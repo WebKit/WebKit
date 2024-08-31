@@ -188,7 +188,7 @@ LineLayout* LineLayout::containing(RenderObject& renderer)
         if (renderer.isRenderFrameSet()) {
             // Since RenderFrameSet is not a RenderBlock, finding container for nested framesets can't use containingBlock ancestor walk.
             if (auto* parent = dynamicDowncast<RenderBlockFlow>(renderer.parent()))
-                return parent->modernLineLayout();
+                return parent->inlineLayout();
             return nullptr;
         }
         auto adjustedContainingBlock = [&] {
@@ -206,12 +206,12 @@ LineLayout* LineLayout::containing(RenderObject& renderer)
             return dynamicDowncast<RenderBlockFlow>(containingBlock);
         };
         if (auto* blockContainer = adjustedContainingBlock())
-            return blockContainer->modernLineLayout();
+            return blockContainer->inlineLayout();
         return nullptr;
     }
 
     if (auto* container = blockContainer(renderer))
-        return container->modernLineLayout();
+        return container->inlineLayout();
 
     return nullptr;
 }
@@ -1138,7 +1138,7 @@ bool LineLayout::updateTextContent(const RenderText& textRenderer, size_t offset
 void LineLayout::releaseCaches(RenderView& view)
 {
     for (auto& renderer : descendantsOfType<RenderBlockFlow>(view)) {
-        if (auto* lineLayout = renderer.modernLineLayout())
+        if (auto* lineLayout = renderer.inlineLayout())
             lineLayout->releaseCachesAndResetDamage();
     }
 }

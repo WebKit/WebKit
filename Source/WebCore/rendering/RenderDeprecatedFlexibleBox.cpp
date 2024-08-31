@@ -985,7 +985,7 @@ std::optional<RenderDeprecatedFlexibleBox::ClampedContent> RenderDeprecatedFlexi
     // If the first block with inline content supports modern line layout, all siblings (and descendants) do as well.
     // see LayoutIntegrationCoverage::canUseForStyle.
     firstBlockFlowWithInlineChildren->computeAndSetLineLayoutPath();
-    if (firstBlockFlowWithInlineChildren->lineLayoutPath() != RenderBlockFlow::ModernPath)
+    if (firstBlockFlowWithInlineChildren->lineLayoutPath() != RenderBlockFlow::InlinePath)
         return { };
 
     auto& layoutState = *view().frameView().layoutContext().layoutState();

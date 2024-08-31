@@ -95,7 +95,7 @@ static void invalidateLineLayout(RenderObject& renderer, IsRemoval isRemoval)
             return !inlinLayout.removedFromTree(*renderer.parent(), renderer);
         return !inlinLayout.insertedIntoTree(*renderer.parent(), renderer);
     };
-    if (auto* inlinLayout = container->modernLineLayout(); inlinLayout && shouldInvalidateLineLayoutPath(*inlinLayout))
+    if (auto* inlinLayout = container->inlineLayout(); inlinLayout && shouldInvalidateLineLayoutPath(*inlinLayout))
         container->invalidateLineLayoutPath(RenderBlockFlow::InvalidationReason::InsertionOrRemoval);
 }
 

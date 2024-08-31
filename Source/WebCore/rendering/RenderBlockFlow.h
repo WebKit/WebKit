@@ -155,8 +155,8 @@ protected:
 
     void dirtyLineFromChangedChild() final
     {
-        if (legacyLineLayout())
-            legacyLineLayout()->lineBoxes().dirtyLineFromChangedChild(*this);
+        if (svgTextLayout())
+            svgTextLayout()->lineBoxes().dirtyLineFromChangedChild(*this);
     }
 
     void paintColumnRules(PaintInfo&, const LayoutPoint&) override;
@@ -341,7 +341,7 @@ public:
 
     LayoutPoint flipFloatForWritingModeForChild(const FloatingObject&, const LayoutPoint&) const;
 
-    LegacyRootInlineBox* legacyRootBox() const { return legacyLineLayout() ? legacyLineLayout()->legacyRootBox() : nullptr; }
+    LegacyRootInlineBox* legacyRootBox() const { return svgTextLayout() ? svgTextLayout()->legacyRootBox() : nullptr; }
 
     void setChildrenInline(bool) final;
 
@@ -355,7 +355,7 @@ public:
     void invalidateLineLayoutPath(InvalidationReason);
     void computeAndSetLineLayoutPath();
 
-    enum LineLayoutPath { UndeterminedPath = 0, ModernPath, LegacyPath };
+    enum LineLayoutPath { UndeterminedPath = 0, InlinePath, SvgTextPath };
     LineLayoutPath lineLayoutPath() const { return static_cast<LineLayoutPath>(renderBlockFlowLineLayoutPath()); }
     void setLineLayoutPath(LineLayoutPath path) { setRenderBlockFlowLineLayoutPath(path); }
 
@@ -363,10 +363,10 @@ public:
 
     bool containsNonZeroBidiLevel() const;
 
-    const LegacyLineLayout* legacyLineLayout() const;
-    LegacyLineLayout* legacyLineLayout();
-    const LayoutIntegration::LineLayout* modernLineLayout() const;
-    LayoutIntegration::LineLayout* modernLineLayout();
+    const LegacyLineLayout* svgTextLayout() const;
+    LegacyLineLayout* svgTextLayout();
+    const LayoutIntegration::LineLayout* inlineLayout() const;
+    LayoutIntegration::LineLayout* inlineLayout();
 
 #if ENABLE(TREE_DEBUGGING)
     void outputFloatingObjects(WTF::TextStream&, int depth) const;
@@ -521,12 +521,11 @@ private:
     void addFocusRingRectsForInlineChildren(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*) const override;
 
 private:
-    bool hasLineLayout() const;
-    bool hasLegacyLineLayout() const;
+    bool hasSvgTextLayout() const;
 
-    bool hasModernLineLayout() const;
-    void layoutModernLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
-    bool tryComputePreferredWidthsUsingModernPath(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth);
+    bool hasInlineLayout() const;
+    void layoutInlineContent(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
+    bool tryComputePreferredWidthsUsingInlinePath(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth);
     void setStaticPositionsForSimpleOutOfFlowContent();
 
     void adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
@@ -541,7 +540,7 @@ private:
     unsigned m_lineCountForTextAutosizing : 2;
 #endif
     // FIXME: This is temporary until after we remove the forced "line layout codepath" invalidation.
-    std::optional<LayoutUnit> m_previousModernLineLayoutContentBoxLogicalHeight;
+    std::optional<LayoutUnit> m_previousInlineLayoutContentBoxLogicalHeight;
 
     std::optional<LayoutUnit> selfCollapsingMarginBeforeWithClear(RenderObject* candidate);
 
@@ -583,39 +582,34 @@ private:
     friend class LegacyLineLayout;
 };
 
-inline bool RenderBlockFlow::hasLineLayout() const
-{
-    return !std::holds_alternative<std::monostate>(m_lineLayout);
-}
-
-inline bool RenderBlockFlow::hasLegacyLineLayout() const
+inline bool RenderBlockFlow::hasSvgTextLayout() const
 {
     return std::holds_alternative<std::unique_ptr<LegacyLineLayout>>(m_lineLayout);
 }
 
-inline const LegacyLineLayout* RenderBlockFlow::legacyLineLayout() const
+inline const LegacyLineLayout* RenderBlockFlow::svgTextLayout() const
 {
-    return hasLegacyLineLayout() ? std::get<std::unique_ptr<LegacyLineLayout>>(m_lineLayout).get() : nullptr;
+    return hasSvgTextLayout() ? std::get<std::unique_ptr<LegacyLineLayout>>(m_lineLayout).get() : nullptr;
 }
 
-inline LegacyLineLayout* RenderBlockFlow::legacyLineLayout()
+inline LegacyLineLayout* RenderBlockFlow::svgTextLayout()
 {
-    return hasLegacyLineLayout() ? std::get<std::unique_ptr<LegacyLineLayout>>(m_lineLayout).get() : nullptr;
+    return hasSvgTextLayout() ? std::get<std::unique_ptr<LegacyLineLayout>>(m_lineLayout).get() : nullptr;
 }
 
-inline bool RenderBlockFlow::hasModernLineLayout() const
+inline bool RenderBlockFlow::hasInlineLayout() const
 {
     return std::holds_alternative<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout);
 }
 
-inline const LayoutIntegration::LineLayout* RenderBlockFlow::modernLineLayout() const
+inline const LayoutIntegration::LineLayout* RenderBlockFlow::inlineLayout() const
 {
-    return hasModernLineLayout() ? std::get<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout).get() : nullptr;
+    return hasInlineLayout() ? std::get<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout).get() : nullptr;
 }
 
-inline LayoutIntegration::LineLayout* RenderBlockFlow::modernLineLayout()
+inline LayoutIntegration::LineLayout* RenderBlockFlow::inlineLayout()
 {
-    return hasModernLineLayout() ? std::get<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout).get() : nullptr;
+    return hasInlineLayout() ? std::get<std::unique_ptr<LayoutIntegration::LineLayout>>(m_lineLayout).get() : nullptr;
 }
 
 } // namespace WebCore

@@ -1695,15 +1695,15 @@ static void invalidateLineLayoutPathOnContentChangeIfNeeded(RenderText& renderer
     if (!container)
         return;
 
-    auto* modernLineLayout = container->modernLineLayout();
-    if (!modernLineLayout)
+    auto* inlineLayout = container->inlineLayout();
+    if (!inlineLayout)
         return;
 
-    if (LayoutIntegration::LineLayout::shouldInvalidateLineLayoutPathAfterContentChange(*container, renderer, *modernLineLayout)) {
+    if (LayoutIntegration::LineLayout::shouldInvalidateLineLayoutPathAfterContentChange(*container, renderer, *inlineLayout)) {
         container->invalidateLineLayoutPath(RenderBlockFlow::InvalidationReason::ContentChange);
         return;
     }
-    if (!modernLineLayout->updateTextContent(renderer, offset, delta))
+    if (!inlineLayout->updateTextContent(renderer, offset, delta))
         container->invalidateLineLayoutPath(RenderBlockFlow::InvalidationReason::ContentChange);
 }
 

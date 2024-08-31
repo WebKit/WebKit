@@ -175,8 +175,8 @@ void RenderMenuList::adjustInnerStyle()
 #endif // !PLATFORM(IOS_FAMILY)
 
     if (m_innerBlock && m_innerBlock->layoutBox()) {
-        if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*m_innerBlock); inlineFormattingContextRoot && inlineFormattingContextRoot->modernLineLayout())
-            inlineFormattingContextRoot->modernLineLayout()->rootStyleWillChange(*inlineFormattingContextRoot, innerStyle);
+        if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*m_innerBlock); inlineFormattingContextRoot && inlineFormattingContextRoot->inlineLayout())
+            inlineFormattingContextRoot->inlineLayout()->rootStyleWillChange(*inlineFormattingContextRoot, innerStyle);
         if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*m_innerBlock))
             lineLayout->styleWillChange(*m_innerBlock, innerStyle, StyleDifference::Layout);
         LayoutIntegration::LineLayout::updateStyle(*m_innerBlock);

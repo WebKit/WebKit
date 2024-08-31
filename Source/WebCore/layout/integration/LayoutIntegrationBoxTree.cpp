@@ -114,7 +114,7 @@ BoxTree::~BoxTree()
             continue;
 
         auto* renderBlockFlow = dynamicDowncast<RenderBlockFlow>(*renderer);
-        auto isLFCInlineBlock = renderBlockFlow && renderBlockFlow->modernLineLayout();
+        auto isLFCInlineBlock = renderBlockFlow && renderBlockFlow->inlineLayout();
         if (isLFCInlineBlock)
             boxesToDetach.append(layoutBox);
     }

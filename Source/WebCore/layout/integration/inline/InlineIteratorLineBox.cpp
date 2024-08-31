@@ -80,7 +80,7 @@ bool LineBoxIterator::operator==(const LineBoxIterator& other) const
 
 LineBoxIterator firstLineBoxFor(const RenderBlockFlow& flow)
 {
-    if (auto* lineLayout = flow.modernLineLayout())
+    if (auto* lineLayout = flow.inlineLayout())
         return lineLayout->firstLineBox();
 
     return { LineBoxIteratorLegacyPath { flow.legacyRootBox() } };
@@ -88,7 +88,7 @@ LineBoxIterator firstLineBoxFor(const RenderBlockFlow& flow)
 
 LineBoxIterator lastLineBoxFor(const RenderBlockFlow& flow)
 {
-    if (auto* lineLayout = flow.modernLineLayout())
+    if (auto* lineLayout = flow.inlineLayout())
         return lineLayout->lastLineBox();
 
     return { LineBoxIteratorLegacyPath { flow.legacyRootBox() } };

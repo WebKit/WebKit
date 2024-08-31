@@ -77,8 +77,8 @@ void RenderButton::setInnerRenderer(RenderBlock& innerRenderer)
     updateAnonymousChildStyle(m_inner->mutableStyle());
 
     if (m_inner && m_inner->layoutBox()) {
-        if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*m_inner); inlineFormattingContextRoot && inlineFormattingContextRoot->modernLineLayout())
-            inlineFormattingContextRoot->modernLineLayout()->rootStyleWillChange(*inlineFormattingContextRoot, inlineFormattingContextRoot->style());
+        if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*m_inner); inlineFormattingContextRoot && inlineFormattingContextRoot->inlineLayout())
+            inlineFormattingContextRoot->inlineLayout()->rootStyleWillChange(*inlineFormattingContextRoot, inlineFormattingContextRoot->style());
         if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*m_inner))
             lineLayout->styleWillChange(*m_inner, m_inner->style(), StyleDifference::Layout);
         LayoutIntegration::LineLayout::updateStyle(*m_inner);
