@@ -620,6 +620,42 @@ TEST(WebKit, NetworkCacheDirectory)
     EXPECT_FALSE(error);
 }
 
+TEST(WebKit, NetworkCacheExcludedFromBackup)
+{
+    TestWebKitAPI::HTTPServer server([] (TestWebKitAPI::Connection connection) {
+        connection.receiveHTTPRequest([=] (Vector<char>&&) {
+            constexpr auto response =
+            "HTTP/1.1 200 OK\r\n"
+            "Cache-Control: max-age=1000000\r\n"
+            "Content-Length: 6\r\n\r\n"
+            "Hello!"_s;
+            connection.send(response);
+        });
+    });
+
+    NSURL *networkCacheDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/NetworkCache" stringByExpandingTildeInPath] isDirectory:YES];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:networkCacheDirectory error:nil];
+    [fileManager createDirectoryAtURL:networkCacheDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [websiteDataStoreConfiguration setNetworkCacheDirectory:networkCacheDirectory];
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
+
+    NSArray *networkCacheFiles = [fileManager contentsOfDirectoryAtPath:networkCacheDirectory.path error:nil];
+    NSNumber *isExcluded = nil;
+    for (NSString *fileName in networkCacheFiles) {
+        NSURL *networkCacheFile = [networkCacheDirectory URLByAppendingPathComponent:fileName];
+        EXPECT_TRUE([networkCacheFile getResourceValue:&isExcluded forKey:NSURLIsExcludedFromBackupKey error:nil]);
+        EXPECT_TRUE(isExcluded.boolValue);
+    }
+}
+
 #if HAVE(ALTERNATIVE_SERVICE)
 
 static void checkUntilEntryFound(WKWebsiteDataStore *dataStore, void(^completionHandler)(NSArray<WKWebsiteDataRecord *> *))
