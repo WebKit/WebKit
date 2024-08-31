@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CSSFontFeatureValue.h"
 
-#include "CSSValueKeywords.h"
+#include "CSSPrimitiveValue.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "HTMLTreeBuilder.h"
 
+#include "CSSTokenizerInputStream.h"
 #include "CommonAtomStrings.h"
 #include "DocumentFragment.h"
 #include "HTMLDocument.h"

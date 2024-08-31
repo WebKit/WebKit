@@ -30,6 +30,8 @@
 #include <wtf/text/MakeString.h>
 #endif
 
+#include <wtf/text/StringView.h>
+
 namespace JSC {
 
 GigacageAlignedMemoryAllocator::GigacageAlignedMemoryAllocator(Gigacage::Kind kind)

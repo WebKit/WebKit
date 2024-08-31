@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CSSUnresolvedColorResolutionContext.h"
 
+#include <optional>
+
 namespace WebCore {
 
 CSSUnresolvedColorResolutionDelegate::~CSSUnresolvedColorResolutionDelegate() = default;

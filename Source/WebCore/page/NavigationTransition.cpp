@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NavigationTransition.h"
 
+#include "JSDOMPromiseDeferred.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

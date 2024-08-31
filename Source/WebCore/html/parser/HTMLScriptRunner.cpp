@@ -27,6 +27,7 @@
 #include "config.h"
 #include "HTMLScriptRunner.h"
 
+#include "CSSTokenizerInputStream.h"
 #include "Element.h"
 #include "Event.h"
 #include "EventLoop.h"

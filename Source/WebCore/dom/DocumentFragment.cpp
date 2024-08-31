@@ -23,6 +23,7 @@
 #include "config.h"
 #include "DocumentFragment.h"
 
+#include "CSSTokenizerInputStream.h"
 #include "Document.h"
 #include "ElementIterator.h"
 #include "HTMLDocumentParser.h"

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Color.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

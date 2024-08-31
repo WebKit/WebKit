@@ -26,8 +26,10 @@
 #include "config.h"
 #include "WaiterListManager.h"
 
+#include "HeapCellInlines.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
+#include "JSObjectInlines.h"
 #include "ObjectConstructor.h"
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>

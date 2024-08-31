@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CSSUnresolvedAbsoluteColor.h"
 
-#include "ColorSerialization.h"
-
 namespace WebCore {
 
 void serializationForCSS(StringBuilder& builder, const CSSUnresolvedAbsoluteColor& unresolved)

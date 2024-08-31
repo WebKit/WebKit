@@ -41,6 +41,7 @@
 #include "ObjectConstructor.h"
 #include "WasmModule.h"
 #include "WasmModuleInformation.h"
+#include "WasmTypeDefinitionInlines.h"
 #include "WebAssemblyModulePrototype.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/MakeString.h>

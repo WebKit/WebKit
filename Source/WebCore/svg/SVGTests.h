@@ -23,11 +23,12 @@
 
 #include "QualifiedName.h"
 #include "SVGStringList.h"
-#include <wtf/Forward.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
+class QualifiedName;
 class SVGElement;
 class SVGStringList;
 class WeakPtrImplWithEventTargetData;

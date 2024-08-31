@@ -25,6 +25,7 @@
 #include "config.h"
 #include "CSSCalcParser.h"
 
+#include "CSSCalcSymbolsAllowed.h"
 #include "CSSCalcValue.h"
 #include "CSSParserMode.h"
 #include "Logging.h"

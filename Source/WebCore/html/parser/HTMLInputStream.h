@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSTokenizerInputStream.h"
 #include "SegmentedString.h"
 #include <wtf/text/OrdinalNumber.h>
 

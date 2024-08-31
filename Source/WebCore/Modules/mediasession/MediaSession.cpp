@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SESSION)
 
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "EventNames.h"
 #include "HTMLMediaElement.h"
