@@ -2093,6 +2093,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyRubyPosition);
         if (first.rubyAlign != second.rubyAlign)
             changingProperties.m_properties.set(CSSPropertyRubyAlign);
+        if (first.rubyOverhang != second.rubyOverhang)
+            changingProperties.m_properties.set(CSSPropertyRubyOverhang);
         if (first.strokeColor != second.strokeColor)
             changingProperties.m_properties.set(CSSPropertyStrokeColor);
         if (first.paintOrder != second.paintOrder)
