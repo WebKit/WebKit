@@ -58,9 +58,9 @@ class Texture;
 class CommandEncoder : public WGPUCommandEncoderImpl, public RefCounted<CommandEncoder>, public CommandsMixin, public CanMakeWeakPtr<CommandEncoder> {
     WTF_MAKE_TZONE_ALLOCATED(CommandEncoder);
 public:
-    static Ref<CommandEncoder> create(id<MTLCommandBuffer> commandBuffer, id<MTLSharedEvent> event, Device& device)
+    static Ref<CommandEncoder> create(id<MTLCommandBuffer> commandBuffer, Device& device)
     {
-        return adoptRef(*new CommandEncoder(commandBuffer, event, device));
+        return adoptRef(*new CommandEncoder(commandBuffer, device));
     }
     static Ref<CommandEncoder> createInvalid(Device& device)
     {
@@ -112,7 +112,7 @@ public:
     void setExistingEncoder(id<MTLCommandEncoder>);
 
 private:
-    CommandEncoder(id<MTLCommandBuffer>, id<MTLSharedEvent>, Device&);
+    CommandEncoder(id<MTLCommandBuffer>, Device&);
     CommandEncoder(Device&);
 
     NSString* errorValidatingCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size);

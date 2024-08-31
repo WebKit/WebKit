@@ -76,8 +76,9 @@ public:
 
     const Device& device() const;
     void clearTextureIfNeeded(const WGPUImageCopyTexture&, NSUInteger);
-    std::pair<id<MTLCommandBuffer>, id<MTLSharedEvent>> commandBufferWithDescriptor(MTLCommandBufferDescriptor*);
+    id<MTLCommandBuffer> commandBufferWithDescriptor(MTLCommandBufferDescriptor*);
     void commitMTLCommandBuffer(id<MTLCommandBuffer>);
+    void removeMTLCommandBuffer(id<MTLCommandBuffer>);
     void setEncoderForBuffer(id<MTLCommandBuffer>, id<MTLCommandEncoder>);
     id<MTLCommandEncoder> encoderForBuffer(id<MTLCommandBuffer>) const;
     void clearTextureViewIfNeeded(TextureView&);
@@ -96,6 +97,7 @@ private:
 
     bool isIdle() const;
     bool isSchedulingIdle() const { return m_submittedCommandBufferCount == m_scheduledCommandBufferCount; }
+    void removeMTLCommandBufferInternal(id<MTLCommandBuffer>);
 
     // This can be called on a background thread.
     void scheduleWork(Instance::WorkItem&&);
@@ -103,7 +105,6 @@ private:
 
     id<MTLCommandQueue> m_commandQueue { nil };
     id<MTLCommandBuffer> m_commandBuffer { nil };
-    id<MTLSharedEvent> m_commandBufferEvent { nil };
     id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };
     ThreadSafeWeakPtr<Device> m_device; // The only kind of queues that exist right now are default queues, which are owned by Devices.
 

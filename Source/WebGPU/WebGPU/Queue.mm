@@ -75,9 +75,8 @@ void Queue::ensureBlitCommandEncoder()
 
     auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
     commandBufferDescriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
-    auto blitCommandBufferWithSharedEvent = commandBufferWithDescriptor(commandBufferDescriptor);
-    m_commandBuffer = blitCommandBufferWithSharedEvent.first;
-    m_commandBufferEvent = blitCommandBufferWithSharedEvent.second;
+    auto blitCommandBuffer = commandBufferWithDescriptor(commandBufferDescriptor);
+    m_commandBuffer = blitCommandBuffer;
     m_blitCommandEncoder = [m_commandBuffer blitCommandEncoder];
     setEncoderForBuffer(m_commandBuffer, m_blitCommandEncoder);
 }
@@ -122,35 +121,24 @@ void Queue::setEncoderForBuffer(id<MTLCommandBuffer> commandBuffer, id<MTLComman
         [m_openCommandEncoders setObject:commandEncoder forKey:commandBuffer];
 }
 
-std::pair<id<MTLCommandBuffer>, id<MTLSharedEvent>> Queue::commandBufferWithDescriptor(MTLCommandBufferDescriptor* descriptor)
+id<MTLCommandBuffer> Queue::commandBufferWithDescriptor(MTLCommandBufferDescriptor* descriptor)
 {
     if (!isValid())
-        return std::make_pair(nil, nil);
+        return nil;
 
     constexpr auto maxCommandBufferCount = 1000;
     auto devicePtr = m_device.get();
     if (m_createdNotCommittedBuffers.count >= maxCommandBufferCount) {
         if (devicePtr)
             devicePtr->loseTheDevice(WGPUDeviceLostReason_Destroyed);
-        return std::make_pair(nil, nil);
+        return nil;
     }
 
     id<MTLCommandBuffer> buffer = [m_commandQueue commandBufferWithDescriptor:descriptor];
     if (buffer)
         [m_createdNotCommittedBuffers addObject:buffer];
-    id<MTLSharedEvent> sharedEvent = nil;
-    static bool captureEnabled = false;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        captureEnabled = !!getenv("METAL_CAPTURE_ENABLED");
-        WTFLogAlways("Metal capture enabled: %s", captureEnabled ? "YES" : "NO");
-    });
-    if (devicePtr && [buffer respondsToSelector:@selector(encodeConditionalAbortEvent:)] && !captureEnabled) {
-        if ((sharedEvent = [devicePtr->device() newSharedEvent]))
-            [(id<MTLCommandBufferSPI>)buffer encodeConditionalAbortEvent:sharedEvent];
-    }
 
-    return std::make_pair(buffer, sharedEvent);
+    return buffer;
 }
 
 void Queue::makeInvalid()
@@ -167,6 +155,9 @@ void Queue::makeInvalid()
 
     m_onSubmittedWorkScheduledCallbacks.clear();
     m_onSubmittedWorkDoneCallbacks.clear();
+
+    m_createdNotCommittedBuffers = nil;
+    m_openCommandEncoders = nil;
 }
 
 void Queue::onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)>&& callback)
@@ -231,10 +222,28 @@ NSString* Queue::errorValidatingSubmit(const Vector<std::reference_wrapper<Comma
     return nil;
 }
 
+void Queue::removeMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
+{
+    if (!commandBuffer)
+        return;
+
+    id<MTLCommandEncoder> existingEncoder = encoderForBuffer(commandBuffer);
+    endEncoding(existingEncoder, commandBuffer);
+    removeMTLCommandBufferInternal(commandBuffer);
+}
+
+void Queue::removeMTLCommandBufferInternal(id<MTLCommandBuffer> commandBuffer)
+{
+    [m_openCommandEncoders removeObjectForKey:commandBuffer];
+    [m_createdNotCommittedBuffers removeObject:commandBuffer];
+}
+
 void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
 {
-    if (!commandBuffer || commandBuffer.status >= MTLCommandBufferStatusCommitted || !isValid())
+    if (!commandBuffer || commandBuffer.status >= MTLCommandBufferStatusCommitted || !isValid()) {
+        removeMTLCommandBuffer(commandBuffer);
         return;
+    }
 
     ASSERT(commandBuffer.commandQueue == m_commandQueue);
     [commandBuffer addScheduledHandler:[protectedThis = Ref { *this }](id<MTLCommandBuffer>) {
@@ -259,8 +268,7 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
     }];
 
     [commandBuffer commit];
-    [m_openCommandEncoders removeObjectForKey:commandBuffer];
-    [m_createdNotCommittedBuffers removeObject:commandBuffer];
+    removeMTLCommandBufferInternal(commandBuffer);
     ++m_submittedCommandBufferCount;
 }
 

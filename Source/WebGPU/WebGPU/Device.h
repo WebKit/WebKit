@@ -177,7 +177,7 @@ private:
 
     bool validateRenderPipeline(const WGPURenderPipelineDescriptor&);
 
-    void makeInvalid() { m_device = nil; }
+    void makeInvalid();
     NSString* addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>&, const std::optional<WGSL::PipelineLayout>&);
     Ref<PipelineLayout> generatePipelineLayout(const Vector<Vector<WGPUBindGroupLayoutEntry>> &bindGroupEntries);
 

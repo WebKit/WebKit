@@ -139,7 +139,7 @@ bool Device::isDestroyed() const
 
 Ref<Device> Device::create(id<MTLDevice> device, String&& deviceLabel, HardwareCapabilities&& capabilities, Adapter& adapter)
 {
-    id<MTLCommandQueue> commandQueue = [device newCommandQueueWithMaxCommandBufferCount:2048];
+    id<MTLCommandQueue> commandQueue = [device newCommandQueueWithMaxCommandBufferCount:4096];
     if (!commandQueue)
         return Device::createInvalid(adapter);
 
@@ -239,13 +239,17 @@ RefPtr<XRSubImage> Device::getXRViewSubImage(WGPUXREye eye)
     return eye == WGPUXREye_Right ? m_xrSubImages[1] : m_xrSubImages[0];
 }
 
+void Device::makeInvalid()
+{
+    m_device = nil;
+    m_defaultQueue->makeInvalid();
+}
+
 void Device::loseTheDevice(WGPUDeviceLostReason reason)
 {
     m_device = nil;
 
     m_adapter->makeInvalid();
-
-    makeInvalid();
 
     if (m_deviceLostCallback) {
         m_deviceLostCallback(reason, "Device lost."_s);

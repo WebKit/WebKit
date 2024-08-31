@@ -18,6 +18,7 @@ struct VertexOutput {
 @vertex
 fn v(@location(0) fromVertexBuffer: u32) -> VertexOutput {
   var v = VertexOutput();
+  v.position = vec4f(0, 0, 0, 1);
   v.something = fromVertexBuffer;
   return v;
 }

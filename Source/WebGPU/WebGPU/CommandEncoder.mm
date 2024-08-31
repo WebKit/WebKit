@@ -99,20 +99,19 @@ Ref<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescrip
 
     auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
     commandBufferDescriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
-    auto commandBufferWithEvent = getQueue().commandBufferWithDescriptor(commandBufferDescriptor);
-    if (!commandBufferWithEvent.first)
+    auto commandBuffer = getQueue().commandBufferWithDescriptor(commandBufferDescriptor);
+    if (!commandBuffer)
         return CommandEncoder::createInvalid(*this);
 
-    commandBufferWithEvent.first.label = fromAPI(descriptor.label);
+    commandBuffer.label = fromAPI(descriptor.label);
 
-    return CommandEncoder::create(commandBufferWithEvent.first, commandBufferWithEvent.second, *this);
+    return CommandEncoder::create(commandBuffer, *this);
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CommandEncoder);
 
-CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, id<MTLSharedEvent> event, Device& device)
+CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, Device& device)
     : m_commandBuffer(commandBuffer)
-    , m_abortCommandBuffer(event)
     , m_device(device)
 {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -129,7 +128,7 @@ CommandEncoder::CommandEncoder(Device& device)
 CommandEncoder::~CommandEncoder()
 {
     finalizeBlitCommandEncoder();
-    m_device->getQueue().commitMTLCommandBuffer(m_commandBuffer);
+    m_device->getQueue().removeMTLCommandBuffer(m_commandBuffer);
 }
 
 id<MTLBlitCommandEncoder> CommandEncoder::ensureBlitCommandEncoder()
@@ -234,13 +233,14 @@ void CommandEncoder::setExistingEncoder(id<MTLCommandEncoder> encoder)
 
 void CommandEncoder::discardCommandBuffer()
 {
-    if (!m_commandBuffer || m_commandBuffer.status >= MTLCommandBufferStatusCommitted)
+    if (!m_commandBuffer || m_commandBuffer.status >= MTLCommandBufferStatusCommitted) {
+        m_commandBuffer = nil;
         return;
+    }
 
     id<MTLCommandEncoder> existingEncoder = m_device->getQueue().encoderForBuffer(m_commandBuffer);
     m_device->getQueue().endEncoding(existingEncoder, m_commandBuffer);
-    [m_abortCommandBuffer setSignaledValue:1];
-    m_device->getQueue().commitMTLCommandBuffer(m_commandBuffer);
+    m_device->getQueue().removeMTLCommandBuffer(m_commandBuffer);
     m_commandBuffer = nil;
 }
 
@@ -250,6 +250,8 @@ void CommandEncoder::endEncoding(id<MTLCommandEncoder> encoder)
     if (existingEncoder != encoder) {
         m_device->getQueue().endEncoding(existingEncoder, m_commandBuffer);
         setExistingEncoder(nil);
+        if (m_lastErrorString)
+            discardCommandBuffer();
         return;
     }
 
@@ -1237,8 +1239,8 @@ void CommandEncoder::makeInvalid(NSString* errorString)
 
     endEncoding(m_existingCommandEncoder);
     m_blitCommandEncoder = nil;
-    [m_abortCommandBuffer setSignaledValue:1];
-    m_device->getQueue().commitMTLCommandBuffer(m_commandBuffer);
+    m_existingCommandEncoder = nil;
+    m_device->getQueue().removeMTLCommandBuffer(m_commandBuffer);
 
     m_commandBuffer = nil;
     m_lastErrorString = errorString;
@@ -1807,6 +1809,7 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
 
     auto *commandBuffer = m_commandBuffer;
     m_commandBuffer = nil;
+    m_existingCommandEncoder = nil;
 
     commandBuffer.label = fromAPI(descriptor.label);
 
@@ -1821,8 +1824,7 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
     }
 #endif
 
-    auto result = CommandBuffer::create(commandBuffer, m_abortCommandBuffer, m_device);
-    m_abortCommandBuffer = nil;
+    auto result = CommandBuffer::create(commandBuffer, m_device);
     m_cachedCommandBuffer = result;
     m_cachedCommandBuffer->setBufferMapCount(m_bufferMapCount);
     if (m_makeSubmitInvalid)

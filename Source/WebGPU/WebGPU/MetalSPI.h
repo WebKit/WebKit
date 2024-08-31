@@ -35,7 +35,4 @@ constexpr MTLPixelFormat MTLPixelFormatYCBCR10_444_2P_PACKED = static_cast<MTLPi
 @optional
 - (kern_return_t)setOwnerWithIdentity:(mach_port_t)task_id_token;
 @end
-@protocol MTLCommandBufferSPI <MTLCommandBuffer>
-- (void)encodeConditionalAbortEvent:(id <MTLSharedEvent>)event;
-@end
 #endif

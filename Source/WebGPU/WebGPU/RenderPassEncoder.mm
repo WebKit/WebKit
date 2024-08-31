@@ -46,6 +46,7 @@ namespace WebGPU {
 #define RETURN_IF_FINISHED() \
 if (!m_parentEncoder->isLocked() || m_parentEncoder->isFinished()) { \
     m_device->generateAValidationError([NSString stringWithFormat:@"%s: failed as encoding has finished", __PRETTY_FUNCTION__]); \
+    m_renderCommandEncoder = nil; \
     return; \
 } \
 if (!m_renderCommandEncoder || !m_parentEncoder->isValid() || !m_parentEncoder->encoderIsCurrent(m_renderCommandEncoder)) { \
@@ -184,7 +185,8 @@ RenderPassEncoder::RenderPassEncoder(CommandEncoder& parentEncoder, Device& devi
 RenderPassEncoder::~RenderPassEncoder()
 {
     if (m_renderCommandEncoder)
-        m_parentEncoder->endEncoding(m_renderCommandEncoder);
+        m_parentEncoder->makeInvalid(@"GPURenderPassEncoder.finish was never called");
+
     m_renderCommandEncoder = nil;
 }
 
