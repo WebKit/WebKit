@@ -28,7 +28,7 @@
 #include "CSSShapeSegmentValue.h"
 
 #include "BasicShapes.h"
-#include "CSSPrimitiveValue.h"
+#include "CSSPrimitiveValueMappings.h"
 #include "CSSValuePair.h"
 #include "CalculationValue.h"
 #include "StyleBuilderState.h"

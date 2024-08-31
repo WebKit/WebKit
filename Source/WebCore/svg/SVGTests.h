@@ -21,12 +21,13 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
+class QualifiedName;
 class SVGElement;
 class SVGStringList;
 class WeakPtrImplWithEventTargetData;

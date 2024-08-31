@@ -26,8 +26,9 @@
 #include "config.h"
 #include "DeferredWorkTimer.h"
 
-#include "CatchScope.h"
 #include "GlobalObjectMethodTable.h"
+#include "HeapCellInlines.h"
+#include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
 #include "VM.h"
 #include <wtf/RunLoop.h>

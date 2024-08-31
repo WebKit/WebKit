@@ -28,8 +28,7 @@
 
 #include "DeferGCInlines.h"
 #include "HeapInlines.h"
-#include "MarkedBlock.h"
-#include "VM.h"
+#include "MarkedBlockInlines.h"
 #include <wtf/SystemTracing.h>
 
 #if !USE(SYSTEM_MALLOC)

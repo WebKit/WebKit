@@ -60,6 +60,7 @@
 #include "CSSPropertyParserConsumer+PercentDefinitions.h"
 #include "CSSPropertyParserConsumer+RawResolver.h"
 #include "CSSPropertyParserConsumer+URL.h"
+#include "CSSPropertyParsing.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValuePair.h"
 #include "Document.h"

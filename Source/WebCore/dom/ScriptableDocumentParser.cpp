@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScriptableDocumentParser.h"
 
+#include "CSSPrimitiveValue.h"
 #include "Document.h"
 #include "Settings.h"
 #include "StyleScope.h"

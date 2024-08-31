@@ -33,6 +33,7 @@
 
 #if ENABLE(XSLT)
 
+#include "CSSPrimitiveValue.h"
 #include "Document.h"
 #include "Element.h"
 #include "FrameDestructionObserverInlines.h"

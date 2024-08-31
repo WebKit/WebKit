@@ -24,9 +24,9 @@
 
 #pragma once
 
+#include "CSSCalcSymbolTable.h"
 #include "CSSCalcTree.h"
 #include "CSSToLengthConversionData.h"
-#include <optional>
 
 namespace WebCore {
 

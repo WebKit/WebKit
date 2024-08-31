@@ -39,6 +39,7 @@
 #include "ModelProcessConnectionParameters.h"
 #include "ModelProcessProxy.h"
 #include "NetworkProcessConnectionInfo.h"
+#include "NetworkProcessMessages.h"
 #include "NotificationManagerMessageHandlerMessages.h"
 #include "PageLoadState.h"
 #include "PlatformXRSystem.h"

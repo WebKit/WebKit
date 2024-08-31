@@ -36,7 +36,7 @@
 #include <queue>
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/MakeString.h>

@@ -26,8 +26,8 @@
 #include "config.h"
 #include "InternalObserver.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "JSDOMExceptionHandling.h"
-#include "ScriptExecutionContext.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 

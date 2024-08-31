@@ -25,6 +25,7 @@
 #include "GStreamerWebRTCUtils.h"
 #include "NotImplemented.h"
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {

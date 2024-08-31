@@ -34,6 +34,7 @@
 #include "CSSFontSelector.h"
 #include "CSSKeyframesRule.h"
 #include "CSSSelectorParser.h"
+#include "CSSViewTransitionRule.h"
 #include "CustomPropertyRegistry.h"
 #include "Document.h"
 #include "DocumentInlines.h"

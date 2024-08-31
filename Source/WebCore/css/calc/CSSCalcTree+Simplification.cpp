@@ -29,7 +29,10 @@
 #include "CSSCalcTree+NumericIdentity.h"
 #include "CSSCalcTree+Traversal.h"
 #include "CSSCalcTree.h"
+#include "CSSPrimitiveValue.h"
+#include "CalculationCategory.h"
 #include "CalculationExecutor.h"
+#include "RenderStyleInlines.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
