@@ -43,6 +43,7 @@
 #include "LegacyInlineTextBox.h"
 #include "LegacyLineLayout.h"
 #include "LegacyRootInlineBox.h"
+#include "LineClampUpdater.h"
 #include "LineSelection.h"
 #include "LocalFrame.h"
 #include "Logging.h"
@@ -686,6 +687,7 @@ void RenderBlockFlow::layoutInFlowChildren(bool relayoutChildren, LayoutUnit& re
 
     if (childrenInline()) {
         auto textBoxTrimmer = TextBoxTrimmer { *this };
+        auto lineClampUpdater = LineClampUpdater { *this };
         return layoutInlineChildren(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
     }
 
@@ -693,6 +695,7 @@ void RenderBlockFlow::layoutInFlowChildren(bool relayoutChildren, LayoutUnit& re
         {
             // With block children, there's no way to tell what the last formatted line is until after we finished laying out the subtree.
             auto textBoxTrimmer = TextBoxTrimmer { *this };
+            auto lineClampUpdater = LineClampUpdater { *this };
             layoutBlockChildren(relayoutChildren, maxFloatLogicalBottom);
         }
 
