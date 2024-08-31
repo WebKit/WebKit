@@ -107,6 +107,7 @@
 #include "PlatformXRSystem.h"
 #include "PolicyDecision.h"
 #include "PrintInfo.h"
+#include "ProcessAssertion.h"
 #include "ProcessThrottler.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
@@ -570,13 +571,26 @@ void WebPageProxy::ProcessActivityState::takeVisibleActivity()
     *m_wasRecentlyVisibleActivity = nullptr;
 #endif
 }
+
 void WebPageProxy::ProcessActivityState::takeAudibleActivity()
 {
     m_isAudibleActivity = m_page.legacyMainFrameProcess().throttler().foregroundActivity("View is playing audio"_s).moveToUniquePtr();
 }
+
 void WebPageProxy::ProcessActivityState::takeCapturingActivity()
 {
     m_isCapturingActivity = m_page.legacyMainFrameProcess().throttler().foregroundActivity("View is capturing media"_s).moveToUniquePtr();
+}
+
+void WebPageProxy::ProcessActivityState::takeMutedCaptureAssertion()
+{
+    m_isMutedCaptureAssertion = ProcessAssertion::create(m_page.legacyMainFrameProcess(), "WebKit Muted Media Capture"_s, ProcessAssertionType::Background);
+    m_isMutedCaptureAssertion->setInvalidationHandler([weakPage = WeakPtr { m_page }] {
+        if (RefPtr protectedPage = weakPage.get()) {
+            RELEASE_LOG(ProcessSuspension, "Muted capture assertion is invalidated");
+            protectedPage->m_legacyMainFrameProcessActivityState.m_isMutedCaptureAssertion = nullptr;
+        }
+    });
 }
 
 void WebPageProxy::ProcessActivityState::reset()
@@ -587,6 +601,7 @@ void WebPageProxy::ProcessActivityState::reset()
 #endif
     m_isAudibleActivity = nullptr;
     m_isCapturingActivity = nullptr;
+    m_isMutedCaptureAssertion = nullptr;
 #if PLATFORM(IOS_FAMILY)
     m_openingAppLinkActivity = nullptr;
 #endif
@@ -613,6 +628,11 @@ void WebPageProxy::ProcessActivityState::dropCapturingActivity()
     m_isCapturingActivity = nullptr;
 }
 
+void WebPageProxy::ProcessActivityState::dropMutedCaptureAssertion()
+{
+    m_isMutedCaptureAssertion = nullptr;
+}
+
 bool WebPageProxy::ProcessActivityState::hasValidVisibleActivity() const
 {
     return m_isVisibleActivity && m_isVisibleActivity->isValid();
@@ -626,6 +646,11 @@ bool WebPageProxy::ProcessActivityState::hasValidAudibleActivity() const
 bool WebPageProxy::ProcessActivityState::hasValidCapturingActivity() const
 {
     return m_isCapturingActivity && m_isCapturingActivity->isValid();
+}
+
+bool WebPageProxy::ProcessActivityState::hasValidMutedCaptureAssertion() const
+{
+    return m_isMutedCaptureAssertion;
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -2938,6 +2963,16 @@ void WebPageProxy::updateThrottleState()
     }
 
     bool isCapturingMedia = internals().activityState.contains(ActivityState::IsCapturingMedia);
+    bool hasMutedCapture = internals().mediaState.containsAny(MediaProducer::MutedCaptureMask);
+
+    if (!isCapturingMedia && hasMutedCapture) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: taking a web process background assertion for muted media capture");
+        m_legacyMainFrameProcessActivityState.takeMutedCaptureAssertion();
+    } else if (m_legacyMainFrameProcessActivityState.hasValidMutedCaptureAssertion()) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: releasing a web process background assertion for muted media capture");
+        m_legacyMainFrameProcessActivityState.dropMutedCaptureAssertion();
+    }
+
     if (isCapturingMedia) {
         if (!m_legacyMainFrameProcessActivityState.hasValidCapturingActivity()) {
             WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is taking a foreground assertion because media capture is active");
