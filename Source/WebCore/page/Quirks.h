@@ -204,6 +204,7 @@ public:
     bool needsGetElementsByNameQuirk() const;
     bool needsRelaxedCorsMixedContentCheckQuirk() const;
     bool needsLaxSameSiteCookieQuirk(const URL&) const;
+    bool needsToRemoveGetFromAccessor() const;
 
 private:
     bool needsQuirks() const;
