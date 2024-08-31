@@ -504,7 +504,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     }
     if (loadParameters.mainResourceNavigationDataForAnyFrame) {
         if (auto documentLoader = resourceLoader.documentLoader()) {
-            loadParameters.navigationID = documentLoader->navigationID();
+            loadParameters.navigationID = documentLoader->navigationID().asOptional();
             loadParameters.navigationRequester = documentLoader->triggeringAction().requester();
         }
     }

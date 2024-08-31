@@ -156,6 +156,11 @@ public:
     ObjectIdentifierGeneric() = default;
     ObjectIdentifierGeneric(HashTableDeletedValueType) : ObjectIdentifierGenericBase<RawValue>(HashTableDeletedValue) { }
 
+    std::optional<ObjectIdentifierGeneric> asOptional() const
+    {
+        return *this ? std::optional { *this } : std::nullopt;
+    }
+
     struct MarkableTraits {
         static bool isEmptyValue(ObjectIdentifierGeneric identifier) { return !identifier; }
         static constexpr ObjectIdentifierGeneric emptyValue() { return ObjectIdentifierGeneric(); }

@@ -31,6 +31,7 @@
 #include "WebPageProxyMessageReceiverRegistration.h"
 #include "WebProcessProxy.h"
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/NavigationIdentifier.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -97,7 +98,7 @@ private:
     void suspensionTimedOut();
 
     void close();
-    void didDestroyNavigation(uint64_t navigationID);
+    void didDestroyNavigation(WebCore::NavigationIdentifier);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

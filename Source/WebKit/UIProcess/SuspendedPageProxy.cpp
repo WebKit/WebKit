@@ -161,7 +161,7 @@ Ref<WebPageProxy> SuspendedPageProxy::protectedPage() const
     return m_page.get();
 }
 
-void SuspendedPageProxy::didDestroyNavigation(uint64_t navigationID)
+void SuspendedPageProxy::didDestroyNavigation(WebCore::NavigationIdentifier navigationID)
 {
     protectedPage()->didDestroyNavigationShared(m_process.copyRef(), navigationID);
 }

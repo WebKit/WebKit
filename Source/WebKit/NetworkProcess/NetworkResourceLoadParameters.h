@@ -33,6 +33,7 @@
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/FetchOptions.h>
+#include <WebCore/NavigationIdentifier.h>
 #include <WebCore/NavigationRequester.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/SecurityContext.h>
@@ -76,7 +77,7 @@ public:
         , WebCore::SandboxFlags effectiveSandboxFlags
         , URL&& openerURL
         , WebCore::CrossOriginOpenerPolicy&& sourceCrossOriginOpenerPolicy
-        , uint64_t navigationID
+        , std::optional<WebCore::NavigationIdentifier> navigationID
         , std::optional<WebCore::NavigationRequester>&&
         , WebCore::ServiceWorkersMode
         , std::optional<WebCore::ServiceWorkerRegistrationIdentifier>
@@ -124,7 +125,7 @@ public:
     WebCore::SandboxFlags effectiveSandboxFlags { WebCore::SandboxNone };
     URL openerURL;
     WebCore::CrossOriginOpenerPolicy sourceCrossOriginOpenerPolicy;
-    uint64_t navigationID { 0 };
+    std::optional<WebCore::NavigationIdentifier> navigationID;
     std::optional<WebCore::NavigationRequester> navigationRequester;
 
     WebCore::ServiceWorkersMode serviceWorkersMode { WebCore::ServiceWorkersMode::None };

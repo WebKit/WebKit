@@ -352,7 +352,7 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& win
         webFrame->info(), /* originatingFrameInfoData */
         webFrame->page()->webPageProxyIdentifier(),
         webFrame->info(), /* frameInfo */
-        0, /* navigationID */
+        std::nullopt, /* navigationID */
         navigationAction.originalRequest(), /* originalRequest */
         navigationAction.originalRequest() /* request */
     };

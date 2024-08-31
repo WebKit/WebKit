@@ -1530,7 +1530,7 @@ void DocumentLoader::detachFromFrame(LoadWillContinueInAnotherProcess loadWillCo
     if (!m_frame)
         return;
 
-    if (auto navigationID = std::exchange(m_navigationID, 0))
+    if (auto navigationID = std::exchange(m_navigationID, { }))
         m_frame->loader().client().documentLoaderDetached(navigationID, loadWillContinueInAnotherProcess);
 
     InspectorInstrumentation::loaderDetachedFromFrame(*m_frame, *this);
@@ -1538,7 +1538,7 @@ void DocumentLoader::detachFromFrame(LoadWillContinueInAnotherProcess loadWillCo
     observeFrame(nullptr);
 }
 
-void DocumentLoader::setNavigationID(uint64_t navigationID)
+void DocumentLoader::setNavigationID(NavigationIdentifier navigationID)
 {
     ASSERT(navigationID);
     m_navigationID = navigationID;

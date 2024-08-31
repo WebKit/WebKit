@@ -288,7 +288,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
 
     auto documentLoader = frameLoader->loaderForWebsitePolicies();
     auto clientRedirectSourceForHistory = documentLoader ? documentLoader->clientRedirectSourceForHistory() : String();
-    auto navigationID = documentLoader ? documentLoader->navigationID() : 0;
+    auto navigationID = documentLoader ? documentLoader->navigationID() : NavigationIdentifier { };
     bool hasOpener = !!frame->opener();
     auto sandboxFlags = frameLoader->effectiveSandboxFlags();
 
