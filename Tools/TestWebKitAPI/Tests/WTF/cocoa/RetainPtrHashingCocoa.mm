@@ -34,17 +34,17 @@
 
 namespace TestWebKitAPI {
 
-TEST(RetainPtrHashing, HashSet)
+TEST(RetainPtrHashingCocoa, HashSet)
 {
-    HashSet<RetainPtr<CFArrayRef>> set;
+    HashSet<RetainPtr<NSObject>> set;
 
-    RetainPtr<CFArrayRef> foo = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
+    RetainPtr<NSObject> foo = adoptNS([NSObject new]);
 
     EXPECT_FALSE(set.contains(foo));
     set.add(foo);
     EXPECT_TRUE(set.contains(foo));
 
-    RetainPtr<CFArrayRef> foo2 = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
+    RetainPtr<NSObject> foo2 = adoptNS([NSObject new]);
     EXPECT_FALSE(set.contains(foo2));
     set.add(foo2);
     EXPECT_TRUE(set.contains(foo));
@@ -55,17 +55,17 @@ TEST(RetainPtrHashing, HashSet)
     EXPECT_TRUE(set.contains(foo2));
 }
 
-TEST(RetainPtrHashing, HashMapKey)
+TEST(RetainPtrHashingCocoa, HashMapKey)
 {
-    HashMap<RetainPtr<CFArrayRef>, int> map;
+    HashMap<RetainPtr<NSObject>, int> map;
 
-    RetainPtr<CFArrayRef> foo = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
+    RetainPtr<NSObject> foo = adoptNS([NSObject new]);
 
     EXPECT_FALSE(map.contains(foo));
     map.add(foo, 1);
     EXPECT_EQ(1, map.get(foo));
 
-    RetainPtr<CFArrayRef> foo2 = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
+    RetainPtr<NSObject> foo2 = adoptNS([NSObject new]);
     EXPECT_TRUE(map.contains(foo));
     EXPECT_FALSE(map.contains(foo2));
     map.add(foo2, 2);
@@ -77,17 +77,17 @@ TEST(RetainPtrHashing, HashMapKey)
     EXPECT_TRUE(map.contains(foo2));
 }
 
-TEST(RetainPtrHashing, HashMapValue)
+TEST(RetainPtrHashingCocoa, HashMapValue)
 {
-    HashMap<int, RetainPtr<CFArrayRef>> map;
+    HashMap<int, RetainPtr<NSObject>> map;
 
-    RetainPtr<CFArrayRef> foo = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
+    RetainPtr<NSObject> foo = adoptNS([NSObject new]);
 
     EXPECT_FALSE(map.contains(1));
     map.add(1, foo);
     EXPECT_EQ(foo, map.get(1));
 
-    RetainPtr<CFArrayRef> foo2 = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
+    RetainPtr<NSObject> foo2 = adoptNS([NSObject new]);
     EXPECT_FALSE(map.contains(2));
     map.add(2, foo2);
     EXPECT_EQ(foo, map.get(1));

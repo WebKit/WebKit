@@ -93,8 +93,8 @@ public:
     template<typename U> constexpr RetainPtr(RetainPtr<U>&& o) : m_ptr(toStorageType(checkType(o.leakRef()))) { }
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
-    constexpr RetainPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
-    constexpr bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
+    constexpr RetainPtr(HashTableDeletedValueType) : m_ptr(toStorageType(hashTableDeletedValue())) { }
+    constexpr bool isHashTableDeletedValue() const { return m_ptr == toStorageType(hashTableDeletedValue()); }
 
     ~RetainPtr();
 
@@ -162,26 +162,26 @@ private:
 
     static constexpr PtrType checkType(PtrType ptr) { return ptr; }
 
-    static constexpr PtrType hashTableDeletedValue() { return reinterpret_cast<PtrType>(-1); }
+    static constexpr PtrType hashTableDeletedValue() { return fromStorageType(reinterpret_cast<CFTypeRef>(-1)); }
 
 #ifdef __OBJC__
-    template<typename U> constexpr std::enable_if_t<std::is_convertible_v<U, id>, PtrType> fromStorageTypeHelper(CFTypeRef ptr) const
+    template<typename U> static constexpr std::enable_if_t<std::is_convertible_v<U, id>, PtrType> fromStorageTypeHelper(CFTypeRef ptr)
     {
         return (__bridge PtrType)const_cast<CF_BRIDGED_TYPE(id) void*>(ptr);
     }
-    template<typename U> constexpr std::enable_if_t<!std::is_convertible_v<U, id>, PtrType> fromStorageTypeHelper(CFTypeRef ptr) const
+    template<typename U> static constexpr std::enable_if_t<!std::is_convertible_v<U, id>, PtrType> fromStorageTypeHelper(CFTypeRef ptr)
     {
         return (PtrType)const_cast<CF_BRIDGED_TYPE(id) void*>(ptr);
     }
-    constexpr PtrType fromStorageType(CFTypeRef ptr) const { return fromStorageTypeHelper<PtrType>(ptr); }
-    constexpr CFTypeRef toStorageType(id ptr) const { return (__bridge CFTypeRef)ptr; }
-    constexpr CFTypeRef toStorageType(CFTypeRef ptr) const { return ptr; }
+    static constexpr PtrType fromStorageType(CFTypeRef ptr) { return fromStorageTypeHelper<PtrType>(ptr); }
+    static constexpr CFTypeRef toStorageType(id ptr) { return (__bridge CFTypeRef)ptr; }
+    static constexpr CFTypeRef toStorageType(CFTypeRef ptr) { return ptr; }
 #else
-    constexpr PtrType fromStorageType(CFTypeRef ptr) const
+    static constexpr PtrType fromStorageType(CFTypeRef ptr)
     {
         return (PtrType)const_cast<CF_BRIDGED_TYPE(id) void*>(ptr);
     }
-    constexpr CFTypeRef toStorageType(PtrType ptr) const { return (CFTypeRef)ptr; }
+    static constexpr CFTypeRef toStorageType(PtrType ptr) { return (CFTypeRef)ptr; }
 #endif
 
     CFTypeRef m_ptr { nullptr };

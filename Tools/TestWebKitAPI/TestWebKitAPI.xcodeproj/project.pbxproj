@@ -270,6 +270,8 @@
 		44D3F8402BE1A74200BE0218 /* XMLParsing.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44D3F8382BE1A6BE00BE0218 /* XMLParsing.mm */; };
 		44D3F8432BE1DB0000BE0218 /* test.xml in Copy Resources */ = {isa = PBXBuildFile; fileRef = 44D3F8422BE1DAD800BE0218 /* test.xml */; };
 		44D5008E26FE9ED6000EB12F /* RetainPtrARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44D5008D26FE9ED6000EB12F /* RetainPtrARC.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		44FBAEFF2C7A7FDB00AF51BC /* RetainPtrHashingCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44FBAEFD2C7A7FDB00AF51BC /* RetainPtrHashingCocoa.mm */; };
+		44FBAF002C7A7FDB00AF51BC /* RetainPtrHashingCocoaARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44FBAEFE2C7A7FDB00AF51BC /* RetainPtrHashingCocoaARC.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		4628C8E92367ABD100B073F0 /* WKSecurityOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4628C8E82367ABBC00B073F0 /* WKSecurityOrigin.cpp */; };
 		462B4E8028E7B0E400653230 /* fragment-navigation-before-load-event.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 462B4E7828E7B0AF00653230 /* fragment-navigation-before-load-event.html */; };
 		46397B951DC2C850009A78AE /* DOMNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46397B941DC2C850009A78AE /* DOMNode.mm */; };
@@ -2454,6 +2456,8 @@
 		44D3F8422BE1DAD800BE0218 /* test.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = test.xml; sourceTree = "<group>"; };
 		44D5008D26FE9ED6000EB12F /* RetainPtrARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RetainPtrARC.mm; path = ns/RetainPtrARC.mm; sourceTree = "<group>"; };
 		44DBE9512BD2272900307F65 /* TextPlaceholderTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextPlaceholderTests.mm; sourceTree = "<group>"; };
+		44FBAEFD2C7A7FDB00AF51BC /* RetainPtrHashingCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RetainPtrHashingCocoa.mm; sourceTree = "<group>"; };
+		44FBAEFE2C7A7FDB00AF51BC /* RetainPtrHashingCocoaARC.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RetainPtrHashingCocoaARC.mm; sourceTree = "<group>"; };
 		46061545275824B400AB613D /* WebLocks.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebLocks.mm; sourceTree = "<group>"; };
 		460C2FC827039D7D0047EF11 /* ServiceWorkerPageProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerPageProtocol.h; sourceTree = "<group>"; };
 		4612C2B8210A6ABF00B788A6 /* LoadFileThenReload.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadFileThenReload.mm; sourceTree = "<group>"; };
@@ -6000,6 +6004,8 @@
 			children = (
 				1CA6FBAC2A1D818C001D4402 /* ContextualizedNSString.mm */,
 				A1C7D7D22AB817A90055AD62 /* LoggerCocoa.mm */,
+				44FBAEFD2C7A7FDB00AF51BC /* RetainPtrHashingCocoa.mm */,
+				44FBAEFE2C7A7FDB00AF51BC /* RetainPtrHashingCocoaARC.mm */,
 				1C4616A626BB172F00F8C9F6 /* TextStreamCocoa.cpp */,
 				1C46169E26BA510700F8C9F6 /* TextStreamCocoa.mm */,
 				44CDE4D326EE6E41009F6ACB /* TypeCastsCocoa.mm */,
@@ -6489,6 +6495,8 @@
 				7C83DF241D0A590C00FEBCF3 /* RetainPtr.mm in Sources */,
 				44D5008E26FE9ED6000EB12F /* RetainPtrARC.mm in Sources */,
 				44B28A0528D18AD20010172C /* RetainPtrHashing.cpp in Sources */,
+				44FBAEFF2C7A7FDB00AF51BC /* RetainPtrHashingCocoa.mm in Sources */,
+				44FBAF002C7A7FDB00AF51BC /* RetainPtrHashingCocoaARC.mm in Sources */,
 				E355A6322615718F001C1129 /* RobinHoodHashMap.cpp in Sources */,
 				E355A63026157174001C1129 /* RobinHoodHashSet.cpp in Sources */,
 				7C83DF051D0A590C00FEBCF3 /* RunLoop.cpp in Sources */,

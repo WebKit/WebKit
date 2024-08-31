@@ -454,7 +454,7 @@ template<> void encodeObjectDirectly<NSObject<NSSecureCoding>>(Encoder& encoder,
     encoder << (__bridge CFDataRef)[archiver encodedData];
 }
 
-static bool shouldEnableStrictMode(Decoder& decoder, const HashSet<Class>& allowedClasses)
+static bool shouldEnableStrictMode(Decoder& decoder, const AllowedClassHashSet& allowedClasses)
 {
 #if HAVE(STRICT_DECODABLE_NSTEXTTABLE) \
     && HAVE(STRICT_DECODABLE_PKCONTACT) \
@@ -562,8 +562,8 @@ static constexpr bool haveSecureActionContext = false;
     // If you want to serialize something new, extract its contents into a
     // struct and use a *.serialization.in file to serialize its contents.
     RetainPtr<NSMutableArray> nsAllowedClasses = adoptNS([[NSMutableArray alloc] initWithCapacity:allowedClasses.size()]);
-    for (auto classPtr : allowedClasses)
-        [nsAllowedClasses addObject:classPtr];
+    for (auto& classPtr : allowedClasses)
+        [nsAllowedClasses addObject:classPtr.get()];
     RELEASE_LOG_FAULT(SecureCoding, "Strict mode check found unknown classes %@", nsAllowedClasses.get());
     ASSERT_NOT_REACHED();
     return true;
@@ -614,8 +614,8 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
 #endif
 
     auto allowedClassSet = adoptNS([[NSMutableSet alloc] initWithCapacity:allowedClasses.size()]);
-    for (auto allowedClass : allowedClasses)
-        [allowedClassSet addObject:allowedClass];
+    for (auto& allowedClass : allowedClasses)
+        [allowedClassSet addObject:allowedClass.get()];
 
     if (shouldEnableStrictMode(decoder, allowedClasses))
         [unarchiver _enableStrictSecureDecodingMode];
