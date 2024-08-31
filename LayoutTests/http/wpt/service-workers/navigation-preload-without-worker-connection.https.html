@@ -11,21 +11,9 @@
 const url = "/WebKit/service-workers/resources/fetch-service-worker-preload-script.py?useNavigationPreloadPromise=true&token=" + token();
 
 promise_test(async (test) => {
-    if (window.testRunner) {
-        testRunner.setUseSeparateServiceWorkerProcess(true);
-        await fetch("").then(() => { }, () => { });
-    }
-
-    const registration = await navigator.serviceWorker.register("/WebKit/service-workers/simple-fetch-service-worker-preload-worker.js", { scope : url });
-    await waitForState(registration.installing ? registration.installing : registration.active, "activated");
-
-    if (registration.navigationPreload)
-        await registration.navigationPreload.enable();
-
-    if (window.testRunner) {
-        testRunner.terminateServiceWorkers();
-        await fetch("").then(() => { }, () => { });
-    }
+     return setupActivatedButNotRunningServiceWorker("/WebKit/service-workers/fetch-service-worker-preload-worker.js", url, registration => {
+         return registration.navigationPreload.enable();
+     }); 
 }, "Setup activated but not running worker");
 
 promise_test(async (test) => {
