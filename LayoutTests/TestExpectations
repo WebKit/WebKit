@@ -5876,8 +5876,6 @@ imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-single-to-multip
 imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-url-to-function.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/svg-shorthand-drop-shadow-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/svg-shorthand-hue-rotate-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/filter-effects/svg-unknown-input-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/filter-effects/svg-unknown-input-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/tainting-feblend-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/tainting-fecomponenttransfer-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/tainting-fecomposite-002.html [ ImageOnlyFailure ]
