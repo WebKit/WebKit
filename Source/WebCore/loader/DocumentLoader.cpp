@@ -2507,7 +2507,10 @@ bool DocumentLoader::navigationCanTriggerCrossDocumentViewTransition(Document& o
     if (!newOrigin->isSameOriginAs(oldDocument.securityOrigin()))
         return false;
 
-    // FIXME: If newDocument was created via cross-origin redirects, then return false.
+    if (const auto* metrics = response().deprecatedNetworkLoadMetricsOrNull()) {
+        if (metrics->crossOriginRedirect())
+            return false;
+    }
 
     if (*m_triggeringAction.navigationAPIType() == NavigationNavigationType::Traverse)
         return true;
