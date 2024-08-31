@@ -1839,4 +1839,7 @@ media/media-vp8-hiddenframes.html [ Pass ImageOnlyFailure ]
 [ Sonoma ] fast/scrolling/rubber-band-shows-background.html [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/278934 [ macOS iOS wk2 ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html is a flaky failure.
-imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure Pass ] 
+imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure Pass ]
+
+# webkit.org/b/278952 [ macOS wk2 ] fast/dom/intersection-observer-document-leak.html is a flaky failure.
+fast/dom/intersection-observer-document-leak.html [ Pass Failure ]
