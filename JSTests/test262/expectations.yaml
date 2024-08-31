@@ -58,48 +58,9 @@ test/built-ins/Function/internals/Construct/derived-this-uninitialized-realm.js:
 test/built-ins/Function/prototype/toString/built-in-function-object.js:
   default: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'
   strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'
-test/built-ins/Iterator/from/callable.js:
-  default: "TypeError: Iterator.from is not a function. (In 'Iterator.from(g())', 'Iterator.from' is undefined)"
-  strict mode: "TypeError: Iterator.from is not a function. (In 'Iterator.from(g())', 'Iterator.from' is undefined)"
 test/built-ins/Iterator/from/get-next-method-only-once.js:
-  default: "TypeError: Iterator.from is not a function. (In 'Iterator.from(iterator)', 'Iterator.from' is undefined)"
-  strict mode: "TypeError: Iterator.from is not a function. (In 'Iterator.from(iterator)', 'Iterator.from' is undefined)"
-test/built-ins/Iterator/from/get-next-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/from/is-function.js:
-  default: 'Test262Error: The value of `typeof Iterator.from` is "function" Expected SameValue(«undefined», «function») to be true'
-  strict mode: 'Test262Error: The value of `typeof Iterator.from` is "function" Expected SameValue(«undefined», «function») to be true'
-test/built-ins/Iterator/from/iterable-primitives.js:
-  default: "TypeError: Iterator.from is not a function. (In 'Iterator.from(new Number(5))', 'Iterator.from' is undefined)"
-  strict mode: "TypeError: Iterator.from is not a function. (In 'Iterator.from(new Number(5))', 'Iterator.from' is undefined)"
-test/built-ins/Iterator/from/iterable-to-iterator-fallback.js:
-  default: "TypeError: Iterator.from is not a function. (In 'Iterator.from(iter)', 'Iterator.from' is undefined)"
-  strict mode: "TypeError: Iterator.from is not a function. (In 'Iterator.from(iter)', 'Iterator.from' is undefined)"
-test/built-ins/Iterator/from/length.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/Iterator/from/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/Iterator/from/primitives.js:
-  default: "TypeError: Iterator.from is not a function. (In 'Iterator.from('string')', 'Iterator.from' is undefined)"
-  strict mode: "TypeError: Iterator.from is not a function. (In 'Iterator.from('string')', 'Iterator.from' is undefined)"
-test/built-ins/Iterator/from/prop-desc.js:
-  default: 'Test262Error: obj should have an own property from'
-  strict mode: 'Test262Error: obj should have an own property from'
-test/built-ins/Iterator/from/proto.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Iterator.from)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Iterator.from)')"
-test/built-ins/Iterator/from/result-proto.js:
-  default: "TypeError: Iterator.from is not a function. (In 'Iterator.from(iter)', 'Iterator.from' is undefined)"
-  strict mode: "TypeError: Iterator.from is not a function. (In 'Iterator.from(iter)', 'Iterator.from' is undefined)"
-test/built-ins/Iterator/from/supports-iterable.js:
-  default: "TypeError: Iterator.from is not a function. (In 'Iterator.from([0, 1, 2, 3])', 'Iterator.from' is undefined)"
-  strict mode: "TypeError: Iterator.from is not a function. (In 'Iterator.from([0, 1, 2, 3])', 'Iterator.from' is undefined)"
-test/built-ins/Iterator/from/supports-iterator.js:
-  default: "TypeError: Iterator.from is not a function. (In 'Iterator.from(iter)', 'Iterator.from' is undefined)"
-  strict mode: "TypeError: Iterator.from is not a function. (In 'Iterator.from(iter)', 'Iterator.from' is undefined)"
+  default: "TypeError: iterator.toArray is not a function. (In 'iterator.toArray()', 'iterator.toArray' is undefined)"
+  strict mode: "TypeError: iterator.toArray is not a function. (In 'iterator.toArray()', 'iterator.toArray' is undefined)"
 test/built-ins/Iterator/prototype/drop/argument-effect-order.js:
   default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.drop.call')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.drop.call')"

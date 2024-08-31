@@ -1419,6 +1419,10 @@
 		8BC0648B1E1ABA9400B2B8CA /* AsyncGeneratorFunctionConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BC064841E1A4FD100B2B8CA /* AsyncGeneratorFunctionConstructor.h */; };
 		8BC064921E1ADCC400B2B8CA /* AsyncGeneratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BC064901E1AD6AC00B2B8CA /* AsyncGeneratorPrototype.h */; };
 		8BC064961E1D845C00B2B8CA /* AsyncIteratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BC064941E1D828B00B2B8CA /* AsyncIteratorPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8CCBF05D2C804E7E00EEC20B /* WrapForValidIteratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CCBF05C2C804E7E00EEC20B /* WrapForValidIteratorPrototype.h */; };
+		8CCBF05F2C804E8500EEC20B /* WrapForValidIteratorPrototypeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CCBF05E2C804E8500EEC20B /* WrapForValidIteratorPrototypeInlines.h */; };
+		8CCBF0622C804EAF00EEC20B /* JSWrapForValidIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CCBF0612C804EAF00EEC20B /* JSWrapForValidIterator.h */; };
+		8CCBF0642C804EB600EEC20B /* JSWrapForValidIteratorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CCBF0632C804EB600EEC20B /* JSWrapForValidIteratorInlines.h */; };
 		90213E3E123A40C200D422F3 /* MemoryStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 90213E3C123A40C200D422F3 /* MemoryStatistics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9064337DD4B0402BAF34A592 /* JSScriptFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BA93C9590484C5BAD9316EA /* JSScriptFetcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		91278D5521DEB82600B57184 /* InspectorAuditAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 91278D5321DEB82500B57184 /* InspectorAuditAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4712,6 +4716,14 @@
 		8BC064901E1AD6AC00B2B8CA /* AsyncGeneratorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncGeneratorPrototype.h; sourceTree = "<group>"; };
 		8BC064931E1D828B00B2B8CA /* AsyncIteratorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncIteratorPrototype.cpp; sourceTree = "<group>"; };
 		8BC064941E1D828B00B2B8CA /* AsyncIteratorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncIteratorPrototype.h; sourceTree = "<group>"; };
+		8CCBF05B2C804E7800EEC20B /* WrapForValidIteratorPrototype.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WrapForValidIteratorPrototype.cpp; sourceTree = "<group>"; };
+		8CCBF05C2C804E7E00EEC20B /* WrapForValidIteratorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WrapForValidIteratorPrototype.h; sourceTree = "<group>"; };
+		8CCBF05E2C804E8500EEC20B /* WrapForValidIteratorPrototypeInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WrapForValidIteratorPrototypeInlines.h; sourceTree = "<group>"; };
+		8CCBF0602C804EA800EEC20B /* JSWrapForValidIterator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSWrapForValidIterator.cpp; sourceTree = "<group>"; };
+		8CCBF0612C804EAF00EEC20B /* JSWrapForValidIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWrapForValidIterator.h; sourceTree = "<group>"; };
+		8CCBF0632C804EB600EEC20B /* JSWrapForValidIteratorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWrapForValidIteratorInlines.h; sourceTree = "<group>"; };
+		8CCBF0652C804ED800EEC20B /* WrapForValidIteratorPrototype.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = WrapForValidIteratorPrototype.js; sourceTree = "<group>"; };
+		8CCBF0662C804EE900EEC20B /* JSIteratorConstructor.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = JSIteratorConstructor.js; sourceTree = "<group>"; };
 		90213E3B123A40C200D422F3 /* MemoryStatistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryStatistics.cpp; sourceTree = "<group>"; };
 		90213E3C123A40C200D422F3 /* MemoryStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryStatistics.h; sourceTree = "<group>"; };
 		91278D5221DEB82400B57184 /* InspectorAuditAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAuditAgent.cpp; sourceTree = "<group>"; };
@@ -8500,6 +8512,9 @@
 				276B390E2A71D2B500252F4E /* JSWeakSetInlines.h */,
 				1442565F15EDE98D0066A49B /* JSWithScope.cpp */,
 				1442566015EDE98D0066A49B /* JSWithScope.h */,
+				8CCBF0602C804EA800EEC20B /* JSWrapForValidIterator.cpp */,
+				8CCBF0612C804EAF00EEC20B /* JSWrapForValidIterator.h */,
+				8CCBF0632C804EB600EEC20B /* JSWrapForValidIteratorInlines.h */,
 				65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */,
 				65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */,
 				E37F44C62A13088000E56D8D /* KeyAtomStringCache.h */,
@@ -8888,6 +8903,9 @@
 				276B383F2A71D07800252F4E /* WeakSetPrototypeInlines.h */,
 				CE27A3D623759BAC0089605E /* WideningNumberPredictionFuzzerAgent.cpp */,
 				CE27A3D523759BAC0089605E /* WideningNumberPredictionFuzzerAgent.h */,
+				8CCBF05B2C804E7800EEC20B /* WrapForValidIteratorPrototype.cpp */,
+				8CCBF05C2C804E7E00EEC20B /* WrapForValidIteratorPrototype.h */,
+				8CCBF05E2C804E8500EEC20B /* WrapForValidIteratorPrototypeInlines.h */,
 				A7DCB77912E3D90500911940 /* WriteBarrier.h */,
 				C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */,
 			);
@@ -9855,6 +9873,7 @@
 				A52704851D027C8800354C37 /* GlobalOperations.js */,
 				E33F50881B844A1A00413856 /* InternalPromiseConstructor.js */,
 				534D9BF92363C55D0054524D /* IteratorHelpers.js */,
+				8CCBF0662C804EE900EEC20B /* JSIteratorConstructor.js */,
 				91F548A52A4CF448007292DE /* MapConstructor.js */,
 				534D9BFA2363C55D0054524D /* MapIteratorPrototype.js */,
 				7035587C1C418419004BD7BF /* MapPrototype.js */,
@@ -9877,6 +9896,7 @@
 				534C457A1BC703DC007476A7 /* TypedArrayConstructor.js */,
 				53917E831B791CB8000EBD33 /* TypedArrayPrototype.js */,
 				E39E030D22D9EA3E00408C18 /* WebAssembly.js */,
+				8CCBF0652C804ED800EEC20B /* WrapForValidIteratorPrototype.js */,
 			);
 			path = builtins;
 			sourceTree = "<group>";
@@ -11377,6 +11397,8 @@
 				AD2FCBEB1DB58DAD00B3E736 /* JSWebAssemblyTable.h in Headers */,
 				14D01BEC26DEEF3800CAE0D0 /* JSWebAssemblyTag.h in Headers */,
 				1442566215EDE98D0066A49B /* JSWithScope.h in Headers */,
+				8CCBF0622C804EAF00EEC20B /* JSWrapForValidIterator.h in Headers */,
+				8CCBF0642C804EB600EEC20B /* JSWrapForValidIteratorInlines.h in Headers */,
 				86E3C619167BABEE006D760A /* JSWrapperMap.h in Headers */,
 				BC18C42E0E16F5CD00B34460 /* JSWrapperObject.h in Headers */,
 				BCFD8C930EEB2EE700283848 /* JumpTable.h in Headers */,
@@ -11972,6 +11994,8 @@
 				BC18C47A0E16F5CD00B34460 /* WebKitAvailability.h in Headers */,
 				4B1F22F62900BFC700CB5E66 /* Width.h in Headers */,
 				99DA00A61BD5993100F4575C /* wkbuiltins.py in Headers */,
+				8CCBF05D2C804E7E00EEC20B /* WrapForValidIteratorPrototype.h in Headers */,
+				8CCBF05F2C804E8500EEC20B /* WrapForValidIteratorPrototypeInlines.h in Headers */,
 				A7DCB97312E5193F00911940 /* WriteBarrier.h in Headers */,
 				C2B6D75318A33793004A9301 /* WriteBarrierInlines.h in Headers */,
 				0FC8150A14043BF500CFA603 /* WriteBarrierSupport.h in Headers */,

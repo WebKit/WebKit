@@ -74,6 +74,7 @@ class JSGlobalObject;
     v(BuiltinLog, nullptr) \
     v(BuiltinDescribe, nullptr) \
     v(RegExp, nullptr) \
+    v(Iterator, nullptr) \
     v(min, nullptr) \
     v(Promise, nullptr) \
     v(InternalPromise, nullptr) \
@@ -148,6 +149,9 @@ class JSGlobalObject;
     v(Float64Array, nullptr) \
     v(BigInt64Array, nullptr) \
     v(BigUint64Array, nullptr) \
+    v(wrapForValidIteratorCreate, nullptr) \
+    v(wrapForValidIteratorGetIteratedIterator, nullptr) \
+    v(wrapForValidIteratorGetIteratedNextMethod, nullptr) \
 
 
 #define DECLARE_LINK_TIME_CONSTANT(name, code) name,

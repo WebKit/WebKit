@@ -346,6 +346,7 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/GlobalOperations.js
     ${JAVASCRIPTCORE_DIR}/builtins/InternalPromiseConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/IteratorHelpers.js
+    ${JAVASCRIPTCORE_DIR}/builtins/JSIteratorConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/MapConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/MapIteratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/MapPrototype.js
@@ -368,6 +369,7 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/TypedArrayConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/TypedArrayPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/WebAssembly.js
+    ${JAVASCRIPTCORE_DIR}/builtins/WrapForValidIteratorPrototype.js
     ${JAVASCRIPTCORE_DIR}/inspector/InjectedScriptSource.js
 )
 
@@ -1121,6 +1123,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSWeakMap.h
     runtime/JSWeakMapInlines.h
     runtime/JSWithScope.h
+    runtime/JSWrapForValidIterator.h
     runtime/JSWrapperObject.h
     runtime/KeyAtomStringCache.h
     runtime/KeyAtomStringCacheInlines.h
@@ -1249,6 +1252,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/WeakGCMapInlines.h
     runtime/WeakGCSet.h
     runtime/WeakGCSetInlines.h
+    runtime/WrapForValidIteratorPrototype.h
+    runtime/WrapForValidIteratorPrototypeInlines.h
     runtime/WriteBarrier.h
     runtime/WriteBarrierInlines.h
 

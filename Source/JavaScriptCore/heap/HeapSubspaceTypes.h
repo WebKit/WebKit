@@ -97,6 +97,7 @@
 #include "JSWebAssemblyTable.h"
 #include "JSWebAssemblyTag.h"
 #include "JSWithScope.h"
+#include "JSWrapForValidIterator.h"
 #include "NativeExecutable.h"
 #include "ProgramExecutable.h"
 #include "PropertyTable.h"

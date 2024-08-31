@@ -75,6 +75,7 @@ enum class LinkTimeConstant : int32_t;
     macro(isMapIterator) \
     macro(isSetIterator) \
     macro(isUndefinedOrNull) \
+    macro(isWrapForValidIterator) \
     macro(tailCallForwardArguments) \
     macro(throwTypeError) \
     macro(throwRangeError) \

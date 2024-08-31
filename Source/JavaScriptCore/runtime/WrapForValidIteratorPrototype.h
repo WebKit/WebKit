@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2024 Sosuke Suzuki <aosukeke@gmail.com>.
- * Copyright (C) 2024 Tetsuharu Ohzeki <tetsuharu.ohzeki@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,27 +25,40 @@
 
 #pragma once
 
-#include "InternalFunction.h"
+#include "JSObject.h"
 
 namespace JSC {
 
-class JSIteratorPrototype;
-
-// https://tc39.es/proposal-iterator-helpers/#sec-iterator-constructor
-class JSIteratorConstructor final : public InternalFunction {
+class WrapForValidIteratorPrototype final : public JSNonFinalObject {
 public:
-    typedef InternalFunction Base;
+    using Base = JSNonFinalObject;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-    static JSIteratorConstructor* create(VM&, JSGlobalObject*, Structure*, JSIteratorPrototype*);
+    template<typename CellType, SubspaceAccess>
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(WrapForValidIteratorPrototype, Base);
+        return &vm.plainObjectSpace();
+    }
+
+    static WrapForValidIteratorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+    {
+        WrapForValidIteratorPrototype* prototype = new (NotNull, allocateCell<WrapForValidIteratorPrototype>(vm)) WrapForValidIteratorPrototype(vm, structure);
+        prototype->finishCreation(vm, globalObject);
+        return prototype;
+    }
 
     DECLARE_INFO;
-    DECLARE_VISIT_CHILDREN;
-private:
-    JSIteratorConstructor(VM&, Structure*);
 
-    void finishCreation(VM&, JSGlobalObject*, JSIteratorPrototype*);
+    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+
+private:
+    WrapForValidIteratorPrototype(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+    }
+
+    void finishCreation(VM&, JSGlobalObject*);
 };
-STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSIteratorConstructor, InternalFunction);
 
 } // namespace JSC

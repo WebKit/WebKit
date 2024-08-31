@@ -970,6 +970,7 @@ runtime/JSWeakMap.cpp
 runtime/JSWeakObjectRef.cpp
 runtime/JSWeakSet.cpp
 runtime/JSWithScope.cpp
+runtime/JSWrapForValidIterator.cpp
 runtime/JSWrapperObject.cpp
 runtime/LazyClassStructure.cpp
 runtime/LeafExecutable.cpp
@@ -1108,6 +1109,7 @@ runtime/WeakObjectRefPrototype.cpp
 runtime/WeakSetConstructor.cpp
 runtime/WeakSetPrototype.cpp
 runtime/WideningNumberPredictionFuzzerAgent.cpp
+runtime/WrapForValidIteratorPrototype.cpp
 
 tools/CellList.cpp
 tools/CharacterPropertyDataGenerator.cpp

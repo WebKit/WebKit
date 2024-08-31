@@ -928,6 +928,7 @@ namespace JSC {
         RegisterID* emitIsArrayIterator(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSArrayIteratorType); }
         RegisterID* emitIsMapIterator(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSMapIteratorType); }
         RegisterID* emitIsSetIterator(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSSetIteratorType); }
+        RegisterID* emitIsWrapForValidIterator(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSWrapForValidIteratorType); }
         RegisterID* emitIsObject(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsCallable(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsConstructor(RegisterID* dst, RegisterID* src);

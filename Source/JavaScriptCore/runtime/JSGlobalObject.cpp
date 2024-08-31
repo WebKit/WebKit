@@ -184,6 +184,7 @@
 #include "JSWebAssemblyTable.h"
 #include "JSWebAssemblyTag.h"
 #include "JSWithScope.h"
+#include "JSWrapForValidIteratorInlines.h"
 #include "LazyClassStructureInlines.h"
 #include "LazyPropertyInlines.h"
 #include "LinkTimeConstant.h"
@@ -281,6 +282,7 @@
 #include "WebAssemblyTablePrototype.h"
 #include "WebAssemblyTagConstructor.h"
 #include "WebAssemblyTagPrototype.h"
+#include "WrapForValidIteratorPrototypeInlines.h"
 #include "runtime/VM.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/FixedVector.h>
@@ -1130,6 +1132,12 @@ void JSGlobalObject::init(VM& vm)
     m_setIteratorPrototype.set(vm, this, setIteratorPrototype);
     m_setIteratorStructure.set(vm, this, JSSetIterator::createStructure(vm, this, setIteratorPrototype));
 
+    if (Options::useIteratorHelpers()) {
+        auto* wrapForValidIteratorPrototype = WrapForValidIteratorPrototype::create(vm, this, WrapForValidIteratorPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
+        m_wrapForValidIteratorPrototype.set(vm, this, wrapForValidIteratorPrototype);
+        m_wrapForValidIteratorStructure.set(vm, this, JSWrapForValidIterator::createStructure(vm, this, wrapForValidIteratorPrototype));
+    }
+
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::sentinelString)].set(vm, this, vm.smallStrings.sentinelString());
 
     JSFunction* defaultPromiseThen = JSFunction::create(vm, this, promisePrototypeThenCodeGenerator(vm), this);
@@ -1262,7 +1270,8 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     putDirectWithoutTransition(vm, vm.propertyNames->RegExp, regExpConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     if (Options::useIteratorHelpers()) {
-        JSIteratorConstructor* iteratorConstructor = JSIteratorConstructor::create(vm, JSIteratorConstructor::createStructure(vm, this, m_functionPrototype.get()), m_iteratorPrototype.get());
+        JSIteratorConstructor* iteratorConstructor = JSIteratorConstructor::create(vm, this, JSIteratorConstructor::createStructure(vm, this, m_functionPrototype.get()), m_iteratorPrototype.get());
+        m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::Iterator)].set(vm, this, iteratorConstructor);
         m_iteratorConstructor.set(vm, this, iteratorConstructor);
         putDirectWithoutTransition(vm, vm.propertyNames->Iterator, iteratorConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
@@ -1528,6 +1537,18 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
     JSObject* regExpStringIteratorPrototype = RegExpStringIteratorPrototype::create(vm, this, RegExpStringIteratorPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
     jsCast<JSObject*>(linkTimeConstant(LinkTimeConstant::RegExpStringIterator))->putDirect(vm, vm.propertyNames->prototype, regExpStringIteratorPrototype);
+
+    if (Options::useIteratorHelpers()) {
+        m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::wrapForValidIteratorCreate)].initLater([](const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "wrapForValidIteratorCreate"_s, wrapForValidIteratorPrivateFuncCreate, ImplementationVisibility::Private));
+        });
+        m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::wrapForValidIteratorGetIteratedIterator)].initLater([](const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "wrapForValidIteratorGetIteratedIterator"_s, wrapForValidIteratorPrivateFuncGetIteratedIterator, ImplementationVisibility::Private));
+        });
+        m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::wrapForValidIteratorGetIteratedNextMethod)].initLater([](const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "wrapForValidIteratorGetIteratedNextMethod"_s, wrapForValidIteratorPrivateFuncGetIteratedNextMethod, ImplementationVisibility::Private));
+        });
+    }
 
     // Map and Set helpers.
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::Set)].initLater([] (const Initializer<JSCell>& init) {
@@ -2571,6 +2592,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_asyncGeneratorPrototype);
     visitor.append(thisObject->m_asyncIteratorPrototype);
     visitor.append(thisObject->m_asyncGeneratorFunctionPrototype);
+    visitor.append(thisObject->m_wrapForValidIteratorPrototype);
 
     thisObject->m_debuggerScopeStructure.visit(visitor);
     thisObject->m_withScopeStructure.visit(visitor);
@@ -2624,6 +2646,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_arrayIteratorStructure);
     visitor.append(thisObject->m_mapIteratorStructure);
     visitor.append(thisObject->m_setIteratorStructure);
+    visitor.append(thisObject->m_wrapForValidIteratorStructure);
     thisObject->m_iteratorResultObjectStructure.visit(visitor);
     thisObject->m_dataPropertyDescriptorObjectStructure.visit(visitor);
     thisObject->m_accessorPropertyDescriptorObjectStructure.visit(visitor);

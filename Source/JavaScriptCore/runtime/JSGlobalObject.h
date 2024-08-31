@@ -108,6 +108,7 @@ class ShadowRealmPrototype;
 class SourceOrigin;
 class StringConstructor;
 class WrapperMap;
+class WrapForValidIteratorPrototype;
 
 enum class ArrayBufferSharingMode : bool;
 enum class CodeGenerationMode : uint8_t;
@@ -297,6 +298,7 @@ public:
     WriteBarrier<ArrayIteratorPrototype> m_arrayIteratorPrototype;
     WriteBarrier<MapIteratorPrototype> m_mapIteratorPrototype;
     WriteBarrier<SetIteratorPrototype> m_setIteratorPrototype;
+    WriteBarrier<WrapForValidIteratorPrototype> m_wrapForValidIteratorPrototype;
 
     LazyProperty<JSGlobalObject, Structure> m_debuggerScopeStructure;
     LazyProperty<JSGlobalObject, Structure> m_withScopeStructure;
@@ -353,6 +355,7 @@ public:
     WriteBarrierStructureID m_arrayIteratorStructure;
     WriteBarrierStructureID m_mapIteratorStructure;
     WriteBarrierStructureID m_setIteratorStructure;
+    WriteBarrierStructureID m_wrapForValidIteratorStructure;
     WriteBarrierStructureID m_regExpMatchesArrayStructure;
     WriteBarrierStructureID m_regExpMatchesArrayWithIndicesStructure;
     WriteBarrierStructureID m_regExpMatchesIndicesArrayStructure;
@@ -757,6 +760,7 @@ public:
     ArrayIteratorPrototype* arrayIteratorPrototype() const { return m_arrayIteratorPrototype.get(); }
     MapIteratorPrototype* mapIteratorPrototype() const { return m_mapIteratorPrototype.get(); }
     SetIteratorPrototype* setIteratorPrototype() const { return m_setIteratorPrototype.get(); }
+    WrapForValidIteratorPrototype* wrapForValidIteratorPrototype() const { return m_wrapForValidIteratorPrototype.get(); }
     JSObject* mapPrototype() const { return m_mapStructure.prototype(this); }
     // Workaround for the name conflict between JSCell::setPrototype.
     JSObject* jsSetPrototype() const { return m_setStructure.prototype(this); }
@@ -848,6 +852,7 @@ public:
     Structure* arrayIteratorStructure() const { return m_arrayIteratorStructure.get(); }    
     Structure* mapIteratorStructure() const { return m_mapIteratorStructure.get(); }
     Structure* setIteratorStructure() const { return m_setIteratorStructure.get(); }
+    Structure* wrapForValidIteratorStructure() const { return m_wrapForValidIteratorStructure.get(); }
     Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
     Structure* symbolObjectStructure() const { return m_symbolObjectStructure.get(); }
     Structure* iteratorResultObjectStructure() const { return m_iteratorResultObjectStructure.get(this); }

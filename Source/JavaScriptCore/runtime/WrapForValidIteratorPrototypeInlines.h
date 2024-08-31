@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2024 Sosuke Suzuki <aosukeke@gmail.com>.
- * Copyright (C) 2024 Tetsuharu Ohzeki <tetsuharu.ohzeki@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,27 +25,13 @@
 
 #pragma once
 
-#include "InternalFunction.h"
+#include "WrapForValidIteratorPrototype.h"
 
 namespace JSC {
 
-class JSIteratorPrototype;
-
-// https://tc39.es/proposal-iterator-helpers/#sec-iterator-constructor
-class JSIteratorConstructor final : public InternalFunction {
-public:
-    typedef InternalFunction Base;
-
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-    static JSIteratorConstructor* create(VM&, JSGlobalObject*, Structure*, JSIteratorPrototype*);
-
-    DECLARE_INFO;
-    DECLARE_VISIT_CHILDREN;
-private:
-    JSIteratorConstructor(VM&, Structure*);
-
-    void finishCreation(VM&, JSGlobalObject*, JSIteratorPrototype*);
-};
-STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSIteratorConstructor, InternalFunction);
+inline Structure* WrapForValidIteratorPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
 
 } // namespace JSC

@@ -64,6 +64,7 @@ namespace JSC {
     macro(ArrayBuffer) \
     macro(ShadowRealm) \
     macro(RegExp) \
+    macro(Iterator) \
     macro(min) \
     macro(create) \
     macro(defineProperty) \
@@ -222,6 +223,9 @@ namespace JSC {
     macro(hasOwn) \
     macro(indexOf) \
     macro(pop) \
+    macro(wrapForValidIteratorCreate) \
+    macro(wrapForValidIteratorGetIteratedIterator) \
+    macro(wrapForValidIteratorGetIteratedNextMethod) \
 
 
 namespace Symbols {

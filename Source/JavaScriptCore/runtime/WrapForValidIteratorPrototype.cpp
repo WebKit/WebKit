@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2024 Sosuke Suzuki <aosukeke@gmail.com>.
- * Copyright (C) 2024 Tetsuharu Ohzeki <tetsuharu.ohzeki@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,29 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WrapForValidIteratorPrototype.h"
 
-#include "InternalFunction.h"
+#include "JSCBuiltins.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 
-class JSIteratorPrototype;
+const ClassInfo WrapForValidIteratorPrototype::s_info = { "Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WrapForValidIteratorPrototype) };
 
-// https://tc39.es/proposal-iterator-helpers/#sec-iterator-constructor
-class JSIteratorConstructor final : public InternalFunction {
-public:
-    typedef InternalFunction Base;
-
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-    static JSIteratorConstructor* create(VM&, JSGlobalObject*, Structure*, JSIteratorPrototype*);
-
-    DECLARE_INFO;
-    DECLARE_VISIT_CHILDREN;
-private:
-    JSIteratorConstructor(VM&, Structure*);
-
-    void finishCreation(VM&, JSGlobalObject*, JSIteratorPrototype*);
-};
-STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSIteratorConstructor, InternalFunction);
+void WrapForValidIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->next, wrapForValidIteratorPrototypeNextCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->returnKeyword, wrapForValidIteratorPrototypeReturnCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+}
 
 } // namespace JSC
