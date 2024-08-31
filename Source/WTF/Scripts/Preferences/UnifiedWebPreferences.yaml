@@ -4206,6 +4206,21 @@ LoginStatusAPIEnabled:
     WebCore:
       default: false
 
+LoginStatusAPIRequiresWebAuthnEnabled:
+  type: bool
+  status: internal
+  category: dom
+  humanReadableName: "Require WebAuthn with the Login Status API"
+  humanReadableDescription: "Require a recent WebAuthn authentication to set login status"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+  sharedPreferenceForWebProcess: true
+
 LogsPageMessagesToSystemConsoleEnabled:
   type: bool
   status: internal

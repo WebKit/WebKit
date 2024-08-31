@@ -69,6 +69,16 @@ LoginStatus::LoginStatus(const RegistrableDomain& domain, const String& username
     setTimeToLive(timeToLive);
 }
 
+LoginStatus::LoginStatus(const RegistrableDomain& domain, const String& username, CredentialTokenType tokenType, AuthenticationType authType, WallTime loggedInTime, Seconds timeToLive)
+    : m_domain { domain }
+    , m_username { username }
+    , m_tokenType { tokenType }
+    , m_authType { authType }
+    , m_loggedInTime { loggedInTime }
+{
+    setTimeToLive(timeToLive);
+}
+
 void LoginStatus::setTimeToLive(Seconds timeToLive)
 {
     m_timeToLive = std::min(timeToLive, m_authType == AuthenticationType::Unmanaged ? TimeToLiveShort : TimeToLiveLong);

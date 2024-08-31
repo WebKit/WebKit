@@ -1823,6 +1823,25 @@ enum class WebCore::IsLoggedIn : uint8_t {
     LoggedIn
 };
 
+header: <WebCore/LoginStatus.h>
+[Nested] enum class WebCore::LoginStatus::CredentialTokenType : bool
+
+header: <WebCore/LoginStatus.h>
+[Nested] enum class WebCore::LoginStatus::AuthenticationType : uint8_t {
+    WebAuthn,
+    PasswordManager,
+    Unmanaged
+};
+
+class WebCore::LoginStatus {
+    WebCore::RegistrableDomain domain();
+    String username();
+    WebCore::LoginStatus::CredentialTokenType tokenType();
+    WebCore::LoginStatus::AuthenticationType authType();
+    WallTime loggedInTime();
+    Seconds timeToLive();
+};
+
 header: <WebCore/AutoplayEvent.h>
 enum class WebCore::AutoplayEvent : uint8_t {
     DidPreventMediaFromPlaying,

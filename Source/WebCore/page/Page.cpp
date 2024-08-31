@@ -5030,4 +5030,12 @@ void Page::activeNowPlayingSessionUpdateTimerFired()
     chrome().client().hasActiveNowPlayingSessionChanged(hasActiveNowPlayingSession);
 }
 
+void Page::setLastAuthentication(LoginStatus::AuthenticationType authType)
+{
+    auto loginStatus = LoginStatus::create(RegistrableDomain(mainFrameURL()), emptyString(), LoginStatus::CredentialTokenType::HTTPStateToken, authType, LoginStatus::TimeToLiveAuthentication);
+    if (loginStatus.hasException())
+        return;
+    m_lastAuthentication = loginStatus.releaseReturnValue();
+}
+
 } // namespace WebCore

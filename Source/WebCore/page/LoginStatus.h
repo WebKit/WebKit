@@ -38,6 +38,7 @@ class LoginStatus {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(LoginStatus, WEBCORE_EXPORT);
 public:
     static constexpr uint32_t UsernameMaxLength = 64;
+    static constexpr Seconds TimeToLiveAuthentication { 30_s };
     static constexpr Seconds TimeToLiveShort { 24_h * 7 };
     static constexpr Seconds TimeToLiveLong { 24_h * 90 };
 
@@ -46,16 +47,18 @@ public:
 
     WEBCORE_EXPORT static ExceptionOr<UniqueRef<LoginStatus>> create(const RegistrableDomain&, const String& username, CredentialTokenType, AuthenticationType);
     WEBCORE_EXPORT static ExceptionOr<UniqueRef<LoginStatus>> create(const RegistrableDomain&, const String& username, CredentialTokenType, AuthenticationType, Seconds timeToLive);
+    WEBCORE_EXPORT LoginStatus(const RegistrableDomain&, const String& username, CredentialTokenType, AuthenticationType, WallTime loggedInTime, Seconds timeToLive);
 
     WEBCORE_EXPORT void setTimeToLive(Seconds);
     WEBCORE_EXPORT bool hasExpired() const;
     WEBCORE_EXPORT WallTime expiry() const;
 
-    const RegistrableDomain& registrableDomain() const { return m_domain; }
+    const RegistrableDomain& domain() const { return m_domain; }
     const String& username() const { return m_username; }
-    CredentialTokenType credentialTokenType() const { return m_tokenType; }
-    AuthenticationType authenticationType() const { return m_authType; }
+    CredentialTokenType tokenType() const { return m_tokenType; }
+    AuthenticationType authType() const { return m_authType; }
     WallTime loggedInTime() const { return m_loggedInTime; }
+    Seconds timeToLive() const { return m_timeToLive; }
 
 private:
     LoginStatus(const RegistrableDomain&, const String& username, CredentialTokenType, AuthenticationType, Seconds timeToLive);

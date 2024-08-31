@@ -141,6 +141,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     LoadImageForDecoding(WebCore::ResourceRequest request, WebKit::WebPageProxyIdentifier pageID, size_t maximumBytesFromNetwork) -> (std::variant<WebCore::ResourceError, Ref<WebCore::FragmentedSharedBuffer>> result)
 
-    SetLoginStatus(WebCore::RegistrableDomain domain, enum:uint8_t WebCore::IsLoggedIn loggedInStatus) -> ()
+    SetLoginStatus(WebCore::RegistrableDomain domain, enum:uint8_t WebCore::IsLoggedIn loggedInStatus, std::optional<WebCore::LoginStatus> lastAuthentication) -> ()
     IsLoggedIn(WebCore::RegistrableDomain domain) -> (bool result)
 }

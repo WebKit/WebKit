@@ -46,6 +46,7 @@
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/IsLoggedIn.h>
+#include <WebCore/LoginStatus.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/SQLiteDatabase.h>
@@ -444,13 +445,17 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(RegistrableDomain&& su
     });
 }
 
-void WebResourceLoadStatisticsStore::setLoginStatus(RegistrableDomain&& domain, IsLoggedIn loggedInStatus, CompletionHandler<void()>&& completionHandler)
+void WebResourceLoadStatisticsStore::setLoginStatus(RegistrableDomain&& domain, IsLoggedIn loggedInStatus, std::optional<LoginStatus>&& lastAuthentication, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
-    if (loggedInStatus == IsLoggedIn::LoggedIn)
-        m_loginStatus.set(domain, loggedInStatus);
-    else
+    if (loggedInStatus == IsLoggedIn::LoggedIn) {
+        auto loginStatusToSet = lastAuthentication && lastAuthentication->hasExpired() ? std::nullopt : std::optional(WTFMove(lastAuthentication));
+        if (loginStatusToSet)
+            loginStatusToSet->setTimeToLive(WebCore::LoginStatus::TimeToLiveLong);
+        auto pair = std::make_pair(loggedInStatus, loginStatusToSet);
+        m_loginStatus.set(domain, WTFMove(pair));
+    } else
         m_loginStatus.remove(domain);
     completionHandler();
 }
@@ -460,7 +465,7 @@ void WebResourceLoadStatisticsStore::isLoggedIn(RegistrableDomain&& domain, Comp
     ASSERT(RunLoop::isMain());
 
     auto it = m_loginStatus.find(domain);
-    completionHandler(it != m_loginStatus.end() && it->value == IsLoggedIn::LoggedIn);
+    completionHandler(it != m_loginStatus.end() && it->value.first == IsLoggedIn::LoggedIn);
 }
 
 void WebResourceLoadStatisticsStore::requestStorageAccessEphemeral(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, FrameIdentifier frameID, PageIdentifier webPageID, WebPageProxyIdentifier webPageProxyID, StorageAccessScope scope, CanRequestStorageAccessWithoutUserInteraction canRequestStorageAccessWithoutUserInteraction, std::optional<OrganizationStorageAccessPromptQuirk>&& storageAccessPromptQuirk, CompletionHandler<void(RequestStorageAccessResult)>&& completionHandler)

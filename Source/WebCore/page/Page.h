@@ -33,6 +33,7 @@
 #include "LengthBox.h"
 #include "LoadSchedulingMode.h"
 #include "LocalFrame.h"
+#include "LoginStatus.h"
 #include "MediaProducer.h"
 #include "MediaSessionGroupIdentifier.h"
 #include "Pagination.h"
@@ -1200,6 +1201,9 @@ public:
     bool canShowWhileLocked() const { return m_canShowWhileLocked; }
 #endif
 
+    void setLastAuthentication(LoginStatus::AuthenticationType);
+    const std::optional<LoginStatus>& lastAuthentication() const { return m_lastAuthentication; }
+
 private:
     explicit Page(PageConfiguration&&);
 
@@ -1620,6 +1624,8 @@ private:
 
     bool m_hasActiveNowPlayingSession { false };
     Timer m_activeNowPlayingSessionUpdateTimer;
+
+    std::optional<LoginStatus> m_lastAuthentication;
 }; // class Page
 
 inline Page* Frame::page() const

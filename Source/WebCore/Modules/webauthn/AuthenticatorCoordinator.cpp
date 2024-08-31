@@ -39,6 +39,8 @@
 #include "JSCredentialCreationOptions.h"
 #include "JSCredentialRequestOptions.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LoginStatus.h"
+#include "Page.h"
 #include "PermissionsPolicy.h"
 #include "PublicKeyCredential.h"
 #include "PublicKeyCredentialCreationOptions.h"
@@ -340,13 +342,15 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
         });
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, promise = WTFMove(promise), abortSignal = WTFMove(requestOptions.signal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, promise = WTFMove(promise), abortSignal = WTFMove(requestOptions.signal), weakPage = WeakPtr { document.page() }] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
             return;
         }
 
         if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
+            if (RefPtr page = weakPage.get())
+                page->setLastAuthentication(LoginStatus::AuthenticationType::WebAuthn);
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;
         }
