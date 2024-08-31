@@ -378,7 +378,7 @@ void Buffer::unmap()
     decrementBufferMapCount();
     indirectBufferInvalidated();
 
-#if CPU(X86_64)
+#if CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
     if (m_buffer.storageMode == MTLStorageModeManaged) {
         if (m_mappedAtCreation)
             [m_buffer didModifyRange:NSMakeRange(0, m_buffer.length)];
