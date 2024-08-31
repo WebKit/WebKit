@@ -38,7 +38,6 @@
 #include "FontSizeAdjust.h"
 #include "GraphicsTypes.h"
 #include "Length.h"
-#include "LineClampValue.h"
 #include "ListStyleType.h"
 #include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
@@ -143,20 +142,6 @@ template<> constexpr TYPE fromCSSValueID(CSSValueID value) { \
     } \
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT(); \
     return { }; \
-}
-
-template<> inline LineClampValue fromCSSValue(const CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-
-    if (primitiveValue.primitiveType() == CSSUnitType::CSS_INTEGER)
-        return LineClampValue(primitiveValue.resolveAsIntegerDeprecated<int>(), LineClamp::LineCount);
-
-    if (primitiveValue.primitiveType() == CSSUnitType::CSS_PERCENTAGE)
-        return LineClampValue(primitiveValue.resolveAsPercentageDeprecated<int>(), LineClamp::Percentage);
-
-    ASSERT(primitiveValue.valueID() == CSSValueNone);
-    return LineClampValue();
 }
 
 #define TYPE ReflectionDirection

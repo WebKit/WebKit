@@ -7980,6 +7980,7 @@
         },
         "-webkit-line-clamp": {
             "codegen-properties": {
+                "converter": "LineClamp",
                 "parser-grammar": "none | <percentage [0,inf]> | <integer [1,inf]>"
             },
             "status": "non-standard"

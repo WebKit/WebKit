@@ -59,6 +59,7 @@
 #include "FontSizeAdjust.h"
 #include "FrameDestructionObserverInlines.h"
 #include "GridPositionsResolver.h"
+#include "LineClampValue.h"
 #include "LocalFrame.h"
 #include "QuotesData.h"
 #include "RenderStyleInlines.h"
@@ -229,6 +230,8 @@ public:
 
     static BlockEllipsis convertBlockEllipsis(BuilderState&, const CSSValue&);
     static size_t convertMaxLines(BuilderState&, const CSSValue&);
+
+    static LineClampValue convertLineClamp(BuilderState&, const CSSValue&);
 
 private:
     friend class BuilderCustom;
@@ -2252,6 +2255,20 @@ inline size_t BuilderConverter::convertMaxLines(BuilderState& builderState, cons
     if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone)
         return 0;
     return convertNumber<size_t>(builderState, value);
+}
+
+inline LineClampValue BuilderConverter::convertLineClamp(BuilderState& builderState, const CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+
+    if (primitiveValue.primitiveType() == CSSUnitType::CSS_INTEGER)
+        return LineClampValue(std::max(primitiveValue.resolveAsInteger<int>(builderState.cssToLengthConversionData()), 1), LineClamp::LineCount);
+
+    if (primitiveValue.primitiveType() == CSSUnitType::CSS_PERCENTAGE)
+        return LineClampValue(std::max(primitiveValue.resolveAsPercentage<int>(builderState.cssToLengthConversionData()), 0), LineClamp::Percentage);
+
+    ASSERT(primitiveValue.valueID() == CSSValueNone);
+    return LineClampValue();
 }
 
 } // namespace Style
