@@ -354,7 +354,7 @@ bool SpeculativeLoadManager::shouldRegisterLoad(const WebCore::ResourceRequest& 
     return true;
 }
 
-void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const ResourceRequest& request, const Key& resourceKey, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections)
+void SpeculativeLoadManager::registerLoad(GlobalFrameID frameID, const ResourceRequest& request, const Key& resourceKey, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(request.url().protocolIsInHTTPFamily());

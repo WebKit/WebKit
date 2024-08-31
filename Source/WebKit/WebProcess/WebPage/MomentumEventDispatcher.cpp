@@ -193,7 +193,7 @@ void MomentumEventDispatcher::dispatchSyntheticMomentumEvent(WebWheelEvent::Phas
         { },
         WebWheelEvent::MomentumEndType::Unknown);
 
-    m_client.handleSyntheticWheelEvent(m_currentGesture.pageIdentifier, syntheticEvent, m_lastRubberBandableEdges);
+    m_client.handleSyntheticWheelEvent(*m_currentGesture.pageIdentifier, syntheticEvent, m_lastRubberBandableEdges);
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     m_currentLogState.totalGeneratedOffset += appKitAcceleratedDelta.height();
@@ -215,7 +215,7 @@ void MomentumEventDispatcher::didStartMomentumPhase(WebCore::PageIdentifier page
     m_currentGesture.currentOffset = { };
     m_currentGesture.startTime = MonotonicTime::now();
     m_currentGesture.displayNominalFrameRate = displayProperties->nominalFrameRate;
-    m_currentGesture.accelerationCurve = scrollingAccelerationCurveForPage(m_currentGesture.pageIdentifier);
+    m_currentGesture.accelerationCurve = scrollingAccelerationCurveForPage(pageIdentifier);
 
     startDisplayLink();
 
@@ -274,7 +274,6 @@ std::optional<ScrollingAccelerationCurve> MomentumEventDispatcher::scrollingAcce
 
 std::optional<MomentumEventDispatcher::DisplayProperties> MomentumEventDispatcher::displayProperties(WebCore::PageIdentifier pageIdentifier) const
 {
-    ASSERT(pageIdentifier);
     auto displayPropertiesIterator = m_displayProperties.find(pageIdentifier);
     if (displayPropertiesIterator == m_displayProperties.end())
         return std::nullopt;
@@ -283,7 +282,7 @@ std::optional<MomentumEventDispatcher::DisplayProperties> MomentumEventDispatche
 
 void MomentumEventDispatcher::startDisplayLink()
 {
-    auto displayProperties = this->displayProperties(m_currentGesture.pageIdentifier);
+    auto displayProperties = this->displayProperties(*m_currentGesture.pageIdentifier);
     if (!displayProperties) {
         RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher failed to start display link");
         return;
@@ -301,7 +300,7 @@ void MomentumEventDispatcher::stopDisplayLink()
     if (!m_currentGesture.active)
         return;
 
-    auto displayProperties = this->displayProperties(m_currentGesture.pageIdentifier);
+    auto displayProperties = this->displayProperties(*m_currentGesture.pageIdentifier);
     if (!displayProperties) {
         RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher failed to stop display link");
         return;
@@ -356,7 +355,7 @@ void MomentumEventDispatcher::displayDidRefresh(WebCore::PlatformDisplayID displ
     if (!m_currentGesture.active)
         return;
 
-    auto displayProperties = this->displayProperties(m_currentGesture.pageIdentifier);
+    auto displayProperties = this->displayProperties(*m_currentGesture.pageIdentifier);
     if (!displayProperties || displayID != displayProperties->displayID)
         return;
 

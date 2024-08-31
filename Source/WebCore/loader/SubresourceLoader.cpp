@@ -73,7 +73,7 @@
 
 #undef SUBRESOURCELOADER_RELEASE_LOG
 #undef SUBRESOURCELOADER_RELEASE_LOG_ERROR
-#define PAGE_ID ((frame() ? valueOrDefault(frame()->pageID()) : PageIdentifier()).toUInt64())
+#define PAGE_ID (frame() && frame()->pageID() ? frame()->pageID()->toUInt64() : 0)
 #define FRAME_ID ((frame() ? frame()->frameID() : FrameIdentifier()).object().toUInt64())
 #if RELEASE_LOG_DISABLED
 #define SUBRESOURCELOADER_RELEASE_LOG(fmt, ...) UNUSED_VARIABLE(this)

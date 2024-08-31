@@ -61,7 +61,7 @@ class WebResourceLoader : public RefCounted<WebResourceLoader>, public IPC::Mess
 public:
     struct TrackingParameters {
         WebPageProxyIdentifier webPageProxyID;
-        WebCore::PageIdentifier pageID;
+        Markable<WebCore::PageIdentifier> pageID;
         WebCore::FrameIdentifier frameID;
         WebCore::ResourceLoaderIdentifier resourceID;
     };

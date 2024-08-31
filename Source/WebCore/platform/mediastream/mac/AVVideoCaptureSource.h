@@ -60,7 +60,7 @@ enum class VideoFrameRotation : uint16_t;
 
 class AVVideoCaptureSource : public RealtimeVideoCaptureSource, private OrientationNotifier::Observer {
 public:
-    static CaptureSourceOrError create(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier);
+    static CaptureSourceOrError create(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
     static NSMutableArray* cameraCaptureDeviceTypes();
 
     WEBCORE_EXPORT static VideoCaptureFactory& factory();
@@ -78,7 +78,7 @@ public:
     void captureOutputDidFinishProcessingPhoto(RetainPtr<AVCapturePhotoOutput>, RetainPtr<AVCapturePhoto>, RetainPtr<NSError>);
 
 private:
-    AVVideoCaptureSource(AVCaptureDevice*, const CaptureDevice&, MediaDeviceHashSalts&&, PageIdentifier);
+    AVVideoCaptureSource(AVCaptureDevice*, const CaptureDevice&, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
     virtual ~AVVideoCaptureSource();
 
     void clearSession();

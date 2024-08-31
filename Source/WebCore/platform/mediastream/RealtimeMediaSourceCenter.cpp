@@ -134,13 +134,13 @@ void RealtimeMediaSourceCenter::getMediaStreamDevices(CompletionHandler<void(Vec
 std::optional<RealtimeMediaSourceCapabilities> RealtimeMediaSourceCenter::getCapabilities(const CaptureDevice& device)
 {
     if (device.type() == CaptureDevice::DeviceType::Camera) {
-        auto source = videoCaptureFactory().createVideoCaptureSource({ device },  { "fake"_s, "fake"_s }, nullptr, { });
+        auto source = videoCaptureFactory().createVideoCaptureSource({ device },  { "fake"_s, "fake"_s }, nullptr, std::nullopt);
         if (!source)
             return std::nullopt;
         return source.source()->capabilities();
     }
     if (device.type() == CaptureDevice::DeviceType::Microphone) {
-        auto source = audioCaptureFactory().createAudioCaptureSource({ device }, { "fake"_s, "fake"_s }, nullptr, { });
+        auto source = audioCaptureFactory().createAudioCaptureSource({ device }, { "fake"_s, "fake"_s }, nullptr, std::nullopt);
         if (!source)
             return std::nullopt;
         return source.source()->capabilities();

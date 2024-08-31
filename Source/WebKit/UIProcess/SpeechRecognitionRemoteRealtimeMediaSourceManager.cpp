@@ -49,7 +49,7 @@ void SpeechRecognitionRemoteRealtimeMediaSourceManager::addSource(SpeechRecognit
     ASSERT(!m_sources.contains(identifier));
     m_sources.add(identifier, source);
 
-    send(Messages::SpeechRecognitionRealtimeMediaSourceManager::CreateSource(identifier, captureDevice, source.pageIdentifier()));
+    send(Messages::SpeechRecognitionRealtimeMediaSourceManager::CreateSource(identifier, captureDevice, *source.pageIdentifier()));
 }
 
 void SpeechRecognitionRemoteRealtimeMediaSourceManager::removeSource(SpeechRecognitionRemoteRealtimeMediaSource& source)

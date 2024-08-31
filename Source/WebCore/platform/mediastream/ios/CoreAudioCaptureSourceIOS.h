@@ -41,7 +41,7 @@ public:
     ~CoreAudioCaptureSourceFactoryIOS();
 
 private:
-    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier) final;
+    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>) final;
 
     RetainPtr<WebCoreAudioCaptureSourceIOSListener> m_listener;
 };

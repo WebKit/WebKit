@@ -103,7 +103,7 @@ CoreAudioCaptureSourceFactory& CoreAudioCaptureSourceFactory::singleton()
     return factory.get();
 }
 
-CaptureSourceOrError CoreAudioCaptureSourceFactoryIOS::createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
+CaptureSourceOrError CoreAudioCaptureSourceFactoryIOS::createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier)
 {
     return CoreAudioCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalts), constraints, pageIdentifier);
 }

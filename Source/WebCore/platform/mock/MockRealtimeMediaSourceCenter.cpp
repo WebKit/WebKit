@@ -123,7 +123,7 @@ static inline Vector<MockMediaDevice> defaultDevices()
 
 class MockRealtimeVideoSourceFactory : public VideoCaptureFactory {
 public:
-    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier) final
+    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier) final
     {
         ASSERT(device.type() == CaptureDevice::DeviceType::Camera);
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(CaptureDevice::DeviceType::Camera, device.persistentId()))
@@ -146,7 +146,7 @@ class MockDisplayCapturer final
     : public DisplayCaptureSourceCocoa::Capturer
     , public CanMakeWeakPtr<MockDisplayCapturer> {
 public:
-    MockDisplayCapturer(const CaptureDevice&, PageIdentifier);
+    MockDisplayCapturer(const CaptureDevice&, std::optional<PageIdentifier>);
 
     void triggerMockCaptureConfigurationChange();
 
@@ -165,7 +165,7 @@ private:
     RealtimeMediaSourceSettings m_settings;
 };
 
-MockDisplayCapturer::MockDisplayCapturer(const CaptureDevice& device, PageIdentifier pageIdentifier)
+MockDisplayCapturer::MockDisplayCapturer(const CaptureDevice& device, std::optional<PageIdentifier> pageIdentifier)
     : m_source(MockRealtimeVideoSourceMac::createForMockDisplayCapturer(String { device.persistentId() }, AtomString { device.label() }, MediaDeviceHashSalts { "persistent"_s, "ephemeral"_s }, pageIdentifier))
 {
 }
@@ -227,7 +227,7 @@ class MockRealtimeDisplaySourceFactory : public DisplayCaptureFactory {
 public:
     static MockRealtimeDisplaySourceFactory& singleton();
 
-    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier) final
+    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier) final
     {
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(device.type(), device.persistentId()))
             return CaptureSourceOrError({ "Unable to find mock display device with given persistentID"_s, MediaAccessDenialReason::PermissionDenied });
@@ -272,7 +272,7 @@ private:
 class MockRealtimeAudioSourceFactory final : public AudioCaptureFactory
 {
 public:
-    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier) final
+    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier) final
     {
         ASSERT(device.type() == CaptureDevice::DeviceType::Microphone || device.type() == CaptureDevice::DeviceType::Speaker);
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(device.type(), device.persistentId()))

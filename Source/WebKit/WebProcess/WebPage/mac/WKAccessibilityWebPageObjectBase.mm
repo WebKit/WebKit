@@ -127,7 +127,7 @@ namespace ax = WebCore::Accessibility;
         auto* frame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
         m_hasMainFramePlugin = frame && frame->document() ? frame->document()->isPluginDocument() : false;
     } else {
-        m_pageID = { };
+        m_pageID = std::nullopt;
         m_hasMainFramePlugin = false;
     }
 }

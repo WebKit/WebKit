@@ -87,7 +87,6 @@ private:
     PAL::SessionID m_sessionID;
     WeakPtr<WebCore::BackgroundFetchRecordLoaderClient> m_client;
     WebCore::ResourceRequest m_request;
-    NetworkResourceLoadParameters m_parameters;
     RefPtr<NetworkDataTask> m_task;
     UniqueRef<NetworkLoadChecker> m_networkLoadChecker;
     Vector<RefPtr<WebCore::BlobDataFileReference>> m_blobFiles;

@@ -48,7 +48,7 @@ static void initializeVideoCaptureSourceDebugCategory()
 
 class GStreamerVideoCaptureSourceFactory final : public VideoCaptureFactory {
 public:
-    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier) final
+    CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier>) final
     {
         return GStreamerVideoCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalts), constraints);
     }
@@ -58,7 +58,7 @@ private:
 
 class GStreamerDisplayCaptureSourceFactory final : public DisplayCaptureFactory {
 public:
-    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier) final
+    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier>) final
     {
         auto& manager = GStreamerDisplayCaptureDeviceManager::singleton();
         return manager.createDisplayCaptureSource(device, WTFMove(hashSalts), constraints);

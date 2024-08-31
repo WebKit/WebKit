@@ -2001,7 +2001,7 @@ class WebCore::HTTPHeaderMap {
 
 struct WebCore::ElementContext {
     WebCore::FloatRect boundingRect;
-    WebCore::PageIdentifier webPageIdentifier;
+    Markable<WebCore::PageIdentifier> webPageIdentifier;
     WebCore::ScriptExecutionContextIdentifier documentIdentifier;
     Markable<WebCore::ElementIdentifier> elementIdentifier;
 };
@@ -2307,7 +2307,7 @@ struct WebCore::MediaStreamRequest {
     WebCore::MediaConstraints audioConstraints;
     WebCore::MediaConstraints videoConstraints;
     bool isUserGesturePriviledged;
-    WebCore::PageIdentifier pageIdentifier;
+    Markable<WebCore::PageIdentifier> pageIdentifier;
 }
 [LegacyPopulateFromEmptyConstructor, CustomHeader] class WebCore::MediaTrackConstraintSetMap {
     std::optional<WebCore::IntConstraint> m_width;

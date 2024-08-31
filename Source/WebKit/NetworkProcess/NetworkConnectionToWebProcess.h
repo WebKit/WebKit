@@ -402,7 +402,6 @@ private:
     void destroyWebTransportSession(WebTransportSessionIdentifier);
 
     struct ResourceNetworkActivityTracker {
-        ResourceNetworkActivityTracker() = default;
         ResourceNetworkActivityTracker(const ResourceNetworkActivityTracker&) = default;
         ResourceNetworkActivityTracker(ResourceNetworkActivityTracker&&) = default;
         ResourceNetworkActivityTracker(WebCore::PageIdentifier pageID)

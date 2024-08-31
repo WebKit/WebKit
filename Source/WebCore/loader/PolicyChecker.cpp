@@ -59,7 +59,7 @@
 #include "QuickLook.h"
 #endif
 
-#define PAGE_ID (valueOrDefault(m_frame->pageID()).toUInt64())
+#define PAGE_ID (m_frame->pageID() ? m_frame->pageID()->toUInt64() : 0)
 #define FRAME_ID (m_frame->loader().frameID().object().toUInt64())
 #define POLICYCHECKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Loading, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 "] PolicyChecker::" fmt, this, PAGE_ID, FRAME_ID, ##__VA_ARGS__)
 

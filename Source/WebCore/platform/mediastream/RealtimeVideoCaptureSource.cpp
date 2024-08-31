@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-RealtimeVideoCaptureSource::RealtimeVideoCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
+RealtimeVideoCaptureSource::RealtimeVideoCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
     : RealtimeMediaSource(device, WTFMove(hashSalts), pageIdentifier)
 {
 }

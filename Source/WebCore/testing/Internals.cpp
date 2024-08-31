@@ -3115,7 +3115,7 @@ bool Internals::isElementAlive(uint64_t elementIdentifier) const
 
 uint64_t Internals::pageIdentifier(const Document& document) const
 {
-    return valueOrDefault(document.pageID()).toUInt64();
+    return document.pageID() ? document.pageID()->toUInt64() : 0;
 }
 
 bool Internals::isAnyWorkletGlobalScopeAlive() const

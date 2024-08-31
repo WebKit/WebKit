@@ -644,7 +644,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_textAnimationController(makeUniqueRef<TextAnimationController>(*this))
 #endif
 {
-    ASSERT(m_identifier);
     WEBPAGE_RELEASE_LOG(Loading, "constructor:");
 
 #if PLATFORM(IOS) || PLATFORM(VISION)

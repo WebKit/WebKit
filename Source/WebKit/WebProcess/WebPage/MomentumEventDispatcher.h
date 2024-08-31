@@ -149,7 +149,7 @@ private:
     struct {
         bool active { false };
 
-        WebCore::PageIdentifier pageIdentifier;
+        Markable<WebCore::PageIdentifier> pageIdentifier;
         std::optional<ScrollingAccelerationCurve> accelerationCurve;
         std::optional<WebWheelEvent> initiatingEvent;
 

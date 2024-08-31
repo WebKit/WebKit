@@ -36,14 +36,14 @@
 namespace WebKit {
 using namespace WebCore;
 
-RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
+RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, std::optional<PageIdentifier> pageIdentifier)
     : RealtimeMediaSource(device, WTFMove(hashSalts), pageIdentifier)
     , m_proxy(identifier, device, shouldCaptureInGPUProcess, constraints)
     , m_manager(manager)
 {
 }
 
-RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RemoteRealtimeMediaSourceProxy&& proxy, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, PageIdentifier pageIdentifier)
+RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RemoteRealtimeMediaSourceProxy&& proxy, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, std::optional<PageIdentifier> pageIdentifier)
     : RealtimeMediaSource(proxy.device(), WTFMove(hashSalts), pageIdentifier)
     , m_proxy(WTFMove(proxy))
     , m_manager(manager)
@@ -52,7 +52,7 @@ RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RemoteRealtimeMediaSourcePr
 
 void RemoteRealtimeMediaSource::createRemoteMediaSource()
 {
-    m_proxy.createRemoteMediaSource(deviceIDHashSalts(), pageIdentifier(), [this, protectedThis = Ref { *this }](WebCore::CaptureSourceError&& error, WebCore::RealtimeMediaSourceSettings&& settings, WebCore::RealtimeMediaSourceCapabilities&& capabilities) {
+    m_proxy.createRemoteMediaSource(deviceIDHashSalts(), *pageIdentifier(), [this, protectedThis = Ref { *this }](WebCore::CaptureSourceError&& error, WebCore::RealtimeMediaSourceSettings&& settings, WebCore::RealtimeMediaSourceCapabilities&& capabilities) {
         if (error) {
             m_proxy.didFail(WTFMove(error));
             return;

@@ -58,7 +58,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/MakeString.h>
 
-#define WEBRESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", durationSeconds=%.3f] WebResourceLoader::" fmt, this, m_trackingParameters.pageID.toUInt64(), m_trackingParameters.frameID.object().toUInt64(), m_trackingParameters.resourceID.toUInt64(), timeSinceLoadStart().value(), ##__VA_ARGS__)
+#define WEBRESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", durationSeconds=%.3f] WebResourceLoader::" fmt, this, m_trackingParameters.pageID ? m_trackingParameters.pageID->toUInt64() : 0, m_trackingParameters.frameID.object().toUInt64(), m_trackingParameters.resourceID.toUInt64(), timeSinceLoadStart().value(), ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;

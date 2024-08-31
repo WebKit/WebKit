@@ -47,13 +47,13 @@ class ImageTransferSessionVT;
 
 class MockRealtimeVideoSourceMac final : public MockRealtimeVideoSource {
 public:
-    static Ref<MockRealtimeVideoSource> createForMockDisplayCapturer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, PageIdentifier);
+    static Ref<MockRealtimeVideoSource> createForMockDisplayCapturer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
 
     virtual ~MockRealtimeVideoSourceMac();
 
 private:
     friend class MockRealtimeVideoSource;
-    MockRealtimeVideoSourceMac(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, PageIdentifier);
+    MockRealtimeVideoSourceMac(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
 
     PlatformLayer* platformLayer() const;
     void updateSampleBuffer() final;

@@ -110,7 +110,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
         return;
     }
     if (decoder.messageReceiverName() == Messages::WebPage::messageReceiverName()) {
-        if (auto* webPage = WebProcess::singleton().webPage(LegacyNullableObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
+        if (auto* webPage = WebProcess::singleton().webPage(ObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
             webPage->didReceiveWebPageMessage(connection, decoder);
         return;
     }
@@ -177,7 +177,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinator::messageReceiverName()) {
-        if (auto webPage = WebProcess::singleton().webPage(LegacyNullableObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
+        if (auto webPage = WebProcess::singleton().webPage(ObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
             webPage->paymentCoordinator()->didReceiveMessage(connection, decoder);
         return;
     }
@@ -197,7 +197,7 @@ bool NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection& connection
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinator::messageReceiverName()) {
-        if (auto webPage = WebProcess::singleton().webPage(LegacyNullableObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
+        if (auto webPage = WebProcess::singleton().webPage(ObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
             return webPage->paymentCoordinator()->didReceiveSyncMessage(connection, decoder, replyEncoder);
         return false;
     }

@@ -47,7 +47,7 @@ GST_DEBUG_CATEGORY(webkit_audio_capture_source_debug);
 
 class GStreamerAudioCaptureSourceFactory : public AudioCaptureFactory {
 public:
-    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier) final
+    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier>) final
     {
         return GStreamerAudioCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalts), constraints);
     }

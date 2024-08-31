@@ -440,7 +440,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
 
 + (instancetype)lookUpBrowsingContextFromHandle:(WKBrowsingContextHandle *)handle
 {
-    return wrapper(WebKit::WebProcess::singleton().webPage(LegacyNullableObjectIdentifier<WebCore::PageIdentifierType>(handle.webPageID)));
+    return wrapper(WebKit::WebProcess::singleton().webPage(ObjectIdentifier<WebCore::PageIdentifierType>(handle.webPageID)));
 }
 
 - (_WKRemoteObjectRegistry *)_remoteObjectRegistry

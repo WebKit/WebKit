@@ -34,7 +34,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::create(const CaptureDevice& device, const MediaConstraints* constraints, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
+Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::create(const CaptureDevice& device, const MediaConstraints* constraints, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, std::optional<PageIdentifier> pageIdentifier)
 {
     auto source = adoptRef(*new RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(hashSalts), manager, shouldCaptureInGPUProcess, pageIdentifier));
     manager.addSource(source.copyRef());
@@ -43,13 +43,13 @@ Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::create(const CaptureDevice& 
     return source;
 }
 
-RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
+RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, std::optional<PageIdentifier> pageIdentifier)
     : RemoteRealtimeMediaSource(identifier, device, constraints, WTFMove(hashSalts), manager, shouldCaptureInGPUProcess, pageIdentifier)
 {
     ASSERT(this->pageIdentifier());
 }
 
-RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RemoteRealtimeMediaSourceProxy&& proxy, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, PageIdentifier pageIdentifier)
+RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RemoteRealtimeMediaSourceProxy&& proxy, MediaDeviceHashSalts&& hashSalts, UserMediaCaptureManager& manager, std::optional<PageIdentifier> pageIdentifier)
     : RemoteRealtimeMediaSource(WTFMove(proxy), WTFMove(hashSalts), manager, pageIdentifier)
 {
     ASSERT(this->pageIdentifier());
@@ -77,7 +77,7 @@ Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::clone()
             return;
         }
 
-        clone = adoptRef(*new RemoteRealtimeVideoSource(proxy().clone(), MediaDeviceHashSalts { deviceIDHashSalts() }, manager(), pageIdentifier()));
+        clone = adoptRef(*new RemoteRealtimeVideoSource(proxy().clone(), MediaDeviceHashSalts { deviceIDHashSalts() }, manager(), *pageIdentifier()));
 
         clone->m_registerOwnerCallback = m_registerOwnerCallback;
         clone->setSettings(RealtimeMediaSourceSettings { settings() });
@@ -85,7 +85,7 @@ Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::clone()
 
         manager().addSource(*clone);
         manager().remoteCaptureSampleManager().addSource(*clone);
-        proxy().createRemoteCloneSource(clone->identifier(), pageIdentifier());
+        proxy().createRemoteCloneSource(clone->identifier(), *pageIdentifier());
 
         bool isNewClonedSource = true;
         clone->m_registerOwnerCallback(*clone, isNewClonedSource);

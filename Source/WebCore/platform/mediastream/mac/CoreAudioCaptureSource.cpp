@@ -79,7 +79,7 @@ static CaptureSourceOrError initializeCoreAudioCaptureSource(Ref<CoreAudioCaptur
     return CaptureSourceOrError(WTFMove(source));
 }
 
-CaptureSourceOrError CoreAudioCaptureSource::create(String&& deviceID, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
+CaptureSourceOrError CoreAudioCaptureSource::create(String&& deviceID, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier)
 {
     CoreAudioCaptureSourceFactory::singleton().setOverrideUnit(nullptr);
 
@@ -99,7 +99,7 @@ CaptureSourceOrError CoreAudioCaptureSource::create(String&& deviceID, MediaDevi
     return initializeCoreAudioCaptureSource(WTFMove(source), constraints);
 }
 
-CaptureSourceOrError CoreAudioCaptureSource::createForTesting(String&& deviceID, AtomString&& label, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, BaseAudioSharedUnit& overrideUnit, PageIdentifier pageIdentifier)
+CaptureSourceOrError CoreAudioCaptureSource::createForTesting(String&& deviceID, AtomString&& label, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, BaseAudioSharedUnit& overrideUnit, std::optional<PageIdentifier> pageIdentifier)
 {
     CoreAudioCaptureSourceFactory::singleton().setOverrideUnit(&overrideUnit);
 
@@ -206,7 +206,7 @@ bool CoreAudioCaptureSourceFactory::shouldAudioCaptureUnitRenderAudio()
 #endif // PLATFORM(IOS_FAMILY)
 }
 
-CoreAudioCaptureSource::CoreAudioCaptureSource(const CaptureDevice& device, uint32_t captureDeviceID, MediaDeviceHashSalts&& hashSalts, BaseAudioSharedUnit* overrideUnit, PageIdentifier pageIdentifier)
+CoreAudioCaptureSource::CoreAudioCaptureSource(const CaptureDevice& device, uint32_t captureDeviceID, MediaDeviceHashSalts&& hashSalts, BaseAudioSharedUnit* overrideUnit, std::optional<PageIdentifier> pageIdentifier)
     : RealtimeMediaSource(device, WTFMove(hashSalts), pageIdentifier)
     , m_captureDeviceID(captureDeviceID)
     , m_overrideUnit(overrideUnit)

@@ -42,7 +42,7 @@ namespace WebCore {
 
 class MockRealtimeAudioSource : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MockRealtimeAudioSource, WTF::DestructionThread::MainRunLoop> {
 public:
-    static CaptureSourceOrError create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier);
+    static CaptureSourceOrError create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
     virtual ~MockRealtimeAudioSource();
 
     static void setIsInterrupted(bool);
@@ -54,7 +54,7 @@ public:
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MockRealtimeAudioSource, WTF::DestructionThread::MainRunLoop>::controlBlock(); }
 
 protected:
-    MockRealtimeAudioSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, PageIdentifier);
+    MockRealtimeAudioSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
 
     virtual void render(Seconds) = 0;
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) override;

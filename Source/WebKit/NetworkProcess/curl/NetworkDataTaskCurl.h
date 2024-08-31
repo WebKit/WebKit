@@ -102,7 +102,7 @@ private:
     void deleteDownloadFile();
 
     WebCore::FrameIdentifier m_frameID;
-    WebCore::PageIdentifier m_pageID;
+    Markable<WebCore::PageIdentifier> m_pageID;
     WebCore::ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
     RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;
 

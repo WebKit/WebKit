@@ -66,7 +66,7 @@ public:
     explicit SpeculativeLoadManager(Cache&, Storage&);
     ~SpeculativeLoadManager();
 
-    void registerLoad(const GlobalFrameID&, const WebCore::ResourceRequest&, const Key& resourceKey, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>);
+    void registerLoad(GlobalFrameID, const WebCore::ResourceRequest&, const Key& resourceKey, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>);
     void registerMainResourceLoadResponse(const GlobalFrameID&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     typedef Function<void (std::unique_ptr<Entry>)> RetrieveCompletionHandler;

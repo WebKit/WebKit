@@ -62,8 +62,8 @@ public:
 #endif
 
 protected:
-    RemoteRealtimeMediaSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, WebCore::MediaDeviceHashSalts&&, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, WebCore::PageIdentifier);
-    RemoteRealtimeMediaSource(RemoteRealtimeMediaSourceProxy&&, WebCore::MediaDeviceHashSalts&&, UserMediaCaptureManager&, WebCore::PageIdentifier);
+    RemoteRealtimeMediaSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, WebCore::MediaDeviceHashSalts&&, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, std::optional<WebCore::PageIdentifier>);
+    RemoteRealtimeMediaSource(RemoteRealtimeMediaSourceProxy&&, WebCore::MediaDeviceHashSalts&&, UserMediaCaptureManager&, std::optional<WebCore::PageIdentifier>);
     void createRemoteMediaSource();
 
     RemoteRealtimeMediaSourceProxy& proxy() { return m_proxy; }
@@ -80,7 +80,7 @@ protected:
 
 private:
     // RealtimeMediaSource
-    void startProducingData() final { m_proxy.startProducingData(pageIdentifier()); }
+    void startProducingData() final { m_proxy.startProducingData(*pageIdentifier()); }
     void stopProducingData() final { m_proxy.stopProducingData(); }
     bool isCaptureSource() const final { return true; }
     void applyConstraints(const WebCore::MediaConstraints&, ApplyConstraintsHandler&&) final;

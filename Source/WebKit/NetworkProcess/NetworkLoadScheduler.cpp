@@ -296,7 +296,7 @@ auto NetworkLoadScheduler::contextForLoad(const NetworkLoad& load) -> HostContex
     if (!load.url().protocolIsInHTTPFamily())
         return nullptr;
 
-    auto* pageContext = m_pageContexts.get(load.parameters().webPageID);
+    auto* pageContext = m_pageContexts.get(*load.parameters().webPageID);
     if (!pageContext)
         return nullptr;
 

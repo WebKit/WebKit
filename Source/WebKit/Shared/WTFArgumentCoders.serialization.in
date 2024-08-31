@@ -112,7 +112,6 @@ template: struct WebCore::MediaPlayerIdentifierType
 template: struct WebCore::MediaPlayerClientIdentifierType
 template: struct WebCore::MediaSessionIdentifierType
 template: struct WebCore::ModelPlayerIdentifierType
-template: struct WebCore::PageIdentifierType
 template: struct WebCore::PlaybackTargetClientContextIdentifierType
 template: struct WebCore::SharedWorkerObjectIdentifierType
 template: struct WebCore::SleepDisablerIdentifierType
@@ -160,6 +159,7 @@ template: enum class WebCore::WindowIdentifierType
 template: enum class WebCore::WorkletGlobalScopeIdentifierType
 template: enum class WebKit::DownloadIdentifierType
 template: struct WebCore::NavigationIdentifierType
+template: struct WebCore::PageIdentifierType
 template: struct WebCore::PlatformLayerIdentifierType
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WTF::ObjectIdentifier {
     [Validator='WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
