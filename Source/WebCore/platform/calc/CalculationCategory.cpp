@@ -34,6 +34,7 @@ namespace Calculation {
 TextStream& operator<<(TextStream& ts, Category category)
 {
     switch (category) {
+    case Category::Integer: ts << "integer"; break;
     case Category::Number: ts << "number"; break;
     case Category::Percent: ts << "percent"; break;
     case Category::Length: ts << "length"; break;

@@ -50,6 +50,7 @@ template<typename Op, typename... Args> static double executeMathOperation(Args&
 static bool percentageResolveToDimension(const SimplificationOptions& options)
 {
     switch (options.category) {
+    case Calculation::Category::Integer:
     case Calculation::Category::Number:
     case Calculation::Category::Length:
     case Calculation::Category::Percent:
@@ -841,6 +842,7 @@ std::optional<Child> simplify(Product& root, const SimplificationOptions& option
     if (success) {
         if (auto category = productResult.type.calculationCategory()) {
             switch (*category) {
+            case Calculation::Category::Integer:
             case Calculation::Category::Number:
                 return makeChild(Number { .value = productResult.value });
             case Calculation::Category::Percent:

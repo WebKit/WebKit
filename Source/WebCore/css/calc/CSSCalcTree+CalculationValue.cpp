@@ -84,6 +84,7 @@ static CanonicalDimension::Dimension determineCanonicalDimension(Calculation::Ca
     case Calculation::Category::PercentLength:
         return CanonicalDimension::Dimension::Length;
 
+    case Calculation::Category::Integer:
     case Calculation::Category::Number:
     case Calculation::Category::Percent:
     case Calculation::Category::Length:
