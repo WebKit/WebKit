@@ -37,6 +37,7 @@ fast/scrolling/rtl-scrollbars-text-selection.html [ Pass ]
 fast/scrolling/rtl-scrollbars-text-selection-scrolled.html [ Pass ]
 
 webkit.org/b/155132 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Pass ]
+security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html [ Failure ]
 
 webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
 

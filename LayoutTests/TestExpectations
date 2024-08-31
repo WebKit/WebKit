@@ -5970,12 +5970,6 @@ imported/w3c/web-platform-tests/workers/shared-worker-name-via-options.html [ Du
 
 webkit.org/b/242498 svg/resource-invalidation/mask-resource-invalidation.html [ ImageOnlyFailure ]
 
-# YouTube plugin replacement
-security/contentSecurityPolicy/object-src-none-blocks-youtube-plugin-replacement.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-without-mime-type.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.html [ Skip ]
-
 webkit.org/b/242983 imported/w3c/web-platform-tests/css/css-scroll-anchoring/fullscreen-crash.html [ Skip ]
 webkit.org/b/261849 imported/w3c/web-platform-tests/css/css-scroll-anchoring/heuristic-with-offset-update-from-scroll-event-listener.html [ Skip ]
 webkit.org/b/261849 imported/w3c/web-platform-tests/css/css-scroll-anchoring/zero-scroll-offset.html [ Skip ]
