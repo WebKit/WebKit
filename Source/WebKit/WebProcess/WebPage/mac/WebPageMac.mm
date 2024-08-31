@@ -427,9 +427,9 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector, Keybo
     }
 
     if (selector == "moveToLeftEndOfLine:"_s)
-        didPerformAction = m_userInterfaceLayoutDirection == WebCore::UserInterfaceLayoutDirection::LTR ? m_page->backForward().goBack() : m_page->backForward().goForward();
+        didPerformAction = m_userInterfaceLayoutDirection == WebCore::UserInterfaceLayoutDirection::LTR ? m_page->checkedBackForward()->goBack() : m_page->checkedBackForward()->goForward();
     else if (selector == "moveToRightEndOfLine:"_s)
-        didPerformAction = m_userInterfaceLayoutDirection == WebCore::UserInterfaceLayoutDirection::LTR ? m_page->backForward().goForward() : m_page->backForward().goBack();
+        didPerformAction = m_userInterfaceLayoutDirection == WebCore::UserInterfaceLayoutDirection::LTR ? m_page->checkedBackForward()->goForward() : m_page->checkedBackForward()->goBack();
 
     return didPerformAction;
 }

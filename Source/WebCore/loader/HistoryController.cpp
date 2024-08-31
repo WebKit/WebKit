@@ -335,8 +335,9 @@ void HistoryController::goToItem(HistoryItem& targetItem, FrameLoadType type, Sh
     // Set the BF cursor before commit, which lets the user quickly click back/forward again.
     // - plus, it only makes sense for the top level of the operation through the frame tree,
     // as opposed to happening for some/one of the page commits that might happen soon
-    RefPtr currentItem = page->backForward().currentItem();
-    page->backForward().setCurrentItem(targetItem);
+    CheckedRef backForward = page->backForward();
+    RefPtr currentItem = backForward->currentItem();
+    backForward->setCurrentItem(targetItem);
 
     // First set the provisional item of any frames that are not actually navigating.
     // This must be done before trying to navigate the desired frame, because some
@@ -877,7 +878,7 @@ void HistoryController::updateBackForwardListClippedAtTarget(bool doClip)
     Ref topItem = mainFrame->checkedHistory()->createItemTree(page->historyItemClient(), *frame, doClip);
     LOG(History, "HistoryController %p updateBackForwardListClippedAtTarget: Adding backforward item %p in frame %p (main frame %d) %s", this, topItem.ptr(), frame.get(), frame->isMainFrame(), frame->loader().documentLoader()->url().string().utf8().data());
 
-    page->backForward().addItem(frame->frameID(), WTFMove(topItem));
+    page->checkedBackForward()->addItem(frame->frameID(), WTFMove(topItem));
 }
 
 void HistoryController::updateCurrentItem()
@@ -941,7 +942,7 @@ void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, c
 
     LOG(History, "HistoryController %p pushState: Adding top item %p, setting url of current item %p to %s, scrollRestoration is %s", this, topItem.ptr(), m_currentItem.get(), urlString.ascii().data(), topItem->shouldRestoreScrollPosition() ? "auto" : "manual");
 
-    page->backForward().addItem(frame->frameID(), WTFMove(topItem));
+    page->checkedBackForward()->addItem(frame->frameID(), WTFMove(topItem));
 
     if (page->usesEphemeralSession())
         return;

@@ -294,12 +294,12 @@ public:
     {
         // If the destination HistoryItem is no longer in the back/forward list, then we don't proceed.
         RefPtr page { frame.page() };
-        if (!page || !page->backForward().containsItem(m_historyItem))
+        if (!page || !page->checkedBackForward()->containsItem(m_historyItem))
             return;
 
         UserGestureIndicator gestureIndicator(userGestureToForward());
 
-        if (page->backForward().currentItem() == m_historyItem.ptr()) {
+        if (page->checkedBackForward()->currentItem() == m_historyItem.ptr()) {
             // Special case for go(0) from a frame -> reload only the frame
             // To follow Firefox and IE's behavior, history reload can only navigate the self frame.
             if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
@@ -671,14 +671,14 @@ void NavigationScheduler::scheduleHistoryNavigation(int steps)
     // Invalid history navigations (such as history.forward() during a new load) have the side effect of cancelling any scheduled
     // redirects. We also avoid the possibility of cancelling the current load by avoiding the scheduled redirection altogether.
     RefPtr page = m_frame->page();
-    auto& backForward = page->backForward();
-    if ((steps > 0 && static_cast<unsigned>(steps) > backForward.forwardCount())
-        || (steps < 0 && static_cast<unsigned>(-steps) > backForward.backCount())) {
+    CheckedRef backForward = page->backForward();
+    if ((steps > 0 && static_cast<unsigned>(steps) > backForward->forwardCount())
+        || (steps < 0 && static_cast<unsigned>(-steps) > backForward->backCount())) {
         cancel();
         return;
     }
 
-    RefPtr historyItem = backForward.itemAtIndex(steps);
+    RefPtr historyItem = backForward->itemAtIndex(steps);
     if (!historyItem) {
         cancel();
         return;

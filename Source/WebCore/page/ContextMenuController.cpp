@@ -1208,10 +1208,10 @@ void ContextMenuController::populate()
 #else
 
                 if (isMainFrame) {
-                    if (page && page->backForward().canGoBackOrForward(-1))
+                    if (page && page->checkedBackForward()->canGoBackOrForward(-1))
                         appendItem(BackItem, m_contextMenu.get());
 
-                    if (page && page->backForward().canGoBackOrForward(1))
+                    if (page && page->checkedBackForward()->canGoBackOrForward(1))
                         appendItem(ForwardItem, m_contextMenu.get());
 
                     // Here we use isLoadingInAPISense rather than isLoading because Stop/Reload are
@@ -1657,10 +1657,10 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
 #endif
 #if PLATFORM(GTK)
         case ContextMenuItemTagGoBack:
-            shouldEnable = frame->page() && frame->page()->backForward().canGoBackOrForward(-1);
+            shouldEnable = frame->page() && frame->page()->checkedBackForward()->canGoBackOrForward(-1);
             break;
         case ContextMenuItemTagGoForward:
-            shouldEnable = frame->page() && frame->page()->backForward().canGoBackOrForward(1);
+            shouldEnable = frame->page() && frame->page()->checkedBackForward()->canGoBackOrForward(1);
             break;
         case ContextMenuItemTagStop:
             shouldEnable = frame->loader().documentLoader()->isLoadingInAPISense();

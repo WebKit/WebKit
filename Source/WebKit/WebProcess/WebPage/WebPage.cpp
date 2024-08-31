@@ -2515,14 +2515,14 @@ String WebPage::dumpHistoryForTesting(const String& directory)
     if (!m_page)
         return { };
 
-    auto& list = m_page->backForward();
+    CheckedRef list = m_page->backForward();
     
     StringBuilder builder;
-    int begin = -list.backCount();
-    if (list.itemAtIndex(begin)->url() == aboutBlankURL())
+    int begin = -list->backCount();
+    if (list->itemAtIndex(begin)->url() == aboutBlankURL())
         ++begin;
-    for (int i = begin; i <= static_cast<int>(list.forwardCount()); ++i)
-        dumpHistoryItem(*list.itemAtIndex(i), 8, !i, builder, directory);
+    for (int i = begin; i <= static_cast<int>(list->forwardCount()); ++i)
+        dumpHistoryItem(*list->itemAtIndex(i), 8, !i, builder, directory);
     return builder.toString();
 }
 

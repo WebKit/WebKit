@@ -2847,7 +2847,7 @@ void FrameLoader::checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess
         }
         if (shouldReset && item) {
             if (RefPtr page = m_frame->page())
-                page->backForward().setCurrentItem(*item);
+                page->checkedBackForward()->setCurrentItem(*item);
         }
 
         handleLoadFailureRecovery(*provisionalDocumentLoader, error, isHTTPSFirstApplicable);
@@ -3958,7 +3958,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         if ((isTargetItem || frame->isMainFrame()) && isBackForwardLoadType(policyChecker().loadType())) {
             if (RefPtr page = frame->page()) {
                 if (RefPtr resetItem = frame->mainFrame().history().currentItem())
-                    page->backForward().setCurrentItem(*resetItem);
+                    page->checkedBackForward()->setCurrentItem(*resetItem);
             }
         }
         return;
@@ -4855,7 +4855,7 @@ void FrameLoader::updateNavigationAPIEntries(std::optional<NavigationNavigationT
     Vector<Ref<HistoryItem>> entriesForNavigationAPI;
     entriesForNavigationAPI.append(*currentItem);
 
-    auto rawEntries = page->backForward().allItems();
+    auto rawEntries = page->checkedBackForward()->allItems();
     auto startingIndex = rawEntries.find(*currentItem);
     if (startingIndex != notFound) {
         Ref startingOrigin = SecurityOrigin::create(rawEntries[startingIndex]->url());

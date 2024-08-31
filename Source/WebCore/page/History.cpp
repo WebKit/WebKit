@@ -79,7 +79,7 @@ ExceptionOr<unsigned> History::length() const
     RefPtr page = frame->page();
     if (!page)
         return 0;
-    return page->backForward().count();
+    return page->checkedBackForward()->count();
 }
 
 ExceptionOr<History::ScrollRestoration> History::scrollRestoration() const

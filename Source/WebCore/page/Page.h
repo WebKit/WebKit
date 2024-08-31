@@ -468,7 +468,7 @@ public:
     void progressEstimateChanged(LocalFrame&) const;
     void progressFinished(LocalFrame&) const;
     BackForwardController& backForward() { return m_backForwardController.get(); }
-    CheckedRef<BackForwardController> checkedBackForward();
+    WEBCORE_EXPORT CheckedRef<BackForwardController> checkedBackForward();
 
     Seconds domTimerAlignmentInterval() const { return m_domTimerAlignmentInterval; }
 

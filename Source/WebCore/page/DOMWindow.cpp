@@ -112,7 +112,7 @@ void DOMWindow::close()
     if (!frame->isMainFrame())
         return;
 
-    if (!(page->openedByDOM() || page->backForward().count() <= 1)) {
+    if (!(page->openedByDOM() || page->checkedBackForward()->count() <= 1)) {
         checkedConsole()->addMessage(MessageSource::JS, MessageLevel::Warning, "Can't close the window since it was not opened by JavaScript"_s);
         return;
     }
