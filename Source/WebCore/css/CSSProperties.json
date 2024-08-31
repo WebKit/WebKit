@@ -7965,6 +7965,19 @@
                 "url": "https://www.w3.org/TR/css-text-3/#line-break"
             }
         },
+        "line-clamp": {
+            "codegen-properties": {
+                "longhands": [
+                    "max-lines",
+                    "block-ellipsis",
+                    "continue"
+                ]
+            },
+            "specification": {
+                "category": "css-inline",
+                "url": "https://www.w3.org/TR/css-overflow-4/#line-clamp"
+            }
+        },
         "-webkit-line-clamp": {
             "codegen-properties": {
                 "parser-grammar": "none | <percentage [0,inf]> | <integer [1,inf]>"

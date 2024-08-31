@@ -4141,6 +4141,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyGridRow,
         CSSPropertyGridTemplate,
         CSSPropertyInsetBlock, // logical shorthand
+        CSSPropertyLineClamp,
         CSSPropertyListStyle, // for list-style-image
         CSSPropertyMargin,
         CSSPropertyMarginBlock, // logical shorthand

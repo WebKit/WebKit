@@ -109,6 +109,7 @@ private:
     RefPtr<CSSValue> textWrapShorthandValue(const RenderStyle&) const;
     RefPtr<CSSValue> whiteSpaceShorthandValue(const RenderStyle&) const;
     RefPtr<CSSValue> textBoxShorthandValue(const RenderStyle&) const;
+    RefPtr<CSSValue> lineClampShorthandValue(const RenderStyle&) const;
 
     RefPtr<Element> m_element;
     std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier;
