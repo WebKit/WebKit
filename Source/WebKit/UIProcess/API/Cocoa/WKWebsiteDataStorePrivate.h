@@ -28,6 +28,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class UNNotificationResponse;
 @class WKSecurityOrigin;
 @class WKWebView;
 @class _WKResourceLoadStatisticsThirdParty;
@@ -150,6 +151,7 @@ typedef NS_ENUM(uint8_t, _WKRestrictedOpenerType) {
 @property (nonatomic, readonly) NSString *_webPushPartition;
 
 + (void)_setWebPushActionHandler:(WKWebsiteDataStore *(^)(_WKWebPushAction *))handler WK_API_AVAILABLE(ios(WK_IOS_TBA));
++ (BOOL)handleNotificationResponse:(UNNotificationResponse *)response WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 @end
 
