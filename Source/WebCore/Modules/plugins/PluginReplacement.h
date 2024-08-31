@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,7 @@
 #pragma once
 
 #include "RenderPtr.h"
-#include <JavaScriptCore/JSCJSValue.h>
-#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/text/WTFString.h>
-
-namespace JSC {
-class JSObject;
-}
 
 namespace WebCore {
 
