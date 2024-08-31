@@ -85,6 +85,8 @@ struct Capabilities {
 #if PLATFORM(GTK)
     std::optional<bool> useOverlayScrollbars;
 #endif
+    // https://w3c.github.io/webdriver-bidi/#websocket-url
+    std::optional<bool> webSocketURL;
 };
 
 } // namespace WebDriver

@@ -75,4 +75,9 @@ bool WebDriverService::platformSupportProxyType(const String&) const
     return false;
 }
 
+bool WebDriverService::platformSupportBidi() const
+{
+    return false;
+}
+
 } // namespace WebDriver
