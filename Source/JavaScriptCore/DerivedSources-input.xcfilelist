@@ -48,6 +48,7 @@ $(PROJECT_DIR)/builtins/GlobalObject.js
 $(PROJECT_DIR)/builtins/GlobalOperations.js
 $(PROJECT_DIR)/builtins/InternalPromiseConstructor.js
 $(PROJECT_DIR)/builtins/IteratorHelpers.js
+$(PROJECT_DIR)/builtins/JSIteratorConstructor.js
 $(PROJECT_DIR)/builtins/MapConstructor.js
 $(PROJECT_DIR)/builtins/MapIteratorPrototype.js
 $(PROJECT_DIR)/builtins/MapPrototype.js
@@ -70,6 +71,7 @@ $(PROJECT_DIR)/builtins/StringPrototype.js
 $(PROJECT_DIR)/builtins/TypedArrayConstructor.js
 $(PROJECT_DIR)/builtins/TypedArrayPrototype.js
 $(PROJECT_DIR)/builtins/WebAssembly.js
+$(PROJECT_DIR)/builtins/WrapForValidIteratorPrototype.js
 $(PROJECT_DIR)/bytecode/BytecodeList.rb
 $(PROJECT_DIR)/create_hash_table
 $(PROJECT_DIR)/generator/Argument.rb
