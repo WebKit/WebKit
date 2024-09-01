@@ -941,7 +941,7 @@ inline TextDecorationThickness BuilderConverter::convertTextDecorationThickness(
         auto conversionData = builderState.cssToLengthConversionData();
 
         if (primitiveValue.isPercentage())
-            return TextDecorationThickness::createWithLength(Length(clampTo<float>(primitiveValue.resolveAsPercentage(conversionData), minValueForCssLength, static_cast<float>(maxValueForCssLength)), LengthType::Percent));
+            return TextDecorationThickness::createWithLength(Length(clampTo<float>(primitiveValue.resolveAsPercentage(conversionData), minValueForCssLength, maxValueForCssLength), LengthType::Percent));
 
         if (primitiveValue.isCalculatedPercentageWithLength())
             return TextDecorationThickness::createWithLength(Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { })));
@@ -1534,7 +1534,7 @@ inline Length BuilderConverter::convertTextLengthOrNormal(BuilderState& builderS
     if (primitiveValue.isLength())
         return primitiveValue.resolveAsLength<Length>(conversionData);
     if (primitiveValue.isPercentage())
-        return Length(clampTo<double>(primitiveValue.resolveAsPercentage(conversionData), minValueForCssLength, maxValueForCssLength), LengthType::Percent);
+        return Length(clampTo<float>(primitiveValue.resolveAsPercentage(conversionData), minValueForCssLength, maxValueForCssLength), LengthType::Percent);
     if (primitiveValue.isCalculatedPercentageWithLength())
         return Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }));
     if (primitiveValue.isNumber())
@@ -1891,7 +1891,7 @@ inline Length BuilderConverter::convertLineHeight(BuilderState& builderState, co
             length = primitiveValue.resolveAsLength<Length>(conversionData);
         else {
             auto value = primitiveValue.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { })->evaluate(builderState.style().computedFontSize());
-            length = { clampTo<float>(value, minValueForCssLength, static_cast<float>(maxValueForCssLength)), LengthType::Fixed };
+            length = { clampTo<float>(value, minValueForCssLength, maxValueForCssLength), LengthType::Fixed };
         }
         if (multiplier != 1.f)
             length = Length(length.value() * multiplier, LengthType::Fixed);

@@ -2844,7 +2844,7 @@ private:
             auto toValue = toTextUnderlineOffset.resolve(to.computedFontSize());
 
             auto blendedValue = blendFunc(fromValue, toValue, context);
-            return TextUnderlineOffset::createWithLength(Length(clampTo<float>(blendedValue, minValueForCssLength, static_cast<float>(maxValueForCssLength)), LengthType::Fixed));
+            return TextUnderlineOffset::createWithLength(Length(clampTo<float>(blendedValue, minValueForCssLength, maxValueForCssLength), LengthType::Fixed));
         };
 
         destination.setTextUnderlineOffset(blendedTextUnderlineOffset());
@@ -2886,7 +2886,7 @@ private:
             auto toValue = toTextDecorationThickness.resolve(to.computedFontSize(), to.metricsOfPrimaryFont());
 
             auto blendedValue = blendFunc(fromValue, toValue, context);
-            return TextDecorationThickness::createWithLength(Length(clampTo<float>(blendedValue, minValueForCssLength, static_cast<float>(maxValueForCssLength)), LengthType::Fixed));
+            return TextDecorationThickness::createWithLength(Length(clampTo<float>(blendedValue, minValueForCssLength, maxValueForCssLength), LengthType::Fixed));
         };
 
         destination.setTextDecorationThickness(blendedTextDecorationThickness());

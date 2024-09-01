@@ -45,8 +45,8 @@ struct Length;
 
 // Max/min values for CSS, needs to slightly smaller/larger than the true max/min values to allow for rounding without overflowing.
 // Subtract two (rather than one) to allow for values to be converted to float and back without exceeding the LayoutUnit::max.
-const int maxValueForCssLength = intMaxForLayoutUnit - 2;
-const int minValueForCssLength = intMinForLayoutUnit + 2;
+constexpr float maxValueForCssLength = static_cast<float>(intMaxForLayoutUnit - 2);
+constexpr float minValueForCssLength = static_cast<float>(intMinForLayoutUnit + 2);
 
 // Dimension calculations are imprecise, often resulting in values of e.g.
 // 44.99998. We need to round if we're really close to the next integer value.

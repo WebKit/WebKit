@@ -625,9 +625,19 @@ template<> unsigned CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversi
     return roundForImpreciseConversion<unsigned>(resolveAsLengthDouble(conversionData));
 }
 
+template<> float CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
+{
+    return narrowPrecisionToFloat(resolveAsLengthDouble(conversionData));
+}
+
+template<> double CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
+{
+    return resolveAsLengthDouble(conversionData);
+}
+
 template<> Length CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return Length(clampTo<double>(resolveAsLengthDouble(conversionData), minValueForCssLength, maxValueForCssLength), LengthType::Fixed);
+    return Length(clampTo<float>(resolveAsLength(conversionData), minValueForCssLength, maxValueForCssLength), LengthType::Fixed);
 }
 
 template<> short CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
@@ -638,16 +648,6 @@ template<> short CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionD
 template<> unsigned short CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
     return roundForImpreciseConversion<unsigned short>(resolveAsLengthDouble(conversionData));
-}
-
-template<> float CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
-{
-    return narrowPrecisionToFloat(resolveAsLengthDouble(conversionData));
-}
-
-template<> double CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
-{
-    return resolveAsLengthDouble(conversionData);
 }
 
 template<> LayoutUnit CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
