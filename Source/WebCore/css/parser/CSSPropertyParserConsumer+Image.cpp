@@ -43,6 +43,7 @@
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+Color.h"
 #include "CSSPropertyParserConsumer+ColorInterpolationMethod.h"
+#include "CSSPropertyParserConsumer+Filter.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Length.h"
 #include "CSSPropertyParserConsumer+LengthDefinitions.h"
@@ -935,7 +936,7 @@ static RefPtr<CSSValue> consumeFilterImage(CSSParserTokenRange& args, const CSSP
     auto imageValueOrNone = consumeImageOrNone(args, context);
     if (!imageValueOrNone || !consumeCommaIncludingWhitespace(args))
         return nullptr;
-    auto filterValue = consumeFilter(args, context, AllowedFilterFunctions::PixelFilters);
+    auto filterValue = consumeFilterValueListOrNone(args, context, AllowedFilterFunctions::PixelFilters);
     if (!filterValue)
         return nullptr;
     return CSSFilterImageValue::create(imageValueOrNone.releaseNonNull(), filterValue.releaseNonNull());

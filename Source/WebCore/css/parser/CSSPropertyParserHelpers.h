@@ -47,28 +47,17 @@ namespace WebCore {
 
 class CSSGridLineNamesValue;
 
-
 // When these functions are successful, they will consume all the relevant
 // tokens from the range and also consume any whitespace which follows. When
 // the start of the range doesn't match the type we're looking for, the range
 // will not be modified.
 namespace CSSPropertyParserHelpers {
 
-RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange&);
-
-enum class AllowedFilterFunctions {
-    PixelFilters,
-    ColorFilters
-};
-
-RefPtr<CSSValue> consumeFilter(CSSParserTokenRange&, const CSSParserContext&, AllowedFilterFunctions);
 RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange&, const CSSParserContext&, bool allowInset, bool allowSpread, bool isWebkitBoxShadow = false);
-
 
 RefPtr<CSSPrimitiveValue> consumeCounterStyleName(CSSParserTokenRange&);
 AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange&, CSSParserMode = CSSParserMode::HTMLStandardMode);
 RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange&);
-
 
 RefPtr<CSSValue> consumeAspectRatio(CSSParserTokenRange&);
 

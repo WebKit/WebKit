@@ -37,7 +37,7 @@ class RenderStyle;
 
 namespace Style {
 
-std::optional<FilterOperations> createFilterOperations(const Document&, RenderStyle&, const CSSToLengthConversionData&, const CSSValue&);
+FilterOperations createFilterOperations(const Document&, RenderStyle&, const CSSToLengthConversionData&, const CSSValue&);
 
 } // namespace Style
 

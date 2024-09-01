@@ -36,9 +36,9 @@
 #include "CSSFilter.h"
 #include "CSSFontSelector.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertyParserConsumer+Filter.h"
 #include "CSSPropertyParserConsumer+Font.h"
 #include "CSSPropertyParserHelpers.h"
-#include "CSSPropertyParserWorkerSafe.h"
 #include "DocumentInlines.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
@@ -99,8 +99,8 @@ std::optional<FilterOperations> CanvasRenderingContext2D::setFilterStringWithout
     if (!style)
         return std::nullopt;
 
-    auto parserMode = strictToCSSParserMode(!usesCSSCompatibilityParseMode());
-    return CSSPropertyParserWorkerSafe::parseFilterString(document, const_cast<RenderStyle&>(*style), filterString, parserMode);
+    auto parserContext = CSSParserContext(strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
+    return CSSPropertyParserHelpers::parseFilterValueListOrNoneRaw(filterString, parserContext, CSSPropertyParserHelpers::AllowedFilterFunctions::PixelFilters, document, const_cast<RenderStyle&>(*style));
 }
 
 RefPtr<Filter> CanvasRenderingContext2D::createFilter(const FloatRect& bounds) const

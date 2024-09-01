@@ -7241,8 +7241,8 @@
                 "aliases": [
                     "-webkit-filter"
                 ],
-                "conditional-converter": "FilterOperations",
-                "parser-function": "consumeFilter",
+                "converter": "FilterOperations",
+                "parser-function": "consumeFilterValueListOrNone",
                 "parser-function-requires-context": true,
                 "parser-function-requires-additional-parameters": ["AllowedFilterFunctions::PixelFilters"],
                 "parser-grammar-unused": "none | <filter-value-list>",
@@ -7257,8 +7257,8 @@
             "inherited": true,
             "codegen-properties": {
                 "settings-flag": "colorFilterEnabled",
-                "conditional-converter": "FilterOperations",
-                "parser-function": "consumeFilter",
+                "converter": "FilterOperations",
+                "parser-function": "consumeFilterValueListOrNone",
                 "parser-function-requires-context": true,
                 "parser-function-requires-additional-parameters": ["AllowedFilterFunctions::ColorFilters"],
                 "parser-grammar-unused": "none | <color-filter-value-list>",
@@ -7296,7 +7296,7 @@
                 "parser-function-requires-additional-parameters": ["isContentPositionKeyword"],
                 "parser-grammar-unused": "normal | <baseline-position> | <content-distribution> | [ <overflow-position>? <content-position> ]",
                 "parser-grammar-unused-reason": "Needs support for ordered groups, '&&' groups and optionals",
-                "comment": "Alternate defintion in css-flexbox - flex-start | flex-end | center | space-between | space-around | stretch"
+                "comment": "Alternate definition in css-flexbox - flex-start | flex-end | center | space-between | space-around | stretch"
             },
             "specification": {
                 "category": "css-align",
@@ -7329,7 +7329,7 @@
                 "parser-function": "consumeAlignItems",
                 "parser-grammar-unused": "normal | stretch | <baseline-position> | [ <overflow-position>? <self-position> ]",
                 "parser-grammar-unused-reason": "Needs support for ordered groups, '&&' groups and optionals.",
-                "comment": "Alternate defintion in css-flexbox - flex-start | flex-end | center | baseline | stretch"
+                "comment": "Alternate definition in css-flexbox - flex-start | flex-end | center | baseline | stretch"
             },
             "specification": {
                 "category": "css-align",
@@ -7365,7 +7365,7 @@
                 "parser-function-requires-additional-parameters": ["isSelfPositionKeyword"],
                 "parser-grammar-unused": "auto | normal | stretch | <baseline-position> | [ <overflow-position>? <self-position> ]",
                 "parser-grammar-unused-reason": "Needs support for ordered groups, '&&' groups and optionals.",
-                "comment": "Alternate defintion in css-flexbox - auto | flex-start | flex-end | center | baseline | stretch"
+                "comment": "Alternate definition in css-flexbox - auto | flex-start | flex-end | center | baseline | stretch"
             },
             "specification": {
                 "category": "css-align",
@@ -7501,7 +7501,7 @@
                 "parser-function": "consumeJustifyContent",
                 "parser-grammar-unused": "normal | <content-distribution> | [ <overflow-position>? [ <content-position> | left | right ] ]",
                 "parser-grammar-unused-reason": "Needs support for ordered groups and optionals.",
-                "comment": "Alternate defintion in css-flexbox - flex-start | flex-end | center | space-between | space-around"
+                "comment": "Alternate definition in css-flexbox - flex-start | flex-end | center | space-between | space-around"
             },
             "specification": {
                 "category": "css-align",
@@ -7512,7 +7512,7 @@
             "codegen-properties": {
                 "cascade-alias": "backdrop-filter",
                 "skip-builder": true,
-                "parser-function": "consumeFilter",
+                "parser-function": "consumeFilterValueListOrNone",
                 "parser-function-requires-context": true,
                 "parser-function-requires-additional-parameters": ["AllowedFilterFunctions::PixelFilters"],
                 "parser-grammar-unused": "none | <filter-value-list>",
@@ -7528,8 +7528,8 @@
         },
         "backdrop-filter": {
             "codegen-properties": {
-                "conditional-converter": "FilterOperations",
-                "parser-function": "consumeFilter",
+                "converter": "FilterOperations",
+                "parser-function": "consumeFilterValueListOrNone",
                 "parser-function-requires-context": true,
                 "parser-function-requires-additional-parameters": ["AllowedFilterFunctions::PixelFilters"],
                 "parser-grammar-unused": "none | <filter-value-list>",

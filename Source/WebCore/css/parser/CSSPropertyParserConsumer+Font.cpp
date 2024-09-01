@@ -134,7 +134,7 @@ static std::optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange& ran
     }
 }
 
-RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange& range)
+static RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange& range)
 {
     if (auto result = consumeFontWeightNumberRaw(range))
         return CSSPrimitiveValue::create(*result);

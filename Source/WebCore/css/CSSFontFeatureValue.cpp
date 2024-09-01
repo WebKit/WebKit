@@ -46,7 +46,7 @@ String CSSFontFeatureValue::customCSSText() const
         builder.append(c);
     builder.append('"');
     // Omit the value if it's `1` as `1` is implied by default.
-    if (m_value->isCalculated() || m_value->resolveAsIntegerNoConversionDataRequired() != 1)
+    if (m_value->resolveAsIntegerIfNotCalculated() != 1)
         builder.append(' ', m_value->customCSSText());
     return builder.toString();
 }
