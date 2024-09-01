@@ -164,7 +164,7 @@ void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node* newNode)
     postNotification(newNode, AXFocusedUIElementChanged);
 }
 
-void AXObjectCache::handleScrolledToAnchor(const Node*)
+void AXObjectCache::handleScrolledToAnchor(const Node&)
 {
 }
 

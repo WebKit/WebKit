@@ -61,7 +61,7 @@ class IntPoint;
 class IntSize;
 class ScrollableArea;
 
-bool nodeHasPresentationRole(Node*);
+bool nodeHasPresentationRole(Node&);
 
 class AccessibilityObject : public AXCoreObject, public CanMakeWeakPtr<AccessibilityObject> {
 public:
@@ -309,7 +309,7 @@ public:
 
     // This function checks if the object should be ignored when there's a modal dialog displayed.
     virtual bool ignoredFromModalPresence() const;
-    bool isModalDescendant(Node*) const;
+    bool isModalDescendant(Node&) const;
     bool isModalNode() const override;
 
     bool supportsSetSize() const override;
@@ -557,7 +557,7 @@ public:
     std::optional<SimpleRange> visibleCharacterRange() const override;
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override { return VisiblePositionRange(); }
 
-    static bool replacedNodeNeedsCharacter(Node* replacedNode);
+    static bool replacedNodeNeedsCharacter(Node& replacedNode);
 
     VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const override;
     VisiblePositionRange leftLineVisiblePositionRange(const VisiblePosition&) const override;

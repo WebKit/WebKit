@@ -1662,16 +1662,16 @@ AXTextMarkerRange AccessibilityObject::selectedTextMarkerRange()
 }
 #endif
 
-bool AccessibilityObject::replacedNodeNeedsCharacter(Node* replacedNode)
+bool AccessibilityObject::replacedNodeNeedsCharacter(Node& replacedNode)
 {
     // we should always be given a rendered node and a replaced node, but be safe
     // replaced nodes are either attachments (widgets) or images
-    if (!replacedNode || !isRendererReplacedElement(replacedNode->renderer()) || replacedNode->isTextNode())
+    if (!isRendererReplacedElement(replacedNode.renderer()) || replacedNode.isTextNode())
         return false;
 
     // create an AX object, but skip it if it is not supposed to be seen
-    if (auto* cache = replacedNode->renderer()->document().axObjectCache()) {
-        if (auto* axObject = cache->getOrCreate(*replacedNode))
+    if (CheckedPtr cache = replacedNode.renderer()->document().axObjectCache()) {
+        if (RefPtr axObject = cache->getOrCreate(replacedNode))
             return !axObject->isIgnored();
     }
 
@@ -1747,7 +1747,7 @@ String AccessibilityObject::stringForRange(const SimpleRange& range) const
                 builder.append(listMarkerTextForNodeAndPosition(it.node(), makeDeprecatedLegacyPosition(it.range().start)));
             it.appendTextToStringBuilder(builder);
         } else {
-            if (replacedNodeNeedsCharacter(it.node()))
+            if (replacedNodeNeedsCharacter(*it.node()))
                 builder.append(objectReplacementCharacter);
         }
     }
@@ -1771,7 +1771,7 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
             it.appendTextToStringBuilder(builder);
         } else {
             // locate the node and starting offset for this replaced range
-            if (replacedNodeNeedsCharacter(it.node()))
+            if (replacedNodeNeedsCharacter(*it.node()))
                 builder.append(objectReplacementCharacter);
         }
     }
@@ -2393,17 +2393,14 @@ AccessibilityCurrentState AccessibilityObject::currentState() const
     return AccessibilityCurrentState::True;
 }
 
-bool AccessibilityObject::isModalDescendant(Node* modalNode) const
+bool AccessibilityObject::isModalDescendant(Node& modalNode) const
 {
-    Node* node = this->node();
-    if (!modalNode || !node)
-        return false;
-    
+    RefPtr node = this->node();
     // ARIA 1.1 aria-modal, indicates whether an element is modal when displayed.
     // For the decendants of the modal object, they should also be considered as aria-modal=true.
     // Determine descendancy by iterating the composed tree which inherently accounts for shadow roots and slots.
-    for (auto* ancestor = this->node(); ancestor; ancestor = ancestor->parentInComposedTree()) {
-        if (ancestor == modalNode)
+    for (auto* ancestor = node.get(); ancestor; ancestor = ancestor->parentInComposedTree()) {
+        if (ancestor == &modalNode)
             return true;
     }
     return false;
@@ -2436,7 +2433,7 @@ bool AccessibilityObject::ignoredFromModalPresence() const
     if (modalNode->document().frame() != this->frame())
         return false;
     
-    return !isModalDescendant(modalNode);
+    return !isModalDescendant(*modalNode);
 }
 
 bool AccessibilityObject::hasTagName(const QualifiedName& tagName) const
@@ -2877,9 +2874,9 @@ String AccessibilityObject::roleDescription() const
     return { };
 }
 
-bool nodeHasPresentationRole(Node* node)
+bool nodeHasPresentationRole(Node& node)
 {
-    return nodeHasRole(node, "presentation"_s) || nodeHasRole(node, "none"_s);
+    return nodeHasRole(&node, "presentation"_s) || nodeHasRole(&node, "none"_s);
 }
     
 bool AccessibilityObject::supportsPressAction() const
@@ -2894,7 +2891,7 @@ bool AccessibilityObject::supportsPressAction() const
         return false;
 
     // [Bug: 133613] Heuristic: If the action element is presentational, we shouldn't expose press as a supported action.
-    if (nodeHasPresentationRole(actionElement.get()))
+    if (nodeHasPresentationRole(*actionElement))
         return false;
 
     auto* cache = axObjectCache();

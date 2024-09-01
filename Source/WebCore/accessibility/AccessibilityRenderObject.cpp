@@ -1074,10 +1074,8 @@ static bool webAreaIsPresentational(RenderObject* renderer)
     if (!renderer || !is<RenderView>(*renderer))
         return false;
     
-    if (auto ownerElement = renderer->document().ownerElement())
-        return nodeHasPresentationRole(ownerElement);
-    
-    return false;
+    auto* ownerElement = renderer->document().ownerElement();
+    return ownerElement && nodeHasPresentationRole(*ownerElement);
 }
 
 bool AccessibilityRenderObject::computeIsIgnored() const

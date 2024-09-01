@@ -163,11 +163,11 @@ std::optional<BoundaryPoint> AXTextMarker::boundaryPoint() const
     CharacterOffset characterOffset = *this;
     if (characterOffset.isNull())
         return std::nullopt;
+    // Guaranteed not to be null by checking Character::isNull().
+    RefPtr node = characterOffset.node;
 
     int offset = characterOffset.startIndex + characterOffset.offset;
-    RefPtr node = characterOffset.node;
-    ASSERT(node);
-    if (AccessibilityObject::replacedNodeNeedsCharacter(node.get()) || (node && node->hasTagName(HTMLNames::brTag)))
+    if (AccessibilityObject::replacedNodeNeedsCharacter(*node) || node->hasTagName(HTMLNames::brTag))
         node = nodeAndOffsetForReplacedNode(*node, offset, characterOffset.offset);
     if (!node)
         return std::nullopt;

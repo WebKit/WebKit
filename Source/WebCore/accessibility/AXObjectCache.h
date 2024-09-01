@@ -391,7 +391,7 @@ public:
     void deferModalChange(Element&);
     void deferMenuListValueChange(Element*);
     void deferNodeAddedOrRemoved(Node*);
-    void handleScrolledToAnchor(const Node* anchorNode);
+    void handleScrolledToAnchor(const Node& anchorNode);
     void onScrollbarUpdate(ScrollView&);
     void onRemoteFrameInitialized(AXRemoteFrame&);
 
@@ -399,7 +399,7 @@ public:
     Node* modalNode();
 
     void deferAttributeChangeIfNeeded(Element&, const QualifiedName&, const AtomString&, const AtomString&);
-    void recomputeIsIgnored(RenderObject*);
+    void recomputeIsIgnored(RenderObject&);
     void recomputeIsIgnored(Node*);
 
     static void enableAccessibility();

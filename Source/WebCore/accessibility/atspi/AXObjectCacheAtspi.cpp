@@ -274,7 +274,7 @@ void AXObjectCache::platformHandleFocusedUIElementChanged(Node* oldFocusedNode, 
     }
 }
 
-void AXObjectCache::handleScrolledToAnchor(const Node*)
+void AXObjectCache::handleScrolledToAnchor(const Node&)
 {
 }
 
