@@ -999,6 +999,8 @@ http/tests/workers/service/openwindow-from-notification-click.html [ Failure ]
 http/tests/workers/service/service-worker-download-body.https.html [ Failure ]
 http/tests/workers/service/service-worker-download-stream.https.html [ Failure ]
 http/tests/workers/service/shownotification-denied.html [ Failure ]
+
+http/wpt/service-workers/fetch-service-worker-preload-download.https.html [ Failure ]
 http/wpt/service-workers/fetch-service-worker-preload-download-through-direct-preload.https.html [ Failure ]
 http/wpt/service-workers/fetch-service-worker-preload-use-download-and-clone.https.html [ Failure ]
 http/wpt/service-workers/fetch-service-worker-preload-use-download.https.html [ Failure ]
