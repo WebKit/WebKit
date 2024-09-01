@@ -65,8 +65,8 @@ public:
     WebSharedWorkerServerConnection(NetworkProcess&, WebSharedWorkerServer&, IPC::Connection&, WebCore::ProcessIdentifier);
     ~WebSharedWorkerServerConnection();
 
-    WebSharedWorkerServer& server() { return m_server; }
-    const WebSharedWorkerServer& server() const { return m_server; }
+    WebSharedWorkerServer& server();
+    const WebSharedWorkerServer& server() const;
 
     PAL::SessionID sessionID();
     NetworkSession* session();
@@ -91,7 +91,7 @@ private:
 
     Ref<IPC::Connection> m_contentConnection;
     Ref<NetworkProcess> m_networkProcess;
-    WebSharedWorkerServer& m_server;
+    CheckedRef<WebSharedWorkerServer> m_server;
     WebCore::ProcessIdentifier m_webProcessIdentifier;
 };
 

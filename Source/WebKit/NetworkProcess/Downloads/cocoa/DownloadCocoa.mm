@@ -42,7 +42,7 @@ void Download::resume(std::span<const uint8_t> resumeData, const String& path, S
     if (m_sandboxExtension)
         m_sandboxExtension->consume();
 
-    auto* networkSession = m_downloadManager.client().networkSession(m_sessionID);
+    auto* networkSession = m_downloadManager->client().networkSession(m_sessionID);
     if (!networkSession) {
         WTFLogAlways("Could not find network session with given session ID");
         return;

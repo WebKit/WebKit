@@ -56,7 +56,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
         localhostAlias = WebCore::CurlStream::LocalhostAlias::Enable;
 
     m_streamID = m_scheduler.createStream(request.url(), *this, WebCore::CurlStream::ServerTrustEvaluation::Enable, localhostAlias);
-    m_channel.didSendHandshakeRequest(WebCore::ResourceRequest(m_request));
+    m_channel->didSendHandshakeRequest(WebCore::ResourceRequest(m_request));
 }
 
 WebSocketTask::~WebSocketTask()
@@ -107,7 +107,7 @@ void WebSocketTask::resume()
 
 NetworkSessionCurl* WebSocketTask::networkSession()
 {
-    return static_cast<NetworkSessionCurl*>(m_channel.session());
+    return static_cast<NetworkSessionCurl*>(m_channel->session());
 }
 
 void WebSocketTask::didOpen(WebCore::CurlStreamID)
@@ -180,14 +180,14 @@ void WebSocketTask::didReceiveData(WebCore::CurlStreamID, const WebCore::SharedB
             {
                 String message = data.size() ? String::fromUTF8(data) : emptyString();
                 if (!message.isNull())
-                    m_channel.didReceiveText(message);
+                    m_channel->didReceiveText(message);
                 else
                     didFail("Could not decode a text frame as UTF-8."_s);
             }
             break;
 
         case WebCore::WebSocketFrame::OpCodeBinary:
-            m_channel.didReceiveBinaryData(data);
+            m_channel->didReceiveBinaryData(data);
             break;
 
         case WebCore::WebSocketFrame::OpCodeClose:
@@ -313,8 +313,8 @@ Expected<bool, String> WebSocketTask::validateOpeningHandshake()
     m_state = State::Opened;
     m_didCompleteOpeningHandshake = true;
 
-    m_channel.didConnect(m_handshake->serverWebSocketProtocol(), m_handshake->acceptedExtensions());
-    m_channel.didReceiveHandshakeResponse(WebCore::ResourceResponse(m_handshake->serverHandshakeResponse()));
+    m_channel->didConnect(m_handshake->serverWebSocketProtocol(), m_handshake->acceptedExtensions());
+    m_channel->didReceiveHandshakeResponse(WebCore::ResourceResponse(m_handshake->serverHandshakeResponse()));
 
     m_handshake = nullptr;
     return true;
@@ -457,7 +457,7 @@ void WebSocketTask::didFail(String&& reason)
     m_hasContinuousFrame = false;
     m_continuousFrameData.clear();
 
-    m_channel.didReceiveMessageError(WTFMove(reason));
+    m_channel->didReceiveMessageError(WTFMove(reason));
     didClose(WebCore::ThreadableWebSocketChannel::CloseEventCode::CloseEventCodeAbnormalClosure, { });
 }
 
@@ -474,7 +474,7 @@ void WebSocketTask::didClose(int32_t code, const String& reason)
         if (!weakThis)
             return;
 
-        m_channel.didClose(code, reason);
+        m_channel->didClose(code, reason);
     });
 }
 

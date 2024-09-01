@@ -297,22 +297,22 @@ void IDBStorageManager::openDBRequestCancelled(const WebCore::IDBOpenRequestData
 
 void IDBStorageManager::registerConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection& connection)
 {
-    m_registry.registerConnection(connection);
+    m_registry->registerConnection(connection);
 }
 
 void IDBStorageManager::unregisterConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection& connection)
 {
-    m_registry.unregisterConnection(connection);
+    m_registry->unregisterConnection(connection);
 }
 
 void IDBStorageManager::registerTransaction(WebCore::IDBServer::UniqueIDBDatabaseTransaction& transaction)
 {
-    m_registry.registerTransaction(transaction);
+    m_registry->registerTransaction(transaction);
 }
 
 void IDBStorageManager::unregisterTransaction(WebCore::IDBServer::UniqueIDBDatabaseTransaction& transaction)
 {
-    m_registry.unregisterTransaction(transaction);
+    m_registry->unregisterTransaction(transaction);
 }
 
 std::unique_ptr<WebCore::IDBServer::IDBBackingStore> IDBStorageManager::createBackingStore(const WebCore::IDBDatabaseIdentifier& identifier)

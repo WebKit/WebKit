@@ -45,6 +45,8 @@ DownloadManager::DownloadManager(Client& client)
 {
 }
 
+DownloadManager::~DownloadManager() = default;
+
 void DownloadManager::startDownload(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, const String& suggestedName)
 {
     auto* networkSession = client().networkSession(sessionID);

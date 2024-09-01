@@ -40,6 +40,8 @@ typedef HashMap<DownloadID, std::unique_ptr<Download>> DownloadMap;
 class DownloadMap {
 public:
     typedef HashMap<DownloadID, std::unique_ptr<Download>> DownloadMapType;
+    DownloadMap();
+    ~DownloadMap();
 
     Download* get(DownloadID) const;
     bool isEmpty() const;

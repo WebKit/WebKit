@@ -151,7 +151,7 @@ enum class CacheOption : uint8_t {
 #endif
 };
 
-class Cache : public RefCounted<Cache> {
+class Cache : public RefCounted<Cache>, public CanMakeWeakPtr<Cache> {
 public:
     ~Cache();
     static RefPtr<Cache> open(NetworkProcess&, const String& cachePath, OptionSet<CacheOption>, PAL::SessionID);
@@ -206,6 +206,7 @@ public:
     void browsingContextRemoved(WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier);
 
     NetworkProcess& networkProcess() { return m_networkProcess.get(); }
+    Ref<NetworkProcess> protectedNetworkProcess();
     PAL::SessionID sessionID() const { return m_sessionID; }
     const String& storageDirectory() const { return m_storageDirectory; }
     void fetchData(bool shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>&&)>&&);

@@ -72,7 +72,7 @@ private:
 
     WebCore::LibWebRTCSocketIdentifier m_identifier;
     Type m_type;
-    NetworkRTCProvider& m_rtcProvider;
+    CheckedRef<NetworkRTCProvider> m_rtcProvider;
     std::unique_ptr<rtc::AsyncPacketSocket> m_socket;
     Ref<IPC::Connection> m_connection;
     int m_sendError { 0 };

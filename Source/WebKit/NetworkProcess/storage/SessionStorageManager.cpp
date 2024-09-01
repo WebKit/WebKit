@@ -72,13 +72,13 @@ void SessionStorageManager::removeNamespace(StorageNamespaceIdentifier namespace
         return;
 
     m_storageAreas.remove(identifier);
-    m_registry.unregisterStorageArea(identifier);
+    m_registry->unregisterStorageArea(identifier);
 }
 
 StorageAreaIdentifier SessionStorageManager::addStorageArea(std::unique_ptr<MemoryStorageArea> storageArea, StorageNamespaceIdentifier namespaceIdentifier)
 {
     auto identifier = storageArea->identifier();
-    m_registry.registerStorageArea(identifier, *storageArea);
+    m_registry->registerStorageArea(identifier, *storageArea);
     m_storageAreasByNamespace.add(namespaceIdentifier, identifier);
     m_storageAreas.add(identifier, WTFMove(storageArea));
 

@@ -61,9 +61,10 @@ class PendingDownload;
 
 enum class CallDownloadDidStart : bool { No, Yes };
 
-class DownloadManager {
+class DownloadManager : public CanMakeCheckedPtr<DownloadManager> {
     WTF_MAKE_NONCOPYABLE(DownloadManager);
-
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DownloadManager);
 public:
     class Client {
     public:
@@ -88,6 +89,7 @@ public:
     };
 
     explicit DownloadManager(Client&);
+    ~DownloadManager();
 
     void startDownload(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain>, const String& suggestedName = { });
     void dataTaskBecameDownloadTask(DownloadID, std::unique_ptr<Download>&&);

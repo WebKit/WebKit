@@ -35,6 +35,8 @@ namespace WebKit {
 
 IDBStorageRegistry::IDBStorageRegistry() = default;
 
+IDBStorageRegistry::~IDBStorageRegistry() = default;
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBStorageRegistry);
 
 WebCore::IDBServer::IDBConnectionToClient& IDBStorageRegistry::ensureConnectionToClient(IPC::Connection::UniqueID connection, WebCore::IDBConnectionIdentifier identifier)

@@ -112,7 +112,7 @@ private:
     void suspendIfNeeded();
     void resumeIfNeeded();
 
-    WebSharedWorkerServer& m_server;
+    CheckedRef<WebSharedWorkerServer> m_server;
     WebCore::SharedWorkerKey m_key;
     WebCore::WorkerOptions m_workerOptions;
     ListHashSet<Object> m_sharedWorkerObjects;

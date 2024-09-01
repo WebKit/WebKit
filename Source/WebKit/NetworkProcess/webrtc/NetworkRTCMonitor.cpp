@@ -415,8 +415,18 @@ void NetworkManager::onGatheredNetworks(RTCNetwork::IPAddress&& ipv4, RTCNetwork
     });
 }
 
+NetworkRTCMonitor::NetworkRTCMonitor(NetworkRTCProvider& rtcProvider)
+    : m_rtcProvider(rtcProvider)
+{
+}
+
 NetworkRTCMonitor::~NetworkRTCMonitor()
 {
+}
+
+NetworkRTCProvider& NetworkRTCMonitor::rtcProvider()
+{
+    return m_rtcProvider.get();
 }
 
 const RTCNetwork::IPAddress& NetworkRTCMonitor::ipv4() const
@@ -444,18 +454,18 @@ void NetworkRTCMonitor::stopUpdating()
 void NetworkRTCMonitor::onNetworksChanged(const Vector<RTCNetwork>& networkList, const RTCNetwork::IPAddress& ipv4, const RTCNetwork::IPAddress& ipv6)
 {
     RTC_RELEASE_LOG("onNetworksChanged sent");
-    m_rtcProvider.connection().send(Messages::WebRTCMonitor::NetworksChanged(networkList, ipv4, ipv6), 0);
+    m_rtcProvider->protectedConnection()->send(Messages::WebRTCMonitor::NetworksChanged(networkList, ipv4, ipv6), 0);
 }
 
 
 void NetworkRTCMonitor::ref()
 {
-    m_rtcProvider.ref();
+    m_rtcProvider->ref();
 }
 
 void NetworkRTCMonitor::deref()
 {
-    m_rtcProvider.deref();
+    m_rtcProvider->deref();
 }
 
 } // namespace WebKit

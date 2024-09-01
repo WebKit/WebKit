@@ -269,11 +269,11 @@ void CacheStorageManager::reset()
     }
 
     for (auto& cache : m_caches)
-        m_registry.unregisterCache(cache->identifier());
+        m_registry->unregisterCache(cache->identifier());
     m_caches.clear();
 
     for (auto& identifier : m_removedCaches.keys())
-        m_registry.unregisterCache(identifier);
+        m_registry->unregisterCache(identifier);
     m_removedCaches.clear();
 
     m_cacheRefConnections.clear();
@@ -295,7 +295,7 @@ bool CacheStorageManager::initializeCaches()
     m_isInitialized = true;
     for (auto& [name, uniqueName] : *cachesList) {
         auto cache = makeUnique<CacheStorageCache>(*this, name, uniqueName, m_path, m_queue.copyRef());
-        m_registry.registerCache(cache->identifier(), *cache.get());
+        m_registry->registerCache(cache->identifier(), *cache.get());
         m_caches.append(WTFMove(cache));
     }
 
@@ -322,7 +322,7 @@ void CacheStorageManager::openCache(const String& name, WebCore::DOMCacheEngine:
 
     makeDirty();
     auto& cache = m_caches.last();
-    m_registry.registerCache(cache->identifier(), *cache);
+    m_registry->registerCache(cache->identifier(), *cache);
     cache->open(WTFMove(callback));
 }
 
@@ -493,7 +493,7 @@ void CacheStorageManager::removeUnusedCache(WebCore::DOMCacheIdentifier cacheIde
 {
     if (auto cache = m_removedCaches.take(cacheIdentifier)) {
         cache->removeAllRecords();
-        m_registry.unregisterCache(cacheIdentifier);
+        m_registry->unregisterCache(cacheIdentifier);
         return;
     }
 

@@ -116,7 +116,7 @@ NetworkRTCUDPSocketCocoa::~NetworkRTCUDPSocketCocoa()
 void NetworkRTCUDPSocketCocoa::close()
 {
     m_connections->close();
-    m_rtcProvider.takeSocket(m_identifier);
+    Ref { m_rtcProvider.get() }->takeSocket(m_identifier);
 }
 
 void NetworkRTCUDPSocketCocoa::setOption(int option, int value)

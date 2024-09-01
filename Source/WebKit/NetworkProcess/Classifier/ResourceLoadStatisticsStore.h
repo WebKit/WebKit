@@ -204,7 +204,7 @@ public:
 
     void didCreateNetworkProcess();
 
-    const WebResourceLoadStatisticsStore& store() const { return m_store; }
+    const WebResourceLoadStatisticsStore& store() const { return m_store.get(); }
 
     bool domainIDExistsInDatabase(int);
     bool observedDomainNavigationWithLinkDecoration(int);
@@ -215,7 +215,7 @@ public:
     static void interruptAllDatabases();
 
 private:
-    WebResourceLoadStatisticsStore& store() { return m_store; }
+    WebResourceLoadStatisticsStore& store() { return m_store.get(); }
 
     struct Parameters {
         size_t pruneEntriesDownTo { 800 };
@@ -352,7 +352,7 @@ private:
     void deleteTable(StringView);
     void destroyStatements() final;
 
-    WebResourceLoadStatisticsStore& m_store;
+    CheckedRef<WebResourceLoadStatisticsStore> m_store;
     Ref<SuspendableWorkQueue> m_workQueue;
 #if HAVE(CORE_PREDICTION)
     ResourceLoadStatisticsClassifierCocoa m_resourceLoadStatisticsClassifier;

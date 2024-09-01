@@ -45,7 +45,7 @@ public:
     void timerFired();
 
 private:
-    Download& m_download;
+    CheckedRef<Download> m_download;
 
     double measuredThroughputRate() const;
     uint32_t testSpeedMultiplier() const;

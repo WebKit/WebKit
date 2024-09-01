@@ -70,7 +70,7 @@ private:
     void connectionClosedForTransientStorageArea(IPC::Connection::UniqueID);
 
     String m_path;
-    StorageAreaRegistry& m_registry;
+    CheckedRef<StorageAreaRegistry> m_registry;
     std::unique_ptr<MemoryStorageArea> m_transientStorageArea;
     std::unique_ptr<StorageAreaBase> m_localStorageArea;
 };

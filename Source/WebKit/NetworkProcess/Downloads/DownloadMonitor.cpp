@@ -95,14 +95,14 @@ void DownloadMonitor::downloadReceivedBytes(uint64_t bytesReceived)
 
 void DownloadMonitor::applicationWillEnterForeground()
 {
-    DOWNLOAD_MONITOR_RELEASE_LOG("applicationWillEnterForeground (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
+    DOWNLOAD_MONITOR_RELEASE_LOG("applicationWillEnterForeground (id = %" PRIu64 ")", m_download->downloadID().toUInt64());
     m_timer.stop();
     m_interval = 0;
 }
 
 void DownloadMonitor::applicationDidEnterBackground()
 {
-    DOWNLOAD_MONITOR_RELEASE_LOG("applicationDidEnterBackground (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
+    DOWNLOAD_MONITOR_RELEASE_LOG("applicationDidEnterBackground (id = %" PRIu64 ")", m_download->downloadID().toUInt64());
     ASSERT(!m_timer.isActive());
     ASSERT(!m_interval);
     m_timer.startOneShot(throughputIntervals[0].time / testSpeedMultiplier());
@@ -110,7 +110,7 @@ void DownloadMonitor::applicationDidEnterBackground()
 
 uint32_t DownloadMonitor::testSpeedMultiplier() const
 {
-    return m_download.testSpeedMultiplier();
+    return m_download->testSpeedMultiplier();
 }
 
 void DownloadMonitor::timerFired()
@@ -119,13 +119,13 @@ void DownloadMonitor::timerFired()
 
     RELEASE_ASSERT(m_interval < std::size(throughputIntervals));
     if (measuredThroughputRate() < throughputIntervals[m_interval].bytesPerSecond) {
-        DOWNLOAD_MONITOR_RELEASE_LOG("timerFired: cancelling download (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
-        m_download.cancel([](auto) { }, Download::IgnoreDidFailCallback::No);
+        DOWNLOAD_MONITOR_RELEASE_LOG("timerFired: cancelling download (id = %" PRIu64 ")", m_download->downloadID().toUInt64());
+        m_download->cancel([](auto) { }, Download::IgnoreDidFailCallback::No);
     } else if (m_interval + 1 < std::size(throughputIntervals)) {
-        DOWNLOAD_MONITOR_RELEASE_LOG("timerFired: sufficient throughput rate (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
+        DOWNLOAD_MONITOR_RELEASE_LOG("timerFired: sufficient throughput rate (id = %" PRIu64 ")", m_download->downloadID().toUInt64());
         m_timer.startOneShot(timeUntilNextInterval(m_interval++) / testSpeedMultiplier());
     } else
-        DOWNLOAD_MONITOR_RELEASE_LOG("timerFired: Download reached threshold to not be terminated (id = %" PRIu64 ")", m_download.downloadID().toUInt64());
+        DOWNLOAD_MONITOR_RELEASE_LOG("timerFired: Download reached threshold to not be terminated (id = %" PRIu64 ")", m_download->downloadID().toUInt64());
 }
 
 } // namespace WebKit

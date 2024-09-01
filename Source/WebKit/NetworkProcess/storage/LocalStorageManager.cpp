@@ -162,7 +162,7 @@ void LocalStorageManager::connectionClosedForLocalStorageArea(IPC::Connection::U
     if (is<MemoryStorageArea>(*m_localStorageArea) && !m_localStorageArea->isEmpty())
         return;
 
-    m_registry.unregisterStorageArea(m_localStorageArea->identifier());
+    m_registry->unregisterStorageArea(m_localStorageArea->identifier());
     m_localStorageArea = nullptr;
 }
 
@@ -175,7 +175,7 @@ void LocalStorageManager::connectionClosedForTransientStorageArea(IPC::Connectio
     if (m_transientStorageArea->hasListeners() || !m_transientStorageArea->isEmpty())
         return;
 
-    m_registry.unregisterStorageArea(m_transientStorageArea->identifier());
+    m_registry->unregisterStorageArea(m_transientStorageArea->identifier());
     m_transientStorageArea = nullptr;
 }
 
@@ -187,7 +187,7 @@ StorageAreaIdentifier LocalStorageManager::connectToLocalStorageArea(IPC::Connec
         else
             m_localStorageArea = makeUnique<MemoryStorageArea>(origin, StorageAreaBase::StorageType::Local);
 
-        m_registry.registerStorageArea(m_localStorageArea->identifier(), *m_localStorageArea);
+        m_registry->registerStorageArea(m_localStorageArea->identifier(), *m_localStorageArea);
     }
 
     ASSERT(m_path.isEmpty() || is<SQLiteStorageArea>(*m_localStorageArea));
@@ -199,7 +199,7 @@ StorageAreaIdentifier LocalStorageManager::connectToTransientLocalStorageArea(IP
 {
     if (!m_transientStorageArea) {
         m_transientStorageArea = makeUnique<MemoryStorageArea>(origin, StorageAreaBase::StorageType::Local);
-        m_registry.registerStorageArea(m_transientStorageArea->identifier(), *m_transientStorageArea);
+        m_registry->registerStorageArea(m_transientStorageArea->identifier(), *m_transientStorageArea);
     }
 
     ASSERT(is<MemoryStorageArea>(*m_transientStorageArea));

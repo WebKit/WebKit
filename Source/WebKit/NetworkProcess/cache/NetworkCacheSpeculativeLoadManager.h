@@ -90,8 +90,10 @@ private:
     static bool canUsePreloadedEntry(const PreloadedEntry&, const WebCore::ResourceRequest& actualRequest);
     static bool canUsePendingPreload(const SpeculativeLoad&, const WebCore::ResourceRequest& actualRequest);
 
-    Cache& m_cache;
-    Storage& m_storage;
+    Ref<Storage> protectedStorage() const;
+
+    WeakRef<Cache> m_cache;
+    CheckedRef<Storage> m_storage;
 
     class PendingFrameLoad;
     HashMap<GlobalFrameID, RefPtr<PendingFrameLoad>> m_pendingFrameLoads;
