@@ -3950,6 +3950,7 @@ class GenerateCSSPropertyParsing:
                     "CSSPropertyParserConsumer+Resolution.h",
                     "CSSPropertyParserConsumer+String.h",
                     "CSSPropertyParserConsumer+Time.h",
+                    "CSSPropertyParserConsumer+TimingFunction.h",
                     "CSSPropertyParserConsumer+URL.h",
                     "CSSValuePool.h",
                     "DeprecatedGlobalSettings.h",

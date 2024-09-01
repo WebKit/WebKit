@@ -99,7 +99,6 @@ RefPtr<CSSValue> consumeTouchAction(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeKeyframesName(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeSingleTransitionPropertyOrNone(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeSingleTransitionProperty(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeTimingFunction(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeTextShadow(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeBoxShadow(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeWebkitBoxShadow(CSSParserTokenRange&, const CSSParserContext&);

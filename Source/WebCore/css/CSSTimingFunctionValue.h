@@ -30,118 +30,137 @@
 
 namespace WebCore {
 
+// FIXME: This function needs CSSToLengthConversionData to properly resolve calc() values.
+RefPtr<TimingFunction> createTimingFunction(const CSSValue&);
+
 class CSSLinearTimingFunctionValue final : public CSSValue {
 public:
-    static Ref<CSSLinearTimingFunctionValue> create(const Vector<LinearTimingFunction::Point>& points)
-    {
-        return adoptRef(*new CSSLinearTimingFunctionValue(points));
-    }
+    struct LinearStop {
+        struct Length {
+            Ref<CSSPrimitiveValue> input;       // <percentage>
+            RefPtr<CSSPrimitiveValue> extra;    // <percentage>
 
-    const Vector<LinearTimingFunction::Point>& points() const { return m_points; }
+            bool operator==(const Length&) const;
+        };
+
+        Ref<CSSPrimitiveValue> output;          // <number>
+        std::optional<Length> input;
+
+        bool operator==(const LinearStop&) const;
+    };
+
+    static Ref<CSSLinearTimingFunctionValue> create(Vector<LinearStop> stops)
+    {
+        return adoptRef(*new CSSLinearTimingFunctionValue(WTFMove(stops)));
+    }
 
     String customCSSText() const;
-
     bool equals(const CSSLinearTimingFunctionValue&) const;
 
+    // FIXME: This function needs CSSToLengthConversionData to properly resolve calc() values.
+    RefPtr<TimingFunction> createTimingFunction() const;
+
 private:
-    CSSLinearTimingFunctionValue(const Vector<LinearTimingFunction::Point>& points)
+    CSSLinearTimingFunctionValue(Vector<LinearStop>&& stops)
         : CSSValue(LinearTimingFunctionClass)
-        , m_points(points)
+        , m_stops(WTFMove(stops))
     {
-        ASSERT(m_points.isEmpty() || m_points.size() >= 2);
+        ASSERT(m_stops.size() >= 2);
     }
 
-    Vector<LinearTimingFunction::Point> m_points;
+    Vector<LinearStop> m_stops;
 };
 
 class CSSCubicBezierTimingFunctionValue final : public CSSValue {
 public:
-    static Ref<CSSCubicBezierTimingFunctionValue> create(double x1, double y1, double x2, double y2)
+    static Ref<CSSCubicBezierTimingFunctionValue> create(Ref<CSSPrimitiveValue> x1, Ref<CSSPrimitiveValue> y1, Ref<CSSPrimitiveValue> x2, Ref<CSSPrimitiveValue> y2)
     {
-        return adoptRef(*new CSSCubicBezierTimingFunctionValue(x1, y1, x2, y2));
+        return adoptRef(*new CSSCubicBezierTimingFunctionValue(WTFMove(x1), WTFMove(y1), WTFMove(x2), WTFMove(y2)));
     }
 
     String customCSSText() const;
-
-    double x1() const { return m_x1; }
-    double y1() const { return m_y1; }
-    double x2() const { return m_x2; }
-    double y2() const { return m_y2; }
-
     bool equals(const CSSCubicBezierTimingFunctionValue&) const;
 
+    // FIXME: This function needs CSSToLengthConversionData to properly resolve calc() values.
+    RefPtr<TimingFunction> createTimingFunction() const;
+
 private:
-    CSSCubicBezierTimingFunctionValue(double x1, double y1, double x2, double y2)
+    CSSCubicBezierTimingFunctionValue(Ref<CSSPrimitiveValue>&& x1, Ref<CSSPrimitiveValue>&& y1, Ref<CSSPrimitiveValue>&& x2, Ref<CSSPrimitiveValue>&& y2)
         : CSSValue(CubicBezierTimingFunctionClass)
-        , m_x1(x1)
-        , m_y1(y1)
-        , m_x2(x2)
-        , m_y2(y2)
+        , m_x1(WTFMove(x1))
+        , m_y1(WTFMove(y1))
+        , m_x2(WTFMove(x2))
+        , m_y2(WTFMove(y2))
     {
+        ASSERT(m_x1->isNumber());
+        ASSERT(m_y1->isNumber());
+        ASSERT(m_x2->isNumber());
+        ASSERT(m_y2->isNumber());
     }
 
-    double m_x1;
-    double m_y1;
-    double m_x2;
-    double m_y2;
+    Ref<CSSPrimitiveValue> m_x1; // <number [0,1]>
+    Ref<CSSPrimitiveValue> m_y1; // <number>
+    Ref<CSSPrimitiveValue> m_x2; // <number [0,1]>
+    Ref<CSSPrimitiveValue> m_y2; // <number>
 };
 
 class CSSStepsTimingFunctionValue final : public CSSValue {
 public:
-    static Ref<CSSStepsTimingFunctionValue> create(int steps, std::optional<StepsTimingFunction::StepPosition> stepPosition)
+    static Ref<CSSStepsTimingFunctionValue> create(Ref<CSSPrimitiveValue> steps, std::optional<StepsTimingFunction::StepPosition> stepPosition)
     {
-        return adoptRef(*new CSSStepsTimingFunctionValue(steps, stepPosition));
+        return adoptRef(*new CSSStepsTimingFunctionValue(WTFMove(steps), stepPosition));
     }
-
-    int numberOfSteps() const { return m_steps; }
-    std::optional<StepsTimingFunction::StepPosition> stepPosition() const { return m_stepPosition; }
 
     String customCSSText() const;
-
     bool equals(const CSSStepsTimingFunctionValue&) const;
 
+    // FIXME: This function needs CSSToLengthConversionData to properly resolve calc() values.
+    RefPtr<TimingFunction> createTimingFunction() const;
+
 private:
-    CSSStepsTimingFunctionValue(int steps, std::optional<StepsTimingFunction::StepPosition> stepPosition)
+    CSSStepsTimingFunctionValue(Ref<CSSPrimitiveValue>&& steps, std::optional<StepsTimingFunction::StepPosition> stepPosition)
         : CSSValue(StepsTimingFunctionClass)
-        , m_steps(steps)
+        , m_steps(WTFMove(steps))
         , m_stepPosition(stepPosition)
     {
+        ASSERT(m_steps->isInteger());
     }
 
-    int m_steps;
+    Ref<CSSPrimitiveValue> m_steps; // <integer [1,∞] or [2,∞]>
     std::optional<StepsTimingFunction::StepPosition> m_stepPosition;
 };
 
 class CSSSpringTimingFunctionValue final : public CSSValue {
 public:
-    static Ref<CSSSpringTimingFunctionValue> create(double mass, double stiffness, double damping, double initialVelocity)
+    static Ref<CSSSpringTimingFunctionValue> create(Ref<CSSPrimitiveValue> mass, Ref<CSSPrimitiveValue> stiffness, Ref<CSSPrimitiveValue> damping, Ref<CSSPrimitiveValue> initialVelocity)
     {
-        return adoptRef(*new CSSSpringTimingFunctionValue(mass, stiffness, damping, initialVelocity));
+        return adoptRef(*new CSSSpringTimingFunctionValue(WTFMove(mass), WTFMove(stiffness), WTFMove(damping), WTFMove(initialVelocity)));
     }
-
-    double mass() const { return m_mass; }
-    double stiffness() const { return m_stiffness; }
-    double damping() const { return m_damping; }
-    double initialVelocity() const { return m_initialVelocity; }
 
     String customCSSText() const;
-
     bool equals(const CSSSpringTimingFunctionValue&) const;
 
+    // FIXME: This function needs CSSToLengthConversionData to properly resolve calc() values.
+    RefPtr<TimingFunction> createTimingFunction() const;
+
 private:
-    CSSSpringTimingFunctionValue(double mass, double stiffness, double damping, double initialVelocity)
+    CSSSpringTimingFunctionValue(Ref<CSSPrimitiveValue>&& mass, Ref<CSSPrimitiveValue>&& stiffness, Ref<CSSPrimitiveValue>&& damping, Ref<CSSPrimitiveValue>&& initialVelocity)
         : CSSValue(SpringTimingFunctionClass)
-        , m_mass(mass)
-        , m_stiffness(stiffness)
-        , m_damping(damping)
-        , m_initialVelocity(initialVelocity)
+        , m_mass(WTFMove(mass))
+        , m_stiffness(WTFMove(stiffness))
+        , m_damping(WTFMove(damping))
+        , m_initialVelocity(WTFMove(initialVelocity))
     {
+        ASSERT(m_mass->isNumber());
+        ASSERT(m_stiffness->isNumber());
+        ASSERT(m_damping->isNumber());
+        ASSERT(m_initialVelocity->isNumber());
     }
 
-    double m_mass;
-    double m_stiffness;
-    double m_damping;
-    double m_initialVelocity;
+    Ref<CSSPrimitiveValue> m_mass;              // <number [>0,∞]>
+    Ref<CSSPrimitiveValue> m_stiffness;         // <number [>0,∞]>
+    Ref<CSSPrimitiveValue> m_damping;           // <number [0,∞]>
+    Ref<CSSPrimitiveValue> m_initialVelocity;   // <number>
 };
 
 } // namespace WebCore

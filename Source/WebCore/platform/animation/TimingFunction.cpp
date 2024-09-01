@@ -26,11 +26,6 @@
 #include "config.h"
 #include "TimingFunction.h"
 
-#include "CSSParserContext.h"
-#include "CSSPrimitiveValue.h"
-#include "CSSTimingFunctionValue.h"
-#include "CSSValueKeywords.h"
-#include "MutableStyleProperties.h"
 #include "SpringSolver.h"
 #include "UnitBezier.h"
 #include <wtf/text/MakeString.h>
@@ -49,14 +44,14 @@ TextStream& operator<<(TextStream& ts, const TimingFunction& timingFunction)
                 ts << ", ";
 
             const auto& point = function.points()[i];
-            ts << point.value << ' ' << point.progress * 100.0 << '%';
+            ts << point.value << ' ' << FormattedCSSNumber::create(point.progress * 100.0) << '%';
         }
         ts << ")";
         break;
     }
     case TimingFunction::Type::CubicBezierFunction: {
         auto& function = uncheckedDowncast<CubicBezierTimingFunction>(timingFunction);
-        ts << "cubic-bezier(" << function.x1() << ", " << function.y1() << ", " <<  function.x2() << ", " << function.y2() << ")";
+        ts << "cubic-bezier(" << FormattedCSSNumber::create(function.x1()) << ", " << FormattedCSSNumber::create(function.y1()) << ", " <<  FormattedCSSNumber::create(function.x2()) << ", " << FormattedCSSNumber::create(function.y2()) << ")";
         break;
     }
     case TimingFunction::Type::StepsFunction: {
@@ -95,7 +90,7 @@ TextStream& operator<<(TextStream& ts, const TimingFunction& timingFunction)
     }
     case TimingFunction::Type::SpringFunction: {
         auto& function = uncheckedDowncast<SpringTimingFunction>(timingFunction);
-        ts << "spring(" << function.mass() << " " << function.stiffness() << " " <<  function.damping() << " " << function.initialVelocity() << ")";
+        ts << "spring(" << FormattedCSSNumber::create(function.mass()) << " " << FormattedCSSNumber::create(function.stiffness()) << " " <<  FormattedCSSNumber::create(function.damping()) << " " << FormattedCSSNumber::create(function.initialVelocity()) << ")";
         break;
     }
     }
@@ -174,52 +169,6 @@ double TimingFunction::transformProgress(double progress, double duration, Befor
     return 0;
 }
 
-ExceptionOr<RefPtr<TimingFunction>> TimingFunction::createFromCSSText(const String& cssText)
-{
-    auto properties = MutableStyleProperties::create();
-    properties->parseDeclaration(makeString("animation-timing-function:"_s, cssText), CSSParserContext(HTMLStandardMode));
-    if (auto value = properties->getPropertyCSSValue(CSSPropertyAnimationTimingFunction)) {
-        if (auto function = createFromCSSValue(*value))
-            return function;
-    }
-    return Exception { ExceptionCode::TypeError };
-}
-
-RefPtr<TimingFunction> TimingFunction::createFromCSSValue(const CSSValue& value)
-{
-    if (is<CSSPrimitiveValue>(value)) {
-        switch (value.valueID()) {
-        case CSSValueLinear:
-            return LinearTimingFunction::create();
-        case CSSValueEase:
-            return CubicBezierTimingFunction::create();
-        case CSSValueEaseIn:
-            return CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::EaseIn);
-        case CSSValueEaseOut:
-            return CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::EaseOut);
-        case CSSValueEaseInOut:
-            return CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::EaseInOut);
-        case CSSValueStepStart:
-            return StepsTimingFunction::create(1, StepsTimingFunction::StepPosition::Start);
-        case CSSValueStepEnd:
-            return StepsTimingFunction::create(1, StepsTimingFunction::StepPosition::End);
-        default:
-            return nullptr;
-        }
-    }
-
-    if (auto* linearTimingFunction = dynamicDowncast<CSSLinearTimingFunctionValue>(value))
-        return LinearTimingFunction::create(linearTimingFunction->points());
-    if (auto* cubicTimingFunction = dynamicDowncast<CSSCubicBezierTimingFunctionValue>(value))
-        return CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::Custom, cubicTimingFunction->x1(), cubicTimingFunction->y1(), cubicTimingFunction->x2(), cubicTimingFunction->y2());
-    if (auto* stepsTimingFunction = dynamicDowncast<CSSStepsTimingFunctionValue>(value))
-        return StepsTimingFunction::create(stepsTimingFunction->numberOfSteps(), stepsTimingFunction->stepPosition());
-    if (auto* springTimingFunction = dynamicDowncast<CSSSpringTimingFunctionValue>(value))
-        return SpringTimingFunction::create(springTimingFunction->mass(), springTimingFunction->stiffness(), springTimingFunction->damping(), springTimingFunction->initialVelocity());
-
-    return nullptr;
-}
-
 String TimingFunction::cssText() const
 {
     if (auto* function = dynamicDowncast<LinearTimingFunction>(*this)) {
@@ -236,7 +185,7 @@ String TimingFunction::cssText() const
             return "ease-out"_s;
         if (function->x1() == 0.42 && !function->y1() && function->x2() == 0.58 && function->y2() == 1.0)
             return "ease-in-out"_s;
-        return makeString("cubic-bezier("_s, function->x1(), ", "_s, function->y1(), ", "_s, function->x2(), ", "_s, function->y2(), ')');
+        return makeString("cubic-bezier("_s, FormattedCSSNumber::create(function->x1()), ", "_s, FormattedCSSNumber::create(function->y1()), ", "_s, FormattedCSSNumber::create(function->x2()), ", "_s, FormattedCSSNumber::create(function->y2()), ')');
     }
 
     if (auto* function = dynamicDowncast<StepsTimingFunction>(*this)) {

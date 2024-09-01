@@ -59,8 +59,8 @@ public:
     BasicEffectTiming getBasicTiming(std::optional<Seconds> = std::nullopt) const;
     ComputedEffectTiming getBindingsComputedTiming() const;
     ComputedEffectTiming getComputedTiming(std::optional<Seconds> = std::nullopt) const;
-    ExceptionOr<void> bindingsUpdateTiming(std::optional<OptionalEffectTiming>);
-    ExceptionOr<void> updateTiming(std::optional<OptionalEffectTiming>);
+    ExceptionOr<void> bindingsUpdateTiming(Document&, std::optional<OptionalEffectTiming>);
+    ExceptionOr<void> updateTiming(Document&, std::optional<OptionalEffectTiming>);
 
     virtual void animationDidTick() { };
     virtual void animationDidChangeTimingProperties() { };

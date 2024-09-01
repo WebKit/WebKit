@@ -79,6 +79,7 @@ public:
     WTF_EXPORT_PRIVATE TextStream& operator<<(ASCIILiteral);
     WTF_EXPORT_PRIVATE TextStream& operator<<(StringView);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const HexNumberBuffer&);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(const FormattedCSSNumber&);
     // Deprecated. Use the NumberRespectingIntegers FormattingFlag instead.
     WTF_EXPORT_PRIVATE TextStream& operator<<(const FormatNumberRespectingIntegers&);
 

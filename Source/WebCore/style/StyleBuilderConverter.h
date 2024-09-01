@@ -52,6 +52,7 @@
 #include "CSSRayValue.h"
 #include "CSSReflectValue.h"
 #include "CSSSubgridValue.h"
+#include "CSSTimingFunctionValue.h"
 #include "CSSValuePair.h"
 #include "CalculationValue.h"
 #include "FontPalette.h"
@@ -232,6 +233,8 @@ public:
     static size_t convertMaxLines(BuilderState&, const CSSValue&);
 
     static LineClampValue convertLineClamp(BuilderState&, const CSSValue&);
+
+    static RefPtr<TimingFunction> convertTimingFunction(BuilderState&, const CSSValue&);
 
 private:
     friend class BuilderCustom;
@@ -2269,6 +2272,11 @@ inline LineClampValue BuilderConverter::convertLineClamp(BuilderState& builderSt
 
     ASSERT(primitiveValue.valueID() == CSSValueNone);
     return LineClampValue();
+}
+
+inline RefPtr<TimingFunction> BuilderConverter::convertTimingFunction(BuilderState&, const CSSValue& value)
+{
+    return createTimingFunction(value);
 }
 
 } // namespace Style

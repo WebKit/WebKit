@@ -1628,21 +1628,43 @@ static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timin
             }
             return CSSPrimitiveValue::create(valueId);
         }
-        return CSSCubicBezierTimingFunctionValue::create(function.x1(), function.y1(), function.x2(), function.y2());
+        return CSSCubicBezierTimingFunctionValue::create(
+            CSSPrimitiveValue::create(function.x1()),
+            CSSPrimitiveValue::create(function.y1()),
+            CSSPrimitiveValue::create(function.x2()),
+            CSSPrimitiveValue::create(function.y2())
+        );
     }
     case TimingFunction::Type::StepsFunction: {
         auto& function = uncheckedDowncast<StepsTimingFunction>(timingFunction);
-        return CSSStepsTimingFunctionValue::create(function.numberOfSteps(), function.stepPosition());
+        return CSSStepsTimingFunctionValue::create(
+            CSSPrimitiveValue::createInteger(function.numberOfSteps()),
+            function.stepPosition()
+        );
     }
     case TimingFunction::Type::SpringFunction: {
         auto& function = uncheckedDowncast<SpringTimingFunction>(timingFunction);
-        return CSSSpringTimingFunctionValue::create(function.mass(), function.stiffness(), function.damping(), function.initialVelocity());
+        return CSSSpringTimingFunctionValue::create(
+            CSSPrimitiveValue::create(function.mass()),
+            CSSPrimitiveValue::create(function.stiffness()),
+            CSSPrimitiveValue::create(function.damping()),
+            CSSPrimitiveValue::create(function.initialVelocity())
+        );
     }
     case TimingFunction::Type::LinearFunction: {
         auto& function = uncheckedDowncast<LinearTimingFunction>(timingFunction);
         if (function.points().isEmpty())
             return CSSPrimitiveValue::create(CSSValueLinear);
-        return CSSLinearTimingFunctionValue::create(function.points());
+
+        return CSSLinearTimingFunctionValue::create(function.points().map([](const auto& point) {
+            return CSSLinearTimingFunctionValue::LinearStop {
+                .output = CSSPrimitiveValue::create(point.value),
+                .input = CSSLinearTimingFunctionValue::LinearStop::Length {
+                    .input = CSSPrimitiveValue::create(point.progress * 100, CSSUnitType::CSS_PERCENTAGE),
+                    .extra = nullptr
+                }
+            };
+        }));
     }
     }
     RELEASE_ASSERT_NOT_REACHED();

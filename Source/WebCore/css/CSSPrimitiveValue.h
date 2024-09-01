@@ -212,6 +212,7 @@ public:
 
     // These return nullopt for calc, for which range checking is not done at parse time: <https://www.w3.org/TR/css3-values/#calc-range>.
     std::optional<bool> isZero() const;
+    std::optional<bool> isOne() const;
     std::optional<bool> isPositive() const;
     std::optional<bool> isNegative() const;
 

@@ -61,6 +61,7 @@
 #include "CSSPropertyParserConsumer+Resolution.h"
 #include "CSSPropertyParserConsumer+String.h"
 #include "CSSPropertyParserConsumer+Time.h"
+#include "CSSPropertyParserConsumer+TimingFunction.h"
 #include "CSSPropertyParserConsumer+URL.h"
 #include "CSSPropertyParsing.h"
 #include "CSSQuadValue.h"

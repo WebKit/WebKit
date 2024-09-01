@@ -476,7 +476,7 @@ void CSSToStyleMap::mapAnimationTimingFunction(Animation& animation, const CSSVa
 {
     if (treatAsInitialValue(value, CSSPropertyAnimationTimingFunction))
         animation.setTimingFunction(Animation::initialTimingFunction());
-    else if (auto timingFunction = TimingFunction::createFromCSSValue(value))
+    else if (auto timingFunction = Style::BuilderConverter::convertTimingFunction(m_builderState, value))
         animation.setTimingFunction(WTFMove(timingFunction));
 }
 

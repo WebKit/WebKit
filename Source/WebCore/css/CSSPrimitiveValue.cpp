@@ -1145,6 +1145,13 @@ std::optional<bool> CSSPrimitiveValue::isZero() const
     return !m_value.number;
 }
 
+std::optional<bool> CSSPrimitiveValue::isOne() const
+{
+    if (isCalculated())
+        return std::nullopt;
+    return m_value.number == 1;
+}
+
 std::optional<bool> CSSPrimitiveValue::isPositive() const
 {
     if (isCalculated())

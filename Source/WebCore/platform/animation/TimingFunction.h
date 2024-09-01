@@ -24,8 +24,6 @@
 
 #pragma once
 
-#include "CSSValue.h"
-#include "ExceptionOr.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -52,8 +50,6 @@ public:
 
     virtual bool operator==(const TimingFunction&) const = 0;
 
-    static ExceptionOr<RefPtr<TimingFunction>> createFromCSSText(const String&);
-    static RefPtr<TimingFunction> createFromCSSValue(const CSSValue&);
     enum class Before : bool { No, Yes };
     double transformProgress(double progress, double duration, Before = Before::No) const;
     String cssText() const;
@@ -118,6 +114,11 @@ public:
     static Ref<CubicBezierTimingFunction> create()
     {
         return create(TimingFunctionPreset::Ease, 0.25, 0.1, 0.25, 1.0);
+    }
+
+    static Ref<CubicBezierTimingFunction> create(double x1, double y1, double x2, double y2)
+    {
+        return adoptRef(*new CubicBezierTimingFunction(TimingFunctionPreset::Custom, x1, y1, x2, y2));
     }
 
     static Ref<CubicBezierTimingFunction> create(TimingFunctionPreset preset, double x1, double y1, double x2, double y2)

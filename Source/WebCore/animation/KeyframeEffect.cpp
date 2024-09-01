@@ -32,6 +32,7 @@
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
+#include "CSSPropertyParserConsumer+TimingFunction.h"
 #include "CSSSelector.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSTimingFunctionValue.h"
@@ -609,7 +610,7 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalG
             keyframeEffect->setComposite(keyframeEffectOptions.composite);
             keyframeEffect->setIterationComposite(keyframeEffectOptions.iterationComposite);
         }
-        auto updateTimingResult = keyframeEffect->updateTiming(timing);
+        auto updateTimingResult = keyframeEffect->updateTiming(document, timing);
         if (updateTimingResult.hasException())
             return updateTimingResult.releaseException();
     }
@@ -916,24 +917,26 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobal
     // since they can be computed up-front.
     computeMissingKeyframeOffsets(parsedKeyframes);
 
+    CSSParserContext parserContext(document);
+
     // 8. For each frame in processed keyframes, perform the following steps:
     for (auto& keyframe : parsedKeyframes) {
         // Let the timing function of frame be the result of parsing the “easing” property on frame using the CSS syntax
         // defined for the easing property of the AnimationEffectTiming interface.
         // If parsing the “easing” property fails, throw a TypeError and abort this procedure.
-        auto timingFunctionResult = TimingFunction::createFromCSSText(keyframe.easing);
-        if (timingFunctionResult.hasException())
-            return timingFunctionResult.releaseException();
-        keyframe.timingFunction = timingFunctionResult.returnValue();
+        auto timingFunctionResult = CSSPropertyParserHelpers::parseTimingFunction(keyframe.easing, parserContext);
+        if (!timingFunctionResult)
+            return Exception { ExceptionCode::TypeError };
+        keyframe.timingFunction = WTFMove(timingFunctionResult);
     }
 
     // 9. Parse each of the values in unused easings using the CSS syntax defined for easing property of the
     //    AnimationEffectTiming interface, and if any of the values fail to parse, throw a TypeError
     //    and abort this procedure.
     for (auto& easing : unusedEasings) {
-        auto timingFunctionResult = TimingFunction::createFromCSSText(easing);
-        if (timingFunctionResult.hasException())
-            return timingFunctionResult.releaseException();
+        auto timingFunctionResult = CSSPropertyParserHelpers::parseTimingFunction(easing, parserContext);
+        if (!timingFunctionResult)
+            return Exception { ExceptionCode::TypeError };
     }
 
     m_parsedKeyframes = WTFMove(parsedKeyframes);
