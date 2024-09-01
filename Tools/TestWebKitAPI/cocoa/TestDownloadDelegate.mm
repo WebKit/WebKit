@@ -58,6 +58,14 @@
         completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
 }
 
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+- (void)_download:(WKDownload *)download decidePlaceholderPolicy:(void (^)(_WKPlaceholderPolicy))completionHandler
+{
+    _callbackRecord.append(DownloadCallback::DecidePlaceholderPolicy);
+    completionHandler(_WKPlaceholderPolicyDisable);
+}
+#endif
+
 - (void)downloadDidFinish:(WKDownload *)download
 {
     _callbackRecord.append(DownloadCallback::DidFinish);

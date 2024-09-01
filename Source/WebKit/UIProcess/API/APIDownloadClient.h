@@ -29,6 +29,7 @@
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
 #include "DownloadID.h"
+#include "DownloadProxy.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
@@ -41,7 +42,6 @@ class ResourceResponse;
 
 namespace WebKit {
 class AuthenticationChallengeProxy;
-class DownloadProxy;
 class WebsiteDataStore;
 class WebProtectionSpace;
 
@@ -60,6 +60,9 @@ public:
     virtual void legacyDidStart(WebKit::DownloadProxy&) { }
     virtual void didReceiveAuthenticationChallenge(WebKit::DownloadProxy&, WebKit::AuthenticationChallengeProxy& challenge) { challenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::Cancel); }
     virtual void didReceiveData(WebKit::DownloadProxy&, uint64_t, uint64_t, uint64_t) { }
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    virtual void decidePlaceholderPolicy(WebKit::DownloadProxy&, CompletionHandler<void(WebKit::UseDownloadPlaceholder)>&& completionHandler) { completionHandler(WebKit::UseDownloadPlaceholder::No); }
+#endif
     virtual void decideDestinationWithSuggestedFilename(WebKit::DownloadProxy&, const WebCore::ResourceResponse&, const WTF::String&, CompletionHandler<void(WebKit::AllowOverwrite, WTF::String)>&& completionHandler) { completionHandler(WebKit::AllowOverwrite::No, { }); }
     virtual void didCreateDestination(WebKit::DownloadProxy&, const WTF::String&) { }
     virtual void didFinish(WebKit::DownloadProxy&) { }

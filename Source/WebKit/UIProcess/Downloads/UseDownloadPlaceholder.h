@@ -23,30 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "DownloadProxy.h"
-
-#import "NetworkProcessMessages.h"
-#import "NetworkProcessProxy.h"
-#import "WebsiteDataStore.h"
-
-#import <wtf/cocoa/SpanCocoa.h>
+#pragma once
 
 namespace WebKit {
 
-#if !HAVE(MODERN_DOWNLOADPROGRESS)
-void DownloadProxy::publishProgress(const URL& url)
-{
-    if (!m_dataStore)
-        return;
+enum class UseDownloadPlaceholder : bool {
+    No,
+    Yes,
+};
 
-    auto handle = SandboxExtension::createHandle(url.fileSystemPath(), SandboxExtension::Type::ReadWrite);
-    ASSERT(handle);
-    if (!handle)
-        return;
-
-    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, url, WTFMove(*handle)), 0);
-    }
-#endif
-
-}
+} // namespace WebKit

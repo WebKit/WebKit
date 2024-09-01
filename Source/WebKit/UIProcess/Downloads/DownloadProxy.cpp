@@ -141,7 +141,7 @@ void DownloadProxy::didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWri
     m_client->didReceiveData(*this, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
 }
 
-void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse& response, String&& suggestedFilename, CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite)>&& completionHandler)
+void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse& response, String&& suggestedFilename, DecideDestinationCallback&& completionHandler)
 {
     RELEASE_LOG_INFO_IF(!response.expectedContentLength(), Network, "DownloadProxy::decideDestinationWithSuggestedFilename expectedContentLength is null");
 
@@ -161,12 +161,13 @@ void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::Resour
         }
 
         setDestinationFilename(destination);
-        completionHandler(destination, WTFMove(sandboxExtensionHandle), allowOverwrite);
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-        bool shouldEnableModernDownloadProgress = CFPreferencesGetAppBooleanValue(CFSTR("EnableModernDownloadProgress"), CFSTR("com.apple.WebKit"), nullptr);
-        if (!destination.isEmpty() && shouldEnableModernDownloadProgress)
-            publishProgress(URL::fileURLWithFileSystemPath(destination));
+        m_client->decidePlaceholderPolicy(*this, [completionHandler = WTFMove(completionHandler), destination = WTFMove(destination), sandboxExtensionHandle = WTFMove(sandboxExtensionHandle), allowOverwrite] (WebKit::UseDownloadPlaceholder usePlaceholder) mutable {
+            completionHandler(destination, WTFMove(sandboxExtensionHandle), allowOverwrite, usePlaceholder);
+        });
+#else
+        completionHandler(destination, WTFMove(sandboxExtensionHandle), allowOverwrite, WebKit::UseDownloadPlaceholder::No);
 #endif
     });
 }

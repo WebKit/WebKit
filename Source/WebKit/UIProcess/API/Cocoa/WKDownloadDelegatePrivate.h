@@ -23,30 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "DownloadProxy.h"
+#import <Foundation/Foundation.h>
+#import <WebKit/WKDownloadDelegate.h>
+#import <WebKit/WKFoundation.h>
 
-#import "NetworkProcessMessages.h"
-#import "NetworkProcessProxy.h"
-#import "WebsiteDataStore.h"
+@class WKDownload;
 
-#import <wtf/cocoa/SpanCocoa.h>
+/* @enum _WKPlaceholderPolicy
+ @abstract The policy for creating a placeholder file in the Downloads directory during downloads.
+ @constant _WKPlaceholderPolicyDisable   Do not create a placeholder file.
+ @constant _WKPlaceholderPolicyEnable    Create a placeholder file.
+ */
+typedef NS_ENUM(NSInteger, _WKPlaceholderPolicy) {
+    _WKPlaceholderPolicyDisable,
+    _WKPlaceholderPolicyEnable,
+} NS_SWIFT_NAME(WKDownload.PlaceholderPolicy) WK_API_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
-namespace WebKit {
+NS_ASSUME_NONNULL_BEGIN
 
-#if !HAVE(MODERN_DOWNLOADPROGRESS)
-void DownloadProxy::publishProgress(const URL& url)
-{
-    if (!m_dataStore)
-        return;
+WK_SWIFT_UI_ACTOR
+@protocol WKDownloadDelegatePrivate <WKDownloadDelegate>
 
-    auto handle = SandboxExtension::createHandle(url.fileSystemPath(), SandboxExtension::Type::ReadWrite);
-    ASSERT(handle);
-    if (!handle)
-        return;
+@optional
 
-    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, url, WTFMove(*handle)), 0);
-    }
-#endif
+/* @abstract Invoked when the download needs a placeholder policy from the client.
+ @param download The download for which we need a placeholder policy
+ @param completionHandler The completion handler that should be invoked with the chosen policy
+ @discussion The placeholder policy specifies whether a placeholder file should be created in
+ the Downloads directory when the download is in progress.
+ */
+- (void)_download:(WKDownload *)download decidePlaceholderPolicy:(void (^)(_WKPlaceholderPolicy))completionHandler WK_API_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
-}
+@end
+
+NS_ASSUME_NONNULL_END

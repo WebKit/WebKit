@@ -2247,6 +2247,39 @@ TEST(WKDownload, DownloadRequest404)
     });
 }
 
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+TEST(WKDownload, DecidePlaceholderPolicy)
+{
+    HTTPServer server({
+        { "/"_s, { 404, { }, "http body"_s } }
+    });
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    auto delegate = adoptNS([TestDownloadDelegate new]);
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool didFinish = false;
+    [webView startDownloadUsingRequest:server.request() completionHandler:^(WKDownload *download) {
+        download.delegate = delegate.get();
+        delegate.get().decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            completionHandler(expectedDownloadFile);
+        };
+        delegate.get().downloadDidFinish = ^(WKDownload *download) {
+            didFinish = true;
+        };
+    }];
+    Util::run(&didFinish);
+
+    checkFileContents(expectedDownloadFile, "http body"_s);
+
+    checkCallbackRecord(delegate.get(), {
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DecidePlaceholderPolicy,
+        DownloadCallback::DidFinish,
+    });
+}
+#endif
+
 TEST(WKDownload, NetworkProcessCrash)
 {
     auto server = downloadTestServer();
