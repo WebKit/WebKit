@@ -7251,7 +7251,7 @@ void HTMLMediaElement::toggleStandardFullscreenState()
 
 bool HTMLMediaElement::videoUsesElementFullscreen() const
 {
-#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
+#if ENABLE(FULLSCREEN_API)
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     if (document().settings().linearMediaPlayerEnabled()) {
         if (RefPtr player = m_player; player && player->supportsLinearMediaPlayer())
@@ -7292,10 +7292,16 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     m_changingVideoFullscreenMode = true;
 
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
-    if (videoUsesElementFullscreen() && document().settings().fullScreenEnabled() && isInWindowOrStandardFullscreen(mode)) {
+    if (videoUsesElementFullscreen() && page->isFullscreenManagerEnabled() && isInWindowOrStandardFullscreen(mode)) {
         m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
         m_waitingToEnterFullscreen = true;
-        protectedDocument()->checkedFullscreenManager()->requestFullscreenForElement(*this, nullptr, FullscreenManager::ExemptIFrameAllowFullscreenRequirement, [](bool) { }, mode);
+        protectedDocument()->checkedFullscreenManager()->requestFullscreenForElement(*this, nullptr, { }, [weakThis = WeakPtr { *this }](bool success) {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis || success)
+                return;
+            protectedThis->m_changingVideoFullscreenMode = false;
+            protectedThis->m_waitingToEnterFullscreen = false;
+        }, mode);
         return;
     }
 #endif
@@ -7358,7 +7364,7 @@ void HTMLMediaElement::exitFullscreen()
     m_waitingToEnterFullscreen = false;
 
 #if ENABLE(FULLSCREEN_API)
-    if (document().settings().fullScreenEnabled() && document().fullscreenManager().currentFullscreenElement() == this) {
+    if (document().fullscreenManager().currentFullscreenElement() == this) {
         if (document().fullscreenManager().isFullscreen()) {
             m_changingVideoFullscreenMode = true;
             protectedDocument()->checkedFullscreenManager()->cancelFullscreen();

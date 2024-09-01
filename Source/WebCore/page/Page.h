@@ -1204,6 +1204,10 @@ public:
     void setLastAuthentication(LoginStatus::AuthenticationType);
     const std::optional<LoginStatus>& lastAuthentication() const { return m_lastAuthentication; }
 
+#if ENABLE(FULLSCREEN_API)
+    WEBCORE_EXPORT bool isFullscreenManagerEnabled() const;
+#endif
+
 private:
     explicit Page(PageConfiguration&&);
 

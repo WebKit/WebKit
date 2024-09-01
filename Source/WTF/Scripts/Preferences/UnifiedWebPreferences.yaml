@@ -7511,15 +7511,16 @@ VerticalFormControlsEnabled:
 VideoFullscreenRequiresElementFullscreen:
   type: bool
   status: embedder
-  condition: PLATFORM(IOS_FAMILY)
+  condition: ENABLE(FULLSCREEN_API)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: defaultVideoFullscreenRequiresElementFullscreen()
     WebCore:
       default: false
-      
+  sharedPreferenceForWebProcess: true
+
 VideoPresentationModeAPIEnabled:
   type: bool
   status: embedder

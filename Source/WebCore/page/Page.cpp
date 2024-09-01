@@ -5038,4 +5038,12 @@ void Page::setLastAuthentication(LoginStatus::AuthenticationType authType)
     m_lastAuthentication = loginStatus.releaseReturnValue();
 }
 
+#if ENABLE(FULLSCREEN_API)
+bool Page::isFullscreenManagerEnabled() const
+{
+    Ref settings = protectedSettings();
+    return settings->fullScreenEnabled() || settings->videoFullscreenRequiresElementFullscreen();
+}
+#endif
+
 } // namespace WebCore

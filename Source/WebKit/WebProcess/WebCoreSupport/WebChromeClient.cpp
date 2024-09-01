@@ -1318,9 +1318,9 @@ void WebChromeClient::clearVideoFullscreenMode(HTMLVideoElement& videoElement, H
 
 #if ENABLE(FULLSCREEN_API)
 
-bool WebChromeClient::supportsFullScreenForElement(const Element&, bool withKeyboard)
+bool WebChromeClient::supportsFullScreenForElement(const Element& element, bool withKeyboard)
 {
-    return protectedPage()->fullScreenManager()->supportsFullScreen(withKeyboard);
+    return protectedPage()->fullScreenManager()->supportsFullScreenForElement(element, withKeyboard);
 }
 
 void WebChromeClient::enterFullScreenForElement(Element& element, HTMLMediaElementEnums::VideoFullscreenMode mode)

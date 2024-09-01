@@ -29,6 +29,7 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
 
@@ -76,13 +77,9 @@ TEST(Fullscreen, AudioLifecycle)
     ASSERT_FALSE([webView _canEnterFullscreen]);
 }
 
-TEST(Fullscreen, VideoLifecycle)
+static void runTest(WKWebViewConfiguration *configuration)
 {
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
-    [configuration preferences].elementFullscreenEnabled = YES;
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration]);
     ASSERT_FALSE([webView _canEnterFullscreen]);
     ASSERT_EQ([webView fullscreenState], WKFullscreenStateNotInFullscreen);
 
@@ -124,6 +121,24 @@ TEST(Fullscreen, VideoLifecycle)
     });
     ASSERT_FALSE([webView _canEnterFullscreen]);
     ASSERT_TRUE(canEnterFullscreenChanged);
+}
+
+TEST(Fullscreen, VideoLifecycle)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
+    [configuration preferences].elementFullscreenEnabled = YES;
+
+    runTest(configuration.get());
+}
+
+TEST(Fullscreen, VideoLifecycleElementFullscreenDisabled)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
+    [configuration preferences]._videoFullscreenRequiresElementFullscreen = YES;
+
+    runTest(configuration.get());
 }
 
 #endif // PLATFORM(MAC)

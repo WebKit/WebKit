@@ -77,6 +77,10 @@ bool defaultAlternateFormControlDesignEnabled()
     return PAL::currentUserInterfaceIdiomIsVision();
 }
 
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+
 bool defaultVideoFullscreenRequiresElementFullscreen()
 {
 #if USE(APPLE_INTERNAL_SDK)
@@ -84,7 +88,12 @@ bool defaultVideoFullscreenRequiresElementFullscreen()
         return true;
 #endif
 
-    return PAL::currentUserInterfaceIdiomIsVision();
+#if PLATFORM(IOS_FAMILY)
+    if (PAL::currentUserInterfaceIdiomIsVision())
+        return true;
+#endif
+
+    return false;
 }
 
 #endif
