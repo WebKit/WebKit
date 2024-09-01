@@ -1371,6 +1371,7 @@ enum class WebCore::ScreenOrientationLockType : uint8_t {
 struct WebCore::ApplicationManifest {
     String rawJSON
     WebCore::ApplicationManifest::Direction dir
+    String lang
     String name
     String shortName
     String description

@@ -270,6 +270,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     NSInteger dir = [aDecoder decodeIntegerForKey:@"dir"];
     // FIXME: <https://webkit.org/b/278619> Remove this assert after further manifest IPC hardening.
     RELEASE_ASSERT(dir >= 0 && dir <= 2);
+    String lang = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"lang"];
     String name = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"name"];
     String shortName = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"short_name"];
     String description = [aDecoder decodeObjectOfClass:[NSString class] forKey:@"description"];
@@ -292,6 +293,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     WebCore::ApplicationManifest coreApplicationManifest {
         WTFMove(rawJSON),
         static_cast<WebCore::ApplicationManifest::Direction>(dir),
+        WTFMove(lang),
         WTFMove(name),
         WTFMove(shortName),
         WTFMove(description),
@@ -328,6 +330,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
 {
     [aCoder encodeObject:self.rawJSON forKey:@"raw_json"];
     [aCoder encodeInteger:static_cast<NSInteger>(_applicationManifest->applicationManifest().dir) forKey:@"dir"];
+    [aCoder encodeObject:self.lang forKey:@"lang"];
     [aCoder encodeObject:self.name forKey:@"name"];
     [aCoder encodeObject:self.shortName forKey:@"short_name"];
     [aCoder encodeObject:self.applicationDescription forKey:@"description"];
@@ -383,6 +386,11 @@ static NSString *nullableNSString(const WTF::String& string)
     }
 
     ASSERT_NOT_REACHED();
+}
+
+- (NSString *)lang
+{
+    return nullableNSString(_applicationManifest->applicationManifest().lang);
 }
 
 - (NSString *)name

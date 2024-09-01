@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "SecurityOrigin.h"
 #include <JavaScriptCore/ConsoleMessage.h>
+#include <JavaScriptCore/IntlObject.h>
 #include <optional>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/text/MakeString.h>
@@ -104,6 +105,7 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const JSON::Object&
     parsedManifest.startURL = parseStartURL(manifest, documentURL);
     parsedManifest.dir = parseDir(manifest);
     parsedManifest.display = parseDisplay(manifest);
+    parsedManifest.lang = parseLang(manifest);
     parsedManifest.name = parseName(manifest);
     parsedManifest.description = parseDescription(manifest);
     parsedManifest.shortName = parseShortName(manifest);
@@ -259,6 +261,20 @@ const std::optional<ScreenOrientationLockType> ApplicationManifestParser::parseO
 
     logDeveloperWarning(makeString("\""_s, stringValue, "\" is not a valid orientation."_s));
     return std::nullopt;
+}
+
+String ApplicationManifestParser::parseLang(const JSON::Object& manifest)
+{
+    auto lang = parseGenericString(manifest, "lang"_s);
+    if (lang.isEmpty())
+        return { };
+
+    if (!JSC::isStructurallyValidLanguageTag(lang)) {
+        logDeveloperWarning(makeString('"', lang, "\" is not a structually valid language tag."_s));
+        return { };
+    }
+
+    return JSC::canonicalizeUnicodeLocaleID(lang.utf8());
 }
 
 String ApplicationManifestParser::parseName(const JSON::Object& manifest)

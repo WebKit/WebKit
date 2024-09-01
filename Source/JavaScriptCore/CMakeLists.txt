@@ -1039,6 +1039,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/Int32Array.h
     runtime/Int8Array.h
     runtime/InternalFunction.h
+    runtime/IntlObject.h
     runtime/Intrinsic.h
     runtime/IterationKind.h
     runtime/IteratorOperations.h

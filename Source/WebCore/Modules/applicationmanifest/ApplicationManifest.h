@@ -70,6 +70,7 @@ struct ApplicationManifest {
 
     String rawJSON;
     Direction dir;
+    String lang;
     String name;
     String shortName;
     String description;

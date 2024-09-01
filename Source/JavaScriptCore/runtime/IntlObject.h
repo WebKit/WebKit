@@ -154,8 +154,8 @@ bool isUnicodeScriptSubtag(StringView);
 bool isUnicodeRegionSubtag(StringView);
 bool isUnicodeVariantSubtag(StringView);
 bool isUnicodeLanguageId(StringView);
-bool isStructurallyValidLanguageTag(StringView);
-String canonicalizeUnicodeLocaleID(const CString& languageTag);
+JS_EXPORT_PRIVATE bool isStructurallyValidLanguageTag(StringView);
+JS_EXPORT_PRIVATE String canonicalizeUnicodeLocaleID(const CString& languageTag);
 
 bool isWellFormedCurrencyCode(StringView);
 
