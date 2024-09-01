@@ -366,7 +366,7 @@ bool RenderFlexibleBox::hitTestChildren(const HitTestRequest& request, HitTestRe
     // If collecting the children in reverse order is bad for performance, this Vector could be determined at layout time.
     Vector<RenderBox*> reversedOrderIteratorForHitTesting;
     for (auto* flexItem = m_orderIterator.first(); flexItem; flexItem = m_orderIterator.next()) {
-        if (m_orderIterator.shouldSkipChild(*flexItem))
+        if (flexItem->isOutOfFlowPositioned())
             continue;
         reversedOrderIteratorForHitTesting.append(flexItem);
     }
