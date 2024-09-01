@@ -193,51 +193,6 @@ function allSettled(iterable)
     var remainingElementsCount = 1;
     var index = 0;
 
-    function newResolveRejectElements(index)
-    {
-        var alreadyCalled = false;
-
-        return [
-            (value) => {
-                if (alreadyCalled)
-                    return @undefined;
-                alreadyCalled = true;
-
-                var obj = {
-                    status: "fulfilled",
-                    value
-                };
-
-                @putByValDirect(values, index, obj);
-
-                --remainingElementsCount;
-                if (remainingElementsCount === 0)
-                    return promiseCapability.resolve.@call(@undefined, values);
-
-                return @undefined;
-            },
-
-            (reason) => {
-                if (alreadyCalled)
-                    return @undefined;
-                alreadyCalled = true;
-
-                var obj = {
-                    status: "rejected",
-                    reason
-                };
-
-                @putByValDirect(values, index, obj);
-
-                --remainingElementsCount;
-                if (remainingElementsCount === 0)
-                    return promiseCapability.resolve.@call(@undefined, values);
-
-                return @undefined;
-            }
-        ];
-    }
-
     try {
         var promiseResolve = this.resolve;
         if (!@isCallable(promiseResolve))
@@ -246,10 +201,39 @@ function allSettled(iterable)
         for (var value of iterable) {
             @putByValDirect(values, index, @undefined);
             var nextPromise = promiseResolve.@call(this, value);
-            var [resolveElement, rejectElement] = newResolveRejectElements(index);
             ++remainingElementsCount;
-            nextPromise.then(resolveElement, rejectElement);
-            ++index;
+            let currentIndex = index++;
+            let alreadyCalled = false;
+            nextPromise.then(
+                (value) => {
+                    if (alreadyCalled)
+                        return @undefined;
+                    alreadyCalled = true;
+                    var obj = {
+                        status: "fulfilled",
+                        value
+                    };
+                    @putByValDirect(values, currentIndex, obj);
+                    --remainingElementsCount;
+                    if (remainingElementsCount === 0)
+                        return promiseCapability.resolve.@call(@undefined, values);
+                    return @undefined;
+                },
+                (reason) => {
+                    if (alreadyCalled)
+                        return @undefined;
+                    alreadyCalled = true;
+                    var obj = {
+                        status: "rejected",
+                        reason
+                    };
+                    @putByValDirect(values, currentIndex, obj);
+                    --remainingElementsCount;
+                    if (remainingElementsCount === 0)
+                        return promiseCapability.resolve.@call(@undefined, values);
+                    return @undefined;
+                }
+            );
         }
 
         --remainingElementsCount;
