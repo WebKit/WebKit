@@ -46,7 +46,7 @@ PageLoadState::~PageLoadState()
 }
 
 PageLoadState::Transaction::Transaction(PageLoadState& pageLoadState)
-    : m_webPageProxy(&pageLoadState.m_webPageProxy)
+    : m_webPageProxy(pageLoadState.m_webPageProxy.ptr())
     , m_pageLoadState(&pageLoadState)
 {
     m_pageLoadState->beginTransaction();
@@ -84,6 +84,11 @@ void PageLoadState::endTransaction()
 
     if (!--m_outstandingTransactionCount)
         commitChanges();
+}
+
+Ref<WebPageProxy> PageLoadState::protectedPage() const
+{
+    return m_webPageProxy.get();
 }
 
 void PageLoadState::commitChanges()
@@ -131,7 +136,7 @@ void PageLoadState::commitChanges()
 
     m_committedState = m_uncommittedState;
 
-    m_webPageProxy.isLoadingChanged();
+    protectedPage()->isLoadingChanged();
 
     // The "did" ordering is the reverse of the "will". This is a requirement of Cocoa Key-Value Observing.
     if (certificateInfoChanged)
@@ -491,7 +496,7 @@ void PageLoadState::didChangeProcessIsResponsive()
 
 void PageLoadState::callObserverCallback(void (Observer::*callback)())
 {
-    Ref protectedPage { m_webPageProxy };
+    Ref protectedPage { m_webPageProxy.get() };
 
     for (auto& observer : copyToVector(m_observers)) {
         // This appears potentially inefficient on the surface (searching in a Vector)

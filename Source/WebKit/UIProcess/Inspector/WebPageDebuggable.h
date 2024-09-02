@@ -30,6 +30,7 @@
 #include <JavaScriptCore/RemoteInspectionTarget.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -57,7 +58,9 @@ public:
     void setNameOverride(const String&);
 
 private:
-    WebPageProxy& m_page;
+    Ref<WebPageProxy> protectedPage() const;
+
+    WeakRef<WebPageProxy> m_page;
     String m_nameOverride;
 };
 

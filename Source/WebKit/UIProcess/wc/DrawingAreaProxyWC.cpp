@@ -40,6 +40,8 @@
 
 namespace WebKit {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DrawingAreaProxyWC);
+
 DrawingAreaProxyWC::DrawingAreaProxyWC(WebPageProxy& webPageProxy, WebProcessProxy& webProcessProxy)
     : DrawingAreaProxy(DrawingAreaType::WC, webPageProxy, webProcessProxy)
 {

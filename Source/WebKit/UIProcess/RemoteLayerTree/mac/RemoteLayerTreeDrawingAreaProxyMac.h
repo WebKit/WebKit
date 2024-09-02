@@ -42,6 +42,9 @@ class RemoteScrollingCoordinatorTransaction;
 
 class RemoteLayerTreeDrawingAreaProxyMac final : public RemoteLayerTreeDrawingAreaProxy {
 friend class RemoteScrollingCoordinatorProxyMac;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeDrawingAreaProxyMac);
+    WTF_MAKE_NONCOPYABLE(RemoteLayerTreeDrawingAreaProxyMac);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLayerTreeDrawingAreaProxyMac);
 public:
     RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy&, WebProcessProxy&);
     ~RemoteLayerTreeDrawingAreaProxyMac();

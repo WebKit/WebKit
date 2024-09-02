@@ -51,10 +51,13 @@
 #import <wtf/CallbackAggregator.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/SystemTracing.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace IPC;
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeDrawingAreaProxy);
 
 RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& pageProxy, WebProcessProxy& webProcessProxy)
     : DrawingAreaProxy(DrawingAreaType::RemoteLayerTree, pageProxy, webProcessProxy)

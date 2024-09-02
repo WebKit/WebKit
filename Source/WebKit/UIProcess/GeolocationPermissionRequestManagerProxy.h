@@ -55,7 +55,7 @@ public:
 private:
     HashMap<GeolocationIdentifier, RefPtr<GeolocationPermissionRequestProxy>> m_pendingRequests;
     HashSet<String> m_validAuthorizationTokens;
-    WebPageProxy& m_page;
+    WeakRef<WebPageProxy> m_page;
 };
 
 } // namespace WebKit

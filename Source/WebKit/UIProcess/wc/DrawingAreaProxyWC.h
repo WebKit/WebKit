@@ -29,6 +29,7 @@
 
 #include "BackingStore.h"
 #include "DrawingAreaProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 class Region;
@@ -37,6 +38,9 @@ class Region;
 namespace WebKit {
 
 class DrawingAreaProxyWC final : public DrawingAreaProxy {
+    WTF_MAKE_TZONE_ALLOCATED(DrawingAreaProxyWC);
+    WTF_MAKE_NONCOPYABLE(DrawingAreaProxyWC);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DrawingAreaProxyWC);
 public:
     DrawingAreaProxyWC(WebPageProxy&, WebProcessProxy&);
 

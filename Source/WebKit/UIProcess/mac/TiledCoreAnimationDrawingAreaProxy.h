@@ -41,6 +41,9 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::TiledCoreAnim
 namespace WebKit {
 
 class TiledCoreAnimationDrawingAreaProxy final : public DrawingAreaProxy {
+    WTF_MAKE_TZONE_ALLOCATED(TiledCoreAnimationDrawingAreaProxy);
+    WTF_MAKE_NONCOPYABLE(TiledCoreAnimationDrawingAreaProxy);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TiledCoreAnimationDrawingAreaProxy);
 public:
     TiledCoreAnimationDrawingAreaProxy(WebPageProxy&, WebProcessProxy&);
     virtual ~TiledCoreAnimationDrawingAreaProxy();

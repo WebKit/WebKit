@@ -176,7 +176,9 @@ private:
 
     void resolveLocation(const WebCore::IntPoint& currentLocation, std::optional<WebCore::IntPoint> location, MouseMoveOrigin, std::optional<String> nodeHandle, Function<void (std::optional<WebCore::IntPoint>, std::optional<AutomationCommandError>)>&&);
 
-    WebPageProxy& m_page;
+    Ref<WebPageProxy> protectedPage() const;
+
+    WeakRef<WebPageProxy> m_page;
     SimulatedInputDispatcher::Client& m_client;
 
     std::optional<WebCore::FrameIdentifier> m_frameID;

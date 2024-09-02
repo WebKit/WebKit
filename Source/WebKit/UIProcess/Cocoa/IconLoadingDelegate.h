@@ -28,6 +28,7 @@
 #import "WKFoundation.h"
 
 #import "APIIconLoadingClient.h"
+#import <wtf/CheckedPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
@@ -37,8 +38,9 @@
 
 namespace WebKit {
 
-class IconLoadingDelegate {
+class IconLoadingDelegate : public CanMakeCheckedPtr<IconLoadingDelegate> {
     WTF_MAKE_TZONE_ALLOCATED(IconLoadingDelegate);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IconLoadingDelegate);
 public:
     explicit IconLoadingDelegate(WKWebView *);
     ~IconLoadingDelegate();
@@ -58,7 +60,7 @@ private:
     private:
         void getLoadDecisionForIcon(const WebCore::LinkIcon&, CompletionHandler<void(CompletionHandler<void(API::Data*)>&&)>&&) override;
 
-        IconLoadingDelegate& m_iconLoadingDelegate;
+        CheckedRef<IconLoadingDelegate> m_iconLoadingDelegate;
     };
 
     WKWebView *m_webView;

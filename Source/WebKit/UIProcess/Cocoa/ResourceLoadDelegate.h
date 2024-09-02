@@ -27,6 +27,7 @@
 
 #import "APIResourceLoadClient.h"
 #import "WKFoundation.h"
+#import <wtf/CheckedPtr.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 
@@ -40,8 +41,9 @@ class ResourceLoadClient;
 
 namespace WebKit {
 
-class ResourceLoadDelegate {
+class ResourceLoadDelegate : public CanMakeCheckedPtr<ResourceLoadDelegate> {
     WTF_MAKE_TZONE_ALLOCATED(ResourceLoadDelegate);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ResourceLoadDelegate);
 public:
     explicit ResourceLoadDelegate(WKWebView *);
     ~ResourceLoadDelegate();
@@ -66,7 +68,7 @@ private:
         void didReceiveResponse(ResourceLoadInfo&&, WebCore::ResourceResponse&&) const final;
         void didCompleteWithError(ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceError&&) const final;
 
-        ResourceLoadDelegate& m_resourceLoadDelegate;
+        CheckedRef<ResourceLoadDelegate> m_resourceLoadDelegate;
     };
 
     WeakObjCPtr<WKWebView> m_webView;

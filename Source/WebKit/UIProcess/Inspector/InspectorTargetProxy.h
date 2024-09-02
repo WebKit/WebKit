@@ -58,7 +58,7 @@ public:
     void sendMessageToTargetBackend(const String&) override;
 
 private:
-    WebPageProxy& m_page;
+    WeakRef<WebPageProxy> m_page;
     String m_identifier;
     Inspector::InspectorTargetType m_type;
     WeakPtr<ProvisionalPageProxy> m_provisionalPage;

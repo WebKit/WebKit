@@ -30,6 +30,7 @@
 #import "APIInspectorExtensionClient.h"
 #import "WKFoundation.h"
 #import <WebCore/FrameIdentifier.h>
+#import <wtf/CheckedPtr.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 
@@ -38,8 +39,9 @@
 
 namespace WebKit {
 
-class InspectorExtensionDelegate {
+class InspectorExtensionDelegate : public CanMakeCheckedPtr<InspectorExtensionDelegate> {
     WTF_MAKE_TZONE_ALLOCATED(InspectorExtensionDelegate);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorExtensionDelegate);
 public:
     InspectorExtensionDelegate(_WKInspectorExtension *, id <_WKInspectorExtensionDelegate>);
     ~InspectorExtensionDelegate();
@@ -61,7 +63,7 @@ private:
         void didNavigateExtensionTab(const Inspector::ExtensionTabID&, const URL&) override;
         void inspectedPageDidNavigate(const URL&) override;
 
-        InspectorExtensionDelegate& m_inspectorExtensionDelegate;
+        CheckedRef<InspectorExtensionDelegate> m_inspectorExtensionDelegate;
     };
 
     WeakObjCPtr<_WKInspectorExtension> m_inspectorExtension;

@@ -78,12 +78,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(IconLoadingDelegateIconLoadingClient, IconL
 
 void IconLoadingDelegate::IconLoadingClient::getLoadDecisionForIcon(const WebCore::LinkIcon& linkIcon, CompletionHandler<void(CompletionHandler<void(API::Data*)>&&)>&& completionHandler)
 {
-    if (!m_iconLoadingDelegate.m_delegateMethods.webViewShouldLoadIconWithParametersCompletionHandler) {
+    if (!m_iconLoadingDelegate->m_delegateMethods.webViewShouldLoadIconWithParametersCompletionHandler) {
         completionHandler(nullptr);
         return;
     }
 
-    auto delegate = m_iconLoadingDelegate.m_delegate.get();
+    auto delegate = m_iconLoadingDelegate->m_delegate.get();
     if (!delegate) {
         completionHandler(nullptr);
         return;
@@ -91,7 +91,7 @@ void IconLoadingDelegate::IconLoadingClient::getLoadDecisionForIcon(const WebCor
 
     RetainPtr<_WKLinkIconParameters> parameters = adoptNS([[_WKLinkIconParameters alloc] _initWithLinkIcon:linkIcon]);
 
-    [delegate webView:m_iconLoadingDelegate.m_webView shouldLoadIconWithParameters:parameters.get() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (IconLoadCompletionHandler loadCompletionHandler) mutable {
+    [delegate webView:m_iconLoadingDelegate->m_webView shouldLoadIconWithParameters:parameters.get() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (IconLoadCompletionHandler loadCompletionHandler) mutable {
         ASSERT(RunLoop::isMain());
         if (loadCompletionHandler) {
             completionHandler([loadCompletionHandler = makeBlockPtr(loadCompletionHandler)](API::Data* data) {

@@ -251,7 +251,9 @@ private:
     static bool hasOnlySecureContent(const Data&);
     static double estimatedProgress(const Data&);
 
-    WebPageProxy& m_webPageProxy;
+    Ref<WebPageProxy> protectedPage() const;
+
+    WeakRef<WebPageProxy> m_webPageProxy;
 
     Data m_committedState;
     Data m_uncommittedState;

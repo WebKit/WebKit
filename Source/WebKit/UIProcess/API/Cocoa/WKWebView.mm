@@ -648,6 +648,8 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     [_textFinderClient willDestroyView:self];
 #endif
 
+    [self _setResourceLoadDelegate:nil];
+
 #if PLATFORM(IOS_FAMILY)
     [_contentView _webViewDestroyed];
 
