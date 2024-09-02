@@ -110,7 +110,7 @@ BOTS = {
     "gtk-release-x11": Query(
         platform="GTK", style="release", version_name="Xvfb", version="5.5.0"
     ),
-    "gtk-release-gtk4": Query(
+    "gtk-release-gtk3": Query(
         platform="GTK", style="release", version_name="Xvfb", version="4.19.0"
     ),
     "gtk-release-wayland": Query(

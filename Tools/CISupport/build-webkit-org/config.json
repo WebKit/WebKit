@@ -104,7 +104,7 @@
                   { "name": "gtk-linux-bot-14", "platform": "gtk" },
                   { "name": "gtk-linux-bot-15", "platform": "gtk" },
                   { "name": "gtk-linux-bot-17", "platform": "gtk" },
-                  { "name": "gtk-linux-bot-18", "platform": "gtk-4" },
+                  { "name": "gtk-linux-bot-18", "platform": "gtk-3" },
                   { "name": "gtk-linux-bot-19", "platform": "gtk" },
                   { "name": "gtk-linux-bot-20", "platform": "gtk" },
                   { "name": "gtk-linux-bot-21", "platform": "gtk" },
@@ -495,8 +495,9 @@
                     "workernames": ["gtk-linux-bot-23"]
                   },
                   {
-                    "name": "GTK-Linux-64-bit-Release-GTK4-Tests", "factory": "BuildAndTestAndArchiveAllButJSCFactory",
-                    "platform": "gtk-4", "configuration": "release", "architectures": ["x86_64"],
+                    "name": "GTK-Linux-64-bit-Release-GTK3-Tests", "factory": "BuildAndTestAndArchiveAllButJSCFactory",
+                    "platform": "gtk-3", "configuration": "release", "architectures": ["x86_64"],
+                    "additionalArguments": ["--cmakeargs=-DUSE_GTK4=OFF"],
                     "workernames": ["gtk-linux-bot-18"]
                   },
                   {
@@ -700,7 +701,7 @@
                                      "GTK-Linux-64-bit-Release-Debian-Stable-Build",
                                      "GTK-Linux-64-bit-Release-Ubuntu-2204-Build",
                                      "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build",
-                                     "GTK-Linux-64-bit-Release-GTK4-Tests",
+                                     "GTK-Linux-64-bit-Release-GTK3-Tests",
                                      "WPE-Linux-64-bit-Release-Ubuntu-2204-Build",
                                      "WPE-Linux-64-bit-Release-Ubuntu-LTS-Build",
                                      "WPE-Linux-RPi4-32bits-Mesa-Release-Perf-Build",
