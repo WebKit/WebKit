@@ -7865,8 +7865,10 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
             openerFrame->frameProcess().site(),
             originatingFrameInfoData.frameID
         } });
-    } else
+    } else {
         configuration->setOpenerInfo(std::nullopt);
+        configuration->setBrowsingContextGroup(BrowsingContextGroup::create());
+    }
 
     trySOAuthorization(configuration.copyRef(), WTFMove(navigationAction), *this, WTFMove(completionHandler), [this, protectedThis = Ref { *this }, windowFeatures = WTFMove(windowFeatures), configuration] (Ref<API::NavigationAction>&& navigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) mutable {
 
