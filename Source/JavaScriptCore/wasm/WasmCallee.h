@@ -197,7 +197,7 @@ public:
     }
 
     CodePtr<WasmEntryPtrTag> entrypointImpl() const;
-    JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegistersImpl();
+    static JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegistersImpl();
     std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; }
 
     static constexpr ptrdiff_t offsetOfIdent() { return OBJECT_OFFSETOF(JITLessJSEntrypointCallee, ident); }

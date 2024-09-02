@@ -446,14 +446,14 @@ CodePtr<WasmEntryPtrTag> JITLessJSEntrypointCallee::entrypointImpl() const
     if (Options::useWasmSIMD() && (wasmCallingConvention().callInformationFor(typeDefinition).argumentsOrResultsIncludeV128)) {
 #if ENABLE(JIT)
         if (Options::useJIT())
-            return createJSToWasmJITInterpreterCrashForSIMDParameters()->entrypoint.compilation->code().retagged<WasmEntryPtrTag>();
+            return createJSToWasmJITSharedCrashForSIMDParameters()->entrypoint.compilation->code().retagged<WasmEntryPtrTag>();
 #endif
         return LLInt::getCodeFunctionPtr<CFunctionPtrTag>(js_to_wasm_wrapper_entry_crash_for_simd_parameters);
     }
 
 #if ENABLE(JIT)
     if (Options::useJIT())
-        return createJSToWasmJITInterpreter()->entrypoint.compilation->code().retagged<WasmEntryPtrTag>();
+        return createJSToWasmJITShared()->entrypoint.compilation->code().retagged<WasmEntryPtrTag>();
 #endif
     return LLInt::getCodeFunctionPtr<CFunctionPtrTag>(js_to_wasm_wrapper_entry);
 }

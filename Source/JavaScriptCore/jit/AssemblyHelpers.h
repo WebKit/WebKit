@@ -1581,7 +1581,17 @@ public:
         unboxDouble(regs, destFPR);
     }
 #endif
-    
+
+    void unboxNativeCallee(GPRReg boxedGPR, GPRReg calleeGPR)
+    {
+#if USE(JSVALUE64)
+        and64(TrustedImm64(~static_cast<uint64_t>(JSValue::NativeCalleeTag)), boxedGPR, calleeGPR);
+        add64(TrustedImm64(lowestAccessibleAddress()), calleeGPR);
+#else
+        add32(TrustedImm32(lowestAccessibleAddress()), boxedGPR, calleeGPR);
+#endif
+    }
+
     void boxBooleanPayload(GPRReg boolGPR, GPRReg payloadGPR)
     {
 #if USE(JSVALUE64)
@@ -1639,9 +1649,19 @@ public:
         move(TrustedImm32(JSValue::CellTag), boxedRegs.tagGPR());
 #endif
     }
-    
+
+    void boxNativeCallee(GPRReg calleeGPR, GPRReg boxedGPR)
+    {
+#if USE(JSVALUE64)
+        sub64(calleeGPR, TrustedImm64(lowestAccessibleAddress()), boxedGPR);
+        or64(TrustedImm64(JSValue::NativeCalleeTag), boxedGPR);
+#else
+        sub32(calleeGPR, TrustedImm32(lowestAccessibleAddress()), boxedGPR);
+#endif
+    }
+
     void callExceptionFuzz(VM&, GPRReg exceptionReg);
-    
+
     enum ExceptionCheckKind { NormalExceptionCheck, InvertedExceptionCheck };
     enum ExceptionJumpWidth { NormalJumpWidth, FarJumpWidth };
     JS_EXPORT_PRIVATE Jump emitExceptionCheck(VM&, ExceptionCheckKind = NormalExceptionCheck, ExceptionJumpWidth = NormalJumpWidth, GPRReg exceptionReg = InvalidGPRReg);
