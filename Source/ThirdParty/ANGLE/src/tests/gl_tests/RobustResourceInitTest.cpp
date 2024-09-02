@@ -2555,11 +2555,14 @@ TEST_P(RobustResourceInitTestES3, BlitDepthStencilAfterClearBuffer)
     EXPECT_PIXEL_COLOR_EQ(kSize - 1, kSize - 1, GLColor::green);
 }
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(RobustResourceInitTest,
-                                       ES2_VULKAN().enable(Feature::AllocateNonZeroMemory));
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
+    RobustResourceInitTest,
+    ES3_METAL().enable(Feature::EmulateDontCareLoadWithRandomClear),
+    ES2_VULKAN().enable(Feature::AllocateNonZeroMemory));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(RobustResourceInitTestES3);
 ANGLE_INSTANTIATE_TEST_ES3_AND(RobustResourceInitTestES3,
+                               ES3_METAL().enable(Feature::EmulateDontCareLoadWithRandomClear),
                                ES3_VULKAN().enable(Feature::AllocateNonZeroMemory));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(RobustResourceInitTestES31);

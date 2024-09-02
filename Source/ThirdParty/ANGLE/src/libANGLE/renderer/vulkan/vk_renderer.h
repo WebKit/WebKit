@@ -574,9 +574,9 @@ class Renderer : angle::NonCopyable
     }
     size_t getStagingBufferAlignment() const { return mStagingBufferAlignment; }
 
-    uint32_t getVertexConversionBufferMemoryTypeIndex(vk::MemoryHostVisibility hostVisibility) const
+    uint32_t getVertexConversionBufferMemoryTypeIndex(MemoryHostVisibility hostVisibility) const
     {
-        return hostVisibility == vk::MemoryHostVisibility::Visible
+        return hostVisibility == MemoryHostVisibility::Visible
                    ? mHostVisibleVertexConversionBufferMemoryTypeIndex
                    : mDeviceLocalVertexConversionBufferMemoryTypeIndex;
     }
@@ -962,6 +962,8 @@ class Renderer : angle::NonCopyable
     VkPhysicalDevice8BitStorageFeatures m8BitStorageFeatures;
     VkPhysicalDevice16BitStorageFeatures m16BitStorageFeatures;
     VkPhysicalDeviceSynchronization2Features mSynchronization2Features;
+    VkPhysicalDeviceVariablePointersFeatures mVariablePointersFeatures;
+
     uint32_t mLegacyDitheringVersion = 0;
 
     angle::PackedEnumBitSet<gl::ShadingRate, uint8_t> mSupportedFragmentShadingRates;

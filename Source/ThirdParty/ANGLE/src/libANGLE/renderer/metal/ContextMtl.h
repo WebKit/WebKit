@@ -325,11 +325,9 @@ class ContextMtl : public ContextImpl, public mtl::Context
     void onTransformFeedbackInactive(const gl::Context *context, TransformFeedbackMtl *xfb);
 
     // Invoked by multiple classes in SyncMtl.mm
-#if ANGLE_MTL_EVENT_AVAILABLE
     // Enqueue an event and return the command queue serial that the event was or will be placed in.
     uint64_t queueEventSignal(id<MTLEvent> event, uint64_t value);
     void serverWaitEvent(id<MTLEvent> event, uint64_t value);
-#endif
 
     const mtl::ClearColorValue &getClearColorValue() const;
     const mtl::WriteMaskArray &getWriteMaskArray() const;

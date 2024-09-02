@@ -47,7 +47,7 @@ index 7952b50a5b8637eaf53d7d9611225a12c80cdcdd..24f072e9eddcb3c7ce480a4f83558d4a
 +
  #endif  // INCLUDE_GLES2_GL2EXT_ANGLE_H_
 diff --git a/include/platform/autogen/FeaturesMtl_autogen.h b/include/platform/autogen/FeaturesMtl_autogen.h
-index 0ad7a6b901fac51d4d91d09a83247cda2fa0b932..d79889bcfa9ad58b608ae07cb85845ca885c136f 100644
+index ad779c84e58594d4005bbd06d594970e7c19ab39..cffeeb6e1106fd5d55c2c48d2bce96bb4594e858 100644
 --- a/include/platform/autogen/FeaturesMtl_autogen.h
 +++ b/include/platform/autogen/FeaturesMtl_autogen.h
 @@ -83,6 +83,13 @@ struct FeaturesMtl : FeatureSetBase
@@ -65,7 +65,7 @@ index 0ad7a6b901fac51d4d91d09a83247cda2fa0b932..d79889bcfa9ad58b608ae07cb85845ca
          "allowInlineConstVertexData",
          FeatureCategory::MetalFeatures,
 diff --git a/include/platform/mtl_features.json b/include/platform/mtl_features.json
-index 4b78291c54fb916dd9cd7f7b0cf396c93b8522ad..2c33cbabf896877cb301acae5889e405f751dd27 100644
+index 7bb2f69edd208c9c4c906d821e07b66ec96fb07d..862c0505702a8be0a0bedc6e0fddd038b4438ee7 100644
 --- a/include/platform/mtl_features.json
 +++ b/include/platform/mtl_features.json
 @@ -70,6 +70,13 @@
@@ -82,23 +82,6 @@ index 4b78291c54fb916dd9cd7f7b0cf396c93b8522ad..2c33cbabf896877cb301acae5889e405
          {
              "name": "allow_inline_const_vertex_data",
              "category": "Features",
-diff --git a/scripts/code_generation_hashes/Metal_format_table.json b/scripts/code_generation_hashes/Metal_format_table.json
-index 64e0142942418f2379418169ea4562c02858b325..3ca95db4ccbb52c88673de803f7202b1282fe27e 100644
---- a/scripts/code_generation_hashes/Metal_format_table.json
-+++ b/scripts/code_generation_hashes/Metal_format_table.json
-@@ -4,9 +4,9 @@
-   "src/libANGLE/renderer/angle_format_map.json":
-     "eab6744df71f7bf6bfe9e8bb39949b79",
-   "src/libANGLE/renderer/metal/gen_mtl_format_table.py":
--    "3416880a331afddfc5c4501b1c86ba2b",
-+    "28f3065f5d1bc65803b1218b706430ae",
-   "src/libANGLE/renderer/metal/mtl_format_map.json":
--    "07506d99e0599e7ec31894a65047fcd4",
-+    "9e7c865511a1af00a0bae54d9feb6a4f",
-   "src/libANGLE/renderer/metal/mtl_format_table_autogen.mm":
--    "2503fdbbc2cfd795ddefdcb8cc48f17a"
-+    "f2772d80ebe9287365e4ecb12c2b8afe"
- }
 diff --git a/scripts/entry_point_packed_gl_enums.json b/scripts/entry_point_packed_gl_enums.json
 index b258660ba4367032e592ab8d6397ee5edca0a661..fe961d3125259b015d3d005a6d45443ede3131bc 100644
 --- a/scripts/entry_point_packed_gl_enums.json
@@ -483,88 +466,6 @@ index d5a48edd40f382359db76acf1a1ce75b6a6dc6d5..907c62e0bb659292b391270790498186
  /* Bison interface for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
-diff --git a/src/gpu_info_util/SystemInfo_internal.h b/src/gpu_info_util/SystemInfo_internal.h
-index 231a4dcef279444e260217ee5a44ecbc2a182498..1a10a6396993260f8b09531487a78c8bf67019d9 100644
---- a/src/gpu_info_util/SystemInfo_internal.h
-+++ b/src/gpu_info_util/SystemInfo_internal.h
-@@ -36,13 +36,18 @@ bool GetSystemInfo_ios(SystemInfo *info);
- // Helper to get the active GPU ID from a given Core Graphics display ID.
- uint64_t GetGpuIDFromDisplayID(uint32_t displayID);
- 
-+#if ANGLE_ENABLE_CGL
- // Helper to get the active GPU ID from an OpenGL display mask.
- uint64_t GetGpuIDFromOpenGLDisplayMask(uint32_t displayMask);
-+#endif
- 
-+#if ANGLE_ENABLE_METAL
- // Get VendorID from metal device's registry ID
- VendorID GetVendorIDFromMetalDeviceRegistryID(uint64_t registryID);
- #endif
- 
-+#endif
-+
- }  // namespace angle
- 
- #endif  // GPU_INFO_UTIL_SYSTEM_INFO_INTERNAL_H_
-diff --git a/src/gpu_info_util/SystemInfo_macos.mm b/src/gpu_info_util/SystemInfo_macos.mm
-index 553c675683fa054c7577cb5199771d10114a07a6..4362f8973679123ea9859120d20981c370dfc4a5 100644
---- a/src/gpu_info_util/SystemInfo_macos.mm
-+++ b/src/gpu_info_util/SystemInfo_macos.mm
-@@ -13,7 +13,10 @@
- #import <Metal/Metal.h>
- 
- #include "common/apple_platform_utils.h"
-+
-+#if ANGLE_ENABLE_CGL
- #include "common/gl/cgl/FunctionsCGL.h"
-+#endif
- 
- #if !defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
- #    define HAVE_MAIN_PORT_DEFAULT 1
-@@ -27,9 +30,6 @@ namespace angle
- namespace
- {
- 
--constexpr CGLRendererProperty kCGLRPRegistryIDLow  = static_cast<CGLRendererProperty>(140);
--constexpr CGLRendererProperty kCGLRPRegistryIDHigh = static_cast<CGLRendererProperty>(141);
--
- // Extracts one integer property from a registry entry.
- bool GetEntryProperty(io_registry_entry_t entry, CFStringRef name, uint32_t *value)
- {
-@@ -226,10 +226,14 @@ uint64_t GetGpuIDFromDisplayID(uint32_t displayID)
-             return registryId;
-         }
-     }
--
-+#if ANGLE_ENABLE_CGL
-     return GetGpuIDFromOpenGLDisplayMask(CGDisplayIDToOpenGLDisplayMask(displayID));
-+#else
-+    return 0;
-+#endif
- }
- 
-+#if ANGLE_ENABLE_CGL
- // Code from WebKit to query the GPU ID given an OpenGL display mask.
- // https://trac.webkit.org/browser/webkit/trunk/Source/WebCore/platform/mac/PlatformScreenMac.mm
- // Used with permission.
-@@ -237,6 +241,9 @@ uint64_t GetGpuIDFromOpenGLDisplayMask(uint32_t displayMask)
- {
-     if (@available(macOS 10.13, *))
-     {
-+        constexpr CGLRendererProperty kCGLRPRegistryIDLow  = static_cast<CGLRendererProperty>(140);
-+        constexpr CGLRendererProperty kCGLRPRegistryIDHigh = static_cast<CGLRendererProperty>(141);
-+
-         GLint numRenderers              = 0;
-         CGLRendererInfoObj rendererInfo = nullptr;
-         CGLError error = CGLQueryRendererInfo(displayMask, &rendererInfo, &numRenderers);
-@@ -276,6 +283,7 @@ uint64_t GetGpuIDFromOpenGLDisplayMask(uint32_t displayMask)
- 
-     return 0;
- }
-+#endif
- 
- // Get VendorID from metal device's registry ID
- VendorID GetVendorIDFromMetalDeviceRegistryID(uint64_t registryID)
 diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
 index 78d8378b79d16fb24183f40f408fe48e2db53f4a..5c9e73344200101c5faa39c8f12f5403af8417a3 100644
 --- a/src/libANGLE/Context.cpp
@@ -1524,7 +1425,7 @@ index 398e6d3e3809da8b0d7ed81458a8f5b752433b16..4689f7484593f8654680d2650d890332
      }
  
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.h b/src/libANGLE/renderer/metal/ContextMtl.h
-index acdd008c5424d3ab67df0ffe384bb459143348a1..7283095e00b5c260f276c497de5d53d1de27d2b9 100644
+index f6f33963a03bc2f97800515333b52147d3c37e8b..497f0284460b772f2d3c0a3914dbd8e15d565a67 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.h
 +++ b/src/libANGLE/renderer/metal/ContextMtl.h
 @@ -272,6 +272,10 @@ class ContextMtl : public ContextImpl, public mtl::Context
@@ -1538,7 +1439,7 @@ index acdd008c5424d3ab67df0ffe384bb459143348a1..7283095e00b5c260f276c497de5d53d1
      // override mtl::ErrorHandler
      void handleError(GLenum error,
                       const char *message,
-@@ -555,6 +559,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -553,6 +557,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
          DIRTY_BIT_RENDER_PIPELINE,
          DIRTY_BIT_UNIFORM_BUFFERS_BINDING,
          DIRTY_BIT_RASTERIZER_DISCARD,
@@ -1546,7 +1447,7 @@ index acdd008c5424d3ab67df0ffe384bb459143348a1..7283095e00b5c260f276c497de5d53d1
  
          DIRTY_BIT_INVALID,
          DIRTY_BIT_MAX = DIRTY_BIT_INVALID,
-@@ -649,6 +654,9 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -647,6 +652,9 @@ class ContextMtl : public ContextImpl, public mtl::Context
      IncompleteTextureSet mIncompleteTextures;
      ProvokingVertexHelper mProvokingVertexHelper;
  
@@ -1557,10 +1458,10 @@ index acdd008c5424d3ab67df0ffe384bb459143348a1..7283095e00b5c260f276c497de5d53d1
  };
  
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index 2575266dce1a914509864397ffda9c277a9ca429..65721594d04c8bffad5088fc53ced3da36dc70c0 100644
+index af75302bffca028e5969c394efb5b1945922bb27..de68ebb90932838ae9d5969c63fb5f39d8e23087 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
-@@ -263,6 +263,8 @@ void ContextMtl::onDestroy(const gl::Context *context)
+@@ -265,6 +265,8 @@ void ContextMtl::onDestroy(const gl::Context *context)
      mIncompleteTextures.onDestroy(context);
      mProvokingVertexHelper.onDestroy(this);
      mDummyXFBRenderTexture = nullptr;
@@ -1569,7 +1470,7 @@ index 2575266dce1a914509864397ffda9c277a9ca429..65721594d04c8bffad5088fc53ced3da
  
      mContextDevice.reset();
  }
-@@ -1084,6 +1086,13 @@ angle::Result ContextMtl::multiDrawElementsInstancedBaseVertexBaseInstance(
+@@ -1086,6 +1088,13 @@ angle::Result ContextMtl::multiDrawElementsInstancedBaseVertexBaseInstance(
  // Device loss
  gl::GraphicsResetStatus ContextMtl::getResetStatus()
  {
@@ -1583,7 +1484,7 @@ index 2575266dce1a914509864397ffda9c277a9ca429..65721594d04c8bffad5088fc53ced3da
      return gl::GraphicsResetStatus::NoError;
  }
  
-@@ -1425,6 +1434,9 @@ void ContextMtl::updateExtendedState(const gl::State &glState,
+@@ -1427,6 +1436,9 @@ void ContextMtl::updateExtendedState(const gl::State &glState,
              case gl::state::EXTENDED_DIRTY_BIT_POLYGON_OFFSET_LINE_ENABLED:
                  mDirtyBits.set(DIRTY_BIT_DEPTH_BIAS);
                  break;
@@ -1593,7 +1494,7 @@ index 2575266dce1a914509864397ffda9c277a9ca429..65721594d04c8bffad5088fc53ced3da
              default:
                  break;
          }
-@@ -1675,6 +1687,36 @@ angle::Result ContextMtl::memoryBarrierByRegion(const gl::Context *context, GLbi
+@@ -1681,6 +1693,36 @@ angle::Result ContextMtl::memoryBarrierByRegion(const gl::Context *context, GLbi
      return angle::Result::Stop;
  }
  
@@ -1630,7 +1531,7 @@ index 2575266dce1a914509864397ffda9c277a9ca429..65721594d04c8bffad5088fc53ced3da
  // override mtl::ErrorHandler
  void ContextMtl::handleError(GLenum glErrorCode,
                               const char *message,
-@@ -2531,8 +2573,22 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
+@@ -2535,8 +2577,22 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
              return angle::Result::Continue;
          }
          // Setup with flushed state should either produce a working encoder or fail with an error
@@ -1655,7 +1556,7 @@ index 2575266dce1a914509864397ffda9c277a9ca429..65721594d04c8bffad5088fc53ced3da
      }
      return angle::Result::Continue;
  }
-@@ -2641,10 +2697,10 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
+@@ -2645,10 +2701,10 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
                      mState.getBlendColor().blue, mState.getBlendColor().alpha);
                  break;
              case DIRTY_BIT_VIEWPORT:
@@ -1668,7 +1569,7 @@ index 2575266dce1a914509864397ffda9c277a9ca429..65721594d04c8bffad5088fc53ced3da
                  break;
              case DIRTY_BIT_DRAW_FRAMEBUFFER:
                  // Already handled.
-@@ -2669,6 +2725,12 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
+@@ -2673,6 +2729,12 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
              case DIRTY_BIT_RASTERIZER_DISCARD:
                  // Already handled.
                  break;
@@ -1682,7 +1583,7 @@ index 2575266dce1a914509864397ffda9c277a9ca429..65721594d04c8bffad5088fc53ced3da
                  UNREACHABLE();
                  break;
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.h b/src/libANGLE/renderer/metal/DisplayMtl.h
-index caf8d03814632d125af67315cc08846e99159c10..8e632756bf2ad4b6478579baf3aa00bede009058 100644
+index 22cad919fa256fc9f7a46525f7997c90ea9e6a6a..f383f15d979274f3b023169f6a1a54a1b694b88b 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.h
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.h
 @@ -143,6 +143,7 @@ class DisplayMtl : public DisplayImpl
@@ -1694,10 +1595,10 @@ index caf8d03814632d125af67315cc08846e99159c10..8e632756bf2ad4b6478579baf3aa00be
      bool isAMDBronzeDriver() const;
      bool isAMDFireProDevice() const;
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index e48b24ffbda3fef0ec470aafb3338f93c0c18f46..2a717fa7096472ae898993aedcf8b3c1295aa575 100644
+index b9568e0dd1facf5ff33aea78a63b1c14235983af..0cf8b7e3b3e79ff4e572b368fc5d608ccb01cb9a 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -184,12 +184,22 @@ void DisplayMtl::terminate()
+@@ -182,12 +182,22 @@ void DisplayMtl::terminate()
  
  bool DisplayMtl::testDeviceLost()
  {
@@ -1720,7 +1621,7 @@ index e48b24ffbda3fef0ec470aafb3338f93c0c18f46..2a717fa7096472ae898993aedcf8b3c1
  }
  
  std::string DisplayMtl::getRendererDescription()
-@@ -1165,6 +1175,14 @@ void DisplayMtl::initializeExtensions() const
+@@ -1160,6 +1170,14 @@ void DisplayMtl::initializeExtensions() const
              mNativeCaps.maxImageUnits = gl::IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES;
          }
      }
@@ -1735,7 +1636,7 @@ index e48b24ffbda3fef0ec470aafb3338f93c0c18f46..2a717fa7096472ae898993aedcf8b3c1
      // "The GPUs in Apple3 through Apple8 families only support memory barriers for compute command
      // encoders, and for vertex-to-vertex and vertex-to-fragment stages of render command encoders."
      mHasFragmentMemoryBarriers = !supportsAppleGPUFamily(3);
-@@ -1237,6 +1255,8 @@ void DisplayMtl::initializeFeatures()
+@@ -1232,6 +1250,8 @@ void DisplayMtl::initializeFeatures()
                              supportsMetal2_1() && (isOSX || isCatalyst) && !isARM);
      ANGLE_FEATURE_CONDITION((&mFeatures), hasDepthAutoResolve, supportsEitherGPUFamily(3, 2));
      ANGLE_FEATURE_CONDITION((&mFeatures), hasStencilAutoResolve, supportsEitherGPUFamily(5, 2));
@@ -1744,7 +1645,7 @@ index e48b24ffbda3fef0ec470aafb3338f93c0c18f46..2a717fa7096472ae898993aedcf8b3c1
      ANGLE_FEATURE_CONDITION((&mFeatures), allowMultisampleStoreAndResolve,
                              supportsEitherGPUFamily(3, 1));
  
-@@ -1459,6 +1479,17 @@ bool DisplayMtl::supportsDepth24Stencil8PixelFormat() const
+@@ -1442,6 +1462,17 @@ bool DisplayMtl::supportsDepth24Stencil8PixelFormat() const
      return false;
  #endif
  }
@@ -1782,7 +1683,7 @@ index f8a15d589405149d2d85f15174ea29989c2bb06d..ca845ad3e93985a6459773242ec0c83d
  
      const mtl::Format *mRenderPassFirstColorAttachmentFormat = nullptr;
 diff --git a/src/libANGLE/renderer/metal/FrameBufferMtl.mm b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-index 8cab198f0ce832cae8b564356066d2a457ad18fa..f4e01a06c2bf3d8faf279be5b9097862eb66062e 100644
+index fc64795431ec16f6d5d08141bf11522b2471901a..3014d1760087614ba44da78c09056599b0bd63ec 100644
 --- a/src/libANGLE/renderer/metal/FrameBufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
 @@ -121,6 +121,9 @@ angle::Result Copy2DTextureSlice0Level0ToTempTexture(const gl::Context *context,
@@ -1893,8 +1794,8 @@ index 8cab198f0ce832cae8b564356066d2a457ad18fa..f4e01a06c2bf3d8faf279be5b9097862
 +#endif
  
              desc.numColorAttachments = std::max(desc.numColorAttachments, colorIndexGL + 1);
-             desc.sampleCount = std::max(desc.sampleCount, colorRenderTarget->getRenderSamples());
-@@ -1127,6 +1172,12 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
+             desc.rasterSampleCount =
+@@ -1128,6 +1173,12 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
      if (mDepthRenderTarget)
      {
          mDepthRenderTarget->toRenderPassAttachmentDesc(&desc.depthAttachment);
@@ -1904,10 +1805,10 @@ index 8cab198f0ce832cae8b564356066d2a457ad18fa..f4e01a06c2bf3d8faf279be5b9097862
 +            mDepthResolveRenderTarget->toRenderPassResolveAttachmentDesc(&desc.depthAttachment);
 +        }
 +#endif
-         desc.sampleCount = std::max(desc.sampleCount, mDepthRenderTarget->getRenderSamples());
+         desc.rasterSampleCount =
+             std::max(desc.rasterSampleCount, mDepthRenderTarget->getRenderSamples());
      }
-     else
-@@ -1137,6 +1188,12 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
+@@ -1139,6 +1190,12 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
      if (mStencilRenderTarget)
      {
          mStencilRenderTarget->toRenderPassAttachmentDesc(&desc.stencilAttachment);
@@ -1917,10 +1818,10 @@ index 8cab198f0ce832cae8b564356066d2a457ad18fa..f4e01a06c2bf3d8faf279be5b9097862
 +            mStencilResolveRenderTarget->toRenderPassResolveAttachmentDesc(&desc.stencilAttachment);
 +        }
 +#endif
-         desc.sampleCount = std::max(desc.sampleCount, mStencilRenderTarget->getRenderSamples());
+         desc.rasterSampleCount =
+             std::max(desc.rasterSampleCount, mStencilRenderTarget->getRenderSamples());
      }
-     else
-@@ -1210,7 +1267,7 @@ angle::Result FramebufferMtl::clearWithLoadOpRenderPassNotStarted(
+@@ -1213,7 +1270,7 @@ angle::Result FramebufferMtl::clearWithLoadOpRenderPassNotStarted(
              colorAttachment.loadAction = MTLLoadActionLoad;
          }
  
@@ -1929,7 +1830,7 @@ index 8cab198f0ce832cae8b564356066d2a457ad18fa..f4e01a06c2bf3d8faf279be5b9097862
          {
              colorAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
          }
-@@ -1230,7 +1287,7 @@ angle::Result FramebufferMtl::clearWithLoadOpRenderPassNotStarted(
+@@ -1233,7 +1290,7 @@ angle::Result FramebufferMtl::clearWithLoadOpRenderPassNotStarted(
          tempDesc.depthAttachment.loadAction = MTLLoadActionLoad;
      }
  
@@ -1938,7 +1839,7 @@ index 8cab198f0ce832cae8b564356066d2a457ad18fa..f4e01a06c2bf3d8faf279be5b9097862
      {
          tempDesc.depthAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
      }
-@@ -1249,7 +1306,7 @@ angle::Result FramebufferMtl::clearWithLoadOpRenderPassNotStarted(
+@@ -1252,7 +1309,7 @@ angle::Result FramebufferMtl::clearWithLoadOpRenderPassNotStarted(
          tempDesc.stencilAttachment.loadAction = MTLLoadActionLoad;
      }
  
@@ -1947,7 +1848,7 @@ index 8cab198f0ce832cae8b564356066d2a457ad18fa..f4e01a06c2bf3d8faf279be5b9097862
      {
          tempDesc.stencilAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
      }
-@@ -1487,31 +1544,54 @@ angle::Result FramebufferMtl::invalidateImpl(const gl::Context *context,
+@@ -1490,31 +1547,54 @@ angle::Result FramebufferMtl::invalidateImpl(const gl::Context *context,
                  }
              }
  
@@ -2009,7 +1910,7 @@ index 8cab198f0ce832cae8b564356066d2a457ad18fa..f4e01a06c2bf3d8faf279be5b9097862
          }
      }
  
-@@ -1695,8 +1775,13 @@ angle::Result FramebufferMtl::readPixelsToPBO(const gl::Context *context,
+@@ -1698,8 +1778,13 @@ angle::Result FramebufferMtl::readPixelsToPBO(const gl::Context *context,
  
      ContextMtl *contextMtl = mtl::GetImpl(context);
  
@@ -2024,7 +1925,7 @@ index 8cab198f0ce832cae8b564356066d2a457ad18fa..f4e01a06c2bf3d8faf279be5b9097862
      uint32_t offset = static_cast<uint32_t>(packPixelsParams.offset);
  
      BufferMtl *packBufferMtl = mtl::GetImpl(packPixelsParams.packBuffer);
-@@ -1845,8 +1930,8 @@ angle::Result FramebufferMtl::unresolveIfNeeded(const gl::Context *context,
+@@ -1848,8 +1933,8 @@ angle::Result FramebufferMtl::unresolveIfNeeded(const gl::Context *context,
              renderPassDesc.colorAttachments[colorIndexGL];
  
          if (colorAttachment.loadAction != MTLLoadActionLoad ||
@@ -2035,7 +1936,7 @@ index 8cab198f0ce832cae8b564356066d2a457ad18fa..f4e01a06c2bf3d8faf279be5b9097862
          {
              continue;
          }
-@@ -1854,9 +1939,9 @@ angle::Result FramebufferMtl::unresolveIfNeeded(const gl::Context *context,
+@@ -1857,9 +1942,9 @@ angle::Result FramebufferMtl::unresolveIfNeeded(const gl::Context *context,
          const angle::Format &angleFormat = colorRenderTarget->getFormat().actualAngleFormat();
  
          // Blit the resolve texture to the MS texture.
@@ -2048,7 +1949,7 @@ index 8cab198f0ce832cae8b564356066d2a457ad18fa..f4e01a06c2bf3d8faf279be5b9097862
  
          colorBlitParams.enabledBuffers.reset();
          colorBlitParams.enabledBuffers.set(colorIndexGL);
-@@ -1871,19 +1956,18 @@ angle::Result FramebufferMtl::unresolveIfNeeded(const gl::Context *context,
+@@ -1874,19 +1959,18 @@ angle::Result FramebufferMtl::unresolveIfNeeded(const gl::Context *context,
      mtl::DepthStencilBlitParams dsBlitParams;
      dsBlitParams.BlitParams::operator=(baseParams);
      const mtl::RenderPassDepthAttachmentDesc &depthAttachment = renderPassDesc.depthAttachment;
@@ -2075,7 +1976,7 @@ index 8cab198f0ce832cae8b564356066d2a457ad18fa..f4e01a06c2bf3d8faf279be5b9097862
      {
          if (mState.hasSeparateDepthAndStencilAttachments())
          {
-@@ -1893,9 +1977,9 @@ angle::Result FramebufferMtl::unresolveIfNeeded(const gl::Context *context,
+@@ -1896,9 +1980,9 @@ angle::Result FramebufferMtl::unresolveIfNeeded(const gl::Context *context,
              dsBlitParams.src = nullptr;
          }
  
@@ -2131,7 +2032,7 @@ index a4a809fabe7572c1d212ff8fb4da35b1f67b6a01..eb2bd204b9edda65ba372b8fcb24f809
      {
          size_t resourceSize = EstimateTextureSizeInBytes(
 diff --git a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
-index 2b12574f70492d26ca793c57b1c21569d50ef468..45446b2b041fad4f756e1587eecd4d0995c0a8bd 100644
+index 48d4ef9cc84a3402cebaa5d5940ab448e077ee02..88a6fc17b25b3d5196cd07374e598e49ffbeea24 100644
 --- a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
 @@ -889,7 +889,7 @@ angle::Result ProgramExecutableMtl::setupDraw(const gl::Context *glContext,
@@ -2198,7 +2099,7 @@ index 18e62da867b2916085794ba3b68ee4a3812d3929..6cbf2a58812184edb425d11689bdbce5
 +#endif
  }  // namespace rx
 diff --git a/src/libANGLE/renderer/metal/SurfaceMtl.mm b/src/libANGLE/renderer/metal/SurfaceMtl.mm
-index 1089fb59517f0c50d055275a66992dda7f380e5f..1c1e2b823d9a4c1340fabb9dff87e8b60993e015 100644
+index d7cc71d0fd2612efeff8895a5948134205c0afa7..25321451b95fbdd0bafc9539278d78a09075691f 100644
 --- a/src/libANGLE/renderer/metal/SurfaceMtl.mm
 +++ b/src/libANGLE/renderer/metal/SurfaceMtl.mm
 @@ -686,8 +686,7 @@ angle::Result WindowSurfaceMtl::obtainNextDrawable(const gl::Context *context)
@@ -2243,7 +2144,7 @@ index d93f10afc07d12b88cd234e569fa658a1fbf6ad2..24fc07ff9b0e8294d972e7623173b9d4
      params.srcDefaultAlphaData  = convertedFormat.defaultAlpha;
  
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.h b/src/libANGLE/renderer/metal/mtl_command_buffer.h
-index 74f085009e4af0e0e7407c658ceddfffda4b2b78..7c36e0840135f5ad703db46c14160420d6b513af 100644
+index 99a284b7cad3c2a2eb7cb7b71790cabc22823fb8..79c182d05d77fa219513ae6ae59fd88e7782022a 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.h
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.h
 @@ -104,6 +104,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
@@ -2264,7 +2165,7 @@ index 74f085009e4af0e0e7407c658ceddfffda4b2b78..7c36e0840135f5ad703db46c14160420
  };
  
  class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::NonCopyable
-@@ -426,8 +430,10 @@ class RenderCommandEncoder final : public CommandEncoder
+@@ -420,8 +424,10 @@ class RenderCommandEncoder final : public CommandEncoder
      RenderCommandEncoder &setStencilRefVals(uint32_t frontRef, uint32_t backRef);
      RenderCommandEncoder &setStencilRefVal(uint32_t ref);
  
@@ -2277,7 +2178,7 @@ index 74f085009e4af0e0e7407c658ceddfffda4b2b78..7c36e0840135f5ad703db46c14160420
  
      RenderCommandEncoder &setBlendColor(float r, float g, float b, float a);
  
-@@ -576,6 +582,8 @@ class RenderCommandEncoder final : public CommandEncoder
+@@ -570,6 +576,8 @@ class RenderCommandEncoder final : public CommandEncoder
      RenderCommandEncoder &setDepthLoadAction(MTLLoadAction action, double clearValue);
      RenderCommandEncoder &setStencilLoadAction(MTLLoadAction action, uint32_t clearValue);
  
@@ -2286,7 +2187,7 @@ index 74f085009e4af0e0e7407c658ceddfffda4b2b78..7c36e0840135f5ad703db46c14160420
      void setLabel(NSString *label);
  
      void pushDebugGroup(NSString *label) override;
-@@ -583,8 +591,11 @@ class RenderCommandEncoder final : public CommandEncoder
+@@ -577,8 +585,11 @@ class RenderCommandEncoder final : public CommandEncoder
  
      const RenderPassDesc &renderPassDesc() const { return mRenderPassDesc; }
      bool hasDrawCalls() const { return mHasDrawCalls; }
@@ -2299,39 +2200,10 @@ index 74f085009e4af0e0e7407c658ceddfffda4b2b78..7c36e0840135f5ad703db46c14160420
    private:
      // Override CommandEncoder
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.mm b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
-index f1633a6d393c4c4b5fbbf7f34b62772ab9325626..00566ecb231a78a6e96a92148ec3819d880ebf18 100644
+index 7a68f31ac8986ce5b62fd1b397c24173487e5fe7..0e3415fa53e6b98c26b94739a743683e663a6ee9 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
-@@ -374,12 +374,20 @@ inline void SetVisibilityResultModeCmd(id<MTLRenderCommandEncoder> encoder,
-     [encoder setVisibilityResultMode:mode offset:offset];
- }
- 
-+#if (defined(__MAC_13_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_13_0) || \
-+    (defined(__IPHONE_16_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_16_0)
-+#    define ANGLE_MTL_USE_RESOURCE_USAGE_DEPRECATED 1
-+#endif
-+
- inline void UseResourceCmd(id<MTLRenderCommandEncoder> encoder, IntermediateCommandStream *stream)
- {
-     id<MTLResource> resource = stream->fetch<id<MTLResource>>();
-     MTLResourceUsage usage   = stream->fetch<MTLResourceUsage>();
-     mtl::RenderStages stages = stream->fetch<mtl::RenderStages>();
-     ANGLE_UNUSED_VARIABLE(stages);
-+#if ANGLE_MTL_USE_RESOURCE_USAGE_DEPRECATED
-+    [encoder useResource:resource usage:usage stages:stages];
-+#else
- #if defined(__IPHONE_13_0) || defined(__MAC_10_15)
-     if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.1, 13.0))
-     {
-@@ -392,6 +400,7 @@ inline void UseResourceCmd(id<MTLRenderCommandEncoder> encoder, IntermediateComm
-         [encoder useResource:resource usage:usage];
-         ANGLE_APPLE_ALLOW_DEPRECATED_END
-     }
-+#endif
-     [resource ANGLE_MTL_RELEASE];
- }
- 
-@@ -645,6 +654,20 @@ void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf,
+@@ -640,6 +640,20 @@ void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf,
  
      ANGLE_MTL_LOG("Completed MTLCommandBuffer %llu:%p", serial, buf);
  
@@ -2352,7 +2224,7 @@ index f1633a6d393c4c4b5fbbf7f34b62772ab9325626..00566ecb231a78a6e96a92148ec3819d
      if (timeElapsedEntry != 0)
      {
          // Record this command buffer's elapsed time.
-@@ -1361,6 +1384,7 @@ void RenderCommandEncoder::reset()
+@@ -1353,6 +1367,7 @@ void RenderCommandEncoder::reset()
      CommandEncoder::reset();
      mRecording        = false;
      mPipelineStateSet = false;
@@ -2360,19 +2232,16 @@ index f1633a6d393c4c4b5fbbf7f34b62772ab9325626..00566ecb231a78a6e96a92148ec3819d
      mCommands.clear();
  }
  
-@@ -1396,9 +1420,8 @@ bool RenderCommandEncoder::finalizeLoadStoreAction(
+@@ -1388,7 +1403,7 @@ bool RenderCommandEncoder::finalizeLoadStoreAction(
      }
  
      // Check if we need to disable MTLLoadActionLoad & MTLStoreActionStore
 -    mtl::TextureRef mainTextureRef = cppRenderPassAttachment.getImplicitMSTextureIfAvailOrTexture();
--    ASSERT(mainTextureRef->get() == objCRenderPassAttachment.texture);
--    if (mainTextureRef->shouldNotLoadStore())
-+    ASSERT(cppRenderPassAttachment.texture->get() == objCRenderPassAttachment.texture);
-+    if (cppRenderPassAttachment.texture->shouldNotLoadStore())
++    mtl::TextureRef mainTextureRef = cppRenderPassAttachment.texture;
+     ASSERT(mainTextureRef->get() == objCRenderPassAttachment.texture);
+     if (mainTextureRef->shouldNotLoadStore())
      {
-         // Disable Load.
-         if (objCRenderPassAttachment.loadAction == MTLLoadActionLoad)
-@@ -1531,13 +1554,13 @@ void RenderCommandEncoder::endEncodingImpl(bool considerDiscardSimulation)
+@@ -1532,13 +1547,13 @@ void RenderCommandEncoder::endEncodingImpl(bool considerDiscardSimulation)
  inline void RenderCommandEncoder::initAttachmentWriteDependencyAndScissorRect(
      const RenderPassAttachmentDesc &attachment)
  {
@@ -2389,7 +2258,7 @@ index f1633a6d393c4c4b5fbbf7f34b62772ab9325626..00566ecb231a78a6e96a92148ec3819d
          mRenderPassMaxScissorRect.width =
              std::min<NSUInteger>(mRenderPassMaxScissorRect.width, texture->width(mipLevel));
          mRenderPassMaxScissorRect.height =
-@@ -1815,7 +1838,8 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilRefVal(uint32_t ref)
+@@ -1816,7 +1831,8 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilRefVal(uint32_t ref)
      return setStencilRefVals(ref, ref);
  }
  
@@ -2399,7 +2268,7 @@ index f1633a6d393c4c4b5fbbf7f34b62772ab9325626..00566ecb231a78a6e96a92148ec3819d
  {
      if (mStateCache.viewport.valid() && mStateCache.viewport.value() == viewport)
      {
-@@ -1828,12 +1852,22 @@ RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewp
+@@ -1829,12 +1845,22 @@ RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewp
      return *this;
  }
  
@@ -2425,7 +2294,7 @@ index f1633a6d393c4c4b5fbbf7f34b62772ab9325626..00566ecb231a78a6e96a92148ec3819d
  
      MTLScissorRect clampedRect = {rect.x, rect.y, std::min(rect.width, clampedWidth),
                                    std::min(rect.height, clampedHeight)};
-@@ -1845,6 +1879,23 @@ RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect
+@@ -1846,6 +1872,23 @@ RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect
  
      mStateCache.scissorRect = clampedRect;
  
@@ -2449,7 +2318,7 @@ index f1633a6d393c4c4b5fbbf7f34b62772ab9325626..00566ecb231a78a6e96a92148ec3819d
      mCommands.push(CmdType::SetScissorRect).push(clampedRect);
  
      return *this;
-@@ -2250,6 +2301,17 @@ void RenderCommandEncoder::popDebugGroup()
+@@ -2251,6 +2294,17 @@ void RenderCommandEncoder::popDebugGroup()
      mCommands.push(CmdType::PopDebugGroup);
  }
  
@@ -2467,7 +2336,7 @@ index f1633a6d393c4c4b5fbbf7f34b62772ab9325626..00566ecb231a78a6e96a92148ec3819d
  RenderCommandEncoder &RenderCommandEncoder::setColorStoreAction(MTLStoreAction action,
                                                                  uint32_t colorAttachmentIndex)
  {
-@@ -2345,6 +2407,16 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilLoadAction(MTLLoadAction a
+@@ -2346,6 +2400,16 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilLoadAction(MTLLoadAction a
      return *this;
  }
  
@@ -2485,12 +2354,12 @@ index f1633a6d393c4c4b5fbbf7f34b62772ab9325626..00566ecb231a78a6e96a92148ec3819d
  {
      mLabel.retainAssign(label);
 diff --git a/src/libANGLE/renderer/metal/mtl_common.h b/src/libANGLE/renderer/metal/mtl_common.h
-index b430aa0263545ce6d35ae410e62b035cd41b6c23..96438f09f8b4f576ee2280206b3bdbf461c7618e 100644
+index 53df62518f0dcedda46c1a0946f214eabdfa28cf..a76051dd40ca82aa4b2631ce37b7ca3a9131c5ed 100644
 --- a/src/libANGLE/renderer/metal/mtl_common.h
 +++ b/src/libANGLE/renderer/metal/mtl_common.h
-@@ -407,6 +407,8 @@ inline AutoObjCObj<U> adoptObjCObj(U *NS_RELEASES_ARGUMENT src)
- #    define ANGLE_MTL_EVENT_AVAILABLE 0
+@@ -372,6 +372,8 @@ inline AutoObjCObj<U> adoptObjCObj(U *NS_RELEASES_ARGUMENT src)
  #endif
+ }
  
 +using RasterizationRateMapRef = AutoObjCPtr<id<MTLRasterizationRateMap>>;
 +
@@ -2513,7 +2382,7 @@ index db95298598177500cebd0eb81cfcb845656031b2..8cbd1014b7dd9c2886272df3ae0923cc
  
      LoadFunctionMap textureLoadFunctions       = nullptr;
 diff --git a/src/libANGLE/renderer/metal/mtl_format_utils.mm b/src/libANGLE/renderer/metal/mtl_format_utils.mm
-index 42ea015fdd35d71234acd7b64db032ba2831fb9b..047c119251175ca9a3b5bbafb84d6f686b0b22dd 100644
+index b6fb44c79e2ed92c908b5b8997695d2253bbe2a2..7f5cacbf7104aa15142cb78688a91a032657c46f 100644
 --- a/src/libANGLE/renderer/metal/mtl_format_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_format_utils.mm
 @@ -161,6 +161,26 @@ bool Format::needConversion(angle::FormatID srcFormatId) const
@@ -2544,7 +2413,7 @@ index 42ea015fdd35d71234acd7b64db032ba2831fb9b..047c119251175ca9a3b5bbafb84d6f68
  {
      switch (metalFormat)
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-index 9e5487d393a0a2bd64106fc70e7b3f73626e2490..956808f2cd03665bd09d95cf4af90e2eeacdd0ef 100644
+index 112dac4c75c78afe0f088bb29b33779c50bec3aa..a9f429dc573864a26b4dc5c5bf3922bec1c53ccb 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
 @@ -607,7 +607,8 @@ void DispatchCompute(ContextMtl *contextMtl,
@@ -2655,7 +2524,7 @@ index 3eaa9a64e79af26faa786102ece3f0bdea84d090..7ecb6db9d993df8985fcb6f701dfe7ca
 +
 +#endif /* LIBANGLE_RENDERER_METAL_RESOURCE_SPI_H_ */
 diff --git a/src/libANGLE/renderer/metal/mtl_resources.h b/src/libANGLE/renderer/metal/mtl_resources.h
-index b226d57cd41322b1de603b12cbef0a20856ac10f..f5d5e77c26ba609528c95ed48483e04a7a766675 100644
+index 051259c2cf61ea9a0fea84dcf72ea02c83af0017..dd5cb60db6aa78fa31a0ab9b3814d0753f3976a7 100644
 --- a/src/libANGLE/renderer/metal/mtl_resources.h
 +++ b/src/libANGLE/renderer/metal/mtl_resources.h
 @@ -228,6 +228,11 @@ class Texture final : public Resource,
@@ -2671,7 +2540,7 @@ index b226d57cd41322b1de603b12cbef0a20856ac10f..f5d5e77c26ba609528c95ed48483e04a
      TextureRef createMipsView(const MipmapNativeLevel &baseLevel, uint32_t levels);
      // Create a view of a level.
 diff --git a/src/libANGLE/renderer/metal/mtl_resources.mm b/src/libANGLE/renderer/metal/mtl_resources.mm
-index 1b20954c46bf4346e77a96a19511a263b9e59946..e0c4c7789813160815a4bf5341175f8b1f634634 100644
+index 1b7be4ff3abee176a10bfb46a624687da208d954..948a15a23d65d909f425ada5c72d4c05f4eb28d9 100644
 --- a/src/libANGLE/renderer/metal/mtl_resources.mm
 +++ b/src/libANGLE/renderer/metal/mtl_resources.mm
 @@ -78,12 +78,10 @@ MTLResourceOptions resourceOptionsForStorageMode(MTLStorageMode storageMode)
@@ -2687,7 +2556,7 @@ index 1b20954c46bf4346e77a96a19511a263b9e59946..e0c4c7789813160815a4bf5341175f8b
      }
  }
  
-@@ -724,7 +722,9 @@ TextureRef Texture::createCubeFaceView(uint32_t face)
+@@ -711,7 +709,9 @@ TextureRef Texture::createCubeFaceView(uint32_t face)
      }
  }
  
@@ -2698,7 +2567,7 @@ index 1b20954c46bf4346e77a96a19511a263b9e59946..e0c4c7789813160815a4bf5341175f8b
  {
      ANGLE_MTL_OBJC_SCOPE
      {
-@@ -733,7 +733,7 @@ TextureRef Texture::createSliceMipView(uint32_t slice, const MipmapNativeLevel &
+@@ -720,7 +720,7 @@ TextureRef Texture::createSliceMipView(uint32_t slice, const MipmapNativeLevel &
              case MTLTextureTypeCube:
              case MTLTextureType2D:
              case MTLTextureType2DArray:
@@ -2707,7 +2576,7 @@ index 1b20954c46bf4346e77a96a19511a263b9e59946..e0c4c7789813160815a4bf5341175f8b
                                                NSMakeRange(level.get(), 1), NSMakeRange(slice, 1)));
              default:
                  UNREACHABLE();
-@@ -742,6 +742,11 @@ TextureRef Texture::createSliceMipView(uint32_t slice, const MipmapNativeLevel &
+@@ -729,6 +729,11 @@ TextureRef Texture::createSliceMipView(uint32_t slice, const MipmapNativeLevel &
      }
  }
  
@@ -2720,10 +2589,10 @@ index 1b20954c46bf4346e77a96a19511a263b9e59946..e0c4c7789813160815a4bf5341175f8b
  {
      ANGLE_MTL_OBJC_SCOPE
 diff --git a/src/libANGLE/renderer/metal/mtl_state_cache.h b/src/libANGLE/renderer/metal/mtl_state_cache.h
-index 9eb4054c173b0cbc7a2fed6380402b0576c6891f..5aa69c7b4e7b7dd2fa7318d4bbf027073ba776ba 100644
+index 577c15359bb26a897a7a62f931174376bdc61047..70d091ab51b6682f0778f225cec7f21e8a4cb354 100644
 --- a/src/libANGLE/renderer/metal/mtl_state_cache.h
 +++ b/src/libANGLE/renderer/metal/mtl_state_cache.h
-@@ -319,20 +319,21 @@ struct RenderPassAttachmentDesc
+@@ -304,20 +304,21 @@ struct RenderPassAttachmentDesc
      bool equalIgnoreLoadStoreOptions(const RenderPassAttachmentDesc &other) const;
      bool operator==(const RenderPassAttachmentDesc &other) const;
  
@@ -2753,7 +2622,7 @@ index 9eb4054c173b0cbc7a2fed6380402b0576c6891f..5aa69c7b4e7b7dd2fa7318d4bbf02707
      bool blendable;
      MTLLoadAction loadAction;
 diff --git a/src/libANGLE/renderer/metal/mtl_state_cache.mm b/src/libANGLE/renderer/metal/mtl_state_cache.mm
-index 8534c5c32fbc218da6c00ed95804026ccab508ef..ef3cb4944f9f588f4ddbf92529c5b999f0cc5f26 100644
+index 96d63ee854d4051a1cae862e6814aa515b4c8f9c..d5b50b7b3980445dcfb8518f0bc643f8be7d57b4 100644
 --- a/src/libANGLE/renderer/metal/mtl_state_cache.mm
 +++ b/src/libANGLE/renderer/metal/mtl_state_cache.mm
 @@ -142,44 +142,29 @@ id<MTLTexture> ToObjC(const TextureRef &texture)
@@ -2812,7 +2681,7 @@ index 8534c5c32fbc218da6c00ed95804026ccab508ef..ef3cb4944f9f588f4ddbf92529c5b999
          dst.resolveDepthPlane = 0;
      }
  
-@@ -692,9 +677,11 @@ RenderPassAttachmentDesc::RenderPassAttachmentDesc()
+@@ -688,9 +673,11 @@ RenderPassAttachmentDesc::RenderPassAttachmentDesc()
  void RenderPassAttachmentDesc::reset()
  {
      texture.reset();
@@ -2825,7 +2694,7 @@ index 8534c5c32fbc218da6c00ed95804026ccab508ef..ef3cb4944f9f588f4ddbf92529c5b999
      blendable           = false;
      loadAction          = MTLLoadActionLoad;
      storeAction         = MTLStoreActionStore;
-@@ -704,7 +691,7 @@ void RenderPassAttachmentDesc::reset()
+@@ -700,7 +687,7 @@ void RenderPassAttachmentDesc::reset()
  bool RenderPassAttachmentDesc::equalIgnoreLoadStoreOptions(
      const RenderPassAttachmentDesc &other) const
  {
@@ -2835,11 +2704,11 @@ index 8534c5c32fbc218da6c00ed95804026ccab508ef..ef3cb4944f9f588f4ddbf92529c5b999
             blendable == other.blendable;
  }
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
-index 81197f9d1a65a8a18f112bc057d69d19b27bd5b7..13446940c9c0c06dcac73e4f6e72531abebc5334 100644
+index 2265bb0be8ce8495426827b03653f87b90f78776..0415d10c8d7b51c6e43823fce31cbaedf38562a2 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_utils.mm
-@@ -1629,6 +1629,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
-     return false;
+@@ -1552,6 +1552,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
+     return [device supportsFamily:family];
  }
  
 +#if (defined(__MAC_13_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_13_0) ||        \
@@ -2863,29 +2732,7 @@ index 81197f9d1a65a8a18f112bc057d69d19b27bd5b7..13446940c9c0c06dcac73e4f6e72531a
  bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-@@ -1643,10 +1661,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
- #        if TARGET_OS_MACCATALYST
-             ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
-             case 1:
--                family = MTLGPUFamilyMacCatalyst1;
-+                family = ANGLE_MTL_GPU_FAMILY_MAC1;
-                 break;
-             case 2:
--                family = MTLGPUFamilyMacCatalyst2;
-+                family = ANGLE_MTL_GPU_FAMILY_MAC2;
-                 break;
-                 ANGLE_APPLE_ALLOW_DEPRECATED_END
- #        else   // TARGET_OS_MACCATALYST
-@@ -1669,7 +1687,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
- 
-     // If device doesn't support [MTLDevice supportsFamily:], then use
-     // [MTLDevice supportsFeatureSet:].
--#    if TARGET_OS_MACCATALYST
-+#    if TARGET_OS_MACCATALYST || ANGLE_MTL_FEATURE_SET_DEPRECATED
-     UNREACHABLE();
-     return false;
- #    else
-@@ -1718,8 +1736,7 @@ static NSUInteger getNextLocationForAttachment(const mtl::RenderPassAttachmentDe
+@@ -1597,8 +1615,7 @@ static NSUInteger getNextLocationForAttachment(const mtl::RenderPassAttachmentDe
                                                 const Context *context,
                                                 NSUInteger currentRenderTargetSize)
  {
@@ -2983,7 +2830,7 @@ index 68f53b5327bb89578b3291b60eaed8992e2e895f..155e852f4fc50dfc0fdfd23f68aff481
          {
              // Invoke clspv
 diff --git a/src/libANGLE/renderer/vulkan/ContextVk.cpp b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-index 857c30d7178ec3dc6ad82b378b374bd01e031a2c..40d05a4b474b55bc972a826b09f9887c1833a502 100644
+index 8d97ff96518771890a7a81e5d8304a77f4eba342..66170292a864d106e73c08195a816060b2280080 100644
 --- a/src/libANGLE/renderer/vulkan/ContextVk.cpp
 +++ b/src/libANGLE/renderer/vulkan/ContextVk.cpp
 @@ -5924,6 +5924,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
@@ -3519,10 +3366,10 @@ index 969cd2f96d302d74dd3515ac842b93eb51387cd2..730d0ffa536caf536ec750e2bac82c81
      window->makeCurrent();
  
 diff --git a/util/autogen/angle_features_autogen.cpp b/util/autogen/angle_features_autogen.cpp
-index c22a77b4530740565872b6bf301b5d100bf569a2..ffdfe6d6a2b05b8b4b802af50c0410739cbe3aee 100644
+index fc3c1999862c412260e3815f765bf4b9ddaadb17..7df5e11f1ee86c0d845428a480623690a7eac2cd 100644
 --- a/util/autogen/angle_features_autogen.cpp
 +++ b/util/autogen/angle_features_autogen.cpp
-@@ -205,6 +205,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
+@@ -206,6 +206,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
      {Feature::HasShaderStencilOutput, "hasShaderStencilOutput"},
      {Feature::HasStencilAutoResolve, "hasStencilAutoResolve"},
      {Feature::HasTextureSwizzle, "hasTextureSwizzle"},
@@ -3531,10 +3378,10 @@ index c22a77b4530740565872b6bf301b5d100bf569a2..ffdfe6d6a2b05b8b4b802af50c041073
      {Feature::InitializeCurrentVertexAttributes, "initializeCurrentVertexAttributes"},
      {Feature::InjectAsmStatementIntoLoopBodies, "injectAsmStatementIntoLoopBodies"},
 diff --git a/util/autogen/angle_features_autogen.h b/util/autogen/angle_features_autogen.h
-index e6420ad0579a2173a51aade8524a4529b3351c37..4069e5be49f58147a3b342023b1393648b259441 100644
+index b2a78355e0be60d44f04f500dfc43ac4f187ccd7..bc9a5db6d6568a2c57912c3aa9729013fe1f65ce 100644
 --- a/util/autogen/angle_features_autogen.h
 +++ b/util/autogen/angle_features_autogen.h
-@@ -205,6 +205,7 @@ enum class Feature
+@@ -206,6 +206,7 @@ enum class Feature
      HasShaderStencilOutput,
      HasStencilAutoResolve,
      HasTextureSwizzle,

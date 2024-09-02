@@ -435,6 +435,13 @@ struct FeaturesMtl : FeatureSetBase
         &members, "http://anglebug.com/42261786"
     };
 
+    FeatureInfo emulateDontCareLoadWithRandomClear = {
+        "emulateDontCareLoadWithRandomClear",
+        FeatureCategory::MetalFeatures,
+        "Emulate DontCare loadAction with Clear loadAction. The clear values will be randomized.",
+        &members, "http://anglebug.com/42261786"
+    };
+
     FeatureInfo injectAsmStatementIntoLoopBodies = {
         "injectAsmStatementIntoLoopBodies",
         FeatureCategory::MetalFeatures,

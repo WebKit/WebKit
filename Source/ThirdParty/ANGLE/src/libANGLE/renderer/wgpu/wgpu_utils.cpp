@@ -296,6 +296,45 @@ bool IsStripPrimitiveTopology(wgpu::PrimitiveTopology topology)
     }
 }
 
+ErrorScope::ErrorScope(wgpu::Instance instance, wgpu::Device device, wgpu::ErrorFilter errorType)
+    : mInstance(instance), mDevice(device)
+{
+    mDevice.PushErrorScope(errorType);
+    mActive = true;
+}
+
+ErrorScope::~ErrorScope()
+{
+    ANGLE_UNUSED_VARIABLE(PopScope(nullptr, nullptr, nullptr, 0));
+}
+
+angle::Result ErrorScope::PopScope(ContextWgpu *context,
+                                   const char *file,
+                                   const char *function,
+                                   unsigned int line)
+{
+    bool hadError  = false;
+    wgpu::Future f = mDevice.PopErrorScope(
+        wgpu::CallbackMode::WaitAnyOnly,
+        [context, file, function, line, &hadError](wgpu::PopErrorScopeStatus status,
+                                                   wgpu::ErrorType type, char const *message) {
+            if (context)
+            {
+                ASSERT(file);
+                ASSERT(function);
+                context->handleError(GL_INVALID_OPERATION, message, file, function, line);
+            }
+            else
+            {
+                ERR() << "Unhandled WebGPU error: " << message;
+            }
+            hadError = true;
+        });
+    mInstance.WaitAny(f, -1);
+
+    return hadError ? angle::Result::Stop : angle::Result::Continue;
+}
+
 }  // namespace webgpu
 
 namespace wgpu_gl

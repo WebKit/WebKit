@@ -28,6 +28,7 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_UTILSVK_H_
 #define LIBANGLE_RENDERER_VULKAN_UTILSVK_H_
 
+#include "libANGLE/renderer/vulkan/BufferVk.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 #include "libANGLE/renderer/vulkan/vk_internal_shaders_autogen.h"
@@ -229,9 +230,9 @@ class UtilsVk : angle::NonCopyable
     angle::Result convertLineLoopIndexIndirectBuffer(
         ContextVk *contextVk,
         vk::BufferHelper *srcIndirectBuffer,
+        vk::BufferHelper *srcIndexBuffer,
         vk::BufferHelper *dstIndirectBuffer,
         vk::BufferHelper *dstIndexBuffer,
-        vk::BufferHelper *srcIndexBuffer,
         const ConvertLineLoopIndexIndirectParameters &params);
 
     angle::Result convertLineLoopArrayIndirectBuffer(
@@ -715,6 +716,69 @@ class UtilsVk : angle::NonCopyable
     vk::Sampler mLinearSampler;
 };
 
+// This class' responsibility is to create index buffers needed to support line loops in Vulkan.
+// In the setup phase of drawing, the createIndexBuffer method should be called with the
+// current draw call parameters. If an element array buffer is bound for an indexed draw, use
+// createIndexBufferFromElementArrayBuffer.
+//
+// If the user wants to draw a loop between [v1, v2, v3], we will create an indexed buffer with
+// these indexes: [0, 1, 2, 3, 0] to emulate the loop.
+class LineLoopHelper final : angle::NonCopyable
+{
+  public:
+    LineLoopHelper(vk::Renderer *renderer);
+    ~LineLoopHelper();
+
+    angle::Result getIndexBufferForDrawArrays(ContextVk *contextVk,
+                                              uint32_t clampedVertexCount,
+                                              GLint firstVertex,
+                                              vk::BufferHelper **bufferOut);
+
+    angle::Result getIndexBufferForElementArrayBuffer(ContextVk *contextVk,
+                                                      BufferVk *elementArrayBufferVk,
+                                                      gl::DrawElementsType glIndexType,
+                                                      int indexCount,
+                                                      intptr_t elementArrayOffset,
+                                                      vk::BufferHelper **bufferOut,
+                                                      uint32_t *indexCountOut);
+
+    angle::Result streamIndices(ContextVk *contextVk,
+                                gl::DrawElementsType glIndexType,
+                                GLsizei indexCount,
+                                const uint8_t *srcPtr,
+                                vk::BufferHelper **bufferOut,
+                                uint32_t *indexCountOut);
+
+    angle::Result streamIndicesIndirect(ContextVk *contextVk,
+                                        gl::DrawElementsType glIndexType,
+                                        vk::BufferHelper *indexBuffer,
+                                        vk::BufferHelper *indirectBuffer,
+                                        VkDeviceSize indirectBufferOffset,
+                                        vk::BufferHelper **indexBufferOut,
+                                        vk::BufferHelper **indirectBufferOut);
+
+    angle::Result streamArrayIndirect(ContextVk *contextVk,
+                                      size_t vertexCount,
+                                      vk::BufferHelper *arrayIndirectBuffer,
+                                      VkDeviceSize arrayIndirectBufferOffset,
+                                      vk::BufferHelper **indexBufferOut,
+                                      vk::BufferHelper **indexIndirectBufferOut);
+
+    void release(ContextVk *contextVk);
+    void destroy(vk::Renderer *renderer);
+
+    static void Draw(uint32_t count,
+                     uint32_t baseVertex,
+                     vk::RenderPassCommandBuffer *commandBuffer)
+    {
+        // Our first index is always 0 because that's how we set it up in createIndexBuffer*.
+        commandBuffer->drawIndexedBaseVertex(count, baseVertex);
+    }
+
+  private:
+    ConversionBuffer mDynamicIndexBuffer;
+    ConversionBuffer mDynamicIndirectBuffer;
+};
 }  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_VULKAN_UTILSVK_H_

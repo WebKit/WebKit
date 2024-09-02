@@ -38,6 +38,7 @@
 /third_party/android_platform
 /third_party/android_sdk
 /third_party/android_system_sdk/*.jar
+/third_party/android_system_sdk/cipd
 /third_party/android_toolchain
 /third_party/astc-encoder/src
 /third_party/bazel/desugar/*.jar

@@ -12,6 +12,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <random>
 #include <type_traits>
 #include "mtl_command_buffer.h"
 #if ANGLE_MTL_SIMULATE_DISCARD_FRAMEBUFFER
@@ -374,69 +375,30 @@ inline void SetVisibilityResultModeCmd(id<MTLRenderCommandEncoder> encoder,
     [encoder setVisibilityResultMode:mode offset:offset];
 }
 
-#if (defined(__MAC_13_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_13_0) || \
-    (defined(__IPHONE_16_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_16_0)
-#    define ANGLE_MTL_USE_RESOURCE_USAGE_DEPRECATED 1
-#endif
-
 inline void UseResourceCmd(id<MTLRenderCommandEncoder> encoder, IntermediateCommandStream *stream)
 {
     id<MTLResource> resource = stream->fetch<id<MTLResource>>();
     MTLResourceUsage usage   = stream->fetch<MTLResourceUsage>();
-    mtl::RenderStages stages = stream->fetch<mtl::RenderStages>();
-    ANGLE_UNUSED_VARIABLE(stages);
-#if ANGLE_MTL_USE_RESOURCE_USAGE_DEPRECATED
+    MTLRenderStages stages   = stream->fetch<MTLRenderStages>();
     [encoder useResource:resource usage:usage stages:stages];
-#else
-#if defined(__IPHONE_13_0) || defined(__MAC_10_15)
-    if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.1, 13.0))
-    {
-        [encoder useResource:resource usage:usage stages:stages];
-    }
-    else
-#endif
-    {
-        ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
-        [encoder useResource:resource usage:usage];
-        ANGLE_APPLE_ALLOW_DEPRECATED_END
-    }
-#endif
     [resource ANGLE_MTL_RELEASE];
 }
 
 inline void MemoryBarrierCmd(id<MTLRenderCommandEncoder> encoder, IntermediateCommandStream *stream)
 {
-    mtl::RenderStages scope  = stream->fetch<mtl::BarrierScope>();
-    mtl::RenderStages after  = stream->fetch<mtl::RenderStages>();
-    mtl::RenderStages before = stream->fetch<mtl::RenderStages>();
-    ANGLE_UNUSED_VARIABLE(scope);
-    ANGLE_UNUSED_VARIABLE(after);
-    ANGLE_UNUSED_VARIABLE(before);
-#if defined(__MAC_10_14) && (TARGET_OS_OSX || TARGET_OS_MACCATALYST)
-    if (ANGLE_APPLE_AVAILABLE_XC(10.14, 13.1))
-    {
-        [encoder memoryBarrierWithScope:scope afterStages:after beforeStages:before];
-    }
-#endif
+    MTLBarrierScope scope  = stream->fetch<MTLBarrierScope>();
+    MTLRenderStages after  = stream->fetch<MTLRenderStages>();
+    MTLRenderStages before = stream->fetch<MTLRenderStages>();
+    [encoder memoryBarrierWithScope:scope afterStages:after beforeStages:before];
 }
 
 inline void MemoryBarrierWithResourceCmd(id<MTLRenderCommandEncoder> encoder,
                                          IntermediateCommandStream *stream)
 {
     id<MTLResource> resource = stream->fetch<id<MTLResource>>();
-    mtl::RenderStages after  = stream->fetch<mtl::RenderStages>();
-    mtl::RenderStages before = stream->fetch<mtl::RenderStages>();
-    ANGLE_UNUSED_VARIABLE(after);
-    ANGLE_UNUSED_VARIABLE(before);
-#if defined(__MAC_10_14) && (TARGET_OS_OSX || TARGET_OS_MACCATALYST)
-    if (ANGLE_APPLE_AVAILABLE_XC(10.14, 13.1))
-    {
-        [encoder memoryBarrierWithResources:&resource
-                                      count:1
-                                afterStages:after
-                               beforeStages:before];
-    }
-#endif
+    MTLRenderStages after    = stream->fetch<MTLRenderStages>();
+    MTLRenderStages before   = stream->fetch<MTLRenderStages>();
+    [encoder memoryBarrierWithResources:&resource count:1 afterStages:after beforeStages:before];
     [resource ANGLE_MTL_RELEASE];
 }
 
@@ -478,6 +440,30 @@ inline void CheckPrimitiveType(MTLPrimitiveType primitiveType)
     {
         // Should have been caught by validation higher up.
         FATAL() << "invalid primitive type was uncaught by validation";
+    }
+}
+
+template <typename ObjCAttachmentDescriptor>
+void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+{
+    std::random_device rd;
+    if constexpr (std::is_same_v<ObjCAttachmentDescriptor, MTLRenderPassColorAttachmentDescriptor>)
+    {
+        std::uniform_real_distribution<float> dist(0.f, 1.f);
+        objCRenderPassAttachment.clearColor =
+            MTLClearColorMake(dist(rd), dist(rd), dist(rd), dist(rd));
+    }
+    else if constexpr (std::is_same_v<ObjCAttachmentDescriptor,
+                                      MTLRenderPassDepthAttachmentDescriptor>)
+    {
+        std::uniform_real_distribution<float> dist(0.f, 1.f);
+        objCRenderPassAttachment.clearDepth = dist(rd);
+    }
+    else if constexpr (std::is_same_v<ObjCAttachmentDescriptor,
+                                      MTLRenderPassStencilAttachmentDescriptor>)
+    {
+        std::uniform_int_distribution<uint32_t> dist(0, 255);
+        objCRenderPassAttachment.clearStencil = dist(rd);
     }
 }
 
@@ -1014,7 +1000,6 @@ void CommandBuffer::popDebugGroup()
     }
 }
 
-#if ANGLE_MTL_EVENT_AVAILABLE
 uint64_t CommandBuffer::queueEventSignal(id<MTLEvent> event, uint64_t value)
 {
     std::lock_guard<std::mutex> lg(mLock);
@@ -1047,7 +1032,6 @@ void CommandBuffer::serverWaitEvent(id<MTLEvent> event, uint64_t value)
     setPendingEvents();
     [get() encodeWaitForEvent:event value:value];
 }
-#endif  // ANGLE_MTL_EVENT_AVAILABLE
 
 /** private use only */
 void CommandBuffer::set(id<MTLCommandBuffer> metalBuffer)
@@ -1163,22 +1147,18 @@ void CommandBuffer::forceEndingAllEncoders()
 
 void CommandBuffer::setPendingEvents()
 {
-#if ANGLE_MTL_EVENT_AVAILABLE
     for (const PendingEvent &eventEntry : mPendingSignalEvents)
     {
         setEventImpl(eventEntry.event, eventEntry.signalValue);
     }
     mPendingSignalEvents.clear();
-#endif
 }
 
-#if ANGLE_MTL_EVENT_AVAILABLE
 void CommandBuffer::setEventImpl(id<MTLEvent> event, uint64_t value)
 {
     ASSERT(!getPendingCommandEncoder());
     [get() encodeSignalEvent:event value:value];
 }
-#endif  // #if ANGLE_MTL_EVENT_AVAILABLE
 
 void CommandBuffer::pushDebugGroupImpl(const std::string &marker)
 {
@@ -1342,8 +1322,11 @@ void RenderCommandEncoderStates::reset()
 
 // RenderCommandEncoder implemtation
 RenderCommandEncoder::RenderCommandEncoder(CommandBuffer *cmdBuffer,
-                                           const OcclusionQueryPool &queryPool)
-    : CommandEncoder(cmdBuffer, RENDER), mOcclusionQueryPool(queryPool)
+                                           const OcclusionQueryPool &queryPool,
+                                           bool emulateDontCareLoadOpWithRandomClear)
+    : CommandEncoder(cmdBuffer, RENDER),
+      mOcclusionQueryPool(queryPool),
+      mEmulateDontCareLoadOpWithRandomClear(emulateDontCareLoadOpWithRandomClear)
 {
     ANGLE_MTL_OBJC_SCOPE
     {
@@ -1452,6 +1435,15 @@ bool RenderCommandEncoder::finalizeLoadStoreAction(
             objCRenderPassAttachment.loadAction = MTLLoadActionClear;
             objCRenderPassAttachment.clearColor = MTLClearColorMake(0, 0, 0, kEmulatedAlphaValue);
         }
+    }
+
+    if (ANGLE_UNLIKELY(mEmulateDontCareLoadOpWithRandomClear &&
+                       objCRenderPassAttachment.loadAction == MTLLoadActionDontCare))
+    {
+        // Emulate DontCare loadAction with Clear. This is useful for testing undefined values
+        // caused by DontCare loadAction on non-tiled GPUs.
+        objCRenderPassAttachment.loadAction = MTLLoadActionClear;
+        RandomizeClearValue(objCRenderPassAttachment);
     }
 
     if (objCRenderPassAttachment.storeAction == MTLStoreActionUnknown)
@@ -2242,7 +2234,7 @@ RenderCommandEncoder &RenderCommandEncoder::setVisibilityResultMode(MTLVisibilit
 
 RenderCommandEncoder &RenderCommandEncoder::useResource(const BufferRef &resource,
                                                         MTLResourceUsage usage,
-                                                        mtl::RenderStages states)
+                                                        MTLRenderStages stages)
 {
     if (!resource)
     {
@@ -2254,22 +2246,22 @@ RenderCommandEncoder &RenderCommandEncoder::useResource(const BufferRef &resourc
     mCommands.push(CmdType::UseResource)
         .push([resource->get() ANGLE_MTL_RETAIN])
         .push(usage)
-        .push(states);
+        .push(stages);
 
     return *this;
 }
 
-RenderCommandEncoder &RenderCommandEncoder::memoryBarrier(mtl::BarrierScope scope,
-                                                          mtl::RenderStages after,
-                                                          mtl::RenderStages before)
+RenderCommandEncoder &RenderCommandEncoder::memoryBarrier(MTLBarrierScope scope,
+                                                          MTLRenderStages after,
+                                                          MTLRenderStages before)
 {
     mCommands.push(CmdType::MemoryBarrier).push(scope).push(after).push(before);
     return *this;
 }
 
 RenderCommandEncoder &RenderCommandEncoder::memoryBarrierWithResource(const BufferRef &resource,
-                                                                      mtl::RenderStages after,
-                                                                      mtl::RenderStages before)
+                                                                      MTLRenderStages after,
+                                                                      MTLRenderStages before)
 {
     if (!resource)
     {
@@ -2787,11 +2779,7 @@ ComputeCommandEncoder &ComputeCommandEncoder::dispatch(const MTLSize &threadGrou
 ComputeCommandEncoder &ComputeCommandEncoder::dispatchNonUniform(const MTLSize &threadsPerGrid,
                                                                  const MTLSize &threadsPerGroup)
 {
-#if TARGET_OS_TV
-    UNREACHABLE();
-#else
     [get() dispatchThreads:threadsPerGrid threadsPerThreadgroup:threadsPerGroup];
-#endif
     return *this;
 }
 }  // namespace mtl

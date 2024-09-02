@@ -451,6 +451,14 @@
             "issue": "http://anglebug.com/42261786"
         },
         {
+            "name": "emulate_dont_care_load_with_random_clear",
+            "category": "Features",
+            "description": [
+                "Emulate DontCare loadAction with Clear loadAction. The clear values will be randomized."
+            ],
+            "issue": "http://anglebug.com/42261786"
+        },
+        {
             "name": "inject_asm_statement_into_loop_bodies",
             "category": "Features",
             "description": [

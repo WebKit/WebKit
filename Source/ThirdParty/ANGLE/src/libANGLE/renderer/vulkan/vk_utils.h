@@ -132,6 +132,12 @@ class Renderer;
 // Used for memory allocation tracking.
 enum class MemoryAllocationType;
 
+enum class MemoryHostVisibility
+{
+    NonVisible,
+    Visible
+};
+
 // Encapsulate the graphics family index and VkQueue index (as seen in vkGetDeviceQueue API
 // arguments) into one integer so that we can easily pass around without introduce extra overhead..
 class DeviceQueueIndex final

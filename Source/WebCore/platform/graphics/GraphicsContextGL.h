@@ -936,6 +936,7 @@ public:
     static constexpr GCGLenum BGRA4_ANGLEX = 0x6ABC;
     static constexpr GCGLenum BGR5_A1_ANGLEX = 0x6ABD;
     static constexpr GCGLenum BGRA8_SRGB_ANGLEX = 0x6AC0;
+    static constexpr GCGLenum RGBX8_SRGB_ANGLEX = 0x6AFA;
 
     // GL_OES_depth32
     static constexpr GCGLenum DEPTH_COMPONENT32_OES = 0x81A7;

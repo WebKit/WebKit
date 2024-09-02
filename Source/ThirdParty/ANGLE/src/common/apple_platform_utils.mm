@@ -73,68 +73,28 @@ bool IsMetalRendererAvailable()
     }
 #endif
 
-    static bool queriedSystemDevice = false;
-    static bool gpuFamilySufficient = false;
-
-    // We only support macos 10.13+ and 11 for now. Since they are requirements for Metal 2.0.
-#if TARGET_OS_SIMULATOR
-    if (ANGLE_APPLE_AVAILABLE_XCI(10.13, 13.1, 13))
-#else
-    if (ANGLE_APPLE_AVAILABLE_XCI(10.13, 13.1, 11))
-#endif
-    {
-        if (!queriedSystemDevice)
+    static bool gpuFamilySufficient = []() -> bool {
+        ANGLE_APPLE_OBJC_SCOPE
         {
-            ANGLE_APPLE_OBJC_SCOPE
+            auto device = [MTLCreateSystemDefaultDevice() ANGLE_APPLE_AUTORELEASE];
+            if (!device)
             {
-                queriedSystemDevice = true;
-                auto device         = [MTLCreateSystemDefaultDevice() ANGLE_APPLE_AUTORELEASE];
-                if (!device)
-                {
-                    return false;
-                }
-
-                // -[MTLDevice supportsFamily] introduced in macOS 10.15, Catalyst 13.1, iOS 13.
-#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
-                // Old Macs, such as MacBookPro11,4, cannot use ANGLE's Metal backend.
-                // This check can be removed once they are no longer supported.
-                if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.1, 13))
-                {
-                    if ([device supportsFamily:MTLGPUFamilyMac2])
-                        gpuFamilySufficient = true;
-                }
-                else
-                {
-                    // Hardcode constant to sidestep compiler errors. Call will
-                    // return false on older macOS versions.
-                    const NSUInteger macFamily2v1 = 10005;
-                    ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
-                    if ([device supportsFeatureSet:static_cast<MTLFeatureSet>(macFamily2v1)])
-                        gpuFamilySufficient = true;
-                    ANGLE_APPLE_ALLOW_DEPRECATED_END
-                }
-#elif ANGLE_PLATFORM_IOS_FAMILY && !ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR
-#    if !defined(__IPHONE_16_0) || __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_16_0
-                // Hardcode constant to sidestep compiler errors. Call will
-                // return false on older macOS versions.
-                const NSUInteger iosFamily3v1 = 4;
-                if ([device supportsFeatureSet:static_cast<MTLFeatureSet>(iosFamily3v1)])
-                    gpuFamilySufficient = true;
-#    else
-                // iOS 16 and later target A11 Bionic.
-                gpuFamilySufficient = true;
-#    endif
-#elif ANGLE_PLATFORM_IOS_FAMILY && ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR
-                // FIXME: Currently we do not have good simulator query, as it does not support
-                // the whole feature set needed for iOS.
-                gpuFamilySufficient = true;
-#endif
+                return false;
             }
+#if TARGET_OS_MACCATALYST && __IPHONE_OS_VERSION_MIN_REQUIRED < 160000
+            // Devices in family 1, such as MacBookPro11,4, cannot use ANGLE's Metal backend.
+            return [device supportsFamily:MTLGPUFamilyMacCatalyst2];
+#elif TARGET_OS_MACCATALYST || TARGET_OS_OSX
+            // Devices in family 1, such as MacBookPro11,4, cannot use ANGLE's Metal backend.
+            return [device supportsFamily:MTLGPUFamilyMac2];
+#else
+            // Devices starting with A9 onwards are supported. Simulator is supported as per
+            // definition that running simulator on Mac Family 1 devices is not supported.
+            return true;
+#endif
         }
-
-        return gpuFamilySufficient;
-    }
-    return false;
+    }();
+    return gpuFamilySufficient;
 }
 
 bool GetMacosMachineModel(std::string *outMachineModel)

@@ -85,4 +85,6 @@
 
 42267265 SWIFTSHADER : KHR-GL46.buffer_objects.* = FAIL
 
+42267265 SWIFTSHADER : KHR-GL46.primitive_restart.restart_mode = FAIL
+
 355292302 : KHR-GL46.api.coverage* = FAIL

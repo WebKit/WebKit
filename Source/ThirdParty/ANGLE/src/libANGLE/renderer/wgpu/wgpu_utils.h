@@ -26,6 +26,20 @@
         }                                                                                    \
     } while (0)
 
+#define ANGLE_WGPU_BEGIN_DEBUG_ERROR_SCOPE(context)                             \
+    ::rx::webgpu::DebugErrorScope(context->getInstance(), context->getDevice(), \
+                                  wgpu::ErrorFilter::Validation)
+#define ANGLE_WGPU_END_DEBUG_ERROR_SCOPE(context, scope) \
+    ANGLE_TRY(scope.PopScope(context, __FILE__, ANGLE_FUNCTION, __LINE__))
+
+#define ANGLE_WGPU_SCOPED_DEBUG_TRY(context, command)                                            \
+    do                                                                                           \
+    {                                                                                            \
+        ::rx::webgpu::DebugErrorScope _errorScope = ANGLE_WGPU_BEGIN_DEBUG_ERROR_SCOPE(context); \
+        (command);                                                                               \
+        ANGLE_WGPU_END_DEBUG_ERROR_SCOPE(context, _errorScope);                                  \
+    } while (0)
+
 #define ANGLE_GL_OBJECTS_X(PROC) \
     PROC(Buffer)                 \
     PROC(Context)                \
@@ -90,6 +104,44 @@ constexpr uint32_t kUnpackedColorBuffersMask =
     angle::BitMask<uint32_t>(gl::IMPLEMENTATION_MAX_DRAW_BUFFERS);
 // WebGPU image level index.
 using LevelIndex = gl::LevelIndexWrapper<uint32_t>;
+
+class ErrorScope : public angle::NonCopyable
+{
+  public:
+    ErrorScope(wgpu::Instance instance, wgpu::Device device, wgpu::ErrorFilter errorType);
+    ~ErrorScope();
+
+    angle::Result PopScope(ContextWgpu *context,
+                           const char *file,
+                           const char *function,
+                           unsigned int line);
+
+  private:
+    wgpu::Instance mInstance;
+    wgpu::Device mDevice;
+    bool mActive = false;
+};
+
+class NoOpErrorScope : public angle::NonCopyable
+{
+  public:
+    NoOpErrorScope(wgpu::Instance instance, wgpu::Device device, wgpu::ErrorFilter errorType) {}
+    ~NoOpErrorScope() {}
+
+    angle::Result PopScope(ContextWgpu *context,
+                           const char *file,
+                           const char *function,
+                           unsigned int line)
+    {
+        return angle::Result::Continue;
+    }
+};
+
+#if defined(ANGLE_ENABLE_ASSERTS)
+using DebugErrorScope = ErrorScope;
+#else
+using DebugErrorScope = NoOpErrorScope;
+#endif
 
 enum class RenderPassClosureReason
 {

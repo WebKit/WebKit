@@ -51,7 +51,6 @@ class SyncImpl
 };
 
 // SharedEvent is only available on iOS 12.0+ or mac 10.14+
-#if ANGLE_MTL_EVENT_AVAILABLE
 class SharedEventSyncImpl : public SyncImpl
 {
   public:
@@ -143,7 +142,6 @@ class SharedEventSyncImpl : public SyncImpl
     std::shared_ptr<std::condition_variable> mCv;
     std::shared_ptr<std::mutex> mLock;
 };
-#endif  // ANGLE_MTL_EVENT_AVAILABLE
 
 class EventSyncImpl : public SyncImpl
 {
@@ -224,7 +222,6 @@ void FenceNVMtl::onDestroy(const gl::Context *context)
 
 angle::Result FenceNVMtl::set(const gl::Context *context, GLenum condition)
 {
-#if ANGLE_MTL_EVENT_AVAILABLE
     ASSERT(condition == GL_ALL_COMPLETED_NV);
     ContextMtl *contextMtl = mtl::GetImpl(context);
 
@@ -233,10 +230,6 @@ angle::Result FenceNVMtl::set(const gl::Context *context, GLenum condition)
     mSync = std::move(impl);
 
     return angle::Result::Continue;
-#else
-    UNREACHABLE();
-    return angle::Result::Stop;
-#endif  // ANGLE_MTL_EVENT_AVAILABLE
 }
 
 angle::Result FenceNVMtl::test(const gl::Context *context, GLboolean *outFinished)
@@ -271,7 +264,6 @@ void SyncMtl::onDestroy(const gl::Context *context)
 
 angle::Result SyncMtl::set(const gl::Context *context, GLenum condition, GLbitfield flags)
 {
-#if ANGLE_MTL_EVENT_AVAILABLE
     ASSERT(condition == GL_SYNC_GPU_COMMANDS_COMPLETE);
     ASSERT(flags == 0);
 
@@ -281,10 +273,6 @@ angle::Result SyncMtl::set(const gl::Context *context, GLenum condition, GLbitfi
     mSync = std::move(impl);
 
     return angle::Result::Continue;
-#else
-    UNREACHABLE();
-    return angle::Result::Stop;
-#endif  // ANGLE_MTL_EVENT_AVAILABLE
 }
 
 angle::Result SyncMtl::clientWait(const gl::Context *context,
@@ -340,7 +328,6 @@ egl::Error EGLSyncMtl::initialize(const egl::Display *display,
     ContextMtl *contextMtl = mtl::GetImpl(context);
     switch (type)
     {
-#if ANGLE_MTL_EVENT_AVAILABLE
         case EGL_SYNC_FENCE_KHR:
         {
             std::unique_ptr<mtl::EventSyncImpl> impl = std::make_unique<mtl::EventSyncImpl>();
@@ -391,7 +378,6 @@ egl::Error EGLSyncMtl::initialize(const egl::Display *display,
             mSync = std::move(impl);
             break;
         }
-#endif  // ANGLE_MTL_EVENT_AVAILABLE
 
         default:
             UNREACHABLE();

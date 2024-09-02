@@ -2007,6 +2007,169 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
 }
 
+// Test that drawing with vertex attribute pointer with two non-overlapping BufferSubData calls
+// works correctly, especially when vertex conversion is involved.
+TEST_P(VertexAttributeTest, DrawArraysWithNonOverlapBufferSubData)
+{
+    constexpr size_t vertexCount = 6;
+    initBasicProgram();
+    glUseProgram(mProgram);
+
+    // input data is GL_BYTEx3 (3 bytes) but stride=4
+    std::array<GLbyte, 4 * vertexCount> inputData;
+    std::array<GLfloat, 3 * vertexCount> expectedData;
+    for (size_t i = 0; i < vertexCount; ++i)
+    {
+        inputData[4 * i]     = 3 * i;
+        inputData[4 * i + 1] = 3 * i + 1;
+        inputData[4 * i + 2] = 3 * i + 2;
+
+        expectedData[3 * i]     = 3 * i;
+        expectedData[3 * i + 1] = 3 * i + 1;
+        expectedData[3 * i + 2] = 3 * i + 2;
+    }
+
+    GLBuffer quadBuffer;
+    InitQuadVertexBuffer(&quadBuffer);
+    GLint positionLocation = glGetAttribLocation(mProgram, "position");
+    ASSERT_NE(-1, positionLocation);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLocation);
+
+    GLsizei fullDataSize = 4 * vertexCount;
+    glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+    glBufferData(GL_ARRAY_BUFFER, fullDataSize, nullptr, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, fullDataSize, inputData.data());
+    glVertexAttribPointer(mTestAttrib, 3, GL_BYTE, GL_FALSE, /* stride */ 4, nullptr);
+    glEnableVertexAttribArray(mTestAttrib);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glVertexAttribPointer(mExpectedAttrib, 3, GL_FLOAT, GL_FALSE, 0, expectedData.data());
+    glEnableVertexAttribArray(mExpectedAttrib);
+
+    // Draw quad and verify data
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+    checkPixels();
+
+    // Update data with two non-overlapping BufferSubData calls with different set of data
+    for (size_t i = 0; i < vertexCount; ++i)
+    {
+        inputData[4 * i]     = 3 * (i + vertexCount);
+        inputData[4 * i + 1] = 3 * (i + vertexCount) + 1;
+        inputData[4 * i + 2] = 3 * (i + vertexCount) + 2;
+
+        expectedData[3 * i]     = 3 * (i + vertexCount);
+        expectedData[3 * i + 1] = 3 * (i + vertexCount) + 1;
+        expectedData[3 * i + 2] = 3 * (i + vertexCount) + 2;
+    }
+    size_t halfDataSize = fullDataSize / 2;
+    glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, halfDataSize, inputData.data());
+    glBufferSubData(GL_ARRAY_BUFFER, halfDataSize, fullDataSize - halfDataSize,
+                    inputData.data() + halfDataSize);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glVertexAttribPointer(mExpectedAttrib, 3, GL_FLOAT, GL_FALSE, 0, expectedData.data());
+
+    // Draw quad and verify data
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    checkPixels();
+
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that drawing with vertex attribute pointer with two overlapping BufferSubData calls works
+// correctly, especially when vertex conversion is involved.
+TEST_P(VertexAttributeTest, DrawArraysWithOverlapBufferSubData)
+{
+    constexpr size_t vertexCount = 6;
+    initBasicProgram();
+    glUseProgram(mProgram);
+
+    // input data is GL_BYTEx3 (3 bytes) but stride=4
+    std::array<GLbyte, 4 * vertexCount> inputData;
+    std::array<GLfloat, 3 * vertexCount> expectedData;
+    for (size_t i = 0; i < vertexCount; ++i)
+    {
+        inputData[4 * i]     = 3 * i;
+        inputData[4 * i + 1] = 3 * i + 1;
+        inputData[4 * i + 2] = 3 * i + 2;
+
+        expectedData[3 * i]     = 3 * i;
+        expectedData[3 * i + 1] = 3 * i + 1;
+        expectedData[3 * i + 2] = 3 * i + 2;
+    }
+
+    GLBuffer quadBuffer;
+    InitQuadVertexBuffer(&quadBuffer);
+    GLint positionLocation = glGetAttribLocation(mProgram, "position");
+    ASSERT_NE(-1, positionLocation);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLocation);
+
+    GLsizei fullDataSize = 4 * vertexCount;
+    glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+    glBufferData(GL_ARRAY_BUFFER, fullDataSize, nullptr, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, fullDataSize, inputData.data());
+    glVertexAttribPointer(mTestAttrib, 3, GL_BYTE, GL_FALSE, /* stride */ 4, nullptr);
+    glEnableVertexAttribArray(mTestAttrib);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glVertexAttribPointer(mExpectedAttrib, 3, GL_FLOAT, GL_FALSE, 0, expectedData.data());
+    glEnableVertexAttribArray(mExpectedAttrib);
+
+    // Draw quad and verify data
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+    checkPixels();
+
+    // Update data with two overlapping BufferSubData calls with different set of data.
+    size_t halfVertexCount = vertexCount / 2;
+    size_t quadDataSize    = fullDataSize / 4;
+    glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+    // First subData is for the first 3 quarter of buffer, but only first half contains valid data.
+    for (size_t i = 0; i < vertexCount; ++i)
+    {
+        if (i < halfVertexCount)
+        {
+            inputData[4 * i]     = 3 * (i + vertexCount);
+            inputData[4 * i + 1] = 3 * (i + vertexCount) + 1;
+            inputData[4 * i + 2] = 3 * (i + vertexCount) + 2;
+        }
+        else
+        {
+            inputData[4 * i]     = 0;
+            inputData[4 * i + 1] = 0;
+            inputData[4 * i + 2] = 0;
+        }
+
+        expectedData[3 * i]     = 3 * (i + vertexCount);
+        expectedData[3 * i + 1] = 3 * (i + vertexCount) + 1;
+        expectedData[3 * i + 2] = 3 * (i + vertexCount) + 2;
+    }
+    glBufferSubData(GL_ARRAY_BUFFER, 0, 3 * quadDataSize, inputData.data());
+    // Second subData call is for the last half buffer, which overlaps with previous subData range.
+    size_t halfDataSize = fullDataSize / 2;
+    for (size_t i = halfVertexCount; i < vertexCount; ++i)
+    {
+        inputData[4 * i]     = 3 * (i + vertexCount);
+        inputData[4 * i + 1] = 3 * (i + vertexCount) + 1;
+        inputData[4 * i + 2] = 3 * (i + vertexCount) + 2;
+    }
+    glBufferSubData(GL_ARRAY_BUFFER, halfDataSize, fullDataSize - halfDataSize,
+                    inputData.data() + halfDataSize);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glVertexAttribPointer(mExpectedAttrib, 3, GL_FLOAT, GL_FALSE, 0, expectedData.data());
+
+    // Draw quad and verify data
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    checkPixels();
+
+    EXPECT_GL_NO_ERROR();
+}
+
 // Tests that we do not generate a SIGBUS error on arm when translating unaligned data.
 // GL_RG32_SNORM_ANGLEX is used when using glVertexAttribPointer with certain parameters.
 TEST_P(VertexAttributeTestES3, DrawWithUnalignedData)

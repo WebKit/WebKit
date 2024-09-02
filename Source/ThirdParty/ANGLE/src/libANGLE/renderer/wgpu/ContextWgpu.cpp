@@ -944,7 +944,7 @@ angle::Result ContextWgpu::endRenderPass(webgpu::RenderPassClosureReason closure
 
         if (mCommandBuffer.hasCommands())
         {
-            mCommandBuffer.recordCommands(mCurrentRenderPass);
+            ANGLE_WGPU_SCOPED_DEBUG_TRY(this, mCommandBuffer.recordCommands(mCurrentRenderPass));
             mCommandBuffer.clear();
         }
 

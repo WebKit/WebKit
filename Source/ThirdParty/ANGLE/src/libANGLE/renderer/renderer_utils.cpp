@@ -239,7 +239,7 @@ void WriteFloatColor(const gl::ColorF &color,
 }
 
 template <int cols, int rows, bool IsColumnMajor>
-inline int GetFlattenedIndex(int col, int row)
+constexpr inline int GetFlattenedIndex(int col, int row)
 {
     if (IsColumnMajor)
     {
@@ -262,7 +262,10 @@ void ExpandMatrix(T *target, const GLfloat *value)
 {
     static_assert(colsSrc <= colsDst && rowsSrc <= rowsDst, "Can only expand!");
 
-    constexpr int kDstFlatSize = colsDst * rowsDst;
+    // Clamp the staging data's size to the last written value so that data packed just after this
+    // matrix is not overwritten.
+    constexpr int kDstFlatSize =
+        GetFlattenedIndex<colsDst, rowsDst, IsDstColumnMajor>(colsSrc - 1, rowsSrc - 1) + 1;
     T staging[kDstFlatSize]    = {0};
 
     for (int r = 0; r < rowsSrc; r++)
