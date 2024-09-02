@@ -4857,10 +4857,9 @@ webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-background
 webkit.org/b/207262 imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times.html [ Pass ImageOnlyFailure ]
 webkit.org/b/266149 imported/w3c/web-platform-tests/web-animations/responsive/toggle-animated-iframe-visibility.html [ ImageOnlyFailure ]
 
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-transformed-tr-percent-height-child.html [ ImageOnlyFailure ]
-
 webkit.org/b/235063 [ Debug ] fast/layers/top-layer-ancestor-opacity-and-transform-crash.html [ Skip ]
 
+webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-transformed-tr-percent-height-child.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/3d-scene-with-iframe-001.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/3dtransform-and-position-sticky-001.html [ ImageOnlyFailure Pass ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/animation/rotate-transform-equivalent.html [ ImageOnlyFailure Pass ]
@@ -4882,6 +4881,16 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-013.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/individual-transform/animation/individual-transform-ordering.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-fixed-bg-008.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/animation/translate-animation-on-svg.html [ ImageOnlyFailure ]
+webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-flattening-001.html [ ImageOnlyFailure ]
+webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/transform-box/svgbox-stroke-box-002.html [ ImageOnlyFailure ]
+webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/transform-box/svgbox-stroke-box-003.html [ ImageOnlyFailure ]
+webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/transform-box/svgbox-stroke-box-004.html [ ImageOnlyFailure ]
+webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/transform-box/svgbox-stroke-box-005.html [ ImageOnlyFailure ]
+webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/transform-iframe-scroll-position.html [ ImageOnlyFailure ]
+webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/transforms-skewY.html [ ImageOnlyFailure ]
+webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/fractional-scale-gradient-bg-obscure-red-bg.html [ ImageOnlyFailure ]
+webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/transform-box/cssbox-content-box-002.html [ Crash ]
 
 webkit.org/b/208396 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Pass Failure ]
 

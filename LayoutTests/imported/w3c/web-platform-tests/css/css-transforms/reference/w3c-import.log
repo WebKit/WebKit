@@ -1,0 +1,63 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/backface-visibility-hidden-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/css-scale-nested-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/css-transform-3d-rotateX-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/css-transform-3d-rotateZ-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/css-transform-3d-transform-style-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/css-transform-scale-ref-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/css-transform-scale-ref-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/css-transforms-3d-anonymous-block-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/css-transforms-transformlist-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/css3-transform-perspective-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/css3-transform-scale-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/green.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/perspective-origin-reftest.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/perspective-reftest.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/rotate-180-degrees-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/rotate-270-degrees-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/rotate-90-degrees-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/rotateY-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/scale-optional-second-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/scale-zero-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/subpixel-transform-changes-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/subpixel-transform-changes-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/subpixel-transform-changes-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/subpixel-transform-changes-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/transform-3d-rotateY-stair-above-ref-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/transform-applies-to-001-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/transform-applies-to-002-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/transform-origin-01-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/transform-origin-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/transform-scale-test-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/transform-translatex-006-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/transformed-preserve-3d-1-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/transformed-rotateX-3-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/transformed-rotateY-1-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/transforms-rotate-degree-45-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/transforms-rotate-degree-90-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/transforms-rotate-translate-scale-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/transforms-rotateY-degree-60-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/transforms-skewX-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/transforms-skewY-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/translate-optional-second-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/ttwf-css-3d-polygon-cycle-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/ttwf-reftest-rotate-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/ttwf-reftest-transform-skewx-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/ttwf-reftest-transform-skewy-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/ttwf-reftest-transform-translatex-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/reference/ttwf-reftest-transform-translatey-001.html
