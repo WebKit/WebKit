@@ -204,7 +204,10 @@ private:
             return false;
         }
 
-        GST_DEBUG("AppSinkFlushCapsWorkaroundProbe: gst-plugins-base version is %s, bug was fixed in 1.21.1 and backported to 1.20.3.", gst_plugins_base_version_string());
+#ifndef GST_DISABLE_GST_DEBUG
+        GUniquePtr<char> version(gst_plugins_base_version_string());
+        GST_DEBUG("AppSinkFlushCapsWorkaroundProbe: gst-plugins-base version is %s, bug was fixed in 1.21.1 and backported to 1.20.3.", version.get());
+#endif
         WorkaroundMode mode = getWorkAroundModeFromEnvironment("WEBKIT_GST_WORKAROUND_APP_SINK_FLUSH_CAPS", WEBKIT_GST_WORKAROUND_APP_SINK_FLUSH_CAPS_DEFAULT_MODE);
         if (mode == WorkaroundMode::ForceEnable) {
             GST_DEBUG("AppSinkFlushCapsWorkaroundProbe: forcing workaround to be enabled.");
