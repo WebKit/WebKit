@@ -399,8 +399,12 @@ static NSNumber *_currentBadge;
     if (!controller)
         return NO;
 
+    NSURL *url = [NSURL URLWithString:filename];
+    if (!url || !url.scheme)
+        url = [NSURL fileURLWithPath:filename];
+
     [controller.window makeKeyAndOrderFront:self];
-    [controller loadURLString:[NSURL fileURLWithPath:filename].absoluteString];
+    [controller loadURLString:url.absoluteString];
     _openNewWindowAtStartup = false;
     return YES;
 }
