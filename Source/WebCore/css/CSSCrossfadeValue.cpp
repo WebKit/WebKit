@@ -69,7 +69,7 @@ RefPtr<StyleImage> CSSCrossfadeValue::createStyleImage(Style::BuilderState& stat
     return StyleCrossfadeImage::create(
         state.createStyleImage(m_fromValueOrNone),
         state.createStyleImage(m_toValueOrNone),
-        clampTo<double>(m_percentageValue->resolveAsNumber<double>(state.cssToLengthConversionData()), 0, 1),
+        clampTo<double>(m_percentageValue->valueDividingBy100IfPercentage<double>(state.cssToLengthConversionData()), 0, 1),
         m_isPrefixed
     );
 }
