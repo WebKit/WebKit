@@ -29,7 +29,6 @@
 #include "MessageSender.h"
 #include "NetworkLoadClient.h"
 #include "SandboxExtension.h"
-#include "UseDownloadPlaceholder.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
@@ -67,7 +66,7 @@ public:
 
 #if PLATFORM(COCOA)
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    void publishProgress(const URL&, std::span<const uint8_t>, UseDownloadPlaceholder);
+    void publishProgress(const URL&, std::span<const uint8_t>);
 #else
     void publishProgress(const URL&, SandboxExtension::Handle&&);
 #endif
@@ -98,7 +97,6 @@ private:
     URL m_progressURL;
 #if HAVE(MODERN_DOWNLOADPROGRESS)
     Vector<uint8_t> m_bookmarkData;
-    UseDownloadPlaceholder m_useDownloadPlaceholder { UseDownloadPlaceholder::No };
 #else
     SandboxExtension::Handle m_progressSandboxExtension;
 #endif

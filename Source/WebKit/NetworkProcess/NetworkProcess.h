@@ -33,7 +33,6 @@
 #include "DownloadManager.h"
 #include "NetworkContentRuleListManager.h"
 #include "QuotaIncreaseRequestIdentifier.h"
-#include "UseDownloadPlaceholder.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebsiteData.h"
@@ -484,7 +483,7 @@ private:
     void cancelDownload(DownloadID, CompletionHandler<void(std::span<const uint8_t>)>&&);
 #if PLATFORM(COCOA)
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    void publishDownloadProgress(DownloadID, const URL&, std::span<const uint8_t> bookmarkData, WebKit::UseDownloadPlaceholder);
+    void publishDownloadProgress(DownloadID, const URL&, std::span<const uint8_t> bookmarkData);
 #else
     void publishDownloadProgress(DownloadID, const URL&, SandboxExtensionHandle&&);
 #endif

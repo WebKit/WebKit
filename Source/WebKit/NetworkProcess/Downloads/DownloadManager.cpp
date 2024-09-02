@@ -129,12 +129,12 @@ void DownloadManager::cancelDownload(DownloadID downloadID, CompletionHandler<vo
 
 #if PLATFORM(COCOA)
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-void DownloadManager::publishDownloadProgress(DownloadID downloadID, const URL& url, std::span<const uint8_t> bookmarkData, WebKit::UseDownloadPlaceholder useDownloadPlaceholder)
+void DownloadManager::publishDownloadProgress(DownloadID downloadID, const URL& url, std::span<const uint8_t> bookmarkData)
 {
     if (auto* download = m_downloads.get(downloadID))
-        download->publishProgress(url, bookmarkData, useDownloadPlaceholder);
+        download->publishProgress(url, bookmarkData);
     else if (auto* pendingDownload = m_pendingDownloads.get(downloadID))
-        pendingDownload->publishProgress(url, bookmarkData, useDownloadPlaceholder);
+        pendingDownload->publishProgress(url, bookmarkData);
 }
 #else
 void DownloadManager::publishDownloadProgress(DownloadID downloadID, const URL& url, SandboxExtension::Handle&& sandboxExtensionHandle)

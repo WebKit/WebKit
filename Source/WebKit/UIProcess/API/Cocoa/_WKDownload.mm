@@ -79,9 +79,7 @@ IGNORE_WARNINGS_END
 
 - (void)publishProgressAtURL:(NSURL *)URL
 {
-#if !HAVE(MODERN_DOWNLOADPROGRESS)
     _download->_download->publishProgress(URL);
-#endif
 }
 
 - (NSURLRequest *)request

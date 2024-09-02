@@ -23,16 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKDownloadDelegatePrivate.h>
 #import <WebKit/WebKit.h>
 
 enum class DownloadCallback : uint8_t {
     WillRedirect,
     AuthenticationChallenge,
     DecideDestination,
-#if HAVE(MODERN_DOWNLOADPROGRESS)
-    DecidePlaceholderPolicy,
-#endif
     DidFinish,
     DidFailWithError,
     NavigationActionBecameDownload,
@@ -41,7 +37,7 @@ enum class DownloadCallback : uint8_t {
     NavigationResponse,
 };
 
-@interface TestDownloadDelegate : NSObject<WKDownloadDelegatePrivate, WKNavigationDelegate>
+@interface TestDownloadDelegate : NSObject<WKDownloadDelegate, WKNavigationDelegate>
 
 @property (nonatomic, copy) void (^willPerformHTTPRedirection)(WKDownload *, NSHTTPURLResponse *, NSURLRequest *, void (^)(WKDownloadRedirectPolicy));
 @property (nonatomic, copy) void (^didReceiveAuthenticationChallenge)(WKDownload *, NSURLAuthenticationChallenge *, void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential*));

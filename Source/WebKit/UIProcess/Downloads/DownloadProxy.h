@@ -30,7 +30,6 @@
 #include "DownloadID.h"
 #include "IdentifierTypes.h"
 #include "SandboxExtension.h"
-#include "UseDownloadPlaceholder.h"
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -64,7 +63,6 @@ struct FrameInfoData;
 
 class DownloadProxy : public API::ObjectImpl<API::Object::Type::Download>, public IPC::MessageReceiver {
 public:
-    using DecideDestinationCallback = CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite, WebKit::UseDownloadPlaceholder)>;
 
     template<typename... Args> static Ref<DownloadProxy> create(Args&&... args)
     {
@@ -96,11 +94,7 @@ public:
     void setDestinationFilename(const String& d) { m_destinationFilename = d; }
 
 #if PLATFORM(COCOA)
-#if HAVE(MODERN_DOWNLOADPROGRESS)
-    void publishProgress(const URL&, UseDownloadPlaceholder = UseDownloadPlaceholder::No);
-#else
     void publishProgress(const URL&);
-#endif
     void setProgress(NSProgress *progress) { m_progress = progress; }
     NSProgress *progress() const { return m_progress.get(); }
 #endif
@@ -123,7 +117,7 @@ public:
     void didFinish();
     void didFail(const WebCore::ResourceError&, std::span<const uint8_t> resumeData);
     void willSendRequest(WebCore::ResourceRequest&& redirectRequest, const WebCore::ResourceResponse& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
-    void decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse&, String&& suggestedFilename, DecideDestinationCallback&&);
+    void decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse&, String&& suggestedFilename, CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite)>&&);
 
 private:
     explicit DownloadProxy(DownloadProxyMap&, WebsiteDataStore&, API::DownloadClient&, const WebCore::ResourceRequest&, const FrameInfoData&, WebPageProxy*);

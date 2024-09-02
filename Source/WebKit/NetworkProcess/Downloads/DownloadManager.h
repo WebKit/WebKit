@@ -31,7 +31,6 @@
 #include "PendingDownload.h"
 #include "PolicyDecision.h"
 #include "SandboxExtension.h"
-#include "UseDownloadPlaceholder.h"
 #include <WebCore/NotImplemented.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
@@ -102,7 +101,7 @@ public:
     void cancelDownload(DownloadID, CompletionHandler<void(std::span<const uint8_t>)>&&);
 #if PLATFORM(COCOA)
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    void publishDownloadProgress(DownloadID, const URL&, std::span<const uint8_t> bookmarkData, WebKit::UseDownloadPlaceholder);
+    void publishDownloadProgress(DownloadID, const URL&, std::span<const uint8_t> bookmarkData);
 #else
     void publishDownloadProgress(DownloadID, const URL&, SandboxExtension::Handle&&);
 #endif

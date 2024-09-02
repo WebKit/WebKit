@@ -90,7 +90,7 @@ void Download::platformDestroyDownload()
 }
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmarkData, UseDownloadPlaceholder useDownloadPlaceholder)
+void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmarkData)
 {
     if (m_progress) {
         RELEASE_LOG(Network, "Progress is already being published for download.");
@@ -110,8 +110,7 @@ void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmark
     bool shouldEnableModernDownloadProgress = CFPreferencesGetAppBooleanValue(CFSTR("EnableModernDownloadProgress"), CFSTR("com.apple.WebKit"), NULL);
 
     if (shouldEnableModernDownloadProgress) {
-        NSData *accessToken = [NSData data]; // FIXME: replace with actual access token
-        m_progress = adoptNS([[WKModernDownloadProgress alloc] initWithDownloadTask:m_downloadTask.get() download:*this URL:(NSURL *)url useDownloadPlaceholder:useDownloadPlaceholder == WebKit::UseDownloadPlaceholder::Yes liveActivityAccessToken:accessToken]);
+        m_progress = adoptNS([[WKModernDownloadProgress alloc] initWithDownloadTask:m_downloadTask.get() download:*this URL:(NSURL *)url]);
         [m_progress publish];
     } else {
         m_progress = adoptNS([[WKDownloadProgress alloc] initWithDownloadTask:m_downloadTask.get() download:*this URL:(NSURL *)url sandboxExtension:nullptr]);
