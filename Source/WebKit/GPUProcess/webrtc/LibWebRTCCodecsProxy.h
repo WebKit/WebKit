@@ -87,13 +87,13 @@ private:
     void releaseDecoder(VideoDecoderIdentifier);
     void flushDecoder(VideoDecoderIdentifier, CompletionHandler<void()>&&);
     void setDecoderFormatDescription(VideoDecoderIdentifier, std::span<const uint8_t>, uint16_t width, uint16_t height);
-    void decodeFrame(VideoDecoderIdentifier, int64_t timeStamp, std::span<const uint8_t>, CompletionHandler<void(bool)>&&);
+    void decodeFrame(VideoDecoderIdentifier, int64_t timeStamp, std::span<const uint8_t>, CompletionHandler<void(Expected<void, String>&&)>&&);
     void setFrameSize(VideoDecoderIdentifier, uint16_t width, uint16_t height);
 
     void createEncoder(VideoEncoderIdentifier, WebCore::VideoCodecType, const String& codecString, const Vector<std::pair<String, String>>&, bool useLowLatency, bool useAnnexB, WebCore::VideoEncoderScalabilityMode, CompletionHandler<void(bool)>&&);
     void releaseEncoder(VideoEncoderIdentifier);
     void initializeEncoder(VideoEncoderIdentifier, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
-    void encodeFrame(VideoEncoderIdentifier, SharedVideoFrame&&, int64_t timeStamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame, CompletionHandler<void(bool)>&&);
+    void encodeFrame(VideoEncoderIdentifier, SharedVideoFrame&&, int64_t timeStamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame, CompletionHandler<void(Expected<void, String>&&)>&&);
     void flushEncoder(VideoEncoderIdentifier, CompletionHandler<void()>&&);
     void setEncodeRates(VideoEncoderIdentifier, uint32_t bitRate, uint32_t frameRate, CompletionHandler<void()>&&);
     void setSharedVideoFrameSemaphore(VideoEncoderIdentifier, IPC::Semaphore&&);
@@ -106,14 +106,14 @@ private:
     struct Decoder {
         std::unique_ptr<WebCore::WebRTCVideoDecoder> webrtcDecoder;
         std::unique_ptr<WebCore::FrameRateMonitor> frameRateMonitor;
-        Deque<CompletionHandler<void(bool)>> decodingCallbacks;
+        Deque<CompletionHandler<void(Expected<void, String>&&)>> decodingCallbacks;
     };
     void doDecoderTask(VideoDecoderIdentifier, Function<void(Decoder&)>&&);
 
     struct Encoder {
         webrtc::LocalEncoder webrtcEncoder { nullptr };
         std::unique_ptr<SharedVideoFrameReader> frameReader;
-        Deque<CompletionHandler<void(bool)>> encodingCallbacks;
+        Deque<CompletionHandler<void(Expected<void, String>&&)>> encodingCallbacks;
     };
     Encoder* findEncoder(VideoEncoderIdentifier) WTF_REQUIRES_CAPABILITY(workQueue());
 

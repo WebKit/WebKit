@@ -357,6 +357,12 @@ public:
     void markCurrentlyDispatchedMessageAsInvalid();
 
     template<typename PC, typename BasePromise>
+    struct ConvertedPromiseRejectValue {
+        using ErrorType = std::remove_reference_t<decltype(PC::convertError(std::declval<IPC::Error>()).value())>;
+        using Type = std::conditional_t<std::is_same_v<ErrorType, WTF::detail::VoidPlaceholder>, void, ErrorType>;
+    };
+
+    template<typename PC, typename BasePromise>
     struct ConvertedPromise {
         template <typename T, typename E>
         struct Promise
@@ -370,8 +376,9 @@ public:
             using Type = NativePromise<T, E>;
         };
 
-        using RejectValueType = std::remove_reference_t<decltype(PC::convertError(std::declval<IPC::Error>()).value())>;
-        using Type = typename Promise<typename BasePromise::ResolveValueType, RejectValueType>::Type;
+        using ResolveValueType = typename BasePromise::ResolveValueType;
+        using RejectValueType = typename ConvertedPromiseRejectValue<PC, BasePromise>::Type;
+        using Type = typename Promise<ResolveValueType, RejectValueType>::Type;
     };
     struct NoOpPromiseConverter {
         static auto convertError(IPC::Error error) { return makeUnexpected(error); }
