@@ -159,11 +159,9 @@ static const float GroupOptionTextColorAlpha = 0.5;
     [self _setUsesCheckedSelection:YES];
 
     [self _setMagnifierEnabled:NO];
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSWritingDirection writingDirection = NSWritingDirectionLeftToRight;
     // FIXME: retrieve from WebProcess writing direction.
     _textAlignment = (writingDirection == NSWritingDirectionLeftToRight) ? NSTextAlignmentLeft : NSTextAlignmentRight;
-ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self setAllowsMultipleSelection:_allowsMultipleSelection];
 
