@@ -86,13 +86,11 @@ WaiterListManager::WaitSyncResult WaiterListManager::waitSyncImpl(VM& vm, ValueT
         list->addLast(listLocker, syncWaiter);
         dataLogLnIf(WaiterListsManagerInternal::verbose, "<WaiterListManager> <Thread:", Thread::current(), "> added a new SyncWaiter=", syncWaiter.get(), " to a waiterList for ptr ", RawPointer(ptr));
 
-        while (syncWaiter->vm() && time.now() < time && !vm.hasTerminationRequest())
+        while (syncWaiter->isOnList() && time.now() < time && !vm.hasTerminationRequest())
             syncWaiter->condition().waitUntil(list->lock, time.approximateWallTime());
 
         // At this point, syncWaiter should be either notified (dequeued) or timeout (not dequeued).
-        // If it's notified by other thread, it's vm should be nulled out.
-        bool didGetDequeued = !syncWaiter->vm();
-        ASSERT(didGetDequeued || syncWaiter->vm() == &vm);
+        bool didGetDequeued = !syncWaiter->isOnList();
         if (didGetDequeued)
             return WaitSyncResult::OK;
 
@@ -227,10 +225,6 @@ void WaiterListManager::notifyWaiterImpl(const AbstractLocker& listLocker, Ref<W
         return;
     }
 
-    // If waiter is a SyncWaiter, we null out its vm to indicate that this waiter
-    // is removed from the WaiterList.
-    ASSERT(waiter->vm());
-    waiter->clearVM(listLocker);
     waiter->condition().notifyOne();
 }
 
@@ -327,7 +321,7 @@ void WaiterListManager::unregister(JSGlobalObject* globalObject)
 
 void WaiterListManager::unregister(uint8_t* arrayPtr, size_t size)
 {
-    Locker listLocker { m_waiterListsLock };
+    Locker waiterListsLocker { m_waiterListsLock };
     m_waiterLists.removeIf([&](auto& entry) {
         if (entry.key >= arrayPtr && entry.key < arrayPtr + size) {
             Ref<WaiterList> list = entry.value;

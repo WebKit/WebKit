@@ -1485,7 +1485,6 @@ bool VM::isScratchBuffer(void* ptr)
 
 Ref<Waiter> VM::syncWaiter()
 {
-    m_syncWaiter->setVM(this);
     return m_syncWaiter;
 }
 

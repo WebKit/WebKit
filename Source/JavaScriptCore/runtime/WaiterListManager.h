@@ -54,16 +54,6 @@ public:
         return m_vm;
     }
 
-    void setVM(VM* vm)
-    {
-        m_vm = vm;
-    }
-
-    void clearVM(const AbstractLocker&)
-    {
-        m_vm = nullptr;
-    }
-
     Condition& condition()
     {
         ASSERT(!m_isAsync);
@@ -140,7 +130,7 @@ public:
         // `takeFisrt` is used to consume a waiter (either notify, timeout, or remove).
         // So, the waiter must not be removed and belong to this list.
         Waiter& waiter = *m_waiters.begin();
-        ASSERT((waiter.vm() || waiter.ticket(NoLockingNecessary)) && waiter.isOnList());
+        ASSERT((!waiter.isAsync() || waiter.ticket(NoLockingNecessary)) && waiter.vm() && waiter.isOnList());
         Ref<Waiter> protectedWaiter = Ref { waiter };
         removeWithUpdate(waiter);
         return protectedWaiter;
