@@ -1,4 +1,19 @@
 =================
+WebKitGTK 2.45.92
+=================
+
+What's new in WebKitGTK 2.45.92?
+
+  - Add webkit://gpu/stdout to dump the information from webkit://gpu to stdout.
+  - Undeprecate injected bundle frame access interfaces.
+  - Fix drag and drop.
+  - Fix connection to a11y bus under flatpak.
+  - Fix the build with Wayland and GBM disabled.
+  - Fix the build in non-linux systems.
+  - Fix linker relocation errors on Debug/RelWithDebInfo builds.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK 2.45.91
 =================
 
