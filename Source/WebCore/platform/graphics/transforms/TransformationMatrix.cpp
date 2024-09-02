@@ -1813,7 +1813,7 @@ void TransformationMatrix::recompose2(const Decomposed2Type& decomp)
     m_matrix[1][0] = decomp.m21;
     m_matrix[1][1] = decomp.m22;
 
-    translate3d(decomp.translateX, decomp.translateY, 0);
+    translateRight(decomp.translateX, decomp.translateY);
     rotate(decomp.angle);
     scale3d(decomp.scaleX, decomp.scaleY, 1);
 }
