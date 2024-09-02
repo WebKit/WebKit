@@ -2438,8 +2438,10 @@
 		E31869C42B1A7C2400571519 /* WKProcessExtension.mm in Sources */ = {isa = PBXBuildFile; fileRef = E31869C22B1A7C2400571519 /* WKProcessExtension.mm */; };
 		E31869C52B1A7C2400571519 /* WKProcessExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = E31869C32B1A7C2400571519 /* WKProcessExtension.h */; };
 		E326E357284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = E326E356284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm */; };
+		E33E8FFD2C7FD2980002BEB3 /* UseDownloadPlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E8FFC2C7FD2980002BEB3 /* UseDownloadPlaceholder.h */; };
 		E34DAD392B753FA700FABEE2 /* ExtensionProcess.mm in Sources */ = {isa = PBXBuildFile; fileRef = E34DAD372B753FA700FABEE2 /* ExtensionProcess.mm */; };
 		E34DAD3A2B753FA700FABEE2 /* ExtensionProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = E34DAD382B753FA700FABEE2 /* ExtensionProcess.h */; };
+		E3607DEA2C7FE92200956766 /* WKDownloadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = E3607DE92C7FE92200956766 /* WKDownloadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E36A00E329CF7AC000AC4E8A /* TextTrackRepresentationCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = E36A00E229CF7AC000AC4E8A /* TextTrackRepresentationCocoa.mm */; };
 		E36FF00327F36FBD004BE21A /* SandboxStateVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = E36FF00127F36FBD004BE21A /* SandboxStateVariables.h */; };
 		E3816B3D27E2463A005EAFC0 /* WebMockContentFilterManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3816B3B27E24639005EAFC0 /* WebMockContentFilterManager.cpp */; };
@@ -7979,6 +7981,7 @@
 		E31869C22B1A7C2400571519 /* WKProcessExtension.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKProcessExtension.mm; sourceTree = "<group>"; };
 		E31869C32B1A7C2400571519 /* WKProcessExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessExtension.h; sourceTree = "<group>"; };
 		E326E356284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuxiliaryProcessProxyCocoa.mm; sourceTree = "<group>"; };
+		E33E8FFC2C7FD2980002BEB3 /* UseDownloadPlaceholder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UseDownloadPlaceholder.h; sourceTree = "<group>"; };
 		E3439B632345463A0011DE0B /* NetworkProcessConnectionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionInfo.h; path = Network/NetworkProcessConnectionInfo.h; sourceTree = "<group>"; };
 		E34B110C27C46BC6006D2F2E /* libWebCoreTestShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E34B110F27C46D09006D2F2E /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7987,6 +7990,7 @@
 		E350A7C52934F1C100A06C29 /* common.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = common.sb; sourceTree = "<group>"; };
 		E350A7C82934F75F00A06C29 /* common.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = common.sb; sourceTree = "<group>"; };
 		E350A7DF29364D3800A06C29 /* util.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = util.sb; sourceTree = "<group>"; };
+		E3607DE92C7FE92200956766 /* WKDownloadDelegatePrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKDownloadDelegatePrivate.h; sourceTree = "<group>"; };
 		E36A00E129CF4EBA00AC4E8A /* TextTrackRepresentationCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextTrackRepresentationCocoa.h; sourceTree = "<group>"; };
 		E36A00E229CF7AC000AC4E8A /* TextTrackRepresentationCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextTrackRepresentationCocoa.mm; sourceTree = "<group>"; };
 		E36D701A27B709ED006531B7 /* WebAttachmentElementClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAttachmentElementClient.h; sourceTree = "<group>"; };
@@ -9493,6 +9497,7 @@
 				E382D57E2C21D500005F7653 /* DownloadProxyCocoa.mm */,
 				1AD25E93167AB08100EA9BCD /* DownloadProxyMap.cpp */,
 				1AD25E94167AB08100EA9BCD /* DownloadProxyMap.h */,
+				E33E8FFC2C7FD2980002BEB3 /* UseDownloadPlaceholder.h */,
 			);
 			path = Downloads;
 			sourceTree = "<group>";
@@ -11585,6 +11590,7 @@
 				DF0C5F24252ECB8D00D921DB /* WKDownload.h */,
 				DF0C5F23252ECB8D00D921DB /* WKDownload.mm */,
 				DF0C5F26252ECB8E00D921DB /* WKDownloadDelegate.h */,
+				E3607DE92C7FE92200956766 /* WKDownloadDelegatePrivate.h */,
 				DF0C5F25252ECB8E00D921DB /* WKDownloadInternal.h */,
 				1AF4592D19464B2000F9D4A2 /* WKError.h */,
 				1AF4592C19464B2000F9D4A2 /* WKError.mm */,
@@ -16820,6 +16826,7 @@
 				93D1EEF529669D74009B31D6 /* UnifiedOriginStorageLevel.h in Headers */,
 				1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */,
 				5C19A5201FD0B29500EEA323 /* URLSchemeTaskParameters.h in Headers */,
+				E33E8FFD2C7FD2980002BEB3 /* UseDownloadPlaceholder.h in Headers */,
 				1AC1336818565B5700F3EC05 /* UserData.h in Headers */,
 				CD491B081E70D05F00009066 /* UserMediaCaptureManager.h in Headers */,
 				CD491B0E1E732E4D00009066 /* UserMediaCaptureManagerMessages.h in Headers */,
@@ -17327,6 +17334,7 @@
 				DF0C5F28252ECB8E00D921DB /* WKDownload.h in Headers */,
 				5C2EBDFA2564380B00D55B05 /* WKDownloadClient.h in Headers */,
 				DF0C5F2A252ECB8E00D921DB /* WKDownloadDelegate.h in Headers */,
+				E3607DEA2C7FE92200956766 /* WKDownloadDelegatePrivate.h in Headers */,
 				DF0C5F2B252ED44000D921DB /* WKDownloadInternal.h in Headers */,
 				637281A221ADC744009E0DE6 /* WKDownloadProgress.h in Headers */,
 				1AB7D78D1288CD9A00CFD08C /* WKDownloadRef.h in Headers */,

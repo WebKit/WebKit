@@ -31,6 +31,7 @@
 #include "MessageSender.h"
 #include "NetworkDataTask.h"
 #include "SandboxExtension.h"
+#include "UseDownloadPlaceholder.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/ResourceRequest.h>
 #include <memory>
@@ -90,7 +91,7 @@ public:
 #endif
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    void publishProgress(const URL&, std::span<const uint8_t>);
+    void publishProgress(const URL&, std::span<const uint8_t>, WebKit::UseDownloadPlaceholder);
 #endif
 
     DownloadID downloadID() const { return m_downloadID; }
