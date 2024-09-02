@@ -62,7 +62,7 @@ PACKAGES=(
     libseccomp-dev
     $(aptIfExists libsoup-3.0-dev)
     libsqlite3-dev
-    libsysprof-capture-4-dev
+    $(aptIfExists libsysprof-capture-4-dev)
     libsystemd-dev
     libtasn1-6-dev
     libtool
