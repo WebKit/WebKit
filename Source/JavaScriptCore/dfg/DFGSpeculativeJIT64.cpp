@@ -3928,7 +3928,9 @@ void SpeculativeJIT::compile(Node* node)
         }
         if (!ok)
             break;
-        
+
+        SuppressRegisetrAllocationValidation suppressScope(*this);
+
         StorageOperand storage(this, storageEdge);
         GPRTemporary oldValue(this);
         GPRTemporary result(this);
@@ -3943,17 +3945,13 @@ void SpeculativeJIT::compile(Node* node)
             fprTemp.emplace(this);
             resultFPR = fprTemp->fpr();
         }
-        
-        // FIXME: It shouldn't be necessary to nop-pad between register allocation and a jump label.
-        // https://bugs.webkit.org/show_bug.cgi?id=170974
-        nop();
-        
+
         Label loop = label();
-        
+
         loadFromIntTypedArray(storageGPR, indexGPR, oldValueGPR, type);
         move(oldValueGPR, newValueGPR);
         move(oldValueGPR, resultGPR);
-        
+
         switch (node->op()) {
         case AtomicsAdd:
             add32(argGPRs[0], newValueGPR);
