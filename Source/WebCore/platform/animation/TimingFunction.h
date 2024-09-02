@@ -27,6 +27,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WTF {
 class TextStream;
