@@ -621,7 +621,7 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
     if (parameters.forceUserGesture == ForceUserGesture::Yes && UserGestureIndicator::currentUserGesture() && parameters.removeTransientActivation == RemoveTransientActivation::Yes) {
         UserGestureIndicator::currentUserGesture()->addDestructionObserver([](UserGestureToken& token) {
             token.forEachImpactedDocument([](Document& document) {
-                if (auto* window = document.domWindow())
+                if (RefPtr window = document.domWindow())
                     window->consumeTransientActivation();
             });
         });

@@ -3157,7 +3157,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> In
         .release();
     stats->setViewport(WTFMove(viewportJSON));
 
-    if (auto* window = mediaElement->document().domWindow())
+    if (RefPtr window = mediaElement->document().domWindow())
         stats->setDevicePixelRatio(window->devicePixelRatio());
 
     if (videoTrack) {

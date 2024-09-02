@@ -1321,7 +1321,7 @@ void DocumentLoader::commitData(const SharedBuffer& data)
         if (!isLoading())
             return;
 
-        if (auto* window = document.domWindow()) {
+        if (RefPtr window = document.domWindow()) {
             window->prewarmLocalStorageIfNecessary();
 
             if (m_mainResource) {

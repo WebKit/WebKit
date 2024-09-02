@@ -2443,7 +2443,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomString& event
 
 #if PLATFORM(IOS_FAMILY)
     if (targetNode == document.ptr() && typeInfo.type() == EventType::scroll) {
-        if (auto* window = document->domWindow())
+        if (RefPtr window = document->domWindow())
             window->incrementScrollEventListenersCount();
     }
 
@@ -2485,7 +2485,7 @@ static inline bool didRemoveEventListenerOfType(Node& targetNode, const AtomStri
 
 #if PLATFORM(IOS_FAMILY)
     if (&targetNode == document.ptr() && typeInfo.type() == EventType::scroll) {
-        if (auto* window = document->domWindow())
+        if (RefPtr window = document->domWindow())
             window->decrementScrollEventListenersCount();
     }
 

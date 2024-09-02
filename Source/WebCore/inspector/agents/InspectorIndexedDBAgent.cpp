@@ -540,7 +540,7 @@ static Inspector::Protocol::ErrorStringOr<Document*> documentFromFrame(LocalFram
 
 static Inspector::Protocol::ErrorStringOr<IDBFactory*> IDBFactoryFromDocument(Document* document)
 {
-    auto* domWindow = document->domWindow();
+    RefPtr domWindow = document->domWindow();
     if (!domWindow)
         return makeUnexpected("Missing window for given document"_s);
 
