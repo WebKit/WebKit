@@ -173,6 +173,7 @@ private:
     bool precheckInitializationSegment(const InitializationSegment&) final;
     void processInitializationSegment(std::optional<InitializationSegment>&&) final;
     void processFormatDescriptionForTrackId(Ref<TrackInfo>&&, TrackID) final;
+    void updateTrackIds(Vector<std::pair<TrackID, TrackID>>&&) final;
 
     // WebAVSampleBufferListenerClient
     void videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *) final;
@@ -196,6 +197,7 @@ private:
     bool requiresFlush() const;
     void flushVideo();
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+    AVSampleBufferAudioRenderer* audioRendererForTrackID(TrackID) const;
     void flushAudio(AVSampleBufferAudioRenderer *);
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 
