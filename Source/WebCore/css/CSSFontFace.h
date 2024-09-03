@@ -194,10 +194,10 @@ private:
     FontSelectionSpecifiedCapabilities m_fontSelectionCapabilities;
     
     Status m_status { Status::Pending };
-    bool m_isLocalFallback { false };
-    bool m_sourcesPopulated { false };
-    bool m_mayBePurged { true };
-    bool m_shouldIgnoreFontLoadCompletions { false };
+    bool m_isLocalFallback : 1 { false };
+    bool m_sourcesPopulated : 1 { false };
+    bool m_mayBePurged : 1 { true };
+    bool m_shouldIgnoreFontLoadCompletions : 1 { false };
     FontLoadTimingOverride m_fontLoadTimingOverride { FontLoadTimingOverride::None };
     AllowUserInstalledFonts m_allowUserInstalledFonts { AllowUserInstalledFonts::Yes };
 
