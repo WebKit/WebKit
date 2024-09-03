@@ -38,12 +38,14 @@ class ResourceResponse;
 
 enum class PolicyDecisionMode;
 
+enum class IsPerformingHTTPFallback : bool { No, Yes };
+
 using FramePolicyFunction = CompletionHandler<void(PolicyAction)>;
 using SandboxFlags = int;
 
 class FrameLoaderClient {
 public:
-    virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, const String& clientRedirectSourceForHistory, std::optional<NavigationIdentifier>, std::optional<HitTestResult>&&, bool hasOpener, SandboxFlags, PolicyDecisionMode, FramePolicyFunction&&) = 0;
+    virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, const String& clientRedirectSourceForHistory, std::optional<NavigationIdentifier>, std::optional<HitTestResult>&&, bool hasOpener, IsPerformingHTTPFallback, SandboxFlags, PolicyDecisionMode, FramePolicyFunction&&) = 0;
     virtual ~FrameLoaderClient() = default;
 };
 

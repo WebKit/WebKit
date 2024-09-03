@@ -337,6 +337,7 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& win
         false, /* hasOpenedFrames */
         false, /* openedByDOMWithOpener */
         navigationAction.newFrameOpenerPolicy() == NewFrameOpenerPolicy::Allow, /* hasOpener */
+        frame.loader().isHTTPFallbackInProgress(),
         { }, /* requesterOrigin */
         { }, /* requesterTopOrigin */
         std::nullopt, /* targetBackForwardItemIdentifier */
