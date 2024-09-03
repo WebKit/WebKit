@@ -39,27 +39,26 @@
 
 namespace IPC {
 
-static const uint8_t defaultMessageFlags = 0;
+static constexpr uint8_t defaultMessageFlags = 0;
 
-template <typename T>
-static inline bool allocBuffer(T*& buffer, size_t size)
+static inline std::span<uint8_t> allocBuffer(size_t size)
 {
 #if OS(DARWIN)
-    buffer = static_cast<T*>(mmap(0, size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0));
-    return buffer != MAP_FAILED;
+    auto* buffer = static_cast<uint8_t*>(mmap(0, size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0));
+    RELEASE_ASSERT(buffer != MAP_FAILED);
+    return std::span { buffer, size };
 #else
-    buffer = static_cast<T*>(fastMalloc(size));
-    return !!buffer;
+    auto* buffer = static_cast<uint8_t*>(fastMalloc(size));
+    return std::span { buffer, size };
 #endif
 }
 
-static inline void freeBuffer(void* addr, size_t size)
+static inline void freeBuffer(std::span<uint8_t> buffer)
 {
 #if OS(DARWIN)
-    munmap(addr, size);
+    munmap(buffer.data(), buffer.size());
 #else
-    UNUSED_PARAM(size);
-    fastFree(addr);
+    fastFree(buffer.data());
 #endif
 }
 
@@ -74,9 +73,14 @@ Encoder::Encoder(MessageName messageName, uint64_t destinationID)
 
 Encoder::~Encoder()
 {
-    if (m_buffer != m_inlineBuffer)
-        freeBuffer(m_buffer, m_bufferCapacity);
+    freeBufferIfNecessary();
     // FIXME: We need to dispose of the attachments in cases of failure.
+}
+
+void Encoder::freeBufferIfNecessary()
+{
+    if (m_capacityBuffer.data() != m_inlineBuffer.data())
+        freeBuffer(m_capacityBuffer);
 }
 
 void Encoder::setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply shouldDispatchWhenWaitingForSyncReply)
@@ -128,9 +132,9 @@ void Encoder::wrapForTesting(UniqueRef<Encoder>&& original)
 
     *this << original->span();
 
-    Vector<Attachment> attachments = original->releaseAttachments();
+    auto attachments = original->releaseAttachments();
     reserve(attachments.size());
-    for (Attachment& attachment : attachments)
+    for (auto&& attachment : WTFMove(attachments))
         addAttachment(WTFMove(attachment));
 }
 
@@ -141,24 +145,18 @@ static inline size_t roundUpToAlignment(size_t value, size_t alignment)
 
 void Encoder::reserve(size_t size)
 {
-    if (size <= m_bufferCapacity)
+    if (size <= m_capacityBuffer.size())
         return;
 
-    size_t newCapacity = roundUpToAlignment(m_bufferCapacity * 2, 4096);
+    size_t newCapacity = roundUpToAlignment(m_capacityBuffer.size() * 2, 4096);
     while (newCapacity < size)
         newCapacity *= 2;
 
-    uint8_t* newBuffer;
-    if (!allocBuffer(newBuffer, newCapacity))
-        CRASH();
+    auto newBuffer = allocBuffer(newCapacity);
+    memcpySpan(newBuffer, span());
 
-    memcpy(newBuffer, m_buffer, m_bufferSize);
-
-    if (m_buffer != m_inlineBuffer)
-        freeBuffer(m_buffer, m_bufferCapacity);
-
-    m_buffer = newBuffer;
-    m_bufferCapacity = newCapacity;
+    freeBufferIfNecessary();
+    m_capacityBuffer = newBuffer;
 }
 
 void Encoder::encodeHeader()
@@ -172,25 +170,24 @@ OptionSet<MessageFlags>& Encoder::messageFlags()
 {
     // FIXME: We should probably pass an OptionSet<MessageFlags> into the Encoder constructor instead of encoding defaultMessageFlags then using this to change it later.
     static_assert(sizeof(OptionSet<MessageFlags>::StorageType) == 1, "Encoder uses the first byte of the buffer for message flags.");
-    return *reinterpret_cast<OptionSet<MessageFlags>*>(m_buffer);
+    return *reinterpret_cast<OptionSet<MessageFlags>*>(m_capacityBuffer.data());
 }
 
 const OptionSet<MessageFlags>& Encoder::messageFlags() const
 {
-    return *reinterpret_cast<OptionSet<MessageFlags>*>(m_buffer);
+    return *reinterpret_cast<OptionSet<MessageFlags>*>(m_capacityBuffer.data());
 }
 
-uint8_t* Encoder::grow(size_t alignment, size_t size)
+std::span<uint8_t> Encoder::grow(size_t alignment, size_t size)
 {
     size_t alignedSize = roundUpToAlignment(m_bufferSize, alignment);
     reserve(alignedSize + size);
 
-    std::memset(m_buffer + m_bufferSize, 0, alignedSize - m_bufferSize);
+    memsetSpan(m_capacityBuffer.subspan(m_bufferSize), 0);
 
     m_bufferSize = alignedSize + size;
-    m_bufferPointer = m_buffer + alignedSize + size;
 
-    return m_buffer + alignedSize;
+    return m_capacityBuffer.subspan(alignedSize);
 }
 
 void Encoder::addAttachment(Attachment&& attachment)
