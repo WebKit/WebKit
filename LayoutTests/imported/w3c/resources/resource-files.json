@@ -6331,6 +6331,8 @@
         "web-platform-tests/css/css-transitions/crashtests/transition-large-word-spacing-001.html",
         "web-platform-tests/css/css-transitions/inherit-background-color-transition-ref.html",
         "web-platform-tests/css/css-transitions/no-transition-from-ua-to-blocking-stylesheet-ref.html",
+        "web-platform-tests/css/css-transitions/pseudo-element-transform-ref.html",
+        "web-platform-tests/css/css-transitions/reference/transition-test-ref.html",
         "web-platform-tests/css/css-transitions/render-blocking/no-transition-from-ua-to-blocking-stylesheet-ref.html",
         "web-platform-tests/css/css-transitions/root-color-transition-ref.html",
         "web-platform-tests/css/css-typed-om/rotate-by-added-angle-ref.html",
