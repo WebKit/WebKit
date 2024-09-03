@@ -7444,11 +7444,6 @@ fast/text/text-underline-position-under.html [ ImageOnlyFailure ]
 # webkit.org/b/269496 [ iOS17 ] fast/forms/datalist/datalist-option-labels.html is a flaky timeout
 fast/forms/datalist/datalist-option-labels.html [ Pass Timeout ]
 
-# webkit.org/b/277989 [ iOS ] 3x imported/w3c/web-platform-tests/mathml/presentation-markup/* (layout-tests) are flaky failures
-imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/stretch-along-block-axis-001.html [ Pass Failure ]
-imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001.html [ Pass Failure ]
-imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001.html [ Pass Failure ]
-
 # webkit.org/b/278080 (6+ fast/forms/ios/* layout tests are flakily timing out (<20%).)
 fast/forms/ios/focus-button.html [ Pass Timeout ]
 fast/forms/ios/focus-checkbox.html [ Pass Timeout ]
@@ -7492,4 +7487,4 @@ css3/filters/backdrop-filter-page-scale.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-intrinsic-aspect-ratio.html [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/278934 [ macOS iOS wk2 ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html is a flaky failure.
-[ Debug ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure Pass ] 
+[ Debug ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure Pass ]

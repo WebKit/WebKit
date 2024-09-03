@@ -294,6 +294,7 @@ void RenderMathMLOperator::styleDidChange(StyleDifference diff, const RenderStyl
 {
     RenderMathMLBlock::styleDidChange(diff, oldStyle);
     m_mathOperator.reset(style());
+    resetStretchSize();
 
     // MathML displaystyle can affect isLargeOperatorInDisplayStyle()
     if (oldStyle && style().mathStyle() != oldStyle->mathStyle() && !isAnonymous())
