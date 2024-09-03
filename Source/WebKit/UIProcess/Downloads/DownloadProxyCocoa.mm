@@ -34,19 +34,24 @@
 
 namespace WebKit {
 
-#if !HAVE(MODERN_DOWNLOADPROGRESS)
 void DownloadProxy::publishProgress(const URL& url)
 {
     if (!m_dataStore)
         return;
 
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    RetainPtr localURL = adoptNS([[NSURL alloc] initFileURLWithPath:url.fileSystemPath() relativeToURL:nil]);
+    NSError *error = nil;
+    RetainPtr bookmark = [localURL bookmarkDataWithOptions:NSURLBookmarkCreationMinimalBookmark includingResourceValuesForKeys:nil relativeToURL:nil error:&error];
+    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, url, span(bookmark.get()), UseDownloadPlaceholder::No), 0);
+#else
     auto handle = SandboxExtension::createHandle(url.fileSystemPath(), SandboxExtension::Type::ReadWrite);
     ASSERT(handle);
     if (!handle)
         return;
 
     m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, url, WTFMove(*handle)), 0);
-    }
 #endif
+}
 
 }

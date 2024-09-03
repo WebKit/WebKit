@@ -96,11 +96,7 @@ public:
     void setDestinationFilename(const String& d) { m_destinationFilename = d; }
 
 #if PLATFORM(COCOA)
-#if HAVE(MODERN_DOWNLOADPROGRESS)
-    void publishProgress(const URL&, UseDownloadPlaceholder = UseDownloadPlaceholder::No);
-#else
     void publishProgress(const URL&);
-#endif
     void setProgress(NSProgress *progress) { m_progress = progress; }
     NSProgress *progress() const { return m_progress.get(); }
 #endif
