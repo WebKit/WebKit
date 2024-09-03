@@ -149,6 +149,7 @@ public:
     OrderedNamedElementsMap namedElements;
     FloatSize initialLargeViewportSize;
     float initialPageZoom;
+    MonotonicTime startTime;
 };
 
 class ViewTransition : public RefCounted<ViewTransition>, public VisibilityChangeClient, public ActiveDOMObject {
@@ -190,6 +191,7 @@ public:
 
     RenderViewTransitionCapture* viewTransitionNewPseudoForCapturedElement(RenderLayerModelObject&);
 
+    static constexpr Seconds defaultTimeout = 4_s;
 private:
     ViewTransition(Document&, RefPtr<ViewTransitionUpdateCallback>&&, Vector<AtomString>&&);
     ViewTransition(Document&, Vector<AtomString>&&);

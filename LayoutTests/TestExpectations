@@ -7494,11 +7494,11 @@ imported/w3c/web-platform-tests/css/css-view-transitions/web-animations-api-pars
 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-mutable-no-document-element-crashtest.html [ Skip ]
 
 # View transitions Level 2 - cross document transitions.
+
+# Chromium specific test.
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/chromium-paint-holding-timeout.html [ ImageOnlyFailure ]
 # Fuzzy failure, pixel rounding in <iframe>?
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe-with-startVT-on-main.html [ ImageOnlyFailure ]
-# https://github.com/w3c/csswg-drafts/issues/10800
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-long-delay.html [ Failure ]
 webkit.org/b/278028 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/hide-before-reveal.html [ Failure ]
 
 # prerender not supported.

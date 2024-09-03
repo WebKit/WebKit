@@ -8118,6 +8118,7 @@ void Document::dispatchPageswapEvent(bool canTriggerCrossDocumentViewTransition,
 
     RefPtr<ViewTransition> oldViewTransition;
 
+    auto startTime = MonotonicTime::now();
     PageSwapEvent::Init swapInit;
     swapInit.activation = WTFMove(activation);
     if (canTriggerCrossDocumentViewTransition && globalObject()) {
@@ -8136,6 +8137,7 @@ void Document::dispatchPageswapEvent(bool canTriggerCrossDocumentViewTransition,
         // FIXME: This should set the params on the new Document, but it doesn't exist yet.
         // Store it on the old, and we'll call transferViewTransitionParams soon.
         m_inboundViewTransitionParams = oldViewTransition->takeViewTransitionParams().moveToUniquePtr();
+        m_inboundViewTransitionParams->startTime = startTime;
     }
 }
 

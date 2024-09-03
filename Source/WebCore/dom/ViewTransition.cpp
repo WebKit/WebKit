@@ -96,6 +96,9 @@ RefPtr<ViewTransition> ViewTransition::resolveInboundCrossDocumentViewTransition
     if (!inboundViewTransitionParams)
         return nullptr;
 
+    if (MonotonicTime::now() - inboundViewTransitionParams->startTime > defaultTimeout)
+        return nullptr;
+
     if (document.activeViewTransition())
         return nullptr;
 
@@ -269,7 +272,7 @@ void ViewTransition::callUpdateCallback()
         }
     });
 
-    m_updateCallbackTimeout = protectedDocument()->checkedEventLoop()->scheduleTask(4_s, TaskSource::DOMManipulation, [this, weakThis = WeakPtr { *this }] {
+    m_updateCallbackTimeout = protectedDocument()->checkedEventLoop()->scheduleTask(defaultTimeout, TaskSource::DOMManipulation, [this, weakThis = WeakPtr { *this }] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
