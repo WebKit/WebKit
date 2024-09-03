@@ -222,9 +222,13 @@ void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomStri
         process();
         break;
     case AttributeNames::blockingAttr:
-        if (m_blockingList)
-            m_blockingList->associatedAttributeValueChanged();
-        process();
+        blocking().associatedAttributeValueChanged();
+        if (blocking().contains("render"_s)) {
+            processInternalResourceLink();
+            if (m_loading && mediaAttributeMatches() && !isAlternate())
+                potentiallyBlockRendering();
+        } else if (!isImplicitlyPotentiallyRenderBlocking())
+            unblockRendering();
         break;
     case AttributeNames::mediaAttr: {
         auto media = newValue.string().convertToASCIILowercase();
@@ -352,6 +356,11 @@ void HTMLLinkElement::process()
         bool isActive = mediaAttributeMatches() && !isAlternate();
         addPendingSheet(isActive ? ActiveSheet : InactiveSheet);
 
+        if (isActive)
+            potentiallyBlockRendering();
+        else
+            unblockRendering();
+
         // Load stylesheets that are not needed for the rendering immediately with low priority.
         std::optional<ResourceLoadPriority> priority;
         if (!isActive)
@@ -383,10 +392,13 @@ void HTMLLinkElement::process()
             m_loading = false;
             sheetLoaded();
             notifyLoadedSheetAndAllCriticalSubresources(true);
+            unblockRendering();
         }
 
         return;
     }
+
+    unblockRendering();
 
     if (m_sheet) {
         // we no longer contain a stylesheet, e.g. perhaps rel or type was changed
@@ -419,7 +431,6 @@ void HTMLLinkElement::processInternalResourceLink(HTMLAnchorElement* anchor)
         return;
 
     if (!m_relAttribute.isInternalResourceLink) {
-        unblockRendering();
         return;
     }
 
@@ -438,15 +449,22 @@ void HTMLLinkElement::processInternalResourceLink(HTMLAnchorElement* anchor)
         indicatedElement = document().findAnchor(m_url.fragmentIdentifier());
 
     // FIXME: "is on a stack of open elements of an HTML parser whose associated Document is doc"
-    if (document().readyState() == Document::ReadyState::Loading && isConnected() && mediaAttributeMatches() && blocking().contains("render"_s) && !indicatedElement) {
-        if (!m_isRenderBlocking) {
-            document().blockRenderingOn(*this);
-            m_isRenderBlocking = true;
-        }
+    if (document().readyState() == Document::ReadyState::Loading && isConnected() && mediaAttributeMatches() && !indicatedElement) {
+        potentiallyBlockRendering();
         if (!m_expectIdTargetObserver)
             m_expectIdTargetObserver = makeUnique<ExpectIdTargetObserver>(makeAtomString(m_url.fragmentIdentifier()), *this);
     } else
         unblockRendering();
+}
+
+// https://html.spec.whatwg.org/multipage/urls-and-fetching.html#blocking-attributes
+void HTMLLinkElement::potentiallyBlockRendering()
+{
+    bool explicitRenderBlocking = m_blockingList && m_blockingList->contains("render"_s);
+    if (explicitRenderBlocking || isImplicitlyPotentiallyRenderBlocking()) {
+        document().blockRenderingOn(*this, explicitRenderBlocking ? Document::ImplicitRenderBlocking::No : Document::ImplicitRenderBlocking::Yes);
+        m_isRenderBlocking = true;
+    }
 }
 
 void HTMLLinkElement::unblockRendering()
@@ -455,6 +473,12 @@ void HTMLLinkElement::unblockRendering()
         document().unblockRenderingOn(*this);
         m_isRenderBlocking = false;
     }
+}
+
+// https://html.spec.whatwg.org/multipage/links.html#link-type-stylesheet
+bool HTMLLinkElement::isImplicitlyPotentiallyRenderBlocking() const
+{
+    return m_relAttribute.isStyleSheet && m_createdByParser;
 }
 
 Node::InsertedIntoAncestorResult HTMLLinkElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
@@ -497,6 +521,7 @@ void HTMLLinkElement::removedFromAncestor(RemovalType removalType, ContainerNode
     }
 
     processInternalResourceLink();
+    unblockRendering();
 }
 
 void HTMLLinkElement::finishParsingChildren()
@@ -528,6 +553,7 @@ void HTMLLinkElement::initializeStyleSheet(Ref<StyleSheetContents>&& styleSheet,
 
 void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet* cachedStyleSheet)
 {
+    unblockRendering();
     if (!isConnected()) {
         ASSERT(!m_sheet);
         return;
