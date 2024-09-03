@@ -1337,6 +1337,8 @@ fast/css/variables/env/ios [ Pass ]
 
 # Tests use resizable popups which are not a thing on iOS.
 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/transition-in-hidden-page.html [ Failure ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/hide-before-reveal.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-push-from-click.html [ Failure ]

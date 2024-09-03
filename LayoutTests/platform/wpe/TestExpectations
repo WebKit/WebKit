@@ -1588,6 +1588,7 @@ compositing/visible-rect/scrolled.html [ Failure ]
 compositing/video/video-border-radius-clipping.html [ Pass ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-visibility-mixed-descendants.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/transition-in-hidden-page.html [ Skip ]
 
 webkit.org/b/272224 imported/w3c/web-platform-tests/selection/textcontrols/selectionchange.html [ Failure ]
 

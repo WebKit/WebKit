@@ -7468,12 +7468,10 @@ imported/w3c/web-platform-tests/css/css-view-transitions/paint-holding-in-iframe
 imported/w3c/web-platform-tests/css/css-view-transitions/iframe-transition.sub.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/fragmented-during-transition-skips.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/root-element-display-none-during-transition-crash.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/transition-in-hidden-page.html [ Skip ]
 
 # Flakes
 imported/w3c/web-platform-tests/css/css-view-transitions/synchronous-callback-skipped-before-run.html [ Failure Pass ]
 imported/w3c/web-platform-tests/css/css-view-transitions/old-content-intrinsic-aspect-ratio.html [ ImageOnlyFailure Pass ]
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation/hide-before-reveal.html [ Failure Pass ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-ctor.html [ Failure Pass ]
 
 # Reftests with variants are not supported
@@ -7494,6 +7492,7 @@ imported/w3c/web-platform-tests/css/css-view-transitions/navigation/chromium-pai
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe-with-startVT-on-main.html [ ImageOnlyFailure ]
 # https://github.com/w3c/csswg-drafts/issues/10800
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-long-delay.html [ Failure ]
+webkit.org/b/278028 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/hide-before-reveal.html [ Failure ]
 
 # prerender not supported.
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/prerender-removed-during-navigation.html [ Skip ]

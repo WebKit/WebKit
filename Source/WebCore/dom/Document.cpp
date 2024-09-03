@@ -2343,8 +2343,9 @@ void Document::visibilityStateChanged()
 {
     // https://w3c.github.io/page-visibility/#reacting-to-visibilitychange-changes
     queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(eventNames().visibilitychangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
-    for (auto& client : m_visibilityStateCallbackClients)
+    m_visibilityStateCallbackClients.forEach([](auto& client) {
         client.visibilityStateChanged();
+    });
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
     if (auto mediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists()) {
@@ -8068,7 +8069,7 @@ void Document::dispatchPagehideEvent(PageshowEventPersistence persisted)
 // https://www.w3.org/TR/css-view-transitions-2/#vt-rule-algo
 std::variant<Document::SkipTransition, Vector<AtomString>> Document::resolveViewTransitionRule()
 {
-    if (visibilityState() == VisibilityState::Hidden)
+    if (hidden())
         return SkipTransition { };
 
     auto rule = styleScope().resolver().viewTransitionRule();
@@ -8089,7 +8090,7 @@ void Document::reveal()
 
     PageRevealEvent::Init init;
 
-    RefPtr<ViewTransition> inboundTransition = ViewTransition::resolveInboundCrossDocumentViewTransition(*this, std::exchange(m_inboundViewTransitionParams, nullptr));
+    RefPtr inboundTransition = ViewTransition::resolveInboundCrossDocumentViewTransition(*this, std::exchange(m_inboundViewTransitionParams, nullptr));
     if (inboundTransition)
         init.viewTransition = inboundTransition;
 
@@ -10828,6 +10829,7 @@ void Document::flushDeferredRenderingIsSuppressedForViewTransitionChanges()
     }
 }
 
+// https://drafts.csswg.org/css-view-transitions/#ViewTransition-prepare
 RefPtr<ViewTransition> Document::startViewTransition(StartViewTransitionCallbackOptions&& callbackOptions)
 {
     if (!globalObject())
@@ -10850,6 +10852,11 @@ RefPtr<ViewTransition> Document::startViewTransition(StartViewTransitionCallback
     }
 
     Ref viewTransition = ViewTransition::createSamePage(*this, WTFMove(updateCallback), WTFMove(activeTypes));
+
+    if (hidden()) {
+        viewTransition->skipViewTransition(Exception { ExceptionCode::InvalidStateError, "View transition was skipped because document visibility state is hidden."_s });
+        return viewTransition;
+    }
 
     if (RefPtr activeViewTransition = m_activeViewTransition)
         activeViewTransition->skipViewTransition(Exception { ExceptionCode::AbortError, "Old view transition aborted by new view transition."_s });

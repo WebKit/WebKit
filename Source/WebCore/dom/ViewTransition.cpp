@@ -68,6 +68,7 @@ ViewTransition::ViewTransition(Document& document, RefPtr<ViewTransitionUpdateCa
     , m_finished(createPromiseAndWrapper(document))
     , m_types(ViewTransitionTypeSet::create(document, WTFMove(initialActiveTypes)))
 {
+    document.registerForVisibilityStateChangedCallbacks(*this);
 }
 
 ViewTransition::ViewTransition(Document& document, Vector<AtomString>&& initialActiveTypes)
@@ -859,12 +860,26 @@ RenderViewTransitionCapture* ViewTransition::viewTransitionNewPseudoForCapturedE
     return nullptr;
 }
 
+// https://drafts.csswg.org/css-view-transitions/#page-visibility-change-steps
+void ViewTransition::visibilityStateChanged()
+{
+    if (!document())
+        return;
+
+    if (protectedDocument()->hidden()) {
+        if (protectedDocument()->activeViewTransition() == this)
+            skipViewTransition(Exception { ExceptionCode::InvalidStateError, "Skipping view transition because document visibility state has become hidden."_s });
+    } else
+        ASSERT(!protectedDocument()->activeViewTransition());
+}
+
 void ViewTransition::stop()
 {
     if (!document())
         return;
 
     m_phase = ViewTransitionPhase::Done;
+    document()->unregisterForVisibilityStateChangedCallbacks(*this);
 
     if (document()->activeViewTransition() == this)
         clearViewTransition();

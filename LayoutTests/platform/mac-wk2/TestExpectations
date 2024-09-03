@@ -1789,9 +1789,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/new-content-intrinsic-a
 tiled-drawing/scrolling/overflow/overflow-scrolled-down-tile-coverage.html [ Pass Failure ]
 tiled-drawing/scrolling/overflow/overflow-scrolled-up-tile-coverage.html [ Pass Failure ]
 
-# rdar://133772823 ([Sonoma wk2] imported/w3c/web-platform-tests/css/css-view-transitions/navigation/hide-before-reveal.html is a flaky failure
-[ Sonoma+ ] imported/w3c/web-platform-tests/css/css-view-transitions/navigation/hide-before-reveal.html [ Pass Failure ]
-
 # webkit.org/b/278178  [macOS Debug] imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html is a flaky failure
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html [ Pass Failure ]
 
