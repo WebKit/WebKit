@@ -939,7 +939,12 @@ TEST(WKWebExtensionAPIRuntime, ConnectFromContentScript)
     [manager loadAndRun];
 }
 
+// FIXME when rdar://135213974 is resolved.
+#if PLATFORM(IOS)
+TEST(WKWebExtensionAPIRuntime, DISABLED_ConnectFromContentScriptWithImmediateMessage)
+#else
 TEST(WKWebExtensionAPIRuntime, ConnectFromContentScriptWithImmediateMessage)
+#endif
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
