@@ -180,17 +180,15 @@ void RemoteImageBufferSetProxy::addRequestedVolatility(OptionSet<BufferInSetType
     m_requestedVolatility.add(request);
 }
 
-void RemoteImageBufferSetProxy::setConfirmedVolatility(MarkSurfacesAsVolatileRequestIdentifier identifier, OptionSet<BufferInSetType> types)
+void RemoteImageBufferSetProxy::setConfirmedVolatility(OptionSet<BufferInSetType> types)
 {
-    if (identifier > m_minimumVolatilityRequest)
-        m_confirmedVolatility.add(types);
+    m_confirmedVolatility.add(types);
 }
 
-void RemoteImageBufferSetProxy::clearVolatilityUntilAfter(MarkSurfacesAsVolatileRequestIdentifier previousVolatilityRequest)
+void RemoteImageBufferSetProxy::clearVolatility()
 {
     m_requestedVolatility = { };
     m_confirmedVolatility = { };
-    m_minimumVolatilityRequest = previousVolatilityRequest;
 }
 
 #if PLATFORM(COCOA)

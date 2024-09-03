@@ -55,22 +55,26 @@ Ref<WebPageGroup> WebPageGroup::create(const String& identifier)
 
 static WebPageGroupData pageGroupData(const String& identifier)
 {
-    WebPageGroupData data;
-
     static NeverDestroyed<HashMap<String, PageGroupIdentifier>> map;
-    if (HashMap<String, PageGroupIdentifier>::isValidKey(identifier)) {
-        data.pageGroupID = map.get().ensure(identifier, [] {
-            return PageGroupIdentifier::generate();
-        }).iterator->value;
-    } else
-        data.pageGroupID = PageGroupIdentifier::generate();
+    auto pageGroupID = [&] {
+        if (HashMap<String, PageGroupIdentifier>::isValidKey(identifier)) {
+            return map.get().ensure(identifier, [] {
+                return PageGroupIdentifier::generate();
+            }).iterator->value;
+        }
+        return PageGroupIdentifier::generate();
+    }();
 
+    String validIdentifier;
     if (!identifier.isEmpty())
-        data.identifier = identifier;
+        validIdentifier = identifier;
     else
-        data.identifier = makeString("__uniquePageGroupID-"_s, data.pageGroupID.toUInt64());
+        validIdentifier = makeString("__uniquePageGroupID-"_s, pageGroupID.toUInt64());
 
-    return data;
+    return {
+        WTFMove(validIdentifier),
+        pageGroupID
+    };
 }
 
 // FIXME: Why does the WebPreferences object here use ".WebKit2" instead of "WebKit2." which all the other constructors use.

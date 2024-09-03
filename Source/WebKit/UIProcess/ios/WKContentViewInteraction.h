@@ -436,7 +436,7 @@ struct ImageAnalysisContextMenuActionData {
 
     WeakObjCPtr<id <UITextInputDelegate>> _inputDelegate;
 
-    WebKit::TapIdentifier _latestTapID;
+    Markable<WebKit::TapIdentifier> _latestTapID;
     struct TapHighlightInformation {
         BOOL nodeHasBuiltInClickHandling { false };
         WebCore::Color color;

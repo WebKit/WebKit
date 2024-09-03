@@ -3564,7 +3564,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (WebKit::TapIdentifier)nextTapIdentifier
 {
     _latestTapID = WebKit::TapIdentifier::generate();
-    return _latestTapID;
+    return *_latestTapID;
 }
 
 - (void)_highlightLongPressRecognized:(UILongPressGestureRecognizer *)gestureRecognizer

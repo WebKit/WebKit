@@ -10544,7 +10544,15 @@ bool WebPageProxy::useGPUProcessForDOMRenderingEnabled() const
 
 WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea, WebCore::FrameIdentifier mainFrameIdentifier, std::optional<RemotePageParameters>&& remotePageParameters, bool isProcessSwap, RefPtr<API::WebsitePolicies>&& websitePolicies)
 {
-    WebPageCreationParameters parameters;
+    Ref userContentController = m_userContentController;
+    if (RefPtr userContentControllerFromWebsitePolicies = websitePolicies ? websitePolicies->userContentController() : nullptr)
+        userContentController = userContentControllerFromWebsitePolicies.releaseNonNull();
+    process.addWebUserContentControllerProxy(userContentController);
+
+    WebPageCreationParameters parameters {
+        .pageGroupData = m_pageGroup->data(),
+        .userContentControllerParameters = userContentController->parameters()
+    };
 
     parameters.processDisplayName = configuration().processDisplayName();
 
@@ -10557,7 +10565,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.drawingAreaIdentifier = drawingArea.identifier();
     parameters.webPageProxyIdentifier = internals().identifier;
     parameters.store = preferencesStore();
-    parameters.pageGroupData = m_pageGroup->data();
     parameters.isEditable = m_isEditable;
     parameters.underlayColor = internals().underlayColor;
     parameters.useFixedLayout = m_useFixedLayout;
@@ -10725,12 +10732,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.crossOriginAccessControlCheckEnabled = m_configuration->crossOriginAccessControlCheckEnabled();
     parameters.hasResourceLoadClient = !!m_resourceLoadClient;
     parameters.portsForUpgradingInsecureSchemeForTesting = m_configuration->portsForUpgradingInsecureSchemeForTesting();
-
-    std::reference_wrapper<WebUserContentControllerProxy> userContentController(m_userContentController.get());
-    if (auto* userContentControllerFromWebsitePolicies = websitePolicies ? websitePolicies->userContentController() : nullptr)
-        userContentController = *userContentControllerFromWebsitePolicies;
-    process.addWebUserContentControllerProxy(userContentController);
-    parameters.userContentControllerParameters = userContentController.get().parameters();
 
 #if ENABLE(WK_WEB_EXTENSIONS)
     if (m_webExtensionController)
