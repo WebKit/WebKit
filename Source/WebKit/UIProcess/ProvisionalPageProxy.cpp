@@ -512,9 +512,9 @@ void ProvisionalPageProxy::didDestroyNavigation(WebCore::NavigationIdentifier na
     m_page->didDestroyNavigationShared(protectedProcess(), navigationID);
 }
 
-void ProvisionalPageProxy::startNetworkRequestsForPageLoadTiming()
+void ProvisionalPageProxy::startNetworkRequestsForPageLoadTiming(WebCore::FrameIdentifier frameID)
 {
-    m_page->startNetworkRequestsForPageLoadTiming();
+    m_page->startNetworkRequestsForPageLoadTiming(frameID);
 }
 
 #if USE(QUICK_LOOK)

@@ -226,7 +226,8 @@ void WebLocalFrameLoaderClient::assignIdentifierToInitialRequest(ResourceLoaderI
         return;
 
     bool pageIsProvisionallyLoading = false;
-    if (FrameLoader* frameLoader = loader ? loader->frameLoader() : nullptr)
+    CheckedPtr frameLoader = loader ? loader->frameLoader() : nullptr;
+    if (frameLoader)
         pageIsProvisionallyLoading = frameLoader->provisionalDocumentLoader() == loader;
 
     webPage->injectedBundleResourceLoadClient().didInitiateLoadForResource(*webPage, m_frame, identifier, request, pageIsProvisionallyLoading);
@@ -235,7 +236,7 @@ void WebLocalFrameLoaderClient::assignIdentifierToInitialRequest(ResourceLoaderI
     webPage->send(Messages::WebPageProxy::DidInitiateLoadForResource(identifier, m_frame->frameID(), request));
 #endif
 
-    webPage->addResourceRequest(identifier, request);
+    webPage->addResourceRequest(identifier, request, frameLoader ? &frameLoader->frame() : nullptr);
 }
 
 void WebLocalFrameLoaderClient::dispatchWillSendRequest(DocumentLoader*, ResourceLoaderIdentifier identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
@@ -314,7 +315,7 @@ void WebLocalFrameLoaderClient::dispatchDidFinishDataDetection(NSArray *detectio
 }
 #endif
 
-void WebLocalFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader*, ResourceLoaderIdentifier identifier)
+void WebLocalFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader* loader, ResourceLoaderIdentifier identifier)
 {
     RefPtr webPage = m_frame->page();
     if (!webPage)
@@ -326,10 +327,10 @@ void WebLocalFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader*, Resour
     webPage->send(Messages::WebPageProxy::DidFinishLoadForResource(identifier, m_frame->frameID(), { }));
 #endif
 
-    webPage->removeResourceRequest(identifier);
+    webPage->removeResourceRequest(identifier, loader && loader->frameLoader() ? &loader->frameLoader()->frame() : nullptr);
 }
 
-void WebLocalFrameLoaderClient::dispatchDidFailLoading(DocumentLoader*, ResourceLoaderIdentifier identifier, const ResourceError& error)
+void WebLocalFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, ResourceLoaderIdentifier identifier, const ResourceError& error)
 {
     RefPtr webPage = m_frame->page();
     if (!webPage)
@@ -341,7 +342,7 @@ void WebLocalFrameLoaderClient::dispatchDidFailLoading(DocumentLoader*, Resource
     webPage->send(Messages::WebPageProxy::DidFinishLoadForResource(identifier, m_frame->frameID(), error));
 #endif
 
-    webPage->removeResourceRequest(identifier);
+    webPage->removeResourceRequest(identifier, loader && loader->frameLoader() ? &loader->frameLoader()->frame() : nullptr);
 }
 
 bool WebLocalFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int /*length*/)

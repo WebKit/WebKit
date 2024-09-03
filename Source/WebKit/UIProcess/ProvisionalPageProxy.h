@@ -182,7 +182,7 @@ private:
     void decidePolicyForNavigationActionSync(NavigationActionData&&, CompletionHandler<void(PolicyDecision&&)>&&);
     void backForwardAddItem(WebCore::FrameIdentifier, BackForwardListItemState&&);
     void didDestroyNavigation(WebCore::NavigationIdentifier);
-    void startNetworkRequestsForPageLoadTiming();
+    void startNetworkRequestsForPageLoadTiming(WebCore::FrameIdentifier);
 #if USE(QUICK_LOOK)
     void requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&&);
 #endif

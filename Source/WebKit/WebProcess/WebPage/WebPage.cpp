@@ -6631,12 +6631,15 @@ void WebPage::drawPagesForPrinting(FrameIdentifier frameID, const PrintInfo& pri
 }
 #endif
 
-void WebPage::addResourceRequest(WebCore::ResourceLoaderIdentifier identifier, const WebCore::ResourceRequest& request)
+void WebPage::addResourceRequest(WebCore::ResourceLoaderIdentifier identifier, const WebCore::ResourceRequest& request, LocalFrame* frame)
 {
-    ASSERT(!m_networkResourceRequestIdentifiersForPageLoadTiming.contains(identifier));
-    if (m_networkResourceRequestIdentifiersForPageLoadTiming.isEmpty())
-        send(Messages::WebPageProxy::StartNetworkRequestsForPageLoadTiming());
-    m_networkResourceRequestIdentifiersForPageLoadTiming.add(identifier);
+    if (frame) {
+        auto frameID = frame->frameID();
+        auto addResult = m_networkResourceRequestCountForPageLoadTiming.add(frameID, 0);
+        if (!addResult.iterator->value)
+            send(Messages::WebPageProxy::StartNetworkRequestsForPageLoadTiming(frameID));
+        ++addResult.iterator->value;
+    }
 
     if (!request.url().protocolIsInHTTPFamily())
         return;
@@ -6651,12 +6654,16 @@ void WebPage::addResourceRequest(WebCore::ResourceLoaderIdentifier identifier, c
         send(Messages::WebPageProxy::SetNetworkRequestsInProgress(true));
 }
 
-void WebPage::removeResourceRequest(WebCore::ResourceLoaderIdentifier identifier)
+void WebPage::removeResourceRequest(WebCore::ResourceLoaderIdentifier identifier, LocalFrame* frame)
 {
-    auto didRemove = m_networkResourceRequestIdentifiersForPageLoadTiming.remove(identifier);
-    ASSERT_UNUSED(didRemove, didRemove);
-    if (m_networkResourceRequestIdentifiersForPageLoadTiming.isEmpty())
-        send(Messages::WebPageProxy::EndNetworkRequestsForPageLoadTiming(WallTime::now()));
+    if (frame) {
+        auto frameID = frame->frameID();
+        auto it = m_networkResourceRequestCountForPageLoadTiming.find(frameID);
+        ASSERT(it != m_networkResourceRequestCountForPageLoadTiming.end());
+        --it->value;
+        if (!it->value)
+            send(Messages::WebPageProxy::EndNetworkRequestsForPageLoadTiming(frameID, WallTime::now()));
+    }
 
     if (!m_trackedNetworkResourceRequestIdentifiers.remove(identifier))
         return;

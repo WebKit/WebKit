@@ -6038,6 +6038,9 @@ void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier 
     if (RefPtr frame = WebFrameProxy::webFrame(frameID))
         frame->disconnect();
 
+    if (m_framesWithSubresourceLoadingForPageLoadTiming.remove(frameID) && m_framesWithSubresourceLoadingForPageLoadTiming.isEmpty())
+        generatePageLoadingTimingSoon();
+
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (!webProcess.hasConnection() || &webProcess.connection() == &connection)
             return;
@@ -6094,20 +6097,22 @@ void WebPageProxy::setNetworkRequestsInProgress(bool networkRequestsInProgress)
     internals().pageLoadState.setNetworkRequestsInProgress(transaction, networkRequestsInProgress);
 }
 
-void WebPageProxy::startNetworkRequestsForPageLoadTiming()
+void WebPageProxy::startNetworkRequestsForPageLoadTiming(WebCore::FrameIdentifier frameID)
 {
     m_generatePageLoadTimingTimer.stop();
-    ++m_subresourceLoadingCountForPageLoadTiming;
+    auto addResult = m_framesWithSubresourceLoadingForPageLoadTiming.add(frameID);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-void WebPageProxy::endNetworkRequestsForPageLoadTiming(WallTime timestamp)
+void WebPageProxy::endNetworkRequestsForPageLoadTiming(WebCore::FrameIdentifier frameID, WallTime timestamp)
 {
-    ASSERT(m_subresourceLoadingCountForPageLoadTiming);
-    --m_subresourceLoadingCountForPageLoadTiming;
+    auto didRemove = m_framesWithSubresourceLoadingForPageLoadTiming.remove(frameID);
+    ASSERT_UNUSED(didRemove, didRemove);
     if (!m_pageLoadTiming)
         return;
     m_pageLoadTiming->updateEndOfNetworkRequests(timestamp);
-    generatePageLoadingTimingSoon();
+    if (m_framesWithSubresourceLoadingForPageLoadTiming.isEmpty())
+        generatePageLoadingTimingSoon();
 }
 
 void WebPageProxy::generatePageLoadingTimingSoon()
@@ -6115,7 +6120,7 @@ void WebPageProxy::generatePageLoadingTimingSoon()
     m_generatePageLoadTimingTimer.stop();
     if (!m_pageLoadTiming)
         return;
-    if (m_subresourceLoadingCountForPageLoadTiming)
+    if (m_framesWithSubresourceLoadingForPageLoadTiming.size())
         return;
     if (!m_pageLoadTiming->firstMeaningfulPaint())
         return;

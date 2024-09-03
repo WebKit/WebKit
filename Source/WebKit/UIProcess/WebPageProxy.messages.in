@@ -113,8 +113,8 @@ messages -> WebPageProxy {
 
     SetNetworkRequestsInProgress(bool networkRequestsInProgress)
 
-    StartNetworkRequestsForPageLoadTiming()
-    EndNetworkRequestsForPageLoadTiming(WallTime timestamp)
+    StartNetworkRequestsForPageLoadTiming(WebCore::FrameIdentifier frameID)
+    EndNetworkRequestsForPageLoadTiming(WebCore::FrameIdentifier frameID, WallTime timestamp)
 
     # Frame lifetime messages
     DidCreateSubframe(WebCore::FrameIdentifier parent, WebCore::FrameIdentifier newFrameID, String frameName)
