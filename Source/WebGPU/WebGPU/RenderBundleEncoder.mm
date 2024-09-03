@@ -917,7 +917,7 @@ Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& 
         return RenderBundle::createInvalid(m_device, m_lastErrorString);
     }
 
-    m_requiresCommandReplay = m_requiresCommandReplay ?: (m_requiresMetalWorkaround || !m_currentCommandIndex);
+    m_requiresCommandReplay = m_requiresCommandReplay ?: (!m_currentCommandIndex);
 
     auto createRenderBundle = ^{
         if (m_requiresCommandReplay)
@@ -1046,9 +1046,6 @@ void RenderBundleEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& gro
 
         if (group.fragmentArgumentBuffer())
             m_icbDescriptor.maxFragmentBufferBindCount = std::max<NSUInteger>(m_icbDescriptor.maxFragmentBufferBindCount, 2 + groupIndex);
-
-        if (group.vertexArgumentBuffer())
-            m_requiresMetalWorkaround = false;
 
         recordCommand([groupIndex, group = Ref { group }, protectedThis = Ref { *this }, dynamicOffsets = WTFMove(dynamicOffsets)]() mutable {
             protectedThis->setBindGroup(groupIndex, group.get(), WTFMove(dynamicOffsets));
@@ -1243,7 +1240,7 @@ void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
         if (pipeline.sampleMask() != defaultSampleMask)
             m_requiresCommandReplay = true;
 
-        if (m_pipeline && m_currentCommandIndex && icbNeedsToBeSplit(*m_pipeline, pipeline) && !m_requiresMetalWorkaround)
+        if (m_pipeline && m_currentCommandIndex && icbNeedsToBeSplit(*m_pipeline, pipeline))
             endCurrentICB();
 
         recordCommand([pipeline = Ref { pipeline }, protectedThis = Ref { *this }] {
@@ -1300,7 +1297,6 @@ void RenderBundleEncoder::setVertexBuffer(uint32_t slot, Buffer* optionalBuffer,
             }
         }
 
-        m_requiresMetalWorkaround = false;
         recordCommand([slot, optionalBuffer = RefPtr { optionalBuffer }, offset, size, protectedThis = Ref { *this }] {
             protectedThis->setVertexBuffer(slot, optionalBuffer.get(), offset, size);
             return false;
