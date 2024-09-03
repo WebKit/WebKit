@@ -4275,27 +4275,23 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length lo
 
         const LayoutUnit availableSpace = containerLogicalWidth - (marginLogicalLeftValue + marginLogicalRightValue + bordersPlusPadding);
 
+        auto shrinkToFitLogicalWidth = [&](auto availableLogicalWidth, auto bordersPlusPadding) -> LayoutUnit {
+            LayoutUnit preferredMaxLogicalWidth = maxPreferredLogicalWidth() - bordersPlusPadding;
+            LayoutUnit preferredMinLogicalWidth = minPreferredLogicalWidth() - bordersPlusPadding;
+            return std::clamp(availableLogicalWidth, preferredMinLogicalWidth, preferredMaxLogicalWidth);
+        };
+
         // FIXME: Is there a faster way to find the correct case?
         // Use rule/case that applies.
         if (logicalLeftIsAuto && logicalWidthIsAuto && !logicalRightIsAuto) {
             // RULE 1: (use shrink-to-fit for width, and solve of left)
             LayoutUnit logicalRightValue = valueForLength(logicalRight, containerLogicalWidth);
-
-            // FIXME: would it be better to have shrink-to-fit in one step?
-            LayoutUnit preferredWidth = maxPreferredLogicalWidth() - bordersPlusPadding;
-            LayoutUnit preferredMinWidth = minPreferredLogicalWidth() - bordersPlusPadding;
-            LayoutUnit availableWidth = availableSpace - logicalRightValue;
-            computedValues.m_extent = std::min(std::max(preferredMinWidth, availableWidth), preferredWidth);
+            computedValues.m_extent = shrinkToFitLogicalWidth(availableSpace - logicalRightValue, bordersPlusPadding);
             logicalLeftValue = availableSpace - (computedValues.m_extent + logicalRightValue);
         } else if (!logicalLeftIsAuto && logicalWidthIsAuto && logicalRightIsAuto) {
             // RULE 3: (use shrink-to-fit for width, and no need solve of right)
             logicalLeftValue = valueForLength(logicalLeft, containerLogicalWidth);
-
-            // FIXME: would it be better to have shrink-to-fit in one step?
-            LayoutUnit preferredWidth = maxPreferredLogicalWidth() - bordersPlusPadding;
-            LayoutUnit preferredMinWidth = minPreferredLogicalWidth() - bordersPlusPadding;
-            LayoutUnit availableWidth = availableSpace - logicalLeftValue;
-            computedValues.m_extent = std::min(std::max(preferredMinWidth, availableWidth), preferredWidth);
+            computedValues.m_extent = shrinkToFitLogicalWidth(availableSpace - logicalLeftValue, bordersPlusPadding);
         } else if (logicalLeftIsAuto && !logicalWidthIsAuto && !logicalRightIsAuto) {
             // RULE 4: (solve for left)
             computedValues.m_extent = adjustContentBoxLogicalWidthForBoxSizing(valueForLength(logicalWidth, containerLogicalWidth), originalLogicalWidthType);
