@@ -4058,7 +4058,7 @@ void WebPageProxy::updateTouchEventTracking(const WebTouchEvent& touchStartEvent
         auto update = [this, location](TrackingType& trackingType, EventTrackingRegions::EventType eventType) {
             if (trackingType == TrackingType::Synchronous)
                 return;
-            auto trackingTypeForLocation = m_scrollingCoordinatorProxy->eventTrackingTypeForPoint(eventType, location);
+            auto trackingTypeForLocation = m_scrollingCoordinatorProxy->eventTrackingTypeForPoint(eventType, roundedIntPoint(location));
             trackingType = mergeTrackingTypes(trackingType, trackingTypeForLocation);
         };
         auto& tracking = internals().touchEventTracking;

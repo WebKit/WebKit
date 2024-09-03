@@ -920,7 +920,7 @@ FloatPoint ScrollView::viewToContents(const FloatPoint& point) const
     if (delegatesScrollingToNativeView())
         return point;
 
-    return viewToContents(IntPoint(point));
+    return point + toFloatSize(documentScrollPositionRelativeToViewOrigin());
 }
 
 FloatPoint ScrollView::contentsToView(const FloatPoint& point) const
@@ -1062,6 +1062,14 @@ IntRect ScrollView::contentsToRootView(const IntRect& contentsRect) const
 
 IntPoint ScrollView::windowToContents(const IntPoint& windowPoint) const
 {
+    return viewToContents(convertFromContainingWindow(windowPoint));
+}
+
+FloatPoint ScrollView::windowToContents(const FloatPoint& windowPoint) const
+{
+    if (delegatesScrolling())
+        return convertFromContainingWindow(windowPoint);
+
     return viewToContents(convertFromContainingWindow(windowPoint));
 }
 

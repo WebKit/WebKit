@@ -172,6 +172,11 @@ public:
         return { m_y, m_x };
     }
 
+    FloatPoint scaledBy(float scale) const
+    {
+        return FloatPoint(m_x * scale, m_y * scale);
+    }
+
 #if USE(CG)
     WEBCORE_EXPORT FloatPoint(const CGPoint&);
     WEBCORE_EXPORT operator CGPoint() const;

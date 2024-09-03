@@ -52,7 +52,7 @@ public:
     };
 
     WebPlatformTouchPoint() = default;
-    WebPlatformTouchPoint(unsigned identifier, WebCore::IntPoint location, State phase)
+    WebPlatformTouchPoint(unsigned identifier, WebCore::FloatPoint location, State phase)
         : m_identifier(identifier)
         , m_location(location)
         , m_phase(phase)
@@ -75,7 +75,7 @@ public:
 #endif
 
     unsigned identifier() const { return m_identifier; }
-    WebCore::IntPoint location() const { return m_location; }
+    WebCore::FloatPoint location() const { return m_location; }
     State phase() const { return m_phase; }
     State state() const { return phase(); }
 
@@ -99,7 +99,7 @@ public:
 
 private:
     unsigned m_identifier { 0 };
-    WebCore::IntPoint m_location;
+    WebCore::FloatPoint m_location;
     State m_phase { State::Released };
 #if ENABLE(IOS_TOUCH_EVENTS)
     double m_radiusX { 0 };

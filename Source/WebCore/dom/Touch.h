@@ -30,6 +30,8 @@
 #elif ENABLE(TOUCH_EVENTS)
 
 #include "EventTarget.h"
+#include "FloatPoint.h"
+#include "FloatSize.h"
 #include "LayoutPoint.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -41,23 +43,23 @@ class LocalFrame;
 class Touch : public RefCounted<Touch> {
 public:
     static Ref<Touch> create(LocalFrame* frame, EventTarget* target,
-            int identifier, int screenX, int screenY, int pageX, int pageY,
-            int radiusX, int radiusY, float rotationAngle, float force)
+        int identifier, const FloatPoint& screenPos, const FloatPoint& pagePos,
+        const FloatSize& radius, float rotationAngle, float force)
     {
-        return adoptRef(*new Touch(frame, target, identifier, screenX, 
-                screenY, pageX, pageY, radiusX, radiusY, rotationAngle, force));
+        return adoptRef(
+            *new Touch(frame, target, identifier, screenPos, pagePos, radius, rotationAngle, force));
     }
 
     EventTarget* target() const { return m_target.get(); }
     int identifier() const { return m_identifier; }
-    int clientX() const { return m_clientX; }
-    int clientY() const { return m_clientY; }
-    int screenX() const { return m_screenX; }
-    int screenY() const { return m_screenY; }
-    int pageX() const { return m_pageX; }
-    int pageY() const { return m_pageY; }
-    int webkitRadiusX() const { return m_radiusX; }
-    int webkitRadiusY() const { return m_radiusY; }
+    double clientX() const { return m_clientPos.x(); }
+    double clientY() const { return m_clientPos.y(); }
+    double screenX() const { return m_screenPos.x(); }
+    double screenY() const { return m_screenPos.y(); }
+    double pageX() const { return m_pagePos.x(); }
+    double pageY() const { return m_pagePos.y(); }
+    double webkitRadiusX() const { return m_radius.width(); }
+    double webkitRadiusY() const { return m_radius.height(); }
     float webkitRotationAngle() const { return m_rotationAngle; }
     float webkitForce() const { return m_force; }
     const LayoutPoint& absoluteLocation() const { return m_absoluteLocation; }
@@ -65,23 +67,23 @@ public:
 
 private:
     Touch(LocalFrame*, EventTarget*, int identifier,
-            int screenX, int screenY, int pageX, int pageY,
-            int radiusX, int radiusY, float rotationAngle, float force);
+        const FloatPoint& screenPos, const FloatPoint& pagePos,
+            const FloatSize& radius, float rotationAngle, float force);
 
-    Touch(EventTarget*, int identifier, int clientX, int clientY,
-        int screenX, int screenY, int pageX, int pageY,
-        int radiusX, int radiusY, float rotationAngle, float force, LayoutPoint absoluteLocation);
+    Touch(EventTarget*, int identifier, const FloatPoint& clientPos,
+        const FloatPoint& screenPos, const FloatPoint& pagePos,
+        const FloatSize& radius, float rotationAngle, float force, LayoutPoint absoluteLocation);
 
     RefPtr<EventTarget> m_target;
     int m_identifier;
-    int m_clientX;
-    int m_clientY;
-    int m_screenX;
-    int m_screenY;
-    int m_pageX;
-    int m_pageY;
-    int m_radiusX;
-    int m_radiusY;
+    // Position relative to the viewport in CSS px.
+    FloatPoint m_clientPos;
+    // Position relative to the screen in DIPs.
+    FloatPoint m_screenPos;
+    // Position relative to the page in CSS px.
+    FloatPoint m_pagePos;
+    // Radius in CSS px.
+    FloatSize m_radius;
     float m_rotationAngle;
     float m_force;
     LayoutPoint m_absoluteLocation;
