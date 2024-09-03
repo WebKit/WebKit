@@ -139,6 +139,11 @@ static bool urlRequiresMacintoshPlatform(const String& domain, const String& bas
     if (baseDomain == "atlassian.net"_s)
         return true;
 
+    // Rosetta Stone discriminates against WebKitGTK's standard mobile user agent
+    // by redirecting to an intent:// URL, which will of course fail to load.
+    if (domain == "totale.rosettastone.com"_s)
+        return true;
+
     return false;
 }
 
