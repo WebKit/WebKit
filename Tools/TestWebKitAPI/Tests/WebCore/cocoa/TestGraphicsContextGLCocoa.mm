@@ -209,7 +209,9 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsDifferentPowerPreferenceMetal)
     EXPECT_NE(lowPowerContext->getString(WebCore::GraphicsContextGL::RENDERER), highPerformanceContext->getString(WebCore::GraphicsContextGL::RENDERER));
     EXPECT_EQ(defaultContext->getString(WebCore::GraphicsContextGL::RENDERER), lowPowerContext->getString(WebCore::GraphicsContextGL::RENDERER));
 }
+#endif
 
+#if PLATFORM(MAC)
 // Tests that requesting context with windowGPUID from low power device results
 // to same thing as requesting default low power context.
 // Tests that windowGPUID from low power device still respects high performance request.
