@@ -31,6 +31,9 @@ NetworkProcess/cocoa/NetworkSessionCocoa.mm
 NetworkProcess/cocoa/NetworkTaskCocoa.mm
 NetworkProcess/cocoa/WKURLSessionTaskDelegate.mm
 
+NetworkProcess/webtransport/cocoa/NetworkTransportBidirectionalStreamCocoa.mm
+NetworkProcess/webtransport/cocoa/NetworkTransportReceiveStreamCocoa.mm
+NetworkProcess/webtransport/cocoa/NetworkTransportSendStreamCocoa.mm
 NetworkProcess/webtransport/cocoa/NetworkTransportSessionCocoa.mm
 
 NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp

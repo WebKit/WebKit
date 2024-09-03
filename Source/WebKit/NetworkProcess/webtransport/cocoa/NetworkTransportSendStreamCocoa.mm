@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "NetworkTransportSendStream.h"
 
-#include <wtf/ObjectIdentifier.h>
-#include <wtf/RefCounted.h>
-#include <wtf/TZoneMalloc.h>
-#include <wtf/WeakPtr.h>
-
-#if PLATFORM(COCOA)
-#include <Network/Network.h>
-#include <wtf/RetainPtr.h>
-#endif
+#import <wtf/Vector.h>
 
 namespace WebKit {
-struct WebTransportStreamIdentifierType;
-using WebTransportStreamIdentifier = LegacyNullableObjectIdentifier<WebTransportStreamIdentifierType>;
+
+NetworkTransportSendStream::NetworkTransportSendStream(nw_connection_t connection)
+    : m_connection(connection)
+{
+    ASSERT(m_connection);
 }
 
-namespace WebKit {
+void NetworkTransportSendStream::sendBytes(std::span<const uint8_t> data, bool)
+{
+    // FIXME: This exists in several places. Make a common place in WTF for it.
+    auto dataFromVector = [] (Vector<uint8_t>&& v) {
+        auto bufferSize = v.size();
+        auto rawPointer = v.releaseBuffer().leakPtr();
+        return adoptNS(dispatch_data_create(rawPointer, bufferSize, dispatch_get_main_queue(), ^{
+            fastFree(rawPointer);
+        }));
+    };
 
-class NetworkTransportSession;
-
-class NetworkTransportReceiveStream : public RefCounted<NetworkTransportReceiveStream>, public CanMakeWeakPtr<NetworkTransportReceiveStream> {
-    WTF_MAKE_TZONE_ALLOCATED(NetworkTransportReceiveStream);
-public:
-    template<typename... Args> static Ref<NetworkTransportReceiveStream> create(Args&&... args) { return adoptRef(*new NetworkTransportReceiveStream(std::forward<Args>(args)...)); }
-
-    WebTransportStreamIdentifier identifier() const { return m_identifier; }
-
-protected:
-#if PLATFORM(COCOA)
-    NetworkTransportReceiveStream(NetworkTransportSession&, nw_connection_t);
-#endif
-
-private:
-    void receiveLoop();
-
-    const WebTransportStreamIdentifier m_identifier;
-    WeakPtr<NetworkTransportSession> m_session;
-#if PLATFORM(COCOA)
-    const RetainPtr<nw_connection_t> m_connection;
-#endif
-};
+    nw_connection_send(m_connection.get(), dataFromVector(Vector(data)).get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, ^(nw_error_t error) {
+        // FIXME: Pipe any error to JS.
+        // FIXME: sendBytes should probably have a completion handler.
+    });
+}
 
 }

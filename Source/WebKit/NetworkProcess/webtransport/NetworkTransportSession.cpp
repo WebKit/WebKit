@@ -39,7 +39,7 @@ namespace WebKit {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkTransportSession);
 
 #if !PLATFORM(COCOA)
-void NetworkTransportSession::initialize(NetworkConnectionToWebProcess&, URL&&, CompletionHandler<void(std::unique_ptr<NetworkTransportSession>&&)>&& completionHandler)
+void NetworkTransportSession::initialize(NetworkConnectionToWebProcess&, URL&&, CompletionHandler<void(RefPtr<NetworkTransportSession>&&)>&& completionHandler)
 {
     completionHandler(nullptr);
 }
@@ -80,23 +80,17 @@ void NetworkTransportSession::streamSendBytes(WebTransportStreamIdentifier ident
     completionHandler();
 }
 
+#if !PLATFORM(COCOA)
 void NetworkTransportSession::createOutgoingUnidirectionalStream(CompletionHandler<void(std::optional<WebTransportStreamIdentifier>)>&& completionHandler)
 {
-    // FIXME: Use nw_connection_group_extract_connection to implement this on Cocoa platforms.
-    auto identifier = WebTransportStreamIdentifier::generate();
-    ASSERT(!m_sendStreams.contains(identifier));
-    m_sendStreams.set(identifier, makeUniqueRef<NetworkTransportSendStream>());
-    completionHandler(identifier);
+    completionHandler(std::nullopt);
 }
 
 void NetworkTransportSession::createBidirectionalStream(CompletionHandler<void(std::optional<WebTransportStreamIdentifier>)>&& completionHandler)
 {
-    // FIXME: Use nw_connection_group_extract_connection to implement this on Cocoa platforms.
-    auto identifier = WebTransportStreamIdentifier::generate();
-    ASSERT(!m_bidirectionalStreams.contains(identifier));
-    m_bidirectionalStreams.set(identifier, makeUniqueRef<NetworkTransportBidirectionalStream>(*this));
-    completionHandler(identifier);
+    completionHandler(std::nullopt);
 }
+#endif
 
 void NetworkTransportSession::destroyOutgoingUnidirectionalStream(WebTransportStreamIdentifier identifier)
 {
@@ -128,20 +122,12 @@ void NetworkTransportSession::streamReceiveBytes(WebTransportStreamIdentifier id
 
 void NetworkTransportSession::receiveIncomingUnidirectionalStream()
 {
-    // FIXME: Implement something that calls this.
-    auto identifier = WebTransportStreamIdentifier::generate();
-    ASSERT(!m_receiveStreams.contains(identifier));
-    m_receiveStreams.set(identifier, makeUniqueRef<NetworkTransportReceiveStream>(*this));
-    send(Messages::WebTransportSession::ReceiveIncomingUnidirectionalStream(identifier));
+    // FIXME: Implement and send Messages::WebTransportSession::ReceiveIncomingUnidirectionalStream.
 }
 
 void NetworkTransportSession::receiveBidirectionalStream()
 {
-    // FIXME: Implement something that calls this.
-    auto identifier = WebTransportStreamIdentifier::generate();
-    ASSERT(!m_bidirectionalStreams.contains(identifier));
-    m_bidirectionalStreams.set(identifier, makeUniqueRef<NetworkTransportBidirectionalStream>(*this));
-    send(Messages::WebTransportSession::ReceiveBidirectionalStream(identifier));
+    // FIXME: Implement and send Messages::WebTransportSession::ReceiveBidirectionalStream.
 }
 
 }

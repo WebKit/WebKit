@@ -8286,6 +8286,9 @@
 		FA651BA72AA3CBB600747576 /* NetworkTransportReceiveStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkTransportReceiveStream.h; sourceTree = "<group>"; };
 		FA651BAE2AA3E5FB00747576 /* WebTransportSendStreamSink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebTransportSendStreamSink.h; path = Network/WebTransportSendStreamSink.h; sourceTree = "<group>"; };
 		FA651BAF2AA3E5FB00747576 /* WebTransportSendStreamSink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebTransportSendStreamSink.cpp; path = Network/WebTransportSendStreamSink.cpp; sourceTree = "<group>"; };
+		FA65EFC52C82240100A0A123 /* NetworkTransportBidirectionalStreamCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkTransportBidirectionalStreamCocoa.mm; sourceTree = "<group>"; };
+		FA65EFC62C82240100A0A123 /* NetworkTransportReceiveStreamCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkTransportReceiveStreamCocoa.mm; sourceTree = "<group>"; };
+		FA65EFC72C82240100A0A123 /* NetworkTransportSendStreamCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkTransportSendStreamCocoa.mm; sourceTree = "<group>"; };
 		FA6757052B815C8300C1566A /* FrameProcess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FrameProcess.cpp; sourceTree = "<group>"; };
 		FA6757062B815C8300C1566A /* FrameProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameProcess.h; sourceTree = "<group>"; };
 		FA6DCE712BAAB3AB0043109B /* WebPagePreferencesLockdownModeObserver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPagePreferencesLockdownModeObserver.mm; sourceTree = "<group>"; };
@@ -15869,6 +15872,9 @@
 		FA13529A2C7E6FC00049C1BC /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				FA65EFC52C82240100A0A123 /* NetworkTransportBidirectionalStreamCocoa.mm */,
+				FA65EFC62C82240100A0A123 /* NetworkTransportReceiveStreamCocoa.mm */,
+				FA65EFC72C82240100A0A123 /* NetworkTransportSendStreamCocoa.mm */,
 				FA13529B2C7E70140049C1BC /* NetworkTransportSessionCocoa.mm */,
 			);
 			path = cocoa;

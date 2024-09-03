@@ -35,12 +35,10 @@ class WebTransportServer {
 public:
     WebTransportServer();
     uint16_t port() const;
-    size_t bytesReceived() const { return m_bytesReceived; }
-    void setBytesReceived(size_t br) { m_bytesReceived = br; }
 private:
     RetainPtr<nw_listener_t> m_listener;
+    Vector<RetainPtr<nw_connection_group_t>> m_connectionGroups;
     Vector<RetainPtr<nw_connection_t>> m_connections;
-    size_t m_bytesReceived { 0 };
 };
 
 } // namespace TestWebKitAPI

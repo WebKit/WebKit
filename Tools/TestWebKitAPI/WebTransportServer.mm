@@ -28,37 +28,53 @@
 
 #import "HTTPServer.h"
 #import "Utilities.h"
+#import <pal/spi/cf/CFNetworkSPI.h>
 
 namespace TestWebKitAPI {
 
-void connectionLoop(WebTransportServer& server, Connection c)
-{
-    // FIXME: This unsafely captures a reference to the server.
-    c.receiveBytes([&server, c](Vector<uint8_t>&& d) {
-        if (d.size()) {
-            server.setBytesReceived(d.size());
-            d.append(0);
-        }
-        connectionLoop(server, c);
-    });
-}
-
 WebTransportServer::WebTransportServer()
 {
-    RetainPtr parameters = adoptNS(nw_parameters_create_secure_tcp(^(nw_protocol_options_t options) {
-        RetainPtr securityOptions = adoptNS(nw_tls_copy_sec_protocol_options(options));
+    auto configureTLS = [](nw_protocol_options_t options) {
+        RetainPtr securityOptions = adoptNS(nw_quic_connection_copy_sec_protocol_options(options));
         sec_protocol_options_set_local_identity(securityOptions.get(), adoptNS(sec_identity_create(testIdentity().get())).get());
-        sec_protocol_options_add_tls_application_protocol(securityOptions.get(), "h2");
-    }, NW_PARAMETERS_DEFAULT_CONFIGURATION));
+        sec_protocol_options_add_tls_application_protocol(securityOptions.get(), "h3");
+    };
+
+    RetainPtr parameters = adoptNS(nw_parameters_create_quic_stream(NW_PARAMETERS_DEFAULT_CONFIGURATION, configureTLS));
 
     m_listener = adoptNS(nw_listener_create(parameters.get()));
 
     // FIXME: This block unsafely captures this.
-    nw_listener_set_new_connection_handler(m_listener.get(), ^(nw_connection_t connection) {
-        nw_connection_set_queue(connection, dispatch_get_main_queue());
-        nw_connection_start(connection);
-        m_connections.append(connection);
-        connectionLoop(*this, connection);
+    nw_listener_set_new_connection_group_handler(m_listener.get(), ^(nw_connection_group_t connectionGroup) {
+        constexpr uint32_t maximumMessageSize { std::numeric_limits<uint32_t>::max() };
+        constexpr bool rejectOversizedMessages { false };
+        nw_connection_group_set_receive_handler(connectionGroup, maximumMessageSize, rejectOversizedMessages, ^(dispatch_data_t data, nw_content_context_t, bool) {
+            // FIXME: Implement and test datagrams with WebTransport.
+        });
+
+        // FIXME: This block unsafely captures this.
+        nw_connection_group_set_new_connection_handler(connectionGroup, ^(nw_connection_t connection) {
+            nw_connection_set_queue(connection, dispatch_get_main_queue());
+            nw_connection_set_state_changed_handler(connection, ^(nw_connection_state_t state, nw_error_t error) {
+                if (error) {
+                    ASSERT_NOT_REACHED();
+                    return;
+                }
+                if (state != nw_connection_state_ready)
+                    return;
+                nw_connection_receive(connection, 1, std::numeric_limits<uint32_t>::max(), ^(dispatch_data_t content, nw_content_context_t context, bool is_complete, nw_error_t error) {
+                    nw_connection_send(connection, content, NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, ^(nw_error_t error) {
+                        ASSERT_UNUSED(error, !error);
+                    });
+                });
+            });
+            nw_connection_start(connection);
+            m_connections.append(connection);
+        });
+
+        nw_connection_group_set_queue(connectionGroup, dispatch_get_main_queue());
+        nw_connection_group_start(connectionGroup);
+        m_connectionGroups.append(connectionGroup);
     });
     nw_listener_set_queue(m_listener.get(), dispatch_get_main_queue());
 

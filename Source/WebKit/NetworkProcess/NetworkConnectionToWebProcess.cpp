@@ -1663,12 +1663,12 @@ void NetworkConnectionToWebProcess::navigatorGetPushPermissionState(URL&& scopeU
 
 void NetworkConnectionToWebProcess::initializeWebTransportSession(URL&& url, CompletionHandler<void(std::optional<WebTransportSessionIdentifier>)>&& completionHandler)
 {
-    NetworkTransportSession::initialize(*this, WTFMove(url), [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (std::unique_ptr<NetworkTransportSession>&& session) mutable {
+    NetworkTransportSession::initialize(*this, WTFMove(url), [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (RefPtr<NetworkTransportSession>&& session) mutable {
         if (!session || !weakThis)
             return completionHandler(std::nullopt);
         auto identifier = session->identifier();
         ASSERT(!m_networkTransportSessions.contains(identifier));
-        m_networkTransportSessions.set(identifier, makeUniqueRefFromNonNullUniquePtr(WTFMove(session)));
+        m_networkTransportSessions.set(identifier, session.releaseNonNull());
         completionHandler(identifier);
     });
 }

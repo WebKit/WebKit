@@ -38,15 +38,6 @@
 #endif
 
 namespace WebKit {
-class NetworkTransportSession;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NetworkTransportSession> : std::true_type { };
-}
-
-namespace WebKit {
 
 class NetworkConnectionToWebProcess;
 class NetworkTransportBidirectionalStream;
@@ -59,14 +50,11 @@ struct WebTransportStreamIdentifierType;
 using WebTransportSessionIdentifier = LegacyNullableObjectIdentifier<WebTransportSessionIdentifierType>;
 using WebTransportStreamIdentifier = LegacyNullableObjectIdentifier<WebTransportStreamIdentifierType>;
 
-class NetworkTransportSession : public IPC::MessageReceiver, public IPC::MessageSender, public Identified<WebTransportSessionIdentifier> {
+class NetworkTransportSession : public RefCounted<NetworkTransportSession>, public IPC::MessageReceiver, public IPC::MessageSender, public Identified<WebTransportSessionIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(NetworkTransportSession);
 public:
-    static void initialize(NetworkConnectionToWebProcess&, URL&&, CompletionHandler<void(std::unique_ptr<NetworkTransportSession>&&)>&&);
+    static void initialize(NetworkConnectionToWebProcess&, URL&&, CompletionHandler<void(RefPtr<NetworkTransportSession>&&)>&&);
 
-#if PLATFORM(COCOA)
-    NetworkTransportSession(NetworkConnectionToWebProcess&, nw_connection_group_t, nw_endpoint_t);
-#endif
     ~NetworkTransportSession();
 
     void sendDatagram(std::span<const uint8_t>, CompletionHandler<void()>&&);
@@ -85,17 +73,22 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 private:
+    template<typename... Args> static Ref<NetworkTransportSession> create(Args&&... args) { return adoptRef(*new NetworkTransportSession(std::forward<Args>(args)...)); }
+#if PLATFORM(COCOA)
+    NetworkTransportSession(NetworkConnectionToWebProcess&, nw_connection_group_t, nw_endpoint_t);
+#endif
+
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    HashMap<WebTransportStreamIdentifier, UniqueRef<NetworkTransportBidirectionalStream>> m_bidirectionalStreams;
-    HashMap<WebTransportStreamIdentifier, UniqueRef<NetworkTransportReceiveStream>> m_receiveStreams;
+    HashMap<WebTransportStreamIdentifier, Ref<NetworkTransportBidirectionalStream>> m_bidirectionalStreams;
+    HashMap<WebTransportStreamIdentifier, Ref<NetworkTransportReceiveStream>> m_receiveStreams;
     HashMap<WebTransportStreamIdentifier, UniqueRef<NetworkTransportSendStream>> m_sendStreams;
     WeakPtr<NetworkConnectionToWebProcess> m_connectionToWebProcess;
 
 #if PLATFORM(COCOA)
-    RetainPtr<nw_connection_group_t> m_connectionGroup;
-    RetainPtr<nw_endpoint_t> m_endpoint;
+    const RetainPtr<nw_connection_group_t> m_connectionGroup;
+    const RetainPtr<nw_endpoint_t> m_endpoint;
 #endif
 };
 

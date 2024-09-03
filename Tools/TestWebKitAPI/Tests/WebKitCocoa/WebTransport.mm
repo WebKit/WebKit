@@ -49,22 +49,24 @@ TEST(WebTransport, Basic)
     auto configuration = adoptNS([WKWebViewConfiguration new]);
     enableWebTransport(configuration.get());
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
     NSString *html = [NSString stringWithFormat:@""
         "<script>async function test() {"
         "  try {"
         "    let t = new WebTransport('https://127.0.0.1:%d/');"
         "    await t.ready;"
-        "    let w = t.datagrams.writable.getWriter();"
-        "    await w.write(new Uint8Array([0x41, 0x42, 0x43]));"
-        "    alert('done');"
+        "    let s = await t.createBidirectionalStream();"
+        "    let w = s.writable.getWriter();"
+        "    await w.write(new TextEncoder().encode('abc'));"
+        "    let r = s.readable.getReader();"
+        "    const { value, done } = await r.read();"
+        "    alert('successfully read ' + new TextDecoder().decode(value));"
         "  } catch (e) { alert('caught ' + e); }"
         "}; test();"
         "</script>",
         server.port()];
     [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
-    while (!server.bytesReceived())
-        Util::spinRunLoop();
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully read abc");
 }
 
 } // namespace TestWebKitAPI

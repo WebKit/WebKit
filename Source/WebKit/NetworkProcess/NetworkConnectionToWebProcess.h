@@ -508,7 +508,7 @@ private:
     IPCTester m_ipcTester;
 #endif
 
-    HashMap<WebTransportSessionIdentifier, UniqueRef<NetworkTransportSession>> m_networkTransportSessions;
+    HashMap<WebTransportSessionIdentifier, Ref<NetworkTransportSession>> m_networkTransportSessions;
 };
 
 } // namespace WebKit

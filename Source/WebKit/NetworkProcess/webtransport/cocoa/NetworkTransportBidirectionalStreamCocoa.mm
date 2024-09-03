@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include <wtf/ObjectIdentifier.h>
-#include <wtf/RefCounted.h>
-#include <wtf/TZoneMalloc.h>
-#include <wtf/WeakPtr.h>
-
-#if PLATFORM(COCOA)
-#include <Network/Network.h>
-#include <wtf/RetainPtr.h>
-#endif
-
-namespace WebKit {
-struct WebTransportStreamIdentifierType;
-using WebTransportStreamIdentifier = LegacyNullableObjectIdentifier<WebTransportStreamIdentifierType>;
-}
+#import "config.h"
+#import "NetworkTransportBidirectionalStream.h"
 
 namespace WebKit {
 
-class NetworkTransportSession;
-
-class NetworkTransportReceiveStream : public RefCounted<NetworkTransportReceiveStream>, public CanMakeWeakPtr<NetworkTransportReceiveStream> {
-    WTF_MAKE_TZONE_ALLOCATED(NetworkTransportReceiveStream);
-public:
-    template<typename... Args> static Ref<NetworkTransportReceiveStream> create(Args&&... args) { return adoptRef(*new NetworkTransportReceiveStream(std::forward<Args>(args)...)); }
-
-    WebTransportStreamIdentifier identifier() const { return m_identifier; }
-
-protected:
-#if PLATFORM(COCOA)
-    NetworkTransportReceiveStream(NetworkTransportSession&, nw_connection_t);
-#endif
-
-private:
-    void receiveLoop();
-
-    const WebTransportStreamIdentifier m_identifier;
-    WeakPtr<NetworkTransportSession> m_session;
-#if PLATFORM(COCOA)
-    const RetainPtr<nw_connection_t> m_connection;
-#endif
-};
+NetworkTransportBidirectionalStream::NetworkTransportBidirectionalStream(NetworkTransportSession& session, nw_connection_t connection)
+    : NetworkTransportSendStream(connection)
+    , NetworkTransportReceiveStream(session, connection) { }
 
 }
