@@ -55,6 +55,8 @@ private:
     void alignInlineLevelBoxes(LineBox&, InlineLayoutUnit lineBoxLogicalHeight) const;
     InlineLayoutUnit adjustForAnnotationIfNeeded(LineBox&, InlineLayoutUnit lineBoxHeight) const;
     InlineLevelBox::AscentAndDescent layoutBoundsForInlineBoxSubtree(const LineBox::InlineLevelBoxList& nonRootInlineLevelBoxes, size_t inlineBoxIndex) const;
+    enum class IsInlineLeveBoxAlignment : bool { No, Yes };
+    InlineLayoutUnit logicalTopOffsetFromParentBaseline(const InlineLevelBox&, const InlineLevelBox& parentInlineBox, IsInlineLeveBoxAlignment = IsInlineLeveBoxAlignment::No) const;
 
     const InlineFormattingUtils& formattingUtils() const { return formattingContext().formattingUtils(); }
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
