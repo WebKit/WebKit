@@ -87,7 +87,7 @@ private:
     String m_pushPartition;
 
     RetainPtr<xpc_connection_t> m_connection;
-    const char* m_serviceName;
+    ASCIILiteral m_serviceName;
 };
 
 } // namespace WebPushTool

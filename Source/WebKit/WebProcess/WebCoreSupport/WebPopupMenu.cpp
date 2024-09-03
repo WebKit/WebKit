@@ -56,7 +56,7 @@ WebPage* WebPopupMenu::page()
 
 void WebPopupMenu::disconnectClient()
 {
-    m_popupClient = 0;
+    m_popupClient = nullptr;
 }
 
 void WebPopupMenu::didChangeSelectedIndex(int newIndex)

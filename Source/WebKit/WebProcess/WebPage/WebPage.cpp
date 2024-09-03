@@ -3443,11 +3443,11 @@ public:
 
     ~CurrentEvent()
     {
-        g_currentEvent = m_previousCurrentEvent;
+        g_currentEvent = m_previousCurrentEvent.get();
     }
 
 private:
-    const WebEvent* m_previousCurrentEvent;
+    CheckedPtr<const WebEvent> m_previousCurrentEvent;
 };
 
 #if ENABLE(CONTEXT_MENUS)

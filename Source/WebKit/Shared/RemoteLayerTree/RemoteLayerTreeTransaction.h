@@ -40,6 +40,7 @@
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/ScrollTypes.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
@@ -75,8 +76,9 @@ struct ChangedLayers {
     ~ChangedLayers();
 };
 
-class RemoteLayerTreeTransaction {
+class RemoteLayerTreeTransaction : public CanMakeCheckedPtr<RemoteLayerTreeTransaction> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeTransaction);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLayerTreeTransaction);
 public:
     struct LayerCreationProperties {
         struct NoAdditionalData { };

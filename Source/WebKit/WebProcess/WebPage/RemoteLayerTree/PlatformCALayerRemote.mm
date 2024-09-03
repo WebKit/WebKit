@@ -371,7 +371,7 @@ void PlatformCALayerRemote::copyContentsFromLayer(PlatformCALayer* layer)
 
 PlatformCALayer* PlatformCALayerRemote::superlayer() const
 {
-    return m_superlayer;
+    return m_superlayer.get();
 }
 
 void PlatformCALayerRemote::removeFromSuperlayer()
@@ -398,7 +398,7 @@ void PlatformCALayerRemote::setSublayers(const PlatformCALayerList& list)
 
     for (const auto& layer : list) {
         layer->removeFromSuperlayer();
-        downcast<PlatformCALayerRemote>(*layer).m_superlayer = this;
+        downcast<PlatformCALayerRemote>(*layer).m_superlayer = *this;
     }
 
     m_properties.notePropertiesChanged(LayerChange::ChildrenChanged);
@@ -419,7 +419,7 @@ void PlatformCALayerRemote::appendSublayer(PlatformCALayer& layer)
 
     layer.removeFromSuperlayer();
     m_children.append(&layer);
-    downcast<PlatformCALayerRemote>(layer).m_superlayer = this;
+    downcast<PlatformCALayerRemote>(layer).m_superlayer = *this;
     m_properties.notePropertiesChanged(LayerChange::ChildrenChanged);
 }
 
@@ -429,7 +429,7 @@ void PlatformCALayerRemote::insertSublayer(PlatformCALayer& layer, size_t index)
 
     layer.removeFromSuperlayer();
     m_children.insert(index, &layer);
-    downcast<PlatformCALayerRemote>(layer).m_superlayer = this;
+    downcast<PlatformCALayerRemote>(layer).m_superlayer = *this;
     m_properties.notePropertiesChanged(LayerChange::ChildrenChanged);
 }
 
@@ -443,7 +443,7 @@ void PlatformCALayerRemote::replaceSublayer(PlatformCALayer& reference, Platform
     if (referenceIndex != notFound) {
         m_children[referenceIndex]->removeFromSuperlayer();
         m_children.insert(referenceIndex, &layer);
-        downcast<PlatformCALayerRemote>(layer).m_superlayer = this;
+        downcast<PlatformCALayerRemote>(layer).m_superlayer = *this;
     }
 
     m_properties.notePropertiesChanged(LayerChange::ChildrenChanged);

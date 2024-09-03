@@ -56,7 +56,7 @@ using namespace WebCore;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaybackSessionInterfaceContext);
 
 PlaybackSessionInterfaceContext::PlaybackSessionInterfaceContext(PlaybackSessionManager& manager, PlaybackSessionContextIdentifier contextId)
-    : m_manager(&manager)
+    : m_manager(manager)
     , m_contextId(contextId)
 {
 }
@@ -67,104 +67,104 @@ PlaybackSessionInterfaceContext::~PlaybackSessionInterfaceContext()
 
 void PlaybackSessionInterfaceContext::durationChanged(double duration)
 {
-    if (m_manager)
-        m_manager->durationChanged(m_contextId, duration);
+    if (RefPtr manager = m_manager.get())
+        manager->durationChanged(m_contextId, duration);
 }
 
 void PlaybackSessionInterfaceContext::currentTimeChanged(double currentTime, double anchorTime)
 {
-    if (m_manager)
-        m_manager->currentTimeChanged(m_contextId, currentTime, anchorTime);
+    if (RefPtr manager = m_manager.get())
+        manager->currentTimeChanged(m_contextId, currentTime, anchorTime);
 }
 
 void PlaybackSessionInterfaceContext::bufferedTimeChanged(double bufferedTime)
 {
-    if (m_manager)
-        m_manager->bufferedTimeChanged(m_contextId, bufferedTime);
+    if (RefPtr manager = m_manager.get())
+        manager->bufferedTimeChanged(m_contextId, bufferedTime);
 }
 
 void PlaybackSessionInterfaceContext::rateChanged(OptionSet<PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double defaultPlaybackRate)
 {
-    if (m_manager)
-        m_manager->rateChanged(m_contextId, playbackState, playbackRate, defaultPlaybackRate);
+    if (RefPtr manager = m_manager.get())
+        manager->rateChanged(m_contextId, playbackState, playbackRate, defaultPlaybackRate);
 }
 
 void PlaybackSessionInterfaceContext::playbackStartedTimeChanged(double playbackStartedTime)
 {
-    if (m_manager)
-        m_manager->playbackStartedTimeChanged(m_contextId, playbackStartedTime);
+    if (RefPtr manager = m_manager.get())
+        manager->playbackStartedTimeChanged(m_contextId, playbackStartedTime);
 }
 
 void PlaybackSessionInterfaceContext::seekableRangesChanged(const WebCore::TimeRanges& ranges, double lastModifiedTime, double liveUpdateInterval)
 {
-    if (m_manager)
-        m_manager->seekableRangesChanged(m_contextId, ranges, lastModifiedTime, liveUpdateInterval);
+    if (RefPtr manager = m_manager.get())
+        manager->seekableRangesChanged(m_contextId, ranges, lastModifiedTime, liveUpdateInterval);
 }
 
 void PlaybackSessionInterfaceContext::canPlayFastReverseChanged(bool value)
 {
-    if (m_manager)
-        m_manager->canPlayFastReverseChanged(m_contextId, value);
+    if (RefPtr manager = m_manager.get())
+        manager->canPlayFastReverseChanged(m_contextId, value);
 }
 
 void PlaybackSessionInterfaceContext::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
-    if (m_manager)
-        m_manager->audioMediaSelectionOptionsChanged(m_contextId, options, selectedIndex);
+    if (RefPtr manager = m_manager.get())
+        manager->audioMediaSelectionOptionsChanged(m_contextId, options, selectedIndex);
 }
 
 void PlaybackSessionInterfaceContext::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
-    if (m_manager)
-        m_manager->legibleMediaSelectionOptionsChanged(m_contextId, options, selectedIndex);
+    if (RefPtr manager = m_manager.get())
+        manager->legibleMediaSelectionOptionsChanged(m_contextId, options, selectedIndex);
 }
 
 void PlaybackSessionInterfaceContext::audioMediaSelectionIndexChanged(uint64_t selectedIndex)
 {
-    if (m_manager)
-        m_manager->audioMediaSelectionIndexChanged(m_contextId, selectedIndex);
+    if (RefPtr manager = m_manager.get())
+        manager->audioMediaSelectionIndexChanged(m_contextId, selectedIndex);
 }
 
 void PlaybackSessionInterfaceContext::legibleMediaSelectionIndexChanged(uint64_t selectedIndex)
 {
-    if (m_manager)
-        m_manager->legibleMediaSelectionIndexChanged(m_contextId, selectedIndex);
+    if (RefPtr manager = m_manager.get())
+        manager->legibleMediaSelectionIndexChanged(m_contextId, selectedIndex);
 }
 
 void PlaybackSessionInterfaceContext::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType type, const String& localizedDeviceName)
 {
-    if (m_manager)
-        m_manager->externalPlaybackChanged(m_contextId, enabled, type, localizedDeviceName);
+    if (RefPtr manager = m_manager.get())
+        manager->externalPlaybackChanged(m_contextId, enabled, type, localizedDeviceName);
 }
 
 void PlaybackSessionInterfaceContext::wirelessVideoPlaybackDisabledChanged(bool disabled)
 {
-    if (m_manager)
-        m_manager->wirelessVideoPlaybackDisabledChanged(m_contextId, disabled);
+    if (RefPtr manager = m_manager.get())
+        manager->wirelessVideoPlaybackDisabledChanged(m_contextId, disabled);
 }
 
 void PlaybackSessionInterfaceContext::mutedChanged(bool muted)
 {
-    if (m_manager)
-        m_manager->mutedChanged(m_contextId, muted);
+    if (RefPtr manager = m_manager.get())
+        manager->mutedChanged(m_contextId, muted);
 }
 
 void PlaybackSessionInterfaceContext::isPictureInPictureSupportedChanged(bool supported)
 {
-    if (m_manager)
-        m_manager->isPictureInPictureSupportedChanged(m_contextId, supported);
+    if (RefPtr manager = m_manager.get())
+        manager->isPictureInPictureSupportedChanged(m_contextId, supported);
 }
 
 void PlaybackSessionInterfaceContext::volumeChanged(double volume)
 {
-    if (m_manager)
-        m_manager->volumeChanged(m_contextId, volume);
+    if (RefPtr manager = m_manager.get())
+        manager->volumeChanged(m_contextId, volume);
 }
 
 void PlaybackSessionInterfaceContext::isInWindowFullscreenActiveChanged(bool isInWindow)
 {
-    if (m_manager)
-        m_manager->isInWindowFullscreenActiveChanged(m_contextId, isInWindow);
+    if (RefPtr manager = m_manager.get())
+        manager->isInWindowFullscreenActiveChanged(m_contextId, isInWindow);
 }
 
 #pragma mark - PlaybackSessionManager

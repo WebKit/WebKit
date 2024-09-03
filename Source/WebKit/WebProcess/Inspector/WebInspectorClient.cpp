@@ -66,7 +66,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebInspectorClient);
 
 WebInspectorClient::WebInspectorClient(WebPage* page)
     : m_page(page)
-    , m_highlightOverlay(nullptr)
 {
 }
 
@@ -138,14 +137,14 @@ void WebInspectorClient::highlight()
     }
 
 #if !PLATFORM(IOS_FAMILY)
-    if (!m_highlightOverlay) {
-        auto highlightOverlay = PageOverlay::create(*this);
-        m_highlightOverlay = highlightOverlay.ptr();
-        page->corePage()->pageOverlayController().installPageOverlay(WTFMove(highlightOverlay), PageOverlay::FadeMode::Fade);
-        m_highlightOverlay->setNeedsDisplay();
+    if (RefPtr highlightOverlay = m_highlightOverlay.get()) {
+        highlightOverlay->stopFadeOutAnimation();
+        highlightOverlay->setNeedsDisplay();
     } else {
-        m_highlightOverlay->stopFadeOutAnimation();
-        m_highlightOverlay->setNeedsDisplay();
+        Ref newHighlightOverlay = PageOverlay::create(*this);
+        m_highlightOverlay = newHighlightOverlay.ptr();
+        page->corePage()->pageOverlayController().installPageOverlay(newHighlightOverlay.copyRef(), PageOverlay::FadeMode::Fade);
+        newHighlightOverlay->setNeedsDisplay();
     }
 #else
     InspectorOverlay::Highlight highlight;
@@ -171,8 +170,8 @@ void WebInspectorClient::hideHighlight()
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
-    if (m_highlightOverlay)
-        page->corePage()->pageOverlayController().uninstallPageOverlay(*m_highlightOverlay, PageOverlay::FadeMode::Fade);
+    if (RefPtr highlightOverlay = m_highlightOverlay.get())
+        page->corePage()->pageOverlayController().uninstallPageOverlay(*highlightOverlay, PageOverlay::FadeMode::Fade);
 #else
     page->hideInspectorHighlight();
 #endif

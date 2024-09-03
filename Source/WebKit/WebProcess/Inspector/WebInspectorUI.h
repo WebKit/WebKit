@@ -182,13 +182,13 @@ private:
 
     void didEstablishConnection();
 
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
     Ref<WebCore::InspectorFrontendAPIDispatcher> m_frontendAPIDispatcher;
     RefPtr<WebCore::InspectorFrontendHost> m_frontendHost;
 
     // Keep a pointer to the frontend's inspector controller rather than going through
     // corePage(), since we may need it after the frontend's page has started destruction.
-    WebCore::InspectorController* m_frontendController { nullptr };
+    CheckedPtr<WebCore::InspectorController> m_frontendController;
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     std::unique_ptr<WebInspectorUIExtensionController> m_extensionController;

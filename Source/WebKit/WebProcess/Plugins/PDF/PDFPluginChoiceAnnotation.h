@@ -38,6 +38,8 @@ OBJC_CLASS PDFAnnotationChoiceWidget;
 namespace WebKit {
 
 class PDFPluginChoiceAnnotation : public PDFPluginAnnotation {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PDFPluginChoiceAnnotation);
 public:
     static Ref<PDFPluginChoiceAnnotation> create(PDFAnnotation *, PDFPluginBase*);
 

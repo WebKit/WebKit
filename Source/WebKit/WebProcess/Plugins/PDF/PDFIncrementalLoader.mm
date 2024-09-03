@@ -64,7 +64,7 @@ public:
     {
     }
 
-    NetscapePlugInStreamLoader* streamLoader() { return m_streamLoader; }
+    NetscapePlugInStreamLoader* streamLoader() { return m_streamLoader.get(); }
     void setStreamLoader(NetscapePlugInStreamLoader* loader) { m_streamLoader = loader; }
     void clearStreamLoader();
     void addData(std::span<const uint8_t> data) { m_accumulatedData.append(data); }
@@ -84,7 +84,7 @@ private:
     size_t m_count { 0 };
     DataRequestCompletionHandler m_completionHandler;
     Vector<uint8_t> m_accumulatedData;
-    NetscapePlugInStreamLoader* m_streamLoader { nullptr };
+    WeakPtr<NetscapePlugInStreamLoader> m_streamLoader;
 };
 
 #pragma mark -

@@ -110,7 +110,7 @@ header: "RemoteLayerBackingStore.h"
 #endif
 };
 
-[LegacyPopulateFromEmptyConstructor] class WebKit::RemoteLayerTreeTransaction {
+[LegacyPopulateFromEmptyConstructor, DisableMissingMemberCheck] class WebKit::RemoteLayerTreeTransaction {
 {
     Markable<WebCore::PlatformLayerIdentifier> m_rootLayerID;
     WebKit::ChangedLayers m_changedLayers;

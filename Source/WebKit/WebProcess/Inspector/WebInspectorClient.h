@@ -89,7 +89,7 @@ private:
     void animationEndedForLayer(const WebCore::GraphicsLayer*);
 
     WeakPtr<WebPage> m_page;
-    WebCore::PageOverlay* m_highlightOverlay;
+    WeakPtr<WebCore::PageOverlay> m_highlightOverlay;
     
     RefPtr<WebCore::PageOverlay> m_paintRectOverlay;
     std::unique_ptr<RepaintIndicatorLayerClient> m_paintIndicatorLayerClient;

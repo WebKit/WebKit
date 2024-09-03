@@ -223,20 +223,21 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
     }
 
     if (!shouldShowOverlay) {
-        if (RefPtr findPageOverlay = m_findPageOverlay)
+        if (RefPtr findPageOverlay = m_findPageOverlay.get())
             m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*findPageOverlay, PageOverlay::FadeMode::Fade);
     } else {
-        if (!m_findPageOverlay) {
-            auto findPageOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
-            m_findPageOverlay = findPageOverlay.ptr();
+        RefPtr findPageOverlay = m_findPageOverlay.get();
+        if (!findPageOverlay) {
+            findPageOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
+            m_findPageOverlay = findPageOverlay.get();
 #if ENABLE(PDF_PLUGIN)
             // FIXME: Remove this once UnifiedPDFPlugin makes the overlay scroll along with the contents.
             if (pluginView && !pluginView->drawsFindOverlay())
-                m_findPageOverlay->setNeedsSynchronousScrolling(true);
+                findPageOverlay->setNeedsSynchronousScrolling(true);
 #endif
-            m_webPage->corePage()->pageOverlayController().installPageOverlay(WTFMove(findPageOverlay), PageOverlay::FadeMode::Fade);
+            m_webPage->corePage()->pageOverlayController().installPageOverlay(*findPageOverlay, PageOverlay::FadeMode::Fade);
         }
-        m_findPageOverlay->setNeedsDisplay();
+        findPageOverlay->setNeedsDisplay();
     }
 
     bool wantsFindIndicator = found && options.contains(FindOptions::ShowFindIndicator);
@@ -421,7 +422,7 @@ void FindController::indicateFindMatch(uint32_t matchIndex)
 void FindController::hideFindUI()
 {
     m_findMatches.clear();
-    if (RefPtr findPageOverlay = m_findPageOverlay)
+    if (RefPtr findPageOverlay = m_findPageOverlay.get())
         m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*findPageOverlay, PageOverlay::FadeMode::Fade);
 
 #if ENABLE(PDF_PLUGIN)
@@ -575,7 +576,7 @@ void FindController::willMoveToPage(PageOverlay&, Page* page)
         return;
 
     ASSERT(m_findPageOverlay);
-    m_findPageOverlay = 0;
+    m_findPageOverlay = nullptr;
 }
     
 void FindController::didMoveToPage(PageOverlay&, Page*)
@@ -654,8 +655,8 @@ bool FindController::mouseEvent(PageOverlay&, const PlatformMouseEvent& mouseEve
 
 void FindController::didInvalidateFindRects()
 {
-    if (m_findPageOverlay)
-        m_findPageOverlay->setNeedsDisplay();
+    if (RefPtr findPageOverlay = m_findPageOverlay.get())
+        findPageOverlay->setNeedsDisplay();
 }
 
 } // namespace WebKit

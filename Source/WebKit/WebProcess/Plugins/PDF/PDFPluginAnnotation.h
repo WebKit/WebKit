@@ -28,6 +28,7 @@
 #if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
 
 #include <WebCore/EventListener.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
@@ -45,7 +46,9 @@ namespace WebKit {
 
 class PDFPluginBase;
 
-class PDFPluginAnnotation : public RefCounted<PDFPluginAnnotation> {
+class PDFPluginAnnotation : public RefCounted<PDFPluginAnnotation>, public CanMakeCheckedPtr<PDFPluginAnnotation> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PDFPluginAnnotation);
 public:
     static RefPtr<PDFPluginAnnotation> create(PDFAnnotation *, PDFPluginBase*);
     virtual ~PDFPluginAnnotation();
@@ -94,7 +97,7 @@ private:
 
         void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) override;
 
-        PDFPluginAnnotation* m_annotation;
+        CheckedPtr<PDFPluginAnnotation> m_annotation;
     };
 
     WeakPtr<WebCore::Element, WebCore::WeakPtrImplWithEventTargetData> m_parent;

@@ -103,11 +103,13 @@ private:
 
     PlaybackSessionInterfaceContext(PlaybackSessionManager&, PlaybackSessionContextIdentifier);
 
-    PlaybackSessionManager* m_manager;
+    CheckedPtr<PlaybackSessionManager> m_manager;
     PlaybackSessionContextIdentifier m_contextId;
 };
 
-class PlaybackSessionManager : public RefCounted<PlaybackSessionManager>, private IPC::MessageReceiver {
+class PlaybackSessionManager : public RefCounted<PlaybackSessionManager>, private IPC::MessageReceiver, public CanMakeCheckedPtr<PlaybackSessionManager> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionManager);
 public:
     static Ref<PlaybackSessionManager> create(WebPage&);
     virtual ~PlaybackSessionManager();

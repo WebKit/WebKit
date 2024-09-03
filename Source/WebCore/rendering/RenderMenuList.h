@@ -48,6 +48,12 @@ public:
 
     HTMLSelectElement& selectElement() const;
 
+    // CheckedPtr interface.
+    uint32_t ptrCount() const final { return RenderFlexibleBox::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return RenderFlexibleBox::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { RenderFlexibleBox::incrementPtrCount(); }
+    void decrementPtrCount() const final { RenderFlexibleBox::decrementPtrCount(); }
+
 #if !PLATFORM(IOS_FAMILY)
     bool popupIsVisible() const { return m_popupIsVisible; }
 #endif

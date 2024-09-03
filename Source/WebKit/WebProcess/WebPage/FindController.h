@@ -116,7 +116,7 @@ private:
 #endif
 
     WeakPtr<WebPage> m_webPage;
-    WebCore::PageOverlay* m_findPageOverlay { nullptr };
+    WeakPtr<WebCore::PageOverlay> m_findPageOverlay;
 
     // Whether the UI process is showing the find indicator. Note that this can be true even if
     // the find indicator isn't showing, but it will never be false when it is showing.

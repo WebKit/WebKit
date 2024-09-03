@@ -63,7 +63,7 @@ public:
     void endChooser() override;
 
 private:
-    WebCore::ColorChooserClient* m_colorChooserClient;
+    CheckedPtr<WebCore::ColorChooserClient> m_colorChooserClient;
     WeakPtr<WebPage> m_page;
 };
 
