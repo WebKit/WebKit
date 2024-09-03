@@ -78,12 +78,17 @@ public:
     // FIXME: Refactor `TextAnimationController` in such a way so as to not explicitly depend on `WritingToolsController`,
     // and then remove these methods after doing so.
     std::optional<SimpleRange> activeSessionRange() const;
-    void showSelection() const;
+    void intelligenceTextAnimationsDidComplete();
 
 private:
     struct CompositionState : CanMakeCheckedPtr<CompositionState> {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
         WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(CompositionState);
+
+        enum class ClearStateDeferralReason : uint8_t {
+            SessionInProgress = 1 << 0,
+            AnimationInProgress = 1 << 1,
+        };
 
         CompositionState(const Vector<Ref<WritingToolsCompositionCommand>>& unappliedCommands, const Vector<Ref<WritingToolsCompositionCommand>>& reappliedCommands, const WritingTools::Session& session)
             : unappliedCommands(unappliedCommands)
@@ -96,6 +101,7 @@ private:
         Vector<Ref<WritingToolsCompositionCommand>> unappliedCommands;
         Vector<Ref<WritingToolsCompositionCommand>> reappliedCommands;
         WritingTools::Session session;
+        OptionSet<ClearStateDeferralReason> clearStateDeferralReasons;
     };
 
     struct ProofreadingState : CanMakeCheckedPtr<ProofreadingState> {
@@ -161,6 +167,9 @@ private:
     void showOriginalCompositionForSession();
     void showRewrittenCompositionForSession();
     void restartCompositionForSession();
+
+    template<CompositionState::ClearStateDeferralReason Reason>
+    void removeCompositionClearStateDeferralReason();
 
     template<WritingTools::Session::Type Type>
     void writingToolsSessionDidReceiveAction(WritingTools::Action);

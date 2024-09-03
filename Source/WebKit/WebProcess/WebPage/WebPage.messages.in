@@ -796,7 +796,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     EnableSourceTextAnimationAfterElementWithID(String elementID);
     EnableTextAnimationTypeForElementWithID(String elementID);
 
-    ShowSelectionForActiveWritingToolsSession();
+    IntelligenceTextAnimationsDidComplete();
 #endif
 
     TakeSnapshotForTargetedElement(WebCore::ElementIdentifier elementID, WebCore::ScriptExecutionContextIdentifier documentID) -> (std::optional<WebCore::ShareableBitmapHandle> image)

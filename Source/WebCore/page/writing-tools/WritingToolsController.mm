@@ -46,7 +46,8 @@
 #import "VisibleUnits.h"
 #import "WebContentReader.h"
 #import <ranges>
-#include <wtf/TZoneMallocInlines.h>
+#import <wtf/Scope.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -369,8 +370,34 @@ void WritingToolsController::proofreadingSessionDidUpdateStateForSuggestion(cons
     }
 }
 
-void WritingToolsController::showSelection() const
+template<WritingToolsController::CompositionState::ClearStateDeferralReason Reason>
+void WritingToolsController::removeCompositionClearStateDeferralReason()
 {
+    // Don't clear the state until all animations have completed *and* the session has been ended.
+    // (Since animations are done async, they may end up still being in progress after the session
+    // has ended, and since they depend on the current state this would lead to issues in the animation).
+
+    CheckedPtr state = std::get_if<CompositionState>(&m_state);
+    if (!state) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    state->clearStateDeferralReasons.remove(Reason);
+
+    if (!state->clearStateDeferralReasons.isEmpty())
+        return;
+
+    state = nullptr;
+    m_state = { };
+}
+
+void WritingToolsController::intelligenceTextAnimationsDidComplete()
+{
+    auto clearState = WTF::makeScopeExit([&] mutable {
+        this->removeCompositionClearStateDeferralReason<CompositionState::ClearStateDeferralReason::AnimationInProgress>();
+    });
+
     RefPtr document = this->document();
     if (!document) {
         ASSERT_NOT_REACHED();
@@ -378,8 +405,12 @@ void WritingToolsController::showSelection() const
     }
 
     CheckedPtr state = std::get_if<CompositionState>(&m_state);
-    if (!state)
+    if (!state) {
+        ASSERT_NOT_REACHED();
         return;
+    }
+
+    m_page->chrome().client().clearAnimationsForActiveWritingToolsSession();
 
     if (state->reappliedCommands.isEmpty()) {
         ASSERT_NOT_REACHED();
@@ -698,11 +729,18 @@ void WritingToolsController::didEndWritingToolsSession<WritingTools::Session::Ty
 
         return false;
     });
+
+    state = nullptr;
+    m_state = { };
 }
 
 template<>
 void WritingToolsController::didEndWritingToolsSession<WritingTools::Session::Type::Composition>(bool accepted)
 {
+    auto clearState = WTF::makeScopeExit([&] mutable {
+        this->removeCompositionClearStateDeferralReason<CompositionState::ClearStateDeferralReason::SessionInProgress>();
+    });
+
     if (accepted)
         return;
 
@@ -731,18 +769,6 @@ void WritingToolsController::didEndWritingToolsSession(const WritingTools::Sessi
         didEndWritingToolsSession<WritingTools::Session::Type::Composition>(accepted);
         break;
     }
-
-    auto sessionRange = activeSessionRange();
-    if (!sessionRange) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    m_page->chrome().client().removeInitialTextAnimationForActiveWritingToolsSession();
-
-    m_page->chrome().client().removeTransparentMarkersForActiveWritingToolsSession();
-
-    m_state = { };
 }
 
 #pragma mark - Methods invoked via editing.
@@ -903,6 +929,8 @@ void WritingToolsController::restartCompositionForSession()
         ASSERT_NOT_REACHED();
         return;
     }
+
+    state->clearStateDeferralReasons.add({ CompositionState::ClearStateDeferralReason::AnimationInProgress, CompositionState::ClearStateDeferralReason::SessionInProgress });
 
     m_page->chrome().client().clearAnimationsForActiveWritingToolsSession();
 

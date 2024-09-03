@@ -2289,8 +2289,8 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
     if (!_partialIntelligenceTextPonderingAnimationCount && _writingToolsTextReplacementsFinished) {
         // If the entire replacement has already been completed, and this is the end of the last animation,
-        // then reveal the selection.
-        _page->showSelectionForActiveWritingToolsSession();
+        // then reveal the selection and end the session if needed.
+        _page->intelligenceTextAnimationsDidComplete();
     }
 }
 

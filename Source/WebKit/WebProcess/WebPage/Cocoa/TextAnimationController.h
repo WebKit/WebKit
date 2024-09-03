@@ -71,9 +71,6 @@ class TextAnimationController final {
 public:
     explicit TextAnimationController(WebPage&);
 
-    void removeTransparentMarkersForActiveWritingToolsSession();
-    void removeTransparentMarkersForTextAnimationID(const WTF::UUID&);
-
     void removeInitialTextAnimationForActiveWritingToolsSession();
     void addInitialTextAnimationForActiveWritingToolsSession();
     void addSourceTextAnimationForActiveWritingToolsSession(const WebCore::CharacterRange&, const String&, CompletionHandler<void(WebCore::TextAnimationRunMode)>&&);
@@ -93,6 +90,9 @@ private:
     std::optional<WebCore::SimpleRange> contextRangeForTextAnimationID(const WTF::UUID&) const;
     std::optional<WebCore::SimpleRange> contextRangeForActiveWritingToolsSession() const;
     std::optional<WebCore::SimpleRange> unreplacedRangeForActiveWritingToolsSession() const;
+
+    void removeTransparentMarkersForTextAnimationID(const WTF::UUID&);
+    void removeTransparentMarkersForActiveWritingToolsSession();
 
     RefPtr<WebCore::Document> document() const;
     WeakPtr<WebPage> m_webPage;

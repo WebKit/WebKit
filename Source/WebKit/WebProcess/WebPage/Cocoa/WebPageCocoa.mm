@@ -981,11 +981,6 @@ void WebPage::removeTextAnimationForAnimationID(const WTF::UUID& uuid)
     send(Messages::WebPageProxy::RemoveTextAnimationForAnimationID(uuid));
 }
 
-void WebPage::removeTransparentMarkersForActiveWritingToolsSession()
-{
-    m_textAnimationController->removeTransparentMarkersForActiveWritingToolsSession();
-}
-
 void WebPage::removeInitialTextAnimationForActiveWritingToolsSession()
 {
     m_textAnimationController->removeInitialTextAnimationForActiveWritingToolsSession();
@@ -1031,9 +1026,9 @@ void WebPage::enableTextAnimationTypeForElementWithID(const String& elementID)
     m_textAnimationController->enableTextAnimationTypeForElementWithID(elementID);
 }
 
-void WebPage::showSelectionForActiveWritingToolsSession()
+void WebPage::intelligenceTextAnimationsDidComplete()
 {
-    corePage()->showSelectionForActiveWritingToolsSession();
+    corePage()->intelligenceTextAnimationsDidComplete();
 }
 
 void WebPage::didEndPartialIntelligenceTextPonderingAnimation()

@@ -2171,9 +2171,9 @@ TEST(WritingTools, EphemeralSession)
 
 TEST(WritingTools, TransparencyMarkersForInlineEditing)
 {
-    auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
 
-    auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable>Early morning in Cupertino</body>"]);
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable>Early morning in Cupertino</body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
     auto waitForValue = [webView](NSUInteger expectedValue) {
@@ -2196,6 +2196,14 @@ TEST(WritingTools, TransparencyMarkersForInlineEditing)
 
         waitForValue(1U);
         EXPECT_EQ(1U, [webView transparentContentMarkerCount:@"document.body.childNodes[0]"]);
+
+        RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@"Cupertino at the crack of dawn"]);
+
+        [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 26) inContext:contexts.firstObject finished:NO];
+        [webView waitForContentValue:@"Cupertino at the crack of dawn"];
+
+        [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 26) inContext:contexts.firstObject finished:YES];
+        [webView waitForNextPresentationUpdate];
 
         [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
 

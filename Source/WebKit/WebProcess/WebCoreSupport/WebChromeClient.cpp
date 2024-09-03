@@ -1882,11 +1882,6 @@ void WebChromeClient::removeTextAnimationForAnimationID(const WTF::UUID& animati
     protectedPage()->removeTextAnimationForAnimationID(animationID);
 }
 
-void WebChromeClient::removeTransparentMarkersForActiveWritingToolsSession()
-{
-    protectedPage()->removeTransparentMarkersForActiveWritingToolsSession();
-}
-
 void WebChromeClient::removeInitialTextAnimationForActiveWritingToolsSession()
 {
     protectedPage()->removeInitialTextAnimationForActiveWritingToolsSession();

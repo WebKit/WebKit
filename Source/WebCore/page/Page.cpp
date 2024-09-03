@@ -5008,9 +5008,9 @@ std::optional<SimpleRange> Page::contextRangeForActiveWritingToolsSession() cons
     return m_writingToolsController->activeSessionRange();
 }
 
-void Page::showSelectionForActiveWritingToolsSession() const
+void Page::intelligenceTextAnimationsDidComplete()
 {
-    return m_writingToolsController->showSelection();
+    m_writingToolsController->intelligenceTextAnimationsDidComplete();
 }
 #endif
 

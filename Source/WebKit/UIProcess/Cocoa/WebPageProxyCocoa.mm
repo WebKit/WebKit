@@ -1323,12 +1323,12 @@ bool WebPageProxy::writingToolsTextReplacementsFinished()
     return protectedPageClient()->writingToolsTextReplacementsFinished();
 }
 
-void WebPageProxy::showSelectionForActiveWritingToolsSession()
+void WebPageProxy::intelligenceTextAnimationsDidComplete()
 {
     if (!hasRunningProcess())
         return;
 
-    legacyMainFrameProcess().send(Messages::WebPage::ShowSelectionForActiveWritingToolsSession(), webPageIDInMainFrameProcess());
+    legacyMainFrameProcess().send(Messages::WebPage::IntelligenceTextAnimationsDidComplete(), webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::removeTextAnimationForAnimationID(IPC::Connection& connection, const WTF::UUID& uuid)

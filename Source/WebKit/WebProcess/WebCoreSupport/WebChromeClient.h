@@ -524,8 +524,6 @@ private:
 
     void addInitialTextAnimationForActiveWritingToolsSession() final;
 
-    void removeTransparentMarkersForActiveWritingToolsSession() final;
-
     void addSourceTextAnimationForActiveWritingToolsSession(const WebCore::CharacterRange&, const String&, CompletionHandler<void(WebCore::TextAnimationRunMode)>&&) final;
 
     void addDestinationTextAnimationForActiveWritingToolsSession(const std::optional<WebCore::CharacterRange>&, const String&) final;
