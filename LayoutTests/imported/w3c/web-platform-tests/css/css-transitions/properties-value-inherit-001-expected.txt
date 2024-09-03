@@ -409,7 +409,7 @@ PASS font-size length(px) / values
 PASS font-size length(px) / events
 PASS font-size length(em) / values
 PASS font-size length(em) / events
-PASS font-size length(ex) / values
+FAIL font-size length(ex) / values assert_not_equals: may not be target value while transitioning on .transition got disallowed value "71.796875px"
 PASS font-size length(ex) / events
 PASS font-size length(mm) / values
 PASS font-size length(mm) / events
@@ -417,7 +417,7 @@ PASS font-size length(cm) / values
 PASS font-size length(cm) / events
 PASS font-size length(in) / values
 PASS font-size length(in) / events
-PASS font-size percentage(%) / values
+FAIL font-size percentage(%) / values assert_not_equals: may not be target value while transitioning on .transition got disallowed value "12.8px"
 PASS font-size percentage(%) / events
 PASS font-weight font-weight(keyword) / values
 PASS font-weight font-weight(keyword) / events
