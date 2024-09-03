@@ -16,7 +16,7 @@ class WebKitTableOfContents {
     private static $toc = array();
     private static $attr_regex = '\{((?:[ ]*[#.][-_:a-zA-Z0-9]+){1,})[ ]*\}';
 
-    public function init() {
+    public static function init() {
         add_filter( 'wp_insert_post_data', array( 'WebKitTableOfContents', 'wp_insert_post_data' ), 20, 2 );
         add_action( 'wp_insert_post', array( 'WebKitTableOfContents', 'wp_insert_post' ) );
     }
@@ -84,7 +84,7 @@ class WebKitTableOfContents {
         echo self::renderMarkup();
     }
 
-    public function wp_insert_post_data( $post_data, $record ) {
+    public static function wp_insert_post_data( $post_data, $record ) {
         if (!self::tocEnabled($post_data['post_type']))
             return $post_data;
 
