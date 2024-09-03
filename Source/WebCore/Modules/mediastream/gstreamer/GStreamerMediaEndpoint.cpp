@@ -54,6 +54,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/Scope.h>
+#include <wtf/SetForScope.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -1264,10 +1265,16 @@ int GStreamerMediaEndpoint::pickAvailablePayloadType()
     return payloadType;
 }
 
-ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::createTransceiverBackends(const String& kind, const RTCRtpTransceiverInit& init, GStreamerRtpSenderBackend::Source&& source)
+ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::createTransceiverBackends(const String& kind, const RTCRtpTransceiverInit& init, GStreamerRtpSenderBackend::Source&& source, PeerConnectionBackend::IgnoreNegotiationNeededFlag ignoreNegotiationNeededFlag)
 {
     if (!m_webrtcBin)
         return Exception { ExceptionCode::InvalidStateError, "End-point has not been configured yet"_s };
+
+    // The current add-transceiver implementation in webrtcbin is synchronous and doesn't trigger
+    // negotiation-needed signals but we keep the m_shouldIgnoreNegotiationNeededSignal in case this
+    // changes in future versions of webrtcbin.
+    bool shouldIgnoreNegotiationNeededSignal = ignoreNegotiationNeededFlag == PeerConnectionBackend::IgnoreNegotiationNeededFlag::Yes ? true : false;
+    SetForScope scopedIgnoreNegotiationNeededSignal(m_shouldIgnoreNegotiationNeededSignal, shouldIgnoreNegotiationNeededSignal, false);
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "%zu streams in init data", init.streams.size());
 
@@ -1368,10 +1375,10 @@ ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::createTran
     return GStreamerMediaEndpoint::Backends { transceiver->createSenderBackend(m_peerConnectionBackend, WTFMove(source), WTFMove(initData)), transceiver->createReceiverBackend(), WTFMove(transceiver) };
 }
 
-ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::addTransceiver(const String& trackKind, const RTCRtpTransceiverInit& init)
+ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::addTransceiver(const String& trackKind, const RTCRtpTransceiverInit& init, PeerConnectionBackend::IgnoreNegotiationNeededFlag ignoreNegotiationNeededFlag)
 {
     GST_DEBUG_OBJECT(m_pipeline.get(), "Creating transceiver for %s track kind", trackKind.ascii().data());
-    return createTransceiverBackends(trackKind, init, nullptr);
+    return createTransceiverBackends(trackKind, init, nullptr, ignoreNegotiationNeededFlag);
 }
 
 GStreamerRtpSenderBackend::Source GStreamerMediaEndpoint::createSourceForTrack(MediaStreamTrack& track)
@@ -1405,10 +1412,10 @@ GStreamerRtpSenderBackend::Source GStreamerMediaEndpoint::createLinkedSourceForT
     return source;
 }
 
-ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::addTransceiver(MediaStreamTrack& track, const RTCRtpTransceiverInit& init)
+ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::addTransceiver(MediaStreamTrack& track, const RTCRtpTransceiverInit& init, PeerConnectionBackend::IgnoreNegotiationNeededFlag ignoreNegotiationNeededFlag)
 {
     GST_DEBUG_OBJECT(m_pipeline.get(), "Creating transceiver associated with %s track %s", track.kind().string().ascii().data(), track.id().ascii().data());
-    return createTransceiverBackends(track.kind(), init, createSourceForTrack(track));
+    return createTransceiverBackends(track.kind(), init, createSourceForTrack(track), ignoreNegotiationNeededFlag);
 }
 
 std::unique_ptr<GStreamerRtpTransceiverBackend> GStreamerMediaEndpoint::transceiverBackendFromSender(GStreamerRtpSenderBackend& backend)
@@ -1617,6 +1624,11 @@ void GStreamerMediaEndpoint::resume()
 
 void GStreamerMediaEndpoint::onNegotiationNeeded()
 {
+    if (m_shouldIgnoreNegotiationNeededSignal) {
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Ignoring negotiation-needed signal");
+        return;
+    }
+
     if (GST_STATE(m_webrtcBin.get()) < GST_STATE_PAUSED) {
         GST_DEBUG_OBJECT(m_pipeline.get(), "Deferring negotiation-needed until webrtc is ready");
         return;

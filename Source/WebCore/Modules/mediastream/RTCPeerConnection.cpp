@@ -197,7 +197,7 @@ ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransce
         if (isClosed())
             return Exception { ExceptionCode::InvalidStateError };
 
-        return m_backend->addTransceiver(kind, init);
+        return m_backend->addTransceiver(kind, init, PeerConnectionBackend::IgnoreNegotiationNeededFlag::No);
     }
 
     if (isClosed())
@@ -207,12 +207,78 @@ ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransce
     return m_backend->addTransceiver(WTFMove(track), init);
 }
 
+ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addReceiveOnlyTransceiver(String&& kind)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    // https://www.w3.org/TR/webrtc/#legacy-configuration-extensions Step 3.3: Let transceiver be
+    // the result of invoking the equivalent of connection.addTransceiver(kind), except that this
+    // operation MUST NOT update the negotiation-needed flag.
+    RTCRtpTransceiverInit init { .direction = RTCRtpTransceiverDirection::Recvonly, .streams = { }, .sendEncodings = { } };
+    if (kind != "audio"_s && kind != "video"_s)
+        return Exception { ExceptionCode::TypeError };
+
+    ASSERT(!isClosed());
+    if (isClosed())
+        return Exception { ExceptionCode::InvalidStateError };
+
+    return m_backend->addTransceiver(kind, init, PeerConnectionBackend::IgnoreNegotiationNeededFlag::Yes);
+}
+
 void RTCPeerConnection::createOffer(RTCOfferOptions&& options, Ref<DeferredPromise>&& promise)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     if (isClosed()) {
         promise->reject(ExceptionCode::InvalidStateError);
         return;
+    }
+
+    // https://www.w3.org/TR/webrtc/#legacy-configuration-extensions
+    auto needsReceiveOnlyTransceiver = [&](auto option, auto&& trackKind) -> bool {
+        if (!option) {
+            for (auto& transceiver : currentTransceivers()) {
+                if (transceiver->stopped())
+                    continue;
+                if (transceiver->sender().trackKind() != trackKind)
+                    continue;
+                if (transceiver->direction() == RTCRtpTransceiverDirection::Sendrecv)
+                    transceiver->setDirection(RTCRtpTransceiverDirection::Sendonly);
+                else if (transceiver->direction() == RTCRtpTransceiverDirection::Recvonly)
+                    transceiver->setDirection(RTCRtpTransceiverDirection::Inactive);
+            }
+            return false;
+        }
+
+        for (auto& transceiver : currentTransceivers()) {
+            if (transceiver->stopped())
+                continue;
+            if (transceiver->sender().trackKind() != trackKind)
+                continue;
+            auto direction = transceiver->direction();
+            if (direction == RTCRtpTransceiverDirection::Sendrecv || direction == RTCRtpTransceiverDirection::Recvonly)
+                return false;
+        }
+
+        return true;
+    };
+
+    if (options.offerToReceiveAudio) {
+        if (needsReceiveOnlyTransceiver(*options.offerToReceiveAudio, "audio"_s)) {
+            auto result = addReceiveOnlyTransceiver("audio"_s);
+            if (result.hasException()) {
+                promise->reject(result.releaseException());
+                return;
+            }
+        }
+    }
+
+    if (options.offerToReceiveVideo) {
+        if (needsReceiveOnlyTransceiver(*options.offerToReceiveVideo, "video"_s)) {
+            auto result = addReceiveOnlyTransceiver("video"_s);
+            if (result.hasException()) {
+                promise->reject(result.releaseException());
+                return;
+            }
+        }
     }
 
     chainOperation(WTFMove(promise), [this, options = WTFMove(options)](Ref<DeferredPromise>&& promise) mutable {
