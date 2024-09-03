@@ -225,15 +225,8 @@ static void lockDownDiscreteGraphics(void)
 {
     mach_port_t mainPort;
 
-#if HAVE(IOKIT_MAIN_PORT)
     if (IOMainPort(bootstrap_port, &mainPort) != KERN_SUCCESS)
         return;
-#else
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (IOMasterPort(bootstrap_port, &mainPort) != KERN_SUCCESS)
-        return;
-    ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
 
     CFDictionaryRef classToMatch = IOServiceMatching("AppleGraphicsControl");
     if (!classToMatch)
