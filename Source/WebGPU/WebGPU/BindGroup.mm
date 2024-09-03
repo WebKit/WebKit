@@ -535,6 +535,9 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
         if (firstPlaneSwizzle)
             mtlTexture0 = [mtlTexture0 newTextureViewWithPixelFormat:mtlTexture0.pixelFormat textureType:mtlTexture0.textureType levels:NSMakeRange(0, mtlTexture0.mipmapLevelCount) slices:NSMakeRange(0, mtlTexture0.arrayLength) swizzle:*firstPlaneSwizzle];
     } else {
+        if (plane0)
+            CFRelease(plane0);
+
         if (plane1)
             CFRelease(plane1);
         return { };
