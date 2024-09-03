@@ -315,6 +315,8 @@ constexpr CSSValueID toCSSValueID(StyleAppearance e)
         return CSSValueNone;
     case StyleAppearance::Auto:
         return CSSValueAuto;
+    case StyleAppearance::Base:
+        return CSSValueBase;
     case StyleAppearance::Checkbox:
         return CSSValueCheckbox;
     case StyleAppearance::Radio:
@@ -391,7 +393,7 @@ template<> constexpr StyleAppearance fromCSSValueID(CSSValueID valueID)
     if (valueID == CSSValueAuto)
         return StyleAppearance::Auto;
 
-    return StyleAppearance(valueID - CSSValueCheckbox + static_cast<unsigned>(StyleAppearance::Checkbox));
+    return StyleAppearance(valueID - CSSValueBase + static_cast<unsigned>(StyleAppearance::Base));
 }
 
 #define TYPE BackfaceVisibility

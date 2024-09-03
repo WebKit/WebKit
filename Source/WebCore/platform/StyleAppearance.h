@@ -35,6 +35,7 @@ namespace WebCore {
 enum class StyleAppearance : uint8_t {
     None,
     Auto,
+    Base,
     Checkbox,
     Radio,
     PushButton,

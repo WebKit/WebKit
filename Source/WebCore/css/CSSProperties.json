@@ -6492,6 +6492,10 @@
                 "searchfield",
                 "textfield",
                 "textarea",
+                {
+                    "value": "base",
+                    "settings-flag": "cssAppearanceBaseEnabled"
+                },
                 "auto",
                 "none",
                 {
