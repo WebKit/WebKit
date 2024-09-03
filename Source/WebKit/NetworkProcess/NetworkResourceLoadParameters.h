@@ -122,7 +122,7 @@ public:
     bool isCrossOriginOpenerPolicyEnabled { false };
     bool isClearSiteDataHeaderEnabled { false };
     bool isDisplayingInitialEmptyDocument { false };
-    WebCore::SandboxFlags effectiveSandboxFlags { WebCore::SandboxNone };
+    WebCore::SandboxFlags effectiveSandboxFlags;
     URL openerURL;
     WebCore::CrossOriginOpenerPolicy sourceCrossOriginOpenerPolicy;
     std::optional<WebCore::NavigationIdentifier> navigationID;

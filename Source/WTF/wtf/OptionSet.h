@@ -175,6 +175,8 @@ public:
         return fromRaw(lhs.m_storage ^ rhs.m_storage);
     }
 
+    static OptionSet all() { return fromRaw(-1); }
+
 private:
     enum InitializationTag { FromRawValue };
     constexpr OptionSet(E e, InitializationTag)

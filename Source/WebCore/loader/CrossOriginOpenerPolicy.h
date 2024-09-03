@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "SandboxFlags.h"
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,8 +39,6 @@ class SecurityOrigin;
 
 struct NavigationRequester;
 struct ReportingClient;
-
-using SandboxFlags = int;
 
 // https://html.spec.whatwg.org/multipage/origin.html#cross-origin-opener-policy-value
 enum class CrossOriginOpenerPolicyValue : uint8_t {

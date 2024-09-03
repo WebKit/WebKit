@@ -236,7 +236,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
         CheckedRef frameLoader = frame->loader();
         switch (policyAction) {
         case PolicyAction::Download:
-            if (!(frameLoader->effectiveSandboxFlags() & SandboxDownloads)) {
+            if (!frameLoader->effectiveSandboxFlags().contains(SandboxFlag::Downloads)) {
                 frameLoader->setOriginalURLForDownloadRequest(request);
                 frameLoader->client().startDownload(request, suggestedFilename);
             } else if (RefPtr document = frame->document())
@@ -315,7 +315,7 @@ std::optional<HitTestResult> PolicyChecker::hitTestResult(const NavigationAction
 
 void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, ResourceRequest&& request, RefPtr<FormState>&& formState, const AtomString& frameName, NewWindowPolicyDecisionFunction&& function)
 {
-    if (m_frame->document() && m_frame->document()->isSandboxed(SandboxPopups))
+    if (m_frame->document() && m_frame->document()->isSandboxed(SandboxFlag::Popups))
         return function({ }, nullptr, { }, { }, ShouldContinuePolicyCheck::No);
 
     if (!LocalDOMWindow::allowPopUp(m_frame))
@@ -329,7 +329,7 @@ void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, Re
 
         switch (policyAction) {
         case PolicyAction::Download:
-            if (!(frame->loader().effectiveSandboxFlags() & SandboxDownloads))
+            if (!frame->loader().effectiveSandboxFlags().contains(SandboxFlag::Downloads))
                 frame->checkedLoader()->client().startDownload(request);
             else if (RefPtr document = frame->document())
                 document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to download due to sandboxing"_s);

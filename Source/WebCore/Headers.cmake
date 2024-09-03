@@ -1059,6 +1059,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/RangeBoundaryPoint.h
     dom/RegisteredEventListener.h
     dom/RenderedDocumentMarker.h
+    dom/SandboxFlags.h
     dom/ScriptDisallowedScope.h
     dom/ScriptElement.h
     dom/ScriptElementCachedScriptFetcher.h

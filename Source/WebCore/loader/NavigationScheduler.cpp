@@ -199,7 +199,7 @@ public:
             return;
 
         if (m_isMetaRefresh == IsMetaRefresh::Yes) {
-            if (RefPtr document = localFrame->document(); document && document->isSandboxed(SandboxAutomaticFeatures)) {
+            if (RefPtr document = localFrame->document(); document && document->isSandboxed(SandboxFlag::AutomaticFeatures)) {
                 document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Unable to do meta refresh due to sandboxing"_s);
                 return;
             }

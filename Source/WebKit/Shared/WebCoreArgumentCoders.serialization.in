@@ -846,6 +846,25 @@ struct CGAffineTransform {
     AvailWidth
 };
 
+[OptionSet] enum class WebCore::SandboxFlag : uint16_t {
+    Navigation,
+    Plugins,
+    Origin,
+    Forms,
+    Scripts,
+    TopNavigation,
+    Popups,
+    AutomaticFeatures,
+    PointerLock,
+    PropagatesToAuxiliaryBrowsingContexts,
+    TopNavigationByUserActivation,
+    DocumentDomain,
+    Modals,
+    StorageAccessByUserActivation,
+    TopNavigationToCustomProtocols,
+    Downloads
+};
+
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 header: <WebCore/GraphicsContextGLActiveInfo.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::GraphicsContextGLActiveInfo {
@@ -8232,7 +8251,7 @@ using WebCore::DOMCacheEngine::CrossThreadRecordsOrError = Expected<Vector<WebCo
 using WebCore::DOMCacheEngine::RemoveCacheIdentifierOrError = Expected<bool, WebCore::DOMCacheEngine::Error>
 
 using WebCore::SVGFilterExpression = Vector<WebCore::SVGFilterExpressionTerm>;
-using WebCore::SandboxFlags = int
+using WebCore::SandboxFlags = OptionSet<WebCore::SandboxFlag>;
 #if ENABLE(VIDEO)
 using WebCore::MediaPlayerEnums::VideoFullscreenMode = uint32_t
 using WebCore::MediaPlayer::VideoFullscreenMode = uint32_t

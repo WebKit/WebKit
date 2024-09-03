@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,28 +25,30 @@
 
 #pragma once
 
-#include "FrameLoaderTypes.h"
-#include "NavigationIdentifier.h"
-#include "SandboxFlags.h"
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
-class FormState;
-class HitTestResult;
-class NavigationAction;
-class ResourceRequest;
-class ResourceResponse;
-
-enum class PolicyDecisionMode;
-
-enum class IsPerformingHTTPFallback : bool { No, Yes };
-
-using FramePolicyFunction = CompletionHandler<void(PolicyAction)>;
-
-class FrameLoaderClient {
-public:
-    virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, const String& clientRedirectSourceForHistory, std::optional<NavigationIdentifier>, std::optional<HitTestResult>&&, bool hasOpener, IsPerformingHTTPFallback, SandboxFlags, PolicyDecisionMode, FramePolicyFunction&&) = 0;
-    virtual ~FrameLoaderClient() = default;
+enum class SandboxFlag : uint16_t {
+    // See http://www.whatwg.org/specs/web-apps/current-work/#attr-iframe-sandbox for a list of the sandbox flags.
+    Navigation           = 1,
+    Plugins              = 1 << 1,
+    Origin               = 1 << 2,
+    Forms                = 1 << 3,
+    Scripts              = 1 << 4,
+    TopNavigation        = 1 << 5,
+    Popups               = 1 << 6, // See https://www.w3.org/Bugs/Public/show_bug.cgi?id=12393
+    AutomaticFeatures    = 1 << 7,
+    PointerLock          = 1 << 8,
+    PropagatesToAuxiliaryBrowsingContexts = 1 << 9,
+    TopNavigationByUserActivation = 1 << 10,
+    DocumentDomain       = 1 << 11,
+    Modals               = 1 << 12,
+    StorageAccessByUserActivation = 1 << 13,
+    TopNavigationToCustomProtocols = 1 << 14,
+    Downloads = 1 << 15
 };
+
+using SandboxFlags = OptionSet<SandboxFlag>;
 
 }

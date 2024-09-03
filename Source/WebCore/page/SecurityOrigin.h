@@ -146,8 +146,8 @@ public:
     // created. http://www.whatwg.org/specs/web-apps/current-work/#sandboxOrigin
     //
     // There's a subtle difference between an opaque origin and an origin that
-    // has the SandboxOrigin flag set. The latter implies the former, and, in
-    // addition, the SandboxOrigin flag is inherited by iframes.
+    // has the SandboxFlag::Origin flag set. The latter implies the former, and, in
+    // addition, the SandboxFlag::Origin flag is inherited by iframes.
     bool isOpaque() const { return m_data.isOpaque(); }
 
     // Marks a file:// origin as being in a domain defined by its path.

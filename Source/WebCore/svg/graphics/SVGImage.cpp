@@ -490,7 +490,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         localMainFrame->setView(LocalFrameView::create(*localMainFrame));
         localMainFrame->init();
         CheckedRef loader = localMainFrame->loader();
-        loader->forceSandboxFlags(SandboxAll);
+        loader->forceSandboxFlags(SandboxFlags::all());
 
         RefPtr frameView = localMainFrame->view();
         frameView->setCanHaveScrollbars(false); // SVG Images will always synthesize a viewBox, if it's not available, and thus never see scrollbars.

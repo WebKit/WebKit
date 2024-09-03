@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/NavigationIdentifier.h>
+#include <WebCore/SandboxFlags.h>
 #include <optional>
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
@@ -41,7 +42,6 @@ class NavigationAction;
 class ResourceRequest;
 class ResourceResponse;
 using FramePolicyFunction = CompletionHandler<void(PolicyAction)>;
-using SandboxFlags = int;
 }
 
 namespace WebKit {

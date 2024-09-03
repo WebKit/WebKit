@@ -1147,7 +1147,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
         if (ResourceLoader* mainResourceLoader = this->mainResourceLoader())
             InspectorInstrumentation::continueWithPolicyDownload(*m_frame, mainResourceLoader->identifier(), *this, m_response);
 
-        if (!(frameLoader()->effectiveSandboxFlags() & SandboxDownloads)) {
+        if (!frameLoader()->effectiveSandboxFlags().contains(SandboxFlag::Downloads)) {
             // When starting the request, we didn't know that it would result in download and not navigation. Now we know that main document URL didn't change.
             // Download may use this knowledge for purposes unrelated to cookies, notably for setting file quarantine data.
             frameLoader()->setOriginalURLForDownloadRequest(m_request);
@@ -2082,7 +2082,7 @@ void DocumentLoader::loadErrorDocument()
         return;
 
     commitData(SharedBuffer::create());
-    m_frame->document()->enforceSandboxFlags(SandboxOrigin);
+    m_frame->document()->enforceSandboxFlags(SandboxFlag::Origin);
     m_writer.end();
 }
 
@@ -2232,7 +2232,7 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
         CachingPolicy::AllowCaching);
 
     auto isSandboxingAllowingServiceWorkerFetchHandling = [](SandboxFlags flags) {
-        return !(flags & SandboxOrigin) && !(flags & SandboxScripts);
+        return !(flags.contains(SandboxFlag::Origin)) && !(flags.contains(SandboxFlag::Scripts));
     };
 
     if (!m_canUseServiceWorkers || !isSandboxingAllowingServiceWorkerFetchHandling(frameLoader()->effectiveSandboxFlags()))

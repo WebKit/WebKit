@@ -164,7 +164,7 @@ std::optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAcc
         return StorageAccessQuickResult::Grant;
 
     // If there is a sandbox, it has to allow the storage access API to be called.
-    if (document->sandboxFlags() != SandboxNone && document->isSandboxed(SandboxStorageAccessByUserActivation))
+    if (!document->sandboxFlags().isEmpty() && document->isSandboxed(SandboxFlag::StorageAccessByUserActivation))
         return StorageAccessQuickResult::Reject;
 
     RegistrableDomain domain { securityOrigin.data() };

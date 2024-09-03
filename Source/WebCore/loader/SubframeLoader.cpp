@@ -130,7 +130,7 @@ bool FrameLoader::SubframeLoader::resourceWillUsePlugin(const String& url, const
 bool FrameLoader::SubframeLoader::pluginIsLoadable(const URL& url)
 {
     if (RefPtr document = m_frame->document()) {
-        if (document->isSandboxed(SandboxPlugins))
+        if (document->isSandboxed(SandboxFlag::Plugins))
             return false;
 
         Ref securityOrigin = document->securityOrigin();

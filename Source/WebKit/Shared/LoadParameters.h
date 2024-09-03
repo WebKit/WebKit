@@ -37,13 +37,13 @@
 #include <WebCore/OwnerPermissionsPolicyData.h>
 #include <WebCore/PublicSuffixStore.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/SandboxFlags.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
 #include <WebCore/SubstituteData.h>
 
 OBJC_CLASS NSDictionary;
 
 namespace WebCore {
-using SandboxFlags = int;
 class SharedBuffer;
 }
 
@@ -75,7 +75,7 @@ struct LoadParameters {
     WebCore::LockBackForwardList lockBackForwardList { WebCore::LockBackForwardList::No };
     WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility { WebCore::SubstituteData::SessionHistoryVisibility::Visible };
     String clientRedirectSourceForHistory;
-    WebCore::SandboxFlags effectiveSandboxFlags { 0 };
+    WebCore::SandboxFlags effectiveSandboxFlags;
     std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy;
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
     std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;

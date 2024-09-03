@@ -170,7 +170,7 @@ ServiceWorkerContainer& NavigatorBase::serviceWorker()
 
 ExceptionOr<ServiceWorkerContainer&> NavigatorBase::serviceWorker(ScriptExecutionContext& context)
 {
-    if (RefPtr document = dynamicDowncast<Document>(context); document && document->isSandboxed(SandboxOrigin))
+    if (RefPtr document = dynamicDowncast<Document>(context); document && document->isSandboxed(SandboxFlag::Origin))
         return Exception { ExceptionCode::SecurityError, "Service Worker is disabled because the context is sandboxed and lacks the 'allow-same-origin' flag"_s };
     return serviceWorker();
 }
