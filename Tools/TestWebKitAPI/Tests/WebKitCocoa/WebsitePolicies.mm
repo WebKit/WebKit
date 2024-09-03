@@ -1228,7 +1228,7 @@ TEST(WebpagePreferences, WebsitePoliciesCustomUserAgent)
     loadCount = 0;
 }
 
-constexpr const char* customUserAgentAsSiteSpecificQuirk = "Foo Site Specific Quriks UserAgent";
+constexpr const char* customUserAgentAsSiteSpecificQuirk = "Foo Site Specific Quirks UserAgent";
 
 @interface CustomJavaScriptUserAgentDelegate : NSObject <WKNavigationDelegate>
 @property (nonatomic) BOOL setCustomUserAgent;
