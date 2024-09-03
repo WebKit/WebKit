@@ -1388,11 +1388,9 @@ static void paintAttachmentTitleBackground(const RenderAttachment& attachment, G
     });
 
     Color backgroundColor;
-    if (attachment.frame().selection().isFocusedAndActive()) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        backgroundColor = colorFromCocoaColor([NSColor alternateSelectedControlColor]);
-ALLOW_DEPRECATED_DECLARATIONS_END
-    } else
+    if (attachment.frame().selection().isFocusedAndActive())
+        backgroundColor = colorFromCocoaColor([NSColor selectedContentBackgroundColor]);
+    else
         backgroundColor = attachmentTitleInactiveBackgroundColor;
 
     backgroundColor = attachment.style().colorByApplyingColorFilter(backgroundColor);
