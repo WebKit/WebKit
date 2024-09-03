@@ -108,6 +108,342 @@ TEST(WKWebExtension, DisplayStringParsing)
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 }
 
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+TEST(WKWebExtension, MultipleIconVariants)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"version": @"1.0",
+        @"description": @"Test",
+
+        @"icon_variants": @[
+            @{ @"32": @"dark-32.png", @"64": @"dark-64.png", @"color_schemes": @[ @"dark" ] },
+            @{ @"32": @"light-32.png", @"64": @"light-64.png", @"color_schemes": @[ @"light" ] }
+        ]
+    };
+
+    auto *dark16Icon = Util::makePNGData(CGSizeMake(32, 32), @selector(whiteColor));
+    auto *dark32Icon = Util::makePNGData(CGSizeMake(64, 64), @selector(whiteColor));
+    auto *light16Icon = Util::makePNGData(CGSizeMake(32, 32), @selector(blackColor));
+    auto *light32Icon = Util::makePNGData(CGSizeMake(64, 64), @selector(blackColor));
+
+    auto *resources = @{
+        @"dark-32.png": dark16Icon,
+        @"dark-64.png": dark32Icon,
+        @"light-32.png": light16Icon,
+        @"light-64.png": light32Icon,
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    Util::performWithAppearance(Util::Appearance::Dark, ^{
+        auto *iconDark16 = [testExtension iconForSize:CGSizeMake(16, 16)];
+        EXPECT_NOT_NULL(iconDark16);
+        EXPECT_TRUE(CGSizeEqualToSize(iconDark16.size, CGSizeMake(16, 16)));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(iconDark16), [CocoaColor whiteColor]));
+
+        auto *iconDark32 = [testExtension iconForSize:CGSizeMake(32, 32)];
+        EXPECT_NOT_NULL(iconDark32);
+        EXPECT_TRUE(CGSizeEqualToSize(iconDark32.size, CGSizeMake(32, 32)));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(iconDark32), [CocoaColor whiteColor]));
+    });
+
+    Util::performWithAppearance(Util::Appearance::Light, ^{
+        auto *iconLight16 = [testExtension iconForSize:CGSizeMake(16, 16)];
+        EXPECT_NOT_NULL(iconLight16);
+        EXPECT_TRUE(CGSizeEqualToSize(iconLight16.size, CGSizeMake(16, 16)));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(iconLight16), [CocoaColor blackColor]));
+
+        auto *iconLight32 = [testExtension iconForSize:CGSizeMake(32, 32)];
+        EXPECT_NOT_NULL(iconLight32);
+        EXPECT_TRUE(CGSizeEqualToSize(iconLight32.size, CGSizeMake(32, 32)));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(iconLight32), [CocoaColor blackColor]));
+    });
+}
+
+TEST(WKWebExtension, SingleIconVariant)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Single Variant",
+        @"version": @"1.0",
+        @"description": @"Test with single icon variant",
+
+        @"icon_variants": @[
+            @{ @"32": @"icon-32.png" }
+        ]
+    };
+
+    auto *icon32 = Util::makePNGData(CGSizeMake(32, 32), @selector(whiteColor));
+
+    auto *resources = @{
+        @"icon-32.png": icon32,
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    auto *icon = [testExtension iconForSize:CGSizeMake(32, 32)];
+    EXPECT_NOT_NULL(icon);
+    EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(32, 32)));
+}
+
+TEST(WKWebExtension, AnySizeIconVariant)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Any Size",
+        @"version": @"1.0",
+        @"description": @"Test with any size icon",
+
+        @"icon_variants": @[
+            @{ @"any": @"icon-any.svg" }
+        ]
+    };
+
+    auto *iconAny = @"<svg width='100' height='100' xmlns='http://www.w3.org/2000/svg'><circle cx='50' cy='50' r='50' fill='white' /></svg>";
+
+    auto *resources = @{
+        @"icon-any.svg": iconAny,
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    auto *icon = [testExtension iconForSize:CGSizeMake(64, 64)];
+    EXPECT_NOT_NULL(icon);
+    EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(64, 64)));
+}
+
+TEST(WKWebExtension, NoIconVariants)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test No Variants",
+        @"version": @"1.0",
+        @"description": @"Test with no icon variants"
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:@{ }];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    auto *icon = [testExtension iconForSize:CGSizeMake(32, 32)];
+    EXPECT_NULL(icon);
+}
+
+TEST(WKWebExtension, IconsAndIconVariantsSpecified)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Icons and Variants",
+        @"version": @"1.0",
+        @"description": @"Test with both icons and icon variants specified",
+
+        @"icons": @{
+            @"32": @"icon-legacy.png"
+        },
+
+        @"icon_variants": @[
+            @{ @"32": @"icon-variant.png" }
+        ]
+    };
+
+    auto *iconLegacy = Util::makePNGData(CGSizeMake(32, 32), @selector(blackColor));
+    auto *iconVariant = Util::makePNGData(CGSizeMake(32, 32), @selector(whiteColor));
+
+    auto *resources = @{
+        @"icon-legacy.png": iconLegacy,
+        @"icon-variant.png": iconVariant,
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    auto *icon = [testExtension iconForSize:CGSizeMake(32, 32)];
+    EXPECT_NOT_NULL(icon);
+    EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(32, 32)));
+    EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon), [CocoaColor whiteColor]));
+}
+
+TEST(WKWebExtension, ActionIconVariantsMultiple)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Action Multiple Variants",
+        @"version": @"1.0",
+        @"description": @"Test action with multiple icon variants",
+
+        @"action": @{
+            @"icon_variants": @[
+                @{ @"32": @"action-dark-32.png", @"64": @"action-dark-64.png", @"color_schemes": @[ @"dark" ] },
+                @{ @"32": @"action-light-32.png", @"64": @"action-light-64.png", @"color_schemes": @[ @"light" ] }
+            ]
+        }
+    };
+
+    auto *dark32Icon = Util::makePNGData(CGSizeMake(32, 32), @selector(whiteColor));
+    auto *dark64Icon = Util::makePNGData(CGSizeMake(64, 64), @selector(whiteColor));
+    auto *light32Icon = Util::makePNGData(CGSizeMake(32, 32), @selector(blackColor));
+    auto *light64Icon = Util::makePNGData(CGSizeMake(64, 64), @selector(blackColor));
+
+    auto *resources = @{
+        @"action-dark-32.png": dark32Icon,
+        @"action-dark-64.png": dark64Icon,
+        @"action-light-32.png": light32Icon,
+        @"action-light-64.png": light64Icon,
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    Util::performWithAppearance(Util::Appearance::Dark, ^{
+        auto *iconDark32 = [testExtension actionIconForSize:CGSizeMake(32, 32)];
+        EXPECT_NOT_NULL(iconDark32);
+        EXPECT_TRUE(CGSizeEqualToSize(iconDark32.size, CGSizeMake(32, 32)));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(iconDark32), [CocoaColor whiteColor]));
+
+        auto *iconDark64 = [testExtension actionIconForSize:CGSizeMake(64, 64)];
+        EXPECT_NOT_NULL(iconDark64);
+        EXPECT_TRUE(CGSizeEqualToSize(iconDark64.size, CGSizeMake(64, 64)));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(iconDark64), [CocoaColor whiteColor]));
+    });
+
+    Util::performWithAppearance(Util::Appearance::Light, ^{
+        auto *iconLight32 = [testExtension actionIconForSize:CGSizeMake(32, 32)];
+        EXPECT_NOT_NULL(iconLight32);
+        EXPECT_TRUE(CGSizeEqualToSize(iconLight32.size, CGSizeMake(32, 32)));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(iconLight32), [CocoaColor blackColor]));
+
+        auto *iconLight64 = [testExtension actionIconForSize:CGSizeMake(64, 64)];
+        EXPECT_NOT_NULL(iconLight64);
+        EXPECT_TRUE(CGSizeEqualToSize(iconLight64.size, CGSizeMake(64, 64)));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(iconLight64), [CocoaColor blackColor]));
+    });
+}
+
+TEST(WKWebExtension, ActionIconSingleVariant)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Action Single Variant",
+        @"version": @"1.0",
+        @"description": @"Test action with a single icon variant",
+
+        @"action": @{
+            @"icon_variants": @[
+                @{ @"32": @"action-icon-32.png" }
+            ]
+        }
+    };
+
+    auto *icon32 = Util::makePNGData(CGSizeMake(32, 32), @selector(whiteColor));
+
+    auto *resources = @{
+        @"action-icon-32.png": icon32,
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    auto *icon = [testExtension actionIconForSize:CGSizeMake(32, 32)];
+    EXPECT_NOT_NULL(icon);
+    EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(32, 32)));
+    EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon), [CocoaColor whiteColor]));
+}
+
+TEST(WKWebExtension, ActionIconAnySizeVariant)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Action Any Size",
+        @"version": @"1.0",
+        @"description": @"Test action with any size icon",
+
+        @"action": @{
+            @"icon_variants": @[
+                @{ @"any": @"action-icon-any.svg" }
+            ]
+        }
+    };
+
+    auto *iconAny = @"<svg width='100' height='100' xmlns='http://www.w3.org/2000/svg'><circle cx='50' cy='50' r='50' fill='white' /></svg>";
+
+    auto *resources = @{
+        @"action-icon-any.svg": iconAny,
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    auto *icon = [testExtension actionIconForSize:CGSizeMake(64, 64)];
+    EXPECT_NOT_NULL(icon);
+    EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(64, 64)));
+}
+
+TEST(WKWebExtension, ActionNoIconVariants)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Action No Variants",
+        @"version": @"1.0",
+        @"description": @"Test action with no icon variants"
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:@{ }];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    auto *icon = [testExtension actionIconForSize:CGSizeMake(32, 32)];
+    EXPECT_NULL(icon);
+}
+
+TEST(WKWebExtension, ActionIconsAndIconVariantsSpecified)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test Action Icons and Variants",
+        @"version": @"1.0",
+        @"description": @"Test action with both icons and icon variants specified",
+
+        @"action": @{
+            @"default_icon": @{
+                @"32": @"action-icon-legacy.png"
+            },
+            @"icon_variants": @[
+                @{ @"32": @"action-icon-variant.png" }
+            ]
+        }
+    };
+
+    auto *iconLegacy = Util::makePNGData(CGSizeMake(32, 32), @selector(blackColor));
+    auto *iconVariant = Util::makePNGData(CGSizeMake(32, 32), @selector(whiteColor));
+
+    auto *resources = @{
+        @"action-icon-legacy.png": iconLegacy,
+        @"action-icon-variant.png": iconVariant,
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    auto *icon = [testExtension actionIconForSize:CGSizeMake(32, 32)];
+    EXPECT_NOT_NULL(icon);
+    EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(32, 32)));
+    EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon), [CocoaColor whiteColor]));
+}
+#endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+
 TEST(WKWebExtension, ActionParsing)
 {
     NSDictionary *testManifestDictionary = @{ @"manifest_version": @2, @"name": @"Test", @"description": @"Test", @"version": @"1.0" };

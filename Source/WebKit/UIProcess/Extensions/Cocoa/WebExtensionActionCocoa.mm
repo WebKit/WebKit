@@ -646,11 +646,12 @@ CocoaImage *WebExtensionAction::icon(CGSize idealSize)
         return nil;
 
     if (m_customIcons) {
-        NSError *error;
-        if (CocoaImage *result = extensionContext()->extension().bestImageInIconsDictionary(m_customIcons.get(), idealSize.width > idealSize.height ? idealSize.width : idealSize.height, &error))
-            return result;
+        auto *result = extensionContext()->extension().bestImageInIconsDictionary(m_customIcons.get(), idealSize, [&](auto *error) {
+            extensionContext()->recordError(error);
+        });
 
-        extensionContext()->recordErrorIfNeeded(error);
+        if (result)
+            return result;
 
         // If custom icons fail, fallback to the default icons.
     }

@@ -158,11 +158,7 @@ TEST(WKWebExtensionAPIAction, PresentPopupForAction)
 
         auto *smallIcon = [action iconForSize:CGSizeMake(16, 16)];
         EXPECT_NOT_NULL(smallIcon);
-#if USE(APPKIT)
         EXPECT_TRUE(CGSizeEqualToSize(smallIcon.size, CGSizeMake(16, 16)));
-#else
-        EXPECT_TRUE(CGSizeEqualToSize(smallIcon.size, CGSizeMake(32, 32)));
-#endif
 
         auto *largeIcon = [action iconForSize:CGSizeMake(32, 32)];
         EXPECT_NOT_NULL(largeIcon);
@@ -680,18 +676,10 @@ TEST(WKWebExtensionAPIAction, SetIconMultipleSizes)
         auto *icon128 = [action iconForSize:CGSizeMake(128, 128)];
 
         EXPECT_NOT_NULL(icon48);
-#if USE(APPKIT)
         EXPECT_TRUE(CGSizeEqualToSize(icon48.size, CGSizeMake(48, 48)));
-#else
-        EXPECT_TRUE(CGSizeEqualToSize(icon48.size, CGSizeMake(128, 128)));
-#endif
 
         EXPECT_NOT_NULL(icon96);
-#if USE(APPKIT)
         EXPECT_TRUE(CGSizeEqualToSize(icon96.size, CGSizeMake(96, 96)));
-#else
-        EXPECT_TRUE(CGSizeEqualToSize(icon96.size, CGSizeMake(128, 128)));
-#endif
 
         EXPECT_NOT_NULL(icon128);
         EXPECT_TRUE(CGSizeEqualToSize(icon128.size, CGSizeMake(128, 128)));
@@ -755,18 +743,10 @@ TEST(WKWebExtensionAPIAction, SetIconMultipleSizesRelative)
         auto *icon128 = [action iconForSize:CGSizeMake(128, 128)];
 
         EXPECT_NOT_NULL(icon48);
-#if USE(APPKIT)
         EXPECT_TRUE(CGSizeEqualToSize(icon48.size, CGSizeMake(48, 48)));
-#else
-        EXPECT_TRUE(CGSizeEqualToSize(icon48.size, CGSizeMake(128, 128)));
-#endif
 
         EXPECT_NOT_NULL(icon96);
-#if USE(APPKIT)
         EXPECT_TRUE(CGSizeEqualToSize(icon96.size, CGSizeMake(96, 96)));
-#else
-        EXPECT_TRUE(CGSizeEqualToSize(icon96.size, CGSizeMake(128, 128)));
-#endif
 
         EXPECT_NOT_NULL(icon128);
         EXPECT_TRUE(CGSizeEqualToSize(icon128.size, CGSizeMake(128, 128)));
@@ -844,18 +824,10 @@ TEST(WKWebExtensionAPIAction, SetIconWithMultipleImageDataSizes)
         auto *icon128 = [action iconForSize:CGSizeMake(128, 128)];
 
         EXPECT_NOT_NULL(icon48);
-#if USE(APPKIT)
         EXPECT_TRUE(CGSizeEqualToSize(icon48.size, CGSizeMake(48, 48)));
-#else
-        EXPECT_TRUE(CGSizeEqualToSize(icon48.size, CGSizeMake(128, 128)));
-#endif
 
         EXPECT_NOT_NULL(icon96);
-#if USE(APPKIT)
         EXPECT_TRUE(CGSizeEqualToSize(icon96.size, CGSizeMake(96, 96)));
-#else
-        EXPECT_TRUE(CGSizeEqualToSize(icon96.size, CGSizeMake(128, 128)));
-#endif
 
         EXPECT_NOT_NULL(icon128);
         EXPECT_TRUE(CGSizeEqualToSize(icon128.size, CGSizeMake(128, 128)));
@@ -942,11 +914,7 @@ TEST(WKWebExtensionAPIAction, SetIconWithMultipleDataURLs)
     manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
         auto *icon48 = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(icon48);
-#if USE(APPKIT)
         EXPECT_TRUE(CGSizeEqualToSize(icon48.size, CGSizeMake(48, 48)));
-#else
-        EXPECT_TRUE(CGSizeEqualToSize(icon48.size, CGSizeMake(96, 96)));
-#endif
 
         auto *icon96 = [action iconForSize:CGSizeMake(96, 96)];
         EXPECT_NOT_NULL(icon96);

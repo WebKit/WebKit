@@ -119,6 +119,11 @@ public:
         ServiceWorker,
     };
 
+    enum class ColorScheme : uint8_t {
+        Light = 1 << 0,
+        Dark  = 1 << 1
+    };
+
     using PermissionsSet = HashSet<String>;
     using MatchPatternSet = HashSet<Ref<WebExtensionMatchPattern>>;
 
@@ -241,11 +246,19 @@ public:
     NSString *sidebarTitle();
 #endif
 
-    CocoaImage *imageForPath(NSString *, NSError **);
+    CocoaImage *imageForPath(NSString *, NSError **, CGSize sizeForResizing = CGSizeZero);
 
+    size_t bestSizeInIconsDictionary(NSDictionary *, size_t idealPixelSize);
     NSString *pathForBestImageInIconsDictionary(NSDictionary *, size_t idealPixelSize);
-    CocoaImage *bestImageInIconsDictionary(NSDictionary *, size_t idealPointSize, NSError **);
-    CocoaImage *bestImageForIconsDictionaryManifestKey(NSDictionary *, NSString *manifestKey, CGSize idealSize, RetainPtr<CocoaImage>& cacheLocation, Error, NSString *customLocalizedDescription);
+
+    CocoaImage *bestImageInIconsDictionary(NSDictionary *, CGSize idealSize, const Function<void(NSError *)>&);
+    CocoaImage *bestImageForIconsDictionaryManifestKey(NSDictionary *, NSString *manifestKey, CGSize idealSize, RetainPtr<NSMutableDictionary>& cacheLocation, Error, NSString *customLocalizedDescription);
+
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    NSDictionary *iconsDictionaryForBestIconVariant(NSArray *, size_t idealPixelSize, ColorScheme);
+    CocoaImage *bestImageForIconVariants(NSArray *, CGSize idealSize, const Function<void(NSError *)>&);
+    CocoaImage *bestImageForIconVariantsManifestKey(NSDictionary *, NSString *manifestKey, CGSize idealSize, RetainPtr<NSMutableDictionary>& cacheLocation, Error, NSString *customLocalizedDescription);
+#endif
 
     bool hasBackgroundContent();
     bool backgroundContentIsPersistent();
@@ -359,18 +372,19 @@ private:
     RetainPtr<NSString> m_displayDescription;
     RetainPtr<NSString> m_version;
 
-    RetainPtr<CocoaImage> m_icon;
+    RetainPtr<NSMutableDictionary> m_iconsCache;
 
     RetainPtr<NSDictionary> m_actionDictionary;
-    RetainPtr<CocoaImage> m_actionIcon;
+    RetainPtr<NSMutableDictionary> m_actionIconsCache;
+    RetainPtr<CocoaImage> m_defaultActionIcon;
     RetainPtr<NSString> m_displayActionLabel;
     RetainPtr<NSString> m_actionPopupPath;
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-    RetainPtr<CocoaImage> m_sidebarIcon;
+    RetainPtr<NSMutableDictionary> m_sidebarIconsCache;
     RetainPtr<NSString> m_sidebarDocumentPath;
     RetainPtr<NSString> m_sidebarTitle;
-#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+#endif
 
     RetainPtr<NSString> m_contentSecurityPolicy;
 

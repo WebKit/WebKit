@@ -45,6 +45,7 @@
 #import <UIKit/UIFont_Private.h>
 #import <UIKit/UIGeometry_Private.h>
 #import <UIKit/UIGestureRecognizer_Private.h>
+#import <UIKit/UIImageAsset_Private.h>
 #import <UIKit/UIImagePickerController_Private.h>
 #import <UIKit/UIImage_Private.h>
 #import <UIKit/UIInterface_Private.h>
@@ -338,6 +339,10 @@ typedef enum {
 @property (nonatomic, setter=_setShowsFileSizePicker:) BOOL _showsFileSizePicker;
 @end
 
+@interface UIImageAsset ()
++ (instancetype)_dynamicAssetNamed:(NSString *)name generator:(UIImage *(^)(UIImageAsset *, UIImageConfiguration *, UIImage *))block;
+@end
+
 typedef struct CGSVGDocument *CGSVGDocumentRef;
 
 @interface UIImage ()
@@ -345,6 +350,7 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 - (UIImage *)_flatImageWithColor:(UIColor *)color;
 + (UIImage *)_systemImageNamed:(NSString *)name;
 + (UIImage *)_imageWithCGSVGDocument:(CGSVGDocumentRef)cgSVGDocument;
++ (UIImage *)_imageWithCGSVGDocument:(CGSVGDocumentRef)cgSVGDocument scale:(CGFloat)scale orientation:(UIImageOrientation)orientation;
 @end
 
 @protocol UIKeyboardImplGeometryDelegate
@@ -1103,6 +1109,10 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 
 @interface UIColor (IPI)
 + (UIColor *)insertionPointColor;
+@end
+
+@interface UIImage ()
+- (UIImage *)_rasterizedImage;
 @end
 
 @interface UIView (IPI)

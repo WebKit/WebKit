@@ -78,6 +78,14 @@ static NSString * const descriptionManifestKey = @"description";
 
 static NSString * const iconsManifestKey = @"icons";
 
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+static NSString * const iconVariantsManifestKey = @"icon_variants";
+static NSString * const colorSchemesManifestKey = @"color_schemes";
+static NSString * const lightManifestKey = @"light";
+static NSString * const darkManifestKey = @"dark";
+static NSString * const anyManifestKey = @"any";
+#endif
+
 static NSString * const actionManifestKey = @"action";
 static NSString * const browserActionManifestKey = @"browser_action";
 static NSString * const pageActionManifestKey = @"page_action";
@@ -700,6 +708,14 @@ ALLOW_NONLITERAL_FORMAT_END
         break;
 
     case Error::InvalidActionIcon:
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        if (m_actionDictionary.get()[iconVariantsManifestKey]) {
+            if (supportsManifestVersion(3))
+                localizedDescription = WEB_UI_STRING("Empty or invalid `icon_variants` for the `action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for icon_variants in action only");
+            else
+                localizedDescription = WEB_UI_STRING("Empty or invalid `icon_variants` for the `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for icon_variants in browser_action or page_action");
+        } else
+#endif
         if (supportsManifestVersion(3))
             localizedDescription = WEB_UI_STRING("Empty or invalid `default_icon` for the `action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for default_icon in action only");
         else
@@ -740,7 +756,12 @@ ALLOW_NONLITERAL_FORMAT_END
         break;
 
     case Error::InvalidIcon:
-        localizedDescription = WEB_UI_STRING("Missing or empty `icons` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for icons");
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        if ([manifest() objectForKey:iconVariantsManifestKey])
+            localizedDescription = WEB_UI_STRING("Empty or invalid `icon_variants` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for icon_variants");
+        else
+#endif
+            localizedDescription = WEB_UI_STRING("Missing or empty `icons` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for icons");
         break;
 
     case Error::InvalidName:
@@ -1011,8 +1032,15 @@ CocoaImage *WebExtension::icon(CGSize size)
     if (!manifestParsedSuccessfully())
         return nil;
 
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    if (m_manifest.get()[iconVariantsManifestKey]) {
+        NSString *localizedErrorDescription = WEB_UI_STRING("Failed to load images in `icon_variants` manifest entry.", "WKWebExtensionErrorInvalidIcon description for failing to load image variants");
+        return bestImageForIconVariantsManifestKey(m_manifest.get(), iconVariantsManifestKey, size, m_iconsCache, Error::InvalidIcon, localizedErrorDescription);
+    }
+#endif
+
     NSString *localizedErrorDescription = WEB_UI_STRING("Failed to load images in `icons` manifest entry.", "WKWebExtensionErrorInvalidIcon description for failing to load images");
-    return bestImageForIconsDictionaryManifestKey(m_manifest.get(), iconsManifestKey, size, m_icon, Error::InvalidIcon, localizedErrorDescription);
+    return bestImageForIconsDictionaryManifestKey(m_manifest.get(), iconsManifestKey, size, m_iconsCache, Error::InvalidIcon, localizedErrorDescription);
 }
 
 CocoaImage *WebExtension::actionIcon(CGSize size)
@@ -1022,13 +1050,25 @@ CocoaImage *WebExtension::actionIcon(CGSize size)
 
     populateActionPropertiesIfNeeded();
 
+    if (m_defaultActionIcon)
+        return m_defaultActionIcon.get();
+
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    if (m_actionDictionary.get()[iconVariantsManifestKey]) {
+        NSString *localizedErrorDescription = WEB_UI_STRING("Failed to load images in `icon_variants` for the `action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load image variants for action");
+        if (auto *result = bestImageForIconVariantsManifestKey(m_actionDictionary.get(), iconVariantsManifestKey, size, m_actionIconsCache, Error::InvalidActionIcon, localizedErrorDescription))
+            return result;
+        return icon(size);
+    }
+#endif
+
     NSString *localizedErrorDescription;
     if (supportsManifestVersion(3))
         localizedErrorDescription = WEB_UI_STRING("Failed to load images in `default_icon` for the `action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load images for action only");
     else
         localizedErrorDescription = WEB_UI_STRING("Failed to load images in `default_icon` for the `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load images for browser_action or page_action");
 
-    if (auto *result = bestImageForIconsDictionaryManifestKey(m_actionDictionary.get(), defaultIconManifestKey, size, m_actionIcon, Error::InvalidActionIcon, localizedErrorDescription))
+    if (auto *result = bestImageForIconsDictionaryManifestKey(m_actionDictionary.get(), defaultIconManifestKey, size, m_actionIconsCache, Error::InvalidActionIcon, localizedErrorDescription))
         return result;
     return icon(size);
 }
@@ -1086,12 +1126,11 @@ void WebExtension::populateActionPropertiesIfNeeded()
         return;
 
     // Look for the "default_icon" as a string, which is useful for SVG icons. Only supported by Firefox currently.
-    NSString *defaultIconPath = objectForKey<NSString>(m_actionDictionary, defaultIconManifestKey);
-    if (defaultIconPath.length) {
+    if (auto *defaultIconPath = objectForKey<NSString>(m_actionDictionary, defaultIconManifestKey)) {
         NSError *resourceError;
-        m_actionIcon = imageForPath(defaultIconPath, &resourceError);
+        m_defaultActionIcon = imageForPath(defaultIconPath, &resourceError);
 
-        if (!m_actionIcon) {
+        if (!m_defaultActionIcon) {
             recordError(resourceError);
 
             NSString *localizedErrorDescription;
@@ -1158,27 +1197,29 @@ void WebExtension::populateSidebarPropertiesIfNeeded()
 void WebExtension::populateSidebarActionProperties(RetainPtr<NSDictionary> sidebarActionDictionary)
 {
     // FIXME: <https://webkit.org/b/276833> implement sidebar icon parsing
-    m_sidebarIcon = nil;
+    m_sidebarIconsCache = nil;
     m_sidebarTitle = objectForKey<NSString>(sidebarActionDictionary, sidebarActionTitleManifestKey);
     m_sidebarDocumentPath = objectForKey<NSString>(sidebarActionDictionary, sidebarActionPathManifestKey);
 }
 
 void WebExtension::populateSidePanelProperties(RetainPtr<NSDictionary> sidePanelDictionary)
 {
-    // Since sidePanel cannot set a default title or icon from the manifest, setting these nil here is intentional
-    m_sidebarIcon = nil;
+    // Since sidePanel cannot set a default title or icon from the manifest, setting these nil here is intentional.
+    m_sidebarIconsCache = nil;
     m_sidebarTitle = nil;
     m_sidebarDocumentPath = objectForKey<NSString>(sidePanelDictionary, sidePanelPathManifestKey);
 }
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
-CocoaImage *WebExtension::imageForPath(NSString *imagePath, NSError **outError)
+CocoaImage *WebExtension::imageForPath(NSString *imagePath, NSError **outError, CGSize sizeForResizing)
 {
     ASSERT(imagePath);
 
-    NSData *imageData = resourceDataForPath(imagePath, outError, CacheResult::Yes);
+    NSData *imageData = resourceDataForPath(imagePath, outError);
     if (!imageData)
         return nil;
+
+    CocoaImage *result;
 
 #if !USE(NSIMAGE_FOR_SVG_SUPPORT)
     UTType *imageType = resourceTypeForPath(imagePath);
@@ -1191,59 +1232,75 @@ CocoaImage *WebExtension::imageForPath(NSString *imagePath, NSError **outError)
         if (!imageRep)
             return nil;
 
-        NSImage *result = [[NSImage alloc] init];
+        result = [[NSImage alloc] init];
         [result addRepresentation:imageRep];
         result.size = imageRep.size;
-
-        return result;
 #else
         CGSVGDocumentRef document = CGSVGDocumentCreateFromData(bridge_cast(imageData), nullptr);
         if (!document)
             return nil;
 
-        UIImage *result = [UIImage _imageWithCGSVGDocument:document];
+        // Since we need to rasterize, scale the image for the densest display, so it will have enough pixels to be sharp.
+        result = [UIImage _imageWithCGSVGDocument:document scale:largestDisplayScale() orientation:UIImageOrientationUp];
         CGSVGDocumentRelease(document);
-
-        return result;
 #endif // not USE(APPKIT)
     }
 #endif // !USE(NSIMAGE_FOR_SVG_SUPPORT)
 
-    return [[CocoaImage alloc] initWithData:imageData];
+    if (!result)
+        result = [[CocoaImage alloc] initWithData:imageData];
+
+#if USE(APPKIT)
+    if (!CGSizeEqualToSize(sizeForResizing, CGSizeZero)) {
+        // Proportionally scale the size.
+        auto originalSize = result.size;
+        auto aspectWidth = sizeForResizing.width / originalSize.width;
+        auto aspectHeight = sizeForResizing.height / originalSize.height;
+        auto aspectRatio = std::min(aspectWidth, aspectHeight);
+
+        result.size = CGSizeMake(originalSize.width * aspectRatio, originalSize.height * aspectRatio);
+    }
+
+    return result;
+#else
+    // Rasterization is needed because UIImageAsset will not register the image unless it is a CGImage.
+    // If the image is already a CGImage bitmap, this operation is a no-op.
+    result = result._rasterizedImage;
+
+    if (!CGSizeEqualToSize(sizeForResizing, CGSizeZero))
+        result = [result imageByPreparingThumbnailOfSize:sizeForResizing];
+
+    return result;
+#endif // not USE(APPKIT)
 }
 
-NSString *WebExtension::pathForBestImageInIconsDictionary(NSDictionary *iconsDictionary, size_t idealPixelSize)
+size_t WebExtension::bestSizeInIconsDictionary(NSDictionary *iconsDictionary, size_t idealPixelSize)
 {
     if (!iconsDictionary.count)
-        return nil;
+        return 0;
+
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    // Check if the "any" size exists (typically a vector image), and prefer it.
+    if (iconsDictionary[anyManifestKey]) {
+        // Return max to ensure it takes precedence over all other sizes.
+        return std::numeric_limits<size_t>::max();
+    }
+#endif
 
     // Check if the ideal size exists, if so return it.
     NSString *idealSizeString = @(idealPixelSize).stringValue;
-    if (NSString *resultPath = iconsDictionary[idealSizeString])
-        return resultPath;
+    if (iconsDictionary[idealSizeString])
+        return idealPixelSize;
 
-    // Check if the ideal retina size exists, if so return it. This will cause downsampling to the ideal size,
-    // but it is an even multiplier so it is better than a fractional scaling.
-    idealSizeString = @(idealPixelSize * 2).stringValue;
-    if (NSString *resultPath = iconsDictionary[idealSizeString])
-        return resultPath;
-
-#if PLATFORM(IOS) || PLATFORM(VISION)
-    // Check if the ideal 3x retina size exists. This will usually be called on 2x iOS devices when a 3x image might exist.
-    // Since the ideal size is likly already 2x, multiply by 1.5x to get the 3x pixel size.
-    idealSizeString = @(idealPixelSize * 1.5).stringValue;
-    if (NSString *resultPath = iconsDictionary[idealSizeString])
-        return resultPath;
-#endif
-
-    // Since the ideal size does not exist, sort the keys and return the next largest size. This could cause
-    // fractional scaling when the final image is displayed. Better than nothing.
+    // Sort the remaining keys and find the next largest size.
     NSArray<NSString *> *sizeKeys = filterObjects(iconsDictionary.allKeys, ^bool(id, id value) {
-        return [value isKindOfClass:NSString.class];
+        // Filter the values to only include numeric strings representing sizes. This will exclude non-numeric string
+        // values such as "any", "color_schemes", and any other strings that cannot be converted to a positive integer.
+        return dynamic_objc_cast<NSString>(value).integerValue > 0;
     });
 
     if (!sizeKeys.count)
-        return nil;
+        return 0;
 
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"self" ascending:YES selector:@selector(localizedStandardCompare:)];
     NSArray<NSString *> *sortedKeys = [sizeKeys sortedArrayUsingDescriptors:@[ sortDescriptor ]];
@@ -1255,62 +1312,116 @@ NSString *WebExtension::pathForBestImageInIconsDictionary(NSDictionary *iconsDic
             break;
     }
 
-    ASSERT(bestSize);
+    return bestSize;
+}
+
+NSString *WebExtension::pathForBestImageInIconsDictionary(NSDictionary *iconsDictionary, size_t idealPixelSize)
+{
+    size_t bestSize = bestSizeInIconsDictionary(iconsDictionary, idealPixelSize);
+    if (!bestSize)
+        return nil;
+
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    if (bestSize == std::numeric_limits<size_t>::max())
+        return iconsDictionary[anyManifestKey];
+#endif
 
     return iconsDictionary[@(bestSize).stringValue];
 }
 
-CocoaImage *WebExtension::bestImageInIconsDictionary(NSDictionary *iconsDictionary, size_t idealPointSize, NSError **outError)
+CocoaImage *WebExtension::bestImageInIconsDictionary(NSDictionary *iconsDictionary, CGSize idealSize, const Function<void(NSError *)>& reportError)
 {
     if (!iconsDictionary.count)
         return nil;
 
-    auto standardPixelSize = idealPointSize;
-#if PLATFORM(IOS) || PLATFORM(VISION)
-    standardPixelSize *= UIScreen.mainScreen.scale;
+    auto idealPointSize = idealSize.width > idealSize.height ? idealSize.width : idealSize.height;
+    auto *screenScales = availableScreenScales();
+    auto *uniquePaths = [NSMutableSet set];
+#if PLATFORM(IOS_FAMILY)
+    auto *scalePaths = [NSMutableDictionary dictionary];
 #endif
 
-    auto *standardIconPath = pathForBestImageInIconsDictionary(iconsDictionary, standardPixelSize);
-    if (!standardIconPath.length)
-        return nil;
+    for (NSNumber *scale in screenScales) {
+        auto pixelSize = idealPointSize * scale.doubleValue;
+        auto *iconPath = pathForBestImageInIconsDictionary(iconsDictionary, pixelSize);
+        if (!iconPath)
+            continue;
 
-    auto *resultImage = imageForPath(standardIconPath, outError);
-    if (!resultImage)
-        return nil;
+        [uniquePaths addObject:iconPath];
 
-#if PLATFORM(MAC)
-    static Class svgImageRep = NSClassFromString(@"_NSSVGImageRep");
-    RELEASE_ASSERT(svgImageRep);
-
-    BOOL isVectorImage = [resultImage.representations indexOfObjectPassingTest:^BOOL(NSImageRep *imageRep, NSUInteger, BOOL *) {
-        return [imageRep isKindOfClass:svgImageRep];
-    }] != NSNotFound;
-
-    if (isVectorImage)
-        return resultImage;
-
-    auto retinaPixelSize = standardPixelSize * 2;
-    auto *retinaIconPath = pathForBestImageInIconsDictionary(iconsDictionary, retinaPixelSize);
-    if (retinaIconPath.length && ![retinaIconPath isEqualToString:standardIconPath]) {
-        if (auto *retinaImage = imageForPath(retinaIconPath, nullptr))
-            [resultImage addRepresentations:retinaImage.representations];
+#if PLATFORM(IOS_FAMILY)
+        scalePaths[scale] = iconPath;
+#endif
     }
-#endif // PLATFORM(MAC)
+
+    if (!uniquePaths.count)
+        return nil;
+
+#if USE(APPKIT)
+    // Return a combined image so the system can select the most appropriate representation based on the current screen scale.
+    NSImage *resultImage;
+
+    for (NSString *iconPath in uniquePaths) {
+        NSError *resourceError;
+        if (auto *image = imageForPath(iconPath, &resourceError, idealSize)) {
+            if (!resultImage)
+                resultImage = image;
+            else
+                [resultImage addRepresentations:image.representations];
+        } else if (reportError && resourceError)
+            reportError(resourceError);
+    }
 
     return resultImage;
+#else
+    if (uniquePaths.count == 1) {
+        [scalePaths removeAllObjects];
+
+        // Add a single value back that has 0 for the scale, which is the
+        // unspecified (universal) trait value for display scale.
+        scalePaths[@0] = uniquePaths.anyObject;
+    }
+
+    auto *images = mapObjects<NSDictionary>(scalePaths, ^id(NSNumber *scale, NSString *path) {
+        NSError *resourceError;
+        if (auto *image = imageForPath(path, &resourceError, idealSize))
+            return image;
+
+        if (reportError && resourceError)
+            reportError(resourceError);
+
+        return nil;
+    });
+
+    // Make a dynamic image asset that returns an image based on the trait collection.
+    auto *imageAsset = [UIImageAsset _dynamicAssetNamed:NSUUID.UUID.UUIDString generator:^(UIImageAsset *, UIImageConfiguration *configuration, UIImage *) {
+        return images[@(configuration.traitCollection.displayScale)] ?: images[@0];
+    }];
+
+    // The returned image retains its link to the image asset and adapts to trait changes,
+    // automatically displaying the correct variant based on the current traits.
+    return [imageAsset imageWithTraitCollection:UITraitCollection.currentTraitCollection];
+#endif // not USE(APPKIT)
 }
 
-CocoaImage *WebExtension::bestImageForIconsDictionaryManifestKey(NSDictionary *dictionary, NSString *manifestKey, CGSize idealSize, RetainPtr<CocoaImage>& cacheLocation, Error error, NSString *customLocalizedDescription)
+CocoaImage *WebExtension::bestImageForIconsDictionaryManifestKey(NSDictionary *dictionary, NSString *manifestKey, CGSize idealSize, RetainPtr<NSMutableDictionary>& cacheLocation, Error error, NSString *customLocalizedDescription)
 {
-    if (cacheLocation)
-        return cacheLocation.get();
+    // Clear the cache if the display scales change (connecting display, etc.)
+    auto *currentScales = availableScreenScales();
+    auto *cachedScales = objectForKey<NSSet>(cacheLocation, @"scales");
+    if (!cacheLocation || ![currentScales isEqualToSet:cachedScales])
+        cacheLocation = [NSMutableDictionary dictionaryWithObject:currentScales forKey:@"scales"];
 
-    CGFloat idealPointSize = idealSize.width > idealSize.height ? idealSize.width : idealSize.height;
-    NSDictionary *iconDictionary = objectForKey<NSDictionary>(dictionary, manifestKey);
+    auto *cacheKey = @(idealSize);
+    if (id cachedResult = cacheLocation.get()[cacheKey])
+        return dynamic_objc_cast<CocoaImage>(cachedResult);
 
-    NSError *resourceError;
-    auto *result = bestImageInIconsDictionary(iconDictionary, idealPointSize, &resourceError);
-    recordErrorIfNeeded(resourceError);
+    auto *iconDictionary = objectForKey<NSDictionary>(dictionary, manifestKey);
+    auto *result = bestImageInIconsDictionary(iconDictionary, idealSize, [&](auto *error) {
+        recordError(error);
+    });
+
+    cacheLocation.get()[cacheKey] = result ?: NSNull.null;
 
     if (!result) {
         if (iconDictionary.count) {
@@ -1324,12 +1435,162 @@ CocoaImage *WebExtension::bestImageForIconsDictionaryManifestKey(NSDictionary *d
         return nil;
     }
 
-    // Cache the icon if there is only one size, usually this is a vector icon or a large bitmap.
-    if (iconDictionary.count == 1)
-        cacheLocation = result;
+    return result;
+}
+
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+static OptionSet<WebExtension::ColorScheme> toColorSchemes(id value)
+{
+    using ColorScheme = WebExtension::ColorScheme;
+
+    if (!value) {
+        // A nil value counts as all color schemes.
+        return { ColorScheme::Light, ColorScheme::Dark };
+    }
+
+    OptionSet<ColorScheme> result;
+
+    auto *array = dynamic_objc_cast<NSArray>(value);
+    if ([array containsObject:lightManifestKey])
+        result.add(ColorScheme::Light);
+
+    if ([array containsObject:darkManifestKey])
+        result.add(ColorScheme::Dark);
 
     return result;
 }
+
+NSDictionary *WebExtension::iconsDictionaryForBestIconVariant(NSArray *variants, size_t idealPixelSize, ColorScheme idealColorScheme)
+{
+    if (!variants.count)
+        return nil;
+
+    if (variants.count == 1)
+        return variants.firstObject;
+
+    NSDictionary *bestVariant;
+    NSDictionary *fallbackVariant;
+    bool foundIdealFallbackVariant = false;
+
+    size_t bestSize = 0;
+    size_t fallbackSize = 0;
+
+    // Pick the first variant matching color scheme and/or size.
+    for (NSDictionary *variant in variants) {
+        auto colorSchemes = toColorSchemes(variant[colorSchemesManifestKey]);
+        auto currentBestSize = bestSizeInIconsDictionary(variant, idealPixelSize);
+
+        if (colorSchemes.contains(idealColorScheme)) {
+            if (currentBestSize >= idealPixelSize) {
+                // Found the best variant, return it.
+                return variant;
+            }
+
+            if (currentBestSize > bestSize) {
+                // Found a larger ideal variant.
+                bestSize = currentBestSize;
+                bestVariant = variant;
+            }
+        } else if (!foundIdealFallbackVariant && currentBestSize >= idealPixelSize) {
+            // Found an ideal fallback variant, based only on size.
+            fallbackSize = currentBestSize;
+            fallbackVariant = variant;
+            foundIdealFallbackVariant = true;
+        } else if (!foundIdealFallbackVariant && currentBestSize > fallbackSize) {
+            // Found a smaller fallback variant.
+            fallbackSize = currentBestSize;
+            fallbackVariant = variant;
+        }
+    }
+
+    return bestVariant ?: fallbackVariant;
+}
+
+CocoaImage *WebExtension::bestImageForIconVariants(NSArray *variants, CGSize idealSize, const Function<void(NSError *)>& reportError)
+{
+    auto idealPointSize = idealSize.width > idealSize.height ? idealSize.width : idealSize.height;
+    auto *lightIconsDictionary = iconsDictionaryForBestIconVariant(variants, idealPointSize, ColorScheme::Light);
+    auto *darkIconsDictionary = iconsDictionaryForBestIconVariant(variants, idealPointSize, ColorScheme::Dark);
+
+    // If the light and dark icons dictionaries are the same, or if either is nil, return the available image directly.
+    if (!lightIconsDictionary || !darkIconsDictionary || [lightIconsDictionary isEqualToDictionary:darkIconsDictionary])
+        return bestImageInIconsDictionary(lightIconsDictionary ?: darkIconsDictionary, idealSize, reportError);
+
+    auto *lightImage = bestImageInIconsDictionary(lightIconsDictionary, idealSize, reportError);
+    auto *darkImage = bestImageInIconsDictionary(darkIconsDictionary, idealSize, reportError);
+
+    // If either the light or dark icon is nil, return the available image directly.
+    if (!lightImage || !darkImage)
+        return lightImage ?: darkImage;
+
+#if USE(APPKIT)
+    // The images need to be the same size to draw correctly in the block.
+    auto imageSize = lightImage.size.width >= darkImage.size.width ? lightImage.size : darkImage.size;
+    lightImage.size = imageSize;
+    darkImage.size = imageSize;
+
+    // Make a dynamic image that draws the light or dark image based on the current appearance.
+    return [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect rect) {
+        static auto *darkAppearanceNames = @[
+            NSAppearanceNameDarkAqua,
+            NSAppearanceNameVibrantDark,
+            NSAppearanceNameAccessibilityHighContrastDarkAqua,
+            NSAppearanceNameAccessibilityHighContrastVibrantDark,
+        ];
+
+        if ([NSAppearance.currentDrawingAppearance bestMatchFromAppearancesWithNames:darkAppearanceNames])
+            [darkImage drawInRect:rect];
+        else
+            [lightImage drawInRect:rect];
+
+        return YES;
+    }];
+#else
+    // Make a dynamic image asset that returns the light or dark image based on the trait collection.
+    auto *imageAsset = [UIImageAsset _dynamicAssetNamed:NSUUID.UUID.UUIDString generator:^(UIImageAsset *, UIImageConfiguration *configuration, UIImage *) {
+        return configuration.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark ? darkImage : lightImage;
+    }];
+
+    // The returned image retains its link to the image asset and adapts to trait changes,
+    // automatically displaying the correct variant based on the current traits.
+    return [imageAsset imageWithTraitCollection:UITraitCollection.currentTraitCollection];
+#endif // not USE(APPKIT)
+}
+
+CocoaImage *WebExtension::bestImageForIconVariantsManifestKey(NSDictionary *dictionary, NSString *manifestKey, CGSize idealSize, RetainPtr<NSMutableDictionary>& cacheLocation, Error error, NSString *customLocalizedDescription)
+{
+    // Clear the cache if the display scales change (connecting display, etc.)
+    auto *currentScales = availableScreenScales();
+    auto *cachedScales = objectForKey<NSSet>(cacheLocation, @"scales");
+    if (!cacheLocation || ![currentScales isEqualToSet:cachedScales])
+        cacheLocation = [NSMutableDictionary dictionaryWithObject:currentScales forKey:@"scales"];
+
+    auto *cacheKey = @(idealSize);
+    if (id cachedResult = cacheLocation.get()[cacheKey])
+        return dynamic_objc_cast<CocoaImage>(cachedResult);
+
+    auto *variants = objectForKey<NSArray>(dictionary, manifestKey, false, NSDictionary.class);
+    auto *result = bestImageForIconVariants(variants, idealSize, [&](auto *error) {
+        recordError(error);
+    });
+
+    cacheLocation.get()[cacheKey] = result ?: NSNull.null;
+
+    if (!result) {
+        if (variants.count) {
+            // Record an error if the array had values, meaning the likely failure is the images were missing on disk or bad format.
+            recordError(createError(error, customLocalizedDescription));
+        } else if ((variants && !variants.count) || dictionary[manifestKey]) {
+            // Record an error if the key had an array that was empty, or the key had a value of the wrong type.
+            recordError(createError(error));
+        }
+
+        return nil;
+    }
+
+    return result;
+}
+#endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
 
 bool WebExtension::hasBackgroundContent()
 {

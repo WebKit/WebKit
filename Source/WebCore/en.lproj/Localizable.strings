@@ -532,6 +532,15 @@
 /* WKWebExtensionErrorInvalidManifestEntry description for externally_connectable */
 "Empty or invalid `externally_connectable` manifest entry." = "Empty or invalid `externally_connectable` manifest entry.";
 
+/* WKWebExtensionErrorInvalidManifestEntry description for icon_variants in action only */
+"Empty or invalid `icon_variants` for the `action` manifest entry." = "Empty or invalid `icon_variants` for the `action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for icon_variants in browser_action or page_action */
+"Empty or invalid `icon_variants` for the `browser_action` or `page_action` manifest entry." = "Empty or invalid `icon_variants` for the `browser_action` or `page_action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for icon_variants */
+"Empty or invalid `icon_variants` manifest entry." = "Empty or invalid `icon_variants` manifest entry.";
+
 /* WKWebExtensionErrorInvalidManifestEntry description for invalid new tab entry */
 "Empty or invalid `newtab` manifest entry." = "Empty or invalid `newtab` manifest entry.";
 
@@ -615,6 +624,12 @@
 
 /* WKWebExtensionErrorInvalidActionIcon description for failing to load images for browser_action or page_action */
 "Failed to load images in `default_icon` for the `browser_action` or `page_action` manifest entry." = "Failed to load images in `default_icon` for the `browser_action` or `page_action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidActionIcon description for failing to load image variants for action */
+"Failed to load images in `icon_variants` for the `action` manifest entry." = "Failed to load images in `icon_variants` for the `action` manifest entry.";
+
+/* WKWebExtensionErrorInvalidIcon description for failing to load image variants */
+"Failed to load images in `icon_variants` manifest entry." = "Failed to load images in `icon_variants` manifest entry.";
 
 /* WKWebExtensionErrorInvalidIcon description for failing to load images */
 "Failed to load images in `icons` manifest entry." = "Failed to load images in `icons` manifest entry.";
