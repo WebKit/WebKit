@@ -152,6 +152,7 @@ private:
     MachSendRight m_completionSyncEvent;
     uint64_t m_renderingFrameIndex { ~0u };
     bool m_usingFoveation { false };
+    bool m_blitDepth { false };
 #else
     PlatformGLObject m_colorTexture;
 #endif

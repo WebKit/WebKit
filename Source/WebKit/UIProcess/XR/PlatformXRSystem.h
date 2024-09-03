@@ -86,7 +86,7 @@ private:
     void requestPermissionOnSessionFeatures(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&&);
     void initializeTrackingAndRendering();
     void shutDownTrackingAndRendering();
-    void requestFrame(CompletionHandler<void(PlatformXR::FrameData&&)>&&);
+    void requestFrame(std::optional<PlatformXR::RequestData>&&, CompletionHandler<void(PlatformXR::FrameData&&)>&&);
     void submitFrame();
     void didCompleteShutdownTriggeredBySystem();
 

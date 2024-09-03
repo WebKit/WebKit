@@ -497,8 +497,11 @@ void WebXRSession::applyPendingRenderState()
     // 1. Let activeState be session’s active render state.
     // 2. Let newState be session’s pending render state.
     // 3. Set session’s pending render state to null.
-    auto newState = m_pendingRenderState;
+    auto newState = WTFMove(m_pendingRenderState);
     ASSERT(newState);
+    ASSERT(!m_pendingRenderState);
+
+    m_requestData = {{ .depthRange = PlatformXR::DepthRange { static_cast<float>(newState->depthNear()), static_cast<float>(newState->depthFar()) } }}; // NOLINT
 
     // 4. Let oldBaseLayer be activeState’s baseLayer.
     // 5. Let oldLayers be activeState’s layers.
@@ -584,10 +587,11 @@ void WebXRSession::requestFrameIfNeeded()
     if (!device)
         return;
     m_isDeviceFrameRequestPending = true;
-    device->requestFrame([this, protectedThis = Ref { *this }](auto&& frameData) {
+    device->requestFrame(WTFMove(m_requestData), [this, protectedThis = Ref { *this }](auto&& frameData) {
         m_isDeviceFrameRequestPending = false;
         onFrame(WTFMove(frameData));
     });
+    m_requestData.reset();
 }
 
 void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)

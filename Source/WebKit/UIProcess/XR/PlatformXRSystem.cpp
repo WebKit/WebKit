@@ -183,7 +183,7 @@ void PlatformXRSystem::shutDownTrackingAndRendering()
     setImmersiveSessionState(ImmersiveSessionState::SessionEndingFromWebContent, [](bool) mutable { });
 }
 
-void PlatformXRSystem::requestFrame(CompletionHandler<void(PlatformXR::FrameData&&)>&& completionHandler)
+void PlatformXRSystem::requestFrame(std::optional<PlatformXR::RequestData>&& requestData, CompletionHandler<void(PlatformXR::FrameData&&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     MESSAGE_CHECK_COMPLETION(m_immersiveSessionState == ImmersiveSessionState::SessionRunning || m_immersiveSessionState == ImmersiveSessionState::SessionEndingFromSystem, completionHandler({ }));
@@ -193,7 +193,7 @@ void PlatformXRSystem::requestFrame(CompletionHandler<void(PlatformXR::FrameData
     }
 
     if (auto* xrCoordinator = PlatformXRSystem::xrCoordinator())
-        xrCoordinator->scheduleAnimationFrame(m_page, WTFMove(completionHandler));
+        xrCoordinator->scheduleAnimationFrame(m_page, WTFMove(requestData), WTFMove(completionHandler));
     else
         completionHandler({ });
 }

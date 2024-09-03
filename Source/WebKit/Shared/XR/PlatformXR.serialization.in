@@ -71,6 +71,16 @@ enum class PlatformXR::XRTargetRayMode : uint8_t {
     TransientPointer,
 };
 
+[Nested] struct PlatformXR::DepthRange {
+    float near;
+    float far;
+};
+
+header: <WebCore/PlatformXR.h>
+[CustomHeader] struct PlatformXR::RequestData {
+    PlatformXR::DepthRange depthRange;
+};
+
 [Nested] struct PlatformXR::FrameData::FloatQuaternion {
     float x;
     float y;
@@ -132,6 +142,7 @@ enum class PlatformXR::XRTargetRayMode : uint8_t {
     std::optional<PlatformXR::FrameData::LayerSetupData> layerSetup;
     uint64_t renderingFrameIndex;
     std::optional<PlatformXR::FrameData::ExternalTextureData> textureData;
+    bool requestDepth;
 #else
     WebCore::IntSize framebufferSize;
     PlatformGLObject opaqueTexture;

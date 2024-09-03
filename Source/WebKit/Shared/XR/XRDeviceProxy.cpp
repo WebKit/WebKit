@@ -112,10 +112,10 @@ Vector<PlatformXR::Device::ViewData> XRDeviceProxy::views(SessionMode mode) cons
     return views;
 }
 
-void XRDeviceProxy::requestFrame(PlatformXR::Device::RequestFrameCallback&& callback)
+void XRDeviceProxy::requestFrame(std::optional<PlatformXR::RequestData>&& requestData, PlatformXR::Device::RequestFrameCallback&& callback)
 {
     if (m_xrSystem)
-        m_xrSystem->requestFrame(WTFMove(callback));
+        m_xrSystem->requestFrame(WTFMove(requestData), WTFMove(callback));
     else
         callback({ });
 }

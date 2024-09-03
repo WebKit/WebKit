@@ -179,6 +179,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::FrameData::LayerData& 
     }
 
     m_renderingFrameIndex = data.renderingFrameIndex;
+    m_blitDepth = data.requestDepth;
 }
 
 void WebXROpaqueFramebuffer::endFrame()
@@ -300,19 +301,13 @@ void WebXROpaqueFramebuffer::blitSharedToLayered(GraphicsContextGL& gl)
         GCGLbitfield buffers = GL::COLOR_BUFFER_BIT;
         gl.framebufferRenderbuffer(GL::DRAW_FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, (*displayAttachmentSet)[layer].colorBuffer.renderBufferObject);
 
-        if ((*displayAttachmentSet)[layer].depthStencilBuffer.image) {
+        if (m_blitDepth && (*displayAttachmentSet)[layer].depthStencilBuffer.image) {
             buffers |= GL::DEPTH_BUFFER_BIT;
             gl.framebufferRenderbuffer(GL::DRAW_FRAMEBUFFER, GL::DEPTH_STENCIL_ATTACHMENT, GL::RENDERBUFFER, (*displayAttachmentSet)[layer].depthStencilBuffer.renderBufferObject);
         }
         ASSERT(gl.checkFramebufferStatus(GL::DRAW_FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
 
         gl.blitFramebuffer(xOffset, 0, xOffset + width, height, 0, 0, width, height, buffers, GL::NEAREST);
-
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=272104 - [WebXR] Compositor expects reverse-Z values
-        {
-            ScopedClearDepthAndMask minDepth { m_context, FLT_MIN, true, m_attributes.depth };
-            gl.clear(GL::DEPTH_BUFFER_BIT);
-        }
 
         xOffset += width;
         width = m_rightPhysicalSize.width();

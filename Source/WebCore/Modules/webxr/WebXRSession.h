@@ -166,6 +166,7 @@ private:
 
     Vector<PlatformXR::Device::ViewData> m_views;
     PlatformXR::FrameData m_frameData;
+    std::optional<PlatformXR::RequestData> m_requestData;
 
     double m_minimumInlineFOV { 0.0 };
     double m_maximumInlineFOV { piFloat };

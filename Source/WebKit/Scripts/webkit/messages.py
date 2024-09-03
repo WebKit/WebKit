@@ -819,6 +819,7 @@ def headers_for_type(type):
         'PlatformXR::FrameData': ['<WebCore/PlatformXR.h>'],
         'PlatformXR::Layout': ['<WebCore/PlatformXR.h>'],
         'PlatformXR::ReferenceSpaceType': ['<WebCore/PlatformXR.h>'],
+        'PlatformXR::RequestData': ['<WebCore/PlatformXR.h>'],
         'PlatformXR::SessionFeature': ['<WebCore/PlatformXR.h>'],
         'PlatformXR::SessionMode': ['<WebCore/PlatformXR.h>'],
         'PlatformXR::VisibilityState': ['<WebCore/PlatformXR.h>'],

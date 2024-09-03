@@ -75,7 +75,7 @@ public:
     virtual void endSessionIfExists(WebPageProxy&) = 0;
 
     // Session display loop.
-    virtual void scheduleAnimationFrame(WebPageProxy&, PlatformXR::Device::RequestFrameCallback&&) = 0;
+    virtual void scheduleAnimationFrame(WebPageProxy&, std::optional<PlatformXR::RequestData>&&, PlatformXR::Device::RequestFrameCallback&&) = 0;
     virtual void submitFrame(WebPageProxy&) { }
 };
 

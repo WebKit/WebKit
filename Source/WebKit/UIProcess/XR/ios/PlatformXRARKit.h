@@ -53,7 +53,7 @@ public:
     void startSession(WebPageProxy&, WeakPtr<SessionEventClient>&&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&) override;
     void endSessionIfExists(WebPageProxy&) override;
 
-    void scheduleAnimationFrame(WebPageProxy&, PlatformXR::Device::RequestFrameCallback&&) override;
+    void scheduleAnimationFrame(WebPageProxy&, std::optional<PlatformXR::RequestData>&&, PlatformXR::Device::RequestFrameCallback&&) override;
     void submitFrame(WebPageProxy&) override;
 
 protected:
