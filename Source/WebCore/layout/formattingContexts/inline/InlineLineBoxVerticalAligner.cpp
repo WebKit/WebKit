@@ -331,7 +331,8 @@ InlineLevelBox::AscentAndDescent LineBoxVerticalAligner::layoutBoundsForInlineBo
     ASSERT(nonRootInlineLevelBoxes[inlineBoxIndex].isInlineBox());
     auto& formattingUtils = this->formattingUtils();
     auto enclosingLayoutBounds = InlineLevelBox::AscentAndDescent { };
-    auto& inlineBoxParent = nonRootInlineLevelBoxes[inlineBoxIndex].layoutBox().parent();
+    auto& inlineBox = nonRootInlineLevelBoxes[inlineBoxIndex];
+    auto& inlineBoxParent = inlineBox.layoutBox().parent();
     for (size_t index = inlineBoxIndex + 1; index < nonRootInlineLevelBoxes.size(); ++index) {
         auto& descendantInlineLevelBox = nonRootInlineLevelBoxes[index];
         if (&descendantInlineLevelBox.layoutBox().parent() == &inlineBoxParent) {
@@ -340,8 +341,13 @@ InlineLevelBox::AscentAndDescent LineBoxVerticalAligner::layoutBoundsForInlineBo
         }
         if (!formattingUtils.inlineLevelBoxAffectsLineBox(descendantInlineLevelBox) || descendantInlineLevelBox.hasLineBoxRelativeAlignment())
             continue;
-        enclosingLayoutBounds.ascent = std::max(descendantInlineLevelBox.layoutBounds().ascent, enclosingLayoutBounds.ascent);
-        enclosingLayoutBounds.descent = std::max(descendantInlineLevelBox.layoutBounds().descent, enclosingLayoutBounds.descent);
+
+        // ascent/descent here really mean enclosing geometry adjusted by vertical alignemnt, which is in case of baseline alignment is simply layout bounds but
+        // e.g. with middle alignment, "ascent and descent" are inline level box height / 2.
+        auto ascent = logicalTopOffsetFromParentBaseline(descendantInlineLevelBox, inlineBox);
+        auto descent = descendantInlineLevelBox.layoutBounds().height() - ascent;
+        enclosingLayoutBounds.ascent = std::max(ascent, enclosingLayoutBounds.ascent);
+        enclosingLayoutBounds.descent = std::max(descent, enclosingLayoutBounds.descent);
     }
     return enclosingLayoutBounds;
 }
