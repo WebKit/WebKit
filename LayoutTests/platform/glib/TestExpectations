@@ -2335,6 +2335,12 @@ imported/w3c/web-platform-tests/webrtc/protocol/split.https.html [ Pass ]
 imported/w3c/web-platform-tests/webrtc/protocol/unknown-mediatypes.html [ Pass ]
 imported/w3c/web-platform-tests/webrtc/protocol/rtx-codecs.https.html [ Pass ]
 
+# Legacy Offer options are enabled by default in WPE and GTK ports.
+imported/w3c/web-platform-tests/webrtc/legacy/RTCPeerConnection-createOffer-offerToReceive.html [ Pass ]
+
+# Fails because the transceiver state.currentDirection is expected to be null but isn't.
+imported/w3c/web-platform-tests/webrtc/legacy/RTCRtpTransceiver-with-OfferToReceive-options.https.html [ Failure ]
+
 # Missing support for ICE restarts
 webkit.org/b/235885 webrtc/peerconnection-page-cache-long.html [ Skip ]
 webrtc/datachannel/datachannel-page-cache-send.html [ Skip ]

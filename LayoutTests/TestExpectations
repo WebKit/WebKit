@@ -284,6 +284,16 @@ imported/w3c/web-platform-tests/video-rvfc [ Skip ]
 fast/mediastream/getUserMedia-rvfc.html [ Skip ]
 webrtc/peerConnection-rvfc.html [ Skip ]
 
+# Our implementation of pc.setLocalDescription() is not fully spec compliant, steps 4.2 and 4.3 are
+# not implemented.
+imported/w3c/web-platform-tests/webrtc/legacy/munge-dont.html [ Failure ]
+
+# The addstream event is not supported anymore.
+imported/w3c/web-platform-tests/webrtc/legacy/onaddstream.https.html [ Skip ]
+
+# The non-promise based createOffer/createAnswer functions are not supported anymore.
+imported/w3c/web-platform-tests/webrtc/legacy/simplecall_callbacks.https.html [ Skip ]
+
 # Only Mac has a way to fail mock capture on device removal
 fast/mediastream/microphone-change-while-muted.html [ Skip ]
 

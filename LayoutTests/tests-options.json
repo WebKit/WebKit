@@ -6584,7 +6584,7 @@
     "imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver.https.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/webrtc/legacy/RTCPeerConnection-addStream.https.html": [
+    "imported/w3c/web-platform-tests/webrtc/legacy/munge-dont.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/protocol/bundle.https.html": [

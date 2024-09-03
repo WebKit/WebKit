@@ -357,7 +357,6 @@
     "web-platform-tests/webrtc-priority": "import",
     "web-platform-tests/webrtc-stats": "import",
     "web-platform-tests/webrtc-svc": "skip",
-    "web-platform-tests/webrtc/legacy": "skip",
     "web-platform-tests/websockets": "import",
     "web-platform-tests/websockets/stream": "skip",
     "web-platform-tests/webstorage": "import",
