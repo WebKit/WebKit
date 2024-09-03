@@ -79,7 +79,7 @@
 #include "TabSize.h"
 #include "TextSpacing.h"
 #include "TouchAction.h"
-#include "TransformFunctions.h"
+#include "TransformOperationsBuilder.h"
 #include "ViewTimeline.h"
 #include "WillChangeData.h"
 #include <wtf/text/MakeString.h>
@@ -561,10 +561,7 @@ inline TransformOperations BuilderConverter::convertTransform(BuilderState& buil
     CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
         builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
         : builderState.cssToLengthConversionData();
-    auto operations = transformsForValue(value, conversionData);
-    if (!operations)
-        return TransformOperations { };
-    return *operations;
+    return createTransformOperations(value, conversionData);
 }
 
 inline RefPtr<TranslateTransformOperation> BuilderConverter::convertTranslate(BuilderState& builderState, const CSSValue& value)
@@ -572,7 +569,7 @@ inline RefPtr<TranslateTransformOperation> BuilderConverter::convertTranslate(Bu
     CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
         builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
         : builderState.cssToLengthConversionData();
-    return translateForValue(value, conversionData);
+    return createTranslate(value, conversionData);
 }
 
 inline RefPtr<RotateTransformOperation> BuilderConverter::convertRotate(BuilderState& builderState, const CSSValue& value)
@@ -580,7 +577,7 @@ inline RefPtr<RotateTransformOperation> BuilderConverter::convertRotate(BuilderS
     CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
         builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
         : builderState.cssToLengthConversionData();
-    return rotateForValue(value, conversionData);
+    return createRotate(value, conversionData);
 }
 
 inline RefPtr<ScaleTransformOperation> BuilderConverter::convertScale(BuilderState& builderState, const CSSValue& value)
@@ -588,7 +585,7 @@ inline RefPtr<ScaleTransformOperation> BuilderConverter::convertScale(BuilderSta
     CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
         builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
         : builderState.cssToLengthConversionData();
-    return scaleForValue(value, conversionData);
+    return createScale(value, conversionData);
 }
 
 #if ENABLE(DARK_MODE_CSS)

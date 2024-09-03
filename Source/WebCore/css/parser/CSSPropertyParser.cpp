@@ -62,6 +62,7 @@
 #include "CSSPropertyParserConsumer+String.h"
 #include "CSSPropertyParserConsumer+Time.h"
 #include "CSSPropertyParserConsumer+TimingFunction.h"
+#include "CSSPropertyParserConsumer+Transform.h"
 #include "CSSPropertyParserConsumer+URL.h"
 #include "CSSPropertyParsing.h"
 #include "CSSQuadValue.h"
@@ -78,7 +79,7 @@
 #include "StylePropertyShorthand.h"
 #include "StylePropertyShorthandFunctions.h"
 #include "TimingFunction.h"
-#include "TransformFunctions.h"
+#include "TransformOperationsBuilder.h"
 #include <memory>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
@@ -410,7 +411,7 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> CSSPropertyParser::co
         case CSSCustomPropertySyntax::Type::TransformFunction:
             return consumeTransformFunction(m_range, m_context);
         case CSSCustomPropertySyntax::Type::TransformList:
-            return consumeTransform(m_range, m_context);
+            return consumeTransformList(m_range, m_context);
         case CSSCustomPropertySyntax::Type::Unknown:
             return nullptr;
         }
@@ -526,9 +527,7 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
             return { serializeString(downcast<CSSPrimitiveValue>(value).stringValue()) };
         case CSSCustomPropertySyntax::Type::TransformFunction:
         case CSSCustomPropertySyntax::Type::TransformList:
-            if (RefPtr transform = transformForValue(value, builderState.cssToLengthConversionData()))
-                return { CSSCustomPropertyValue::TransformSyntaxValue { transform.releaseNonNull() } };
-            return { };
+            return { CSSCustomPropertyValue::TransformSyntaxValue { Style::createTransformOperation(value, builderState.cssToLengthConversionData()) } };
         case CSSCustomPropertySyntax::Type::Unknown:
             return { };
         }

@@ -1908,20 +1908,7 @@ bool CSSPrimitiveValue::convertingToLengthHasRequiredConversionData(int lengthCo
     if (!isFixedNumberConversion)
         return true;
 
-    auto dependencies = computedStyleDependencies();
-    if (!dependencies.rootProperties.isEmpty() && !conversionData.rootStyle())
-        return false;
-
-    if (!dependencies.properties.isEmpty() && !conversionData.style())
-        return false;
-
-    if (dependencies.containerDimensions && !conversionData.elementForContainerUnitResolution())
-        return false;
-
-    if (dependencies.viewportDimensions && !conversionData.renderView())
-        return false;
-
-    return true;
+    return canResolveDependenciesWithConversionData(conversionData);
 }
 
 IterationStatus CSSPrimitiveValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const

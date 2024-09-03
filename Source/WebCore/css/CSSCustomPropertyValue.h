@@ -45,7 +45,7 @@ public:
         double value;
         CSSUnitType unitType;
 
-        friend bool operator==(const NumericSyntaxValue&, const NumericSyntaxValue&) = default;
+        bool operator==(const NumericSyntaxValue&) const = default;
     };
 
     struct TransformSyntaxValue {

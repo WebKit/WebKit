@@ -8758,7 +8758,7 @@
             "codegen-properties": {
                 "converter": "Translate",
                 "parser-function": "consumeTranslate",
-                "parser-function-requires-context-mode": true,
+                "parser-function-requires-context": true,
                 "parser-grammar-unused": "none | [ <length-percentage> [ <length-percentage> <length>? ]? ]",
                 "parser-grammar-unused-reason": "Needs support for ordered groups and optionals."
             },
@@ -8771,7 +8771,7 @@
             "codegen-properties": {
                 "converter": "Scale",
                 "parser-function": "consumeScale",
-                "parser-function-requires-context-mode": true,
+                "parser-function-requires-context": true,
                 "parser-grammar-unused": "none | [ <number> | <percentage> ]{1,3}",
                 "parser-grammar-unused-reason": "Needs support for '{A,B}' multipliers."
             },
@@ -8785,7 +8785,7 @@
             "codegen-properties": {
                 "converter": "Rotate",
                 "parser-function": "consumeRotate",
-                "parser-function-requires-context-mode": true,
+                "parser-function-requires-context": true,
                 "parser-grammar-unused": "none | <angle> | [ [ x | y | z | <number>{3} ] && <angle> ]",
                 "parser-grammar-unused-reason": "Needs support for '&&' groups and '{A}' multipliers."
             },

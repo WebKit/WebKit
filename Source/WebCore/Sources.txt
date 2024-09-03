@@ -971,7 +971,6 @@ css/StyleRuleImport.cpp
 css/StyleSheet.cpp
 css/StyleSheetContents.cpp
 css/StyleSheetList.cpp
-css/TransformFunctions.cpp
 css/calc/CSSCalcSymbolTable.cpp
 css/calc/CSSCalcSymbolsAllowed.cpp
 css/calc/CSSCalcTree+CalculationValue.cpp
@@ -1036,6 +1035,7 @@ css/parser/CSSPropertyParserConsumer+String.cpp
 css/parser/CSSPropertyParserConsumer+Symbol.cpp
 css/parser/CSSPropertyParserConsumer+Time.cpp
 css/parser/CSSPropertyParserConsumer+TimingFunction.cpp
+css/parser/CSSPropertyParserConsumer+Transform.cpp
 css/parser/CSSPropertyParserConsumer+URL.cpp
 css/parser/CSSPropertyParserConsumer+UnevaluatedCalc.cpp
 css/parser/CSSPropertyParserHelpers.cpp
@@ -3026,6 +3026,7 @@ style/StyleSheetContentsCache.cpp
 style/StyleTreeResolver.cpp
 style/StyleUpdate.cpp
 style/Styleable.cpp
+style/TransformOperationsBuilder.cpp
 style/UserAgentStyle.cpp
 svg/DocumentSVG.cpp
 svg/SVGAElement.cpp

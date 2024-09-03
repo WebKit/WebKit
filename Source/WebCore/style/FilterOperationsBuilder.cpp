@@ -28,12 +28,13 @@
 
 #include "CSSFilterFunctionDescriptor.h"
 #include "CSSFunctionValue.h"
+#include "CSSPrimitiveValueMappings.h"
 #include "CSSShadowValue.h"
 #include "CSSToLengthConversionData.h"
+#include "CalculationValue.h"
 #include "ColorFromPrimitiveValue.h"
 #include "Document.h"
 #include "RenderStyle.h"
-#include "TransformFunctions.h"
 
 namespace WebCore {
 namespace Style {
@@ -67,7 +68,7 @@ static Ref<FilterOperation> createFilterFunctionBlur(const CSSFunctionValue& fil
 
     Length stdDeviation;
     if (auto* parameter = filter.item(0))
-        stdDeviation = convertToFloatLength(downcast<CSSPrimitiveValue>(parameter), conversionData);
+        stdDeviation = downcast<CSSPrimitiveValue>(*parameter).convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion>(conversionData);
     else
         stdDeviation = Length(filterFunctionDefaultValue<function>().value, LengthType::Fixed);
 
@@ -210,47 +211,52 @@ static Ref<FilterOperation> createFilterFunctionReference(const CSSPrimitiveValu
     return ReferenceFilterOperation::create(filterURL, WTFMove(fragment));
 }
 
-FilterOperations createFilterOperations(const Document& document, RenderStyle& style, const CSSToLengthConversionData& conversionData, const CSSValue& inValue)
+static Ref<FilterOperation> createFilterOperation(const CSSValue& value, const Document& document, RenderStyle& style, const CSSToLengthConversionData& conversionData)
 {
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(inValue)) {
-        if (primitiveValue->valueID() == CSSValueNone)
-            return FilterOperations { };
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value))
+        return createFilterFunctionReference(*primitiveValue, document);
+
+    auto& filter = downcast<CSSFunctionValue>(value);
+
+    switch (filter.name()) {
+    case CSSValueBlur:
+        return createFilterFunctionBlur(filter, document, style, conversionData);
+    case CSSValueBrightness:
+        return createFilterFunctionBrightness(filter, document, style, conversionData);
+    case CSSValueContrast:
+        return createFilterFunctionContrast(filter, document, style, conversionData);
+    case CSSValueDropShadow:
+        return createFilterFunctionDropShadow(filter, document, style, conversionData);
+    case CSSValueGrayscale:
+        return createFilterFunctionGrayscale(filter, document, style, conversionData);
+    case CSSValueHueRotate:
+        return createFilterFunctionHueRotate(filter, document, style, conversionData);
+    case CSSValueInvert:
+        return createFilterFunctionInvert(filter, document, style, conversionData);
+    case CSSValueOpacity:
+        return createFilterFunctionOpacity(filter, document, style, conversionData);
+    case CSSValueSaturate:
+        return createFilterFunctionSaturate(filter, document, style, conversionData);
+    case CSSValueSepia:
+        return createFilterFunctionSepia(filter, document, style, conversionData);
+    case CSSValueAppleInvertLightness:
+        return createFilterFunctionAppleInvertLightness(filter, document, style, conversionData);
+    default:
+        break;
     }
 
-    return FilterOperations { WTF::map(downcast<CSSValueList>(inValue), [&](const auto& value) -> Ref<FilterOperation> {
-        if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value))
-            return createFilterFunctionReference(*primitiveValue, document);
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
-        auto& filter = downcast<CSSFunctionValue>(value);
+FilterOperations createFilterOperations(const Document& document, RenderStyle& style, const CSSToLengthConversionData& conversionData, const CSSValue& value)
+{
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        ASSERT_UNUSED(primitiveValue, primitiveValue->valueID() == CSSValueNone);
+        return FilterOperations { };
+    }
 
-        switch (filter.name()) {
-        case CSSValueBlur:
-            return createFilterFunctionBlur(filter, document, style, conversionData);
-        case CSSValueBrightness:
-            return createFilterFunctionBrightness(filter, document, style, conversionData);
-        case CSSValueContrast:
-            return createFilterFunctionContrast(filter, document, style, conversionData);
-        case CSSValueDropShadow:
-            return createFilterFunctionDropShadow(filter, document, style, conversionData);
-        case CSSValueGrayscale:
-            return createFilterFunctionGrayscale(filter, document, style, conversionData);
-        case CSSValueHueRotate:
-            return createFilterFunctionHueRotate(filter, document, style, conversionData);
-        case CSSValueInvert:
-            return createFilterFunctionInvert(filter, document, style, conversionData);
-        case CSSValueOpacity:
-            return createFilterFunctionOpacity(filter, document, style, conversionData);
-        case CSSValueSaturate:
-            return createFilterFunctionSaturate(filter, document, style, conversionData);
-        case CSSValueSepia:
-            return createFilterFunctionSepia(filter, document, style, conversionData);
-        case CSSValueAppleInvertLightness:
-            return createFilterFunctionAppleInvertLightness(filter, document, style, conversionData);
-        default:
-            break;
-        }
-
-        RELEASE_ASSERT_NOT_REACHED();
+    return FilterOperations { WTF::map(downcast<CSSValueList>(value), [&](const auto& value) {
+        return createFilterOperation(value, document, style, conversionData);
     }) };
 }
 
