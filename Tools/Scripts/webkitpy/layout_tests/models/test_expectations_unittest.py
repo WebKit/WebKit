@@ -510,6 +510,49 @@ Bug(y) failures/expected/text.html [ Failure ]
                                      "Bug(test) [ XP ] passes/text.html [ Failure ]\n")
 
 
+class PrintExpectationsTests(Base):
+    def test_absent(self):
+        self.parse_exp('')
+        self.assertTrue(self._exp._model.get_expectation_line('some_unknown_file.html') is None)
+        self.assertTrue(self._exp._model.get_expectation_lines('some_unknown_file.html') is None)
+
+    def test_single(self):
+        exp_str = 'Bug(test) failures/expected/text.html [ Failure ]'
+        self.parse_exp(exp_str)
+        main_line = self._exp._model.get_expectation_line('failures/expected/text.html')
+        lines = self._exp._model.get_expectation_lines('failures/expected/text.html')
+        self.assertEqual(str(main_line), exp_str)
+        self.assertEqual(len(lines), 1)
+        self.assertEqual(lines[0], main_line)
+
+    def test_override_same_file(self):
+        exp_strs = ['Bug(exp) failures/expected/text.html [ Failure ]',
+                    'Bug(override) failures/expected/text.html [ ImageOnlyFailure ]']
+        exp_main = 0
+        self.parse_exp('\n'.join(exp_strs))
+        main_line = self._exp._model.get_expectation_line('failures/expected/text.html')
+        lines = self._exp._model.get_expectation_lines('failures/expected/text.html')
+        self.assertEqual(str(main_line), exp_strs[exp_main])
+        self.assertEqual(len(lines), len(exp_strs))
+        for index, exp_str in enumerate(exp_strs):
+            self.assertEqual(str(lines[index]), exp_str)
+        self.assertEqual(lines.count(main_line), 1)
+
+    def test_overrides_with_dir(self):
+        exp_strs = ['Bug(exp) failures/expected [ Failure ]',
+                    'Bug(override) failures/expected/text.html [ ImageOnlyFailure ]',
+                    'Bug(override2) failures [ ImageOnlyFailure ]']
+        exp_main = 1
+        self.parse_exp('\n'.join(exp_strs))
+        main_line = self._exp._model.get_expectation_line('failures/expected/text.html')
+        lines = self._exp._model.get_expectation_lines('failures/expected/text.html')
+        self.assertEqual(str(main_line), exp_strs[exp_main])
+        self.assertEqual(len(lines), len(exp_strs))
+        for line, exp_str in zip(lines, exp_strs):
+            self.assertEqual(str(line), exp_str)
+        self.assertEqual(lines.count(main_line), 1)
+
+
 class RebaseliningTest(Base):
     """Test rebaselining-specific functionality."""
     def assertRemove(self, input_expectations, input_overrides, tests, expected_expectations, expected_overrides):

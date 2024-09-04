@@ -350,7 +350,7 @@ def parse_args(args):
             help=("Makes sure the test files parse for all configurations. Does not run any tests.")),
         optparse.make_option(
             "--print-expectations", action="store_true", default=False,
-            help=("Print the expected outcome for the given test, or all tests listed in TestExpectations. Does not run any tests.")),
+            help=("Print the expected outcome for the given test, or all tests listed in TestExpectations. Does not run any tests. With --verbose, also show discarded TestExpectations lines.")),
         optparse.make_option(
             "--print-summary", action="store_true", default=False,
             help=("Print a summary of how tests are expected to run, grouped by directory. Does not run any tests.")),
