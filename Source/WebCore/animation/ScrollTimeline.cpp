@@ -87,7 +87,22 @@ ScrollTimeline::ScrollTimeline(Scroller scroller, ScrollAxis axis)
 {
 }
 
-Ref<CSSValue> ScrollTimeline::toCSSValue() const
+void ScrollTimeline::dump(TextStream& ts) const
+{
+    auto hasScroller = m_scroller != Scroller::Nearest;
+    auto hasAxis = m_axis != ScrollAxis::Block;
+
+    ts << "scroll(";
+    if (hasScroller)
+        ts << (m_scroller == Scroller::Root ? "root" : "self");
+    if (hasScroller && hasAxis)
+        ts << " ";
+    if (hasAxis)
+        ts << m_axis;
+    ts << ")";
+}
+
+Ref<CSSValue> ScrollTimeline::toCSSValue(const RenderStyle&) const
 {
     auto scroller = [&]() {
         switch (m_scroller) {

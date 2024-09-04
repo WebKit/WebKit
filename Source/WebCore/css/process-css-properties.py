@@ -3951,6 +3951,7 @@ class GenerateCSSPropertyParsing:
                     "CSSPropertyParserConsumer+Resolution.h",
                     "CSSPropertyParserConsumer+String.h",
                     "CSSPropertyParserConsumer+Time.h",
+                    "CSSPropertyParserConsumer+Timeline.h",
                     "CSSPropertyParserConsumer+TimingFunction.h",
                     "CSSPropertyParserConsumer+Transform.h",
                     "CSSPropertyParserConsumer+URL.h",

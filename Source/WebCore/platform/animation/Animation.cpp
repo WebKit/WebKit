@@ -171,18 +171,26 @@ TextStream& operator<<(TextStream& ts, Animation::Direction direction)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, Animation::TimelineKeyword keyword)
+{
+    switch (keyword) {
+    case Animation::TimelineKeyword::Auto: ts << "auto"; break;
+    case Animation::TimelineKeyword::None: ts << "none"; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, const Animation::Timeline& timeline)
 {
     WTF::switchOn(timeline,
-        [&] (Animation::TimelineKeyword keyword) {
-            switch (keyword) {
-            case Animation::TimelineKeyword::Auto: ts << "auto"; break;
-            case Animation::TimelineKeyword::None: ts << "none"; break;
-            }
-        }, [&] (const AtomString& customIdent) {
+        [&](Animation::TimelineKeyword keyword) {
+            ts << keyword;
+        },
+        [&](const AtomString& customIdent) {
             ts << customIdent;
-        }, [&] (const Ref<ScrollTimeline>& scrollTimeline) {
-            ts << scrollTimeline->toCSSValue()->cssText();
+        },
+        [&](const Ref<ScrollTimeline>& scrollTimeline) {
+            scrollTimeline->dump(ts);
         }
     );
     return ts;

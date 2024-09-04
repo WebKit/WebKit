@@ -79,7 +79,6 @@
 #include "CSSRayValue.h"
 #include "CSSRectValue.h"
 #include "CSSReflectValue.h"
-#include "CSSScrollValue.h"
 #include "CSSShapeSegmentValue.h"
 #include "CSSSubgridValue.h"
 #include "CSSTransformListValue.h"
@@ -88,7 +87,6 @@
 #include "CSSValuePool.h"
 #include "CSSVariableData.h"
 #include "CSSVariableParser.h"
-#include "CSSViewValue.h"
 #include "CalculationCategory.h"
 #include "ColorInterpolation.h"
 #include "LengthPoint.h"
@@ -3336,107 +3334,6 @@ RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange& range)
     if (list.isEmpty())
         return nullptr;
     return CSSValueList::createSpaceSeparated(WTFMove(list));
-}
-
-RefPtr<CSSValue> consumeAnimationTimeline(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    return consumeCommaSeparatedListWithSingleValueOptimization(range, [context](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
-        return consumeSingleAnimationTimeline(range, context);
-    });
-}
-
-RefPtr<CSSValue> consumeSingleAnimationTimeline(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // <single-animation-timeline> = auto | none | <dashed-ident> | <scroll()> | <view()>
-    auto id = range.peek().id();
-    if (id == CSSValueAuto || id == CSSValueNone)
-        return consumeIdent(range);
-    if (auto name = consumeDashedIdent(range))
-        return name;
-    if (auto scroll = consumeAnimationTimelineScroll(range))
-        return scroll;
-    return consumeAnimationTimelineView(range, context);
-}
-
-RefPtr<CSSValue> consumeAnimationTimelineScroll(CSSParserTokenRange& range)
-{
-    // https://drafts.csswg.org/scroll-animations-1/#scroll-notation
-    // <scroll()> = scroll( [ <scroller> || <axis> ]? )
-    // <scroller> = root | nearest | self
-    // <axis> = block | inline | x | y
-
-    if (range.peek().type() != FunctionToken || range.peek().functionId() != CSSValueScroll)
-        return nullptr;
-
-    auto args = consumeFunction(range);
-
-    if (!args.size())
-        return CSSScrollValue::create(nullptr, nullptr);
-
-    auto scroller = CSSPropertyParsing::consumeScroller(args);
-    auto axis = CSSPropertyParsing::consumeAxis(args);
-
-    // Try <scroller> again since the order of <scroller> and <axis> is not guaranteed.
-    if (!scroller)
-        scroller = CSSPropertyParsing::consumeScroller(args);
-
-    // If there are values left to consume, these are not valid <scroller> or <axis> and the function is invalid.
-    if (args.size())
-        return nullptr;
-
-    return CSSScrollValue::create(WTFMove(scroller), WTFMove(axis));
-}
-
-RefPtr<CSSValue> consumeAnimationTimelineView(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // https://drafts.csswg.org/scroll-animations-1/#view-notation
-    // <view()> = view( [ <axis> || <'view-timeline-inset'> ]? )
-    // <axis> = block | inline | x | y
-    // <'view-timeline-inset'> = [ [ auto | <length-percentage> ]{1,2} ]#
-
-    if (range.peek().type() != FunctionToken || range.peek().functionId() != CSSValueView)
-        return nullptr;
-
-    auto args = consumeFunction(range);
-
-    if (!args.size())
-        return CSSViewValue::create();
-
-    auto axis = CSSPropertyParsing::consumeAxis(args);
-
-    auto startInset = CSSPropertyParsing::consumeSingleViewTimelineInset(args, context);
-    auto endInset = CSSPropertyParsing::consumeSingleViewTimelineInset(args, context);
-
-    // Try <axis> again since the order of <axis> and <'view-timeline-inset'> is not guaranteed.
-    if (!axis)
-        axis = CSSPropertyParsing::consumeAxis(args);
-
-    // If there are values left to consume, these are not valid <axis> or <'view-timeline-inset'> and the function is invalid.
-    if (args.size())
-        return nullptr;
-
-    return CSSViewValue::create(WTFMove(axis), WTFMove(startInset), WTFMove(endInset));
-}
-
-RefPtr<CSSValue> consumeViewTimelineInsetListItem(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    auto startInset = CSSPropertyParsing::consumeSingleViewTimelineInset(range, context);
-    if (!startInset)
-        return nullptr;
-
-    if (auto endInset = CSSPropertyParsing::consumeSingleViewTimelineInset(range, context)) {
-        if (endInset != startInset)
-            return CSSValuePair::createNoncoalescing(startInset.releaseNonNull(), endInset.releaseNonNull());
-    }
-
-    return startInset;
-}
-
-RefPtr<CSSValue> consumeViewTimelineInset(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    return consumeCommaSeparatedListWithoutSingleValueOptimization(range, [context](CSSParserTokenRange& range) {
-        return consumeViewTimelineInsetListItem(range, context);
-    });
 }
 
 RefPtr<CSSPrimitiveValue> consumeAnchor(CSSParserTokenRange& range, CSSParserMode mode)

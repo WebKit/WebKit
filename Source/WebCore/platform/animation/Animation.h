@@ -271,6 +271,7 @@ public:
 WTF::TextStream& operator<<(WTF::TextStream&, AnimationPlayState);
 WTF::TextStream& operator<<(WTF::TextStream&, Animation::TransitionProperty);
 WTF::TextStream& operator<<(WTF::TextStream&, Animation::Direction);
+WTF::TextStream& operator<<(WTF::TextStream&, Animation::TimelineKeyword);
 WTF::TextStream& operator<<(WTF::TextStream&, const Animation::Timeline&);
 WTF::TextStream& operator<<(WTF::TextStream&, const Animation&);
 

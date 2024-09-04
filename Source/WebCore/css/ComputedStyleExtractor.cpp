@@ -1590,7 +1590,7 @@ static Ref<CSSPrimitiveValue> valueForScopedName(const Style::ScopedName& scoped
     return CSSPrimitiveValue::create(scopedName.name);
 }
 
-static Ref<CSSValue> valueForAnimationTimeline(const Animation::Timeline& timeline)
+static Ref<CSSValue> valueForAnimationTimeline(const RenderStyle& style, const Animation::Timeline& timeline)
 {
     return WTF::switchOn(timeline,
         [&] (Animation::TimelineKeyword keyword) -> Ref<CSSValue> {
@@ -1598,7 +1598,7 @@ static Ref<CSSValue> valueForAnimationTimeline(const Animation::Timeline& timeli
         }, [&] (const AtomString& customIdent) -> Ref<CSSValue> {
             return CSSPrimitiveValue::createCustomIdent(customIdent);
         }, [&] (const Ref<ScrollTimeline>& scrollTimeline) -> Ref<CSSValue> {
-            return scrollTimeline->toCSSValue();
+            return scrollTimeline->toCSSValue(style);
         }
     );
 }
@@ -1670,7 +1670,7 @@ static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timin
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static void addValueForAnimationPropertyToList(CSSValueListBuilder& list, CSSPropertyID property, const Animation* animation)
+static void addValueForAnimationPropertyToList(const RenderStyle& style, CSSValueListBuilder& list, CSSPropertyID property, const Animation* animation)
 {
     if (property == CSSPropertyTransitionBehavior) {
         if (!animation || !animation->isAllowsDiscreteTransitionsFilled())
@@ -1700,7 +1700,7 @@ static void addValueForAnimationPropertyToList(CSSValueListBuilder& list, CSSPro
             list.append(valueForAnimationComposition(animation ? animation->compositeOperation() : Animation::initialCompositeOperation()));
     } else if (property == CSSPropertyAnimationTimeline) {
         if (!animation || !animation->isTimelineFilled())
-            list.append(valueForAnimationTimeline(animation ? animation->timeline() : Animation::initialTimeline()));
+            list.append(valueForAnimationTimeline(style, animation ? animation->timeline() : Animation::initialTimeline()));
     } else if (property == CSSPropertyTransitionProperty) {
         if (animation) {
             if (!animation->isPropertyFilled())
@@ -1717,18 +1717,18 @@ static void addValueForAnimationPropertyToList(CSSValueListBuilder& list, CSSPro
         ASSERT_NOT_REACHED();
 }
 
-static Ref<CSSValueList> valueListForAnimationOrTransitionProperty(CSSPropertyID property, const AnimationList* animationList)
+static Ref<CSSValueList> valueListForAnimationOrTransitionProperty(const RenderStyle& style, CSSPropertyID property, const AnimationList* animationList)
 {
     CSSValueListBuilder list;
     if (animationList) {
         for (auto& animation : *animationList)
-            addValueForAnimationPropertyToList(list, property, animation.ptr());
+            addValueForAnimationPropertyToList(style, list, property, animation.ptr());
     } else
-        addValueForAnimationPropertyToList(list, property, nullptr);
+        addValueForAnimationPropertyToList(style, list, property, nullptr);
     return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
-static Ref<CSSValue> singleAnimationValue(const Animation& animation)
+static Ref<CSSValue> singleAnimationValue(const RenderStyle& style, const Animation& animation)
 {
     static NeverDestroyed<Ref<TimingFunction>> initialTimingFunction(Animation::initialTimingFunction());
 
@@ -1809,7 +1809,7 @@ static Ref<CSSValue> singleAnimationValue(const Animation& animation)
     if (animation.name() != Animation::initialName())
         list.append(valueForScopedName(animation.name()));
     if (animation.timeline() != Animation::initialTimeline())
-        list.append(valueForAnimationTimeline(animation.timeline()));
+        list.append(valueForAnimationTimeline(style, animation.timeline()));
     if (animation.compositeOperation() != Animation::initialCompositeOperation())
         list.append(valueForAnimationComposition(animation.compositeOperation()));
     if (list.isEmpty())
@@ -1817,14 +1817,14 @@ static Ref<CSSValue> singleAnimationValue(const Animation& animation)
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-static Ref<CSSValue> animationShorthandValue(const AnimationList* animations)
+static Ref<CSSValue> animationShorthandValue(const RenderStyle& style, const AnimationList* animations)
 {
     if (!animations || animations->isEmpty())
         return CSSPrimitiveValue::create(CSSValueNone);
 
     CSSValueListBuilder list;
     for (auto& animation : *animations)
-        list.append(singleAnimationValue(animation));
+        list.append(singleAnimationValue(style, animation));
     ASSERT(!list.isEmpty());
     return CSSValueList::createCommaSeparated(WTFMove(list));
 }
@@ -4312,7 +4312,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return CSSPrimitiveValue::create(CSSValueContentBox);
         return CSSPrimitiveValue::create(CSSValueBorderBox);
     case CSSPropertyAnimation:
-        return animationShorthandValue(style.animations());
+        return animationShorthandValue(style, style.animations());
     case CSSPropertyAnimationComposition:
     case CSSPropertyAnimationDelay:
     case CSSPropertyAnimationDirection:
@@ -4323,7 +4323,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyAnimationPlayState:
     case CSSPropertyAnimationTimeline:
     case CSSPropertyAnimationTimingFunction:
-        return valueListForAnimationOrTransitionProperty(propertyID, style.animations());
+        return valueListForAnimationOrTransitionProperty(style, propertyID, style.animations());
     case CSSPropertyAppearance:
         return createConvertingToCSSValueID(style.appearance());
     case CSSPropertyAspectRatio:
@@ -4535,7 +4535,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyTransitionDuration:
     case CSSPropertyTransitionTimingFunction:
     case CSSPropertyTransitionProperty:
-        return valueListForAnimationOrTransitionProperty(propertyID, style.transitions());
+        return valueListForAnimationOrTransitionProperty(style, propertyID, style.transitions());
     case CSSPropertyTransition:
         return transitionShorthandValue(style.transitions());
     case CSSPropertyPointerEvents:
