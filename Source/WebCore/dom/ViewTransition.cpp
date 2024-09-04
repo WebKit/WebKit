@@ -218,13 +218,14 @@ void ViewTransition::callUpdateCallback()
 
     ASSERT(m_phase < ViewTransitionPhase::UpdateCallbackCalled || m_phase == ViewTransitionPhase::Done);
 
+    if (m_phase != ViewTransitionPhase::Done)
+        m_phase = ViewTransitionPhase::UpdateCallbackCalled;
+
+    if (!m_shouldCallUpdateCallback)
+        return;
+
     Ref document = *this->document();
     RefPtr<DOMPromise> callbackPromise;
-    if (!m_shouldCallUpdateCallback) {
-        if (m_phase != ViewTransitionPhase::Done)
-            m_phase = ViewTransitionPhase::UpdateCallbackCalled;
-        return;
-    }
 
     if (!m_updateCallback) {
         auto promiseAndWrapper = createPromiseAndWrapper(document);
@@ -243,9 +244,6 @@ void ViewTransition::callUpdateCallback()
             callbackPromise = WTFMove(promiseAndWrapper.first);
         }
     }
-
-    if (m_phase != ViewTransitionPhase::Done)
-        m_phase = ViewTransitionPhase::UpdateCallbackCalled;
 
     callbackPromise->whenSettled([this, weakThis = WeakPtr { *this }, callbackPromise] () mutable {
         RefPtr protectedThis = weakThis.get();
