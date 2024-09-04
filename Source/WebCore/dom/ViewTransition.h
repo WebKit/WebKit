@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -222,8 +222,7 @@ private:
     FloatSize m_initialLargeViewportSize;
     float m_initialPageZoom;
 
-    RefPtr<ViewTransitionUpdateCallback>  m_updateCallback;
-    bool m_shouldCallUpdateCallback { false };
+    RefPtr<ViewTransitionUpdateCallback> m_updateCallback;
 
     using PromiseAndWrapper = std::pair<Ref<DOMPromise>, Ref<DeferredPromise>>;
     PromiseAndWrapper m_ready;

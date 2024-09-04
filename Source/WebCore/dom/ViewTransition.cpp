@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,7 +62,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ViewTransition);
 ViewTransition::ViewTransition(Document& document, RefPtr<ViewTransitionUpdateCallback>&& updateCallback, Vector<AtomString>&& initialActiveTypes)
     : ActiveDOMObject(document)
     , m_updateCallback(WTFMove(updateCallback))
-    , m_shouldCallUpdateCallback(true)
     , m_ready(createPromiseAndWrapper(document))
     , m_updateCallbackDone(createPromiseAndWrapper(document))
     , m_finished(createPromiseAndWrapper(document))
@@ -220,9 +219,6 @@ void ViewTransition::callUpdateCallback()
 
     if (m_phase != ViewTransitionPhase::Done)
         m_phase = ViewTransitionPhase::UpdateCallbackCalled;
-
-    if (!m_shouldCallUpdateCallback)
-        return;
 
     Ref document = *this->document();
     RefPtr<DOMPromise> callbackPromise;
