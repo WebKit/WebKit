@@ -35,6 +35,27 @@
 
 namespace JSC {
 
+constexpr inline auto MarkedBlock::Handle::SpecializedSweepConfig::with(EmptyMode emptyMode) const -> SpecializedSweepConfig
+{
+    SpecializedSweepConfig result = *this;
+    result.emptyMode = emptyMode;
+    return result;
+}
+
+constexpr inline auto MarkedBlock::Handle::SpecializedSweepConfig::with(MarksMode marksMode) const -> SpecializedSweepConfig
+{
+    SpecializedSweepConfig result = *this;
+    result.marksMode = marksMode;
+    return result;
+}
+
+constexpr inline auto MarkedBlock::Handle::SpecializedSweepConfig::with(SweepMode sweepMode) const -> SpecializedSweepConfig
+{
+    SpecializedSweepConfig result = *this;
+    result.sweepMode = sweepMode;
+    return result;
+}
+
 inline unsigned MarkedBlock::Handle::cellsPerBlock()
 {
     return MarkedSpace::blockPayload / cellSize();
@@ -252,17 +273,21 @@ private:
     size_t m_size { 0 };
 };
 
-template<bool specialize, MarkedBlock::Handle::EmptyMode specializedEmptyMode, MarkedBlock::Handle::SweepMode specializedSweepMode, MarkedBlock::Handle::SweepDestructionMode specializedDestructionMode, MarkedBlock::Handle::ScribbleMode specializedScribbleMode, MarkedBlock::Handle::NewlyAllocatedMode specializedNewlyAllocatedMode, MarkedBlock::Handle::MarksMode specializedMarksMode, typename DestroyFunc>
-void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Handle::EmptyMode emptyMode, MarkedBlock::Handle::SweepMode sweepMode, MarkedBlock::Handle::SweepDestructionMode destructionMode, MarkedBlock::Handle::ScribbleMode scribbleMode, MarkedBlock::Handle::NewlyAllocatedMode newlyAllocatedMode, MarkedBlock::Handle::MarksMode marksMode, const DestroyFunc& destroyFunc)
+template<bool specialize, MarkedBlock::Handle::SpecializedSweepConfig specializedConfig, typename DestroyFunc>
+void MarkedBlock::Handle::specializedSweep(FreeList* freeList, SpecializedSweepConfig config, const DestroyFunc& destroyFunc)
 {
-    if (specialize) {
-        emptyMode = specializedEmptyMode;
-        sweepMode = specializedSweepMode;
-        destructionMode = specializedDestructionMode;
-        scribbleMode = specializedScribbleMode;
-        newlyAllocatedMode = specializedNewlyAllocatedMode;
-        marksMode = specializedMarksMode;
-    }
+    constexpr bool verbose = false;
+    if constexpr (specialize)
+        config = specializedConfig;
+    // FIXME: Once enough compilers move to Clang 16 we can make this a structured binding rather than declaring these variables...
+    // In earlier C++ versions, structured bindings didn't declare variables and lambdas could only capture variables but this seems
+    // to be fixed in C++20.
+    EmptyMode emptyMode = config.emptyMode;
+    SweepMode sweepMode = config.sweepMode;
+    SweepDestructionMode destructionMode = config.destructionMode;
+    ScribbleMode scribbleMode = config.scribbleMode;
+    NewlyAllocatedMode newlyAllocatedMode = config.newlyAllocatedMode;
+    MarksMode marksMode = config.marksMode;
 
     RELEASE_ASSERT(!(destructionMode == BlockHasNoDestructors && sweepMode == SweepOnly));
 
@@ -271,7 +296,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     MarkedBlock& block = this->block();
     MarkedBlock::Header& header = block.header();
 
-    if (false)
+    if (verbose)
         dataLog(RawPointer(this), "/", RawPointer(&block), ": MarkedBlock::Handle::specializedSweep!\n");
 
     unsigned cellSize = this->cellSize();
@@ -282,7 +307,11 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         JSCell* jsCell = static_cast<JSCell*>(cell);
         if (!jsCell->isZapped()) {
             destroyFunc(vm, jsCell);
-            jsCell->zap(HeapCell::Destruction);
+            if (sweepMode == SweepAndZero) {
+                memset(cell, 0, cellSize);
+                ASSERT(jsCell->isZapped());
+            } else
+                jsCell->zap(HeapCell::Destruction);
         }
     };
 
@@ -331,8 +360,9 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
             FreeCell* interval = reinterpret_cast_ptr<FreeCell*>(payloadBegin);
             interval->makeLast(payloadEnd - payloadBegin, secret);
             freeList->initialize(interval, secret, payloadEnd - payloadBegin);
-        }
-        if (false)
+        } else if (destructionMode == BlockHasNoDestructors && sweepMode == SweepAndZero)
+            memset(payloadBegin, 0, payloadEnd - payloadBegin);
+        if (verbose)
             dataLog("Quickly swept block ", RawPointer(this), " with cell size ", cellSize, " and attributes ", m_attributes, ": ", pointerDump(freeList), "\n");
         return;
     }
@@ -381,7 +411,8 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
             }
             currentInterval += m_atomsPerCell;
             previousDeadCell = i;
-        }
+        } else if (destructionMode == BlockHasNoDestructors && sweepMode == SweepAndZero)
+            memset(&block.atoms()[i], 0, cellSize);
     };
 
     auto checkForFinalInterval = [&] () {
@@ -432,21 +463,20 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         freeList->initialize(head, secret, freedBytes);
     setBits(isEmpty);
 
-    if (false)
+    if (verbose)
         dataLog("Slowly swept block ", RawPointer(&block), " with cell size ", cellSize, " and attributes ", m_attributes, ": ", pointerDump(freeList), "\n");
 }
 
 template<typename DestroyFunc>
-void MarkedBlock::Handle::finishSweepKnowingHeapCellType(FreeList* freeList, const DestroyFunc& destroyFunc)
+ALWAYS_INLINE void MarkedBlock::Handle::finishSweepKnowingHeapCellType(SweepMode sweepMode, FreeList* freeList, const DestroyFunc& destroyFunc)
 {
-    SweepMode sweepMode = freeList ? SweepToFreeList : SweepOnly;
     SweepDestructionMode destructionMode = this->sweepDestructionMode();
     EmptyMode emptyMode = this->emptyMode();
     ScribbleMode scribbleMode = this->scribbleMode();
     NewlyAllocatedMode newlyAllocatedMode = this->newlyAllocatedMode();
     MarksMode marksMode = this->marksMode();
 
-    auto trySpecialized = [&] () -> bool {
+    auto trySpecialized = [&] () ALWAYS_INLINE_LAMBDA -> bool {
         if (scribbleMode != DontScribble)
             return false;
         if (newlyAllocatedMode != DoesNotHaveNewlyAllocated)
@@ -454,52 +484,40 @@ void MarkedBlock::Handle::finishSweepKnowingHeapCellType(FreeList* freeList, con
         if (destructionMode != BlockHasDestructors)
             return false;
 
-        switch (emptyMode) {
-        case IsEmpty:
-            switch (sweepMode) {
-            case SweepOnly:
-                switch (marksMode) {
-                case MarksNotStale:
-                    specializedSweep<true, IsEmpty, SweepOnly, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale>(freeList, IsEmpty, SweepOnly, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale, destroyFunc);
-                    return true;
-                case MarksStale:
-                    specializedSweep<true, IsEmpty, SweepOnly, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale>(freeList, IsEmpty, SweepOnly, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale, destroyFunc);
-                    return true;
-                }
-                RELEASE_ASSERT_NOT_REACHED();
-            case SweepToFreeList:
-                switch (marksMode) {
-                case MarksNotStale:
-                    specializedSweep<true, IsEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale>(freeList, IsEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale, destroyFunc);
-                    return true;
-                case MarksStale:
-                    specializedSweep<true, IsEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale>(freeList, IsEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale, destroyFunc);
-                    return true;
-                }
+        auto specializeMarksMode = [&] <SpecializedSweepConfig config> () ALWAYS_INLINE_LAMBDA -> void {
+            switch (marksMode) {
+            case MarksNotStale:
+                return specializedSweep<true, config.with(MarksNotStale)>(freeList, { }, destroyFunc);
+            case MarksStale:
+                return specializedSweep<true, config.with(MarksStale)>(freeList, { }, destroyFunc);
             }
             RELEASE_ASSERT_NOT_REACHED();
-        case NotEmpty:
+        };
+
+        auto specializeSweepMode = [&] <SpecializedSweepConfig config> () ALWAYS_INLINE_LAMBDA -> void {
             switch (sweepMode) {
             case SweepOnly:
-                switch (marksMode) {
-                case MarksNotStale:
-                    specializedSweep<true, NotEmpty, SweepOnly, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale>(freeList, NotEmpty, SweepOnly, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale, destroyFunc);
-                    return true;
-                case MarksStale:
-                    specializedSweep<true, NotEmpty, SweepOnly, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale>(freeList, NotEmpty, SweepOnly, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale, destroyFunc);
-                    return true;
-                }
-                RELEASE_ASSERT_NOT_REACHED();
+                return specializeMarksMode.template operator()<config.with(SweepOnly)>();
             case SweepToFreeList:
-                switch (marksMode) {
-                case MarksNotStale:
-                    specializedSweep<true, NotEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale>(freeList, NotEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale, destroyFunc);
-                    return true;
-                case MarksStale:
-                    specializedSweep<true, NotEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale>(freeList, NotEmpty, SweepToFreeList, BlockHasDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale, destroyFunc);
-                    return true;
-                }
+                return specializeMarksMode.template operator()<config.with(SweepToFreeList)>();
+            case SweepAndZero:
+                return specializeMarksMode.template operator()<config.with(SweepAndZero)>();
             }
+            RELEASE_ASSERT_NOT_REACHED();
+        };
+
+        constexpr SpecializedSweepConfig config {
+            .destructionMode = BlockHasDestructors,
+            .scribbleMode = DontScribble,
+            .newlyAllocatedMode = DoesNotHaveNewlyAllocated,
+        };
+        switch (emptyMode) {
+        case IsEmpty:
+            specializeSweepMode.template operator()<config.with(IsEmpty)>();
+            return true;
+        case NotEmpty:
+            specializeSweepMode.template operator()<config.with(NotEmpty)>();
+            return true;
         }
 
         return false;
@@ -509,7 +527,7 @@ void MarkedBlock::Handle::finishSweepKnowingHeapCellType(FreeList* freeList, con
         return;
 
     // The template arguments don't matter because the first one is false.
-    specializedSweep<false, IsEmpty, SweepOnly, BlockHasNoDestructors, DontScribble, HasNewlyAllocated, MarksStale>(freeList, emptyMode, sweepMode, destructionMode, scribbleMode, newlyAllocatedMode, marksMode, destroyFunc);
+    specializedSweep<false, SpecializedSweepConfig { }>(freeList, { emptyMode, sweepMode, destructionMode, scribbleMode, newlyAllocatedMode, marksMode }, destroyFunc);
 }
 
 inline MarkedBlock::Handle::SweepDestructionMode MarkedBlock::Handle::sweepDestructionMode()

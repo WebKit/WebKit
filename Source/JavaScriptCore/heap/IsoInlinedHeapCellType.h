@@ -38,7 +38,7 @@ public:
         ALWAYS_INLINE void operator()(VM&, JSCell*) const;
     };
 
-    void finishSweep(MarkedBlock::Handle&, FreeList*) const final;
+    void finishSweep(MarkedBlock::Handle&, SweepMode, FreeList*) const final;
     void destroy(VM&, JSCell*) const final;
 };
 

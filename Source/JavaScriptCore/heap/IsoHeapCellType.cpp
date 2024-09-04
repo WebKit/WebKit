@@ -42,9 +42,9 @@ IsoHeapCellType::IsoHeapCellType(DestructionMode destructionMode, DestroyFunctio
 
 IsoHeapCellType::~IsoHeapCellType() = default;
 
-void IsoHeapCellType::finishSweep(MarkedBlock::Handle& handle, FreeList* freeList) const
+void IsoHeapCellType::finishSweep(MarkedBlock::Handle& handle, SweepMode sweepMode, FreeList* freeList) const
 {
-    handle.finishSweepKnowingHeapCellType(freeList, *this);
+    handle.finishSweepKnowingHeapCellType(sweepMode, freeList, *this);
 }
 
 void IsoHeapCellType::destroy(VM&, JSCell* cell) const

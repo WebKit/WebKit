@@ -54,9 +54,9 @@ HeapCellType::HeapCellType(CellAttributes attributes)
 
 HeapCellType::~HeapCellType() = default;
 
-void HeapCellType::finishSweep(MarkedBlock::Handle& block, FreeList* freeList) const
+void HeapCellType::finishSweep(MarkedBlock::Handle& block, SweepMode sweepMode, FreeList* freeList) const
 {
-    block.finishSweepKnowingHeapCellType(freeList, DefaultDestroyFunc());
+    block.finishSweepKnowingHeapCellType(sweepMode, freeList, DefaultDestroyFunc());
 }
 
 void HeapCellType::destroy(VM& vm, JSCell* cell) const

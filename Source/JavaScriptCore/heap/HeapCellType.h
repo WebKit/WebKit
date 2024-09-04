@@ -41,7 +41,7 @@ public:
 
     // The purpose of overriding this is to specialize the sweep for your destructors. This won't
     // be called for no-destructor blocks. This must call MarkedBlock::finishSweepKnowingSubspace.
-    virtual void finishSweep(MarkedBlock::Handle&, FreeList*) const;
+    virtual void finishSweep(MarkedBlock::Handle&, SweepMode, FreeList*) const;
 
     // These get called for large objects.
     virtual void destroy(VM&, JSCell*) const;

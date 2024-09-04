@@ -54,7 +54,6 @@ public:
     const HeapCellType* heapCellType() const { return m_heapCellType; }
     AlignedMemoryAllocator* alignedMemoryAllocator() const { return m_alignedMemoryAllocator; }
     
-    void finishSweep(MarkedBlock::Handle&, FreeList*);
     void destroy(VM&, JSCell*);
 
     void prepareForAllocation();

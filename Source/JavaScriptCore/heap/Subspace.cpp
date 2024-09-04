@@ -56,11 +56,6 @@ void Subspace::initialize(const HeapCellType& heapCellType, AlignedMemoryAllocat
 
 Subspace::~Subspace() = default;
 
-void Subspace::finishSweep(MarkedBlock::Handle& block, FreeList* freeList)
-{
-    m_heapCellType->finishSweep(block, freeList);
-}
-
 void Subspace::destroy(VM& vm, JSCell* cell)
 {
     m_heapCellType->destroy(vm, cell);

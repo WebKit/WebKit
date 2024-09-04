@@ -54,7 +54,7 @@ public:
         : IsoHeapCellType(args.mode, args.functionPtr)
     { }
 
-    void finishSweep(MarkedBlock::Handle&, FreeList*) const final;
+    void finishSweep(MarkedBlock::Handle&, SweepMode, FreeList*) const final;
     void destroy(VM&, JSCell*) const final;
 
     ALWAYS_INLINE void operator()(VM&, JSCell* cell) const

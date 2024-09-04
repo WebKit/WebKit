@@ -36,7 +36,7 @@ public:
     JS_EXPORT_PRIVATE JSDestructibleObjectHeapCellType();
     JS_EXPORT_PRIVATE ~JSDestructibleObjectHeapCellType() final;
     
-    void finishSweep(MarkedBlock::Handle&, FreeList*) const final;
+    void finishSweep(MarkedBlock::Handle&, SweepMode, FreeList*) const final;
     void destroy(VM&, JSCell*) const final;
 };
 

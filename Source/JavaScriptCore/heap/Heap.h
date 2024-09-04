@@ -145,7 +145,7 @@ class Heap;
     v(symbolTableSpace, destructibleCellHeapCellType, SymbolTable)
     
 #define FOR_EACH_JSC_STRUCTURE_ISO_SUBSPACE(v) \
-    v(structureSpace, destructibleCellHeapCellType, Structure) \
+    v(structureSpace, structureHeapCellType, Structure) \
     v(brandedStructureSpace, destructibleCellHeapCellType, BrandedStructure) \
 
 #define FOR_EACH_JSC_ISO_SUBSPACE(v) \
@@ -964,6 +964,7 @@ public:
     IsoHeapCellType injectedScriptHostSpaceHeapCellType;
     IsoHeapCellType javaScriptCallFrameHeapCellType;
     IsoHeapCellType jsModuleRecordHeapCellType;
+    IsoHeapCellType structureHeapCellType;
     IsoHeapCellType syntheticModuleRecordHeapCellType;
     IsoHeapCellType moduleNamespaceObjectHeapCellType;
     IsoHeapCellType nativeStdFunctionHeapCellType;
