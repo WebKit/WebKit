@@ -445,6 +445,12 @@ struct PerWebProcessState {
 - (void)_clearWarningViewIfForMainFrameNavigation;
 - (void)_clearBrowsingWarningIfForMainFrameNavigation;
 
+#if !TARGET_OS_IPHONE
+@property (nonatomic, readonly) NSView *_browsingWarning;
+#else
+@property (nonatomic, readonly) UIView *_browsingWarning;
+#endif
+
 - (std::optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting;
 
 - (void)_didAccessBackForwardList NS_DIRECT;
