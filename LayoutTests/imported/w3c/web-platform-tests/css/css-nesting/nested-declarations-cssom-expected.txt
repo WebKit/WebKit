@@ -5,4 +5,10 @@ FAIL CSSNestedDeclarations.style assert_equals: expected 2 but got 1
 FAIL Nested group rule assert_equals: expected 2 but got 1
 FAIL Nested @scope rule assert_equals: expected 2 but got 1
 FAIL Inner rule starting with an ident assert_equals: expected 4 but got 2
+FAIL Inserting a CSSNestedDeclaration rule into style rule The string did not match the expected pattern.
+FAIL Inserting a CSSNestedDeclaration rule into nested group rule The string did not match the expected pattern.
+PASS Attempting to insert a CSSNestedDeclaration rule into top-level @media rule
+PASS Attempting to insert a CSSNestedDeclaration rule into a stylesheet
+PASS Attempting to insert a CSSNestedDeclaration rule, empty block
+PASS Attempting to insert a CSSNestedDeclaration rule, all invalid declarations
 
