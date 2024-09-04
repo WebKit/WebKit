@@ -186,7 +186,7 @@ bool DragDropInteractionState::anyActiveDragSourceContainsSelection() const
     return false;
 }
 
-void DragDropInteractionState::prepareForDragSession(id <UIDragSession> session, dispatch_block_t completionHandler)
+void DragDropInteractionState::prepareForDragSession(id<UIDragSession> session, DragPreparationBlock completionHandler)
 {
     m_dragSession = session;
     m_dragStartCompletionBlock = completionHandler;
@@ -332,7 +332,7 @@ bool DragDropInteractionState::shouldRequestAdditionalItemForDragSession(id <UID
     return m_dragSession == session && !m_addDragItemCompletionBlock && !m_dragStartCompletionBlock;
 }
 
-void DragDropInteractionState::dragSessionWillRequestAdditionalItem(void (^completion)(NSArray <UIDragItem *> *))
+void DragDropInteractionState::dragSessionWillRequestAdditionalItem(AddDragItemBlock completion)
 {
     clearStagedDragSource();
     m_addDragItemCompletionBlock = completion;

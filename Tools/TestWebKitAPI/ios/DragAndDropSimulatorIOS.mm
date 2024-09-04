@@ -32,6 +32,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "UIKitSPIForTesting.h"
+#import <BrowserEngineKit/BrowserEngineKit.h>
 #import <UIKit/UIDragInteraction.h>
 #import <UIKit/UIDragItem.h>
 #import <UIKit/UIDropInteraction.h>
@@ -82,14 +83,14 @@ static char dragDropSimulatorKey;
     return [self valueForKey:@"_currentContentView"];
 }
 
-- (id <UIDropInteractionDelegate>)dropInteractionDelegate
+- (id<UIDropInteractionDelegate>)dropInteractionDelegate
 {
-    return (id <UIDropInteractionDelegate>)self._dragDropInteractionView;
+    return (id<UIDropInteractionDelegate>)self._dragDropInteractionView;
 }
 
-- (id <UIDragInteractionDelegate>)dragInteractionDelegate
+- (id<BEDragInteractionDelegate>)dragInteractionDelegate
 {
-    return (id <UIDragInteractionDelegate>)self._dragDropInteractionView;
+    return (id<BEDragInteractionDelegate>)self._dragDropInteractionView;
 }
 
 - (UIDropInteraction *)dropInteraction
@@ -483,12 +484,13 @@ IGNORE_WARNINGS_END
     } else {
         _dragSession = adoptNS([[MockDragSession alloc] initWithWindow:[_webView window] allowMove:self.shouldAllowMoveOperation]);
         [_dragSession setMockLocationInWindow:_startLocation];
-        [(id <UIDragInteractionDelegate_ForWebKitOnly>)[_webView dragInteractionDelegate] _dragInteraction:[_webView dragInteraction] prepareForSession:_dragSession.get() completion:[strongSelf = retainPtr(self)] {
+        [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] prepareDragSession:_dragSession.get() completion:[strongSelf = retainPtr(self)] {
             if (strongSelf->_phase == DragAndDropPhaseCancelled)
-                return;
+                return NO;
 
             strongSelf->_phase = DragAndDropPhaseBeginning;
             [strongSelf _advanceProgress];
+            return YES;
         }];
     }
 
@@ -608,9 +610,10 @@ IGNORE_WARNINGS_END
     [_queuedAdditionalItemRequestLocations removeObjectAtIndex:0];
 
     auto requestLocation = [[_webView window] convertPoint:[requestLocationValue CGPointValue] toView:_webView.get()];
-    [(id <UIDragInteractionDelegate_ForWebKitOnly>)[_webView dragInteractionDelegate] _dragInteraction:[_webView dragInteraction] itemsForAddingToSession:_dragSession.get() withTouchAtPoint:requestLocation completion:[dragSession = _dragSession, dropSession = _dropSession] (NSArray *items) {
+    [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] itemsForAddingToSession:_dragSession.get() forTouchAtPoint:requestLocation completion:[dragSession = _dragSession, dropSession = _dropSession](NSArray *items) {
         [dragSession addItems:items];
         [dropSession addItems:items];
+        return YES;
     }];
     return YES;
 }

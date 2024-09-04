@@ -35,6 +35,7 @@
 #import "TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <BrowserEngineKit/BrowserEngineKit.h>
 #import <Contacts/Contacts.h>
 #import <MapKit/MapKit.h>
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -1578,7 +1579,9 @@ TEST(DragAndDropTests, UnresponsivePageDoesNotHangUI)
 
     // The test passes if we can prepare for a drag session without timing out.
     auto dragSession = adoptNS([[MockDragSession alloc] init]);
-    [(id <UIDragInteractionDelegate_ForWebKitOnly>)[webView dragInteractionDelegate] _dragInteraction:[webView dragInteraction] prepareForSession:dragSession.get() completion:^() { }];
+    [[webView dragInteractionDelegate] dragInteraction:[webView dragInteraction] prepareDragSession:dragSession.get() completion:^{
+        return NO;
+    }];
 }
 
 TEST(DragAndDropTests, WebItemProviderPasteboardLoading)

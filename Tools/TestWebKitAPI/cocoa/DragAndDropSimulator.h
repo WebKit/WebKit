@@ -35,6 +35,9 @@
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
 #endif
 
+@class BEDragInteraction;
+@protocol BEDragInteractionDelegate;
+
 #if PLATFORM(IOS_FAMILY)
 
 typedef NS_ENUM(NSInteger, DragAndDropPhase) {
@@ -68,10 +71,10 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 @end
 
 @interface WKWebView (DragAndDropTesting)
-- (id <UIDropInteractionDelegate>)dropInteractionDelegate;
-- (id <UIDragInteractionDelegate>)dragInteractionDelegate;
+- (id<UIDropInteractionDelegate>)dropInteractionDelegate;
+- (id<BEDragInteractionDelegate>)dragInteractionDelegate;
 - (UIDropInteraction *)dropInteraction;
-- (UIDragInteraction *)dragInteraction;
+- (BEDragInteraction *)dragInteraction;
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
