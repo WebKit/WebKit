@@ -36,5 +36,5 @@ layer at (0,0) size 480x360
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.2 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
-selection start: position 3 of child 0 {#text} of child 3 {text} of child 3 {g} of child 35 {g} of child 1 {svg} of document
-selection end:   position 12 of child 0 {#text} of child 3 {text} of child 3 {g} of child 35 {g} of child 1 {svg} of document
+selection start: position 4 of child 0 {#text} of child 3 {text} of child 3 {g} of child 35 {g} of child 1 {svg} of document
+selection end:   position 13 of child 0 {#text} of child 3 {text} of child 3 {g} of child 35 {g} of child 1 {svg} of document
