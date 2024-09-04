@@ -320,7 +320,7 @@ bool BitmapImageSource::hasEverAnimated() const
 
 bool BitmapImageSource::isLargeForDecoding() const
 {
-    size_t sizeInBytes = size(ImageOrientation::Orientation::None).area() * sizeof(uint32_t);
+    auto sizeInBytes = size(ImageOrientation::Orientation::None).unclampedArea() * sizeof(uint32_t);
     return sizeInBytes > (isAnimated() ? 100 * KB : 500 * KB);
 }
 
@@ -472,7 +472,7 @@ void BitmapImageSource::cacheNativeImageAtIndex(unsigned index, SubsamplingLevel
     destroyNativeImageAtIndex(index);
 
     // Do not cache NativeImage if adding its frameByes to MemoryCache will cause numerical overflow.
-    size_t frameBytes = nativeImage->size().unclampedArea() * sizeof(uint32_t);
+    auto frameBytes = nativeImage->size().unclampedArea() * sizeof(uint32_t);
     if (!isInBounds<unsigned>(frameBytes + m_decodedSize))
         return;
 
