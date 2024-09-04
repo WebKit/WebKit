@@ -119,6 +119,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     bool timeIsProgressing() const final;
     WebCoreDecompressionSession *decompressionSession() const { return m_decompressionSession.get(); }
     WebSampleBufferVideoRendering *layerOrVideoRenderer() const;
+    bool hasVideoRenderer() const { return layerOrVideoRenderer() || decompressionSession(); }
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     RetainPtr<PlatformLayer> createVideoFullscreenLayer() override;
