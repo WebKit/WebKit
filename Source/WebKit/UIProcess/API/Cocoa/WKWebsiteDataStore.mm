@@ -1373,30 +1373,47 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
-- (void)_handleNextPushMessage
+- (void)_handleNextPushMessageWithCompletionHandler:(void(^)())completionHandler
 {
     [self _getPendingPushMessage:^(NSDictionary *payload) {
-        if (!payload)
+        if (!payload) {
+            completionHandler();
             return;
+        }
 
         [self _processPushMessage:payload completionHandler:^(bool showedNotification) {
-            [self _handleNextPushMessage];
+            [self _handleNextPushMessageWithCompletionHandler:completionHandler];
         }];
     }];
 }
 
 - (void)_handleWebPushAction:(_WKWebPushAction *)webPushAction
 {
+    UIBackgroundTaskIdentifier backgroundTaskIdentifier = [webPushAction beginBackgroundTaskForHandling];
+    auto completionHandler = ^{
+#if PLATFORM(IOS)
+        [UIApplication.sharedApplication endBackgroundTask:backgroundTaskIdentifier];
+#else
+        UNUSED_PARAM(backgroundTaskIdentifier);
+#endif
+    };
+
     if ([webPushAction.type isEqualToString:_WKWebPushActionTypePushEvent])
-        [self _handleNextPushMessage];
+        [self _handleNextPushMessageWithCompletionHandler:completionHandler];
     else if ([webPushAction.type isEqualToString:_WKWebPushActionTypeNotificationClick]) {
         RELEASE_ASSERT(webPushAction.coreNotificationData);
-        [self _processWebCorePersistentNotificationClick:*webPushAction.coreNotificationData completionHandler:^(bool) { }];
+        [self _processWebCorePersistentNotificationClick:*webPushAction.coreNotificationData completionHandler:^(bool) {
+            completionHandler();
+        }];
     } else if ([webPushAction.type isEqualToString:_WKWebPushActionTypeNotificationClose]) {
         RELEASE_ASSERT(webPushAction.coreNotificationData);
-        [self _processWebCorePersistentNotificationClose:*webPushAction.coreNotificationData completionHandler:^(bool) { }];
-    } else
+        [self _processWebCorePersistentNotificationClose:*webPushAction.coreNotificationData completionHandler:^(bool) {
+            completionHandler();
+        }];
+    } else {
         RELEASE_LOG_ERROR(Push, "Unhandled webPushAction: %@", webPushAction);
+        completionHandler();
+    }
 }
 
 @end

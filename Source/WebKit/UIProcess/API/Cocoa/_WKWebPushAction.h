@@ -27,6 +27,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NSUInteger UIBackgroundTaskIdentifier;
+
 @class UNNotificationResponse;
 
 WK_EXTERN NSString * const _WKWebPushActionTypePushEvent;
@@ -43,6 +45,8 @@ WK_EXTERN
 @property (nonatomic, readonly) NSNumber *version;
 @property (nonatomic, readonly) NSString *pushPartition;
 @property (nonatomic, readonly) NSString *type;
+
+- (UIBackgroundTaskIdentifier)beginBackgroundTaskForHandling;
 
 @end
 
