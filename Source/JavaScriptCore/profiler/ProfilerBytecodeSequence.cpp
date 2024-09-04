@@ -36,15 +36,18 @@ namespace JSC { namespace Profiler {
 BytecodeSequence::BytecodeSequence(CodeBlock* codeBlock)
 {
     StringPrintStream out;
-    
-    for (unsigned i = 0; i < codeBlock->numberOfArgumentValueProfiles(); ++i) {
+
+    {
+        unsigned index = 0;
         ConcurrentJSLocker locker(codeBlock->valueProfileLock());
-        CString description = codeBlock->valueProfileForArgument(i).briefDescription(locker);
-        if (!description.length())
-            continue;
-        out.reset();
-        out.print("arg", i, ": ", description);
-        m_header.append(out.toCString());
+        for (auto& profile : codeBlock->argumentValueProfiles()) {
+            CString description = profile.briefDescription(locker);
+            if (!description.length())
+                continue;
+            out.reset();
+            out.print("arg", index++, ": ", description);
+            m_header.append(out.toCString());
+        }
     }
     
     ICStatusMap statusMap;

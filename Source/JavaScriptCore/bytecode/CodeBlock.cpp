@@ -2796,6 +2796,7 @@ void CodeBlock::updateAllNonLazyValueProfilePredictionsAndCountLiveness(const Co
     unsigned index = 0;
     UnlinkedCodeBlock* unlinkedCodeBlock = this->unlinkedCodeBlock();
     bool isBuiltinFunction = unlinkedCodeBlock->isBuiltinFunction();
+    auto unlinkedValueProfiles = unlinkedCodeBlock->unlinkedValueProfiles().mutableSpan();
     forEachValueProfile([&](auto& profile, bool isArgument) {
         unsigned numSamples = profile.totalNumberOfSamples();
         using Profile = std::remove_reference_t<decltype(profile)>;
@@ -2806,7 +2807,7 @@ void CodeBlock::updateAllNonLazyValueProfilePredictionsAndCountLiveness(const Co
         if (isArgument) {
             profile.computeUpdatedPrediction(locker);
             if (!isBuiltinFunction)
-                unlinkedCodeBlock->unlinkedValueProfile(index).update(profile);
+                unlinkedValueProfiles[index].update(profile);
             ++index;
             return;
         }
@@ -2814,7 +2815,7 @@ void CodeBlock::updateAllNonLazyValueProfilePredictionsAndCountLiveness(const Co
             numberOfLiveNonArgumentValueProfiles++;
         profile.computeUpdatedPrediction(locker);
         if (!isBuiltinFunction)
-            unlinkedCodeBlock->unlinkedValueProfile(index).update(profile);
+            unlinkedValueProfiles[index].update(profile);
         ++index;
     });
 
@@ -2856,10 +2857,11 @@ void CodeBlock::updateAllArrayProfilePredictions()
     unsigned index = 0;
     UnlinkedCodeBlock* unlinkedCodeBlock = this->unlinkedCodeBlock();
     bool isBuiltinFunction = unlinkedCodeBlock->isBuiltinFunction();
+    auto unlinkedArrayProfiles = unlinkedCodeBlock->unlinkedArrayProfiles().mutableSpan();
     auto process = [&] (ArrayProfile& profile) {
         profile.computeUpdatedPrediction(this);
         if (!isBuiltinFunction)
-            unlinkedCodeBlock->unlinkedArrayProfile(index).update(profile);
+            unlinkedArrayProfiles[index].update(profile);
         ++index;
     };
 

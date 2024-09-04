@@ -36,8 +36,8 @@ namespace JSC {
 template<typename Functor>
 void CodeBlock::forEachValueProfile(const Functor& func)
 {
-    for (unsigned i = 0; i < numberOfArgumentValueProfiles(); ++i)
-        func(valueProfileForArgument(i), true);
+    for (auto& profile : argumentValueProfiles())
+        func(profile, true);
 
     if (m_metadata) {
         auto wrapper = [&] (ValueProfile& profile) {

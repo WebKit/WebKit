@@ -352,8 +352,8 @@ public:
         return !isBuiltinFunction();
     }
     void allocateSharedProfiles(unsigned numBinaryArithProfiles, unsigned numUnaryArithProfiles);
-    UnlinkedValueProfile& unlinkedValueProfile(unsigned index) { return m_valueProfiles[index]; }
-    UnlinkedArrayProfile& unlinkedArrayProfile(unsigned index) { return m_arrayProfiles[index]; }
+    FixedVector<UnlinkedValueProfile>& unlinkedValueProfiles() { return m_valueProfiles; }
+    FixedVector<UnlinkedArrayProfile>& unlinkedArrayProfiles() { return m_arrayProfiles; }
     unsigned numberOfValueProfiles() const { return m_valueProfiles.size(); }
     unsigned numberOfArrayProfiles() const { return m_arrayProfiles.size(); }
 

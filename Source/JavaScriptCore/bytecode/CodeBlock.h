@@ -406,6 +406,8 @@ public:
         return m_argumentValueProfiles[argumentIndex];
     }
 
+    FixedVector<ArgumentValueProfile>& argumentValueProfiles() { return m_argumentValueProfiles; }
+
     ValueProfile& valueProfileForOffset(unsigned profileOffset) { return m_metadata->valueProfileForOffset(profileOffset); }
 
     ValueProfile* tryGetValueProfileForBytecodeIndex(BytecodeIndex);
