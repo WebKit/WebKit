@@ -28,9 +28,12 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedPlatformLayerBuffer.h"
-#include "CoordinatedPlatformLayerBufferVideo.h"
 #include "TextureMapperLayer.h"
 #include <wtf/Scope.h>
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+#include "CoordinatedPlatformLayerBufferVideo.h"
+#endif
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>
@@ -168,8 +171,10 @@ void TextureMapperPlatformLayerProxyGL::dropCurrentBufferWhilePreservingTexture(
             return;
 
         m_pendingBuffer = nullptr;
+#if ENABLE(VIDEO) && USE(GSTREAMER)
         if (is<CoordinatedPlatformLayerBufferVideo>(*m_currentBuffer))
             m_pendingBuffer = downcast<CoordinatedPlatformLayerBufferVideo>(*m_currentBuffer).copyBuffer();
+#endif
 
         m_currentBuffer = WTFMove(m_pendingBuffer);
         m_targetLayer->setContentsLayer(m_currentBuffer.get());

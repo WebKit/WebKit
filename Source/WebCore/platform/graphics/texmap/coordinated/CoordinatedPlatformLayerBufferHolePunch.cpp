@@ -27,9 +27,12 @@
 #include "CoordinatedPlatformLayerBufferHolePunch.h"
 
 #if USE(COORDINATED_GRAPHICS) && ENABLE(VIDEO)
-#include "GStreamerQuirks.h"
 #include "IntRect.h"
 #include "TextureMapper.h"
+
+#if USE(GSTREAMER)
+#include "GStreamerQuirks.h"
+#endif
 
 namespace WebCore {
 
