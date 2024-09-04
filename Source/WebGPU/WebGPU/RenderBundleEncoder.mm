@@ -126,7 +126,7 @@ static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndi
 
     id<MTLArgumentEncoder> argumentEncoder =
         [device.icbCommandClampFunction(MTLIndexTypeUInt32) newArgumentEncoderWithBufferIndex:device.bufferIndexForICBContainer()];
-    id<MTLBuffer> container = [device.device() newBufferWithLength:argumentEncoder.encodedLength options:MTLResourceStorageModeShared];
+    id<MTLBuffer> container = device.safeCreateBuffer(argumentEncoder.encodedLength);
     container.label = @"ICB Argument Buffer";
     [argumentEncoder setArgumentBuffer:container offset:0];
     [argumentEncoder setIndirectCommandBuffer:icb atIndex:0];
@@ -853,14 +853,14 @@ void RenderBundleEncoder::endCurrentICB()
     if (m_fragmentBuffers.size() < m_icbDescriptor.maxFragmentBufferBindCount)
         m_fragmentBuffers.grow(m_icbDescriptor.maxFragmentBufferBindCount);
     if (m_vertexDynamicOffset && !m_dynamicOffsetsVertexBuffer) {
-        m_dynamicOffsetsVertexBuffer = [m_device->device() newBufferWithLength:m_vertexDynamicOffset options:MTLResourceStorageModeShared];
+        m_dynamicOffsetsVertexBuffer = m_device->safeCreateBuffer(m_vertexDynamicOffset);
         if (!addResource(m_resources, m_dynamicOffsetsVertexBuffer, MTLRenderStageVertex))
             return;
     }
     m_vertexDynamicOffset = 0;
 
     if (!m_dynamicOffsetsFragmentBuffer) {
-        m_dynamicOffsetsFragmentBuffer = [m_device->device() newBufferWithLength:m_fragmentDynamicOffset + RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float) options:MTLResourceStorageModeShared];
+        m_dynamicOffsetsFragmentBuffer = m_device->safeCreateBuffer(m_fragmentDynamicOffset + RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float));
         auto* fragmentBufferPtr = m_dynamicOffsetsFragmentBuffer.contents;
         RELEASE_ASSERT(fragmentBufferPtr);
         static_assert(sizeof(float) == sizeof(uint32_t));
