@@ -320,8 +320,25 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
     }
 
     GraphicsContextStateSaver backgroundClipStateSaver(context, false);
-    RefPtr<ImageBuffer> maskImage;
-    FloatRect maskRect;
+
+    auto backgroundClipOuterLayerScope = TransparencyLayerScope(context, 1, false);
+    auto backgroundClipInnerLayerScope = TransparencyLayerScope(context, 1, false);
+
+    auto setupMaskingBackgroundClip = [&](const LayoutRect& borderRect, const std::function<void(const LayoutRect&, const FloatRect&)>& paintFunction) {
+        auto transparencyLayerBounds = snapRectToDevicePixels(rect, deviceScaleFactor);
+        transparencyLayerBounds.intersect(snapRectToDevicePixels(m_paintInfo.rect, deviceScaleFactor));
+        transparencyLayerBounds.inflate(1);
+
+        backgroundClipStateSaver.save();
+        context.clip(transparencyLayerBounds);
+
+        backgroundClipOuterLayerScope.beginLayer(1);
+        paintFunction(borderRect, transparencyLayerBounds);
+
+        context.setCompositeOperation(CompositeOperator::SourceIn);
+        backgroundClipInnerLayerScope.beginLayer(1);
+        context.setCompositeOperation(CompositeOperator::SourceOver);
+    };
 
     switch (layerClip) {
     case FillBox::BorderBox:
@@ -344,22 +361,9 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
         // We have to draw our text into a mask that can then be used to clip background drawing.
         // First figure out how big the mask has to be. It should be no bigger than what we need
         // to actually render, so we should intersect the dirty rect with the border box of the background.
-        maskRect = snapRectToDevicePixels(rect, deviceScaleFactor);
-        maskRect.intersect(snapRectToDevicePixels(m_paintInfo.rect, deviceScaleFactor));
-
-        maskRect.inflate(1);
-
-        // Now create the mask.
-        maskImage = context.createAlignedImageBuffer(maskRect.size());
-        if (!maskImage)
-            return;
-
-        m_renderer.paintMaskForTextFillBox(maskImage.get(), maskRect, inlineBoxIterator, scrolledPaintRect);
-
-        // The mask has been created. Now we just need to clip to it.
-        backgroundClipStateSaver.save();
-        context.clip(maskRect);
-        context.beginTransparencyLayer(1);
+        setupMaskingBackgroundClip(rect, [&](const LayoutRect&, const FloatRect& paintRect) {
+            m_renderer.paintMaskForTextFillBox(context, paintRect, inlineBoxIterator, scrolledPaintRect);
+        });
         break;
     }
     case FillBox::BorderArea: {
@@ -367,30 +371,14 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
         if (borderAreaPath) {
             backgroundClipStateSaver.save();
             context.clipPath(borderAreaPath.value());
-        } else {
-            maskRect = snapRectToDevicePixels(rect, deviceScaleFactor);
-            maskRect.intersect(snapRectToDevicePixels(m_paintInfo.rect, deviceScaleFactor));
-
-            maskRect.inflate(1);
-
-            // Now create the mask.
-            maskImage = context.createAlignedImageBuffer(maskRect.size());
-            if (!maskImage)
-                return;
-
-            // paint the border
-            {
-                auto& maskContext = maskImage->context();
-                maskContext.translate(-maskRect.location());
-                auto maskPaintInfo = PaintInfo { maskContext, LayoutRect { maskRect }, PaintPhase::BlockBackground, PaintBehavior::ForceBlackBorder };
-                auto borderPainter = BorderPainter { m_renderer, maskPaintInfo };
-                borderPainter.paintBorder(rect, style);
-            }
-
-            backgroundClipStateSaver.save();
-            context.clip(maskRect);
-            context.beginTransparencyLayer(1);
+            break;
         }
+
+        setupMaskingBackgroundClip(rect, [&](const LayoutRect& borderRect, const FloatRect& paintRect) {
+            auto borderPaintInfo = PaintInfo { context, LayoutRect { paintRect }, PaintPhase::BlockBackground, PaintBehavior::ForceBlackBorder };
+            auto borderPainter = BorderPainter { m_renderer, borderPaintInfo };
+            borderPainter.paintBorder(borderRect, style);
+        });
         break;
     }
     case FillBox::NoClip:
@@ -484,11 +472,6 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
             if (m_renderer.element() && !context.paintingDisabled())
                 m_renderer.element()->setHasEverPaintedImages(true);
         }
-    }
-
-    if (maskImage) {
-        context.drawConsumingImageBuffer(WTFMove(maskImage), maskRect, { CompositeOperator::DestinationIn });
-        context.endTransparencyLayer();
     }
 }
 
