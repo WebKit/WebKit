@@ -792,7 +792,8 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         if (!elementChild->isAnonymous() || elementChild->style().pseudoElementType() != PseudoId::None)
             continue;
 
-        if (propagationType == StylePropagationType::BlockChildrenOnly && !is<RenderBlock>(elementChild.get()))
+        bool isBlockOrRuby = is<RenderBlock>(elementChild.get()) || elementChild->style().display() == DisplayType::Ruby;
+        if (propagationType == StylePropagationType::BlockAndRubyChildren && !isBlockOrRuby)
             continue;
 
         // RenderFragmentedFlows are updated through the RenderView::styleDidChange function.

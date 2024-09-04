@@ -314,7 +314,7 @@ protected:
 
     enum class StylePropagationType {
         AllChildren,
-        BlockChildrenOnly
+        BlockAndRubyChildren
     };
     void propagateStyleToAnonymousChildren(StylePropagationType);
 
