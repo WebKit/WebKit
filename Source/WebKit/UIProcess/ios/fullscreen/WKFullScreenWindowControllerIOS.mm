@@ -1072,18 +1072,10 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         // apply the default web view state (which sets both parameters anyways)?
         [webView _setMinimumEffectiveDeviceWidth:0];
         [webView _setViewScale:1.f];
-        WebKit::WKWebViewState().applyTo(webView.get());
         [webView _overrideZoomScaleParametersWithMinimumZoomScale:WebKit::baseScale maximumZoomScale:WebKit::baseScale allowUserScaling:NO];
         [webView _resetContentOffset];
         [_window insertSubview:webView.get() atIndex:0];
-
-        // _obscuredInsets and _unobscuredSafeAreaInsets were already reset by
-        // WKWebViewState::applyTo(), but inserting webView into _window may change its
-        // safeAreaInsets, which may cause the client to set new (un)obscured insets.
-        // Therefore we need to reset them again.
-        [webView _resetObscuredInsets];
-        [webView _resetUnobscuredSafeAreaInsets];
-
+        WebKit::WKWebViewState().applyTo(webView.get());
         [webView setNeedsLayout];
         [webView layoutIfNeeded];
 
@@ -1108,6 +1100,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
             [self._webView _doAfterNextVisibleContentRectAndPresentationUpdate:makeBlockPtr([self, protectedSelf, logIdentifier] {
                 if (auto* manager = [protectedSelf _manager]) {
                     OBJC_ALWAYS_LOG(logIdentifier, "presentation updated");
+                    WebKit::WKWebViewState().applyTo(self._webView);
                     manager->willEnterFullScreen();
                     return;
                 }
