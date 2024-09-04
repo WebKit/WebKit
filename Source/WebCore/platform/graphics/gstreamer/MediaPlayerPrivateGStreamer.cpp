@@ -850,12 +850,14 @@ const PlatformTimeRanges& MediaPlayerPrivateGStreamer::buffered() const
 
 MediaTime MediaPlayerPrivateGStreamer::maxTimeSeekable() const
 {
-    GST_TRACE_OBJECT(pipeline(), "errorOccured: %s, isLiveStream: %s", boolForPrinting(m_didErrorOccur), boolForPrinting(m_isLiveStream));
+    GST_TRACE_OBJECT(pipeline(), "errorOccured: %s", boolForPrinting(m_didErrorOccur));
     if (m_didErrorOccur)
         return MediaTime::zeroTime();
 
-    if (m_isLiveStream.value_or(false))
-        return MediaTime::zeroTime();
+    bool isLiveStream = m_isLiveStream.value_or(false);
+    GST_TRACE_OBJECT(pipeline(), "isLiveStream: %s", boolForPrinting(isLiveStream));
+    if (isLiveStream)
+        return MediaTime::positiveInfiniteTime();
 
     if (isMediaStreamPlayer())
         return MediaTime::zeroTime();

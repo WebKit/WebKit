@@ -4093,6 +4093,8 @@ ExceptionOr<void> HTMLMediaElement::setCurrentTimeForBindings(double time)
     if (m_mediaController)
         return Exception { ExceptionCode::InvalidStateError };
 
+    time = clampTo(time, 0.0);
+
     if (m_readyState == HAVE_NOTHING || !m_player) {
         m_defaultPlaybackStartPosition = MediaTime::createWithDouble(time);
         return { };
