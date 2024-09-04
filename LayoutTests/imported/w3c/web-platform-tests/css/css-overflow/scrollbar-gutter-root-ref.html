@@ -6,10 +6,8 @@
 
 <style>
     html {
-
         background-color: blue;
         margin: 10px;
-        margin-right: 25px;
         padding: 10px;
         border: 5px solid black;
     }
@@ -20,7 +18,7 @@
         border: 5px solid green;
     }
 
-    div {
+    #abspos {
         position:absolute;
         top:150px;
         left: 0px;
@@ -31,9 +29,19 @@
     }
 
 p {
-  background-color: purple;
-  color: white;
+    background-color: purple;
+    color: white;
 }
 </style>
+<div id="outer" style="width: 100px; height: 100px; overflow: scroll; left: -200px; position: absolute;">
+    <div id="inner" style="width: 100%; height: 200%;"></div>
+</div>
+<script>
+    var outer = document.getElementById("outer");
+    var inner = document.getElementById("inner");
+    // Compute scrollbar gutter size and add it as margin to the root element
+    document.documentElement.style.marginRight = String((outer.offsetWidth - inner.offsetWidth) + 10) + "px";
+</script>
+
 <p id="content">Should not have space around me in the inline axis.</p> 
-<div></div>
+<div id="abspos"> </div>
