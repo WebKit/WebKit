@@ -8120,6 +8120,9 @@ void Document::dispatchPageswapEvent(bool canTriggerCrossDocumentViewTransition,
     if (!settings().crossDocumentViewTransitionsEnabled())
         return;
 
+    if (!m_hasBeenRevealed)
+        canTriggerCrossDocumentViewTransition = false;
+
     RefPtr<ViewTransition> oldViewTransition;
 
     auto startTime = MonotonicTime::now();
