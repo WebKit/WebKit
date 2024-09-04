@@ -27,6 +27,7 @@
 
 #include "IDBIndexInfo.h"
 #include "IDBKeyPath.h"
+#include "IDBObjectStoreIdentifier.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -34,10 +35,9 @@ namespace WebCore {
 
 class IDBObjectStoreInfo {
 public:
-    WEBCORE_EXPORT IDBObjectStoreInfo();
-    WEBCORE_EXPORT IDBObjectStoreInfo(uint64_t identifier, const String& name, std::optional<IDBKeyPath>&&, bool autoIncrement, HashMap<uint64_t, IDBIndexInfo>&& = { });
+    WEBCORE_EXPORT IDBObjectStoreInfo(IDBObjectStoreIdentifier, const String& name, std::optional<IDBKeyPath>&&, bool autoIncrement, HashMap<uint64_t, IDBIndexInfo>&& = { });
 
-    uint64_t identifier() const { return m_identifier; }
+    IDBObjectStoreIdentifier identifier() const { return m_identifier; }
     const String& name() const { return m_name; }
     const std::optional<IDBKeyPath>& keyPath() const { return m_keyPath; }
     bool autoIncrement() const { return m_autoIncrement; }
@@ -66,7 +66,7 @@ public:
 #endif
 
 private:
-    uint64_t m_identifier { 0 };
+    IDBObjectStoreIdentifier m_identifier;
     String m_name;
     std::optional<IDBKeyPath> m_keyPath;
     bool m_autoIncrement { false };
@@ -75,3 +75,15 @@ private:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct HashTraits<WebCore::IDBObjectStoreInfo> : GenericHashTraits<WebCore::IDBObjectStoreInfo> {
+    static constexpr bool emptyValueIsZero = false;
+    static WebCore::IDBObjectStoreInfo emptyValue()
+    {
+        return WebCore::IDBObjectStoreInfo { HashTraits<WebCore::IDBObjectStoreIdentifier>::emptyValue(), { }, { }, false };
+    }
+};
+
+} // namespace WTF

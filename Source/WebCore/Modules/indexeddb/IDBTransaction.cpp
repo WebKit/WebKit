@@ -231,7 +231,7 @@ void IDBTransaction::abortInternal()
         Locker locker { m_referencedObjectStoreLock };
 
         auto& info = m_database->info();
-        Vector<uint64_t> identifiersToRemove;
+        Vector<IDBObjectStoreIdentifier> identifiersToRemove;
         Vector<std::unique_ptr<IDBObjectStore>> objectStoresToDelete;
         for (auto& iterator : m_deletedObjectStores) {
             if (info.infoForExistingObjectStore(iterator.key)) {
@@ -707,7 +707,7 @@ void IDBTransaction::renameObjectStore(IDBObjectStore& objectStore, const String
     ASSERT(!m_referencedObjectStores.contains(newName));
     ASSERT(m_referencedObjectStores.get(objectStore.info().name()) == &objectStore);
 
-    uint64_t objectStoreIdentifier = objectStore.info().identifier();
+    auto objectStoreIdentifier = objectStore.info().identifier();
 
     LOG(IndexedDBOperations, "IDB rename object store operation: %s to %s", objectStore.info().condensedLoggingString().utf8().data(), newName.utf8().data());
     scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, [protectedThis = Ref { *this }] (const auto& result) {
@@ -719,7 +719,7 @@ void IDBTransaction::renameObjectStore(IDBObjectStore& objectStore, const String
     m_referencedObjectStores.set(newName, m_referencedObjectStores.take(objectStore.info().name()));
 }
 
-void IDBTransaction::renameObjectStoreOnServer(IDBClient::TransactionOperation& operation, const uint64_t& objectStoreIdentifier, const String& newName)
+void IDBTransaction::renameObjectStoreOnServer(IDBClient::TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName)
 {
     LOG(IndexedDB, "IDBTransaction::renameObjectStoreOnServer");
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
@@ -795,10 +795,10 @@ void IDBTransaction::renameIndex(IDBIndex& index, const String& newName)
 
     index.objectStore().renameReferencedIndex(index, newName);
 
-    uint64_t objectStoreIdentifier = index.objectStore().info().identifier();
+    auto objectStoreIdentifier = index.objectStore().info().identifier();
     uint64_t indexIdentifier = index.info().identifier();
 
-    LOG(IndexedDBOperations, "IDB rename index operation: %s to %s under object store %" PRIu64, index.info().condensedLoggingString().utf8().data(), newName.utf8().data(), index.info().objectStoreIdentifier());
+    LOG(IndexedDBOperations, "IDB rename index operation: %s to %s under object store %" PRIu64, index.info().condensedLoggingString().utf8().data(), newName.utf8().data(), objectStoreIdentifier.toRawValue());
     scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, [protectedThis = Ref { *this }] (const auto& result) {
         protectedThis->didRenameIndexOnServer(result);
     }, [protectedThis = Ref { *this }, objectStoreIdentifier, indexIdentifier, newName = newName.isolatedCopy()] (auto& operation) {
@@ -806,7 +806,7 @@ void IDBTransaction::renameIndex(IDBIndex& index, const String& newName)
     }), IsWriteOperation::Yes);
 }
 
-void IDBTransaction::renameIndexOnServer(IDBClient::TransactionOperation& operation, const uint64_t& objectStoreIdentifier, const uint64_t& indexIdentifier, const String& newName)
+void IDBTransaction::renameIndexOnServer(IDBClient::TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, const uint64_t& indexIdentifier, const String& newName)
 {
     LOG(IndexedDB, "IDBTransaction::renameIndexOnServer");
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
@@ -1208,7 +1208,7 @@ Ref<IDBRequest> IDBTransaction::requestClearObjectStore(IDBObjectStore& objectSt
     auto request = IDBRequest::create(*scriptExecutionContext(), objectStore, *this);
     addRequest(request.get());
 
-    uint64_t objectStoreIdentifier = objectStore.info().identifier();
+    auto objectStoreIdentifier = objectStore.info().identifier();
 
     LOG(IndexedDBOperations, "IDB clear object store operation: %s", objectStore.info().condensedLoggingString().utf8().data());
     scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, request.get(), [protectedThis = Ref { *this }, request] (const auto& result) {
@@ -1220,7 +1220,7 @@ Ref<IDBRequest> IDBTransaction::requestClearObjectStore(IDBObjectStore& objectSt
     return request;
 }
 
-void IDBTransaction::clearObjectStoreOnServer(IDBClient::TransactionOperation& operation, const uint64_t& objectStoreIdentifier)
+void IDBTransaction::clearObjectStoreOnServer(IDBClient::TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier)
 {
     LOG(IndexedDB, "IDBTransaction::clearObjectStoreOnServer");
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
@@ -1360,13 +1360,13 @@ void IDBTransaction::didDeleteObjectStoreOnServer(const IDBResultData& resultDat
     ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::DeleteObjectStoreSuccess || resultData.type() == IDBResultType::Error);
 }
 
-void IDBTransaction::deleteIndex(uint64_t objectStoreIdentifier, const String& indexName)
+void IDBTransaction::deleteIndex(IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
 {
     LOG(IndexedDB, "IDBTransaction::deleteIndex");
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(isVersionChange());
 
-    LOG(IndexedDBOperations, "IDB delete index operation: %s (%" PRIu64 ")", indexName.utf8().data(), objectStoreIdentifier);
+    LOG(IndexedDBOperations, "IDB delete index operation: %s (%" PRIu64 ")", indexName.utf8().data(), objectStoreIdentifier.toRawValue());
     scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, [protectedThis = Ref { *this }] (const auto& result) {
         protectedThis->didDeleteIndexOnServer(result);
     }, [protectedThis = Ref { *this }, objectStoreIdentifier, indexName = indexName.isolatedCopy()] (auto& operation) {
@@ -1374,7 +1374,7 @@ void IDBTransaction::deleteIndex(uint64_t objectStoreIdentifier, const String& i
     }), IsWriteOperation::Yes);
 }
 
-void IDBTransaction::deleteIndexOnServer(IDBClient::TransactionOperation& operation, const uint64_t& objectStoreIdentifier, const String& indexName)
+void IDBTransaction::deleteIndexOnServer(IDBClient::TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
 {
     LOG(IndexedDB, "IDBTransaction::deleteIndexOnServer");
     ASSERT(isVersionChange());

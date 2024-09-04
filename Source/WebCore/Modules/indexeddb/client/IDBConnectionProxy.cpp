@@ -143,7 +143,7 @@ void IDBConnectionProxy::createObjectStore(TransactionOperation& operation, cons
     callConnectionOnMainThread(&IDBConnectionToServer::createObjectStore, requestData, info);
 }
 
-void IDBConnectionProxy::renameObjectStore(TransactionOperation& operation, uint64_t objectStoreIdentifier, const String& newName)
+void IDBConnectionProxy::renameObjectStore(TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName)
 {
     const IDBRequestData requestData { operation };
     saveOperation(operation);
@@ -151,7 +151,7 @@ void IDBConnectionProxy::renameObjectStore(TransactionOperation& operation, uint
     callConnectionOnMainThread(&IDBConnectionToServer::renameObjectStore, requestData, objectStoreIdentifier, newName);
 }
 
-void IDBConnectionProxy::renameIndex(TransactionOperation& operation, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+void IDBConnectionProxy::renameIndex(TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
 {
     const IDBRequestData requestData { operation };
     saveOperation(operation);
@@ -167,7 +167,7 @@ void IDBConnectionProxy::deleteObjectStore(TransactionOperation& operation, cons
     callConnectionOnMainThread(&IDBConnectionToServer::deleteObjectStore, requestData, objectStoreName);
 }
 
-void IDBConnectionProxy::clearObjectStore(TransactionOperation& operation, uint64_t objectStoreIdentifier)
+void IDBConnectionProxy::clearObjectStore(TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier)
 {
     const IDBRequestData requestData { operation };
     saveOperation(operation);
@@ -183,7 +183,7 @@ void IDBConnectionProxy::createIndex(TransactionOperation& operation, const IDBI
     callConnectionOnMainThread(&IDBConnectionToServer::createIndex, requestData, info);
 }
 
-void IDBConnectionProxy::deleteIndex(TransactionOperation& operation, uint64_t objectStoreIdentifier, const String& indexName)
+void IDBConnectionProxy::deleteIndex(TransactionOperation& operation, IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
 {
     const IDBRequestData requestData { operation };
     saveOperation(operation);

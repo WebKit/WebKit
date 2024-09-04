@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IDBKeyRangeData.h"
+#include "IDBObjectStoreIdentifier.h"
 #include "IDBResourceIdentifier.h"
 #include <wtf/ArgumentCoder.h>
 
@@ -48,13 +49,13 @@ enum class CursorDuplicity {
 
 class IDBCursorInfo {
 public:
-    static IDBCursorInfo objectStoreCursor(IDBTransaction&, uint64_t objectStoreIdentifier, const IDBKeyRangeData&, IndexedDB::CursorDirection, IndexedDB::CursorType);
-    static IDBCursorInfo indexCursor(IDBTransaction&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData&, IndexedDB::CursorDirection, IndexedDB::CursorType);
+    static IDBCursorInfo objectStoreCursor(IDBTransaction&, IDBObjectStoreIdentifier, const IDBKeyRangeData&, IndexedDB::CursorDirection, IndexedDB::CursorType);
+    static IDBCursorInfo indexCursor(IDBTransaction&, IDBObjectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData&, IndexedDB::CursorDirection, IndexedDB::CursorType);
 
     IDBResourceIdentifier identifier() const { return m_cursorIdentifier; }
     IDBResourceIdentifier transactionIdentifier() const { return m_transactionIdentifier; }
     uint64_t sourceIdentifier() const { return m_sourceIdentifier; }
-    uint64_t objectStoreIdentifier() const { return m_objectStoreIdentifier; }
+    IDBObjectStoreIdentifier objectStoreIdentifier() const { return m_objectStoreIdentifier; }
 
     IndexedDB::CursorSource cursorSource() const { return m_source; }
     IndexedDB::CursorDirection cursorDirection() const { return m_direction; }
@@ -74,13 +75,13 @@ public:
 
 private:
     friend struct IPC::ArgumentCoder<IDBCursorInfo, void>;
-    WEBCORE_EXPORT IDBCursorInfo(const IDBResourceIdentifier&, const IDBResourceIdentifier&, uint64_t, uint64_t, const IDBKeyRangeData&, IndexedDB::CursorSource, IndexedDB::CursorDirection, IndexedDB::CursorType);
-    IDBCursorInfo(IDBTransaction&, uint64_t objectStoreIdentifier, const IDBKeyRangeData&, IndexedDB::CursorDirection, IndexedDB::CursorType);
-    IDBCursorInfo(IDBTransaction&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData&, IndexedDB::CursorDirection, IndexedDB::CursorType);
+    WEBCORE_EXPORT IDBCursorInfo(const IDBResourceIdentifier&, const IDBResourceIdentifier&, IDBObjectStoreIdentifier, uint64_t, const IDBKeyRangeData&, IndexedDB::CursorSource, IndexedDB::CursorDirection, IndexedDB::CursorType);
+    IDBCursorInfo(IDBTransaction&, IDBObjectStoreIdentifier, const IDBKeyRangeData&, IndexedDB::CursorDirection, IndexedDB::CursorType);
+    IDBCursorInfo(IDBTransaction&, IDBObjectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData&, IndexedDB::CursorDirection, IndexedDB::CursorType);
 
     IDBResourceIdentifier m_cursorIdentifier;
     IDBResourceIdentifier m_transactionIdentifier;
-    uint64_t m_objectStoreIdentifier { 0 };
+    IDBObjectStoreIdentifier m_objectStoreIdentifier;
     uint64_t m_sourceIdentifier { 0 };
 
     IDBKeyRangeData m_range;

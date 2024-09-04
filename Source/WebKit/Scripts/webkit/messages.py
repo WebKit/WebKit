@@ -320,6 +320,7 @@ def serialized_identifiers():
         'WebCore::FileSystemHandleIdentifier',
         'WebCore::FileSystemSyncAccessHandleIdentifier',
         'WebCore::FrameIdentifierID',
+        'WebCore::IDBObjectStoreIdentifier',
         'WebCore::ImageDecoderIdentifier',
         'WebCore::InbandGenericCueIdentifier',
         'WebCore::LayerHostingContextIdentifier',

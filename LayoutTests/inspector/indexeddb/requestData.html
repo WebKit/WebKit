@@ -6,6 +6,12 @@
 <script>
 function test()
 {
+    function sortedObjectStores(database) {
+        const stores = database.objectStores;
+        stores.sort((a, b) => a.name > b.name);
+        return stores;
+    }
+
     function objectPropertyPreview(remoteObject, name) {
         for (let propertyPreview of remoteObject.preview.propertyPreviews) {
             if (propertyPreview.name === name)
@@ -36,7 +42,8 @@ function test()
             IndexedDBAgent.requestDatabase(WI.networkManager.mainFrame.securityOrigin, "Database1", (error, database) => {
                 InspectorTest.expectNoError(error);
 
-                let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = database.objectStores;
+                InspectorTest.expectThat(database.objectStores.length === 3, "Database should have 3 object stores.");
+                let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = sortedObjectStores(database);
                 const securityOrigin = WI.networkManager.mainFrame.securityOrigin;
                 const skipCount = 0;
                 const pageSize = 10;
@@ -114,7 +121,8 @@ function test()
             IndexedDBAgent.requestDatabase(WI.networkManager.mainFrame.securityOrigin, "Database2", (error, database) => {
                 InspectorTest.expectNoError(error);
 
-                let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = database.objectStores;
+                InspectorTest.expectThat(database.objectStores.length === 3, "Database should have 3 object stores.");
+                let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = sortedObjectStores(database);
                 const securityOrigin = WI.networkManager.mainFrame.securityOrigin;
                 const indexName = "";
                 const pageSize = 2;
@@ -168,7 +176,8 @@ function test()
             IndexedDBAgent.requestDatabase(WI.networkManager.mainFrame.securityOrigin, "Database3", (error, database) => {
                 InspectorTest.expectNoError(error);
 
-                let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = database.objectStores;
+                InspectorTest.expectThat(database.objectStores.length === 3, "Database should have 3 object stores.");
+                let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = sortedObjectStores(database);
                 const securityOrigin = WI.networkManager.mainFrame.securityOrigin;
                 const indexName = "Name Index";
                 const skipCount = 0;

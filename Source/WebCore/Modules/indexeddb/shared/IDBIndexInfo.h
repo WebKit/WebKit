@@ -26,20 +26,21 @@
 #pragma once
 
 #include "IDBKeyPath.h"
+#include "IDBObjectStoreIdentifier.h"
+#include <wtf/HashTraits.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class IDBIndexInfo {
 public:
-    WEBCORE_EXPORT IDBIndexInfo();
-    WEBCORE_EXPORT IDBIndexInfo(uint64_t identifier, uint64_t objectStoreIdentifier, const String& name, IDBKeyPath&&, bool unique, bool multiEntry);
+    WEBCORE_EXPORT IDBIndexInfo(uint64_t identifier, IDBObjectStoreIdentifier, const String& name, IDBKeyPath&&, bool unique, bool multiEntry);
 
     WEBCORE_EXPORT IDBIndexInfo isolatedCopy() const &;
     WEBCORE_EXPORT IDBIndexInfo isolatedCopy() &&;
 
     uint64_t identifier() const { return m_identifier; }
-    uint64_t objectStoreIdentifier() const { return m_objectStoreIdentifier; }
+    IDBObjectStoreIdentifier objectStoreIdentifier() const { return m_objectStoreIdentifier; }
     const String& name() const { return m_name; }
     const IDBKeyPath& keyPath() const { return m_keyPath; }
     bool unique() const { return m_unique; }
@@ -58,7 +59,7 @@ public:
     void setIdentifier(uint64_t identifier) { m_identifier = identifier; }
 private:
     uint64_t m_identifier { 0 };
-    uint64_t m_objectStoreIdentifier { 0 };
+    IDBObjectStoreIdentifier m_objectStoreIdentifier;
     String m_name;
     IDBKeyPath m_keyPath;
     bool m_unique { true };
@@ -66,3 +67,15 @@ private:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct HashTraits<WebCore::IDBIndexInfo> : GenericHashTraits<WebCore::IDBIndexInfo> {
+    static constexpr bool emptyValueIsZero = false;
+    static WebCore::IDBIndexInfo emptyValue()
+    {
+        return WebCore::IDBIndexInfo { { }, HashTraits<WebCore::IDBObjectStoreIdentifier>::emptyValue(), { }, { }, false, false };
+    }
+};
+
+} // namespace WTF

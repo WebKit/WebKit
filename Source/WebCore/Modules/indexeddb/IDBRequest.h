@@ -32,11 +32,13 @@
 #include "IDBGetAllResult.h"
 #include "IDBGetResult.h"
 #include "IDBKeyData.h"
+#include "IDBObjectStoreIdentifier.h"
 #include "IDBResourceIdentifier.h"
 #include "IDBValue.h"
 #include "IndexedDB.h"
 #include "JSValueInWrappedObject.h"
 #include <JavaScriptCore/Strong.h>
+#include <optional>
 #include <wtf/Function.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMalloc.h>
@@ -95,7 +97,7 @@ public:
 
     bool isDone() const { return m_readyState == ReadyState::Done; }
 
-    uint64_t sourceObjectStoreIdentifier() const;
+    std::optional<IDBObjectStoreIdentifier> sourceObjectStoreIdentifier() const;
     uint64_t sourceIndexIdentifier() const;
     IndexedDB::ObjectStoreRecordType requestedObjectStoreRecordType() const;
     IndexedDB::IndexRecordType requestedIndexRecordType() const;

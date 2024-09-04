@@ -202,17 +202,17 @@ RefPtr<WebCore::IDBTransaction> IDBRequest::transaction() const
     return m_shouldExposeTransactionToDOM ? m_transaction : nullptr;
 }
 
-uint64_t IDBRequest::sourceObjectStoreIdentifier() const
+std::optional<IDBObjectStoreIdentifier> IDBRequest::sourceObjectStoreIdentifier() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
     if (!m_source)
-        return 0;
+        return std::nullopt;
 
     return WTF::switchOn(m_source.value(),
-        [] (const RefPtr<IDBObjectStore>& objectStore) -> uint64_t { return objectStore->info().identifier(); },
-        [] (const RefPtr<IDBIndex>& index) -> uint64_t { return index->info().objectStoreIdentifier(); },
-        [] (const RefPtr<IDBCursor>&) -> uint64_t { return 0; }
+        [] (const RefPtr<IDBObjectStore>& objectStore) -> std::optional<IDBObjectStoreIdentifier> { return objectStore->info().identifier(); },
+        [] (const RefPtr<IDBIndex>& index) -> std::optional<IDBObjectStoreIdentifier> { return index->info().objectStoreIdentifier(); },
+        [] (const RefPtr<IDBCursor>&) -> std::optional<IDBObjectStoreIdentifier> { return std::nullopt; }
     );
 }
 

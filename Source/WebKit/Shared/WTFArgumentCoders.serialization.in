@@ -178,6 +178,7 @@ template: enum class WebCore::DOMCacheIdentifierType
 template: enum class WebCore::DisplayConfigurationClientIdentifierType
 template: enum class WebCore::FileSystemHandleIdentifierType
 template: enum class WebCore::FileSystemSyncAccessHandleIdentifierType
+template: enum class WebCore::IDBObjectStoreIdentifierType
 template: enum class WebCore::LibWebRTCSocketIdentifierType
 template: enum class WebCore::MainThreadPermissionObserverIdentifierType
 template: enum class WebCore::OpaqueOriginIdentifierType

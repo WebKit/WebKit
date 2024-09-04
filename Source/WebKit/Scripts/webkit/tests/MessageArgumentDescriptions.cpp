@@ -120,6 +120,7 @@
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
 #include <WebCore/GlobalWindowIdentifier.h>
 #include <WebCore/IDBDatabaseConnectionIdentifier.h>
+#include <WebCore/IDBObjectStoreIdentifier.h>
 #include <WebCore/ImageDecoderIdentifier.h>
 #include <WebCore/InbandGenericCueIdentifier.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
@@ -492,6 +493,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebCore::FileSystemHandleIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::FileSystemSyncAccessHandleIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::FrameIdentifierID));
+    static_assert(sizeof(uint64_t) == sizeof(WebCore::IDBObjectStoreIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::ImageDecoderIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::InbandGenericCueIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::LayerHostingContextIdentifier));
@@ -637,6 +639,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::FileSystemHandleIdentifier"_s,
         "WebCore::FileSystemSyncAccessHandleIdentifier"_s,
         "WebCore::FrameIdentifierID"_s,
+        "WebCore::IDBObjectStoreIdentifier"_s,
         "WebCore::ImageDecoderIdentifier"_s,
         "WebCore::InbandGenericCueIdentifier"_s,
         "WebCore::LayerHostingContextIdentifier"_s,

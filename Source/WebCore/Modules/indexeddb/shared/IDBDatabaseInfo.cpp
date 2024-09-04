@@ -33,11 +33,10 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBDatabaseInfo);
 
-IDBDatabaseInfo::IDBDatabaseInfo(const String& name, uint64_t version, uint64_t maxIndexID, uint64_t maxObjectStoreID, HashMap<uint64_t, IDBObjectStoreInfo>&& objectStoreMap)
+IDBDatabaseInfo::IDBDatabaseInfo(const String& name, uint64_t version, uint64_t maxIndexID, HashMap<IDBObjectStoreIdentifier, IDBObjectStoreInfo>&& objectStoreMap)
     : m_name(name)
     , m_version(version)
     , m_maxIndexID(maxIndexID)
-    , m_maxObjectStoreID(maxObjectStoreID)
     , m_objectStoreMap(WTFMove(objectStoreMap))
 {
 }
@@ -46,7 +45,6 @@ IDBDatabaseInfo::IDBDatabaseInfo(const IDBDatabaseInfo& other, IsolatedCopyTag)
     : m_name(other.m_name.isolatedCopy())
     , m_version(other.m_version)
     , m_maxIndexID(other.m_maxIndexID)
-    , m_maxObjectStoreID(other.m_maxObjectStoreID)
 {
     for (const auto& entry : other.m_objectStoreMap)
         m_objectStoreMap.set(entry.key, entry.value.isolatedCopy());
@@ -69,7 +67,14 @@ bool IDBDatabaseInfo::hasObjectStore(const String& name) const
 
 IDBObjectStoreInfo IDBDatabaseInfo::createNewObjectStore(const String& name, std::optional<IDBKeyPath>&& keyPath, bool autoIncrement)
 {
-    IDBObjectStoreInfo info(++m_maxObjectStoreID, name, WTFMove(keyPath), autoIncrement);
+    // ObjectIdentifier generation begins anew from 1 each time the program is restarted. But the IDBObjectStores
+    // held in m_objectStoreMap and their identifiers are perisisted to disk. So we must ensure that newly created
+    // identifiers do not conflict with identifiers for pre-existing IDBObjectStores loaded from disk.
+    auto objectStoreIdentifier = IDBObjectStoreIdentifier::generate();
+    while (m_objectStoreMap.contains(objectStoreIdentifier))
+        objectStoreIdentifier = IDBObjectStoreIdentifier::generate();
+
+    IDBObjectStoreInfo info(objectStoreIdentifier, name, WTFMove(keyPath), autoIncrement);
     m_objectStoreMap.set(info.identifier(), info);
     return info;
 }
@@ -77,14 +82,10 @@ IDBObjectStoreInfo IDBDatabaseInfo::createNewObjectStore(const String& name, std
 void IDBDatabaseInfo::addExistingObjectStore(const IDBObjectStoreInfo& info)
 {
     ASSERT(!m_objectStoreMap.contains(info.identifier()));
-
-    if (info.identifier() > m_maxObjectStoreID)
-        m_maxObjectStoreID = info.identifier();
-
     m_objectStoreMap.set(info.identifier(), info);
 }
 
-IDBObjectStoreInfo* IDBDatabaseInfo::getInfoForExistingObjectStore(uint64_t objectStoreIdentifier)
+IDBObjectStoreInfo* IDBDatabaseInfo::getInfoForExistingObjectStore(IDBObjectStoreIdentifier objectStoreIdentifier)
 {
     auto iterator = m_objectStoreMap.find(objectStoreIdentifier);
     if (iterator == m_objectStoreMap.end())
@@ -103,12 +104,12 @@ IDBObjectStoreInfo* IDBDatabaseInfo::getInfoForExistingObjectStore(const String&
     return nullptr;
 }
 
-const IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(uint64_t objectStoreIdentifier) const
+const IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(IDBObjectStoreIdentifier objectStoreIdentifier) const
 {
     return const_cast<IDBDatabaseInfo*>(this)->getInfoForExistingObjectStore(objectStoreIdentifier);
 }
 
-IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(uint64_t objectStoreIdentifier)
+IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(IDBObjectStoreIdentifier objectStoreIdentifier)
 {
     return getInfoForExistingObjectStore(objectStoreIdentifier);
 }
@@ -123,7 +124,7 @@ IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(const String& na
     return getInfoForExistingObjectStore(name);
 }
 
-void IDBDatabaseInfo::renameObjectStore(uint64_t objectStoreIdentifier, const String& newName)
+void IDBDatabaseInfo::renameObjectStore(IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName)
 {
     auto* info = infoForExistingObjectStore(objectStoreIdentifier);
     if (!info)
@@ -148,7 +149,7 @@ void IDBDatabaseInfo::deleteObjectStore(const String& objectStoreName)
     m_objectStoreMap.remove(info->identifier());
 }
 
-void IDBDatabaseInfo::deleteObjectStore(uint64_t objectStoreIdentifier)
+void IDBDatabaseInfo::deleteObjectStore(IDBObjectStoreIdentifier objectStoreIdentifier)
 {
     m_objectStoreMap.remove(objectStoreIdentifier);
 }

@@ -6,6 +6,12 @@
 <script>
 function test()
 {
+    function sortedObjectStores(database) {
+        const stores = database.objectStores;
+        stores.sort((a, b) => a.name > b.name);
+        return stores;
+    }
+
     let suite = InspectorTest.createAsyncSuite("IndexedDB.clearObjectStore");
 
     suite.addTestCase({
@@ -41,7 +47,8 @@ function test()
                 }
 
                 let securityOrigin = WI.networkManager.mainFrame.securityOrigin;
-                let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = database.objectStores;
+                InspectorTest.expectThat(database.objectStores.length === 3, "Database should have 3 object stores.");
+                let [emptyObjectStore, reviewersObjectStore, statsObjectStore] = sortedObjectStores(database);
                 let instructions = [
                     { type: "check", objectStore: emptyObjectStore, expectedCount: 0, message: "'Empty' object store should always be empty." },
                     { type: "check", objectStore: reviewersObjectStore, expectedCount: 4, message: "'Reviewers' object store should start with 4 entries." },

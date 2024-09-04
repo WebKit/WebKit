@@ -6,6 +6,12 @@
 <script>
 function test()
 {
+    function sortedObjectStores(database) {
+        const stores = database.objectStores;
+        stores.sort((a, b) => a.name > b.name);
+        return stores;
+    }
+
     let suite = InspectorTest.createAsyncSuite("IndexedDB.requestDatabase");
 
     suite.addTestCase({
@@ -45,7 +51,7 @@ function test()
             .then((event) => {
                 IndexedDBAgent.requestDatabase(WI.networkManager.mainFrame.securityOrigin, "CompleteDatabase", (error, databaseWithObjectStores) => {
                     InspectorTest.expectNoError(error);
-                    let objectStores = databaseWithObjectStores.objectStores;
+                    let objectStores = sortedObjectStores(databaseWithObjectStores);
                     InspectorTest.expectThat(databaseWithObjectStores.name === "CompleteDatabase", "Database name should be 'EmptyDatabase'.");
                     InspectorTest.expectThat(databaseWithObjectStores.version === 456, "Database version should be 456.");
                     InspectorTest.expectThat(databaseWithObjectStores.objectStores.length === 3, "Database should have 3 object stores.");

@@ -46,7 +46,7 @@ IDBRequestData::IDBRequestData(IDBClient::TransactionOperation& operation)
         m_cursorIdentifier = *operation.cursorIdentifier();
 }
 
-IDBRequestData::IDBRequestData(IDBConnectionIdentifier serverConnectionIdentifier, IDBResourceIdentifier requestIdentifier, IDBResourceIdentifier transactionIdentifier, std::optional<IDBResourceIdentifier>&& cursorIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType indexRecordType, uint64_t requestedVersion, IndexedDB::RequestType requestType)
+IDBRequestData::IDBRequestData(IDBConnectionIdentifier serverConnectionIdentifier, IDBResourceIdentifier requestIdentifier, IDBResourceIdentifier transactionIdentifier, std::optional<IDBResourceIdentifier>&& cursorIdentifier, std::optional<IDBObjectStoreIdentifier> objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType indexRecordType, uint64_t requestedVersion, IndexedDB::RequestType requestType)
     : m_serverConnectionIdentifier(serverConnectionIdentifier)
     , m_requestIdentifier(requestIdentifier)
     , m_transactionIdentifier(transactionIdentifier)
@@ -118,10 +118,10 @@ IDBResourceIdentifier IDBRequestData::cursorIdentifier() const
     return *m_cursorIdentifier;
 }
 
-uint64_t IDBRequestData::objectStoreIdentifier() const
+IDBObjectStoreIdentifier IDBRequestData::objectStoreIdentifier() const
 {
     ASSERT(m_objectStoreIdentifier);
-    return m_objectStoreIdentifier;
+    return *m_objectStoreIdentifier;
 }
 
 uint64_t IDBRequestData::indexIdentifier() const

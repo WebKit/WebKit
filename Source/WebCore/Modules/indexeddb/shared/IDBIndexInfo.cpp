@@ -31,11 +31,7 @@
 
 namespace WebCore {
 
-IDBIndexInfo::IDBIndexInfo()
-{
-}
-
-IDBIndexInfo::IDBIndexInfo(uint64_t identifier, uint64_t objectStoreIdentifier, const String& name, IDBKeyPath&& keyPath, bool unique, bool multiEntry)
+IDBIndexInfo::IDBIndexInfo(uint64_t identifier, IDBObjectStoreIdentifier objectStoreIdentifier, const String& name, IDBKeyPath&& keyPath, bool unique, bool multiEntry)
     : m_identifier(identifier)
     , m_objectStoreIdentifier(objectStoreIdentifier)
     , m_name(name)
