@@ -145,6 +145,9 @@ id<MTLBlitCommandEncoder> CommandEncoder::ensureBlitCommandEncoder()
         finalizeBlitCommandEncoder();
     }
 
+    if (!m_device->isValid())
+        return nil;
+
     MTLBlitPassDescriptor *descriptor = [MTLBlitPassDescriptor new];
     m_blitCommandEncoder = [m_commandBuffer blitCommandEncoderWithDescriptor:descriptor];
     setExistingEncoder(m_blitCommandEncoder);
@@ -213,6 +216,9 @@ Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDe
         return ComputePassEncoder::createInvalid(*this, m_device, @"command buffer has already been committed");
 
     finalizeBlitCommandEncoder();
+
+    if (!m_device->isValid())
+        return ComputePassEncoder::createInvalid(*this, m_device, @"GPUDevice was invalid, this will be an error submitting the command buffer");
 
     MTLComputePassDescriptor* computePassDescriptor = [MTLComputePassDescriptor new];
     computePassDescriptor.dispatchType = MTLDispatchTypeSerial;
@@ -667,6 +673,9 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
 
         runClearEncoder(attachmentsToClear, depthStencilAttachmentToClear, depthAttachmentToClear, stencilAttachmentToClear);
     }
+
+    if (!m_device->isValid())
+        return RenderPassEncoder::createInvalid(*this, m_device, @"GPUDevice was invalid, this will be an error submitting the command buffer");
 
     auto mtlRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:mtlDescriptor];
     ASSERT(!m_existingCommandEncoder);

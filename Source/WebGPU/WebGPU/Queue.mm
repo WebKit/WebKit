@@ -156,6 +156,9 @@ void Queue::makeInvalid()
     m_onSubmittedWorkScheduledCallbacks.clear();
     m_onSubmittedWorkDoneCallbacks.clear();
 
+    while (m_createdNotCommittedBuffers.count)
+        removeMTLCommandBuffer(m_createdNotCommittedBuffers.firstObject);
+
     m_createdNotCommittedBuffers = nil;
     m_openCommandEncoders = nil;
 }
