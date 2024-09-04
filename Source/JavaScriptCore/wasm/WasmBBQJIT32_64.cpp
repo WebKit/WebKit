@@ -3052,56 +3052,67 @@ void BBQJIT::notifyFunctionUsesSIMD()
 PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDLoad(ExpressionType, uint32_t, ExpressionType&)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDStore(ExpressionType, ExpressionType, uint32_t)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDSplat(SIMDLane, ExpressionType, ExpressionType&)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDShuffle(v128_t, ExpressionType, ExpressionType, ExpressionType&)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDShift(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDExtmul(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDLoadSplat(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDLoadLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t, ExpressionType&)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDStoreLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDLoadExtend(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDLoadPad(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 void BBQJIT::materializeVectorConstant(v128_t, Location)
@@ -3112,46 +3123,56 @@ void BBQJIT::materializeVectorConstant(v128_t, Location)
 ExpressionType BBQJIT::addConstant(v128_t)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addExtractLane(SIMDInfo, uint8_t, Value, Value&)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addReplaceLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType, ExpressionType&)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDI_V(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType&)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDV_V(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType&)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDBitwiseSelect(ExpressionType, ExpressionType, ExpressionType, ExpressionType&)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDRelOp(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, B3::Air::Arg, ExpressionType&)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDV_VV(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addSIMDRelaxedFMA(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType, ExpressionType&)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return { };
+
 }
 
 void BBQJIT::emitStoreConst(Value constant, Location loc)
