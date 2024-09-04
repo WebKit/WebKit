@@ -44,9 +44,9 @@
 #endif
 
 #if USE(COORDINATED_GRAPHICS)
+#include "CoordinatedPlatformLayerBufferRGB.h"
 #include "GraphicsLayerContentsDisplayDelegateTextureMapper.h"
 #include "TextureMapperFlags.h"
-#include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxyGL.h"
 #else
 #include "PlatformLayerDisplayDelegate.h"
@@ -297,19 +297,12 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
             return;
 
         OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
-        GLint colorFormat;
-        if (contextAttributes().alpha) {
+        if (contextAttributes().alpha)
             flags.add(TextureMapperFlags::ShouldBlend);
-            colorFormat = GL_RGBA;
-        } else
-            colorFormat = GL_RGB;
 
         auto fboSize = getInternalFramebufferSize();
         Locker locker { proxy.lock() };
-        auto layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(m_compositorTextureID, fboSize, flags, colorFormat);
-#if PLATFORM(GTK) || PLATFORM(WPE)
-        layerBuffer->setFence(WTFMove(m_frameFence));
-#endif
+        auto layerBuffer = CoordinatedPlatformLayerBufferRGB::create(m_compositorTextureID, fboSize, flags, WTFMove(m_frameFence));
         downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
     });
     m_layerContentsDisplayDelegate = GraphicsLayerContentsDisplayDelegateTextureMapper::create(WTFMove(proxy));

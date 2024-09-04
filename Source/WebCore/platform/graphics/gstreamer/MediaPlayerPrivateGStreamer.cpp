@@ -113,8 +113,8 @@
 #if USE(TEXTURE_MAPPER)
 #include "BitmapTexture.h"
 #include "BitmapTexturePool.h"
-#include "GStreamerVideoFrameHolder.h"
-#include "TextureMapperPlatformLayerBuffer.h"
+#include "CoordinatedPlatformLayerBufferHolePunch.h"
+#include "CoordinatedPlatformLayerBufferVideo.h"
 #include "TextureMapperPlatformLayerProxyGL.h"
 #endif // USE(TEXTURE_MAPPER)
 
@@ -3328,49 +3328,18 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
 
     ++m_sampleCount;
 
-    auto internalCompositingOperation = [this](TextureMapperPlatformLayerProxyGL& proxy, std::unique_ptr<GstVideoFrameHolder>&& frameHolder) {
-        std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer;
-        if (frameHolder->hasMappedTextures()) {
-            layerBuffer = frameHolder->platformLayerBuffer();
-            if (!layerBuffer)
-                return;
-            layerBuffer->setUnmanagedBufferDataHolder(WTFMove(frameHolder));
-        } else {
-            layerBuffer = proxy.getAvailableBuffer(frameHolder->size(), GL_DONT_CARE);
-            if (UNLIKELY(!layerBuffer)) {
-                OptionSet<BitmapTexture::Flags> flags;
-                if (frameHolder->hasAlphaChannel())
-                    flags.add(BitmapTexture::Flags::SupportsAlpha);
-                auto texture = BitmapTexture::create(frameHolder->size(), flags);
-                layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
-            }
-            frameHolder->updateTexture(layerBuffer->texture());
-            auto extraFlags = m_textureMapperFlags;
-            if (frameHolder->hasAlphaChannel())
-                extraFlags.add({ TextureMapperFlags::ShouldBlend, TextureMapperFlags::ShouldPremultiply });
-            layerBuffer->setExtraFlags(extraFlags);
-        }
-        proxy.pushNextBuffer(WTFMove(layerBuffer));
-    };
-
-    auto proxyOperation =
-        [this, internalCompositingOperation](TextureMapperPlatformLayerProxyGL& proxy)
-        {
-            Locker locker { proxy.lock() };
-
-            if (!proxy.isActive()) {
-                GST_ERROR_OBJECT(pipeline(), "TextureMapperPlatformLayerProxyGL is inactive");
-                textureMapperPlatformLayerProxyWasInvalidated();
-                return;
-            }
-
-            auto frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_videoDecoderPlatform, m_textureMapperFlags, !m_isUsingFallbackVideoSink);
-            internalCompositingOperation(proxy, WTFMove(frameHolder));
-            m_hasFirstVideoSampleBeenRendered = true;
-        };
-
     ASSERT(is<TextureMapperPlatformLayerProxyGL>(*m_platformLayer));
-    proxyOperation(downcast<TextureMapperPlatformLayerProxyGL>(*m_platformLayer));
+    auto& proxy = downcast<TextureMapperPlatformLayerProxyGL>(*m_platformLayer);
+    Locker locker { proxy.lock() };
+    if (!proxy.isActive()) {
+        GST_ERROR_OBJECT(pipeline(), "TextureMapperPlatformLayerProxyGL is inactive");
+        textureMapperPlatformLayerProxyWasInvalidated();
+        return;
+    }
+
+    auto layerBuffer = CoordinatedPlatformLayerBufferVideo::create(m_sample.get(), m_videoDecoderPlatform, !m_isUsingFallbackVideoSink, m_textureMapperFlags);
+    proxy.pushNextBuffer(WTFMove(layerBuffer));
+    m_hasFirstVideoSampleBeenRendered = true;
 }
 #endif // USE(TEXTURE_MAPPER)
 
@@ -3808,30 +3777,13 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GRefPtr<GstSample>&& sample)
     }
 
 #if USE(TEXTURE_MAPPER)
-    if (m_isUsingFallbackVideoSink) {
-        Locker locker { m_drawLock };
-        auto proxyOperation =
-            [this](TextureMapperPlatformLayerProxyGL& proxy)
-            {
-                return proxy.scheduleUpdateOnCompositorThread([this] { this->pushTextureToCompositor(); });
-            };
-
-        ASSERT(is<TextureMapperPlatformLayerProxyGL>(*m_platformLayer));
-        if (!proxyOperation(downcast<TextureMapperPlatformLayerProxyGL>(*m_platformLayer)))
-            return;
-
-        m_drawTimer.startOneShot(0_s);
-        m_drawCondition.wait(m_drawLock);
-    } else {
 #if USE(TEXTURE_MAPPER_DMABUF)
-        if (is<TextureMapperPlatformLayerProxyDMABuf>(*m_platformLayer)) {
-            pushDMABufToCompositor();
-            return;
-        }
-#endif
-
-        pushTextureToCompositor();
+    if (is<TextureMapperPlatformLayerProxyDMABuf>(*m_platformLayer)) {
+        pushDMABufToCompositor();
+        return;
     }
+#endif
+    pushTextureToCompositor();
 #endif // USE(TEXTURE_MAPPER)
 }
 
@@ -3873,21 +3825,13 @@ void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
             gst_sample_get_segment(m_sample.get()), info ? gst_structure_copy(info) : nullptr));
     }
 
-    bool shouldWait = m_videoDecoderPlatform == GstVideoDecoderPlatform::Video4Linux;
-    auto proxyOperation = [shouldWait, pipeline = pipeline()](TextureMapperPlatformLayerProxyGL& proxy) {
-        GST_DEBUG_OBJECT(pipeline, "Flushing video sample %s", shouldWait ? "synchronously" : "");
-        if (shouldWait) {
-            if (proxy.isActive())
-                proxy.dropCurrentBufferWhilePreservingTexture(shouldWait);
-        } else {
-            Locker locker { proxy.lock() };
-            if (proxy.isActive())
-                proxy.dropCurrentBufferWhilePreservingTexture(shouldWait);
-        }
-    };
+    if (!is<TextureMapperPlatformLayerProxyGL>(*m_platformLayer))
+        return;
 
-    if (is<TextureMapperPlatformLayerProxyGL>(*m_platformLayer))
-        proxyOperation(downcast<TextureMapperPlatformLayerProxyGL>(*m_platformLayer));
+    bool shouldWait = m_videoDecoderPlatform == GstVideoDecoderPlatform::Video4Linux;
+    GST_DEBUG_OBJECT(pipeline(), "Flushing video sample %s", shouldWait ? "synchronously" : "");
+    auto& proxy = downcast<TextureMapperPlatformLayerProxyGL>(*m_platformLayer);
+    proxy.dropCurrentBufferWhilePreservingTexture(shouldWait);
 }
 
 void MediaPlayerPrivateGStreamer::setVisibleInViewport(bool isVisible)
@@ -4062,31 +4006,6 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSinkGL()
     return sink;
 }
 
-class GStreamerHolePunchClient : public TextureMapperPlatformLayerBuffer::HolePunchClient {
-public:
-    GStreamerHolePunchClient(GRefPtr<GstElement>&& videoSink, RefPtr<GStreamerQuirksManager>&& quirksManagerForTesting)
-        : m_videoSink(WTFMove(videoSink))
-        , m_quirksManagerForTesting(WTFMove(quirksManagerForTesting))
-    { };
-    void setVideoRectangle(const IntRect& rect) final
-    {
-        if (!m_videoSink)
-            return;
-
-        if (m_quirksManagerForTesting) {
-            m_quirksManagerForTesting->setHolePunchVideoRectangle(m_videoSink.get(), rect);
-            return;
-        }
-
-        auto& quirksManager = GStreamerQuirksManager::singleton();
-        quirksManager.setHolePunchVideoRectangle(m_videoSink.get(), rect);
-    }
-
-private:
-    GRefPtr<GstElement> m_videoSink;
-    RefPtr<GStreamerQuirksManager> m_quirksManagerForTesting;
-};
-
 bool MediaPlayerPrivateGStreamer::isHolePunchRenderingEnabled() const
 {
     if (m_quirksManagerForTesting)
@@ -4119,19 +4038,12 @@ GstElement* MediaPlayerPrivateGStreamer::createHolePunchVideoSink()
 
 void MediaPlayerPrivateGStreamer::pushNextHolePunchBuffer()
 {
-    auto proxyOperation =
-        [this](TextureMapperPlatformLayerProxyGL& proxy)
-        {
-            Locker locker { proxy.lock() };
-            std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperFlags::ShouldNotBlend, GL_DONT_CARE);
-            std::unique_ptr<GStreamerHolePunchClient> holePunchClient = makeUnique<GStreamerHolePunchClient>(m_videoSink.get(), RefPtr { m_quirksManagerForTesting });
-            layerBuffer->setHolePunchClient(WTFMove(holePunchClient));
-            proxy.pushNextBuffer(WTFMove(layerBuffer));
-        };
-
     ASSERT(isHolePunchRenderingEnabled());
     ASSERT(is<TextureMapperPlatformLayerProxyGL>(*m_platformLayer));
-    proxyOperation(downcast<TextureMapperPlatformLayerProxyGL>(*m_platformLayer));
+    auto& proxy = downcast<TextureMapperPlatformLayerProxyGL>(*m_platformLayer);
+    Locker locker { proxy.lock() };
+    auto layerBuffer = CoordinatedPlatformLayerBufferHolePunch::create(m_size, m_videoSink.get(), m_quirksManagerForTesting ? m_quirksManagerForTesting.copyRef() : RefPtr { &GStreamerQuirksManager::singleton() });
+    proxy.pushNextBuffer(WTFMove(layerBuffer));
 }
 
 bool MediaPlayerPrivateGStreamer::shouldIgnoreIntrinsicSize()

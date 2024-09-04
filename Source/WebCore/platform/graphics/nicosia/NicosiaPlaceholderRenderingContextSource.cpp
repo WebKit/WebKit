@@ -28,13 +28,12 @@
 #include "PlaceholderRenderingContext.h"
 
 #include "BitmapTexture.h"
+#include "CoordinatedPlatformLayerBufferRGB.h"
 #include "GLFence.h"
 #include "GraphicsLayerContentsDisplayDelegateTextureMapper.h"
 #include "ImageBuffer.h"
 #include "NativeImage.h"
-#include "NicosiaPlatformLayer.h"
 #include "TextureMapperFlags.h"
-#include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxyGL.h"
 #include <wtf/Lock.h>
 
@@ -170,11 +169,7 @@ void NicosiaPlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer&
 #endif
             }
 
-            auto layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
-            layerBuffer->setExtraFlags(TextureMapperFlags::ShouldBlend);
-#if PLATFORM(GTK) || PLATFORM(WPE)
-            layerBuffer->setFence(WTFMove(fence));
-#endif
+            auto layerBuffer = CoordinatedPlatformLayerBufferRGB::create(Ref { *texture }, { TextureMapperFlags::ShouldBlend }, WTFMove(fence));
             downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
 
         });

@@ -22,8 +22,8 @@
 #include "MediaPlayerPrivateHolePunch.h"
 
 #if USE(EXTERNAL_HOLEPUNCH)
+#include "CoordinatedPlatformLayerBufferHolePunch.h"
 #include "MediaPlayer.h"
-#include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxyGL.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -66,16 +66,11 @@ FloatSize MediaPlayerPrivateHolePunch::naturalSize() const
 
 void MediaPlayerPrivateHolePunch::pushNextHolePunchBuffer()
 {
-    auto proxyOperation =
-        [this](TextureMapperPlatformLayerProxyGL& proxy)
-        {
-            Locker locker { proxy.lock() };
-            std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperFlags::ShouldNotBlend, GL_DONT_CARE);
-            proxy.pushNextBuffer(WTFMove(layerBuffer));
-        };
-
     ASSERT(is<TextureMapperPlatformLayerProxyGL>(*m_platformLayer));
-    proxyOperation(downcast<TextureMapperPlatformLayerProxyGL>(*m_platformLayer));
+    auto& proxy = downcast<TextureMapperPlatformLayerProxyGL>(*m_platformLayer);
+    Locker locker { proxy.lock() };
+    auto layerBuffer = CoordinatedPlatformLayerBufferHolePunch::create(m_size);
+    proxy.pushNextBuffer(WTFMove(layerBuffer));
 }
 
 static HashSet<String>& mimeTypeCache()

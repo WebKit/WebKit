@@ -57,7 +57,6 @@ platform/graphics/gstreamer/GStreamerAudioMixer.cpp
 platform/graphics/gstreamer/GStreamerCommon.cpp
 platform/graphics/gstreamer/GStreamerRegistryScanner.cpp
 platform/graphics/gstreamer/GStreamerSinksWorkarounds.cpp
-platform/graphics/gstreamer/GStreamerVideoFrameHolder.cpp @no-unify
 platform/graphics/gstreamer/GStreamerVideoSinkCommon.cpp
 platform/graphics/gstreamer/GstAllocatorFastMalloc.cpp
 platform/graphics/gstreamer/ImageDecoderGStreamer.cpp

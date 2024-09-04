@@ -42,10 +42,10 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "BitmapTexture.h"
+#include "CoordinatedPlatformLayerBufferRGB.h"
 #include "GLFence.h"
 #include "GraphicsLayerContentsDisplayDelegateTextureMapper.h"
 #include "TextureMapperFlags.h"
-#include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxyGL.h"
 #include <skia/gpu/GrBackendSurface.h>
 #include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
@@ -97,10 +97,7 @@ ImageBufferSkiaAcceleratedBackend::ImageBufferSkiaAcceleratedBackend(const Param
                 return;
 
             Locker locker { proxy.lock() };
-            auto layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(m_texture.front->id(), m_texture.front->size(), TextureMapperFlags::ShouldBlend, GL_DONT_CARE);
-#if PLATFORM(GTK) || PLATFORM(WPE)
-            layerBuffer->setFence(WTFMove(fence));
-#endif
+            auto layerBuffer = CoordinatedPlatformLayerBufferRGB::create(m_texture.front->id(), m_texture.front->size(), { TextureMapperFlags::ShouldBlend }, WTFMove(fence));
             downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
         });
         m_layerContentsDisplayDelegate = GraphicsLayerContentsDisplayDelegateTextureMapper::create(WTFMove(proxy));
