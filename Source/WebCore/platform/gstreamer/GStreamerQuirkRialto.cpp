@@ -29,6 +29,7 @@
 #if USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
+#include "WebKitAudioSinkGStreamer.h"
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -87,6 +88,9 @@ GstElement* GStreamerQuirkRialto::createAudioSink()
 
 GstElement* GStreamerQuirkRialto::createWebAudioSink()
 {
+    if (GstElement* sink = webkitAudioSinkNew())
+        return sink;
+
     auto sink = makeGStreamerElement("rialtowebaudiosink", nullptr);
     RELEASE_ASSERT_WITH_MESSAGE(sink, "rialtowebaudiosink should be available in the system but it is not");
     return sink;
