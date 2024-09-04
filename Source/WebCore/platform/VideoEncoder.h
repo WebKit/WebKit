@@ -32,7 +32,7 @@
 #include "VideoFrame.h"
 #include <span>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Expected.h>
+#include <wtf/NativePromise.h>
 
 namespace WebCore {
 
@@ -77,12 +77,11 @@ public:
     static void create(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
     WEBCORE_EXPORT static void createLocalEncoder(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
 
-    using EncodeCallback = Function<void(String&&)>;
-    virtual void encode(RawFrame&&, bool shouldGenerateKeyFrame, EncodeCallback&&) = 0;
+    using EncodePromise = NativePromise<void, String>;
+    virtual Ref<EncodePromise> encode(RawFrame&&, bool shouldGenerateKeyFrame) = 0;
 
-    // FIXME: Evaluate whether we can make it virtual pure and not return a boolean.
-    virtual bool setRates(uint64_t /* bitRate */, double /* frameRate */, Function<void()>&&) { return false; }
-    virtual void flush(Function<void()>&&) = 0;
+    virtual Ref<GenericPromise> setRates(uint64_t /* bitRate */, double /* frameRate */) = 0;
+    virtual Ref<GenericPromise> flush() = 0;
     virtual void reset() = 0;
     virtual void close() = 0;
 

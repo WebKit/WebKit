@@ -63,8 +63,8 @@ public:
     ~RemoteVideoDecoder();
 
 private:
-    void decode(EncodedFrame&&, DecodeCallback&&) final;
-    void flush(Function<void()>&&) final;
+    Ref<DecodePromise> decode(EncodedFrame&&) final;
+    Ref<GenericPromise> flush() final;
     void reset() final;
     void close() final;
 
@@ -103,11 +103,11 @@ public:
     ~RemoteVideoEncoder();
 
 private:
-    void encode(RawFrame&&, bool shouldGenerateKeyFrame, EncodeCallback&&) final;
-    void flush(Function<void()>&&) final;
+    Ref<EncodePromise> encode(RawFrame&&, bool shouldGenerateKeyFrame) final;
+    Ref<GenericPromise> flush() final;
     void reset() final;
     void close() final;
-    bool setRates(uint64_t bitRate, double frameRate, Function<void()>&&) final;
+    Ref<GenericPromise> setRates(uint64_t bitRate, double frameRate) final;
 
     LibWebRTCCodecs::Encoder& m_internalEncoder;
     Ref<RemoteVideoEncoderCallbacks> m_callbacks;
@@ -219,24 +219,18 @@ RemoteVideoDecoder::~RemoteVideoDecoder()
     WebProcess::singleton().libWebRTCCodecs().releaseDecoder(m_internalDecoder);
 }
 
-void RemoteVideoDecoder::decode(EncodedFrame&& frame, DecodeCallback&& callback)
+Ref<RemoteVideoDecoder::DecodePromise> RemoteVideoDecoder::decode(EncodedFrame&& frame)
 {
     if (frame.duration)
         m_callbacks->addDuration(frame.timestamp, *frame.duration);
-    WebProcess::singleton().libWebRTCCodecs().decodeFrame(m_internalDecoder, frame.timestamp, frame.data, m_width, m_height, [callback = WTFMove(callback), callbacks = m_callbacks] (bool result) mutable {
-        callbacks->postTask([callback = WTFMove(callback), result]() mutable {
-            callback(result ? String { } : "Decoding task failed"_s);
-        });
-    });
+
+    auto& codecs = WebProcess::singleton().libWebRTCCodecs();
+    return codecs.decodeFrame(m_internalDecoder, frame.timestamp, frame.data, m_width, m_height);
 }
 
-void RemoteVideoDecoder::flush(Function<void()>&& callback)
+Ref<GenericPromise> RemoteVideoDecoder::flush()
 {
-    WebProcess::singleton().libWebRTCCodecs().flushDecoder(m_internalDecoder, [callback = WTFMove(callback), callbacks = m_callbacks]() mutable {
-        callbacks->postTask([callback = WTFMove(callback)]() mutable {
-            callback();
-        });
-    });
+    return WebProcess::singleton().libWebRTCCodecs().flushDecoder(m_internalDecoder);
 }
 
 void RemoteVideoDecoder::reset()
@@ -294,28 +288,21 @@ RemoteVideoEncoder::~RemoteVideoEncoder()
     WebProcess::singleton().libWebRTCCodecs().releaseEncoder(m_internalEncoder);
 }
 
-void RemoteVideoEncoder::encode(RawFrame&& rawFrame, bool shouldGenerateKeyFrame, EncodeCallback&& callback)
+Ref<RemoteVideoEncoder::EncodePromise> RemoteVideoEncoder::encode(RawFrame&& rawFrame, bool shouldGenerateKeyFrame)
 {
-    WebProcess::singleton().libWebRTCCodecs().encodeFrame(m_internalEncoder, rawFrame.frame.get(), rawFrame.timestamp, rawFrame.duration, shouldGenerateKeyFrame, [callback = WTFMove(callback), callbacks = m_callbacks] (bool result) mutable {
-        callbacks->postTask([callback = WTFMove(callback), result]() mutable {
-            callback(result ? String { } : "Encoding task failed"_s);
-        });
-    });
+    auto& codecs = WebProcess::singleton().libWebRTCCodecs();
+    return codecs.encodeFrame(m_internalEncoder, rawFrame.frame.get(), rawFrame.timestamp, rawFrame.duration, shouldGenerateKeyFrame);
 }
 
-bool RemoteVideoEncoder::setRates(uint64_t bitRate, double frameRate, Function<void()>&& callback)
+Ref<GenericPromise> RemoteVideoEncoder::setRates(uint64_t bitRate, double frameRate)
 {
     auto bitRateInKbps = bitRate / 1000;
-    WebProcess::singleton().libWebRTCCodecs().setEncodeRates(m_internalEncoder, bitRateInKbps, frameRate);
-    m_callbacks->postTask(WTFMove(callback));
-    return true;
+    return WebProcess::singleton().libWebRTCCodecs().setEncodeRates(m_internalEncoder, bitRateInKbps, frameRate);
 }
 
-void RemoteVideoEncoder::flush(Function<void()>&& callback)
+Ref<GenericPromise> RemoteVideoEncoder::flush()
 {
-    WebProcess::singleton().libWebRTCCodecs().flushEncoder(m_internalEncoder, [callback = WTFMove(callback), callbacks = m_callbacks]() mutable {
-        callbacks->postTask(WTFMove(callback));
-    });
+    return WebProcess::singleton().libWebRTCCodecs().flushEncoder(m_internalEncoder);
 }
 
 void RemoteVideoEncoder::reset()

@@ -35,14 +35,15 @@ class GStreamerVideoEncoder : public VideoEncoder {
 public:
     static void create(const String& codecName, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
 
-    GStreamerVideoEncoder(DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
+    GStreamerVideoEncoder(const Config&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
     ~GStreamerVideoEncoder();
 
 private:
-    void encode(RawFrame&&, bool shouldGenerateKeyFrame, EncodeCallback&&) final;
-    void flush(Function<void()>&&) final;
+    Ref<EncodePromise> encode(RawFrame&&, bool shouldGenerateKeyFrame) final;
+    Ref<GenericPromise> flush() final;
     void reset() final;
     void close() final;
+    Ref<GenericPromise> setRates(uint64_t bitRate, double frameRate) final;
 
     Ref<GStreamerInternalVideoEncoder> m_internalEncoder;
 };

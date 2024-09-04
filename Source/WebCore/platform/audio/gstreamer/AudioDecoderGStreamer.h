@@ -40,8 +40,8 @@ public:
     ~GStreamerAudioDecoder();
 
 private:
-    void decode(EncodedData&&, DecodeCallback&&) final;
-    void flush(Function<void()>&&) final;
+    Ref<DecodePromise> decode(EncodedData&&) final;
+    Ref<GenericPromise> flush() final;
     void reset() final;
     void close() final;
 

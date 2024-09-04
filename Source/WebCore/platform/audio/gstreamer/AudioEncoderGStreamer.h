@@ -40,8 +40,8 @@ public:
     ~GStreamerAudioEncoder();
 
 private:
-    void encode(RawFrame&&, EncodeCallback&&) final;
-    void flush(Function<void()>&&) final;
+    Ref<EncodePromise> encode(RawFrame&&) final;
+    Ref<GenericPromise> flush() final;
     void reset() final;
     void close() final;
 

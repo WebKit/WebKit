@@ -56,7 +56,7 @@ public:
     String initialize(const String& codecName, const AudioEncoder::Config&);
     void postTask(Function<void()>&& task) { m_postTaskCallback(WTFMove(task)); }
     bool encode(AudioEncoder::RawFrame&&);
-    void flush(Function<void()>&&);
+    void flush();
     void close() { m_isClosed = true; }
 
     const RefPtr<GStreamerElementHarness> harness() const { return m_harness; }
@@ -139,33 +139,26 @@ GStreamerAudioEncoder::~GStreamerAudioEncoder()
     close();
 }
 
-void GStreamerAudioEncoder::encode(RawFrame&& frame, EncodeCallback&& callback)
+Ref<AudioEncoder::EncodePromise> GStreamerAudioEncoder::encode(RawFrame&& frame)
 {
-    gstEncoderWorkQueue().dispatch([frame = WTFMove(frame), encoder = m_internalEncoder, callback = WTFMove(callback)]() mutable {
+    return invokeAsync(gstEncoderWorkQueue(), [frame = WTFMove(frame), encoder = m_internalEncoder]() mutable {
         auto result = encoder->encode(WTFMove(frame));
         if (encoder->isClosed())
-            return;
+            return EncodePromise::createAndReject("Empty frame"_s);
 
-        String resultString;
-        if (result)
-            encoder->harness()->processOutputSamples();
-        else
-            resultString = "Encoding failed"_s;
+        if (!result)
+            return EncodePromise::createAndReject("Encoding failed"_s);
 
-        encoder->postTask([weakEncoder = ThreadSafeWeakPtr { encoder.get() }, result = WTFMove(resultString), callback = WTFMove(callback)]() mutable {
-            auto encoder = weakEncoder.get();
-            if (!encoder || encoder->isClosed())
-                return;
-
-            callback(WTFMove(result));
-        });
+        encoder->harness()->processOutputSamples();
+        return EncodePromise::createAndResolve();
     });
 }
 
-void GStreamerAudioEncoder::flush(Function<void()>&& callback)
+Ref<GenericPromise> GStreamerAudioEncoder::flush()
 {
-    gstEncoderWorkQueue().dispatch([encoder = m_internalEncoder, callback = WTFMove(callback)]() mutable {
-        encoder->flush(WTFMove(callback));
+    return invokeAsync(gstEncoderWorkQueue(), [encoder = m_internalEncoder] {
+        encoder->flush();
+        return GenericPromise::createAndResolve();
     });
 }
 
@@ -245,7 +238,8 @@ GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(AudioEncoder::Descr
     }, static_cast<GConnectFlags>(0));
 
     m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
-        if (!weakThis.get())
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
         if (m_isClosed)
             return;
@@ -375,10 +369,9 @@ bool GStreamerInternalAudioEncoder::encode(AudioEncoder::RawFrame&& rawFrame)
     return m_harness->pushSample(gstAudioFrame->sample());
 }
 
-void GStreamerInternalAudioEncoder::flush(Function<void()>&& callback)
+void GStreamerInternalAudioEncoder::flush()
 {
     m_harness->flush();
-    m_postTaskCallback(WTFMove(callback));
 }
 
 #undef GST_CAT_DEFAULT

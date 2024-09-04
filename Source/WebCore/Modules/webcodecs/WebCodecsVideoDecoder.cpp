@@ -197,9 +197,12 @@ ExceptionOr<void> WebCodecsVideoDecoder::decode(Ref<WebCodecsEncodedVideoChunk>&
         --m_decodeQueueSize;
         scheduleDequeueEvent();
 
-        m_internalDecoder->decode({ chunk->span(), chunk->type() == WebCodecsEncodedVideoChunkType::Key, chunk->timestamp(), chunk->duration() }, [this, pendingActivity = takePendingWebCodecActivity()](auto&& result) {
-            if (!result.isNull())
-                closeDecoder(Exception { ExceptionCode::EncodingError, WTFMove(result) });
+        protectedScriptExecutionContext()->enqueueTaskWhenSettled(m_internalDecoder->decode({ chunk->span(), chunk->type() == WebCodecsEncodedVideoChunkType::Key, chunk->timestamp(), chunk->duration() }), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { * this }, pendingActivity = takePendingWebCodecActivity()] (auto&& result) {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis || !!result)
+                return;
+
+            protectedThis->closeDecoder(Exception { ExceptionCode::EncodingError, WTFMove(result.error()) });
         });
     } });
     return { };
@@ -213,11 +216,15 @@ ExceptionOr<void> WebCodecsVideoDecoder::flush(Ref<DeferredPromise>&& promise)
     m_isKeyChunkRequired = true;
     m_pendingFlushPromises.append(WTFMove(promise));
     queueControlMessageAndProcess({ *this, [this, clearFlushPromiseCount = m_clearFlushPromiseCount] {
-        m_internalDecoder->flush([this, clearFlushPromiseCount, pendingActivity = takePendingWebCodecActivity()] {
-            if (clearFlushPromiseCount != m_clearFlushPromiseCount)
+        protectedScriptExecutionContext()->enqueueTaskWhenSettled(m_internalDecoder->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, clearFlushPromiseCount, pendingActivity = takePendingWebCodecActivity()] (auto&&) {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
 
-            m_pendingFlushPromises.takeFirst()->resolve();
+            if (clearFlushPromiseCount != protectedThis->m_clearFlushPromiseCount)
+                return;
+
+            protectedThis->m_pendingFlushPromises.takeFirst()->resolve();
         });
     } });
     return { };
@@ -338,13 +345,14 @@ void WebCodecsVideoDecoder::processControlMessageQueue()
 
 void WebCore::WebCodecsVideoDecoder::suspend(ReasonForSuspension)
 {
-    // FIXME: Implement.
 }
 
 void WebCodecsVideoDecoder::stop()
 {
     m_state = WebCodecsCodecState::Closed;
     m_internalDecoder = nullptr;
+    m_controlMessageQueue.clear();
+    m_pendingFlushPromises.clear();
 }
 
 bool WebCodecsVideoDecoder::virtualHasPendingActivity() const

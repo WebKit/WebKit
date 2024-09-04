@@ -68,7 +68,7 @@ public:
     int initialize(LibWebRTCVPXVideoEncoder::Type, const VideoEncoder::Config&);
 
     void postTask(Function<void()>&& task) { m_postTaskCallback(WTFMove(task)); }
-    void encode(VideoEncoder::RawFrame&&, bool shouldGenerateKeyFrame, VideoEncoder::EncodeCallback&&);
+    Ref<VideoEncoder::EncodePromise> encode(VideoEncoder::RawFrame&&, bool shouldGenerateKeyFrame);
     void close() { m_isClosed = true; }
     void setRates(uint64_t bitRate, double frameRate);
 
@@ -124,17 +124,17 @@ int LibWebRTCVPXVideoEncoder::initialize(LibWebRTCVPXVideoEncoder::Type type, co
     return m_internalEncoder->initialize(type, config);
 }
 
-void LibWebRTCVPXVideoEncoder::encode(RawFrame&& frame, bool shouldGenerateKeyFrame, EncodeCallback&& callback)
+Ref<VideoEncoder::EncodePromise> LibWebRTCVPXVideoEncoder::encode(RawFrame&& frame, bool shouldGenerateKeyFrame)
 {
-    vpxEncoderQueue().dispatch([frame = WTFMove(frame), shouldGenerateKeyFrame, encoder = m_internalEncoder, callback = WTFMove(callback)]() mutable {
-        encoder->encode(WTFMove(frame), shouldGenerateKeyFrame, WTFMove(callback));
+    return invokeAsync(vpxEncoderQueue(), [frame = WTFMove(frame), shouldGenerateKeyFrame, encoder = m_internalEncoder]() mutable {
+        return encoder->encode(WTFMove(frame), shouldGenerateKeyFrame);
     });
 }
 
-void LibWebRTCVPXVideoEncoder::flush(Function<void()>&& callback)
+Ref<GenericPromise> LibWebRTCVPXVideoEncoder::flush()
 {
-    vpxEncoderQueue().dispatch([encoder = m_internalEncoder, callback = WTFMove(callback)]() mutable {
-        encoder->postTask(WTFMove(callback));
+    return invokeAsync(vpxEncoderQueue(), [] {
+        return GenericPromise::createAndResolve();
     });
 }
 
@@ -148,13 +148,12 @@ void LibWebRTCVPXVideoEncoder::close()
     m_internalEncoder->close();
 }
 
-bool LibWebRTCVPXVideoEncoder::setRates(uint64_t bitRate, double frameRate, Function<void()>&& callback)
+Ref<GenericPromise> LibWebRTCVPXVideoEncoder::setRates(uint64_t bitRate, double frameRate)
 {
-    vpxEncoderQueue().dispatch([encoder = m_internalEncoder, bitRate, frameRate, callback = WTFMove(callback)]() mutable {
+    return invokeAsync(vpxEncoderQueue(), [encoder = m_internalEncoder, bitRate, frameRate] {
         encoder->setRates(bitRate, frameRate);
-        encoder->postTask(WTFMove(callback));
+        return GenericPromise::createAndResolve();
     });
-    return true;
 }
 
 static UniqueRef<webrtc::VideoEncoder> createInternalEncoder(LibWebRTCVPXVideoEncoder::Type type)
@@ -264,10 +263,10 @@ int LibWebRTCVPXInternalVideoEncoder::initialize(LibWebRTCVPXVideoEncoder::Type 
     return 0;
 }
 
-void LibWebRTCVPXInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame, bool shouldGenerateKeyFrame, VideoEncoder::EncodeCallback&& callback)
+Ref<VideoEncoder::EncodePromise> LibWebRTCVPXInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame, bool shouldGenerateKeyFrame)
 {
     if (!m_isInitialized)
-        return;
+        return VideoEncoder::EncodePromise::createAndReject("Encoder is not initialized"_s);
 
     if (rawFrame.timestamp + m_timestampOffset <= 0)
         m_timestampOffset = 1 - rawFrame.timestamp;
@@ -288,15 +287,10 @@ void LibWebRTCVPXInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame,
     if (!m_hasEncoded)
         m_hasEncoded = !error;
 
-    m_postTaskCallback([protectedThis = Ref { *this }, error, callback = WTFMove(callback)]() mutable {
-        if (protectedThis->m_isClosed)
-            return;
+    if (error)
+        return VideoEncoder::EncodePromise::createAndReject("Encoder is not initialized"_s);
 
-        String result;
-        if (error)
-            result = makeString("VPx encoding failed with error "_s, error);
-        callback(WTFMove(result));
-    });
+    return VideoEncoder::EncodePromise::createAndResolve();
 }
 
 void LibWebRTCVPXInternalVideoEncoder::setRates(uint64_t bitRate, double frameRate)

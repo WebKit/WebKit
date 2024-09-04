@@ -28,8 +28,7 @@
 #include "ProcessIdentity.h"
 #include <span>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Expected.h>
-#include <wtf/Ref.h>
+#include <wtf/NativePromise.h>
 
 namespace WebCore {
 
@@ -74,10 +73,10 @@ public:
     static void create(const String&, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
     WEBCORE_EXPORT static void createLocalDecoder(const String&, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
 
-    using DecodeCallback = Function<void(String&&)>;
-    virtual void decode(EncodedFrame&&, DecodeCallback&&) = 0;
+    using DecodePromise = NativePromise<void, String>;
+    virtual Ref<DecodePromise> decode(EncodedFrame&&) = 0;
 
-    virtual void flush(Function<void()>&&) = 0;
+    virtual Ref<GenericPromise> flush() = 0;
     virtual void reset() = 0;
     virtual void close() = 0;
 

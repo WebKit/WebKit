@@ -69,7 +69,7 @@ public:
     ~LibWebRTCVPXInternalVideoDecoder() = default;
 
     void postTask(Function<void()>&& task) { m_postTaskCallback(WTFMove(task)); }
-    void decode(std::span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration,  VideoDecoder::DecodeCallback&&);
+    Ref<VideoDecoder::DecodePromise> decode(std::span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration);
     void close() { m_isClosed = true; }
 private:
     LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type, const VideoDecoder::Config&, VideoDecoder::OutputCallback&&, VideoDecoder::PostTaskCallback&&);
@@ -112,17 +112,17 @@ LibWebRTCVPXVideoDecoder::~LibWebRTCVPXVideoDecoder()
 {
 }
 
-void LibWebRTCVPXVideoDecoder::decode(EncodedFrame&& frame, DecodeCallback&& callback)
+Ref<VideoDecoder::DecodePromise> LibWebRTCVPXVideoDecoder::decode(EncodedFrame&& frame)
 {
-    vpxDecoderQueue().dispatch([value = Vector<uint8_t> { frame.data }, isKeyFrame = frame.isKeyFrame, timestamp = frame.timestamp, duration = frame.duration, decoder = m_internalDecoder, callback = WTFMove(callback)]() mutable {
-        decoder->decode({ value.data(), value.size() }, isKeyFrame, timestamp, duration, WTFMove(callback));
+    return invokeAsync(vpxDecoderQueue(), [value = Vector<uint8_t> { frame.data }, isKeyFrame = frame.isKeyFrame, timestamp = frame.timestamp, duration = frame.duration, decoder = m_internalDecoder] {
+        return decoder->decode({ value.data(), value.size() }, isKeyFrame, timestamp, duration);
     });
 }
 
-void LibWebRTCVPXVideoDecoder::flush(Function<void()>&& callback)
+Ref<GenericPromise> LibWebRTCVPXVideoDecoder::flush()
 {
-    vpxDecoderQueue().dispatch([decoder = m_internalDecoder, callback = WTFMove(callback)]() mutable {
-        decoder->postTask(WTFMove(callback));
+    return invokeAsync(vpxDecoderQueue(), [] {
+        return GenericPromise::createAndResolve();
     });
 }
 
@@ -137,7 +137,7 @@ void LibWebRTCVPXVideoDecoder::close()
 }
 
 
-void LibWebRTCVPXInternalVideoDecoder::decode(std::span<const uint8_t> data, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration,  VideoDecoder::DecodeCallback&& callback)
+Ref<VideoDecoder::DecodePromise> LibWebRTCVPXInternalVideoDecoder::decode(std::span<const uint8_t> data, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration)
 {
     m_timestamp = timestamp;
     m_duration = duration;
@@ -148,15 +148,10 @@ void LibWebRTCVPXInternalVideoDecoder::decode(std::span<const uint8_t> data, boo
 
     auto error = m_internalDecoder->Decode(image, false, 0);
 
-    m_postTaskCallback([protectedThis = Ref { *this }, error, callback = WTFMove(callback)]() mutable {
-        if (protectedThis->m_isClosed)
-            return;
+    if (error)
+        return VideoDecoder::DecodePromise::createAndReject(makeString("VPx decoding failed with error "_s, error));
 
-        if (error)
-            protectedThis->m_outputCallback(makeUnexpected(makeString("VPx decoding failed with error "_s, error)));
-
-        callback({ });
-    });
+    return VideoDecoder::DecodePromise::createAndResolve();
 }
 
 static UniqueRef<webrtc::VideoDecoder> createInternalDecoder(LibWebRTCVPXVideoDecoder::Type type)

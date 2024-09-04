@@ -52,8 +52,8 @@ public:
     ~LibWebRTCVPXVideoDecoder();
 
 private:
-    void decode(EncodedFrame&&, DecodeCallback&&) final;
-    void flush(Function<void()>&&) final;
+    Ref<DecodePromise> decode(EncodedFrame&&) final;
+    Ref<GenericPromise> flush() final;
     void reset() final;
     void close() final;
 

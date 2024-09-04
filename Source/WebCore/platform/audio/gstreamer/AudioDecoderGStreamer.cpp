@@ -57,8 +57,8 @@ public:
     ~GStreamerInternalAudioDecoder() = default;
 
     void postTask(Function<void()>&& task) { m_postTaskCallback(WTFMove(task)); }
-    void decode(std::span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration, AudioDecoder::DecodeCallback&&);
-    void flush(Function<void()>&&);
+    Ref<AudioDecoder::DecodePromise> decode(std::span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration);
+    void flush();
     void close() { m_isClosed = true; }
     bool isConfigured() const { return !!m_inputCaps; }
 
@@ -136,17 +136,18 @@ GStreamerAudioDecoder::~GStreamerAudioDecoder()
     close();
 }
 
-void GStreamerAudioDecoder::decode(EncodedData&& data, DecodeCallback&& callback)
+Ref<AudioDecoder::DecodePromise> GStreamerAudioDecoder::decode(EncodedData&& data)
 {
-    gstDecoderWorkQueue().dispatch([value = Vector<uint8_t> { data.data }, isKeyFrame = data.isKeyFrame, timestamp = data.timestamp, duration = data.duration, decoder = m_internalDecoder, callback = WTFMove(callback)]() mutable {
-        decoder->decode({ value.data(), value.size() }, isKeyFrame, timestamp, duration, WTFMove(callback));
+    return invokeAsync(gstDecoderWorkQueue(), [value = Vector<uint8_t> { data.data }, isKeyFrame = data.isKeyFrame, timestamp = data.timestamp, duration = data.duration, decoder = m_internalDecoder] {
+        return decoder->decode({ value.data(), value.size() }, isKeyFrame, timestamp, duration);
     });
 }
 
-void GStreamerAudioDecoder::flush(Function<void()>&& callback)
+Ref<GenericPromise> GStreamerAudioDecoder::flush()
 {
-    gstDecoderWorkQueue().dispatch([decoder = m_internalDecoder, callback = WTFMove(callback)]() mutable {
-        decoder->flush(WTFMove(callback));
+    return invokeAsync(gstDecoderWorkQueue(), [decoder = m_internalDecoder] {
+        decoder->flush();
+        return GenericPromise::createAndResolve();
     });
 }
 
@@ -261,7 +262,8 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
         harnessedElement = WTFMove(element);
 
     m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = WeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
-        if (!weakThis)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
         if (m_isClosed)
             return;
@@ -290,23 +292,13 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
     });
 }
 
-void GStreamerInternalAudioDecoder::decode(std::span<const uint8_t> frameData, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration, AudioDecoder::DecodeCallback&& callback)
+Ref<AudioDecoder::DecodePromise> GStreamerInternalAudioDecoder::decode(std::span<const uint8_t> frameData, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration)
 {
     GST_DEBUG_OBJECT(m_harness->element(), "Decoding%s frame", isKeyFrame ? " key" : "");
 
     auto encodedData = wrapSpanData(frameData);
-    if (!encodedData) {
-        m_postTaskCallback([weakThis = WeakPtr { *this }, this, callback = WTFMove(callback)]() mutable {
-            if (!weakThis)
-                return;
-            if (m_isClosed)
-                return;
-
-            m_outputCallback(makeUnexpected("Empty frame"_s));
-            callback({ });
-        });
-        return;
-    }
+    if (!encodedData)
+        return AudioDecoder::DecodePromise::createAndReject("Empty frame"_s);
 
     GstSegment segment;
     gst_segment_init(&segment, GST_FORMAT_TIME);
@@ -324,26 +316,17 @@ void GStreamerInternalAudioDecoder::decode(std::span<const uint8_t> frameData, b
         GST_BUFFER_DURATION(encodedData.get()) = *duration;
 
     auto result = m_harness->pushSample(adoptGRef(gst_sample_new(encodedData.get(), m_inputCaps.get(), &segment, nullptr)));
-    m_postTaskCallback([weakThis = WeakPtr { *this }, this, callback = WTFMove(callback), result]() mutable {
-        if (!weakThis)
-            return;
-        if (m_isClosed)
-            return;
+    if (!result)
+        return AudioDecoder::DecodePromise::createAndReject("Decode error"_s);
 
-        if (result)
-            m_harness->processOutputSamples();
-        else
-            m_outputCallback(makeUnexpected("Decode error"_s));
-
-        callback({ });
-    });
+    m_harness->processOutputSamples();
+    return AudioDecoder::DecodePromise::createAndResolve();
 }
 
-void GStreamerInternalAudioDecoder::flush(Function<void()>&& callback)
+void GStreamerInternalAudioDecoder::flush()
 {
     if (m_isClosed) {
         GST_DEBUG_OBJECT(m_harness->element(), "Decoder closed, nothing to flush");
-        m_postTaskCallback(WTFMove(callback));
         return;
     }
 
@@ -352,7 +335,6 @@ void GStreamerInternalAudioDecoder::flush(Function<void()>&& callback)
     m_harness->pushBuffer(WTFMove(buffer));
 
     m_harness->flushBuffers();
-    m_postTaskCallback(WTFMove(callback));
 }
 
 #undef GST_CAT_DEFAULT

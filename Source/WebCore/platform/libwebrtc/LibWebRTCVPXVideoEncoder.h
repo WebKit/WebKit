@@ -53,11 +53,11 @@ public:
 
 private:
     int initialize(LibWebRTCVPXVideoEncoder::Type, const VideoEncoder::Config&);
-    void encode(RawFrame&&, bool shouldGenerateKeyFrame, EncodeCallback&&) final;
-    void flush(Function<void()>&&) final;
+    Ref<EncodePromise> encode(RawFrame&&, bool shouldGenerateKeyFrame) final;
+    Ref<GenericPromise> flush() final;
     void reset() final;
     void close() final;
-    bool setRates(uint64_t bitRate, double frameRate, Function<void()>&&) final;
+    Ref<GenericPromise> setRates(uint64_t bitRate, double frameRate) final;
 
     Ref<LibWebRTCVPXInternalVideoEncoder> m_internalEncoder;
 };

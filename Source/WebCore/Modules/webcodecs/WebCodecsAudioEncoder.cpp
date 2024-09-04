@@ -137,7 +137,8 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
     if (m_internalEncoder) {
         queueControlMessageAndProcess({ *this, [this, config]() mutable {
             m_isMessageQueueBlocked = true;
-            m_internalEncoder->flush([weakThis = ThreadSafeWeakPtr { *this }, config = WTFMove(config).isolatedCopy()]() mutable {
+
+            protectedScriptExecutionContext()->enqueueTaskWhenSettled(m_internalEncoder->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, config = WTFMove(config)] (auto&&) mutable {
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis)
                     return;
@@ -270,13 +271,15 @@ ExceptionOr<void> WebCodecsAudioEncoder::encode(Ref<WebCodecsAudioData>&& frame)
     queueControlMessageAndProcess({ *this, [this, audioData = WTFMove(audioData), timestamp = frame->timestamp(), duration = frame->duration()]() mutable {
         --m_encodeQueueSize;
         scheduleDequeueEvent();
-        m_internalEncoder->encode({ WTFMove(audioData), timestamp, duration }, [this, pendingActivity = takePendingWebCodecActivity()](auto&& result) {
-            if (!result.isNull()) {
-                if (auto* context = scriptExecutionContext())
-                    context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("AudioEncoder encode failed: "_s, result));
-                closeEncoder(Exception { ExceptionCode::EncodingError, WTFMove(result) });
+
+        protectedScriptExecutionContext()->enqueueTaskWhenSettled(m_internalEncoder->encode({ WTFMove(audioData), timestamp, duration }), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = takePendingWebCodecActivity()] (auto&& result) {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis || !!result)
                 return;
-            }
+
+            if (auto context = protectedThis->protectedScriptExecutionContext())
+                context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("AudioEncoder encode failed: "_s, result.error()));
+            protectedThis->closeEncoder(Exception { ExceptionCode::EncodingError, WTFMove(result.error()) });
         });
     } });
     return { };
@@ -291,12 +294,12 @@ void WebCodecsAudioEncoder::flush(Ref<DeferredPromise>&& promise)
 
     m_pendingFlushPromises.append(WTFMove(promise));
     queueControlMessageAndProcess({ *this, [this, clearFlushPromiseCount = m_clearFlushPromiseCount]() mutable {
-        m_internalEncoder->flush([this, weakThis = ThreadSafeWeakPtr { *this }, clearFlushPromiseCount, pendingActivity = takePendingWebCodecActivity()] {
+        protectedScriptExecutionContext()->enqueueTaskWhenSettled(m_internalEncoder->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, clearFlushPromiseCount, pendingActivity = takePendingWebCodecActivity()] (auto&&) {
             RefPtr protectedThis = weakThis.get();
-            if (!protectedThis || clearFlushPromiseCount != m_clearFlushPromiseCount)
+            if (!protectedThis || clearFlushPromiseCount != protectedThis->m_clearFlushPromiseCount)
                 return;
 
-            m_pendingFlushPromises.takeFirst()->resolve();
+            protectedThis->m_pendingFlushPromises.takeFirst()->resolve();
         });
     } });
 }
@@ -417,12 +420,14 @@ void WebCodecsAudioEncoder::processControlMessageQueue()
 
 void WebCore::WebCodecsAudioEncoder::suspend(ReasonForSuspension)
 {
-    // FIXME: Implement.
 }
 
 void WebCodecsAudioEncoder::stop()
 {
-    // FIXME: Implement.
+    m_state = WebCodecsCodecState::Closed;
+    m_internalEncoder = nullptr;
+    m_controlMessageQueue.clear();
+    m_pendingFlushPromises.clear();
 }
 
 bool WebCodecsAudioEncoder::virtualHasPendingActivity() const

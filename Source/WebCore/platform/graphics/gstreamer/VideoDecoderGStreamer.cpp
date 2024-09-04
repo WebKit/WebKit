@@ -62,8 +62,8 @@ public:
     }
 
     void postTask(Function<void()>&& task) { m_postTaskCallback(WTFMove(task)); }
-    void decode(std::span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration,  VideoDecoder::DecodeCallback&&);
-    void flush(Function<void()>&&);
+    Ref<VideoDecoder::DecodePromise> decode(std::span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration);
+    void flush();
     void close() { m_isClosed = true; }
 
     bool isConfigured() const { return !!m_inputCaps; }
@@ -131,17 +131,18 @@ GStreamerVideoDecoder::~GStreamerVideoDecoder()
     close();
 }
 
-void GStreamerVideoDecoder::decode(EncodedFrame&& frame, DecodeCallback&& callback)
+Ref<VideoDecoder::DecodePromise> GStreamerVideoDecoder::decode(EncodedFrame&& frame)
 {
-    gstDecoderWorkQueue().dispatch([value = Vector<uint8_t> { frame.data }, isKeyFrame = frame.isKeyFrame, timestamp = frame.timestamp, duration = frame.duration, decoder = m_internalDecoder, callback = WTFMove(callback)]() mutable {
-        decoder->decode({ value.data(), value.size() }, isKeyFrame, timestamp, duration, WTFMove(callback));
+    return invokeAsync(gstDecoderWorkQueue(), [value = Vector<uint8_t> { frame.data }, isKeyFrame = frame.isKeyFrame, timestamp = frame.timestamp, duration = frame.duration, decoder = m_internalDecoder] {
+        return decoder->decode({ value.data(), value.size() }, isKeyFrame, timestamp, duration);
     });
 }
 
-void GStreamerVideoDecoder::flush(Function<void()>&& callback)
+Ref<GenericPromise> GStreamerVideoDecoder::flush()
 {
-    gstDecoderWorkQueue().dispatch([decoder = m_internalDecoder, callback = WTFMove(callback)]() mutable {
-        decoder->flush(WTFMove(callback));
+    return invokeAsync(gstDecoderWorkQueue(), [decoder = m_internalDecoder] {
+        decoder->flush();
+        return GenericPromise::createAndResolve();
     });
 }
 
@@ -251,23 +252,12 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
     });
 }
 
-void GStreamerInternalVideoDecoder::decode(std::span<const uint8_t> frameData, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration, VideoDecoder::DecodeCallback&& callback)
+Ref<VideoDecoder::DecodePromise> GStreamerInternalVideoDecoder::decode(std::span<const uint8_t> frameData, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration)
 {
     GST_DEBUG_OBJECT(m_harness->element(), "Decoding%s frame", isKeyFrame ? " key" : "");
     auto buffer = wrapSpanData(frameData);
-    if (!buffer) {
-        m_postTaskCallback([weakThis = WeakPtr { *this }, this, callback = WTFMove(callback)]() mutable {
-            if (!weakThis)
-                return;
-
-            if (m_isClosed)
-                return;
-
-            m_outputCallback(makeUnexpected("Empty frame"_s));
-            callback({ });
-        });
-        return;
-    }
+    if (!buffer)
+        return VideoDecoder::DecodePromise::createAndReject("Empty frame"_s);
 
     m_timestamp = timestamp;
     m_duration = duration;
@@ -281,32 +271,21 @@ void GStreamerInternalVideoDecoder::decode(std::span<const uint8_t> frameData, b
 
     // FIXME: Maybe configure segment here, could be useful for reverse playback.
     auto result = m_harness->pushSample(adoptGRef(gst_sample_new(buffer.get(), m_inputCaps.get(), nullptr, nullptr)));
-    if (result)
-        m_harness->processOutputSamples();
-    m_postTaskCallback([weakThis = WeakPtr { *this }, this, callback = WTFMove(callback), result]() mutable {
-        if (!weakThis)
-            return;
+    if (!result)
+        return VideoDecoder::DecodePromise::createAndReject("Decode error"_s);
 
-        if (weakThis->m_isClosed)
-            return;
-
-        if (!result)
-            m_outputCallback(makeUnexpected("Decode error"_s));
-
-        callback({ });
-    });
+    m_harness->processOutputSamples();
+    return VideoDecoder::DecodePromise::createAndResolve();
 }
 
-void GStreamerInternalVideoDecoder::flush(Function<void()>&& callback)
+void GStreamerInternalVideoDecoder::flush()
 {
     if (m_isClosed) {
         GST_DEBUG_OBJECT(m_harness->element(), "Decoder closed, nothing to flush");
-        m_postTaskCallback(WTFMove(callback));
         return;
     }
 
     m_harness->reset();
-    m_postTaskCallback(WTFMove(callback));
 }
 
 #undef GST_CAT_DEFAULT
