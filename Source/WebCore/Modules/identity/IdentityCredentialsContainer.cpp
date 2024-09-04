@@ -37,6 +37,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSDigitalCredential.h"
 #include "LocalDOMWindow.h"
+#include "MediationRequirement.h"
 #include "Page.h"
 #include "VisibilityState.h"
 
@@ -53,6 +54,11 @@ void IdentityCredentialsContainer::get(CredentialRequestOptions&& options, Crede
 
     if (!options.digital || options.publicKey) {
         promise.reject(Exception { ExceptionCode::NotSupportedError, "Only digital member is supported."_s });
+        return;
+    }
+
+    if (options.mediation != MediationRequirement::Required) {
+        promise.reject(Exception { ExceptionCode::TypeError, "User mediation is required for DigitalCredential."_s });
         return;
     }
 
@@ -84,9 +90,6 @@ void IdentityCredentialsContainer::get(CredentialRequestOptions&& options, Crede
         promise.reject(Exception { ExceptionCode::TypeError, "At least one provider must be specified."_s });
         return;
     }
-
-    // FIXME: <https://webkit.org/b/277322> mediation requirement,
-    // which is waiting on https://github.com/WICG/digital-credentials/pull/149
 
     document->page()->credentialRequestCoordinator().discoverFromExternalSource(*document, WTFMove(options), WTFMove(promise));
 }
