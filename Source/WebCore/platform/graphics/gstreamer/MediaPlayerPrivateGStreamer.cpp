@@ -517,7 +517,7 @@ bool MediaPlayerPrivateGStreamer::paused() const
     // For debug mode (either GStreamer of WebKit) we make some extra check to ensure there is no desynchronization
     // between pipeline and player. In the case of media stream, we just return the result of the pipeline as there are
     // nuances regarding the prerolling creating some regressions in the tests.
-#if !defined(GST_DISABLE_GST_DEBUG) || !defined(NDEBUG) || (defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM)
+#if !defined(GST_DISABLE_GST_DEBUG) || !defined(NDEBUG) || ENABLE(MEDIA_STREAM)
     GstState state, pending;
     auto stateChange = gst_element_get_state(m_pipeline.get(), &state, &pending, 0);
     bool isPipelinePaused = state <= GST_STATE_PAUSED;
@@ -1767,7 +1767,7 @@ void MediaPlayerPrivateGStreamer::configureMediaStreamAudioTracks()
 {
 #if ENABLE(MEDIA_STREAM)
     if (WEBKIT_IS_MEDIA_STREAM_SRC(m_source.get()))
-        webkitMediaStreamSrcConfigureAudioTracks(WEBKIT_MEDIA_STREAM_SRC(m_source.get()), volume(), isMuted(), !m_isPaused);
+        webkitMediaStreamSrcConfigureAudioTracks(WEBKIT_MEDIA_STREAM_SRC(m_source.get()), volume(), isMuted(), !paused());
 #endif
 }
 
@@ -2524,7 +2524,6 @@ void MediaPlayerPrivateGStreamer::updateStates()
 
     MediaPlayer::NetworkState oldNetworkState = m_networkState;
     MediaPlayer::ReadyState oldReadyState = m_readyState;
-    bool oldIsPaused = m_isPaused;
     GstState pending, state;
     bool stateReallyChanged = false;
     RefPtr player = m_player.get();
@@ -2713,9 +2712,6 @@ void MediaPlayerPrivateGStreamer::updateStates()
         } else if (m_isSeeking && !(state == GST_STATE_PLAYING && pending == GST_STATE_PAUSED))
             finishSeek();
     }
-
-    if (oldIsPaused != m_isPaused)
-        configureMediaStreamAudioTracks();
 }
 
 void MediaPlayerPrivateGStreamer::mediaLocationChanged(GstMessage* message)
