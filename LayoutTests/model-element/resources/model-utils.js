@@ -40,3 +40,52 @@ const assert_cameras_are_not_equal = (actualCamera, expectedCamera, description)
                          Math.abs(actualCamera.scale - expectedCamera.scale) > epsilon;
     assert_false(camerasMatch, description);
 };
+
+const assert_points_are_equal = (actual, expected) => {
+    assert_equals(actual.x, expected.x, "x is not matched");
+    assert_equals(actual.y, expected.y, "y is not matched");
+    assert_equals(actual.z, expected.z, "z is not matched");
+    assert_equals(actual.w, expected.w, "w is not matched");
+};
+
+const assert_3d_matrix_is_identity = (actual, isIdentity) => {
+    assert_true(actual instanceof DOMMatrixReadOnly);
+    assert_false(actual.is2D, "is2D");
+    if (isIdentity)
+        assert_true(actual.isIdentity, "isIdentity");
+    else
+        assert_false(actual.isIdentity, "isIdentity");
+};
+
+const assert_3d_matrix_equals = (actual, expected) => {
+    assert_true(actual instanceof DOMMatrixReadOnly);
+    assert_true(expected instanceof DOMMatrixReadOnly);
+
+    assert_false(actual.is2D, "is2D");
+    assert_false(expected.is2D, "is2D");
+    let actualArray = actual.toFloat64Array();
+    let expectedArray = expected.toFloat64Array();
+    assert_equals(actualArray.length, expectedArray.length);
+    for (var i = 0; i < actualArray.length; i++) {
+        assert_equals(actualArray[i], expectedArray[i], "matrix array should match at index " + i);
+    }
+};
+
+const assert_3d_matrix_not_equals = (actual, expected) => {
+    assert_true(actual instanceof DOMMatrixReadOnly);
+    assert_true(expected instanceof DOMMatrixReadOnly);
+
+    assert_false(actual.is2D, "is2D");
+    assert_false(expected.is2D, "is2D");
+    let actualArray = actual.toFloat64Array();
+    let expectedArray = expected.toFloat64Array();
+    assert_equals(actualArray.length, expectedArray.length);
+    var allEqual = true;
+    for (var i = 0; i < actualArray.length; i++) {
+        if (actualArray[i] != expectedArray[i]) {
+            allEqual = false;
+            break;
+        }
+    }
+    assert_false(allEqual, "matrix arrays should not match");
+};

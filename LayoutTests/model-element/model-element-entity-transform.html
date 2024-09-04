@@ -1,0 +1,53 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> entity transform</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<script src="resources/model-utils.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t);
+    assert_3d_matrix_is_identity(model.entityTransform, true);
+}, `<model> with empty source has entityTransform = identity`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/2x2x2-positive.usdz");
+    await model.ready;
+    let originalTransform = model.entityTransform;
+    assert_3d_matrix_is_identity(originalTransform, false);
+    let scaledTransform = originalTransform.scale(2, 2, 2);
+    model.entityTransform = scaledTransform;
+    assert_3d_matrix_equals(model.entityTransform, scaledTransform);
+}, `<model> gets the updated entityTransform after change`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/2x2x2-positive.usdz");
+    await model.ready;
+    let firstModelTransform = model.entityTransform;
+
+    source.src = "resources/heart.usdz";
+    await model.ready;
+    let secondModelTransform = model.entityTransform;
+    assert_3d_matrix_not_equals(firstModelTransform, secondModelTransform);
+}, `<model> gets the updated entityTransform after model source change`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/2x2x2-positive.usdz");
+    await model.ready;
+    assert_3d_matrix_is_identity(model.entityTransform, false);
+
+    return new Promise((resolve, reject) => {
+        model.addEventListener("error", event => {
+            assert_3d_matrix_is_identity(model.entityTransform, true);
+            resolve();
+        });
+        source.remove();
+    });
+}, `<model> gets the identity entityTransform after model source removal`);
+
+</script>
+</body>
