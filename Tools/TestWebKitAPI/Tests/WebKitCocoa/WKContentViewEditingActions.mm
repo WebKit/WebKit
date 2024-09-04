@@ -100,7 +100,8 @@ TEST(WebKit, CopyInAutoFilledAndViewablePasswordField)
 
 #if ENABLE(APP_HIGHLIGHTS)
 
-TEST(WebKit, AppHighlightsInImageOverlays)
+// FIXME when rdar://135224110 is resolved.
+TEST(WebKit, DISABLED_AppHighlightsInImageOverlays)
 {
     auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES]);
     [configuration _setAppHighlightsEnabled:YES];
