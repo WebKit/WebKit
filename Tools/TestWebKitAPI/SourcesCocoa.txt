@@ -23,6 +23,7 @@
 
 DeprecatedGlobalValues.mm
 EditingTestHarness.mm
+NetworkConnection.mm
 WKWebViewConfigurationExtras.mm
 
 cocoa/CGImagePixelReader.cpp

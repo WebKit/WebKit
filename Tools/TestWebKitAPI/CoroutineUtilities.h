@@ -25,23 +25,44 @@
 
 #pragma once
 
-#import "CoroutineUtilities.h"
-#import "NetworkConnection.h"
-#import <Network/Network.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/Vector.h>
+#if (_LIBCPP_VERSION >= 14000) && !defined(_LIBCPP_HAS_NO_CXX20_COROUTINES)
+#import <coroutine>
+#else
+// FIXME: Remove this once all supported toolchains have non-experimental coroutine support.
+#import <experimental/coroutine>
+namespace std {
+using std::experimental::coroutine_handle;
+using std::experimental::suspend_never;
+using std::experimental::suspend_always;
+}
+#endif
 
 namespace TestWebKitAPI {
 
-class WebTransportServer {
-public:
-    WebTransportServer(Function<Task(Connection)>&&);
-    ~WebTransportServer();
-
-    uint16_t port() const;
-private:
-    struct Data;
-    Ref<Data> m_data;
+template<typename PromiseType>
+struct CoroutineHandle {
+    CoroutineHandle(std::coroutine_handle<PromiseType>&& handle)
+        : handle(WTFMove(handle)) { }
+    CoroutineHandle(const CoroutineHandle&) = delete;
+    CoroutineHandle(CoroutineHandle&& other)
+        : handle(std::exchange(other.handle, nullptr)) { }
+    ~CoroutineHandle()
+    {
+        if (handle)
+            handle.destroy();
+    }
+    std::coroutine_handle<PromiseType> handle;
 };
 
-} // namespace TestWebKitAPI
+struct Task {
+    struct promise_type {
+        Task get_return_object() { return { std::coroutine_handle<promise_type>::from_promise(*this) }; }
+        std::suspend_never initial_suspend() { return { }; }
+        std::suspend_always final_suspend() noexcept { return { }; }
+        void unhandled_exception() { }
+        void return_void() { }
+    };
+    CoroutineHandle<promise_type> handle;
+};
+
+}

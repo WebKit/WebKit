@@ -3774,6 +3774,9 @@
 		F6FDDDD214241AD4004F1729 /* PrivateBrowsingPushStateNoHistoryCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateBrowsingPushStateNoHistoryCallback.cpp; sourceTree = "<group>"; };
 		F6FDDDD514241C48004F1729 /* push-state.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "push-state.html"; sourceTree = "<group>"; };
 		FA049D0F2BCF22210099C221 /* LoadAndDecodeImage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadAndDecodeImage.mm; sourceTree = "<group>"; };
+		FA65EFFC2C87F43C00A0A123 /* CoroutineUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoroutineUtilities.h; sourceTree = "<group>"; };
+		FA65F0042C87F4CF00A0A123 /* NetworkConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkConnection.h; sourceTree = "<group>"; };
+		FA65F0052C87F4CF00A0A123 /* NetworkConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkConnection.mm; sourceTree = "<group>"; };
 		FA8650312C7D01CA00117287 /* WebTransportServer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebTransportServer.h; sourceTree = "<group>"; };
 		FA8650322C7D01CA00117287 /* WebTransportServer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTransportServer.mm; sourceTree = "<group>"; };
 		FA8650332C7D047B00117287 /* WebTransport.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTransport.mm; sourceTree = "<group>"; };
@@ -3914,6 +3917,7 @@
 				BCA61C3A11700B9400460D1E /* mac */,
 				A17A5A3122A887610065C5F0 /* TestRunnerShared */,
 				BC131A9E1171317C00B69727 /* config.h */,
+				FA65EFFC2C87F43C00A0A123 /* CoroutineUtilities.h */,
 				7C6BBD8B19CEA63000C1F5E0 /* Counters.cpp */,
 				7C6BBD8A19CEA54300C1F5E0 /* Counters.h */,
 				5CABDBEC2735CB4D00B88BCB /* DeprecatedGlobalValues.cpp */,
@@ -3972,6 +3976,8 @@
 				F42F081627449FFD007E0D90 /* ImageAnalysisTestingUtilities.mm */,
 				F44A530D21B8976900DBB99C /* InstanceMethodSwizzler.h */,
 				F44A531021B8976900DBB99C /* InstanceMethodSwizzler.mm */,
+				FA65F0042C87F4CF00A0A123 /* NetworkConnection.h */,
+				FA65F0052C87F4CF00A0A123 /* NetworkConnection.mm */,
 				0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */,
 				F4010B8224DA267F00A876E2 /* PoseAsClass.h */,
 				F4010B8124DA267F00A876E2 /* PoseAsClass.mm */,

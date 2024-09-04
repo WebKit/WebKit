@@ -44,7 +44,12 @@ static void enableWebTransport(WKWebViewConfiguration *configuration)
 
 TEST(WebTransport, Basic)
 {
-    WebTransportServer server;
+    WebTransportServer echoServer([] (Connection connection) -> Task {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveBytes();
+            co_await connection.awaitableSend(WTFMove(request));
+        }
+    });
 
     auto configuration = adoptNS([WKWebViewConfiguration new]);
     enableWebTransport(configuration.get());
@@ -64,7 +69,7 @@ TEST(WebTransport, Basic)
         "  } catch (e) { alert('caught ' + e); }"
         "}; test();"
         "</script>",
-        server.port()];
+        echoServer.port()];
     [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully read abc");
 }
