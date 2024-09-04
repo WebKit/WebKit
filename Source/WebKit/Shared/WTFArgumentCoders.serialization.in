@@ -210,6 +210,7 @@ template: struct WebKit::StorageAreaIdentifierType
 }
 
 header: <wtf/ObjectIdentifier.h>
+template: enum class WebCore::IDBObjectStoreIdentifierType
 template: enum class WebCore::ServiceWorkerJobIdentifierType
 template: enum class WebCore::ServiceWorkerRegistrationIdentifierType
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::AtomicObjectIdentifier {

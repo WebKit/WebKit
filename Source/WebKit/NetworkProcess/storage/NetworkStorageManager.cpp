@@ -1615,7 +1615,7 @@ void NetworkStorageManager::deleteObjectStore(const WebCore::IDBRequestData& req
     transaction->deleteObjectStore(requestData, objectStoreName);
 }
 
-void NetworkStorageManager::renameObjectStore(const WebCore::IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& newName)
+void NetworkStorageManager::renameObjectStore(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName)
 {
     auto transaction = idbTransaction(requestData);
     if (!transaction || !transaction->isVersionChange())
@@ -1624,7 +1624,7 @@ void NetworkStorageManager::renameObjectStore(const WebCore::IDBRequestData& req
     transaction->renameObjectStore(requestData, objectStoreIdentifier, newName);
 }
 
-void NetworkStorageManager::clearObjectStore(const WebCore::IDBRequestData& requestData, uint64_t objectStoreIdentifier)
+void NetworkStorageManager::clearObjectStore(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier)
 {
     if (auto transaction = idbTransaction(requestData))
         transaction->clearObjectStore(requestData, objectStoreIdentifier);
@@ -1636,13 +1636,13 @@ void NetworkStorageManager::createIndex(const WebCore::IDBRequestData& requestDa
         transaction->createIndex(requestData, indexInfo);
 }
 
-void NetworkStorageManager::deleteIndex(const WebCore::IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& indexName)
+void NetworkStorageManager::deleteIndex(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
 {
     if (auto transaction = idbTransaction(requestData))
         transaction->deleteIndex(requestData, objectStoreIdentifier, indexName);
 }
 
-void NetworkStorageManager::renameIndex(const WebCore::IDBRequestData& requestData, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+void NetworkStorageManager::renameIndex(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
 {
     if (auto transaction = idbTransaction(requestData))
         transaction->renameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName);

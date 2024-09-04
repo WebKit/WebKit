@@ -5,6 +5,7 @@ CONSOLE MESSAGE: Created Database 'Database3'
 == Running test suite: IndexedDB.requestData
 -- Running test case: ClearDatabases
 -- Running test case: RequestDataBasic
+PASS: Database should have 3 object stores.
 -- No Index
 PASS: Should be 4 entries.
 PASS: Should not have more entries.
@@ -52,6 +53,7 @@ PASS: Key should be ordered by email: 'peacock@webkit.org'
 PASS: Value should be a remote object for: 'Jamming Peacock'
 
 -- Running test case: RequestDataPagination
+PASS: Database should have 3 object stores.
 -- Page 1
 PASS: Entries length should match page size.
 PASS: Should have more entries.
@@ -68,6 +70,7 @@ PASS: Primary key should be ordered by primary key: 4
 PASS: Value should be a remote object for: 'Monstrous Beaver'
 
 -- Running test case: RequestDataKeyRangeBounds
+PASS: Database should have 3 object stores.
 -- Keys >= 'M'
 -- Lower Bound: 'M' (closed)
 -- Upper Bound: -

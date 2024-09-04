@@ -41,6 +41,7 @@
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
 #include <WebCore/IDBDatabaseConnectionIdentifier.h>
+#include <WebCore/IDBObjectStoreIdentifier.h>
 #include <WebCore/IDBResourceIdentifier.h>
 #include <WebCore/IndexedDB.h>
 #include <WebCore/ServiceWorkerTypes.h>
@@ -201,11 +202,11 @@ private:
     void didFinishHandlingVersionChangeTransaction(WebCore::IDBDatabaseConnectionIdentifier, const WebCore::IDBResourceIdentifier&);
     void createObjectStore(const WebCore::IDBRequestData&, const WebCore::IDBObjectStoreInfo&);
     void deleteObjectStore(const WebCore::IDBRequestData&, const String& objectStoreName);
-    void renameObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& newName);
-    void clearObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier);
+    void renameObjectStore(const WebCore::IDBRequestData&, WebCore::IDBObjectStoreIdentifier, const String& newName);
+    void clearObjectStore(const WebCore::IDBRequestData&, WebCore::IDBObjectStoreIdentifier);
     void createIndex(const WebCore::IDBRequestData&, const WebCore::IDBIndexInfo&);
-    void deleteIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName);
-    void renameIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName);
+    void deleteIndex(const WebCore::IDBRequestData&, WebCore::IDBObjectStoreIdentifier, const String& indexName);
+    void renameIndex(const WebCore::IDBRequestData&, WebCore::IDBObjectStoreIdentifier, uint64_t indexIdentifier, const String& newName);
     void putOrAdd(IPC::Connection&, const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, WebCore::IndexedDB::ObjectStoreOverwriteMode);
     void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBGetRecordData&);
     void getAllRecords(const WebCore::IDBRequestData&, const WebCore::IDBGetAllRecordsData&);

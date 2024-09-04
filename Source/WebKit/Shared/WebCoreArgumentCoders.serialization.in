@@ -520,7 +520,7 @@ struct WebCore::IDBCursorRecord {
 class WebCore::IDBCursorInfo {
     WebCore::IDBResourceIdentifier identifier();
     WebCore::IDBResourceIdentifier transactionIdentifier();
-    uint64_t objectStoreIdentifier();
+    WebCore::IDBObjectStoreIdentifier objectStoreIdentifier();
     uint64_t sourceIdentifier();
 
     WebCore::IDBKeyRangeData range();
@@ -539,7 +539,7 @@ struct WebCore::IDBGetAllRecordsData {
     WebCore::IDBKeyRangeData keyRangeData;
     WebCore::IndexedDB::GetAllType getAllType;
     std::optional<uint32_t> count;
-    uint64_t objectStoreIdentifier;
+    WebCore::IDBObjectStoreIdentifier objectStoreIdentifier;
     uint64_t indexIdentifier;
 }
 
@@ -563,8 +563,7 @@ class WebCore::IDBDatabaseInfo {
     String m_name
     uint64_t m_version
     uint64_t m_maxIndexID
-    uint64_t m_maxObjectStoreID
-    HashMap<uint64_t, WebCore::IDBObjectStoreInfo> m_objectStoreMap
+    HashMap<WebCore::IDBObjectStoreIdentifier, WebCore::IDBObjectStoreInfo> m_objectStoreMap
 }
 
 struct WebCore::IDBKeyRangeData {
@@ -593,7 +592,7 @@ struct WebCore::IDBGetRecordData {
 
 class WebCore::IDBIndexInfo {
     uint64_t identifier()
-    uint64_t objectStoreIdentifier()
+    WebCore::IDBObjectStoreIdentifier objectStoreIdentifier()
     String name()
     WebCore::IDBKeyPath keyPath()
     bool unique()
@@ -601,7 +600,7 @@ class WebCore::IDBIndexInfo {
 }
 
 class WebCore::IDBObjectStoreInfo {
-    uint64_t identifier()
+    WebCore::IDBObjectStoreIdentifier identifier()
     String name()
     std::optional<WebCore::IDBKeyPath> keyPath()
     bool autoIncrement()
@@ -639,7 +638,7 @@ class WebCore::IDBRequestData {
     [Validator='!m_requestIdentifier->isEmpty()'] WebCore::IDBResourceIdentifier m_requestIdentifier;
     [Validator='!m_transactionIdentifier->isEmpty()'] WebCore::IDBResourceIdentifier m_transactionIdentifier;
     std::optional<WebCore::IDBResourceIdentifier> m_cursorIdentifier;
-    uint64_t m_objectStoreIdentifier;
+    Markable<WebCore::IDBObjectStoreIdentifier> m_objectStoreIdentifier;
     uint64_t m_indexIdentifier;
     WebCore::IndexedDB::IndexRecordType m_indexRecordType;
     uint64_t m_requestedVersion;

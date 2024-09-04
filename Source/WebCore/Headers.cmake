@@ -420,6 +420,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/indexeddb/IDBKeyPath.h
     Modules/indexeddb/IDBKeyRange.h
     Modules/indexeddb/IDBKeyRangeData.h
+    Modules/indexeddb/IDBObjectStoreIdentifier.h
     Modules/indexeddb/IDBOpenDBRequest.h
     Modules/indexeddb/IDBRequest.h
     Modules/indexeddb/IDBTransaction.h
