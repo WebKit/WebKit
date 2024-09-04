@@ -64,9 +64,6 @@ public:
 
     int offsetForPositionInFragment(const SVGTextFragment&, float position) const;
     FloatRect selectionRectForTextFragment(const SVGTextFragment&, unsigned fragmentStartPosition, unsigned fragmentEndPosition, const RenderStyle&) const;
-    
-    OptionSet<RenderSVGResourceMode> paintingResourceMode() const { return OptionSet<RenderSVGResourceMode>::fromRaw(m_legacyPaintingResourceMode); }
-    void setPaintingResourceMode(OptionSet<RenderSVGResourceMode> mode) { m_legacyPaintingResourceMode = mode.toRaw(); }
 
     inline SVGInlineTextBox* nextTextBox() const;
     
@@ -75,25 +72,12 @@ private:
 
     TextRun constructTextRun(const RenderStyle&, const SVGTextFragment&) const;
 
-    bool acquirePaintingResource(SVGPaintServerHandling&, float scalingFactor, RenderBoxModelObject&, const RenderStyle&);
-    void releasePaintingResource(SVGPaintServerHandling&);
-
-    bool acquireLegacyPaintingResource(GraphicsContext*&, float scalingFactor, RenderBoxModelObject&, const RenderStyle&);
-    void releaseLegacyPaintingResource(GraphicsContext*&, const Path*);
-
-    void paintDecoration(GraphicsContext&, OptionSet<TextDecorationLine>, const SVGTextFragment&);
-    void paintDecorationWithStyle(GraphicsContext&, OptionSet<TextDecorationLine>, const SVGTextFragment&, RenderBoxModelObject& decorationRenderer);
-    void paintTextWithShadows(GraphicsContext&, const RenderStyle&, TextRun&, const SVGTextFragment&, unsigned startPosition, unsigned endPosition);
-    void paintText(GraphicsContext&, const RenderStyle&, const RenderStyle& selectionStyle, const SVGTextFragment&, bool hasSelection, bool paintSelectedTextOnly);
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 
 private:
     float m_logicalHeight { 0 };
-    unsigned m_legacyPaintingResourceMode : 4; // RenderSVGResourceMode
     unsigned m_startsNewTextChunk : 1;
-    LegacyRenderSVGResource* m_legacyPaintingResource { nullptr };
-    SVGPaintServerOrColor m_paintServerOrColor { };
 
     Vector<SVGTextFragment> m_textFragments;
 };

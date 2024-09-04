@@ -80,6 +80,7 @@ protected:
     float textPosition();
     FloatRect computePaintRect(const LayoutPoint& paintOffset);
     bool computeHaveSelection() const;
+    std::pair<unsigned, unsigned> selectionStartEnd() const;
     MarkedText createMarkedTextFromSelectionInBox();
     const FontCascade& fontCascade() const;
     FloatPoint textOriginFromPaintRect(const FloatRect&) const;

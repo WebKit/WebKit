@@ -152,9 +152,15 @@ void TextBoxPainter<TextBoxPath>::paint()
 }
 
 template<typename TextBoxPath>
+std::pair<unsigned, unsigned> TextBoxPainter<TextBoxPath>::selectionStartEnd() const
+{
+    return m_renderer.view().selection().rangeForTextBox(m_renderer, m_selectableRange);
+}
+
+template<typename TextBoxPath>
 MarkedText TextBoxPainter<TextBoxPath>::createMarkedTextFromSelectionInBox()
 {
-    auto [selectionStart, selectionEnd] = m_renderer.view().selection().rangeForTextBox(m_renderer, m_selectableRange);
+    auto [selectionStart, selectionEnd] = selectionStartEnd();
     if (selectionStart < selectionEnd)
         return { selectionStart, selectionEnd, MarkedText::Type::Selection };
     return { };
@@ -362,7 +368,7 @@ void TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations()
         unsigned selectionStart = 0;
         unsigned selectionEnd = 0;
         if (m_haveSelection)
-            std::tie(selectionStart, selectionEnd) = m_renderer.view().selection().rangeForTextBox(m_renderer, m_selectableRange);
+            std::tie(selectionStart, selectionEnd) = selectionStartEnd();
 
         FloatRect textDecorationSelectionClipOutRect;
         if ((m_paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection)) && selectionStart < selectionEnd && selectionEnd <= length) {

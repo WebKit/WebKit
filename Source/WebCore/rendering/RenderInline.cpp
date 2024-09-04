@@ -935,7 +935,7 @@ void RenderInline::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoin
     }
 }
 
-void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOffset) const
 {
     if (!hasOutline())
         return;

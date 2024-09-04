@@ -2953,6 +2953,7 @@ rendering/svg/SVGRenderSupport.cpp
 rendering/svg/SVGRenderTreeAsText.cpp
 rendering/svg/SVGRenderingContext.cpp
 rendering/svg/SVGRootInlineBox.cpp
+rendering/svg/SVGTextBoxPainter.cpp
 rendering/svg/SVGTextChunk.cpp
 rendering/svg/SVGTextChunkBuilder.cpp
 rendering/svg/SVGTextLayoutAttributes.cpp
