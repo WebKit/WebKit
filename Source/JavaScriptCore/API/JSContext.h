@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <JavaScriptCore/JavaScript.h>
-#import <JavaScriptCore/WebKitAvailability.h>
+#ifndef JSContext_h
+#define JSContext_h
 
-#if JSC_OBJC_API_ENABLED
+#include <JavaScriptCore/JavaScript.h>
+#include <JavaScriptCore/WebKitAvailability.h>
+
+#if defined(__OBJC__) && JSC_OBJC_API_ENABLED
 
 @class JSScript, JSVirtualMachine, JSValue, JSContext;
 
@@ -238,3 +241,5 @@ JSC_CLASS_AVAILABLE(macos(10.9), ios(7.0))
 @end
 
 #endif
+
+#endif /* JSContext_h */

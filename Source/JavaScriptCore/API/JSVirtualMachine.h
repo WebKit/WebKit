@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <JavaScriptCore/JavaScriptCore.h>
+#ifndef JSVirtualMachine_h
+#define JSVirtualMachine_h
 
-#if JSC_OBJC_API_ENABLED
+#include <JavaScriptCore/JavaScriptCore.h>
+
+#if defined(__OBJC__) && JSC_OBJC_API_ENABLED
 
 /*!
 @interface
@@ -85,3 +88,5 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @end
 
 #endif
+
+#endif /* JSVirtualMachine_h */
