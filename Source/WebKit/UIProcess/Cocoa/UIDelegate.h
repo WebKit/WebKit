@@ -119,6 +119,7 @@ private:
         void handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
         void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool allowed)>&&) final;
         void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&) final;
+        bool focusFromServiceWorker(WebKit::WebPageProxy&) final;
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         void mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData&, OptionSet<WebEventModifier>, API::Object*);
 #endif
@@ -127,7 +128,6 @@ private:
         void showPage(WebPageProxy*) final;
         void focus(WebPageProxy*) final;
         void unfocus(WebPageProxy*) final;
-        bool focusFromServiceWorker(WebKit::WebPageProxy&) final;
 
         bool canRunModal() const final;
         void runModal(WebPageProxy&) final;
@@ -231,13 +231,13 @@ private:
         bool webViewDidResignInputElementStrongPasswordAppearanceWithUserInfo : 1;
         bool webViewTakeFocus : 1;
         bool webViewHandleAutoplayEventWithFlags : 1;
+        bool focusWebViewFromServiceWorker : 1;
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         bool webViewMouseDidMoveOverElementWithFlagsUserInfo : 1;
 #endif
 #if PLATFORM(MAC)
         bool showWebView : 1;
         bool focusWebView : 1;
-        bool focusWebViewFromServiceWorker : 1;
         bool unfocusWebView : 1;
         bool webViewRunModal : 1;
         bool webViewDidScroll : 1;

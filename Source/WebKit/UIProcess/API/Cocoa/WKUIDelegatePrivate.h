@@ -217,6 +217,8 @@ struct UIEdgeInsets;
 - (void)_webViewRecentlyAccessedGamepadsForTesting:(WKWebView *)webView WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 - (void)_webViewStoppedAccessingGamepadsForTesting:(WKWebView *)webView WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
+- (bool)_focusWebViewFromServiceWorker:(WKWebView *)webView WK_API_AVAILABLE(macos(13.0), ios(16.0));
+
 #if defined(TARGET_OS_VISION) && TARGET_OS_VISION
 - (void)_webView:(WKWebView *)webView setRecentlyAccessedGamepads:(BOOL)recentlyAccessedGamepads WK_API_AVAILABLE(visionos(2.0));
 - (void)_webView:(WKWebView *)webView gamepadsConnectedStateDidChange:(BOOL)gamepadsConnected WK_API_AVAILABLE(visionos(2.0));
@@ -306,7 +308,6 @@ struct UIEdgeInsets;
 - (void)_completeImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
 - (void)_showWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
 - (void)_focusWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
-- (bool)_focusWebViewFromServiceWorker:(WKWebView *)webView WK_API_AVAILABLE(macos(13.0), ios(16.0));
 - (void)_unfocusWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
 - (void)_webViewDidScroll:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
 - (void)_webViewRunModal:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
