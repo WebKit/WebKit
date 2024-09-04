@@ -602,7 +602,7 @@ void HTMLCanvasElement::reset()
     setSurfaceSize(newSize);
 
     if (m_context) {
-        if (auto* context = dynamicDowncast<GPUBasedCanvasRenderingContext>(*m_context))
+        if (RefPtr context = dynamicDowncast<GPUBasedCanvasRenderingContext>(*m_context))
             context->reshape();
     }
 

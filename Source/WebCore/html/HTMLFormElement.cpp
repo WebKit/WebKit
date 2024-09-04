@@ -189,7 +189,7 @@ void HTMLFormElement::submitImplicitly(Event& event, bool fromImplicitSubmission
 {
     unsigned submissionTriggerCount = 0;
     for (auto& listedElement : m_listedElements) {
-        auto* formElement = dynamicDowncast<HTMLFormControlElement>(*listedElement);
+        RefPtr formElement = dynamicDowncast<HTMLFormControlElement>(*listedElement);
         if (!formElement)
             continue;
         if (formElement->isSuccessfulSubmitButton()) {

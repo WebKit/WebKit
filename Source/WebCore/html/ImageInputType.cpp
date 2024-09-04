@@ -99,7 +99,7 @@ void ImageInputType::handleDOMActivateEvent(Event& event)
     // the Form or button relationships.
     protectedElement->protectedDocument()->updateLayoutIgnorePendingStylesheets();
 
-    if (auto currentForm = protectedElement->form())
+    if (RefPtr currentForm = protectedElement->form())
         currentForm->submitIfPossible(&event, element()); // Event handlers can run.
 
     event.setDefaultHandled();

@@ -95,7 +95,7 @@ bool BaseCheckableInputType::canSetStringValue() const
 bool BaseCheckableInputType::accessKeyAction(bool sendMouseEvents)
 {
     ASSERT(element());
-    return InputType::accessKeyAction(sendMouseEvents) || element()->dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
+    return InputType::accessKeyAction(sendMouseEvents) || protectedElement()->dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
 String BaseCheckableInputType::fallbackValue() const

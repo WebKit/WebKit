@@ -160,7 +160,7 @@ static void appendServerMapMousePosition(StringBuilder& url, Event& event)
     if (!mouseEvent)
         return;
 
-    auto* imageElement = dynamicDowncast<HTMLImageElement>(mouseEvent->target());
+    RefPtr imageElement = dynamicDowncast<HTMLImageElement>(mouseEvent->target());
     if (!imageElement)
         return;
 
