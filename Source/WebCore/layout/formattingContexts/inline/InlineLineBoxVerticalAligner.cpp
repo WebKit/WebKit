@@ -374,8 +374,10 @@ void LineBoxVerticalAligner::alignInlineLevelBoxes(LineBox& lineBox, InlineLayou
         switch (inlineLevelBox.verticalAlign().type) {
         case VerticalAlign::Top: {
             auto ascent = inlineLevelBox.layoutBounds().ascent;
-            if (inlineLevelBox.isInlineBox())
-                ascent = std::max(layoutBoundsForInlineBoxSubtree(nonRootInlineLevelBoxes, index).ascent, ascent);
+            if (inlineLevelBox.isInlineBox()) {
+                auto descendantsEnclosingAscent = layoutBoundsForInlineBoxSubtree(nonRootInlineLevelBoxes, index).ascent;
+                ascent = !inlineLevelBox.hasContent() ? descendantsEnclosingAscent : std::max(descendantsEnclosingAscent, ascent);
+            }
             // Note that this logical top is not relative to the parent inline box.
             logicalTop = ascent - inlineLevelBox.ascent();
             break;
