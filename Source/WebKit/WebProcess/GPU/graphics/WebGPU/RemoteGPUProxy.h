@@ -33,7 +33,6 @@
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPU.h>
 #include <WebCore/WebGPUPresentationContext.h>
-#include <wtf/Deque.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -144,7 +143,6 @@ private:
     bool isCurrent() const final { return m_dispatcher.isCurrent(); }
 
     Ref<WebGPU::ConvertToBackingContext> m_convertToBackingContext;
-    Deque<CompletionHandler<void(RefPtr<WebCore::WebGPU::Adapter>&&)>> m_callbacks;
     SerialFunctionDispatcher& m_dispatcher;
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RefPtr<IPC::StreamClientConnection> m_streamConnection;

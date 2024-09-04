@@ -32,7 +32,6 @@
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUCommandEncoderDescriptor.h>
 #include <WebCore/WebGPUDevice.h>
-#include <wtf/Deque.h>
 #include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
@@ -113,10 +112,6 @@ private:
 
     void setLabelInternal(const String&) final;
     void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&) final;
-
-    Deque<CompletionHandler<void(Ref<WebCore::WebGPU::ComputePipeline>&&)>> m_createComputePipelineAsyncCallbacks;
-    Deque<CompletionHandler<void(Ref<WebCore::WebGPU::RenderPipeline>&&)>> m_createRenderPipelineAsyncCallbacks;
-    Deque<CompletionHandler<void(std::optional<WebCore::WebGPU::Error>&&)>> m_popErrorScopeCallbacks;
 
     WebGPUIdentifier m_backing;
     WebGPUIdentifier m_queueBacking;

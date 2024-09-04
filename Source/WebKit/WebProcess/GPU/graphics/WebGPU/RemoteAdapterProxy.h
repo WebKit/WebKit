@@ -30,7 +30,6 @@
 #include "RemoteGPUProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUAdapter.h>
-#include <wtf/Deque.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
@@ -79,8 +78,6 @@ private:
     }
 
     void requestDevice(const WebCore::WebGPU::DeviceDescriptor&, CompletionHandler<void(RefPtr<WebCore::WebGPU::Device>&&)>&&) final;
-
-    Deque<CompletionHandler<void(Ref<WebCore::WebGPU::Device>)>> m_callbacks;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

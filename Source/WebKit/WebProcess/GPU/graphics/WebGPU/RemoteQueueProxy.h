@@ -30,7 +30,6 @@
 #include "RemoteAdapterProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUQueue.h>
-#include <wtf/Deque.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit::WebGPU {
@@ -109,8 +108,6 @@ private:
         const WebCore::WebGPU::Extent3D& copySize) final;
 
     void setLabelInternal(const String&) final;
-
-    Deque<CompletionHandler<void()>> m_callbacks;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

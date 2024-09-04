@@ -131,12 +131,6 @@ public:
     virtual void popErrorScope(CompletionHandler<void(bool, std::optional<Error>&&)>&&) = 0;
     virtual void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<Error>&&)>&&) = 0;
     virtual void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&) = 0;
-    class DeviceLostClient {
-        virtual ~DeviceLostClient() = default;
-        virtual void deviceLost() = 0;
-    };
-    void registerDeviceLostClient(DeviceLostClient& client) { m_deviceLostClients.add(&client); }
-    void unregisterDeviceLostClient(DeviceLostClient& client) { m_deviceLostClients.remove(&client); }
 
 protected:
     Device(Ref<SupportedFeatures>&& features, Ref<SupportedLimits>&& limits)
@@ -154,7 +148,6 @@ private:
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
-    HashSet<DeviceLostClient*> m_deviceLostClients;
     Ref<SupportedFeatures> m_features;
     Ref<SupportedLimits> m_limits;
 };
