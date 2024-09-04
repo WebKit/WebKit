@@ -7498,7 +7498,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-m
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/chromium-paint-holding-timeout.html [ ImageOnlyFailure ]
 # Fuzzy failure, pixel rounding in <iframe>?
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/root-element-transition-iframe-with-startVT-on-main.html [ ImageOnlyFailure ]
-webkit.org/b/278028 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/hide-before-reveal.html [ Failure ]
 webkit.org/b/278756 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/skip-outbound-vt-before-reveal.html [ Failure ]
 
 # prerender not supported.

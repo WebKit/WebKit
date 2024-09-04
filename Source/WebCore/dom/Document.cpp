@@ -2360,6 +2360,10 @@ void Document::visibilityStateChanged()
             callback();
     }
     updateServiceWorkerClientData();
+
+    // https://drafts.csswg.org/css-view-transitions/#page-visibility-change-steps
+    if (hidden())
+        m_inboundViewTransitionParams = nullptr;
 }
 
 VisibilityState Document::visibilityState() const
