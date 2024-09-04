@@ -1835,3 +1835,6 @@ media/media-vp8-hiddenframes.html [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/278934 [ macOS iOS wk2 ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html is a flaky failure.
 imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure Pass ] 
+
+# webkit.org/b/279096 [ macOS wk2 arm64 debug ] animations/stop-animation-on-suspend.html is a flaky text failure. 
+[ Debug arm64 ] animations/stop-animation-on-suspend.html [ Pass Failure ]
