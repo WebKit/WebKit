@@ -72,7 +72,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionAction, WebExtensionAction, 
 
 - (id<WKWebExtensionTab>)associatedTab
 {
-    if (auto *tab = _webExtensionAction->tab())
+    if (RefPtr tab = _webExtensionAction->tab())
         return tab->delegate();
     return nil;
 }

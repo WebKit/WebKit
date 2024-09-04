@@ -78,8 +78,8 @@ public:
     bool operator==(const WebExtensionAction&) const;
 
     WebExtensionContext* extensionContext() const;
-    WebExtensionTab* tab() { return m_tab.get(); }
-    WebExtensionWindow* window() { return m_window.get(); }
+    RefPtr<WebExtensionTab> tab() const;
+    RefPtr<WebExtensionWindow> window() const;
 
     void clearCustomizations();
     void clearBlockedResourceCount();
@@ -149,8 +149,8 @@ private:
 #endif
 
     WeakPtr<WebExtensionContext> m_extensionContext;
-    RefPtr<WebExtensionTab> m_tab;
-    RefPtr<WebExtensionWindow> m_window;
+    std::optional<WeakPtr<WebExtensionTab>> m_tab;
+    std::optional<WeakPtr<WebExtensionWindow>> m_window;
 
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<_WKWebExtensionActionViewController> m_popupViewController;

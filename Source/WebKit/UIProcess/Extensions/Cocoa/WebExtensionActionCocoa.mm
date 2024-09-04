@@ -589,6 +589,20 @@ WebExtensionContext* WebExtensionAction::extensionContext() const
     return m_extensionContext.get();
 }
 
+RefPtr<WebExtensionTab> WebExtensionAction::tab() const
+{
+    return m_tab.and_then([](auto const& maybeTab) {
+        return std::optional(RefPtr(maybeTab.get()));
+    }).value_or(nullptr);
+}
+
+RefPtr<WebExtensionWindow> WebExtensionAction::window() const
+{
+    return m_window.and_then([](auto const& maybeWindow) {
+        return std::optional(RefPtr(maybeWindow.get()));
+    }).value_or(nullptr);
+}
+
 void WebExtensionAction::clearCustomizations()
 {
     if (!m_customIcons && m_customPopupPath.isNull() && m_customLabel.isNull() && m_customBadgeText.isNull() && !m_customEnabled && !m_blockedResourceCount)
@@ -628,12 +642,12 @@ WebExtensionAction* WebExtensionAction::fallbackAction() const
     if (!extensionContext())
         return nullptr;
 
-    // Tab actions fallback to the window action.
-    if (m_tab)
-        return extensionContext()->getAction(m_tab->window().get()).ptr();
+    // Tab actions whose tab references have not dropped fallback to the window action.
+    if (RefPtr tab = this->tab())
+        return extensionContext()->getAction(tab->window().get()).ptr();
 
-    // Window actions fallback to the default action.
-    if (m_window)
+    // Window actions and tab actions whose tab references have dropped fallback to the default action.
+    if (m_window.has_value() || m_tab.has_value())
         return &extensionContext()->defaultAction();
 
     // Default actions have no fallback.
@@ -1160,9 +1174,11 @@ NSArray *WebExtensionAction::platformMenuItems() const
     if (!extensionContext())
         return @[ ];
 
-    RefPtr tab = m_tab;
-    if (!tab && m_window)
-        tab = m_window->activeTab();
+    RefPtr tab = this->tab();
+    if (!tab) {
+        if (RefPtr window = this->window())
+            tab = window->activeTab();
+    }
 
     WebExtensionMenuItemContextParameters contextParameters;
     contextParameters.types = WebExtensionMenuItemContextType::Action;
