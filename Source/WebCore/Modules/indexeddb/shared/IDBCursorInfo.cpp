@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-IDBCursorInfo IDBCursorInfo::objectStoreCursor(IDBTransaction& transaction, uint64_t objectStoreIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
+IDBCursorInfo IDBCursorInfo::objectStoreCursor(IDBTransaction& transaction, IDBObjectStoreIdentifier objectStoreIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
 {
     return { transaction, objectStoreIdentifier, range, direction, type };
 }
 
-IDBCursorInfo IDBCursorInfo::indexCursor(IDBTransaction& transaction, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
+IDBCursorInfo IDBCursorInfo::indexCursor(IDBTransaction& transaction, IDBObjectStoreIdentifier objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
 {
     return { transaction, objectStoreIdentifier, indexIdentifier, range, direction, type };
 }
@@ -47,11 +47,11 @@ IDBCursorInfo::IDBCursorInfo()
 {
 }
 
-IDBCursorInfo::IDBCursorInfo(IDBTransaction& transaction, uint64_t objectStoreIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
+IDBCursorInfo::IDBCursorInfo(IDBTransaction& transaction, IDBObjectStoreIdentifier objectStoreIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
     : m_cursorIdentifier(transaction.database().connectionProxy())
     , m_transactionIdentifier(transaction.info().identifier())
     , m_objectStoreIdentifier(objectStoreIdentifier)
-    , m_sourceIdentifier(objectStoreIdentifier)
+    , m_sourceIdentifier(objectStoreIdentifier.toRawValue())
     , m_range(range)
     , m_source(IndexedDB::CursorSource::ObjectStore)
     , m_direction(direction)
@@ -59,7 +59,7 @@ IDBCursorInfo::IDBCursorInfo(IDBTransaction& transaction, uint64_t objectStoreId
 {
 }
 
-IDBCursorInfo::IDBCursorInfo(IDBTransaction& transaction, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
+IDBCursorInfo::IDBCursorInfo(IDBTransaction& transaction, IDBObjectStoreIdentifier objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
     : m_cursorIdentifier(transaction.database().connectionProxy())
     , m_transactionIdentifier(transaction.info().identifier())
     , m_objectStoreIdentifier(objectStoreIdentifier)
@@ -71,7 +71,7 @@ IDBCursorInfo::IDBCursorInfo(IDBTransaction& transaction, uint64_t objectStoreId
 {
 }
 
-IDBCursorInfo::IDBCursorInfo(const IDBResourceIdentifier& cursorIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t sourceIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorSource source, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
+IDBCursorInfo::IDBCursorInfo(const IDBResourceIdentifier& cursorIdentifier, const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier objectStoreIdentifier, uint64_t sourceIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorSource source, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
     : m_cursorIdentifier(cursorIdentifier)
     , m_transactionIdentifier(transactionIdentifier)
     , m_objectStoreIdentifier(objectStoreIdentifier)
