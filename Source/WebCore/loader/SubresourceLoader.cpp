@@ -283,9 +283,18 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
             NetworkLoadMetrics emptyMetrics;
             didFinishLoading(emptyMetrics);
             return completionHandler(WTFMove(newRequest));
-        } else if (m_redirectCount++ >= options().maxRedirectCount) {
+        }
+
+        if (m_redirectCount++ >= options().maxRedirectCount) {
             SUBRESOURCELOADER_RELEASE_LOG("willSendRequestInternal: resource load canceled because too many redirects");
             cancel(ResourceError(String(), 0, request().url(), "Too many redirections"_s, ResourceError::Type::General));
+            return completionHandler(WTFMove(newRequest));
+        }
+
+        // FIXME: Ideally we'd fail any non-HTTP(S) URL. See also ResourceLoader.
+        if (newRequest.url().protocolIsData()) {
+            SUBRESOURCELOADER_RELEASE_LOG("willSendRequestInternal: resource load canceled because of a data: URL");
+            cancel(ResourceError(String(), 0, request().url(), "Cannot redirect to a data: URL"_s, ResourceError::Type::General));
             return completionHandler(WTFMove(newRequest));
         }
 

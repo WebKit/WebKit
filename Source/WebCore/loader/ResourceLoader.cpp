@@ -491,16 +491,11 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
     m_request = request;
 
     if (isRedirect) {
-        auto& redirectURL = request.url();
         if (m_documentLoader && !m_documentLoader->isCommitted())
             checkedFrameLoader()->client().dispatchDidReceiveServerRedirectForProvisionalLoad();
 
-        if (redirectURL.protocolIsData()) {
-            // Handle data URL decoding locally.
-            RESOURCELOADER_RELEASE_LOG("willSendRequestInternal: Redirected to a data URL. Processing locally");
-            finishNetworkLoad();
-            loadDataURL();
-        }
+        // FIXME: Ideally we'd assert this is an HTTP(S) URL. See also SubResourceLoader.
+        ASSERT(!request.url().protocolIsData());
     }
 
     RESOURCELOADER_RELEASE_LOG("willSendRequestInternal: calling completion handler");
