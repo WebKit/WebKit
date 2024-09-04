@@ -60,11 +60,7 @@ CoordinatedPlatformLayerBufferVideo::CoordinatedPlatformLayerBufferVideo(GstBuff
 {
 }
 
-CoordinatedPlatformLayerBufferVideo::~CoordinatedPlatformLayerBufferVideo()
-{
-    if (m_isMapped)
-        gst_video_frame_unmap(&m_videoFrame);
-}
+CoordinatedPlatformLayerBufferVideo::~CoordinatedPlatformLayerBufferVideo() = default;
 
 std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::copyBuffer() const
 {
@@ -89,11 +85,12 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
     // When not having a texture, we map the frame here and upload the pixels to a texture in the
     // compositor thread, in paintToTextureMapper(), which also allows us to use the texture mapper
     // bitmap texture pool.
-    m_isMapped = gst_video_frame_map(&m_videoFrame, videoInfo, m_gstBuffer.get(), GST_MAP_READ);
-    if (!m_isMapped)
+    GstMappedFrame frame(m_gstBuffer.get(), videoInfo, GST_MAP_READ);
+    if (!frame)
         return nullptr;
 
-    if (GST_VIDEO_INFO_HAS_ALPHA(&m_videoFrame.info))
+    m_videoFrame = WTFMove(frame);
+    if (GST_VIDEO_INFO_HAS_ALPHA(m_videoFrame.info()))
         m_flags.add({ TextureMapperFlags::ShouldBlend, TextureMapperFlags::ShouldPremultiply });
 
     return nullptr;
@@ -105,46 +102,48 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
     if (!gst_is_gl_memory(memory))
         return nullptr;
 
-    m_isMapped = gst_video_frame_map(&m_videoFrame, videoInfo, m_gstBuffer.get(), static_cast<GstMapFlags>(GST_MAP_READ | GST_MAP_GL));
-    if (!m_isMapped)
+    GstMappedFrame frame(m_gstBuffer.get(), videoInfo, static_cast<GstMapFlags>(GST_MAP_READ | GST_MAP_GL));
+    if (!frame)
         return nullptr;
 
-    if (GST_VIDEO_INFO_HAS_ALPHA(&m_videoFrame.info))
+    m_videoFrame = WTFMove(frame);
+    auto info = m_videoFrame.info();
+    if (GST_VIDEO_INFO_HAS_ALPHA(info))
         m_flags.add({ TextureMapperFlags::ShouldBlend, TextureMapperFlags::ShouldPremultiply });
 
     auto textureTarget = gst_gl_memory_get_texture_target(GST_GL_MEMORY_CAST(memory));
     if (textureTarget == GST_GL_TEXTURE_TARGET_EXTERNAL_OES)
-        return CoordinatedPlatformLayerBufferExternalOES::create(*reinterpret_cast<GLuint*>(m_videoFrame.data[0]), m_size, m_flags, nullptr);
+        return CoordinatedPlatformLayerBufferExternalOES::create(*reinterpret_cast<GLuint*>(m_videoFrame.planeData(0)), m_size, m_flags, nullptr);
 
-    if ((GST_VIDEO_INFO_IS_RGB(&m_videoFrame.info) && GST_VIDEO_INFO_N_PLANES(&m_videoFrame.info) == 1))
-        return CoordinatedPlatformLayerBufferRGB::create(*reinterpret_cast<GLuint*>(m_videoFrame.data[0]), m_size, m_flags, nullptr);
+    if ((GST_VIDEO_INFO_IS_RGB(info) && GST_VIDEO_INFO_N_PLANES(info) == 1))
+        return CoordinatedPlatformLayerBufferRGB::create(*reinterpret_cast<GLuint*>(m_videoFrame.planeData(0)), m_size, m_flags, nullptr);
 
-    if (GST_VIDEO_INFO_IS_YUV(&m_videoFrame.info) && GST_VIDEO_INFO_N_COMPONENTS(&m_videoFrame.info) >= 3 && GST_VIDEO_INFO_N_PLANES(&m_videoFrame.info) <= 4) {
+    if (GST_VIDEO_INFO_IS_YUV(info) && GST_VIDEO_INFO_N_COMPONENTS(info) >= 3 && GST_VIDEO_INFO_N_PLANES(info) <= 4) {
         if (m_videoDecoderPlatform && *m_videoDecoderPlatform == GstVideoDecoderPlatform::ImxVPU) {
             // IMX VPU decoder decodes YUV data only into the Y texture from which the sampler
             // then directly produces RGBA data. Textures for other planes aren't used, but
             // that's decoder's problem. We have to treat that Y texture as having RGBA data.
-            return CoordinatedPlatformLayerBufferRGB::create(*reinterpret_cast<GLuint*>(m_videoFrame.data[0]), m_size, m_flags, nullptr);
+            return CoordinatedPlatformLayerBufferRGB::create(*reinterpret_cast<GLuint*>(m_videoFrame.planeData(0)), m_size, m_flags, nullptr);
         }
 
-        unsigned numberOfPlanes = GST_VIDEO_INFO_N_PLANES(&m_videoFrame.info);
+        unsigned numberOfPlanes = GST_VIDEO_INFO_N_PLANES(info);
         std::array<GLuint, 4> planes;
         std::array<unsigned, 4> yuvPlane;
         std::array<unsigned, 4> yuvPlaneOffset;
         for (unsigned i = 0; i < numberOfPlanes; ++i)
-            planes[i] = *static_cast<GLuint*>(m_videoFrame.data[i]);
+            planes[i] = *static_cast<GLuint*>(m_videoFrame.planeData(i));
         for (unsigned i = 0; i < numberOfPlanes; ++i) {
-            yuvPlane[i] = GST_VIDEO_INFO_COMP_PLANE(&m_videoFrame.info, i);
-            yuvPlaneOffset[i] = GST_VIDEO_INFO_COMP_POFFSET(&m_videoFrame.info, i);
+            yuvPlane[i] = GST_VIDEO_INFO_COMP_PLANE(info, i);
+            yuvPlaneOffset[i] = GST_VIDEO_INFO_COMP_POFFSET(info, i);
         }
 
         // Default to bt601. This is the same behaviour as GStreamer's glcolorconvert element.
         CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::BT601;
-        if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(&m_videoFrame.info), GST_VIDEO_COLORIMETRY_BT709))
+        if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(info), GST_VIDEO_COLORIMETRY_BT709))
             yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::BT709;
-        else if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(&m_videoFrame.info), GST_VIDEO_COLORIMETRY_BT2020))
+        else if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(info), GST_VIDEO_COLORIMETRY_BT2020))
             yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::BT2020;
-        else if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(&m_videoFrame.info), GST_VIDEO_COLORIMETRY_SMPTE240M))
+        else if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(info), GST_VIDEO_COLORIMETRY_SMPTE240M))
             yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::SMPTE240M;
 
         return CoordinatedPlatformLayerBufferYUV::create(numberOfPlanes, WTFMove(planes), WTFMove(yuvPlane), WTFMove(yuvPlaneOffset), yuvToRgbColorSpace, m_size, m_flags, nullptr);
@@ -163,9 +162,9 @@ void CoordinatedPlatformLayerBufferVideo::paintToTextureMapper(TextureMapper& te
         }
     }
 
-    if (!m_buffer && m_isMapped) {
+    if (!m_buffer && m_videoFrame) {
         OptionSet<BitmapTexture::Flags> textureFlags;
-        if (GST_VIDEO_INFO_HAS_ALPHA(&m_videoFrame.info))
+        if (GST_VIDEO_INFO_HAS_ALPHA(m_videoFrame.info()))
             textureFlags.add(BitmapTexture::Flags::SupportsAlpha);
         auto texture = textureMapper.acquireTextureFromPool(m_size, textureFlags);
 
@@ -177,12 +176,10 @@ void CoordinatedPlatformLayerBufferVideo::paintToTextureMapper(TextureMapper& te
         }
 
         if (!m_buffer) {
-            int stride = GST_VIDEO_FRAME_PLANE_STRIDE(&m_videoFrame, 0);
-            const void* srcData = GST_VIDEO_FRAME_PLANE_DATA(&m_videoFrame, 0);
+            int stride = m_videoFrame.planeStride(0);
+            const void* srcData = m_videoFrame.planeData(0);
             texture->updateContents(srcData, IntRect(0, 0, m_size.width(), m_size.height()), IntPoint(0, 0), stride);
             m_buffer = CoordinatedPlatformLayerBufferRGB::create(WTFMove(texture), m_flags, nullptr);
-            gst_video_frame_unmap(&m_videoFrame);
-            m_isMapped = false;
         }
     }
 

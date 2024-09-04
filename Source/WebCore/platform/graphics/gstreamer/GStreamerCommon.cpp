@@ -664,6 +664,8 @@ GstMappedFrame::GstMappedFrame(const GRefPtr<GstSample>& sample, GstMapFlags fla
     gst_video_frame_map(&m_frame, &info, gst_sample_get_buffer(sample.get()), flags);
 }
 
+GstMappedFrame::GstMappedFrame() = default;
+
 GstMappedFrame::~GstMappedFrame()
 {
     // FIXME: Make this un-conditional when the minimum GStreamer dependency version is >= 1.22.

@@ -46,9 +46,8 @@ private:
     std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromGLMemory(GstVideoInfo*);
 
     GRefPtr<GstBuffer> m_gstBuffer;
-    GstVideoFrame m_videoFrame;
+    GstMappedFrame m_videoFrame;
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
-    bool m_isMapped { false };
     std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
 };
 
