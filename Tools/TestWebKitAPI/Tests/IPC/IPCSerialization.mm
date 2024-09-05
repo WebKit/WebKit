@@ -1335,6 +1335,32 @@ TEST(IPCSerialization, NSShadow)
     runTestNSShadow({ 10.5, 5.7 }, 0.79, platformColor.get());
 }
 
+TEST(IPCSerialization, NSURLRequest)
+{
+    RetainPtr url = [NSURL URLWithString:@"https://webkit.org/"];
+    RetainPtr urlRequest = [NSURLRequest requestWithURL:url.get()];
+    runTestNS({ urlRequest });
+
+    NSDictionary *jsonDict = @{
+        @"a" : @1,
+        @"b" : @2
+    };
+    RetainPtr postData = [NSJSONSerialization dataWithJSONObject:jsonDict options:0 error:Nil];
+    RetainPtr postRequest = [[NSMutableURLRequest alloc] initWithURL:url.get()];
+
+    [postRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    [postRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [postRequest setHTTPMethod:@"POST"];
+    [postRequest setHTTPBody:postData.get()];
+    [postRequest _setPrivacyProxyFailClosed:YES];
+
+    runTestNS({ postRequest.get() });
+
+    url = nil;
+    urlRequest = [NSURLRequest requestWithURL:url.get()];
+    runTestNS({ urlRequest });
+}
+
 #if PLATFORM(MAC)
 
 static RetainPtr<DDScannerResult> fakeDataDetectorResultForTesting()
@@ -1379,26 +1405,6 @@ static RetainPtr<DDScannerResult> fakeDataDetectorResultForTesting()
 
 TEST(IPCSerialization, SecureCoding)
 {
-    // NSURLRequest
-    NSURL *url = [NSURL URLWithString:@"https://webkit.org/"];
-    NSURLRequest *urlRequest = [NSURLRequest requestWithURL:url];
-    runTestNS({ urlRequest });
-
-    NSDictionary *jsonDict = @{
-        @"a" : @1,
-        @"b" : @2
-    };
-    NSData *postData = [NSJSONSerialization dataWithJSONObject:jsonDict options:0 error:Nil];
-    NSMutableURLRequest *postRequest = [[NSMutableURLRequest alloc] initWithURL:url];
-
-    [postRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    [postRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [postRequest setHTTPMethod:@"POST"];
-    [postRequest setHTTPBody:postData];
-    [postRequest _setPrivacyProxyFailClosed:YES];
-
-    runTestNS({ postRequest });
-
     // DDScannerResult
     //   - Note: For now, there's no reasonable way to create anything but an empty DDScannerResult object
     auto scannerResult = fakeDataDetectorResultForTesting();

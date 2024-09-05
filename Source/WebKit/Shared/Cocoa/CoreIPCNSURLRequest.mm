@@ -51,12 +51,15 @@ namespace WebKit {
     if ([NAME isKindOfClass:CLASS.class])                      \
         m_data.NAME = [NAME PRIMITIVE##Value];
 
-#define SET_DICT_FROM_OPTIONAL_MEMBER(KEY)                     \
-    if (m_data.KEY)                                            \
-        [dict setObject:m_data.KEY->toID().get() forKey:@#KEY]
+#define SET_DICT_FROM_OPTIONAL_MEMBER(KEY) \
+    if (m_data.KEY) { \
+        if (auto var##KEY = m_data.KEY->toID()) \
+            [dict setObject:var##KEY.get() forKey:@#KEY]; \
+    }
 
 #define SET_DICT_FROM_MEMBER(KEY) \
-    [dict setObject:m_data.KEY.toID().get() forKey:@#KEY]
+    if (auto var##KEY = m_data.KEY.toID()) \
+        [dict setObject:var##KEY.get() forKey:@#KEY] \
 
 #define SET_DICT_FROM_OPTIONAL_PRIMITIVE(KEY, CLASS, PRIMITIVE)                    \
     if (m_data.KEY)                                                                \
@@ -227,7 +230,8 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
     SET_DICT_FROM_OPTIONAL_MEMBER(protocolProperties);
     SET_DICT_FROM_PRIMITIVE(isMutable, NSNumber, Bool);
 
-    [dict setObject:m_data.url.toID().get() forKey:@"URL"];
+    if (auto nsURL = m_data.url.toID())
+        [dict setObject:nsURL.get() forKey:@"URL"];
 
     SET_DICT_FROM_PRIMITIVE(timeout, NSNumber, Double);
 
@@ -254,13 +258,15 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
         for (auto& headerPair : *m_data.headerFields) {
             WTF::switchOn(headerPair.second,
                 [&] (const String& s) {
-                    [headerFields setObject:(NSString *)s forKey:(NSString *)headerPair.first];
+                    if (!s.isNull() && !headerPair.first.isNull())
+                        [headerFields setObject:(NSString *)s forKey:(NSString *)headerPair.first];
                 },
                 [&] (const Vector<String>& vector) {
                     auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:vector.size()]);
                     for (auto& item : vector)
                         [array addObject: item];
-                    [headerFields setObject:array.get() forKey:(NSString *)headerPair.first];
+                    if (!headerPair.first.isNull())
+                        [headerFields setObject:array.get() forKey:(NSString *)headerPair.first];
                 }
             );
         }
@@ -274,7 +280,8 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
         for (auto& value : *m_data.bodyParts) {
             WTF::switchOn(value,
                 [&] (const auto& d) {
-                    [array addObject:d.toID().get()];
+                    if (auto obj = d.toID())
+                        [array addObject:obj.get()];
                 }
             );
         }
@@ -311,8 +318,10 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
 
     if (m_data.contentDispositionEncodingFallbackArray) {
         auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:m_data.contentDispositionEncodingFallbackArray->size()]);
-        for (auto& value : *m_data.contentDispositionEncodingFallbackArray)
-            [array addObject:value.toID().get()];
+        for (auto& value : *m_data.contentDispositionEncodingFallbackArray) {
+            if (auto valueObj = value.toID())
+                [array addObject:valueObj.get()];
+        }
         [dict setObject:array.get() forKey:@"contentDispositionEncodingFallbackArray"];
     }
 
