@@ -9876,19 +9876,6 @@ void HTMLMediaElement::watchtimeTimerFired()
     }();
 }
 
-std::optional<SpatialVideoMetadata> HTMLMediaElement::spatialVideoMetadata() const
-{
-    RefPtr videoTracks = this->videoTracks();
-    if (!videoTracks)
-        return { };
-
-    RefPtr selectedVideoTrack = videoTracks->selectedItem();
-    if (!selectedVideoTrack)
-        return { };
-
-    return selectedVideoTrack->configuration().spatialVideoMetadata();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO)

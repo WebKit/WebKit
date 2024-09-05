@@ -100,6 +100,9 @@ private:
     void volumeChanged(double) final;
     void isPictureInPictureSupportedChanged(bool) final;
     void isInWindowFullscreenActiveChanged(bool) final;
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    void spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>&) final;
+#endif
 
     PlaybackSessionInterfaceContext(PlaybackSessionManager&, PlaybackSessionContextIdentifier);
 
@@ -162,6 +165,7 @@ private:
     void volumeChanged(PlaybackSessionContextIdentifier, double);
     void isPictureInPictureSupportedChanged(PlaybackSessionContextIdentifier, bool);
     void isInWindowFullscreenActiveChanged(PlaybackSessionContextIdentifier, bool);
+    void spatialVideoMetadataChanged(PlaybackSessionContextIdentifier, const std::optional<WebCore::SpatialVideoMetadata>&);
 
     // Messages from PlaybackSessionManagerProxy
     void play(PlaybackSessionContextIdentifier);

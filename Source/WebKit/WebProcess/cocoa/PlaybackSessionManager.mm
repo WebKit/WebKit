@@ -167,6 +167,14 @@ void PlaybackSessionInterfaceContext::isInWindowFullscreenActiveChanged(bool isI
         manager->isInWindowFullscreenActiveChanged(m_contextId, isInWindow);
 }
 
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+void PlaybackSessionInterfaceContext::spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>& metadata)
+{
+    if (m_manager)
+        m_manager->spatialVideoMetadataChanged(m_contextId, metadata);
+}
+#endif
+
 #pragma mark - PlaybackSessionManager
 
 Ref<PlaybackSessionManager> PlaybackSessionManager::create(WebPage& page)
@@ -444,6 +452,13 @@ void PlaybackSessionManager::isInWindowFullscreenActiveChanged(PlaybackSessionCo
 {
     m_page->send(Messages::PlaybackSessionManagerProxy::IsInWindowFullscreenActiveChanged(contextId, inWindow));
 }
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+void PlaybackSessionManager::spatialVideoMetadataChanged(PlaybackSessionContextIdentifier contextId, const std::optional<WebCore::SpatialVideoMetadata>& metadata)
+{
+    m_page->send(Messages::PlaybackSessionManagerProxy::SpatialVideoMetadataChanged(contextId, metadata));
+}
+#endif
 
 #pragma mark Messages from PlaybackSessionManagerProxy:
 
