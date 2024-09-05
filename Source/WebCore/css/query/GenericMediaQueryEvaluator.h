@@ -30,17 +30,14 @@
 #include "LayoutUnit.h"
 
 namespace WebCore {
-
-class RenderElement;
-
 namespace MQ {
 
 EvaluationResult evaluateLengthFeature(const Feature&, LayoutUnit, const CSSToLengthConversionData&);
-EvaluationResult evaluateRatioFeature(const Feature&, FloatSize);
-EvaluationResult evaluateBooleanFeature(const Feature&, bool);
-EvaluationResult evaluateIntegerFeature(const Feature&, int);
-EvaluationResult evaluateNumberFeature(const Feature&, double);
-EvaluationResult evaluateResolutionFeature(const Feature&, float);
+EvaluationResult evaluateRatioFeature(const Feature&, FloatSize, const CSSToLengthConversionData&);
+EvaluationResult evaluateBooleanFeature(const Feature&, bool, const CSSToLengthConversionData&);
+EvaluationResult evaluateIntegerFeature(const Feature&, int, const CSSToLengthConversionData&);
+EvaluationResult evaluateNumberFeature(const Feature&, double, const CSSToLengthConversionData&);
+EvaluationResult evaluateResolutionFeature(const Feature&, float, const CSSToLengthConversionData&);
 EvaluationResult evaluateIdentifierFeature(const Feature&, CSSValueID);
 
 template<typename ConcreteEvaluator>

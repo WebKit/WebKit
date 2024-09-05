@@ -35,12 +35,13 @@ namespace WebCore {
 
 String CSSAspectRatioValue::customCSSText() const
 {
-    return makeString(m_numeratorValue, " / "_s, m_denominatorValue);
+    return makeString(m_numeratorValue->customCSSText(), " / "_s, m_denominatorValue->customCSSText());
 }
 
 bool CSSAspectRatioValue::equals(const CSSAspectRatioValue& other) const
 {
-    return m_numeratorValue == other.m_numeratorValue && m_denominatorValue == other.m_denominatorValue;
+    return compareCSSValue(m_numeratorValue, other.m_numeratorValue)
+        && compareCSSValue(m_denominatorValue, other.m_denominatorValue);
 }
 
-}
+} // namespace WebCore
