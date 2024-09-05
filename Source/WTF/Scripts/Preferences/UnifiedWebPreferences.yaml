@@ -1164,7 +1164,7 @@ CSSLightDarkEnabled:
 
 CSSLineClampEnabled:
   type: bool
-  status: testable
+  status: preview
   category: css
   humanReadableName: "CSS line-clamp"
   humanReadableDescription: "Enable CSS line-clamp"
