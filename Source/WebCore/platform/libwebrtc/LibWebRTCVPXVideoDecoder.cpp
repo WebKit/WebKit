@@ -65,20 +65,18 @@ static WorkQueue& vpxDecoderQueue()
 
 class LibWebRTCVPXInternalVideoDecoder : public ThreadSafeRefCounted<LibWebRTCVPXInternalVideoDecoder> , public webrtc::DecodedImageCallback {
 public:
-    static Ref<LibWebRTCVPXInternalVideoDecoder> create(LibWebRTCVPXVideoDecoder::Type type, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback, VideoDecoder::PostTaskCallback&& postTaskCallback) { return adoptRef(*new LibWebRTCVPXInternalVideoDecoder(type, config, WTFMove(outputCallback), WTFMove(postTaskCallback))); }
+    static Ref<LibWebRTCVPXInternalVideoDecoder> create(LibWebRTCVPXVideoDecoder::Type type, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback) { return adoptRef(*new LibWebRTCVPXInternalVideoDecoder(type, config, WTFMove(outputCallback))); }
     ~LibWebRTCVPXInternalVideoDecoder() = default;
 
-    void postTask(Function<void()>&& task) { m_postTaskCallback(WTFMove(task)); }
     Ref<VideoDecoder::DecodePromise> decode(std::span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration);
     void close() { m_isClosed = true; }
 private:
-    LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type, const VideoDecoder::Config&, VideoDecoder::OutputCallback&&, VideoDecoder::PostTaskCallback&&);
+    LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type, const VideoDecoder::Config&, VideoDecoder::OutputCallback&&);
     int32_t Decoded(webrtc::VideoFrame&) final;
     CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, OSType) WTF_REQUIRES_LOCK(m_pixelBufferPoolLock);
     CVPixelBufferRef createPixelBuffer(size_t width, size_t height, webrtc::BufferType);
 
     VideoDecoder::OutputCallback m_outputCallback;
-    VideoDecoder::PostTaskCallback m_postTaskCallback;
     UniqueRef<webrtc::VideoDecoder> m_internalDecoder;
     int64_t m_timestamp { 0 };
     std::optional<uint64_t> m_duration;
@@ -92,19 +90,14 @@ private:
     OSType m_pixelBufferPoolType;
 };
 
-void LibWebRTCVPXVideoDecoder::create(Type type, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback)
+void LibWebRTCVPXVideoDecoder::create(Type type, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback)
 {
-    auto decoder = makeUniqueRef<LibWebRTCVPXVideoDecoder>(type, config, WTFMove(outputCallback), WTFMove(postTaskCallback));
-    vpxDecoderQueue().dispatch([callback = WTFMove(callback), decoder = WTFMove(decoder)]() mutable {
-        auto internalDecoder = decoder->m_internalDecoder;
-        internalDecoder->postTask([callback = WTFMove(callback), decoder = WTFMove(decoder)]() mutable {
-            callback(UniqueRef<VideoDecoder> { WTFMove(decoder) });
-        });
-    });
+    UniqueRef<VideoDecoder> decoder = makeUniqueRef<LibWebRTCVPXVideoDecoder>(type, config, WTFMove(outputCallback));
+    callback(WTFMove(decoder));
 }
 
-LibWebRTCVPXVideoDecoder::LibWebRTCVPXVideoDecoder(Type type, const Config& config, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback)
-    : m_internalDecoder(LibWebRTCVPXInternalVideoDecoder::create(type, config, WTFMove(outputCallback), WTFMove(postTaskCallback)))
+LibWebRTCVPXVideoDecoder::LibWebRTCVPXVideoDecoder(Type type, const Config& config, OutputCallback&& outputCallback)
+    : m_internalDecoder(LibWebRTCVPXInternalVideoDecoder::create(type, config, WTFMove(outputCallback)))
 {
 }
 
@@ -170,9 +163,8 @@ static UniqueRef<webrtc::VideoDecoder> createInternalDecoder(LibWebRTCVPXVideoDe
     }
 }
 
-LibWebRTCVPXInternalVideoDecoder::LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type type, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback, VideoDecoder::PostTaskCallback&& postTaskCallback)
+LibWebRTCVPXInternalVideoDecoder::LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type type, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback)
     : m_outputCallback(WTFMove(outputCallback))
-    , m_postTaskCallback(WTFMove(postTaskCallback))
     , m_internalDecoder(createInternalDecoder(type))
     , m_useIOSurface(config.pixelBuffer == VideoDecoder::HardwareBuffer::Yes)
     , m_resourceOwner(config.resourceOwner)
@@ -238,18 +230,15 @@ CVPixelBufferRef LibWebRTCVPXInternalVideoDecoder::createPixelBuffer(size_t widt
 
 int32_t LibWebRTCVPXInternalVideoDecoder::Decoded(webrtc::VideoFrame& frame)
 {
-    m_postTaskCallback([protectedThis = Ref { *this }, colorSpace = VideoFrameLibWebRTC::colorSpaceFromFrame(frame), buffer = frame.video_frame_buffer(), timestamp = m_timestamp, duration = m_duration]() mutable {
-        if (protectedThis->m_isClosed)
-            return;
+    if (m_isClosed)
+        return 0;
 
-        auto videoFrame = VideoFrameLibWebRTC::create({ }, false, VideoFrame::Rotation::None, WTFMove(colorSpace), WTFMove(buffer), [protectedThis] (auto& buffer) {
-            return adoptCF(webrtc::createPixelBufferFromFrameBuffer(buffer, [protectedThis] (size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
-                return protectedThis->createPixelBuffer(width, height, bufferType);
-            }));
-        });
-
-        protectedThis->m_outputCallback(VideoDecoder::DecodedFrame { WTFMove(videoFrame), timestamp, duration });
+    auto videoFrame = VideoFrameLibWebRTC::create({ }, false, VideoFrame::Rotation::None, VideoFrameLibWebRTC::colorSpaceFromFrame(frame), frame.video_frame_buffer(), [protectedThis = Ref { *this }] (auto& buffer) {
+        return adoptCF(webrtc::createPixelBufferFromFrameBuffer(buffer, [protectedThis] (size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
+            return protectedThis->createPixelBuffer(width, height, bufferType);
+        }));
     });
+    m_outputCallback(VideoDecoder::DecodedFrame { WTFMove(videoFrame), m_timestamp, m_duration });
     return 0;
 }
 

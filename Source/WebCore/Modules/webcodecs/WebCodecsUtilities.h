@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
- * Copyright (C) 2023 Igalia S.L
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,34 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "AudioEncoder.h"
+#pragma once
 
 #if ENABLE(WEB_CODECS)
 
-#include <wtf/UniqueRef.h>
-
-#if USE(GSTREAMER)
-#include "AudioEncoderGStreamer.h"
-#endif
-
 namespace WebCore {
 
-void AudioEncoder::create(const String& codecName, const Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
+template<typename Codec>
+void postTaskToCodec(ScriptExecutionContextIdentifier identifier, ThreadSafeWeakPtr<Codec> codec, Function<void(Codec&)>&& task)
 {
-#if USE(GSTREAMER)
-    GStreamerAudioEncoder::create(codecName, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback));
-    return;
-#else
-    UNUSED_PARAM(codecName);
-    UNUSED_PARAM(config);
-    UNUSED_PARAM(descriptionCallback);
-    UNUSED_PARAM(outputCallback);
-#endif
-
-    callback(makeUnexpected("Not supported"_s));
+    ScriptExecutionContext::postTaskTo(identifier, [codec = WTFMove(codec), task = WTFMove(task)](auto&) mutable {
+        RefPtr protectedCodec = codec.get();
+        if (!protectedCodec)
+            return;
+        Codec::queueTaskKeepingObjectAlive(*protectedCodec, TaskSource::MediaElement, [codec = protectedCodec.get(), task = WTFMove(task)] () mutable {
+            task(*codec);
+        });
+    });
 }
 
-} // namespace WebCore
+}
 
-#endif // ENABLE(WEB_CODECS)
+#endif

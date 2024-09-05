@@ -112,6 +112,7 @@ private:
     bool m_isKeyChunkRequired { false };
     Deque<WebCodecsControlMessage<WebCodecsVideoDecoder>> m_controlMessageQueue;
     bool m_isMessageQueueBlocked { false };
+    size_t m_decoderCount { 0 };
 };
 
 }

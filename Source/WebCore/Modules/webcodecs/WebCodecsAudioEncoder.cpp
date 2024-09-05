@@ -46,6 +46,7 @@
 #include "WebCodecsEncodedAudioChunkMetadata.h"
 #include "WebCodecsEncodedAudioChunkOutputCallback.h"
 #include "WebCodecsErrorCallback.h"
+#include "WebCodecsUtilities.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -155,57 +156,53 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
     bool isSupportedCodec = isSupportedEncoderCodec(config.codec);
     queueControlMessageAndProcess({ *this, [this, config = WTFMove(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
         m_isMessageQueueBlocked = true;
-        AudioEncoder::PostTaskCallback postTaskCallback = [weakThis = ThreadSafeWeakPtr { *this }, identifier](auto&& task) {
-            ScriptExecutionContext::postTaskTo(identifier, [weakThis, task = WTFMove(task)](auto&) mutable {
-                RefPtr protectedThis = weakThis.get();
-                if (!protectedThis)
-                    return;
-                protectedThis->queueTaskKeepingObjectAlive(*protectedThis, TaskSource::MediaElement, WTFMove(task));
-            });
-        };
-
         if (!isSupportedCodec) {
-            postTaskCallback([this] {
-                closeEncoder(Exception { ExceptionCode::NotSupportedError, "Codec is not supported"_s });
+            postTaskToCodec<WebCodecsAudioEncoder>(identifier, *this, [] (auto& encoder) {
+                encoder.closeEncoder(Exception { ExceptionCode::NotSupportedError, "Codec is not supported"_s });
             });
             return;
         }
 
         auto encoderConfig = createAudioEncoderConfig(config);
         if (encoderConfig.hasException()) {
-            postTaskCallback([this, message = encoderConfig.releaseException().message()]() mutable {
-                closeEncoder(Exception { ExceptionCode::NotSupportedError, WTFMove(message) });
+            postTaskToCodec<WebCodecsAudioEncoder>(identifier, *this, [message = encoderConfig.releaseException().message()] (auto& encoder) mutable {
+                encoder.closeEncoder(Exception { ExceptionCode::NotSupportedError, WTFMove(message) });
             });
             return;
         }
 
         m_baseConfiguration = config;
-
-        AudioEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [this](auto&& result) {
-            if (!result.has_value()) {
-                closeEncoder(Exception { ExceptionCode::NotSupportedError, WTFMove(result.error()) });
-                return;
-            }
-            setInternalEncoder(WTFMove(result.value()));
-            m_isMessageQueueBlocked = false;
-            m_hasNewActiveConfiguration = true;
-            processControlMessageQueue();
-        }, [this](auto&& configuration) {
-            m_activeConfiguration = WTFMove(configuration);
-            m_hasNewActiveConfiguration = true;
-        }, [this](auto&& result) {
-            if (m_state != WebCodecsCodecState::Configured)
-                return;
-
-            RefPtr buffer = JSC::ArrayBuffer::create(result.data);
-            auto chunk = WebCodecsEncodedAudioChunk::create(WebCodecsEncodedAudioChunk::Init {
-                result.isKeyFrame ? WebCodecsEncodedAudioChunkType::Key : WebCodecsEncodedAudioChunkType::Delta,
-                result.timestamp,
-                result.duration,
-                BufferSource { WTFMove(buffer) }
+        AudioEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [identifier, weakThis = ThreadSafeWeakPtr { *this }] (auto&& result) mutable {
+            postTaskToCodec<WebCodecsAudioEncoder>(identifier, WTFMove(weakThis), [result = WTFMove(result)] (auto& encoder) mutable {
+                if (!result.has_value()) {
+                    encoder.closeEncoder(Exception { ExceptionCode::NotSupportedError, WTFMove(result.error()) });
+                    return;
+                }
+                encoder.setInternalEncoder(WTFMove(result.value()));
+                encoder.m_isMessageQueueBlocked = false;
+                encoder.m_hasNewActiveConfiguration = true;
+                encoder.processControlMessageQueue();
             });
-            m_output->handleEvent(WTFMove(chunk), createEncodedChunkMetadata());
-        }, WTFMove(postTaskCallback));
+        }, [identifier, weakThis = ThreadSafeWeakPtr { *this }] (auto&& configuration) {
+            postTaskToCodec<WebCodecsAudioEncoder>(identifier, weakThis, [configuration = WTFMove(configuration)] (auto& encoder) mutable {
+                encoder.m_activeConfiguration = WTFMove(configuration);
+                encoder.m_hasNewActiveConfiguration = true;
+            });
+        }, [identifier, weakThis = ThreadSafeWeakPtr { *this }, encoderCount = ++m_encoderCount] (auto&& result) {
+            postTaskToCodec<WebCodecsAudioEncoder>(identifier, weakThis, [result = WTFMove(result), encoderCount] (auto& encoder) mutable {
+                if (encoder.m_state != WebCodecsCodecState::Configured || encoder.m_encoderCount != encoderCount)
+                    return;
+
+                RefPtr buffer = JSC::ArrayBuffer::create(result.data);
+                auto chunk = WebCodecsEncodedAudioChunk::create(WebCodecsEncodedAudioChunk::Init {
+                    result.isKeyFrame ? WebCodecsEncodedAudioChunkType::Key : WebCodecsEncodedAudioChunkType::Delta,
+                    result.timestamp,
+                    result.duration,
+                    BufferSource { WTFMove(buffer) }
+                });
+                encoder.m_output->handleEvent(WTFMove(chunk), encoder.createEncodedChunkMetadata());
+            });
+        });
     } });
     return { };
 }
@@ -342,8 +339,6 @@ void WebCodecsAudioEncoder::isConfigSupported(ScriptExecutionContext& context, W
         });
     }, [](auto&&) {
     }, [](auto&&) {
-    }, [](auto&& task) {
-        task();
     });
 }
 

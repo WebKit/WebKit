@@ -118,6 +118,7 @@ private:
     WebCodecsVideoEncoderConfig m_baseConfiguration;
     VideoEncoder::ActiveConfiguration m_activeConfiguration;
     bool m_hasNewActiveConfiguration { false };
+    size_t m_encoderCount { 0 };
 };
 
 }

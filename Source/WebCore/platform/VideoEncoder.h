@@ -66,16 +66,15 @@ public:
     };
     using CreateResult = Expected<UniqueRef<VideoEncoder>, String>;
 
-    using PostTaskCallback = Function<void(Function<void()>&&)>;
     using DescriptionCallback = Function<void(ActiveConfiguration&&)>;
     using OutputCallback = Function<void(EncodedFrame&&)>;
     using CreateCallback = Function<void(CreateResult&&)>;
 
-    using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
+    using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&);
     WEBCORE_EXPORT static void setCreatorCallback(CreatorFunction&&);
 
-    static void create(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
-    WEBCORE_EXPORT static void createLocalEncoder(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
+    static void create(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&);
+    WEBCORE_EXPORT static void createLocalEncoder(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&);
 
     using EncodePromise = NativePromise<void, String>;
     virtual Ref<EncodePromise> encode(RawFrame&&, bool shouldGenerateKeyFrame) = 0;

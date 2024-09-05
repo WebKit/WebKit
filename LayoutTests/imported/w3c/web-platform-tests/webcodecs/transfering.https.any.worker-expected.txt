@@ -6,6 +6,6 @@ PASS Test transfering same array buffer twice
 FAIL Test transfering ArrayBuffer to EncodedAudioChunk assert_equals: data.length after detach expected 0 but got 10
 FAIL Test transfering ArrayBuffer to EncodedVideoChunk assert_equals: data.length after detach expected 0 but got 10
 FAIL Test transfering ArrayBuffer to AudioData promise_test: Unhandled rejection with value: object "NotSupportedError: AudioData creation failed"
-FAIL Encoding from AudioData with transferred buffer assert_unreached: Encoder error Reached unreachable code
+FAIL Encoding from AudioData with transferred buffer promise_test: Unhandled rejection with value: object "NotSupportedError: AudioData creation failed"
 FAIL Test transfering ArrayBuffer to ImageDecoder. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ImageDecoder"
 

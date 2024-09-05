@@ -34,9 +34,9 @@ class GStreamerAudioDecoder : public ThreadSafeRefCounted<GStreamerAudioDecoder>
     WTF_MAKE_TZONE_ALLOCATED(GStreamerAudioDecoder);
 
 public:
-    static void create(const String& codecName, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+    static void create(const String& codecName, const Config&, CreateCallback&&, OutputCallback&&);
 
-    GStreamerAudioDecoder(const String& codecName, const Config&, OutputCallback&&, PostTaskCallback&&, GRefPtr<GstElement>&&);
+    GStreamerAudioDecoder(const String& codecName, const Config&, OutputCallback&&, GRefPtr<GstElement>&&);
     ~GStreamerAudioDecoder();
 
 private:

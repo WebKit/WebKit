@@ -79,12 +79,11 @@ public:
     };
     using CreateResult = Expected<UniqueRef<AudioEncoder>, String>;
 
-    using PostTaskCallback = Function<void(Function<void()>&&)>;
     using DescriptionCallback = Function<void(ActiveConfiguration&&)>;
     using OutputCallback = Function<void(EncodedFrame&&)>;
     using CreateCallback = Function<void(CreateResult&&)>;
 
-    static void create(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
+    static void create(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&);
 
     using EncodePromise = NativePromise<void, String>;
     virtual Ref<EncodePromise> encode(RawFrame&&) = 0;

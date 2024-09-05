@@ -50,11 +50,10 @@ class GStreamerInternalAudioEncoder : public ThreadSafeRefCountedAndCanMakeThrea
     WTF_MAKE_NONCOPYABLE(GStreamerInternalAudioEncoder);
 
 public:
-    static Ref<GStreamerInternalAudioEncoder> create(AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback, AudioEncoder::PostTaskCallback&& postTaskCallback, GRefPtr<GstElement>&& element) { return adoptRef(*new GStreamerInternalAudioEncoder(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback), WTFMove(element))); }
+    static Ref<GStreamerInternalAudioEncoder> create(AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& element) { return adoptRef(*new GStreamerInternalAudioEncoder(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(element))); }
     ~GStreamerInternalAudioEncoder();
 
     String initialize(const String& codecName, const AudioEncoder::Config&);
-    void postTask(Function<void()>&& task) { m_postTaskCallback(WTFMove(task)); }
     bool encode(AudioEncoder::RawFrame&&);
     void flush();
     void close() { m_isClosed = true; }
@@ -63,11 +62,10 @@ public:
     bool isClosed() const { return m_isClosed; }
 
 private:
-    GStreamerInternalAudioEncoder(AudioEncoder::DescriptionCallback&&, AudioEncoder::OutputCallback&&, AudioEncoder::PostTaskCallback&&, GRefPtr<GstElement>&&);
+    GStreamerInternalAudioEncoder(AudioEncoder::DescriptionCallback&&, AudioEncoder::OutputCallback&&, GRefPtr<GstElement>&&);
 
     AudioEncoder::DescriptionCallback m_descriptionCallback;
     AudioEncoder::OutputCallback m_outputCallback;
-    AudioEncoder::PostTaskCallback m_postTaskCallback;
     int64_t m_timestamp { 0 };
     std::optional<uint64_t> m_duration;
     bool m_isClosed { false };
@@ -79,7 +77,7 @@ private:
     GRefPtr<GstCaps> m_inputCaps;
 };
 
-void GStreamerAudioEncoder::create(const String& codecName, const AudioEncoder::Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback)
+void GStreamerAudioEncoder::create(const String& codecName, const AudioEncoder::Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -91,9 +89,7 @@ void GStreamerAudioEncoder::create(const String& codecName, const AudioEncoder::
         auto components = codecName.split('-');
         if (components.size() != 2) {
             auto errorMessage = makeString("Invalid LPCM codec string: "_s, codecName);
-            postTaskCallback([callback = WTFMove(callback), errorMessage = WTFMove(errorMessage)]() mutable {
-                callback(makeUnexpected(WTFMove(errorMessage)));
-            });
+            callback(makeUnexpected(WTFMove(errorMessage)));
             return;
         }
         element = gst_element_factory_make("identity", nullptr);
@@ -102,34 +98,28 @@ void GStreamerAudioEncoder::create(const String& codecName, const AudioEncoder::
         auto lookupResult = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Encoding, codecName);
         if (!lookupResult) {
             auto errorMessage = makeString("No GStreamer encoder found for codec "_s, codecName);
-            postTaskCallback([callback = WTFMove(callback), errorMessage = WTFMove(errorMessage)]() mutable {
-                callback(makeUnexpected(WTFMove(errorMessage)));
-            });
+            callback(makeUnexpected(WTFMove(errorMessage)));
             return;
         }
         element = gst_element_factory_create(lookupResult.factory.get(), nullptr);
     }
-    auto encoder = makeUniqueRef<GStreamerAudioEncoder>(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback), WTFMove(element));
+    auto encoder = makeUniqueRef<GStreamerAudioEncoder>(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(element));
     auto internalEncoder = encoder->m_internalEncoder;
     auto error = internalEncoder->initialize(codecName, config);
     if (!error.isEmpty()) {
-        encoder->m_internalEncoder->postTask([callback = WTFMove(callback), error = WTFMove(error)]() mutable {
-            GST_WARNING("Error creating encoder: %s", error.ascii().data());
-            callback(makeUnexpected(makeString("GStreamer encoding initialization failed with error: "_s, error)));
-        });
+        GST_WARNING("Error creating encoder: %s", error.ascii().data());
+        callback(makeUnexpected(makeString("GStreamer encoding initialization failed with error: "_s, error)));
         return;
     }
     gstEncoderWorkQueue().dispatch([callback = WTFMove(callback), encoder = WTFMove(encoder)]() mutable {
         auto internalEncoder = encoder->m_internalEncoder;
-        internalEncoder->postTask([callback = WTFMove(callback), encoder = WTFMove(encoder)]() mutable {
-            GST_DEBUG("Encoder created");
-            callback(UniqueRef<AudioEncoder> { WTFMove(encoder) });
-        });
+        GST_DEBUG("Encoder created");
+        callback(UniqueRef<AudioEncoder> { WTFMove(encoder) });
     });
 }
 
-GStreamerAudioEncoder::GStreamerAudioEncoder(DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback, GRefPtr<GstElement>&& element)
-    : m_internalEncoder(GStreamerInternalAudioEncoder::create(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback), WTFMove(element)))
+GStreamerAudioEncoder::GStreamerAudioEncoder(DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback, GRefPtr<GstElement>&& element)
+    : m_internalEncoder(GStreamerInternalAudioEncoder::create(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(element)))
 {
 }
 
@@ -174,10 +164,9 @@ void GStreamerAudioEncoder::close()
     m_internalEncoder->close();
 }
 
-GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback, AudioEncoder::PostTaskCallback&& postTaskCallback, GRefPtr<GstElement>&& encoderElement)
+GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback, GRefPtr<GstElement>&& encoderElement)
     : m_descriptionCallback(WTFMove(descriptionCallback))
     , m_outputCallback(WTFMove(outputCallback))
-    , m_postTaskCallback(WTFMove(postTaskCallback))
     , m_encoder(WTFMove(encoderElement))
 {
     static Atomic<uint64_t> counter = 0;
@@ -207,32 +196,26 @@ GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(AudioEncoder::Descr
         if (!caps)
             return;
 
-        encoder->postTask([weakEncoder = WTFMove(weakEncoder), caps = WTFMove(caps)] {
-            auto encoder = weakEncoder->get();
-            if (!encoder)
-                return;
+        auto structure = gst_caps_get_structure(caps.get(), 0);
+        GstBuffer* header = nullptr;
+        if (auto streamHeader = gst_structure_get_value(structure, "streamheader")) {
+            RELEASE_ASSERT(GST_VALUE_HOLDS_ARRAY(streamHeader));
+            auto firstValue = gst_value_array_get_value(streamHeader, 0);
+            RELEASE_ASSERT(GST_VALUE_HOLDS_BUFFER(firstValue));
+            header = gst_value_get_buffer(firstValue);
+        } else if (auto codecData = gst_structure_get_value(structure, "codec_data")) {
+            RELEASE_ASSERT(GST_VALUE_HOLDS_BUFFER(codecData));
+            header = gst_value_get_buffer(codecData);
+        }
 
-            auto structure = gst_caps_get_structure(caps.get(), 0);
-            GstBuffer* header = nullptr;
-            if (auto streamHeader = gst_structure_get_value(structure, "streamheader")) {
-                RELEASE_ASSERT(GST_VALUE_HOLDS_ARRAY(streamHeader));
-                auto firstValue = gst_value_array_get_value(streamHeader, 0);
-                RELEASE_ASSERT(GST_VALUE_HOLDS_BUFFER(firstValue));
-                header = gst_value_get_buffer(firstValue);
-            } else if (auto codecData = gst_structure_get_value(structure, "codec_data")) {
-                RELEASE_ASSERT(GST_VALUE_HOLDS_BUFFER(codecData));
-                header = gst_value_get_buffer(codecData);
-            }
-
-            AudioEncoder::ActiveConfiguration configuration;
-            if (header) {
-                GstMappedBuffer buffer(header, GST_MAP_READ);
-                configuration.description = Vector<uint8_t> { std::span { buffer.data(), buffer.size() } };
-            }
-            configuration.numberOfChannels = gstStructureGet<int>(structure, "channels"_s);
-            configuration.sampleRate = gstStructureGet<int>(structure, "rate"_s);
-            encoder->m_descriptionCallback(WTFMove(configuration));
-        });
+        AudioEncoder::ActiveConfiguration configuration;
+        if (header) {
+            GstMappedBuffer buffer(header, GST_MAP_READ);
+            configuration.description = buffer.createVector();
+        }
+        configuration.numberOfChannels = gstStructureGet<int>(structure, "channels"_s);
+        configuration.sampleRate = gstStructureGet<int>(structure, "rate"_s);
+        encoder->m_descriptionCallback(WTFMove(configuration));
     }), new ThreadSafeWeakPtr { *this }, [](void* data, GClosure*) {
         delete static_cast<ThreadSafeWeakPtr<GStreamerInternalAudioEncoder>*>(data);
     }, static_cast<GConnectFlags>(0));
@@ -261,11 +244,7 @@ GStreamerInternalAudioEncoder::GStreamerInternalAudioEncoder(AudioEncoder::Descr
         GST_TRACE_OBJECT(m_harness->element(), "Notifying encoded%s frame", isKeyFrame ? " key" : "");
         GstMappedBuffer mappedBuffer(outputBuffer, GST_MAP_READ);
         AudioEncoder::EncodedFrame encodedFrame { mappedBuffer.createVector(), isKeyFrame, m_timestamp, m_duration };
-        m_postTaskCallback([protectedThis = Ref { *this }, this, encodedFrame = WTFMove(encodedFrame)]() mutable {
-            if (protectedThis->m_isClosed)
-                return;
-            m_outputCallback({ WTFMove(encodedFrame) });
-        });
+        m_outputCallback({ WTFMove(encodedFrame) });
     });
 }
 

@@ -62,16 +62,15 @@ public:
         std::optional<uint64_t> duration;
     };
 
-    using PostTaskCallback = Function<void(Function<void()>&&)>;
     using OutputCallback = Function<void(Expected<DecodedFrame, String>&&)>;
     using CreateResult = Expected<UniqueRef<VideoDecoder>, String>;
     using CreateCallback = Function<void(CreateResult&&)>;
 
-    using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+    using CreatorFunction = void(*)(const String&, const Config&, CreateCallback&&, OutputCallback&&);
     WEBCORE_EXPORT static void setCreatorCallback(CreatorFunction&&);
 
-    static void create(const String&, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
-    WEBCORE_EXPORT static void createLocalDecoder(const String&, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+    static void create(const String&, const Config&, CreateCallback&&, OutputCallback&&);
+    WEBCORE_EXPORT static void createLocalDecoder(const String&, const Config&, CreateCallback&&, OutputCallback&&);
 
     using DecodePromise = NativePromise<void, String>;
     virtual Ref<DecodePromise> decode(EncodedFrame&&) = 0;

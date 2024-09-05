@@ -33,9 +33,9 @@ class GStreamerInternalVideoEncoder;
 class GStreamerVideoEncoder : public VideoEncoder {
     WTF_MAKE_TZONE_ALLOCATED(GStreamerVideoEncoder);
 public:
-    static void create(const String& codecName, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
+    static void create(const String& codecName, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&);
 
-    GStreamerVideoEncoder(const Config&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
+    GStreamerVideoEncoder(const Config&, DescriptionCallback&&, OutputCallback&&);
     ~GStreamerVideoEncoder();
 
 private:

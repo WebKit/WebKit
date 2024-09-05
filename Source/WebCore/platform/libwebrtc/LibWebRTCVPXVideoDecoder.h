@@ -46,9 +46,9 @@ public:
         AV1
 #endif
     };
-    static void create(Type, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+    static void create(Type, const Config&, CreateCallback&&, OutputCallback&&);
 
-    LibWebRTCVPXVideoDecoder(Type, const Config&, OutputCallback&&, PostTaskCallback&&);
+    LibWebRTCVPXVideoDecoder(Type, const Config&, OutputCallback&&);
     ~LibWebRTCVPXVideoDecoder();
 
 private:

@@ -40,6 +40,7 @@
 #include "WebCodecsAudioDataOutputCallback.h"
 #include "WebCodecsEncodedAudioChunk.h"
 #include "WebCodecsErrorCallback.h"
+#include "WebCodecsUtilities.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -104,43 +105,39 @@ ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext&, WebC
     bool isSupportedCodec = AudioDecoder::isCodecSupported(config.codec);
     queueControlMessageAndProcess({ *this, [this, config = WTFMove(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
         m_isMessageQueueBlocked = true;
-        AudioDecoder::PostTaskCallback postTaskCallback = [identifier, weakThis = ThreadSafeWeakPtr { *this }](Function<void()>&& task) {
-            ScriptExecutionContext::postTaskTo(identifier, [weakThis, task = WTFMove(task)](auto&) mutable {
-                RefPtr protectedThis = weakThis.get();
-                if (!protectedThis)
-                    return;
-                protectedThis->queueTaskKeepingObjectAlive(*protectedThis, TaskSource::MediaElement, WTFMove(task));
-            });
-        };
 
         if (!isSupportedCodec) {
-            postTaskCallback([this] {
-                closeDecoder(Exception { ExceptionCode::NotSupportedError, "Codec is not supported"_s });
+            postTaskToCodec<WebCodecsAudioDecoder>(identifier, *this, [] (auto& decoder) {
+                decoder.closeDecoder(Exception { ExceptionCode::NotSupportedError, "Codec is not supported"_s });
             });
             return;
         }
 
-        AudioDecoder::create(config.codec, createAudioDecoderConfig(config), [this](AudioDecoder::CreateResult&& result) {
-            if (!result.has_value()) {
-                closeDecoder(Exception { ExceptionCode::NotSupportedError, WTFMove(result.error()) });
-                return;
-            }
-            setInternalDecoder(WTFMove(result.value()));
-            m_isMessageQueueBlocked = false;
-            processControlMessageQueue();
-        }, [this](auto&& result) {
-            if (m_state != WebCodecsCodecState::Configured)
-                return;
+        AudioDecoder::create(config.codec, createAudioDecoderConfig(config), [identifier, decoder = ThreadSafeWeakPtr { *this }] (AudioDecoder::CreateResult&& result) mutable {
+            postTaskToCodec<WebCodecsAudioDecoder>(identifier, WTFMove(decoder), [result = WTFMove(result)] (auto& decoder) mutable {
+                if (!result.has_value()) {
+                    decoder.closeDecoder(Exception { ExceptionCode::NotSupportedError, WTFMove(result.error()) });
+                    return;
+                }
+                decoder.setInternalDecoder(WTFMove(result.value()));
+                decoder. m_isMessageQueueBlocked = false;
+                decoder.processControlMessageQueue();
+            });
+        }, [identifier, weakThis = ThreadSafeWeakPtr { *this }, decoderCount = ++m_decoderCount] (auto&& result) {
+            postTaskToCodec<WebCodecsAudioDecoder>(identifier, weakThis, [result = WTFMove(result), decoderCount] (auto& decoder) mutable {
+                if (decoder.m_state != WebCodecsCodecState::Configured || decoder.m_decoderCount != decoderCount)
+                    return;
 
-            if (!result.has_value()) {
-                closeDecoder(Exception { ExceptionCode::EncodingError, WTFMove(result).error() });
-                return;
-            }
+                if (!result.has_value()) {
+                    decoder.closeDecoder(Exception { ExceptionCode::EncodingError, WTFMove(result).error() });
+                    return;
+                }
 
-            auto decodedResult = WTFMove(result).value();
-            auto audioData = WebCodecsAudioData::create(*scriptExecutionContext(), WTFMove(decodedResult.data));
-            m_output->handleEvent(WTFMove(audioData));
-        }, WTFMove(postTaskCallback));
+                auto decodedResult = WTFMove(result).value();
+                auto audioData = WebCodecsAudioData::create(*decoder.scriptExecutionContext(), WTFMove(decodedResult.data));
+                decoder.m_output->handleEvent(WTFMove(audioData));
+            });
+        });
     } });
     return { };
 }
@@ -230,8 +227,6 @@ void WebCodecsAudioDecoder::isConfigSupported(ScriptExecutionContext& context, W
             }
         });
     }, [](auto&&) {
-    }, [](auto&& task) {
-        task();
     });
 }
 

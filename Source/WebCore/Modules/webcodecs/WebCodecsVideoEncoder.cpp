@@ -177,57 +177,55 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
         }
 
         m_isMessageQueueBlocked = true;
-        VideoEncoder::PostTaskCallback postTaskCallback = [weakThis = ThreadSafeWeakPtr { *this }, identifier](auto&& task) {
-            ScriptExecutionContext::postTaskTo(identifier, [weakThis, task = WTFMove(task)](auto&) mutable {
-                RefPtr protectedThis = weakThis.get();
-                if (!protectedThis)
-                    return;
-                protectedThis->queueTaskKeepingObjectAlive(*protectedThis, TaskSource::MediaElement, WTFMove(task));
-            });
-        };
 
         if (!isSupportedCodec) {
-            postTaskCallback([this] {
-                closeEncoder(Exception { ExceptionCode::NotSupportedError, "Codec is not supported"_s });
+            postTaskToCodec<WebCodecsVideoEncoder>(identifier, *this, [] (auto& encoder) {
+                encoder.closeEncoder(Exception { ExceptionCode::NotSupportedError, "Codec is not supported"_s });
             });
             return;
         }
 
         auto encoderConfig = createVideoEncoderConfig(config);
         if (encoderConfig.hasException()) {
-            postTaskCallback([this, message = encoderConfig.releaseException().message()]() mutable {
-                closeEncoder(Exception { ExceptionCode::NotSupportedError, WTFMove(message) });
+            postTaskToCodec<WebCodecsVideoEncoder>(identifier, *this, [message = encoderConfig.releaseException().message()] (auto& encoder) mutable {
+                encoder.closeEncoder(Exception { ExceptionCode::NotSupportedError, WTFMove(message) });
             });
             return;
         }
 
         m_baseConfiguration = config;
 
-        VideoEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [this](auto&& result) {
-            if (!result.has_value()) {
-                closeEncoder(Exception { ExceptionCode::NotSupportedError, WTFMove(result.error()) });
-                return;
-            }
-            setInternalEncoder(WTFMove(result.value()));
-            m_hasNewActiveConfiguration = true;
-            m_isMessageQueueBlocked = false;
-            processControlMessageQueue();
-        }, [this](VideoEncoder::ActiveConfiguration&& configuration) {
-            m_activeConfiguration = WTFMove(configuration);
-            m_hasNewActiveConfiguration = true;
-        }, [this](auto&& result) {
-            if (m_state != WebCodecsCodecState::Configured)
-                return;
-
-            RefPtr<JSC::ArrayBuffer> buffer = JSC::ArrayBuffer::create(result.data);
-            auto chunk = WebCodecsEncodedVideoChunk::create(WebCodecsEncodedVideoChunk::Init {
-                result.isKeyFrame ? WebCodecsEncodedVideoChunkType::Key : WebCodecsEncodedVideoChunkType::Delta,
-                result.timestamp,
-                result.duration,
-                BufferSource { WTFMove(buffer) }
+        VideoEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [identifier, weakThis = ThreadSafeWeakPtr { *this }] (auto&& result) mutable {
+            postTaskToCodec<WebCodecsVideoEncoder>(identifier, WTFMove(weakThis), [result = WTFMove(result)] (auto& encoder) mutable {
+                if (!result.has_value()) {
+                    encoder.closeEncoder(Exception { ExceptionCode::NotSupportedError, WTFMove(result.error()) });
+                    return;
+                }
+                encoder.setInternalEncoder(WTFMove(result.value()));
+                encoder.m_hasNewActiveConfiguration = true;
+                encoder.m_isMessageQueueBlocked = false;
+                encoder.processControlMessageQueue();
             });
-            m_output->handleEvent(WTFMove(chunk), createEncodedChunkMetadata(result.temporalIndex));
-        }, WTFMove(postTaskCallback));
+        }, [identifier, weakThis = ThreadSafeWeakPtr { *this }](VideoEncoder::ActiveConfiguration&& configuration) {
+            postTaskToCodec<WebCodecsVideoEncoder>(identifier, weakThis, [configuration = WTFMove(configuration)] (auto& encoder) mutable {
+                encoder.m_activeConfiguration = WTFMove(configuration);
+                encoder.m_hasNewActiveConfiguration = true;
+            });
+        }, [identifier, weakThis = ThreadSafeWeakPtr { *this }, encoderCount = ++m_encoderCount](auto&& result) {
+            postTaskToCodec<WebCodecsVideoEncoder>(identifier, weakThis, [result = WTFMove(result), encoderCount] (auto& encoder) mutable {
+                if (encoder.m_state != WebCodecsCodecState::Configured || encoder.m_encoderCount != encoderCount)
+                    return;
+
+                RefPtr<JSC::ArrayBuffer> buffer = JSC::ArrayBuffer::create(result.data);
+                auto chunk = WebCodecsEncodedVideoChunk::create(WebCodecsEncodedVideoChunk::Init {
+                    result.isKeyFrame ? WebCodecsEncodedVideoChunkType::Key : WebCodecsEncodedVideoChunkType::Delta,
+                    result.timestamp,
+                    result.duration,
+                    BufferSource { WTFMove(buffer) }
+                });
+                encoder.m_output->handleEvent(WTFMove(chunk), encoder.createEncodedChunkMetadata(result.temporalIndex));
+            });
+        });
     } });
     return { };
 }
@@ -355,8 +353,6 @@ void WebCodecsVideoEncoder::isConfigSupported(ScriptExecutionContext& context, W
         });
     }, [](auto&&) {
     }, [](auto&&) {
-    }, [] (auto&& task) {
-        task();
     });
 }
 

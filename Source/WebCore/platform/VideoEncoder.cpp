@@ -45,45 +45,44 @@ void VideoEncoder::setCreatorCallback(CreatorFunction&& function)
     s_customCreator = WTFMove(function);
 }
 
-void VideoEncoder::create(const String& codecName, const Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
+void VideoEncoder::create(const String& codecName, const Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
 {
     if (s_customCreator) {
-        s_customCreator(codecName, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
+        s_customCreator(codecName, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback));
         return;
     }
-    createLocalEncoder(codecName, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
+    createLocalEncoder(codecName, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback));
 }
 
-void VideoEncoder::createLocalEncoder(const String& codecName, const Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
+void VideoEncoder::createLocalEncoder(const String& codecName, const Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
 {
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
     if (codecName == "vp8"_s) {
-        LibWebRTCVPXVideoEncoder::create(LibWebRTCVPXVideoEncoder::Type::VP8, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
+        LibWebRTCVPXVideoEncoder::create(LibWebRTCVPXVideoEncoder::Type::VP8, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback));
         return;
     }
     if (codecName.startsWith("vp09.00"_s)) {
-        LibWebRTCVPXVideoEncoder::create(LibWebRTCVPXVideoEncoder::Type::VP9, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
+        LibWebRTCVPXVideoEncoder::create(LibWebRTCVPXVideoEncoder::Type::VP9, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback));
         return;
     }
     if (codecName.startsWith("vp09.02"_s)) {
-        LibWebRTCVPXVideoEncoder::create(LibWebRTCVPXVideoEncoder::Type::VP9_P2, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
+        LibWebRTCVPXVideoEncoder::create(LibWebRTCVPXVideoEncoder::Type::VP9_P2, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback));
         return;
     }
 #if ENABLE(AV1)
     if (codecName.startsWith("av01."_s)) {
-        LibWebRTCVPXVideoEncoder::create(LibWebRTCVPXVideoEncoder::Type::AV1, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
+        LibWebRTCVPXVideoEncoder::create(LibWebRTCVPXVideoEncoder::Type::AV1, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback));
         return;
     }
 #endif
 #elif USE(GSTREAMER)
-    GStreamerVideoEncoder::create(codecName, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postCallback));
+    GStreamerVideoEncoder::create(codecName, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback));
     return;
 #else
     UNUSED_PARAM(codecName);
     UNUSED_PARAM(config);
     UNUSED_PARAM(descriptionCallback);
     UNUSED_PARAM(outputCallback);
-    UNUSED_PARAM(postCallback);
 #endif
 
     callback(makeUnexpected("Not supported"_s));
