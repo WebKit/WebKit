@@ -173,7 +173,6 @@ void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacingsIfNeeded(const Inli
         }
 
         size_t boundaryDepth = std::min(currentCharacterDepth, lastCharacterDepth);
-        ASSERT((inlineBoxStartIndexesOnInlineItemsList.size() - 1 - (currentCharacterDepth - boundaryDepth)) >= 0);
         size_t boundaryIndex = inlineBoxStartIndexesOnInlineItemsList.size() - 1 - (currentCharacterDepth - boundaryDepth);
         const RenderStyle& boundaryOwnerStyle = inlineItemList[boundaryIndex].layoutBox().parent().style();
         const TextAutospace& boundaryTextAutospace = boundaryOwnerStyle.textAutospace();
