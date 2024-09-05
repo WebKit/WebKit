@@ -2549,6 +2549,8 @@ TEST(WKNavigation, GeneratePageLoadTiming)
         NSDate *afterEnd = [NSDate now];
         EXPECT_EQ([beforeStart compare:timing.navigationStart], NSOrderedAscending);
         EXPECT_EQ([timing.navigationStart compare:afterEnd], NSOrderedAscending);
+        EXPECT_EQ([timing.navigationStart compare:timing.firstVisualLayout], NSOrderedAscending);
+        EXPECT_EQ([timing.firstVisualLayout compare:afterEnd], NSOrderedAscending);
         EXPECT_EQ([timing.navigationStart compare:timing.firstMeaningfulPaint], NSOrderedAscending);
         EXPECT_EQ([timing.firstMeaningfulPaint compare:afterEnd], NSOrderedAscending);
         EXPECT_EQ([timing.navigationStart compare:timing.documentFinishedLoading], NSOrderedAscending);

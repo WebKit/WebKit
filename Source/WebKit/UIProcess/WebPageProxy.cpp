@@ -6131,6 +6131,8 @@ void WebPageProxy::generatePageLoadingTimingSoon()
         return;
     if (m_framesWithSubresourceLoadingForPageLoadTiming.size())
         return;
+    if (!m_pageLoadTiming->firstVisualLayout())
+        return;
     if (!m_pageLoadTiming->firstMeaningfulPaint())
         return;
     if (!m_pageLoadTiming->documentFinishedLoading())
@@ -7083,7 +7085,7 @@ void WebPageProxy::didFirstLayoutForFrame(FrameIdentifier, const UserData& userD
 {
 }
 
-void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(IPC::Connection& connection, FrameIdentifier frameID, const UserData& userData)
+void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(IPC::Connection& connection, FrameIdentifier frameID, const UserData& userData, WallTime timestamp)
 {
     Ref protectedPageClient { pageClient() };
 
@@ -7095,6 +7097,11 @@ void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(IPC::Connection& conne
 
     if (frame->isMainFrame())
         protectedPageClient->didFirstVisuallyNonEmptyLayoutForMainFrame();
+
+    if (m_pageLoadTiming && !m_pageLoadTiming->firstVisualLayout()) {
+        m_pageLoadTiming->setFirstVisualLayout(timestamp);
+        generatePageLoadingTimingSoon();
+    }
 }
 
 void WebPageProxy::didLayoutForCustomContentProvider()

@@ -32,6 +32,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 @interface _WKPageLoadTiming : NSObject
 
 @property (nonatomic, readonly) NSDate *navigationStart;
+@property (nonatomic, readonly) NSDate *firstVisualLayout;
 @property (nonatomic, readonly) NSDate *firstMeaningfulPaint;
 @property (nonatomic, readonly) NSDate *documentFinishedLoading;
 @property (nonatomic, readonly) NSDate *allSubresourcesFinishedLoading;
