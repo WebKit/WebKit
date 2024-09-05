@@ -283,7 +283,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
 #if !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
         RELEASE_ASSERT_NOT_REACHED();
 #else
-        resolveLocation(valueOrDefault(a.location), b.location, b.origin.value_or(MouseMoveOrigin::Viewport), b.nodeHandle, [this, &a, &b, inputSource = inputSource.type, eventDispatchFinished = WTFMove(eventDispatchFinished)](std::optional<WebCore::IntPoint> location, std::optional<AutomationCommandError> error) mutable {
+        resolveLocation(valueOrDefault(a.location), b.location, b.origin.value_or(MouseMoveOrigin::Pointer), b.nodeHandle, [this, &a, &b, inputSource = inputSource.type, eventDispatchFinished = WTFMove(eventDispatchFinished)](std::optional<WebCore::IntPoint> location, std::optional<AutomationCommandError> error) mutable {
             if (error) {
                 eventDispatchFinished(error);
                 return;
