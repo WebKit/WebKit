@@ -482,26 +482,6 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
     Ref currentCommand = state->reappliedCommands.takeLast();
 
-    // Save all the existing transparent document markers before the command is undone, since such
-    // operation is not guaranteed to persist all the markers; some may be discarded if the nodes end
-    // up changing.
-    //
-    // The character ranges are relative to the range of the document, since the document node is the
-    // only guaranteed common ancestor node before the undo and after the replace.
-
-    Vector<std::tuple<CharacterRange, WTF::UUID>> existingTransparentContentDocumentMarkers;
-
-    auto documentRange = makeRangeSelectingNodeContents(*document);
-    document->markers().forEach(documentRange, { DocumentMarker::Type::TransparentContent }, [&](auto& node, auto& marker) mutable {
-        auto markerRange = makeSimpleRange(node, marker);
-        auto data = std::get<DocumentMarker::TransparentContentData>(marker.data());
-
-        auto resolvedCharacterRange = characterRange(documentRange, markerRange);
-        existingTransparentContentDocumentMarkers.append({ resolvedCharacterRange, data.uuid });
-
-        return false;
-    });
-
     // The prior replacement command must be undone in such a way as to not have it be added to the undo stack
     currentCommand->ensureComposition().unapply(EditCommandComposition::AddToUndoStack::No);
 
@@ -537,20 +517,6 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
     auto commandState = finished ? WritingToolsCompositionCommand::State::Complete : WritingToolsCompositionCommand::State::InProgress;
     replaceContentsOfRangeInSession(*state, resolvedRange, attributedText, commandState);
-
-    // Restore the transparent content document markers after the undo + replace is complete.
-    // Since only some markers may have been discarded, all transparent content markers are first
-    // removed, and then the saved ones are re-added. This ensures that there are not duplicate
-    // markers added.
-    //
-    // This methodology is valid since subsequent replacements always have a prefix that is their prior replacement.
-
-    document->markers().removeMarkers({ WebCore::DocumentMarker::Type::TransparentContent });
-
-    for (const auto& [characterRange, markerIdentifier] : existingTransparentContentDocumentMarkers) {
-        auto resolvedRange = resolveCharacterRange(documentRange, characterRange);
-        document->markers().addTransparentContentMarker(resolvedRange, markerIdentifier);
-    }
 
     if (runMode == TextAnimationRunMode::OnlyReplaceText) {
         compositionSessionDidFinishReplacement();
