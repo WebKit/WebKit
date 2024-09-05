@@ -232,14 +232,10 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
 
     auto borderShapeRespectingBleedAvoidance = [&](bool includeLeftEdge, bool includeRightEdge, bool shrinkForBleedAvoidance = true) {
         auto borderRect = rect;
-
         if (shrinkForBleedAvoidance && bleedAvoidance == BackgroundBleedShrinkBackground) {
             // Ideally we'd use the border rect, but add a device pixel of additional inset to preserve corner shape.
             borderRect = shrinkRectByOneDevicePixel(m_paintInfo.context(), borderRect, deviceScaleFactor);
         }
-
-        if (inlineBoxIterator && (inlineBoxIterator->nextInlineBox() || inlineBoxIterator->previousInlineBox()))
-            borderRect.setLocation({ });
 
         return BorderShape::shapeForBorderRect(style, borderRect, includeLeftEdge, includeRightEdge);
     };
