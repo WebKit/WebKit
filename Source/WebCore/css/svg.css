@@ -94,3 +94,9 @@ text, tspan, tref {
 a:any-link {
     cursor: pointer;
 }
+
+/* SVG handles zooming in a different way. font-size has to be resolved at document boundaries. */
+
+*|*:not(*) > svg, foreignObject > *|*:not(*) {
+    font-size: inherit;
+}
