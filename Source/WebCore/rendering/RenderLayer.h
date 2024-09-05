@@ -676,7 +676,12 @@ public:
         
     LayoutRect childrenClipRect() const; // Returns the foreground clip rect of the layer in the document's coordinate space.
     LayoutRect selfClipRect() const; // Returns the background clip rect of the layer in the document's coordinate space.
-    LayoutRect localClipRect(bool& clipExceedsBounds) const; // Returns the background clip rect of the layer in the local coordinate space.
+
+    enum class LocalClipRectMode {
+        IncludeCompositingState,
+        ExcludeCompositingState,
+    };
+    LayoutRect localClipRect(bool& clipExceedsBounds, LocalClipRectMode = LocalClipRectMode::IncludeCompositingState) const; // Returns the background clip rect of the layer in the local coordinate space.
 
     bool clipCrossesPaintingBoundary() const;
 
@@ -684,17 +689,18 @@ public:
     bool intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer, const LayoutSize& offsetFromRoot, const std::optional<LayoutRect>& cachedBoundingBox = std::nullopt) const;
 
     enum CalculateLayerBoundsFlag {
-        IncludeSelfTransform                    = 1 << 0,
-        UseLocalClipRectIfPossible              = 1 << 1,
-        IncludeFilterOutsets                    = 1 << 2,
-        IncludePaintedFilterOutsets             = 1 << 3,
-        ExcludeHiddenDescendants                = 1 << 4,
-        DontConstrainForMask                    = 1 << 5,
-        IncludeCompositedDescendants            = 1 << 6,
-        UseFragmentBoxesExcludingCompositing    = 1 << 7,
-        UseFragmentBoxesIncludingCompositing    = 1 << 8,
-        IncludeRootBackgroundPaintingArea       = 1 << 9,
-        PreserveAncestorFlags                   = 1 << 10,
+        IncludeSelfTransform                           = 1 << 0,
+        UseLocalClipRectIfPossible                     = 1 << 1,
+        IncludeFilterOutsets                           = 1 << 2,
+        IncludePaintedFilterOutsets                    = 1 << 3,
+        ExcludeHiddenDescendants                       = 1 << 4,
+        DontConstrainForMask                           = 1 << 5,
+        IncludeCompositedDescendants                   = 1 << 6,
+        UseFragmentBoxesExcludingCompositing           = 1 << 7,
+        UseFragmentBoxesIncludingCompositing           = 1 << 8,
+        IncludeRootBackgroundPaintingArea              = 1 << 9,
+        PreserveAncestorFlags                          = 1 << 10,
+        UseLocalClipRectExcludingCompositingIfPossible = 1 << 11,
     };
     static constexpr OptionSet<CalculateLayerBoundsFlag> defaultCalculateLayerBoundsFlags() { return { IncludeSelfTransform, UseLocalClipRectIfPossible, IncludePaintedFilterOutsets, UseFragmentBoxesExcludingCompositing }; }
 
@@ -973,7 +979,7 @@ private:
     void setRepaintRects(const RenderObject::RepaintRects&);
     void clearRepaintRects();
 
-    LayoutRect clipRectRelativeToAncestor(RenderLayer* ancestor, LayoutSize offsetFromAncestor, const LayoutRect& constrainingRect, bool temporaryClipRects = false) const;
+    LayoutRect clipRectRelativeToAncestor(const RenderLayer* ancestor, LayoutSize offsetFromAncestor, const LayoutRect& constrainingRect, bool temporaryClipRects = false) const;
 
     void clipToRect(GraphicsContext&, GraphicsContextStateSaver&, RegionContextStateSaver&, const LayerPaintingInfo&, OptionSet<PaintBehavior>, const ClipRect&, BorderRadiusClippingRule = IncludeSelfForBorderRadius);
 
