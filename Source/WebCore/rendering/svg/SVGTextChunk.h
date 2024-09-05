@@ -29,10 +29,8 @@ namespace WebCore {
 class AffineTransform;
 class SVGInlineTextBox;
 
-using SVGChunkTransformMapKey = std::pair<const RenderSVGInlineText*, unsigned>;
-using SVGChunkTransformMap = HashMap<SVGChunkTransformMapKey, AffineTransform>;
-
-SVGChunkTransformMapKey makeSVGChunkTransformMapKey(InlineIterator::SVGTextBoxIterator);
+using SVGChunkTransformMap = HashMap<InlineIterator::SVGTextBox::Key, AffineTransform>;
+using SVGTextFragmentMap = HashMap<InlineIterator::SVGTextBox::Key, Vector<SVGTextFragment>>;
 
 // A SVGTextChunk describes a range of SVGTextFragments, see the SVG spec definition of a "text chunk".
 class SVGTextChunk {
@@ -47,7 +45,7 @@ public:
         LengthAdjustSpacingAndGlyphs = 1 << 6
     };
 
-    SVGTextChunk(const Vector<InlineIterator::SVGTextBoxIterator>&, unsigned first, unsigned limit);
+    SVGTextChunk(const Vector<InlineIterator::SVGTextBoxIterator>&, unsigned first, unsigned limit, SVGTextFragmentMap&);
 
     unsigned totalCharacters() const;
     float totalLength() const;
@@ -67,11 +65,18 @@ private:
     bool hasLengthAdjustSpacing() const { return m_chunkStyle & LengthAdjustSpacing; }
     bool hasLengthAdjustSpacingAndGlyphs() const { return m_chunkStyle & LengthAdjustSpacingAndGlyphs; }
 
-    bool boxSpacingAndGlyphsTransform(InlineIterator::SVGTextBoxIterator, AffineTransform&) const;
+    bool boxSpacingAndGlyphsTransform(const Vector<SVGTextFragment>&, AffineTransform&) const;
+
+    Vector<SVGTextFragment>& fragments(InlineIterator::SVGTextBoxIterator);
+    const Vector<SVGTextFragment>& fragments(InlineIterator::SVGTextBoxIterator) const;
 
 private:
     // Contains all SVGInlineTextBoxes this chunk spans.
-    Vector<InlineIterator::SVGTextBoxIterator> m_boxes;
+    struct BoxAndFragments {
+        InlineIterator::SVGTextBoxIterator box;
+        Vector<SVGTextFragment>& fragments;
+    };
+    Vector<BoxAndFragments> m_boxes;
 
     unsigned m_chunkStyle { DefaultStyle };
     float m_desiredTextLength { 0 };

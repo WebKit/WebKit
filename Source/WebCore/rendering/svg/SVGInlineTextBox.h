@@ -52,9 +52,8 @@ public:
 
     FloatRect calculateBoundaries() const;
 
-    void clearTextFragments() { m_textFragments.clear(); }
-    Vector<SVGTextFragment>& textFragments() { return m_textFragments; }
     const Vector<SVGTextFragment>& textFragments() const { return m_textFragments; }
+    void setTextFragments(Vector<SVGTextFragment>&& fragments) { m_textFragments = WTFMove(fragments); }
 
     void dirtyOwnLineBoxes() override;
     void dirtyLineBoxes() override;

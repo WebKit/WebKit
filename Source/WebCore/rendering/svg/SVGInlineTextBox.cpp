@@ -71,8 +71,7 @@ void SVGInlineTextBox::dirtyOwnLineBoxes()
 {
     LegacyInlineTextBox::dirtyLineBoxes();
 
-    // Clear the now stale text fragments
-    clearTextFragments();
+    m_textFragments = { };
 }
 
 void SVGInlineTextBox::dirtyLineBoxes()

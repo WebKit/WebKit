@@ -88,6 +88,10 @@ SVGTextBoxIterator svgTextBoxFor(const SVGInlineTextBox* box)
     return { BoxLegacyPath { box } };
 }
 
+SVGTextBox::Key makeKey(const SVGTextBox& textBox)
+{
+    return { &textBox.renderer(), textBox.start() };
+}
 
 }
 }

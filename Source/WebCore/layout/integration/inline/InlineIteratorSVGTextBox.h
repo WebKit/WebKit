@@ -45,6 +45,8 @@ public:
     const RenderSVGInlineText& renderer() const { return downcast<RenderSVGInlineText>(TextBox::renderer()); }
 
     const SVGInlineTextBox* legacyInlineBox() const;
+
+    using Key = std::pair<const RenderSVGInlineText*, unsigned>;
 };
 
 class SVGTextBoxIterator : public TextBoxIterator {
@@ -79,6 +81,8 @@ private:
 SVGTextBoxIterator firstSVGTextBoxFor(const RenderSVGInlineText&);
 BoxRange<SVGTextBoxIterator> svgTextBoxesFor(const RenderSVGInlineText&);
 SVGTextBoxIterator svgTextBoxFor(const SVGInlineTextBox*);
+
+SVGTextBox::Key makeKey(const SVGTextBox&);
 
 }
 }

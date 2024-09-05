@@ -114,12 +114,11 @@ void SVGRootInlineBox::computePerCharacterLayoutInformation()
     layoutCharactersInTextBoxes(this, characterLayout);
 
     // Perform SVG text layout phase three (see SVGTextChunkBuilder for details).
-    characterLayout.finishLayout();
+    auto fragmentMap = characterLayout.finishLayout();
 
     // Perform SVG text layout phase four
     // Position & resize all SVGInlineText/FlowBoxes in the inline box tree, resize the root box as well as the RenderSVGText parent block.
-    FloatRect childRect;
-    layoutChildBoxes(this, &childRect);
+    auto childRect = layoutChildBoxes(this, fragmentMap);
     layoutRootBox(childRect);
 }
 
@@ -154,12 +153,18 @@ void SVGRootInlineBox::layoutCharactersInTextBoxes(LegacyInlineFlowBox* start, S
     }
 }
 
-void SVGRootInlineBox::layoutChildBoxes(LegacyInlineFlowBox* start, FloatRect* childRect)
+FloatRect SVGRootInlineBox::layoutChildBoxes(LegacyInlineFlowBox* start, SVGTextFragmentMap& fragmentMap)
 {
+    FloatRect childRect;
+
     for (auto* child = start->firstChild(); child; child = child->nextOnLine()) {
         FloatRect boxRect;
         if (auto* textBox = dynamicDowncast<SVGInlineTextBox>(*child)) {
             ASSERT(is<RenderSVGInlineText>(textBox->renderer()));
+
+            auto it = fragmentMap.find(makeKey(*InlineIterator::svgTextBoxFor(textBox)));
+            if (it != fragmentMap.end())
+                textBox->setTextFragments(WTFMove(it->value));
 
             boxRect = textBox->calculateBoundaries();
             textBox->setX(boxRect.x());
@@ -172,7 +177,7 @@ void SVGRootInlineBox::layoutChildBoxes(LegacyInlineFlowBox* start, FloatRect* c
                 continue;
 
             auto& flowBox = downcast<SVGInlineFlowBox>(*child);
-            layoutChildBoxes(&flowBox);
+            layoutChildBoxes(&flowBox, fragmentMap);
 
             boxRect = flowBox.calculateBoundaries();
             flowBox.setX(boxRect.x());
@@ -180,9 +185,10 @@ void SVGRootInlineBox::layoutChildBoxes(LegacyInlineFlowBox* start, FloatRect* c
             flowBox.setLogicalWidth(boxRect.width());
             flowBox.setLogicalHeight(boxRect.height());
         }
-        if (childRect)
-            childRect->unite(boxRect);
+        childRect.unite(boxRect);
     }
+
+    return childRect;
 }
 
 void SVGRootInlineBox::layoutRootBox(const FloatRect& childRect)
