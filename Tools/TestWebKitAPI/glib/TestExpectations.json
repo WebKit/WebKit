@@ -121,7 +121,10 @@
 	    },
             "/webkit/WebKitAccessibility/selection/menulist": {
                 "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/279009"}}
-	    }
+	    },
+            "afterAll": {
+                "expected": {"gtk": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/273682"}}
+            }
         }
     },
     "TestPrinting": {
@@ -142,6 +145,9 @@
         "subtests": {
             "/webkit/WebKitWebContext/memory-pressure": {
                 "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/274345"}}
+            },
+            "/webkit/WebKitWebContext/uri-scheme": {
+                "expected": {"gtk": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/279204"}}
             }
         }
     },
@@ -414,6 +420,9 @@
         "subtests": {
             "afterAll": {
                 "expected": {"all": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/264509"}}
+            },
+            "/webkit/WebKitWebResource/get-data-error": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/279203"}}
             }
         }
     }
