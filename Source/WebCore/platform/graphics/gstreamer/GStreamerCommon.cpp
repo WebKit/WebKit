@@ -1557,7 +1557,12 @@ std::optional<unsigned> gstGetAutoplugSelectResult(ASCIILiteral nick)
 #if !GST_CHECK_VERSION(1, 20, 0)
 GstBuffer* gst_buffer_new_memdup(gconstpointer data, gsize size)
 {
-    gpointer copiedData = g_memdup2(data, size);
+    gpointer copiedData = nullptr;
+
+    if (data && size) {
+        copiedData = g_malloc(size);
+        memcpy(copiedData, data, size);
+    }
 
     return gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), copiedData, size, 0, size, copiedData, g_free);
 }
