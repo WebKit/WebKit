@@ -98,6 +98,16 @@ void IPCStreamTester::syncMessageEmptyReply(uint32_t, CompletionHandler<void()>&
     completionHandler();
 }
 
+void IPCStreamTester::syncMessage(uint32_t value, CompletionHandler<void(uint32_t)>&& completionHandler)
+{
+    completionHandler(value);
+}
+
+void IPCStreamTester::syncMessageNotStreamEncodableReply(uint32_t value, CompletionHandler<void(uint32_t)>&& completionHandler)
+{
+    completionHandler(value);
+}
+
 void IPCStreamTester::syncCrashOnZero(int32_t value, CompletionHandler<void(int32_t)>&& completionHandler)
 {
     if (!value) {
@@ -110,6 +120,10 @@ void IPCStreamTester::syncCrashOnZero(int32_t value, CompletionHandler<void(int3
 void IPCStreamTester::asyncPing(uint32_t value, CompletionHandler<void(uint32_t)>&& completionHandler)
 {
     completionHandler(value + 1);
+}
+
+void IPCStreamTester::emptyMessage()
+{
 }
 
 #if USE(FOUNDATION)
