@@ -30,6 +30,7 @@
 
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeViews.h"
+#import "RemoteScrollingCoordinatorProxy.h"
 #import "SystemPreviewController.h"
 #import "UIKitSPI.h"
 #import "WKContentViewInteraction.h"

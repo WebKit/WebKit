@@ -190,6 +190,9 @@ public:
 #endif
 #endif
         WebResourceLoadStatisticsManager,
+        WebPushDaemonConnection,
+        WebPushMessage,
+        WebPushSubscriptionData,
         WebsiteDataRecord,
         WebsiteDataStore,
         WebsiteDataStoreConfiguration,

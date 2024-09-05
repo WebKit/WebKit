@@ -96,6 +96,9 @@
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWebAuthenticationAssertionResponseInternal.h"
 #import "_WKWebAuthenticationPanelInternal.h"
+#import "_WKWebPushDaemonConnectionInternal.h"
+#import "_WKWebPushMessageInternal.h"
+#import "_WKWebPushSubscriptionDataInternal.h"
 #import "_WKWebsiteDataStoreConfigurationInternal.h"
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -445,6 +448,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         break;
 #endif
 #endif // ENABLE(WK_WEB_EXTENSIONS)
+
+    case Type::WebPushDaemonConnection:
+        wrapper = [_WKWebPushDaemonConnection alloc];
+        break;
+
+    case Type::WebPushMessage:
+        wrapper = [_WKWebPushMessage alloc];
+        break;
+
+    case Type::WebPushSubscriptionData:
+        wrapper = [_WKWebPushSubscriptionData alloc];
+        break;
 
     case Type::WebsiteDataRecord:
         wrapper = [WKWebsiteDataRecord alloc];

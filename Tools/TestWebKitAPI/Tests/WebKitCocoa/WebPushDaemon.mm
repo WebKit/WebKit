@@ -49,6 +49,8 @@
 #import <WebKit/_WKFeature.h>
 #import <WebKit/_WKNotificationData.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <WebKit/_WKWebPushDaemonConnection.h>
+#import <WebKit/_WKWebPushSubscriptionData.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreDelegate.h>
 #import <mach/mach_init.h>
@@ -2380,6 +2382,88 @@ TEST(WebPushD, DeclarativeWebPushHandling)
     }];
     TestWebKitAPI::Util::run(&done);
 }
+
+#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+
+TEST(WebPushD, WKWebPushDaemonConnectionRequestPushPermission)
+{
+    setUpTestWebPushD();
+
+    auto configuration = adoptNS([[_WKWebPushDaemonConnectionConfiguration alloc] init]);
+    configuration.get().machServiceName = @"org.webkit.webpushtestdaemon.service";
+    auto connection = adoptNS([[_WKWebPushDaemonConnection alloc] initWithConfiguration:configuration.get()]);
+    auto url = adoptNS([[NSURL alloc] initWithString:@"https://webkit.org"]);
+
+    __block bool done = false;
+    [connection getPushPermissionStateForOrigin:url.get() completionHandler:^(_WKWebPushPermissionState state) {
+        done = true;
+        EXPECT_EQ(state, _WKWebPushPermissionStatePrompt);
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [connection requestPushPermissionForOrigin:url.get() completionHandler:^(BOOL granted) {
+        done = true;
+        EXPECT_TRUE(granted);
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [connection getPushPermissionStateForOrigin:url.get() completionHandler:^(_WKWebPushPermissionState state) {
+        done = true;
+        EXPECT_EQ(state, _WKWebPushPermissionStateGranted);
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WebPushD, WKWebPushDaemonConnectionPushSubscription)
+{
+    setUpTestWebPushD();
+
+    auto configuration = adoptNS([[_WKWebPushDaemonConnectionConfiguration alloc] init]);
+    configuration.get().machServiceName = @"org.webkit.webpushtestdaemon.service";
+    // Bundle identifier is required for making push subscription.
+    configuration.get().bundleIdentifier = @"com.apple.WebKit.TestWebKitAPI";
+    auto connection = adoptNS([[_WKWebPushDaemonConnection alloc] initWithConfiguration:configuration.get()]);
+    auto url = adoptNS([[NSURL alloc] initWithString:@"https://webkit.org/sw.js"]);
+    RetainPtr applicationServerKey = [NSData dataWithBytes:(const void *)validServerKey.characters() length:validServerKey.length()];
+
+    __block bool done = false;
+    [connection subscribeToPushServiceForScope:url.get() applicationServerKey:applicationServerKey.get() completionHandler:^(_WKWebPushSubscriptionData *subscription, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(subscription);
+        EXPECT_WK_STREQ(@"https://webkit.org/push", subscription.endpoint.absoluteString);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [connection getSubscriptionForScope:url.get() completionHandler:^(_WKWebPushSubscriptionData *subscription, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(subscription);
+        EXPECT_WK_STREQ(@"https://webkit.org/push", subscription.endpoint.absoluteString);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [connection unsubscribeFromPushServiceForScope:url.get() completionHandler:^(BOOL unsubscribed, NSError * error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE(unsubscribed);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [connection getSubscriptionForScope:url.get() completionHandler:^(_WKWebPushSubscriptionData *subscription, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NULL(subscription);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+#endif
 
 class WebPushDPushNotificationEventTest : public WebPushDTest {
 public:

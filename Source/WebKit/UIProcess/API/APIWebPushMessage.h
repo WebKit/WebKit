@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKDownloadDelegatePrivate.h>
-#import <WebKit/WKHistoryDelegatePrivate.h>
-#import <WebKit/WKNavigationPrivate.h>
-#import <WebKit/WKProcessPoolPrivate.h>
-#import <WebKit/WKUIDelegatePrivate.h>
-#import <WebKit/WKWebViewConfigurationPrivate.h>
-#import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/_WKActivatedElementInfo.h>
-#import <WebKit/_WKAttachment.h>
-#import <WebKit/_WKElementAction.h>
-#import <WebKit/_WKFocusedElementInfo.h>
-#import <WebKit/_WKFormInputSession.h>
-#import <WebKit/_WKInputDelegate.h>
-#import <WebKit/_WKPageLoadTiming.h>
-#import <WebKit/_WKProcessPoolConfiguration.h>
-#import <WebKit/_WKTargetedElementInfo.h>
-#import <WebKit/_WKTargetedElementRequest.h>
-#import <WebKit/_WKThumbnailView.h>
-#import <WebKit/_WKVisitedLinkStore.h>
-#import <WebKit/_WKWebPushAction.h>
-#import <WebKit/_WKWebPushDaemonConnection.h>
-#import <WebKit/_WKWebPushMessage.h>
-#import <WebKit/_WKWebPushSubscriptionData.h>
+#pragma once
+
+#include "APIObject.h"
+#include "WebPushMessage.h"
+
+namespace API {
+
+class WebPushMessage final : public ObjectImpl<Object::Type::WebPushMessage> {
+public:
+    static Ref<WebPushMessage> create(WebKit::WebPushMessage&& message)
+    {
+        return adoptRef(*new WebPushMessage(WTFMove(message)));
+    }
+
+    explicit WebPushMessage(WebKit::WebPushMessage&& message)
+        : m_message(WTFMove(message)) { }
+
+    std::optional<Vector<uint8_t>> data() const { return m_message.pushData; };
+    WTF::URL scope() const { return m_message.registrationURL; }
+    WTF::String partition() const { return m_message.pushPartitionString; }
+
+private:
+    WebKit::WebPushMessage m_message;
+};
+
+} // namespace API

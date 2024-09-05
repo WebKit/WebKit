@@ -1,0 +1,158 @@
+/*
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "_WKWebPushDaemonConnectionInternal.h"
+
+#import "APIWebPushMessage.h"
+#import "APIWebPushSubscriptionData.h"
+#import "WKError.h"
+#import "_WKWebPushSubscriptionDataInternal.h"
+#import <WebCore/ExceptionData.h>
+#import <WebCore/PushPermissionState.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/CompletionHandler.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
+
+@implementation _WKWebPushDaemonConnectionConfiguration
+
+- (instancetype)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+#if ENABLE(RELOCATABLE_WEBPUSHD)
+    _machServiceName = @"com.apple.webkit.webpushd.relocatable.service";
+#else
+    _machServiceName = @"com.apple.webkit.webpushd.service";
+#endif
+    return self;
+}
+
+@end
+
+@implementation _WKWebPushDaemonConnection
+
+- (instancetype)initWithConfiguration:(_WKWebPushDaemonConnectionConfiguration *)configuration
+{
+    if (!(self = [super init]))
+        return nil;
+
+    API::Object::constructInWrapper<API::WebPushDaemonConnection>(self, configuration.machServiceName, configuration.partition, configuration.bundleIdentifier);
+
+    return self;
+}
+
+static _WKWebPushPermissionState toWKPermissionsState(WebCore::PushPermissionState state)
+{
+    switch (state) {
+    case WebCore::PushPermissionState::Denied:
+        return _WKWebPushPermissionStateDenied;
+    case WebCore::PushPermissionState::Granted:
+        return _WKWebPushPermissionStateGranted;
+    case WebCore::PushPermissionState::Prompt:
+        return _WKWebPushPermissionStatePrompt;
+    }
+
+    return _WKWebPushPermissionStateDenied;
+}
+
+- (void)getPushPermissionStateForOrigin:(NSURL *)originURL completionHandler:(void (^)(_WKWebPushPermissionState))completionHandler
+{
+    _connection->getPushPermissionState(originURL, [completionHandlerCopy = makeBlockPtr(completionHandler)](auto result) {
+        completionHandlerCopy(toWKPermissionsState(result));
+    });
+}
+
+- (void)requestPushPermissionForOrigin:(NSURL *)originURL completionHandler:(void (^)(BOOL))completionHandler
+{
+    _connection->requestPushPermission(originURL, [completionHandlerCopy = makeBlockPtr(completionHandler)] (bool result) {
+        completionHandlerCopy(result);
+    });
+}
+
+- (void)setAppBadge:(NSUInteger *)badge origin:(NSURL *)originURL
+{
+    std::optional<uint64_t> badgeValue = badge ? std::optional<uint64_t> { (uint64_t)badge } : std::nullopt;
+    _connection->setAppBadge(originURL, badgeValue);
+}
+
+- (void)subscribeToPushServiceForScope:(NSURL *)scopeURL applicationServerKey:(NSData *)applicationServerKey completionHandler:(void (^)(_WKWebPushSubscriptionData *, NSError *))completionHandler
+{
+    auto key = makeVector(applicationServerKey);
+    _connection->subscribeToPushService(scopeURL, WTFMove(key), [completionHandlerCopy = makeBlockPtr(completionHandler)] (auto result) {
+        if (result)
+            return completionHandlerCopy(wrapper(API::WebPushSubscriptionData::create(WTFMove(result.value()))).get(), nil);
+
+        // FIXME: This error can be used to create DOMException; we may consider adding a new value to WKErrorCode for it.
+        auto error = [NSError errorWithDomain:@"WKErrorDomain" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:result.error().message }];
+        completionHandlerCopy(nil, error);
+    });
+}
+
+- (void)unsubscribeFromPushServiceForScope:(NSURL *)scopeURL completionHandler:(void (^)(BOOL unsubscribed, NSError *))completionHandler
+{
+    _connection->unsubscribeFromPushService(scopeURL, [completionHandlerCopy = makeBlockPtr(completionHandler)] (auto result) {
+        if (result)
+            return completionHandlerCopy(result.value(), nil);
+
+        auto error = [NSError errorWithDomain:@"WKErrorDomain" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:result.error().message }];
+        completionHandlerCopy(false, error);
+    });
+}
+
+- (void)getSubscriptionForScope:(NSURL *)scopeURL completionHandler:(void (^)(_WKWebPushSubscriptionData *, NSError *))completionHandler
+{
+    _connection->getPushSubscription(scopeURL, [completionHandlerCopy = makeBlockPtr(completionHandler)] (auto result) {
+        if (result) {
+            if (auto data = result.value())
+                return completionHandlerCopy(wrapper(API::WebPushSubscriptionData::create(WTFMove(*data))).get(), nil);
+
+            return completionHandlerCopy(nil, nil);
+        }
+
+        auto error = [NSError errorWithDomain:@"WKErrorDomain" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:result.error().message }];
+        completionHandlerCopy(nil, error);
+    });
+}
+
+- (void)getNextPendingPushMessage:(void (^)(_WKWebPushMessage *))completionHandler
+{
+    _connection->getNextPendingPushMessage([completionHandlerCopy = makeBlockPtr(completionHandler)] (auto result) {
+        if (!result)
+            return completionHandlerCopy(nil);
+
+        return completionHandlerCopy(wrapper(API::WebPushMessage::create(WTFMove(result.value()))).get());
+    });
+}
+
+- (API::Object&)_apiObject
+{
+    return *_connection;
+}
+
+@end

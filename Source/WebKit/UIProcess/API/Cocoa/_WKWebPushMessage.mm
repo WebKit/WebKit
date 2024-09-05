@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKDownloadDelegatePrivate.h>
-#import <WebKit/WKHistoryDelegatePrivate.h>
-#import <WebKit/WKNavigationPrivate.h>
-#import <WebKit/WKProcessPoolPrivate.h>
-#import <WebKit/WKUIDelegatePrivate.h>
-#import <WebKit/WKWebViewConfigurationPrivate.h>
-#import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/_WKActivatedElementInfo.h>
-#import <WebKit/_WKAttachment.h>
-#import <WebKit/_WKElementAction.h>
-#import <WebKit/_WKFocusedElementInfo.h>
-#import <WebKit/_WKFormInputSession.h>
-#import <WebKit/_WKInputDelegate.h>
-#import <WebKit/_WKPageLoadTiming.h>
-#import <WebKit/_WKProcessPoolConfiguration.h>
-#import <WebKit/_WKTargetedElementInfo.h>
-#import <WebKit/_WKTargetedElementRequest.h>
-#import <WebKit/_WKThumbnailView.h>
-#import <WebKit/_WKVisitedLinkStore.h>
-#import <WebKit/_WKWebPushAction.h>
-#import <WebKit/_WKWebPushDaemonConnection.h>
-#import <WebKit/_WKWebPushMessage.h>
-#import <WebKit/_WKWebPushSubscriptionData.h>
+#import "config.h"
+#import "_WKWebPushMessageInternal.h"
+
+#import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/cocoa/SpanCocoa.h>
+
+@implementation _WKWebPushMessage
+
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebPushMessage.class, self))
+        return;
+
+    _message->API::WebPushMessage::~WebPushMessage();
+    [super dealloc];
+}
+
+- (NSData *)data
+{
+    if (auto messageData = _message->data())
+        return toNSData(*messageData).get();
+
+    return nil;
+}
+
+- (NSURL *)scope
+{
+    return _message->scope();
+}
+
+- (NSString *)partition
+{
+    return _message->partition();
+}
+
+- (API::Object&)_apiObject
+{
+    return *_message;
+}
+
+@end
+
