@@ -905,7 +905,8 @@ void Queue::scheduleWork(Instance::WorkItem&& workItem)
     if (!device)
         return;
 
-    device->instance().scheduleWork(WTFMove(workItem));
+    if (auto inst = device->instance(); inst.get())
+        inst->scheduleWork(WTFMove(workItem));
 }
 
 void Queue::clearTextureViewIfNeeded(TextureView& textureView)

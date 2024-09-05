@@ -31,6 +31,7 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/TZoneMalloc.h>
+#import <wtf/WeakPtr.h>
 
 struct WGPUAdapterImpl {
 };
@@ -65,7 +66,7 @@ public:
     void makeInvalid() { m_device = nil; }
     bool isXRCompatible() const;
 
-    Instance& instance() const { return m_instance; }
+    RefPtr<Instance> instance() const { return m_instance.get(); }
 
 
 private:
@@ -73,7 +74,7 @@ private:
     Adapter(Instance&);
 
     id<MTLDevice> m_device { nil };
-    const Ref<Instance> m_instance;
+    const ThreadSafeWeakPtr<Instance> m_instance;
 
     const HardwareCapabilities m_capabilities { };
     bool m_deviceRequested { false };

@@ -33,6 +33,7 @@
 #import <wtf/Ref.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/ThreadSafeRefCounted.h>
+#import <wtf/WeakPtr.h>
 
 struct WGPUInstanceImpl {
 };
@@ -47,7 +48,7 @@ class Adapter;
 class PresentationContext;
 
 // https://gpuweb.github.io/gpuweb/#gpu
-class Instance : public WGPUInstanceImpl, public ThreadSafeRefCounted<Instance> {
+class Instance : public WGPUInstanceImpl, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Instance> {
     WTF_MAKE_TZONE_ALLOCATED(Instance);
 public:
     static Ref<Instance> create(const WGPUInstanceDescriptor&);
@@ -56,7 +57,7 @@ public:
         return adoptRef(*new Instance());
     }
 
-    ~Instance();
+    virtual ~Instance();
 
     Ref<PresentationContext> createSurface(const WGPUSurfaceDescriptor&);
     void processEvents();

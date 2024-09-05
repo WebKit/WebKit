@@ -163,12 +163,13 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
         RefPtr<Device> protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        auto& instance = protectedThis->instance();
-        instance.scheduleWork([protectedThis = WTFMove(protectedThis), device = device]() {
-            if (![protectedThis->m_device isEqual:device])
-                return;
-            protectedThis->loseTheDevice(WGPUDeviceLostReason_Undefined);
-        });
+        if (auto instance = protectedThis->instance(); instance.get()) {
+            instance->scheduleWork([protectedThis = WTFMove(protectedThis), device = device]() {
+                if (![protectedThis->m_device isEqual:device])
+                    return;
+                protectedThis->loseTheDevice(WGPUDeviceLostReason_Undefined);
+            });
+        }
     });
 
 #if ASSERT_ENABLED
@@ -273,7 +274,7 @@ static void setOwnerWithIdentity(id<MTLResourceSPI> resource, auto webProcessID)
 
 void Device::setOwnerWithIdentity(id<MTLResource> resource) const
 {
-    if (auto optionalWebProcessID = instance().webProcessID()) {
+    if (auto optionalWebProcessID = webProcessID()) {
         auto webProcessID = optionalWebProcessID->sendRight();
         if (!webProcessID)
             return;
@@ -461,12 +462,15 @@ bool Device::popErrorScope(CompletionHandler<void(WGPUErrorType, String&&)>&& ca
 
     auto scope = m_errorScopeStack.takeLast();
 
-    instance().scheduleWork([scope = WTFMove(scope), callback = WTFMove(callback)]() mutable {
-        if (scope.error)
-            callback(scope.error->type, WTFMove(scope.error->message));
-        else
-            callback(WGPUErrorType_NoError, { });
-    });
+    if (auto inst = instance(); inst.get()) {
+        inst->scheduleWork([scope = WTFMove(scope), callback = WTFMove(callback)]() mutable {
+            if (scope.error)
+                callback(scope.error->type, WTFMove(scope.error->message));
+            else
+                callback(WGPUErrorType_NoError, { });
+        });
+    } else
+        callback(WGPUErrorType_NoError, { });
 
     // FIXME: Make sure this is the right thing to return.
     return true;
@@ -503,6 +507,12 @@ void Device::setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&
 void Device::setLabel(String&&)
 {
     // Because MTLDevices are process-global, we can't set the label on it, because 2 contexts' labels would fight each other.
+}
+
+const std::optional<const MachSendRight> Device::webProcessID() const
+{
+    auto scheduler = instance();
+    return scheduler ? scheduler->webProcessID() : std::nullopt;
 }
 
 id<MTLBuffer> Device::dispatchCallBuffer()

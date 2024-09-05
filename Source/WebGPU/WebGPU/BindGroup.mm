@@ -498,7 +498,7 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
         return { mtlTextures[0], mtlTextures[1], simd::float3x2(1.f), colorSpaceConversionMatrix };
     }
 
-    if (auto optionalWebProcessID = instance().webProcessID()) {
+    if (auto optionalWebProcessID = webProcessID()) {
         if (auto webProcessID = optionalWebProcessID->sendRight())
             IOSurfaceSetOwnershipIdentity(ioSurface, webProcessID, kIOSurfaceMemoryLedgerTagGraphics, 0);
     }

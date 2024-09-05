@@ -132,9 +132,12 @@ std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const W
 void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, String&& message)>&& callback)
 {
     auto pipelineAndError = createComputePipeline(descriptor, true);
-    instance().scheduleWork([pipeline = WTFMove(pipelineAndError.first), callback = WTFMove(callback), protectedThis = Ref { *this }, error = WTFMove(pipelineAndError.second)]() mutable {
-        callback((pipeline->isValid() || protectedThis->isDestroyed()) ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTFMove(pipeline), WTFMove(error));
-    });
+    if (auto inst = instance(); inst.get()) {
+        inst->scheduleWork([pipeline = WTFMove(pipelineAndError.first), callback = WTFMove(callback), protectedThis = Ref { *this }, error = WTFMove(pipelineAndError.second)]() mutable {
+            callback((pipeline->isValid() || protectedThis->isDestroyed()) ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTFMove(pipeline), WTFMove(error));
+        });
+    } else
+        callback(WGPUCreatePipelineAsyncStatus_ValidationError, WTFMove(pipelineAndError.first), WTFMove(pipelineAndError.second));
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ComputePipeline);
