@@ -605,10 +605,17 @@ RefPtr<WebExtensionWindow> WebExtensionAction::window() const
 
 void WebExtensionAction::clearCustomizations()
 {
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    if (!m_customIcons && !m_customIconVariants && m_customPopupPath.isNull() && m_customLabel.isNull() && m_customBadgeText.isNull() && !m_customEnabled && !m_blockedResourceCount)
+#else
     if (!m_customIcons && m_customPopupPath.isNull() && m_customLabel.isNull() && m_customBadgeText.isNull() && !m_customEnabled && !m_blockedResourceCount)
+#endif
         return;
 
     m_customIcons = nil;
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    m_customIconVariants = nil;
+#endif
     m_customPopupPath = nullString();
     m_customLabel = nullString();
     m_customBadgeText = nullString();
@@ -620,6 +627,7 @@ void WebExtensionAction::clearCustomizations()
     m_popoverAppearance = Appearance::Default;
 #endif
 
+    clearIconCache();
     propertiesDidChange();
 }
 
@@ -659,15 +667,46 @@ CocoaImage *WebExtensionAction::icon(CGSize idealSize)
     if (!extensionContext())
         return nil;
 
-    if (m_customIcons) {
-        auto *result = extensionContext()->extension().bestImageInIconsDictionary(m_customIcons.get(), idealSize, [&](auto *error) {
-            extensionContext()->recordError(error);
-        });
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    if (m_customIconVariants || m_customIcons)
+#else
+    if (m_customIcons)
+#endif
+    {
+        // Clear the cache if the display scales change (connecting display, etc.)
+        auto *currentScales = availableScreenScales();
+        if (![currentScales isEqualToSet:m_cachedIconScales.get()])
+            clearIconCache();
 
-        if (result)
+        if (m_cachedIcon && CGSizeEqualToSize(idealSize, m_cachedIconIdealSize))
+            return m_cachedIcon.get();
+
+        CocoaImage *result;
+
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        if (m_customIconVariants) {
+            result = extensionContext()->extension().bestImageForIconVariants(m_customIconVariants.get(), idealSize, [&](auto *error) {
+                extensionContext()->recordError(error);
+            });
+        } else
+#endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        if (m_customIcons) {
+            result = extensionContext()->extension().bestImageInIconsDictionary(m_customIcons.get(), idealSize, [&](auto *error) {
+                extensionContext()->recordError(error);
+            });
+        }
+
+        if (result) {
+            m_cachedIcon = result;
+            m_cachedIconScales = currentScales;
+            m_cachedIconIdealSize = idealSize;
+
             return result;
+        }
 
-        // If custom icons fail, fallback to the default icons.
+        clearIconCache();
+
+        // If custom icons fail, fallback.
     }
 
     if (RefPtr fallback = fallbackAction())
@@ -677,14 +716,39 @@ CocoaImage *WebExtensionAction::icon(CGSize idealSize)
     return extensionContext()->extension().actionIcon(idealSize);
 }
 
-void WebExtensionAction::setIconsDictionary(NSDictionary *icons)
+void WebExtensionAction::setIcons(NSDictionary *icons)
 {
     if ([(m_customIcons ?: @{ }) isEqualToDictionary:(icons ?: @{ })])
         return;
 
     m_customIcons = icons.count ? icons : nil;
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    m_customIconVariants = nil;
+#endif
 
+    clearIconCache();
     propertiesDidChange();
+}
+
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+void WebExtensionAction::setIconVariants(NSArray *iconVariants)
+{
+    if ([(m_customIconVariants ?: @[ ]) isEqualToArray:(iconVariants ?: @[ ])])
+        return;
+
+    m_customIconVariants = iconVariants.count ? iconVariants : nil;
+    m_customIcons = nil;
+
+    clearIconCache();
+    propertiesDidChange();
+}
+#endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+
+void WebExtensionAction::clearIconCache()
+{
+    m_cachedIcon = nil;
+    m_cachedIconScales = nil;
+    m_cachedIconIdealSize = CGSizeZero;
 }
 
 String WebExtensionAction::popupPath() const

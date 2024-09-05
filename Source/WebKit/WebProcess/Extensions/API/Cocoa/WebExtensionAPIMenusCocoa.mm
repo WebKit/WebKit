@@ -61,6 +61,10 @@ static NSString * const titleKey = @"title";
 static NSString * const typeKey = @"type";
 static NSString * const visibleKey = @"visible";
 
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+static NSString * const iconVariantsKey = @"icon_variants";
+#endif
+
 static NSString * const normalKey = @"normal";
 static NSString * const checkboxKey = @"checkbox";
 static NSString * const radioKey = @"radio";
@@ -96,7 +100,7 @@ static id toMenuIdentifierWebAPI(const String& identifier)
     return identifier;
 }
 
-bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, NSDictionary *properties, std::optional<WebExtensionMenuItemParameters>& outParameters, RefPtr<WebExtensionCallbackHandler>& outClickCallback, NSString **outExceptionString)
+bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, NSDictionary *properties, const URL& baseURL, std::optional<WebExtensionMenuItemParameters>& outParameters, RefPtr<WebExtensionCallbackHandler>& outClickCallback, NSString **outExceptionString)
 {
     static NSArray<NSString *> *requiredKeys = @[
         titleKey,
@@ -108,7 +112,10 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
         contextsKey: @[ NSString.class ],
         documentURLPatternsKey: @[ NSString.class ],
         enabledKey: @YES.class,
-        iconsKey: [NSOrderedSet orderedSetWithObjects:NSString.class, NSDictionary.class, nil],
+        iconsKey: [NSOrderedSet orderedSetWithObjects:NSString.class, NSDictionary.class, NSNull.class, nil],
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        iconVariantsKey: [NSOrderedSet orderedSetWithObjects:@[ NSDictionary.class ], NSNull.class, nil],
+#endif
         idKey: [NSOrderedSet orderedSetWithObjects:NSString.class, NSNumber.class, nil],
         onclickKey: JSValue.class,
         parentIdKey: [NSOrderedSet orderedSetWithObjects:NSString.class, NSNumber.class, nil],
@@ -248,25 +255,39 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
 
     NSDictionary *iconDictionary;
 
-    if (NSString *iconPath = objectForKey<NSString>(properties, iconsKey))
-        iconDictionary = @{ @"16": iconPath };
+    if (auto *iconPath = objectForKey<NSString>(properties, iconsKey))
+        iconDictionary = @{ @"16": WebExtensionAPIAction::parseIconPath(iconPath, baseURL) };
 
-    if (NSDictionary *iconPaths = objectForKey<NSDictionary>(properties, iconsKey)) {
-        for (NSString *key in iconPaths) {
-            if (!WebExtensionAPIAction::isValidDimensionKey(key)) {
-                *outExceptionString = toErrorString(nil, iconsKey, @"'%@' in not a valid dimension", key);
-                return false;
-            }
-
-            if (!validateObject(iconPaths[key], [NSString stringWithFormat:@"%@[%@]", iconsKey, key], NSString.class, outExceptionString))
-                return false;
-        }
-
-        iconDictionary = iconPaths;
+    if (auto *iconPaths = objectForKey<NSDictionary>(properties, iconsKey)) {
+        iconDictionary = WebExtensionAPIAction::parseIconPathsDictionary(iconPaths, baseURL, false, iconsKey, outExceptionString);
+        if (!iconDictionary)
+            return false;
     }
 
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    NSArray *iconVariants;
+    if (auto *variants = objectForKey<NSArray>(properties, iconVariantsKey, false)) {
+        iconVariants = WebExtensionAPIAction::parseIconVariants(variants, baseURL, iconVariantsKey, outExceptionString);
+        if (!iconVariants)
+            return false;
+    }
+
+    // Icon variants takes precedence over the old icons key, even if empty.
+    if (iconVariants || iconDictionary.count)
+        parameters.iconsJSON = encodeJSONString(iconVariants ?: iconDictionary, JSONOptions::FragmentsAllowed);
+#else
     if (iconDictionary.count)
-        parameters.iconDictionaryJSON = encodeJSONString(iconDictionary);
+        parameters.iconsJSON = encodeJSONString(iconDictionary);
+#endif
+
+    // An explicit null icon variants or icons will clear the current icon.
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    if (properties[iconVariantsKey] && objectForKey<NSNull>(properties, iconVariantsKey))
+        parameters.iconsJSON = emptyString();
+    else
+#endif
+    if (properties[iconsKey] && objectForKey<NSNull>(properties, iconsKey))
+        parameters.iconsJSON = emptyString();
 
     if (NSString *command = properties[commandKey]) {
         if (!command.length) {
@@ -291,7 +312,7 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
     return true;
 }
 
-id WebExtensionAPIMenus::createMenu(WebPage& page, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+id WebExtensionAPIMenus::createMenu(WebPage& page, WebFrame& frame, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/menus/create
 
@@ -299,7 +320,7 @@ id WebExtensionAPIMenus::createMenu(WebPage& page, NSDictionary *properties, Ref
 
     std::optional<WebExtensionMenuItemParameters> parameters;
     RefPtr<WebExtensionCallbackHandler> clickCallback;
-    if (!parseCreateAndUpdateProperties(ForUpdate::No, properties, parameters, clickCallback, outExceptionString))
+    if (!parseCreateAndUpdateProperties(ForUpdate::No, properties, frame.url(), parameters, clickCallback, outExceptionString))
         return nil;
 
     if (parameters.value().identifier.isEmpty())
@@ -324,7 +345,7 @@ id WebExtensionAPIMenus::createMenu(WebPage& page, NSDictionary *properties, Ref
     return toMenuIdentifierWebAPI(parameters.value().identifier);
 }
 
-void WebExtensionAPIMenus::update(WebPage& page, id identifier, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIMenus::update(WebPage& page, WebFrame& frame, id identifier, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/menus/update
 
@@ -335,7 +356,7 @@ void WebExtensionAPIMenus::update(WebPage& page, id identifier, NSDictionary *pr
 
     std::optional<WebExtensionMenuItemParameters> parameters;
     RefPtr<WebExtensionCallbackHandler> clickCallback;
-    if (!parseCreateAndUpdateProperties(ForUpdate::Yes, properties, parameters, clickCallback, outExceptionString))
+    if (!parseCreateAndUpdateProperties(ForUpdate::Yes, properties, frame.url(), parameters, clickCallback, outExceptionString))
         return;
 
     if (NSNumber *identifierNumber = dynamic_objc_cast<NSNumber>(identifier))

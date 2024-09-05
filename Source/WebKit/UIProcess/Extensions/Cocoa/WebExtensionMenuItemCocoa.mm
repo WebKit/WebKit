@@ -107,8 +107,14 @@ WebExtensionMenuItem::WebExtensionMenuItem(WebExtensionContext& extensionContext
     else
         m_contexts = WebExtensionMenuItemContextType::Page;
 
-    if (!parameters.iconDictionaryJSON.isEmpty())
-        m_icons = parseJSON(parameters.iconDictionaryJSON);
+    if (!parameters.iconsJSON.isEmpty()) {
+        id parsedIcons = parseJSON(parameters.iconsJSON, JSONOptions::FragmentsAllowed);
+        m_icons = dynamic_objc_cast<NSDictionary>(parsedIcons);
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        m_iconVariants = dynamic_objc_cast<NSArray>(parsedIcons);
+#endif
+        clearIconCache();
+    }
 
     if (parameters.documentURLPatterns) {
         for (auto& patternString : parameters.documentURLPatterns.value()) {
@@ -135,7 +141,7 @@ WebExtensionMenuItemParameters WebExtensionMenuItem::minimalParameters() const
 
         nullString(), // title
         nullString(), // command
-        nullString(), // iconDictionaryJSON
+        nullString(), // iconsJSON
 
         isChecked(),
         isEnabled(),
@@ -175,8 +181,14 @@ void WebExtensionMenuItem::update(const WebExtensionMenuItemParameters& paramete
     if (!parameters.command.isNull())
         m_command = extensionContext()->command(parameters.command);
 
-    if (!parameters.iconDictionaryJSON.isNull())
-        m_icons = parseJSON(parameters.iconDictionaryJSON);
+    if (!parameters.iconsJSON.isNull()) {
+        id parsedIcons = parseJSON(parameters.iconsJSON, JSONOptions::FragmentsAllowed);
+        m_icons = dynamic_objc_cast<NSDictionary>(parsedIcons);
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        m_iconVariants = dynamic_objc_cast<NSArray>(parsedIcons);
+#endif
+        clearIconCache();
+    }
 
     if (parameters.checked)
         m_checked = parameters.checked.value();
@@ -331,9 +343,54 @@ CocoaImage *WebExtensionMenuItem::icon(CGSize idealSize) const
 {
     ASSERT(extensionContext());
 
-    return extensionContext()->extension().bestImageInIconsDictionary(m_icons.get(), idealSize, [&](auto *error) {
-        extensionContext()->recordError(error);
-    });
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    if (!m_iconVariants && !m_icons)
+#else
+    if (!m_icons)
+#endif
+        return nil;
+
+    // Clear the cache if the display scales change (connecting display, etc.)
+    auto *currentScales = availableScreenScales();
+    if (![currentScales isEqualToSet:m_cachedIconScales.get()])
+        clearIconCache();
+
+    if (m_cachedIcon && CGSizeEqualToSize(idealSize, m_cachedIconIdealSize))
+        return m_cachedIcon.get();
+
+    CocoaImage *result;
+
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    if (m_iconVariants) {
+        result = extensionContext()->extension().bestImageForIconVariants(m_iconVariants.get(), idealSize, [&](auto *error) {
+            extensionContext()->recordError(error);
+        });
+    } else
+#endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    if (m_icons) {
+        result = extensionContext()->extension().bestImageInIconsDictionary(m_icons.get(), idealSize, [&](auto *error) {
+            extensionContext()->recordError(error);
+        });
+    }
+
+    if (result) {
+        m_cachedIcon = result;
+        m_cachedIconIdealSize = idealSize;
+        m_cachedIconScales = currentScales;
+
+        return result;
+    }
+
+    clearIconCache();
+
+    return nil;
+}
+
+void WebExtensionMenuItem::clearIconCache() const
+{
+    m_cachedIcon = nil;
+    m_cachedIconScales = nil;
+    m_cachedIconIdealSize = CGSizeZero;
 }
 
 } // namespace WebKit

@@ -838,7 +838,7 @@ TEST(WKWebExtensionAPIAction, SetIconWithMultipleImageDataSizes)
     [manager loadAndRun];
 }
 
-TEST(WKWebExtensionAPIAction, SetIconWithSVGDataURL)
+TEST(WKWebExtensionAPIAction, SetIconWithDataURL)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"const canvas = document.createElement('canvas')",
@@ -925,6 +925,261 @@ TEST(WKWebExtensionAPIAction, SetIconWithMultipleDataURLs)
 
     [manager loadAndRun];
 }
+
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+TEST(WKWebExtensionAPIAction, SetIconWithVariants)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"await browser.test.assertSafeResolve(() => browser.action.setIcon({",
+        @"    variants: [",
+        @"        { 32: 'action-dark-32.png', 64: 'action-dark-64.png', 'color_schemes': [ 'dark' ] },",
+        @"        { 32: 'action-light-32.png', 64: 'action-light-64.png', 'color_schemes': [ 'light' ] }",
+        @"    ]",
+        @"}))",
+
+        @"browser.action.openPopup()"
+    ]);
+
+    auto *dark32Icon = Util::makePNGData(CGSizeMake(32, 32), @selector(whiteColor));
+    auto *dark64Icon = Util::makePNGData(CGSizeMake(64, 64), @selector(whiteColor));
+    auto *light32Icon = Util::makePNGData(CGSizeMake(32, 32), @selector(blackColor));
+    auto *light64Icon = Util::makePNGData(CGSizeMake(64, 64), @selector(blackColor));
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"popup.html": @"Hello world!",
+        @"action-dark-32.png": dark32Icon,
+        @"action-dark-64.png": dark64Icon,
+        @"action-light-32.png": light32Icon,
+        @"action-light-64.png": light64Icon,
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+        auto *icon32 = [action iconForSize:CGSizeMake(32, 32)];
+        EXPECT_NOT_NULL(icon32);
+        EXPECT_TRUE(CGSizeEqualToSize(icon32.size, CGSizeMake(32, 32)));
+
+        auto *icon64 = [action iconForSize:CGSizeMake(64, 64)];
+        EXPECT_NOT_NULL(icon64);
+        EXPECT_TRUE(CGSizeEqualToSize(icon64.size, CGSizeMake(64, 64)));
+
+        Util::performWithAppearance(Util::Appearance::Dark, ^{
+            EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon32), [CocoaColor whiteColor]));
+            EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon64), [CocoaColor whiteColor]));
+        });
+
+        Util::performWithAppearance(Util::Appearance::Light, ^{
+            EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon32), [CocoaColor blackColor]));
+            EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon64), [CocoaColor blackColor]));
+        });
+
+        [manager done];
+    };
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIAction, SetIconWithImageDataAndVariants)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const createImageData = (size, color) => {",
+        @"  const context = new OffscreenCanvas(size, size).getContext('2d')",
+        @"  context.fillStyle = color",
+        @"  context.fillRect(0, 0, size, size)",
+
+        @"  return context.getImageData(0, 0, size, size)",
+        @"}",
+
+        @"const imageDataDark32 = createImageData(32, 'white')",
+        @"const imageDataDark64 = createImageData(64, 'white')",
+        @"const imageDataLight32 = createImageData(32, 'black')",
+        @"const imageDataLight64 = createImageData(64, 'black')",
+
+        @"await browser.test.assertSafeResolve(() => browser.action.setIcon({",
+        @"    variants: [",
+        @"        { 32: imageDataDark32, 64: imageDataDark64, 'color_schemes': [ 'dark' ] },",
+        @"        { 32: imageDataLight32, 64: imageDataLight64, 'color_schemes': [ 'light' ] }",
+        @"    ]",
+        @"}))",
+
+        @"browser.action.openPopup()"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"popup.html": @"Hello world!",
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+        auto *icon32 = [action iconForSize:CGSizeMake(32, 32)];
+        auto *icon64 = [action iconForSize:CGSizeMake(64, 64)];
+
+        EXPECT_NOT_NULL(icon32);
+        EXPECT_TRUE(CGSizeEqualToSize(icon32.size, CGSizeMake(32, 32)));
+
+        EXPECT_NOT_NULL(icon64);
+        EXPECT_TRUE(CGSizeEqualToSize(icon64.size, CGSizeMake(64, 64)));
+
+        Util::performWithAppearance(Util::Appearance::Dark, ^{
+            EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon32), [CocoaColor whiteColor]));
+            EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon64), [CocoaColor whiteColor]));
+        });
+
+        Util::performWithAppearance(Util::Appearance::Light, ^{
+            EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon32), [CocoaColor blackColor]));
+            EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon64), [CocoaColor blackColor]));
+        });
+
+        [manager done];
+    };
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIAction, SetIconThrowsWithNoValidVariants)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const createImageData = (size, color) => {",
+        @"  const context = new OffscreenCanvas(size, size).getContext('2d')",
+        @"  context.fillStyle = color",
+        @"  context.fillRect(0, 0, size, size)",
+
+        @"  return context.getImageData(0, 0, size, size)",
+        @"}",
+
+        @"const invalidImageData = createImageData(32, 'white')",
+
+        @"await browser.test.assertThrows(() => browser.action.setIcon({",
+        @"    variants: [ { 'thirtytwo': invalidImageData, 'color_schemes': [ 'light' ] } ]",
+        @"}), /'variants\\[0\\]' value is invalid, because 'thirtytwo' is not a valid dimension/s)",
+
+        @"await browser.test.assertThrows(() => browser.action.setIcon({",
+        @"    variants: [ { 32: invalidImageData, 'color_schemes': [ 'bad' ] } ]",
+        @"}), /'variants\\[0\\]\\['color_schemes'\\]' value is invalid, because it must specify either 'light' or 'dark'/s)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"popup.html": @"Hello world!",
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIAction, SetIconWithMixedValidAndInvalidVariants)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const createImageData = (size, color) => {",
+        @"  const context = new OffscreenCanvas(size, size).getContext('2d')",
+        @"  context.fillStyle = color",
+        @"  context.fillRect(0, 0, size, size)",
+
+        @"  return context.getImageData(0, 0, size, size)",
+        @"}",
+
+        @"const imageDataLight32 = createImageData(32, 'black')",
+        @"const invalidImageData = createImageData(32, 'white')",
+
+        @"await browser.test.assertSafeResolve(() => browser.action.setIcon({",
+        @"    variants: [",
+        @"        { '32': imageDataLight32, 'color_schemes': ['light'] },",
+        @"        { '32.5': invalidImageData, 'color_schemes': ['dark'] }",
+        @"    ]",
+        @"}))",
+
+        @"browser.action.openPopup()"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"popup.html": @"Hello world!",
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+        auto *icon32 = [action iconForSize:CGSizeMake(32, 32)];
+        EXPECT_NOT_NULL(icon32);
+        EXPECT_TRUE(CGSizeEqualToSize(icon32.size, CGSizeMake(32, 32)));
+
+        Util::performWithAppearance(Util::Appearance::Light, ^{
+            EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon32), [CocoaColor blackColor]));
+        });
+
+        Util::performWithAppearance(Util::Appearance::Dark, ^{
+            // Should still be black, as light variant is used.
+            EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon32), [CocoaColor blackColor]));
+        });
+
+        [manager done];
+    };
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIAction, SetIconWithAnySizeVariantAndSVGDataURL)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const whiteSVGData = 'data:image/svg+xml;base64,' + btoa(`",
+        @"  <svg width=\"100\" height=\"100\" xmlns=\"http://www.w3.org/2000/svg\">",
+        @"    <rect width=\"100\" height=\"100\" fill=\"white\" />",
+        @"  </svg>`)",
+
+        @"const blackSVGData = 'data:image/svg+xml;base64,' + btoa(`",
+        @"  <svg width=\"100\" height=\"100\" xmlns=\"http://www.w3.org/2000/svg\">",
+        @"    <rect width=\"100\" height=\"100\" fill=\"black\" />",
+        @"  </svg>`)",
+
+        @"await browser.test.assertSafeResolve(() => browser.action.setIcon({",
+        @"    variants: [",
+        @"        { any: whiteSVGData, 'color_schemes': [ 'dark' ] },",
+        @"        { any: blackSVGData, 'color_schemes': [ 'light' ] }",
+        @"    ]",
+        @"}))",
+
+        @"browser.action.openPopup()"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"popup.html": @"Hello World!",
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+        auto *iconAnySize = [action iconForSize:CGSizeMake(48, 48)];
+
+        EXPECT_NOT_NULL(iconAnySize);
+        EXPECT_TRUE(CGSizeEqualToSize(iconAnySize.size, CGSizeMake(48, 48)));
+
+        Util::performWithAppearance(Util::Appearance::Dark, ^{
+            EXPECT_TRUE(Util::compareColors(Util::pixelColor(iconAnySize), [CocoaColor whiteColor]));
+        });
+
+        Util::performWithAppearance(Util::Appearance::Light, ^{
+            EXPECT_TRUE(Util::compareColors(Util::pixelColor(iconAnySize), [CocoaColor blackColor]));
+        });
+
+        [manager done];
+    };
+
+    [manager loadAndRun];
+}
+#endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
 
 TEST(WKWebExtensionAPIAction, BrowserAction)
 {

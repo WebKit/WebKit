@@ -87,7 +87,10 @@ public:
     void propertiesDidChange();
 
     CocoaImage *icon(CGSize);
-    void setIconsDictionary(NSDictionary *);
+    void setIcons(NSDictionary *);
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    void setIconVariants(NSArray *);
+#endif
 
     String label(FallbackWhenEmpty = FallbackWhenEmpty::Yes) const;
     void setLabel(String);
@@ -144,6 +147,8 @@ public:
 private:
     WebExtensionAction* fallbackAction() const;
 
+    void clearIconCache();
+
 #if PLATFORM(MAC)
     void detectPopoverColorScheme();
 #endif
@@ -166,7 +171,14 @@ private:
     String m_customPopupPath;
     String m_popupWebViewInspectionName;
 
+    RetainPtr<CocoaImage> m_cachedIcon;
+    RetainPtr<NSSet> m_cachedIconScales;
+    CGSize m_cachedIconIdealSize { CGSizeZero };
+
     RetainPtr<NSDictionary> m_customIcons;
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    RetainPtr<NSArray> m_customIconVariants;
+#endif
     String m_customLabel;
     String m_customBadgeText;
     ssize_t m_blockedResourceCount { 0 };
