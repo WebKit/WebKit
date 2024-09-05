@@ -82,8 +82,8 @@ PASS Has syntax error: 'const let;'
 SyntaxError: Cannot use 'let' as a lexical variable name in strict mode.
 SyntaxError: Cannot use 'let' as a lexical variable name in strict mode.
 PASS Has syntax error: ''use strict'; const let;'
-SyntaxError: Unexpected keyword 'let'. Cannot use 'let' as an identifier name for a LexicalDeclaration.
-SyntaxError: Unexpected keyword 'let'. Cannot use 'let' as an identifier name for a LexicalDeclaration.
+SyntaxError: Cannot use the keyword 'let' as a lexical variable name.
+SyntaxError: Cannot use the keyword 'let' as a lexical variable name.
 PASS Has syntax error: 'let {let};'
 SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'let'.
 SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'let'.
@@ -94,8 +94,8 @@ PASS Has syntax error: 'let {l: let};'
 SyntaxError: Cannot use 'let' as a lexical variable name in strict mode.
 SyntaxError: Cannot use 'let' as a lexical variable name in strict mode.
 PASS Has syntax error: ''use strict'; let {l: let};'
-SyntaxError: Unexpected keyword 'let'. Cannot use 'let' as an identifier name for a LexicalDeclaration.
-SyntaxError: Unexpected keyword 'let'. Cannot use 'let' as an identifier name for a LexicalDeclaration.
+SyntaxError: Cannot use the keyword 'let' as a lexical variable name.
+SyntaxError: Cannot use the keyword 'let' as a lexical variable name.
 PASS Has syntax error: 'let {l: {let}};'
 SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'let'.
 SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'let'.
@@ -445,6 +445,8 @@ PASS Does not have syntax error: 'let x; if (true) let: x = 3;'
 SyntaxError: Cannot use 'let' as a label in strict mode.
 SyntaxError: Cannot use 'let' as a label in strict mode.
 PASS Has syntax error: ''use strict'; let x; if (true) let: x = 3;'
+PASS Does not have syntax error: 'let {let: a} = {let: 1}'
+PASS Does not have syntax error: ''use strict'; let {let: a} = {let: 1}'
 PASS successfullyParsed is true
 
 TEST COMPLETE

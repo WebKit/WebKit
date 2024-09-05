@@ -1293,13 +1293,14 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
             JSTokenLocation location = m_token.m_location;
             bool escapedKeyword = match(ESCAPED_KEYWORD);
             if (escapedKeyword || matchSpecIdentifier()) {
-                failIfTrue(match(LET) && (kind == DestructuringKind::DestructureToLet || kind == DestructuringKind::DestructureToConst), "Cannot use 'let' as an identifier name for a LexicalDeclaration");
+                bool letMatched = match(LET);
                 propertyName = m_token.m_data.ident;
                 JSToken identifierToken = m_token;
                 next();
                 if (consume(COLON))
                     innerPattern = parseBindingOrAssignmentElement(context, kind, exportType, duplicateIdentifier, hasDestructuringPattern, bindingContext, depth + 1);
                 else {
+                    semanticFailIfTrue(letMatched && (kind == DestructuringKind::DestructureToLet || kind == DestructuringKind::DestructureToConst), "Cannot use the keyword 'let' as a lexical variable name");
                     semanticFailIfTrue(escapedKeyword, "Cannot use abbreviated destructuring syntax for keyword '", propertyName->impl(), "'");
                     semanticFailIfTrue(isDisallowedIdentifierAwait(identifierToken), "Cannot use 'await' as a ", destructuringKindToVariableKindName(kind), " ", disallowedIdentifierAwaitReason());
                     if (kind == DestructuringKind::DestructureToExpressions) {
