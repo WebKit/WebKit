@@ -597,6 +597,7 @@ public:
     void addWebUndoStep(WebUndoStepID, Ref<WebUndoStep>&&);
     void removeWebEditCommand(WebUndoStepID);
     bool isInRedo() const { return m_isInRedo; }
+    void setIsInRedo(bool isInRedo) { m_isInRedo = isInRedo; }
 
     void closeCurrentTypingCommand();
 

@@ -362,10 +362,8 @@ void WritingToolsController::showSelection() const
     }
 
     CheckedPtr state = std::get_if<CompositionState>(&m_state);
-    if (!state) {
-        ASSERT_NOT_REACHED();
+    if (!state)
         return;
-    }
 
     if (state->reappliedCommands.isEmpty()) {
         ASSERT_NOT_REACHED();
@@ -862,6 +860,8 @@ void WritingToolsController::showRewrittenCompositionForSession()
 
     auto& stack = state->unappliedCommands;
 
+    m_page->chrome().client().setIsInRedo(true);
+
     while (!stack.isEmpty()) {
         auto oldSize = stack.size();
 
@@ -870,6 +870,8 @@ void WritingToolsController::showRewrittenCompositionForSession()
 
         RELEASE_ASSERT(oldSize > stack.size());
     }
+
+    m_page->chrome().client().setIsInRedo(false);
 }
 
 void WritingToolsController::restartCompositionForSession()

@@ -5558,9 +5558,9 @@ void WebPage::reapplyEditCommand(WebUndoStepID stepID)
     if (!step)
         return;
 
-    m_isInRedo = true;
+    setIsInRedo(true);
     step->step().reapply();
-    m_isInRedo = false;
+    setIsInRedo(false);
 }
 
 void WebPage::didRemoveEditCommand(WebUndoStepID commandID)
