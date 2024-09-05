@@ -13,5 +13,5 @@ variables:
 
 sources:
 - kind: tar
-  url: https://github.com/google/highway/archive/refs/tags/1.0.4.tar.gz
-  ref: faccd343935c9e98afd1016e9d20e0b8b89d908508d1af958496f8c2d3004ac2
+  url: github_com:google/highway/releases/download/1.2.0/highway-1.2.0.tar.gz
+  ref: 58e9d5d41d6573ad15245ad76aec53a69499ca7480c092d899c4424812ed906f

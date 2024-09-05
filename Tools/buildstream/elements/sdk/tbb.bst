@@ -24,4 +24,4 @@ sources:
 - kind: git_repo
   url: github_com:oneapi-src/oneTBB.git
   track: v2021.*
-  ref: v2021.11.0-src-rc1-0-gcb6cc0ec55353b7f48b19c45586f4736b89c4eac
+  ref: v2021.13.0-rc1-0-g003b08693b749c8d1e01ec754244a3d67350b3c7
