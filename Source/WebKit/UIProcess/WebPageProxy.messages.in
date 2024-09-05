@@ -75,7 +75,9 @@ messages -> WebPageProxy {
     DidChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
     DidChangeScrollOffsetPinningForMainFrame(WebCore::RectEdges<bool> pinnedState)
     DidChangePageCount(unsigned pageCount)
+#if PLATFORM(MAC)
     ThemeColorChanged(WebCore::Color themeColor)
+#endif
     PageExtendedBackgroundColorDidChange(WebCore::Color backgroundColor)
     SampledPageTopColorChanged(WebCore::Color sampledPageTopColor)
     SetCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents)

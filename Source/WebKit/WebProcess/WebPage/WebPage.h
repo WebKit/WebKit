@@ -1459,7 +1459,9 @@ public:
 #endif
 
     void themeColorChanged() { m_pendingThemeColorChange = true; }
+#if PLATFORM(MAC)
     void flushPendingThemeColorChange();
+#endif
 
     void pageExtendedBackgroundColorDidChange() { m_pendingPageExtendedBackgroundColorChange = true; }
     void flushPendingPageExtendedBackgroundColorChange();
