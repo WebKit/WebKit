@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,6 +34,8 @@ public:
     static Ref<SVGGElement> create(Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGElement, SVGGraphicsElement>;
+
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
 
 private:
     SVGGElement(const QualifiedName&, Document&);

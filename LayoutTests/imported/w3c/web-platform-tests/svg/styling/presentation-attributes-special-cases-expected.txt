@@ -21,10 +21,10 @@ PASS fill presentation attribute not supported on animateMotion
 PASS fill presentation attribute not supported on animateTransform
 FAIL fill presentation attribute not supported on discard assert_false: Presentation attribute fill="blue" should not be supported on discard element expected false got true
 PASS fill presentation attribute not supported on set
-FAIL transform presentation attribute supported on g assert_true: Presentation attribute transform="scale(2)" should be supported on g element expected true got false
-FAIL patternTransform presentation attribute supported on pattern assert_true: Presentation attribute patternTransform="scale(2)" should be supported on pattern element expected true got false
-FAIL patternTransform presentation attribute supported on linearGradient assert_true: Presentation attribute gradientTransform="scale(2)" should be supported on linearGradient element expected true got false
-FAIL patternTransform presentation attribute supported on radialGradient assert_true: Presentation attribute gradientTransform="scale(2)" should be supported on radialGradient element expected true got false
+PASS transform presentation attribute supported on g
+PASS patternTransform presentation attribute supported on pattern
+PASS gradientTransform presentation attribute supported on linearGradient
+PASS gradientTransform presentation attribute supported on radialGradient
 PASS transform presentation attribute not supported on pattern or gradient elements
 PASS patternTransform presentation attribute not supported on g or gradient elements
 PASS gradientTransform presentation attribute not supported on g or pattern elements
