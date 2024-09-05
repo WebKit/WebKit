@@ -587,6 +587,22 @@ static inline OptionSet<TextDecorationLine> computedTextDecorationType(const Ren
     return textDecorations;
 }
 
+static inline const RenderStyle& decoratingBoxStyleForInlineBox(const InlineIterator::InlineBox& inlineBox, bool isFirstLine)
+{
+    if (!inlineBox.isRootInlineBox())
+        return inlineBox.style();
+    // "When specified on or propagated to a block container that establishes an inline formatting context, the decorations are propagated to an anonymous
+    // inline box that wraps all the in-flow inline-level children of the block container"
+    // https://drafts.csswg.org/css-text-decor-4/#line-decoration
+    // Sadly we don't have the concept of anonymous inline box for all inline-level chidren when content forces us to generate anonymous block containers.
+    for (const RenderElement* ancestor = &inlineBox.renderer(); ancestor; ancestor = ancestor->parent()) {
+        if (!ancestor->isAnonymous())
+            return isFirstLine ? ancestor->firstLineStyle() : ancestor->style();
+    }
+    ASSERT_NOT_REACHED();
+    return inlineBox.style();
+}
+
 static inline bool isDecoratingBoxForBackground(const InlineIterator::InlineBox& inlineBox, const RenderStyle& styleToUse)
 {
     if (auto* element = inlineBox.renderer().element(); element && (is<HTMLAnchorElement>(*element) || element->hasTagName(HTMLNames::fontTag))) {
@@ -606,20 +622,20 @@ void TextBoxPainter<TextBoxPath>::collectDecoratingBoxesForTextBox(DecoratingBox
         return;
     }
 
-    // FIXME: Vertical writing mode needs some coordinate space transformation for parent inline boxes as we rotate the content with m_paintRect (see ::paint)
-    if (ancestorInlineBox->isRootInlineBox() || !textBox->isHorizontal()) {
-        decoratingBoxList.append({
-            ancestorInlineBox,
-            m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style(),
-            overrideDecorationStyle,
-            textBoxLocation
-        });
+    if (ancestorInlineBox->isRootInlineBox()) {
+        decoratingBoxList.append({ ancestorInlineBox, decoratingBoxStyleForInlineBox(*ancestorInlineBox, m_isFirstLine), overrideDecorationStyle, textBoxLocation });
+        return;
+    }
+
+    if (!textBox->isHorizontal()) {
+        // FIXME: Vertical writing mode needs some coordinate space transformation for parent inline boxes as we rotate the content with m_paintRect (see ::paint)
+        decoratingBoxList.append({ ancestorInlineBox, m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style(), overrideDecorationStyle, textBoxLocation });
         return;
     }
 
     enum UseOverriderDecorationStyle : bool { No, Yes };
     auto appendIfIsDecoratingBoxForBackground = [&] (auto& inlineBox, auto useOverriderDecorationStyle) {
-        auto& style = m_isFirstLine ? inlineBox->renderer().firstLineStyle() : inlineBox->renderer().style();
+        auto& style = decoratingBoxStyleForInlineBox(*inlineBox, m_isFirstLine);
 
         auto computedDecorationStyle = [&] {
             return TextDecorationPainter::stylesForRenderer(inlineBox->renderer(), style.textDecorationsInEffect(), m_isFirstLine);
