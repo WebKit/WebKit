@@ -39,6 +39,19 @@ WI.HeapSnapshotInstanceFetchMoreDataGridNode = class HeapSnapshotInstanceFetchMo
         this._fetchCallback = fetchCallback;
     }
 
+    // Public
+
+    hasVisibleSiblingNodes()
+    {
+        let node = this;
+        while (node = node.previousSibling) {
+            if (!node.hidden)
+                return true;
+        }
+
+        return false;
+    }
+
     // Protected
 
     createCellContent(columnIdentifier)
