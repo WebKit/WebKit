@@ -42,6 +42,7 @@
 #include "CSSGridAutoRepeatValue.h"
 #include "CSSGridIntegerRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
+#include "CSSGridLineValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSOffsetRotateValue.h"
@@ -1324,33 +1325,17 @@ inline bool BuilderConverter::createGridPosition(const CSSValue& value, GridPosi
         return true;
     }
 
-    auto& values = downcast<CSSValueList>(value);
-    ASSERT(values.length());
+    auto& gridLineValue = downcast<CSSGridLineValue>(value);
+    RefPtr uncheckedSpanValue = gridLineValue.spanValue();
+    RefPtr uncheckedNumericValue = gridLineValue.numericValue();
+    RefPtr uncheckedGridLineName = gridLineValue.gridLineName();
 
-    auto it = values.begin();
-    auto* currentValue = &downcast<CSSPrimitiveValue>(*it);
-    bool isSpanPosition = false;
-    if (currentValue->valueID() == CSSValueSpan) {
-        isSpanPosition = true;
-        ++it;
-        currentValue = it != values.end() ? &downcast<CSSPrimitiveValue>(*it) : nullptr;
-    }
-
-    int gridLineNumber = 0;
-    if (currentValue && currentValue->isInteger()) {
-        gridLineNumber = currentValue->resolveAsIntegerDeprecated();
-        ++it;
-        currentValue = it != values.end() ? &downcast<CSSPrimitiveValue>(*it) : nullptr;
-    }
-
+    unsigned gridLineNumber = uncheckedNumericValue && uncheckedNumericValue->isInteger() ? uncheckedNumericValue->resolveAsIntegerDeprecated() : 0;
     String gridLineName;
-    if (currentValue && currentValue->isCustomIdent()) {
-        gridLineName = currentValue->stringValue();
-        ++it;
-    }
+    if (uncheckedGridLineName && uncheckedGridLineName->isCustomIdent())
+        gridLineName = uncheckedGridLineName->stringValue();
 
-    ASSERT(it == values.end());
-    if (isSpanPosition)
+    if (uncheckedSpanValue && uncheckedSpanValue->valueID() == CSSValueSpan)
         position.setSpanPosition(gridLineNumber ? gridLineNumber : 1, gridLineName);
     else
         position.setExplicitPosition(gridLineNumber, gridLineName);

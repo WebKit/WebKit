@@ -104,6 +104,7 @@ public:
     bool isGridAutoRepeatValue() const { return m_classType == GridAutoRepeatClass; }
     bool isGridIntegerRepeatValue() const { return m_classType == GridIntegerRepeatClass; }
     bool isGridLineNamesValue() const { return m_classType == GridLineNamesClass; }
+    bool isGridLineValue() const { return m_classType == GridLineValueClass; }
     bool isGridTemplateAreasValue() const { return m_classType == GridTemplateAreasClass; }
     bool isImageSetOptionValue() const { return m_classType == ImageSetOptionClass; }
     bool isImageSetValue() const { return m_classType == ImageSetClass; }
@@ -268,6 +269,7 @@ protected:
         FontVariantAlternatesClass,
         FontVariationClass,
         GridLineNamesClass,
+        GridLineValueClass,
         GridTemplateAreasClass,
         InsetShapeClass,
         LineBoxContainClass,

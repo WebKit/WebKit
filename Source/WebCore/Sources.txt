@@ -882,6 +882,7 @@ css/CSSGradientValue.cpp
 css/CSSGridAutoRepeatValue.cpp
 css/CSSGridIntegerRepeatValue.cpp
 css/CSSGridLineNamesValue.cpp
+css/CSSGridLineValue.cpp
 css/CSSGridTemplateAreasValue.cpp
 css/CSSGroupingRule.cpp
 css/CSSImageSetOptionValue.cpp

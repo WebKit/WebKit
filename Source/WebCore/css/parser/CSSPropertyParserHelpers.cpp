@@ -68,6 +68,7 @@
 #include "CSSGridAutoRepeatValue.h"
 #include "CSSGridIntegerRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
+#include "CSSGridLineValue.h"
 #include "CSSGridTemplateAreasValue.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSOffsetRotateValue.h"
@@ -2367,14 +2368,7 @@ RefPtr<CSSValue> consumeGridLine(CSSParserTokenRange& range)
     if (numericValue && numericValue->isZero().value_or(false))
         return nullptr; // An <integer> value of zero makes the declaration invalid.
 
-    CSSValueListBuilder values;
-    if (spanValue)
-        values.append(spanValue.releaseNonNull());
-    if (numericValue)
-        values.append(numericValue.releaseNonNull());
-    if (gridLineName)
-        values.append(gridLineName.releaseNonNull());
-    return CSSValueList::createSpaceSeparated(WTFMove(values));
+    return CSSGridLineValue::create(WTFMove(spanValue), WTFMove(numericValue), WTFMove(gridLineName));
 }
 
 static bool isGridTrackFixedSized(const CSSPrimitiveValue& primitiveValue)

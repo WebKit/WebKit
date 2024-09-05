@@ -61,4 +61,4 @@ Ref<CSSGridLineNamesValue> CSSGridLineNamesValue::create(std::span<const String>
     return adoptRef(*new CSSGridLineNamesValue(names));
 }
 
-}
+} // namespace WebCore
