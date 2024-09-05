@@ -829,12 +829,6 @@ http/tests/storageAccess/deny-with-prompt-does-not-preserve-gesture.html [ Skip 
 # Enable again when fixing https://bugs.webkit.org/show_bug.cgi?id=208400.
 http/tests/storageAccess/has-storage-access-true-if-third-party-has-cookies-ephemeral.https.html [ Skip ]
 
-# rdar://134525355 
-[ Sequoia+ ] http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-ephemeral.https.html [ Failure ]
-[ Sequoia+ ] http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture.https.html [ Failure ]
-[ Sequoia+ ] http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.https.html [ Failure ]
-[ Sequoia+ ] http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.https.html [ Failure ]
-
 # As of https://trac.webkit.org/changeset/227762 the timestampResolution is just 5 seconds which makes this test flaky
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ]
 
@@ -863,7 +857,7 @@ http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction.html
 http/tests/resourceLoadStatistics/cookie-deletion.html [ Pass ]
 http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html [ Pass ]
 http/tests/resourceLoadStatistics/add-blocking-to-redirect.html [ Pass ]
-#http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Pass ]
+#http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.https.html [ Pass ]
 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store.html [ Pass ]
 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Pass ]
 http/tests/resourceLoadStatistics/grandfathering.html [ Pass ]
@@ -1764,9 +1758,13 @@ webkit.org/b/275913 [ Debug ] imported/w3c/web-platform-tests/media-source/dedic
 
 webkit.org/b/275873 storage/indexeddb/database-transaction-cycle.html [ Pass Failure ]
 
-webkit.org/b/278353 [ Sequoia+ ] http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Failure ]
-webkit.org/b/278353 [ Sequoia+ ] http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Failure Timeout ] # expectation exists above
-webkit.org/b/278353 [ Sequoia+ ] http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Failure Timeout ]
+# rdar://135211047
+[ Sequoia+ ] http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.https.html [ Failure ]
+[ Sequoia+ ] http/tests/privateClickMeasurement/send-attribution-conversion-request.https.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-ephemeral.https.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture.https.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.https.html [ Failure ]
+[ Sequoia+ ] http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.https.html [ Failure ]
 
 # rdar://125587489
 [ Sequoia+ ] imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.html [ Failure ]
@@ -1777,6 +1775,7 @@ webkit.org/b/278353 [ Sequoia+ ] http/tests/privateClickMeasurement/send-attribu
 [ Ventura Sonoma ] http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
 [ Ventura Sonoma ] imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
 [ Ventura Sonoma ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
+[ Ventura Sonoma ] http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Failure ]
 
 webkit.org/b/276389 media/video-transformed.html [ Pass Failure ] 
 

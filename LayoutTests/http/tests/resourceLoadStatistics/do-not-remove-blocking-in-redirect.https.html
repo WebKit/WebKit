@@ -10,8 +10,8 @@
     description("Tests that blocking is not removed mid-flight in redirects.");
     jsTestIsAsync = true;
 
-    const partitionHost = "127.0.0.1:8000";
-    const thirdPartyOrigin = "http://localhost:8000";
+    const partitionHost = "127.0.0.1:8443";
+    const thirdPartyOrigin = "https://localhost:8443";
     const resourcePath = "/resourceLoadStatistics/resources";
     const thirdPartyBaseUrl = thirdPartyOrigin + resourcePath;
     const firstPartyCookieNamePrefix = "firstPartyCookie";
@@ -20,7 +20,7 @@
     const thirdPartyCookieName = "thirdPartyCookie";
     const subPathToSetThirdPartyCookie = "/set-cookie.py?name=" + thirdPartyCookieName + "&value=value";
     const subPathToGetCookies = "/get-cookies.py?name1=" + firstPartyCookieNameIP + "&name2=" + firstPartyCookieNameLocalhost + "&name3=" + thirdPartyCookieName;
-    const redirectChainUrl = thirdPartyOrigin + resourcePath + "/redirect.py?redirectTo=http://" + partitionHost + resourcePath + subPathToGetCookies;
+    const redirectChainUrl = thirdPartyOrigin + resourcePath + "/redirect.py?redirectTo=https://" + partitionHost + resourcePath + subPathToGetCookies;
 
     function openIframe(url, onLoadHandler) {
         const element = document.createElement("iframe");
@@ -36,11 +36,11 @@
             case "#step1":
                 // Set first-party cookies for 127.0.0.1 and localhost.
                 if (document.location.origin === thirdPartyOrigin) {
-                    document.cookie = firstPartyCookieNameLocalhost + "=localhost;path='/'";
-                    document.location.href = "http://127.0.0.1:8000/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html#step2";
+                    document.cookie = firstPartyCookieNameLocalhost + "=localhost; path='/'; SameSite=None; Secure";
+                    document.location.href = "https://127.0.0.1:8443/resourceLoadStatistics/do-not-remove-blocking-in-redirect.https.html#step2";
                 } else {
-                    document.cookie = firstPartyCookieNameIP + "=127.0.0.1;path='/'";
-                    document.location.href = "http://localhost:8000/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html#step1";
+                    document.cookie = firstPartyCookieNameIP + "=127.0.0.1; path='/'; SameSite=None; Secure";
+                    document.location.href = "https://localhost:8443/resourceLoadStatistics/do-not-remove-blocking-in-redirect.https.html#step1";
                 }
                 break;
             case "#step2":

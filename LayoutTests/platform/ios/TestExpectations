@@ -7332,7 +7332,7 @@ imported/w3c/web-platform-tests/fetch/h1-parsing/lone-cr.window.html [ Pass Fail
 
 # rdar://129872343 (REGRESSION: [ iOS 18 ] 19x http/tests/resourceLoadStatistics/* layout-tests are constant failures)
 # FIXME: needs new bug.
-http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Failure ]
+http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.https.html [ Failure ]
 http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Failure ]
 
 # webkit.org/b/276558 ([ iOS18 ] 7 wpt/intersection-observer/* layout tests are flakily failing.)
@@ -7434,7 +7434,7 @@ imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenera
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Failure ]
 
-webkit.org/b/278353 http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Failure ]
+webkit.org/b/278353 http/tests/privateClickMeasurement/send-attribution-conversion-request.https.html [ Failure ]
 
 # webkit.org/b/277933 (REGRESSION (iOS 18): 5 WPT CSS layout tests are constantly failing (ImageOnlyFailure). (277933))
 imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ ImageOnlyFailure ]
