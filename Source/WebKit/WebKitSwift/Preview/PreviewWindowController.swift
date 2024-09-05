@@ -27,7 +27,11 @@
 import OSLog
 import WebKitSwift
 
+#if USE_APPLE_INTERNAL_SDK
 @_spi(PreviewApplication) import QuickLook
+#else
+import QuickLook_SPI
+#endif
 
 @objc(WKSPreviewWindowController)
 public final class PreviewWindowController: NSObject {
