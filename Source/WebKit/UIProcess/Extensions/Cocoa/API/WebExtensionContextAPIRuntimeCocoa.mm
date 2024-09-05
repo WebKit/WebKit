@@ -200,11 +200,19 @@ void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtension
 
         for (auto& process : mainWorldProcesses) {
             process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, std::nullopt, completeSenderParameters), [=, this, protectedThis = Ref { *this }, &handledCount](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
+                // Flip target and source worlds since we're adding the opposite side of the port connection, sending from target back to source.
                 addPorts(targetContentWorldType, sourceContentWorldType, channelIdentifier, WTFMove(addedPortCounts));
-                fireQueuedPortMessageEventsIfNeeded(process, targetContentWorldType, channelIdentifier);
+
+                fireQueuedPortMessageEventsIfNeeded(targetContentWorldType, channelIdentifier);
+                fireQueuedPortMessageEventsIfNeeded(sourceContentWorldType, channelIdentifier);
+
                 firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
-                if (++handledCount >= totalExpected)
-                    clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+
+                if (++handledCount < totalExpected)
+                    return;
+
+                clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+                clearQueuedPortMessages(sourceContentWorldType, channelIdentifier);
             }, identifier());
         }
 
@@ -380,11 +388,19 @@ void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebEx
 
         for (auto& process : mainWorldProcesses) {
             process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, std::nullopt, completeSenderParameters), [=, this, protectedThis = Ref { *this }, &handledCount](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
+                // Flip target and source worlds since we're adding the opposite side of the port connection, sending from target back to source.
                 addPorts(targetContentWorldType, sourceContentWorldType, channelIdentifier, WTFMove(addedPortCounts));
-                fireQueuedPortMessageEventsIfNeeded(process, targetContentWorldType, channelIdentifier);
+
+                fireQueuedPortMessageEventsIfNeeded(targetContentWorldType, channelIdentifier);
+                fireQueuedPortMessageEventsIfNeeded(sourceContentWorldType, channelIdentifier);
+
                 firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
-                if (++handledCount >= totalExpected)
-                    clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+
+                if (++handledCount < totalExpected)
+                    return;
+
+                clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+                clearQueuedPortMessages(sourceContentWorldType, channelIdentifier);
             }, identifier());
         }
 

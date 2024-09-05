@@ -507,10 +507,16 @@ void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, W
     auto process = processes.takeAny();
 
     process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, frameIdentifier, senderParameters), [=, this, protectedThis = Ref { *this }](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
+        // Flip target and source worlds since we're adding the opposite side of the port connection, sending from target back to source.
         addPorts(targetContentWorldType, sourceContentWorldType, channelIdentifier, WTFMove(addedPortCounts));
-        fireQueuedPortMessageEventsIfNeeded(*process, targetContentWorldType, channelIdentifier);
+
+        fireQueuedPortMessageEventsIfNeeded(targetContentWorldType, channelIdentifier);
+        fireQueuedPortMessageEventsIfNeeded(sourceContentWorldType, channelIdentifier);
+
         firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
+
         clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
+        clearQueuedPortMessages(sourceContentWorldType, channelIdentifier);
     }, identifier());
 
     completionHandler({ });
