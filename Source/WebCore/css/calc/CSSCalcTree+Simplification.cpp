@@ -32,6 +32,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CalculationCategory.h"
 #include "CalculationExecutor.h"
+#include "RenderStyle.h"
 #include "RenderStyleInlines.h"
 #include <wtf/StdLibExtras.h>
 

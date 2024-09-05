@@ -1,5 +1,5 @@
 // Copyright 2014 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2024 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -70,7 +70,6 @@
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
-#include "css/CSSProperty.h"
 #include <bitset>
 #include <memory>
 #include <optional>
@@ -239,6 +238,15 @@ RefPtr<StyleRuleBase> CSSParserImpl::parseRule(const String& string, const CSSPa
     if (!rule || !range.atEnd())
         return nullptr; // Parse error, trailing garbage
     return rule;
+}
+
+RefPtr<StyleRuleNestedDeclarations> CSSParserImpl::parseNestedDeclarations(const CSSParserContext&context , const String& string)
+{
+    auto properties = MutableStyleProperties::createEmpty();
+    if (!parseDeclarationList(properties.ptr(), string , context))
+        return { };
+
+    return StyleRuleNestedDeclarations::create(WTFMove(properties));
 }
 
 void CSSParserImpl::parseStyleSheet(const String& string, const CSSParserContext& context, StyleSheetContents& styleSheet)
@@ -666,14 +674,10 @@ void CSSParserImpl::runInNewNestingContext(auto&& run)
     m_nestingContextStack.removeLast();
 }
 
-Ref<StyleRuleBase> CSSParserImpl::createNestingParentRule()
+Ref<StyleRuleBase> CSSParserImpl::createNestedDeclarationsRule()
 {
-    auto nestingParentSelector = makeUnique<MutableCSSSelector>();
-    nestingParentSelector->setMatch(CSSSelector::Match::NestingParent);
-    MutableCSSSelectorList selectorList;
-    selectorList.append(WTFMove(nestingParentSelector));
     auto properties = createStyleProperties(topContext().m_parsedProperties, m_context.mode);
-    return StyleRuleWithNesting::create(WTFMove(properties), m_context.hasDocumentSecurityOrigin, CSSSelectorList { WTFMove(selectorList) }, { });
+    return StyleRuleNestedDeclarations::create(WTFMove(properties));
 }
 
 RefPtr<StyleSheetContents> CSSParserImpl::protectedStyleSheet() const
@@ -695,10 +699,10 @@ Vector<Ref<StyleRuleBase>> CSSParserImpl::consumeNestedGroupRules(CSSParserToken
             consumeStyleBlock(block, StyleRuleType::Style, ParsingStyleDeclarationsInRuleList::Yes);
 
             if (!topContext().m_parsedProperties.isEmpty()) {
-                // This at-rule contains orphan declarations, we attach them to an implicit parent nesting rule. Web
+                // This at-rule contains orphan declarations, we attach them to a nested declaration rule. Web
                 // Inspector expects this rule to occur first in the children rules, and to contain all orphaned
                 // property declarations.
-                rules.append(createNestingParentRule());
+                rules.append(createNestedDeclarationsRule());
 
                 if (m_observerWrapper)
                     m_observerWrapper->observer().markRuleBodyContainsImplicitlyNestedProperties();
@@ -1416,14 +1420,34 @@ void CSSParserImpl::consumeBlockContent(CSSParserTokenRange range, StyleRuleType
             range.consumeComponentValue();
     };
 
-    auto consumeNestedQualifiedRule = [&] {
+    auto consumeNestedQualifiedRule = [&] () -> RefPtr<StyleRuleBase> {
         RefPtr rule = consumeQualifiedRule(range, AllowedRules::RegularRules);
         if (!rule)
-            return false;
+            return { };
         if (!rule->isStyleRule())
-            return false;
-        topContext().m_parsedRules.append(rule.releaseNonNull());
-        return true;
+            return { };
+        return rule;
+    };
+
+    ParsedPropertyVector initialDeclarationBlock;
+    bool initialDeclarationBlockFinished = false;
+    auto storeDeclarations = [&] {
+        // We don't wrap the first declaration block, we store it until the end of the style rule.
+        if (!initialDeclarationBlockFinished) {
+            initialDeclarationBlockFinished = true;
+            std::swap(initialDeclarationBlock, topContext().m_parsedProperties);
+            return;
+        }
+
+        // Nothing to wrap
+        if (topContext().m_parsedProperties.isEmpty())
+            return;
+
+        ParsedPropertyVector properties;
+        std::swap(properties, topContext().m_parsedProperties);
+
+        auto rule = StyleRuleNestedDeclarations::create(createStyleProperties(properties, m_context.mode));
+        topContext().m_parsedRules.append(WTFMove(rule));
     };
 
     while (!range.atEnd()) {
@@ -1455,8 +1479,13 @@ void CSSParserImpl::consumeBlockContent(CSSParserTokenRange range, StyleRuleType
             if (!isValidDeclaration) {
                 // If it's not a valid declaration, we try to parse it as a nested style rule.
                 range = initialRange;
-                if (nestedRulesAllowed() && consumeNestedQualifiedRule())
-                    break;
+                if (nestedRulesAllowed()) {
+                    if (auto rule = consumeNestedQualifiedRule()) {
+                        storeDeclarations();
+                        topContext().m_parsedRules.append(rule.releaseNonNull());
+                        break;
+                    }
+                }
                 errorRecovery();
             }
             break;
@@ -1469,6 +1498,7 @@ void CSSParserImpl::consumeBlockContent(CSSParserTokenRange range, StyleRuleType
                 if (!rule->isGroupRule())
                     break;
                 topContext().m_parsedRules.append(rule.releaseNonNull());
+                storeDeclarations();
             } else {
                 RefPtr rule = consumeAtRule(range, AllowedRules::NoRules);
                 ASSERT_UNUSED(rule, !rule);
@@ -1476,11 +1506,23 @@ void CSSParserImpl::consumeBlockContent(CSSParserTokenRange range, StyleRuleType
             break;
         }
         default:
-            if (nestedRulesAllowed() && consumeNestedQualifiedRule())
-                break;
+            if (nestedRulesAllowed()) {
+                if (auto rule = consumeNestedQualifiedRule()) {
+                    storeDeclarations();
+                    topContext().m_parsedRules.append(rule.releaseNonNull());
+                    break;
+                }
+            }
             errorRecovery();
         }
     }
+
+    // Store trailing declarations if any
+    storeDeclarations();
+
+    // Restore the initial declaration block
+    if (!initialDeclarationBlock.isEmpty())
+        std::swap(initialDeclarationBlock, topContext().m_parsedProperties);
 
     // Yield remaining comments
     if (useObserver) {

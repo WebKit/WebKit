@@ -8067,10 +8067,6 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-js-expose.
 
 fast/canvas/image-buffer-resource-limits.html [ Slow ]
 
-# CSS Nesting interleaved declarations and rules
-# https://bugs.webkit.org/show_bug.cgi?id=275365
-imported/w3c/web-platform-tests/css/css-nesting/nesting-basic.html [ ImageOnlyFailure ]
-
 # Standardized CSS zoom tests.
 imported/w3c/web-platform-tests/css/css-viewport/width.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-viewport/zoom/border-spacing.html [ ImageOnlyFailure ]
@@ -8089,6 +8085,9 @@ imported/w3c/web-platform-tests/css/css-viewport/zoom/word-spacing.html [ ImageO
 
 # WebRTC Encoded Transform - Test Expectation - Crashes on 'mac-wk2' debug and gtk-wk2 / wpe-wk2
 webkit.org/b/275663 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-generateKeyFrame-simulcast.https.html [ Skip ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=276663
+inspector/css/getMatchedStylesForNodeNestingStyleGrouping.html [ Failure ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=266843 flakey tests with racey promise console.logs
 imported/w3c/web-platform-tests/dom/observable/tentative/observable-from.any.html [ Skip ]

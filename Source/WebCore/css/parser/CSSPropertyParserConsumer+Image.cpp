@@ -48,6 +48,7 @@
 #include "CSSPropertyParserConsumer+Length.h"
 #include "CSSPropertyParserConsumer+LengthDefinitions.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+MetaResolver.h"
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
 #include "CSSPropertyParserConsumer+Percent.h"
@@ -59,6 +60,7 @@
 #include "CSSPropertyParserConsumer+String.h"
 #include "CSSPropertyParserConsumer+URL.h"
 #include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
+#include "CSSValue.h"
 #include "CSSValueList.h"
 #include "StyleImage.h"
 #include <wtf/SortedArrayMap.h>
@@ -1025,7 +1027,7 @@ static RefPtr<CSSPrimitiveValue> consumeImageSetResolutionOrTypeFunction(CSSPars
             return CSSPrimitiveValue::create(typeFunction.value);
         },
         [&](const auto& resolution) -> RefPtr<CSSPrimitiveValue> {
-            return CSSPrimitiveValueResolverBase::resolve(resolution, { }, options);
+            return CSSPrimitiveValueResolverBase::resolve(resolution, CSSCalcSymbolTable { }, options);
         }
     );
 }

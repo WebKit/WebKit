@@ -40,6 +40,7 @@ class Element;
 class ImmutableStyleProperties;
 class MutableStyleProperties;
 class StyleRuleBase;
+class StyleRuleNestedDeclarations;
 class StyleRuleKeyframe;
 class StyleSheetContents;
 

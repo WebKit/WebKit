@@ -929,6 +929,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSLayerStatementRule.idl
     css/CSSMediaRule.idl
     css/CSSNamespaceRule.idl
+    css/CSSNestedDeclarations.idl
     css/CSSPaintCallback.idl
     css/CSSPaintSize.idl
     css/CSSPageRule.idl

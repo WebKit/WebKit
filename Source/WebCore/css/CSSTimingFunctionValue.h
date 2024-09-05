@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSPrimitiveValue.h"
 #include "CSSValue.h"
 #include "TimingFunction.h"
 

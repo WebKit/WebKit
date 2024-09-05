@@ -31,10 +31,9 @@
 #include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include "ColorInterpolationMethod.h"
 #include "Gradient.h"
+#include "StyleImage.h"
 
 namespace WebCore {
-
-class StyleImage;
 
 namespace Style {
 class BuilderState;

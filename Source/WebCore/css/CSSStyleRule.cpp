@@ -24,6 +24,7 @@
 
 #include "CSSGroupingRule.h"
 #include "CSSParser.h"
+#include "CSSParserImpl.h"
 #include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
 #include "DeclaredStylePropertyMap.h"
@@ -236,10 +237,13 @@ ExceptionOr<unsigned> CSSStyleRule::insertRule(const String& ruleString, unsigne
 
     RefPtr styleSheet = parentStyleSheet();
     RefPtr<StyleRuleBase> newRule = CSSParser::parseRule(parserContext(), styleSheet ? &styleSheet->contents() : nullptr, ruleString, CSSParserEnum::IsNestedContext::Yes);
-    if (!newRule)
-        return Exception { ExceptionCode::SyntaxError };
-    // We only accepts style rule or group rule (@media,...) inside style rules.
-    if (!newRule->isStyleRule() && !newRule->isGroupRule())
+    if (!newRule) {
+        newRule = CSSParserImpl::parseNestedDeclarations(parserContext(), ruleString);
+        if (!newRule)
+            return Exception { ExceptionCode::SyntaxError };
+    }
+    // We only accepts style rule, nested group rule (@media,...) or nested declarations inside style rules.
+    if (!newRule->isStyleRule() && !newRule->isGroupRule() && !newRule->isNestedDeclarationsRule())
         return Exception { ExceptionCode::HierarchyRequestError };
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);

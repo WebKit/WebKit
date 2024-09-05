@@ -897,6 +897,7 @@ css/CSSMarkup.cpp
 css/CSSMediaRule.cpp
 css/CSSNamedImageValue.cpp
 css/CSSNamespaceRule.cpp
+css/CSSNestedDeclarations.cpp
 css/CSSOffsetRotateValue.cpp
 css/CSSPageRule.cpp
 css/CSSPaintImageValue.cpp
@@ -3417,6 +3418,7 @@ JSCSSLayerBlockRule.cpp
 JSCSSLayerStatementRule.cpp
 JSCSSMediaRule.cpp
 JSCSSNamespaceRule.cpp
+JSCSSNestedDeclarations.cpp
 JSCSSPageRule.cpp
 JSCSSPaintCallback.cpp
 JSCSSPaintSize.cpp

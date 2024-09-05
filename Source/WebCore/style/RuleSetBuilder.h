@@ -41,6 +41,7 @@ private:
     RuleSetBuilder(const MQ::MediaQueryEvaluator&);
 
     void addStyleRule(StyleRuleWithNesting&);
+    void addStyleRule(StyleRuleNestedDeclarations&);
     void addRulesFromSheetContents(const StyleSheetContents&);
     void addChildRules(const Vector<Ref<StyleRuleBase>>&);
     void addChildRule(Ref<StyleRuleBase>);
