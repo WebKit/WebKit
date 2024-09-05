@@ -1201,7 +1201,6 @@ RegisterID* NewExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
 
 CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argumentsNode, unsigned additionalArguments)
     : m_argumentsNode(argumentsNode)
-    , m_padding(0)
 {
     size_t argumentCountIncludingThis = 1 + additionalArguments; // 'this' register.
     if (argumentsNode) {
@@ -1209,22 +1208,27 @@ CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argume
             ++argumentCountIncludingThis;
     }
 
-    m_argv.grow(argumentCountIncludingThis);
-    for (int i = argumentCountIncludingThis - 1; i >= 0; --i) {
-        m_argv[i] = generator.newTemporary();
-        ASSERT(static_cast<size_t>(i) == m_argv.size() - 1 || m_argv[i]->index() == m_argv[i + 1]->index() - 1);
-    }
+    static_assert(stackAlignmentRegisters() == 2);
+    size_t argvSize = argumentCountIncludingThis;
+    ASSERT(argvSize >= 1);
+    if ((CallFrame::headerSizeInRegisters + argvSize) % stackAlignmentRegisters())
+        ++argvSize;
+    argvSize += 1; // For stackOffset adjustment case.
+    ASSERT(argvSize >= 2);
+    m_allocatedRegisters.grow(argvSize);
 
-    // We need to ensure that the frame size is stack-aligned
-    while ((CallFrame::headerSizeInRegisters + m_argv.size()) % stackAlignmentRegisters()) {
-        m_argv.insert(0, generator.newTemporary());
-        m_padding++;
-    }
-    
-    while (stackOffset() % stackAlignmentRegisters()) {
-        m_argv.insert(0, generator.newTemporary());
-        m_padding++;
-    }
+    // Do not initialize index 0.
+    size_t index = m_allocatedRegisters.size();
+    generator.newTemporaries(m_allocatedRegisters.size() - 1, [&](RegisterID* slot) {
+        m_allocatedRegisters[--index] = slot;
+    });
+
+    // We initialize 0 based on offset. And adjust m_argv based on that.
+    if ((-m_allocatedRegisters[1]->index() + CallFrame::headerSizeInRegisters) % stackAlignmentRegisters()) {
+        m_allocatedRegisters[0] = generator.newTemporary();
+        m_argv = m_allocatedRegisters.mutableSpan().subspan(0, argumentCountIncludingThis);
+    } else
+        m_argv = m_allocatedRegisters.mutableSpan().subspan(1, argumentCountIncludingThis);
 }
 
 // ------------------------------ EvalFunctionCallNode ----------------------------------

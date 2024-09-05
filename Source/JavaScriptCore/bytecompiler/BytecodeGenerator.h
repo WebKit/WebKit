@@ -84,13 +84,13 @@ namespace JSC {
         RegisterID* thisRegister() { return m_argv[0].get(); }
         RegisterID* argumentRegister(unsigned i) { return m_argv[i + 1].get(); }
         unsigned stackOffset() { return -m_argv[0]->index() + CallFrame::headerSizeInRegisters; }
-        unsigned argumentCountIncludingThis() { return m_argv.size() - m_padding; }
+        unsigned argumentCountIncludingThis() { return m_argv.size(); }
         ArgumentsNode* argumentsNode() { return m_argumentsNode; }
 
     private:
         ArgumentsNode* m_argumentsNode;
-        Vector<RefPtr<RegisterID>, 8, UnsafeVectorOverflow> m_argv;
-        unsigned m_padding;
+        std::span<RefPtr<RegisterID>> m_argv;
+        Vector<RefPtr<RegisterID>, 8, UnsafeVectorOverflow> m_allocatedRegisters;
     };
 
     class Variable {

@@ -180,6 +180,18 @@ RegisterID* BytecodeGeneratorBase<Traits>::newTemporary()
     return result;
 }
 
+template<typename Traits>
+template<typename Functor>
+void BytecodeGeneratorBase<Traits>::newTemporaries(size_t count, const Functor& func)
+{
+    reclaimFreeRegisters();
+    for (size_t index = 0; index < count; ++index) {
+        RegisterID* result = newRegister();
+        result->setTemporary();
+        func(result);
+    }
+}
+
 // Adds an anonymous local var slot. To give this slot a name, add it to symbolTable().
 template<typename Traits>
 RegisterID* BytecodeGeneratorBase<Traits>::addVar()
