@@ -87,7 +87,8 @@ DeviceImpl::DeviceImpl(WebGPUPtr<WGPUDevice>&& device, Ref<SupportedFeatures>&& 
 
 DeviceImpl::~DeviceImpl()
 {
-    wgpuDeviceSetUncapturedErrorCallback(m_backing.get(), nullptr, nullptr);
+    wgpuDeviceClearDeviceLostCallback(m_backing.get());
+    wgpuDeviceClearUncapturedErrorCallback(m_backing.get());
 }
 
 Ref<Queue> DeviceImpl::queue()

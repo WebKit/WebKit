@@ -230,6 +230,11 @@ Device::~Device()
         m_deviceLostCallback(WGPUDeviceLostReason_Destroyed, ""_s);
         m_deviceLostCallback = nullptr;
     }
+
+    if (m_uncapturedErrorCallback) {
+        m_uncapturedErrorCallback(WGPUErrorType_NoError, ""_s);
+        m_uncapturedErrorCallback = nullptr;
+    }
 }
 
 RefPtr<XRSubImage> Device::getXRViewSubImage(WGPUXREye eye)
@@ -487,6 +492,9 @@ void Device::pushErrorScope(WGPUErrorFilter filter)
 
 void Device::setDeviceLostCallback(Function<void(WGPUDeviceLostReason, String&&)>&& callback)
 {
+    if (m_deviceLostCallback)
+        m_deviceLostCallback(WGPUDeviceLostReason_Destroyed, ""_s);
+
     m_deviceLostCallback = WTFMove(callback);
     if (m_isLost)
         loseTheDevice(WGPUDeviceLostReason_Destroyed);
@@ -501,6 +509,8 @@ bool Device::isValid() const
 
 void Device::setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&& callback)
 {
+    if (m_uncapturedErrorCallback)
+        m_uncapturedErrorCallback(WGPUErrorType_NoError, ""_s);
     m_uncapturedErrorCallback = WTFMove(callback);
 }
 
@@ -1064,6 +1074,15 @@ void wgpuDevicePopErrorScopeWithBlock(WGPUDevice device, WGPUErrorBlockCallback 
 void wgpuDevicePushErrorScope(WGPUDevice device, WGPUErrorFilter filter)
 {
     WebGPU::fromAPI(device).pushErrorScope(filter);
+}
+
+void wgpuDeviceClearDeviceLostCallback(WGPUDevice device)
+{
+    return WebGPU::fromAPI(device).setDeviceLostCallback(nullptr);
+}
+void wgpuDeviceClearUncapturedErrorCallback(WGPUDevice device)
+{
+    return WebGPU::fromAPI(device).setUncapturedErrorCallback(nullptr);
 }
 
 void wgpuDeviceSetDeviceLostCallback(WGPUDevice device, WGPUDeviceLostCallback callback, void* userdata)
