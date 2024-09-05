@@ -32,10 +32,13 @@
 #include "JITExceptions.h"
 #include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyHelpers.h"
+#include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyStruct.h"
 #include "TypedArrayController.h"
 #include "WaiterListManager.h"
 #include "WasmLLIntGenerator.h"
+#include "WasmModuleInformation.h"
+#include "WasmTypeDefinition.h"
 
 namespace JSC {
 namespace Wasm {
@@ -295,8 +298,15 @@ inline EncodedJSValue arrayNewElem(JSWebAssemblyInstance* instance, uint32_t typ
 
     // Ensure that adding the offset to the desired array length doesn't overflow int32 or
     // overflow the length of the element segment
-    size_t segmentLength = instance->elementAt(elemSegmentIndex) ? instance->elementAt(elemSegmentIndex)->length() : 0U;
-    if (UNLIKELY(sumOverflows<uint32_t>(offset, arraySize) || ((offset + arraySize) > segmentLength)))
+    auto element = instance->elementAt(elemSegmentIndex);
+    size_t segmentLength = element ? element->length() : 0U;
+    auto calculatedArrayEnd = CheckedUint32 { offset } + arraySize;
+    if (UNLIKELY(calculatedArrayEnd.hasOverflowed() || calculatedArrayEnd > segmentLength))
+        return JSValue::encode(jsNull());
+
+    size_t elementTypeSize = typeSizeInBytes(StorageType(element->elementType));
+    auto newArraySizeInBytes = CheckedSize { elementTypeSize } * arraySize;
+    if (UNLIKELY(newArraySizeInBytes.hasOverflowed() || newArraySizeInBytes > maxArraySizeInBytes))
         return JSValue::encode(jsNull());
 
     FixedVector<uint64_t> values(arraySize);
