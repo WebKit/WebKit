@@ -633,13 +633,20 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
     auto exception = Exception(ExceptionCode::AbortError, "Navigation aborted"_s);
     auto domException = createDOMException(*globalObject, exception.isolatedCopy());
 
+    auto error = JSC::createError(protectedScriptExecutionContext()->globalObject(), "Navigation aborted"_s);
+
+    ErrorInformation errorInformation;
+    if (auto* errorInstance = jsDynamicCast<JSC::ErrorInstance*>(error)) {
+        if (auto result = extractErrorInformationFromErrorInstance(protectedScriptExecutionContext()->globalObject(), *errorInstance))
+            errorInformation = WTFMove(*result);
+    }
+
     if (event.signal())
         event.signal()->signalAbort(domException);
 
     m_ongoingNavigateEvent = nullptr;
 
-    // FIXME: Fill in exception information.
-    dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, exception.message(), { }, 0, 0, { globalObject->vm(), domException }));
+    dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, exception.message(), errorInformation.sourceURL, errorInformation.line, errorInformation.column, { globalObject->vm(), domException }));
 
     if (m_ongoingAPIMethodTracker)
         rejectFinishedPromise(m_ongoingAPIMethodTracker.get(), exception, domException);
@@ -859,14 +866,17 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
             m_ongoingNavigateEvent->finish();
             m_ongoingNavigateEvent = nullptr;
 
-            // FIXME: Fill in error information.
+            ErrorInformation errorInformation;
             String errorMessage;
-            if (auto* error = jsDynamicCast<JSC::ErrorInstance*>(result))
-                errorMessage = makeString("Uncaught "_s, error->sanitizedToString(protectedScriptExecutionContext()->globalObject()));
+            if (auto* errorInstance = jsDynamicCast<JSC::ErrorInstance*>(result)) {
+                if (auto result = extractErrorInformationFromErrorInstance(protectedScriptExecutionContext()->globalObject(), *errorInstance)) {
+                    errorInformation = WTFMove(*result);
+                    errorMessage = makeString("Uncaught "_s, errorInformation.errorTypeString, ": "_s, errorInformation.message);
+                }
+            }
             auto exception = Exception(ExceptionCode::UnknownError, errorMessage);
 
-            // FIXME: Set line/column numbers.
-            dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, exception.message(), document->url().stringWithoutFragmentIdentifier(), 1, 1, { protectedScriptExecutionContext()->globalObject()->vm(), result }));
+            dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, errorMessage, errorInformation.sourceURL, errorInformation.line, errorInformation.column, { protectedScriptExecutionContext()->globalObject()->vm(), result }));
 
             if (RefPtr transition = std::exchange(m_transition, nullptr))
                 transition->rejectPromise(exception);

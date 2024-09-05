@@ -62,6 +62,11 @@ class MemoryHandle;
 } }
 #endif
 
+namespace JSC {
+class ErrorInstance;
+class JSGlobalObject;
+}
+
 namespace WebCore {
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -83,6 +88,17 @@ using ArrayBufferContentsArray = Vector<JSC::ArrayBufferContents>;
 using WasmModuleArray = Vector<RefPtr<JSC::Wasm::Module>>;
 using WasmMemoryHandleArray = Vector<RefPtr<JSC::SharedArrayBufferContents>>;
 #endif
+
+struct ErrorInformation {
+    String errorTypeString;
+    String message;
+    unsigned line { 0 };
+    unsigned column { 0 };
+    String sourceURL;
+    String stack;
+};
+
+std::optional<ErrorInformation> extractErrorInformationFromErrorInstance(JSC::JSGlobalObject*, JSC::ErrorInstance&);
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SerializedScriptValue);
 class SerializedScriptValue : public ThreadSafeRefCounted<SerializedScriptValue> {
