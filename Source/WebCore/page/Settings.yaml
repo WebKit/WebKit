@@ -506,10 +506,3 @@ WebkitImageReadyEventEnabled:
   defaultValue:
     WebCore:
       default: false
-
-YouTubeFlashPluginReplacementEnabled:
-  type: bool
-  defaultValue:
-    WebCore:
-      PLATFORM(COCOA): true
-      default: false

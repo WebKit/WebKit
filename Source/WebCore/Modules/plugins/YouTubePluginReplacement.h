@@ -50,7 +50,6 @@ private:
     static bool supportsMIMEType(const String&);
     static bool supportsFileExtension(StringView);
     static bool supportsURL(const URL&);
-    static bool isEnabledBySettings(const Settings&);
 
     void installReplacement(ShadowRoot&) final;
 
