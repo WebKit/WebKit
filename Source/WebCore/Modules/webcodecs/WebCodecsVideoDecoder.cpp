@@ -191,7 +191,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::decode(Ref<WebCodecsEncodedVideoChunk>&
         --m_decodeQueueSize;
         scheduleDequeueEvent();
 
-        protectedScriptExecutionContext()->enqueueTaskWhenSettled(m_internalDecoder->decode({ chunk->span(), chunk->type() == WebCodecsEncodedVideoChunkType::Key, chunk->timestamp(), chunk->duration() }), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { * this }, pendingActivity = takePendingWebCodecActivity()] (auto&& result) {
+        protectedScriptExecutionContext()->enqueueTaskWhenSettled(m_internalDecoder->decode({ chunk->span(), chunk->type() == WebCodecsEncodedVideoChunkType::Key, chunk->timestamp(), chunk->duration() }), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { * this }, pendingActivity = makePendingActivity(*this)] (auto&& result) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis || !!result)
                 return;
@@ -210,7 +210,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::flush(Ref<DeferredPromise>&& promise)
     m_isKeyChunkRequired = true;
     m_pendingFlushPromises.append(WTFMove(promise));
     queueControlMessageAndProcess({ *this, [this, clearFlushPromiseCount = m_clearFlushPromiseCount] {
-        protectedScriptExecutionContext()->enqueueTaskWhenSettled(m_internalDecoder->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, clearFlushPromiseCount, pendingActivity = takePendingWebCodecActivity()] (auto&&) {
+        protectedScriptExecutionContext()->enqueueTaskWhenSettled(m_internalDecoder->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, clearFlushPromiseCount, pendingActivity = makePendingActivity(*this)] (auto&&) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -349,7 +349,7 @@ void WebCodecsVideoDecoder::stop()
 
 bool WebCodecsVideoDecoder::virtualHasPendingActivity() const
 {
-    return (m_state == WebCodecsCodecState::Configured && (m_decodeQueueSize || m_isMessageQueueBlocked)) || hasPendingWebCodecActivity();
+    return m_state == WebCodecsCodecState::Configured && (m_decodeQueueSize || m_isMessageQueueBlocked);
 }
 
 } // namespace WebCore

@@ -155,7 +155,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
             }
 
             m_isMessageQueueBlocked = true;
-            protectedScriptExecutionContext()->enqueueTaskWhenSettled(m_internalEncoder->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, config = WTFMove(config), pendingActivity = takePendingWebCodecActivity()] (auto&&) mutable {
+            protectedScriptExecutionContext()->enqueueTaskWhenSettled(m_internalEncoder->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, config = WTFMove(config), pendingActivity = makePendingActivity(*this)] (auto&&) mutable {
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis)
                     return;
@@ -283,7 +283,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::encode(Ref<WebCodecsVideoFrame>&& frame
         --m_encodeQueueSize;
         scheduleDequeueEvent();
 
-        protectedScriptExecutionContext()->enqueueTaskWhenSettled(m_internalEncoder->encode({ WTFMove(internalFrame), timestamp, duration }, options.keyFrame), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = takePendingWebCodecActivity()] (auto&& result) {
+        protectedScriptExecutionContext()->enqueueTaskWhenSettled(m_internalEncoder->encode({ WTFMove(internalFrame), timestamp, duration }, options.keyFrame), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this)] (auto&& result) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis || !!result)
                 return;
@@ -305,7 +305,7 @@ void WebCodecsVideoEncoder::flush(Ref<DeferredPromise>&& promise)
 
     m_pendingFlushPromises.append(WTFMove(promise));
     queueControlMessageAndProcess({ *this, [this, clearFlushPromiseCount = m_clearFlushPromiseCount]() mutable {
-        protectedScriptExecutionContext()->enqueueTaskWhenSettled(m_internalEncoder->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, clearFlushPromiseCount, pendingActivity = takePendingWebCodecActivity()] (auto&&) {
+        protectedScriptExecutionContext()->enqueueTaskWhenSettled(m_internalEncoder->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, clearFlushPromiseCount, pendingActivity = makePendingActivity(*this)] (auto&&) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis || clearFlushPromiseCount != protectedThis->m_clearFlushPromiseCount)
                 return;
@@ -441,7 +441,7 @@ void WebCodecsVideoEncoder::stop()
 
 bool WebCodecsVideoEncoder::virtualHasPendingActivity() const
 {
-    return (m_state == WebCodecsCodecState::Configured && (m_encodeQueueSize || m_isMessageQueueBlocked)) || hasPendingWebCodecActivity();
+    return m_state == WebCodecsCodecState::Configured && (m_encodeQueueSize || m_isMessageQueueBlocked);
 }
 
 } // namespace WebCore
