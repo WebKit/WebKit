@@ -817,6 +817,47 @@ TEST(WKHTTPCookieStore, CookiesForURL)
     TestWebKitAPI::Util::run(&done);
 }
 
+#if HAVE(SAMESITE_LAX_DEFAULT)
+static void setSameSiteCookiePoliciesWithStore(WKWebsiteDataStore *dataStore)
+{
+    RetainPtr httpCookieStore = [dataStore httpCookieStore];
+    for (NSString *sameSitePolicy in @[@"none", @"lax", @"strict", @""]) {
+        RetainPtr cookie = [NSHTTPCookie cookieWithProperties:@{
+            NSHTTPCookiePath: @"/",
+            NSHTTPCookieName: @"a",
+            NSHTTPCookieValue: @"b",
+            NSHTTPCookieDomain: @"127.0.0.1",
+            NSHTTPCookieSameSitePolicy: sameSitePolicy
+        }];
+
+        clearCookies(dataStore);
+
+        finished = false;
+        [httpCookieStore.get() setCookie:cookie.get() completionHandler:^{
+            [httpCookieStore.get() getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+                EXPECT_EQ(1u, cookies.count);
+                EXPECT_STREQ(sameSitePolicy.length ? sameSitePolicy.UTF8String : "lax", cookies.firstObject.sameSitePolicy.UTF8String);
+                finished = true;
+            }];
+        }];
+        TestWebKitAPI::Util::run(&finished);
+    }
+    clearCookies(dataStore);
+}
+
+TEST(WKHTTPCookieStore, SetSameSiteCookiePolicies)
+{
+    RetainPtr dataStore = [WKWebsiteDataStore defaultDataStore];
+    setSameSiteCookiePoliciesWithStore(dataStore.get());
+}
+
+TEST(WKHTTPCookieStore, SetSameSiteCookiePoliciesNonPersistentStore)
+{
+    RetainPtr nonPersistentDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    setSameSiteCookiePoliciesWithStore(nonPersistentDataStore.get());
+}
+#endif // HAVE(SAMESITE_LAX_DEFAULT)
+
 TEST(WKHTTPCookieStore, CookieAccessAfterNetworkProcessTermination)
 {
     auto webView = adoptNS([TestWKWebView new]);
