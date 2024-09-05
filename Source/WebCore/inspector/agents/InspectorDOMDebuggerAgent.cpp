@@ -36,7 +36,9 @@
 #include "EventTarget.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
+#include "JSDOMGlobalObject.h"
 #include "JSEvent.h"
+#include "JSEventListener.h"
 #include "RegisteredEventListener.h"
 #include "ResourceRequest.h"
 #include "ScriptDisallowedScope.h"
@@ -247,12 +249,22 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::removeEventB
     return makeUnexpected("Not supported"_s);
 }
 
+static JSC::JSGlobalObject* globalObjectFor(ScriptExecutionContext& scriptExecutionContext, EventListener& eventListener)
+{
+    if (auto* jsEventListener = dynamicDowncast<JSEventListener>(eventListener)) {
+        if (auto* isolatedWorld = jsEventListener->isolatedWorld())
+            return toJSDOMGlobalObject(scriptExecutionContext, *isolatedWorld);
+    }
+
+    return scriptExecutionContext.globalObject();
+}
+
 void InspectorDOMDebuggerAgent::willHandleEvent(ScriptExecutionContext& scriptExecutionContext, Event& event, const RegisteredEventListener& registeredEventListener)
 {
     // `event.target()->scriptExecutionContext()` can change between `willHandleEvent` and `didHandleEvent`. The passed
     // `scriptExecutionContext` parameter will always match in companion calls to `willHandleEvent` and
     // `didHandleEvent`, and will not be null.
-    auto state = scriptExecutionContext.globalObject();
+    auto state = globalObjectFor(scriptExecutionContext, registeredEventListener.callback());
     auto injectedScript = m_injectedScriptManager.injectedScriptFor(state);
     if (injectedScript.hasNoValue())
         return;
@@ -300,7 +312,7 @@ void InspectorDOMDebuggerAgent::didHandleEvent(ScriptExecutionContext& scriptExe
     // `event.target()->scriptExecutionContext()` can change between `willHandleEvent` and `didHandleEvent`. Here it
     // could also be nullptr. The passed `scriptExecutionContext` parameter here will always match in companion calls to
     // `willHandleEvent` and `didHandleEvent`, and will not be null.
-    auto state = scriptExecutionContext.globalObject();
+    auto state = globalObjectFor(scriptExecutionContext, registeredEventListener.callback());
     auto injectedScript = m_injectedScriptManager.injectedScriptFor(state);
     if (injectedScript.hasNoValue())
         return;
