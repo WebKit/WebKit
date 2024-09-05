@@ -2423,3 +2423,8 @@ imported/w3c/web-platform-tests/css/css-writing-modes/text-orientation-upright-s
 
 # webkit.org/b/278952 [ Ventura ] fast/dom/intersection-observer-document-leak.html is a flaky failure.
 fast/dom/intersection-observer-document-leak.html [ Pass Failure ]
+
+# webkit.org/b/279213 REGRESSION (Sonoma): [ macOS Sonoma ] 3x http/tests/media/video-* is a constant failure.
+[ Sonoma+ ] http/tests/media/video-error-abort.html [ Failure ]
+[ Sonoma+ ] http/tests/media/video-served-as-text.html [ Failure ]
+[ Sonoma+ ] http/tests/media/video-throttled-load-metadata.html [ Failure ]
