@@ -396,7 +396,7 @@ NSString *WebExtensionAPIAction::parseIconPath(NSString *path, const URL& baseUR
 {
     // Resolve paths as relative against the base URL, unless it is a data URL.
     if ([path hasPrefix:@"data:"])
-        return path
+        return path;
     return URL { baseURL, path }.path().toString();
 }
 
