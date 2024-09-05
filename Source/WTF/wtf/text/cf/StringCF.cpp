@@ -40,6 +40,11 @@ String::String(CFStringRef str)
         return;
     }
 
+    if (const char *ptr = CFStringGetCStringPtr(str, kCFStringEncodingISOLatin1)) {
+        m_impl = StringImpl::createFromCString(ptr);
+        return;
+    }
+
     {
         StringBuffer<LChar> buffer(size);
         CFIndex usedBufLen;
