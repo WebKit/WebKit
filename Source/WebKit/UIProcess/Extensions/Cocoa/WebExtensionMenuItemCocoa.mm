@@ -78,6 +78,11 @@
         _handler(sender);
 }
 
++ (BOOL)usesUserKeyEquivalents
+{
+    return NO;
+}
+
 @end
 #endif // USE(APPKIT)
 
