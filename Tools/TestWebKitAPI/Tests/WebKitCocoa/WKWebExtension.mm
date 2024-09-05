@@ -1651,7 +1651,7 @@ TEST(WKWebExtension, CommandsParsing)
     };
 
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    EXPECT_FALSE(testExtension.hasCommands);
+    EXPECT_TRUE(testExtension.hasCommands);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary = @{
@@ -1665,7 +1665,7 @@ TEST(WKWebExtension, CommandsParsing)
     };
 
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    EXPECT_FALSE(testExtension.hasCommands);
+    EXPECT_TRUE(testExtension.hasCommands);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary = @{
@@ -1679,7 +1679,7 @@ TEST(WKWebExtension, CommandsParsing)
     };
 
     testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
-    EXPECT_FALSE(testExtension.hasCommands);
+    EXPECT_TRUE(testExtension.hasCommands);
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testManifestDictionary = @{

@@ -1996,9 +1996,10 @@ void WebExtension::populateCommandsIfNeeded()
 
     auto *commandsDictionary = objectForKey<NSDictionary>(m_manifest, commandsManifestKey, false, NSDictionary.class);
     if (!commandsDictionary) {
-        if (id value = [m_manifest objectForKey:commandsManifestKey]; value && ![value isKindOfClass:NSDictionary.class])
+        if (id value = [m_manifest objectForKey:commandsManifestKey]; value && ![value isKindOfClass:NSDictionary.class]) {
             recordError(createError(Error::InvalidCommands));
-        return;
+            return;
+        }
     }
 
     if (id value = [m_manifest objectForKey:commandsManifestKey]; commandsDictionary.count != dynamic_objc_cast<NSDictionary>(value).count) {
