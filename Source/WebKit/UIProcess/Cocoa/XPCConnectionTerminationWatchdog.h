@@ -25,22 +25,23 @@
 
 #pragma once
 
-#include <wtf/OSObjectPtr.h>
-#include <wtf/RunLoop.h>
-#include <wtf/Seconds.h>
-#include <wtf/spi/darwin/XPCSPI.h>
+#import <wtf/OSObjectPtr.h>
+#import <wtf/RunLoop.h>
+#import <wtf/Seconds.h>
+#import <wtf/spi/darwin/XPCSPI.h>
+
+#if USE(EXTENSIONKIT_PROCESS_TERMINATION)
+#import "ExtensionProcess.h"
+#endif
 
 #if PLATFORM(IOS_FAMILY)
-#include <wtf/Ref.h>
+#import <wtf/Ref.h>
 #endif
 
 namespace WebKit {
 
 class AuxiliaryProcessProxy;
 class ProcessAndUIAssertion;
-#if USE(EXTENSIONKIT)
-class ExtensionProcess;
-#endif
 
 // ConnectionTerminationWatchdog does two things:
 // 1) It sets a watchdog timer to kill the peered process.
