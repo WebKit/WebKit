@@ -271,7 +271,7 @@ bool CanvasBase::shouldAccelerate(const IntSize& size) const
 
 bool CanvasBase::shouldAccelerate(uint64_t area) const
 {
-#if USE(IOSURFACE_CANVAS_BACKING_STORE) || USE(SKIA)
+#if USE(CA) || USE(SKIA)
     if (!scriptExecutionContext()->settingsValues().canvasUsesAcceleratedDrawing)
         return false;
     if (area < scriptExecutionContext()->settingsValues().minimumAccelerated2DContextArea)

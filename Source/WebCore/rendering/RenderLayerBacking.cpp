@@ -364,7 +364,7 @@ Ref<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& name, G
 
     graphicsLayer->setName(name);
 
-#if PLATFORM(COCOA) && USE(CA)
+#if USE(CA)
     graphicsLayer->setAcceleratesDrawing(compositor().acceleratedDrawingEnabled());
 #endif
 
@@ -550,7 +550,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     }
 #endif
 
-#if PLATFORM(COCOA) && USE(CA)
+#if USE(CA)
     if (!compositor().acceleratedDrawingEnabled() && renderer().isRenderHTMLCanvas()) {
         const HTMLCanvasElement* canvas = downcast<HTMLCanvasElement>(renderer().element());
         if (canvas->shouldAccelerate(canvas->size()))
