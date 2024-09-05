@@ -2806,6 +2806,11 @@ bool Internals::hasWritingToolsTextSuggestionMarker(int from, int length)
 }
 #endif
 
+bool Internals::hasTransparentContentMarker(int from, int length)
+{
+    return hasMarkerFor(DocumentMarker::Type::TransparentContent, from, length);
+}
+
 void Internals::setContinuousSpellCheckingEnabled(bool enabled)
 {
     if (!contextDocument() || !contextDocument()->frame())

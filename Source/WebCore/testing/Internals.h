@@ -450,6 +450,7 @@ public:
 #if ENABLE(WRITING_TOOLS)
     bool hasWritingToolsTextSuggestionMarker(int from, int length);
 #endif
+    bool hasTransparentContentMarker(int from, int length);
     void setContinuousSpellCheckingEnabled(bool);
     void setAutomaticQuoteSubstitutionEnabled(bool);
     void setAutomaticLinkDetectionEnabled(bool);

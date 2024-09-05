@@ -675,6 +675,7 @@ enum RenderingMode {
 #if defined(ENABLE_WRITING_TOOLS) && ENABLE_WRITING_TOOLS
     boolean hasWritingToolsTextSuggestionMarker(long from, long length);
 #endif
+    boolean hasTransparentContentMarker(long from, long length);
     undefined setContinuousSpellCheckingEnabled(boolean enabled);
     undefined setAutomaticQuoteSubstitutionEnabled(boolean enabled);
     undefined setAutomaticLinkDetectionEnabled(boolean enabled);
