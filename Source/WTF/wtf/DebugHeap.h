@@ -75,6 +75,8 @@ private:
         static void* tryRealloc(void* p, size_t size) { return debugHeap().realloc(p, size); } \
 \
         static void free(void* p) { debugHeap().free(p); } \
+\
+        static constexpr ALWAYS_INLINE size_t nextCapacity(size_t capacity) { return capacity + capacity / 4 + 1; } \
     }
 
 #define DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Type) \

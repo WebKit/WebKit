@@ -291,6 +291,11 @@ struct FastMalloc {
     }
     
     static void free(void* p) { fastFree(p); }
+
+    static constexpr ALWAYS_INLINE size_t nextCapacity(size_t capacity)
+    {
+        return capacity + capacity / 4 + 1;
+    }
 };
 
 struct FastCompactMalloc {
@@ -328,6 +333,11 @@ struct FastCompactMalloc {
     }
 
     static void free(void* p) { fastFree(p); }
+
+    static constexpr ALWAYS_INLINE size_t nextCapacity(size_t capacity)
+    {
+        return capacity + capacity / 4 + 1;
+    }
 };
 
 template<typename T>
