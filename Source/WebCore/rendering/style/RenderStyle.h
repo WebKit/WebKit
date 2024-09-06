@@ -111,7 +111,7 @@ enum class AspectRatioType : uint8_t;
 enum class AutoRepeatType : uint8_t;
 enum class BackfaceVisibility : uint8_t;
 enum class BlendMode : uint8_t;
-enum class BlockFlowDirection : uint8_t;
+enum class FlowDirection : uint8_t;
 enum class BlockStepInsert : bool;
 enum class BorderCollapse : bool;
 enum class BorderStyle : uint8_t;
@@ -1084,7 +1084,7 @@ public:
     inline bool isVerticalWritingMode() const;
     inline bool isFlippedLinesWritingMode() const;
     inline bool isFlippedBlocksWritingMode() const;
-    BlockFlowDirection blockFlowDirection() const;
+    FlowDirection blockFlowDirection() const;
     TypographicMode typographicMode() const;
 
     inline ImageOrientation imageOrientation() const;

@@ -3077,17 +3077,17 @@ static bool shouldFlipBeforeAfterMargins(const RenderStyle& containingBlockStyle
     auto childBlockFlowDirection = childStyle->blockFlowDirection();
     bool shouldFlip = false;
     switch (containingBlockStyle.blockFlowDirection()) {
-    case BlockFlowDirection::TopToBottom:
-        shouldFlip = (childBlockFlowDirection == BlockFlowDirection::RightToLeft);
+    case FlowDirection::TopToBottom:
+        shouldFlip = (childBlockFlowDirection == FlowDirection::RightToLeft);
         break;
-    case BlockFlowDirection::BottomToTop:
-        shouldFlip = (childBlockFlowDirection == BlockFlowDirection::RightToLeft);
+    case FlowDirection::BottomToTop:
+        shouldFlip = (childBlockFlowDirection == FlowDirection::RightToLeft);
         break;
-    case BlockFlowDirection::RightToLeft:
-        shouldFlip = (childBlockFlowDirection == BlockFlowDirection::BottomToTop);
+    case FlowDirection::RightToLeft:
+        shouldFlip = (childBlockFlowDirection == FlowDirection::BottomToTop);
         break;
-    case BlockFlowDirection::LeftToRight:
-        shouldFlip = (childBlockFlowDirection == BlockFlowDirection::BottomToTop);
+    case FlowDirection::LeftToRight:
+        shouldFlip = (childBlockFlowDirection == FlowDirection::BottomToTop);
         break;
     }
 
@@ -5350,9 +5350,9 @@ LayoutRect RenderBox::visualOverflowRectForPropagation(const RenderStyle* parent
     
     // We are putting ourselves into our parent's coordinate space.  If there is a flipped block mismatch
     // in a particular axis, then we have to flip the rect along that axis.
-    if (style().blockFlowDirection() == BlockFlowDirection::RightToLeft || parentStyle->blockFlowDirection() == BlockFlowDirection::RightToLeft)
+    if (style().blockFlowDirection() == FlowDirection::RightToLeft || parentStyle->blockFlowDirection() == FlowDirection::RightToLeft)
         rect.setX(width() - rect.maxX());
-    else if (style().blockFlowDirection() == BlockFlowDirection::BottomToTop || parentStyle->blockFlowDirection() == BlockFlowDirection::BottomToTop)
+    else if (style().blockFlowDirection() == FlowDirection::BottomToTop || parentStyle->blockFlowDirection() == FlowDirection::BottomToTop)
         rect.setY(height() - rect.maxY());
 
     return rect;
@@ -5420,9 +5420,9 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(const RenderStyle* parent
     
     // We are putting ourselves into our parent's coordinate space.  If there is a flipped block mismatch
     // in a particular axis, then we have to flip the rect along that axis.
-    if (style().blockFlowDirection() == BlockFlowDirection::RightToLeft || parentStyle->blockFlowDirection() == BlockFlowDirection::RightToLeft)
+    if (style().blockFlowDirection() == FlowDirection::RightToLeft || parentStyle->blockFlowDirection() == FlowDirection::RightToLeft)
         rect.setX(width() - rect.maxX());
-    else if (style().blockFlowDirection() == BlockFlowDirection::BottomToTop || parentStyle->blockFlowDirection() == BlockFlowDirection::BottomToTop)
+    else if (style().blockFlowDirection() == FlowDirection::BottomToTop || parentStyle->blockFlowDirection() == FlowDirection::BottomToTop)
         rect.setY(height() - rect.maxY());
 
     return rect;

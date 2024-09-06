@@ -723,12 +723,12 @@ LayoutUnit LineLayout::lastLinePhysicalBaseline() const
 LayoutUnit LineLayout::physicalBaselineForLine(const InlineDisplay::Line& line) const
 {
     switch (writingModeToBlockFlowDirection(rootLayoutBox().style().writingMode())) {
-    case BlockFlowDirection::TopToBottom:
-    case BlockFlowDirection::BottomToTop:
+    case FlowDirection::TopToBottom:
+    case FlowDirection::BottomToTop:
         return LayoutUnit { line.lineBoxTop() + line.baseline() };
-    case BlockFlowDirection::LeftToRight:
+    case FlowDirection::LeftToRight:
         return LayoutUnit { line.lineBoxLeft() + (line.lineBoxWidth() - line.baseline()) };
-    case BlockFlowDirection::RightToLeft:
+    case FlowDirection::RightToLeft:
         return LayoutUnit { line.lineBoxLeft() + line.baseline() };
     default:
         ASSERT_NOT_REACHED();
@@ -745,10 +745,10 @@ LayoutUnit LineLayout::lastLineLogicalBaseline() const
 
     auto& lastLine = lastLineWithInlineContent(m_inlineContent->displayContent().lines);
     switch (writingModeToBlockFlowDirection(rootLayoutBox().style().writingMode())) {
-    case BlockFlowDirection::TopToBottom:
-    case BlockFlowDirection::BottomToTop:
+    case FlowDirection::TopToBottom:
+    case FlowDirection::BottomToTop:
         return LayoutUnit { lastLine.lineBoxTop() + lastLine.baseline() };
-    case BlockFlowDirection::LeftToRight: {
+    case FlowDirection::LeftToRight: {
         // FIXME: We should set the computed height on the root's box geometry (in RenderBlockFlow) so that
         // we could call m_layoutState.geometryForRootBox().borderBoxHeight() instead.
 
@@ -756,7 +756,7 @@ LayoutUnit LineLayout::lastLineLogicalBaseline() const
         auto lineLogicalTop = flow().logicalHeight() - lastLine.lineBoxRight();
         return LayoutUnit { lineLogicalTop + lastLine.baseline() };
     }
-    case BlockFlowDirection::RightToLeft:
+    case FlowDirection::RightToLeft:
         return LayoutUnit { lastLine.lineBoxLeft() + lastLine.baseline() };
     default:
         ASSERT_NOT_REACHED();
@@ -886,11 +886,11 @@ LayoutRect LineLayout::firstInlineBoxRect(const RenderInline& renderInline) cons
     // is finished sizing in one go.
     auto firstBoxRect = Layout::toLayoutRect(firstBox->visualRectIgnoringBlockDirection());
     switch (writingModeToBlockFlowDirection(rootLayoutBox().style().writingMode())) {
-    case BlockFlowDirection::TopToBottom:
-    case BlockFlowDirection::BottomToTop:
-    case BlockFlowDirection::LeftToRight:
+    case FlowDirection::TopToBottom:
+    case FlowDirection::BottomToTop:
+    case FlowDirection::LeftToRight:
         return firstBoxRect;
-    case BlockFlowDirection::RightToLeft:
+    case FlowDirection::RightToLeft:
         firstBoxRect.setX(flow().width() - firstBoxRect.maxX());
         return firstBoxRect;
     default:

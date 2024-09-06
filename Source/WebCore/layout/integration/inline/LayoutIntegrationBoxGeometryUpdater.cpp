@@ -151,14 +151,14 @@ static inline Layout::BoxGeometry::HorizontalEdges horizontalLogicalMargin(const
     return { retainMarginStart ? marginBottom : 0_lu, retainMarginEnd ? marginTop : 0_lu };
 }
 
-static inline Layout::BoxGeometry::VerticalEdges verticalLogicalMargin(const RenderBoxModelObject& renderer, BlockFlowDirection blockFlowDirection)
+static inline Layout::BoxGeometry::VerticalEdges verticalLogicalMargin(const RenderBoxModelObject& renderer, FlowDirection blockFlowDirection)
 {
     switch (blockFlowDirection) {
-    case BlockFlowDirection::TopToBottom:
-    case BlockFlowDirection::BottomToTop:
+    case FlowDirection::TopToBottom:
+    case FlowDirection::BottomToTop:
         return { renderer.marginTop(), renderer.marginBottom() };
-    case BlockFlowDirection::LeftToRight:
-    case BlockFlowDirection::RightToLeft:
+    case FlowDirection::LeftToRight:
+    case FlowDirection::RightToLeft:
         return { renderer.marginRight(), renderer.marginLeft() };
     default:
         ASSERT_NOT_REACHED();
@@ -167,7 +167,7 @@ static inline Layout::BoxGeometry::VerticalEdges verticalLogicalMargin(const Ren
 }
 
 enum class IsPartOfFormattingContext : bool { No, Yes };
-static inline Layout::BoxGeometry::Edges logicalBorder(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, BlockFlowDirection blockFlowDirection, UseComputedValues useComputedValues = UseComputedValues::No, IsPartOfFormattingContext isPartOfFormattingContext = IsPartOfFormattingContext::No, bool retainBorderStart = true, bool retainBorderEnd = true)
+static inline Layout::BoxGeometry::Edges logicalBorder(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, FlowDirection blockFlowDirection, UseComputedValues useComputedValues = UseComputedValues::No, IsPartOfFormattingContext isPartOfFormattingContext = IsPartOfFormattingContext::No, bool retainBorderStart = true, bool retainBorderEnd = true)
 {
     auto& style = renderer.style();
     auto borderLeft = useComputedValues == UseComputedValues::No ? renderer.borderLeft() : LayoutUnit(style.borderLeftWidth());
@@ -175,7 +175,7 @@ static inline Layout::BoxGeometry::Edges logicalBorder(const RenderBoxModelObjec
     auto borderTop = useComputedValues == UseComputedValues::No ? renderer.borderTop() : LayoutUnit(style.borderTopWidth());
     auto borderBottom = useComputedValues == UseComputedValues::No ? renderer.borderBottom() : LayoutUnit(style.borderBottomWidth());
 
-    if (blockFlowDirection == BlockFlowDirection::TopToBottom || blockFlowDirection == BlockFlowDirection::BottomToTop) {
+    if (blockFlowDirection == FlowDirection::TopToBottom || blockFlowDirection == FlowDirection::BottomToTop) {
         if (isLeftToRightInlineDirection)
             return { { retainBorderStart ? borderLeft : 0_lu, retainBorderEnd ? borderRight : 0_lu }, { borderTop, borderBottom } };
         return { { retainBorderStart ? borderRight : 0_lu, retainBorderEnd ? borderLeft : 0_lu }, { borderTop, borderBottom } };
@@ -184,12 +184,12 @@ static inline Layout::BoxGeometry::Edges logicalBorder(const RenderBoxModelObjec
     auto borderLogicalLeft = retainBorderStart ? isLeftToRightInlineDirection ? borderTop : borderBottom : 0_lu;
     auto borderLogicalRight = retainBorderEnd ? isLeftToRightInlineDirection ? borderBottom : borderTop : 0_lu;
     // For boxes inside the formatting context, right border (padding) always points up, while when converting the formatting context root's border (padding) the directionality matters.
-    auto borderLogicalTop = isPartOfFormattingContext == IsPartOfFormattingContext::Yes ? borderRight : blockFlowDirection == BlockFlowDirection::LeftToRight ? borderLeft : borderRight;
-    auto borderLogicalBottom = isPartOfFormattingContext == IsPartOfFormattingContext::Yes ? borderLeft : blockFlowDirection == BlockFlowDirection::LeftToRight ? borderRight : borderLeft;
+    auto borderLogicalTop = isPartOfFormattingContext == IsPartOfFormattingContext::Yes ? borderRight : blockFlowDirection == FlowDirection::LeftToRight ? borderLeft : borderRight;
+    auto borderLogicalBottom = isPartOfFormattingContext == IsPartOfFormattingContext::Yes ? borderLeft : blockFlowDirection == FlowDirection::LeftToRight ? borderRight : borderLeft;
     return { { borderLogicalLeft, borderLogicalRight }, { borderLogicalTop, borderLogicalBottom } };
 }
 
-static inline Layout::BoxGeometry::Edges logicalPadding(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, BlockFlowDirection blockFlowDirection, UseComputedValues useComputedValues = UseComputedValues::No, IsPartOfFormattingContext isPartOfFormattingContext = IsPartOfFormattingContext::No, bool retainPaddingStart = true, bool retainPaddingEnd = true)
+static inline Layout::BoxGeometry::Edges logicalPadding(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, FlowDirection blockFlowDirection, UseComputedValues useComputedValues = UseComputedValues::No, IsPartOfFormattingContext isPartOfFormattingContext = IsPartOfFormattingContext::No, bool retainPaddingStart = true, bool retainPaddingEnd = true)
 {
     auto& style = renderer.style();
     auto paddingLeft = useComputedValues == UseComputedValues::No ? renderer.paddingLeft() : fixedValueOrZero(style.paddingLeft());
@@ -197,7 +197,7 @@ static inline Layout::BoxGeometry::Edges logicalPadding(const RenderBoxModelObje
     auto paddingTop = useComputedValues == UseComputedValues::No ? renderer.paddingTop() : fixedValueOrZero(style.paddingTop());
     auto paddingBottom = useComputedValues == UseComputedValues::No ? renderer.paddingBottom() : fixedValueOrZero(style.paddingBottom());
 
-    if (blockFlowDirection == BlockFlowDirection::TopToBottom || blockFlowDirection == BlockFlowDirection::BottomToTop) {
+    if (blockFlowDirection == FlowDirection::TopToBottom || blockFlowDirection == FlowDirection::BottomToTop) {
         if (isLeftToRightInlineDirection)
             return { { retainPaddingStart ? paddingLeft : 0_lu, retainPaddingEnd ? paddingRight : 0_lu }, { paddingTop, paddingBottom } };
         return { { retainPaddingStart ? paddingRight : 0_lu, retainPaddingEnd ? paddingLeft : 0_lu }, { paddingTop, paddingBottom } };
@@ -206,8 +206,8 @@ static inline Layout::BoxGeometry::Edges logicalPadding(const RenderBoxModelObje
     auto paddingLogicalLeft = retainPaddingStart ? isLeftToRightInlineDirection ? paddingTop : paddingBottom : 0_lu;
     auto paddingLogicalRight = retainPaddingEnd ? isLeftToRightInlineDirection ? paddingBottom : paddingTop : 0_lu;
     // For boxes inside the formatting context, right padding (border) always points up, while when converting the formatting context root's padding (border) the directionality matters.
-    auto paddingLogicalTop = isPartOfFormattingContext == IsPartOfFormattingContext::Yes ? paddingRight : blockFlowDirection == BlockFlowDirection::LeftToRight ? paddingLeft : paddingRight;
-    auto paddingLogicalBottom = isPartOfFormattingContext == IsPartOfFormattingContext::Yes ? paddingLeft : blockFlowDirection == BlockFlowDirection::LeftToRight ? paddingRight : paddingLeft;
+    auto paddingLogicalTop = isPartOfFormattingContext == IsPartOfFormattingContext::Yes ? paddingRight : blockFlowDirection == FlowDirection::LeftToRight ? paddingLeft : paddingRight;
+    auto paddingLogicalBottom = isPartOfFormattingContext == IsPartOfFormattingContext::Yes ? paddingLeft : blockFlowDirection == FlowDirection::LeftToRight ? paddingRight : paddingLeft;
     return { { paddingLogicalLeft, paddingLogicalRight }, { paddingLogicalTop, paddingLogicalBottom } };
 }
 
@@ -226,7 +226,7 @@ void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, s
     auto& layoutBox = const_cast<Layout::ElementBox&>(*renderBox.layoutBox());
     auto isLeftToRightInlineDirection = renderBox.parent()->style().isLeftToRightDirection();
     auto blockFlowDirection = writingModeToBlockFlowDirection(renderBox.parent()->style().writingMode());
-    auto isHorizontalWritingMode = blockFlowDirection == BlockFlowDirection::TopToBottom || blockFlowDirection == BlockFlowDirection::BottomToTop;
+    auto isHorizontalWritingMode = blockFlowDirection == FlowDirection::TopToBottom || blockFlowDirection == FlowDirection::BottomToTop;
 
     auto& boxGeometry = layoutState().ensureGeometryForBox(layoutBox);
     auto inlineMargin = horizontalLogicalMargin(renderBox, isLeftToRightInlineDirection, isHorizontalWritingMode, intrinsicWidthMode ? UseComputedValues::Yes : UseComputedValues::No);
@@ -287,7 +287,7 @@ void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, s
         return hasAppareance || !blockFlow->childrenInline() || blockFlow->hasLines() || blockFlow->hasLineIfEmpty();
     }();
     if (hasNonSyntheticBaseline) {
-        auto baseline = renderBox.baselinePosition(AlphabeticBaseline, false /* firstLine */, blockFlowDirection == BlockFlowDirection::TopToBottom || blockFlowDirection == BlockFlowDirection::BottomToTop ? HorizontalLine : VerticalLine, PositionOnContainingLine);
+        auto baseline = renderBox.baselinePosition(AlphabeticBaseline, false /* firstLine */, blockFlowDirection == FlowDirection::TopToBottom || blockFlowDirection == FlowDirection::BottomToTop ? HorizontalLine : VerticalLine, PositionOnContainingLine);
         layoutBox.setBaselineForIntegration(baseline);
     }
 
@@ -319,7 +319,7 @@ void BoxGeometryUpdater::updateInlineBoxDimensions(const RenderInline& renderInl
 
     auto isLeftToRightInlineDirection = renderInline.style().isLeftToRightDirection();
     auto blockFlowDirection = writingModeToBlockFlowDirection(renderInline.style().writingMode());
-    auto isHorizontalWritingMode = blockFlowDirection == BlockFlowDirection::TopToBottom || blockFlowDirection == BlockFlowDirection::BottomToTop;
+    auto isHorizontalWritingMode = blockFlowDirection == FlowDirection::TopToBottom || blockFlowDirection == FlowDirection::BottomToTop;
 
     auto inlineMargin = horizontalLogicalMargin(renderInline, isLeftToRightInlineDirection, isHorizontalWritingMode, intrinsicWidthMode ? UseComputedValues::Yes : UseComputedValues::No, !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd);
     auto border = logicalBorder(renderInline, isLeftToRightInlineDirection, blockFlowDirection, intrinsicWidthMode ? UseComputedValues::Yes : UseComputedValues::No, IsPartOfFormattingContext::Yes, !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd);

@@ -539,7 +539,7 @@ bool RenderFlexibleBox::isHorizontalFlow() const
 bool RenderFlexibleBox::isLeftToRightFlow() const
 {
     if (isColumnFlow())
-        return style().blockFlowDirection() == BlockFlowDirection::TopToBottom || style().blockFlowDirection() == BlockFlowDirection::LeftToRight;
+        return style().blockFlowDirection() == FlowDirection::TopToBottom || style().blockFlowDirection() == FlowDirection::LeftToRight;
     return style().isLeftToRightDirection() ^ (style().flexDirection() == FlexDirection::RowReverse);
 }
 
@@ -736,22 +736,22 @@ std::optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForFlexItem(Re
     return flexItem.computeLogicalWidthInFragmentUsing(sizeType, size, mainAxisWidth, *this, { }) - flexItem.borderAndPaddingLogicalWidth();
 }
 
-BlockFlowDirection RenderFlexibleBox::transformedBlockFlowDirection() const
+FlowDirection RenderFlexibleBox::transformedBlockFlowDirection() const
 {
     auto blockFlowDirection = style().blockFlowDirection();
     if (!isColumnFlow())
         return blockFlowDirection;
     
     switch (blockFlowDirection) {
-    case BlockFlowDirection::TopToBottom:
-    case BlockFlowDirection::BottomToTop:
-        return style().isLeftToRightDirection() ? BlockFlowDirection::LeftToRight : BlockFlowDirection::RightToLeft;
-    case BlockFlowDirection::LeftToRight:
-    case BlockFlowDirection::RightToLeft:
-        return style().isLeftToRightDirection() ? BlockFlowDirection::TopToBottom : BlockFlowDirection::BottomToTop;
+    case FlowDirection::TopToBottom:
+    case FlowDirection::BottomToTop:
+        return style().isLeftToRightDirection() ? FlowDirection::LeftToRight : FlowDirection::RightToLeft;
+    case FlowDirection::LeftToRight:
+    case FlowDirection::RightToLeft:
+        return style().isLeftToRightDirection() ? FlowDirection::TopToBottom : FlowDirection::BottomToTop;
     }
     ASSERT_NOT_REACHED();
-    return BlockFlowDirection::TopToBottom;
+    return FlowDirection::TopToBottom;
 }
 
 LayoutUnit RenderFlexibleBox::flowAwareBorderStart() const
@@ -771,13 +771,13 @@ LayoutUnit RenderFlexibleBox::flowAwareBorderEnd() const
 LayoutUnit RenderFlexibleBox::flowAwareBorderBefore() const
 {
     switch (transformedBlockFlowDirection()) {
-    case BlockFlowDirection::TopToBottom:
+    case FlowDirection::TopToBottom:
         return borderTop();
-    case BlockFlowDirection::BottomToTop:
+    case FlowDirection::BottomToTop:
         return borderBottom();
-    case BlockFlowDirection::LeftToRight:
+    case FlowDirection::LeftToRight:
         return borderLeft();
-    case BlockFlowDirection::RightToLeft:
+    case FlowDirection::RightToLeft:
         return borderRight();
     }
     ASSERT_NOT_REACHED();
@@ -787,13 +787,13 @@ LayoutUnit RenderFlexibleBox::flowAwareBorderBefore() const
 LayoutUnit RenderFlexibleBox::flowAwareBorderAfter() const
 {
     switch (transformedBlockFlowDirection()) {
-    case BlockFlowDirection::TopToBottom:
+    case FlowDirection::TopToBottom:
         return borderBottom();
-    case BlockFlowDirection::BottomToTop:
+    case FlowDirection::BottomToTop:
         return borderTop();
-    case BlockFlowDirection::LeftToRight:
+    case FlowDirection::LeftToRight:
         return borderRight();
-    case BlockFlowDirection::RightToLeft:
+    case FlowDirection::RightToLeft:
         return borderLeft();
     }
     ASSERT_NOT_REACHED();
@@ -817,13 +817,13 @@ LayoutUnit RenderFlexibleBox::flowAwarePaddingEnd() const
 LayoutUnit RenderFlexibleBox::flowAwarePaddingBefore() const
 {
     switch (transformedBlockFlowDirection()) {
-    case BlockFlowDirection::TopToBottom:
+    case FlowDirection::TopToBottom:
         return paddingTop();
-    case BlockFlowDirection::BottomToTop:
+    case FlowDirection::BottomToTop:
         return paddingBottom();
-    case BlockFlowDirection::LeftToRight:
+    case FlowDirection::LeftToRight:
         return paddingLeft();
-    case BlockFlowDirection::RightToLeft:
+    case FlowDirection::RightToLeft:
         return paddingRight();
     }
     ASSERT_NOT_REACHED();
@@ -833,13 +833,13 @@ LayoutUnit RenderFlexibleBox::flowAwarePaddingBefore() const
 LayoutUnit RenderFlexibleBox::flowAwarePaddingAfter() const
 {
     switch (transformedBlockFlowDirection()) {
-    case BlockFlowDirection::TopToBottom:
+    case FlowDirection::TopToBottom:
         return paddingBottom();
-    case BlockFlowDirection::BottomToTop:
+    case FlowDirection::BottomToTop:
         return paddingTop();
-    case BlockFlowDirection::LeftToRight:
+    case FlowDirection::LeftToRight:
         return paddingRight();
-    case BlockFlowDirection::RightToLeft:
+    case FlowDirection::RightToLeft:
         return paddingLeft();
     }
     ASSERT_NOT_REACHED();
@@ -863,13 +863,13 @@ LayoutUnit RenderFlexibleBox::flowAwareMarginEndForFlexItem(const RenderBox& fle
 LayoutUnit RenderFlexibleBox::flowAwareMarginBeforeForFlexItem(const RenderBox& flexItem) const
 {
     switch (transformedBlockFlowDirection()) {
-    case BlockFlowDirection::TopToBottom:
+    case FlowDirection::TopToBottom:
         return flexItem.marginTop();
-    case BlockFlowDirection::BottomToTop:
+    case FlowDirection::BottomToTop:
         return flexItem.marginBottom();
-    case BlockFlowDirection::LeftToRight:
+    case FlowDirection::LeftToRight:
         return flexItem.marginLeft();
-    case BlockFlowDirection::RightToLeft:
+    case FlowDirection::RightToLeft:
         return flexItem.marginRight();
     }
     ASSERT_NOT_REACHED();
@@ -2488,7 +2488,7 @@ void RenderFlexibleBox::performBaselineAlignment(LineState& lineState)
         return style().direction() == TextDirection::LTR ? WritingMode::VerticalLr : WritingMode::VerticalRl;
     };
 
-    auto shouldAdjustItemTowardsCrossAxisEnd = [&](const BlockFlowDirection& flexItemBlockFlowDirection, ItemPosition alignment) {
+    auto shouldAdjustItemTowardsCrossAxisEnd = [&](const FlowDirection& flexItemBlockFlowDirection, ItemPosition alignment) {
         ASSERT(alignment == ItemPosition::Baseline || alignment == ItemPosition::LastBaseline);
 
         // The direction in which we are aligning (i.e. direction of the cross axis) must be parallel with the direction of the flex item's used writing mode
@@ -2619,7 +2619,7 @@ std::optional<TextDirection> RenderFlexibleBox::leftRightAxisDirectionFromStyle(
         return style.direction();
 
     if (!style.isHorizontalWritingMode()) {
-        return (style.blockFlowDirection() == BlockFlowDirection::LeftToRight)
+        return (style.blockFlowDirection() == FlowDirection::LeftToRight)
             ? TextDirection::LTR : TextDirection::RTL;
     }
 

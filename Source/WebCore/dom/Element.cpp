@@ -1003,12 +1003,12 @@ inline ScrollAlignment toScrollAlignmentForInlineDirection(std::optional<ScrollL
     switch (position.value_or(ScrollLogicalPosition::Nearest)) {
     case ScrollLogicalPosition::Start: {
         switch (blockFlowDirection) {
-        case BlockFlowDirection::TopToBottom:
-        case BlockFlowDirection::BottomToTop: {
+        case FlowDirection::TopToBottom:
+        case FlowDirection::BottomToTop: {
             return isLTR ? ScrollAlignment::alignLeftAlways : ScrollAlignment::alignRightAlways;
         }
-        case BlockFlowDirection::LeftToRight:
-        case BlockFlowDirection::RightToLeft: {
+        case FlowDirection::LeftToRight:
+        case FlowDirection::RightToLeft: {
             return isLTR ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignBottomAlways;
         }
         default:
@@ -1020,12 +1020,12 @@ inline ScrollAlignment toScrollAlignmentForInlineDirection(std::optional<ScrollL
         return ScrollAlignment::alignCenterAlways;
     case ScrollLogicalPosition::End: {
         switch (blockFlowDirection) {
-        case BlockFlowDirection::TopToBottom:
-        case BlockFlowDirection::BottomToTop: {
+        case FlowDirection::TopToBottom:
+        case FlowDirection::BottomToTop: {
             return isLTR ? ScrollAlignment::alignRightAlways : ScrollAlignment::alignLeftAlways;
         }
-        case BlockFlowDirection::LeftToRight:
-        case BlockFlowDirection::RightToLeft: {
+        case FlowDirection::LeftToRight:
+        case FlowDirection::RightToLeft: {
             return isLTR ? ScrollAlignment::alignBottomAlways : ScrollAlignment::alignTopAlways;
         }
         default:
@@ -1047,13 +1047,13 @@ inline ScrollAlignment toScrollAlignmentForBlockDirection(std::optional<ScrollLo
     switch (position.value_or(ScrollLogicalPosition::Start)) {
     case ScrollLogicalPosition::Start: {
         switch (blockFlowDirection) {
-        case BlockFlowDirection::TopToBottom:
+        case FlowDirection::TopToBottom:
             return ScrollAlignment::alignTopAlways;
-        case BlockFlowDirection::BottomToTop:
+        case FlowDirection::BottomToTop:
             return ScrollAlignment::alignBottomAlways;
-        case BlockFlowDirection::LeftToRight:
+        case FlowDirection::LeftToRight:
             return ScrollAlignment::alignLeftAlways;
-        case BlockFlowDirection::RightToLeft:
+        case FlowDirection::RightToLeft:
             return ScrollAlignment::alignRightAlways;
         default:
             ASSERT_NOT_REACHED();
@@ -1064,13 +1064,13 @@ inline ScrollAlignment toScrollAlignmentForBlockDirection(std::optional<ScrollLo
         return ScrollAlignment::alignCenterAlways;
     case ScrollLogicalPosition::End: {
         switch (blockFlowDirection) {
-        case BlockFlowDirection::TopToBottom:
+        case FlowDirection::TopToBottom:
             return ScrollAlignment::alignBottomAlways;
-        case BlockFlowDirection::BottomToTop:
+        case FlowDirection::BottomToTop:
             return ScrollAlignment::alignTopAlways;
-        case BlockFlowDirection::LeftToRight:
+        case FlowDirection::LeftToRight:
             return ScrollAlignment::alignRightAlways;
-        case BlockFlowDirection::RightToLeft:
+        case FlowDirection::RightToLeft:
             return ScrollAlignment::alignLeftAlways;
         default:
             ASSERT_NOT_REACHED();

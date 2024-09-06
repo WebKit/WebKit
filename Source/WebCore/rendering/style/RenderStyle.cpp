@@ -3178,13 +3178,13 @@ Color RenderStyle::usedScrollbarTrackColor() const
 const BorderValue& RenderStyle::borderBefore() const
 {
     switch (blockFlowDirection()) {
-    case BlockFlowDirection::TopToBottom:
+    case FlowDirection::TopToBottom:
         return borderTop();
-    case BlockFlowDirection::BottomToTop:
+    case FlowDirection::BottomToTop:
         return borderBottom();
-    case BlockFlowDirection::LeftToRight:
+    case FlowDirection::LeftToRight:
         return borderLeft();
-    case BlockFlowDirection::RightToLeft:
+    case FlowDirection::RightToLeft:
         return borderRight();
     }
     ASSERT_NOT_REACHED();
@@ -3194,13 +3194,13 @@ const BorderValue& RenderStyle::borderBefore() const
 const BorderValue& RenderStyle::borderAfter() const
 {
     switch (blockFlowDirection()) {
-    case BlockFlowDirection::TopToBottom:
+    case FlowDirection::TopToBottom:
         return borderBottom();
-    case BlockFlowDirection::BottomToTop:
+    case FlowDirection::BottomToTop:
         return borderTop();
-    case BlockFlowDirection::LeftToRight:
+    case FlowDirection::LeftToRight:
         return borderRight();
-    case BlockFlowDirection::RightToLeft:
+    case FlowDirection::RightToLeft:
         return borderLeft();
     }
     ASSERT_NOT_REACHED();
@@ -3224,13 +3224,13 @@ const BorderValue& RenderStyle::borderEnd() const
 float RenderStyle::borderBeforeWidth() const
 {
     switch (blockFlowDirection()) {
-    case BlockFlowDirection::TopToBottom:
+    case FlowDirection::TopToBottom:
         return borderTopWidth();
-    case BlockFlowDirection::BottomToTop:
+    case FlowDirection::BottomToTop:
         return borderBottomWidth();
-    case BlockFlowDirection::LeftToRight:
+    case FlowDirection::LeftToRight:
         return borderLeftWidth();
-    case BlockFlowDirection::RightToLeft:
+    case FlowDirection::RightToLeft:
         return borderRightWidth();
     }
     ASSERT_NOT_REACHED();
@@ -3240,13 +3240,13 @@ float RenderStyle::borderBeforeWidth() const
 float RenderStyle::borderAfterWidth() const
 {
     switch (blockFlowDirection()) {
-    case BlockFlowDirection::TopToBottom:
+    case FlowDirection::TopToBottom:
         return borderBottomWidth();
-    case BlockFlowDirection::BottomToTop:
+    case FlowDirection::BottomToTop:
         return borderTopWidth();
-    case BlockFlowDirection::LeftToRight:
+    case FlowDirection::LeftToRight:
         return borderRightWidth();
-    case BlockFlowDirection::RightToLeft:
+    case FlowDirection::RightToLeft:
         return borderLeftWidth();
     }
     ASSERT_NOT_REACHED();
@@ -3822,7 +3822,7 @@ float RenderStyle::outlineOffset() const
 
 bool RenderStyle::shouldPlaceVerticalScrollbarOnLeft() const
 {
-    return (!isLeftToRightDirection() && isHorizontalWritingMode()) || blockFlowDirection() == BlockFlowDirection::RightToLeft;
+    return (!isLeftToRightDirection() && isHorizontalWritingMode()) || blockFlowDirection() == FlowDirection::RightToLeft;
 }
 
 std::span<const PaintType, 3> RenderStyle::paintTypesForPaintOrder(PaintOrder order)

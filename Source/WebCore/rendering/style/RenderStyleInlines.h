@@ -957,7 +957,7 @@ constexpr bool RenderStyle::preserveNewline(WhiteSpace mode)
     return mode != WhiteSpace::Normal && mode != WhiteSpace::NoWrap;
 }
 
-inline BlockFlowDirection RenderStyle::blockFlowDirection() const
+inline FlowDirection RenderStyle::blockFlowDirection() const
 {
     return writingModeToBlockFlowDirection(writingMode());
 }
