@@ -2670,6 +2670,52 @@ TEST(WritingTools, ShowPanelWithRangedSelection)
     EXPECT_TRUE(NSEqualRects(expectedRect, selectionRect));
 }
 
+TEST(WritingTools, FocusWebViewAfterAnimation)
+{
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    __block bool writingToolsFinished = false;
+
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        EXPECT_WK_STREQ(@"AAAA BBBB CCCC", contexts.firstObject.attributedText.string);
+
+        [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
+
+        EXPECT_WK_STREQ(@"AAAA BBBB CCCC", [webView contentsAsStringWithoutNBSP]);
+
+        auto attributedText = adoptNS([[NSAttributedString alloc] initWithString:@"ZZZZ"]);
+
+        [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 14) inContext:contexts.firstObject finished:NO];
+
+        [webView waitForContentValue:@"ZZZZ"];
+        EXPECT_WK_STREQ(@"ZZZZ", [webView contentsAsStringWithoutNBSP]);
+
+        [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 14) inContext:contexts.firstObject finished:YES];
+
+        [webView waitForContentValue:@"ZZZZ"];
+        EXPECT_WK_STREQ(@"ZZZZ", [webView contentsAsStringWithoutNBSP]);
+
+        [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
+
+        writingToolsFinished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&writingToolsFinished);
+
+    // FIXME: Remove the additional wait for the animations to finish.
+    TestWebKitAPI::Util::runFor(2_s);
+
+    [[webView window] makeFirstResponder:nil];
+    [webView sendClickAtPoint:NSMakePoint(50, 50)];
+
+    EXPECT_EQ([[webView window] firstResponder], webView.get());
+}
+
 #endif // PLATFORM(MAC)
 
 TEST(WritingTools, SmartRepliesMatchStyle)

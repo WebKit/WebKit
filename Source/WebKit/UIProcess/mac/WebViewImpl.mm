@@ -4671,6 +4671,11 @@ void WebViewImpl::removeTextAnimationForAnimationID(WTF::UUID uuid)
     [m_textAnimationTypeManager removeTextAnimationForAnimationID:uuid];
 }
 
+void WebViewImpl::hideTextAnimationView()
+{
+    [m_textAnimationTypeManager hideTextAnimationView];
+}
+
 #endif // ENABLE(WRITING_TOOLS)
 
 ViewGestureController& WebViewImpl::ensureGestureController()

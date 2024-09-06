@@ -746,6 +746,8 @@ public:
 
     void addTextAnimationForAnimationID(WTF::UUID, const WebCore::TextAnimationData&);
     void removeTextAnimationForAnimationID(WTF::UUID);
+
+    void hideTextAnimationView();
 #endif
 
 #if HAVE(INLINE_PREDICTIONS)
