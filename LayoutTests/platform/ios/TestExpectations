@@ -1914,7 +1914,7 @@ fast/sub-pixel/selection/selection-rect-in-sub-pixel-table.html [ Failure ]
 fast/sub-pixel/sub-pixel-root-layer.html [ ImageOnlyFailure ]
 
 fast/text/decorations-transformed.html [ Failure ]
-fast/text/emphasis-avoid-ruby.html [ Failure ]
+fast/text/emphasis-avoid-ruby-001.html [ Failure ]
 fast/text/emphasis-overlap.html [ Failure ]
 fast/text/glyph-reordering.html [ Failure ]
 fast/text/international/001.html [ Failure ]

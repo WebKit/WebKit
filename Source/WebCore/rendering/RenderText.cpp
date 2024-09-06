@@ -2117,10 +2117,9 @@ std::optional<bool> RenderText::emphasisMarkExistsAndIsAbove(const RenderText& r
     };
 
     if (auto* annotation = findRubyAnnotation()) {
-        // The emphasis marks over are suppressed only if there is a ruby annotation box and it is not empty.
-        if (annotation->hasLines())
+        // The emphasis marks are suppressed only if there is a ruby annotation box on the same side and it is not empty.
+        if (annotation->hasLines() && isAbove == (annotation->style().rubyPosition() == RubyPosition::Over))
             return { };
-        return isAbove;
     }
 
     return isAbove;
