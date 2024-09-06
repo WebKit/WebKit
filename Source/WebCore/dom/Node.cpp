@@ -2698,7 +2698,7 @@ void Node::defaultEventHandler(Event& event)
 #if ENABLE(CONTEXT_MENUS)
     case EventType::contextmenu:
         if (RefPtr frame = document().frame()) {
-            if (auto* page = frame->page())
+            if (RefPtr page = frame->page())
                 page->contextMenuController().handleContextMenuEvent(event);
         }
         break;

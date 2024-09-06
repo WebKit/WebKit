@@ -553,7 +553,7 @@ void WebXRSession::minimalUpdateRendering()
     if (!sessionDocument)
         return;
 
-    if (auto* page = sessionDocument->page()) {
+    if (RefPtr page = sessionDocument->page()) {
         page->forEachDocument([&] (Document& document) {
             document.serviceRequestVideoFrameCallbacks();
         });

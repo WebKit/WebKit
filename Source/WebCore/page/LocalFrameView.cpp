@@ -2106,7 +2106,7 @@ void LocalFrameView::viewportContentsChanged()
         return;
     }
 
-    if (auto* page = m_frame->page())
+    if (RefPtr page = m_frame->page())
         page->updateValidationBubbleStateIfNeeded();
 
     // When the viewport contents changes (scroll, resize, style recalc, layout, ...),
@@ -5873,7 +5873,7 @@ void LocalFrameView::setViewExposedRect(std::optional<FloatRect> viewExposedRect
         tiledBacking->setTiledScrollingIndicatorPosition(m_viewExposedRect ? m_viewExposedRect.value().location() : FloatPoint());
     }
 
-    if (auto* page = m_frame->page()) {
+    if (RefPtr page = m_frame->page()) {
         page->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
         page->pageOverlayController().didChangeViewExposedRect();
     }
@@ -6076,7 +6076,7 @@ float LocalFrameView::pageScaleFactor() const
 
 void LocalFrameView::didStartScrollAnimation()
 {
-    if (auto* page = m_frame->page())
+    if (RefPtr page = m_frame->page())
         page->scheduleRenderingUpdate({ RenderingUpdateStep::Scroll });
 }
 

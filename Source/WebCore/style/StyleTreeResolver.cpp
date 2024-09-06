@@ -1278,7 +1278,7 @@ PostResolutionCallbackDisabler::~PostResolutionCallbackDisabler()
 
         auto& queue = memoryCacheClientCallsResumeQueue();
         for (size_t i = 0; i < queue.size(); ++i) {
-            if (auto* page = queue[i]->page())
+            if (RefPtr page = queue[i]->page())
                 page->setMemoryCacheClientCallsEnabled(true);
         }
         queue.clear();

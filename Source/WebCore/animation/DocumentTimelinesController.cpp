@@ -85,7 +85,7 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
     std::optional<FramesPerSecond> defaultTimelineFrameRate;
     // This will hold the frame rate used for this timeline until now.
     std::optional<FramesPerSecond> previousTimelineFrameRate;
-    if (auto* page = m_document.page()) {
+    if (RefPtr page = m_document.page()) {
         defaultTimelineFrameRate = page->preferredRenderingUpdateFramesPerSecond({ Page::PreferredRenderingUpdateOption::IncludeThrottlingReasons });
         previousTimelineFrameRate = page->preferredRenderingUpdateFramesPerSecond({
             Page::PreferredRenderingUpdateOption::IncludeThrottlingReasons,
@@ -168,7 +168,7 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
 
     // Ensure the timeline updates at the maximum frame rate we've encountered for our animations.
     if (previousMaximumAnimationFrameRate != maximumAnimationFrameRate) {
-        if (auto* page = m_document.page()) {
+        if (RefPtr page = m_document.page()) {
             if (previousTimelineFrameRate != maximumAnimationFrameRate)
                 page->timelineControllerMaximumAnimationFrameRateDidChange(*this);
         }
