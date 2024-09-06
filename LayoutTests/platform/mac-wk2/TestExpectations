@@ -2,7 +2,6 @@
 # Platform-specific directories. Skipped globally, then re-enabled here.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
-[ Sonoma+ ] compositing/plugins/pdf [ Pass ]
 compositing/shared-backing/overflow-scroll [ Pass ]
 compositing/scrolling/async-overflow-scrolling [ Pass ]
 compositing/layer-creation/clipping-scope [ Pass ]
@@ -39,7 +38,7 @@ swipe [ Pass ]
 view-gestures [ Pass ]
 http/tests/swipe [ Pass ]
 http/tests/pdf [ Pass ]
-pdf/unifiedpdf [ Pass ]
+[ Sonoma+ ] pdf [ Pass ]
 tiled-drawing [ Pass ]
 ipc/restrictedendpoints/mac [ Pass ]
 
@@ -1692,6 +1691,16 @@ webkit.org/b/264001 [ Debug ] imported/w3c/web-platform-tests/requestidlecallbac
 #webkit.org/b/269301  (2X imported/w3c/web-platform-tests/webcodecs/videoFrame (layout-tests) are constant failures)
 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.html [ Failure ]
 [ x86_64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.worker.html [ Failure ]
+
+webkit.org/b/268398 [ Sonoma+ ] pdf/pdf-in-iframe-scrolling-tree-after-back.html [ Pass Failure ]
+
+# webkit.org/b/270092  (REGRESSION (275274@main): [ Sonoma+ wk2 ] Multiple compositing/plugins/pdf/pdf are constant failures)
+[ Sonoma+ ] pdf/pdf-in-embed.html [ Failure ]
+[ Sonoma+ ] pdf/pdf-in-styled-embed.html [ Failure ]
+[ Sonoma+ ] pdf/pdf-scrolling-tree-dynamic.html [ Failure Timeout ]
+[ Sonoma+ ] pdf/pdf-scrolling-tree.html [ Failure ]
+
+[ Sonoma+ ] pdf/pdf-in-embed-with-root-page-zoom.html [ Failure ]
 
 webkit.org/b/270235 [ Ventura+ Debug x86_64 ] webgl/pending/conformance/glsl/misc/shader-with-reserved-words-2.html [ Timeout ]
 
