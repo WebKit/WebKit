@@ -358,6 +358,20 @@ bool MarkedSpace::isPagedOut()
     return pagedOutPagesStats.mean() > pagedOutPagesStats.count() * bailoutPercentage;
 }
 
+MarkedBlock::Handle* MarkedSpace::findMarkedBlockHandle(MarkedBlock* block)
+{
+    MarkedBlock::Handle* result = nullptr;
+    forEachDirectory(
+        [&](BlockDirectory& directory) -> IterationStatus {
+            if (MarkedBlock::Handle* handle = directory.findMarkedBlockHandle(block)) {
+                result = handle;
+                return IterationStatus::Done;
+            }
+            return IterationStatus::Continue;
+        });
+    return result;
+}
+
 void MarkedSpace::freeBlock(MarkedBlock::Handle* block)
 {
     m_capacity -= MarkedBlock::blockSize;

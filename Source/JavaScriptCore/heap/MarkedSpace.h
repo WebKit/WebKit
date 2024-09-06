@@ -139,6 +139,8 @@ public:
     void didConsumeFreeList(MarkedBlock::Handle*);
     void didAllocateInBlock(MarkedBlock::Handle*);
 
+    MarkedBlock::Handle* findMarkedBlockHandle(MarkedBlock*);
+
     void beginMarking();
     void endMarking();
     void snapshotUnswept();

@@ -31,6 +31,7 @@
 #include "JSCJSValueInlines.h"
 #include "MarkedBlockInlines.h"
 #include "SweepingScope.h"
+#include "VMInspector.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {
@@ -203,19 +204,22 @@ void MarkedBlock::Handle::resumeAllocating(FreeList& freeList)
     sweep(&freeList);
 }
 
-void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion)
+void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion, JSCell* cell)
 {
     ASSERT(vm().heap.objectSpace().isMarking());
     Locker locker { header().m_lock };
     
     if (!areMarksStale(markingVersion))
         return;
-    
-    BlockDirectory* directory = handle().directory();
+
+    MarkedBlock::Handle* handle = header().handleBitsForNullCheck();
+    if (UNLIKELY(!handle))
+        dumpInfoIfHandleIsNotValid(locker, cell);
+    BlockDirectory* directory = handle->directory();
     bool isAllocated;
     {
         Locker bitLocker { directory->bitvectorLock() };
-        isAllocated = directory->isAllocated(&handle());
+        isAllocated = directory->isAllocated(handle);
     }
 
     if (isAllocated || !marksConveyLivenessDuringMarking(markingVersion)) {
@@ -258,7 +262,7 @@ void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion)
 #endif
     // This means we're the first ones to mark any object in this block.
     Locker bitLocker { directory->bitvectorLock() };
-    directory->setIsMarkingNotEmpty(&handle(), true);
+    directory->setIsMarkingNotEmpty(handle, true);
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
@@ -500,6 +504,67 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
 
     // The template arguments don't matter because the first one is false.
     specializedSweep<false, IsEmpty, SweepOnly, BlockHasNoDestructors, DontScribble, HasNewlyAllocated, MarksStale>(freeList, emptyMode, sweepMode, BlockHasNoDestructors, scribbleMode, newlyAllocatedMode, marksMode, [] (VM&, JSCell*) { });
+}
+
+NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoIfHandleIsNotValid(AbstractLocker&, JSCell* cell)
+{
+    size_t contiguousZeroCount = 0;
+    {
+        char* mem = WTF::bitwise_cast<char*>(&header());
+        for (; contiguousZeroCount < sizeof(MarkedBlock::blockSize); ++contiguousZeroCount) {
+            if (*mem)
+                break;
+            ++mem;
+        }
+    }
+
+    bool isValidBlockVM = false;
+    bool isBlockInVM = false;
+    bool isBlockHandleInVM = false;
+    VM* blockVM = header().m_vm;
+    {
+        isValidBlockVM = blockVM ? VMInspector::isValidVM(blockVM) : false;
+        if (isValidBlockVM) {
+            Heap& heap = blockVM->heap;
+            MarkedSpace& objectSpace = heap.objectSpace();
+            isBlockInVM = objectSpace.blocks().set().contains(this);
+            isBlockHandleInVM = !!objectSpace.findMarkedBlockHandle(this);
+        } else {
+            VMInspector::forEachVM([&](VM& vm) {
+                MarkedSpace& objectSpace = vm.heap.objectSpace();
+                isBlockInVM = objectSpace.blocks().set().contains(this);
+                isBlockHandleInVM = !!objectSpace.findMarkedBlockHandle(this);
+                // Either of them is true indicates that the block belongs or used to belong to the VM.
+                if (isBlockInVM || isBlockHandleInVM) {
+                    blockVM = &vm;
+                    return IterationStatus::Done;
+                }
+                return IterationStatus::Continue;
+            });
+        }
+    }
+
+    bool hasCell = !!cell;
+    bool isValidCellVM = false;
+    bool isCellVMSameAsBlockVM = false;
+    bool isAliveCell = false;
+    if (hasCell) {
+        VM& cellVM = cell->vm();
+        isValidCellVM = VMInspector::isValidVM(&cellVM);
+        isCellVMSameAsBlockVM = blockVM == &cellVM;
+        if (isValidCellVM)
+            isAliveCell = VMInspector::isValidCell(&cellVM.heap, cell);
+    }
+
+    CRASH_WITH_INFO(
+        contiguousZeroCount,
+        isValidBlockVM,
+        isBlockInVM,
+        isBlockHandleInVM,
+        hasCell,
+        isCellVMSameAsBlockVM,
+        isAliveCell
+    );
 }
 
 } // namespace JSC

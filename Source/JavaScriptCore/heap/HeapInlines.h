@@ -78,11 +78,11 @@ ALWAYS_INLINE bool Heap::isMarked(const void* rawCell)
 
 ALWAYS_INLINE bool Heap::testAndSetMarked(HeapVersion markingVersion, const void* rawCell)
 {
-    HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
+    JSCell* cell = bitwise_cast<JSCell*>(rawCell);
     if (cell->isPreciseAllocation())
         return cell->preciseAllocation().testAndSetMarked();
     MarkedBlock& block = cell->markedBlock();
-    Dependency dependency = block.aboutToMark(markingVersion);
+    Dependency dependency = block.aboutToMark(markingVersion, cell);
     return block.testAndSetMarked(cell, dependency);
 }
 
