@@ -59,7 +59,7 @@
     "web-platform-tests/css/css-anchor-position": "import",
     "web-platform-tests/css/css-animations": "import",
     "web-platform-tests/css/css-backgrounds": "import",
-    "web-platform-tests/css/css-borders": "skip",
+    "web-platform-tests/css/css-borders": "import",
     "web-platform-tests/css/css-box": "import",
     "web-platform-tests/css/css-break": "import",
     "web-platform-tests/css/css-cascade": "import",

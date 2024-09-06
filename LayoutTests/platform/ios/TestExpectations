@@ -3203,7 +3203,10 @@ webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--width.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--height.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--width.html [ ImageOnlyFailure ]
-
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/borders-on-sub-unit-sized-elements.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/subpixel-border-width.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/subpixel-borders-with-child-border-box-sizing.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/subpixel-borders-with-child.html [ ImageOnlyFailure ]
 
 webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height-viewbox.html [ Skip ]
 webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height.html [ Skip ]
@@ -4416,7 +4419,6 @@ webkit.org/b/254398 webgl/2.0.y/conformance/extensions/webgl-compressed-texture-
 
 # webkit.org/b/255177 Batch mark expectations for newly failing tests introduced with iOS 16.4 update
 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-multi-line.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-5.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-color-mix-function.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/disabled-elements/event-propagate-disabled.tentative.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html [ Failure ]

@@ -1,0 +1,64 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-block-end-radius-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-block-end-radius-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-block-end-radius-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-block-start-radius-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-block-start-radius-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-block-start-radius-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-bottom-radius-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-bottom-radius-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-bottom-radius-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-clip-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-clip-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-clip-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-inline-end-radius-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-inline-end-radius-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-inline-end-radius-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-inline-start-radius-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-inline-start-radius-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-inline-start-radius-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-left-radius-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-left-radius-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-left-radius-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-right-radius-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-right-radius-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-right-radius-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-top-radius-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-top-radius-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/border-top-radius-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-blur-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-blur-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-blur-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-color-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-color-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-color-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-offset-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-offset-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-offset-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-position-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-position-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-position-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-spread-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-spread-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/box-shadow-spread-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/corner-shape-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/corner-shape-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/corner-shape-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/corners-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/corners-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/tentative/parsing/corners-valid.html

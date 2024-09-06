@@ -7016,11 +7016,31 @@ webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-near-zero-svg.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-radius-000.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-radius-001.html [ ImageOnlyFailure ]
-webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-001.html [ ImageOnlyFailure ]
-webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-002.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-001.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-002.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-003.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-fixed-block-002.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-fixed-inline-002.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-fixed-inline-scrolled.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local-block-002.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local-inline-002.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-animated-text.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-text-decorations.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-gradient-interpolation-003.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-rounded-image-clip-002.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/border-radius-greater-than-width.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/tentative/border-radius-side-shorthands/border-radius-side-shorthands-001.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/tentative/border-radius-side-shorthands/border-radius-side-shorthands-002.html [ ImageOnlyFailure ]
+
+webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/tentative/corner-shape [ Skip ]
+
+webkit.org/b/279222 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-cors-no-reload.html [ Pass Failure ]
+
+webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-position/background-position-right-in-body.html [ ImageOnlyFailure ]
+webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover-svg-view.html [ ImageOnlyFailure ]
+webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-round-003.html [ ImageOnlyFailure ]
+webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-round-stretch-001.html [ ImageOnlyFailure ]
+webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-stretch-round-001.html [ ImageOnlyFailure ]
 
 # Flaky test that sometimes passes and sometimes fails.
 imported/w3c/web-platform-tests/screen-orientation/nested-documents.html [ Pass Failure ]
