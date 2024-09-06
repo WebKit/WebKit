@@ -449,11 +449,11 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
         // Top layer elements are always position: absolute; unless the position is set to fixed.
         // https://fullscreen.spec.whatwg.org/#new-stacking-layer
-        if (m_element != m_document.documentElement() && style.position() != PositionType::Absolute && style.position() != PositionType::Fixed && isInTopLayerOrBackdrop(style, m_element))
+        if (m_element != m_document->documentElement() && style.position() != PositionType::Absolute && style.position() != PositionType::Fixed && isInTopLayerOrBackdrop(style, m_element))
             style.setPosition(PositionType::Absolute);
 
         // Absolute/fixed positioned elements, floating elements and the document element need block-like outside display.
-        if (style.hasOutOfFlowPosition() || style.isFloating() || (m_element && m_document.documentElement() == m_element))
+        if (style.hasOutOfFlowPosition() || style.isFloating() || (m_element && m_document->documentElement() == m_element))
             style.setEffectiveDisplay(equivalentBlockDisplay(style));
 
         // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
@@ -548,7 +548,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     // cases where objects that should be blended as a single unit end up with a non-transparent
     // object wedged in between them. Auto z-index also becomes 0 for objects that specify transforms/masks/reflections.
     if (style.hasAutoUsedZIndex()) {
-        if ((m_element && m_document.documentElement() == m_element)
+        if ((m_element && m_document->documentElement() == m_element)
             || style.hasOpacity()
             || hasTransformRelatedProperty(style, m_element, m_parentStyle)
             || style.hasMask()
@@ -722,12 +722,12 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         return is<HTMLElement>(element) && element->hasAttributeWithoutSynchronization(HTMLNames::inertAttr);
     };
     auto isInertSubtreeRoot = [this, hasInertAttribute] (const Element* element) -> bool {
-        if (m_document.activeModalDialog() && element == m_document.documentElement())
+        if (m_document->activeModalDialog() && element == m_document->documentElement())
             return true;
         if (hasInertAttribute(element))
             return true;
 #if ENABLE(FULLSCREEN_API)
-        if (CheckedPtr fullscreenManager = m_document.fullscreenManagerIfExists(); fullscreenManager && fullscreenManager->fullscreenElement() && element == m_document.documentElement())
+        if (CheckedPtr fullscreenManager = m_document->fullscreenManagerIfExists(); fullscreenManager && fullscreenManager->fullscreenElement() && element == m_document->documentElement())
             return true;
 #endif
         return false;
@@ -737,11 +737,11 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
     if (m_element) {
         // Make sure the active dialog is interactable when the whole document is blocked by the modal dialog
-        if (m_element == m_document.activeModalDialog() && !hasInertAttribute(m_element))
+        if (m_element == m_document->activeModalDialog() && !hasInertAttribute(m_element))
             style.setEffectiveInert(false);
 
 #if ENABLE(FULLSCREEN_API)
-        if (CheckedPtr fullscreenManager = m_document.fullscreenManagerIfExists(); fullscreenManager && m_element == fullscreenManager->fullscreenElement() && !hasInertAttribute(m_element))
+        if (CheckedPtr fullscreenManager = m_document->fullscreenManagerIfExists(); fullscreenManager && m_element == fullscreenManager->fullscreenElement() && !hasInertAttribute(m_element))
             style.setEffectiveInert(false);
 #endif
 
@@ -754,7 +754,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 #endif
 
 #if ENABLE(TEXT_AUTOSIZING)
-        if (m_document.settings().textAutosizingUsesIdempotentMode())
+        if (m_document->settings().textAutosizingUsesIdempotentMode())
             adjustForTextAutosizing(style, *m_element);
 #endif
     }
@@ -815,7 +815,7 @@ static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
 void Adjuster::adjustDisplayContentsStyle(RenderStyle& style) const
 {
     bool isInTopLayer = isInTopLayerOrBackdrop(style, m_element);
-    if (isInTopLayer || m_document.documentElement() == m_element) {
+    if (isInTopLayer || m_document->documentElement() == m_element) {
         style.setEffectiveDisplay(DisplayType::Block);
         return;
     }
@@ -922,13 +922,13 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
     if (!m_element)
         return;
 
-    if (m_document.quirks().needsGMailOverflowScrollQuirk()) {
+    if (m_document->quirks().needsGMailOverflowScrollQuirk()) {
         // This turns sidebar scrollable without mouse move event.
         static MainThreadNeverDestroyed<const AtomString> roleValue("navigation"_s);
         if (style.overflowY() == Overflow::Hidden && m_element->attributeWithoutSynchronization(roleAttr) == roleValue)
             style.setOverflowY(Overflow::Auto);
     }
-    if (m_document.quirks().needsIPadSkypeOverflowScrollQuirk()) {
+    if (m_document->quirks().needsIPadSkypeOverflowScrollQuirk()) {
         // This makes the layout scrollable and makes visible the buttons hidden outside of the viewport.
         // static MainThreadNeverDestroyed<const AtomString> selectorValue(".app-container .noFocusOutline > div"_s);
         if (RefPtr div = dynamicDowncast<HTMLDivElement>(m_element)) {
@@ -941,13 +941,13 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
             }
         }
     }
-    if (m_document.quirks().needsYouTubeOverflowScrollQuirk()) {
+    if (m_document->quirks().needsYouTubeOverflowScrollQuirk()) {
         // This turns sidebar scrollable without hover.
         static MainThreadNeverDestroyed<const AtomString> idValue("guide-inner-content"_s);
         if (style.overflowY() == Overflow::Hidden && m_element->idForStyleResolution() == idValue)
             style.setOverflowY(Overflow::Auto);
     }
-    if (m_document.quirks().needsWeChatScrollingQuirk()) {
+    if (m_document->quirks().needsWeChatScrollingQuirk()) {
         static MainThreadNeverDestroyed<const AtomString> class1("tree-select"_s);
         static MainThreadNeverDestroyed<const AtomString> class2("v-tree-select"_s);
         const auto& flexBasis = style.flexBasis();
@@ -962,7 +962,7 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
             style.setMinHeight(Length(0, LengthType::Fixed));
     }
 #if ENABLE(VIDEO)
-    if (m_document.quirks().needsFullscreenDisplayNoneQuirk()) {
+    if (m_document->quirks().needsFullscreenDisplayNoneQuirk()) {
         if (RefPtr div = dynamicDowncast<HTMLDivElement>(m_element); div && style.display() == DisplayType::None) {
             static MainThreadNeverDestroyed<const AtomString> instreamNativeVideoDivClass("instream-native-video--mobile"_s);
             static MainThreadNeverDestroyed<const AtomString> videoElementID("vjs_video_3_html5_api"_s);
@@ -975,7 +975,7 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
         }
     }
 #if ENABLE(FULLSCREEN_API)
-    if (CheckedPtr fullscreenManager = m_document.fullscreenManagerIfExists(); fullscreenManager && m_document.quirks().needsFullscreenObjectFitQuirk()) {
+    if (CheckedPtr fullscreenManager = m_document->fullscreenManagerIfExists(); fullscreenManager && m_document->quirks().needsFullscreenObjectFitQuirk()) {
         static MainThreadNeverDestroyed<const AtomString> playerClassName("top-player-video-element"_s);
         bool isFullscreen = fullscreenManager->isFullscreen();
         RefPtr video = dynamicDowncast<HTMLVideoElement>(m_element);

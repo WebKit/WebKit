@@ -148,7 +148,7 @@ private:
         DescendantsToResolve descendantsToResolve { DescendantsToResolve::None };
     };
 
-    Document& m_document;
+    CheckedRef<Document> m_document;
     std::unique_ptr<RenderStyle> m_documentElementStyle;
 
     Vector<Ref<Scope>, 4> m_scopeStack;
