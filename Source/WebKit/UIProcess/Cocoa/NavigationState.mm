@@ -521,7 +521,7 @@ static bool isUnsupportedWebExtensionNavigation(API::NavigationAction& navigatio
         return false;
 
     auto *requiredBaseURL = page.cocoaView().get()._requiredWebExtensionBaseURL;
-    if (!requiredBaseURL)
+    if (!requiredBaseURL || navigationAction.shouldPerformDownload())
         return false;
 
     if (RefPtr extensionController = page.webExtensionController()) {
