@@ -3985,6 +3985,118 @@ TEST(ServiceWorker, OpenWindowCOOP)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "client");
 }
 
+#if PLATFORM(MAC)
+static constexpr auto ServiceWorkerNotYetFocusedMain =
+"<div>Test page 1</div>"
+"<script>"
+"let worker;"
+"async function registerServiceWorker() {"
+"    try {"
+"        const registration = await navigator.serviceWorker.register('/sw.js');"
+"        if (registration.active) {"
+"            worker = registration.active;"
+"            alert('already active');"
+"            return;"
+"        }"
+"        worker = registration.installing;"
+"        worker.addEventListener('statechange', () => {"
+"            if (worker.state == 'activated')"
+"                alert('successfully registered');"
+"        });"
+"    } catch(e) {"
+"        alert('Exception: ' + e);"
+"    }"
+"}"
+"window.onload = registerServiceWorker;"
+"</script>"_s;
+
+static constexpr auto ServiceWorkerNotYetFocusedClient =
+"<div>Test page 2</div>"
+"<script>"
+"async function checkFocused() {"
+"    let counter = 0;"
+"    while (++counter < 100) {"
+"        if (document.hasFocus()) {"
+"           alert('PASS');"
+"           return;"
+"        }"
+"        await new Promise(resolve => setTimeout(resolve, 50));"
+"    }"
+"    alert('FAIL');"
+"}"
+"window.onload = checkFocused;"
+"</script>"_s;
+
+static constexpr auto ServiceWorkerNotYetFocusedJS =
+"async function serveContent(event) {"
+"    try {"
+"        const client = await self.clients.get(event.resultingClientId);"
+"        client.focus();"
+"    } catch (e) {"
+"        return new Response('<div>Error page</div><script>alert(Response);</script>', {headers: {'Content-Type': 'text/html'} });"
+"    }"
+"    return fetch(event.request);"
+"}"
+"self.addEventListener('fetch', (event) => {"
+"    event.respondWith(serveContent(event));"
+"});"_s;
+
+TEST(ServiceWorker, FocusNotYetLoadedClient)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto preferences = [configuration preferences];
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"ServiceWorkersUserGestureEnabled"])
+            [preferences _setEnabled:NO forFeature:feature];
+    }
+
+    auto dataStoreDelegate = adoptNS([[ServiceWorkerOpenWindowWebsiteDataStoreDelegate alloc] initWithConfiguration:configuration.get()]);
+    [[configuration websiteDataStore] set_delegate:dataStoreDelegate.get()];
+
+    TestWebKitAPI::HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&](auto connection) -> TestWebKitAPI::Task {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = TestWebKitAPI::HTTPServer::parsePath(request);
+            if (path == "/"_s) {
+                co_await connection.awaitableSend(makeString("HTTP/1.1 200 OK\r\nContent-Type:text/html\r\nContent-Length: "_s, strlen(ServiceWorkerNotYetFocusedMain), "\r\n\r\n"_s));
+                co_await connection.awaitableSend(ServiceWorkerNotYetFocusedMain);
+                continue;
+            }
+            if (path == "/sw.js"_s) {
+                co_await connection.awaitableSend(makeString("HTTP/1.1 200 OK\r\nContent-Type:application/javascript\r\nContent-Length: "_s, strlen(ServiceWorkerNotYetFocusedJS), "\r\n\r\n"_s));
+                co_await connection.awaitableSend(ServiceWorkerNotYetFocusedJS);
+                continue;
+            }
+            if (path == "/delayed-client"_s) {
+                TestWebKitAPI::Util::runFor(0.5_s);
+                co_await connection.awaitableSend(makeString("HTTP/1.1 200 OK\r\nContent-Type:text/html\r\nContent-Length: "_s, strlen(ServiceWorkerNotYetFocusedClient), "\r\n\r\n"_s));
+                co_await connection.awaitableSend(ServiceWorkerNotYetFocusedClient);
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    });
+
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    [webView1 loadRequest:server.request()];
+    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "successfully registered");
+
+    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    [webView2 loadRequest:server.request("/delayed-client"_s)];
+    EXPECT_WK_STREQ([webView2 _test_waitForAlert], "PASS");
+}
+#endif
+
 #if WK_HAVE_C_SPI
 
 static constexpr auto serviceWorkerStorageTimingMainBytes = R"SWRESOURCE(

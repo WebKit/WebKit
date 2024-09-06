@@ -410,25 +410,35 @@ void WebSWClientConnection::notifyRecordResponseBodyEnd(RetrieveRecordResponseBo
         callback(makeUnexpected(WTFMove(error)));
 }
 
+static RefPtr<Page> pageFromScriptExecutionContextIdentifier(ScriptExecutionContextIdentifier clientIdentifier)
+{
+    RefPtr document = Document::allDocumentsMap().get(clientIdentifier);
+    if (!document) {
+        RefPtr loader = DocumentLoader::fromScriptExecutionContextIdentifier(clientIdentifier);
+        RefPtr frame = loader ? loader->frame() : nullptr;
+        return frame ? frame->page() : nullptr;
+    }
+    return document->page();
+}
+
 void WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>&& callback)
 {
-    RefPtr client = Document::allDocumentsMap().get(clientIdentifier);
-    auto* page = client ? client->page() : nullptr;
+    RefPtr page = pageFromScriptExecutionContextIdentifier(clientIdentifier);
     if (!page) {
         callback({ });
         return;
     }
 
     WebPage::fromCorePage(*page)->sendWithAsyncReply(Messages::WebPageProxy::FocusFromServiceWorker { }, [clientIdentifier, callback = WTFMove(callback)]() mutable {
-        RefPtr client = Document::allDocumentsMap().get(clientIdentifier);
-        RefPtr frame = client ? client->frame() : nullptr;
-        auto* page = frame ? frame->page() : nullptr;
+        RefPtr document = Document::allDocumentsMap().get(clientIdentifier);
+        RefPtr frame = document ? document->frame() : nullptr;
+        RefPtr page = frame ? frame->page() : nullptr;
         if (!page) {
             callback({ });
             return;
         }
         page->focusController().setFocusedFrame(frame.get());
-        callback(ServiceWorkerClientData::from(*client));
+        callback(ServiceWorkerClientData::from(*document));
     });
 }
 
