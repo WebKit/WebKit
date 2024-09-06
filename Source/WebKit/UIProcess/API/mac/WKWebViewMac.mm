@@ -1787,6 +1787,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _impl->setFontForWebView(font, sender);
 }
 
+- (void)_showWritingTools
+{
+#if ENABLE(WRITING_TOOLS)
+    _impl->showWritingTools();
+#endif
+}
+
 @end // WKWebView (WKPrivateMac)
 
 #endif // PLATFORM(MAC)
