@@ -465,6 +465,27 @@ void MediaSession::willPausePlayback()
     notifyPositionStateObservers();
 }
 
+static Vector<URL> fallbackArtwork(DocumentLoader* loader)
+{
+    if (!loader)
+        return { };
+    size_t size = 0;
+    for (const auto& icon : loader->linkIcons()) {
+        if (icon.url.protocolIsInHTTPFamily())
+            size++;
+    }
+    if (!size)
+        return { };
+
+    Vector<URL> images;
+    images.reserveInitialCapacity(size);
+    for (const auto& icon : loader->linkIcons()) {
+        if (icon.url.protocolIsInHTTPFamily())
+            images.append(icon.url);
+    };
+    return images;
+}
+
 void MediaSession::updateNowPlayingInfo(NowPlayingInfo& info)
 {
     if (auto positionState = this->positionState()) {
@@ -474,13 +495,10 @@ void MediaSession::updateNowPlayingInfo(NowPlayingInfo& info)
     if (auto currentPosition = this->currentPosition())
         info.currentTime = *currentPosition;
 
-    if (!m_defaultMetadata && (!m_metadata || m_metadata->artwork().isEmpty())) {
-        if (RefPtr loader = document() ? document()->loader() : nullptr; loader && loader->linkIcons().size()) {
-            Vector<URL> images { document()->loader()->linkIcons().size(), [&](size_t index) {
-                return loader->linkIcons()[index].url;
-            } };
+    if (!m_defaultArtworkAttempted && (!m_metadata || m_metadata->artwork().isEmpty())) {
+        m_defaultArtworkAttempted = true;
+        if (auto images = fallbackArtwork(document() ? document()->loader() : nullptr); images.size())
             m_defaultMetadata = MediaMetadata::create(*this, WTFMove(images));
-        }
     }
 
     if (RefPtr metadataWithImage = m_metadata && m_metadata->artworkImage() ? m_metadata : (m_defaultMetadata && m_defaultMetadata->artworkImage() ? m_defaultMetadata : nullptr)) {
