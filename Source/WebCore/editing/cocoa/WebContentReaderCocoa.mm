@@ -124,7 +124,7 @@ static NSDictionary *attributesForAttributedStringConversion(bool useInterchange
     NSURL *baseURL = URL::fakeURLWithRelativePart(emptyString());
 
     // The output base URL needs +1 refcount to work around the fact that NSHTMLReader over-releases it.
-    CFRetain((__bridge CFTypeRef)baseURL);
+    [baseURL retain];
 
     return @{
         NSExcludedElementsDocumentAttribute: excludedElements.get(),
