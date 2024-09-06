@@ -3635,8 +3635,6 @@ pointerevents/mouse/pointer-event-basic-properties.html [ Timeout ]
 imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004.html [ Failure Pass ]
 [ Release ] perf/nested-combined-selectors.html [ Failure ]
 
-webkit.org/b/238227 fast/dom/intersection-observer-document-leak.html [ Pass Failure ]
-
 webkit.org/b/238519 animations/shadow-host-child-change.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/236930 accessibility/ios-simulator/aria-details.html [ Crash Pass ]

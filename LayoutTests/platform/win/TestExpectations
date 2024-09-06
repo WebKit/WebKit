@@ -1231,8 +1231,6 @@ webkit.org/b/182128 fast/dom/navigator-detached-no-crash.html [ Pass Failure ]
 
 webkit.org/b/257624 fast/dom/SelectorAPI/caseID.html [ Failure Pass ]
 
-webkit.org/b/238227 fast/dom/intersection-observer-document-leak.html [ Pass Failure ]
-
 webkit.org/b/265213 fast/dom/Range/detach-range-during-deletecontents.html [ Skip ] # Timeout
 
 webkit.org/b/227753 [ Debug ] fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Pass Failure ]
