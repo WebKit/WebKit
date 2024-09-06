@@ -549,14 +549,16 @@ SocketPair createPlatformConnection(unsigned options)
 {
     int sockets[2];
 
-    auto setPasscredIfNeeded = [options, &sockets] {
 #if USE(GLIB) && OS(LINUX)
+    auto setPasscredIfNeeded = [options, &sockets] {
         if (options & SetPasscredOnServer) {
             int enable = 1;
             RELEASE_ASSERT(!setsockopt(sockets[1], SOL_SOCKET, SO_PASSCRED, &enable, sizeof(enable)));
         }
-#endif
     };
+#else
+    auto setPasscredIfNeeded = [] { };
+#endif
 
 #if OS(LINUX)
     if ((options & SetCloexecOnServer) || (options & SetCloexecOnClient)) {
