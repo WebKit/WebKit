@@ -346,24 +346,32 @@ TEST_P(ConnectionTestABBA, IncomingMessageThrottlingNestedRunLoopDispatches)
     }
 }
 
+// Sends a connection that is already closed (invalidated). We still expect to receive the connection
+// and receive didClose on the connection.
 TEST_P(ConnectionTestABBA, ReceiveAlreadyInvalidatedClientNoAssert)
 {
     ASSERT_TRUE(openBoth());
+    constexpr size_t iterations = 800;
     HashSet<uint64_t> done;
+    struct {
+        RefPtr<IPC::Connection> clientConnection;
+        MockConnectionClient mockClientClient;
+    } connections[iterations];
+
     bClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
-        auto destinationID = decoder.destinationID();
+        auto i = decoder.destinationID();
         auto handle = decoder.decode<IPC::Connection::Handle>();
         if (!handle)
             return false;
         Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(*handle) });
-        MockConnectionClient mockClientClient;
-        clientConnection->open(mockClientClient);
-        EXPECT_TRUE(mockClientClient.waitForDidClose(kDefaultWaitForTimeout)) << destinationID;
-        clientConnection->invalidate();
-        done.add(destinationID);
+        clientConnection->open(connections[i].mockClientClient);
+        connections[i].clientConnection = WTFMove(clientConnection);
+        // The connection starts as not closed in order for the system to deliver didClose().
+        EXPECT_FALSE(connections[i].mockClientClient.gotDidClose()) << i;
+        done.add(i);
         return true;
     });
-    for (uint64_t i = 1; i < 801; ++i) {
+    for (uint64_t i = 1; i < iterations; ++i) {
         auto identifiers = IPC::Connection::createConnectionIdentifierPair();
         ASSERT_NE(identifiers, std::nullopt);
         Ref<IPC::Connection> serverConnection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
@@ -372,8 +380,14 @@ TEST_P(ConnectionTestABBA, ReceiveAlreadyInvalidatedClientNoAssert)
         a()->send(MockTestMessageWithConnection { WTFMove(identifiers->client) }, i);
         serverConnection->invalidate();
     }
-    while (done.size() < 800)
+    while (done.size() < iterations - 1)
         RunLoop::current().cycle();
+
+    for (uint64_t i = 1; i < iterations; ++i) {
+        auto& connection = connections[i];
+        EXPECT_TRUE(connection.mockClientClient.gotDidClose() || connection.mockClientClient.waitForDidClose(kDefaultWaitForTimeout)) << i;
+        connection.clientConnection->invalidate();
+    }
 }
 
 // DISABLED: currently cannot test that wait on unopened connection causes InvalidConnection,
