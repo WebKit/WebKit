@@ -82,7 +82,17 @@ private:
     Vector<RefPtr<Element>> m_internalSVGReferences;
     Vector<CachedResourceHandle<CachedSVGDocument>> m_externalSVGReferences;
 
-    LayoutRect m_targetBoundingBox;
+    struct FilterInputs {
+        LayoutRect dirtyRect;
+        LayoutRect filterBoxRect;
+        FloatSize filterScale;
+        OptionSet<FilterRenderingMode> renderingModes;
+
+        bool operator==(const FilterInputs&) const = default;
+    };
+
+    FilterInputs m_filterInputs;
+
     LayoutRect m_dirtySourceRect;
     LayoutRect m_repaintRect;
 

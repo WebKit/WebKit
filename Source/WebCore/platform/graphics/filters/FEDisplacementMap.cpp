@@ -81,6 +81,12 @@ FloatRect FEDisplacementMap::calculateImageRect(const Filter& filter, std::span<
     return filter.maxEffectRect(primitiveSubregion);
 }
 
+IntOutsets FEDisplacementMap::calculateOutsets(const FloatSize& maxDisplacement)
+{
+    auto intDisplacement = expandedIntSize(maxDisplacement);
+    return { intDisplacement.height(), intDisplacement.width(), intDisplacement.height(), intDisplacement.width() };
+}
+
 const DestinationColorSpace& FEDisplacementMap::resultColorSpace(const FilterImageVector& inputs) const
 {
     // Spec: The 'color-interpolation-filters' property only applies to the 'in2' source image

@@ -45,14 +45,15 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSFilter);
 
-RefPtr<CSSFilter> CSSFilter::create(RenderElement& renderer, const FilterOperations& operations, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
+RefPtr<CSSFilter> CSSFilter::create(RenderElement& renderer, const FilterOperations& operations, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale,
+    const FloatRect& inflatedDirtyRect, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
 {
     bool hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin = operations.hasFilterThatShouldBeRestrictedBySecurityOrigin();
 
     auto filter = adoptRef(*new CSSFilter(filterScale, hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin));
 
-    if (!filter->buildFilterFunctions(renderer, operations, preferredFilterRenderingModes, targetBoundingBox, destinationContext)) {
+    if (!filter->buildFilterFunctions(renderer, operations, preferredFilterRenderingModes, inflatedDirtyRect, targetBoundingBox, destinationContext)) {
         LOG_WITH_STREAM(Filters, stream << "CSSFilter::create: failed to build filters " << operations);
         return nullptr;
     }
@@ -227,18 +228,20 @@ static IntOutsets calculateReferenceFilterOutsets(const ReferenceFilterOperation
     return SVGFilter::calculateOutsets(*filterElement, targetBoundingBox);
 }
 
-static RefPtr<SVGFilter> createReferenceFilter(CSSFilter& filter, const ReferenceFilterOperation& filterOperation, RenderElement& renderer, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
+static RefPtr<SVGFilter> createReferenceFilter(CSSFilter& filter, const ReferenceFilterOperation& filterOperation, RenderElement& renderer, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatRect& inflatedDirtyRect, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
 {
     RefPtr filterElement = referenceFilterElement(filterOperation, renderer);
     if (!filterElement)
         return nullptr;
 
+    // We need to compute the filterRegion based on the unclipped target box size, because resolveRectangle() computes percentages of the box size.
     auto filterRegion = SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement.get(), filterElement->filterUnits(), targetBoundingBox);
+    filterRegion.intersect(inflatedDirtyRect);
 
     return SVGFilter::create(*filterElement, preferredFilterRenderingModes, filter.filterScale(), filterRegion, targetBoundingBox, destinationContext);
 }
 
-bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
+bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatRect& inflatedDirtyRect, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
 {
     RefPtr<FilterFunction> function;
 
@@ -289,7 +292,7 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
             break;
 
         case FilterOperation::Type::Reference:
-            function = createReferenceFilter(*this, uncheckedDowncast<ReferenceFilterOperation>(operation), renderer, preferredFilterRenderingModes, targetBoundingBox, destinationContext);
+            function = createReferenceFilter(*this, uncheckedDowncast<ReferenceFilterOperation>(operation), renderer, preferredFilterRenderingModes, inflatedDirtyRect, targetBoundingBox, destinationContext);
             break;
 
         default:
