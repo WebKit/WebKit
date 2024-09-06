@@ -368,6 +368,11 @@ bool NetworkResourceLoader::shouldSendResourceLoadMessages() const
 
 void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoad load)
 {
+    if (request.wasSchemeOptimisticallyUpgraded()) {
+        // FIXME: This timeout should be adaptive based on network conditions
+        request.setTimeoutInterval(3);
+    }
+
     LOADER_RELEASE_LOG("startNetworkLoad: (isFirstLoad=%d, timeout=%f)", load == FirstLoad::Yes, request.timeoutInterval());
     if (load == FirstLoad::Yes) {
         consumeSandboxExtensions();
@@ -406,11 +411,6 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
                 httpBody = IPC::FormDataReference { WTFMove(formData) };
         }
         m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidSendRequest(m_parameters.webPageProxyID, resourceLoadInfo(), request, httpBody), 0);
-    }
-
-    if (request.wasSchemeOptimisticallyUpgraded()) {
-        // FIXME: This timeout should be adaptive based on network conditions
-        request.setTimeoutInterval(10);
     }
 
     if (networkSession->shouldSendPrivateTokenIPCForTesting())
