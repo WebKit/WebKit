@@ -1,4 +1,18 @@
 =================
+WPE WebKit 2.44.4
+=================
+
+  - Add quirk to allow totale.rosettastone.com to load properly.
+  - Fix webkit_web_resource_get_data() not working properly in some sites.
+  - Fix not being able to jump-to-source in Web Inspector canvas traces.
+  - Fix not being able to scroll list of WebGL shader programs in the
+    Web Inspector.
+  - Fix the build with GBM support when the WPEPlatform library is disabled.
+  - Fix linker relocation errors on Debug/RelWithDebInfo builds.
+  - Fix crashes when built with Clang with Link-Time Optimization (LTO).
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.44.3
 =================
 
