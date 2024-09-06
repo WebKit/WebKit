@@ -54,9 +54,8 @@ std::unique_ptr<CoordinatedPlatformLayerBufferVideo> CoordinatedPlatformLayerBuf
 
 CoordinatedPlatformLayerBufferVideo::CoordinatedPlatformLayerBufferVideo(GstBuffer* buffer, GstVideoInfo* videoInfo, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)
     : CoordinatedPlatformLayerBuffer(Type::Video, IntSize(GST_VIDEO_INFO_WIDTH(videoInfo), GST_VIDEO_INFO_HEIGHT(videoInfo)), flags, nullptr)
-    , m_gstBuffer(buffer)
     , m_videoDecoderPlatform(videoDecoderPlatform)
-    , m_buffer(createBufferIfNeeded(videoInfo, gstGLEnabled))
+    , m_buffer(createBufferIfNeeded(buffer, videoInfo, gstGLEnabled))
 {
 }
 
@@ -81,15 +80,15 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
     return CoordinatedPlatformLayerBufferRGB::create(WTFMove(texture), m_flags, nullptr);
 }
 
-std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferIfNeeded(GstVideoInfo* videoInfo, bool gstGLEnabled)
+std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferIfNeeded(GstBuffer* buffer, GstVideoInfo* videoInfo, bool gstGLEnabled)
 {
     if (gstGLEnabled)
-        return createBufferFromGLMemory(videoInfo);
+        return createBufferFromGLMemory(buffer, videoInfo);
 
     // When not having a texture, we map the frame here and upload the pixels to a texture in the
     // compositor thread, in paintToTextureMapper(), which also allows us to use the texture mapper
     // bitmap texture pool.
-    m_isMapped = gst_video_frame_map(&m_videoFrame, videoInfo, m_gstBuffer.get(), GST_MAP_READ);
+    m_isMapped = gst_video_frame_map(&m_videoFrame, videoInfo, buffer, GST_MAP_READ);
     if (!m_isMapped)
         return nullptr;
 
@@ -99,13 +98,13 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
     return nullptr;
 }
 
-std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferFromGLMemory(GstVideoInfo* videoInfo)
+std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferFromGLMemory(GstBuffer* buffer, GstVideoInfo* videoInfo)
 {
-    GstMemory* memory = gst_buffer_peek_memory(m_gstBuffer.get(), 0);
+    GstMemory* memory = gst_buffer_peek_memory(buffer, 0);
     if (!gst_is_gl_memory(memory))
         return nullptr;
 
-    m_isMapped = gst_video_frame_map(&m_videoFrame, videoInfo, m_gstBuffer.get(), static_cast<GstMapFlags>(GST_MAP_READ | GST_MAP_GL));
+    m_isMapped = gst_video_frame_map(&m_videoFrame, videoInfo, buffer, static_cast<GstMapFlags>(GST_MAP_READ | GST_MAP_GL));
     if (!m_isMapped)
         return nullptr;
 
@@ -155,21 +154,23 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
 
 void CoordinatedPlatformLayerBufferVideo::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)
 {
+    if (!m_isMapped)
+        return;
     if (m_videoDecoderPlatform != GstVideoDecoderPlatform::OpenMAX) {
-        if (auto* meta = gst_buffer_get_gl_sync_meta(m_gstBuffer.get())) {
-            GstMemory* memory = gst_buffer_peek_memory(m_gstBuffer.get(), 0);
+        if (auto* meta = gst_buffer_get_gl_sync_meta(m_videoFrame.buffer)) {
+            GstMemory* memory = gst_buffer_peek_memory(m_videoFrame.buffer, 0);
             GstGLContext* context = reinterpret_cast<GstGLBaseMemory*>(memory)->context;
             gst_gl_sync_meta_wait_cpu(meta, context);
         }
     }
 
-    if (!m_buffer && m_isMapped) {
+    if (!m_buffer) {
         OptionSet<BitmapTexture::Flags> textureFlags;
         if (GST_VIDEO_INFO_HAS_ALPHA(&m_videoFrame.info))
             textureFlags.add(BitmapTexture::Flags::SupportsAlpha);
         auto texture = textureMapper.acquireTextureFromPool(m_size, textureFlags);
 
-        auto* meta = gst_buffer_get_video_gl_texture_upload_meta(m_gstBuffer.get());
+        auto* meta = gst_buffer_get_video_gl_texture_upload_meta(m_videoFrame.buffer);
         if (meta && meta->n_textures == 1) {
             guint ids[4] = { texture->id(), 0, 0, 0 };
             if (gst_video_gl_texture_upload_meta_upload(meta, ids))

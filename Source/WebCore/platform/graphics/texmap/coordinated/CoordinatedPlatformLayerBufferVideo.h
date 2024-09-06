@@ -42,10 +42,9 @@ public:
 private:
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
 
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferIfNeeded(GstVideoInfo*, bool gstGLEnabled);
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromGLMemory(GstVideoInfo*);
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferIfNeeded(GstBuffer*, GstVideoInfo*, bool gstGLEnabled);
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromGLMemory(GstBuffer*, GstVideoInfo*);
 
-    GRefPtr<GstBuffer> m_gstBuffer;
     GstVideoFrame m_videoFrame;
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
     bool m_isMapped { false };
