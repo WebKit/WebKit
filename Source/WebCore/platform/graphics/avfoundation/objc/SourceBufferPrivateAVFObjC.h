@@ -197,7 +197,7 @@ private:
     bool requiresFlush() const;
     void flushVideo();
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-    AVSampleBufferAudioRenderer* audioRendererForTrackID(TrackID) const;
+    RetainPtr<AVSampleBufferAudioRenderer> audioRendererForTrackID(TrackID) const;
     void flushAudio(AVSampleBufferAudioRenderer *);
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 

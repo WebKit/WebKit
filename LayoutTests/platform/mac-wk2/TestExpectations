@@ -1852,6 +1852,3 @@ imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.
 
 # webkit.org/b/279140 [ macOS wk2 ] REGRESSION (283140@main): [ macOS wk2 ] fast/scrolling/mac/scrollbars/scrollbar-state.html is a constant failure 
 fast/scrolling/mac/scrollbars/scrollbar-state.html [ Failure ] 
-
-# webkit.org/b/279232 REGRESSION(283049@main): [ macOS EWS ]: imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-mode.html is a flaky crash
-[ Debug ]  imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-mode.html [ Skip ]
