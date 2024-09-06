@@ -98,14 +98,24 @@ protected:
     // Returns whether the pointer should be freed or not.
     bool derefBase() const
     {
+#if ASSERT_ENABLED
+        (void)m_beSameSizeAsRefCountedBase1;
+        (void)m_beSameSizeAsRefCountedBase2;
+#endif
 #if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
         ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
+        (void)m_beSameSizeAsRefCountedBase3;
 #endif
         return derefBaseWithoutDeletionCheck();
     }
 
 private:
     mutable std::atomic<unsigned> m_refCount { 1 };
+
+#if ASSERT_ENABLED
+    mutable bool m_beSameSizeAsRefCountedBase1 { true };
+    bool m_beSameSizeAsRefCountedBase2 { true };
+#endif
 
 #if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
     bool deletionHasEnded() const;
@@ -116,6 +126,7 @@ private:
         Yes = 0xFEEDB0BA
     };
     mutable std::atomic<IsAllocatedMemory> m_isAllocatedMemory { IsAllocatedMemory::Yes };
+    bool m_beSameSizeAsRefCountedBase3 { true };
 #endif
 };
 
