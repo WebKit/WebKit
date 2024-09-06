@@ -538,7 +538,6 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
 }
 
 // maps.google.com https://bugs.webkit.org/show_bug.cgi?id=199904
-// desmos.com rdar://50925173
 std::optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(EventTarget* target) const
 {
     if (!shouldDispatchSimulatedMouseEvents(target))
@@ -550,9 +549,6 @@ std::optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(Even
             return Event::IsCancelable::Yes;
         return { };
     }
-
-    if (isDomain("desmos.com"_s))
-        return Event::IsCancelable::No;
 
     return Event::IsCancelable::Yes;
 }
