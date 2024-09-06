@@ -683,9 +683,11 @@ public:
 
     virtual void addInitialTextAnimationForActiveWritingToolsSession() { }
 
-    virtual void addSourceTextAnimationForActiveWritingToolsSession(const CharacterRange&, const String&, CompletionHandler<void(TextAnimationRunMode)>&&) { }
+    virtual void addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& /*sourceAnimationUUID*/, const WTF::UUID& /*destinationAnimationUUID*/, bool, const CharacterRange&, const String&, CompletionHandler<void(TextAnimationRunMode)>&&) { }
 
-    virtual void addDestinationTextAnimationForActiveWritingToolsSession(const std::optional<CharacterRange>&, const String&) { }
+    virtual void addDestinationTextAnimationForActiveWritingToolsSession(const WTF::UUID& /*sourceAnimationUUID*/, const WTF::UUID& /*destinationAnimationUUID*/, const std::optional<CharacterRange>&, const String&) { }
+
+    virtual void saveSnapshotOfTextPlaceholderForAnimation(const SimpleRange&) { };
 
     virtual void clearAnimationsForActiveWritingToolsSession() { };
 #endif

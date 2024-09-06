@@ -2446,6 +2446,9 @@ public:
     void enableTextAnimationTypeForElementWithID(const String& elementID);
 
     void callCompletionHandlerForAnimationID(const WTF::UUID&, WebCore::TextAnimationRunMode);
+#if PLATFORM(IOS_FAMILY)
+    void storeDestinationCompletionHandlerForAnimationID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>)>&&);
+#endif
     void getTextIndicatorForID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
     void updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID&, bool, CompletionHandler<void()>&& = [] { });
 

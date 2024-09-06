@@ -177,7 +177,7 @@
     for (NSUUID *chunkID in [_chunkToEffect allKeys]) {
         RetainPtr effectData = [_chunkToEffect objectForKey:chunkID];
         if ([effectData type] == WebCore::TextAnimationType::Initial)
-            [self addTextAnimationForAnimationID:chunkID withData: { WebCore::TextAnimationType::Initial, WebCore::TextAnimationRunMode::RunAnimation, WTF::UUID(WTF::UUID::emptyValue) }];
+            [self addTextAnimationForAnimationID:chunkID withData:{ WebCore::TextAnimationType::Initial, WebCore::TextAnimationRunMode::RunAnimation }];
     }
 }
 

@@ -37,6 +37,8 @@
 #include "CSSValuePool.h"
 #include "CachedResourceLoader.h"
 #include "ChangeListTypeCommand.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "ClipboardEvent.h"
 #include "CommonAtomStrings.h"
 #include "CompositionEvent.h"
@@ -3678,6 +3680,12 @@ RefPtr<TextPlaceholderElement> Editor::insertTextPlaceholder(const IntSize& size
     document->selection().addCaretVisibilitySuppressionReason(CaretVisibilitySuppressionReason::TextPlaceholderIsShowing);
 
     document->selection().setSelection(VisibleSelection { positionInParentBeforeNode(placeholder.ptr()) }, FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes));
+
+#if ENABLE(WRITING_TOOLS)
+    // For Writing Tools, we need the snapshot of the last inserted placeholder.
+    if (auto placeholderRange = makeRangeSelectingNode(placeholder.get()))
+        protectedDocument()->page()->chrome().client().saveSnapshotOfTextPlaceholderForAnimation(*placeholderRange);
+#endif
 
     return placeholder;
 }

@@ -160,9 +160,9 @@ private:
     void replaceContentsOfRangeInSession(CompositionState&, const SimpleRange&, const AttributedString&, WritingToolsCompositionCommand::State);
 
     void compositionSessionDidFinishReplacement();
-    void compositionSessionDidFinishReplacement(const CharacterRange&, const String&);
+    void compositionSessionDidFinishReplacement(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, const CharacterRange&, const String&);
 
-    void compositionSessionDidReceiveTextWithReplacementRangeAsync(const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished, TextAnimationRunMode);
+    void compositionSessionDidReceiveTextWithReplacementRangeAsync(const WTF::UUID&, const WTF::UUID&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished, TextAnimationRunMode);
 
     void showOriginalCompositionForSession();
     void showRewrittenCompositionForSession();

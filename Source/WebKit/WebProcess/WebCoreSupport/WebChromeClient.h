@@ -524,9 +524,11 @@ private:
 
     void addInitialTextAnimationForActiveWritingToolsSession() final;
 
-    void addSourceTextAnimationForActiveWritingToolsSession(const WebCore::CharacterRange&, const String&, CompletionHandler<void(WebCore::TextAnimationRunMode)>&&) final;
+    void addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, bool finished, const WebCore::CharacterRange&, const String&, CompletionHandler<void(WebCore::TextAnimationRunMode)>&&) final;
 
-    void addDestinationTextAnimationForActiveWritingToolsSession(const std::optional<WebCore::CharacterRange>&, const String&) final;
+    void addDestinationTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, const std::optional<WebCore::CharacterRange>&, const String&) final;
+
+    void saveSnapshotOfTextPlaceholderForAnimation(const WebCore::SimpleRange&);
 
     void clearAnimationsForActiveWritingToolsSession() final;
 #endif

@@ -991,14 +991,19 @@ void WebPage::addInitialTextAnimationForActiveWritingToolsSession()
     m_textAnimationController->addInitialTextAnimationForActiveWritingToolsSession();
 }
 
-void WebPage::addSourceTextAnimationForActiveWritingToolsSession(const CharacterRange& range, const String& string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
+void WebPage::addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, bool finished, const CharacterRange& range, const String& string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
 {
-    m_textAnimationController->addSourceTextAnimationForActiveWritingToolsSession(range, string, WTFMove(completionHandler));
+    m_textAnimationController->addSourceTextAnimationForActiveWritingToolsSession(sourceAnimationUUID, destinationAnimationUUID, finished, range, string, WTFMove(completionHandler));
 }
 
-void WebPage::addDestinationTextAnimationForActiveWritingToolsSession(const std::optional<CharacterRange>& range, const String& string)
+void WebPage::addDestinationTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, const std::optional<CharacterRange>& range, const String& string)
 {
-    m_textAnimationController->addDestinationTextAnimationForActiveWritingToolsSession(range, string);
+    m_textAnimationController->addDestinationTextAnimationForActiveWritingToolsSession(sourceAnimationUUID, destinationAnimationUUID, range, string);
+}
+
+void WebPage::saveSnapshotOfTextPlaceholderForAnimation(const WebCore::SimpleRange& placeholderRange)
+{
+    m_textAnimationController->saveSnapshotOfTextPlaceholderForAnimation(placeholderRange);
 }
 
 void WebPage::clearAnimationsForActiveWritingToolsSession()

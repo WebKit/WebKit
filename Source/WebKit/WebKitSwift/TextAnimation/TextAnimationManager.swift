@@ -42,12 +42,16 @@ import WebKitSwift
     }
     
     @objc(addTextAnimationForAnimationID:withStyleType:) public func beginEffect(for uuid: UUID, style: WKTextAnimationType) {
-        if style == .initial {
+        switch style {
+        case .initial:
             let newEffect = self.effectView.addEffect(UITextEffectView.PonderingEffect(chunk: TextEffectChunk(uuid: uuid), view: self.effectView) as UITextEffectView.TextEffect)
             self.chunkToEffect[uuid] = newEffect
-        } else {
+        case .source:
             let newEffect = self.effectView.addEffect(UITextEffectView.ReplacementTextEffect(chunk: TextEffectChunk(uuid: uuid), view: self.effectView, delegate:self) as UITextEffectView.TextEffect)
             self.chunkToEffect[uuid] = newEffect
+        case .final:
+            break
+            // Discard `.final` since we don't manually start the 2nd part of the animation on iOS.
         }
     }
     
@@ -107,9 +111,10 @@ extension TextAnimationManager: UITextEffectView.ReplacementTextEffect.Delegate 
             return nil
         }
 
-        guard let preview = await delegate.targetedPreview(for: uuidChunk.uuid) else {
-            Self.logger.debug("Could not generate a UITargetedPreview")
-            return nil
+        let preview = await withCheckedContinuation { continuation in
+            delegate.callCompletionHandler(forAnimationID: uuidChunk.uuid) { preview in
+                continuation.resume(returning: preview)
+            }
         }
 
         return preview

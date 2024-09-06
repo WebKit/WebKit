@@ -433,15 +433,16 @@ void WritingToolsController::intelligenceTextAnimationsDidComplete()
 void WritingToolsController::compositionSessionDidFinishReplacement()
 {
     // An empty optional range implies that an animation should be considered to have already been finished.
-    m_page->chrome().client().addDestinationTextAnimationForActiveWritingToolsSession(std::nullopt, ""_s);
+    WTF::UUID emptyUUID { WTF::UUID::emptyValue };
+    m_page->chrome().client().addDestinationTextAnimationForActiveWritingToolsSession(emptyUUID, emptyUUID, std::nullopt, ""_s);
 }
 
-void WritingToolsController::compositionSessionDidFinishReplacement(const CharacterRange& updatedRange, const String& replacementText)
+void WritingToolsController::compositionSessionDidFinishReplacement(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, const CharacterRange& updatedRange, const String& replacementText)
 {
-    m_page->chrome().client().addDestinationTextAnimationForActiveWritingToolsSession(updatedRange, replacementText);
+    m_page->chrome().client().addDestinationTextAnimationForActiveWritingToolsSession(sourceAnimationUUID, destinationAnimationUUID, updatedRange, replacementText);
 }
 
-void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRangeAsync(const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished, TextAnimationRunMode runMode)
+void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRangeAsync(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished, TextAnimationRunMode runMode)
 {
     RefPtr document = this->document();
     if (!document) {
@@ -523,8 +524,6 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
         return;
     }
 
-    // FIXME: We won't be setting the selection after every replace, we need a different way to
-    // calculate this range.
     auto selectionRange = state->reappliedCommands.last()->endingSelection().firstRange();
     if (!selectionRange) {
         compositionSessionDidFinishReplacement();
@@ -534,11 +533,11 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
     auto rangeAfterReplace = characterRange(sessionRange, *selectionRange);
 
-    compositionSessionDidFinishReplacement(rangeAfterReplace, attributedText.string);
+    compositionSessionDidFinishReplacement(sourceAnimationUUID, destinationAnimationUUID, rangeAfterReplace, attributedText.string);
     document->selection().clear();
 }
 
-void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange(const WritingTools::Session&, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished)
+void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange(const WritingTools::Session& session, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished)
 {
     RELEASE_LOG(WritingTools, "WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange [range: %llu, %llu; finished: %d]", range.location, range.length, finished);
 
@@ -550,15 +549,21 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
     m_page->chrome().client().removeInitialTextAnimationForActiveWritingToolsSession();
 
-    auto addDestinationTextAnimation = [weakThis = WeakPtr { *this }, attributedText, range, context, finished](TextAnimationRunMode runMode) mutable {
-        weakThis->compositionSessionDidReceiveTextWithReplacementRangeAsync(attributedText, range, context, finished, runMode);
+    // Must generate these UUID now to pass into the source animation for iOS to work.
+    auto sourceAnimationUUID = WTF::UUID::createVersion4();
+    auto destinationAnimationUUID = WTF::UUID::createVersion4();
+
+    auto addDestinationTextAnimation = [weakThis = WeakPtr { *this }, attributedText, range, context, finished, sourceAnimationUUID, destinationAnimationUUID](TextAnimationRunMode runMode) mutable {
+        if (weakThis)
+            weakThis->compositionSessionDidReceiveTextWithReplacementRangeAsync(sourceAnimationUUID, destinationAnimationUUID, attributedText, range, context, finished, runMode);
     };
 
-#if PLATFORM(MAC)
-    m_page->chrome().client().addSourceTextAnimationForActiveWritingToolsSession(range, attributedText.string, WTFMove(addDestinationTextAnimation));
-#else
-    addDestinationTextAnimation(WebCore::TextAnimationRunMode::RunAnimation);
-#endif
+    // We only get a single replace call for smart replies with finished = true. We use this flag to not run the final replace for a compsition
+    // session, so for smart replies, we need to make sure to not send with this flag, so that we can be sure to do the animation for smart replies.
+    if (session.compositionType == WritingTools::SessionCompositionType::SmartReply)
+        finished = false;
+
+    m_page->chrome().client().addSourceTextAnimationForActiveWritingToolsSession(sourceAnimationUUID, destinationAnimationUUID, finished, range, attributedText.string, WTFMove(addDestinationTextAnimation));
 }
 
 template<>

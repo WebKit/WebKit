@@ -1892,14 +1892,19 @@ void WebChromeClient::addInitialTextAnimationForActiveWritingToolsSession()
     protectedPage()->addInitialTextAnimationForActiveWritingToolsSession();
 }
 
-void WebChromeClient::addSourceTextAnimationForActiveWritingToolsSession(const CharacterRange& range, const String& string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
+void WebChromeClient::addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, bool finished, const CharacterRange& range, const String& string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
 {
-    protectedPage()->addSourceTextAnimationForActiveWritingToolsSession(range, string, WTFMove(completionHandler));
+    protectedPage()->addSourceTextAnimationForActiveWritingToolsSession(sourceAnimationUUID, destinationAnimationUUID, finished, range, string, WTFMove(completionHandler));
 }
 
-void WebChromeClient::addDestinationTextAnimationForActiveWritingToolsSession(const std::optional<CharacterRange>& range, const String& string)
+void WebChromeClient::addDestinationTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, const std::optional<CharacterRange>& range, const String& string)
 {
-    protectedPage()->addDestinationTextAnimationForActiveWritingToolsSession(range, string);
+    protectedPage()->addDestinationTextAnimationForActiveWritingToolsSession(sourceAnimationUUID, destinationAnimationUUID, range, string);
+}
+
+void WebChromeClient::saveSnapshotOfTextPlaceholderForAnimation(const WebCore::SimpleRange& placeholderRange)
+{
+    protectedPage()->saveSnapshotOfTextPlaceholderForAnimation(placeholderRange);
 }
 
 void WebChromeClient::clearAnimationsForActiveWritingToolsSession()

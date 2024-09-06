@@ -565,6 +565,7 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<UIView<UITextCursorView>> _editDropTextCursorView;
     RetainPtr<UITextCursorDropPositionAnimator> _editDropCaretAnimator;
 #endif
+    RetainPtr<NSMutableDictionary<NSUUID *, NSUUID *>> _sourceAnimationIDtoDestinationAnimationID;
 
 #if HAVE(PEPPER_UI_CORE)
     RetainPtr<WKFocusedFormControlView> _focusedFormControlView;
@@ -838,7 +839,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)clearTextIndicator:(WebCore::TextIndicatorDismissalAnimation)animation;
 
 #if ENABLE(WRITING_TOOLS)
-- (void)addTextAnimationForAnimationID:(NSUUID *)uuid withStyleType:(WKTextAnimationType)styleType;
+- (void)addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebCore::TextAnimationData&)data;
 - (void)removeTextAnimationForAnimationID:(NSUUID *)uuid;
 #endif
 

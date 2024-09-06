@@ -51,6 +51,11 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/unicode/CharacterNames.h>
+
+#if PLATFORM(MAC)
+#import <pal/spi/mac/NSTextInputContextSPI.h>
+#endif
+
 #import <pal/cocoa/WritingToolsUISoftLink.h>
 
 #if PLATFORM(MAC)
@@ -2874,27 +2879,56 @@ TEST(WritingTools, SuggestedTextIsSelectedAfterSmartReply)
         EXPECT_EQ(1UL, contexts.count);
 
         [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
-        TestWebKitAPI::Util::runFor(0.1_s);
 
-        EXPECT_WK_STREQ(@"", contexts.firstObject.attributedText.string);
+#if PLATFORM(MAC)
+        [(id<NSTextInputClient_Async>)webView.get() insertTextPlaceholderWithSize:CGSizeMake(50, 100) completionHandler:^(NSTextPlaceholder *placeholder) {
 
-        RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@"Z"]);
+            TestWebKitAPI::Util::runFor(0.1_s);
+            EXPECT_WK_STREQ(@"", contexts.firstObject.attributedText.string);
+            RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@"Z"]);
 
-        [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 0) inContext:contexts.firstObject finished:NO];
-        TestWebKitAPI::Util::runFor(0.1_s);
+            [(id<NSTextInputClient_Async>)webView.get() removeTextPlaceholder:placeholder willInsertText:YES completionHandler:^{
 
-        [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 0) inContext:contexts.firstObject finished:YES];
+                [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 0) inContext:contexts.firstObject finished:YES];
 
-        [webView waitForSelectionValue:@"Z"];
+                [webView waitForSelectionValue:@"Z"];
 
-        [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
+                [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
 
-        auto selectionAfterEnd = [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"];
-        EXPECT_WK_STREQ(@"Z", selectionAfterEnd);
+                auto selectionAfterEnd = [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"];
+                EXPECT_WK_STREQ(@"Z", selectionAfterEnd);
 
-        EXPECT_WK_STREQ(@"ZAAAA\n\nBBBB", [webView contentsAsString]);
+                EXPECT_WK_STREQ(@"ZAAAA\n\nBBBB", [webView contentsAsString]);
 
-        finished = true;
+                finished = true;
+
+            }];
+        }];
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+        [(id<UIWKInteractionViewProtocol>)[webView textInputContentView] insertTextPlaceholderWithSize:CGSizeMake(50, 100) completionHandler:^(UITextPlaceholder *placeholder) {
+            TestWebKitAPI::Util::runFor(0.1_s);
+            EXPECT_WK_STREQ(@"", contexts.firstObject.attributedText.string);
+            RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@"Z"]);
+
+            [(id<UIWKInteractionViewProtocol>)[webView textInputContentView] removeTextPlaceholder:placeholder willInsertText:YES completionHandler:^{
+
+                [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 0) inContext:contexts.firstObject finished:YES];
+
+                [webView waitForSelectionValue:@"Z"];
+
+                [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
+
+                auto selectionAfterEnd = [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"];
+                EXPECT_WK_STREQ(@"Z", selectionAfterEnd);
+
+                EXPECT_WK_STREQ(@"ZAAAA\n\nBBBB", [webView contentsAsString]);
+
+                finished = true;
+            }];
+        }];
+#endif
     }];
 
     TestWebKitAPI::Util::run(&finished);

@@ -1269,6 +1269,26 @@ void WebPageProxy::addTextAnimationForAnimationIDWithCompletionHandler(IPC::Conn
     if (completionHandler)
         internals().completionHandlerForAnimationID.add(uuid, WTFMove(completionHandler));
 
+#if PLATFORM(IOS_FAMILY)
+    // The shape of the iOS API requires us to have stored this completionHandler when we call into the WebProcess
+    // to replace the text and generate the text indicator of the replacement text.
+    if (auto destinationAnimationCompletionHandler = internals().completionHandlerForDestinationTextIndicatorForSourceID.take(uuid))
+        destinationAnimationCompletionHandler(indicatorData);
+
+    // Storing and sending information for the different shaped SPI on iOS.
+    if (styleData.runMode == WebCore::TextAnimationRunMode::RunAnimation) {
+        if (styleData.style == WebCore::TextAnimationType::Source)
+            internals().sourceAnimationIDtoDestinationAnimationID.add(styleData.destinationAnimationUUID, uuid);
+
+        if (styleData.style == WebCore::TextAnimationType::Final) {
+            if (auto sourceAnimationID = internals().sourceAnimationIDtoDestinationAnimationID.take(uuid)) {
+                if (auto completionHandler = internals().completionHandlerForDestinationTextIndicatorForSourceID.take(sourceAnimationID))
+                    completionHandler(indicatorData);
+            }
+        }
+    }
+#endif
+
     protectedPageClient()->addTextAnimationForAnimationID(uuid, styleData);
 }
 
@@ -1280,6 +1300,13 @@ void WebPageProxy::callCompletionHandlerForAnimationID(const WTF::UUID& uuid, We
     if (auto completionHandler = internals().completionHandlerForAnimationID.take(uuid))
         completionHandler(runMode);
 }
+
+#if PLATFORM(IOS_FAMILY)
+void WebPageProxy::storeDestinationCompletionHandlerForAnimationID(const WTF::UUID& destinationAnimationUUID, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>)>&& completionHandler)
+{
+    internals().completionHandlerForDestinationTextIndicatorForSourceID.add(destinationAnimationUUID, WTFMove(completionHandler));
+}
+#endif
 
 void WebPageProxy::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
 {
