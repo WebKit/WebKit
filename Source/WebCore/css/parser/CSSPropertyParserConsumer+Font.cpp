@@ -77,10 +77,12 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
+#if ENABLE(VARIATION_FONTS)
 static bool isFontStyleAngleInRange(double angleInDegrees)
 {
     return angleInDegrees >= -90 && angleInDegrees <= 90;
 }
+#endif
 
 static CSSParserMode parserMode(ScriptExecutionContext& context)
 {
