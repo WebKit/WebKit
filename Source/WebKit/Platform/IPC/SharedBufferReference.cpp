@@ -90,8 +90,12 @@ const uint8_t* SharedBufferReference::data() const
     if (m_memory)
         return static_cast<uint8_t*>(m_memory->data());
 #endif
-    if (!m_buffer || !m_buffer->isContiguous())
+    if (!m_buffer)
         return nullptr;
+
+    if (!m_buffer->isContiguous())
+        m_buffer = m_buffer->makeContiguous();
+
     return downcast<SharedBuffer>(m_buffer.get())->data();
 }
 
