@@ -179,6 +179,7 @@ private:
     Vector<Ref<MediaMetadata>> m_playlist;
 #endif
     mutable Lock m_actionHandlersLock;
+    mutable bool m_defaultArtworkAttempted { false };
 };
 
 String convertEnumerationToString(MediaSessionPlaybackState);
