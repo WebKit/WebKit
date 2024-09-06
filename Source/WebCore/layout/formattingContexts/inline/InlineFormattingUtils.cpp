@@ -566,12 +566,12 @@ std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasi
     // Normally we resolve visual -> logical values at pre-layout time, but emphaisis values are not part of the general box geometry.
     auto hasAboveTextEmphasis = false;
     auto hasUnderTextEmphasis = false;
-    if (style.isHorizontalWritingMode()) {
-        hasAboveTextEmphasis = emphasisPosition.contains(TextEmphasisPosition::Over);
-        hasUnderTextEmphasis = !hasAboveTextEmphasis && emphasisPosition.contains(TextEmphasisPosition::Under);
+    if (style.isVerticalWritingMode()) {
+        hasAboveTextEmphasis = !emphasisPosition.contains(TextEmphasisPosition::Left);
+        hasUnderTextEmphasis = !hasAboveTextEmphasis;
     } else {
-        hasAboveTextEmphasis = emphasisPosition.contains(TextEmphasisPosition::Right) || emphasisPosition == TextEmphasisPosition::Over;
-        hasUnderTextEmphasis = !hasAboveTextEmphasis && (emphasisPosition.contains(TextEmphasisPosition::Left) || emphasisPosition == TextEmphasisPosition::Under);
+        hasAboveTextEmphasis = !emphasisPosition.contains(TextEmphasisPosition::Under);
+        hasUnderTextEmphasis = !hasAboveTextEmphasis;
     }
 
     if (!hasAboveTextEmphasis && !hasUnderTextEmphasis)

@@ -2097,24 +2097,10 @@ std::optional<bool> RenderText::emphasisMarkExistsAndIsAbove(const RenderText& r
     if (style.textEmphasisMark() == TextEmphasisMark::None)
         return std::nullopt;
 
-    const OptionSet<TextEmphasisPosition> horizontalMask { TextEmphasisPosition::Left, TextEmphasisPosition::Right };
-
     auto emphasisPosition = style.textEmphasisPosition();
-    auto emphasisPositionHorizontalValue = emphasisPosition & horizontalMask;
-    ASSERT(!((emphasisPosition & TextEmphasisPosition::Over) && (emphasisPosition & TextEmphasisPosition::Under)));
-    ASSERT(emphasisPositionHorizontalValue != horizontalMask);
-
-    bool isAbove = false;
-    if (!emphasisPositionHorizontalValue)
-        isAbove = emphasisPosition.contains(TextEmphasisPosition::Over);
-    else if (style.isHorizontalWritingMode())
-        isAbove = emphasisPosition.contains(TextEmphasisPosition::Over);
-    else
-        isAbove = emphasisPositionHorizontalValue == TextEmphasisPosition::Right;
-
-    if ((style.isHorizontalWritingMode() && (emphasisPosition & TextEmphasisPosition::Under))
-        || (!style.isHorizontalWritingMode() && (emphasisPosition & TextEmphasisPosition::Left)))
-        return isAbove; // Ruby text is always over, so it cannot suppress emphasis marks under.
+    bool isAbove = !emphasisPosition.contains(TextEmphasisPosition::Under);
+    if (style.isVerticalWritingMode())
+        isAbove = !emphasisPosition.contains(TextEmphasisPosition::Left);
 
     auto findRubyAnnotation = [&]() -> RenderBlockFlow* {
         for (auto* baseCandidate = renderer.parent(); baseCandidate; baseCandidate = baseCandidate->parent()) {
