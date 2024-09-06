@@ -3,14 +3,11 @@
     // no layout. If the test passes, there are two green squares. If it fails, then one
     // or both of the squares is red instead.
 
-    var layoutCountBeforeTimer;
-
     function animationComplete()
     {
         if (window.internals && window.testRunner) {
             internals.updateLayoutAndStyleForAllFrames();
-            var count = internals.layoutCount - layoutCountBeforeTimer;
-            if (count == 0) {
+            if (internals.layoutUpdateCount() == 0) {
                 var indicator = document.getElementById("indicator");
                 indicator.addEventListener("load", function() { testRunner.notifyDone(); })
                 indicator.src = "resources/rgb-jpeg-green.jpg";
@@ -25,7 +22,7 @@
         if (window.internals && window.testRunner) {
             testRunner.waitUntilDone();
             internals.updateLayoutAndStyleForAllFrames();
-            layoutCountBeforeTimer = internals.layoutCount;
+            internals.startTrackingLayoutUpdates();
         }
 
         // The 200ms value here is longer than the time it takes for gif-loop-count.gif

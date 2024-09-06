@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 5000px;
+        }
+        .container > div {
+            margin: 20px;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        description('Test that layout and render layer updates do not happen for style changes that do not need them.');
+        window.jsTestIsAsync = true;
+
+        var results = [];
+        var result;
+
+	// Stash the results during the test, so that we don't mutate layout inserting the output into the document.
+        function expectLayoutAndLayerUpdateCounts(layoutCount, layerUpdateCount)
+        {
+            results.push({
+                expectedLayoutCount: layoutCount,
+                actualLayoutCount: internals.layoutUpdateCount(),
+                expectedLayerUpdateCount: layerUpdateCount,
+                actualLayerUpdateCount: internals.renderLayerPositionUpdateCount()
+            });
+        }
+
+        function runTest()
+        {
+            internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+            internals.startTrackingLayoutUpdates();
+            internals.startTrackingRenderLayerPositionUpdates();
+
+            const boxes = document.querySelectorAll('.box');
+
+            // Check that interleaved mutations and getBoundingClientRect don't trigger layer updates.
+            boxes[0].style.width = "101px";
+            boxes[0].getBoundingClientRect();
+
+            expectLayoutAndLayerUpdateCounts(1, 0);
+
+	    boxes[1].style.width = "101px";
+            boxes[1].getBoundingClientRect();
+
+            expectLayoutAndLayerUpdateCounts(2, 0);
+
+            boxes[2].style.width = "101px";
+            boxes[2].getBoundingClientRect();
+
+            expectLayoutAndLayerUpdateCounts(3, 0);
+
+            // Check that getBoundingClientRect without mutations doesn't do any extra work.
+            for (let box of boxes) {
+                box.getBoundingClientRect();
+            }
+
+            expectLayoutAndLayerUpdateCounts(3, 0);
+
+            // Check that flushing layout via another property results in the layer update happening.
+            boxes[1].offsetTop;
+
+            expectLayoutAndLayerUpdateCounts(4, 1);
+
+            for (let i = 0; i < results.length; i++) {
+              result =  results[i];
+              shouldBe('result.actualLayoutCount', 'result.expectedLayoutCount');
+              shouldBe('result.actualLayerUpdateCount', 'result.expectedLayerUpdateCount');
+            }
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', function() {
+            window.setTimeout(runTest, 200);
+        }, false);
+    </script>
+</head>
+<body>
+  <div class="container">
+    <div id="box" class="box"></div>
+    <div id="box" class="box"></div>
+    <div id="box" class="box"></div>
+    <div id="box" class="box"></div>
+    <div id="box" class="box"></div>
+    <div id="box" class="box"></div>
+    <div id="box" class="box"></div>
+    <div id="box" class="box"></div>
+  </div>
+
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1109,6 +1109,7 @@ void LocalFrameView::topContentInsetDidChange(float newTopContentInset)
     if (platformWidget())
         platformSetTopContentInset(newTopContentInset);
     
+    renderView->setNeedsLayout();
     layoutContext().layout();
     // Every scroll that happens as the result of content inset change is programmatic.
     auto oldScrollType = currentScrollType();
@@ -1299,12 +1300,42 @@ void LocalFrameView::willDoLayout(SingleThreadWeakPtr<RenderElement> layoutRoot)
     forceLayoutParentViewIfNeeded();
 }
 
-void LocalFrameView::didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot, bool didRunSimplifiedLayout)
+bool LocalFrameView::hasPendingUpdateLayerPositions() const
+{
+    return !!m_pendingUpdateLayerPositions;
+}
+
+void LocalFrameView::flushUpdateLayerPositions()
+{
+    if (!m_pendingUpdateLayerPositions)
+        return;
+
+    UpdateLayerPositions updateLayerPositions = *std::exchange(m_pendingUpdateLayerPositions, std::nullopt);
+
+    WeakPtr layoutRoot = updateLayerPositions.layoutRoot;
+    if (!layoutRoot)
+        layoutRoot = renderView();
+
+    if (layoutRoot) {
+        CheckedPtr enclosingLayer = layoutRoot->enclosingLayer();
+        enclosingLayer->updateLayerPositionsAfterLayout(updateLayerPositions.layoutIdentifier, !is<RenderView>(*layoutRoot), updateLayerPositions.needsFullRepaint, updateLayerPositions.didRunSimplifiedLayout ? RenderLayer::CanUseSimplifiedRepaintPass::Yes : RenderLayer::CanUseSimplifiedRepaintPass::No);
+        m_renderLayerPositionUpdateCount++;
+    }
+}
+
+void LocalFrameView::didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot, bool didRunSimplifiedLayout, bool canDeferUpdateLayerPositions)
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    m_layoutUpdateCount++;
 
-    auto* layoutRootEnclosingLayer = layoutRoot->enclosingLayer();
-    layoutRootEnclosingLayer->updateLayerPositionsAfterLayout(!is<RenderView>(*layoutRoot), layoutContext().needsFullRepaint(), didRunSimplifiedLayout ? RenderLayer::CanUseSimplifiedRepaintPass::Yes : RenderLayer::CanUseSimplifiedRepaintPass::No);
+    UpdateLayerPositions updateLayerPositions { layoutRoot, layoutContext().layoutIdentifier(), layoutContext().needsFullRepaint(), didRunSimplifiedLayout };
+    if (!m_pendingUpdateLayerPositions || !m_pendingUpdateLayerPositions->merge(updateLayerPositions)) {
+        flushUpdateLayerPositions();
+        m_pendingUpdateLayerPositions = updateLayerPositions;
+    }
+
+    if (!canDeferUpdateLayerPositions)
+        flushUpdateLayerPositions();
 
     m_updateCompositingLayersIsPending = true;
 
@@ -2956,9 +2987,17 @@ void LocalFrameView::updateLayerPositionsAfterScrolling()
     if (!layoutContext().isLayoutNested() && hasViewportConstrainedObjects()) {
         if (auto* renderView = this->renderView()) {
             updateWidgetPositions();
+            flushUpdateLayerPositions();
             renderView->layer()->updateLayerPositionsAfterDocumentScroll();
         }
     }
+}
+
+void LocalFrameView::updateLayerPositionsAfterOverflowScroll(RenderLayer& layer)
+{
+    flushUpdateLayerPositions();
+    layer.updateLayerPositionsAfterOverflowScroll();
+    scheduleUpdateWidgetPositions();
 }
 
 ScrollingCoordinator* LocalFrameView::scrollingCoordinator() const
@@ -5359,6 +5398,26 @@ String LocalFrameView::trackedRepaintRectsAsText() const
         ts << ")\n";
     }
     return ts.release();
+}
+
+void LocalFrameView::startTrackingLayoutUpdates()
+{
+    m_layoutUpdateCount = 0;
+}
+
+unsigned LocalFrameView::layoutUpdateCount()
+{
+    return m_layoutUpdateCount;
+}
+
+void LocalFrameView::startTrackingRenderLayerPositionUpdates()
+{
+    m_renderLayerPositionUpdateCount = 0;
+}
+
+unsigned LocalFrameView::renderLayerPositionUpdateCount()
+{
+    return m_renderLayerPositionUpdateCount;
 }
 
 void LocalFrameView::addScrollableAreaForAnimatedScroll(ScrollableArea* scrollableArea)

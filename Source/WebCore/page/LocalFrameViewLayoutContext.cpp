@@ -144,13 +144,13 @@ UpdateScrollInfoAfterLayoutTransaction& LocalFrameViewLayoutContext::updateScrol
     return *m_updateScrollInfoAfterLayoutTransaction;
 }
 
-void LocalFrameViewLayoutContext::layout()
+void LocalFrameViewLayoutContext::layout(bool canDeferUpdateLayerPositions)
 {
     LOG_WITH_STREAM(Layout, stream << "LocalFrameView " << &view() << " LocalFrameViewLayoutContext::layout() with size " << view().layoutSize());
 
     Ref protectedView(view());
 
-    performLayout();
+    performLayout(canDeferUpdateLayerPositions);
 
     if (view().hasOneRef())
         return;
@@ -162,14 +162,14 @@ void LocalFrameViewLayoutContext::layout()
         if (!needsLayout())
             break;
 
-        performLayout();
+        performLayout(canDeferUpdateLayerPositions);
 
         if (view().hasOneRef())
             return;
     }
 }
 
-void LocalFrameViewLayoutContext::performLayout()
+void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPositions)
 {
     Ref frame = this->frame();
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!document()->inRenderTreeUpdate());
@@ -222,7 +222,7 @@ void LocalFrameViewLayoutContext::performLayout()
         layoutRoot = subtreeLayoutRoot() ? subtreeLayoutRoot() : renderView();
         m_needsFullRepaint = is<RenderView>(layoutRoot) && (m_firstLayout || renderView()->printing());
 
-        LOG_WITH_STREAM(Layout, stream << "LocalFrameView " << &view() << " layout " << m_layoutCount << " - subtree root " << subtreeLayoutRoot() << ", needsFullRepaint " << m_needsFullRepaint);
+        LOG_WITH_STREAM(Layout, stream << "LocalFrameView " << &view() << " layout " << m_layoutIdentifier << " - subtree root " << subtreeLayoutRoot() << ", needsFullRepaint " << m_needsFullRepaint);
 
         protectedView()->willDoLayout(layoutRoot);
         m_firstLayout = false;
@@ -240,7 +240,6 @@ void LocalFrameViewLayoutContext::performLayout()
 #endif
         ++m_layoutIdentifier;
         layoutRoot->layout();
-        ++m_layoutCount;
 #if ENABLE(TEXT_AUTOSIZING)
         applyTextSizingIfNeeded(*layoutRoot.get());
 #endif
@@ -272,14 +271,14 @@ void LocalFrameViewLayoutContext::performLayout()
         if (m_needsFullRepaint)
             renderView()->repaintRootContents();
         ASSERT(!layoutRoot->needsLayout());
-        protectedView()->didLayout(layoutRoot, isSimplifiedLayout);
-        runOrScheduleAsynchronousTasks();
+        protectedView()->didLayout(layoutRoot, isSimplifiedLayout, canDeferUpdateLayerPositions);
+        runOrScheduleAsynchronousTasks(canDeferUpdateLayerPositions);
     }
     InspectorInstrumentation::didLayout(frame, *layoutRoot);
     DebugPageOverlays::didLayout(frame);
 }
 
-void LocalFrameViewLayoutContext::runOrScheduleAsynchronousTasks()
+void LocalFrameViewLayoutContext::runOrScheduleAsynchronousTasks(bool canDeferUpdateLayerPositions)
 {
     if (m_postLayoutTaskTimer.isActive())
         return;
@@ -298,10 +297,10 @@ void LocalFrameViewLayoutContext::runOrScheduleAsynchronousTasks()
     }
 
     runPostLayoutTasks();
-    if (needsLayout()) {
+    if (needsLayoutInternal()) {
         // If runPostLayoutTasks() made us layout again, let's defer the tasks until after we return.
         m_postLayoutTaskTimer.startOneShot(0_s);
-        layout();
+        layout(canDeferUpdateLayerPositions);
     }
 }
 
@@ -325,7 +324,6 @@ void LocalFrameViewLayoutContext::reset()
 {
     m_layoutPhase = LayoutPhase::OutsideLayout;
     clearSubtreeLayoutRoot();
-    m_layoutCount = 0;
     m_layoutSchedulingIsEnabled = true;
     m_layoutTimer.stop();
     m_firstLayout = true;
@@ -333,7 +331,18 @@ void LocalFrameViewLayoutContext::reset()
     m_needsFullRepaint = true;
 }
 
-bool LocalFrameViewLayoutContext::needsLayout() const
+bool LocalFrameViewLayoutContext::needsLayout(OptionSet<LayoutOptions> layoutOptions) const
+{
+    if (needsLayoutInternal())
+        return true;
+
+    if (layoutOptions.contains(LayoutOptions::CanDeferUpdateLayerPositions))
+        return false;
+
+    return protectedView()->hasPendingUpdateLayerPositions();
+}
+
+bool LocalFrameViewLayoutContext::needsLayoutInternal() const
 {
     // This can return true in cases where the document does not have a body yet.
     // Document::shouldScheduleLayout takes care of preventing us from scheduling

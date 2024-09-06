@@ -1381,7 +1381,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
 int AccessibilityRenderObject::layoutCount() const
 {
     auto* view = dynamicDowncast<RenderView>(m_renderer.get());
-    return view ? view->frameView().layoutContext().layoutCount() : 0;
+    return view ? view->frameView().layoutUpdateCount() : 0;
 }
 
 CharacterRange AccessibilityRenderObject::documentBasedSelectedTextRange() const

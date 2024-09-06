@@ -889,6 +889,12 @@ enum RenderingMode {
     unsigned long styleRecalcCount();
     readonly attribute unsigned long lastStyleUpdateSize;
 
+    undefined startTrackingLayoutUpdates();
+    unsigned long layoutUpdateCount();
+
+    undefined startTrackingRenderLayerPositionUpdates();
+    unsigned long renderLayerPositionUpdateCount();
+
     undefined startTrackingCompositingUpdates();
     unsigned long compositingUpdateCount();
 
@@ -903,8 +909,6 @@ enum RenderingMode {
     // If |node| is an HTMLIFrameElement, it assumes node.contentDocument is
     // specified without security checks. Unspecified or null means this document.
     undefined updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(optional Node? node = null);
-
-    readonly attribute unsigned long layoutCount;
 
     // Returns a string with information about the mouse cursor used at the specified client location.
     DOMString getCurrentCursorInfo();

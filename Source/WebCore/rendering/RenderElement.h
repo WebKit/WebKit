@@ -304,7 +304,7 @@ public:
     using LayoutIdentifier = unsigned;
     void setLayoutIdentifier(LayoutIdentifier layoutIdentifier) { m_layoutIdentifier = layoutIdentifier; }
     LayoutIdentifier layoutIdentifier() const { return m_layoutIdentifier; }
-    bool didVisitDuringLastLayout() const;
+    bool didVisitSinceLayout(LayoutIdentifier) const;
 
 protected:
     RenderElement(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);

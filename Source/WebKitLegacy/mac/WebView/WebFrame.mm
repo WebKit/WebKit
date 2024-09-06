@@ -1408,7 +1408,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     WebCore::LocalFrame *frame = core(self);
     if (!frame || !frame->view())
         return 0;
-    return frame->view()->layoutContext().layoutCount();
+    return frame->view()->layoutUpdateCount();
 }
 
 - (BOOL)isTelephoneNumberParsingAllowed

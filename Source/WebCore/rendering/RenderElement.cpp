@@ -1099,9 +1099,9 @@ void RenderElement::willBeRemovedFromTree()
     RenderObject::willBeRemovedFromTree();
 }
 
-bool RenderElement::didVisitDuringLastLayout() const
+bool RenderElement::didVisitSinceLayout(LayoutIdentifier identifier) const
 {
-    return layoutIdentifier() == view().frameView().layoutContext().layoutIdentifier();
+    return layoutIdentifier() >= identifier;
 }
 
 inline void RenderElement::clearSubtreeLayoutRootIfNeeded() const

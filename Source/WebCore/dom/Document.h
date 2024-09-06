@@ -379,6 +379,11 @@ enum class LayoutOptions : uint8_t {
     ContentVisibilityForceLayout = 1 << 2,
     UpdateCompositingLayers = 1 << 3,
     DoNotLayoutAncestorDocuments = 1 << 4,
+    // Doesn't call RenderLayer::recursiveUpdateLayerPositionsAfterLayout if
+    // possible. The caller should use a LocalFrameView::AutoPreventLayerAccess
+    // for the scope that layout is expected to be flushed to stop any access to
+    // the stale RenderLayers.
+    CanDeferUpdateLayerPositions = 1 << 5
 };
 
 enum class HttpEquivPolicy : uint8_t {

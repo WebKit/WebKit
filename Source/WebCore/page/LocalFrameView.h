@@ -129,6 +129,9 @@ public:
     CheckedRef<const LocalFrameViewLayoutContext> checkedLayoutContext() const;
     CheckedRef<LocalFrameViewLayoutContext> checkedLayoutContext();
 
+    bool hasPendingUpdateLayerPositions() const;
+    void flushUpdateLayerPositions();
+
     WEBCORE_EXPORT bool didFirstLayout() const;
 
     WEBCORE_EXPORT bool needsLayout() const;
@@ -279,6 +282,7 @@ public:
     void cancelScheduledScrolls();
     void scrollToFocusedElementImmediatelyIfNeeded();
     void updateLayerPositionsAfterScrolling() final;
+    void updateLayerPositionsAfterOverflowScroll(RenderLayer&);
     void updateCompositingLayersAfterScrolling() final;
     static WEBCORE_EXPORT bool scrollRectToVisible(const LayoutRect& absoluteRect, const RenderObject&, bool insideFixed, const ScrollRectToVisibleOptions&);
 
@@ -575,6 +579,11 @@ public:
     const Vector<FloatRect>& trackedRepaintRects() const { return m_trackedRepaintRects; }
     String trackedRepaintRectsAsText() const;
 
+    WEBCORE_EXPORT void startTrackingLayoutUpdates();
+    WEBCORE_EXPORT unsigned layoutUpdateCount();
+    WEBCORE_EXPORT void startTrackingRenderLayerPositionUpdates();
+    WEBCORE_EXPORT unsigned renderLayerPositionUpdateCount();
+
     typedef WeakHashSet<ScrollableArea> ScrollableAreaSet;
     // Returns whether the scrollable area has just been newly added.
     WEBCORE_EXPORT bool addScrollableArea(ScrollableArea*);
@@ -732,6 +741,35 @@ public:
     IntSize totalScrollbarSpace() const final;
     int scrollbarGutterWidth(bool isHorizontalWritingMode = true) const;
     int insetForLeftScrollbarSpace() const final;
+
+#if ASSERT_ENABLED
+    struct AutoPreventLayerAccess {
+        AutoPreventLayerAccess(LocalFrameView* view)
+            : frameView(view)
+            , oldPreventLayerAccess(view ? view->layerAccessPrevented() : false)
+        {
+            if (view)
+                view->setLayerAcessPrevented(true);
+        }
+
+        ~AutoPreventLayerAccess()
+        {
+            if (frameView)
+                frameView->setLayerAcessPrevented(oldPreventLayerAccess);
+        }
+
+    private:
+        SingleThreadWeakPtr<LocalFrameView> frameView;
+        bool oldPreventLayerAccess { false };
+    };
+
+    void setLayerAcessPrevented(bool prevented) { m_layerAccessPrevented = prevented; }
+    bool layerAccessPrevented() const { return m_layerAccessPrevented; }
+#else
+    struct AutoPreventLayerAccess {
+        AutoPreventLayerAccess(LocalFrameView*) { }
+    };
+#endif
 
 private:
     explicit LocalFrameView(LocalFrame&);
@@ -895,7 +933,7 @@ private:
     RenderElement* viewportRenderer() const;
     
     void willDoLayout(SingleThreadWeakPtr<RenderElement> layoutRoot);
-    void didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot, bool didRunSimplifiedLayout);
+    void didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot, bool didRunSimplifiedLayout, bool canDeferUpdateLayerPositions);
 
     FloatSize calculateSizeForCSSViewportUnitsOverride(std::optional<OverrideViewportSize>) const;
 
@@ -974,6 +1012,8 @@ private:
     unsigned m_visuallyNonEmptyCharacterCount { 0 };
     unsigned m_visuallyNonEmptyPixelCount { 0 };
     unsigned m_textRendererCountForVisuallyNonEmptyCharacters { 0 };
+    unsigned m_layoutUpdateCount { 0 };
+    unsigned m_renderLayerPositionUpdateCount { 0 };
     int m_headerHeight { 0 };
     int m_footerHeight { 0 };
 
@@ -998,6 +1038,26 @@ private:
     std::unique_ptr<ScrollableAreaSet> m_scrollableAreas;
     std::unique_ptr<ScrollableAreaSet> m_scrollableAreasForAnimatedScroll;
     std::unique_ptr<SingleThreadWeakHashSet<RenderLayerModelObject>> m_viewportConstrainedObjects;
+
+    struct UpdateLayerPositions {
+        bool merge(const UpdateLayerPositions& other)
+        {
+            // FIXME: If one is an ancestor of the other we can also probably combine them.
+            if (layoutRoot != other.layoutRoot)
+                return false;
+
+            needsFullRepaint |= other.needsFullRepaint;
+            if (!other.didRunSimplifiedLayout)
+                didRunSimplifiedLayout = false;
+            return true;
+        }
+
+        SingleThreadWeakPtr<RenderElement> layoutRoot;
+        RenderElement::LayoutIdentifier layoutIdentifier : 12 { 0 };
+        bool needsFullRepaint { false };
+        bool didRunSimplifiedLayout { true };
+    };
+    std::optional<UpdateLayerPositions> m_pendingUpdateLayerPositions;
 
     OptionSet<LayoutMilestone> m_milestonesPendingPaint;
 
@@ -1054,6 +1114,9 @@ private:
     bool m_inUpdateEmbeddedObjects { false };
     bool m_scheduledToScrollToAnchor { false };
     bool m_updateCompositingLayersIsPending { false };
+#if ASSERT_ENABLED
+    bool m_layerAccessPrevented { false };
+#endif
 };
 
 inline void LocalFrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)

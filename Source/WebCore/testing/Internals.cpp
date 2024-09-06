@@ -4028,6 +4028,44 @@ unsigned Internals::lastStyleUpdateSize() const
     return document->lastStyleUpdateSizeForTesting();
 }
 
+ExceptionOr<void> Internals::startTrackingLayoutUpdates()
+{
+    Document* document = contextDocument();
+    if (!document || !document->view())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    document->view()->startTrackingLayoutUpdates();
+    return { };
+}
+
+ExceptionOr<unsigned> Internals::layoutUpdateCount()
+{
+    Document* document = contextDocument();
+    if (!document || !document->view())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    return document->view()->layoutUpdateCount();
+}
+
+ExceptionOr<void> Internals::startTrackingRenderLayerPositionUpdates()
+{
+    Document* document = contextDocument();
+    if (!document || !document->view())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    document->view()->startTrackingRenderLayerPositionUpdates();
+    return { };
+}
+
+ExceptionOr<unsigned> Internals::renderLayerPositionUpdateCount()
+{
+    Document* document = contextDocument();
+    if (!document || !document->view())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    return document->view()->renderLayerPositionUpdateCount();
+}
+
 ExceptionOr<void> Internals::startTrackingCompositingUpdates()
 {
     Document* document = contextDocument();
@@ -4133,14 +4171,6 @@ ExceptionOr<void> Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayou
     document->flushDeferredAXObjectCacheUpdate();
 
     return { };
-}
-
-unsigned Internals::layoutCount() const
-{
-    Document* document = contextDocument();
-    if (!document || !document->view())
-        return 0;
-    return document->view()->layoutContext().layoutCount();
 }
 
 #if !PLATFORM(IOS_FAMILY)

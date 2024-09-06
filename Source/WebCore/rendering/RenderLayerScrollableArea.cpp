@@ -364,9 +364,7 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
     // We don't update compositing layers, because we need to do a deep update from the compositing ancestor.
     if (!view.frameView().layoutContext().isInRenderTreeLayout()) {
         // If we're in the middle of layout, we'll just update layers once layout has finished.
-        m_layer.updateLayerPositionsAfterOverflowScroll();
-
-        view.frameView().scheduleUpdateWidgetPositions();
+        view.frameView().updateLayerPositionsAfterOverflowScroll(m_layer);
 
         if (!m_updatingMarqueePosition) {
             // Avoid updating compositing layers if, higher on the stack, we're already updating layer

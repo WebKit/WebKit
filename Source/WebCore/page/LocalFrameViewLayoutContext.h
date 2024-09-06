@@ -67,8 +67,8 @@ public:
     LocalFrameViewLayoutContext(LocalFrameView&);
     ~LocalFrameViewLayoutContext();
 
-    WEBCORE_EXPORT void layout();
-    bool needsLayout() const;
+    WEBCORE_EXPORT void layout(bool canDeferUpdateLayerPositions = false);
+    bool needsLayout(OptionSet<LayoutOptions> layoutOptions = { }) const;
 
     // We rely on the side-effects of layout, like compositing updates, to update state in various subsystems
     // whose dependencies are poorly defined. This call triggers such updates.
@@ -97,8 +97,6 @@ public:
 
     bool needsSkippedContentLayout() const { return m_needsSkippedContentLayout; }
     void setNeedsSkippedContentLayout(bool needsSkippedContentLayout) { m_needsSkippedContentLayout = needsSkippedContentLayout; }
-
-    unsigned layoutCount() const { return m_layoutCount; }
 
     RenderElement* subtreeLayoutRoot() const;
     void clearSubtreeLayoutRoot() { m_subtreeLayoutRoot.clear(); }
@@ -144,13 +142,15 @@ private:
     friend class LayoutStateDisabler;
     friend class SubtreeLayoutStateMaintainer;
 
-    void performLayout();
+    bool needsLayoutInternal() const;
+
+    void performLayout(bool canDeferUpdateLayerPositions);
     bool canPerformLayout() const;
     bool isLayoutSchedulingEnabled() const { return m_layoutSchedulingIsEnabled; }
 
     void layoutTimerFired();
     void runPostLayoutTasks();
-    void runOrScheduleAsynchronousTasks();
+    void runOrScheduleAsynchronousTasks(bool canDeferUpdateLayerPositions);
     bool inAsynchronousTasks() const { return m_inAsynchronousTasks; }
 
     void setSubtreeLayoutRoot(RenderElement&);
@@ -197,7 +197,6 @@ private:
     LayoutPhase m_layoutPhase { LayoutPhase::OutsideLayout };
     enum class LayoutNestedState : uint8_t  { NotInLayout, NotNested, Nested };
     LayoutNestedState m_layoutNestedState { LayoutNestedState::NotInLayout };
-    unsigned m_layoutCount { 0 };
     unsigned m_disableSetNeedsLayoutCount { 0 };
     unsigned m_paintOffsetCacheDisableCount { 0 };
     LayoutStateStack m_layoutStateStack;
