@@ -1610,6 +1610,9 @@ webkit.org/b/263396 css3/color/text.html [ Skip ]
 
 # WebGPU
 
+# skipped outside of macOS Sequoia due to crash in failed allocation
+[ Ventura Sonoma ] fast/webgpu/nocrash/fuzz-279086.html [ Skip ]
+
 [ Release arm64 ] http/tests/webgpu/webgpu/api [ Pass Failure Timeout ]
 [ Release arm64 ] http/tests/webgpu/webgpu/shader [ Pass Failure Timeout ]
 [ Release arm64 ] http/tests/webgpu/webgpu/web_platform [ Pass Failure Timeout ]

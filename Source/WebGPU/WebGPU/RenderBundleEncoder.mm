@@ -874,6 +874,10 @@ void RenderBundleEncoder::endCurrentICB()
 
     if (!m_renderPassEncoder) {
         m_indirectCommandBuffer = [m_device->device() newIndirectCommandBufferWithDescriptor:m_icbDescriptor maxCommandCount:commandCount options:0];
+        if (!m_indirectCommandBuffer) {
+            makeInvalid(@"MTLIndirectCommandBuffer allocation failed, likely tried to encode too many commands");
+            return;
+        }
         m_device->setOwnerWithIdentity(m_indirectCommandBuffer);
     }
 
