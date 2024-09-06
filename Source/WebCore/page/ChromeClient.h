@@ -674,8 +674,6 @@ public:
 
     virtual void removeTextAnimationForAnimationID(const WTF::UUID&) { }
 
-    virtual void removeTransparentMarkersForActiveWritingToolsSession() { }
-
     virtual void removeInitialTextAnimationForActiveWritingToolsSession() { }
 
     virtual void addInitialTextAnimationForActiveWritingToolsSession() { }

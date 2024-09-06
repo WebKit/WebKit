@@ -2441,7 +2441,7 @@ public:
     void updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID&, bool, CompletionHandler<void()>&& = [] { });
 
     bool writingToolsTextReplacementsFinished();
-    void showSelectionForActiveWritingToolsSession();
+    void intelligenceTextAnimationsDidComplete();
 
     void didEndPartialIntelligenceTextPonderingAnimation(IPC::Connection&);
     void didEndPartialIntelligenceTextPonderingAnimationImpl();
