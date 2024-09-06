@@ -557,27 +557,6 @@ std::optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(Even
     return Event::IsCancelable::Yes;
 }
 
-// youtube.com rdar://53415195
-bool Quirks::shouldMakeTouchEventNonCancelableForTarget(EventTarget* target) const
-{
-    if (!needsQuirks())
-        return false;
-
-    auto host = m_document->topDocument().url().host();
-
-    if (host == "www.youtube.com"_s) {
-        if (RefPtr element = dynamicDowncast<Element>(target)) {
-            unsigned depth = 3;
-            for (; element && depth; element = element->parentElement(), --depth) {
-                if (element->localName() == "paper-item"_s && element->classList().contains("yt-dropdown-menu"_s))
-                    return true;
-            }
-        }
-    }
-
-    return false;
-}
-
 // shutterstock.com rdar://58844166
 bool Quirks::shouldPreventPointerMediaQueryFromEvaluatingToCoarse() const
 {
