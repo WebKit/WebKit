@@ -1833,7 +1833,7 @@ public:
     enum class ImplicitRenderBlocking : bool { Yes, No };
     void blockRenderingOn(Element&, ImplicitRenderBlocking = ImplicitRenderBlocking::No);
     void unblockRenderingOn(Element&);
-    void processInternalResourceLinks(HTMLAnchorElement&);
+    void processInternalResourceLinks(HTMLAnchorElement* = nullptr);
 
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT void forEachMediaElement(const Function<void(HTMLMediaElement&)>&);

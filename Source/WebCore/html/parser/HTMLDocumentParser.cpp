@@ -139,8 +139,14 @@ void HTMLDocumentParser::prepareToStopParsing()
     DocumentParser::prepareToStopParsing();
 
     // We will not have a scriptRunner when parsing a DocumentFragment.
-    if (m_scriptRunner)
+    if (m_scriptRunner) {
         document()->setReadyState(Document::ReadyState::Interactive);
+
+        // FIXME: Bug 279167 - This should be called after every element is popped
+        // from the stack of open elements, not just the last.
+        if (!isDetached())
+            document()->processInternalResourceLinks();
+    }
 
     // Setting the ready state above can fire mutation event and detach us
     // from underneath. In that case, just bail out.

@@ -261,7 +261,7 @@ void HTMLAnchorElement::attributeChanged(const QualifiedName& name, const AtomSt
         if (m_relList)
             m_relList->associatedAttributeValueChanged();
     } else if (name == nameAttr)
-        document().processInternalResourceLinks(*this);
+        document().processInternalResourceLinks(this);
 }
 
 bool HTMLAnchorElement::isURLAttribute(const Attribute& attribute) const
@@ -750,7 +750,7 @@ ReferrerPolicy HTMLAnchorElement::referrerPolicy() const
 Node::InsertedIntoAncestorResult HTMLAnchorElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     auto result = HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    document().processInternalResourceLinks(*this);
+    document().processInternalResourceLinks(this);
     return result;
 }
 

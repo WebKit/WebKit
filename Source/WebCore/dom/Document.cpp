@@ -8352,12 +8352,12 @@ void Document::unblockRenderingOn(Element& element)
 }
 
 // https://html.spec.whatwg.org/multipage/links.html#process-internal-resource-links
-void Document::processInternalResourceLinks(HTMLAnchorElement& anchor)
+void Document::processInternalResourceLinks(HTMLAnchorElement* anchor)
 {
     auto copy = copyToVector(m_renderBlockingElements);
     for (auto& element : copy) {
         if (RefPtr link = dynamicDowncast<HTMLLinkElement>(element.get()))
-            link->processInternalResourceLink(&anchor);
+            link->processInternalResourceLink(anchor);
     }
 }
 

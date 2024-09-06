@@ -448,7 +448,7 @@ void HTMLLinkElement::processInternalResourceLink(HTMLAnchorElement* anchor)
     } else
         indicatedElement = document().findAnchor(m_url.fragmentIdentifier());
 
-    // FIXME: "is on a stack of open elements of an HTML parser whose associated Document is doc"
+    // FIXME: Bug 279167 - Don't match if indicatedElement "is on a stack of open elements of an HTML parser whose associated Document is doc"
     if (document().readyState() == Document::ReadyState::Loading && isConnected() && mediaAttributeMatches() && !indicatedElement) {
         potentiallyBlockRendering();
         if (!m_expectIdTargetObserver)

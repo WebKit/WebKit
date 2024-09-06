@@ -1,0 +1,3 @@
+
+PASS link rel=expect: render blocking stops waiting when the document finishes loading
+
