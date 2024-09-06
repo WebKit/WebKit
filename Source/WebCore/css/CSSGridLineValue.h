@@ -40,6 +40,7 @@ public:
     CSSPrimitiveValue* spanValue() const { return m_spanValue.get(); }
     CSSPrimitiveValue* numericValue() const { return m_numericValue.get(); }
     CSSPrimitiveValue* gridLineName() const { return m_gridLineName.get(); }
+
 private:
     explicit CSSGridLineValue(RefPtr<CSSPrimitiveValue>&&, RefPtr<CSSPrimitiveValue>&&, RefPtr<CSSPrimitiveValue>&&);
     RefPtr<CSSPrimitiveValue> m_spanValue;

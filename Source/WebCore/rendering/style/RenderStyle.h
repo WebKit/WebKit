@@ -2109,6 +2109,9 @@ public:
     static inline GridPosition initialGridItemRowStart();
     static inline GridPosition initialGridItemRowEnd();
 
+    static GridTrackList initialGridColumnList();
+    static GridTrackList initialGridRowList();
+
     static constexpr TabSize initialTabSize();
 
     static inline const AtomString& initialLineGrid();

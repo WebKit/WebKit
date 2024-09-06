@@ -7684,7 +7684,7 @@
         "grid-column-end": {
             "codegen-properties": {
                 "name-for-methods": "GridItemColumnEnd",
-                "conditional-converter": "GridPosition",
+                "converter": "GridPosition",
                 "parser-function": "consumeGridLine",
                 "parser-grammar-unused": "<grid-line>",
                 "parser-grammar-unused-reason": "Needs support for ordered groups, '&&' groups, '||' groups and optionals"
@@ -7697,7 +7697,7 @@
         "grid-column-start": {
             "codegen-properties": {
                 "name-for-methods": "GridItemColumnStart",
-                "conditional-converter": "GridPosition",
+                "converter": "GridPosition",
                 "parser-function": "consumeGridLine",
                 "parser-grammar-unused": "<grid-line>",
                 "parser-grammar-unused-reason": "Needs support for ordered groups, '&&' groups, '||' groups and optionals"
@@ -7722,7 +7722,8 @@
         },
         "grid-template-columns": {
             "codegen-properties": {
-                "custom": "All",
+                "name-for-methods": "GridColumnList",
+                "conditional-converter": "GridTrackList",
                 "parser-function": "consumeGridTemplatesRowsOrColumns",
                 "parser-function-requires-context": true,
                 "parser-grammar-unused": "none | <track-list> | <auto-track-list>",
@@ -7735,7 +7736,8 @@
         },
         "grid-template-rows": {
             "codegen-properties": {
-                "custom": "All",
+                "name-for-methods": "GridRowList",
+                "conditional-converter": "GridTrackList",
                 "parser-function": "consumeGridTemplatesRowsOrColumns",
                 "parser-function-requires-context": true,
                 "parser-grammar-unused": "none | <track-list> | <auto-track-list>",
@@ -7749,7 +7751,7 @@
         "grid-row-end": {
             "codegen-properties": {
                 "name-for-methods": "GridItemRowEnd",
-                "conditional-converter": "GridPosition",
+                "converter": "GridPosition",
                 "parser-function": "consumeGridLine",
                 "parser-grammar-unused": "<grid-line>",
                 "parser-grammar-unused-reason": "Needs support for ordered groups, '&&' groups, '||' groups and optionals"
@@ -7762,7 +7764,7 @@
         "grid-row-start": {
             "codegen-properties": {
                 "name-for-methods": "GridItemRowStart",
-                "conditional-converter": "GridPosition",
+                "converter": "GridPosition",
                 "parser-function": "consumeGridLine",
                 "parser-grammar-unused": "<grid-line>",
                 "parser-grammar-unused-reason": "Needs support for ordered groups, '&&' groups, '||' groups and optionals"

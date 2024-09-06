@@ -40,7 +40,7 @@ String CSSGridLineValue::customCSSText() const
     // Only return the numeric value if not 1, or if it provided without a span value.
     // https://drafts.csswg.org/css-grid-2/#grid-placement-span-int
     if (m_numericValue) {
-        if (m_numericValue->resolveAsIntegerDeprecated() != 1 || !m_spanValue || !m_gridLineName)
+        if (m_numericValue->isOne() != true || !m_spanValue || !m_gridLineName)
             parts.append(m_numericValue->cssText());
     }
     if (m_gridLineName)
