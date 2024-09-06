@@ -1067,9 +1067,15 @@ void RenderLayer::recursiveUpdateLayerPositions(RenderElement::LayoutIdentifier 
         auto mayNeedRepaintRectUpdate = [&] {
             if (canUseSimplifiedRepaintPass == CanUseSimplifiedRepaintPass::No)
                 return true;
+            if (m_isSimplifiedLayoutRoot) {
+                // Disable optimization for normal flow subtree(s) while running simplified repaint (initiated by simplified layout).
+                m_isSimplifiedLayoutRoot = false;
+                canUseSimplifiedRepaintPass = CanUseSimplifiedRepaintPass::No;
+                return true;
+            }
             if (!renderer().didVisitSinceLayout(layoutIdentifier))
                 return false;
-            if (auto* renderBox = this->renderBox(); renderBox && renderBox->hasRenderOverflow()) {
+            if (auto* renderBox = this->renderBox(); renderBox && renderBox->hasRenderOverflow() && renderBox->hasTransformRelatedProperty()) {
                 // Disable optimization for subtree when dealing with overflow as RenderLayer is not sized to enclose overflow.
                 // FIXME: This should check if transform related property has changed.
                 canUseSimplifiedRepaintPass = CanUseSimplifiedRepaintPass::No;

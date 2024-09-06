@@ -595,6 +595,20 @@ void RenderObject::scheduleLayout(RenderElement* layoutRoot)
         layoutRoot->view().protectedFrameView()->checkedLayoutContext()->scheduleSubtreeLayout(*layoutRoot);
 }
 
+static inline void setIsSimplifiedLayoutRootForLayerIfApplicable(RenderElement& renderElement)
+{
+    ASSERT(renderElement.isOutOfFlowPositioned());
+
+    if (!renderElement.normalChildNeedsLayout())
+        return;
+
+    if (auto* renderer = dynamicDowncast<RenderLayerModelObject>(renderElement)) {
+        if (auto* layer = renderer->layer())
+            return layer->setIsSimplifiedLayoutRoot();
+    }
+    ASSERT_NOT_REACHED();
+}
+
 RenderElement* RenderObject::markContainingBlocksForLayout(RenderElement* layoutRoot)
 {
     ASSERT(!isSetNeedsLayoutForbidden());
@@ -648,6 +662,8 @@ RenderElement* RenderObject::markContainingBlocksForLayout(RenderElement* layout
             return ancestor.get();
 
         hasOutOfFlowPosition = ancestor->isOutOfFlowPositioned();
+        if (hasOutOfFlowPosition)
+            setIsSimplifiedLayoutRootForLayerIfApplicable(*ancestor);
         ancestor = WTFMove(container);
     }
     return { };
