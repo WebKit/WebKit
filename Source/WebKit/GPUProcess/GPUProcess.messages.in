@@ -49,6 +49,7 @@ messages -> GPUProcess LegacyReceiver {
     ResetMockMediaDevices()
     SetMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
     TriggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay)
+    SetShouldListenToVoiceActivity(bool shouldListen)
 #endif
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     SetUseSCContentSharingPicker(bool use)

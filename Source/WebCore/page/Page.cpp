@@ -171,6 +171,7 @@
 #include "ThermalMitigationNotifier.h"
 #include "UserContentProvider.h"
 #include "UserContentURLPattern.h"
+#include "UserMediaController.h"
 #include "UserScript.h"
 #include "UserStyleSheet.h"
 #include "ValidationMessageClient.h"
@@ -2817,6 +2818,12 @@ void Page::updateCaptureState(bool isActive, MediaProducerMediaCaptureKind kind)
     forEachDocument([&] (Document& document) {
         document.pageMutedStateDidChange();
     });
+}
+
+void Page::voiceActivityDetected()
+{
+    if (auto* controller = UserMediaController::from(this))
+        controller->voiceActivityDetected();
 }
 #endif
 

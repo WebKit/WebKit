@@ -288,6 +288,11 @@ public:
 private:
     CaptureDeviceManager& audioCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().audioCaptureDeviceManager(); }
     const Vector<CaptureDevice>& speakerDevices() const final { return MockRealtimeMediaSourceCenter::speakerDevices(); }
+#if PLATFORM(COCOA)
+    void enableMutedSpeechActivityEventListener(Function<void()>&& callback) final {
+MockAudioSharedUnit::singleton().enableMutedSpeechActivityEventListener(WTFMove(callback)); }
+    void disableMutedSpeechActivityEventListener() final { MockAudioSharedUnit::singleton().disableMutedSpeechActivityEventListener(); }
+#endif
 };
 
 static Vector<MockMediaDevice>& devices()

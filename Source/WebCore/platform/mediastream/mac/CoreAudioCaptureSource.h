@@ -154,6 +154,8 @@ private:
     CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>) override;
     CaptureDeviceManager& audioCaptureDeviceManager() final;
     const Vector<CaptureDevice>& speakerDevices() const final;
+    void enableMutedSpeechActivityEventListener(Function<void()>&&) final;
+    void disableMutedSpeechActivityEventListener() final;
 
     void beginInterruption();
     void endInterruption();

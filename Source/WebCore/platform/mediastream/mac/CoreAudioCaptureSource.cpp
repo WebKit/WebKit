@@ -176,6 +176,16 @@ const Vector<CaptureDevice>& CoreAudioCaptureSourceFactory::speakerDevices() con
 #endif
 }
 
+void CoreAudioCaptureSourceFactory::enableMutedSpeechActivityEventListener(Function<void()>&& callback)
+{
+    CoreAudioSharedUnit::unit().enableMutedSpeechActivityEventListener(WTFMove(callback));
+}
+
+void CoreAudioCaptureSourceFactory::disableMutedSpeechActivityEventListener()
+{
+    CoreAudioSharedUnit::unit().disableMutedSpeechActivityEventListener();
+}
+
 void CoreAudioCaptureSourceFactory::registerSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer& producer)
 {
     CoreAudioSharedUnit::unit().registerSpeakerSamplesProducer(producer);

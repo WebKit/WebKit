@@ -37,8 +37,11 @@
 
 namespace WebCore {
 
+constexpr Seconds voiceActivityThrottlingDuration = 5_s;
+
 BaseAudioSharedUnit::BaseAudioSharedUnit()
     : m_sampleRate(AudioSession::sharedSession().sampleRate())
+    , m_voiceActivityThrottleTimer([] { })
 {
     RealtimeMediaSourceCenter::singleton().addDevicesChangedObserver(*this);
 }
@@ -220,7 +223,7 @@ void BaseAudioSharedUnit::stopProducingData()
     if (m_producingCount && --m_producingCount)
         return;
 
-    if (m_isRenderingAudio) {
+    if (m_isRenderingAudio || isListeningToVoiceActivity()) {
         setIsProducingMicrophoneSamples(false);
         return;
     }
@@ -342,6 +345,15 @@ void BaseAudioSharedUnit::handleNewCurrentMicrophoneDevice(CaptureDevice&& devic
     forEachClient([&device](auto& client) {
         client.handleNewCurrentMicrophoneDevice(device);
     });
+}
+
+void BaseAudioSharedUnit::voiceActivityDetected()
+{
+    if (m_voiceActivityThrottleTimer.isActive() || !m_voiceActivityCallback)
+        return;
+
+    m_voiceActivityCallback();
+    m_voiceActivityThrottleTimer.startOneShot(voiceActivityThrottlingDuration);
 }
 
 } // namespace WebCore

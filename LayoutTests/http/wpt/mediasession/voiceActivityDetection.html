@@ -1,0 +1,178 @@
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<iframe src="resources/toggleCapture-iframe.html" id=frame1></iframe>
+<iframe src="resources/toggleCapture-iframe.html" id=frame2></iframe>
+<video id=video autoplay playsinline></video>
+<script>
+var context = new AudioContext();
+
+function analyseAudio(stream, duration, context)
+{
+    return new Promise((resolve, reject) => {
+        var sourceNode = context.createMediaStreamSource(stream);
+
+        var analyser = context.createAnalyser();
+        var gain = context.createGain();
+
+        var results = { heardHum: false, heardBip: false, heardBop: false, heardNoise: false };
+
+        analyser.fftSize = 2048;
+        analyser.smoothingTimeConstant = 0;
+        analyser.minDecibels = -100;
+        analyser.maxDecibels = 0;
+        gain.gain.value = 0;
+
+        sourceNode.connect(analyser);
+        analyser.connect(gain);
+        gain.connect(context.destination);
+
+       function analyse() {
+           var freqDomain = new Uint8Array(analyser.frequencyBinCount);
+           analyser.getByteFrequencyData(freqDomain);
+
+           var hasFrequency = expectedFrequency => {
+                var bin = Math.floor(expectedFrequency * analyser.fftSize / context.sampleRate);
+                return bin < freqDomain.length && freqDomain[bin] >= 100;
+           };
+
+           if (!results.heardHum)
+                results.heardHum = hasFrequency(150);
+
+           if (!results.heardBip)
+               results.heardBip = hasFrequency(1500);
+
+           if (!results.heardBop)
+                results.heardBop = hasFrequency(500);
+
+           if (!results.heardNoise)
+                results.heardNoise = hasFrequency(3000);
+
+           if (results.heardHum && results.heardBip && results.heardBop && results.heardNoise)
+                done();
+        };
+
+       function done() {
+            clearTimeout(timeout);
+            clearInterval(interval);
+            resolve(results);
+       }
+
+        var timeout = setTimeout(done, 3 * duration);
+        var interval = setInterval(analyse, duration / 30);
+        analyse();
+    });
+}
+
+async function checkForHumBipBop(stream, previousResults, counter)
+{
+    if (!previousResults)
+        previousResults = {
+            heardHum : false,
+            heardBip : false,
+            heardBop : false
+    };
+    if (!counter)
+        counter = 1;
+    else if (++counter > 100)
+        return Promise.resolve(false);
+    results = await analyseAudio(stream, 100, context);
+    previousResults.heardHum |= results.heardHum;
+    previousResults.heardBip |= results.heardBip;
+    previousResults.heardBop |= results.heardBop;
+    if (previousResults.heardHum && previousResults.heardBip && previousResults.heardBop)
+        return Promise.resolve(true);
+    var results = await checkForHumBipBop(stream, previousResults, counter);
+    return results;
+}
+
+async function checkForNoHumBipBop(stream, previousResults, counter)
+{
+    if (!counter)
+        counter = 1;
+    else if (++counter > 4)
+        return Promise.resolve(false);
+    results = await analyseAudio(stream, 100, context);
+    if (!previousResults.heardHum && !previousResults.heardBip && !previousResults.heardBop)
+        return Promise.resolve(true);
+    var results = await checkForHumBipBop(stream, previousResults, counter);
+    return results;
+}
+
+promise_test(async () => {
+    return Promise.all([
+        new Promise(resolve => frame1.onload = resolve),
+        new Promise(resolve => frame2.onload = resolve),
+    ]);
+}, "Setup tests");
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return;
+
+    video.srcObject = await frame1.contentWindow.startCapture(true, false);
+    await video.play();
+
+    assert_true(await checkForHumBipBop(video.srcObject), "got bip bop");
+
+    let testCounter = 0;
+    let actionCount1 = 0;
+    let actionCount2 = 0;
+    frame1.contentWindow.navigator.mediaSession.setActionHandler("voiceactivity", () => actionCount1++);
+    frame2.contentWindow.navigator.mediaSession.setActionHandler("voiceactivity", () => actionCount2++);
+
+    // Check action is not executed when capture is live
+    await new Promise(resolve => setTimeout(resolve, 500));
+    assert_equals(actionCount1, 0, "test1");
+    assert_equals(actionCount2, 0, "test2");
+
+    // Check action is executed when capture is muted by web page.
+    await frame1.contentWindow.navigator.mediaSession.setMicrophoneActive(false);
+
+    testCounter = 0;
+    while (!actionCount1 && ++testCounter < 100)
+        await new Promise(resolve => setTimeout(resolve, 50));
+    assert_greater_than(actionCount1, 0, "test3");
+    assert_equals(actionCount2, 0, "test4");
+
+    // Check action is not executed when capture is live again.
+    let promise;
+    internals.withUserGesture(() => {
+        promise = frame1.contentWindow.navigator.mediaSession.setMicrophoneActive(true);
+    });
+    await promise;
+    actionCount1 = 0;
+
+    assert_true(await checkForHumBipBop(video.srcObject), "got bip bop");
+
+    assert_equals(actionCount1, 0, "test5");
+    assert_equals(actionCount2, 0, "test6");
+
+    // Check action is executed when capture is muted by app
+    promise = frame1.contentWindow.waitForToggleAction("togglemicrophone");
+    internals.setPageMuted("capturedevices");
+    await promise;
+    actionCount1 = 0;
+
+    testCounter = 0;
+    while (!actionCount1 && ++testCounter < 100)
+        await new Promise(resolve => setTimeout(resolve, 50));
+    assert_greater_than(actionCount1, 0, "test7");
+    assert_equals(actionCount2, 0, "test8");
+
+    // Check action is not executed for hidden document.
+    internals.setPageVisibility(false);
+
+    testCounter = 0;
+    while(++testCounter < 10) {
+        const previousActionCount1 = actionCount1;
+        await new Promise(resolve => setTimeout(resolve, 500));
+        if (previousActionCount1 == actionCount1)
+            break;
+    }
+    assert_less_than(testCounter, 10);
+}, "voiceActivity detection tests");
+</script>
+</body>
+</html>

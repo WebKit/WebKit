@@ -127,6 +127,7 @@ private:
     OSStatus defaultOutputDevice(uint32_t*) final;
     void delaySamples(Seconds) final;
     Seconds verifyCaptureInterval(bool) const final { return 1_s; }
+    void setVoiceActivityDetection(bool);
 
     int sampleRate() const { return m_streamFormat.mSampleRate; }
     void tick();
@@ -134,6 +135,8 @@ private:
     void generateSampleBuffers(MonotonicTime);
     void emitSampleBuffers(uint32_t frameCount);
     void reconfigure();
+
+    void voiceDetected();
 
     static Seconds renderInterval() { return 20_ms; }
 
@@ -151,7 +154,10 @@ private:
     bool m_hasAudioUnit { false };
     Ref<MockAudioSharedInternalUnitState> m_internalState;
     bool m_enableEchoCancellation { true };
+    bool m_isOutputMuted { false };
+    bool m_voiceActivityDetectionEnabled { false };
     RunLoop::Timer m_timer;
+    RunLoop::Timer m_voiceDetectionTimer;
     MonotonicTime m_lastRenderTime { MonotonicTime::nan() };
     MonotonicTime m_delayUntil;
 
@@ -200,6 +206,7 @@ MockAudioSharedInternalUnit::MockAudioSharedInternalUnit(bool enableEchoCancella
     : m_internalState(MockAudioSharedInternalUnitState::create())
     , m_enableEchoCancellation(enableEchoCancellation)
     , m_timer(RunLoop::current(), [this] { this->start(); })
+    , m_voiceDetectionTimer(RunLoop::current(), [this] { this->voiceDetected(); })
     , m_workQueue(WorkQueue::create("MockAudioSharedInternalUnit Capture Queue"_s, WorkQueue::QOS::UserInteractive))
 {
     m_streamFormat = m_outputStreamFormat = createAudioFormat(44100, 2);
@@ -254,6 +261,22 @@ void MockAudioSharedInternalUnit::delaySamples(Seconds delta)
 {
     stop();
     m_timer.startOneShot(delta);
+}
+
+void MockAudioSharedInternalUnit::setVoiceActivityDetection(bool shouldEnable)
+{
+    m_voiceActivityDetectionEnabled = shouldEnable;
+    if (!m_voiceActivityDetectionEnabled || !m_isOutputMuted) {
+        m_voiceDetectionTimer.stop();
+        return;
+    }
+    m_voiceDetectionTimer.startRepeating(100_ms);
+}
+
+void MockAudioSharedInternalUnit::voiceDetected()
+{
+    MockAudioSharedUnit::singleton().voiceActivityDetected();
+    MockAudioSharedUnit::singleton().disableVoiceActivityThrottleTimerForTesting();
 }
 
 void MockAudioSharedInternalUnit::reconfigure()
@@ -403,6 +426,11 @@ OSStatus MockAudioSharedInternalUnit::set(AudioUnitPropertyID property, AudioUni
             return -1;
 
         m_streamFormat.mSampleRate = m_outputStreamFormat.mSampleRate = std::get<MockMicrophoneProperties>(device->properties).defaultSampleRate;
+        return 0;
+    }
+    if (property == kAUVoiceIOProperty_MuteOutput) {
+        m_isOutputMuted = *static_cast<const bool*>(value);
+        setVoiceActivityDetection(m_voiceActivityDetectionEnabled);
         return 0;
     }
     

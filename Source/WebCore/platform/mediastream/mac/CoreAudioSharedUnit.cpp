@@ -31,6 +31,7 @@
 #include "AudioSampleBufferList.h"
 #include "AudioSession.h"
 #include "CoreAudioCaptureSource.h"
+#include "CoreAudioSharedInternalUnit.h"
 #include "Logging.h"
 #include <AudioToolbox/AudioConverter.h>
 #include <AudioUnit/AudioUnit.h>
@@ -70,28 +71,6 @@ void CoreAudioSharedUnit::AudioUnitDeallocator::operator()(AudioUnit unit) const
 {
     PAL::AudioComponentInstanceDispose(unit);
 }
-
-class CoreAudioSharedInternalUnit final :  public CoreAudioSharedUnit::InternalUnit {
-    WTF_MAKE_TZONE_ALLOCATED_INLINE(CoreAudioSharedInternalUnit);
-public:
-    static Expected<UniqueRef<InternalUnit>, OSStatus> create(bool shouldUseVPIO);
-    CoreAudioSharedInternalUnit(CoreAudioSharedUnit::StoredAudioUnit&&, bool shouldUseVPIO);
-    ~CoreAudioSharedInternalUnit() final;
-
-private:
-    OSStatus initialize() final;
-    OSStatus uninitialize() final;
-    OSStatus start() final;
-    OSStatus stop() final;
-    OSStatus set(AudioUnitPropertyID, AudioUnitScope, AudioUnitElement, const void*, UInt32) final;
-    OSStatus get(AudioUnitPropertyID, AudioUnitScope, AudioUnitElement, void*, UInt32*) final;
-    OSStatus render(AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32, UInt32, AudioBufferList*) final;
-    OSStatus defaultInputDevice(uint32_t*) final;
-    OSStatus defaultOutputDevice(uint32_t*) final;
-
-    CoreAudioSharedUnit::StoredAudioUnit m_audioUnit;
-    bool m_shouldUseVPIO { false };
-};
 
 static Expected<CoreAudioSharedUnit::StoredAudioUnit, OSStatus> createAudioUnit(bool shouldUseVPIO)
 {
@@ -663,11 +642,22 @@ OSStatus CoreAudioSharedUnit::startInternal()
     m_microphoneProcsCalled = 0;
     m_microphoneProcsCalledLastTime = 0;
 
+    if (m_shouldSetVoiceActivityListener) {
+        m_ioUnit->setVoiceActivityDetection(true);
+        m_shouldSetVoiceActivityListener = false;
+    }
+
     return noErr;
 }
 
 void CoreAudioSharedUnit::isProducingMicrophoneSamplesChanged()
 {
+    if (m_ioUnit) {
+        UInt32 muteUplinkOutput = !isProducingMicrophoneSamples();
+        auto error = m_ioUnit->set(kAUVoiceIOProperty_MuteOutput, kAudioUnitScope_Global, outputBus, &muteUplinkOutput, sizeof(muteUplinkOutput));
+        RELEASE_LOG_ERROR_IF(error, WebRTC, "CoreAudioSharedUnit::isProducingMicrophoneSamplesChanged(%p) unable to set kAUVoiceIOProperty_MuteOutput, error %d (%.4s)", this, (int)error, (char*)&error);
+    }
+
     if (!isProducingData())
         return;
     m_verifyCapturingTimer.startRepeating(m_ioUnit->verifyCaptureInterval(isProducingMicrophoneSamples()));
@@ -718,7 +708,7 @@ void CoreAudioSharedUnit::prewarmAudioUnitCreation(CompletionHandler<void()>&& c
         return;
     }
 
-    m_audioUnitCreationWarmupPromise = invokeAsync(WorkQueue::create("CoreAudioSharedUnit AudioUnit creation"_s).get(), [] {
+    m_audioUnitCreationWarmupPromise = invokeAsync(WorkQueue::create("CoreAudioSharedUnit AudioUnit creation"_s, WorkQueue::QOS::UserInitiated).get(), [] {
         return createAudioUnit(true);
     })->whenSettled(RunLoop::main(), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)] (auto&& vpioUnitOrError) mutable {
         if (weakThis && vpioUnitOrError.has_value())

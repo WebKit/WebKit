@@ -2385,6 +2385,9 @@ http/tests/webrtc/muted-video-mediastream-invisible-autoplay.html [ Failure Time
 # Lack of AudioSession category
 http/wpt/mediasession/setCaptureState-audio-category.html [ Skip ]
 
+# Lack of voice activity detection mock
+http/wpt/mediasession/voiceActivityDetection.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

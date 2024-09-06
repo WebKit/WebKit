@@ -10363,6 +10363,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     updatePlayingMediaDidChange(MediaProducer::IsNotPlaying);
 #if ENABLE(MEDIA_STREAM)
     m_userMediaPermissionRequestManager = nullptr;
+    m_shouldListenToVoiceActivity = false;
 #endif
 
 #if ENABLE(POINTER_LOCK)
@@ -11308,6 +11309,21 @@ void WebPageProxy::validateCaptureStateUpdate(WebCore::UserMediaRequestIdentifie
         ASSERT_NOT_REACHED();
     }
     completionHandler({ });
+}
+
+void WebPageProxy::setShouldListenToVoiceActivity(bool value)
+{
+    m_shouldListenToVoiceActivity = value;
+#if ENABLE(GPU_PROCESS)
+    RefPtr gpuProcess = m_legacyMainFrameProcess->processPool().gpuProcess();
+    if (gpuProcess && preferences().captureAudioInGPUProcessEnabled())
+        gpuProcess->setShouldListenToVoiceActivity(*this, m_shouldListenToVoiceActivity);
+#endif
+}
+
+void WebPageProxy::voiceActivityDetected()
+{
+    send(Messages::WebPage::VoiceActivityDetected { });
 }
 #endif
 
@@ -13734,6 +13750,10 @@ void WebPageProxy::gpuProcessExited(ProcessTerminationReason)
         gpuProcess.updateCaptureAccess(activeAudioCapture, activeVideoCapture, activeDisplayCapture, m_legacyMainFrameProcess->coreProcessIdentifier(), [] { });
 #if PLATFORM(IOS_FAMILY)
         gpuProcess.setOrientationForMediaCapture(m_orientationForMediaCapture);
+#endif
+#if PLATFORM(MEDIA_STREAM)
+        if (m_shouldListenToVoiceActivity)
+            gpuProcess.setShouldListenToVoiceActivity(*this, m_shouldListenToVoiceActivity);
 #endif
     }
 #endif

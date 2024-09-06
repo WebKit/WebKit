@@ -130,6 +130,7 @@ static std::optional<std::pair<PlatformMediaSession::RemoteControlCommandType, P
     case MediaSessionAction::Togglecamera:
     case MediaSessionAction::Togglemicrophone:
     case MediaSessionAction::Togglescreenshare:
+    case MediaSessionAction::Voiceactivity:
         break;
     }
     if (command == PlatformMediaSession::RemoteControlCommandType::NoCommand)
@@ -261,8 +262,13 @@ ExceptionOr<void> MediaSession::setActionHandler(MediaSessionAction action, RefP
 {
 #if ENABLE(MEDIA_STREAM)
     RefPtr document = this->document();
-    if (document && !document->settings().mediaSessionCaptureToggleAPIEnabled() && (action == MediaSessionAction::Togglecamera || action == MediaSessionAction::Togglemicrophone || action == MediaSessionAction::Togglescreenshare))
+    if (document && !document->settings().mediaSessionCaptureToggleAPIEnabled() && (action == MediaSessionAction::Togglecamera || action == MediaSessionAction::Togglemicrophone || action == MediaSessionAction::Togglescreenshare || action == MediaSessionAction::Voiceactivity))
         return Exception { ExceptionCode::TypeError, makeString("Argument 1 ('action') to MediaSession.setActionHandler must be a value other than '"_s, convertEnumerationToString(action), "'"_s) };
+
+    if (action == MediaSessionAction::Voiceactivity) {
+        if (RefPtr document = this->document())
+            document->setShouldListenToVoiceActivity(!!handler);
+    }
 #endif
 
     if (handler) {

@@ -24,6 +24,7 @@
 
 #include "UserMediaPermissionRequestManager.h"
 #include "WebPage.h"
+#include "WebPageProxyMessages.h"
 #include <WebCore/UserMediaController.h>
 #include <WebCore/UserMediaRequest.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -71,6 +72,11 @@ void WebUserMediaClient::removeDeviceChangeObserver(DeviceChangeObserverToken to
 void WebUserMediaClient::updateCaptureState(const WebCore::Document& document, bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
     m_page.userMediaPermissionRequestManager().updateCaptureState(document, isActive, kind, WTFMove(completionHandler));
+}
+
+void WebUserMediaClient::setShouldListenToVoiceActivity(bool shouldListen)
+{
+    m_page.send(Messages::WebPageProxy::SetShouldListenToVoiceActivity { shouldListen });
 }
 
 } // namespace WebKit;

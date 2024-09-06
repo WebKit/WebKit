@@ -445,6 +445,28 @@ void GPUProcessProxy::triggerMockCaptureConfigurationChange(bool forMicrophone, 
 {
     send(Messages::GPUProcess::TriggerMockCaptureConfigurationChange { forMicrophone, forDisplay }, 0);
 }
+
+void GPUProcessProxy::setShouldListenToVoiceActivity(const WebPageProxy& proxy, bool shouldListen)
+{
+    if (shouldListen) {
+        m_pagesListeningToVoiceActivity.add(proxy);
+        if (m_shouldListenToVoiceActivity)
+            return;
+    } else {
+        m_pagesListeningToVoiceActivity.remove(proxy);
+        if (!m_shouldListenToVoiceActivity)
+            return;
+    }
+
+    bool shouldListenToVoiceActivity = anyOf(m_pagesListeningToVoiceActivity, [] (auto& page) {
+        return page.shouldListenToVoiceActivity();
+    });
+    if (m_shouldListenToVoiceActivity == shouldListenToVoiceActivity)
+        return;
+
+    m_shouldListenToVoiceActivity = shouldListenToVoiceActivity;
+    send(Messages::GPUProcess::SetShouldListenToVoiceActivity { shouldListenToVoiceActivity }, 0);
+}
 #endif // ENABLE(MEDIA_STREAM)
 
 #if HAVE(SCREEN_CAPTURE_KIT)
@@ -817,7 +839,14 @@ void GPUProcessProxy::requestBitmapImageForCurrentTime(ProcessIdentifier process
 }
 #endif
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
+#if ENABLE(MEDIA_STREAM)
+void GPUProcessProxy::voiceActivityDetected()
+{
+    for (auto& page : m_pagesListeningToVoiceActivity)
+        Ref(page)->voiceActivityDetected();
+}
+
+#if PLATFORM(IOS_FAMILY)
 void GPUProcessProxy::statusBarWasTapped(CompletionHandler<void()>&& completionHandler)
 {
     if (auto page = WebProcessProxy::audioCapturingWebPage())
@@ -826,6 +855,7 @@ void GPUProcessProxy::statusBarWasTapped(CompletionHandler<void()>&& completionH
     completionHandler();
 }
 #endif
+#endif // ENABLE(MEDIA_STREAM)
 
 } // namespace WebKit
 

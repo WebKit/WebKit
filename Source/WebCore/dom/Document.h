@@ -1660,6 +1660,9 @@ public:
     void cameraCaptureStateDidChange();
     void microphoneCaptureStateDidChange();
     void screenshareCaptureStateDidChange();
+    void setShouldListenToVoiceActivity(bool);
+    void voiceActivityDetected();
+    bool hasMutedAudioCaptureDevice() const;
 #endif
     void pageMutedStateDidChange();
     void visibilityAdjustmentStateDidChange();
@@ -2483,6 +2486,7 @@ private:
     size_t m_activeMediaElementsWithMediaStreamCount { 0 };
     HashSet<Ref<RealtimeMediaSource>> m_captureSources;
     bool m_isUpdatingCaptureAccordingToMutedState { false };
+    bool m_shouldListenToVoiceActivity { false };
 #endif
 
     struct PendingScrollEventTargetList;

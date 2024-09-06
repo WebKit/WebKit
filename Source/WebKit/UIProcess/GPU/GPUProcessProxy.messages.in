@@ -34,8 +34,11 @@ messages -> GPUProcessProxy {
 #if ENABLE(AV1)
     SetHasAV1HardwareDecoder(bool hasAV1HardwareDecoder)
 #endif
-#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
+#if ENABLE(MEDIA_STREAM)
+    VoiceActivityDetected()
+#if PLATFORM(IOS_FAMILY)
     StatusBarWasTapped() -> () Async
+#endif
 #endif
 
     ProcessIsReadyToExit()

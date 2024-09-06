@@ -5825,6 +5825,11 @@ void WebPage::captureDevicesChanged()
     m_userMediaPermissionRequestManager->captureDevicesChanged();
 }
 
+void WebPage::voiceActivityDetected()
+{
+    corePage()->voiceActivityDetected();
+}
+
 #if USE(GSTREAMER)
 void WebPage::setOrientationForMediaCapture(uint64_t rotation)
 {

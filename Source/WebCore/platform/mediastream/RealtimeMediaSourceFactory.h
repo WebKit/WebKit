@@ -50,6 +50,9 @@ public:
     virtual const Vector<CaptureDevice>& speakerDevices() const = 0;
     virtual void computeSpeakerDevices(CompletionHandler<void()>&& callback) const { callback(); }
 
+    WEBCORE_EXPORT virtual void enableMutedSpeechActivityEventListener(Function<void()>&&) { }
+    WEBCORE_EXPORT virtual void disableMutedSpeechActivityEventListener() { }
+
 protected:
     AudioCaptureFactory() = default;
 };

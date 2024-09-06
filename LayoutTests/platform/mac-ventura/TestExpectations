@@ -7,6 +7,9 @@ webkit.org/b/268789 [ Debug ] imported/w3c/web-platform-tests/css/css-break/tabl
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Failure ]
 
+# HAVE(VOICEACTIVITYDETECTION) is false in Ventura.
+http/wpt/mediasession/voiceActivityDetection.html [ Skip ]
+
 # Skip these tests that enable UnifiedPDFPlugin, since it's only meaningful for macOS 14+.
 http/tests/pdf/linearized-pdf-in-iframe.html [ Skip ]
 http/tests/pdf/linearized-pdf-in-display-none-iframe.html [ Skip ]
