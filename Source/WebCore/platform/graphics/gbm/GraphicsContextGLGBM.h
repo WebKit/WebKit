@@ -102,10 +102,6 @@ protected:
 
     EGLExtensions m_eglExtensions;
     Swapchain m_swapchain;
-
-#if USE(ANGLE_GBM)
-    std::unique_ptr<GLFence> m_frameFence;
-#endif
 };
 
 } // namespace WebCore

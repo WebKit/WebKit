@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2022 Metrological Group B.V.
- * Copyright (C) 2022 Igalia S.L.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,30 +25,31 @@
 
 #pragma once
 
-#if USE(ANGLE_GBM)
-
-#include "GraphicsContextGLGBM.h"
-#include <memory>
+#if ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && USE(GBM)
+#include "GraphicsLayerContentsDisplayDelegateTextureMapper.h"
 
 namespace WebCore {
+class DMABufBuffer;
+class GLFence;
 
-class GraphicsContextGLGBMTextureMapper final : public GraphicsContextGLGBM {
+class GraphicsLayerContentsDisplayDelegateGBM final : public GraphicsLayerContentsDisplayDelegateTextureMapper {
 public:
-    static RefPtr<GraphicsContextGLGBMTextureMapper> create(GraphicsContextGLAttributes&&);
-    virtual ~GraphicsContextGLGBMTextureMapper();
+    static Ref<GraphicsLayerContentsDisplayDelegateGBM> create(bool isOpaque)
+    {
+        return adoptRef(*new GraphicsLayerContentsDisplayDelegateGBM(isOpaque));
+    }
+    virtual ~GraphicsLayerContentsDisplayDelegateGBM();
 
-    // GraphicsContextGL overrides
-    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
-
-    // GraphicsContextGLANGLE overrides
-    bool platformInitialize() final;
+    void setDisplayBuffer(RefPtr<DMABufBuffer>&, std::unique_ptr<GLFence>&&);
 
 private:
-    GraphicsContextGLGBMTextureMapper(GraphicsContextGLAttributes&&);
+    explicit GraphicsLayerContentsDisplayDelegateGBM(bool isOpaque);
 
-    RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
+    bool m_isOpaque { false };
+    RefPtr<DMABufBuffer> m_buffer;
+    std::unique_ptr<GLFence> m_fence;
 };
 
 } // namespace WebCore
 
-#endif // USE(ANGLE_GBM)
+#endif // ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && USE(GBM)

@@ -53,8 +53,9 @@
 #include "TextureMapperGCGLPlatformLayer.h"
 #endif
 
-#if USE(ANGLE_GBM)
-#include "GraphicsContextGLGBMTextureMapper.h"
+#if USE(GBM)
+#include "GraphicsContextGLTextureMapperGBM.h"
+#include "GraphicsLayerContentsDisplayDelegateGBM.h"
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -131,10 +132,17 @@ RefPtr<PixelBuffer> GraphicsContextGLTextureMapperANGLE::readCompositedResults()
 
 RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes)
 {
-#if USE(ANGLE_GBM)
-    auto& eglExtensions = PlatformDisplay::sharedDisplay().eglExtensions();
-    if (eglExtensions.KHR_image_base && eglExtensions.EXT_image_dma_buf_import)
-        return GraphicsContextGLGBMTextureMapper::create(GraphicsContextGLAttributes { attributes });
+#if USE(GBM)
+    auto& display = PlatformDisplay::sharedDisplay();
+    if (display.type() == PlatformDisplay::Type::GBM && display.eglExtensions().KHR_image_base && display.eglExtensions().EXT_image_dma_buf_import) {
+        static const char* disableGBM = getenv("WEBKIT_WEBGL_DISABLE_GBM");
+        if (!disableGBM || *disableGBM == '0') {
+            RefPtr delegate = GraphicsLayerContentsDisplayDelegateGBM::create(!attributes.alpha);
+            if (auto context = GraphicsContextGLTextureMapperGBM::create(GraphicsContextGLAttributes { attributes }, WTFMove(delegate)))
+                return context;
+            WTFLogAlways("Failed to create a graphics context for WebGL using GBM, falling back to textures");
+        }
+    }
 #endif
     return GraphicsContextGLTextureMapperANGLE::create(GraphicsContextGLAttributes { attributes });
 }
@@ -159,11 +167,11 @@ GraphicsContextGLTextureMapperANGLE::~GraphicsContextGLTextureMapperANGLE()
         static_cast<GraphicsLayerContentsDisplayDelegateTextureMapper*>(m_layerContentsDisplayDelegate.get())->proxy().setSwapBuffersFunction(nullptr);
 #endif
 
-    if (!makeContextCurrent())
-        return;
-
-    if (m_compositorTexture)
+    if (m_compositorTexture) {
+        if (!makeContextCurrent())
+            return;
         GL_DeleteTextures(1, &m_compositorTexture);
+    }
 }
 
 RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLTextureMapperANGLE::layerContentsDisplayDelegate()

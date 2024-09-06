@@ -78,6 +78,12 @@ if (USE_COORDINATED_GRAPHICS)
         )
     endif ()
 
+    if (USE_GBM)
+        list(APPEND WebCore_SOURCES
+            platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferDMABuf.cpp
+        )
+    endif ()
+
     if (USE_CAIRO)
         list(APPEND WebCore_SOURCES
             platform/graphics/texmap/coordinated/CoordinatedGraphicsLayerCairo.cpp
@@ -168,6 +174,7 @@ endif ()
 
 if (USE_GBM)
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        platform/graphics/gbm/DMABufBuffer.h
         platform/graphics/gbm/DMABufColorSpace.h
         platform/graphics/gbm/DMABufEGLUtilities.h
         platform/graphics/gbm/DMABufFormat.h

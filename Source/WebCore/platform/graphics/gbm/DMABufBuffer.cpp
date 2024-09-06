@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,36 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "DMABufBuffer.h"
 
-#if USE(COORDINATED_GRAPHICS)
-
-#include "GraphicsLayerContentsDisplayDelegate.h"
-#include "TextureMapperPlatformLayerProxy.h"
+#if USE(GBM)
+#include "CoordinatedPlatformLayerBuffer.h"
+#include <atomic>
 
 namespace WebCore {
 
-class GraphicsLayerContentsDisplayDelegateTextureMapper : public GraphicsLayerContentsDisplayDelegate {
-public:
-    static Ref<GraphicsLayerContentsDisplayDelegateTextureMapper> create(Ref<TextureMapperPlatformLayerProxy>&& proxy)
-    {
-        return adoptRef(*new GraphicsLayerContentsDisplayDelegateTextureMapper(WTFMove(proxy)));
-    }
-    virtual ~GraphicsLayerContentsDisplayDelegateTextureMapper() = default;
+static uint64_t generateID()
+{
+    static std::atomic<uint64_t> id;
+    return ++id;
+}
 
-    TextureMapperPlatformLayerProxy& proxy() const { return m_proxy.get(); }
+DMABufBuffer::DMABufBuffer(const IntSize& size, uint32_t fourcc, Vector<WTF::UnixFileDescriptor>&& fds, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier)
+    : m_id(generateID())
+    , m_attributes({ size, fourcc, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier })
+{
+}
 
-protected:
-    explicit GraphicsLayerContentsDisplayDelegateTextureMapper(Ref<TextureMapperPlatformLayerProxy>&& proxy)
-        : m_proxy(WTFMove(proxy))
-    {
-    }
+DMABufBuffer::~DMABufBuffer() = default;
 
-    PlatformLayer* platformLayer() const final { return m_proxy.ptr(); }
-
-    Ref<TextureMapperPlatformLayerProxy> m_proxy;
-};
+void DMABufBuffer::setBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer)
+{
+    m_buffer = WTFMove(buffer);
+}
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS)
+#endif // USE(GBM)
