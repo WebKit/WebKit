@@ -1,3 +1,30 @@
+==================
+WPE WebKit 2.45.90
+==================
+
+What's new in WPE WebKit 2.45.90?
+
+  - Add explicit fencing support when available.
+  - Add new API to WebKitAutomationSession to be notified when the session is
+    about to be closed.
+  - Add webkit://gpu/stdout to dump the information from webkit://gpu to
+    standard output stream.
+  - Add signposts to allow observing graphics tile rendering in Sysprof.
+  - Add quirk to allow totale.rosettastone.com to load properly.
+  - Undeprecate injected bundle frame access interfaces.
+  - Use RGBA as the pixel format for texture backed SkSurfaces.
+  - Ensure that the WPEMonitor properties "width" and "height" are set at
+    the same time.
+  - Fix WebGL with accelerated compositing disabled.
+  - Fix build with GStreamer versions < 1.22.
+  - Fix connection to the accessibility bus under Flatpak.
+  - Fix image filtering not being applied in some cases.
+  - Fix linker relocation errors on Debug/RelWithDebInfo builds.
+  - Fix the build in non-linux systems.
+  - Fix the build with -DUSE_TEXTURE_MAPPER_DMABUF=OFF
+  - Fix the build with Wayland and GBM disabled.
+  - Fix several crashes and rendering issues.
+
 =================
 WPE WebKit 2.45.3
 =================
