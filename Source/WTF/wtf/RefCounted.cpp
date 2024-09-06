@@ -21,8 +21,12 @@
 #include "config.h"
 #include <wtf/RefCounted.h>
 
+#include <wtf/ThreadSafeRefCounted.h>
+
 namespace WTF {
 
 bool RefCountedBase::areThreadingChecksEnabledGlobally { false };
+
+static_assert(sizeof(RefCountedBase) == sizeof(ThreadSafeRefCountedBase));
 
 }

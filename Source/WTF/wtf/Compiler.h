@@ -337,6 +337,12 @@
 #define UNUSED_FUNCTION __attribute__((unused))
 #endif
 
+/* UNUSED_MEMBER_VARIABLE */
+
+#if !defined(UNUSED_MEMBER_VARIABLE)
+#define UNUSED_MEMBER_VARIABLE __attribute__((unused))
+#endif
+
 /* UNUSED_TYPE_ALIAS */
 
 #if !defined(UNUSED_TYPE_ALIAS)
