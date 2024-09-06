@@ -886,6 +886,20 @@ bool WebThreadIsLockedOrDisabled(void)
     return !WebThreadIsEnabled() || WebThreadIsLocked();
 }
 
+bool WebThreadIsLockedOrDisabledInMainOrWebThread(void)
+{
+    if (!WebThreadIsEnabled())
+        return true;
+
+    if (WebThreadIsCurrent())
+        return webThreadLockCount;
+
+    if (pthread_main_np())
+        return mainThreadLockCount;
+
+    return true;
+}
+
 void WebThreadLockPushModal(void)
 {
     if (WebThreadIsCurrent())
