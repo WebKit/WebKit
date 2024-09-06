@@ -154,6 +154,8 @@ TEST_F(SimpleConnectionTest, ClearOutgoingMessages)
     // Try a sync send over the second connection, which should
     // fail immediately if the client handle has been released.
     secondServerConnection->sendSync(MockTestSyncMessage(), 0, IPC::Timeout::infinity(), IPC::SendSyncOption::UseFullySynchronousModeForTesting);
+    firstServerConnection->invalidate();
+    secondServerConnection->invalidate();
 }
 
 class ConnectionTest : public testing::Test, protected ConnectionTestBase {
