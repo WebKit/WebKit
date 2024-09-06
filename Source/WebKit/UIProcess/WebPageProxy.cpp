@@ -12746,8 +12746,8 @@ void WebPageProxy::getLoadDecisionForIcon(const WebCore::LinkIcon& icon, Callbac
             return;
         }
         sendWithAsyncReply(Messages::WebPage::DidGetLoadDecisionForIcon(true, loadIdentifier), [callback = WTFMove(callback)](const IPC::SharedBufferReference& iconData) mutable {
-            if (auto buffer = iconData.unsafeBuffer())
-                callback(API::Data::create(buffer->span()).ptr());
+            if (!iconData.isNull())
+                callback(API::Data::create(iconData.span()).ptr());
             else
                 callback(nullptr);
         });
