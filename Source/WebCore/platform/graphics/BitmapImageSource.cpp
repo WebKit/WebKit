@@ -426,8 +426,8 @@ void BitmapImageSource::imageFrameDecodeAtIndexHasFinished(unsigned index, Subsa
 {
     ASSERT(index < m_frames.size());
 
-    if (!nativeImage) {
-        LOG(Images, "BitmapImageSource::%s - %p - url: %s. Frame at index = %d has been failed.", __FUNCTION__, this, sourceUTF8(), index);
+    if (!nativeImage || !m_decoder) {
+        LOG(Images, "BitmapImageSource::%s - %p - url: %s. Frame at index = %d has failed.", __FUNCTION__, this, sourceUTF8(), index);
 
         destroyNativeImageAtIndex(index);
         imageFrameDecodeAtIndexHasFinished(index, animatingState, DecodingStatus::Invalid);
@@ -465,6 +465,8 @@ void BitmapImageSource::cacheMetadataAtIndex(unsigned index, SubsamplingLevel su
 
 void BitmapImageSource::cacheNativeImageAtIndex(unsigned index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options, Ref<NativeImage>&& nativeImage)
 {
+    ASSERT(m_decoder);
+
     if (index >= m_frames.size())
         return;
 
