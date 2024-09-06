@@ -480,12 +480,16 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
     auto color = [this, cssValueID, options, useDarkAppearance]() -> Color {
         LocalDefaultSystemAppearance localAppearance(useDarkAppearance);
 
-        auto selectCocoaColor = [cssValueID] () -> SEL {
+        auto selectCocoaColor = [cssValueID, useDarkAppearance] () -> SEL {
             switch (cssValueID) {
             case CSSValueActivecaption:
                 return @selector(windowFrameTextColor);
             case CSSValueAppworkspace:
                 return @selector(headerColor);
+            case CSSValueButtonface:
+            case CSSValueThreedface:
+                // Fallback to hardcoded color below in light mode.
+                return useDarkAppearance ? @selector(controlColor) : nullptr;
             case CSSValueButtonhighlight:
                 return @selector(controlHighlightColor);
             case CSSValueButtonshadow:
@@ -614,8 +618,10 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
 
         case CSSValueButtonface:
         case CSSValueThreedface:
+            // Dark mode uses [NSColor controlColor].
             // We selected this value instead of [NSColor controlColor] to avoid website incompatibilities.
             // We may want to consider changing to [NSColor controlColor] some day.
+            ASSERT(!localAppearance.usingDarkAppearance());
             return Color::lightGray;
 
         case CSSValueInfobackground:
