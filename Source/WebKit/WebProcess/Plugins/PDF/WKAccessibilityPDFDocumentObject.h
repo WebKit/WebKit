@@ -57,6 +57,8 @@ class WeakPtrImplWithEventTargetData;
 - (id)accessibilityHitTest:(NSPoint)point;
 - (void)gotoDestination:(PDFDestination *)destination;
 - (NSRect)convertFromPDFPageToScreenForAccessibility:(NSRect)rectInPageCoordinate pageIndex:(WebKit::PDFDocumentLayout::PageIndex)pageIndex;
+- (id)accessibilityAssociatedControlForAnnotation:(PDFAnnotation *)annotation;
+- (void)setActiveAnnotation:(PDFAnnotation *)annotation;
 
 @end
 

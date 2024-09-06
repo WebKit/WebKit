@@ -3400,29 +3400,30 @@ void UnifiedPDFPlugin::focusPreviousAnnotation()
 void UnifiedPDFPlugin::setActiveAnnotation(SetActiveAnnotationParams&& setActiveAnnotationParams)
 {
 #if PLATFORM(MAC)
-    auto&& [annotation, isInPluginCleanup] = setActiveAnnotationParams;
+    callOnMainRunLoopAndWait([annotation = WTFMove(setActiveAnnotationParams.annotation), isInPluginCleanup = WTFMove(setActiveAnnotationParams.isInPluginCleanup), this] {
 
-    ASSERT(isInPluginCleanup != IsInPluginCleanup::Yes || !annotation, "Must pass a null annotation when cleaning up the plugin");
+        ASSERT(isInPluginCleanup != IsInPluginCleanup::Yes || !annotation, "Must pass a null annotation when cleaning up the plugin");
 
-    if (isInPluginCleanup != IsInPluginCleanup::Yes && !supportsForms())
-        return;
-
-    if (isInPluginCleanup != IsInPluginCleanup::Yes && m_activeAnnotation) {
-        m_activeAnnotation->commit();
-        setNeedsRepaintForAnnotation(m_activeAnnotation->annotation(), repaintRequirementsForAnnotation(m_activeAnnotation->annotation(), IsAnnotationCommit::Yes));
-    }
-
-    if (annotation) {
-        if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()] && [annotation isReadOnly]) {
-            m_activeAnnotation = nullptr;
+        if (isInPluginCleanup != IsInPluginCleanup::Yes && !supportsForms())
             return;
+
+        if (isInPluginCleanup != IsInPluginCleanup::Yes && m_activeAnnotation) {
+            m_activeAnnotation->commit();
+            setNeedsRepaintForAnnotation(m_activeAnnotation->annotation(), repaintRequirementsForAnnotation(m_activeAnnotation->annotation(), IsAnnotationCommit::Yes));
         }
 
-        m_activeAnnotation = PDFPluginAnnotation::create(annotation.get(), this);
-        protectedActiveAnnotation()->attach(m_annotationContainer.get());
-        revealAnnotation(protectedActiveAnnotation()->annotation());
-    } else
-        m_activeAnnotation = nullptr;
+        if (annotation) {
+            if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()] && [annotation isReadOnly]) {
+                m_activeAnnotation = nullptr;
+                return;
+            }
+
+            m_activeAnnotation = PDFPluginAnnotation::create(annotation.get(), this);
+            protectedActiveAnnotation()->attach(m_annotationContainer.get());
+            revealAnnotation(protectedActiveAnnotation()->annotation());
+        } else
+            m_activeAnnotation = nullptr;
+    });
 #endif
 }
 
