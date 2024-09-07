@@ -30,6 +30,7 @@
 #include <WebCore/DisplayListRecorder.h>
 #include <WebCore/DrawGlyphsRecorder.h>
 #include <WebCore/GraphicsContext.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -45,6 +46,7 @@ class RemoteImageBufferProxy;
 class SharedVideoFrameWriter;
 
 class RemoteDisplayListRecorderProxy : public WebCore::DisplayList::Recorder {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteDisplayListRecorderProxy);
 public:
     RemoteDisplayListRecorderProxy(RemoteImageBufferProxy&, RemoteRenderingBackendProxy&, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&);
     RemoteDisplayListRecorderProxy(RemoteRenderingBackendProxy& , WebCore::RenderingResourceIdentifier, const WebCore::DestinationColorSpace&, WebCore::RenderingMode, const WebCore::FloatRect&, const WebCore::AffineTransform&);

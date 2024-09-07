@@ -27,10 +27,13 @@
 #include "TextCodecReplacement.h"
 
 #include <wtf/Function.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace PAL {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCodecReplacement);
 
 void TextCodecReplacement::registerEncodingNames(EncodingNameRegistrar registrar)
 {

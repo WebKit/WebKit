@@ -33,6 +33,7 @@
 #include "PlatformLocale.h"
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -45,6 +46,7 @@ namespace WebCore {
 class DateComponents;
 
 class LocaleCocoa final : public Locale {
+    WTF_MAKE_TZONE_ALLOCATED(LocaleCocoa);
 public:
     explicit LocaleCocoa(const AtomString&);
     ~LocaleCocoa();

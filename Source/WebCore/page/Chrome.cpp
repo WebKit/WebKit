@@ -58,6 +58,7 @@
 #include "WorkerClient.h"
 #include <JavaScriptCore/VM.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -73,6 +74,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Chrome);
 
 using namespace HTMLNames;
 

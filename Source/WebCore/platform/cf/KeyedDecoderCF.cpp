@@ -26,10 +26,13 @@
 #include "config.h"
 #include "KeyedDecoderCF.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(KeyedDecoderCF);
 
 std::unique_ptr<KeyedDecoder> KeyedDecoder::decoder(std::span<const uint8_t> data)
 {

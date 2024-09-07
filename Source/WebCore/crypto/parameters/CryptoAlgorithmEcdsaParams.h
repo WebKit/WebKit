@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class CryptoAlgorithmEcdsaParams final : public CryptoAlgorithmParameters {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CryptoAlgorithmEcdsaParams);
 public:
     // FIXME: Consider merging hash and hashIdentifier.
     std::variant<JSC::Strong<JSC::JSObject>, String> hash;

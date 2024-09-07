@@ -32,6 +32,7 @@
 #include <wtf/Compiler.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 enum NEFilterSourceStatus : NSInteger;
@@ -42,6 +43,7 @@ OBJC_CLASS NSData;
 namespace WebCore {
 
 class NetworkExtensionContentFilter final : public PlatformContentFilter {
+    WTF_MAKE_TZONE_ALLOCATED(NetworkExtensionContentFilter);
     friend UniqueRef<NetworkExtensionContentFilter> WTF::makeUniqueRefWithoutFastMallocCheck<NetworkExtensionContentFilter>();
 
 public:

@@ -34,6 +34,7 @@
 #include "Timer.h"
 #include <wtf/RefPtr.h>
 #include <wtf/SmallMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -46,6 +47,7 @@ class ScrollingStateTree;
 // ScrollingCoordinator subclass that maintains a ScrollingStateTree and a ScrollingTree,
 // allowing asynchronous scrolling (in another thread or process).
 class AsyncScrollingCoordinator : public ScrollingCoordinator {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AsyncScrollingCoordinator, WEBCORE_EXPORT);
 public:
     static Ref<AsyncScrollingCoordinator> create(Page*);
     WEBCORE_EXPORT virtual ~AsyncScrollingCoordinator();

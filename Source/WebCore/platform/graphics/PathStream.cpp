@@ -27,8 +27,11 @@
 #include "PathStream.h"
 
 #include "GeometryUtilities.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PathStream);
 
 Ref<PathStream> PathStream::create()
 {

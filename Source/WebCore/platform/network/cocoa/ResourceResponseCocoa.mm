@@ -35,12 +35,15 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/text/StringView.h>
 
 WTF_DECLARE_CF_TYPE_TRAIT(SecTrust);
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ResourceResponse);
 
 void ResourceResponse::initNSURLResponse() const
 {

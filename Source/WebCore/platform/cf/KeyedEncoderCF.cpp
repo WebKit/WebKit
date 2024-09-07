@@ -28,9 +28,12 @@
 
 #include "SharedBuffer.h"
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(KeyedEncoderCF);
 
 std::unique_ptr<KeyedEncoder> KeyedEncoder::encoder()
 {

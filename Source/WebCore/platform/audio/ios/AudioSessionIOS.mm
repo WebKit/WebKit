@@ -37,6 +37,7 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/LoggerHelper.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WorkQueue.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -98,6 +99,8 @@
 @end
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSessionIOS);
 
 static WeakHashSet<AudioSessionIOS::CategoryChangedObserver>& audioSessionCategoryChangedObservers()
 {

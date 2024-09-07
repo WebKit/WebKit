@@ -27,10 +27,12 @@
 
 #include "RemoteLayerBackingStore.h"
 #include <WebCore/DynamicContentScalingResourceCache.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class RemoteLayerWithInProcessRenderingBackingStore : public RemoteLayerBackingStore {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerWithInProcessRenderingBackingStore);
 public:
     using RemoteLayerBackingStore::RemoteLayerBackingStore;
 

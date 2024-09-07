@@ -27,11 +27,14 @@
 #include "TextCodecUserDefined.h"
 
 #include <array>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace PAL {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCodecUserDefined);
 
 void TextCodecUserDefined::registerEncodingNames(EncodingNameRegistrar registrar)
 {

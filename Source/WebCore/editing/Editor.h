@@ -161,7 +161,7 @@ private:
 };
 
 class IgnoreSelectionChangeForScope {
-    WTF_MAKE_TZONE_ALLOCATED(IgnoreSelectionChangeForScope);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IgnoreSelectionChangeForScope, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(IgnoreSelectionChangeForScope);
 public:
     IgnoreSelectionChangeForScope(LocalFrame& frame)

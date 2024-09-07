@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class CryptoAlgorithmRsaPssParams final : public CryptoAlgorithmParameters {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CryptoAlgorithmRsaPssParams);
 public:
     size_t saltLength;
 

@@ -232,6 +232,7 @@ private:
     const std::optional<Vector<FourCC>>& allowedMediaCaptionFormatTypes() const final { return nullOptionalFourCCVector(); }
 
     class NullMediaResourceLoader final : public PlatformMediaResourceLoader {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(NullMediaResourceLoader);
         void sendH2Ping(const URL&, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&& completionHandler) final
         {
             completionHandler(makeUnexpected(ResourceError { }));

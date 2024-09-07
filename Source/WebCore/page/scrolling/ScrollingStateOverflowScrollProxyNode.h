@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class ScrollingStateOverflowScrollProxyNode : public ScrollingStateNode {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingStateOverflowScrollProxyNode, WEBCORE_EXPORT);
 public:
     template<typename... Args> static Ref<ScrollingStateOverflowScrollProxyNode> create(Args&&... args) { return adoptRef(*new ScrollingStateOverflowScrollProxyNode(std::forward<Args>(args)...)); }
 

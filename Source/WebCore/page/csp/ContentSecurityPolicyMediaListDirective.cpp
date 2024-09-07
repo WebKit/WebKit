@@ -30,10 +30,13 @@
 #include "ContentSecurityPolicy.h"
 #include "ContentSecurityPolicyDirectiveList.h"
 #include "ParsingUtilities.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentSecurityPolicyMediaListDirective);
 
 template<typename CharacterType> static bool isMediaTypeCharacter(CharacterType c)
 {

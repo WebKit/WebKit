@@ -36,6 +36,7 @@
 #include <wtf/Atomics.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -48,6 +49,7 @@ class MediaResource;
 class WeakPtrImplWithEventTargetData;
 
 class MediaResourceLoader final : public PlatformMediaResourceLoader, public CanMakeWeakPtr<MediaResourceLoader>, public ContextDestructionObserver {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MediaResourceLoader, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT MediaResourceLoader(Document&, Element&, const String& crossOriginMode, FetchOptions::Destination);
     WEBCORE_EXPORT virtual ~MediaResourceLoader();
@@ -76,6 +78,7 @@ private:
 };
 
 class MediaResource : public PlatformMediaResource, public CachedRawResourceClient {
+    WTF_MAKE_TZONE_ALLOCATED(MediaResource);
 public:
     static Ref<MediaResource> create(MediaResourceLoader&, CachedResourceHandle<CachedRawResource>&&);
     virtual ~MediaResource();

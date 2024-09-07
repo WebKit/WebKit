@@ -29,6 +29,7 @@
 #include "APIClient.h"
 #include "APIInjectedBundlePageResourceLoadClient.h"
 #include "WKBundlePageResourceLoadClient.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace API {
 template<> struct ClientTraits<WKBundlePageResourceLoadClientBase> {
@@ -48,6 +49,7 @@ class WebPage;
 class WebFrame;
 
 class InjectedBundlePageResourceLoadClient : public API::InjectedBundle::ResourceLoadClient, public API::Client<WKBundlePageResourceLoadClientBase> {
+    WTF_MAKE_TZONE_ALLOCATED(InjectedBundlePageResourceLoadClient);
 public:
     explicit InjectedBundlePageResourceLoadClient(const WKBundlePageResourceLoadClientBase*);
 

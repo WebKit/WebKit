@@ -31,6 +31,7 @@
 #include <WebCore/ScrollbarsController.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
@@ -40,6 +41,7 @@ class ScrollingCoordinator;
 namespace WebKit {
 
 class RemoteScrollbarsController final : public WebCore::ScrollbarsController {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteScrollbarsController);
 public:
     RemoteScrollbarsController(WebCore::ScrollableArea&, WebCore::ScrollingCoordinator*);
     ~RemoteScrollbarsController() = default;

@@ -29,6 +29,7 @@
 
 #include "AudioSessionCocoa.h"
 #include <pal/spi/cf/CoreAudioSPI.h>
+#include <wtf/TZoneMalloc.h>
 
 typedef UInt32 AudioObjectID;
 typedef struct AudioObjectPropertyAddress AudioObjectPropertyAddress;
@@ -36,6 +37,7 @@ typedef struct AudioObjectPropertyAddress AudioObjectPropertyAddress;
 namespace WebCore {
 
 class AudioSessionMac final : public AudioSessionCocoa {
+    WTF_MAKE_TZONE_ALLOCATED(AudioSessionMac);
 public:
     AudioSessionMac() = default;
     virtual ~AudioSessionMac() = default;

@@ -27,11 +27,13 @@
 
 #include "KeyedCoding.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class KeyedEncoderCF final : public KeyedEncoder {
+    WTF_MAKE_TZONE_ALLOCATED(KeyedEncoderCF);
 public:
     KeyedEncoderCF();
     ~KeyedEncoderCF();

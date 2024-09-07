@@ -39,6 +39,7 @@
 #include "DateTimeFormat.h"
 #include "InputType.h"
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -48,6 +49,7 @@ struct DateTimeChooserParameters;
 
 // A super class of date, datetime, datetime-local, month, time, and week types.
 class BaseDateAndTimeInputType : public InputType, private DateTimeChooserClient, private DateTimeEditElementEditControlOwner {
+    WTF_MAKE_TZONE_ALLOCATED(BaseDateAndTimeInputType);
 public:
     bool typeMismatchFor(const String&) const final;
     bool valueMissing(const String&) const final;

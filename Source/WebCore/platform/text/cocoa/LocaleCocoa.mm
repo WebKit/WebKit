@@ -39,11 +39,14 @@
 #import <wtf/HashMap.h>
 #import <wtf/Language.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/AtomStringHash.h>
 #import "LocalizedDateCache.h"
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LocaleCocoa);
 
 std::unique_ptr<Locale> Locale::create(const AtomString& locale)
 {

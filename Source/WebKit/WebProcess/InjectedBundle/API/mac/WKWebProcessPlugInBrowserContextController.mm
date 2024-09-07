@@ -64,6 +64,7 @@
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -461,6 +462,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
     _formDelegate = formDelegate;
 
     class FormClient final : public API::InjectedBundle::FormClient {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(FormClient);
     public:
         explicit FormClient(WKWebProcessPlugInBrowserContextController *controller)
             : m_controller(controller)
@@ -596,6 +598,7 @@ static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction action)
     _editingDelegate = editingDelegate;
 
     class Client final : public API::InjectedBundle::EditorClient {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(Client);
     public:
         explicit Client(WKWebProcessPlugInBrowserContextController *controller)
             : m_controller { controller }

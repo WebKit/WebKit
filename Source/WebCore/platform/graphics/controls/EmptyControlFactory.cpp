@@ -27,8 +27,12 @@
 #include "EmptyControlFactory.h"
 
 #include "NotImplemented.h"
+#include <wtf/TZoneMallocInlines.h>
+
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyControlFactory);
 
 #if ENABLE(APPLE_PAY)
 std::unique_ptr<PlatformControl> EmptyControlFactory::createPlatformApplePayButton(ApplePayButtonPart&)

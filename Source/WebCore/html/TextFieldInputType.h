@@ -37,6 +37,7 @@
 #include "DataListSuggestionsClient.h"
 #include "InputType.h"
 #include "SpinButtonElement.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -50,6 +51,7 @@ class TextFieldInputType : public InputType, protected SpinButtonOwner, protecte
     , private DataListSuggestionsClient, protected DataListButtonElement::DataListButtonOwner
 #endif
 {
+    WTF_MAKE_TZONE_ALLOCATED(TextFieldInputType);
 public:
     bool valueMissing(const String&) const final;
 

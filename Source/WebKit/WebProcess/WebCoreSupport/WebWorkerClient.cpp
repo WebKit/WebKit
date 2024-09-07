@@ -49,6 +49,7 @@ using namespace WebCore;
 
 #if ENABLE(GPU_PROCESS)
 class GPUProcessWebWorkerClient final : public WebWorkerClient {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GPUProcessWebWorkerClient);
 public:
     using WebWorkerClient::WebWorkerClient;
     UniqueRef<WorkerClient> createNestedWorkerClient(SerialFunctionDispatcher&) final;

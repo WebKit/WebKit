@@ -60,6 +60,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/NativePromise.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakPtr.h>
 
 #import "CoreVideoSoftLink.h"
@@ -223,6 +224,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
 #pragma mark MediaPlayer Factory Methods
 
 class MediaPlayerFactoryMediaSourceAVFObjC final : public MediaPlayerFactory {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MediaPlayerFactoryMediaSourceAVFObjC);
 public:
     MediaPlayerFactoryMediaSourceAVFObjC()
     {

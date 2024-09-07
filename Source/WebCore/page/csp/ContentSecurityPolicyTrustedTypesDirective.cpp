@@ -29,10 +29,13 @@
 #include "ContentSecurityPolicy.h"
 #include "ContentSecurityPolicyDirectiveList.h"
 #include "ParsingUtilities.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringCommon.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentSecurityPolicyTrustedTypesDirective);
 
 template<typename CharacterType> static bool isTrustedTypesNone(StringParsingBuffer<CharacterType> buffer)
 {

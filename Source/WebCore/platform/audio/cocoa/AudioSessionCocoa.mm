@@ -32,11 +32,14 @@
 #import "NotImplemented.h"
 #import <AVFoundation/AVAudioSession.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WorkQueue.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSessionCocoa);
 
 void AudioSessionCocoa::setEligibleForSmartRoutingInternal(bool eligible)
 {

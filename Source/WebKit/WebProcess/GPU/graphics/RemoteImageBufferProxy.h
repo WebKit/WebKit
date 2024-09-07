@@ -35,6 +35,7 @@
 #include <WebCore/ImageBufferBackend.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Connection;
@@ -45,6 +46,7 @@ namespace WebKit {
 class RemoteRenderingBackendProxy;
 
 class RemoteImageBufferProxy : public WebCore::ImageBuffer {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteImageBufferProxy);
     friend class RemoteSerializedImageBufferProxy;
 public:
     template<typename BackendType>

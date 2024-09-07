@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RemoteObjectRegistry.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebKit {
@@ -33,6 +34,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class UIRemoteObjectRegistry final : public RemoteObjectRegistry {
+    WTF_MAKE_TZONE_ALLOCATED(UIRemoteObjectRegistry);
 public:
     UIRemoteObjectRegistry(_WKRemoteObjectRegistry *, WebPageProxy&);
     ~UIRemoteObjectRegistry();

@@ -28,10 +28,12 @@
 #include "WebPage.h"
 #include "WebSpeechRecognitionConnection.h"
 #include <WebCore/SpeechRecognitionProvider.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 class WebSpeechRecognitionProvider final : public WebCore::SpeechRecognitionProvider {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebSpeechRecognitionProvider);
 public:
     explicit WebSpeechRecognitionProvider(WebCore::PageIdentifier identifier)
         : m_pageIdentifier(identifier)

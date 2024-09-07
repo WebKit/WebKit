@@ -28,8 +28,11 @@
 
 #include "NetworkStorageManager.h"
 #include <WebCore/SWServer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSWRegistrationStore);
 
 WebSWRegistrationStore::WebSWRegistrationStore(WebCore::SWServer& server, NetworkStorageManager& manager)
     : m_server(server)

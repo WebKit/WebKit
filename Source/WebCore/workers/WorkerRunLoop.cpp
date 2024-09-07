@@ -59,6 +59,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerDedicatedRunLoop);
 WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WorkerDedicatedRunLoopTask, WorkerDedicatedRunLoop::Task);
 
 class WorkerSharedTimer final : public SharedTimer {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WorkerSharedTimer);
 public:
     // SharedTimer interface.
     void setFiredFunction(Function<void()>&& function) final { m_sharedTimerFunction = WTFMove(function); }

@@ -27,6 +27,7 @@
 
 #include <WebCore/UniqueIDBDatabase.h>
 #include <WebCore/UniqueIDBDatabaseManager.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class IDBRequestData;
@@ -45,6 +46,7 @@ namespace WebKit {
 class IDBStorageRegistry;
 
 class IDBStorageManager final : public WebCore::IDBServer::UniqueIDBDatabaseManager {
+    WTF_MAKE_TZONE_ALLOCATED(IDBStorageManager);
 public:
     static void createVersionDirectoryIfNeeded(const String& rootDirectory);
     static String idbStorageOriginDirectory(const String& rootDirectory, const WebCore::ClientOrigin&);

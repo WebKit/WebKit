@@ -1164,6 +1164,7 @@ class EmptyStorageSessionProvider final : public StorageSessionProvider {
 };
 
 class EmptyMediaRecorderProvider final : public MediaRecorderProvider {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(EmptyMediaRecorderProvider);
 public:
     EmptyMediaRecorderProvider() = default;
 private:

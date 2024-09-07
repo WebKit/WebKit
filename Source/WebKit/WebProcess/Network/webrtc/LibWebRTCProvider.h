@@ -33,6 +33,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 #if PLATFORM(COCOA)
@@ -61,6 +62,7 @@ using LibWebRTCProviderBase = WebCore::LibWebRTCProvider;
 #endif
 
 class LibWebRTCProvider final : public LibWebRTCProviderBase {
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCProvider);
 public:
     explicit LibWebRTCProvider(WebPage&);
     ~LibWebRTCProvider();

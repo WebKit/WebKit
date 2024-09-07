@@ -31,6 +31,7 @@
 #include "Event.h"
 #include "EventLoop.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -147,6 +148,7 @@ void ActiveDOMObject::queueTaskInEventLoop(TaskSource source, Function<void ()>&
 }
 
 class ActiveDOMObjectEventDispatchTask : public EventLoopTask {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(ActiveDOMObjectEventDispatchTask);
 public:
     ActiveDOMObjectEventDispatchTask(TaskSource source, EventLoopTaskGroup& group, ActiveDOMObject& object, Function<void()>&& dispatchEvent)
         : EventLoopTask(source, group)

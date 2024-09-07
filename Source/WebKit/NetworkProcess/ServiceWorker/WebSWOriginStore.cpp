@@ -30,8 +30,11 @@
 #include "WebSWClientConnectionMessages.h"
 #include "WebSWServerConnection.h"
 #include <WebCore/SecurityOrigin.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSWOriginStore);
 
 using namespace WebCore;
 

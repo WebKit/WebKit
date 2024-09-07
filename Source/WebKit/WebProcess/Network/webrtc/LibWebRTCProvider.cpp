@@ -55,6 +55,8 @@ ALLOW_COMMA_END
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCProvider);
+
 LibWebRTCProvider::LibWebRTCProvider(WebPage& webPage)
     : m_webPage(webPage)
 {

@@ -40,8 +40,12 @@
 #include "LocalFrameLoaderClient.h"
 #include "SecurityOrigin.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaResourceLoader);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaResource);
 
 static bool shouldRecordResponsesForTesting = false;
 

@@ -65,6 +65,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/SystemTracing.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(ASYNC_SCROLLING)
 #import <WebCore/AsyncScrollingCoordinator.h>
@@ -74,6 +75,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TiledCoreAnimationDrawingArea);
 
 TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaType::TiledCoreAnimation, parameters.drawingAreaIdentifier, webPage)

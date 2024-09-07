@@ -29,11 +29,14 @@
 #include "EncodingTables.h"
 #include <mutex>
 #include <wtf/IteratorRange.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CodePointIterator.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace PAL {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCodecSingleByte);
 
 enum class TextCodecSingleByte::Encoding : uint8_t {
     ISO_8859_3,

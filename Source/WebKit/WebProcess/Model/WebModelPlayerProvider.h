@@ -26,12 +26,14 @@
 #pragma once
 
 #include <WebCore/ModelPlayerProvider.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebPage;
 
 class WebModelPlayerProvider final : public WebCore::ModelPlayerProvider {
+    WTF_MAKE_TZONE_ALLOCATED(WebModelPlayerProvider);
 public:
     WebModelPlayerProvider(WebPage&);
     virtual ~WebModelPlayerProvider();

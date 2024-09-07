@@ -32,6 +32,8 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSelectionGeometryBase);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSelectionGeometry);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderBlockSelectionGeometry);
 
 RenderSelectionGeometryBase::RenderSelectionGeometryBase(RenderObject& renderer)
     : m_renderer(renderer)

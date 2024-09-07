@@ -27,11 +27,13 @@
 
 #include "MockContentFilterSettings.h"
 #include "PlatformContentFilter.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
 class MockContentFilter final : public PlatformContentFilter {
+    WTF_MAKE_TZONE_ALLOCATED(MockContentFilter);
     friend UniqueRef<MockContentFilter> WTF::makeUniqueRefWithoutFastMallocCheck<MockContentFilter>();
 
 public:

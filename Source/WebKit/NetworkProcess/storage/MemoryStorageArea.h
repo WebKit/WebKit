@@ -27,6 +27,7 @@
 
 #include "StorageAreaBase.h"
 #include <WebCore/StorageMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class StorageMap;
@@ -35,6 +36,7 @@ class StorageMap;
 namespace WebKit {
 
 class MemoryStorageArea final : public StorageAreaBase {
+    WTF_MAKE_TZONE_ALLOCATED(MemoryStorageArea);
 public:
     explicit MemoryStorageArea(const WebCore::ClientOrigin&, StorageAreaBase::StorageType = StorageAreaBase::StorageType::Session);
 

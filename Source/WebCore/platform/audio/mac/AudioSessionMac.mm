@@ -34,12 +34,15 @@
 #import <CoreAudio/AudioHardware.h>
 #import <wtf/LoggerHelper.h>
 #import <wtf/MainThread.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/UniqueArray.h>
 #import <wtf/text/WTFString.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSessionMac);
 
 static AudioDeviceID defaultDeviceWithoutCaching()
 {

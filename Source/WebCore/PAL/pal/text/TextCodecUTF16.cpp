@@ -26,12 +26,15 @@
 #include "config.h"
 #include "TextCodecUTF16.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace PAL {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCodecUTF16);
 
 inline TextCodecUTF16::TextCodecUTF16(bool littleEndian)
     : m_littleEndian(littleEndian)

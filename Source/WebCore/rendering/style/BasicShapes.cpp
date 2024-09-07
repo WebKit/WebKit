@@ -51,6 +51,14 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShape);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShapeCircleOrEllipse);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShapeCircle);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShapeEllipse);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShapePolygon);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShapePath);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShapeInset);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShapeRect);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShapeXywh);
 
 void BasicShapeCenterCoordinate::updateComputedLength()
 {

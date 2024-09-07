@@ -35,6 +35,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS CALayer;
 
@@ -59,6 +60,7 @@ namespace WebKit {
 class LayerHostingContext;
 
 class TiledCoreAnimationDrawingArea final : public DrawingArea {
+    WTF_MAKE_TZONE_ALLOCATED(TiledCoreAnimationDrawingArea);
 public:
     TiledCoreAnimationDrawingArea(WebPage&, const WebPageCreationParameters&);
     virtual ~TiledCoreAnimationDrawingArea();

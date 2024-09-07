@@ -129,6 +129,7 @@ private:
 // Used to store one float value of an animation.
 // FIXME: Should be moved to its own header file.
 class FloatAnimationValue : public AnimationValue {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FloatAnimationValue, WEBCORE_EXPORT);
 public:
     FloatAnimationValue(double keyTime, float value, TimingFunction* timingFunction = nullptr)
         : AnimationValue(keyTime, timingFunction)
@@ -150,6 +151,7 @@ private:
 // Used to store one transform value in a keyframe list.
 // FIXME: Should be moved to its own header file.
 class TransformAnimationValue : public AnimationValue {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TransformAnimationValue, WEBCORE_EXPORT);
 public:
     TransformAnimationValue(double keyTime, const TransformOperations& value, TimingFunction* timingFunction = nullptr)
         : AnimationValue(keyTime, timingFunction)
@@ -185,6 +187,7 @@ private:
 // Used to store one filter value in a keyframe list.
 // FIXME: Should be moved to its own header file.
 class FilterAnimationValue : public AnimationValue {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FilterAnimationValue, WEBCORE_EXPORT);
 public:
     FilterAnimationValue(double keyTime, const FilterOperations& value, TimingFunction* timingFunction = nullptr)
         : AnimationValue(keyTime, timingFunction)
@@ -215,6 +218,7 @@ private:
 // Values will all be of the same type, which can be inferred from the property.
 // FIXME: Should be moved to its own header file.
 class KeyframeValueList {
+    WTF_MAKE_TZONE_ALLOCATED(KeyframeValueList);
 public:
     explicit KeyframeValueList(AnimatedProperty property)
         : m_property(property)

@@ -28,6 +28,7 @@
 #include "APIClient.h"
 #include "APIInjectedBundleEditorClient.h"
 #include "WKBundlePageEditorClient.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace API {
 template<> struct ClientTraits<WKBundlePageEditorClientBase> {
@@ -48,6 +49,7 @@ class WebFrame;
 class WebPage;
 
 class InjectedBundlePageEditorClient final : public API::Client<WKBundlePageEditorClientBase>, public API::InjectedBundle::EditorClient {
+    WTF_MAKE_TZONE_ALLOCATED(InjectedBundlePageEditorClient);
 public:
     explicit InjectedBundlePageEditorClient(const WKBundlePageEditorClientBase&);
 

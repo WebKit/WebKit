@@ -29,8 +29,11 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "NotImplemented.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ControlFactoryIOS);
 
 RefPtr<ControlFactory> ControlFactory::create()
 {

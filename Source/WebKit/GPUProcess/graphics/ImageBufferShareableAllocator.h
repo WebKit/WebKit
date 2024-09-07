@@ -30,10 +30,12 @@
 #include <WebCore/ImageBufferAllocator.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/SharedMemory.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class ImageBufferShareableAllocator final : public WebCore::ImageBufferAllocator {
+    WTF_MAKE_TZONE_ALLOCATED(ImageBufferShareableAllocator);
 public:
     ImageBufferShareableAllocator(const WebCore::ProcessIdentity&);
 
