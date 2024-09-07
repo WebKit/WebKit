@@ -421,9 +421,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RefPtr videoPresentationManager = page->videoPresentationManager();
     RefPtr videoPresentationInterface = videoPresentationManager ? videoPresentationManager->controlsManagerInterface() : nullptr;
 
-    if (videoPresentationInterface)
-        videoPresentationInterface->setSpatialImmersive(true);
-
     LMPlayableViewController *playableViewController = videoPresentationInterface ? videoPresentationInterface->playableViewController() : nil;
     UIViewController *environmentPickerButtonViewController = playableViewController.wks_environmentPickerButtonViewController;
 
@@ -462,14 +459,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_didCleanupFullscreen
 {
-    RefPtr page = self._webView._page.get();
-    if (!page)
-        return;
-    RefPtr videoPresentationManager = page->videoPresentationManager();
-    if (!videoPresentationManager)
-        return;
-    if (RefPtr videoPresentationInterface = videoPresentationManager->controlsManagerInterface())
-        videoPresentationInterface->setSpatialImmersive(false);
+    // Place videoPresentationInterface cleanup code here.
 }
 #endif // ENABLE(LINEAR_MEDIA_PLAYER)
 
