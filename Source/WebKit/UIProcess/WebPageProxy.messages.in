@@ -335,7 +335,7 @@ messages -> WebPageProxy {
     ExecuteSavedCommandBySelector(String selector) -> (bool handled) Synchronous
 
     # Remote accessibility messages
-    RegisterWebProcessAccessibilityToken(std::span<const uint8_t> data, WebCore::FrameIdentifier frameID)
+    RegisterWebProcessAccessibilityToken(std::span<const uint8_t> data)
 
     # Speech messages
     GetIsSpeaking() -> (bool isSpeaking) Synchronous

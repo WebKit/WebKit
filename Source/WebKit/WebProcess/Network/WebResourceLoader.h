@@ -62,7 +62,7 @@ public:
     struct TrackingParameters {
         WebPageProxyIdentifier webPageProxyID;
         Markable<WebCore::PageIdentifier> pageID;
-        WebCore::FrameIdentifier frameID;
+        Markable<WebCore::FrameIdentifier> frameID;
         WebCore::ResourceLoaderIdentifier resourceID;
     };
 

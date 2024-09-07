@@ -693,20 +693,22 @@ auto TextManipulationController::completeManipulation(const Vector<WebCore::Text
     for (unsigned i = 0; i < completionItems.size(); ++i) {
         auto& itemToComplete = completionItems[i];
         auto frameID = itemToComplete.frameID;
+        if (!frameID)
+            continue;
         auto itemID = itemToComplete.identifier;
-        if (!frameID || !m_document || !m_document->frame() || frameID != m_document->frame()->frameID()) {
-            failures.append(ManipulationFailure { frameID, itemID, i, ManipulationFailure::Type::NotAvailable });
+        if (!m_document || !m_document->frame() || (frameID != m_document->frame()->frameID())) {
+            failures.append(ManipulationFailure { *frameID, itemID, i, ManipulationFailure::Type::NotAvailable });
             continue;
         }
 
         if (!itemID) {
-            failures.append(ManipulationFailure { frameID, itemID, i, ManipulationFailure::Type::InvalidItem });
+            failures.append(ManipulationFailure { *frameID, itemID, i, ManipulationFailure::Type::InvalidItem });
             continue;
         }
 
         auto itemDataIterator = m_items.find(itemID);
         if (itemDataIterator == m_items.end()) {
-            failures.append(ManipulationFailure { frameID, itemID, i, ManipulationFailure::Type::InvalidItem });
+            failures.append(ManipulationFailure { *frameID, itemID, i, ManipulationFailure::Type::InvalidItem });
             continue;
         }
 
@@ -715,7 +717,7 @@ auto TextManipulationController::completeManipulation(const Vector<WebCore::Text
         m_items.remove(itemDataIterator);
 
         if (auto failureOrNullopt = replace(itemData, itemToComplete.tokens, containersWithoutVisualOverflowBeforeReplacement))
-            failures.append(ManipulationFailure { frameID, itemID, i, *failureOrNullopt });
+            failures.append(ManipulationFailure { *frameID, itemID, i, *failureOrNullopt });
     }
 
     if (!containersWithoutVisualOverflowBeforeReplacement.isEmpty()) {

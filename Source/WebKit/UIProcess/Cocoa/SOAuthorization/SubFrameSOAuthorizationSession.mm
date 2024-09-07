@@ -53,22 +53,22 @@ constexpr auto soAuthorizationPostDidCancelMessageToParent = "<script>parent.pos
 
 } // namespace
 
-Ref<SOAuthorizationSession> SubFrameSOAuthorizationSession::create(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler, FrameIdentifier frameID)
+Ref<SOAuthorizationSession> SubFrameSOAuthorizationSession::create(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler, std::optional<FrameIdentifier> frameID)
 {
     return adoptRef(*new SubFrameSOAuthorizationSession(delegate, WTFMove(navigationAction), page, WTFMove(completionHandler), frameID));
 }
 
-SubFrameSOAuthorizationSession::SubFrameSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler, FrameIdentifier frameID)
+SubFrameSOAuthorizationSession::SubFrameSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler, std::optional<FrameIdentifier> frameID)
     : NavigationSOAuthorizationSession(delegate, WTFMove(navigationAction), page, InitiatingAction::SubFrame, WTFMove(completionHandler))
     , m_frameID(frameID)
 {
-    if (auto* frame = WebFrameProxy::webFrame(m_frameID))
+    if (RefPtr frame = WebFrameProxy::webFrame(m_frameID))
         frame->frameLoadState().addObserver(*this);
 }
 
 SubFrameSOAuthorizationSession::~SubFrameSOAuthorizationSession()
 {
-    if (auto* frame = WebFrameProxy::webFrame(m_frameID))
+    if (RefPtr frame = WebFrameProxy::webFrame(m_frameID))
         frame->frameLoadState().removeObserver(*this);
 }
 

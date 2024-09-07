@@ -114,7 +114,7 @@ public:
     NetworkConnectionToWebProcess& connectionToWebProcess() const { return m_connection; }
     PAL::SessionID sessionID() const { return m_connection->sessionID(); }
     WebCore::ResourceLoaderIdentifier coreIdentifier() const { return m_parameters.identifier; }
-    WebCore::FrameIdentifier frameID() const { return m_parameters.webFrameID; }
+    WebCore::FrameIdentifier frameID() const { return *m_parameters.webFrameID; }
     WebCore::PageIdentifier pageID() const { return *m_parameters.webPageID; }
     const NetworkResourceLoadParameters& parameters() const { return m_parameters; }
     NetworkResourceLoadIdentifier identifier() const { return m_resourceLoadID; }

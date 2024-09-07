@@ -106,7 +106,6 @@ template: struct WebCore::AttributedStringTextTableIDType
 #endif
 template: struct WebCore::BackForwardItemIdentifierType
 template: struct WebCore::DictationContextType
-template: struct WebCore::FrameIdentifierType
 template: struct WebCore::MediaKeySystemRequestIdentifierType
 template: struct WebCore::MediaPlayerIdentifierType
 template: struct WebCore::MediaPlayerClientIdentifierType
@@ -150,6 +149,7 @@ template: enum class WebCore::SharedWorkerIdentifierType
 template: enum class WebCore::WindowIdentifierType
 template: enum class WebCore::WorkletGlobalScopeIdentifierType
 template: enum class WebKit::DownloadIdentifierType
+template: struct WebCore::FrameIdentifierType
 template: struct WebCore::NavigationIdentifierType
 template: struct WebCore::PageIdentifierType
 template: struct WebCore::PlatformLayerIdentifierType

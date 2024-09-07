@@ -391,7 +391,7 @@ void PageClientImpl::executeUndoRedo(UndoOrRedo undoOrRedo)
     return (undoOrRedo == UndoOrRedo::Undo) ? [[contentView() undoManager] undo] : [[contentView() undoManager] redo];
 }
 
-void PageClientImpl::accessibilityWebProcessTokenReceived(std::span<const uint8_t> data, WebCore::FrameIdentifier, pid_t)
+void PageClientImpl::accessibilityWebProcessTokenReceived(std::span<const uint8_t> data, pid_t)
 {
     [contentView() _setAccessibilityWebProcessToken:toNSData(data).get()];
 }

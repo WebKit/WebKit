@@ -1387,10 +1387,7 @@ void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> p
 #if PLATFORM(COCOA)
     auto accessibilityToken = provisionalPage->takeAccessibilityToken();
     if (!accessibilityToken.isEmpty()) {
-        registerWebProcessAccessibilityToken({ accessibilityToken.data(), accessibilityToken.size() }, WebCore::FrameIdentifier {
-            LegacyNullableObjectIdentifier<WebCore::FrameIdentifierType>(),
-            LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>()
-        });
+        registerWebProcessAccessibilityToken({ accessibilityToken.data(), accessibilityToken.size() });
     }
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -2347,7 +2344,7 @@ RefPtr<API::Navigation> WebPageProxy::goBack()
         return nullptr;
 
     if (auto* currentItem = m_backForwardList->currentItem()) {
-        if (auto* childItem = backItem->childItemForFrameID(currentItem->frameID()))
+        if (auto* childItem = currentItem->frameID() ? backItem->childItemForFrameID(*currentItem->frameID()) : nullptr)
             backItem = childItem;
     }
 
@@ -2386,7 +2383,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem
         ASSERT(m_preferences->siteIsolationEnabled());
         if (RefPtr processForIdentifier = WebProcessProxy::processForIdentifier(item.lastProcessIdentifier()))
             process = *processForIdentifier;
-        else if (auto* targetFrameState = item.pageState().mainFrameState.stateForFrameID(item.frameID())) {
+        else if (auto* targetFrameState = item.frameID() ? item.pageState().mainFrameState.stateForFrameID(*item.frameID()) : nullptr) {
             if (&item != m_backForwardList->currentItem())
                 protectedBackForwardList()->goToItem(item);
             if (RefPtr frame = WebFrameProxy::webFrame(item.frameID())) {
@@ -3538,10 +3535,8 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
     };
 
     auto processID = siteIsolatedProcess().coreProcessIdentifier();
-    if (frameID) {
-        if (RefPtr frame = WebFrameProxy::webFrame(*frameID))
-            processID = frame->process().coreProcessIdentifier();
-    }
+    if (RefPtr frame = WebFrameProxy::webFrame(frameID))
+        processID = frame->process().coreProcessIdentifier();
 
     if (!filenames.size())
         return afterAllowed();
@@ -6943,7 +6938,7 @@ void WebPageProxy::didSameDocumentNavigationForFrameViaJSHistoryAPI(IPC::Connect
     MESSAGE_CHECK_BASE(frame, connection);
     MESSAGE_CHECK_URL(m_legacyMainFrameProcess, url);
 
-    WEBPAGEPROXY_RELEASE_LOG(Loading, "didSameDocumentNavigationForFrameViaJSHistoryAPI: frameID=%" PRIu64 ", isMainFrame=%d, type=%u", frameID.object().toUInt64(), frame->isMainFrame(), enumToUnderlyingType(navigationType));
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "didSameDocumentNavigationForFrameViaJSHistoryAPI: frameID=%" PRIu64 ", isMainFrame=%d, type=%u", frameID->object().toUInt64(), frame->isMainFrame(), enumToUnderlyingType(navigationType));
 
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the back/forward cache.
     RefPtr<API::Navigation> navigation;
@@ -7272,7 +7267,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     navigation->setOriginatorAdvancedPrivacyProtections(navigation->wasUserInitiated() ? navigationActionData.advancedPrivacyProtections : navigationActionData.originatorAdvancedPrivacyProtections);
 
     RefPtr mainFrameNavigation = frame.isMainFrame() ? navigation.get() : nullptr;
-    RefPtr originatingFrame = originatingFrameInfoData.frameID ? WebFrameProxy::webFrame(originatingFrameInfoData.frameID) : nullptr;
+    RefPtr originatingFrame = WebFrameProxy::webFrame(originatingFrameInfoData.frameID);
     Ref destinationFrameInfo = API::FrameInfo::create(FrameInfoData { frameInfo }, this);
     RefPtr<API::FrameInfo> sourceFrameInfo;
     if (!fromAPI && originatingFrame == &frame)
@@ -7526,10 +7521,9 @@ void WebPageProxy::decidePolicyForNavigationActionSync(IPC::Connection& connecti
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
     if (!frame) {
         // This synchronous IPC message was processed before the asynchronous DidCreateSubframe one so we do not know about this frameID yet.
-        MESSAGE_CHECK_BASE(frameInfo.parentFrameID, connection);
-        RefPtr parentFrame = WebFrameProxy::webFrame(*frameInfo.parentFrameID);
+        RefPtr parentFrame = WebFrameProxy::webFrame(frameInfo.parentFrameID);
         MESSAGE_CHECK_BASE(parentFrame, connection);
-        parentFrame->didCreateSubframe(frameInfo.frameID, frameInfo.frameName);
+        parentFrame->didCreateSubframe(*frameInfo.frameID, frameInfo.frameName);
     }
 
     decidePolicyForNavigationActionSyncShared(frame->protectedProcess(), WTFMove(data), WTFMove(reply));
@@ -7824,7 +7818,6 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
     auto originatingPageID = navigationActionData.originatingPageID;
     auto& request = navigationActionData.request;
     MESSAGE_CHECK_BASE(originatingPageID, connection);
-    MESSAGE_CHECK_BASE(originatingFrameInfoData.frameID, connection);
     MESSAGE_CHECK_BASE(WebFrameProxy::webFrame(originatingFrameInfoData.frameID), connection);
 
     auto originatingPage = protectedLegacyMainFrameProcess()->webPage(*originatingPageID);
@@ -7893,7 +7886,7 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
         configuration->setOpenerInfo({ {
             openerFrame->frameProcess().process(),
             openerFrame->frameProcess().site(),
-            originatingFrameInfoData.frameID
+            *originatingFrameInfoData.frameID
         } });
     } else {
         configuration->setOpenerInfo(std::nullopt);
@@ -10582,14 +10575,14 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
     WebPageCreationParameters parameters {
         .pageGroupData = m_pageGroup->data(),
-        .userContentControllerParameters = userContentController->parameters()
+        .userContentControllerParameters = userContentController->parameters(),
+        .mainFrameIdentifier = mainFrameIdentifier
     };
 
     parameters.processDisplayName = configuration().processDisplayName();
 
     parameters.remotePageParameters = WTFMove(remotePageParameters);
     parameters.openerFrameIdentifier = m_openerFrame ? std::optional(m_openerFrame->frameID()) : std::nullopt;
-    parameters.mainFrameIdentifier = mainFrameIdentifier;
     parameters.viewSize = protectedPageClient()->viewSize();
     parameters.activityState = internals().activityState;
     parameters.drawingAreaType = drawingArea.type();
@@ -11051,7 +11044,6 @@ void WebPageProxy::makeStorageSpaceRequest(FrameIdentifier frameID, const String
 
 void WebPageProxy::requestGeolocationPermissionForFrame(IPC::Connection& connection, GeolocationIdentifier geolocationID, FrameInfoData&& frameInfo)
 {
-    MESSAGE_CHECK_BASE(frameInfo.frameID, connection);
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
     MESSAGE_CHECK_BASE(frame, connection);
 
@@ -12535,7 +12527,7 @@ void WebPageProxy::didPerformImmediateActionHitTest(WebHitTestResultData&& resul
             return;
         }
         if (auto parentFrameID = result.frameInfo->parentFrameID) {
-            sendWithAsyncReplyToProcessContainingFrame(parentFrameID, Messages::WebPage::RemoteDictionaryPopupInfoToRootView(result.frameInfo->frameID, result.dictionaryPopupInfo), [protectedThis = Ref { *this }, this, userData, result = WTFMove(result), contentPreventsDefault](WebCore::DictionaryPopupInfo popupInfo) mutable {
+            sendWithAsyncReplyToProcessContainingFrame(parentFrameID, Messages::WebPage::RemoteDictionaryPopupInfoToRootView(*result.frameInfo->frameID, result.dictionaryPopupInfo), [protectedThis = Ref { *this }, this, userData, result = WTFMove(result), contentPreventsDefault](WebCore::DictionaryPopupInfo popupInfo) mutable {
                 result.dictionaryPopupInfo = popupInfo;
                 protectedThis->protectedPageClient()->didPerformImmediateActionHitTest(result, contentPreventsDefault, m_legacyMainFrameProcess->transformHandlesToObjects(userData.protectedObject().get()).get());
             });
@@ -14450,11 +14442,9 @@ Ref<WebBackForwardList> WebPageProxy::protectedBackForwardList() const
 template<typename F>
 decltype(auto) WebPageProxy::sendToWebPage(std::optional<FrameIdentifier> frameID, F&& sendFunction)
 {
-    if (frameID) {
-        if (RefPtr frame = WebFrameProxy::webFrame(*frameID)) {
-            if (auto* remotePage = m_browsingContextGroup->remotePageInProcess(*this, frame->process()))
-                return sendFunction(*remotePage);
-        }
+    if (RefPtr frame = WebFrameProxy::webFrame(frameID)) {
+        if (auto* remotePage = m_browsingContextGroup->remotePageInProcess(*this, frame->process()))
+            return sendFunction(*remotePage);
     }
     return sendFunction(*this);
 }

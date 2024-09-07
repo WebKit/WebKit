@@ -287,13 +287,13 @@ void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& diction
     protectedPageClient()->didPerformDictionaryLookup(dictionaryPopupInfo);
 }
 
-void WebPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t> data, FrameIdentifier frameID)
+void WebPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t> data)
 {
     if (!hasRunningProcess())
         return;
 
     // Note: The WebFrameProxy with this FrameIdentifier might not exist in the UI process. See rdar://130998804.
-    protectedPageClient()->accessibilityWebProcessTokenReceived(data, frameID, legacyMainFrameProcess().connection().remoteProcessID());
+    protectedPageClient()->accessibilityWebProcessTokenReceived(data, legacyMainFrameProcess().connection().remoteProcessID());
 }
 
 void WebPageProxy::makeFirstResponder()

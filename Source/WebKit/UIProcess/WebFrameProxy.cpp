@@ -74,11 +74,11 @@ static HashMap<FrameIdentifier, WeakRef<WebFrameProxy>>& allFrames()
     return map.get();
 }
 
-WebFrameProxy* WebFrameProxy::webFrame(FrameIdentifier identifier)
+WebFrameProxy* WebFrameProxy::webFrame(std::optional<FrameIdentifier> identifier)
 {
-    if (!std::remove_reference_t<decltype(allFrames())>::isValidKey(identifier))
+    if (!identifier || !std::remove_reference_t<decltype(allFrames())>::isValidKey(*identifier))
         return nullptr;
-    return allFrames().get(identifier);
+    return allFrames().get(*identifier);
 }
 
 bool WebFrameProxy::canCreateFrame(FrameIdentifier frameID)

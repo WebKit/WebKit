@@ -23,6 +23,6 @@
 headers: "APIFrameHandle.h"
 
 [RefCounted, CustomHeader] class API::FrameHandle {
-    WebCore::FrameIdentifier frameID()
+    Markable<WebCore::FrameIdentifier> frameID()
     bool isAutoconverting()
 };

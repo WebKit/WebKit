@@ -55,18 +55,18 @@ using OrphanScrollingNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode
 struct CommitTreeState {
     // unvisitedNodes starts with all nodes in the map; we remove nodes as we visit them. At the end, it's the unvisited nodes.
     // We can't use orphanNodes for this, because orphanNodes won't contain descendants of removed nodes.
-    HashSet<ScrollingNodeID> unvisitedNodes;
+    HashSet<ScrollingNodeID> unvisitedNodes { };
     // Nodes with non-empty synchronousScrollingReasons.
-    HashSet<ScrollingNodeID> synchronousScrollingNodes;
+    HashSet<ScrollingNodeID> synchronousScrollingNodes { };
     // orphanNodes keeps child nodes alive while we rebuild child lists.
-    OrphanScrollingNodeMap orphanNodes;
+    OrphanScrollingNodeMap orphanNodes { };
     // Hosted subtrees needing attaching to scrolling tree after main commit has finished
-    Vector<std::pair<LayerHostingContextIdentifier, Vector<std::unique_ptr<ScrollingStateTree>>>> pendingSubtreesNeedingCommit;
+    Vector<std::pair<LayerHostingContextIdentifier, Vector<std::unique_ptr<ScrollingStateTree>>>> pendingSubtreesNeedingCommit { };
     // Nodes that are descendants of a frame hosting node.
-    HashSet<ScrollingNodeID> hostedScrollingNodes;
-    // This has a value when doing a commit for a hosted subtree
-    RefPtr<ScrollingTreeFrameHostingNode> frameHostingNode;
-    // Identifier for the frame associated with this commit
+    HashSet<ScrollingNodeID> hostedScrollingNodes { };
+    // This has a value when doing a commit for a hosted subtree.
+    RefPtr<ScrollingTreeFrameHostingNode> frameHostingNode { };
+    // Identifier for the frame associated with this commit.
     FrameIdentifier frameId;
 };
 
@@ -346,7 +346,9 @@ bool ScrollingTree::commitTreeStateInternal(std::unique_ptr<ScrollingStateTree>&
     LOG(ScrollingTree, "\nScrollingTree %p commitTreeState", this);
 
     auto rootNode = scrollingStateTree->rootStateNode();
-    CommitTreeState commitState;
+    CommitTreeState commitState {
+        .frameId = scrollingStateTree->rootFrameIdentifier()
+    };
 
     if (hostingContextIdentifier) {
         LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::commitTreeState - starting hosted tree commit for hosting context ID:  " << *hostingContextIdentifier);
@@ -398,8 +400,6 @@ bool ScrollingTree::commitTreeStateInternal(std::unique_ptr<ScrollingStateTree>&
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::Property::OverlayScrollbarsEnabled))
             setOverlayScrollbarsEnabled(scrollingStateTree->rootStateNode()->overlayScrollbarsEnabled());
     }
-
-    commitState.frameId = scrollingStateTree->rootFrameIdentifier();
 
     m_overflowRelatedNodesMap.removeIf([this, &commitState](auto& keyAndValue) {
         if (auto* scrollingNode = m_nodeMap.get(keyAndValue.key))

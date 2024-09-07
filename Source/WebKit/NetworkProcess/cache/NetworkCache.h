@@ -83,7 +83,7 @@ struct GlobalFrameIDHash {
 };
 
 template<> struct HashTraits<WebKit::NetworkCache::GlobalFrameID> : GenericHashTraits<WebKit::NetworkCache::GlobalFrameID> {
-    static WebKit::NetworkCache::GlobalFrameID emptyValue() { return { { }, HashTraits<WebCore::PageIdentifier>::emptyValue(), { } }; }
+    static WebKit::NetworkCache::GlobalFrameID emptyValue() { return { { }, HashTraits<WebCore::PageIdentifier>::emptyValue(), HashTraits<WebCore::FrameIdentifier>::emptyValue() }; }
 
     static void constructDeletedValue(WebKit::NetworkCache::GlobalFrameID& slot) { new (NotNull, &slot.webPageID) WebCore::PageIdentifier(WTF::HashTableDeletedValue); }
 

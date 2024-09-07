@@ -164,7 +164,10 @@ private:
 {
     if (!handle)
         return;
-    _inspector->showMainResourceForFrame(handle->_frameHandle->frameID());
+    auto frameID = handle->_frameHandle->frameID();
+    if (!frameID)
+        return;
+    _inspector->showMainResourceForFrame(*frameID);
 }
 
 - (void)attach

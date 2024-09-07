@@ -94,8 +94,8 @@ public:
     }
 
     WEBCORE_EXPORT String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const;
-    FrameIdentifier rootFrameIdentifier() const { return m_rootFrameIdentifier; }
-    void setRootFrameIdentifier(FrameIdentifier frameID) { m_rootFrameIdentifier = frameID; }
+    FrameIdentifier rootFrameIdentifier() const { return *m_rootFrameIdentifier; }
+    void setRootFrameIdentifier(std::optional<FrameIdentifier> frameID) { m_rootFrameIdentifier = frameID; }
 
 private:
     ScrollingStateTree(bool hasNewRootStateNode, bool hasChangedProperties, RefPtr<ScrollingStateFrameScrollingNode>&&);
@@ -114,7 +114,7 @@ private:
     void traverse(const ScrollingStateNode&, const Function<void(const ScrollingStateNode&)>&) const;
 
     ThreadSafeWeakPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
-    FrameIdentifier m_rootFrameIdentifier;
+    Markable<FrameIdentifier> m_rootFrameIdentifier;
 
     // Contains all the nodes we know about (those in the m_rootStateNode tree, and in m_unparentedNodes subtrees).
     StateNodeMap m_stateNodeMap;

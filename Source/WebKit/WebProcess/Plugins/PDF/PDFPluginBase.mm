@@ -1236,7 +1236,7 @@ void PDFPluginBase::registerPDFTest(RefPtr<WebCore::VoidCallback>&& callback)
         m_pdfTestCallback = WTFMove(callback);
 }
 
-FrameIdentifier PDFPluginBase::rootFrameID() const
+std::optional<FrameIdentifier> PDFPluginBase::rootFrameID() const
 {
     return m_view->frame()->rootFrame().frameID();
 }

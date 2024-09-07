@@ -63,7 +63,6 @@ static void nodeWasReattachedRecursive(ScrollingStateNode& node)
 
 ScrollingStateTree::ScrollingStateTree(AsyncScrollingCoordinator* scrollingCoordinator)
     : m_scrollingCoordinator(scrollingCoordinator)
-    , m_rootFrameIdentifier(FrameIdentifier { })
 {
 }
 

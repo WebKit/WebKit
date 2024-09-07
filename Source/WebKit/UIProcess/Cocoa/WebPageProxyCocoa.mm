@@ -220,11 +220,8 @@ std::optional<IPC::AsyncReplyID> WebPageProxy::grantAccessToCurrentPasteboardDat
         completionHandler();
         return std::nullopt;
     }
-    if (frameID) {
-        if (auto* frame = WebFrameProxy::webFrame(*frameID)) {
-            return WebPasteboardProxy::singleton().grantAccessToCurrentData(frame->process(), pasteboardName, WTFMove(completionHandler));
-        }
-    }
+    if (auto* frame = WebFrameProxy::webFrame(frameID))
+        return WebPasteboardProxy::singleton().grantAccessToCurrentData(frame->process(), pasteboardName, WTFMove(completionHandler));
     return WebPasteboardProxy::singleton().grantAccessToCurrentData(m_legacyMainFrameProcess, pasteboardName, WTFMove(completionHandler));
 }
 

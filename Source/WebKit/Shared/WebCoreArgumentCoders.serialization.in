@@ -2699,7 +2699,7 @@ struct WebCore::EventTrackingRegions {
 enum class WebCore::HasInsecureContent : bool
 
 struct WebCore::TextManipulationItem {
-    WebCore::FrameIdentifier frameID;
+    Markable<WebCore::FrameIdentifier> frameID;
     bool isSubframe;
     bool isCrossSiteSubframe;
     WebCore::TextManipulationItemIdentifier identifier;

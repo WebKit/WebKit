@@ -1013,9 +1013,9 @@ void WebProcess::didClose(IPC::Connection& connection)
     AuxiliaryProcess::didClose(connection);
 }
 
-WebFrame* WebProcess::webFrame(FrameIdentifier frameID) const
+WebFrame* WebProcess::webFrame(std::optional<FrameIdentifier> frameID) const
 {
-    return m_frameMap.get(frameID).get();
+    return frameID ? m_frameMap.get(*frameID).get() : nullptr;
 }
 
 void WebProcess::addWebFrame(FrameIdentifier frameID, WebFrame* frame)
@@ -1900,9 +1900,10 @@ RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)
         RefPtr<API::Object> transformObject(API::Object& object) const override
         {
             switch (object.type()) {
-            case API::Object::Type::FrameHandle:
-                return WebProcess::singleton().webFrame(static_cast<const API::FrameHandle&>(object).frameID());
-
+            case API::Object::Type::FrameHandle: {
+                auto frameID = static_cast<const API::FrameHandle&>(object).frameID();
+                return frameID ? WebProcess::singleton().webFrame(*frameID) : nullptr;
+            }
             case API::Object::Type::PageHandle:
                 return WebProcess::singleton().webPage(static_cast<const API::PageHandle&>(object).webPageID());
 

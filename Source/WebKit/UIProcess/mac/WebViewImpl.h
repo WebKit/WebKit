@@ -469,7 +469,7 @@ public:
     void setIgnoresMouseDraggedEvents(bool);
     bool ignoresMouseDraggedEvents() const { return m_ignoresMouseDraggedEvents; }
 
-    void setAccessibilityWebProcessToken(NSData *, WebCore::FrameIdentifier, pid_t);
+    void setAccessibilityWebProcessToken(NSData *, pid_t);
     void accessibilityRegisterUIProcessTokens();
     void updateRemoteAccessibilityRegistration(bool registerProcess);
     id accessibilityFocusedUIElement();

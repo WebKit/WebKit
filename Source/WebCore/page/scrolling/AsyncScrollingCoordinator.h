@@ -84,7 +84,7 @@ public:
     LocalFrameView* frameViewForScrollingNode(LocalFrame& localMainFrame, ScrollingNodeID) const;
 
     WEBCORE_EXPORT ScrollingStateTree& ensureScrollingStateTreeForRootFrameID(FrameIdentifier);
-    const ScrollingStateTree* existingScrollingStateTreeForRootFrameID(FrameIdentifier) const;
+    const ScrollingStateTree* existingScrollingStateTreeForRootFrameID(std::optional<FrameIdentifier>) const;
     ScrollingStateTree* stateTreeForNodeID(ScrollingNodeID) const;
     std::unique_ptr<ScrollingStateTree> commitTreeStateForRootFrameID(FrameIdentifier, LayerRepresentation::Type);
 

@@ -101,7 +101,7 @@ private:
     String suggestedFilename() const override;
     void deleteDownloadFile();
 
-    WebCore::FrameIdentifier m_frameID;
+    Markable<WebCore::FrameIdentifier> m_frameID;
     Markable<WebCore::PageIdentifier> m_pageID;
     WebCore::ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
     RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;

@@ -235,7 +235,7 @@ std::optional<FrameIdentifier> WebAutomationSession::webFrameIDForHandle(const S
 
 String WebAutomationSession::handleForWebFrameID(std::optional<FrameIdentifier> frameID)
 {
-    if (!frameID || !*frameID)
+    if (!frameID)
         return emptyString();
 
     if (auto* frame = WebFrameProxy::webFrame(*frameID); frame && frame->isMainFrame())
