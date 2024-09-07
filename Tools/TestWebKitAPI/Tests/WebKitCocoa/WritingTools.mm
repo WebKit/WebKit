@@ -1687,9 +1687,12 @@ TEST(WritingTools, CompositionShowOriginalHasNoTransparentMarkers)
         [attributedText appendAttributedString:boldText.get()];
         [attributedText appendAttributedString:normalText.get()];
 
+        [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 109) inContext:contexts.firstObject finished:NO];
+
         [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 109) inContext:contexts.firstObject finished:YES];
 
-        TestWebKitAPI::Util::runFor(1.0_s);
+        // FIXME: Remove this, and all other delays, once there is testing infrastructure in place to be able to wait for animations to finish.
+        TestWebKitAPI::Util::runFor(2.0_s);
 
         [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionShowOriginal];
 
