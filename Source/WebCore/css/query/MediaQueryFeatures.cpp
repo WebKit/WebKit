@@ -55,7 +55,7 @@ struct BooleanSchema : public FeatureSchema {
 
     EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
     {
-        return evaluateBooleanFeature(feature, valueFunction(context));
+        return evaluateBooleanFeature(feature, valueFunction(context), context.conversionData);
     }
 
 private:
@@ -72,7 +72,7 @@ struct IntegerSchema : public FeatureSchema {
 
     EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
     {
-        return evaluateIntegerFeature(feature, valueFunction(context));
+        return evaluateIntegerFeature(feature, valueFunction(context), context.conversionData);
     }
 
 private:
@@ -89,7 +89,7 @@ struct NumberSchema : public FeatureSchema {
 
     EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
     {
-        return evaluateNumberFeature(feature, valueFunction(context));
+        return evaluateNumberFeature(feature, valueFunction(context), context.conversionData);
     }
 
 private:
@@ -123,7 +123,7 @@ struct RatioSchema : public FeatureSchema {
 
     EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
     {
-        return evaluateRatioFeature(feature, valueFunction(context));
+        return evaluateRatioFeature(feature, valueFunction(context), context.conversionData);
     }
 
 private:
@@ -140,7 +140,7 @@ struct ResolutionSchema : public FeatureSchema {
 
     EvaluationResult evaluate(const Feature& feature, const FeatureEvaluationContext& context) const override
     {
-        return evaluateResolutionFeature(feature, valueFunction(context));
+        return evaluateResolutionFeature(feature, valueFunction(context), context.conversionData);
     }
 
 private:

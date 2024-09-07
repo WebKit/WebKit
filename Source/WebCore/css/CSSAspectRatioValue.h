@@ -34,28 +34,28 @@ namespace WebCore {
 
 class CSSAspectRatioValue final : public CSSValue {
 public:
-    static Ref<CSSAspectRatioValue> create(float numeratorValue, float denominatorValue)
+    static Ref<CSSAspectRatioValue> create(Ref<CSSPrimitiveValue> numeratorValue, Ref<CSSPrimitiveValue> denominatorValue)
     {
-        return adoptRef(*new CSSAspectRatioValue(numeratorValue, denominatorValue));
+        return adoptRef(*new CSSAspectRatioValue(WTFMove(numeratorValue), WTFMove(denominatorValue)));
     }
 
     String customCSSText() const;
 
-    float numeratorValue() const { return m_numeratorValue; }
-    float denominatorValue() const { return m_denominatorValue; }
+    const CSSPrimitiveValue& numeratorValue() const { return m_numeratorValue; }
+    const CSSPrimitiveValue& denominatorValue() const { return m_denominatorValue; }
 
     bool equals(const CSSAspectRatioValue&) const;
 
 private:
-    CSSAspectRatioValue(float numeratorValue, float denominatorValue)
+    CSSAspectRatioValue(Ref<CSSPrimitiveValue>&& numeratorValue, Ref<CSSPrimitiveValue>&& denominatorValue)
         : CSSValue(AspectRatioClass)
-        , m_numeratorValue(numeratorValue)
-        , m_denominatorValue(denominatorValue)
+        , m_numeratorValue(WTFMove(numeratorValue))
+        , m_denominatorValue(WTFMove(denominatorValue))
     {
     }
 
-    float m_numeratorValue;
-    float m_denominatorValue;
+    Ref<CSSPrimitiveValue> m_numeratorValue;
+    Ref<CSSPrimitiveValue> m_denominatorValue;
 };
 
 } // namespace WebCore

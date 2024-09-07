@@ -83,12 +83,12 @@ static EvaluationResult evaluateLengthComparison(LayoutUnit size, const std::opt
     return toEvaluationResult(compare(comparison->op, left, right));
 };
 
-static EvaluationResult evaluateNumberComparison(double number, const std::optional<Comparison>& comparison, Side side)
+static EvaluationResult evaluateNumberComparison(double number, const std::optional<Comparison>& comparison, Side side, const CSSToLengthConversionData& conversionData)
 {
     if (!comparison)
         return EvaluationResult::True;
 
-    auto expressionNumber = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->resolveAsNumberDeprecated();
+    auto expressionNumber = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->resolveAsNumber(conversionData);
 
     auto left = side == Side::Left ? expressionNumber : number;
     auto right = side == Side::Left ? number : expressionNumber;
@@ -96,12 +96,12 @@ static EvaluationResult evaluateNumberComparison(double number, const std::optio
     return toEvaluationResult(compare(comparison->op, left, right));
 };
 
-static EvaluationResult evaluateIntegerComparison(int number, const std::optional<Comparison>& comparison, Side side)
+static EvaluationResult evaluateIntegerComparison(int number, const std::optional<Comparison>& comparison, Side side, const CSSToLengthConversionData& conversionData)
 {
     if (!comparison)
         return EvaluationResult::True;
 
-    auto expressionNumber = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->resolveAsIntegerDeprecated();
+    auto expressionNumber = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->resolveAsInteger(conversionData);
 
     auto left = side == Side::Left ? expressionNumber : number;
     auto right = side == Side::Left ? number : expressionNumber;
@@ -109,12 +109,12 @@ static EvaluationResult evaluateIntegerComparison(int number, const std::optiona
     return toEvaluationResult(compare(comparison->op, left, right));
 };
 
-static EvaluationResult evaluateResolutionComparison(float resolution, const std::optional<Comparison>& comparison, Side side)
+static EvaluationResult evaluateResolutionComparison(float resolution, const std::optional<Comparison>& comparison, Side side, const CSSToLengthConversionData& conversionData)
 {
     if (!comparison)
         return EvaluationResult::True;
 
-    auto expressionResolution = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->resolveAsResolutionDeprecated<float>();
+    auto expressionResolution = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->resolveAsResolution<float>(conversionData);
 
     auto left = side == Side::Left ? expressionResolution : resolution;
     auto right = side == Side::Left ? resolution : expressionResolution;
@@ -133,7 +133,7 @@ EvaluationResult evaluateLengthFeature(const Feature& feature, LayoutUnit length
     return leftResult & rightResult;
 };
 
-static EvaluationResult evaluateRatioComparison(FloatSize size, const std::optional<Comparison>& comparison, Side side)
+static EvaluationResult evaluateRatioComparison(FloatSize size, const std::optional<Comparison>& comparison, Side side, const CSSToLengthConversionData& conversionData)
 {
     if (!comparison)
         return EvaluationResult::True;
@@ -143,10 +143,11 @@ static EvaluationResult evaluateRatioComparison(FloatSize size, const std::optio
         return EvaluationResult::Unknown;
 
     // Ratio with zero denominator is infinite and compares greater to any value.
-    auto denominator = ratioValue->denominatorValue();
+    auto denominator = ratioValue->denominatorValue().resolveAsNumber<float>(conversionData);
+    auto numerator = ratioValue->numeratorValue().resolveAsNumber<float>(conversionData);
 
-    auto comparisonA = denominator ? size.height() * ratioValue->numeratorValue() : 1.f;
-    auto comparisonB = denominator ? size.width() * denominator : 0.f;
+    auto comparisonA = denominator ? size.height() * numerator : 1.0f;
+    auto comparisonB = denominator ? size.width() * denominator : 0.0f;
 
     auto left = side == Side::Left ? comparisonA : comparisonB;
     auto right = side == Side::Left ? comparisonB : comparisonA;
@@ -154,24 +155,24 @@ static EvaluationResult evaluateRatioComparison(FloatSize size, const std::optio
     return toEvaluationResult(compare(comparison->op, left, right));
 };
 
-EvaluationResult evaluateRatioFeature(const Feature& feature, FloatSize size)
+EvaluationResult evaluateRatioFeature(const Feature& feature, FloatSize size, const CSSToLengthConversionData& conversionData)
 {
     if (!feature.leftComparison && !feature.rightComparison)
         return toEvaluationResult(size.width());
 
-    auto leftResult = evaluateRatioComparison(size, feature.leftComparison, Side::Left);
-    auto rightResult = evaluateRatioComparison(size, feature.rightComparison, Side::Right);
+    auto leftResult = evaluateRatioComparison(size, feature.leftComparison, Side::Left, conversionData);
+    auto rightResult = evaluateRatioComparison(size, feature.rightComparison, Side::Right, conversionData);
 
     return leftResult & rightResult;
 }
 
-EvaluationResult evaluateBooleanFeature(const Feature& feature, bool currentValue)
+EvaluationResult evaluateBooleanFeature(const Feature& feature, bool currentValue, const CSSToLengthConversionData& conversionData)
 {
     if (!feature.rightComparison)
         return toEvaluationResult(currentValue);
 
     Ref value = downcast<CSSPrimitiveValue>(*feature.rightComparison->value);
-    auto expectedValue = value->resolveAsIntegerDeprecated();
+    auto expectedValue = value->resolveAsInteger(conversionData);
 
     if (expectedValue && expectedValue != 1)
         return EvaluationResult::Unknown;
@@ -179,35 +180,35 @@ EvaluationResult evaluateBooleanFeature(const Feature& feature, bool currentValu
     return toEvaluationResult(expectedValue == currentValue);
 }
 
-EvaluationResult evaluateIntegerFeature(const Feature& feature, int currentValue)
+EvaluationResult evaluateIntegerFeature(const Feature& feature, int currentValue, const CSSToLengthConversionData& conversionData)
 {
     if (!feature.leftComparison && !feature.rightComparison)
         return toEvaluationResult(!!currentValue);
 
-    auto leftResult = evaluateIntegerComparison(currentValue, feature.leftComparison, Side::Left);
-    auto rightResult = evaluateIntegerComparison(currentValue, feature.rightComparison, Side::Right);
+    auto leftResult = evaluateIntegerComparison(currentValue, feature.leftComparison, Side::Left, conversionData);
+    auto rightResult = evaluateIntegerComparison(currentValue, feature.rightComparison, Side::Right, conversionData);
 
     return leftResult & rightResult;
 }
 
-EvaluationResult evaluateNumberFeature(const Feature& feature, double currentValue)
+EvaluationResult evaluateNumberFeature(const Feature& feature, double currentValue, const CSSToLengthConversionData& conversionData)
 {
     if (!feature.leftComparison && !feature.rightComparison)
         return toEvaluationResult(!!currentValue);
 
-    auto leftResult = evaluateNumberComparison(currentValue, feature.leftComparison, Side::Left);
-    auto rightResult = evaluateNumberComparison(currentValue, feature.rightComparison, Side::Right);
+    auto leftResult = evaluateNumberComparison(currentValue, feature.leftComparison, Side::Left, conversionData);
+    auto rightResult = evaluateNumberComparison(currentValue, feature.rightComparison, Side::Right, conversionData);
 
     return leftResult & rightResult;
 }
 
-EvaluationResult evaluateResolutionFeature(const Feature& feature, float currentValue)
+EvaluationResult evaluateResolutionFeature(const Feature& feature, float currentValue, const CSSToLengthConversionData& conversionData)
 {
     if (!feature.leftComparison && !feature.rightComparison)
         return toEvaluationResult(!!currentValue);
 
-    auto leftResult = evaluateResolutionComparison(currentValue, feature.leftComparison, Side::Left);
-    auto rightResult = evaluateResolutionComparison(currentValue, feature.rightComparison, Side::Right);
+    auto leftResult = evaluateResolutionComparison(currentValue, feature.leftComparison, Side::Left, conversionData);
+    auto rightResult = evaluateResolutionComparison(currentValue, feature.rightComparison, Side::Right, conversionData);
 
     return leftResult & rightResult;
 }

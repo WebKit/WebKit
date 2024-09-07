@@ -135,9 +135,9 @@ const FeatureSchema& aspectRatio()
             : SizeFeatureSchema("aspect-ratio"_s, FeatureSchema::Type::Range, FeatureSchema::ValueType::Ratio)
         { }
 
-        EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData&) const override
+        EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
         {
-            return evaluateRatioFeature(feature, renderer.contentSize());
+            return evaluateRatioFeature(feature, renderer.contentSize(), conversionData);
         }
     };
 
