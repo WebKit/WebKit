@@ -27,6 +27,7 @@
 #include "FragmentDirectiveGenerator.h"
 
 #include "Document.h"
+#include "FragmentDirectiveUtilities.h"
 #include "HTMLParserIdioms.h"
 #include "Logging.h"
 #include "Range.h"
@@ -39,6 +40,7 @@
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+using namespace FragmentDirectiveUtilities;
 
 constexpr int maximumInlineStringLength = 300;
 constexpr int minimumInlineContextlessStringLength = 20;
@@ -49,12 +51,19 @@ FragmentDirectiveGenerator::FragmentDirectiveGenerator(const SimpleRange& textFr
     generateFragmentDirective(textFragmentRange);
 }
 
-static String previousWordsFromPosition(unsigned numberOfWords, VisiblePosition& startPosition)
+static bool positionsHaveSameBlockAncestor(const VisiblePosition& a, const VisiblePosition& b)
+{
+    RefPtr aNode = a.deepEquivalent().containerNode();
+    RefPtr bNode = b.deepEquivalent().containerNode();
+    return aNode && bNode && nearestBlockAncestor(*aNode) == nearestBlockAncestor(*bNode);
+}
+
+static String previousWordsFromPositionInSameBlock(unsigned numberOfWords, VisiblePosition& startPosition)
 {
     auto previousPosition = startPosition;
     while (numberOfWords--) {
         auto potentialPreviousPosition = previousWordPosition(previousPosition);
-        if (potentialPreviousPosition.deepEquivalent().containerNode() != startPosition.deepEquivalent().containerNode())
+        if (!positionsHaveSameBlockAncestor(potentialPreviousPosition, startPosition))
             break;
         previousPosition = potentialPreviousPosition;
     }
@@ -72,12 +81,12 @@ static String previousWordsFromPosition(unsigned numberOfWords, VisiblePosition&
     return range->toString().trim(isHTMLSpaceButNotLineBreak);
 }
 
-static String nextWordsFromPosition(unsigned numberOfWords, VisiblePosition& startPosition)
+static String nextWordsFromPositionInSameBlock(unsigned numberOfWords, VisiblePosition& startPosition)
 {
     auto nextPosition = startPosition;
     while (numberOfWords--) {
         auto potentialNextPosition = nextWordPosition(nextPosition);
-        if (potentialNextPosition.deepEquivalent().containerNode() != startPosition.deepEquivalent().containerNode())
+        if (!positionsHaveSameBlockAncestor(potentialNextPosition, startPosition))
             break;
         nextPosition = potentialNextPosition;
     }
@@ -100,9 +109,10 @@ void FragmentDirectiveGenerator::generateFragmentDirective(const SimpleRange& te
 {
     LOG_WITH_STREAM(TextFragment, stream << " generateFragmentDirective: ");
 
-    String textDirectivePrefix = ":~:text="_s;
+    Ref document = textFragmentRange.startContainer().document();
+    document->updateLayoutIgnorePendingStylesheets();
 
-    auto url = textFragmentRange.startContainer().document().url();
+    auto url = document->url();
     auto textFromRange = createLiveRange(textFragmentRange)->toString();
 
     VisiblePosition visibleEndPosition = VisiblePosition(Position(textFragmentRange.protectedEndContainer(), textFragmentRange.endOffset(), Position::PositionIsOffsetInAnchor));
@@ -121,14 +131,14 @@ void FragmentDirectiveGenerator::generateFragmentDirective(const SimpleRange& te
     };
 
     if (textFromRange.length() >= maximumInlineStringLength) {
-        startText = encodeComponent(nextWordsFromPosition(numberOfWordsOfContext, visibleStartPosition));
-        endText = encodeComponent(previousWordsFromPosition(numberOfWordsOfContext, visibleEndPosition));
+        startText = encodeComponent(nextWordsFromPositionInSameBlock(numberOfWordsOfContext, visibleStartPosition));
+        endText = encodeComponent(previousWordsFromPositionInSameBlock(numberOfWordsOfContext, visibleEndPosition));
     } else if (textFromRange.length() > minimumInlineContextlessStringLength)
         startText = encodeComponent(textFromRange);
     else {
-        prefix = encodeComponent(previousWordsFromPosition(numberOfWordsOfContext, visibleStartPosition));
+        prefix = encodeComponent(previousWordsFromPositionInSameBlock(numberOfWordsOfContext, visibleStartPosition));
         startText = encodeComponent(textFromRange);
-        suffix = encodeComponent(nextWordsFromPosition(numberOfWordsOfContext, visibleEndPosition));
+        suffix = encodeComponent(nextWordsFromPositionInSameBlock(numberOfWordsOfContext, visibleEndPosition));
     }
 
     Vector<String> components;
@@ -141,6 +151,7 @@ void FragmentDirectiveGenerator::generateFragmentDirective(const SimpleRange& te
     if (suffix)
         components.append(makeString('-', *suffix));
 
+    static constexpr auto textDirectivePrefix = ":~:text="_s;
     url.setFragmentIdentifier(makeString(textDirectivePrefix, makeStringByJoining(components, ","_s)));
 
     m_urlWithFragment = url;

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8" />
+<title>Scroll to text fragment generation - ensure that we allow context generation to pass boundaries of inline elements</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.addEventListener('load', () => {
+    const range = document.createRange();
+    range.selectNode(document.body.getElementsByTagName("b")[0])
+    document.body.innerText = internals.textFragmentDirectiveForRange(range).split('#')[1];
+});
+</script>
+</head>
+<body>This is a very simple <b>document</b>. There is no text before 'this'.</body>
+</html>
+

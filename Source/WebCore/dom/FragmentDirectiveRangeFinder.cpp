@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "DocumentType.h"
 #include "Editor.h"
+#include "FragmentDirectiveUtilities.h"
 #include "HTMLAudioElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
@@ -50,7 +51,9 @@
 #include "TextIterator.h"
 
 namespace WebCore {
+
 namespace FragmentDirectiveRangeFinder {
+using namespace FragmentDirectiveUtilities;
 
 enum class BoundaryPointIsAtEnd : bool { No, Yes };
 enum class WordBounded : bool { No, Yes };
@@ -92,18 +95,6 @@ static bool isNonSearchableSubtree(const Node& node)
         traversingNode = traversingNode->parentOrShadowHostNode();
     }
     return false;
-}
-
-// https://wicg.github.io/scroll-to-text-fragment/#nearest-block-ancestor
-static const Node& nearestBlockAncestor(const Node& node)
-{
-    const Node* currentNode = &node;
-    while (currentNode) {
-        if (!currentNode->isTextNode() && currentNode->renderer() && currentNode->renderer()->style().isDisplayBlockLevel())
-            return *currentNode;
-        currentNode = currentNode->parentNode();
-    }
-    return node.document();
 }
 
 // https://wicg.github.io/scroll-to-text-fragment/#get-boundary-point-at-index
