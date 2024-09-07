@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -53,6 +53,7 @@
 #include "WillChangeData.h"
 #include <memory>
 #include <wtf/DataRef.h>
+#include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
@@ -104,8 +105,8 @@ public:
 
     OptionSet<Containment> usedContain() const;
 
-    std::optional<Length> containIntrinsicWidth;
-    std::optional<Length> containIntrinsicHeight;
+    Markable<Length> containIntrinsicWidth;
+    Markable<Length> containIntrinsicHeight;
 
     Length perspectiveOriginX;
     Length perspectiveOriginY;
