@@ -3939,6 +3939,7 @@ class GenerateCSSPropertyParsing:
                     "CSSPropertyParserConsumer+Color.h",
                     "CSSPropertyParserConsumer+Filter.h",
                     "CSSPropertyParserConsumer+Font.h",
+                    "CSSPropertyParserConsumer+Grid.h",
                     "CSSPropertyParserConsumer+Ident.h",
                     "CSSPropertyParserConsumer+Integer.h",
                     "CSSPropertyParserConsumer+Image.h",

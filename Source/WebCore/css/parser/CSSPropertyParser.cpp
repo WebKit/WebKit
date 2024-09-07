@@ -50,6 +50,7 @@
 #include "CSSPropertyParserConsumer+Angle.h"
 #include "CSSPropertyParserConsumer+Color.h"
 #include "CSSPropertyParserConsumer+Font.h"
+#include "CSSPropertyParserConsumer+Grid.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Image.h"
 #include "CSSPropertyParserConsumer+Integer.h"
@@ -2170,7 +2171,7 @@ bool CSSPropertyParser::consumeGridTemplateRowsAndAreasAndColumns(CSSPropertyID 
         ++rowCount;
 
         // Handle template-rows's track-size.
-        if (RefPtr value = consumeGridTrackSize(m_range, m_context.mode))
+        if (RefPtr value = consumeGridTrackSize(m_range, m_context))
             templateRows.append(value.releaseNonNull());
         else
             templateRows.append(CSSPrimitiveValue::create(CSSValueAuto));

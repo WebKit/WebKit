@@ -1022,6 +1022,7 @@ css/parser/CSSPropertyParserConsumer+Color.cpp
 css/parser/CSSPropertyParserConsumer+ColorInterpolationMethod.cpp
 css/parser/CSSPropertyParserConsumer+Filter.cpp
 css/parser/CSSPropertyParserConsumer+Font.cpp
+css/parser/CSSPropertyParserConsumer+Grid.cpp
 css/parser/CSSPropertyParserConsumer+Ident.cpp
 css/parser/CSSPropertyParserConsumer+Image.cpp
 css/parser/CSSPropertyParserConsumer+Integer.cpp
