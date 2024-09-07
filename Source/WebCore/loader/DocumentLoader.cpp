@@ -283,7 +283,7 @@ void DocumentLoader::setMainDocumentError(const ResourceError& error)
     frameLoader()->client().setMainDocumentError(this, error);
 }
 
-void DocumentLoader::mainReceivedError(const ResourceError& error, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
+void DocumentLoader::mainReceivedError(const ResourceError& error, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess, InvokedFromNotifyFinished invokedFromNotifyFinished)
 {
     ASSERT(!error.isNull());
 
@@ -308,6 +308,10 @@ void DocumentLoader::mainReceivedError(const ResourceError& error, LoadWillConti
 
     setMainDocumentError(error);
     clearMainResourceLoader();
+
+    if (invokedFromNotifyFinished == InvokedFromNotifyFinished::Yes && !error.isCancellation())
+        loadErrorDocument();
+
     frameLoader()->receivedMainResourceError(error, loadWillContinueInAnotherProcess);
 }
 
@@ -398,7 +402,7 @@ void DocumentLoader::stopLoading()
         } else {
             // If there are no resource loaders, we need to manufacture a cancelled message.
             // (A back/forward navigation has no resource loaders because its resources are cached.)
-            mainReceivedError(frameLoader->cancelledError(m_request));
+            mainReceivedError(frameLoader->cancelledError(m_request), LoadWillContinueInAnotherProcess::No);
         }
     }
 
@@ -461,7 +465,7 @@ void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadM
     if (!m_mainResource->resourceError().isNull())
         DOCUMENTLOADER_RELEASE_LOG("notifyFinished: canceling load (type=%d, code=%d)", static_cast<int>(m_mainResource->resourceError().type()), m_mainResource->resourceError().errorCode());
 
-    mainReceivedError(m_mainResource->resourceError(), loadWillContinueInAnotherProcess);
+    mainReceivedError(m_mainResource->resourceError(), loadWillContinueInAnotherProcess, InvokedFromNotifyFinished::Yes);
 }
 
 void DocumentLoader::finishedLoading()
@@ -1140,7 +1144,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
         // m_mainResource can be null, e.g. when loading a substitute resource from application cache.
         if (!m_mainResource) {
             DOCUMENTLOADER_RELEASE_LOG("continueAfterContentPolicy: cannot show URL");
-            mainReceivedError(frameLoader()->client().cannotShowURLError(m_request));
+            mainReceivedError(frameLoader()->client().cannotShowURLError(m_request), LoadWillContinueInAnotherProcess::No);
             return;
         }
 
@@ -2354,7 +2358,7 @@ void DocumentLoader::cancelMainResourceLoad(const ResourceError& resourceError, 
 
     clearMainResource();
 
-    mainReceivedError(error);
+    mainReceivedError(error, LoadWillContinueInAnotherProcess::No);
 }
 
 void DocumentLoader::willContinueMainResourceLoadAfterRedirect(const ResourceRequest& newRequest)
