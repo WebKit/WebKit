@@ -39,6 +39,7 @@
 #include "WebCodecsEncodedVideoChunkMetadata.h"
 #include "WebCodecsEncodedVideoChunkOutputCallback.h"
 #include "WebCodecsErrorCallback.h"
+#include "WebCodecsUtilities.h"
 #include "WebCodecsVideoEncoderConfig.h"
 #include "WebCodecsVideoEncoderEncodeOptions.h"
 #include "WebCodecsVideoFrame.h"
