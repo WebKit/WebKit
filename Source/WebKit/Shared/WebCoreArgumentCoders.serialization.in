@@ -7111,6 +7111,7 @@ struct WebCore::NowPlayingInfo {
     WebCore::MediaUniqueIdentifier uniqueIdentifier;
     bool isPlaying;
     bool allowsNowPlayingControlsVisibility;
+    bool isVideo;
 }
 
 struct WebCore::VideoConfiguration {

@@ -1309,7 +1309,8 @@ std::optional<NowPlayingInfo> MediaElementSession::computeNowPlayingInfo() const
         supportsSeeking,
         m_element.mediaUniqueIdentifier(),
         isPlaying,
-        allowsNowPlayingControlsVisibility
+        allowsNowPlayingControlsVisibility,
+        m_element.isVideo()
     };
 
     if (page->usesEphemeralSession() && !m_element.document().settings().allowPrivacySensitiveOperationsInNonPersistentDataStores()) {

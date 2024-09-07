@@ -63,6 +63,7 @@ struct NowPlayingInfo {
     MediaUniqueIdentifier uniqueIdentifier;
     bool isPlaying { false };
     bool allowsNowPlayingControlsVisibility { false };
+    bool isVideo { false };
 
     friend bool operator==(const NowPlayingInfo&, const NowPlayingInfo&) = default;
 };
