@@ -310,8 +310,10 @@ public:
 
     void add64(RegisterID op1Hi, RegisterID op1Lo, RegisterID op2Hi, RegisterID op2Lo, RegisterID destHi, RegisterID destLo)
     {
-        m_assembler.add_S(destLo, op1Lo, op2Lo);
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        m_assembler.add_S(scratch, op1Lo, op2Lo);
         m_assembler.adc(destHi, op1Hi, op2Hi);
+        move(scratch, destLo);
     }
 
     void and16(Address src, RegisterID dest)
@@ -704,8 +706,10 @@ public:
 
     void sub64(RegisterID leftHi, RegisterID leftLo, RegisterID rightHi, RegisterID rightLo, RegisterID destHi, RegisterID destLo)
     {
-        m_assembler.sub_S(destLo, leftLo, rightLo);
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        m_assembler.sub_S(scratch, leftLo, rightLo);
         m_assembler.sbc(destHi, leftHi, rightHi);
+        move(scratch, destLo);
     }
 
     void xor32(RegisterID op1, RegisterID op2, RegisterID dest)

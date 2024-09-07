@@ -2285,8 +2285,8 @@ void testLinearScanSpillRangesLateUse()
         Tmp tmp1 = tmps[i];
         Tmp tmp2 = tmps[i + 1];
 
-        B3::Value* dummyValue = proc.addConstant(B3::Origin(), B3::Int64, 0);
-        B3::Value* dummyValue2 = proc.addConstant(B3::Origin(), B3::Int64, 0);
+        B3::Value* dummyValue = proc.addConstant(B3::Origin(), B3::pointerType(), 0);
+        B3::Value* dummyValue2 = proc.addConstant(B3::Origin(), B3::pointerType(), 0);
 
         B3::PatchpointValue* patchpoint = proc.add<B3::PatchpointValue>(B3::Void, B3::Origin());
         patchpoint->append(dummyValue, B3::ValueRep::SomeRegister);
@@ -2339,7 +2339,7 @@ void testLinearScanSpillRangesEarlyDef()
         Tmp tmp1 = tmps[i];
         Tmp tmp2 = tmps[i + 1];
 
-        B3::Value* dummyValue = proc.addConstant(B3::Origin(), B3::Int64, 0);
+        B3::Value* dummyValue = proc.addConstant(B3::Origin(), B3::pointerType(), 0);
 
         B3::PatchpointValue* patchpoint = proc.add<B3::PatchpointValue>(B3::Int32, B3::Origin());
         patchpoint->resultConstraints = { B3::ValueRep::SomeEarlyRegister };
@@ -2365,7 +2365,7 @@ void testLinearScanSpillRangesEarlyDef()
     for (unsigned i = 0; i < tmps.size(); ++i) {
         Tmp tmp = tmps[i];
 
-        B3::Value* dummyValue = proc.addConstant(B3::Origin(), B3::Int64, 0);
+        B3::Value* dummyValue = proc.addConstant(B3::Origin(), B3::pointerType(), 0);
 
         B3::PatchpointValue* patchpoint = proc.add<B3::PatchpointValue>(B3::Void, B3::Origin());
         patchpoint->append(dummyValue, B3::ValueRep::SomeRegister);
@@ -2450,7 +2450,7 @@ void testEarlyAndLateUseOfSameTmp()
 
         {
             unsigned rand = weakRandom.getUint32(tmps.size());
-            B3::Value* dummyValue = proc.addConstant(B3::Origin(), B3::Int64, 0);
+            B3::Value* dummyValue = proc.addConstant(B3::Origin(), B3::pointerType(), 0);
 
             B3::PatchpointValue* patchpoint = proc.add<B3::PatchpointValue>(B3::Void, B3::Origin());
             patchpoint->append(dummyValue, B3::ValueRep::SomeRegister);
@@ -2512,7 +2512,7 @@ void testEarlyClobberInterference()
 
         {
             unsigned rand = weakRandom.getUint32(tmps.size());
-            B3::Value* dummyValue = proc.addConstant(B3::Origin(), B3::Int64, 0);
+            B3::Value* dummyValue = proc.addConstant(B3::Origin(), B3::pointerType(), 0);
 
             B3::PatchpointValue* patchpoint = proc.add<B3::PatchpointValue>(B3::Void, B3::Origin());
             patchpoint->append(dummyValue, B3::ValueRep::SomeRegister);

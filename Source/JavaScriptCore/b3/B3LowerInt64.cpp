@@ -31,6 +31,7 @@
 #include "B3BlockInsertionSet.h"
 #include "B3Const32Value.h"
 #include "B3ConstPtrValue.h"
+#include "B3ExtractValue.h"
 #include "B3InsertionSet.h"
 #include "B3InsertionSetInlines.h"
 #include "B3PhaseScope.h"
@@ -149,7 +150,7 @@ private:
         size_t index = m_index;
         if (providedIndex)
             index = *providedIndex;
-        return insert<Value>(index, Trunc, m_origin, value);
+        return insert<ExtractValue>(index, m_origin, Int32, value, ExtractValue::s_int64LowBits);
     }
 
     Value* valueHi(Value* value, std::optional<size_t> providedIndex = { })
@@ -157,7 +158,7 @@ private:
         size_t index = m_index;
         if (providedIndex)
             index = *providedIndex;
-        return insert<Value>(index, TruncHigh, m_origin, value);
+        return insert<ExtractValue>(index, m_origin, Int32, value, ExtractValue::s_int64HighBits);
     }
 
     Value* valueHiLo(Value* hi, Value* lo, std::optional<size_t> providedIndex = { })
@@ -323,6 +324,24 @@ private:
         }
     }
 
+    bool hasInt64Arg()
+    {
+        if (m_value->type() == Int64)
+            return true;
+        if (m_value->type().isTuple()) {
+            for (auto type : m_proc.tupleForType(m_value->type())) {
+                if (type == Int64)
+                    return true;
+            }
+        }
+        for (size_t index = 0; index < m_value->numChildren(); ++index) {
+            if (m_value->child(index)->type() == Int64)
+                return true;
+            ASSERT(!m_value->child(index)->type().isTuple());
+        }
+        return false;
+    }
+
     void processValue()
     {
         switch (m_value->opcode()) {
@@ -363,13 +382,7 @@ private:
             return;
         }
         case CCall: {
-            bool hasInt64Arg = false;
-            for (size_t index = 0; index < m_value->numChildren(); ++index) {
-                if (m_value->child(index)->type() != Int64)
-                    continue;
-                hasInt64Arg = true;
-            }
-            if (!hasInt64Arg && m_value->type() != Int64)
+            if (!hasInt64Arg())
                 return;
             Vector<Value*> args;
             for (size_t index = 1; index < m_value->numChildren(); ++index) {
@@ -393,13 +406,7 @@ private:
             return;
         }
         case Check: {
-            bool hasInt64Arg = false;
-            for (size_t index = 0; index < m_value->numChildren(); ++index) {
-                if (m_value->child(index)->type() != Int64)
-                    continue;
-                hasInt64Arg = true;
-            }
-            if (!hasInt64Arg && m_value->type() != Int64)
+            if (!hasInt64Arg())
                 return;
 
             CheckValue* originalCheck = m_value->as<CheckValue>();
@@ -438,48 +445,107 @@ private:
             return;
         }
         case Patchpoint: {
-            bool hasInt64Arg = false;
-            for (size_t index = 0; index < m_value->numChildren(); ++index) {
-                if (m_value->child(index)->type() != Int64)
-                    continue;
-                hasInt64Arg = true;
-            }
-            if (!hasInt64Arg && m_value->type() != Int64)
+            if (!hasInt64Arg())
                 return;
+
             PatchpointValue* originalPatchpoint = m_value->as<PatchpointValue>();
 
-            // Putting together Int64 values with valueHiLo needs to preceed the
-            // insertion of the PatchpointValue.
+            // (Int64, Int64, double) Patchpoint(Int32, Int64, double) -> (Int32, Int32, double, Int32, Int32) Patchpoint(Int32, Int32, double, Int32)
+            // Int64 results are lowered to (Int32, Int32)
             Vector<Value*> args;
+            Vector<Value*> highArgs;
+            Vector<ValueRep> highReps;
             for (size_t index = 0; index < originalPatchpoint->numChildren(); ++index) {
                 Value* child = originalPatchpoint->child(index);
                 if (child->type() == Int64) {
                     auto childParts = getMapping(child);
-                    // The rep should have been correctly assigned when the
-                    // Patchpoint was created, here we simply piece together the
-                    // 64-bit value that it expects.
-                    args.append(valueHiLo(childParts.first, childParts.second));
+                    auto rep = originalPatchpoint->reps()[index];
+                    // If you already know you want a particular register, it should not be an Int64 value.
+                    ASSERT(rep.isStack() || rep.isStackArgument()
+                        || rep.kind() == ValueRep::SomeRegister
+                        || rep.kind() == ValueRep::SomeLateRegister
+                        || rep.isAny());
+                    args.append(childParts.second);
+                    highArgs.append(childParts.first);
+
+                    if (rep.isStack())
+                        rep = B3::ValueRep::stack(checkedSum<intptr_t>(rep.offsetFromFP(), static_cast<intptr_t>(bytesForWidth(Width32))));
+                    else if (rep.isStackArgument())
+                        rep = B3::ValueRep::stackArgument(checkedSum<intptr_t>(rep.offsetFromSP(), static_cast<intptr_t>(bytesForWidth(Width32))));
+
+                    highReps.append(rep);
                 } else
                     args.append(child);
             }
-            PatchpointValue* patchpoint = insert<PatchpointValue>(m_index + 1, originalPatchpoint->type(), m_origin);
+
+            const auto originalReturnType = originalPatchpoint->type();
+            auto returnType = originalReturnType;
+
+            if (originalReturnType.isTuple()) {
+                Vector<Type> newTupleType;
+                unsigned int64Count = 0;
+                for (auto type : m_proc.tupleForType(originalReturnType)) {
+                    if (type == Int64) {
+                        newTupleType.append(Int32);
+                        ++int64Count;
+                        continue;
+                    }
+                    newTupleType.append(type);
+                }
+                for (unsigned i = 0; i < int64Count; ++i)
+                    newTupleType.append(Int32);
+                returnType = m_proc.addTuple(WTFMove(newTupleType));
+            } else if (originalReturnType == Int64)
+                returnType = m_proc.addTuple({ Int32, Int32 });
+
+            PatchpointValue* patchpoint = insert<PatchpointValue>(m_index + 1, returnType, m_origin);
+
             patchpoint->clobberEarly(originalPatchpoint->earlyClobbered());
             patchpoint->clobberLate(originalPatchpoint->lateClobbered());
-            // XXX: m_usedRegisters?
             patchpoint->effects = originalPatchpoint->effects;
             patchpoint->resultConstraints = originalPatchpoint->resultConstraints;
             patchpoint->numGPScratchRegisters = originalPatchpoint->numGPScratchRegisters;
             patchpoint->numFPScratchRegisters = originalPatchpoint->numFPScratchRegisters;
             patchpoint->setGenerator(originalPatchpoint->generator());
+
             const Vector<ValueRep>& reps = originalPatchpoint->reps();
             for (size_t index = 0; index < originalPatchpoint->numChildren(); ++index)
                 patchpoint->append(args[index], reps[index]);
-            if (m_value->type() == Int64) {
+            for (size_t index = 0; index < highArgs.size(); ++index)
+                patchpoint->append(highArgs[index], highReps[index]);
+
+            if (originalReturnType.isTuple()) {
+                auto originalTuple = m_proc.tupleForType(originalReturnType);
+                m_rewrittenTupleResults.add(originalPatchpoint, patchpoint);
+                valueReplaced();
+
+                for (size_t index = 0; index < originalTuple.size(); ++index) {
+                    if (originalTuple[index] == Int64)
+                        patchpoint->resultConstraints.append(patchpoint->resultConstraints[index]);
+                }
+
+                return;
+            }
+
+            if (originalReturnType == Int64) {
+                ASSERT(patchpoint->resultConstraints.size() == 1);
+                m_rewrittenTupleResults.add(originalPatchpoint, patchpoint);
+                auto rep = patchpoint->resultConstraints[0];
+                ASSERT(rep.isStack() || rep.isStackArgument()
+                    || rep.kind() == ValueRep::SomeRegister
+                    || rep.kind() == ValueRep::SomeLateRegister
+                    || rep.isAny());
+                if (rep.isStack())
+                    rep = B3::ValueRep::stack(checkedSum<intptr_t>(rep.offsetFromFP(), static_cast<intptr_t>(bytesForWidth(Width32))));
+                else if (rep.isStackArgument())
+                    rep = B3::ValueRep::stackArgument(checkedSum<intptr_t>(rep.offsetFromSP(), static_cast<intptr_t>(bytesForWidth(Width32))));
+                patchpoint->resultConstraints.append(rep);
                 setMapping(m_value, valueHi(patchpoint, m_index + 1), valueLo(patchpoint, m_index + 1));
                 valueReplaced();
-            } else
-                m_value->replaceWithIdentity(patchpoint);
+                return;
+            }
 
+            m_value->replaceWithIdentity(patchpoint);
             return;
         }
         case Add:
@@ -828,9 +894,32 @@ private:
             return;
         }
         case Extract: {
-            if (m_proc.typeAtOffset(m_value->child(0)->type(), m_value->as<ExtractValue>()->index()) != Int64)
+            auto originalTuple = m_value->child(0);
+            auto index = m_value->as<ExtractValue>()->index();
+            if (originalTuple->type() == Int64) {
+                auto input = getMapping(originalTuple);
+                m_value->replaceWithIdentity(index ? input.second : input.first);
                 return;
-            setMapping(m_value, valueHi(m_value, m_index + 1), valueLo(m_value, m_index + 1));
+            }
+            auto originalTupleType = m_proc.tupleForType(originalTuple->type());
+            if (!m_rewrittenTupleResults.contains(originalTuple))
+                return;
+            auto tuple = m_rewrittenTupleResults.get(originalTuple);
+            if (originalTupleType[index] != Int64) {
+                m_value->child(0) = tuple;
+                return;
+            }
+            int highBitsIndex = 0;
+            for (int i = 0; i < index; ++i) {
+                ASSERT(i < static_cast<int>(originalTupleType.size()));
+                if (originalTupleType[i] == Int64)
+                    ++highBitsIndex;
+            }
+            ASSERT(originalTupleType.size() + highBitsIndex < m_proc.tupleForType(tuple->type()).size());
+            Value* hi = insert<ExtractValue>(m_index, m_origin, Int32, tuple, m_proc.tupleForType(originalTuple->type()).size() + highBitsIndex);
+            Value* lo = insert<ExtractValue>(m_index, m_origin, Int32, tuple, index);
+            valueReplaced();
+            setMapping(m_value, hi, lo);
             return;
         }
         case Abs:
@@ -872,7 +961,7 @@ private:
                 setMapping(m_value, valueHi(m_value, m_index + 1), valueLo(m_value, m_index + 1));
             } else if (m_value->child(0)->type() == Int64) {
                 auto input = getMapping(m_value->child(0));
-                Value* cast = insert<Value>(m_index + 1, BitwiseCast, m_origin, valueHiLo(input.first, input.second, m_index + 1));
+                Value* cast = insert<Value>(m_index, BitwiseCast, m_origin, valueHiLo(input.first, input.second));
                 m_value->replaceWithIdentity(cast);
             }
 
@@ -1092,6 +1181,7 @@ private:
     InsertionSet m_insertionSet;
     BlockInsertionSet m_blockInsertionSet;
     bool m_changed;
+    HashMap<Value*, Value*> m_rewrittenTupleResults;
     HashMap<Value*, std::pair<Value*, Value*>> m_mapping;
     HashSet<Value*> m_syntheticValues;
 };

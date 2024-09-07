@@ -221,6 +221,7 @@ contents = wasm.header + """
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "B3Type.h"
 #include <cstdint>
 #include <wtf/PrintStream.h>
 #include <wtf/text/ASCIILiteral.h>

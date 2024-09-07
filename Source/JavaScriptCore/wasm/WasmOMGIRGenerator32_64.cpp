@@ -88,6 +88,12 @@ namespace JSC { namespace Wasm {
 
 using namespace B3;
 
+#if USE(JSVALUE32_64)
+using ConstIntPtrValue = Const32Value;
+#else
+using ConstIntPtrValue = Const64Value;
+#endif
+
 namespace {
 namespace WasmOMGIRGeneratorInternal {
 static constexpr bool verbose = false;
@@ -708,7 +714,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
     PartialResult WARN_UNUSED_RETURN emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* boxedCalleeCallee, Value* jsCalleeAnchor, const TypeDefinition&, const ArgumentList& args, ResultList&, CallType = CallType::Call);
-    auto createCallPatchpoint(BasicBlock*, Value* jsCalleeAnchor, B3::Type, const CallInformation&, const ArgumentList& tmpArgs) -> CallPatchpointData;
+    auto createCallPatchpoint(BasicBlock*, Value* jsCalleeAnchor, const TypeDefinition&, const CallInformation&, const ArgumentList& tmpArgs) -> CallPatchpointData;
     auto createTailCallPatchpoint(BasicBlock*, CallInformation wasmCallerInfoAsCallee, CallInformation wasmCalleeInfoAsCallee, const ArgumentList& tmpArgSourceLocations, Vector<B3::ConstrainedValue> patchArgs) -> CallPatchpointData;
 
     PartialResult WARN_UNUSED_RETURN emitInlineDirectCall(uint32_t calleeIndex, const TypeDefinition&, ArgumentList& args, ResultList& results);
@@ -999,7 +1005,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL_TEMPLATE(FunctionParserOMGIRGenerator);
 int32_t OMGIRGenerator::fixupPointerPlusOffset(Value*& ptr, uint32_t offset)
 {
     if (static_cast<uint64_t>(offset) > static_cast<uint64_t>(std::numeric_limits<int32_t>::max())) {
-        ptr = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), ptr, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), offset));
+        if (isARM_THUMB2())
+            RELEASE_ASSERT_NOT_REACHED();
+        ptr = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), ptr, m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), offset));
         return 0;
     }
     return offset;
@@ -1037,7 +1045,7 @@ void OMGIRGenerator::computeStackCheckSize(bool& needsOverflowCheck, int32_t& ch
         // This allows us to elide stack checks in the Wasm -> JS call IC stub. Since these will
         // spill all arguments to the stack, we ensure that a stack check here covers the
         // stack that such a stub would use.
-        Checked<uint32_t>(m_maxNumJSCallArguments) * sizeof(Register) + JSCallingConvention::headerSizeInBytes
+        Checked<uint32_t>(m_maxNumJSCallArguments) * sizeof(uint64_t) + JSCallingConvention::headerSizeInBytes
     ));
 
     checkSize = wasmFrameSize.value();
@@ -1153,14 +1161,22 @@ OMGIRGenerator::OMGIRGenerator(CalleeGroup& calleeGroup, const ModuleInformation
                     B3::PatchpointValue* getBoundsCheckingSize = m_topLevelBlock->appendNew<B3::PatchpointValue>(m_proc, pointerType(), Origin());
                     getBoundsCheckingSize->effects.writesPinned = false;
                     getBoundsCheckingSize->effects.readsPinned = true;
+#if OMG_JSVALUE_32_64_PINNED_MEMORY_REGISTERS
                     getBoundsCheckingSize->resultConstraints = { ValueRep::reg(GPRInfo::wasmBoundsCheckingSizeRegister) };
+#else
+                    getBoundsCheckingSize->resultConstraints = { ValueRep::SomeRegister };
+#endif
                     getBoundsCheckingSize->setGenerator([=] (CCallHelpers&, const B3::StackmapGenerationParams&) { });
                     m_boundsCheckingSizeValue = getBoundsCheckingSize;
                 }
                 B3::PatchpointValue* getBaseMemory = m_topLevelBlock->appendNew<B3::PatchpointValue>(m_proc, pointerType(), Origin());
                 getBaseMemory->effects.writesPinned = false;
                 getBaseMemory->effects.readsPinned = true;
+#if OMG_JSVALUE_32_64_PINNED_MEMORY_REGISTERS
                 getBaseMemory->resultConstraints = { ValueRep::reg(GPRInfo::wasmBaseMemoryPointer) };
+#else
+                getBaseMemory->resultConstraints = { ValueRep::SomeRegister };
+#endif
                 getBaseMemory->setGenerator([=] (CCallHelpers&, const B3::StackmapGenerationParams&) { });
                 m_baseMemoryValue = getBaseMemory;
             }
@@ -1173,8 +1189,10 @@ OMGIRGenerator::OMGIRGenerator(CalleeGroup& calleeGroup, const ModuleInformation
         code.emitDefaultPrologue(jit);
         GPRReg scratchGPR = wasmCallingConvention().prologueScratchGPRs[0];
         jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(m_callee)), scratchGPR);
-        static_assert(CallFrameSlot::codeBlock + 1 == CallFrameSlot::callee);
-        jit.storePairPtr(GPRInfo::wasmContextInstancePointer, scratchGPR, GPRInfo::callFrameRegister, CCallHelpers::TrustedImm32(CallFrameSlot::codeBlock * sizeof(Register)));
+        CCallHelpers::Address calleeSlot { GPRInfo::callFrameRegister, CallFrameSlot::callee * sizeof(Register) };
+        jit.storePtr(scratchGPR, calleeSlot.withOffset(PayloadOffset));
+        jit.store32(CCallHelpers::TrustedImm32(JSValue::NativeCalleeTag), calleeSlot.withOffset(TagOffset));
+        jit.storePtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::addressFor(CallFrameSlot::codeBlock));
     });
     {
         B3::PatchpointValue* stackOverflowCheck = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, Void, Origin());
@@ -1361,13 +1379,26 @@ B3::Type OMGIRGenerator::toB3ResultType(const TypeDefinition* returnType)
     if (returnType->as<FunctionSignature>()->returnsVoid())
         return B3::Void;
 
+    if (returnType->as<FunctionSignature>()->returnCount() == 1 && returnType->as<FunctionSignature>()->returnType(0).isI64())
+        return m_proc.addTuple({ Int32, Int32 });
+
     if (returnType->as<FunctionSignature>()->returnCount() == 1)
         return toB3Type(returnType->as<FunctionSignature>()->returnType(0));
 
     auto result = m_tupleMap.ensure(returnType, [&] {
         Vector<B3::Type> result;
-        for (unsigned i = 0; i < returnType->as<FunctionSignature>()->returnCount(); ++i)
-            result.append(toB3Type(returnType->as<FunctionSignature>()->returnType(i)));
+        Vector<B3::Type> highBits;
+        for (unsigned i = 0; i < returnType->as<FunctionSignature>()->returnCount(); ++i) {
+            auto type = toB3Type(returnType->as<FunctionSignature>()->returnType(i));
+            if (type == Int64) {
+                result.append(Int32);
+                highBits.append(Int32);
+                continue;
+            }
+            result.append(type);
+        }
+        for (auto type : highBits)
+            result.append(type);
         return m_proc.addTuple(WTFMove(result));
     });
     return result.iterator->value;
@@ -1470,7 +1501,7 @@ auto OMGIRGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
 
 auto OMGIRGenerator::addRefIsNull(ExpressionType value, ExpressionType& result) -> PartialResult
 {
-    result = push(m_currentBlock->appendNew<Value>(m_proc, B3::Equal, origin(), get(value), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+    result = push(m_currentBlock->appendNew<Value>(m_proc, B3::Equal, origin(), get(value), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
     return { };
 }
 
@@ -1482,7 +1513,7 @@ auto OMGIRGenerator::addTableGet(unsigned tableIndex, ExpressionType index, Expr
     {
         result = push(resultValue);
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), 0)));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), 0)));
 
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTableAccess);
@@ -1523,7 +1554,7 @@ auto OMGIRGenerator::addRefAsNonNull(ExpressionType reference, ExpressionType& r
     result = push(get(reference));
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(reference), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(reference), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::NullRefAsNonNull);
         });
@@ -1662,6 +1693,44 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
 {
     bool isTailCall = callType == CallType::TailCall;
     ASSERT(callType == CallType::Call || isTailCall);
+
+    B3::Type returnType = toB3ResultType(&signature);
+
+    auto fillResults = [&] (Value* callResult) {
+        switch (returnType.kind()) {
+        case B3::Void: {
+            break;
+        }
+        case B3::Tuple: {
+            const Vector<B3::Type>& tuple = m_proc.tupleForType(returnType);
+            auto logicalReturnCount = signature.as<FunctionSignature>()->returnCount();
+
+            ASSERT(!isARM64() || logicalReturnCount == tuple.size());
+            for (unsigned i = 0; i < logicalReturnCount; ++i) {
+                if (signature.as<FunctionSignature>()->returnType(i).isI64()) {
+                    int highBitsIndex = 0;
+                    for (unsigned j = 0; j < i; ++j) {
+                        ASSERT(j < logicalReturnCount);
+                        if (signature.as<FunctionSignature>()->returnType(j).isI64())
+                            ++highBitsIndex;
+                    }
+                    auto lo = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, callResult, i);
+                    auto hi = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, callResult, logicalReturnCount + highBitsIndex);
+                    auto stitched = m_currentBlock->appendNew<Value>(m_proc, Stitch, origin(), hi, lo);
+                    results.append(push(stitched));
+                    continue;
+                }
+                results.append(push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), tuple[i], callResult, i)));
+            }
+            break;
+        }
+        default: {
+            results.append(push(callResult));
+            break;
+        }
+        }
+    };
+
     // Do a context switch if needed.
     {
         BasicBlock* continuation = m_proc.addBlock();
@@ -1729,8 +1798,7 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
 
     m_makesCalls = true;
 
-    B3::Type returnType = toB3ResultType(&signature);
-    auto [patchpoint, handle, prepareForCall] = createCallPatchpoint(m_currentBlock, jsCalleeAnchor, returnType, wasmCalleeInfo, args);
+    auto [patchpoint, handle, prepareForCall] = createCallPatchpoint(m_currentBlock, jsCalleeAnchor, signature, wasmCalleeInfo, args);
     // We need to clobber all potential pinned registers since we might be leaving the instance.
     // We pessimistically assume we're always calling something that is bounds checking so
     // because the wasm->wasm thunk unconditionally overrides the size registers.
@@ -1752,23 +1820,7 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
         jit.storeWasmCalleeCallee(params[patchArgsIndex + 1].gpr());
         jit.call(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
     });
-    auto callResult = patchpoint;
-
-    switch (returnType.kind()) {
-    case B3::Void: {
-        break;
-    }
-    case B3::Tuple: {
-        const Vector<B3::Type>& tuple = m_proc.tupleForType(returnType);
-        for (unsigned i = 0; i < signature.as<FunctionSignature>()->returnCount(); ++i)
-            results.append(push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), tuple[i], callResult, i)));
-        break;
-    }
-    default: {
-        results.append(push(callResult));
-        break;
-    }
-    }
+    fillResults(patchpoint);
 
     // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
     restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_currentBlock);
@@ -2917,7 +2969,7 @@ auto OMGIRGenerator::addI31GetS(ExpressionType ref, ExpressionType& result) -> P
     // Trap on null reference.
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(ref), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(ref), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::NullI31Get);
         });
@@ -2933,7 +2985,7 @@ auto OMGIRGenerator::addI31GetU(ExpressionType ref, ExpressionType& result) -> P
     // Trap on null reference.
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(ref), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(ref), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::NullI31Get);
         });
@@ -2959,7 +3011,7 @@ Variable* OMGIRGenerator::pushArrayNew(uint32_t typeIndex, Value* initValue, Exp
 
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
 
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::BadArrayNew);
@@ -3089,7 +3141,7 @@ auto OMGIRGenerator::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, E
     // Ensure arrayref is non-null.
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(arrayref), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(arrayref), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::NullArrayGet);
         });
@@ -3151,7 +3203,7 @@ auto OMGIRGenerator::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, E
 void OMGIRGenerator::emitArrayNullCheck(Value* arrayref, ExceptionType exceptionType)
 {
     CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-        m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), arrayref, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+        m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), arrayref, m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
     check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, exceptionType);
     });
@@ -3222,7 +3274,7 @@ auto OMGIRGenerator::addArrayLen(ExpressionType arrayref, ExpressionType& result
     // Ensure arrayref is non-null.
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(arrayref), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(arrayref), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::NullArrayLen);
         });
@@ -3336,7 +3388,7 @@ auto OMGIRGenerator::addStructNew(uint32_t typeIndex, ArgumentList& args, Expres
 
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), structValue, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), structValue, m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::BadStructNew);
         });
@@ -3363,7 +3415,7 @@ auto OMGIRGenerator::addStructNewDefault(uint32_t typeIndex, ExpressionType& res
 
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), structValue, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), structValue, m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::BadStructNew);
         });
@@ -3373,9 +3425,9 @@ auto OMGIRGenerator::addStructNewDefault(uint32_t typeIndex, ExpressionType& res
     for (StructFieldCount i = 0; i < structType.fieldCount(); ++i) {
         Value* initValue;
         if (Wasm::isRefType(structType.field(i).type))
-            initValue = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()));
+            initValue = m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()));
         else
-            initValue = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), 0);
+            initValue = m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), 0);
         emitStructSet(structValue, i, structType, initValue);
     }
 
@@ -3391,7 +3443,7 @@ auto OMGIRGenerator::addStructGet(ExtGCOpType structGetKind, ExpressionType stru
 
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(structReference), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(structReference), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::NullStructGet);
         });
@@ -3438,7 +3490,7 @@ auto OMGIRGenerator::addStructSet(ExpressionType structReference, const StructTy
 {
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(structReference), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(structReference), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::NullStructSet);
         });
@@ -3483,7 +3535,7 @@ void OMGIRGenerator::emitRefTestOrCast(CastKind castKind, ExpressionType referen
         BasicBlock* nonNullCase = m_proc.addBlock();
 
         Value* isNull = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
-            get(reference), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull())));
+            get(reference), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull())));
         m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), isNull,
             FrequentedBlock(nullCase), FrequentedBlock(nonNullCase));
         nullCase->addPredecessor(m_currentBlock);
@@ -4067,11 +4119,7 @@ void OMGIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclos
                 stackmap.append(get(value));
             if (ControlType::isAnyCatch(data)) {
                 Value* exception = get(data.exception());
-                Value* exceptionLo = m_currentBlock->appendNew<Value>(m_proc, Trunc, origin, exception);
-                Value* exceptionHi = m_currentBlock->appendNew<Value>(m_proc, TruncHigh, origin, exception);
-
-                stackmap.append(exceptionLo);
-                stackmap.append(exceptionHi);
+                stackmap.append(exception);
             }
         }
         for (TypedExpression value : enclosingStack)
@@ -4148,13 +4196,8 @@ void OMGIRGenerator::connectControlAtEntrypoint(unsigned& indexInBuffer, Value* 
             m_currentBlock->appendNew<VariableValue>(m_proc, Set, origin(), value.value(), load);
     }
     if (ControlType::isAnyCatch(data) && &data != &currentData) {
-        // XXX(angelos): duplicates loadFromScratchBuffer
-        unsigned valueSize = m_proc.usesSIMD() ? 2 : 1;
-        size_t offset = valueSize * sizeof(uint64_t) * (indexInBuffer++);
-        Value* loadLo = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), pointer, offset);
-        Value* loadHi = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), pointer, offset + 4);
-        Value* load = m_currentBlock->appendNew<Value>(m_proc, Stitch, Origin(), loadHi, loadLo);
-        m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), data.exception(), load);
+        auto* load = loadFromScratchBuffer(indexInBuffer, pointer, pointerType());
+        m_currentBlock->appendNew<VariableValue>(m_proc, Set, origin(), data.exception(), load);
     }
 };
 
@@ -4323,10 +4366,7 @@ PatchpointExceptionHandle OMGIRGenerator::preparePatchpointForExceptions(BasicBl
                 liveValues.append(get(block, value));
             if (ControlType::isAnyCatch(data)) {
                 Value* exception = get(block, data.exception());
-                Value* exceptionLo = m_currentBlock->appendNew<Value>(m_proc, Trunc, origin, exception);
-                Value* exceptionHi = m_currentBlock->appendNew<Value>(m_proc, TruncHigh, origin, exception);
-                liveValues.append(exceptionLo);
-                liveValues.append(exceptionHi);
+                liveValues.append(exception);
             }
         }
         for (Variable* value : currentFrame->m_parser->expressionStack())
@@ -4390,10 +4430,8 @@ Value* OMGIRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned
     reloadMemoryRegistersFromInstance(m_info.memory, instanceValue(), m_currentBlock);
 
     Value* pointer = m_currentBlock->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR0);
-    Value* exceptionHi = m_currentBlock->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR2);
-    Value* exceptionLo = m_currentBlock->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR1);
-    Value* exception = m_currentBlock->appendNew<Value>(m_proc, Stitch, Origin(), exceptionHi, exceptionLo);
-    Value* buffer = m_currentBlock->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR3);
+    Value* exception = m_currentBlock->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR1);
+    Value* buffer = m_currentBlock->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR2);
 
     unsigned indexInBuffer = 0;
 
@@ -4451,7 +4489,7 @@ auto OMGIRGenerator::addThrow(unsigned exceptionIndex, ArgumentList& args, Stack
     patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
     unsigned offset = 0;
     for (auto arg : args) {
-        patch->append(get(arg), ValueRep::stackArgument(offset * sizeof(EncodedJSValue)));
+        patch->append(get(arg), ValueRep::stackArgument(offset * sizeof(uint64_t)));
         offset += arg->type().isVector() ? 2 : 1;
     }
     m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, offset);
@@ -4476,10 +4514,7 @@ auto OMGIRGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
     patch->effects.terminal = true;
     patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
     Value* exception = get(data.exception());
-    Value* exceptionLo = m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), exception);
-    Value* exceptionHi = m_currentBlock->appendNew<Value>(m_proc, TruncHigh, origin(), exception);
-    patch->append(exceptionLo, ValueRep::reg(GPRInfo::argumentGPR2));
-    patch->append(exceptionHi, ValueRep::reg(GPRInfo::argumentGPR3));
+    patch->append(exception, ValueRep::reg(GPRInfo::argumentGPR2));
     PatchpointExceptionHandle handle = preparePatchpointForExceptions(m_currentBlock, patch);
     patch->setGenerator([this, handle] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -4535,11 +4570,18 @@ auto OMGIRGenerator::addReturn(const ControlData&, const Stack& returnValues) ->
             B3::Value* address = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Add, Origin(), framePointer(), constant(pointerType(), rep.offsetFromFP()));
             m_currentBlock->appendNew<B3::MemoryValue>(m_proc, B3::Store, Origin(), get(returnValues[offset + i]), address);
         } else {
-            ASSERT(rep.isReg() || rep.isRegPair());
-            if (wasmCallInfo.results[i].usedWidth == Width32)
-                patch->append(get(returnValues[offset + i]), B3::ValueRep(wasmCallInfo.results[i].location.jsr().payloadGPR()));
-            else
-                patch->append(get(returnValues[offset + i]), rep);
+            ASSERT(rep.isReg());
+            auto result = get(returnValues[offset + i]);
+            if (rep.isFPR())
+                patch->append(result, B3::ValueRep(wasmCallInfo.results[i].location.fpr()));
+            else if (result->type() != Int64)
+                patch->append(result, B3::ValueRep(wasmCallInfo.results[i].location.jsr().payloadGPR()));
+            else {
+                auto* hi = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, result, ExtractValue::s_int64HighBits);
+                auto* lo = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, result, ExtractValue::s_int64LowBits);
+                patch->append(hi, B3::ValueRep(wasmCallInfo.results[i].location.jsr().tagGPR()));
+                patch->append(lo, B3::ValueRep(wasmCallInfo.results[i].location.jsr().payloadGPR()));
+            }
         }
 
         TRACE_VALUE(m_parser->signature().as<FunctionSignature>()->returnType(i), get(returnValues[offset + i]), "put to return value ", i);
@@ -4588,7 +4630,7 @@ auto OMGIRGenerator::addBranch(ControlData& data, ExpressionType condition, cons
 
 auto OMGIRGenerator::addBranchNull(ControlData& data, ExpressionType reference, const Stack& returnValues, bool shouldNegate, ExpressionType& result) -> PartialResult
 {
-    auto condition = push(m_currentBlock->appendNew<Value>(m_proc, shouldNegate ? B3::NotEqual : B3::Equal, origin(), get(reference), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+    auto condition = push(m_currentBlock->appendNew<Value>(m_proc, shouldNegate ? B3::NotEqual : B3::Equal, origin(), get(reference), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
     // We should pop the condition here to keep stack size consistent.
     --m_stackSize;
 
@@ -4687,11 +4729,23 @@ auto OMGIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expre
 }
 
 
-auto OMGIRGenerator::createCallPatchpoint(BasicBlock* block, Value* jsCalleeAnchor, B3::Type returnType, const CallInformation& wasmCalleeInfo, const ArgumentList& tmpArgs) -> CallPatchpointData
+auto OMGIRGenerator::createCallPatchpoint(BasicBlock* block, Value* jsCalleeAnchor, const TypeDefinition& signature, const CallInformation& wasmCalleeInfo, const ArgumentList& tmpArgs) -> CallPatchpointData
 {
+    auto functionSignature = *signature.as<FunctionSignature>();
+    auto returnType = toB3ResultType(&signature);
     Vector<B3::ConstrainedValue> constrainedPatchArgs;
-    for (unsigned i = 0; i < tmpArgs.size(); ++i)
+    Vector<B3::ConstrainedValue> constrainedPatchArgsHighBits;
+    for (unsigned i = 0; i < tmpArgs.size(); ++i) {
+        if (tmpArgs[i]->type() == Int64) {
+            auto int64 = get(block, tmpArgs[i]);
+            auto hi = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, int64, ExtractValue::s_int64HighBits);
+            auto lo = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, int64, ExtractValue::s_int64LowBits);
+            constrainedPatchArgs.append(B3::ConstrainedValue(lo, ValueRep::reg(wasmCalleeInfo.params[i].location.jsr().payloadGPR())));
+            constrainedPatchArgsHighBits.append(B3::ConstrainedValue(hi, ValueRep::reg(wasmCalleeInfo.params[i].location.jsr().tagGPR())));
+            continue;
+        }
         constrainedPatchArgs.append(B3::ConstrainedValue(get(block, tmpArgs[i]), wasmCalleeInfo.params[i]));
+    }
     if (jsCalleeAnchor)
         constrainedPatchArgs.append(B3::ConstrainedValue(jsCalleeAnchor, wasmCalleeInfo.thisArgument));
 
@@ -4703,14 +4757,46 @@ auto OMGIRGenerator::createCallPatchpoint(BasicBlock* block, Value* jsCalleeAnch
     patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
     patchpoint->appendVector(constrainedPatchArgs);
+    patchpoint->appendVector(constrainedPatchArgsHighBits);
 
     *exceptionHandle = preparePatchpointForExceptions(block, patchpoint);
 
     const Vector<ArgumentLocation, 1>& constrainedResultLocations = wasmCalleeInfo.results;
-    if (returnType != B3::Void) {
+    if (returnType.isTuple() || returnType == Int64) {
+        Vector<B3::ValueRep, 1> resultConstraints;
+        Vector<B3::ValueRep, 1> resultConstraintsHigh;
+
+        for (auto valueLocation : constrainedResultLocations) {
+            if (valueLocation.location.isGPR())
+                resultConstraints.append(B3::ValueRep(valueLocation.location.jsr().payloadGPR()));
+            else
+                resultConstraints.append(B3::ValueRep(valueLocation.location));
+        }
+
+        for (size_t index = 0; index < functionSignature.returnCount(); ++index) {
+            auto valueLocation = constrainedResultLocations[index];
+
+            if (functionSignature.returnType(index).isI64()) {
+                ASSERT(returnType == Int64 || m_proc.tupleForType(returnType)[index] == Int32);
+                if (valueLocation.location.isGPR())
+                    resultConstraintsHigh.append(B3::ValueRep(valueLocation.location.jsr().tagGPR()));
+                else if (valueLocation.location.isStack())
+                    resultConstraintsHigh.append(B3::ValueRep::stack(checkedSum<intptr_t>(valueLocation.location.offsetFromFP(), static_cast<intptr_t>(bytesForWidth(Width32)))));
+                else {
+                    ASSERT(valueLocation.location.isStackArgument());
+                    resultConstraintsHigh.append(B3::ValueRep::stackArgument(checkedSum<intptr_t>(valueLocation.location.offsetFromSP(), static_cast<intptr_t>(bytesForWidth(Width32)))));
+                }
+            }
+        }
+
+        ASSERT(resultConstraints.size() + resultConstraintsHigh.size() == (returnType == Int64 ? 2 : m_proc.tupleForType(returnType).size()));
+        for (auto c : resultConstraintsHigh)
+            resultConstraints.append(c);
+        patchpoint->resultConstraints = WTFMove(resultConstraints);
+    } else if (returnType != B3::Void) {
         Vector<B3::ValueRep, 1> resultConstraints;
         for (auto valueLocation : constrainedResultLocations) {
-            if (valueLocation.location.isGPR() && valueLocation.usedWidth == Width32)
+            if (valueLocation.location.isGPR())
                 resultConstraints.append(B3::ValueRep(valueLocation.location.jsr().payloadGPR()));
             else
                 resultConstraints.append(B3::ValueRep(valueLocation.location));
@@ -4931,17 +5017,31 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
     }
 
     auto fillResults = [&] (Value* callResult) {
-        ASSERT(returnType == callResult->type());
-
         switch (returnType.kind()) {
         case B3::Void: {
             break;
         }
         case B3::Tuple: {
             const Vector<B3::Type>& tuple = m_proc.tupleForType(returnType);
-            ASSERT(signature.as<FunctionSignature>()->returnCount() == tuple.size());
-            for (unsigned i = 0; i < signature.as<FunctionSignature>()->returnCount(); ++i)
+            auto logicalReturnCount = signature.as<FunctionSignature>()->returnCount();
+
+            ASSERT(!isARM64() || logicalReturnCount == tuple.size());
+            for (unsigned i = 0; i < logicalReturnCount; ++i) {
+                if (signature.as<FunctionSignature>()->returnType(i).isI64()) {
+                    int highBitsIndex = 0;
+                    for (unsigned j = 0; j < i; ++j) {
+                        ASSERT(j < logicalReturnCount);
+                        if (signature.as<FunctionSignature>()->returnType(j).isI64())
+                            ++highBitsIndex;
+                    }
+                    auto lo = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, callResult, i);
+                    auto hi = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, callResult, logicalReturnCount + highBitsIndex);
+                    auto stitched = m_currentBlock->appendNew<Value>(m_proc, Stitch, origin(), hi, lo);
+                    results.append(push(stitched));
+                    continue;
+                }
                 results.append(push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), tuple[i], callResult, i)));
+            }
             break;
         }
         default: {
@@ -4989,7 +5089,7 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
             return { };
         }
 
-        auto [patchpoint, handle, prepareForCall] = createCallPatchpoint(m_currentBlock, nullptr, returnType, wasmCalleeInfo, args);
+        auto [patchpoint, handle, prepareForCall] = createCallPatchpoint(m_currentBlock, nullptr, signature, wasmCalleeInfo, args);
         emitCallToImport(patchpoint, handle, prepareForCall);
 
         if (returnType != B3::Void)
@@ -5043,11 +5143,13 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
     // 1. It is not tail-call. So this does not clobber the arguments of this function.
     // 2. We are not changing instance. Thus, |this| of this function's arguments are the same and OK.
 
-    auto [patchpoint, handle, prepareForCall] = createCallPatchpoint(m_currentBlock, nullptr, returnType, wasmCalleeInfo, args);
+    auto [patchpoint, handle, prepareForCall] = createCallPatchpoint(m_currentBlock, nullptr, signature, wasmCalleeInfo, args);
     emitUnlinkedWasmToWasmCall(patchpoint, handle, prepareForCall);
     // We need to clobber the size register since the LLInt always bounds checks
+#if OMG_JSVALUE_32_64_PINNED_MEMORY_REGISTERS
     if (useSignalingMemory() || m_info.memory.isShared())
         patchpoint->clobberLate(RegisterSetBuilder { GPRInfo::wasmBoundsCheckingSizeRegister });
+#endif
 
 
     fillResults(patchpoint);
@@ -5197,7 +5299,7 @@ auto OMGIRGenerator::addCallRef(const TypeDefinition& originalSignature, Argumen
     // Check the target reference for null.
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), callee, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), callee, m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::NullReference);
         });

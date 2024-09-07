@@ -32,6 +32,9 @@
 #include "AirCode.h"
 #include "B3BasicBlockInlines.h"
 #include "B3BreakCriticalEdges.h"
+#include "B3CCallValue.h"
+#include "B3Procedure.h"
+#include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 { namespace Air {

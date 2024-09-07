@@ -2623,8 +2623,8 @@ void testCompareFloatToDoubleThroughPhi(float a, float b)
     auto code = compileProc(proc);
     int32_t integerA = bitwise_cast<int32_t>(a);
     double doubleB = b;
-    CHECK(invoke<intptr_t>(*code, 1L, integerA, doubleB) == (a == b));
-    CHECK(invoke<intptr_t>(*code, 0L, integerA, doubleB) == (b == 0));
+    CHECK_EQ(invoke<intptr_t>(*code, 1L, integerA, doubleB), (a == b));
+    CHECK_EQ(invoke<intptr_t>(*code, 0L, integerA, doubleB), (b == 0)); 
 }
 
 void testDoubleToFloatThroughPhi(float value)
