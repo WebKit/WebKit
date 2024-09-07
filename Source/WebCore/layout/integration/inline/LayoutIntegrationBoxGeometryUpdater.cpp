@@ -88,6 +88,7 @@ void BoxGeometryUpdater::updateListMarkerDimensions(const RenderListMarker& list
                     offset -= (ancestor->borderStart() + ancestor->paddingStart());
                 if (is<RenderListItem>(*ancestor))
                     break;
+                offset -= (ancestor->marginStart());
                 if (ancestor->isFlexItem()) {
                     offset -= ancestor->logicalLeft();
                     hasAccountedForBorderAndPadding = true;

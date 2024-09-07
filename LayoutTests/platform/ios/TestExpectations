@@ -7490,3 +7490,5 @@ imported/w3c/web-platform-tests/css/css-view-transitions/new-content-intrinsic-a
 
 # webkit.org/b/278934 [ macOS iOS wk2 ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html is a flaky failure.
 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure Pass ]
+
+webkit.org/b/279295 fast/inline/list-marker-inside-container-with-margin.html [ ImageOnlyFailure ]
