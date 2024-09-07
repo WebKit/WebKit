@@ -88,45 +88,26 @@ public:
 
 class BasicShapeCenterCoordinate {
 public:
-    enum class Direction : bool {
-        TopLeft,
-        BottomRight
-    };
-
     BasicShapeCenterCoordinate()
     {
-        updateComputedLength();
     }
 
-    BasicShapeCenterCoordinate(Direction direction, Length&& length)
-        : m_direction(direction)
-        , m_length(WTFMove(length))
+    BasicShapeCenterCoordinate(Length&& length)
+        : m_length(WTFMove(length))
     {
-        updateComputedLength();
     }
 
-    Direction direction() const { return m_direction; }
     const Length& length() const { return m_length; }
-    const Length& computedLength() const { return m_computedLength; }
 
     BasicShapeCenterCoordinate blend(const BasicShapeCenterCoordinate& from, const BlendingContext& context) const
     {
-        return BasicShapeCenterCoordinate(Direction::TopLeft, WebCore::blend(from.m_computedLength, m_computedLength, context));
+        return BasicShapeCenterCoordinate(WebCore::blend(from.m_length, m_length, context));
     }
     
-    bool operator==(const BasicShapeCenterCoordinate& other) const
-    {
-        return m_direction == other.m_direction
-            && m_length == other.m_length
-            && m_computedLength == other.m_computedLength;
-    }
+    bool operator==(const BasicShapeCenterCoordinate&) const = default;
 
 private:
-    WEBCORE_EXPORT void updateComputedLength();
-
-    Direction m_direction { Direction::TopLeft };
-    Length m_length { LengthType::Undefined };
-    Length m_computedLength;
+    Length m_length { 100, LengthType::Percent };
 };
 
 class BasicShapeRadius {

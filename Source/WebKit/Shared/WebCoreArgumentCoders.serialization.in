@@ -3039,10 +3039,7 @@ class WebCore::SVGPathByteStream {
 }
 
 header: <WebCore/BasicShapes.h>
-[Nested, CustomHeader] enum class WebCore::BasicShapeCenterCoordinate::Direction : bool
-
 [CustomHeader] class WebCore::BasicShapeCenterCoordinate {
-    WebCore::BasicShapeCenterCoordinate::Direction direction();
     WebCore::Length length();
 }
 

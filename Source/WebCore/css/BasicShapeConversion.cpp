@@ -48,16 +48,6 @@
 
 namespace WebCore {
 
-static Ref<CSSValue> valueForCenterCoordinate(const RenderStyle& style, const BasicShapeCenterCoordinate& center, BoxOrient orientation)
-{
-    if (center.direction() == BasicShapeCenterCoordinate::Direction::TopLeft)
-        return CSSPrimitiveValue::create(center.length(), style);
-
-    CSSValueID keyword = orientation == BoxOrient::Horizontal ? CSSValueRight : CSSValueBottom;
-
-    return CSSValuePair::create(CSSPrimitiveValue::create(keyword), CSSPrimitiveValue::create(center.length(), style));
-}
-
 static Ref<CSSPrimitiveValue> basicShapeRadiusToCSSValue(const RenderStyle& style, const BasicShapeRadius& radius)
 {
     switch (radius.type()) {
@@ -124,8 +114,9 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
             return CSSCircleValue::create(WTFMove(radius), nullptr, nullptr);
 
         return CSSCircleValue::create(WTFMove(radius),
-            valueForCenterCoordinate(style, circle.centerX(), BoxOrient::Horizontal),
-            valueForCenterCoordinate(style, circle.centerY(), BoxOrient::Vertical));
+            CSSPrimitiveValue::create(circle.centerX().length(), style),
+            CSSPrimitiveValue::create(circle.centerY().length(), style)
+        );
     }
     case BasicShape::Type::Ellipse: {
         auto& ellipse = uncheckedDowncast<BasicShapeEllipse>(basicShape);
@@ -136,9 +127,11 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
             return CSSEllipseValue::create(WTFMove(radiusX), WTFMove(radiusY), nullptr, nullptr);
 
         return CSSEllipseValue::create(
-            WTFMove(radiusX), WTFMove(radiusY),
-            valueForCenterCoordinate(style, ellipse.centerX(), BoxOrient::Horizontal),
-            valueForCenterCoordinate(style, ellipse.centerY(), BoxOrient::Vertical));
+            WTFMove(radiusX),
+            WTFMove(radiusY),
+            CSSPrimitiveValue::create(ellipse.centerX().length(), style),
+            CSSPrimitiveValue::create(ellipse.centerY().length(), style)
+        );
     }
     case BasicShape::Type::Polygon: {
         auto& polygon = uncheckedDowncast<BasicShapePolygon>(basicShape);
@@ -216,7 +209,7 @@ static LengthPoint convertToLengthPoint(const CSSToLengthConversionData& convers
 static BasicShapeCenterCoordinate convertToCenterCoordinate(const CSSToLengthConversionData& conversionData, const CSSValue* value)
 {
     CSSValueID keyword = CSSValueTop;
-    Length offset { 0, LengthType::Fixed };
+    Length offset { 0, LengthType::Percent };
     if (!value)
         keyword = CSSValueCenter;
     else if (value->isValueID())
@@ -227,27 +220,23 @@ static BasicShapeCenterCoordinate convertToCenterCoordinate(const CSSToLengthCon
     } else
         offset = convertToLength(conversionData, *value);
 
-    BasicShapeCenterCoordinate::Direction direction;
     switch (keyword) {
     case CSSValueTop:
     case CSSValueLeft:
-        direction = BasicShapeCenterCoordinate::Direction::TopLeft;
         break;
     case CSSValueRight:
     case CSSValueBottom:
-        direction = BasicShapeCenterCoordinate::Direction::BottomRight;
+        offset = convertTo100PercentMinusLength(WTFMove(offset));
         break;
     case CSSValueCenter:
-        direction = BasicShapeCenterCoordinate::Direction::TopLeft;
         offset = Length(50, LengthType::Percent);
         break;
     default:
         ASSERT_NOT_REACHED();
-        direction = BasicShapeCenterCoordinate::Direction::TopLeft;
         break;
     }
 
-    return BasicShapeCenterCoordinate(direction, WTFMove(offset));
+    return BasicShapeCenterCoordinate(WTFMove(offset));
 }
 
 static BasicShapeRadius cssValueToBasicShapeRadius(const CSSToLengthConversionData& conversionData, const CSSValue* radius)
@@ -382,10 +371,7 @@ Ref<BasicShapeShape> basicShapeShapeForValue(const CSSShapeValue& shapeValue, co
 
 float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate& center, float boxDimension)
 {
-    float offset = floatValueForLength(center.length(), boxDimension);
-    if (center.direction() == BasicShapeCenterCoordinate::Direction::TopLeft)
-        return offset;
-    return boxDimension - offset;
+    return floatValueForLength(center.length(), boxDimension);
 }
 
 } // namespace WebCore

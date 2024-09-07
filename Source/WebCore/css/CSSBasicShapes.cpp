@@ -54,58 +54,6 @@ Ref<CSSCircleValue> CSSCircleValue::create(RefPtr<CSSValue>&& radius, RefPtr<CSS
     return adoptRef(*new CSSCircleValue(WTFMove(radius), WTFMove(centerX), WTFMove(centerY)));
 }
 
-struct SerializablePositionOffset {
-    CSSValueID side;
-    Ref<const CSSValue> amount;
-};
-
-static String serializePositionOffset(const SerializablePositionOffset& offset, const SerializablePositionOffset& other)
-{
-    if ((offset.side == CSSValueLeft && other.side == CSSValueTop) || (offset.side == CSSValueTop && other.side == CSSValueLeft))
-        return offset.amount->cssText();
-    return makeString(nameLiteral(offset.side), ' ', offset.amount->cssText());
-}
-
-static bool isZeroLength(const CSSValue& value)
-{
-    auto* primitive = dynamicDowncast<CSSPrimitiveValue>(value);
-    return primitive && primitive->isLength() && primitive->isZero().value_or(false);
-}
-
-static SerializablePositionOffset buildSerializablePositionOffset(CSSValue* offset, CSSValueID defaultSide)
-{
-    CSSValueID side = defaultSide;
-    RefPtr<const CSSValue> amount;
-
-    if (!offset)
-        side = CSSValueCenter;
-    else if (offset->isValueID())
-        side = offset->valueID();
-    else if (offset->isPair()) {
-        side = offset->first().valueID();
-        amount = &offset->second();
-    } else
-        amount = offset;
-
-    if (!amount)
-        amount = CSSPrimitiveValue::create(Length(side == CSSValueCenter ? 50 : 0, LengthType::Percent));
-    
-    if (side == CSSValueCenter)
-        side = defaultSide;
-    else if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*amount); (side == CSSValueRight || side == CSSValueBottom) && primitiveValue && primitiveValue->isPercentage()) {
-        side = defaultSide;
-        amount = CSSPrimitiveValue::create(Length(100 - primitiveValue->resolveAsPercentageDeprecated<float>(), LengthType::Percent));
-    } else if (isZeroLength(*amount)) {
-        if (side == CSSValueRight || side == CSSValueBottom)
-            amount = CSSPrimitiveValue::create(Length(100, LengthType::Percent));
-        else
-            amount = CSSPrimitiveValue::create(Length(0, LengthType::Percent));
-        side = defaultSide;
-    }
-
-    return { side, amount.releaseNonNull() };
-}
-
 String CSSCircleValue::customCSSText() const
 {
     String radius;
@@ -117,10 +65,7 @@ String CSSCircleValue::customCSSText() const
         return makeString("circle("_s, radius, ')');
     }
 
-    auto x = buildSerializablePositionOffset(m_centerX.get(), CSSValueLeft);
-    auto y = buildSerializablePositionOffset(m_centerY.get(), CSSValueTop);
-    return makeString("circle("_s, radius, radius.isNull() ? ""_s : " "_s,
-        "at "_s, serializePositionOffset(x, y), ' ', serializePositionOffset(y, x), ')');
+    return makeString("circle("_s, radius, radius.isNull() ? ""_s : " "_s, "at "_s, m_centerX->cssText(), ' ', m_centerY->cssText(), ')');
 }
 
 bool CSSCircleValue::equals(const CSSCircleValue& other) const
@@ -188,9 +133,9 @@ String CSSEllipseValue::customCSSText() const
         return buildEllipseString(radiusX, radiusY, nullString(), nullString());
     }
 
-    auto x = buildSerializablePositionOffset(m_centerX.get(), CSSValueLeft);
-    auto y = buildSerializablePositionOffset(m_centerY.get(), CSSValueTop);
-    return buildEllipseString(radiusX, radiusY, serializePositionOffset(x, y), serializePositionOffset(y, x));
+    auto x = m_centerX->cssText();
+    auto y = m_centerY->cssText();
+    return buildEllipseString(radiusX, radiusY, x, y);
 }
 
 bool CSSEllipseValue::equals(const CSSEllipseValue& other) const
