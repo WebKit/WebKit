@@ -2242,8 +2242,7 @@ LayoutUnit RenderBox::shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStar
     }
 
     LayoutUnit logicalHeight = cb.logicalHeightForChild(*this);
-    LayoutUnit result = cb.availableLogicalWidthForLineInFragment(logicalTopPosition, containingBlockFragment, logicalHeight) - childMarginStart - childMarginEnd;
-
+    LayoutUnit availableLogicalWidthAtLogicalTopPosition = cb.availableLogicalWidthForLineInFragment(logicalTopPosition, containingBlockFragment, logicalHeight);
     // We need to see if margins on either the start side or the end side can contain the floats in question. If they can,
     // then just using the line width is inaccurate. In the case where a float completely fits, we don't need to use the line
     // offset at all, but can instead push all the way to the content edge of the containing block. In the case where the float
@@ -2253,23 +2252,23 @@ LayoutUnit RenderBox::shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStar
         LayoutUnit startContentSide = cb.startOffsetForContent(containingBlockFragment);
         LayoutUnit startContentSideWithMargin = startContentSide + childMarginStart;
         LayoutUnit startOffset = cb.startOffsetForLineInFragment(logicalTopPosition, containingBlockFragment, logicalHeight);
-        if (startOffset > startContentSideWithMargin)
-            result += childMarginStart;
-        else
-            result += startOffset - startContentSide;
+        if (startOffset <= startContentSideWithMargin) {
+            availableLogicalWidthAtLogicalTopPosition -= childMarginStart;
+            availableLogicalWidthAtLogicalTopPosition += startOffset - startContentSide;
+        }
     }
     
     if (childMarginEnd > 0) {
         LayoutUnit endContentSide = cb.endOffsetForContent(containingBlockFragment);
         LayoutUnit endContentSideWithMargin = endContentSide + childMarginEnd;
         LayoutUnit endOffset = cb.endOffsetForLineInFragment(logicalTopPosition, containingBlockFragment, logicalHeight);
-        if (endOffset > endContentSideWithMargin)
-            result += childMarginEnd;
-        else
-            result += endOffset - endContentSide;
+        if (endOffset <= endContentSideWithMargin) {
+            availableLogicalWidthAtLogicalTopPosition -= childMarginEnd;
+            availableLogicalWidthAtLogicalTopPosition += endOffset - endContentSide;
+        }
     }
 
-    return result;
+    return availableLogicalWidthAtLogicalTopPosition;
 }
 
 LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
