@@ -949,17 +949,19 @@ CocoaColor *pixelColor(CocoaImage *image, CGPoint point)
     auto *color = [bitmap colorAtX:point.x y:point.y];
     return color;
 #else
+    image = [image.imageAsset imageWithTraitCollection:UITraitCollection.currentTraitCollection];
+
     UIGraphicsBeginImageContext(image.size);
 
     [image drawAtPoint:CGPointZero];
 
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    unsigned char *data = (unsigned char *)CGBitmapContextGetData(context);
+    auto context = UIGraphicsGetCurrentContext();
+    auto *data = (unsigned char *)CGBitmapContextGetData(context);
     if (!data)
         return nil;
 
     unsigned offset = ((image.size.width * point.y) + point.x) * 4;
-    UIColor *color = [UIColor colorWithRed:data[offset] / 255.0 green:data[offset + 1] / 255.0 blue:data[offset + 2] / 255.0 alpha:data[offset + 3] / 255.0];
+    auto *color = [UIColor colorWithRed:data[offset] / 255.0 green:data[offset + 1] / 255.0 blue:data[offset + 2] / 255.0 alpha:data[offset + 3] / 255.0];
 
     UIGraphicsEndImageContext();
 

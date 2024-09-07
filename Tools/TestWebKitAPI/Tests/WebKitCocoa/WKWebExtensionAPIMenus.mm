@@ -757,15 +757,8 @@ TEST(WKWebExtensionAPIMenus, MenuItemWithIconVariants)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertSafe(() => browser.menus.create({",
-        @"  id: 'top-level-item',",
-        @"  title: 'Top Level Menu',",
-        @"  contexts: [ 'action' ]",
-        @"}))",
-
-        @"browser.test.assertSafe(() => browser.menus.create({",
-        @"  id: 'submenu-item-with-icon-variants',",
-        @"  parentId: 'top-level-item',",
-        @"  title: 'Submenu Item with Icon Variants',",
+        @"  id: 'menu-item-with-icon-variants',",
+        @"  title: 'Menu Item with Icon Variants',",
         @"  icon_variants: [",
         @"    { 16: 'icon-dark-16.png', 'color_schemes': [ 'dark' ] },",
         @"    { 16: 'icon-light-16.png', 'color_schemes': [ 'light' ] }",
@@ -794,31 +787,22 @@ TEST(WKWebExtensionAPIMenus, MenuItemWithIconVariants)
 
     EXPECT_EQ(menuItems.count, 1lu);
 
-    auto *topLevelMenuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
-    EXPECT_TRUE([topLevelMenuItem isKindOfClass:[CocoaMenuItem class]]);
-    EXPECT_NS_EQUAL(topLevelMenuItem.title, @"Top Level Menu");
+    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
+    EXPECT_NS_EQUAL(menuItem.title, @"Menu Item with Icon Variants");
 
 #if USE(APPKIT)
-    EXPECT_EQ(topLevelMenuItem.submenu.itemArray.count, 1lu);
-
-    auto *submenuItem = dynamic_objc_cast<CocoaMenuItem>(topLevelMenuItem.submenu.itemArray.firstObject);
-    EXPECT_NS_EQUAL(submenuItem.title, @"Submenu Item with Icon Variants");
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(16, 16)));
 #else
-    auto *parentMenu = dynamic_objc_cast<UIMenu>(topLevelMenuItem);
-    EXPECT_EQ(parentMenu.children.count, 1lu);
-
-    auto *submenuItem = dynamic_objc_cast<CocoaMenuAction>(parentMenu.children.firstObject);
-    EXPECT_NS_EQUAL(submenuItem.title, @"Submenu Item with Icon Variants");
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(20, 20)));
 #endif
 
     Util::performWithAppearance(Util::Appearance::Dark, ^{
-        EXPECT_TRUE(CGSizeEqualToSize(submenuItem.image.size, CGSizeMake(16, 16)));
-        EXPECT_TRUE(Util::compareColors(Util::pixelColor(submenuItem.image), [CocoaColor whiteColor]));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor whiteColor]));
     });
 
     Util::performWithAppearance(Util::Appearance::Light, ^{
-        EXPECT_TRUE(CGSizeEqualToSize(submenuItem.image.size, CGSizeMake(16, 16)));
-        EXPECT_TRUE(Util::compareColors(Util::pixelColor(submenuItem.image), [CocoaColor blackColor]));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor blackColor]));
     });
 }
 
@@ -833,19 +817,12 @@ TEST(WKWebExtensionAPIMenus, MenuItemWithImageDataVariants)
         @"  return context.getImageData(0, 0, size, size)",
         @"}",
 
-        @"browser.test.assertSafe(() => browser.menus.create({",
-        @"  id: 'top-level-item',",
-        @"  title: 'Top Level Menu',",
-        @"  contexts: [ 'action' ]",
-        @"}))",
-
         @"const darkImageData = createImageData(16, 'white')",
         @"const lightImageData = createImageData(16, 'black')",
 
         @"browser.test.assertSafe(() => browser.menus.create({",
-        @"  id: 'submenu-item-with-icon-variants',",
-        @"  parentId: 'top-level-item',",
-        @"  title: 'Submenu Item with ImageData Variants',",
+        @"  id: 'menu-item-with-image-data-variants',",
+        @"  title: 'Menu Item with ImageData Variants',",
         @"  icon_variants: [",
         @"    { 16: darkImageData, 'color_schemes': [ 'dark' ] },",
         @"    { 16: lightImageData, 'color_schemes': [ 'light' ] }",
@@ -869,31 +846,22 @@ TEST(WKWebExtensionAPIMenus, MenuItemWithImageDataVariants)
 
     EXPECT_EQ(menuItems.count, 1lu);
 
-    auto *topLevelMenuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
-    EXPECT_TRUE([topLevelMenuItem isKindOfClass:[CocoaMenuItem class]]);
-    EXPECT_NS_EQUAL(topLevelMenuItem.title, @"Top Level Menu");
+    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
+    EXPECT_NS_EQUAL(menuItem.title, @"Menu Item with ImageData Variants");
 
 #if USE(APPKIT)
-    EXPECT_EQ(topLevelMenuItem.submenu.itemArray.count, 1lu);
-
-    auto *submenuItem = dynamic_objc_cast<CocoaMenuItem>(topLevelMenuItem.submenu.itemArray.firstObject);
-    EXPECT_NS_EQUAL(submenuItem.title, @"Submenu Item with ImageData Variants");
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(16, 16)));
 #else
-    auto *parentMenu = dynamic_objc_cast<UIMenu>(topLevelMenuItem);
-    EXPECT_EQ(parentMenu.children.count, 1lu);
-
-    auto *submenuItem = dynamic_objc_cast<CocoaMenuAction>(parentMenu.children.firstObject);
-    EXPECT_NS_EQUAL(submenuItem.title, @"Submenu Item with ImageData Variants");
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(20, 20)));
 #endif
 
     Util::performWithAppearance(Util::Appearance::Dark, ^{
-        EXPECT_TRUE(CGSizeEqualToSize(submenuItem.image.size, CGSizeMake(16, 16)));
-        EXPECT_TRUE(Util::compareColors(Util::pixelColor(submenuItem.image), [CocoaColor whiteColor]));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor whiteColor]));
     });
 
     Util::performWithAppearance(Util::Appearance::Light, ^{
-        EXPECT_TRUE(CGSizeEqualToSize(submenuItem.image.size, CGSizeMake(16, 16)));
-        EXPECT_TRUE(Util::compareColors(Util::pixelColor(submenuItem.image), [CocoaColor blackColor]));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor blackColor]));
     });
 }
 
@@ -955,15 +923,8 @@ TEST(WKWebExtensionAPIMenus, MenuItemWithMixedValidAndInvalidIconVariants)
         @"const invalidImageData = createImageData(16, 'white')",
 
         @"browser.test.assertSafe(() => browser.menus.create({",
-        @"  id: 'top-level-item',",
-        @"  title: 'Top Level Menu',",
-        @"  contexts: [ 'action' ]",
-        @"}))",
-
-        @"browser.test.assertSafe(() => browser.menus.create({",
-        @"  id: 'submenu-item-mixed',",
-        @"  parentId: 'top-level-item',",
-        @"  title: 'Submenu Item with Mixed Variants',",
+        @"  id: 'menu-item-mixed',",
+        @"  title: 'Menu Item with Mixed Variants',",
         @"  icon_variants: [",
         @"    { 'sixteen': invalidImageData, 'color_schemes': [ 'dark' ] },",
         @"    { '16': validImageData, 'color_schemes': [ 'light' ] }",
@@ -987,32 +948,23 @@ TEST(WKWebExtensionAPIMenus, MenuItemWithMixedValidAndInvalidIconVariants)
 
     EXPECT_EQ(menuItems.count, 1lu);
 
-    auto *topLevelMenuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
-    EXPECT_TRUE([topLevelMenuItem isKindOfClass:[CocoaMenuItem class]]);
-    EXPECT_NS_EQUAL(topLevelMenuItem.title, @"Top Level Menu");
+    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
+    EXPECT_NS_EQUAL(menuItem.title, @"Menu Item with Mixed Variants");
 
 #if USE(APPKIT)
-    EXPECT_EQ(topLevelMenuItem.submenu.itemArray.count, 1lu);
-
-    auto *submenuItem = dynamic_objc_cast<CocoaMenuItem>(topLevelMenuItem.submenu.itemArray.firstObject);
-    EXPECT_NS_EQUAL(submenuItem.title, @"Submenu Item with Mixed Variants");
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(16, 16)));
 #else
-    auto *parentMenu = dynamic_objc_cast<UIMenu>(topLevelMenuItem);
-    EXPECT_EQ(parentMenu.children.count, 1lu);
-
-    auto *submenuItem = dynamic_objc_cast<CocoaMenuAction>(parentMenu.children.firstObject);
-    EXPECT_NS_EQUAL(submenuItem.title, @"Submenu Item with Mixed Variants");
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(20, 20)));
 #endif
 
-    EXPECT_TRUE(CGSizeEqualToSize(submenuItem.image.size, CGSizeMake(16, 16)));
-
     Util::performWithAppearance(Util::Appearance::Light, ^{
-        EXPECT_TRUE(Util::compareColors(Util::pixelColor(submenuItem.image), [CocoaColor blackColor]));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor blackColor]));
     });
 
     Util::performWithAppearance(Util::Appearance::Dark, ^{
         // Should still be black, as light variant is used.
-        EXPECT_TRUE(Util::compareColors(Util::pixelColor(submenuItem.image), [CocoaColor blackColor]));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor blackColor]));
     });
 }
 
@@ -1030,15 +982,8 @@ TEST(WKWebExtensionAPIMenus, MenuItemWithAnySizeVariantAndSVGDataURL)
         @"  </svg>`)",
 
         @"browser.test.assertSafe(() => browser.menus.create({",
-        @"  id: 'top-level-item',",
-        @"  title: 'Top Level Menu',",
-        @"  contexts: [ 'all' ]",
-        @"}))",
-
-        @"browser.test.assertSafe(() => browser.menus.create({",
-        @"  id: 'submenu-item-with-icon-variants',",
-        @"  parentId: 'top-level-item',",
-        @"  title: 'Submenu Item with SVG Icon Variants',",
+        @"  id: 'menu-item-with-svg-variants',",
+        @"  title: 'Menu Item with SVG Icon Variants',",
         @"  icon_variants: [",
         @"    { any: whiteSVGData, 'color_schemes': [ 'dark' ] },",
         @"    { any: blackSVGData, 'color_schemes': [ 'light' ] }",
@@ -1062,31 +1007,22 @@ TEST(WKWebExtensionAPIMenus, MenuItemWithAnySizeVariantAndSVGDataURL)
 
     EXPECT_EQ(menuItems.count, 1lu);
 
-    auto *topLevelMenuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
-    EXPECT_TRUE([topLevelMenuItem isKindOfClass:[CocoaMenuItem class]]);
-    EXPECT_NS_EQUAL(topLevelMenuItem.title, @"Top Level Menu");
+    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
+    EXPECT_NS_EQUAL(menuItem.title, @"Menu Item with SVG Icon Variants");
 
 #if USE(APPKIT)
-    EXPECT_EQ(topLevelMenuItem.submenu.itemArray.count, 1lu);
-
-    auto *submenuItem = dynamic_objc_cast<CocoaMenuItem>(topLevelMenuItem.submenu.itemArray.firstObject);
-    EXPECT_NS_EQUAL(submenuItem.title, @"Submenu Item with SVG Icon Variants");
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(16, 16)));
 #else
-    auto *parentMenu = dynamic_objc_cast<UIMenu>(topLevelMenuItem);
-    EXPECT_EQ(parentMenu.children.count, 1lu);
-
-    auto *submenuItem = dynamic_objc_cast<CocoaMenuAction>(parentMenu.children.firstObject);
-    EXPECT_NS_EQUAL(submenuItem.title, @"Submenu Item with SVG Icon Variants");
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(20, 20)));
 #endif
 
-    EXPECT_TRUE(CGSizeEqualToSize(submenuItem.image.size, CGSizeMake(16, 16)));
-
     Util::performWithAppearance(Util::Appearance::Dark, ^{
-        EXPECT_TRUE(Util::compareColors(Util::pixelColor(submenuItem.image), [CocoaColor whiteColor]));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor whiteColor]));
     });
 
     Util::performWithAppearance(Util::Appearance::Light, ^{
-        EXPECT_TRUE(Util::compareColors(Util::pixelColor(submenuItem.image), [CocoaColor blackColor]));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor blackColor]));
     });
 }
 
@@ -1094,20 +1030,13 @@ TEST(WKWebExtensionAPIMenus, UpdateMenuItemWithIconVariants)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertSafe(() => browser.menus.create({",
-        @"  id: 'top-level-item',",
-        @"  title: 'Top Level Menu',",
+        @"  id: 'menu-item-without-icon-variants',",
+        @"  title: 'Menu Item without Icon Variants',",
         @"  contexts: [ 'action' ]",
         @"}))",
 
-        @"browser.test.assertSafe(() => browser.menus.create({",
-        @"  id: 'submenu-item-without-icon-variants',",
-        @"  parentId: 'top-level-item',",
-        @"  title: 'Submenu Item without Icon Variants',",
-        @"  contexts: [ 'action' ]",
-        @"}))",
-
-        @"browser.test.assertSafe(() => browser.menus.update('submenu-item-without-icon-variants', {",
-        @"  title: 'Submenu Item with Icon Variants',",
+        @"browser.test.assertSafe(() => browser.menus.update('menu-item-without-icon-variants', {",
+        @"  title: 'Menu Item with Icon Variants',",
         @"  icon_variants: [",
         @"    { 16: 'icon-dark-16.png', 'color_schemes': [ 'dark' ] },",
         @"    { 16: 'icon-light-16.png', 'color_schemes': [ 'light' ] }",
@@ -1135,31 +1064,22 @@ TEST(WKWebExtensionAPIMenus, UpdateMenuItemWithIconVariants)
 
     EXPECT_EQ(menuItems.count, 1lu);
 
-    auto *topLevelMenuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
-    EXPECT_TRUE([topLevelMenuItem isKindOfClass:[CocoaMenuItem class]]);
-    EXPECT_NS_EQUAL(topLevelMenuItem.title, @"Top Level Menu");
+    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
+    EXPECT_NS_EQUAL(menuItem.title, @"Menu Item with Icon Variants");
 
 #if USE(APPKIT)
-    EXPECT_EQ(topLevelMenuItem.submenu.itemArray.count, 1lu);
-
-    auto *submenuItem = dynamic_objc_cast<CocoaMenuItem>(topLevelMenuItem.submenu.itemArray.firstObject);
-    EXPECT_NS_EQUAL(submenuItem.title, @"Submenu Item with Icon Variants");
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(16, 16)));
 #else
-    auto *parentMenu = dynamic_objc_cast<UIMenu>(topLevelMenuItem);
-    EXPECT_EQ(parentMenu.children.count, 1lu);
-
-    auto *submenuItem = dynamic_objc_cast<CocoaMenuAction>(parentMenu.children.firstObject);
-    EXPECT_NS_EQUAL(submenuItem.title, @"Submenu Item with Icon Variants");
+    EXPECT_TRUE(CGSizeEqualToSize(menuItem.image.size, CGSizeMake(20, 20)));
 #endif
 
-    EXPECT_TRUE(CGSizeEqualToSize(submenuItem.image.size, CGSizeMake(16, 16)));
-
     Util::performWithAppearance(Util::Appearance::Dark, ^{
-        EXPECT_TRUE(Util::compareColors(Util::pixelColor(submenuItem.image), [CocoaColor whiteColor]));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor whiteColor]));
     });
 
     Util::performWithAppearance(Util::Appearance::Light, ^{
-        EXPECT_TRUE(Util::compareColors(Util::pixelColor(submenuItem.image), [CocoaColor blackColor]));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(menuItem.image), [CocoaColor blackColor]));
     });
 }
 
@@ -1167,15 +1087,8 @@ TEST(WKWebExtensionAPIMenus, ClearMenuItemIconVariantsWithNull)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertSafe(() => browser.menus.create({",
-        @"  id: 'top-level-item',",
-        @"  title: 'Top Level Menu',",
-        @"  contexts: [ 'action' ]",
-        @"}))",
-
-        @"browser.test.assertSafe(() => browser.menus.create({",
-        @"  id: 'submenu-item-with-icon-variants',",
-        @"  parentId: 'top-level-item',",
-        @"  title: 'Submenu Item with Icon Variants',",
+        @"  id: 'menu-item-with-icon-variants',",
+        @"  title: 'Menu Item with Icon Variants',",
         @"  icon_variants: [",
         @"    { 16: 'icon-dark-16.png', 'color_schemes': [ 'dark' ] },",
         @"    { 16: 'icon-light-16.png', 'color_schemes': [ 'light' ] }",
@@ -1183,9 +1096,9 @@ TEST(WKWebExtensionAPIMenus, ClearMenuItemIconVariantsWithNull)
         @"  contexts: [ 'action' ]",
         @"}))",
 
-        @"browser.test.assertSafe(() => browser.menus.update('submenu-item-with-icon-variants', {",
+        @"browser.test.assertSafe(() => browser.menus.update('menu-item-with-icon-variants', {",
         @"  icon_variants: null,",
-        @"  title: 'Submenu Item without Icon Variants'",
+        @"  title: 'Menu Item without Icon Variants'",
         @"}))",
 
         @"browser.test.yield('Menus Updated')",
@@ -1209,40 +1122,20 @@ TEST(WKWebExtensionAPIMenus, ClearMenuItemIconVariantsWithNull)
 
     EXPECT_EQ(menuItems.count, 1lu);
 
-    auto *topLevelMenuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
-    EXPECT_TRUE([topLevelMenuItem isKindOfClass:[CocoaMenuItem class]]);
-    EXPECT_NS_EQUAL(topLevelMenuItem.title, @"Top Level Menu");
-
-#if USE(APPKIT)
-    EXPECT_EQ(topLevelMenuItem.submenu.itemArray.count, 1lu);
-
-    auto *submenuItem = dynamic_objc_cast<CocoaMenuItem>(topLevelMenuItem.submenu.itemArray.firstObject);
-    EXPECT_NS_EQUAL(submenuItem.title, @"Submenu Item without Icon Variants");
-#else
-    auto *parentMenu = dynamic_objc_cast<UIMenu>(topLevelMenuItem);
-    EXPECT_EQ(parentMenu.children.count, 1lu);
-
-    auto *submenuItem = dynamic_objc_cast<CocoaMenuAction>(parentMenu.children.firstObject);
-    EXPECT_NS_EQUAL(submenuItem.title, @"Submenu Item without Icon Variants");
-#endif
+    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
+    EXPECT_NS_EQUAL(menuItem.title, @"Menu Item without Icon Variants");
 
     // Icon should be null after clearing.
-    EXPECT_NULL(submenuItem.image);
+    EXPECT_NULL(menuItem.image);
 }
 
 TEST(WKWebExtensionAPIMenus, ClearMenuItemIconVariantsWithEmpty)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertSafe(() => browser.menus.create({",
-        @"  id: 'top-level-item',",
-        @"  title: 'Top Level Menu',",
-        @"  contexts: [ 'action' ]",
-        @"}))",
-
-        @"browser.test.assertSafe(() => browser.menus.create({",
-        @"  id: 'submenu-item-with-icon-variants',",
-        @"  parentId: 'top-level-item',",
-        @"  title: 'Submenu Item with Icon Variants',",
+        @"  id: 'menu-item-with-icon-variants',",
+        @"  title: 'Menu Item with Icon Variants',",
         @"  icon_variants: [",
         @"    { 16: 'icon-dark-16.png', 'color_schemes': [ 'dark' ] },",
         @"    { 16: 'icon-light-16.png', 'color_schemes': [ 'light' ] }",
@@ -1250,9 +1143,9 @@ TEST(WKWebExtensionAPIMenus, ClearMenuItemIconVariantsWithEmpty)
         @"  contexts: [ 'action' ]",
         @"}))",
 
-        @"browser.test.assertSafe(() => browser.menus.update('submenu-item-with-icon-variants', {",
+        @"browser.test.assertSafe(() => browser.menus.update('menu-item-with-icon-variants', {",
         @"  icon_variants: [ ],",
-        @"  title: 'Submenu Item without Icon Variants'",
+        @"  title: 'Menu Item without Icon Variants'",
         @"}))",
 
         @"browser.test.yield('Menus Updated')",
@@ -1276,25 +1169,12 @@ TEST(WKWebExtensionAPIMenus, ClearMenuItemIconVariantsWithEmpty)
 
     EXPECT_EQ(menuItems.count, 1lu);
 
-    auto *topLevelMenuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
-    EXPECT_TRUE([topLevelMenuItem isKindOfClass:[CocoaMenuItem class]]);
-    EXPECT_NS_EQUAL(topLevelMenuItem.title, @"Top Level Menu");
-
-#if USE(APPKIT)
-    EXPECT_EQ(topLevelMenuItem.submenu.itemArray.count, 1lu);
-
-    auto *submenuItem = dynamic_objc_cast<CocoaMenuItem>(topLevelMenuItem.submenu.itemArray.firstObject);
-    EXPECT_NS_EQUAL(submenuItem.title, @"Submenu Item without Icon Variants");
-#else
-    auto *parentMenu = dynamic_objc_cast<UIMenu>(topLevelMenuItem);
-    EXPECT_EQ(parentMenu.children.count, 1lu);
-
-    auto *submenuItem = dynamic_objc_cast<CocoaMenuAction>(parentMenu.children.firstObject);
-    EXPECT_NS_EQUAL(submenuItem.title, @"Submenu Item without Icon Variants");
-#endif
+    auto *menuItem = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
+    EXPECT_TRUE([menuItem isKindOfClass:[CocoaMenuItem class]]);
+    EXPECT_NS_EQUAL(menuItem.title, @"Menu Item without Icon Variants");
 
     // Icon should be null after clearing.
-    EXPECT_NULL(submenuItem.image);
+    EXPECT_NULL(menuItem.image);
 }
 #endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
 

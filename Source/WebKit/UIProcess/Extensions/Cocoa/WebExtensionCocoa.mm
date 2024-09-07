@@ -491,10 +491,10 @@ UTType *WebExtension::resourceTypeForPath(NSString *path)
             auto *mimeType = [path substringWithRange:NSMakeRange(5, mimeTypeRange.location - 5)];
             result = [UTType typeWithMIMEType:mimeType];
         }
-    } else {
-        auto *fileURL = resourceFileURLForPath(path);
+    } else if (auto *fileExtension = path.pathExtension; fileExtension.length)
+        result = [UTType typeWithFilenameExtension:fileExtension];
+    else if (auto *fileURL = resourceFileURLForPath(path))
         [fileURL getResourceValue:&result forKey:NSURLContentTypeKey error:nil];
-    }
 
     return result;
 }
@@ -1267,7 +1267,7 @@ CocoaImage *WebExtension::imageForPath(NSString *imagePath, NSError **outError, 
     // If the image is already a CGImage bitmap, this operation is a no-op.
     result = result._rasterizedImage;
 
-    if (!CGSizeEqualToSize(sizeForResizing, CGSizeZero))
+    if (!CGSizeEqualToSize(sizeForResizing, CGSizeZero) && !CGSizeEqualToSize(result.size, sizeForResizing))
         result = [result imageByPreparingThumbnailOfSize:sizeForResizing];
 
     return result;
@@ -1392,6 +1392,9 @@ CocoaImage *WebExtension::bestImageInIconsDictionary(NSDictionary *iconsDictiona
 
         return nil;
     });
+
+    if (images.count == 1)
+        return images.allValues.firstObject;
 
     // Make a dynamic image asset that returns an image based on the trait collection.
     auto *imageAsset = [UIImageAsset _dynamicAssetNamed:NSUUID.UUID.UUIDString generator:^(UIImageAsset *, UIImageConfiguration *configuration, UIImage *) {
