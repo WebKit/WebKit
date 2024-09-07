@@ -3070,6 +3070,10 @@ void WebExtensionContext::userGesturePerformed(WebExtensionTab& tab)
     RefPtr pattern = WebExtensionMatchPattern::getOrCreate(currentURL);
     tab.setTemporaryPermissionMatchPattern(pattern.copyRef());
 
+    // FIXME: <https://webkit.org/b/279287> permissionsDidChange should include a tab parameter for this use-case
+    if (pattern)
+        permissionsDidChange(WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification, MatchPatternSet { *pattern });
+
     // Fire the updated event now that the extension has permission to see the URL and title.
     didChangeTabProperties(tab, { WebExtensionTab::ChangedProperties::URL, WebExtensionTab::ChangedProperties::Title });
 }
@@ -3089,8 +3093,14 @@ void WebExtensionContext::clearUserGesture(WebExtensionTab& tab)
     if (!isLoaded())
         return;
 
+    RefPtr oldTemporaryPermissionMatchPattern = tab.temporaryPermissionMatchPattern();
+
     tab.setActiveUserGesture(false);
     tab.setTemporaryPermissionMatchPattern(nullptr);
+
+    // FIXME: <https://webkit.org/b/279287> permissionsDidChange should include a tab parameter for this use-case
+    if (oldTemporaryPermissionMatchPattern)
+        permissionsDidChange(WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification, MatchPatternSet { *oldTemporaryPermissionMatchPattern });
 }
 
 std::optional<WebCore::PageIdentifier> WebExtensionContext::backgroundPageIdentifier() const

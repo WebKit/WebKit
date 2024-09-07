@@ -801,11 +801,11 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelAPIGlobalEnablePersists)
 {
     auto *script = @[
         @"let startingOptions = await browser.sidePanel.getOptions({})",
-        @"browser.test.assertFalse(startingOptions.enabled)",
+        @"browser.test.assertTrue(startingOptions.enabled)",
 
-        @"await browser.sidePanel.setOptions({ enabled: true })",
+        @"await browser.sidePanel.setOptions({ enabled: false })",
         @"let options = await browser.sidePanel.getOptions({})",
-        @"browser.test.assertTrue(options.enabled)",
+        @"browser.test.assertFalse(options.enabled)",
 
         @"browser.test.notifyPass()",
     ];
@@ -819,17 +819,17 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelAPITabEnablePersists)
         @"let tabs = await browser.tabs.query({})",
         @"let [tab1, tab2] = tabs",
         @"let startingOptions = await browser.sidePanel.getOptions({})",
-        @"browser.test.assertFalse(startingOptions.enabled)",
+        @"browser.test.assertTrue(startingOptions.enabled)",
 
-        @"await browser.sidePanel.setOptions({ tabId: tab1.id, enabled: true })",
+        @"await browser.sidePanel.setOptions({ tabId: tab1.id, enabled: false })",
 
         @"let tabOptions = await browser.sidePanel.getOptions({ tabId: tab1.id })",
         @"let otherTabOptions = await browser.sidePanel.getOptions({ tabId: tab2.id })",
         @"let globalOptions = await browser.sidePanel.getOptions({})",
 
-        @"browser.test.assertTrue(tabOptions.enabled)",
-        @"browser.test.assertFalse(otherTabOptions.enabled)",
-        @"browser.test.assertFalse(globalOptions.enabled)",
+        @"browser.test.assertFalse(tabOptions.enabled)",
+        @"browser.test.assertTrue(otherTabOptions.enabled)",
+        @"browser.test.assertTrue(globalOptions.enabled)",
 
         @"browser.test.notifyPass()",
     ];
@@ -903,15 +903,15 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelModifyGlobalEnable)
 {
     auto *script = @[
         @"let startingOptions = await browser.sidePanel.getOptions({})",
-        @"browser.test.assertFalse(startingOptions.enabled)",
-
-        @"await browser.sidePanel.setOptions({ enabled: true })",
-        @"let preModOptions = await browser.sidePanel.getOptions({})",
-        @"browser.test.assertTrue(preModOptions.enabled)",
+        @"browser.test.assertTrue(startingOptions.enabled)",
 
         @"await browser.sidePanel.setOptions({ enabled: false })",
+        @"let preModOptions = await browser.sidePanel.getOptions({})",
+        @"browser.test.assertFalse(preModOptions.enabled)",
+
+        @"await browser.sidePanel.setOptions({ enabled: true })",
         @"let postModOptions = await browser.sidePanel.getOptions({})",
-        @"browser.test.assertFalse(postModOptions.enabled)",
+        @"browser.test.assertTrue(postModOptions.enabled)",
 
         @"browser.test.notifyPass()",
     ];

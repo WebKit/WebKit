@@ -104,11 +104,18 @@ public:
     String sidebarPath() const;
     void setSidebarPath(std::optional<String>);
 
+    /// Should be called when a user action will open the sidebar
     void willOpenSidebar();
     void willCloseSidebar();
 
+    /// Should be called when the sidebar will be displayed, regardless of whether this stems from a user action.
+    void sidebarWillAppear();
+    void sidebarWillDisappear();
+
     void addChild(WebExtensionSidebar const& child);
     void removeChild(WebExtensionSidebar const& child);
+
+    void didReceiveUserInteraction();
 
     RetainPtr<SidebarViewControllerType> viewController();
 

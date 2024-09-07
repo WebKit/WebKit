@@ -154,7 +154,7 @@ using WTF::WeakPtr;
     [super viewWillAppear];
 
     if (RefPtr sidebar = _webExtensionSidebar.get())
-        sidebar->willOpenSidebar();
+        sidebar->sidebarWillAppear();
 }
 
 - (void)viewWillDisappear
@@ -162,8 +162,51 @@ using WTF::WeakPtr;
     [super viewWillDisappear];
 
     if (RefPtr sidebar = _webExtensionSidebar.get())
-        sidebar->willCloseSidebar();
+        sidebar->sidebarWillDisappear();
 }
+@end
+
+@interface _WKWebExtensionSidebarWebView : WKWebView
+@end
+
+@implementation _WKWebExtensionSidebarWebView {
+    WeakPtr<WebExtensionSidebar> _webExtensionSidebar;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *) configuration webExtensionSidebar:(WebExtensionSidebar&)sidebar
+{
+    if (!(self = [super initWithFrame:frame configuration:configuration]))
+        return nil;
+
+    _webExtensionSidebar = sidebar;
+
+    return self;
+}
+
+- (void)mouseDown:(NSEvent *)event
+{
+    if (RefPtr sidebar = _webExtensionSidebar.get())
+        sidebar->didReceiveUserInteraction();
+
+    [super mouseDown:event];
+}
+
+- (void)rightMouseDown:(NSEvent *)event
+{
+    if (RefPtr sidebar = _webExtensionSidebar.get())
+        sidebar->didReceiveUserInteraction();
+
+    [super rightMouseDown:event];
+}
+
+- (void)otherMouseDown:(NSEvent *)event
+{
+    if (RefPtr sidebar = _webExtensionSidebar.get())
+        sidebar->didReceiveUserInteraction();
+
+    [super otherMouseDown:event];
+}
+
 @end
 
 namespace WebKit {
@@ -257,14 +300,10 @@ RetainPtr<CocoaImage> WebExtensionSidebar::icon(CGSize size)
     if (!extensionContext())
         return nil;
 
-    const auto largestDim = [](CGSize size) {
-        return size.width > size.height ? size.width : size.height;
-    };
-
     auto& context = extensionContext().value().get();
     return m_iconsOverride
         .and_then([&](RetainPtr<NSDictionary> icons) -> std::optional<RetainPtr<CocoaImage>> {
-            return toOptional(context.extension().bestImageInIconsDictionary(icons.get(), largestDim(size)));
+            return toOptional(context.extension().bestImageInIconsDictionary(icons.get(), size, [](NSError *error) { }));
         })
         .or_else([&] -> std::optional<RetainPtr<CocoaImage>> {
             return parent().transform([&](auto const& parent) { return parent.get().icon(size); });
@@ -368,17 +407,16 @@ void WebExtensionSidebar::setSidebarPath(std::optional<String> sidebarPath)
 
 void WebExtensionSidebar::willOpenSidebar()
 {
-    ASSERT(m_webView);
     ASSERT(isEnabled());
     ASSERT(!isDefaultSidebar());
     ASSERT(!static_cast<bool>(m_window));
 
-    RELEASE_LOG_ERROR_IF(!m_webView, Extensions, "willOpenSidebar was called on a sidebar object which has no web view");
     RELEASE_LOG_ERROR_IF(!isEnabled(), Extensions, "willOpenSidebar was called on a sidebar object which is currently disabled");
     RELEASE_LOG_ERROR_IF(isDefaultSidebar(), Extensions, "willOpenSidebar was called on the default sidebar object");
     RELEASE_LOG_ERROR_IF(static_cast<bool>(m_window), Extensions, "willOpenSidebar was called on a window-global sidebar object");
 
     m_isOpen = true;
+    didReceiveUserInteraction();
 }
 
 void WebExtensionSidebar::willCloseSidebar()
@@ -392,6 +430,16 @@ void WebExtensionSidebar::willCloseSidebar()
     m_isOpen = false;
 }
 
+void WebExtensionSidebar::sidebarWillAppear()
+{
+    m_isOpen = true;
+}
+
+void WebExtensionSidebar::sidebarWillDisappear()
+{
+    m_isOpen = false;
+}
+
 void WebExtensionSidebar::addChild(WebExtensionSidebar const& child)
 {
     ASSERT(&child != this);
@@ -401,6 +449,20 @@ void WebExtensionSidebar::addChild(WebExtensionSidebar const& child)
 void WebExtensionSidebar::removeChild(WebExtensionSidebar const& child)
 {
     m_children.remove(child);
+}
+
+void WebExtensionSidebar::didReceiveUserInteraction()
+{
+    auto currentTab = tab();
+    auto currentContext = extensionContext();
+
+    ASSERT(isOpen());
+    ASSERT(currentTab);
+
+    if (!(isOpen() && currentTab && currentContext))
+        return;
+
+    currentContext.value()->userGesturePerformed(currentTab.value());
 }
 
 RetainPtr<SidebarViewControllerType> WebExtensionSidebar::viewController()
@@ -430,7 +492,7 @@ WKWebView *WebExtensionSidebar::webView()
         return m_webView.get();
 
     auto *webViewConfiguration = context->webViewConfiguration(WebExtensionContext::WebViewPurpose::Sidebar);
-    m_webView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration];
+    m_webView = [[_WKWebExtensionSidebarWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration webExtensionSidebar:*this];
     m_webView.get().inspectable = context->isInspectable();
     m_webView.get().accessibilityLabel = title();
     m_webViewDelegate = [[_WKWebExtensionSidebarWebViewDelegate alloc] initWithWebExtensionSidebar:*this];
