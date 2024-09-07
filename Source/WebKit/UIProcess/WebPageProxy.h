@@ -3161,7 +3161,7 @@ private:
 #endif
 
     private:
-        WebPageProxy& m_page;
+        WeakRef<WebPageProxy> m_page;
 
         std::unique_ptr<ProcessThrottlerActivity> m_isVisibleActivity;
 #if PLATFORM(MAC)

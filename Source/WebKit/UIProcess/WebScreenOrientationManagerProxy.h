@@ -62,7 +62,7 @@ private:
     void unlock();
     void setShouldSendChangeNotification(bool);
 
-    WebPageProxy& m_page;
+    WeakRef<WebPageProxy> m_page;
     WebCore::ScreenOrientationType m_currentOrientation;
     std::optional<WebCore::ScreenOrientationType> m_currentlyLockedOrientation;
     CompletionHandler<void(std::optional<WebCore::Exception>&&)> m_currentLockRequest;

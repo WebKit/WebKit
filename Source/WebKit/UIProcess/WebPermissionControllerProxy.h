@@ -27,6 +27,7 @@
 
 #include "MessageReceiver.h"
 #include "WebPageProxyIdentifier.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -57,7 +58,9 @@ private:
     // IPC Message handlers.
     void query(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, std::optional<WebPageProxyIdentifier>, WebCore::PermissionQuerySource, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&);
 
-    WebProcessProxy& m_process;
+    Ref<WebProcessProxy> protectedProcess() const;
+
+    CheckedRef<WebProcessProxy> m_process;
 };
 
 } // namespace WebKit

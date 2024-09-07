@@ -57,17 +57,17 @@ SmartMagnificationController::SmartMagnificationController(WKContentView *conten
     : m_webPageProxy(*contentView.page)
     , m_contentView(contentView)
 {
-    m_webPageProxy.legacyMainFrameProcess().addMessageReceiver(Messages::SmartMagnificationController::messageReceiverName(), m_webPageProxy.webPageIDInMainFrameProcess(), *this);
+    m_webPageProxy->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::SmartMagnificationController::messageReceiverName(), m_webPageProxy->webPageIDInMainFrameProcess(), *this);
 }
 
 SmartMagnificationController::~SmartMagnificationController()
 {
-    m_webPageProxy.legacyMainFrameProcess().removeMessageReceiver(Messages::SmartMagnificationController::messageReceiverName(), m_webPageProxy.webPageIDInMainFrameProcess());
+    m_webPageProxy->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::SmartMagnificationController::messageReceiverName(), m_webPageProxy->webPageIDInMainFrameProcess());
 }
 
 void SmartMagnificationController::handleSmartMagnificationGesture(FloatPoint origin)
 {
-    m_webPageProxy.legacyMainFrameProcess().send(Messages::ViewGestureGeometryCollector::CollectGeometryForSmartMagnificationGesture(origin), m_webPageProxy.webPageIDInMainFrameProcess());
+    m_webPageProxy->protectedLegacyMainFrameProcess()->send(Messages::ViewGestureGeometryCollector::CollectGeometryForSmartMagnificationGesture(origin), m_webPageProxy->webPageIDInMainFrameProcess());
 }
 
 void SmartMagnificationController::handleResetMagnificationGesture(FloatPoint origin)
@@ -121,7 +121,7 @@ void SmartMagnificationController::didCollectGeometryForSmartMagnificationGestur
     // If the content already fits in the scroll view and we're already zoomed in to the target scale,
     // it is most likely that the user intended to scroll, so use a small distance threshold to initiate panning.
     float minimumScrollDistance;
-    if ([m_contentView bounds].size.width <= m_webPageProxy.unobscuredContentRect().width())
+    if ([m_contentView bounds].size.width <= m_webPageProxy->unobscuredContentRect().width())
         minimumScrollDistance = smartMagnificationPanScrollThresholdZoomedOut;
     else if (PAL::currentUserInterfaceIdiomIsSmallScreen())
         minimumScrollDistance = smartMagnificationPanScrollThresholdIPhone;

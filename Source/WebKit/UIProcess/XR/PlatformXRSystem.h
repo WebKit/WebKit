@@ -78,6 +78,8 @@ private:
 
     bool webXREnabled() const;
 
+    Ref<WebPageProxy> protectedPage() const;
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
@@ -109,7 +111,7 @@ private:
     void setImmersiveSessionState(ImmersiveSessionState, CompletionHandler<void(bool)>&&);
     void invalidateImmersiveSessionState(ImmersiveSessionState nextSessionState = ImmersiveSessionState::Idle);
 
-    WebPageProxy& m_page;
+    WeakRef<WebPageProxy> m_page;
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_immersiveSessionActivity;
 };
 

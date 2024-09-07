@@ -536,7 +536,7 @@ WebPageProxy::ProcessActivityState::ProcessActivityState(WebPageProxy& page)
 
 void WebPageProxy::ProcessActivityState::takeVisibleActivity()
 {
-    m_isVisibleActivity = m_page.legacyMainFrameProcess().throttler().foregroundActivity("View is visible"_s).moveToUniquePtr();
+    m_isVisibleActivity = m_page->protectedLegacyMainFrameProcess()->throttler().foregroundActivity("View is visible"_s).moveToUniquePtr();
 #if PLATFORM(MAC)
     *m_wasRecentlyVisibleActivity = nullptr;
 #endif
@@ -544,18 +544,18 @@ void WebPageProxy::ProcessActivityState::takeVisibleActivity()
 
 void WebPageProxy::ProcessActivityState::takeAudibleActivity()
 {
-    m_isAudibleActivity = m_page.legacyMainFrameProcess().throttler().foregroundActivity("View is playing audio"_s).moveToUniquePtr();
+    m_isAudibleActivity = m_page->protectedLegacyMainFrameProcess()->throttler().foregroundActivity("View is playing audio"_s).moveToUniquePtr();
 }
 
 void WebPageProxy::ProcessActivityState::takeCapturingActivity()
 {
-    m_isCapturingActivity = m_page.legacyMainFrameProcess().throttler().foregroundActivity("View is capturing media"_s).moveToUniquePtr();
+    m_isCapturingActivity = m_page->protectedLegacyMainFrameProcess()->throttler().foregroundActivity("View is capturing media"_s).moveToUniquePtr();
 }
 
 void WebPageProxy::ProcessActivityState::takeMutedCaptureAssertion()
 {
-    m_isMutedCaptureAssertion = ProcessAssertion::create(m_page.legacyMainFrameProcess(), "WebKit Muted Media Capture"_s, ProcessAssertionType::Background);
-    m_isMutedCaptureAssertion->setInvalidationHandler([weakPage = WeakPtr { m_page }] {
+    m_isMutedCaptureAssertion = ProcessAssertion::create(m_page->protectedLegacyMainFrameProcess(), "WebKit Muted Media Capture"_s, ProcessAssertionType::Background);
+    m_isMutedCaptureAssertion->setInvalidationHandler([weakPage = WeakPtr { m_page.get() }] {
         if (RefPtr protectedPage = weakPage.get()) {
             RELEASE_LOG(ProcessSuspension, "Muted capture assertion is invalidated");
             protectedPage->m_legacyMainFrameProcessActivityState.m_isMutedCaptureAssertion = nullptr;
@@ -581,9 +581,9 @@ void WebPageProxy::ProcessActivityState::dropVisibleActivity()
 {
 #if PLATFORM(MAC)
     if (WTF::numberOfProcessorCores() > 4)
-        *m_wasRecentlyVisibleActivity = m_page.legacyMainFrameProcess().throttler().backgroundActivity("View was recently visible"_s);
+        *m_wasRecentlyVisibleActivity = m_page->protectedLegacyMainFrameProcess()->throttler().backgroundActivity("View was recently visible"_s);
     else
-        *m_wasRecentlyVisibleActivity = m_page.legacyMainFrameProcess().throttler().foregroundActivity("View was recently visible"_s);
+        *m_wasRecentlyVisibleActivity = m_page->protectedLegacyMainFrameProcess()->throttler().foregroundActivity("View was recently visible"_s);
 #endif
     m_isVisibleActivity = nullptr;
 }
@@ -626,7 +626,7 @@ bool WebPageProxy::ProcessActivityState::hasValidMutedCaptureAssertion() const
 #if PLATFORM(IOS_FAMILY)
 void WebPageProxy::ProcessActivityState::takeOpeningAppLinkActivity()
 {
-    m_openingAppLinkActivity = m_page.legacyMainFrameProcess().throttler().backgroundActivity("Opening AppLink"_s).moveToUniquePtr();
+    m_openingAppLinkActivity = m_page->protectedLegacyMainFrameProcess()->throttler().backgroundActivity("Opening AppLink"_s).moveToUniquePtr();
 }
 
 void WebPageProxy::ProcessActivityState::dropOpeningAppLinkActivity()
