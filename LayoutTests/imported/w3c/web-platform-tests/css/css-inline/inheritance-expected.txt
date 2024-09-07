@@ -1,7 +1,7 @@
 
 PASS Property alignment-baseline has initial value baseline
 PASS Property alignment-baseline does not inherit
-FAIL Property baseline-shift has initial value 0px assert_equals: expected "0px" but got "baseline"
+PASS Property baseline-shift has initial value 0px
 PASS Property baseline-shift does not inherit
 PASS Property dominant-baseline has initial value auto
 FAIL Property dominant-baseline inherits assert_equals: expected "central" but got "auto"
