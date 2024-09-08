@@ -80,8 +80,6 @@ bool CertificateInfo::containsNonRootSHA1SignedCertificate() const
             if (SecCertificateGetSignatureHashAlgorithm(certificate) == kSecSignatureHashAlgorithmSHA1)
                 return true;
         }
-
-        return false;
     }
 
     return false;
@@ -98,10 +96,20 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
     auto leafCertificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain.get(), 0));
     auto subjectCF = adoptCF(SecCertificateCopySubjectSummary(leafCertificate));
     summaryInfo.subject = subjectCF.get();
-#endif
+
+#if HAVE(SEC_CERTIFICATE_DATE)
+    if (auto validNotBefore = adoptCF(SecCertificateCopyNotValidBeforeDate(leafCertificate)))
+        summaryInfo.validFrom = Seconds(kCFAbsoluteTimeIntervalSince1970 + CFDateGetAbsoluteTime(validNotBefore.get()));
+
+    if (auto validNotAfter = adoptCF(SecCertificateCopyNotValidAfterDate(leafCertificate)))
+        summaryInfo.validUntil = Seconds(kCFAbsoluteTimeIntervalSince1970 + CFDateGetAbsoluteTime(validNotAfter.get()));
+
+#endif // HAVE(SEC_CERTIFICATE_DATE)
+#endif // !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
 
 #if PLATFORM(MAC)
     if (auto certificateDictionary = adoptCF(SecCertificateCopyValues(leafCertificate, nullptr, nullptr))) {
+#if !HAVE(SEC_CERTIFICATE_DATE)
         if (auto validNotBefore = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(certificateDictionary.get(), kSecOIDX509V1ValidityNotBefore))) {
             if (auto number = checked_cf_cast<CFNumberRef>(CFDictionaryGetValue(validNotBefore, CFSTR("value")))) {
                 double numberValue;
@@ -117,6 +125,7 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
                     summaryInfo.validUntil = Seconds(kCFAbsoluteTimeIntervalSince1970 + numberValue);
             }
         }
+#endif
 
         if (auto dnsNames = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(certificateDictionary.get(), CFSTR("DNSNAMES")))) {
             if (auto dnsNamesArray = checked_cf_cast<CFArrayRef>(CFDictionaryGetValue(dnsNames, CFSTR("value")))) {
