@@ -406,6 +406,7 @@ bool doesGC(Graph& graph, Node* node)
     case NewArrayWithSize:
     case NewArrayWithConstantSize:
     case NewArrayWithSpecies:
+    case NewArrayWithSizeAndStructure:
     case NewArrayBuffer:
     case NewRegexp:
     case NewStringObject:

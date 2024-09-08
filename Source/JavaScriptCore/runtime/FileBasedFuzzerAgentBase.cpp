@@ -51,6 +51,8 @@ OpcodeID FileBasedFuzzerAgentBase::opcodeAliasForLookupKey(const OpcodeID& opcod
         return op_get_by_val;
     if (opcodeId == op_construct_varargs)
         return op_construct;
+    if (opcodeId == op_super_construct_varargs)
+        return op_super_construct;
     return opcodeId;
 }
 

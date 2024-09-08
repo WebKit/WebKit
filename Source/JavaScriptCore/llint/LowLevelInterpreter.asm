@@ -153,6 +153,7 @@ end
 const PtrSize = constexpr (sizeof(void*))
 const MachineRegisterSize = constexpr (sizeof(CPURegister))
 const SlotSize = constexpr (sizeof(Register))
+const SeenMultipleCalleeObjects = 1
 
 if JSVALUE64
     const CallFrameHeaderSlots = 5
@@ -2300,6 +2301,24 @@ end, dispatchAfterRegularCall)
 commonCallOp(op_construct, OpConstruct, prepareForRegularCall, invokeForRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
 end, dispatchAfterRegularCall)
 
+commonCallOp(op_super_construct, OpSuperConstruct, prepareForRegularCall, invokeForRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
+    if JSVALUE64
+        getu(m_argv, t1)
+        lshifti 3, t1
+        negp t1
+        addp cfr, t1
+        loadp ThisArgumentOffset + PayloadOffset[t1], t1
+        loadp OpSuperConstruct::Metadata::m_cachedCallee[t5], t2
+        bqeq t1, t2, .done
+        btqz t2, .store
+    .invalidate:
+        move SeenMultipleCalleeObjects, t1
+    .store:
+        storep t1, OpSuperConstruct::Metadata::m_cachedCallee[t5]
+    .done:
+    end
+end, dispatchAfterRegularCall)
+
 commonCallOp(op_tail_call, OpTailCall, prepareForTailCall, invokeForTailCall, prepareForSlowTailCall, macro (getu, metadata)
     arrayProfileForCall(OpTailCall, getu)
     checkSwitchToJITForEpilogue()
@@ -2343,7 +2362,6 @@ end)
 llintOpWithMetadata(op_construct_varargs, OpConstructVarargs, macro (size, get, dispatch, metadata, return)
     doCallVarargs(op_construct_varargs, size, get, OpConstructVarargs, m_valueProfile, m_dst, dispatch, metadata, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_construct_varargs, prepareForRegularCall, invokeForRegularCall, prepareForSlowRegularCall, dispatchAfterRegularCall)
 end)
-
 
 # Eval is executed in one of two modes:
 #

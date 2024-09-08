@@ -1307,6 +1307,7 @@ private:
         case NewArray:
         case NewArrayWithSize:
         case NewArrayWithConstantSize:
+        case NewArrayWithSizeAndStructure:
         case CreateRest:
         case NewArrayBuffer:
         case ObjectKeys:

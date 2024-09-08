@@ -4471,7 +4471,12 @@ void SpeculativeJIT::compile(Node* node)
         compileNewArrayWithSpecies(node);
         break;
     }
-        
+
+    case NewArrayWithSizeAndStructure: {
+        compileNewArrayWithSizeAndStructure(node);
+        break;
+    }
+
     case NewArrayBuffer: {
         compileNewArrayBuffer(node);
         break;

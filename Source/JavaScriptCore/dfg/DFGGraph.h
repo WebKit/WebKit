@@ -1026,6 +1026,7 @@ public:
             case op_call_varargs:
             case op_tail_call_varargs:
             case op_construct_varargs:
+            case op_super_construct_varargs:
                 // When inlining varargs call, uses include array used for varargs. But when we are in inlined function,
                 // the content of this is already read and flushed to the stack. So, at this point, we no longer need to
                 // keep these use registers. We can use the liveness at LivenessCalculationPoint::AfterUse point.

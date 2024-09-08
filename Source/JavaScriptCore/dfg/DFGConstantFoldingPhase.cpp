@@ -1291,10 +1291,10 @@ private:
                     if (callee && newTarget) {
                         JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                         if (callee->globalObject() == globalObject) {
-                            if (callee->classInfo() == ObjectConstructor::info() && node->numChildren() == 2) {
-                                if (FunctionRareData* rareData = newTarget->rareData()) {
-                                    if (rareData->allocationProfileWatchpointSet().isStillValid() && globalObject->structureCacheClearedWatchpointSet().isStillValid()) {
-                                        Structure* structure = rareData->internalFunctionAllocationStructure();
+                            if (FunctionRareData* rareData = newTarget->rareData()) {
+                                if (rareData->allocationProfileWatchpointSet().isStillValid() && globalObject->structureCacheClearedWatchpointSet().isStillValid()) {
+                                    Structure* structure = rareData->internalFunctionAllocationStructure();
+                                    if (callee->classInfo() == ObjectConstructor::info() && node->numChildren() == 2) {
                                         if (structure && structure->classInfoForCells() == JSFinalObject::info() && structure->hasMonoProto()) {
                                             m_graph.freeze(rareData);
                                             m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
@@ -1303,6 +1303,20 @@ private:
                                             node->convertToNewObject(m_graph.registerStructure(structure));
                                             changed = true;
                                             break;
+                                        }
+                                    }
+
+                                    if (callee->classInfo() == ArrayConstructor::info() && node->numChildren() == 3 && !m_graph.hasExitSite(node->origin.semantic, BadType) && !m_graph.hasExitSite(node->origin.semantic, OutOfBounds)) {
+                                        if (structure && structure->classInfoForCells() == JSArray::info() && structure->hasMonoProto() && !hasAnyArrayStorage(structure->indexingType())) {
+                                            if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
+                                                m_graph.freeze(rareData);
+                                                m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
+                                                m_graph.freeze(globalObject);
+                                                m_graph.watchpoints().addLazily(globalObject->structureCacheClearedWatchpointSet());
+                                                node->convertToNewArrayWithSizeAndStructure(m_graph, m_graph.registerStructure(structure));
+                                                changed = true;
+                                                break;
+                                            }
                                         }
                                     }
                                 }

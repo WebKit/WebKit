@@ -1725,6 +1725,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case NewArrayWithSize:
+    case NewArrayWithSizeAndStructure:
         read(HeapObjectCount);
         write(HeapObjectCount);
         return;

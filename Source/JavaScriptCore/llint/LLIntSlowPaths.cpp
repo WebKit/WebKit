@@ -2113,6 +2113,13 @@ LLINT_SLOW_PATH_DECL(slow_path_size_frame_for_varargs)
         firstVarArg = bytecode.m_firstVarArg;
         break;
     }
+    case op_super_construct_varargs: {
+        auto bytecode = pc->as<OpSuperConstructVarargs>();
+        numUsedStackSlots = -bytecode.m_firstFree.offset();
+        arguments = getOperand(callFrame, bytecode.m_arguments);
+        firstVarArg = bytecode.m_firstVarArg;
+        break;
+    }
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -2200,6 +2207,11 @@ LLINT_SLOW_PATH_DECL(slow_path_tail_call_forward_arguments)
 LLINT_SLOW_PATH_DECL(slow_path_construct_varargs)
 {
     return varargsSetup<OpConstructVarargs, SetArgumentsWith::Object>(callFrame, pc, CodeForConstruct);
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_super_construct_varargs)
+{
+    return varargsSetup<OpSuperConstructVarargs, SetArgumentsWith::Object>(callFrame, pc, CodeForConstruct);
 }
 
 static inline UGPRPair commonCallDirectEval(CallFrame* callFrame, const JSInstruction* pc, MacroAssemblerCodeRef<JSEntryPtrTag> returnPoint)
@@ -2508,7 +2520,7 @@ static void handleVarargsCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalObject
     RETURN_IF_EXCEPTION(scope, void());
 
     JSValue result;
-    if (Opcode::opcodeID != op_construct_varargs)
+    if (Opcode::opcodeID != op_construct_varargs && Opcode::opcodeID != op_super_construct_varargs)
         result = call(globalObject, getOperand(callFrame, bytecode.m_callee), getOperand(callFrame, bytecode.m_thisValue), args, ""_s);
     else
         result = construct(globalObject, getOperand(callFrame, bytecode.m_callee), getOperand(callFrame, bytecode.m_thisValue), args, ""_s);
@@ -2603,6 +2615,10 @@ extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit_from_inlined_ca
         callFrame->uncheckedR(pc->as<OpConstructVarargs>().m_dst) = JSValue::decode(result);
         break;
     }
+    case op_super_construct_varargs: {
+        callFrame->uncheckedR(pc->as<OpSuperConstructVarargs>().m_dst) = JSValue::decode(result);
+        break;
+    }
     // op_tail_call_varargs should never return if the thing it was calling was inlined.
 
     case op_iterator_open: {
@@ -2659,6 +2675,9 @@ extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit(CallFrame* call
         break;
     case op_construct_varargs:
         handleVarargsCheckpoint(vm, callFrame, globalObject, pc->as<OpConstructVarargs>(), *sideState.get());
+        break;
+    case op_super_construct_varargs:
+        handleVarargsCheckpoint(vm, callFrame, globalObject, pc->as<OpSuperConstructVarargs>(), *sideState.get());
         break;
     case op_tail_call_varargs:
         ASSERT_WITH_MESSAGE(pc.next()->opcodeID() == op_ret || pc.next()->opcodeID() == op_jmp, "We strongly assume all tail calls are followed by an op_ret (or sometimes a jmp to a ret).");

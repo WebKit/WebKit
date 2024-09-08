@@ -1908,8 +1908,14 @@ private:
             }
             break;
         }
-            
+
         case NewArrayWithSize: {
+            watchHavingABadTime(node);
+            fixEdge<Int32Use>(node->child1());
+            break;
+        }
+
+        case NewArrayWithSizeAndStructure: {
             watchHavingABadTime(node);
             fixEdge<Int32Use>(node->child1());
             break;

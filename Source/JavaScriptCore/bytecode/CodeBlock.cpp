@@ -517,12 +517,14 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpTailCall, callLinkInfo)
         LINK(OpCallDirectEval, callLinkInfo)
         LINK(OpConstruct, callLinkInfo)
+        LINK(OpSuperConstruct, callLinkInfo)
         LINK(OpIteratorOpen, callLinkInfo)
         LINK(OpIteratorNext, callLinkInfo)
         LINK(OpCallVarargs, callLinkInfo)
         LINK(OpTailCallVarargs, callLinkInfo)
         LINK(OpTailCallForwardArguments, callLinkInfo)
         LINK(OpConstructVarargs, callLinkInfo)
+        LINK(OpSuperConstructVarargs, callLinkInfo)
         LINK(OpCallIgnoreResult, callLinkInfo)
 
         case op_new_array_with_species: {
@@ -1488,7 +1490,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
             metadata.m_toThisStatus = merge(metadata.m_toThisStatus, ToThisClearedByGC);
         });
 
-        auto handleCreateBytecode = [&] (auto& metadata, ASCIILiteral name) {
+        auto clearCachedCalleeIfNecessary = [&](auto& metadata, ASCIILiteral name) {
             auto& cacheWriteBarrier = metadata.m_cachedCallee;
             if (!cacheWriteBarrier || cacheWriteBarrier.unvalidatedGet() == JSCell::seenMultipleCalleeObjects())
                 return;
@@ -1499,17 +1501,23 @@ void CodeBlock::finalizeLLIntInlineCaches()
             cacheWriteBarrier.clear();
         };
 
-        m_metadata->forEach<OpCreateThis>([&] (auto& metadata) {
-            handleCreateBytecode(metadata, "op_create_this"_s);
+        m_metadata->forEach<OpCreateThis>([&](auto& metadata) {
+            clearCachedCalleeIfNecessary(metadata, "op_create_this"_s);
         });
-        m_metadata->forEach<OpCreatePromise>([&] (auto& metadata) {
-            handleCreateBytecode(metadata, "op_create_promise"_s);
+        m_metadata->forEach<OpCreatePromise>([&](auto& metadata) {
+            clearCachedCalleeIfNecessary(metadata, "op_create_promise"_s);
         });
-        m_metadata->forEach<OpCreateGenerator>([&] (auto& metadata) {
-            handleCreateBytecode(metadata, "op_create_generator"_s);
+        m_metadata->forEach<OpCreateGenerator>([&](auto& metadata) {
+            clearCachedCalleeIfNecessary(metadata, "op_create_generator"_s);
         });
-        m_metadata->forEach<OpCreateAsyncGenerator>([&] (auto& metadata) {
-            handleCreateBytecode(metadata, "op_create_async_generator"_s);
+        m_metadata->forEach<OpCreateAsyncGenerator>([&](auto& metadata) {
+            clearCachedCalleeIfNecessary(metadata, "op_create_async_generator"_s);
+        });
+        m_metadata->forEach<OpSuperConstruct>([&](auto& metadata) {
+            clearCachedCalleeIfNecessary(metadata, "op_super_construct"_s);
+        });
+        m_metadata->forEach<OpSuperConstructVarargs>([&](auto& metadata) {
+            clearCachedCalleeIfNecessary(metadata, "op_super_construct_varargs"_s);
         });
 
         m_metadata->forEach<OpResolveScope>([&] (auto& metadata) {

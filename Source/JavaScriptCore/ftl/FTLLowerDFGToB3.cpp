@@ -1240,6 +1240,9 @@ private:
         case NewArrayWithSpecies:
             compileNewArrayWithSpecies();
             break;
+        case NewArrayWithSizeAndStructure:
+            compileNewArrayWithSizeAndStructure();
+            break;
         case NewTypedArray:
             compileNewTypedArray();
             break;
@@ -9264,6 +9267,17 @@ IGNORE_CLANG_WARNINGS_END
             return;
         }
         setJSValue(vmCall(pointerType(), operationNewArrayWithSpecies, weakPointer(globalObject), lowJSValue(m_node->child1()), lowCell(m_node->child2()), m_out.constInt32(m_node->indexingType())));
+    }
+
+    void compileNewArrayWithSizeAndStructure()
+    {
+        LValue publicLength = lowInt32(m_node->child1());
+        RegisteredStructure structure = m_node->structure();
+        speculate(OutOfBounds, noValue(), nullptr, m_out.aboveOrEqual(publicLength, m_out.constInt32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)));
+        bool shouldInitializeElements = true;
+        bool shouldLargeArraySizeCreateArrayStorage = false;
+        setJSValue(allocateJSArray(publicLength, publicLength, weakStructure(structure), m_out.constInt32(structure->indexingType()), shouldInitializeElements, shouldLargeArraySizeCreateArrayStorage).array);
+        mutatorFence();
     }
 
     void compileNewTypedArray()
