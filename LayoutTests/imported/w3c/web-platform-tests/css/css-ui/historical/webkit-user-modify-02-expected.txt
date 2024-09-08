@@ -1,0 +1,4 @@
+
+FAIL contenteditable="true" doesn't use unsupported -webkit-user-modify property assert_equals: expected "" but got "read-write"
+FAIL contenteditable="plaintext-only" doesn't use unsupported -webkit-user-modify property assert_equals: expected "" but got "read-write-plaintext-only"
+

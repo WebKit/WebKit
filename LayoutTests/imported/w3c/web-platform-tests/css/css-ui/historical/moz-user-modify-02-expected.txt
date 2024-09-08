@@ -1,0 +1,4 @@
+
+PASS contenteditable="true" doesn't use unsupported -moz-user-modify property
+PASS contenteditable="plaintext-only" doesn't use unsupported -moz-user-modify property
+

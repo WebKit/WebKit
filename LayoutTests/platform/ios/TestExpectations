@@ -169,6 +169,11 @@ imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-contro
 
 webkit.org/b/259089 imported/w3c/web-platform-tests/css/css-ui/text-overflow-028.html [ ImageOnlyFailure ]
 
+webkit.org/b/279302 imported/w3c/web-platform-tests/css/css-ui/outline-width-rounding.tentative.html [ Failure ]
+webkit.org/b/279302 imported/w3c/web-platform-tests/css/css-ui/parsing/outline-width-computed.html [ Failure ]
+webkit.org/b/279302 imported/w3c/web-platform-tests/css/css-ui/resize-interactive.html [ Failure ]
+webkit.org/b/279302 imported/w3c/web-platform-tests/css/css-ui/subpixel-outline-width.tentative.html [ ImageOnlyFailure ]
+
 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Pass ]
 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Pass ]
 http/wpt/content-security-policy/sandbox-manifest-blocked.html [ Pass ]

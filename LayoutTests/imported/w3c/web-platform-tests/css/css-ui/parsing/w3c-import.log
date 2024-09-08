@@ -14,9 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/box-sizing-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/box-sizing-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/box-sizing-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/canonical-order-outline-sub-properties-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/caret-color-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/caret-color-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/caret-color-valid.html
@@ -28,8 +30,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/field-sizing-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-color-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-color-invalid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-color-valid-mandatory.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-color-valid-optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-color-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-offset-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-offset-invalid.html
@@ -38,8 +39,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-style-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-style-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-style-valid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-valid-mandatory.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-valid-optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-width-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-width-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-width-valid.html
@@ -52,3 +52,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/user-select-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/user-select-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/user-select-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/webkit-appearance-alias.html
