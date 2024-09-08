@@ -1990,17 +1990,17 @@ CoreMathMLEnabled:
 
 CrossDocumentViewTransitionsEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "Cross document view-transitions"
   humanReadableDescription: "Enable support for view-transitions cross-document"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CrossOriginEmbedderPolicyEnabled:
   type: bool
