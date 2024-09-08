@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class StyleCursorImage;
 class StyleImage;
 
 namespace Style {
@@ -35,11 +36,9 @@ class BuilderState;
 
 class CSSCursorImageValue final : public CSSValue {
 public:
-    static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, const std::optional<IntPoint>& hotSpot, LoadedFromOpaqueSource);
-    static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, const std::optional<IntPoint>& hotSpot, URL, LoadedFromOpaqueSource);
+    static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, LoadedFromOpaqueSource);
+    static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, URL, LoadedFromOpaqueSource);
     ~CSSCursorImageValue();
-
-    std::optional<IntPoint> hotSpot() const { return m_hotSpot; }
 
     const URL& imageURL() const { return m_originalURL; }
     String customCSSText() const;
@@ -50,14 +49,14 @@ public:
         return func(m_imageValue.get());
     }
 
-    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
+    RefPtr<StyleCursorImage> createStyleImage(Style::BuilderState&) const;
 
 private:
-    CSSCursorImageValue(Ref<CSSValue>&& imageValue, const std::optional<IntPoint>& hotSpot, URL, LoadedFromOpaqueSource);
+    CSSCursorImageValue(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, URL, LoadedFromOpaqueSource);
 
     URL m_originalURL;
     Ref<CSSValue> m_imageValue;
-    std::optional<IntPoint> m_hotSpot;
+    RefPtr<CSSValue> m_hotSpot;
     LoadedFromOpaqueSource m_loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
 };
 

@@ -52,6 +52,8 @@ public:
     void cursorElementRemoved(SVGCursorElement&);
     void cursorElementChanged(SVGCursorElement&);
 
+    std::optional<IntPoint> hotSpot() const { return m_hotSpot; }
+
 private:
     explicit StyleCursorImage(Ref<StyleImage>&&, const std::optional<IntPoint>& hotSpot, const URL&, LoadedFromOpaqueSource);
 

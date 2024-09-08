@@ -999,17 +999,18 @@ RefPtr<CSSValue> consumeStrokeDasharray(CSSParserTokenRange& range)
 
 RefPtr<CSSValue> consumeCursor(CSSParserTokenRange& range, const CSSParserContext& context, bool inQuirksMode)
 {
+    // https://drafts.csswg.org/css-ui/#propdef-cursor
+
     CSSValueListBuilder list;
     while (auto image = consumeImage(range, context, { AllowedImageType::URLFunction, AllowedImageType::ImageSet })) {
-        std::optional<IntPoint> hotSpot;
-        if (auto x = consumeNumberRaw(range)) {
-            auto y = consumeNumberRaw(range);
+        RefPtr<CSSValuePair> hotSpot;
+        if (auto x = consumeNumber(range)) {
+            auto y = consumeNumber(range);
             if (!y)
                 return nullptr;
-            // FIXME: Should we clamp or round instead of just casting from double to int?
-            hotSpot = IntPoint { static_cast<int>(x->value), static_cast<int>(y->value) };
+            hotSpot = CSSValuePair::createNoncoalescing(x.releaseNonNull(), y.releaseNonNull());
         }
-        list.append(CSSCursorImageValue::create(image.releaseNonNull(), hotSpot, context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No));
+        list.append(CSSCursorImageValue::create(image.releaseNonNull(), WTFMove(hotSpot), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No));
         if (!consumeCommaIncludingWhitespace(range))
             return nullptr;
     }

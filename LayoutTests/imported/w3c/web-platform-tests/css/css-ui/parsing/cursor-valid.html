@@ -70,6 +70,24 @@ test_valid_value(
 
 test_valid_value(
   "cursor",
+  'url("https://example.com/") 1 calc(10 + (sign(2cqw - 10px) * 5)), copy',
+  [
+    'url("https://example.com/") 1 calc(10 + (5 * sign(2cqw - 10px))), copy',
+    'url(https://example.com/) 1 calc(10 + (5 * sign(2cqw - 10px))), copy'
+  ]
+);
+
+test_valid_value(
+  "cursor",
+  'url("https://example.com/") 1 calc(-3), copy',
+  [
+    'url("https://example.com/") 1 calc(-3), copy',
+    'url(https://example.com/) 1 calc(-3), copy'
+  ]
+);
+
+test_valid_value(
+  "cursor",
   'url("https://example.com/"), url("https://example.com/") 3 -4, move',
   [
     'url("https://example.com/"), url("https://example.com/") 3 -4, move',

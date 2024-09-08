@@ -1145,7 +1145,9 @@ inline void BuilderCustom::applyValueCursor(BuilderState& builderState, CSSValue
     auto& list = downcast<CSSValueList>(value);
     for (auto& item : list) {
         if (auto* image = dynamicDowncast<CSSCursorImageValue>(item)) {
-            builderState.style().addCursor(builderState.createStyleImage(*image), image->hotSpot());
+            auto styleImage = image->createStyleImage(builderState);
+            auto hotSpot = styleImage->hotSpot();
+            builderState.style().addCursor(WTFMove(styleImage), hotSpot);
             continue;
         }
 
