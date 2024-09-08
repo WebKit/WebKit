@@ -33,6 +33,7 @@
 #include "MediaSourcePrivateClient.h"
 #include "PlatformTimeRanges.h"
 #include "SourceBufferPrivate.h"
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -143,7 +144,7 @@ void MediaSourcePrivate::sourceBufferPrivateDidChangeActiveState(SourceBufferPri
 
 bool MediaSourcePrivate::hasAudio() const
 {
-    assertIsCurrent(m_dispatcher);
+    ASSERT(m_dispatcher->isCurrent() || Thread::mayBeGCThread());
 
     return std::any_of(m_activeSourceBuffers.begin(), m_activeSourceBuffers.end(), [] (SourceBufferPrivate* sourceBuffer) {
         return sourceBuffer->hasAudio();
