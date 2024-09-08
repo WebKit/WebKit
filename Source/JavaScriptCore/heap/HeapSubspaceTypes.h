@@ -55,6 +55,7 @@
 #include "JSArray.h"
 #include "JSArrayBuffer.h"
 #include "JSArrayIterator.h"
+#include "JSAsyncFromSyncIterator.h"
 #include "JSAsyncGenerator.h"
 #include "JSBigInt.h"
 #include "JSBoundFunction.h"
