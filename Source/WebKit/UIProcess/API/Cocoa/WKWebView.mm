@@ -437,6 +437,11 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     _activeWritingToolsSession = nil;
     _writingToolsTextSuggestions = [NSMapTable strongToWeakObjectsMapTable];
 #endif
+
+#if PLATFORM(APPLETV)
+    // FIXME: This is a workaround for <rdar://135515434> to prevent the tint color from being set to either solid black or white.
+    self.tintColor = UIColor.systemBlueColor;
+#endif
 }
 
 - (void)_setupPageConfiguration:(Ref<API::PageConfiguration>&)pageConfiguration withPool:(WebKit::WebProcessPool&)pool
