@@ -131,7 +131,7 @@ inline static RetainPtr<UIToolbar> createToolbarWithItems(NSArray<UIBarButtonIte
 
 - (instancetype)initWithInputAssistantItem:(UITextInputAssistantItem *)inputAssistant delegate:(id<WKFormAccessoryViewDelegate>)delegate
 {
-    self = [self init];
+    self = [super init];
     if (!self)
         return nil;
 
@@ -176,40 +176,30 @@ inline static RetainPtr<UIToolbar> createToolbarWithItems(NSArray<UIBarButtonIte
 
     [self _updateFrame];
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // FIXME (262139): Adopt -registerForTraitChanges: once iOS 17 is the minimum supported iOS version.
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_updateFrame) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    [self registerForTraitChanges:systemTraitsAffectingColorAppearance withHandler:^(id traitEnvironment, UITraitCollection *previousTraitCollection) {
+        if (self.traitCollection.verticalSizeClass != previousTraitCollection.verticalSizeClass)
+            [self _updateFrame];
+
+        UITraitCollection *newTraitCollection = self.traitCollection;
+        if (![newTraitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection])
+            return;
+
+        NSMutableDictionary *doneButtonAttributes = [NSMutableDictionary dictionaryWithObject:WebKit::doneButtonFont() forKey:NSFontAttributeName];
+
+        UIColor *tintColor = nil;
+
+        if (newTraitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            tintColor = UIColor.whiteColor;
+            doneButtonAttributes[NSForegroundColorAttributeName] = tintColor;
+        }
+
+        self.tintColor = tintColor;
+
+        [_doneButton setTitleTextAttributes:doneButtonAttributes forState:UIControlStateNormal];
+    }];
 
     return self;
 }
-
-ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-// FIXME (262139): Adopt -registerForTraitChanges: once iOS 17 is the minimum supported iOS version.
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
-{
-    [super traitCollectionDidChange:previousTraitCollection];
-
-    auto newTraitCollection = self.traitCollection;
-    if (![newTraitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection])
-        return;
-
-    auto doneButtonAttributes = [NSMutableDictionary dictionaryWithObject:WebKit::doneButtonFont() forKey:NSFontAttributeName];
-
-    UIColor *tintColor = nil;
-
-    if (newTraitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        tintColor = UIColor.whiteColor;
-        doneButtonAttributes[NSForegroundColorAttributeName] = tintColor;
-    }
-
-    self.tintColor = tintColor;
-
-    [_doneButton setTitleTextAttributes:doneButtonAttributes forState:UIControlStateNormal];
-}
-ALLOW_DEPRECATED_DECLARATIONS_END
-ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)_updateFrame
 {
