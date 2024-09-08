@@ -717,9 +717,6 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
 
     beginUpdateScrollInfoAfterLayoutTransaction();
 
-    ChildLayoutDeltas childLayoutDeltas;
-    appendChildLayoutDeltas(this, childLayoutDeltas);
-
     // We do 2 passes.  The first pass is simply to lay everyone out at
     // their preferred widths.  The second pass handles flexing the children.
     // Our first pass is done without flexing.  We simply lay the children
@@ -728,7 +725,6 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
         setHeight(borderTop() + paddingTop());
         LayoutUnit minHeight = height() + toAdd;
 
-        size_t childIndex = 0;
         for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
             // Make sure we relayout children if we need it.
             if (!haveLineClamp && relayoutChildren)
@@ -745,8 +741,6 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                 }
                 continue;
             }
-            
-            LayoutSize& childLayoutDelta = childLayoutDeltas[childIndex++];
 
             // Compute the child's vertical margins.
             child->computeAndSetBlockDirectionMargins(*this);
@@ -757,7 +751,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             child->markForPaginationRelayoutIfNeeded();
 
             // Now do a layout.
-            layoutChildIfNeededApplyingDelta(child, childLayoutDelta);
+            child->layoutIfNeeded();
 
             // We can place the child now, using our value of box-align.
             LayoutUnit childX = borderLeft() + paddingLeft();
@@ -781,10 +775,9 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             }
 
             // Place the child.
-            placeChild(child, LayoutPoint(childX, height()), &childLayoutDelta);
+            placeChild(child, LayoutPoint(childX, height()));
             setHeight(height() + child->height() + child->marginBottom());
         }
-        ASSERT(childIndex == childLayoutDeltas.size());
 
         yPos = height();
 
