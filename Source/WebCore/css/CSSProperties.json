@@ -7296,8 +7296,7 @@
                 ],
                 "initial": "initialContentAlignment",
                 "converter": "ContentAlignmentData",
-                "parser-function": "consumeContentDistributionOverflowPosition",
-                "parser-function-requires-additional-parameters": ["isContentPositionKeyword"],
+                "parser-function": "consumeAlignContent",
                 "parser-grammar-unused": "normal | <baseline-position> | <content-distribution> | [ <overflow-position>? <content-position> ]",
                 "parser-grammar-unused-reason": "Needs support for ordered groups, '&&' groups and optionals",
                 "comment": "Alternate definition in css-flexbox - flex-start | flex-end | center | space-between | space-around | stretch"
@@ -7365,8 +7364,7 @@
                 ],
                 "initial": "initialSelfAlignment",
                 "converter": "SelfOrDefaultAlignmentData",
-                "parser-function": "consumeSelfPositionOverflowPosition",
-                "parser-function-requires-additional-parameters": ["isSelfPositionKeyword"],
+                "parser-function": "consumeAlignSelf",
                 "parser-grammar-unused": "auto | normal | stretch | <baseline-position> | [ <overflow-position>? <self-position> ]",
                 "parser-grammar-unused-reason": "Needs support for ordered groups, '&&' groups and optionals.",
                 "comment": "Alternate definition in css-flexbox - auto | flex-start | flex-end | center | baseline | stretch"
@@ -7560,8 +7558,7 @@
             "codegen-properties": {
                 "initial": "initialSelfAlignment",
                 "converter": "SelfOrDefaultAlignmentData",
-                "parser-function": "consumeSelfPositionOverflowPosition",
-                "parser-function-requires-additional-parameters": ["isSelfPositionOrLeftOrRightKeyword"],
+                "parser-function": "consumeJustifySelf",
                 "parser-grammar-unused": "auto | normal | stretch | <baseline-position> | [ <overflow-position>? [ <self-position> | left | right ] ]",
                 "parser-grammar-unused-reason": "Needs support for ordered groups, '&&' groups and optionals."
             },

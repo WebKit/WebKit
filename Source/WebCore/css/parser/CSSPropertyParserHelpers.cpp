@@ -60,7 +60,6 @@
 #include "CSSBorderImageWidthValue.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
-#include "CSSContentDistributionValue.h"
 #include "CSSCounterValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSCustomPropertyValue.h"
@@ -615,24 +614,6 @@ RefPtr<CSSValue> consumeTextUnderlinePosition(CSSParserTokenRange& range, const 
     return nullptr;
 }
 
-static bool validWidthOrHeightKeyword(CSSValueID id)
-{
-    switch (id) {
-    case CSSValueIntrinsic:
-    case CSSValueMinIntrinsic:
-    case CSSValueMinContent:
-    case CSSValueWebkitMinContent:
-    case CSSValueMaxContent:
-    case CSSValueWebkitMaxContent:
-    case CSSValueWebkitFillAvailable:
-    case CSSValueFitContent:
-    case CSSValueWebkitFitContent:
-        return true;
-    default:
-        return false;
-    }
-}
-
 static RefPtr<CSSValue> consumeAutoOrLengthOrPercent(CSSParserTokenRange& range, CSSParserMode mode, UnitlessQuirk unitless, AnchorPolicy anchorPolicy = AnchorPolicy::Forbid)
 {
     if (range.peek().id() == CSSValueAuto)
@@ -975,10 +956,6 @@ RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(WTFMove(paintOrderList));
 }
 
-bool isFlexBasisIdent(CSSValueID id)
-{
-    return identMatches<CSSValueAuto, CSSValueContent>(id) || validWidthOrHeightKeyword(id);
-}
 
 RefPtr<CSSValue> consumeStrokeDasharray(CSSParserTokenRange& range)
 {
@@ -1849,97 +1826,6 @@ RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange& range, const CSSParser
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-static bool isAuto(CSSValueID id)
-{
-    return identMatches<CSSValueAuto>(id);
-}
-
-static bool isNormalOrStretch(CSSValueID id)
-{
-    return identMatches<CSSValueNormal, CSSValueStretch>(id);
-}
-
-static bool isLeftOrRightKeyword(CSSValueID id)
-{
-    return identMatches<CSSValueLeft, CSSValueRight>(id);
-}
-
-bool isBaselineKeyword(CSSValueID id)
-{
-    return identMatches<CSSValueFirst, CSSValueLast, CSSValueBaseline>(id);
-}
-
-bool isContentPositionKeyword(CSSValueID id)
-{
-    return identMatches<CSSValueStart, CSSValueEnd, CSSValueCenter, CSSValueFlexStart, CSSValueFlexEnd>(id);
-}
-
-bool isContentPositionOrLeftOrRightKeyword(CSSValueID id)
-{
-    return isContentPositionKeyword(id) || isLeftOrRightKeyword(id);
-}
-
-static bool isContentDistributionKeyword(CSSValueID id)
-{
-    return identMatches<CSSValueSpaceBetween, CSSValueSpaceAround, CSSValueSpaceEvenly, CSSValueStretch>(id);
-}
-
-static bool isOverflowKeyword(CSSValueID id)
-{
-    return identMatches<CSSValueUnsafe, CSSValueSafe>(id);
-}
-
-static RefPtr<CSSPrimitiveValue> consumeOverflowPositionKeyword(CSSParserTokenRange& range)
-{
-    return isOverflowKeyword(range.peek().id()) ? consumeIdent(range) : nullptr;
-}
-
-static std::optional<CSSValueID> consumeBaselineKeywordRaw(CSSParserTokenRange& range)
-{
-    auto preference = consumeIdentRaw<CSSValueFirst, CSSValueLast>(range);
-    if (!consumeIdent<CSSValueBaseline>(range))
-        return std::nullopt;
-    return preference == CSSValueLast ? CSSValueLastBaseline : CSSValueBaseline;
-}
-
-static RefPtr<CSSValue> consumeBaselineKeyword(CSSParserTokenRange& range)
-{
-    auto keyword = consumeBaselineKeywordRaw(range);
-    if (!keyword)
-        return nullptr;
-    if (*keyword == CSSValueLastBaseline)
-        return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueLast), CSSPrimitiveValue::create(CSSValueBaseline));
-    return CSSPrimitiveValue::create(CSSValueBaseline);
-}
-
-RefPtr<CSSValue> consumeContentDistributionOverflowPosition(CSSParserTokenRange& range, IsPositionKeyword isPositionKeyword)
-{
-    ASSERT(isPositionKeyword);
-    CSSValueID id = range.peek().id();
-    if (identMatches<CSSValueNormal>(id))
-        return CSSContentDistributionValue::create(CSSValueInvalid, range.consumeIncludingWhitespace().id(), CSSValueInvalid);
-    if (isBaselineKeyword(id)) {
-        auto baseline = consumeBaselineKeywordRaw(range);
-        if (!baseline)
-            return nullptr;
-        return CSSContentDistributionValue::create(CSSValueInvalid, *baseline, CSSValueInvalid);
-    }
-    if (isContentDistributionKeyword(id))
-        return CSSContentDistributionValue::create(range.consumeIncludingWhitespace().id(), CSSValueInvalid, CSSValueInvalid);
-    CSSValueID overflow = isOverflowKeyword(id) ? range.consumeIncludingWhitespace().id() : CSSValueInvalid;
-    if (isPositionKeyword(range.peek().id()))
-        return CSSContentDistributionValue::create(CSSValueInvalid, range.consumeIncludingWhitespace().id(), overflow);
-    return nullptr;
-}
-
-RefPtr<CSSValue> consumeJustifyContent(CSSParserTokenRange& range)
-{
-    // justify-content property does not allow the <baseline-position> values.
-    if (isBaselineKeyword(range.peek().id()))
-        return nullptr;
-    return consumeContentDistributionOverflowPosition(range, isContentPositionOrLeftOrRightKeyword);
-}
-
 static RefPtr<CSSPrimitiveValue> consumeBorderImageRepeatKeyword(CSSParserTokenRange& range)
 {
     return consumeIdent<CSSValueStretch, CSSValueRepeat, CSSValueSpace, CSSValueRound>(range);
@@ -2207,61 +2093,25 @@ RefPtr<CSSValue> consumeSingleWebkitBackgroundSize(CSSParserTokenRange& range, c
     return consumeBackgroundSize<CSSPropertyWebkitBackgroundSize>(range, context.mode);
 }
 
-bool isSelfPositionKeyword(CSSValueID id)
+bool isFlexBasisIdent(CSSValueID id)
 {
-    return identMatches<CSSValueStart, CSSValueEnd, CSSValueCenter, CSSValueSelfStart, CSSValueSelfEnd, CSSValueFlexStart, CSSValueFlexEnd>(id);
-}
-
-bool isSelfPositionOrLeftOrRightKeyword(CSSValueID id)
-{
-    return isSelfPositionKeyword(id) || isLeftOrRightKeyword(id);
-}
-
-
-RefPtr<CSSValue> consumeSelfPositionOverflowPosition(CSSParserTokenRange& range, IsPositionKeyword isPositionKeyword)
-{
-    ASSERT(isPositionKeyword);
-    CSSValueID id = range.peek().id();
-    if (isAuto(id) || isNormalOrStretch(id))
-        return consumeIdent(range);
-    if (isBaselineKeyword(id))
-        return consumeBaselineKeyword(range);
-    auto overflowPosition = consumeOverflowPositionKeyword(range);
-    if (!isPositionKeyword(range.peek().id()))
-        return nullptr;
-    auto selfPosition = consumeIdent(range);
-    if (overflowPosition)
-        return CSSValuePair::create(overflowPosition.releaseNonNull(), selfPosition.releaseNonNull());
-    return selfPosition;
-}
-
-RefPtr<CSSValue> consumeAlignItems(CSSParserTokenRange& range)
-{
-    // align-items property does not allow the 'auto' value.
-    if (identMatches<CSSValueAuto>(range.peek().id()))
-        return nullptr;
-    return consumeSelfPositionOverflowPosition(range, isSelfPositionKeyword);
-}
-
-RefPtr<CSSValue> consumeJustifyItems(CSSParserTokenRange& range)
-{
-    // justify-items property does not allow the 'auto' value.
-    if (identMatches<CSSValueAuto>(range.peek().id()))
-        return nullptr;
-    CSSParserTokenRange rangeCopy = range;
-    auto legacy = consumeIdent<CSSValueLegacy>(rangeCopy);
-    auto positionKeyword = consumeIdent<CSSValueCenter, CSSValueLeft, CSSValueRight>(rangeCopy);
-    if (!legacy)
-        legacy = consumeIdent<CSSValueLegacy>(rangeCopy);
-    if (legacy) {
-        range = rangeCopy;
-        if (positionKeyword)
-            return CSSValuePair::create(legacy.releaseNonNull(), positionKeyword.releaseNonNull());
-        return legacy;
+    switch (id) {
+    case CSSValueAuto:
+    case CSSValueContent:
+    case CSSValueIntrinsic:
+    case CSSValueMinIntrinsic:
+    case CSSValueMinContent:
+    case CSSValueWebkitMinContent:
+    case CSSValueMaxContent:
+    case CSSValueWebkitMaxContent:
+    case CSSValueWebkitFillAvailable:
+    case CSSValueFitContent:
+    case CSSValueWebkitFitContent:
+        return true;
+    default:
+        return false;
     }
-    return consumeSelfPositionOverflowPosition(range, isSelfPositionOrLeftOrRightKeyword);
 }
-
 
 RefPtr<CSSValue> consumeLineBoxContain(CSSParserTokenRange& range)
 {

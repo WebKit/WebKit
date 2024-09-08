@@ -1016,6 +1016,7 @@ css/parser/CSSParserObserverWrapper.cpp
 css/parser/CSSParserToken.cpp
 css/parser/CSSParserTokenRange.cpp
 css/parser/CSSPropertyParser.cpp
+css/parser/CSSPropertyParserConsumer+Align.cpp
 css/parser/CSSPropertyParserConsumer+Angle.cpp
 css/parser/CSSPropertyParserConsumer+CSSPrimitiveValueResolver.cpp
 css/parser/CSSPropertyParserConsumer+Color.cpp

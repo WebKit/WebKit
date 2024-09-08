@@ -117,9 +117,7 @@ private:
     bool consumeGridShorthand(bool important);
     bool consumeGridAreaShorthand(bool important);
 
-    bool consumePlaceContentShorthand(bool important);
-    bool consumePlaceItemsShorthand(bool important);
-    bool consumePlaceSelfShorthand(bool important);
+    bool consumeAlignShorthand(const StylePropertyShorthand&, bool important);
 
     bool consumeFont(bool important);
     bool consumeTextDecorationSkip(bool important);

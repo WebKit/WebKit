@@ -61,13 +61,7 @@ RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange&);
 
 RefPtr<CSSValue> consumeAspectRatio(CSSParserTokenRange&);
 
-using IsPositionKeyword = bool (*)(CSSValueID);
 bool isFlexBasisIdent(CSSValueID);
-bool isBaselineKeyword(CSSValueID);
-bool isContentPositionKeyword(CSSValueID);
-bool isContentPositionOrLeftOrRightKeyword(CSSValueID);
-bool isSelfPositionKeyword(CSSValueID);
-bool isSelfPositionOrLeftOrRightKeyword(CSSValueID);
 
 RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange&, const CSSParserContext&);
@@ -113,8 +107,6 @@ enum PathParsingOption : uint8_t { RejectRay = 1 << 0, RejectFillRule = 1 << 1 }
 RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange&, const CSSParserContext&, OptionSet<PathParsingOption>);
 RefPtr<CSSValue> consumePath(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeContentDistributionOverflowPosition(CSSParserTokenRange&, IsPositionKeyword);
-RefPtr<CSSValue> consumeJustifyContent(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeBorderImageRepeat(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeBorderImageSlice(CSSPropertyID, CSSParserTokenRange&);
 RefPtr<CSSValue> consumeBorderImageOutset(CSSParserTokenRange&);
@@ -128,9 +120,6 @@ RefPtr<CSSValue> consumeBackgroundSize(CSSPropertyID, CSSParserTokenRange&, CSSP
 RefPtr<CSSValue> consumeSingleBackgroundSize(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeSingleMaskSize(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeSingleWebkitBackgroundSize(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeSelfPositionOverflowPosition(CSSParserTokenRange&, IsPositionKeyword);
-RefPtr<CSSValue> consumeAlignItems(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeJustifyItems(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeLineBoxContain(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeContainerName(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeWebkitInitialLetter(CSSParserTokenRange&);

@@ -47,6 +47,7 @@
 #include "CSSParserIdioms.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPrimitiveValueMappings.h"
+#include "CSSPropertyParserConsumer+Align.h"
 #include "CSSPropertyParserConsumer+Angle.h"
 #include "CSSPropertyParserConsumer+Color.h"
 #include "CSSPropertyParserConsumer+Font.h"
@@ -2331,81 +2332,33 @@ bool CSSPropertyParser::consumeGridShorthand(bool important)
     return true;
 }
 
-bool CSSPropertyParser::consumePlaceContentShorthand(bool important)
+bool CSSPropertyParser::consumeAlignShorthand(const StylePropertyShorthand& shorthand, bool important)
 {
-    ASSERT(shorthandForProperty(CSSPropertyPlaceContent).length() == 2);
+    // Used to implement the rules in CSS Align for the following shorthands:
+    //   <'place-content'> https://drafts.csswg.org/css-align/#propdef-place-content
+    //   <'place-items'>   https://drafts.csswg.org/css-align/#propdef-place-items
+    //   <'place-self'>    https://drafts.csswg.org/css-align/#propdef-place-self
+    //   <'gap'>           https://drafts.csswg.org/css-align/#propdef-gap
 
-    if (m_range.atEnd())
+    ASSERT(shorthand.length() == 2);
+    const auto* longhands = shorthand.properties();
+
+    auto rangeCopy = m_range;
+
+    RefPtr prop1 = parseSingleValue(longhands[0], shorthand.id());
+    if (!prop1)
         return false;
 
-    CSSParserTokenRange rangeCopy = m_range;
-    bool isBaseline = isBaselineKeyword(m_range.peek().id());
-    RefPtr alignContentValue = consumeContentDistributionOverflowPosition(m_range, isContentPositionKeyword);
-    if (!alignContentValue)
-        return false;
-
-    // justify-content property does not allow the <baseline-position> values.
-    if (m_range.atEnd() && isBaseline)
-        return false;
-    if (isBaselineKeyword(m_range.peek().id()))
-        return false;
-
+    // If there are no more tokens, that prop2 should use re-use the original range. This is the equivalent of copying and validating prop1.
     if (m_range.atEnd())
         m_range = rangeCopy;
-    RefPtr justifyContentValue = consumeContentDistributionOverflowPosition(m_range, isContentPositionOrLeftOrRightKeyword);
-    if (!justifyContentValue)
-        return false;
-    if (!m_range.atEnd())
-        return false;
 
-    addProperty(CSSPropertyAlignContent, CSSPropertyPlaceContent, alignContentValue.releaseNonNull(), important);
-    addProperty(CSSPropertyJustifyContent, CSSPropertyPlaceContent, justifyContentValue.releaseNonNull(), important);
-    return true;
-}
-
-bool CSSPropertyParser::consumePlaceItemsShorthand(bool important)
-{
-    ASSERT(shorthandForProperty(CSSPropertyPlaceItems).length() == 2);
-
-    CSSParserTokenRange rangeCopy = m_range;
-    RefPtr alignItemsValue = consumeAlignItems(m_range);
-    if (!alignItemsValue)
+    RefPtr prop2 = parseSingleValue(longhands[1], shorthand.id());
+    if (!prop2 || !m_range.atEnd())
         return false;
 
-    if (m_range.atEnd())
-        m_range = rangeCopy;
-    RefPtr justifyItemsValue = consumeJustifyItems(m_range);
-    if (!justifyItemsValue)
-        return false;
-
-    if (!m_range.atEnd())
-        return false;
-
-    addProperty(CSSPropertyAlignItems, CSSPropertyPlaceItems, alignItemsValue.releaseNonNull(), important);
-    addProperty(CSSPropertyJustifyItems, CSSPropertyPlaceItems, justifyItemsValue.releaseNonNull(), important);
-    return true;
-}
-
-bool CSSPropertyParser::consumePlaceSelfShorthand(bool important)
-{
-    ASSERT(shorthandForProperty(CSSPropertyPlaceSelf).length() == 2);
-
-    CSSParserTokenRange rangeCopy = m_range;
-    RefPtr alignSelfValue = consumeSelfPositionOverflowPosition(m_range, isSelfPositionKeyword);
-    if (!alignSelfValue)
-        return false;
-
-    if (m_range.atEnd())
-        m_range = rangeCopy;
-    RefPtr justifySelfValue = consumeSelfPositionOverflowPosition(m_range, isSelfPositionOrLeftOrRightKeyword);
-    if (!justifySelfValue)
-        return false;
-
-    if (!m_range.atEnd())
-        return false;
-
-    addProperty(CSSPropertyAlignSelf, CSSPropertyPlaceSelf, alignSelfValue.releaseNonNull(), important);
-    addProperty(CSSPropertyJustifySelf, CSSPropertyPlaceSelf, justifySelfValue.releaseNonNull(), important);
+    addProperty(longhands[0], shorthand.id(), prop1.releaseNonNull(), important);
+    addProperty(longhands[1], shorthand.id(), prop2.releaseNonNull(), important);
     return true;
 }
 
@@ -3063,17 +3016,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumePerspectiveOrigin(important);
     case CSSPropertyWebkitPerspective:
         return consumePrefixedPerspective(important);
-    case CSSPropertyGap: {
-        RefPtr rowGap = CSSPropertyParsing::consumeRowGap(m_range, m_context);
-        RefPtr columnGap = CSSPropertyParsing::consumeColumnGap(m_range, m_context);
-        if (!rowGap || !m_range.atEnd())
-            return false;
-        if (!columnGap)
-            columnGap = rowGap;
-        addProperty(CSSPropertyRowGap, CSSPropertyGap, rowGap.releaseNonNull(), important);
-        addProperty(CSSPropertyColumnGap, CSSPropertyGap, columnGap.releaseNonNull(), important);
-        return true;
-    }
+    case CSSPropertyGap:
+        return consumeAlignShorthand(shorthandForProperty(property), important);
     case CSSPropertyGridColumn:
     case CSSPropertyGridRow:
         return consumeGridItemPositionShorthand(property, important);
@@ -3084,11 +3028,11 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     case CSSPropertyGrid:
         return consumeGridShorthand(important);
     case CSSPropertyPlaceContent:
-        return consumePlaceContentShorthand(important);
+        return consumeAlignShorthand(shorthandForProperty(property), important);
     case CSSPropertyPlaceItems:
-        return consumePlaceItemsShorthand(important);
+        return consumeAlignShorthand(shorthandForProperty(property), important);
     case CSSPropertyPlaceSelf:
-        return consumePlaceSelfShorthand(important);
+        return consumeAlignShorthand(shorthandForProperty(property), important);
     case CSSPropertyTextDecorationSkip:
         return consumeTextDecorationSkip(important);
     case CSSPropertyContainer:
