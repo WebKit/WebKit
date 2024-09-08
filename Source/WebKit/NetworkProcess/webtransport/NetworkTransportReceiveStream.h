@@ -49,6 +49,8 @@ class NetworkTransportReceiveStream : public RefCounted<NetworkTransportReceiveS
 public:
     template<typename... Args> static Ref<NetworkTransportReceiveStream> create(Args&&... args) { return adoptRef(*new NetworkTransportReceiveStream(std::forward<Args>(args)...)); }
 
+    virtual ~NetworkTransportReceiveStream();
+
     WebTransportStreamIdentifier identifier() const { return m_identifier; }
 
 protected:

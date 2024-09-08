@@ -32,4 +32,6 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkTransportReceiveStream);
 
+NetworkTransportReceiveStream::~NetworkTransportReceiveStream() = default;
+
 }
