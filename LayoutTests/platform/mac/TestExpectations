@@ -708,10 +708,6 @@ imported/w3c/web-platform-tests/cookies/encoding/charset.html [ Failure ]
 #rdar://92629515 (REGRESSION(Ventura): [ Ventura ] media/media-can-play-av1.html is a constant text failure)
 media/media-can-play-av1.html [ Skip ]
 
-# WebVTT tests don't work because they need more than a 800x600 snapshot.
-# They are also flakily failing on WebKit2, as snapshot sometimes has a black rectangle for video element instead of white one.
-webkit.org/b/131476 media/track/w3c/track/webvtt [ Skip ]
-
 webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_codecs_order_2.html [ Failure ]
 webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html [ Failure ]
 webkit.org/b/75184 media/W3C/video/canPlayType/canPlayType_two_implies_one_3.html [ Failure ]
