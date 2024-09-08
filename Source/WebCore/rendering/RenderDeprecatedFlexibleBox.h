@@ -65,8 +65,7 @@ private:
         LayoutUnit contentHeight;
         SingleThreadWeakPtr<const RenderBlockFlow> renderer;
     };
-    std::optional<ClampedContent> applyLineClamp(FlexBoxIterator&, bool relayoutChildren);
-    std::optional<ClampedContent> applyModernLineClamp(FlexBoxIterator&);
+    ClampedContent applyLineClamp(FlexBoxIterator&, bool relayoutChildren);
     void clearLineClamp();
 
     bool m_stretchingChildren;
