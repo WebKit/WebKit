@@ -1043,6 +1043,7 @@ css/parser/CSSPropertyParserConsumer+TimingFunction.cpp
 css/parser/CSSPropertyParserConsumer+Transform.cpp
 css/parser/CSSPropertyParserConsumer+URL.cpp
 css/parser/CSSPropertyParserConsumer+UnevaluatedCalc.cpp
+css/parser/CSSPropertyParserConsumer+ViewTransition.cpp
 css/parser/CSSPropertyParserHelpers.cpp
 css/parser/CSSSelectorParser.cpp
 css/parser/CSSSelectorParserContext.cpp

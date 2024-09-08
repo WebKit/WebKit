@@ -2594,38 +2594,6 @@ RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange& range, CSSParserMode m
     return CSSOffsetRotateValue::create(WTFMove(modifier), WTFMove(angle));
 }
 
-RefPtr<CSSValue> consumeViewTransitionClass(CSSParserTokenRange& range)
-{
-    if (auto noneValue = consumeIdent<CSSValueNone>(range))
-        return noneValue;
-
-    CSSValueListBuilder list;
-    do {
-        if (range.peek().id() == CSSValueNone)
-            return nullptr;
-
-        auto ident = consumeCustomIdent(range);
-        if (!ident)
-            return nullptr;
-
-        list.append(ident.releaseNonNull());
-    } while (!range.atEnd());
-
-    if (list.isEmpty())
-        return nullptr;
-
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
-}
-
-RefPtr<CSSValue> consumeViewTransitionName(CSSParserTokenRange& range)
-{
-    if (auto noneValue = consumeIdent<CSSValueNone>(range))
-        return noneValue;
-    if (isAuto(range.peek().id()))
-        return nullptr;
-    return consumeCustomIdent(range);
-}
-
 // MARK: - @-rule descriptor consumers:
 
 // MARK: @counter-style
@@ -2926,25 +2894,6 @@ RefPtr<CSSPrimitiveValue> consumeAnchor(CSSParserTokenRange& range, CSSParserMod
     range = rangeCopy;
     auto anchor = CSSAnchorValue::create(WTFMove(anchorElement), WTFMove(anchorSide), WTFMove(fallback));
     return CSSPrimitiveValue::create(anchor);
-}
-
-RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange& range)
-{
-    if (range.peek().id() == CSSValueNone)
-        return consumeIdent(range);
-
-    CSSValueListBuilder list;
-    do {
-        if (range.peek().id() == CSSValueNone)
-            return nullptr;
-        auto type = consumeCustomIdent(range);
-        if (!type)
-            return nullptr;
-        if (type->customIdent().startsWith("-ua-"_s))
-            return nullptr;
-        list.append(type.releaseNonNull());
-    } while (!range.atEnd());
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
 } // namespace CSSPropertyParserHelpers

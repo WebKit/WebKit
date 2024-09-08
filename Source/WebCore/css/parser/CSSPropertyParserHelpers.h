@@ -107,8 +107,6 @@ RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeScrollbarColor(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeScrollbarGutter(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeTextEdge(CSSPropertyID, CSSParserTokenRange&);
-RefPtr<CSSValue> consumeViewTransitionClass(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeViewTransitionName(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange&, CSSParserMode);
 bool consumeRadii(std::array<RefPtr<CSSValue>, 4>& horizontalRadii, std::array<RefPtr<CSSValue>, 4>& verticalRadii, CSSParserTokenRange&, CSSParserMode, bool useLegacyParsing);
 enum PathParsingOption : uint8_t { RejectRay = 1 << 0, RejectFillRule = 1 << 1 };
@@ -149,7 +147,6 @@ RefPtr<CSSValue> consumeTextSpacingTrim(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeTextUnderlinePosition(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSPrimitiveValue> consumeAnchor(CSSParserTokenRange&, CSSParserMode);
-RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange&);
 
 RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange&, const CSSParserContext&);
 
