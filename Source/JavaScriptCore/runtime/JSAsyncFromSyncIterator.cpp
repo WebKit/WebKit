@@ -71,22 +71,4 @@ JSC_DEFINE_HOST_FUNCTION(asyncFromSyncIteratorPrivateFuncCreate, (JSGlobalObject
     return JSValue::encode(asyncFromSyncIterator);
 }
 
-JSC_DEFINE_HOST_FUNCTION(asyncFromSyncIteratorPrivateFuncGetSyncIterator, (JSGlobalObject*, CallFrame* callFrame))
-{
-    ASSERT(callFrame->argument(0).isCell());
-
-    JSCell* cell = callFrame->uncheckedArgument(0).asCell();
-    JSAsyncFromSyncIterator* iterator = jsCast<JSAsyncFromSyncIterator*>(cell);
-    return JSValue::encode(iterator->syncIterator());
-}
-
-JSC_DEFINE_HOST_FUNCTION(asyncFromSyncIteratorPrivateFuncGetNextMethod, (JSGlobalObject*, CallFrame* callFrame))
-{
-    ASSERT(callFrame->argument(0).isCell());
-
-    JSCell* cell = callFrame->uncheckedArgument(0).asCell();
-    JSAsyncFromSyncIterator* iterator = jsCast<JSAsyncFromSyncIterator*>(cell);
-    return JSValue::encode(iterator->nextMethod());
-}
-
 } // namespace JSC

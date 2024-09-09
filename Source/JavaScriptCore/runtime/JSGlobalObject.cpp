@@ -1544,22 +1544,10 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::asyncFromSyncIteratorCreate)].initLater([](const Initializer<JSCell>& init) {
         init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "asyncFromSyncIteratorCreate"_s, asyncFromSyncIteratorPrivateFuncCreate, ImplementationVisibility::Private));
     });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::asyncFromSyncIteratorGetSyncIterator)].initLater([](const Initializer<JSCell>& init) {
-        init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "asyncFromSyncIteratorGetSyncIterator"_s, asyncFromSyncIteratorPrivateFuncGetSyncIterator, ImplementationVisibility::Private));
-    });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::asyncFromSyncIteratorGetNextMethod)].initLater([](const Initializer<JSCell>& init) {
-        init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "asyncFromSyncIteratorGetNextMethod"_s, asyncFromSyncIteratorPrivateFuncGetNextMethod, ImplementationVisibility::Private));
-    });
 
     if (Options::useIteratorHelpers()) {
         m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::wrapForValidIteratorCreate)].initLater([](const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "wrapForValidIteratorCreate"_s, wrapForValidIteratorPrivateFuncCreate, ImplementationVisibility::Private));
-        });
-        m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::wrapForValidIteratorGetIteratedIterator)].initLater([](const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "wrapForValidIteratorGetIteratedIterator"_s, wrapForValidIteratorPrivateFuncGetIteratedIterator, ImplementationVisibility::Private));
-        });
-        m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::wrapForValidIteratorGetIteratedNextMethod)].initLater([](const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "wrapForValidIteratorGetIteratedNextMethod"_s, wrapForValidIteratorPrivateFuncGetIteratedNextMethod, ImplementationVisibility::Private));
         });
     }
 

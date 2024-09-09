@@ -84,7 +84,5 @@ private:
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSWrapForValidIterator);
 
 JSC_DECLARE_HOST_FUNCTION(wrapForValidIteratorPrivateFuncCreate);
-JSC_DECLARE_HOST_FUNCTION(wrapForValidIteratorPrivateFuncGetIteratedIterator);
-JSC_DECLARE_HOST_FUNCTION(wrapForValidIteratorPrivateFuncGetIteratedNextMethod);
 
 } // namespace JSC

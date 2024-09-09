@@ -35,7 +35,7 @@ function next()
         @throwTypeError("%WrapForValidIteratorPrototype%.next requires that |this| be a WrapForValidIteratorPrototype object");
 
     // 4. Return ? Call(iteratorRecord.[[NextMethod]], iteratorRecord.[[Iterator]]).
-    return @wrapForValidIteratorGetIteratedNextMethod(this).@call(@wrapForValidIteratorGetIteratedIterator(this));
+    return @getWrapForValidIteratorInternalField(this, @wrapForValidIteratorFieldIteratedNextMethod).@call(@getWrapForValidIteratorInternalField(this, @wrapForValidIteratorFieldIteratedIterator));
 }
 
 // https://tc39.es/proposal-iterator-helpers/#sec-wrapforvaliditeratorprototype.return
@@ -50,7 +50,7 @@ function return()
         @throwTypeError("%WrapForValidIteratorPrototype%.next requires that |this| be a WrapForValidIteratorPrototype object");
 
     // 3. Let iterator be O.[[Iterated]].[[Iterator]].
-    var iterator = @wrapForValidIteratorGetIteratedIterator(this);
+    var iterator = @getWrapForValidIteratorInternalField(this, @wrapForValidIteratorFieldIteratedIterator);
     // 4. Assert: iterator is an Object.
     @assert(@isObject(iterator));
     // 5. Let returnMethod be ? GetMethod(iterator, "return").

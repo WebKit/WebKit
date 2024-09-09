@@ -221,11 +221,7 @@ namespace JSC {
     macro(indexOf) \
     macro(pop) \
     macro(wrapForValidIteratorCreate) \
-    macro(wrapForValidIteratorGetIteratedIterator) \
-    macro(wrapForValidIteratorGetIteratedNextMethod) \
     macro(asyncFromSyncIteratorCreate) \
-    macro(asyncFromSyncIteratorGetSyncIterator) \
-    macro(asyncFromSyncIteratorGetNextMethod) \
 
 
 namespace Symbols {

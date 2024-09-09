@@ -72,22 +72,4 @@ JSC_DEFINE_HOST_FUNCTION(wrapForValidIteratorPrivateFuncCreate, (JSGlobalObject*
     return JSValue::encode(wrapForValidIterator);
 }
 
-JSC_DEFINE_HOST_FUNCTION(wrapForValidIteratorPrivateFuncGetIteratedIterator, (JSGlobalObject*, CallFrame* callFrame))
-{
-    ASSERT(callFrame->argument(0).isCell());
-
-    JSCell* cell = callFrame->uncheckedArgument(0).asCell();
-    JSWrapForValidIterator* iterator = jsCast<JSWrapForValidIterator*>(cell);
-    return JSValue::encode(iterator->iteratedIterator());
-}
-
-JSC_DEFINE_HOST_FUNCTION(wrapForValidIteratorPrivateFuncGetIteratedNextMethod, (JSGlobalObject*, CallFrame* callFrame))
-{
-    ASSERT(callFrame->argument(0).isCell());
-
-    JSCell* cell = callFrame->uncheckedArgument(0).asCell();
-    JSWrapForValidIterator* iterator = jsCast<JSWrapForValidIterator*>(cell);
-    return JSValue::encode(iterator->iteratedNextMethod());
-}
-
 } // namespace JSC

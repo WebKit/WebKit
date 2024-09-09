@@ -84,7 +84,5 @@ private:
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSAsyncFromSyncIterator);
 
 JSC_DECLARE_HOST_FUNCTION(asyncFromSyncIteratorPrivateFuncCreate);
-JSC_DECLARE_HOST_FUNCTION(asyncFromSyncIteratorPrivateFuncGetSyncIterator);
-JSC_DECLARE_HOST_FUNCTION(asyncFromSyncIteratorPrivateFuncGetNextMethod);
 
 } // namespace JSC

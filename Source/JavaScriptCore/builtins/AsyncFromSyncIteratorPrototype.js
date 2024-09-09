@@ -54,13 +54,13 @@ function next(value)
 
     var promise = @newPromise();
 
-    if (!@isObject(this) || !@isObject(@asyncFromSyncIteratorGetSyncIterator(this))) {
+    if (!@isObject(this) || !@isObject(@getAsyncFromSyncIteratorInternalField(this, @asyncFromSyncIteratorFieldSyncIterator))) {
         @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, @makeTypeError('Iterator is not an object.'));
         return promise;
     }
 
-    var syncIterator = @asyncFromSyncIteratorGetSyncIterator(this);
-    var nextMethod = @asyncFromSyncIteratorGetNextMethod(this);
+    var syncIterator = @getAsyncFromSyncIteratorInternalField(this, @asyncFromSyncIteratorFieldSyncIterator);
+    var nextMethod = @getAsyncFromSyncIteratorInternalField(this, @asyncFromSyncIteratorFieldNextMethod);
 
     try {
         var nextResult = @argumentCount() === 0 ? nextMethod.@call(syncIterator) : nextMethod.@call(syncIterator, value);
@@ -79,12 +79,12 @@ function return(value)
 
     var promise = @newPromise();
 
-    if (!@isObject(this) || !@isObject(@asyncFromSyncIteratorGetSyncIterator(this))) {
+    if (!@isObject(this) || !@isObject(@getAsyncFromSyncIteratorInternalField(this, @asyncFromSyncIteratorFieldSyncIterator))) {
         @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, @makeTypeError('Iterator is not an object.'));
         return promise;
     }
 
-    var syncIterator = @asyncFromSyncIteratorGetSyncIterator(this);
+    var syncIterator = @getAsyncFromSyncIteratorInternalField(this, @asyncFromSyncIteratorFieldSyncIterator);
 
     var returnMethod;
 
@@ -123,12 +123,12 @@ function throw(exception)
 
     var promise = @newPromise();
 
-    if (!@isObject(this) || !@isObject(@asyncFromSyncIteratorGetSyncIterator(this))) {
+    if (!@isObject(this) || !@isObject(@getAsyncFromSyncIteratorInternalField(this, @asyncFromSyncIteratorFieldSyncIterator))) {
         @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, @makeTypeError('Iterator is not an object.'));
         return promise;
     }
 
-    var syncIterator = @asyncFromSyncIteratorGetSyncIterator(this);
+    var syncIterator = @getAsyncFromSyncIteratorInternalField(this, @asyncFromSyncIteratorFieldSyncIterator);
 
     var throwMethod;
 

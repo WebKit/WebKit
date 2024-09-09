@@ -49,6 +49,7 @@ enum class LinkTimeConstant : int32_t;
     macro(getPrototypeOf) \
     macro(getPromiseInternalField) \
     macro(getGeneratorInternalField) \
+    macro(getAsyncFromSyncIteratorInternalField) \
     macro(getAsyncGeneratorInternalField) \
     macro(getAbstractModuleRecordInternalField) \
     macro(getArrayIteratorInternalField) \
@@ -56,6 +57,7 @@ enum class LinkTimeConstant : int32_t;
     macro(getMapIteratorInternalField) \
     macro(getSetIteratorInternalField) \
     macro(getProxyInternalField) \
+    macro(getWrapForValidIteratorInternalField) \
     macro(idWithProfile) \
     macro(isObject) \
     macro(isCallable) \
@@ -173,7 +175,12 @@ enum class LinkTimeConstant : int32_t;
     macro(AsyncGeneratorSuspendReasonYield) \
     macro(AsyncGeneratorSuspendReasonAwait) \
     macro(AsyncGeneratorSuspendReasonNone) \
-    macro(abstractModuleRecordFieldState)
+    macro(asyncFromSyncIteratorFieldSyncIterator) \
+    macro(asyncFromSyncIteratorFieldNextMethod) \
+    macro(abstractModuleRecordFieldState) \
+    macro(wrapForValidIteratorFieldIteratedIterator) \
+    macro(wrapForValidIteratorFieldIteratedNextMethod) \
+
 
 #define JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_CUSTOM_EACH_NAME(macro) \
     macro(orderedHashTableSentinel)

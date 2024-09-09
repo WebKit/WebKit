@@ -33,6 +33,7 @@
 #include "BytecodeGenerator.h"
 #include "BytecodeGeneratorBaseInlines.h"
 #include "JSArrayIterator.h"
+#include "JSAsyncFromSyncIterator.h"
 #include "JSAsyncGenerator.h"
 #include "JSCInlines.h"
 #include "JSGenerator.h"
@@ -41,6 +42,7 @@
 #include "JSPromise.h"
 #include "JSSetIterator.h"
 #include "JSStringIterator.h"
+#include "JSWrapForValidIterator.h"
 #include "LabelScope.h"
 #include "LinkTimeConstant.h"
 #include "ModuleScopeData.h"
@@ -1629,6 +1631,28 @@ static ProxyObject::Field proxyInternalFieldIndex(BytecodeIntrinsicNode* node)
     return ProxyObject::Field::Target;
 }
 
+static JSAsyncFromSyncIterator::Field asyncFromSyncIteratorInternalFieldIndex(BytecodeIntrinsicNode* node)
+{
+    ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncFromSyncIteratorFieldSyncIterator)
+        return JSAsyncFromSyncIterator::Field::SyncIterator;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_asyncFromSyncIteratorFieldNextMethod)
+        return JSAsyncFromSyncIterator::Field::NextMethod;
+    RELEASE_ASSERT_NOT_REACHED();
+    return JSAsyncFromSyncIterator::Field::SyncIterator;
+}
+
+static JSWrapForValidIterator::Field wrapForValidIteratorInternalFieldIndex(BytecodeIntrinsicNode* node)
+{
+    ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_wrapForValidIteratorFieldIteratedIterator)
+        return JSWrapForValidIterator::Field::IteratedIterator;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_wrapForValidIteratorFieldIteratedNextMethod)
+        return JSWrapForValidIterator::Field::IteratedNextMethod;
+    RELEASE_ASSERT_NOT_REACHED();
+    return JSWrapForValidIterator::Field::IteratedNextMethod;
+}
+
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getPromiseInternalField(BytecodeGenerator& generator, RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;
@@ -1741,6 +1765,32 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getSetIteratorInternalField(By
     RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
     unsigned index = static_cast<unsigned>(setIteratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
     ASSERT(index < JSSetIterator::numberOfInternalFields);
+    ASSERT(!node->m_next);
+
+    return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getAsyncFromSyncIteratorInternalField(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+    RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
+    unsigned index = static_cast<unsigned>(asyncFromSyncIteratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
+    ASSERT(index < ProxyObject::numberOfInternalFields);
+    ASSERT(!node->m_next);
+
+    return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getWrapForValidIteratorInternalField(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+    RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
+    unsigned index = static_cast<unsigned>(wrapForValidIteratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
+    ASSERT(index < ProxyObject::numberOfInternalFields);
     ASSERT(!node->m_next);
 
     return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
