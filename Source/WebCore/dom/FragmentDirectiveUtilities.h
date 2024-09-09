@@ -31,6 +31,13 @@ namespace WebCore {
 
 class Node;
 
+struct ParsedTextDirective {
+    String prefix;
+    String startText;
+    String endText;
+    String suffix;
+};
+
 namespace FragmentDirectiveUtilities {
 
 const Node& nearestBlockAncestor(const Node&);

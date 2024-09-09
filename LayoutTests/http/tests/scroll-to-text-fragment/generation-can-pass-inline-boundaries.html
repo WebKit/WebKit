@@ -8,7 +8,7 @@ if (window.testRunner)
 
 window.addEventListener('load', () => {
     const range = document.createRange();
-    range.selectNode(document.body.getElementsByTagName("b")[0])
+    range.selectNode(document.body.getElementsByTagName("b")[0]);
     document.body.innerText = internals.textFragmentDirectiveForRange(range).split('#')[1];
 });
 </script>

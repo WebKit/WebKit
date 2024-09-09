@@ -50,6 +50,7 @@
 #include "FocusController.h"
 #include "FragmentDirectiveParser.h"
 #include "FragmentDirectiveRangeFinder.h"
+#include "FragmentDirectiveUtilities.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
