@@ -5580,6 +5580,8 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
 
         // Visibility and scrollability are input to canUseCompositedScrolling().
         if (m_scrollableArea) {
+            if (oldStyle->direction() != renderer().style().direction())
+                m_scrollableArea->invalidateScrollCornerRect({ });
             if (visibilityChanged || oldStyle->isOverflowVisible() != renderer().style().isOverflowVisible())
                 m_scrollableArea->computeHasCompositedScrollableOverflow(diff <= StyleDifference::RepaintLayer ? LayoutUpToDate::Yes : LayoutUpToDate::No);
         }
