@@ -123,29 +123,42 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
         return jsUndefined();
 
     JSValue program = callFrame->argument(0);
-    JSString* programString = nullptr;
-    if (LIKELY(program.isString()))
-        programString = asString(program);
-    else if (Options::useTrustedTypes()) {
-        auto code = globalObject->globalObjectMethodTable()->codeForEval(globalObject, program);
-        if (!code.isNull())
-            programString = jsString(vm, code);
+    String programSource = nullString();
+    bool isTrusted = false;
+    if (LIKELY(program.isString())) {
+        programSource = program.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, JSValue());
+    } else if (Options::useTrustedTypes() && program.isObject()) {
+        auto* structure = globalObject->trustedScriptStructure();
+        if (structure == asObject(program)->structure()) {
+            programSource = program.toWTFString(globalObject);
+            RETURN_IF_EXCEPTION(scope, JSValue());
+            isTrusted = true;
+        } else {
+            auto code = globalObject->globalObjectMethodTable()->codeForEval(globalObject, program);
+            RETURN_IF_EXCEPTION(scope, JSValue());
+            if (!code.isNull()) {
+                programSource = code;
+                isTrusted = true;
+            }
+        }
     }
 
-    if (!programString)
+    if (programSource.isNull())
         return program;
 
-    auto programSource = programString->value(globalObject);
-    RETURN_IF_EXCEPTION(scope, JSValue());
-
-    if (Options::useTrustedTypes() && globalObject->requiresTrustedTypes() && !globalObject->globalObjectMethodTable()->canCompileStrings(globalObject, CompilationType::DirectEval, programSource, program)) {
-        throwException(globalObject, scope, createEvalError(globalObject, "Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment."_s));
-        return { };
+    if (Options::useTrustedTypes() && globalObject->requiresTrustedTypes() && !isTrusted) {
+        bool canCompileStrings = globalObject->globalObjectMethodTable()->canCompileStrings(globalObject, CompilationType::DirectEval, programSource, *vm.emptyList);
+        RETURN_IF_EXCEPTION(scope, JSValue());
+        if (!canCompileStrings) {
+            throwException(globalObject, scope, createEvalError(globalObject, "Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment."_s));
+            return { };
+        }
     }
 
     TopCallFrameSetter topCallFrame(vm, callFrame);
     if (!globalObject->evalEnabled()) {
-        globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, programString);
+        globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, programSource);
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
         return { };
     }
@@ -172,13 +185,13 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
     DirectEvalExecutable* eval = callerBaselineCodeBlock->directEvalCodeCache().tryGet(programSource, bytecodeIndex);
     if (!eval) {
         if (!(lexicallyScopedFeatures & StrictModeLexicallyScopedFeature)) {
-            if (programSource->is8Bit()) {
-                LiteralParser preparser(globalObject, programSource->span8(), SloppyJSON, callerBaselineCodeBlock);
+            if (programSource.is8Bit()) {
+                LiteralParser preparser(globalObject, programSource.span8(), SloppyJSON, callerBaselineCodeBlock);
                 if (JSValue parsedObject = preparser.tryLiteralParse())
                     RELEASE_AND_RETURN(scope, parsedObject);
 
             } else {
-                LiteralParser preparser(globalObject, programSource->span16(), SloppyJSON, callerBaselineCodeBlock);
+                LiteralParser preparser(globalObject, programSource.span16(), SloppyJSON, callerBaselineCodeBlock);
                 if (JSValue parsedObject = preparser.tryLiteralParse())
                     RELEASE_AND_RETURN(scope, parsedObject);
 

@@ -49,6 +49,7 @@
 #include "JSReadableStream.h"
 #include "JSShadowRealmGlobalScope.h"
 #include "JSShadowRealmGlobalScopeBase.h"
+#include "JSTrustedScript.h"
 #include "JSWorkerGlobalScope.h"
 #include "JSWorkletGlobalScope.h"
 #include "JSWritableStream.h"
@@ -372,7 +373,17 @@ ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
     return nullptr;
 }
 
-bool JSDOMGlobalObject::canCompileStrings(JSGlobalObject* globalObject, CompilationType compilationType, String codeString, JSValue bodyArgument)
+String JSDOMGlobalObject::codeForEval(JSGlobalObject* globalObject, JSValue value)
+{
+    VM& vm = globalObject->vm();
+
+    if (auto* script = JSTrustedScript::toWrapped(vm, value))
+        return script->toString();
+
+    return nullString();
+}
+
+bool JSDOMGlobalObject::canCompileStrings(JSGlobalObject* globalObject, CompilationType compilationType, String codeString, const ArgList& args)
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -380,14 +391,25 @@ bool JSDOMGlobalObject::canCompileStrings(JSGlobalObject* globalObject, Compilat
     auto& thisObject = static_cast<JSDOMGlobalObject&>(*globalObject);
     auto* scriptExecutionContext = thisObject.scriptExecutionContext();
 
-    auto result = canCompile(*scriptExecutionContext, compilationType, codeString, bodyArgument);
+    auto result = canCompile(*scriptExecutionContext, compilationType, codeString, args);
 
     if (result.hasException()) {
-        propagateException(*globalObject, throwScope, result.releaseException());
+        // https://w3c.github.io/webappsec-csp/#can-compile-strings
+        // Step 2.7. If the algorithm throws an error, throw an EvalError.
+        // This clears the existing exceptions and returns false, where the caller throws an EvalError.
+        throwScope.clearException();
         RETURN_IF_EXCEPTION(throwScope, false);
+        return false;
     }
 
     return result.releaseReturnValue();
+}
+
+Structure* JSDOMGlobalObject::trustedScriptStructure(JSGlobalObject* globalObject)
+{
+    auto& thisObject = static_cast<JSDOMGlobalObject&>(*globalObject);
+
+    return getDOMStructure<JSTrustedScript>(globalObject->vm(), thisObject);
 }
 
 template<typename Visitor>

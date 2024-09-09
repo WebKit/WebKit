@@ -1,18 +1,33 @@
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
-FAIL Function constructor with mixed plain and trusted strings, mask #0 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
-FAIL Function constructor with mixed plain and trusted strings, mask #1 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
-FAIL Function constructor with mixed plain and trusted strings, mask #2 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
-FAIL Function constructor with mixed plain and trusted strings, mask #3 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
-FAIL Function constructor with mixed plain and trusted strings, mask #4 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
-FAIL Function constructor with mixed plain and trusted strings, mask #5 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
-FAIL Function constructor with mixed plain and trusted strings, mask #6 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
-FAIL Function constructor with mixed plain and trusted strings, mask #7 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
-FAIL Function constructor with mixed plain and trusted strings, mask #8 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
-FAIL Function constructor with mixed plain and trusted strings, mask #9 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
-FAIL Function constructor with mixed plain and trusted strings, mask #10 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
-FAIL Function constructor with mixed plain and trusted strings, mask #11 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
-FAIL Function constructor with mixed plain and trusted strings, mask #12 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
-FAIL Function constructor with mixed plain and trusted strings, mask #13 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
-FAIL Function constructor with mixed plain and trusted strings, mask #14 assert_throws_js: function "_ => new_function_with_maybe_trusted_args(mask)" did not throw
+PASS Function constructor with mixed plain and trusted strings, mask #0
+PASS Function constructor with mixed plain and trusted strings, mask #1
+PASS Function constructor with mixed plain and trusted strings, mask #2
+PASS Function constructor with mixed plain and trusted strings, mask #3
+PASS Function constructor with mixed plain and trusted strings, mask #4
+PASS Function constructor with mixed plain and trusted strings, mask #5
+PASS Function constructor with mixed plain and trusted strings, mask #6
+PASS Function constructor with mixed plain and trusted strings, mask #7
+PASS Function constructor with mixed plain and trusted strings, mask #8
+PASS Function constructor with mixed plain and trusted strings, mask #9
+PASS Function constructor with mixed plain and trusted strings, mask #10
+PASS Function constructor with mixed plain and trusted strings, mask #11
+PASS Function constructor with mixed plain and trusted strings, mask #12
+PASS Function constructor with mixed plain and trusted strings, mask #13
+PASS Function constructor with mixed plain and trusted strings, mask #14
 PASS Function constructor with mixed plain and trusted strings, mask #15
 

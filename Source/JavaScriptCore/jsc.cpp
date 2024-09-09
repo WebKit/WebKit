@@ -956,6 +956,7 @@ const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = {
     &deriveShadowRealmGlobalObject,
     &codeForEval,
     &canCompileStrings,
+    &trustedScriptStructure,
 };
 
 GlobalObject::GlobalObject(VM& vm, Structure* structure)

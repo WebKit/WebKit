@@ -31,6 +31,7 @@
 #include <JavaScriptCore/Lookup.h>
 #include <JavaScriptCore/ObjectConstructor.h>
 #include <JavaScriptCore/SlotVisitorInlines.h>
+#include <JavaScriptCore/Structure.h>
 #include <JavaScriptCore/StructureInlines.h>
 #include <JavaScriptCore/WriteBarrier.h>
 #include <cstddef>
@@ -79,9 +80,7 @@ public:
     static void queueMicrotaskToEventLoop(JSC::JSGlobalObject&, Ref<JSC::Microtask>&&);
     static JSC::JSObject* currentScriptExecutionOwner(JSC::JSGlobalObject*);
     static JSC::ScriptExecutionStatus scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
-    static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, JSC::JSString*);
-    static String codeForEval(JSC::JSGlobalObject*, JSC::JSValue);
-    static bool canCompileStrings(JSC::JSGlobalObject*, JSC::CompilationType, String, JSC::JSValue);
+    static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, const String&);
 
     void printErrorMessage(const String&) const;
 

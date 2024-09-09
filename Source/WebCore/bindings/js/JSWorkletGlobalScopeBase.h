@@ -58,9 +58,7 @@ public:
     static JSC::RuntimeFlags javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
     static JSC::ScriptExecutionStatus scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
     static void queueMicrotaskToEventLoop(JSC::JSGlobalObject&, Ref<JSC::Microtask>&&);
-    static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, JSC::JSString*);
-    static String codeForEval(JSC::JSGlobalObject*, JSC::JSValue);
-    static bool canCompileStrings(JSC::JSGlobalObject*, JSC::CompilationType, String, JSC::JSValue);
+    static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, const String&);
 
 protected:
     JSWorkletGlobalScopeBase(JSC::VM&, JSC::Structure*, RefPtr<WorkletGlobalScope>&&);

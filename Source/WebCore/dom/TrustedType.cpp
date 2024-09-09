@@ -38,6 +38,7 @@
 #include "WindowOrWorkerGlobalScopeTrustedTypes.h"
 #include "WorkerGlobalScope.h"
 #include "XLinkNames.h"
+#include <JavaScriptCore/ArgList.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -302,12 +303,36 @@ ExceptionOr<String> requireTrustedTypesForPreNavigationCheckPasses(ScriptExecuti
         : nullString());
 }
 
-ExceptionOr<bool> canCompile(ScriptExecutionContext& scriptExecutionContext, JSC::CompilationType compilationType, String codeString, JSC::JSValue bodyArgument)
+ExceptionOr<bool> canCompile(ScriptExecutionContext& scriptExecutionContext, JSC::CompilationType compilationType, String codeString, const JSC::ArgList& args)
 {
-    if (bodyArgument.isObject())
-        return JSTrustedScript::toWrapped(scriptExecutionContext.vm(), bodyArgument) ? true : false;
+    if (compilationType == CompilationType::Function) {
+        VM& vm = scriptExecutionContext.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
 
-    ASSERT(bodyArgument.isString());
+        bool isTrusted = true;
+
+        for (size_t i = 0; i < args.size(); i++) {
+            auto arg = args.at(i);
+            if (!arg.isObject()) {
+                isTrusted = false;
+                break;
+            }
+            if (auto trustedScript = JSTrustedScript::toWrapped(vm, arg)) {
+                if (!trustedScript || trustedScript->toString() != arg.toWTFString(scriptExecutionContext.globalObject())) {
+                    RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
+                    isTrusted = false;
+                    break;
+                }
+                RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
+            } else {
+                isTrusted = false;
+                break;
+            }
+        }
+
+        if (isTrusted)
+            return true;
+    }
 
     auto sink = compilationType == CompilationType::Function ? "Function"_s : "eval"_s;
 

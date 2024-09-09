@@ -146,9 +146,31 @@ JSObject* constructFunction(JSGlobalObject* globalObject, const ArgList& args, c
     auto code = stringifyFunction(globalObject, args, functionName, functionConstructionMode, scope, functionConstructorParametersEndPosition);
     EXCEPTION_ASSERT(!!scope.exception() == code.isNull());
 
+    if (Options::useTrustedTypes() && globalObject->requiresTrustedTypes()) {
+        bool isTrusted = true;
+        auto* structure = globalObject->trustedScriptStructure();
+        for (size_t i = 0; i < args.size(); i++) {
+            auto arg = args.at(i);
+
+            if (!arg.isObject() || structure != asObject(arg)->structure()) {
+                isTrusted = false;
+                break;
+            }
+        }
+
+        if (!isTrusted) {
+            bool canCompileStrings = globalObject->globalObjectMethodTable()->canCompileStrings(globalObject, CompilationType::Function, code, args);
+            RETURN_IF_EXCEPTION(scope, { });
+            if (!canCompileStrings) {
+                throwException(globalObject, scope, createEvalError(globalObject, "Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment."_s));
+                return nullptr;
+            }
+        }
+    }
+
     if (UNLIKELY(!globalObject->evalEnabled())) {
         scope.clearException();
-        globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, !code.isNull() ? jsNontrivialString(vm, WTFMove(code)) : nullptr);
+        globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, !code.isNull() ? WTFMove(code) : nullString());
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
         return nullptr;
     }
