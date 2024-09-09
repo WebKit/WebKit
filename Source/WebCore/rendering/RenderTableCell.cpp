@@ -1365,6 +1365,26 @@ static LayoutRect backgroundRectForSection(const RenderTableSection& tableSectio
     return rect;
 }
 
+static LayoutRect backgroundRectForCol(const RenderTableCol& tableCol, const RenderTable& table)
+{
+    unsigned colStart = table.effectiveIndexOfColumn(tableCol);
+    unsigned colEnd = table.effectiveColumnAfter(colStart, table.spanOfColumn(tableCol));
+    unsigned numCols = table.numEffCols();
+    if (colStart >= numCols || colStart >= colEnd)
+        return { };
+
+    auto hSpacing = table.hBorderSpacing();
+    auto inlineStart = hSpacing + table.columnPositions()[colStart];
+    auto inlineLength = table.columnPositions()[colEnd] - inlineStart;
+    auto blockLength = table.columnBlockLength();
+    if (!table.style().isLeftToRightDirection())
+        inlineStart = hSpacing + table.columnPositions()[numCols] - (inlineStart + inlineLength);
+
+    if (table.isHorizontalWritingMode())
+        return { inlineStart, 0, inlineLength, blockLength };
+    return { 0, inlineStart, blockLength, inlineLength };
+}
+
 void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, LayoutPoint paintOffset, RenderBox* backgroundObject, LayoutPoint backgroundPaintOffset)
 {
     ASSERT(backgroundObject);
@@ -1399,10 +1419,12 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, LayoutPoi
         // row or row group. Draw them as sized for that element, but clipped
         // to this cell.
         // FIXME: This should also apply to columns and column groups.
-        if (bgLayer.hasImage() && !is<RenderTableCol>(backgroundObject)) {
+        if (bgLayer.hasImage()) {
             LayoutRect imageRect;
             if (auto* tableSectionRenderer = dynamicDowncast<RenderTableSection>(backgroundObject))
                 imageRect = backgroundRectForSection(*tableSectionRenderer, *tableElt);
+            else if (auto* tableColRenderer = dynamicDowncast<RenderTableCol>(backgroundObject))
+                imageRect = backgroundRectForCol(*tableColRenderer, *tableElt);
             else
                 imageRect = backgroundRectForRow(*backgroundObject, *tableElt);
             imageRect.moveBy(backgroundPaintOffset);
