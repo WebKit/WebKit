@@ -111,8 +111,9 @@ hr {
     border-width: 1px;
 }
 
+/* FIXME: webkit.org/b/230083 - Remove `-webkit-` from below.  */
 abbr[title], acronym[title] {
-    text-decoration: dotted underline;
+    -webkit-text-decoration: dotted underline;
 }
 
 /* ::backdrop */
