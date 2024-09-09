@@ -51,11 +51,13 @@
 
 static const size_t kLowPowerVideoBufferSize = 4096;
 
+#if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
 // FIXME (135444366): Remove staging code once -suppressPresentationOverBundleIdentifiers: is available in SDKs
 @protocol WKStagedNowPlayingActivityUIControllable <MRNowPlayingActivityUIControllable>
 @optional
 - (void)suppressPresentationOverBundleIdentifiers:(NSSet *)bundleIdentifiers;
 @end
+#endif
 
 namespace WebCore {
 
