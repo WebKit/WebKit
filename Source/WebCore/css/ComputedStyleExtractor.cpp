@@ -1259,7 +1259,7 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
         CSSValueListBuilder repeatedValues;
         for (auto& entry : repeat.list)
             repeatVisitor(repeatedValues, entry);
-        list.append(CSSGridIntegerRepeatValue::create(repeat.repeats, WTFMove(repeatedValues)));
+        list.append(CSSGridIntegerRepeatValue::create(CSSPrimitiveValue::createInteger(repeat.repeats), WTFMove(repeatedValues)));
     }, [&](const GridTrackEntryAutoRepeat& repeat) {
         CSSValueListBuilder repeatedValues;
         for (auto& entry : repeat.list)

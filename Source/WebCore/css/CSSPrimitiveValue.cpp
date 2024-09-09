@@ -1093,12 +1093,6 @@ double CSSPrimitiveValue::doubleValue(const CSSToLengthConversionData& conversio
     return isCalculated() ? m_value.calc->doubleValue(conversionData, { }) : m_value.number;
 }
 
-double CSSPrimitiveValue::doubleValueNoConversionDataRequired() const
-{
-    ASSERT(!isCalculated());
-    return m_value.number;
-}
-
 double CSSPrimitiveValue::doubleValueDeprecated() const
 {
     return isCalculated() ? m_value.calc->doubleValueDeprecated({ }) : m_value.number;

@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
 
 namespace WebCore {
@@ -44,17 +45,26 @@ namespace WebCore {
 //                          [ <line-names>? <fixed-size> ]+ <line-names>? )
 class CSSGridIntegerRepeatValue final : public CSSValueContainingVector {
 public:
-    static Ref<CSSGridIntegerRepeatValue> create(size_t repetitions, CSSValueListBuilder);
+    static Ref<CSSGridIntegerRepeatValue> create(Ref<CSSPrimitiveValue>&& repetitions, CSSValueListBuilder);
 
-    size_t repetitions() const { return m_repetitions; }
+    const CSSPrimitiveValue& repetitions() const { return m_repetitions; }
 
     String customCSSText() const;
     bool equals(const CSSGridIntegerRepeatValue&) const;
 
-private:
-    CSSGridIntegerRepeatValue(size_t repetitions, CSSValueListBuilder);
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (CSSValueContainingVector::customVisitChildren(func) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (func(m_repetitions.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        return IterationStatus::Continue;
+    }
 
-    size_t m_repetitions;
+private:
+    CSSGridIntegerRepeatValue(Ref<CSSPrimitiveValue>&& repetitions, CSSValueListBuilder);
+
+    Ref<CSSPrimitiveValue> m_repetitions;
 };
 
 } // namespace WebCore

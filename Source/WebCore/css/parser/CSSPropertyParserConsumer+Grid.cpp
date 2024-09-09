@@ -301,16 +301,13 @@ static bool consumeGridTrackRepeatFunction(CSSParserTokenRange& range, CSSParser
 
     CSSValueListBuilder repeatedValues;
 
-    // The number of repetitions for <auto-repeat> is not important at parsing level
-    // because it will be computed later, let's set it to 1.
-    size_t repetitions = 1;
+    RefPtr<CSSPrimitiveValue> repetitions;
     auto autoRepeatType = consumeIdentRaw<CSSValueAutoFill, CSSValueAutoFit>(args);
     isAutoRepeat = autoRepeatType.has_value();
     if (!isAutoRepeat) {
-        auto repetition = consumePositiveIntegerRaw(args);
-        if (!repetition)
+        repetitions = consumePositiveInteger(args);
+        if (!repetitions)
             return false;
-        repetitions = clampTo<size_t>(static_cast<size_t>(*repetition), 0, GridPosition::max());
     }
     if (!consumeCommaIncludingWhitespace(args))
         return false;
@@ -336,9 +333,10 @@ static bool consumeGridTrackRepeatFunction(CSSParserTokenRange& range, CSSParser
     if (isAutoRepeat)
         list.append(CSSGridAutoRepeatValue::create(*autoRepeatType, WTFMove(repeatedValues)));
     else {
-        // We clamp the repetitions to a multiple of the repeat() track list's size, while staying below the max grid size.
-        repetitions = std::min(repetitions, GridPosition::max() / numberOfTracks);
-        list.append(CSSGridIntegerRepeatValue::create(repetitions, WTFMove(repeatedValues)));
+        auto maxRepetitions = GridPosition::max() / numberOfTracks;
+        if (auto repetitionsInteger = repetitions->resolveAsIntegerIfNotCalculated(); repetitionsInteger && repetitionsInteger > maxRepetitions)
+            repetitions = CSSPrimitiveValue::createInteger(maxRepetitions);
+        list.append(CSSGridIntegerRepeatValue::create(repetitions.releaseNonNull(), WTFMove(repeatedValues)));
     }
     return true;
 }
@@ -346,13 +344,14 @@ static bool consumeGridTrackRepeatFunction(CSSParserTokenRange& range, CSSParser
 static bool consumeSubgridNameRepeatFunction(CSSParserTokenRange& range, CSSValueListBuilder& list, bool& isAutoRepeat)
 {
     CSSParserTokenRange args = consumeFunction(range);
-    size_t repetitions = 1;
+    RefPtr<CSSPrimitiveValue> repetitions;
     isAutoRepeat = consumeIdentRaw<CSSValueAutoFill>(args).has_value();
     if (!isAutoRepeat) {
-        auto repetition = consumePositiveIntegerRaw(args);
-        if (!repetition)
+        repetitions = consumePositiveInteger(args);
+        if (!repetitions)
             return false;
-        repetitions = clampTo<size_t>(static_cast<size_t>(*repetition), 0, GridPosition::max());
+        if (auto repetitionsInteger = repetitions->resolveAsIntegerIfNotCalculated(); repetitionsInteger && repetitionsInteger > GridPosition::max())
+            repetitions = CSSPrimitiveValue::createInteger(GridPosition::max());
     }
     if (!consumeCommaIncludingWhitespace(args))
         return false;
@@ -368,7 +367,7 @@ static bool consumeSubgridNameRepeatFunction(CSSParserTokenRange& range, CSSValu
     if (isAutoRepeat)
         list.append(CSSGridAutoRepeatValue::create(CSSValueAutoFill, WTFMove(repeatedValues)));
     else
-        list.append(CSSGridIntegerRepeatValue::create(repetitions, WTFMove(repeatedValues)));
+        list.append(CSSGridIntegerRepeatValue::create(repetitions.releaseNonNull(), WTFMove(repeatedValues)));
     return true;
 }
 

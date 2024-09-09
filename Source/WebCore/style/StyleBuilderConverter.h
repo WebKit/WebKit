@@ -1275,11 +1275,8 @@ inline std::optional<GridTrackList> BuilderConverter::createGridTrackList(Builde
     };
 
     auto addOne = [&](const CSSValue& currentValue) {
-        if (auto* lineNamesValue = dynamicDowncast<CSSGridLineNamesValue>(currentValue)) {
-            Vector<String> names;
-            for (auto& namedGridLineValue : lineNamesValue->names())
-                names.append(namedGridLineValue);
-            trackList.list.append(WTFMove(names));
+        if (auto* namesValue = dynamicDowncast<CSSGridLineNamesValue>(currentValue)) {
+            trackList.list.append(Vector<String>(namesValue->names()));
             return;
         }
 
@@ -1295,14 +1292,15 @@ inline std::optional<GridTrackList> BuilderConverter::createGridTrackList(Builde
             buildRepeatList(currentValue, repeat.list);
             trackList.list.append(WTFMove(repeat));
         } else if (auto* repeatValue = dynamicDowncast<CSSGridIntegerRepeatValue>(currentValue)) {
+            auto repetitions = clampTo(repeatValue->repetitions().resolveAsInteger(builderState.cssToLengthConversionData()), 1, GridPosition::max());
+
             GridTrackEntryRepeat repeat;
-            repeat.repeats = repeatValue->repetitions();
+            repeat.repeats = repetitions;
 
             buildRepeatList(currentValue, repeat.list);
             trackList.list.append(WTFMove(repeat));
-        } else {
+        } else
             trackList.list.append(createGridTrackSize(builderState, currentValue));
-        }
     };
 
     if (!valueList)

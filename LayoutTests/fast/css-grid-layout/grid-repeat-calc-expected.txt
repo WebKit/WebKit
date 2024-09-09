@@ -5,8 +5,17 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS testDiv.style['grid-template-rows'] is ""
 testDiv.style['grid-template-rows'] = 'repeat(calc(1 + 1), 18px)'
-PASS testDiv.style['grid-template-rows'] is "repeat(2, 18px)"
+PASS testDiv.style['grid-template-rows'] is "repeat(calc(2), 18px)"
 PASS window.getComputedStyle(testDiv).getPropertyValue('grid-template-rows') is "repeat(2, 18px)"
+testDiv.style['grid-template-rows'] = 'repeat(calc(-1), 18px)'
+PASS testDiv.style['grid-template-rows'] is "repeat(calc(-1), 18px)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('grid-template-rows') is "repeat(1, 18px)"
+testDiv.style['grid-template-rows'] = 'repeat(calc(2.2), 18px)'
+PASS testDiv.style['grid-template-rows'] is "repeat(calc(2.2), 18px)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('grid-template-rows') is "repeat(2, 18px)"
+testDiv.style['grid-template-rows'] = 'repeat(calc(10 + (sign(20cqw - 10px)) * 5), 18px)'
+PASS testDiv.style['grid-template-rows'] is "repeat(calc(10 + (5 * sign(20cqw - 10px))), 18px)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('grid-template-rows') is "repeat(5, 18px)"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,17 +1,31 @@
 <!DOCTYPE html>
 <body>
 <script src="../../resources/js-test-pre.js"></script>
+<div style="container-type: inline-size; width: 10px;">
 <div id="testDiv" style="width: 400px; height: 400px"></div>
+</div>
 <script>
 description("Tests using calculated value in function() for 'grid-template-rows' CSS property works.");
 
 var testDiv = document.getElementById("testDiv");
-//grid-template-rows: repeat(1, 18px);
-// grid-template-columns: repeat(1, 15%);
+
 shouldBeEmptyString("testDiv.style['grid-template-rows']");
+
 evalAndLog("testDiv.style['grid-template-rows'] = 'repeat(calc(1 + 1), 18px)'");
-shouldBeEqualToString("testDiv.style['grid-template-rows']", "repeat(2, 18px)");
+shouldBeEqualToString("testDiv.style['grid-template-rows']", "repeat(calc(2), 18px)");
 shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('grid-template-rows')", "repeat(2, 18px)");
+
+evalAndLog("testDiv.style['grid-template-rows'] = 'repeat(calc(-1), 18px)'");
+shouldBeEqualToString("testDiv.style['grid-template-rows']", "repeat(calc(-1), 18px)");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('grid-template-rows')", "repeat(1, 18px)");
+
+evalAndLog("testDiv.style['grid-template-rows'] = 'repeat(calc(2.2), 18px)'");
+shouldBeEqualToString("testDiv.style['grid-template-rows']", "repeat(calc(2.2), 18px)");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('grid-template-rows')", "repeat(2, 18px)");
+
+evalAndLog("testDiv.style['grid-template-rows'] = 'repeat(calc(10 + (sign(20cqw - 10px)) * 5), 18px)'");
+shouldBeEqualToString("testDiv.style['grid-template-rows']", "repeat(calc(10 + (5 * sign(20cqw - 10px))), 18px)");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('grid-template-rows')", "repeat(5, 18px)");
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

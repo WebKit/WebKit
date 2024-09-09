@@ -156,7 +156,7 @@ public:
 
     ~CSSPrimitiveValue();
 
-    CSSUnitType primitiveType() const;
+    WEBCORE_EXPORT CSSUnitType primitiveType() const;
 
     // Exposed for DeprecatedCSSOMPrimitiveValue. Throws if conversion to `targetUnit` is not allowed.
     ExceptionOr<float> getFloatValueDeprecated(CSSUnitType targetUnit) const;
@@ -279,7 +279,7 @@ private:
 
     // MARK: Non-converting
     double doubleValue(const CSSToLengthConversionData&) const;
-    double doubleValueNoConversionDataRequired() const;
+    double doubleValueNoConversionDataRequired() const { ASSERT(!isCalculated()); return m_value.number; }
     double doubleValueDeprecated() const;
     double doubleValueDividingBy100IfPercentage(const CSSToLengthConversionData&) const;
     double doubleValueDividingBy100IfPercentageNoConversionDataRequired() const;
