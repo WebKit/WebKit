@@ -78,6 +78,7 @@ public:
     GPU* gpu();
 
     Document* document();
+    RefPtr<Document> protectedDocument();
 
     void setAppBadge(std::optional<unsigned long long>, Ref<DeferredPromise>&&);
     void clearAppBadge(Ref<DeferredPromise>&&);

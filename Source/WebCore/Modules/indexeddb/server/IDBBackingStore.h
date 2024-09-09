@@ -29,7 +29,9 @@
 #include "IDBError.h"
 #include "IDBObjectStoreIdentifier.h"
 #include "IndexKey.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -56,7 +58,9 @@ enum class IndexRecordType : bool;
 
 namespace IDBServer {
 
-class IDBBackingStore {
+class IDBBackingStore : public CanMakeThreadSafeCheckedPtr<IDBBackingStore> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(IDBBackingStore);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IDBBackingStore);
 public:
     virtual ~IDBBackingStore() { RELEASE_ASSERT(!isMainThread()); }
 

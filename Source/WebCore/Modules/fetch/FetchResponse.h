@@ -174,7 +174,7 @@ private:
         void didReceiveResponse(const ResourceResponse&) final;
         void didReceiveData(const SharedBuffer&) final;
 
-        FetchResponse& m_response;
+        WeakRef<FetchResponse> m_response;
         NotificationCallback m_responseCallback;
         ConsumeDataByChunkCallback m_consumeDataCallback;
         std::unique_ptr<FetchLoader> m_loader;

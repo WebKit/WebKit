@@ -73,7 +73,7 @@ public:
 
     SQLiteDatabase* sqliteDatabase() const;
     SQLiteTransaction* sqliteTransaction() const { return m_sqliteTransaction.get(); }
-    SQLiteIDBBackingStore& backingStore() { return m_backingStore; }
+    SQLiteIDBBackingStore& backingStore() { return m_backingStore.get(); }
 
     void addBlobFile(const String& temporaryPath, const String& storedFilename);
     void addRemovedBlobFile(const String& removedFilename);
@@ -88,7 +88,7 @@ private:
 
     IDBTransactionInfo m_info;
 
-    SQLiteIDBBackingStore& m_backingStore;
+    CheckedRef<SQLiteIDBBackingStore> m_backingStore;
     CheckedPtr<SQLiteDatabase> m_sqliteDatabase;
     std::unique_ptr<SQLiteTransaction> m_sqliteTransaction;
     HashMap<IDBResourceIdentifier, std::unique_ptr<SQLiteIDBCursor>> m_cursors;

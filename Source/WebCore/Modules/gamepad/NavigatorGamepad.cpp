@@ -76,7 +76,7 @@ Ref<Gamepad> NavigatorGamepad::gamepadFromPlatformGamepad(PlatformGamepad& platf
 {
     unsigned index = platformGamepad.index();
     if (index >= m_gamepads.size() || !m_gamepads[index])
-        return Gamepad::create(m_navigator.document(), platformGamepad);
+        return Gamepad::create(m_navigator->protectedDocument().get(), platformGamepad);
 
     return *m_gamepads[index];
 }
@@ -125,7 +125,7 @@ Seconds NavigatorGamepad::gamepadsRecentlyAccessedThreshold()
 
 const Vector<RefPtr<Gamepad>>& NavigatorGamepad::gamepads()
 {
-    if (RefPtr frame = m_navigator.frame()) {
+    if (RefPtr frame = m_navigator->frame()) {
         if (RefPtr page = frame->protectedPage())
             page->gamepadsRecentlyAccessed();
     }
@@ -157,7 +157,7 @@ void NavigatorGamepad::gamepadsBecameVisible()
         if (!platformGamepads[i])
             continue;
 
-        m_gamepads[i] = Gamepad::create(m_navigator.document(), *platformGamepads[i]);
+        m_gamepads[i] = Gamepad::create(m_navigator->protectedDocument().get(), *platformGamepads[i]);
     }
 }
 
@@ -176,9 +176,9 @@ void NavigatorGamepad::gamepadConnected(PlatformGamepad& platformGamepad)
     ASSERT(index <= m_gamepads.size());
 
     if (index < m_gamepads.size())
-        m_gamepads[index] = Gamepad::create(m_navigator.document(), platformGamepad);
+        m_gamepads[index] = Gamepad::create(m_navigator->protectedDocument().get(), platformGamepad);
     else if (index == m_gamepads.size())
-        m_gamepads.append(Gamepad::create(m_navigator.document(), platformGamepad));
+        m_gamepads.append(Gamepad::create(m_navigator->protectedDocument().get(), platformGamepad));
 }
 
 void NavigatorGamepad::gamepadDisconnected(PlatformGamepad& platformGamepad)
@@ -195,7 +195,7 @@ void NavigatorGamepad::gamepadDisconnected(PlatformGamepad& platformGamepad)
 
 RefPtr<Page> NavigatorGamepad::protectedPage() const
 {
-    RefPtr frame = m_navigator.frame();
+    RefPtr frame = m_navigator->frame();
     return frame ? frame->protectedPage() : nullptr;
 }
 

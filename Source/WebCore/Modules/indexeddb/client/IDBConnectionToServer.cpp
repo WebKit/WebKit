@@ -57,6 +57,8 @@ IDBConnectionToServer::IDBConnectionToServer(IDBConnectionToServerDelegate& dele
 {
 }
 
+IDBConnectionToServer::~IDBConnectionToServer() = default;
+
 IDBConnectionIdentifier IDBConnectionToServer::identifier() const
 {
     return m_delegate->identifier();

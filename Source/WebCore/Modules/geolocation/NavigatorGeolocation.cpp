@@ -76,7 +76,7 @@ Geolocation* NavigatorGeolocation::geolocation(Navigator& navigator)
 Geolocation* NavigatorGeolocation::geolocation() const
 {
     if (!m_geolocation)
-        m_geolocation = Geolocation::create(m_navigator);
+        m_geolocation = Geolocation::create(Ref { m_navigator.get() });
     return m_geolocation.get();
 }
 

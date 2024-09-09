@@ -99,7 +99,7 @@ void SQLiteIDBTransaction::moveBlobFilesIfNecessary()
 {
     ASSERT(!isReadOnly());
 
-    String databaseDirectory = m_backingStore.databaseDirectory();
+    String databaseDirectory = m_backingStore->databaseDirectory();
     for (auto& entry : m_blobTemporaryAndStoredFilenames) {
         if (!FileSystem::hardLinkOrCopyFile(entry.first, FileSystem::pathByAppendingComponent(databaseDirectory, entry.second)))
             LOG_ERROR("Failed to link/copy temporary blob file '%s' to location '%s'", entry.first.utf8().data(), FileSystem::pathByAppendingComponent(databaseDirectory, entry.second).utf8().data());
@@ -117,7 +117,7 @@ void SQLiteIDBTransaction::deleteBlobFilesIfNecessary()
     if (m_blobRemovedFilenames.isEmpty())
         return;
 
-    String databaseDirectory = m_backingStore.databaseDirectory();
+    String databaseDirectory = m_backingStore->databaseDirectory();
     for (auto& entry : m_blobRemovedFilenames) {
         String fullPath = FileSystem::pathByAppendingComponent(databaseDirectory, entry);
 
@@ -197,7 +197,7 @@ void SQLiteIDBTransaction::closeCursor(SQLiteIDBCursor& cursor)
 
     ASSERT(m_cursors.contains(cursor.identifier()));
 
-    m_backingStore.unregisterCursor(cursor);
+    m_backingStore->unregisterCursor(cursor);
     m_cursors.remove(cursor.identifier());
 }
 
@@ -219,7 +219,7 @@ void SQLiteIDBTransaction::notifyCursorsOfChanges(IDBObjectStoreIdentifier objec
 void SQLiteIDBTransaction::clearCursors()
 {
     for (auto& cursor : m_cursors.values())
-        m_backingStore.unregisterCursor(*cursor);
+        m_backingStore->unregisterCursor(*cursor);
 
     m_cursors.clear();
 }

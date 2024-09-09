@@ -393,6 +393,11 @@ Document* Navigator::document()
     return frame ? frame->document() : nullptr;
 }
 
+RefPtr<Document> Navigator::protectedDocument()
+{
+    return document();
+}
+
 void Navigator::setAppBadge(std::optional<unsigned long long> badge, Ref<DeferredPromise>&& promise)
 {
     RefPtr frame = this->frame();

@@ -28,6 +28,7 @@
 #if ENABLE(GAMEPAD)
 
 #include "Supplementable.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -80,7 +81,7 @@ private:
 
     const Vector<RefPtr<Gamepad>>& gamepads();
 
-    Navigator& m_navigator;
+    CheckedRef<Navigator> m_navigator;
     Vector<RefPtr<Gamepad>> m_gamepads;
 };
 

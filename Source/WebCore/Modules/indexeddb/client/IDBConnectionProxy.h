@@ -138,9 +138,9 @@ private:
     void callConnectionOnMainThread(void (IDBConnectionToServer::*method)(Parameters...), Arguments&&... arguments)
     {
         if (isMainThread())
-            (m_connectionToServer.*method)(std::forward<Arguments>(arguments)...);
+            (m_connectionToServer.get().*method)(std::forward<Arguments>(arguments)...);
         else
-            postMainThreadTask(m_connectionToServer, method, arguments...);
+            postMainThreadTask(m_connectionToServer.get(), method, arguments...);
     }
 
     template<typename... Arguments>
@@ -155,7 +155,7 @@ private:
     void scheduleMainThreadTasks();
     void handleMainThreadTasks();
 
-    IDBConnectionToServer& m_connectionToServer;
+    CheckedRef<IDBConnectionToServer> m_connectionToServer;
     IDBConnectionIdentifier m_serverConnectionIdentifier;
 
     Lock m_databaseConnectionMapLock;

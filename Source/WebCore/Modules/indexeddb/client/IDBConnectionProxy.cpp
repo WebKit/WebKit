@@ -56,12 +56,12 @@ IDBConnectionProxy::IDBConnectionProxy(IDBConnectionToServer& connection)
 
 void IDBConnectionProxy::ref()
 {
-    m_connectionToServer.ref();
+    m_connectionToServer->ref();
 }
 
 void IDBConnectionProxy::deref()
 {
-    m_connectionToServer.deref();
+    m_connectionToServer->deref();
 }
 
 Ref<IDBOpenDBRequest> IDBConnectionProxy::openDatabase(ScriptExecutionContext& context, const IDBDatabaseIdentifier& databaseIdentifier, uint64_t version)
@@ -490,7 +490,7 @@ void IDBConnectionProxy::scheduleMainThreadTasks()
     if (m_mainThreadProtector)
         return;
 
-    m_mainThreadProtector = &m_connectionToServer;
+    m_mainThreadProtector = m_connectionToServer.ptr();
     callOnMainThread([this] {
         handleMainThreadTasks();
     });

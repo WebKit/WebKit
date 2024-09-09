@@ -30,9 +30,11 @@
 #include "IDBCursorDirection.h"
 #include "IDBKeyPath.h"
 #include "IDBObjectStoreInfo.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Lock.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakRef.h>
 
 namespace JSC {
 class CallFrame;
@@ -50,6 +52,7 @@ class IDBKeyRange;
 class IDBRequest;
 class IDBTransaction;
 class SerializedScriptValue;
+class WeakPtrImplWithEventTargetData;
 class WebCoreOpaqueRoot;
 
 struct IDBKeyRangeData;
@@ -58,8 +61,9 @@ namespace IndexedDB {
 enum class ObjectStoreOverwriteMode : uint8_t;
 }
 
-class IDBObjectStore final : public ActiveDOMObject {
+class IDBObjectStore final : public ActiveDOMObject, public CanMakeCheckedPtr<IDBObjectStore> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(IDBObjectStore);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IDBObjectStore);
 public:
     static UniqueRef<IDBObjectStore> create(ScriptExecutionContext&, const IDBObjectStoreInfo&, IDBTransaction&);
     ~IDBObjectStore();
@@ -134,8 +138,8 @@ private:
     IDBObjectStoreInfo m_originalInfo;
 
     // IDBObjectStore objects are always owned by their referencing IDBTransaction.
-    // ObjectStores will never outlive transactions so its okay to keep a raw C++ reference here.
-    IDBTransaction& m_transaction;
+    // ObjectStores will never outlive transactions so its okay to keep a WeakRef here.
+    WeakRef<IDBTransaction, WeakPtrImplWithEventTargetData> m_transaction;
 
     bool m_deleted { false };
 

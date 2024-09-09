@@ -28,6 +28,7 @@
 #include "IDBCursorInfo.h"
 #include "IndexValueStore.h"
 #include "MemoryCursor.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -48,7 +49,9 @@ private:
     void currentData(IDBGetResult&) final;
     void iterate(const IDBKeyData&, const IDBKeyData& primaryKey, uint32_t count, IDBGetResult&) final;
 
-    MemoryIndex& m_index;
+    Ref<MemoryIndex> protectedIndex() const;
+
+    CheckedRef<MemoryIndex> m_index;
 
     IndexValueStore::Iterator m_currentIterator;
     IDBKeyData m_currentKey;
