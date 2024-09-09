@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Supplementable.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -48,7 +49,7 @@ private:
     static ASCIILiteral supplementName();
 
     RefPtr<Clipboard> m_clipboard;
-    Navigator& m_navigator;
+    CheckedRef<Navigator> m_navigator;
 };
 
 }

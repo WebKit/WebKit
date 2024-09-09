@@ -50,7 +50,7 @@ void NavigatorCookieConsent::requestCookieConsent(RequestCookieConsentOptions&& 
     // FIXME: Support the 'More info' option.
     UNUSED_PARAM(options);
 
-    RefPtr frame = m_navigator.frame();
+    RefPtr frame = m_navigator->frame();
     if (!frame || !frame->isMainFrame() || !frame->page()) {
         promise->reject(ExceptionCode::NotAllowedError);
         return;

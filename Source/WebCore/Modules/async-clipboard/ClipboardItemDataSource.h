@@ -51,7 +51,7 @@ public:
     virtual void collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&&) = 0;
 
 protected:
-    ClipboardItem& m_item;
+    WeakRef<ClipboardItem> m_item;
 };
 
 } // namespace WebCore

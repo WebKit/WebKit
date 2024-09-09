@@ -151,6 +151,7 @@ private:
 
     class Loader final : public FetchLoaderClient {
         WTF_MAKE_TZONE_ALLOCATED(Loader);
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Loader);
     public:
         Loader(FetchResponse&, NotificationCallback&&);
         ~Loader();

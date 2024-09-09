@@ -26,6 +26,7 @@
 #include "ScriptWrappable.h"
 #include "ShareData.h"
 #include "Supplementable.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -46,6 +47,7 @@ class Navigator final
 #endif
 {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Navigator);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Navigator);
 public:
     static Ref<Navigator> create(ScriptExecutionContext* context, LocalDOMWindow& window) { return adoptRef(*new Navigator(context, window)); }
     virtual ~Navigator();

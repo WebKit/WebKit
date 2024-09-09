@@ -38,6 +38,7 @@
 #include "FetchLoaderClient.h"
 #include "ResourceError.h"
 #include "SharedBuffer.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -119,6 +120,9 @@ private:
     bool virtualHasPendingActivity() const final;
 
     struct BlobLoader final : FetchLoaderClient {
+        WTF_MAKE_TZONE_ALLOCATED(BlobLoader);
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(BlobLoader);
+    public:
         BlobLoader(FetchBodyOwner&);
 
         // FetchLoaderClient API
