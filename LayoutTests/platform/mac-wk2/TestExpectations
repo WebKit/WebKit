@@ -1852,3 +1852,6 @@ imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.
 
 # webkit.org/b/279140 [ macOS wk2 ] REGRESSION (283140@main): [ macOS wk2 ] fast/scrolling/mac/scrollbars/scrollbar-state.html is a constant failure 
 fast/scrolling/mac/scrollbars/scrollbar-state.html [ Failure ] 
+
+# webkit.org/b/279359 http/wpt/mediastream/mediastreamtrackprocessor-videoframe-timestamp.html  is asserting on debug
+[ Sonoma+ Debug ] http/wpt/mediastream/mediastreamtrackprocessor-videoframe-timestamp.html [ Skip ]
