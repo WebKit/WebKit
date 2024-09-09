@@ -441,7 +441,7 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
 
     const bool supportsExtendedFormats = [m_device supportsFamily:MTLGPUFamilyApple4];
     IOSurfaceRef ioSurface = CVPixelBufferGetIOSurface(pixelBuffer);
-    if (!ioSurface) {
+    if (!ioSurface || isIntel()) {
         auto planeCount = std::max<size_t>(CVPixelBufferGetPlaneCount(pixelBuffer), 1);
         if (planeCount > 2) {
             ASSERT_NOT_REACHED("non-IOSurface CVPixelBuffer instances with more than two planes are not supported");

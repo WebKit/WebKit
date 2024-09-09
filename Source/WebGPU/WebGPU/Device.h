@@ -166,6 +166,11 @@ public:
     ExternalTextureData createExternalTextureFromPixelBuffer(CVPixelBufferRef, WGPUColorSpace) const;
     RefPtr<XRSubImage> getXRViewSubImage(WGPUXREye);
     const std::optional<const MachSendRight> webProcessID() const;
+#if CPU(X86_64)
+    bool isIntel() const { return [m_device.name localizedCaseInsensitiveContainsString:@"intel"]; }
+#else
+    constexpr bool isIntel() const { return false; }
+#endif
 
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&&, Adapter&);
