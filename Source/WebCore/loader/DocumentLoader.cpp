@@ -222,6 +222,9 @@ DocumentLoader::~DocumentLoader()
         ASSERT(scriptExecutionContextIdentifierToLoaderMap().contains(m_resultingClientId));
         scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
     }
+
+    if (auto createdCallback = std::exchange(m_whenDocumentIsCreatedCallback, { }))
+        createdCallback(nullptr);
 }
 
 RefPtr<FragmentedSharedBuffer> DocumentLoader::mainResourceData() const
@@ -286,6 +289,9 @@ void DocumentLoader::setMainDocumentError(const ResourceError& error)
 void DocumentLoader::mainReceivedError(const ResourceError& error, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
 {
     ASSERT(!error.isNull());
+
+    if (auto createdCallback = std::exchange(m_whenDocumentIsCreatedCallback, { }))
+        createdCallback(nullptr);
 
     if (!frameLoader())
         return;
@@ -1267,7 +1273,13 @@ void DocumentLoader::commitData(const SharedBuffer& data)
 
         m_writer.setDocumentWasLoadedAsPartOfNavigation();
 
-        auto* documentOrNull = m_frame ? m_frame->document() : nullptr;
+        RefPtr documentOrNull = m_frame ? m_frame->document() : nullptr;
+
+        auto scope = makeScopeExit([&] {
+            if (auto createdCallback = std::exchange(m_whenDocumentIsCreatedCallback, { }))
+                createdCallback(isInFinishedLoadingOfEmptyDocument() ? nullptr : documentOrNull.get());
+        });
+
         if (!documentOrNull)
             return;
         auto& document = *documentOrNull;
@@ -2682,6 +2694,19 @@ void DocumentLoader::setHTTPSByDefaultMode(HTTPSByDefaultMode mode)
 Ref<CachedResourceLoader> DocumentLoader::protectedCachedResourceLoader() const
 {
     return m_cachedResourceLoader;
+}
+
+void DocumentLoader::whenDocumentIsCreated(Function<void(Document*)>&& callback)
+{
+    ASSERT(!m_canUseServiceWorkers || !!m_resultingClientId);
+
+    if (auto previousCallback = std::exchange(m_whenDocumentIsCreatedCallback, { })) {
+        callback = [previousCallback = WTFMove(previousCallback), newCallback = WTFMove(callback)] (auto* document) mutable {
+            previousCallback(document);
+            newCallback(document);
+        };
+    }
+    m_whenDocumentIsCreatedCallback = WTFMove(callback);
 }
 
 } // namespace WebCore

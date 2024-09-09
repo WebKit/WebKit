@@ -429,16 +429,39 @@ void WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdent
         return;
     }
 
-    WebPage::fromCorePage(*page)->sendWithAsyncReply(Messages::WebPageProxy::FocusFromServiceWorker { }, [clientIdentifier, callback = WTFMove(callback)]() mutable {
+    WebPage::fromCorePage(*page)->sendWithAsyncReply(Messages::WebPageProxy::FocusFromServiceWorker { }, [clientIdentifier, callback = WTFMove(callback)] () mutable {
+        auto doFocusSteps = [callback = WTFMove(callback)] (auto* document) mutable {
+            if (!document) {
+                callback({ });
+                return;
+            }
+
+            document->eventLoop().queueTask(TaskSource::Networking, [document = RefPtr { document }, callback = WTFMove(callback)] () mutable {
+                RefPtr frame = document ? document->frame() : nullptr;
+                RefPtr page = frame ? frame->page() : nullptr;
+
+                if (!page) {
+                    callback({ });
+                    return;
+                }
+
+                page->focusController().setFocusedFrame(frame.get());
+                callback(ServiceWorkerClientData::from(*document));
+            });
+        };
+
         RefPtr document = Document::allDocumentsMap().get(clientIdentifier);
-        RefPtr frame = document ? document->frame() : nullptr;
-        RefPtr page = frame ? frame->page() : nullptr;
-        if (!page) {
-            callback({ });
+        if (!document) {
+            RefPtr loader = DocumentLoader::fromScriptExecutionContextIdentifier(clientIdentifier);
+            if (!loader) {
+                callback({ });
+                return;
+            };
+            loader->whenDocumentIsCreated(WTFMove(doFocusSteps));
             return;
         }
-        page->focusController().setFocusedFrame(frame.get());
-        callback(ServiceWorkerClientData::from(*document));
+
+        doFocusSteps(document.get());
     });
 }
 

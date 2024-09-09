@@ -516,6 +516,7 @@ public:
     bool isInitialAboutBlank() const { return m_isInitialAboutBlank; }
 
     bool navigationCanTriggerCrossDocumentViewTransition(Document& oldDocument);
+    WEBCORE_EXPORT void whenDocumentIsCreated(Function<void(Document*)>&&);
 
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
@@ -779,6 +780,8 @@ private:
 #endif
 
     bool m_canUseServiceWorkers { true };
+
+    Function<void(Document*)> m_whenDocumentIsCreatedCallback;
 
 #if ASSERT_ENABLED
     bool m_hasEverBeenAttached { false };
