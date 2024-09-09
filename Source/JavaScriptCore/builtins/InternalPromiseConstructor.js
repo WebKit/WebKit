@@ -46,25 +46,6 @@ function internalAll(array)
     var index = 0;
     var remainingElementsCount = 0;
 
-    function newResolveElement(index)
-    {
-        var alreadyCalled = false;
-        return function (argument)
-        {
-            if (alreadyCalled)
-                return @undefined;
-            alreadyCalled = true;
-
-            @putByValDirect(values, index, argument);
-
-            --remainingElementsCount;
-            if (remainingElementsCount === 0)
-                return @fulfillPromiseWithFirstResolvingFunctionCallCheck(promise, values);
-
-            return @undefined;
-        }
-    }
-
     try {
         if (array.length === 0)
             @fulfillPromiseWithFirstResolvingFunctionCallCheck(promise, values);
@@ -72,8 +53,21 @@ function internalAll(array)
             for (var index = 0, length = array.length; index < length; ++index) {
                 var value = array[index];
                 @putByValDirect(values, index, @undefined);
+                let currentIndex = index;
                 ++remainingElementsCount;
-                @resolveWithoutPromise(value, newResolveElement(index), reject, @undefined);
+                @resolveWithoutPromise(value, (argument) => {
+                    if (currentIndex < 0)
+                        return @undefined;
+
+                    @putByValDirect(values, currentIndex, argument);
+                    currentIndex = -1;
+
+                    --remainingElementsCount;
+                    if (remainingElementsCount === 0)
+                        return @fulfillPromiseWithFirstResolvingFunctionCallCheck(promise, values);
+
+                    return @undefined;
+                }, reject, @undefined);
             }
         }
     } catch (error) {
