@@ -162,7 +162,7 @@ static NSString *platformNotificationSourceForDisplay(PushClientConnection& conn
 #endif
 }
 
-#endif
+#endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
 
 WebPushDaemon& WebPushDaemon::singleton()
 {
@@ -924,10 +924,7 @@ void WebPushDaemon::showNotification(PushClientConnection& connection, const Web
         content.get().sound = [UNNotificationSound defaultSound];
 
     auto notificationCenterBundleIdentifier = platformNotificationCenterBundleIdentifier(identifier.pushPartition);
-
-#if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
     content.get().icon = [UNNotificationIcon iconForApplicationIdentifier:notificationCenterBundleIdentifier.get()];
-#endif
 
     NSString *notificationSourceForDisplay = platformNotificationSourceForDisplay(connection);
     if (!notificationSourceForDisplay.length)
