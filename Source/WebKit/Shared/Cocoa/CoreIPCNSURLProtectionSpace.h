@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,44 @@
 
 #pragma once
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) && HAVE(WK_SECURE_CODING_NSURLPROTECTIONSPACE)
 
-#include <wtf/ArgumentCoder.h>
-#include <wtf/text/WTFString.h>
+#import "CoreIPCData.h"
+#import "CoreIPCSecTrust.h"
+#import "CoreIPCString.h"
+
+#import <WebCore/ProtectionSpace.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
+#import <wtf/Vector.h>
+
+OBJC_CLASS NSURLProtectionSpace;
 
 namespace WebKit {
 
-class CoreIPCString  {
+struct CoreIPCNSURLProtectionSpaceData {
+    std::optional<WebKit::CoreIPCString> host;
+    uint16_t port;
+    WebCore::ProtectionSpace::ServerType type;
+    std::optional<WebKit::CoreIPCString> realm;
+    WebCore::ProtectionSpace::AuthenticationScheme scheme;
+    std::optional<CoreIPCSecTrust> trust;
+    std::optional<Vector<WebKit::CoreIPCData>> distnames;
+};
+
+class CoreIPCNSURLProtectionSpace {
+    WTF_MAKE_TZONE_ALLOCATED(NSURLProtectionSpace);
 public:
-    CoreIPCString(NSString *string)
-        : m_string(string)
-    {
-    }
+    CoreIPCNSURLProtectionSpace(NSURLProtectionSpace *);
+    CoreIPCNSURLProtectionSpace(CoreIPCNSURLProtectionSpaceData&&);
+    CoreIPCNSURLProtectionSpace(const RetainPtr<NSURLProtectionSpace>&);
 
-    CoreIPCString(String&& string)
-        : m_string(WTFMove(string))
-    {
-    }
-
-    CoreIPCString() = default;
-
-    RetainPtr<id> toID() const { return (NSString *)m_string; }
-
+    RetainPtr<id> toID() const;
 private:
-    friend struct IPC::ArgumentCoder<CoreIPCString, void>;
-
-    String m_string;
+    friend struct IPC::ArgumentCoder<CoreIPCNSURLProtectionSpace, void>;
+    CoreIPCNSURLProtectionSpaceData m_data;
 };
 
 } // namespace WebKit
 
-#endif // PLATFORM(COCOA)
+#endif // PLATFORM(COCOA) && HAVE(WK_SECURE_CODING_NSURLPROTECTIONSPACE)

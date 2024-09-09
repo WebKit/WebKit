@@ -382,7 +382,11 @@ static ProtectionSpace::AuthenticationScheme authenticationSchemeFromAuthenticat
     if (CFEqual(method, kCFHTTPAuthenticationSchemeNegotiate))
         return ProtectionSpace::AuthenticationScheme::Negotiate;
     ASSERT_NOT_REACHED();
+#if PLATFORM(COCOA)
+    return ProtectionSpace::AuthenticationScheme::Default;
+#else
     return ProtectionSpace::AuthenticationScheme::Unknown;
+#endif
 }
     
 static void setCONNECTProxyAuthorizationForStream(CFReadStreamRef stream, CFStringRef proxyAuthorizationString)

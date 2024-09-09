@@ -549,8 +549,10 @@ static BOOL wkDDActionContext_isEqual(WKDDActionContext *a, SEL, WKDDActionConte
 
 static bool wkNSURLProtectionSpace_isEqual(NSURLProtectionSpace *a, SEL, NSURLProtectionSpace* b)
 {
-    if (![a.host isEqual: b.host])
-        return false;
+    if (![a.host isEqual: b.host]) {
+        if (!(a.host == nil && b.host == nil))
+            return false;
+    }
     if (!(a.port == b.port))
         return false;
     if (![a.protocol isEqual:b.protocol])
@@ -1310,6 +1312,12 @@ TEST(IPCSerialization, Basic)
     [protectionSpace2.get() _setServerTrust:trustRef];
     [protectionSpace2.get() _setDistinguishedNames:distinguishedNames];
     runTestNS({ protectionSpace2.get() });
+
+    NSString* nilString = nil;
+    RetainPtr<NSURLProtectionSpace> protectionSpace3 = adoptNS([[NSURLProtectionSpace alloc] initWithHost:nilString port:443 protocol:NSURLProtectionSpaceHTTPS realm:nil authenticationMethod:NSURLAuthenticationMethodServerTrust]);
+    [protectionSpace3.get() _setServerTrust:nil];
+    [protectionSpace3.get() _setDistinguishedNames:nil];
+    runTestNS({ protectionSpace3.get() });
 
     runTestNS({ [NSURLCredential credentialForTrust:trust.get()] });
 #if HAVE(DICTIONARY_SERIALIZABLE_NSURLCREDENTIAL)
