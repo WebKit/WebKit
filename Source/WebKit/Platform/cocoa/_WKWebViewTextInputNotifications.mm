@@ -57,7 +57,7 @@
 {
     if (_caretType == WebCore::CaretAnimatorType::Dictation) {
         if (_webView)
-            _webView->page().setCaretBlinkingSuspended(false);
+            _webView->protectedPage()->setCaretBlinkingSuspended(false);
         return;
     }
 
@@ -66,7 +66,7 @@
         if (NSTextInputContext *context = _webView->inputContext())
             context.showsCursorAccessories = YES;
 
-        _webView->page().setCaretAnimatorType(WebCore::CaretAnimatorType::Dictation);
+        _webView->protectedPage()->setCaretAnimatorType(WebCore::CaretAnimatorType::Dictation);
     }
 }
 
@@ -77,26 +77,26 @@
 
     _caretType = WebCore::CaretAnimatorType::Default;
     if (_webView)
-        _webView->page().setCaretAnimatorType(WebCore::CaretAnimatorType::Default);
+        _webView->protectedPage()->setCaretAnimatorType(WebCore::CaretAnimatorType::Default);
 }
 
 - (void)dictationDidPause
 {
     if (_webView)
-        _webView->page().setCaretBlinkingSuspended(true);
+        _webView->protectedPage()->setCaretBlinkingSuspended(true);
 }
 
 - (void)dictationDidResume
 {
     if (_caretType == WebCore::CaretAnimatorType::Dictation) {
         if (_webView)
-            _webView->page().setCaretBlinkingSuspended(false);
+            _webView->protectedPage()->setCaretBlinkingSuspended(false);
         return;
     }
 
     _caretType = WebCore::CaretAnimatorType::Dictation;
     if (_webView)
-        _webView->page().setCaretAnimatorType(WebCore::CaretAnimatorType::Dictation);
+        _webView->protectedPage()->setCaretAnimatorType(WebCore::CaretAnimatorType::Dictation);
 }
 
 @end

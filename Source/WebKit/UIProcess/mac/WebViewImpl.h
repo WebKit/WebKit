@@ -210,6 +210,8 @@ public:
     NSWindow *window();
 
     WebPageProxy& page() { return m_page.get(); }
+    Ref<WebPageProxy> protectedPage() const;
+
     NSView *view() const { return m_view.getAutoreleased(); }
 
     void processWillSwap();
@@ -855,8 +857,6 @@ private:
 #endif
 
     std::optional<EditorState::PostLayoutData> postLayoutDataForContentEditable();
-
-    Ref<WebPageProxy> protectedPage() const;
 
     WeakObjCPtr<NSView<WebViewImplDelegate>> m_view;
     std::unique_ptr<PageClient> m_pageClient;
