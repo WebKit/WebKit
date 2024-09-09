@@ -8286,14 +8286,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_super_construct: {
             auto bytecode = currentInstruction->as<OpSuperConstruct>();
             Node* callee = get(VirtualRegister(-bytecode.m_argv + CallFrameSlot::thisArgument));
-            JSFunction* function = callee->dynamicCastConstant<JSFunction*>();
+            JSCell* function = callee->dynamicCastConstant<JSFunction*>();
             if (!function) {
                 JSCell* cachedFunction = bytecode.metadata(codeBlock).m_cachedCallee.unvalidatedGet();
                 if (cachedFunction && cachedFunction != JSCell::seenMultipleCalleeObjects() && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
-                    ASSERT(cachedFunction->inherits<JSFunction>());
                     FrozenValue* frozen = m_graph.freeze(cachedFunction);
                     addToGraph(CheckIsConstant, OpInfo(frozen), callee);
-                    function = static_cast<JSFunction*>(cachedFunction);
+                    function = cachedFunction;
                 }
             }
 
@@ -8346,14 +8345,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_super_construct_varargs: {
             auto bytecode = currentInstruction->as<OpSuperConstructVarargs>();
             Node* callee = get(bytecode.m_thisValue);
-            JSFunction* function = callee->dynamicCastConstant<JSFunction*>();
+            JSCell* function = callee->dynamicCastConstant<JSFunction*>();
             if (!function) {
                 JSCell* cachedFunction = bytecode.metadata(codeBlock).m_cachedCallee.unvalidatedGet();
                 if (cachedFunction && cachedFunction != JSCell::seenMultipleCalleeObjects() && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
-                    ASSERT(cachedFunction->inherits<JSFunction>());
                     FrozenValue* frozen = m_graph.freeze(cachedFunction);
                     addToGraph(CheckIsConstant, OpInfo(frozen), callee);
-                    function = static_cast<JSFunction*>(cachedFunction);
+                    function = cachedFunction;
                 }
             }
             handleVarargsCall<OpSuperConstructVarargs>(currentInstruction, ConstructVarargs, CallMode::Construct);
