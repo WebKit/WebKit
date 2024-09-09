@@ -5993,8 +5993,6 @@ imported/w3c/web-platform-tests/workers/shared-worker-name-via-options.html [ Du
 # Display list logging is only available in debug
 [ Release ] fast/text/glyph-display-lists [ Skip ]
 
-webkit.org/b/242498 svg/resource-invalidation/mask-resource-invalidation.html [ ImageOnlyFailure ]
-
 webkit.org/b/242983 imported/w3c/web-platform-tests/css/css-scroll-anchoring/fullscreen-crash.html [ Skip ]
 webkit.org/b/261849 imported/w3c/web-platform-tests/css/css-scroll-anchoring/heuristic-with-offset-update-from-scroll-event-listener.html [ Skip ]
 webkit.org/b/261849 imported/w3c/web-platform-tests/css/css-scroll-anchoring/zero-scroll-offset.html [ Skip ]
