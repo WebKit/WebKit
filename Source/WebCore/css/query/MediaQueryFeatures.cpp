@@ -478,12 +478,6 @@ const FeatureSchema& pointer()
         [](auto& context) {
             RefPtr page = context.document->frame()->page();
             auto pointerCharacteristics = page ? page->chrome().client().pointerCharacteristicsOfPrimaryPointingDevice() : OptionSet<PointerCharacteristics>();
-#if ENABLE(TOUCH_EVENTS)
-            if (pointerCharacteristics.contains(PointerCharacteristics::Coarse)) {
-                if (context.document->quirks().shouldPreventPointerMediaQueryFromEvaluatingToCoarse())
-                    pointerCharacteristics = PointerCharacteristics::Fine;
-            }
-#endif
             MatchingIdentifiers identifiers;
             if (pointerCharacteristics.contains(PointerCharacteristics::Fine))
                 identifiers.append(CSSValueFine);

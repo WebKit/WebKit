@@ -70,7 +70,6 @@ public:
     bool shouldDispatchSimulatedMouseEvents(const EventTarget*) const;
     bool shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTarget*) const;
     std::optional<Event::IsCancelable> simulatedMouseEventTypeForTarget(EventTarget*) const;
-    bool shouldPreventPointerMediaQueryFromEvaluatingToCoarse() const;
     bool shouldPreventDispatchOfTouchEvent(const AtomString&, EventTarget*) const;
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)

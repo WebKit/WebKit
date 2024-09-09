@@ -553,15 +553,6 @@ std::optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(Even
     return Event::IsCancelable::Yes;
 }
 
-// shutterstock.com rdar://58844166
-bool Quirks::shouldPreventPointerMediaQueryFromEvaluatingToCoarse() const
-{
-    if (!needsQuirks())
-        return false;
-
-    return isDomain("shutterstock.com"_s);
-}
-
 // sites.google.com rdar://58653069
 bool Quirks::shouldPreventDispatchOfTouchEvent(const AtomString& touchEventType, EventTarget* target) const
 {
