@@ -145,6 +145,21 @@ public:
         return c;
     }
 
+    unsigned effectiveColumnAfter(unsigned index, unsigned span) const
+    {
+        unsigned numColumns = numEffCols();
+        if (!m_hasCellColspanThatDeterminesTableWidth
+            && index <= numColumns
+            && numColumns - index <= span)
+            return index + span;
+        unsigned currentSpan = 0;
+        while (index < numColumns && currentSpan < span) {
+            currentSpan += m_columns[index].span;
+            ++index;
+        }
+        return index;
+    }
+
     LayoutUnit borderSpacingInRowDirection() const
     {
         if (unsigned effectiveColumnCount = numEffCols())
@@ -210,11 +225,16 @@ public:
     LayoutUnit offsetWidthForColumn(const RenderTableCol&) const;
     LayoutUnit offsetHeightForColumn(const RenderTableCol&) const;
     
+    unsigned effectiveIndexOfColumn(const RenderTableCol&) const;
+    unsigned spanOfColumn(const RenderTableCol&) const;
+
     void markForPaginationRelayoutIfNeeded() final;
 
     void willInsertTableColumn(RenderTableCol& child, RenderObject* beforeChild);
     void willInsertTableSection(RenderTableSection& child, RenderObject* beforeChild);
 
+    LayoutUnit columnBlockStart() const { return m_columnBlockStart; }
+    LayoutUnit columnBlockLength() const { return m_columnBlockLength; }
     LayoutUnit sumCaptionsLogicalHeight() const;
 
 protected:
@@ -274,11 +294,8 @@ private:
     mutable Vector<LayoutUnit> m_columnPos;
     mutable Vector<ColumnStruct> m_columns;
     mutable Vector<SingleThreadWeakPtr<RenderTableCaption>> m_captions;
-    mutable Vector<SingleThreadWeakPtr<RenderTableCol>> m_columnRenderers;
 
-    unsigned effectiveIndexOfColumn(const RenderTableCol&) const;
-    using EffectiveColumnIndexMap = UncheckedKeyHashMap<SingleThreadWeakRef<const RenderTableCol>, unsigned>;
-    mutable EffectiveColumnIndexMap m_effectiveColumnIndexMap;
+    mutable unsigned m_tableColumnSpan { 0 }; // total span of all RenderTableCol elements
 
     mutable SingleThreadWeakPtr<RenderTableSection> m_head;
     mutable SingleThreadWeakPtr<RenderTableSection> m_foot;
@@ -313,6 +330,8 @@ private:
     LayoutUnit m_vSpacing;
     LayoutUnit m_borderStart;
     LayoutUnit m_borderEnd;
+    LayoutUnit m_columnBlockStart;
+    LayoutUnit m_columnBlockLength;
     mutable LayoutUnit m_columnOffsetTop;
     mutable LayoutUnit m_columnOffsetHeight;
     unsigned m_recursiveSectionMovedWithPaginationLevel { 0 };

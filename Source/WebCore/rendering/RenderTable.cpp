@@ -234,8 +234,6 @@ void RenderTable::removeCaption(RenderTableCaption& oldCaption)
 void RenderTable::invalidateCachedColumns()
 {
     m_columnRenderersValid = false;
-    m_columnRenderers.shrink(0);
-    m_effectiveColumnIndexMap.clear();
 }
 
 void RenderTable::invalidateCachedColumnOffsets()
@@ -582,6 +580,9 @@ void RenderTable::layout()
 
         // position the table sections
         RenderTableSection* section = topSection();
+        bool seenNonEmptySection = false;
+        m_columnBlockStart = m_columnBlockLength = 0;
+
         while (section) {
             sectionCount++;
             if (!sectionMoved && section->logicalTop() != logicalHeight()) {
@@ -590,9 +591,20 @@ void RenderTable::layout()
             }
             section->setLogicalLocation(LayoutPoint(sectionLogicalLeft, logicalHeight()));
 
-            setLogicalHeight(logicalHeight() + section->logicalHeight());
+            auto sectionTop = logicalHeight();
+            auto sectionBottom = sectionTop + section->logicalHeight();
+
+            if (section->numRows()) {
+                if (!seenNonEmptySection) {
+                    seenNonEmptySection = true;
+                    m_columnBlockStart = sectionTop + m_vSpacing;
+                }
+                m_columnBlockLength = sectionBottom - m_vSpacing - m_columnBlockStart;
+            }
+
+            setLogicalHeight(sectionBottom);
             section->addVisualEffectOverflow();
-            
+
             section = sectionBelow(section);
         }
 
@@ -1010,20 +1022,16 @@ RenderTableCol* RenderTable::firstColumn() const
 void RenderTable::updateColumnCache() const
 {
     ASSERT(m_hasColElements);
-    ASSERT(m_columnRenderers.isEmpty());
-    ASSERT(m_effectiveColumnIndexMap.isEmpty());
     ASSERT(!m_columnRenderersValid);
 
     unsigned columnIndex = 0;
     for (RenderTableCol* columnRenderer = firstColumn(); columnRenderer; columnRenderer = columnRenderer->nextColumn()) {
+        columnRenderer->setColumnIndex(columnIndex);
         if (columnRenderer->isTableColumnGroupWithColumnChildren())
             continue;
-        m_columnRenderers.append(columnRenderer);
-        // FIXME: We should look to compute the effective column index successively from previous values instead of
-        // calling colToEffCol(), which is in O(numEffCols()). Although it's unlikely that this is a hot function.
-        m_effectiveColumnIndexMap.add(*columnRenderer, colToEffCol(columnIndex));
         columnIndex += columnRenderer->span();
     }
+    m_tableColumnSpan = columnIndex;
     m_columnRenderersValid = true;
 }
 
@@ -1031,14 +1039,21 @@ unsigned RenderTable::effectiveIndexOfColumn(const RenderTableCol& column) const
 {
     if (!m_columnRenderersValid)
         updateColumnCache();
-    const RenderTableCol* columnToUse = &column;
-    if (columnToUse->isTableColumnGroupWithColumnChildren())
-        columnToUse = columnToUse->nextColumn(); // First column in column-group
-    auto it = m_effectiveColumnIndexMap.find(columnToUse);
-    ASSERT(it != m_effectiveColumnIndexMap.end());
-    if (it == m_effectiveColumnIndexMap.end())
-        return std::numeric_limits<unsigned>::max();
-    return it->value;
+    return colToEffCol(column.columnIndex());
+}
+
+unsigned RenderTable::spanOfColumn(const RenderTableCol& column) const
+{
+    if (!m_columnRenderersValid)
+        updateColumnCache();
+    if (!column.firstChild())
+        return column.span();
+    // |column| is a column group with children, so its span is the sum
+    // of its childrens' spans.
+    RenderObject* next = column.nextSibling();
+    if (RenderTableCol* nextColumn = next ? dynamicDowncast<RenderTableCol>(next) : nullptr)
+        return nextColumn->columnIndex() - column.columnIndex();
+    return m_tableColumnSpan - column.columnIndex();
 }
 
 LayoutUnit RenderTable::offsetTopForColumn(const RenderTableCol& column) const
@@ -1063,32 +1078,13 @@ LayoutUnit RenderTable::offsetLeftForColumn(const RenderTableCol& column) const
 
 LayoutUnit RenderTable::offsetWidthForColumn(const RenderTableCol& column) const
 {
-    const RenderTableCol* currentColumn = &column;
-    bool hasColumnChildren;
-    if ((hasColumnChildren = currentColumn->isTableColumnGroupWithColumnChildren()))
-        currentColumn = currentColumn->nextColumn(); // First column in column-group
+    unsigned index = effectiveIndexOfColumn(column);
+    unsigned span = spanOfColumn(column);
     unsigned numberOfEffectiveColumns = numEffCols();
+    if (!span || index >= numberOfEffectiveColumns)
+        return 0;
     ASSERT_WITH_SECURITY_IMPLICATION(m_columnPos.size() >= numberOfEffectiveColumns + 1);
-    LayoutUnit width;
-    LayoutUnit spacing = m_hSpacing;
-    while (currentColumn) {
-        unsigned columnIndex = effectiveIndexOfColumn(*currentColumn);
-        unsigned span = currentColumn->span();
-        while (span && columnIndex < numberOfEffectiveColumns) {
-            width += m_columnPos[columnIndex + 1] - m_columnPos[columnIndex] - spacing;
-            span -= m_columns[columnIndex].span;
-            ++columnIndex;
-            if (span)
-                width += spacing;
-        }
-        if (!hasColumnChildren)
-            break;
-        currentColumn = currentColumn->nextColumn();
-        if (!currentColumn || currentColumn->isTableColumnGroup())
-            break;
-        width += spacing;
-    }
-    return width;
+    return m_columnPos[effectiveColumnAfter(index, span)] - m_columnPos[index] - m_hSpacing;
 }
 
 LayoutUnit RenderTable::offsetHeightForColumn(const RenderTableCol& column) const
@@ -1114,8 +1110,8 @@ RenderTableCol* RenderTable::slowColElement(unsigned col, bool* startEdge, bool*
         updateColumnCache();
 
     unsigned columnCount = 0;
-    for (auto& columnRenderer : m_columnRenderers) {
-        if (!columnRenderer)
+    for (RenderTableCol* columnRenderer = firstColumn(); columnRenderer; columnRenderer = columnRenderer->nextColumn()) {
+        if (columnRenderer->isTableColumnGroupWithColumnChildren())
             continue;
         unsigned span = columnRenderer->span();
         unsigned startCol = columnCount;
@@ -1127,7 +1123,7 @@ RenderTableCol* RenderTable::slowColElement(unsigned col, bool* startEdge, bool*
                 *startEdge = startCol == col;
             if (endEdge)
                 *endEdge = endCol == col;
-            return columnRenderer.get();
+            return columnRenderer;
         }
     }
     return nullptr;
