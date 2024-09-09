@@ -55,8 +55,6 @@ namespace CSSPropertyParserHelpers {
 
 RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange&, const CSSParserContext&, bool allowInset, bool allowSpread, bool isWebkitBoxShadow = false);
 
-RefPtr<CSSPrimitiveValue> consumeCounterStyleName(CSSParserTokenRange&);
-AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange&, CSSParserMode = CSSParserMode::HTMLStandardMode);
 RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange&);
 
 RefPtr<CSSValue> consumeAspectRatio(CSSParserTokenRange&);
@@ -66,9 +64,6 @@ bool isFlexBasisIdent(CSSValueID);
 RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeCounterIncrement(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeCounterReset(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeCounterSet(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeSize(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeTextTransform(CSSParserTokenRange&);
@@ -90,7 +85,6 @@ RefPtr<CSSValue> consumeBorderWidth(CSSParserTokenRange&, CSSPropertyID currentS
 RefPtr<CSSValue> consumeBorderColor(CSSParserTokenRange&, CSSPropertyID currentShorthand, const CSSParserContext&);
 RefPtr<CSSValue> consumeRepeatStyle(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumePaintStroke(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeListStyleType(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeStrokeDasharray(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeCursor(CSSParserTokenRange&, const CSSParserContext&, bool inQuirksMode);
@@ -139,16 +133,6 @@ RefPtr<CSSPrimitiveValue> consumeAnchor(CSSParserTokenRange&, CSSParserMode);
 
 RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange&, const CSSParserContext&);
 
-// @counter-style descriptor consumers:
-
-RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeCounterStyleSymbol(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeCounterStyleNegative(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeCounterStyleRange(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeCounterStylePad(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeCounterStyleSymbols(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeCounterStyleSpeakAs(CSSParserTokenRange&);
 
 } // namespace CSSPropertyParserHelpers
 

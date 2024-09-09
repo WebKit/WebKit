@@ -44,6 +44,7 @@
 #include "CSSParserObserverWrapper.h"
 #include "CSSParserToken.h"
 #include "CSSPropertyParser.h"
+#include "CSSPropertyParserConsumer+CounterStyles.h"
 #include "CSSPropertyParserConsumer+Font.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Integer.h"

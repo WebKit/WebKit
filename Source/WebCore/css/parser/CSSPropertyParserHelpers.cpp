@@ -40,6 +40,7 @@
 #include "CSSPropertyParserConsumer+Integer.h"
 #include "CSSPropertyParserConsumer+Length.h"
 #include "CSSPropertyParserConsumer+List.h"
+#include "CSSPropertyParserConsumer+Lists.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
@@ -160,44 +161,6 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, const CSS
     if (!horizontalOffset || !verticalOffset)
         return nullptr;
     return CSSShadowValue::create(WTFMove(horizontalOffset), WTFMove(verticalOffset), WTFMove(blurRadius), WTFMove(spreadDistance), WTFMove(style), WTFMove(color), isWebkitBoxShadow);
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#predefined-counters
-static bool isPredefinedCounterStyle(CSSValueID valueID)
-{
-    return valueID >= CSSValueDisc && valueID <= CSSValueEthiopicNumeric;
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#typedef-counter-style-name
-RefPtr<CSSPrimitiveValue> consumeCounterStyleName(CSSParserTokenRange& range)
-{
-    // <counter-style-name> is a <custom-ident> that is not an ASCII case-insensitive match for "none".
-    auto valueID = range.peek().id();
-    if (valueID == CSSValueNone)
-        return nullptr;
-    // If the value is an ASCII case-insensitive match for any of the predefined counter styles, lowercase it.
-    if (auto name = consumeCustomIdent(range, isPredefinedCounterStyle(valueID)))
-        return name;
-    return nullptr;
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#typedef-counter-style-name
-AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude, CSSParserMode mode)
-{
-    auto nameToken = prelude.consumeIncludingWhitespace();
-    if (!prelude.atEnd())
-        return AtomString();
-    // Ensure this token is a valid <custom-ident>.
-    if (nameToken.type() != IdentToken || !isValidCustomIdentifier(nameToken.id()))
-        return AtomString();
-    // In the context of the prelude of an @counter-style rule, a <counter-style-name> must not be an ASCII
-    // case-insensitive match for "decimal", "disc", "square", "circle", "disclosure-open" and "disclosure-closed". No <counter-style-name>, prelude or not, may be an ASCII
-    // case-insensitive match for "none".
-    auto id = nameToken.id();
-    if (identMatches<CSSValueNone>(id) || (!isUASheetBehavior(mode) && identMatches<CSSValueDecimal, CSSValueDisc, CSSValueCircle, CSSValueSquare, CSSValueDisclosureOpen, CSSValueDisclosureClosed>(id)))
-        return AtomString();
-    auto name = nameToken.value();
-    return isPredefinedCounterStyle(nameToken.id()) ? name.convertToASCIILowercaseAtom() : name.toAtomString();
 }
 
 RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange& range)
@@ -436,38 +399,6 @@ RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange& range)
     if (values.size() && !(values.size() % 2))
         return CSSValueList::createSpaceSeparated(WTFMove(values));
     return nullptr;
-}
-
-static RefPtr<CSSValue> consumeCounter(CSSParserTokenRange& range, int defaultValue)
-{
-    if (range.peek().id() == CSSValueNone)
-        return consumeIdent(range);
-    CSSValueListBuilder list;
-    do {
-        auto counterName = consumeCustomIdent(range);
-        if (!counterName)
-            return nullptr;
-        int i = defaultValue;
-        if (auto counterValue = consumeIntegerRaw(range))
-            i = *counterValue;
-        list.append(CSSValuePair::create(counterName.releaseNonNull(), CSSPrimitiveValue::createInteger(i)));
-    } while (!range.atEnd());
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
-}
-
-RefPtr<CSSValue> consumeCounterIncrement(CSSParserTokenRange& range)
-{
-    return consumeCounter(range, 1);
-}
-
-RefPtr<CSSValue> consumeCounterReset(CSSParserTokenRange& range)
-{
-    return consumeCounter(range, 0);
-}
-
-RefPtr<CSSValue> consumeCounterSet(CSSParserTokenRange& range)
-{
-    return consumeCounter(range, 0);
 }
 
 RefPtr<CSSValue> consumeSize(CSSParserTokenRange& range, CSSParserMode mode)
@@ -1787,22 +1718,6 @@ RefPtr<CSSValue> consumePath(CSSParserTokenRange& range, const CSSParserContext&
     return result;
 }
 
-RefPtr<CSSValue> consumeListStyleType(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    if (range.peek().id() == CSSValueNone)
-        return consumeIdent(range);
-    if (range.peek().type() == StringToken)
-        return consumeString(range);
-
-    if (auto predefinedValues = consumeIdent(range, isPredefinedCounterStyle))
-        return predefinedValues;
-
-    if (context.propertySettings.cssCounterStyleAtRulesEnabled)
-        return consumeCustomIdent(range);
-
-    return nullptr;
-}
-
 RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (auto imageValue = consumeImageOrNone(range, context))
@@ -2443,207 +2358,6 @@ RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange& range, CSSParserMode m
 
     range = rangeCopy;
     return CSSOffsetRotateValue::create(WTFMove(modifier), WTFMove(angle));
-}
-
-// MARK: - @-rule descriptor consumers:
-
-// MARK: @counter-style
-
-// https://www.w3.org/TR/css-counter-styles-3/#counter-style-system
-RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // cyclic | numeric | alphabetic | symbolic | additive | [fixed <integer>?] | [ extends <counter-style-name> ]
-
-    if (auto ident = consumeIdent<CSSValueCyclic, CSSValueNumeric, CSSValueAlphabetic, CSSValueSymbolic, CSSValueAdditive>(range))
-        return ident;
-
-    if (isUASheetBehavior(context.mode)) {
-        auto internalKeyword = consumeIdent<
-            CSSValueInternalDisclosureClosed,
-            CSSValueInternalDisclosureOpen,
-            CSSValueInternalSimplifiedChineseInformal,
-            CSSValueInternalSimplifiedChineseFormal,
-            CSSValueInternalTraditionalChineseInformal,
-            CSSValueInternalTraditionalChineseFormal,
-            CSSValueInternalEthiopicNumeric
-        >(range);
-        if (internalKeyword)
-            return internalKeyword;
-    }
-
-    if (auto ident = consumeIdent<CSSValueFixed>(range)) {
-        if (range.atEnd())
-            return ident;
-        // If we have the `fixed` keyword but the range is not at the end, the next token must be a integer.
-        // If it's not, this value is invalid.
-        auto firstSymbolValue = consumeInteger(range);
-        if (!firstSymbolValue)
-            return nullptr;
-        return CSSValuePair::create(ident.releaseNonNull(), firstSymbolValue.releaseNonNull());
-    }
-
-    if (auto ident = consumeIdent<CSSValueExtends>(range)) {
-        // There must be a `<counter-style-name>` following the `extends` keyword. If there isn't, this value is invalid.
-        auto parsedCounterStyleName = consumeCounterStyleName(range);
-        if (!parsedCounterStyleName)
-            return nullptr;
-        return CSSValuePair::create(ident.releaseNonNull(), parsedCounterStyleName.releaseNonNull());
-    }
-    return nullptr;
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#typedef-symbol
-RefPtr<CSSValue> consumeCounterStyleSymbol(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // [ <string> | <image> | <custom-ident> ]
-
-    if (auto string = consumeString(range))
-        return string;
-    if (auto customIdent = consumeCustomIdent(range))
-        return customIdent;
-    // There are inherent difficulties in supporting <image> symbols in @counter-styles, so gate them behind a
-    // flag for now. https://bugs.webkit.org/show_bug.cgi?id=167645
-    if (context.counterStyleAtRuleImageSymbolsEnabled) {
-        if (auto image = consumeImage(range, context, { AllowedImageType::URLFunction, AllowedImageType::GeneratedImage }))
-            return image;
-    }
-    return nullptr;
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#counter-style-negative
-RefPtr<CSSValue> consumeCounterStyleNegative(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // <symbol> <symbol>?
-
-    auto prependValue = consumeCounterStyleSymbol(range, context);
-    if (!prependValue || range.atEnd())
-        return prependValue;
-
-    auto appendValue = consumeCounterStyleSymbol(range, context);
-    if (!appendValue || !range.atEnd())
-        return nullptr;
-
-    return CSSValueList::createSpaceSeparated(prependValue.releaseNonNull(), appendValue.releaseNonNull());
-}
-
-static RefPtr<CSSPrimitiveValue> consumeCounterStyleRangeBound(CSSParserTokenRange& range)
-{
-    if (auto infinite = consumeIdent<CSSValueInfinite>(range))
-        return infinite;
-    if (auto integer = consumeInteger(range))
-        return integer;
-    return nullptr;
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#counter-style-range
-RefPtr<CSSValue> consumeCounterStyleRange(CSSParserTokenRange& range)
-{
-    // [ [ <integer> | infinite ]{2} ]# | auto
-
-    if (auto autoValue = consumeIdent<CSSValueAuto>(range))
-        return autoValue;
-
-    auto rangeList = consumeCommaSeparatedListWithoutSingleValueOptimization(range, [](auto& range) -> RefPtr<CSSValue> {
-        auto lowerBound = consumeCounterStyleRangeBound(range);
-        if (!lowerBound)
-            return nullptr;
-        auto upperBound = consumeCounterStyleRangeBound(range);
-        if (!upperBound)
-            return nullptr;
-
-        // If the lower bound of any range is higher than the upper bound, the entire descriptor is invalid and must be
-        // ignored.
-        if (lowerBound->isInteger() && upperBound->isInteger() && lowerBound->resolveAsIntegerDeprecated() > upperBound->resolveAsIntegerDeprecated())
-            return nullptr;
-
-        return CSSValuePair::createNoncoalescing(lowerBound.releaseNonNull(), upperBound.releaseNonNull());
-    });
-
-    if (!range.atEnd() || !rangeList || !rangeList->length())
-        return nullptr;
-    return rangeList;
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#counter-style-pad
-RefPtr<CSSValue> consumeCounterStylePad(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // <integer [0,∞]> && <symbol>
-    RefPtr<CSSPrimitiveValue> integer;
-    RefPtr<CSSValue> symbol;
-    while (!integer || !symbol) {
-        if (!integer) {
-            integer = consumeNonNegativeInteger(range);
-            if (integer)
-                continue;
-        }
-        if (!symbol) {
-            symbol = consumeCounterStyleSymbol(range, context);
-            if (symbol)
-                continue;
-        }
-        return nullptr;
-    }
-    if (!range.atEnd())
-        return nullptr;
-    return CSSValueList::createSpaceSeparated(integer.releaseNonNull(), symbol.releaseNonNull());
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#descdef-counter-style-symbols
-RefPtr<CSSValue> consumeCounterStyleSymbols(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // <symbol>+
-    CSSValueListBuilder symbols;
-    while (!range.atEnd()) {
-        auto symbol = consumeCounterStyleSymbol(range, context);
-        if (!symbol)
-            return nullptr;
-        symbols.append(symbol.releaseNonNull());
-    }
-    if (symbols.isEmpty())
-        return nullptr;
-    return CSSValueList::createSpaceSeparated(WTFMove(symbols));
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#descdef-counter-style-additive-symbols
-RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // [ <integer [0,∞]> && <symbol> ]#
-
-    std::optional<int> lastWeight;
-    auto values = consumeCommaSeparatedListWithoutSingleValueOptimization(range, [&lastWeight](auto& range, auto& context) -> RefPtr<CSSValue> {
-        auto integer = consumeNonNegativeInteger(range);
-        auto symbol = consumeCounterStyleSymbol(range, context);
-        if (!integer) {
-            if (!symbol)
-                return nullptr;
-            integer = consumeNonNegativeInteger(range);
-            if (!integer)
-                return nullptr;
-        }
-        if (!symbol)
-            return nullptr;
-
-        // Additive tuples must be specified in order of strictly descending weight.
-        auto weight = integer->resolveAsIntegerDeprecated();
-        if (lastWeight && !(weight < lastWeight))
-            return nullptr;
-        lastWeight = weight;
-
-        return CSSValuePair::create(integer.releaseNonNull(), symbol.releaseNonNull());
-    }, context);
-
-    if (!range.atEnd() || !values || !values->length())
-        return nullptr;
-    return values;
-}
-
-// https://www.w3.org/TR/css-counter-styles-3/#counter-style-speak-as
-RefPtr<CSSValue> consumeCounterStyleSpeakAs(CSSParserTokenRange& range)
-{
-    // auto | bullets | numbers | words | spell-out | <counter-style-name>
-    if (auto speakAsIdent = consumeIdent<CSSValueAuto, CSSValueBullets, CSSValueNumbers, CSSValueWords, CSSValueSpellOut>(range))
-        return speakAsIdent;
-    return consumeCounterStyleName(range);
 }
 
 RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange& range, const CSSParserContext& context)

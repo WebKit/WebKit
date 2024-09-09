@@ -486,8 +486,8 @@ bool CSSCounterStyle::isInRange(int value) const
 }
 
 CSSCounterStyle::CSSCounterStyle(const CSSCounterStyleDescriptors& descriptors, bool isPredefinedCounterStyle)
-    : m_descriptors { descriptors },
-    m_predefinedCounterStyle { isPredefinedCounterStyle }
+    : m_descriptors { descriptors }
+    , m_predefinedCounterStyle { isPredefinedCounterStyle }
 {
 }
 
