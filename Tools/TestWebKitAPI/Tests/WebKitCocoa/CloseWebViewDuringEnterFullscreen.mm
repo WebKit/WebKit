@@ -60,7 +60,7 @@ namespace TestWebKitAPI {
 TEST(CloseWebViewDuringEnterFullscreen, VideoFullscreen)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration preferences]._fullScreenEnabled = YES;
+    configuration.get().preferences.elementFullscreenEnabled = YES;
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
     RetainPtr<CloseWebViewDuringEnterFullscreenUIDelegate> handler = adoptNS([[CloseWebViewDuringEnterFullscreenUIDelegate alloc] init]);
     [webView _setFullscreenDelegate:handler.get()];
@@ -80,7 +80,7 @@ TEST(CloseWebViewDuringEnterFullscreen, VideoFullscreen)
 TEST(CloseWebViewDuringEnterFullscreen, DISABLED_ElementFullscreen)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration preferences]._fullScreenEnabled = YES;
+    configuration.get().preferences.elementFullscreenEnabled = YES;
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
     RetainPtr<CloseWebViewDuringEnterFullscreenUIDelegate> handler = adoptNS([[CloseWebViewDuringEnterFullscreenUIDelegate alloc] init]);
     [webView _setFullscreenDelegate:handler.get()];

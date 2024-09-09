@@ -138,7 +138,7 @@ TEST(WKWebViewCloseAllMediaPresentations, VideoFullscreen)
 #endif
 {
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-    [[configuration preferences] _setFullScreenEnabled:YES];
+    configuration.preferences.elementFullscreenEnabled = YES;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
 
     [webView synchronouslyLoadHTMLString:@"<video src=video-with-audio.mp4 webkit-playsinline playsinline loop></video>"];
@@ -175,7 +175,7 @@ TEST(WKWebViewCloseAllMediaPresentations, ElementFullscreen)
 #endif
 {
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-    [[configuration preferences] _setFullScreenEnabled:YES];
+    configuration.preferences.elementFullscreenEnabled = YES;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
 
     [webView synchronouslyLoadHTMLString:@"<div id=\"target\" style=\"width:100px;height:100px;background-color:red\"></div>"];

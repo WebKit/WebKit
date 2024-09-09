@@ -104,7 +104,7 @@ namespace TestWebKitAPI {
 TEST(PictureInPicture, WKUIDelegate)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration preferences]._fullScreenEnabled = YES;
+    configuration.get().preferences.elementFullscreenEnabled = YES;
     [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;
     RetainPtr<PictureInPictureUIDelegate> handler = adoptNS([[PictureInPictureUIDelegate alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"pictureInPictureChangeHandler"];
@@ -170,7 +170,7 @@ TEST(PictureInPicture, AudioCannotTogglePictureInPicture)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 54) configuration:configuration.get()]);
-    [configuration preferences]._fullScreenEnabled = YES;
+    configuration.get().preferences.elementFullscreenEnabled = YES;
     [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;
     RetainPtr<PictureInPictureUIDelegate> handler = adoptNS([[PictureInPictureUIDelegate alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"pictureInPictureChangeHandler"];

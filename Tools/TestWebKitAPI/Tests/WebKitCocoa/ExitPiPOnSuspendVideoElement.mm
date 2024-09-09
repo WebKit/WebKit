@@ -67,7 +67,7 @@ TEST(PictureInPicture, DISABLED_ExitPiPOnSuspendVideoElement)
     }];
 
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration preferences]._fullScreenEnabled = YES;
+    configuration.get().preferences.elementFullscreenEnabled = YES;
     [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
     RetainPtr<ExitPiPOnSuspendVideoElementUIDelegate> handler = adoptNS([[ExitPiPOnSuspendVideoElementUIDelegate alloc] init]);

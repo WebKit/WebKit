@@ -82,7 +82,7 @@ namespace TestWebKitAPI {
 TEST(Fullscreen, Delegate)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration preferences]._fullScreenEnabled = YES;
+    configuration.get().preferences.elementFullscreenEnabled = YES;
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
     RetainPtr<FullscreenDelegateMessageHandler> handler = adoptNS([[FullscreenDelegateMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"fullscreenChangeHandler"];
@@ -121,7 +121,7 @@ TEST(Fullscreen, VisibilityChangeNotDispatched)
 #endif
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration preferences]._fullScreenEnabled = YES;
+    configuration.get().preferences.elementFullscreenEnabled = YES;
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
     RetainPtr<FullscreenDelegateMessageHandler> handler = adoptNS([[FullscreenDelegateMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"fullscreenChangeHandler"];

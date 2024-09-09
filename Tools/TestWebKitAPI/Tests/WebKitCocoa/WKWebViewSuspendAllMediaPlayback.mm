@@ -114,7 +114,7 @@ TEST(WKWebViewSuspendAllMediaPlayback, PauseWhenResume)
 TEST(WKWebViewSuspendAllMediaPlayback, FullscreenWhileSuspended)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [[configuration preferences] _setFullScreenEnabled:YES];
+    configuration.get().preferences.elementFullscreenEnabled = YES;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get() addToWindow:YES]);
 
