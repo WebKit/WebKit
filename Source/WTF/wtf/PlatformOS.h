@@ -92,6 +92,11 @@
 #define WTF_OS_FUCHSIA 1
 #endif
 
+/* OS(HAIKU) - Haiku */
+#if defined(__HAIKU__)
+#define WTF_OS_HAIKU 1
+#endif
+
 /* OS(HURD) - GNU/Hurd */
 #if defined(__GNU__)
 #define WTF_OS_HURD 1
