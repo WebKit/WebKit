@@ -89,6 +89,9 @@ private:
     RemoteXRProjectionLayer& operator=(const RemoteXRProjectionLayer&) = delete;
     RemoteXRProjectionLayer& operator=(RemoteXRProjectionLayer&&) = delete;
 
+    Ref<IPC::StreamServerConnection> protectedStreamConnection();
+    Ref<RemoteGPU> protectedGPU() const;
+
     RefPtr<IPC::Connection> connection() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;

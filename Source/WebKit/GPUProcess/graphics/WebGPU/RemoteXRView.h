@@ -86,6 +86,8 @@ private:
     RemoteXRView& operator=(const RemoteXRView&) = delete;
     RemoteXRView& operator=(RemoteXRView&&) = delete;
 
+    Ref<IPC::StreamServerConnection> protectedStreamConnection();
+
     WebCore::WebGPU::XRView& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;

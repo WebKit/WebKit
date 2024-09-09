@@ -46,10 +46,15 @@ RemoteXRSubImage::RemoteXRSubImage(WebCore::WebGPU::XRSubImage& xrSubImage, WebG
     , m_identifier(identifier)
     , m_gpu(gpu)
 {
-    m_streamConnection->startReceivingMessages(*this, Messages::RemoteXRSubImage::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->startReceivingMessages(*this, Messages::RemoteXRSubImage::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteXRSubImage::~RemoteXRSubImage() = default;
+
+Ref<IPC::StreamServerConnection> RemoteXRSubImage::protectedStreamConnection()
+{
+    return m_streamConnection;
+}
 
 RefPtr<IPC::Connection> RemoteXRSubImage::connection() const
 {
@@ -66,7 +71,7 @@ void RemoteXRSubImage::destruct()
 
 void RemoteXRSubImage::stopListeningForIPC()
 {
-    m_streamConnection->stopReceivingMessages(Messages::RemoteXRSubImage::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->stopReceivingMessages(Messages::RemoteXRSubImage::messageReceiverName(), m_identifier.toUInt64());
 }
 
 } // namespace WebKit

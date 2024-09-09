@@ -170,7 +170,7 @@ void RemoteLegacyCDMFactoryProxy::removeSession(RemoteLegacyCDMSessionIdentifier
     m_sessions.remove(identifier);
 
     if (connection && allowsExitUnderMemoryPressure())
-        connection->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
+        connection->protectedGPUProcess()->tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 RemoteLegacyCDMSessionProxy* RemoteLegacyCDMFactoryProxy::getSession(const RemoteLegacyCDMSessionIdentifier& identifier) const
@@ -190,9 +190,10 @@ bool RemoteLegacyCDMFactoryProxy::allowsExitUnderMemoryPressure() const
 const Logger& RemoteLegacyCDMFactoryProxy::logger() const
 {
     if (!m_logger) {
-        m_logger = Logger::create(this);
+        Ref logger = Logger::create(this);
+        m_logger = logger.ptr();
         auto connection = m_gpuConnectionToWebProcess.get();
-        m_logger->setEnabled(this, connection ? connection->sessionID().isAlwaysOnLoggingAllowed() : false);
+        logger->setEnabled(this, connection ? connection->sessionID().isAlwaysOnLoggingAllowed() : false);
     }
 
     return *m_logger;

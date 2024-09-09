@@ -46,14 +46,24 @@ RemoteXRProjectionLayer::RemoteXRProjectionLayer(WebCore::WebGPU::XRProjectionLa
     , m_identifier(identifier)
     , m_gpu(gpu)
 {
-    m_streamConnection->startReceivingMessages(*this, Messages::RemoteXRProjectionLayer::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->startReceivingMessages(*this, Messages::RemoteXRProjectionLayer::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteXRProjectionLayer::~RemoteXRProjectionLayer() = default;
 
+Ref<IPC::StreamServerConnection> RemoteXRProjectionLayer::protectedStreamConnection()
+{
+    return m_streamConnection;
+}
+
+Ref<RemoteGPU> RemoteXRProjectionLayer::protectedGPU() const
+{
+    return m_gpu.get();
+}
+
 RefPtr<IPC::Connection> RemoteXRProjectionLayer::connection() const
 {
-    RefPtr connection = m_gpu->gpuConnectionToWebProcess();
+    RefPtr connection = protectedGPU()->gpuConnectionToWebProcess();
     if (!connection)
         return nullptr;
     return &connection->connection();
@@ -76,7 +86,7 @@ void RemoteXRProjectionLayer::endFrame()
 
 void RemoteXRProjectionLayer::stopListeningForIPC()
 {
-    m_streamConnection->stopReceivingMessages(Messages::RemoteXRProjectionLayer::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->stopReceivingMessages(Messages::RemoteXRProjectionLayer::messageReceiverName(), m_identifier.toUInt64());
 }
 
 } // namespace WebKit

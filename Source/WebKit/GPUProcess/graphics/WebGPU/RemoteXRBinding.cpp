@@ -47,10 +47,25 @@ RemoteXRBinding::RemoteXRBinding(WebCore::WebGPU::XRBinding& xrBinding, WebGPU::
     , m_identifier(identifier)
     , m_gpu(gpu)
 {
-    m_streamConnection->startReceivingMessages(*this, Messages::RemoteXRBinding::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->startReceivingMessages(*this, Messages::RemoteXRBinding::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteXRBinding::~RemoteXRBinding() = default;
+
+Ref<IPC::StreamServerConnection> RemoteXRBinding::protectedStreamConnection()
+{
+    return m_streamConnection;
+}
+
+Ref<WebCore::WebGPU::XRBinding> RemoteXRBinding::protectedBacking()
+{
+    return m_backing;
+}
+
+Ref<RemoteGPU> RemoteXRBinding::protectedGPU()
+{
+    return m_gpu.get();
+}
 
 void RemoteXRBinding::destruct()
 {
@@ -65,37 +80,39 @@ void RemoteXRBinding::createProjectionLayer(WebCore::WebGPU::TextureFormat color
         .textureUsage = textureUsage,
         .scaleFactor = scaleFactor
     };
-    auto projectionLayer = m_backing->createProjectionLayer(WTFMove(init));
+    auto projectionLayer = protectedBacking()->createProjectionLayer(WTFMove(init));
     if (!projectionLayer) {
         // FIXME: Add MESSAGE_CHECK call
         return;
     }
 
-    auto remoteProjectionLayer = RemoteXRProjectionLayer::create(*projectionLayer, m_objectHeap, m_streamConnection.copyRef(), m_gpu, identifier);
-    m_objectHeap->addObject(identifier, remoteProjectionLayer);
+    Ref objectHeap = m_objectHeap.get();
+    auto remoteProjectionLayer = RemoteXRProjectionLayer::create(*projectionLayer, objectHeap, protectedStreamConnection(), protectedGPU(), identifier);
+    objectHeap->addObject(identifier, remoteProjectionLayer);
 }
 
 void RemoteXRBinding::getViewSubImage(WebGPUIdentifier projectionLayerIdentifier, WebCore::WebGPU::XREye eye, WebGPUIdentifier identifier)
 {
-    auto projectionLayer = m_objectHeap->convertXRProjectionLayerFromBacking(projectionLayerIdentifier);
+    Ref objectHeap = m_objectHeap.get();
+    auto projectionLayer = objectHeap->convertXRProjectionLayerFromBacking(projectionLayerIdentifier);
     if (!projectionLayer) {
         // FIXME: Add MESSAGE_CHECK call
         return;
     }
 
-    auto subImage = m_backing->getViewSubImage(*projectionLayer, eye);
+    auto subImage = protectedBacking()->getViewSubImage(*projectionLayer, eye);
     if (!subImage) {
         // FIXME: Add MESSAGE_CHECK call
         return;
     }
 
-    auto remoteSubImage = RemoteXRSubImage::create(*subImage, m_objectHeap, m_streamConnection.copyRef(), m_gpu, identifier);
-    m_objectHeap->addObject(identifier, remoteSubImage);
+    auto remoteSubImage = RemoteXRSubImage::create(*subImage, objectHeap, protectedStreamConnection(), protectedGPU(), identifier);
+    objectHeap->addObject(identifier, remoteSubImage);
 }
 
 void RemoteXRBinding::stopListeningForIPC()
 {
-    m_streamConnection->stopReceivingMessages(Messages::RemoteXRBinding::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->stopReceivingMessages(Messages::RemoteXRBinding::messageReceiverName(), m_identifier.toUInt64());
 }
 
 } // namespace WebKit

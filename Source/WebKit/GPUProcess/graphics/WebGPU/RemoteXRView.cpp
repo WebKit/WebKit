@@ -44,7 +44,12 @@ RemoteXRView::RemoteXRView(WebCore::WebGPU::XRView& xrView, WebGPU::ObjectHeap& 
     , m_identifier(identifier)
     , m_gpu(gpu)
 {
-    m_streamConnection->startReceivingMessages(*this, Messages::RemoteXRView::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->startReceivingMessages(*this, Messages::RemoteXRView::messageReceiverName(), m_identifier.toUInt64());
+}
+
+Ref<IPC::StreamServerConnection> RemoteXRView::protectedStreamConnection()
+{
+    return m_streamConnection;
 }
 
 RemoteXRView::~RemoteXRView() = default;
@@ -56,7 +61,7 @@ void RemoteXRView::destruct()
 
 void RemoteXRView::stopListeningForIPC()
 {
-    m_streamConnection->stopReceivingMessages(Messages::RemoteXRView::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->stopReceivingMessages(Messages::RemoteXRView::messageReceiverName(), m_identifier.toUInt64());
 }
 
 } // namespace WebKit
