@@ -33,8 +33,11 @@
 #import "GraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "SliderThumbPart.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SliderThumbMac);
 
 SliderThumbMac::SliderThumbMac(SliderThumbPart& owningPart, ControlFactoryMac& controlFactory, NSSliderCell *sliderCell)
     : ControlMac(owningPart, controlFactory)

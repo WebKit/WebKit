@@ -32,8 +32,11 @@
 #import "LocalDefaultSystemAppearance.h"
 #import "TextAreaPart.h"
 #import <pal/spi/mac/NSCellSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextAreaMac);
 
 TextAreaMac::TextAreaMac(TextAreaPart& owningPart)
     : PlatformControl(owningPart)

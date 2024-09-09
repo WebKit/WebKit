@@ -31,10 +31,12 @@
 #pragma once
 
 #include "BaseTextInputType.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class URLInputType final : public BaseTextInputType {
+    WTF_MAKE_TZONE_ALLOCATED(URLInputType);
 public:
     static Ref<URLInputType> create(HTMLInputElement& element)
     {

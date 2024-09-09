@@ -44,8 +44,11 @@
 #include "ShadowRoot.h"
 #include "TextControlInnerElements.h"
 #include "UserAgentParts.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SearchInputType);
 
 using namespace HTMLNames;
 

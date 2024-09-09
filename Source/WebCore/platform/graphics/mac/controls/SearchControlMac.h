@@ -28,10 +28,12 @@
 #if PLATFORM(MAC)
 
 #import "ControlMac.h"
+#import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SearchControlMac : public ControlMac {
+    WTF_MAKE_TZONE_ALLOCATED(SearchControlMac);
 public:
     SearchControlMac(ControlPart&, ControlFactoryMac&, NSSearchFieldCell *);
 

@@ -32,8 +32,11 @@
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
 #import "MenuListButtonPart.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MenuListButtonMac);
 
 MenuListButtonMac::MenuListButtonMac(MenuListButtonPart& owningPart, ControlFactoryMac& controlFactory)
     : ControlMac(owningPart, controlFactory)

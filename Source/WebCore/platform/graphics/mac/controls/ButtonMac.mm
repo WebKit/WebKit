@@ -32,8 +32,11 @@
 #import "ControlFactoryMac.h"
 #import "GraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ButtonMac);
 
 ButtonMac::ButtonMac(ButtonPart& owningPart, ControlFactoryMac& controlFactory, NSButtonCell *buttonCell)
     : ButtonControlMac(owningPart, controlFactory, buttonCell)

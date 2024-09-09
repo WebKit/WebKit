@@ -29,6 +29,7 @@
 
 #import "LengthBox.h"
 #import "PlatformControl.h"
+#import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ class GraphicsContext;
 class IntSize;
 
 class ControlMac : public PlatformControl {
+    WTF_MAKE_TZONE_ALLOCATED(ControlMac);
 public:
     ControlMac(ControlPart&, ControlFactoryMac&);
 

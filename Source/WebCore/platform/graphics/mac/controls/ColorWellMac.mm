@@ -32,8 +32,11 @@
 #import "ControlFactoryMac.h"
 #import "FloatRoundedRect.h"
 #import "LocalDefaultSystemAppearance.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ColorWellMac);
 
 ColorWellMac::ColorWellMac(ColorWellPart& owningPart, ControlFactoryMac& controlFactory, NSButtonCell *buttonCell)
     : ButtonControlMac(owningPart, controlFactory, buttonCell)

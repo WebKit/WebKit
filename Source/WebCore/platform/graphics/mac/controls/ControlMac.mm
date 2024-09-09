@@ -43,8 +43,11 @@
 #import <pal/spi/mac/NSGraphicsSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ControlMac);
 
 ControlMac::ControlMac(ControlPart& owningPart, ControlFactoryMac& controlFactory)
     : PlatformControl(owningPart)

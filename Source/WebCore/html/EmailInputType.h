@@ -31,10 +31,12 @@
 #pragma once
 
 #include "BaseTextInputType.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class EmailInputType final : public BaseTextInputType {
+    WTF_MAKE_TZONE_ALLOCATED(EmailInputType);
 public:
     static Ref<EmailInputType> create(HTMLInputElement& element)
     {

@@ -28,12 +28,14 @@
 #if PLATFORM(MAC)
 
 #import "ControlMac.h"
+#import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class TextFieldPart;
 
 class TextFieldMac final : public ControlMac {
+    WTF_MAKE_TZONE_ALLOCATED(TextFieldMac);
 public:
     TextFieldMac(TextFieldPart& owningPart, ControlFactoryMac&, NSTextFieldCell *);
 

@@ -28,12 +28,14 @@
 #if PLATFORM(MAC)
 
 #import "ControlMac.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class SliderThumbPart;
 
 class SliderThumbMac final : public ControlMac {
+    WTF_MAKE_TZONE_ALLOCATED(SliderThumbMac);
 public:
     SliderThumbMac(SliderThumbPart&, ControlFactoryMac&, NSSliderCell *);
 
