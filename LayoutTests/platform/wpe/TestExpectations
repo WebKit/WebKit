@@ -23,7 +23,6 @@ scrollingcoordinator/ios/ [ Skip ]
 
 # Incorrect upstream, but seem to pass on the bots, possibly with a broken baseline.
 # https://github.com/w3c/web-platform-tests/issues/8407
-css2.1/20110323/replaced-intrinsic-001.htm [ Pass ]
 css2.1/20110323/replaced-intrinsic-002.htm [ Pass ]
 
 fast/events/constructors/keyboard-event-constructor.html [ Pass ]
@@ -1088,8 +1087,6 @@ Bug(WPE) svg/animations/animations-paused-when-inserted-in-hidden-document2.html
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 Bug(WPE) svg/text/select-text-svgfont.html [ Failure ]
 Bug(WPE) svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
-
-webkit.org/b/186100 css3/color-filters/color-filter-ignore-semantic.html [ ImageOnlyFailure ]
 
 webkit.org/b/188433 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure ]
 

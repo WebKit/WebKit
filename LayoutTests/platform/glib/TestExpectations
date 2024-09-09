@@ -89,6 +89,7 @@ crypto/workers/subtle/rsa-pss-import-key-verify.html [ Pass ]
 http/wpt/crypto/rsa-pss-crash.any.html [ Pass ]
 http/wpt/crypto/rsa-pss-crash.any.worker.html [ Pass ]
 
+css2.1/20110323/replaced-intrinsic-001.htm [ Pass ]
 fast/block/lineboxcontain/inline-box-vertical.html [ Pass ]
 
 fast/text/emoji-gender-3.html [ Pass ]
@@ -748,8 +749,6 @@ accessibility/full-size-kana-untransformed.html [ Skip ]
 #////////////////////////////////////////////////////////////////////////////////////////
 # Compositing tests
 #////////////////////////////////////////////////////////////////////////////////////////
-
-webkit.org/b/214417 [ Debug ] css3/color/composited-solid-backgrounds.html [ Crash ]
 
 # Failures related with ENABLE_CSS_COMPOSITING=ON
 webkit.org/b/169916 css3/blending/blend-mode-accelerated-parent-overflow-hidden.html [ ImageOnlyFailure ]
@@ -3783,7 +3782,6 @@ imported/w3c/web-platform-tests/preload/preload-type-match.html [ DumpJSConsoleL
 
 # Tests crashing in Debug only.
 [ Debug ] editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
-[ Debug ] fast/backgrounds/gradient-background-leakage-hidpi.html [ Crash ]
 [ Debug ] fast/canvas/2d.backingStorePixelRatio.html [ Crash ]
 [ Debug ] fast/canvas/canvas-as-image-hidpi.html [ Crash ]
 [ Debug ] fast/canvas/canvas-resize-reset-pixelRatio.html [ Crash ]
@@ -4000,7 +3998,7 @@ webkit.org/b/206499 compositing/visibility/visibility-change-in-subframe.html [ 
 webkit.org/b/169918 compositing/visibility/visibility-image-layers-dynamic.html [ Failure ]
 webkit.org/b/186667 compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Failure Pass ]
 # Probably categorized under the wrong bug.
-webkit.org/b/212202 compositing/fixed-with-main-thread-scrolling.html [ Timeout ]
+webkit.org/b/212202 compositing/fixed-with-main-thread-scrolling.html [ Timeout Pass Crash ]
 compositing/canvas/hidpi-canvas-backing-store-invalidation-2.html [ Failure ]
 compositing/canvas/hidpi-canvas-backing-store-invalidation.html [ Failure ]
 compositing/canvas/hidpi-canvas-backing-store.html [ Failure ]

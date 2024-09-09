@@ -45,6 +45,9 @@ webkit.org/b/191506 fast/css-grid-layout/grid-item-scroll-position.html [ Pass ]
 
 css-dark-mode [ Pass ]
 css-dark-mode/older-systems [ Skip ]
+
+editing/selection/extend-by-character-007.html [ Pass ]
+
 fast/loader/plain-text-document-dark-mode.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-multicol/multicol-width-ch-001.xht [ Pass ]
@@ -830,9 +833,6 @@ webkit.org/b/180062 fast/text/user-installed-fonts [ Skip ]
 # Test does not make sense for our platform
 webkit.org/b/181659 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]
 
-# This seems to be testing Apple-specific behavior?
-css3/color-filters/color-filter-ignore-semantic.html [ ImageOnlyFailure ]
-
 # Requires support for testing text replacement
 editing/spelling/text-replacement-after-typing-to-word.html [ Skip ]
 editing/spelling/text-replacement-first-word-second-line.html [ Skip ]
@@ -1264,7 +1264,7 @@ Bug(GTK) http/tests/misc/large-js-program.py [ Pass Slow ]
 [ Debug ] editing/selection/move-by-word-visually-inline-block-positioned-element.html [ Pass Timeout ]
 [ Debug ] editing/selection/move-by-word-visually-mac.html [ Failure Timeout ]
 [ Debug ] editing/selection/move-by-word-visually-multi-line.html [ Pass Timeout ]
-[ Debug ] editing/selection/move-by-word-visually-multi-space.html [ Failure Timeout ]
+[ Debug ] editing/selection/move-by-word-visually-multi-space.html [ Pass Timeout ]
 
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_007.htm [ Slow ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_010.htm [ Slow ]
@@ -1624,7 +1624,6 @@ webkit.org/b/178441 editing/deleting/delete-ligature-001.html [ Failure ]
 webkit.org/b/178441 editing/deleting/delete-ligature-002.html [ Failure ]
 webkit.org/b/178441 editing/deleting/delete-ligature-003.html [ Failure ]
 
-webkit.org/b/144690 editing/spelling/spelling-marker-includes-hyphen.html [ Failure ImageOnlyFailure ]
 webkit.org/b/144690 fast/writing-mode/english-bt-text-with-spelling-marker.html [ ImageOnlyFailure ]
 
 webkit.org/b/179605 editing/execCommand/underline-selection-containing-image.html [ Failure ]
