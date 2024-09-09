@@ -47,6 +47,7 @@
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
 #include "PaymentCoordinator.h"
+#include "Quirks.h"
 #include "RunJavaScriptParameters.h"
 #include "RuntimeApplicationChecks.h"
 #include "ScriptDisallowedScope.h"
@@ -156,6 +157,11 @@ ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourc
 
     Ref protector { m_frame };
     SetForScope sourceURLScope(m_sourceURL, &sourceURL);
+
+    if (RefPtr document = m_frame.document()) {
+        if (auto script = document->quirks().scriptToEvaluateBeforeRunningScriptFromURL(sourceURL); !script.isEmpty())
+            evaluateIgnoringException({ WTFMove(script), JSC::SourceTaintedOrigin::Untainted });
+    }
 
     InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), sourceCode.startLine(), sourceCode.startColumn());
 

@@ -203,6 +203,8 @@ public:
     bool needsRelaxedCorsMixedContentCheckQuirk() const;
     bool needsLaxSameSiteCookieQuirk(const URL&) const;
 
+    String scriptToEvaluateBeforeRunningScriptFromURL(const URL&);
+
 private:
     bool needsQuirks() const;
     bool isDomain(const String&) const;

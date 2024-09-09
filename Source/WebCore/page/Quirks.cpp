@@ -1892,4 +1892,19 @@ std::optional<TargetedElementSelectors> Quirks::defaultVisibilityAdjustmentSelec
 #endif
 }
 
+String Quirks::scriptToEvaluateBeforeRunningScriptFromURL(const URL& scriptURL)
+{
+#if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
+    if (!needsQuirks())
+        return { };
+
+    auto topDomain = RegistrableDomain(m_document->topDocument().url()).string();
+    if (UNLIKELY(topDomain == "webex.com"_s && scriptURL.lastPathComponent().startsWith("pushdownload."_s)))
+        return "Object.defineProperty(window, 'Touch', { get: () => undefined });"_s;
+#else
+    UNUSED_PARAM(scriptURL);
+#endif
+    return { };
+}
+
 }
