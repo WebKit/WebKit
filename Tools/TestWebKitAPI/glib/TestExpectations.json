@@ -423,6 +423,16 @@
             },
             "/webkit/WebKitWebResource/get-data-error": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/279203"}}
+            },
+            "/webkit/WebKitWebView/sync-request-on-max-conns": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/279351"}}
+            }
+        }
+    },
+    "TestUIClient": {
+        "subtests": {
+            "/webkit/WebKitWebView/file-chooser-request": {
+                "expected": {"gtk": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/279352"}}
             }
         }
     }
