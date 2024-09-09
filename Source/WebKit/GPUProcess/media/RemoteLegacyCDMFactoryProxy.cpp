@@ -193,7 +193,7 @@ const Logger& RemoteLegacyCDMFactoryProxy::logger() const
         Ref logger = Logger::create(this);
         m_logger = logger.ptr();
         auto connection = m_gpuConnectionToWebProcess.get();
-        logger->setEnabled(this, connection ? connection->sessionID().isAlwaysOnLoggingAllowed() : false);
+        logger->setEnabled(this, connection && connection->sessionID().isAlwaysOnLoggingAllowed());
     }
 
     return *m_logger;

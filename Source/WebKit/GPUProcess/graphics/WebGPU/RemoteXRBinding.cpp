@@ -80,14 +80,14 @@ void RemoteXRBinding::createProjectionLayer(WebCore::WebGPU::TextureFormat color
         .textureUsage = textureUsage,
         .scaleFactor = scaleFactor
     };
-    auto projectionLayer = protectedBacking()->createProjectionLayer(WTFMove(init));
+    RefPtr projectionLayer = protectedBacking()->createProjectionLayer(WTFMove(init));
     if (!projectionLayer) {
         // FIXME: Add MESSAGE_CHECK call
         return;
     }
 
     Ref objectHeap = m_objectHeap.get();
-    auto remoteProjectionLayer = RemoteXRProjectionLayer::create(*projectionLayer, objectHeap, protectedStreamConnection(), protectedGPU(), identifier);
+    Ref remoteProjectionLayer = RemoteXRProjectionLayer::create(*projectionLayer, objectHeap, protectedStreamConnection(), protectedGPU(), identifier);
     objectHeap->addObject(identifier, remoteProjectionLayer);
 }
 
@@ -100,13 +100,13 @@ void RemoteXRBinding::getViewSubImage(WebGPUIdentifier projectionLayerIdentifier
         return;
     }
 
-    auto subImage = protectedBacking()->getViewSubImage(*projectionLayer, eye);
+    RefPtr subImage = protectedBacking()->getViewSubImage(*projectionLayer, eye);
     if (!subImage) {
         // FIXME: Add MESSAGE_CHECK call
         return;
     }
 
-    auto remoteSubImage = RemoteXRSubImage::create(*subImage, objectHeap, protectedStreamConnection(), protectedGPU(), identifier);
+    Ref remoteSubImage = RemoteXRSubImage::create(*subImage, objectHeap, protectedStreamConnection(), protectedGPU(), identifier);
     objectHeap->addObject(identifier, remoteSubImage);
 }
 
