@@ -47,6 +47,7 @@
 #include "ScriptExecutionContext.h"
 #include "StringWithDirection.h"
 #include "Supplementable.h"
+#include "TextIndicator.h"
 #include "Timer.h"
 #include "TreeScope.h"
 #include "TrustedHTML.h"
