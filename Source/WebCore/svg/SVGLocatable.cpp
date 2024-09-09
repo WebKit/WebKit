@@ -50,7 +50,7 @@ static bool isViewportElement(const SVGElement* element)
 SVGElement* SVGLocatable::nearestViewportElement(const SVGElement* element)
 {
     ASSERT(element);
-    for (Element* current = element->parentOrShadowHostElement(); current; current = current->parentOrShadowHostElement()) {
+    for (RefPtr current = element->parentOrShadowHostElement(); current; current = current->parentOrShadowHostElement()) {
         auto* svgElement = dynamicDowncast<SVGElement>(*current);
         if (isViewportElement(svgElement))
             return svgElement;
@@ -63,7 +63,7 @@ SVGElement* SVGLocatable::farthestViewportElement(const SVGElement* element)
 {
     ASSERT(element);
     SUPPRESS_UNCOUNTED_LOCAL SVGElement* farthest = nullptr;
-    for (Element* current = element->parentOrShadowHostElement(); current; current = current->parentOrShadowHostElement()) {
+    for (RefPtr current = element->parentOrShadowHostElement(); current; current = current->parentOrShadowHostElement()) {
         auto* svgElement = dynamicDowncast<SVGElement>(*current);
         if (isViewportElement(svgElement))
             farthest = svgElement;

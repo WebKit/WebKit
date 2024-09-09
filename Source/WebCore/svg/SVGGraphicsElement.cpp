@@ -97,7 +97,7 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
     AffineTransform matrix;
 
     CheckedPtr renderer = this->renderer();
-    auto* style = renderer ? &renderer->style() : nullptr;
+    CheckedPtr style = renderer ? &renderer->style() : nullptr;
     bool hasSpecifiedTransform = style && style->hasTransform();
 
     // Honor any of the transform-related CSS properties if set.

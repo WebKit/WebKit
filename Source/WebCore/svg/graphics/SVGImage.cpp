@@ -221,7 +221,7 @@ RefPtr<NativeImage> SVGImage::nativeImage(const DestinationColorSpace& colorSpac
         bufferOptions.add(ImageBufferOptions::Accelerated);
 
     HostWindow* hostWindow = nullptr;
-    if (auto contentRenderer = embeddedContentBox())
+    if (CheckedPtr contentRenderer = embeddedContentBox())
         hostWindow = contentRenderer->hostWindow();
 
     RefPtr imageBuffer = ImageBuffer::create(size(), RenderingPurpose::DOM, 1, colorSpace, ImageBufferPixelFormat::BGRA8, bufferOptions, hostWindow);
