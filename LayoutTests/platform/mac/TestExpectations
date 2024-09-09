@@ -2394,9 +2394,6 @@ webkit.org/b/276906 imported/w3c/web-platform-tests/IndexedDB/storage-buckets.ht
 [ Release ] media/video-playsinline.html [ Pass Failure ]
 [ Release ] media/video-webkit-playsinline.html [ Pass Failure ]
 
-# webkit.org/b/278352 [ iOS MacOS ] imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html is a flaky image failure
-imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html [ Pass ImageOnlyFailure ]
-
 # webkit.org/b/278318 [macOS Debug] ASSERTION FAILED: m_wrapper on media/video-playsinline.html, also flaky failure in Release
 [ Debug ] media/video-playsinline.html [ Pass Crash ]
 
