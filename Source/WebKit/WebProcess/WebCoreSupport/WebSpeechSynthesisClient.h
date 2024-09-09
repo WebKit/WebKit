@@ -48,11 +48,7 @@ class WebPage;
 class WebSpeechSynthesisClient : public WebCore::SpeechSynthesisClient {
     WTF_MAKE_TZONE_ALLOCATED(WebSpeechSynthesisClient);
 public:
-    WebSpeechSynthesisClient(WebPage& page)
-        : m_page(page)
-    {
-    }
-    
+    explicit WebSpeechSynthesisClient(WebPage&);
     virtual ~WebSpeechSynthesisClient() { }
     
     const Vector<RefPtr<WebCore::PlatformSpeechSynthesisVoice>>& voiceList() override;
@@ -60,14 +56,17 @@ public:
     void cancel() override;
     void pause() override;
     void resume() override;
+
 private:
+    Ref<WebPage> protectedPage() const;
+
     void setObserver(WeakPtr<WebCore::SpeechSynthesisClientObserver> observer) override { m_observer = observer; }
     WeakPtr<WebCore::SpeechSynthesisClientObserver> observer() const override { return m_observer; }
     void resetState() override;
 
     WebCore::SpeechSynthesisClientObserver* corePageObserver() const;
     
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
     WeakPtr<WebCore::SpeechSynthesisClientObserver> m_observer;
     Vector<RefPtr<WebCore::PlatformSpeechSynthesisVoice>> m_voices;
 };

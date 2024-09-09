@@ -55,7 +55,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebModelPlayerProvider);
 WebModelPlayerProvider::WebModelPlayerProvider(WebPage& page)
     : m_page { page }
 {
-    UNUSED_PARAM(m_page);
 }
 
 WebModelPlayerProvider::~WebModelPlayerProvider() = default;
@@ -64,20 +63,22 @@ WebModelPlayerProvider::~WebModelPlayerProvider() = default;
 
 RefPtr<WebCore::ModelPlayer> WebModelPlayerProvider::createModelPlayer(WebCore::ModelPlayerClient& client)
 {
+    Ref page = m_page.get();
+    UNUSED_PARAM(page);
 #if ENABLE(MODEL_PROCESS)
-    if (m_page.corePage()->settings().modelProcessEnabled())
-        return WebProcess::singleton().modelProcessModelPlayerManager().createModelProcessModelPlayer(m_page, client);
+    if (page->corePage()->settings().modelProcessEnabled())
+        return WebProcess::singleton().modelProcessModelPlayerManager().createModelProcessModelPlayer(page, client);
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-    if (m_page.useARKitForModel())
-        return ARKitInlinePreviewModelPlayerMac::create(m_page, client);
+    if (page->useARKitForModel())
+        return ARKitInlinePreviewModelPlayerMac::create(page, client);
 #endif
 #if HAVE(SCENEKIT)
-    if (m_page.useSceneKitForModel())
+    if (page->useSceneKitForModel())
         return WebCore::SceneKitModelPlayer::create(client);
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    return ARKitInlinePreviewModelPlayerIOS::create(m_page, client);
+    return ARKitInlinePreviewModelPlayerIOS::create(page, client);
 #endif
 
     UNUSED_PARAM(client);

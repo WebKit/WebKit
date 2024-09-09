@@ -123,8 +123,8 @@ void WebScreenOrientationManagerProxy::lock(WebCore::ScreenOrientationLockType l
         bool didLockOrientation = false;
         Ref page = m_page.get();
 #if ENABLE(FULLSCREEN_API)
-        if (page->fullScreenManager() && page->fullScreenManager()->isFullScreen()) {
-            if (!page->fullScreenManager()->lockFullscreenOrientation(resolvedLockedOrientation)) {
+        if (CheckedPtr fullscreenManager = page->fullScreenManager(); fullscreenManager && fullscreenManager->isFullScreen()) {
+            if (!fullscreenManager->lockFullscreenOrientation(resolvedLockedOrientation)) {
                 m_currentLockRequest(WebCore::Exception { WebCore::ExceptionCode::NotSupportedError, "Screen orientation locking is not supported"_s });
                 return;
             }
@@ -152,8 +152,8 @@ void WebScreenOrientationManagerProxy::unlock()
     bool didUnlockOrientation = false;
     Ref page = m_page.get();
 #if ENABLE(FULLSCREEN_API)
-    if (page->fullScreenManager() && page->fullScreenManager()->isFullScreen()) {
-        page->fullScreenManager()->unlockFullscreenOrientation();
+    if (CheckedPtr fullScreenManager = page->fullScreenManager(); fullScreenManager && fullScreenManager->isFullScreen()) {
+        fullScreenManager->unlockFullscreenOrientation();
         didUnlockOrientation = true;
     }
 #endif

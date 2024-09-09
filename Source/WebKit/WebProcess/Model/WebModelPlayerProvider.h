@@ -27,6 +27,7 @@
 
 #include <WebCore/ModelPlayerProvider.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -42,7 +43,7 @@ private:
     // WebCore::ModelPlayerProvider overrides.
     virtual RefPtr<WebCore::ModelPlayer> createModelPlayer(WebCore::ModelPlayerClient&) final;
 
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
 };
 
 }
