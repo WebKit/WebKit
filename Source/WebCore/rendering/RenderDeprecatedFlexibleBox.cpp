@@ -186,17 +186,8 @@ static LayoutUnit contentHeightForChild(RenderBox* child)
 void RenderDeprecatedFlexibleBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
     auto* oldStyle = hasInitializedStyle() ? &style() : nullptr;
-    if (oldStyle) {
-        auto hadLineClamp = !oldStyle->lineClamp().isNone();
-        auto hasLineClamp = !newStyle.lineClamp().isNone(); 
-        if (hasLineClamp != hadLineClamp) {
-            for (auto& child : childrenOfType<RenderBlockFlow>(*this))
-                child.invalidateLineLayoutPath(RenderBlockFlow::InvalidationReason::StyleChange);
-
-            if (hadLineClamp)
-                clearLineClamp();
-        }
-    }
+    if (oldStyle && !oldStyle->lineClamp().isNone() && newStyle.lineClamp().isNone())
+        clearLineClamp();
     RenderBlock::styleWillChange(diff, newStyle);
 }
 
