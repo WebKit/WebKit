@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/css/support/parsing-testcommon.js"></script>
+</head>
+<body>
+<script>
+test_valid_value("perspective", "10px");
+test_valid_value("perspective", "10em");
+test_valid_value("perspective", "calc(10px)");
+test_valid_value("perspective", "calc(-10px)");
+test_valid_value("perspective", "calc(10em)");
+test_valid_value("perspective", "calc(-10em)");
+test_valid_value("perspective", "calc(10px + (5px * sign(2cqw - 10px)))");
+
+test_valid_value("-webkit-perspective", "10px");
+test_valid_value("-webkit-perspective", "10em");
+test_valid_value("-webkit-perspective", "calc(10px)");
+test_valid_value("-webkit-perspective", "calc(-10px)");
+test_valid_value("-webkit-perspective", "calc(10em)");
+test_valid_value("-webkit-perspective", "calc(-10em)");
+test_valid_value("-webkit-perspective", "calc(10px + (5px * sign(2cqw - 10px)))");
+test_valid_value("-webkit-perspective", "10");
+test_valid_value("-webkit-perspective", "calc(10)");
+test_valid_value("-webkit-perspective", "calc(-10)");
+test_valid_value("-webkit-perspective", "calc(10 + (5 * sign(2cqw - 10px)))");
+</script>
+</body>
+</html>

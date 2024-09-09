@@ -2478,11 +2478,8 @@ bool CSSPropertyParser::consumePrefixedPerspective(bool important)
         return m_range.atEnd();
     }
 
-    if (auto perspective = consumeNumberRaw(m_range)) {
-        if (perspective->value < 0)
-            return false;
-        Ref value = CSSPrimitiveValue::create(perspective->value, CSSUnitType::CSS_PX);
-        addProperty(CSSPropertyPerspective, CSSPropertyWebkitPerspective, WTFMove(value), important);
+    if (auto perspective = consumeNumber(m_range, ValueRange::NonNegative)) {
+        addProperty(CSSPropertyPerspective, CSSPropertyWebkitPerspective, WTFMove(perspective), important);
         return m_range.atEnd();
     }
 
