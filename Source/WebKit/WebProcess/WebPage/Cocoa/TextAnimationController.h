@@ -29,7 +29,13 @@
 
 #include <WebCore/CharacterRange.h>
 #include <WebCore/SimpleRange.h>
+<<<<<<< ours
 #include <wtf/FastMalloc.h>
+||||||| base
+=======
+#include <WebCore/TextIndicator.h>
+#include <wtf/CompletionHandler.h>
+>>>>>>> theirs
 #include <wtf/Noncopyable.h>
 #include <wtf/UUID.h>
 #include <wtf/WeakPtr.h>
@@ -37,8 +43,6 @@
 namespace WebCore {
 
 class Range;
-
-struct TextIndicatorData;
 
 enum class TextIndicatorOption : uint16_t;
 enum class TextAnimationRunMode : uint8_t;
