@@ -55,27 +55,6 @@
 
 namespace WebKit {
 
-#if OS(LINUX)
-static bool isFlatpakSpawnUsable()
-{
-    ASSERT(isInsideFlatpak());
-    static std::optional<bool> ret;
-    if (ret)
-        return *ret;
-
-    // For our usage to work we need flatpak >= 1.5.2 on the host and flatpak-xdg-utils > 1.0.1 in the sandbox
-    GRefPtr<GSubprocess> process = adoptGRef(g_subprocess_new(static_cast<GSubprocessFlags>(G_SUBPROCESS_FLAGS_STDOUT_SILENCE | G_SUBPROCESS_FLAGS_STDERR_SILENCE),
-        nullptr, "flatpak-spawn", "--sandbox", "--sandbox-expose-path-ro-try=/this_path_doesnt_exist", "echo", nullptr));
-
-    if (!process.get())
-        ret = false;
-    else
-        ret = g_subprocess_wait_check(process.get(), nullptr, nullptr);
-
-    return *ret;
-}
-#endif
-
 static int connectionOptions()
 {
 #if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
@@ -219,7 +198,7 @@ void ProcessLauncher::launchProcess()
 #if OS(LINUX)
     bool sandboxEnabled = m_launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-sandbox"_s) == "true"_s;
 
-    if (sandboxEnabled && isInsideFlatpak() && isFlatpakSpawnUsable())
+    if (sandboxEnabled && isInsideFlatpak())
         process = flatpakSpawn(launcher.get(), m_launchOptions, argv, webkitSocketPair.client, pidSocketPair.client, &error.outPtr());
 #if ENABLE(BUBBLEWRAP_SANDBOX)
     // You cannot use bubblewrap within Flatpak or some containers so lets ensure it never happens.
