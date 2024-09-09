@@ -748,7 +748,8 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             // Add in the child's marginTop to our height.
             setHeight(height() + child->marginTop());
 
-            child->markForPaginationRelayoutIfNeeded();
+            if (!haveLineClamp)
+                child->markForPaginationRelayoutIfNeeded();
 
             // Now do a layout.
             child->layoutIfNeeded();
@@ -1010,9 +1011,10 @@ RenderDeprecatedFlexibleBox::ClampedContent RenderDeprecatedFlexibleBox::applyLi
 
     layoutState.setLegacyLineClamp(RenderLayoutState::LegacyLineClamp { lineCountForLineClamp(), { }, { }, { } });
     for (auto* child = iterator.first(); child; child = iterator.next()) {
-        if (childDoesNotAffectWidthOrFlexing(child))
+        if (child->isOutOfFlowPositioned())
             continue;
 
+        child->markForPaginationRelayoutIfNeeded();
         child->layoutIfNeeded();
     }
 
