@@ -117,7 +117,6 @@ namespace JSC {
     macro(generatorResumeMode) \
     macro(syncIterator) \
     macro(nextMethod) \
-    macro(asyncGeneratorQueueItemNext) \
     macro(this) \
     macro(toIntegerOrInfinity) \
     macro(toLength) \
