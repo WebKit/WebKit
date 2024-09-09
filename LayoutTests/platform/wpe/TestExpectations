@@ -28,15 +28,6 @@ css2.1/20110323/replaced-intrinsic-002.htm [ Pass ]
 
 fast/events/constructors/keyboard-event-constructor.html [ Pass ]
 
-imported/mozilla/svg/filters/filter-marked-line-02.svg [ Pass ]
-imported/mozilla/svg/filters/filter-marked-line-03.svg [ Pass ]
-imported/mozilla/svg/filters/filter-marked-line-04.svg [ Pass ]
-imported/mozilla/svg/filters/filter-marked-line-05.svg [ Pass ]
-imported/mozilla/svg/filters/filter-marked-line-06.svg [ Pass ]
-imported/mozilla/svg/filters/filter-marked-line-07.svg [ Pass ]
-imported/mozilla/svg/filters/filter-marked-line-08.svg [ Pass ]
-imported/mozilla/svg/filters/filter-marked-line-09.svg [ Pass ]
-
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_flex-natural-mixed-basis-auto.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/grid-flex-item-007.html [ Pass ]
 

@@ -365,6 +365,15 @@ imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-radi
 # GLIB PASS since r281724
 imported/mozilla/svg/as-image/border-image-simple-1.html [ Pass ]
 
+imported/mozilla/svg/filters/filter-marked-line-02.svg [ Pass ]
+imported/mozilla/svg/filters/filter-marked-line-03.svg [ Pass ]
+imported/mozilla/svg/filters/filter-marked-line-04.svg [ Pass ]
+imported/mozilla/svg/filters/filter-marked-line-05.svg [ Pass ]
+imported/mozilla/svg/filters/filter-marked-line-06.svg [ Pass ]
+imported/mozilla/svg/filters/filter-marked-line-07.svg [ Pass ]
+imported/mozilla/svg/filters/filter-marked-line-08.svg [ Pass ]
+imported/mozilla/svg/filters/filter-marked-line-09.svg [ Pass ]
+
 fast/css/accent-color/checkbox.html [ Pass ]
 fast/css/accent-color/progress.html [ Pass ]
 fast/css/accent-color/radio.html [ Pass ]
