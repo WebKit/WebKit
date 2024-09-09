@@ -38,7 +38,7 @@ class RenderText;
 class RenderedDocumentMarker;
 struct TextBoxSelectableRange;
 
-struct MarkedText : public CanMakeCheckedPtr<MarkedText> {
+struct MarkedText : public CanMakeCheckedPtr<MarkedText, WTF::DefautedOperatorEqual::Yes> {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(MarkedText);
 
