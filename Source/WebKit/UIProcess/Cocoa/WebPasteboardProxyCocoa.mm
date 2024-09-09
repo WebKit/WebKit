@@ -79,7 +79,7 @@ std::optional<IPC::AsyncReplyID> WebPasteboardProxy::grantAccessToCurrentData(We
         return std::nullopt;
     }
 
-    auto* networkProcess = process.websiteDataStore()->networkProcessIfExists();
+    RefPtr networkProcess = process.websiteDataStore()->networkProcessIfExists();
     if (!networkProcess || !paths.size()) {
         completionHandler();
         return std::nullopt;
