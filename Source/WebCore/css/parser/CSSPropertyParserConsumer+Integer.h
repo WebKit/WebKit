@@ -36,11 +36,8 @@ namespace CSSPropertyParserHelpers {
 
 enum class IntegerValueRange : uint8_t;
 
-std::optional<int> consumeIntegerRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&);
-std::optional<int> consumeNonNegativeIntegerRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeNonNegativeInteger(CSSParserTokenRange&);
-std::optional<unsigned> consumePositiveIntegerRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&, IntegerValueRange);
 
