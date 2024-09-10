@@ -47,6 +47,7 @@ public:
     JSWebAssemblyInstance* instance() const { return m_instance.get(); }
 
     Wasm::TypeIndex typeIndex() const { return m_importableFunction.typeIndex; }
+    Wasm::Type type() const { return { Wasm::TypeKind::Ref, typeIndex() }; }
     WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation() const { return m_importableFunction.entrypointLoadLocation; }
     const uintptr_t* boxedWasmCalleeLoadLocation() const { return m_importableFunction.boxedWasmCalleeLoadLocation; }
     WasmToWasmImportableFunction importableFunction() const { return m_importableFunction; }

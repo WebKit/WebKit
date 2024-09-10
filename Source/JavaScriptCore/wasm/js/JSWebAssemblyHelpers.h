@@ -190,7 +190,7 @@ ALWAYS_INLINE JSValue toJSValue(JSGlobalObject* globalObject, const Wasm::Type t
     return JSValue();
 }
 
-ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Type type, JSValue value)
+ALWAYS_INLINE uint64_t toWebAssemblyValue(JSGlobalObject* globalObject, const Wasm::Type type, JSValue value)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -213,16 +213,15 @@ ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Typ
             if (!type.isNullable() && value.isNull())
                 return throwVMTypeError(globalObject, scope, "Non-null Externref cannot be null"_s);
         } else if (Wasm::isFuncref(type) || (!Options::useWasmGC() && isRefWithTypeIndex(type))) {
-            WebAssemblyFunction* wasmFunction = nullptr;
-            WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
-            if (!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && (!type.isNullable() || !value.isNull()))
+            if (type.isNullable() && value.isNull())
+                break;
+
+            auto* wasmFunction = jsDynamicCast<WebAssemblyFunctionBase*>(value);
+            if (!wasmFunction)
                 return throwVMTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
-            if (isRefWithTypeIndex(type) && !value.isNull()) {
-                Wasm::TypeIndex paramIndex = type.index;
-                Wasm::TypeIndex argIndex = wasmFunction ? wasmFunction->typeIndex() : wasmWrapperFunction->typeIndex();
-                if (paramIndex != argIndex)
-                    return throwVMTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
-            }
+
+            if (!isSubtype(wasmFunction->type(), type))
+                return throwVMTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
         } else {
             ASSERT(Options::useWasmGC());
             value = Wasm::internalizeExternref(value);

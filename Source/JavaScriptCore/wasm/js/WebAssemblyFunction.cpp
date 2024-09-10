@@ -85,7 +85,7 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
 
     for (unsigned argIndex = 0; argIndex < signature.argumentCount(); ++argIndex) {
         auto argType = signature.argumentType(argIndex);
-        uint64_t value = fromJSValue(globalObject, argType, callFrame->argument(argIndex));
+        uint64_t value = toWebAssemblyValue(globalObject, argType, callFrame->argument(argIndex));
         if (UNLIKELY(argType.isRef()))
             keepAliveArgs.append(callFrame->argument(argIndex));
 

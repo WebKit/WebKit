@@ -137,7 +137,7 @@ public:
         static constexpr ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(Function, m_value); }
     };
 
-    void setFunction(uint32_t, JSObject*, WasmToWasmImportableFunction, JSWebAssemblyInstance*);
+    void setFunction(uint32_t, WebAssemblyFunctionBase*);
     const Function& function(uint32_t) const;
     void copyFunction(const FuncRefTable* srcTable, uint32_t dstIndex, uint32_t srcIndex);
 

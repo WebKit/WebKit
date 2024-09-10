@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -169,16 +169,16 @@ std::optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
 
 void Table::copy(const Table* srcTable, uint32_t dstIndex, uint32_t srcIndex)
 {
-    RELEASE_ASSERT(isExternrefTable());
-    RELEASE_ASSERT(srcTable->isExternrefTable());
+    ASSERT(isExternrefTable());
+    ASSERT(srcTable->isExternrefTable());
 
     set(dstIndex, srcTable->get(srcIndex));
 }
 
 void Table::clear(uint32_t index)
 {
-    RELEASE_ASSERT(index < length());
-    RELEASE_ASSERT(m_owner);
+    ASSERT(index < length());
+    ASSERT(m_owner);
     visitDerived([&](auto& table) {
         table.clear(index);
     });
@@ -186,9 +186,8 @@ void Table::clear(uint32_t index)
 
 void Table::set(uint32_t index, JSValue value)
 {
-    RELEASE_ASSERT(index < length());
-    RELEASE_ASSERT(isExternrefTable());
-    RELEASE_ASSERT(m_owner);
+    ASSERT(index < length());
+    ASSERT(m_owner);
     visitDerived([&](auto& table) {
         table.set(index, value);
     });
@@ -196,8 +195,8 @@ void Table::set(uint32_t index, JSValue value)
 
 JSValue Table::get(uint32_t index) const
 {
-    RELEASE_ASSERT(index < length());
-    RELEASE_ASSERT(m_owner);
+    ASSERT(index < length());
+    ASSERT(m_owner);
     return visitDerived([&](auto& table) {
         return table.get(index);
     });
@@ -287,17 +286,14 @@ Ref<FuncRefTable> FuncRefTable::createFixedSized(uint32_t size, Type wasmType)
     return adoptRef(*new (NotNull, fastMalloc(allocationSize(allocatedLength(size)))) FuncRefTable(size, size, wasmType));
 }
 
-void FuncRefTable::setFunction(uint32_t index, JSObject* optionalWrapper, WasmToWasmImportableFunction function, JSWebAssemblyInstance* instance)
+void FuncRefTable::setFunction(uint32_t index, WebAssemblyFunctionBase* function)
 {
-    RELEASE_ASSERT(index < length());
-    RELEASE_ASSERT(m_owner);
+    ASSERT(index < length());
+    ASSERT_WITH_SECURITY_IMPLICATION(isSubtype(function->type(), wasmType()));
     auto& slot = m_importableFunctions.get()[index];
-    slot.m_function = function;
-    slot.m_instance = instance;
-    if (optionalWrapper)
-        slot.m_value.set(m_owner->vm(), m_owner, optionalWrapper);
-    else
-        slot.m_value.setWithoutWriteBarrier(jsNull());
+    slot.m_function = function->importableFunction();
+    slot.m_instance = function->instance();
+    slot.m_value.set(function->instance()->vm(), m_owner, function);
 }
 
 const FuncRefTable::Function& FuncRefTable::function(uint32_t index) const
@@ -307,17 +303,20 @@ const FuncRefTable::Function& FuncRefTable::function(uint32_t index) const
 
 void FuncRefTable::copyFunction(const FuncRefTable* srcTable, uint32_t dstIndex, uint32_t srcIndex)
 {
+    ASSERT(dstIndex < length());
     if (srcTable->get(srcIndex).isNull()) {
         clear(dstIndex);
         return;
     }
 
-    auto& function = srcTable->function(srcIndex);
-    setFunction(dstIndex, jsCast<JSObject*>(srcTable->get(srcIndex)), function.m_function, function.m_instance);
+    m_importableFunctions.get()[dstIndex] = srcTable->function(srcIndex);
+    // Write barrier our owner for good measure.
+    m_owner->vm().writeBarrier(m_owner);
 }
 
 void FuncRefTable::clear(uint32_t index)
 {
+    ASSERT(wasmType().isNullable());
     m_importableFunctions.get()[index] = FuncRefTable::Function { };
     ASSERT(m_importableFunctions.get()[index].m_function.typeIndex == Wasm::TypeDefinition::invalidIndex); // We rely on this in compiled code.
     ASSERT(!m_importableFunctions.get()[index].m_instance);
@@ -326,8 +325,10 @@ void FuncRefTable::clear(uint32_t index)
 
 void FuncRefTable::set(uint32_t index, JSValue value)
 {
-    clear(index);
-    m_importableFunctions.get()[index].m_value.set(m_owner->vm(), m_owner, value);
+    if (value.isNull())
+        clear(index);
+    else
+        setFunction(index, jsCast<WebAssemblyFunctionBase*>(value));
 }
 
 } } // namespace JSC::Table

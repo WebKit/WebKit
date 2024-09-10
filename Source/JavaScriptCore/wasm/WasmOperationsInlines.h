@@ -561,24 +561,10 @@ inline bool tableSet(JSWebAssemblyInstance* instance, unsigned tableIndex, uint3
         return false;
 
     JSValue value = JSValue::decode(encValue);
-    if (instance->table(tableIndex)->type() == Wasm::TableElementType::Externref)
+    if (value.isNull())
+        instance->table(tableIndex)->clear(index);
+    else
         instance->table(tableIndex)->set(index, value);
-    else if (instance->table(tableIndex)->type() == Wasm::TableElementType::Funcref) {
-        WebAssemblyFunction* wasmFunction;
-        WebAssemblyWrapperFunction* wasmWrapperFunction;
-
-        if (isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction)) {
-            ASSERT(!!wasmFunction || !!wasmWrapperFunction);
-            if (wasmFunction)
-                instance->table(tableIndex)->asFuncrefTable()->setFunction(index, jsCast<JSObject*>(value), wasmFunction->importableFunction(), wasmFunction->instance());
-            else
-                instance->table(tableIndex)->asFuncrefTable()->setFunction(index, jsCast<JSObject*>(value), wasmWrapperFunction->importableFunction(), wasmWrapperFunction->instance());
-        } else if (value.isNull())
-            instance->table(tableIndex)->clear(index);
-        else
-            ASSERT_NOT_REACHED();
-    } else
-        ASSERT_NOT_REACHED();
 
     return true;
 }
