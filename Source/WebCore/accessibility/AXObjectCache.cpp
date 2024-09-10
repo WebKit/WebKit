@@ -1304,6 +1304,17 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
     else if (auto* axRow = dynamicDowncast<AccessibilityTableRow>(object)) {
         if (auto* parentTable = axRow->parentTable())
             deferRecomputeTableCellSlots(*parentTable);
+    } else if (auto* scrollView = dynamicDowncast<AccessibilityScrollView>(object)) {
+        // When the children of an iframe change, e.g., because its visibility changes,
+        // then we need to dirty the web area's subtree since the scroll area doesn't
+        // have a node nor renderer, thus, failing the check below and returning early.
+
+        // Only do this when the web area is not the root web area, as this indicates
+        // we are in an iframe.
+        if (RefPtr webArea = scrollView->webAreaObject(); webArea && webArea != rootWebArea()) {
+            webArea->setNeedsToUpdateSubtree();
+            webArea->setNeedsToUpdateChildren();
+        }
     }
 
     if (!object.node() && !object.renderer())

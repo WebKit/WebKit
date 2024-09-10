@@ -3992,7 +3992,7 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
     if (useParentData && (m_isIgnoredFromParentData.isAXHidden || m_isIgnoredFromParentData.isPresentationalChildOfAriaRole))
         return AccessibilityObjectInclusion::IgnoreObject;
 
-    if (isARIAHidden())
+    if (isARIAHidden() || isWithinHiddenWebArea())
         return AccessibilityObjectInclusion::IgnoreObject;
 
     bool ignoreARIAHidden = isFocused();
@@ -4006,6 +4006,22 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
         return AccessibilityObjectInclusion::IncludeObject;
 
     return accessibilityPlatformIncludesObject();
+}
+
+bool AccessibilityObject::isWithinHiddenWebArea() const
+{
+    RefPtr webArea = this->containingWebArea();
+    CheckedPtr renderView = webArea ? dynamicDowncast<RenderView>(webArea->renderer()) : nullptr;
+    CheckedPtr frameRenderer = renderView ? renderView->frameView().frame().ownerRenderer() : nullptr;
+    while (frameRenderer) {
+        if (frameRenderer->style().usedVisibility() != Visibility::Visible || frameRenderer->style().effectiveInert())
+            return true;
+
+        renderView = frameRenderer->document().renderView();
+        frameRenderer = renderView ? renderView->frameView().frame().ownerRenderer() : nullptr;
+    }
+    return false;
+
 }
     
 bool AccessibilityObject::isIgnored() const
@@ -4411,6 +4427,14 @@ bool AccessibilityObject::ignoredByRowAncestor() const
     });
 
     return ancestor && ancestor->isTableRow();
+}
+
+AccessibilityObject* AccessibilityObject::containingWebArea() const
+{
+    CheckedPtr frameView = documentFrameView();
+    CheckedPtr cache = axObjectCache();
+    RefPtr root = cache ? dynamicDowncast<AccessibilityScrollView>(cache->getOrCreate(frameView.get())) : nullptr;
+    return root ? root->webAreaObject() : nullptr;
 }
 
 namespace Accessibility {

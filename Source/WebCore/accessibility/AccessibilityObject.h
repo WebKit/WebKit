@@ -745,6 +745,8 @@ public:
 
     const AccessibilityScrollView* ancestorAccessibilityScrollView(bool includeSelf) const;
     virtual AccessibilityObject* webAreaObject() const { return nullptr; }
+    bool isWithinHiddenWebArea() const;
+    AccessibilityObject* containingWebArea() const;
 
     void clearIsIgnoredFromParentData() { m_isIgnoredFromParentData = { }; }
     void setIsIgnoredFromParentDataForChild(AccessibilityObject*);
