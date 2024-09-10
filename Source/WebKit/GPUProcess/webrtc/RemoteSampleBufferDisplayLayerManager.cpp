@@ -126,7 +126,7 @@ bool RemoteSampleBufferDisplayLayerManager::allowsExitUnderMemoryPressure() cons
 void RemoteSampleBufferDisplayLayerManager::updateSampleBufferDisplayLayerBoundsAndPosition(SampleBufferDisplayLayerIdentifier identifier, WebCore::FloatRect bounds, std::optional<MachSendRight>&& sendRight)
 {
     Locker lock(m_layersLock);
-    if (auto* layer = m_layers.get(identifier))
+    if (RefPtr layer = m_layers.get(identifier))
         layer->updateBoundsAndPosition(bounds, WTFMove(sendRight));
 }
 
