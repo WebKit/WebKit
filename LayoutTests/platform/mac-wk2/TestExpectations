@@ -1854,4 +1854,5 @@ imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.
 fast/scrolling/mac/scrollbars/scrollbar-state.html [ Failure ] 
 
 # webkit.org/b/279359 http/wpt/mediastream/mediastreamtrackprocessor-videoframe-timestamp.html  is asserting on debug
-[ Sonoma+ Debug ] http/wpt/mediastream/mediastreamtrackprocessor-videoframe-timestamp.html [ Skip ]
+[ Sonoma+ Debug ] http/wpt/mediastream/mediastreamtrackprocessor-videoframe-timestamp.html  [ Skip ]
+[ Sonoma+ Debug ] http/wpt/mediasession/voiceActivityDetection.html [ Skip ]
