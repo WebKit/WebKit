@@ -234,7 +234,7 @@ FuncRefTable* Table::asFuncrefTable()
 ExternRefTable::ExternRefTable(uint32_t initial, std::optional<uint32_t> maximum, Type wasmType)
     : Table(initial, maximum, wasmType, TableElementType::Externref)
 {
-    RELEASE_ASSERT(isExternref(wasmType) || (Options::useWasmGC() && isSubtype(wasmType, externrefType())));
+    RELEASE_ASSERT(isExternref(wasmType) || (Options::useWasmGC() && isSubtype(wasmType, anyrefType())));
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
     // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
