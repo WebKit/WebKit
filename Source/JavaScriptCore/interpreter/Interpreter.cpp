@@ -674,6 +674,8 @@ public:
                 m_wasmTag = &wasmException->tag();
             } else if (ErrorInstance* error = jsDynamicCast<ErrorInstance*>(thrownValue))
                 m_catchableFromWasm = error->isCatchableFromWasm();
+            else
+                m_catchableFromWasm = true;
         }
 #else
         UNUSED_PARAM(thrownValue);
