@@ -39,25 +39,30 @@
 
 - (NSURL *)endpoint
 {
-    return _data->endpoint();
+    return self._protectedData->endpoint();
 }
 
 - (NSData *)applicationServerKey
 {
-    return toNSData(_data->applicationServerKey()).get();
+    return toNSData(self._protectedData->applicationServerKey()).get();
 }
 
 - (NSData *)authenticationSecret
 {
-    return toNSData(_data->sharedAuthenticationSecret()).get();
+    return toNSData(self._protectedData->sharedAuthenticationSecret()).get();
 }
 
 - (NSData *)ecdhPublicKey
 {
-    return toNSData(_data->clientECDHPublicKey()).get();
+    return toNSData(self._protectedData->clientECDHPublicKey()).get();
 }
 
 - (API::Object&)_apiObject
+{
+    return *_data;
+}
+
+- (Ref<API::WebPushSubscriptionData>)_protectedData
 {
     return *_data;
 }

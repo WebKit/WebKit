@@ -176,137 +176,137 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 
 - (NSDictionary<NSString *, id> *)manifest
 {
-    return _webExtension->manifest();
+    return self._protectedWebExtension->manifest();
 }
 
 - (double)manifestVersion
 {
-    return _webExtension->manifestVersion();
+    return self._protectedWebExtension->manifestVersion();
 }
 
 - (BOOL)supportsManifestVersion:(double)version
 {
-    return _webExtension->supportsManifestVersion(version);
+    return self._protectedWebExtension->supportsManifestVersion(version);
 }
 
 - (NSLocale *)defaultLocale
 {
-    return _webExtension->defaultLocale();
+    return self._protectedWebExtension->defaultLocale();
 }
 
 - (NSString *)displayName
 {
-    return _webExtension->displayName();
+    return self._protectedWebExtension->displayName();
 }
 
 - (NSString *)displayShortName
 {
-    return _webExtension->displayShortName();
+    return self._protectedWebExtension->displayShortName();
 }
 
 - (NSString *)displayVersion
 {
-    return _webExtension->displayVersion();
+    return self._protectedWebExtension->displayVersion();
 }
 
 - (NSString *)displayDescription
 {
-    return _webExtension->displayDescription();
+    return self._protectedWebExtension->displayDescription();
 }
 
 - (NSString *)displayActionLabel
 {
-    return _webExtension->displayActionLabel();
+    return self._protectedWebExtension->displayActionLabel();
 }
 
 - (NSString *)version
 {
-    return _webExtension->version();
+    return self._protectedWebExtension->version();
 }
 
 - (CocoaImage *)iconForSize:(CGSize)size
 {
-    return _webExtension->icon(size);
+    return self._protectedWebExtension->icon(size);
 }
 
 - (CocoaImage *)actionIconForSize:(CGSize)size
 {
-    return _webExtension->actionIcon(size);
+    return self._protectedWebExtension->actionIcon(size);
 }
 
 - (NSSet<WKWebExtensionPermission> *)requestedPermissions
 {
-    return WebKit::toAPI(_webExtension->requestedPermissions());
+    return WebKit::toAPI(self._protectedWebExtension->requestedPermissions());
 }
 
 - (NSSet<WKWebExtensionPermission> *)optionalPermissions
 {
-    return WebKit::toAPI(_webExtension->optionalPermissions());
+    return WebKit::toAPI(self._protectedWebExtension->optionalPermissions());
 }
 
 - (NSSet<WKWebExtensionMatchPattern *> *)requestedPermissionMatchPatterns
 {
-    return toAPI(_webExtension->requestedPermissionMatchPatterns());
+    return toAPI(self._protectedWebExtension->requestedPermissionMatchPatterns());
 }
 
 - (NSSet<WKWebExtensionMatchPattern *> *)optionalPermissionMatchPatterns
 {
-    return toAPI(_webExtension->optionalPermissionMatchPatterns());
+    return toAPI(self._protectedWebExtension->optionalPermissionMatchPatterns());
 }
 
 - (NSSet<WKWebExtensionMatchPattern *> *)allRequestedMatchPatterns
 {
-    return toAPI(_webExtension->allRequestedMatchPatterns());
+    return toAPI(self._protectedWebExtension->allRequestedMatchPatterns());
 }
 
 - (NSArray<NSError *> *)errors
 {
-    return _webExtension->errors();
+    return self._protectedWebExtension->errors();
 }
 
 - (BOOL)hasBackgroundContent
 {
-    return _webExtension->hasBackgroundContent();
+    return self._protectedWebExtension->hasBackgroundContent();
 }
 
 - (BOOL)hasPersistentBackgroundContent
 {
-    return _webExtension->backgroundContentIsPersistent();
+    return self._protectedWebExtension->backgroundContentIsPersistent();
 }
 
 - (BOOL)hasInjectedContent
 {
-    return _webExtension->hasStaticInjectedContent();
+    return self._protectedWebExtension->hasStaticInjectedContent();
 }
 
 - (BOOL)hasOptionsPage
 {
-    return _webExtension->hasOptionsPage();
+    return self._protectedWebExtension->hasOptionsPage();
 }
 
 - (BOOL)hasOverrideNewTabPage
 {
-    return _webExtension->hasOverrideNewTabPage();
+    return self._protectedWebExtension->hasOverrideNewTabPage();
 }
 
 - (BOOL)hasCommands
 {
-    return _webExtension->hasCommands();
+    return self._protectedWebExtension->hasCommands();
 }
 
 - (BOOL)hasContentModificationRules
 {
-    return _webExtension->hasContentModificationRules();
+    return self._protectedWebExtension->hasContentModificationRules();
 }
 
 - (BOOL)_hasServiceWorkerBackgroundContent
 {
-    return _webExtension->backgroundContentIsServiceWorker();
+    return self._protectedWebExtension->backgroundContentIsServiceWorker();
 }
 
 - (BOOL)_hasModularBackgroundContent
 {
-    return _webExtension->backgroundContentUsesModules();
+    return self._protectedWebExtension->backgroundContentUsesModules();
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
@@ -329,6 +329,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 }
 
 - (WebKit::WebExtension&)_webExtension
+{
+    return *_webExtension;
+}
+
+- (Ref<WebKit::WebExtension>)_protectedWebExtension
 {
     return *_webExtension;
 }

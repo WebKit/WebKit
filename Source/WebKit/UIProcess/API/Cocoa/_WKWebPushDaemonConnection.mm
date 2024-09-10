@@ -83,14 +83,14 @@ static _WKWebPushPermissionState toWKPermissionsState(WebCore::PushPermissionSta
 
 - (void)getPushPermissionStateForOrigin:(NSURL *)originURL completionHandler:(void (^)(_WKWebPushPermissionState))completionHandler
 {
-    _connection->getPushPermissionState(originURL, [completionHandlerCopy = makeBlockPtr(completionHandler)](auto result) {
+    self._protectedConnection->getPushPermissionState(originURL, [completionHandlerCopy = makeBlockPtr(completionHandler)](auto result) {
         completionHandlerCopy(toWKPermissionsState(result));
     });
 }
 
 - (void)requestPushPermissionForOrigin:(NSURL *)originURL completionHandler:(void (^)(BOOL))completionHandler
 {
-    _connection->requestPushPermission(originURL, [completionHandlerCopy = makeBlockPtr(completionHandler)] (bool result) {
+    self._protectedConnection->requestPushPermission(originURL, [completionHandlerCopy = makeBlockPtr(completionHandler)] (bool result) {
         completionHandlerCopy(result);
     });
 }
@@ -98,13 +98,13 @@ static _WKWebPushPermissionState toWKPermissionsState(WebCore::PushPermissionSta
 - (void)setAppBadge:(NSUInteger *)badge origin:(NSURL *)originURL
 {
     std::optional<uint64_t> badgeValue = badge ? std::optional<uint64_t> { (uint64_t)badge } : std::nullopt;
-    _connection->setAppBadge(originURL, badgeValue);
+    self._protectedConnection->setAppBadge(originURL, badgeValue);
 }
 
 - (void)subscribeToPushServiceForScope:(NSURL *)scopeURL applicationServerKey:(NSData *)applicationServerKey completionHandler:(void (^)(_WKWebPushSubscriptionData *, NSError *))completionHandler
 {
     auto key = makeVector(applicationServerKey);
-    _connection->subscribeToPushService(scopeURL, WTFMove(key), [completionHandlerCopy = makeBlockPtr(completionHandler)] (auto result) {
+    self._protectedConnection->subscribeToPushService(scopeURL, WTFMove(key), [completionHandlerCopy = makeBlockPtr(completionHandler)] (auto result) {
         if (result)
             return completionHandlerCopy(wrapper(API::WebPushSubscriptionData::create(WTFMove(result.value()))).get(), nil);
 
@@ -116,7 +116,7 @@ static _WKWebPushPermissionState toWKPermissionsState(WebCore::PushPermissionSta
 
 - (void)unsubscribeFromPushServiceForScope:(NSURL *)scopeURL completionHandler:(void (^)(BOOL unsubscribed, NSError *))completionHandler
 {
-    _connection->unsubscribeFromPushService(scopeURL, [completionHandlerCopy = makeBlockPtr(completionHandler)] (auto result) {
+    self._protectedConnection->unsubscribeFromPushService(scopeURL, [completionHandlerCopy = makeBlockPtr(completionHandler)] (auto result) {
         if (result)
             return completionHandlerCopy(result.value(), nil);
 
@@ -127,7 +127,7 @@ static _WKWebPushPermissionState toWKPermissionsState(WebCore::PushPermissionSta
 
 - (void)getSubscriptionForScope:(NSURL *)scopeURL completionHandler:(void (^)(_WKWebPushSubscriptionData *, NSError *))completionHandler
 {
-    _connection->getPushSubscription(scopeURL, [completionHandlerCopy = makeBlockPtr(completionHandler)] (auto result) {
+    self._protectedConnection->getPushSubscription(scopeURL, [completionHandlerCopy = makeBlockPtr(completionHandler)] (auto result) {
         if (result) {
             if (auto data = result.value())
                 return completionHandlerCopy(wrapper(API::WebPushSubscriptionData::create(WTFMove(*data))).get(), nil);
@@ -142,7 +142,7 @@ static _WKWebPushPermissionState toWKPermissionsState(WebCore::PushPermissionSta
 
 - (void)getNextPendingPushMessage:(void (^)(_WKWebPushMessage *))completionHandler
 {
-    _connection->getNextPendingPushMessage([completionHandlerCopy = makeBlockPtr(completionHandler)] (auto result) {
+    self._protectedConnection->getNextPendingPushMessage([completionHandlerCopy = makeBlockPtr(completionHandler)] (auto result) {
         if (!result)
             return completionHandlerCopy(nil);
 
@@ -151,6 +151,11 @@ static _WKWebPushPermissionState toWKPermissionsState(WebCore::PushPermissionSta
 }
 
 - (API::Object&)_apiObject
+{
+    return *_connection;
+}
+
+- (Ref<API::WebPushDaemonConnection>)_protectedConnection
 {
     return *_connection;
 }

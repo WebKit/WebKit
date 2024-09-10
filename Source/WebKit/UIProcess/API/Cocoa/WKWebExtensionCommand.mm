@@ -71,12 +71,13 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 
 - (NSString *)debugDescription
 {
-    return [NSString stringWithFormat:@"<%@: %p; identifier = %@; shortcut = %@>", NSStringFromClass(self.class), self, self.identifier, self.activationKey.length ? (NSString *)self._webExtensionCommand.shortcutString() : @"(none)"];
+    return [NSString stringWithFormat:@"<%@: %p; identifier = %@; shortcut = %@>", NSStringFromClass(self.class), self,
+        self.identifier, self.activationKey.length ? (NSString *)self._protectedWebExtensionCommand->shortcutString() : @"(none)"];
 }
 
 - (WKWebExtensionContext *)webExtensionContext
 {
-    if (auto *context = _webExtensionCommand->extensionContext())
+    if (auto *context = self._protectedWebExtensionCommand->extensionContext())
         return context->wrapper();
     return nil;
 }
@@ -100,13 +101,13 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 
 - (void)setActivationKey:(NSString *)activationKey
 {
-    bool result = _webExtensionCommand->setActivationKey(activationKey);
+    bool result = self._protectedWebExtensionCommand->setActivationKey(activationKey);
     NSAssert(result, @"Invalid parameter: an unsupported character was provided");
 }
 
 - (CocoaModifierFlags)modifierFlags
 {
-    return _webExtensionCommand->modifierFlags().toRaw();
+    return self._protectedWebExtensionCommand->modifierFlags().toRaw();
 }
 
 - (void)setModifierFlags:(CocoaModifierFlags)modifierFlags
@@ -114,12 +115,12 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
     auto optionSet = OptionSet<WebKit::WebExtension::ModifierFlags>::fromRaw(modifierFlags) & WebKit::WebExtension::allModifierFlags();
     NSAssert(optionSet.toRaw() == modifierFlags, @"Invalid parameter: an unsupported modifier flag was provided");
 
-    _webExtensionCommand->setModifierFlags(optionSet);
+    self._protectedWebExtensionCommand->setModifierFlags(optionSet);
 }
 
 - (CocoaMenuItem *)menuItem
 {
-    return _webExtensionCommand->platformMenuItem();
+    return self._protectedWebExtensionCommand->platformMenuItem();
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -131,12 +132,12 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 
 - (NSString *)_shortcut
 {
-    return _webExtensionCommand->shortcutString();
+    return self._protectedWebExtensionCommand->shortcutString();
 }
 
 - (NSString *)_userVisibleShortcut
 {
-    return _webExtensionCommand->userVisibleShortcut();
+    return self._protectedWebExtensionCommand->userVisibleShortcut();
 }
 
 #if USE(APPKIT)
@@ -144,7 +145,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 {
     NSParameterAssert([event isKindOfClass:NSEvent.class]);
 
-    return _webExtensionCommand->matchesEvent(event);
+    return self._protectedWebExtensionCommand->matchesEvent(event);
 }
 #endif
 
@@ -156,6 +157,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 }
 
 - (WebKit::WebExtensionCommand&)_webExtensionCommand
+{
+    return *_webExtensionCommand;
+}
+
+- (Ref<WebKit::WebExtensionCommand>)_protectedWebExtensionCommand
 {
     return *_webExtensionCommand;
 }

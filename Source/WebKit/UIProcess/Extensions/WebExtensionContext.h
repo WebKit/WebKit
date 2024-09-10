@@ -292,6 +292,7 @@ public:
     bool isLoaded() const { return !!m_extensionController; }
 
     WebExtension& extension() const { return *m_extension; }
+    Ref<WebExtension> protectedExtension() const { return extension(); }
     WebExtensionController* extensionController() const { return m_extensionController.get(); }
 
     const URL& baseURL() const { return m_baseURL; }
