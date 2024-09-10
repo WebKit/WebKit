@@ -83,19 +83,41 @@ id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& m
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     options.fastMathEnabled = YES;
 ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
-    // FIXME(PERFORMANCE): Run the asynchronous version of this
-    id<MTLLibrary> library = [device newLibraryWithSource:msl options:options error:error];
-    if (error && *error) {
-        *error = [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Failed to compile the shader source, generated metal:\n%@", (NSString*)msl] }];
-#ifndef NDEBUG
+    
+    // Use a dispatch semaphore to wait for the async operation to complete
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    __block id<MTLLibrary> resultLibrary = nil;
+    __block NSError* resultError = nil;
+    
+    [device newLibraryWithSource:msl options:options completionHandler:^(id<MTLLibrary> library, NSError* libraryError) {
+        if (library) {
+            resultLibrary = library;
+            library.label = label;
+        }
+        
+        if (libraryError) {
+            resultError = libraryError;
+        }
+        
+        dispatch_semaphore_signal(semaphore);
+    }];
+    
+    // Wait for the async operation to complete
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    
+    if (error && resultError) {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250442
-        WTFLogAlways("MSL compilation error: %@", [*error localizedDescription]);
+#ifdef NDEBUG
+        *error = [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Failed to compile the shader source, generated metal:\n%@", (NSString*)msl] }];
+#else
+        WTFLogAlways("MSL compilation error: %@", [resultError localizedDescription]);
+        *error = resultError;
 #endif
         return nil;
     }
-    library.label = label;
-    return library;
+    
+    return resultLibrary;
 }
 
 static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptor& suppliedHints, String&& label)
