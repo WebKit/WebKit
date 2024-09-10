@@ -1638,8 +1638,6 @@ http/tests/webgpu/webgpu/api/validation/queue/destroyed [ Pass ]
 
 http/tests/webgpu/webgpu/shader/execution/flow_control/switch.html [ Pass ]
 
-webkit.org/b/263920 svg/transforms/transformed-text-fill-gradient.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/264266 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/264306 [ Sonoma+ ] fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html [ Pass ImageOnlyFailure Timeout ]
