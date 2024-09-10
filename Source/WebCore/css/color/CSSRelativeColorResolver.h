@@ -45,15 +45,6 @@ struct CSSRelativeColorResolver {
 };
 
 template<typename Descriptor>
-bool requiresConversionData(const CSSRelativeColorResolver<Descriptor>& relative)
-{
-    return requiresConversionData(std::get<0>(relative.components))
-        || requiresConversionData(std::get<1>(relative.components))
-        || requiresConversionData(std::get<2>(relative.components))
-        || requiresConversionData(std::get<3>(relative.components));
-}
-
-template<typename Descriptor>
 Color resolve(const CSSRelativeColorResolver<Descriptor>& relative, const CSSToLengthConversionData& conversionData)
 {
     auto originColor = relative.origin;
@@ -94,7 +85,7 @@ Color resolve(const CSSRelativeColorResolver<Descriptor>& relative, const CSSToL
 template<typename Descriptor>
 Color resolveNoConversionDataRequired(const CSSRelativeColorResolver<Descriptor>& relative)
 {
-    ASSERT(!requiresConversionData(relative));
+    ASSERT(!requiresConversionData(relative.components));
 
     auto originColor = relative.origin;
     auto originColorAsColorType = originColor.template toColorTypeLossy<GetColorType<Descriptor>>();

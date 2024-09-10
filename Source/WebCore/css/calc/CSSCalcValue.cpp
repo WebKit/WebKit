@@ -240,10 +240,10 @@ Ref<CalculationValue> CSSCalcValue::createCalculationValue(const CSSToLengthConv
     return CSSCalc::toCalculationValue(m_tree, options);
 }
 
-NumberRaw CSSCalcValue::numberValueDeprecated(const CSSCalcSymbolTable& symbolTable) const
+NumberRaw CSSCalcValue::numberValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
 {
     ASSERT(m_tree.category == Calculation::Category::Number);
-    return { doubleValueDeprecated(symbolTable) };
+    return { doubleValueNoConversionDataRequired(symbolTable) };
 }
 
 NumberRaw CSSCalcValue::numberValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
@@ -252,10 +252,10 @@ NumberRaw CSSCalcValue::numberValue(const CSSToLengthConversionData& conversionD
     return { doubleValue(conversionData, symbolTable) };
 }
 
-PercentRaw CSSCalcValue::percentValueDeprecated(const CSSCalcSymbolTable& symbolTable) const
+PercentRaw CSSCalcValue::percentValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
 {
     ASSERT(m_tree.category == Calculation::Category::Percent);
-    return { doubleValueDeprecated(symbolTable) };
+    return { doubleValueNoConversionDataRequired(symbolTable) };
 }
 
 PercentRaw CSSCalcValue::percentValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
@@ -264,10 +264,10 @@ PercentRaw CSSCalcValue::percentValue(const CSSToLengthConversionData& conversio
     return { doubleValue(conversionData, symbolTable) };
 }
 
-AngleRaw CSSCalcValue::angleValueDeprecated(const CSSCalcSymbolTable& symbolTable) const
+AngleRaw CSSCalcValue::angleValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
 {
     ASSERT(m_tree.category == Calculation::Category::Angle);
-    return { CSSUnitType::CSS_DEG, doubleValueDeprecated(symbolTable) };
+    return { CSSUnitType::CSS_DEG, doubleValueNoConversionDataRequired(symbolTable) };
 }
 
 AngleRaw CSSCalcValue::angleValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
@@ -276,10 +276,10 @@ AngleRaw CSSCalcValue::angleValue(const CSSToLengthConversionData& conversionDat
     return { CSSUnitType::CSS_DEG, doubleValue(conversionData, symbolTable) };
 }
 
-LengthRaw CSSCalcValue::lengthValueDeprecated(const CSSCalcSymbolTable& symbolTable) const
+LengthRaw CSSCalcValue::lengthValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
 {
     ASSERT(m_tree.category == Calculation::Category::Length);
-    return { CSSUnitType::CSS_PX, doubleValueDeprecated(symbolTable) };
+    return { CSSUnitType::CSS_PX, doubleValueNoConversionDataRequired(symbolTable) };
 }
 
 LengthRaw CSSCalcValue::lengthValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
@@ -288,10 +288,10 @@ LengthRaw CSSCalcValue::lengthValue(const CSSToLengthConversionData& conversionD
     return { CSSUnitType::CSS_PX, doubleValue(conversionData, symbolTable) };
 }
 
-ResolutionRaw CSSCalcValue::resolutionValueDeprecated(const CSSCalcSymbolTable& symbolTable) const
+ResolutionRaw CSSCalcValue::resolutionValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
 {
     ASSERT(m_tree.category == Calculation::Category::Resolution);
-    return { CSSUnitType::CSS_DPPX, doubleValueDeprecated(symbolTable) };
+    return { CSSUnitType::CSS_DPPX, doubleValueNoConversionDataRequired(symbolTable) };
 }
 
 ResolutionRaw CSSCalcValue::resolutionValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
@@ -300,10 +300,10 @@ ResolutionRaw CSSCalcValue::resolutionValue(const CSSToLengthConversionData& con
     return { CSSUnitType::CSS_DPPX, doubleValue(conversionData, symbolTable) };
 }
 
-TimeRaw CSSCalcValue::timeValueDeprecated(const CSSCalcSymbolTable& symbolTable) const
+TimeRaw CSSCalcValue::timeValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
 {
     ASSERT(m_tree.category == Calculation::Category::Time);
-    return { CSSUnitType::CSS_S, doubleValueDeprecated(symbolTable) };
+    return { CSSUnitType::CSS_S, doubleValueNoConversionDataRequired(symbolTable) };
 }
 
 TimeRaw CSSCalcValue::timeValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
