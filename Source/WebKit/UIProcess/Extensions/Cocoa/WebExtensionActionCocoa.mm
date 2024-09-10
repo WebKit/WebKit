@@ -238,6 +238,20 @@ using namespace WebKit;
 
     _webExtensionAction->popupDidFinishDocumentLoad();
 }
+
+#if PLATFORM(MAC)
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> *URLs))completionHandler
+{
+    RefPtr extensionContext = _webExtensionAction ? _webExtensionAction->extensionContext() : nullptr;
+    if (!extensionContext) {
+        completionHandler(nil);
+        return;
+    }
+
+    extensionContext->runOpenPanel(webView, parameters, completionHandler);
+}
+#endif // PLATFORM(MAC)
+
 @end
 
 #if PLATFORM(IOS_FAMILY)

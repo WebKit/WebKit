@@ -119,6 +119,20 @@ ALWAYS_INLINE std::optional<Ref<T>> toOptionalRef(RefPtr<T> ptr)
 
     decisionHandler(WKNavigationActionPolicyAllow);
 }
+
+#if PLATFORM(MAC)
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> *URLs))completionHandler
+{
+    auto extensionContext = _webExtensionSidebar ? _webExtensionSidebar->extensionContext() : std::nullopt;
+    if (!extensionContext) {
+        completionHandler(nil);
+        return;
+    }
+
+    extensionContext.value()->runOpenPanel(webView, parameters, completionHandler);
+}
+#endif // PLATFORM(MAC)
+
 @end
 
 using WebKit::WebExtensionSidebar;

@@ -44,6 +44,7 @@
 #import "ResourceLoadInfo.h"
 #import "WKNavigationActionPrivate.h"
 #import "WKNavigationDelegatePrivate.h"
+#import "WKOpenPanelParametersPrivate.h"
 #import "WKPreferencesPrivate.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebExtensionContextInternal.h"
@@ -78,6 +79,7 @@
 #import "_WKWebExtensionLocalization.h"
 #import "_WKWebExtensionRegisteredScriptsSQLiteStore.h"
 #import "_WKWebExtensionStorageSQLiteStore.h"
+#import <UniformTypeIdentifiers/UTType.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/UserScript.h>
 #import <pal/spi/cocoa/NSKeyedUnarchiverSPI.h>
@@ -172,6 +174,16 @@ static constexpr NSInteger currentDeclarativeNetRequestRuleTranslatorVersion = 1
 
     _webExtensionContext->webViewWebContentProcessDidTerminate(webView);
 }
+
+#if PLATFORM(MAC)
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> *URLs))completionHandler
+{
+    if (!_webExtensionContext)
+        return;
+
+    _webExtensionContext->runOpenPanel(webView, parameters, completionHandler);
+}
+#endif // PLATFORM(MAC)
 
 @end
 
@@ -3767,6 +3779,24 @@ void WebExtensionContext::webViewWebContentProcessDidTerminate(WKWebView *webVie
 
     ASSERT_NOT_REACHED();
 }
+
+#if PLATFORM(MAC)
+void WebExtensionContext::runOpenPanel(WKWebView *, WKOpenPanelParameters *parameters, void (^completionHandler)(NSArray *URLs))
+{
+    auto *panel = [NSOpenPanel openPanel];
+    panel.allowsMultipleSelection = parameters.allowsMultipleSelection;
+    panel.canChooseDirectories = parameters.allowsDirectories;
+    panel.canChooseFiles = YES;
+
+    panel.allowedContentTypes = WebKit::mapObjects((NSArray *)parameters._allowedFileExtensions, ^(id index, NSString *fileExtension) {
+        return [UTType typeWithFilenameExtension:fileExtension];
+    });
+
+    [panel beginWithCompletionHandler:^(NSModalResponse result) {
+        completionHandler(result == NSModalResponseOK ? panel.URLs : nil);
+    }];
+}
+#endif // PLATFORM(MAC)
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 URL WebExtensionContext::inspectorBackgroundPageURL() const
