@@ -267,7 +267,7 @@ void AsyncPDFRenderer::coverageRectDidChange(TiledBacking& tiledBacking, const F
         return;
 
     std::optional<PDFLayoutRow> layoutRow;
-    const GraphicsLayer* layer = nullptr;
+    RefPtr<GraphicsLayer> layer;
     auto layerID = m_tileGridToLayerIDMap.getOptional(tiledBacking.primaryGridIdentifier());
     if (layerID) {
         layoutRow = presentationController->rowForLayerID(*layerID);
@@ -276,7 +276,7 @@ void AsyncPDFRenderer::coverageRectDidChange(TiledBacking& tiledBacking, const F
 
     auto pageCoverage = presentationController->pageCoverageForContentsRect(coverageRect, layoutRow);
 
-    auto pagePreviewScale = presentationController->graphicsLayerClient().customContentsScale(layer).value_or(1);
+    auto pagePreviewScale = presentationController->graphicsLayerClient().customContentsScale(layer.get()).value_or(1);
 
     for (auto& pageInfo : pageCoverage) {
         if (m_pagePreviews.contains(pageInfo.pageIndex))

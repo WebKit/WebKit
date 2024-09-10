@@ -79,7 +79,7 @@ bool RemoteSampleBufferDisplayLayerManager::dispatchMessage(IPC::Connection& con
 
     auto identifier = LegacyNullableObjectIdentifier<SampleBufferDisplayLayerIdentifierType>(decoder.destinationID());
     Locker lock(m_layersLock);
-    if (auto* layer = m_layers.get(identifier))
+    if (RefPtr layer = m_layers.get(identifier))
         layer->didReceiveMessage(connection, decoder);
     return true;
 }
@@ -95,8 +95,7 @@ void RemoteSampleBufferDisplayLayerManager::createLayer(SampleBufferDisplayLayer
             callback({ });
             return;
         }
-        auto& layerReference = *layer;
-        layerReference.initialize(hideRootLayer, size, shouldMaintainAspectRatio, canShowWhileLocked, [this, protectedThis = Ref { *this }, callback = WTFMove(callback), identifier, layer = layer.releaseNonNull()](auto layerId) mutable {
+        layer->initialize(hideRootLayer, size, shouldMaintainAspectRatio, canShowWhileLocked, [this, protectedThis = Ref { *this }, callback = WTFMove(callback), identifier, layer = Ref { *layer }](auto layerId) mutable {
             m_queue->dispatch([this, protectedThis = WTFMove(protectedThis), callback = WTFMove(callback), identifier, layer = WTFMove(layer), layerId = WTFMove(layerId)]() mutable {
                 Locker lock(m_layersLock);
                 ASSERT(!m_layers.contains(identifier));
