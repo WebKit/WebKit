@@ -724,15 +724,16 @@ accessibility/mac/AXObjectCacheMac.mm
 accessibility/mac/AccessibilityObjectMac.mm
 accessibility/mac/WebAccessibilityObjectWrapperBase.mm
 accessibility/mac/WebAccessibilityObjectWrapperMac.mm
+
 animation/AcceleratedTimeline.cpp
 animation/AnimationEffect.cpp
 animation/AnimationEffectTiming.cpp
+animation/AnimationTimelinesController.cpp
 animation/BlendingKeyframes.cpp
 animation/CSSPropertyAnimation.cpp
 animation/CSSTransition.cpp
 animation/CustomEffect.cpp
 animation/DocumentTimeline.cpp
-animation/DocumentTimelinesController.cpp
 animation/KeyframeEffect.cpp
 animation/KeyframeEffectStack.cpp
 animation/StyleOriginatedAnimation.cpp

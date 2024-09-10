@@ -29,6 +29,7 @@
 #include "Document.h"
 
 #include "AXObjectCache.h"
+#include "AnimationTimelinesController.h"
 #include "ApplicationManifest.h"
 #include "Attr.h"
 #include "BeforeUnloadEvent.h"
@@ -74,7 +75,6 @@
 #include "DocumentMarkerController.h"
 #include "DocumentSharedObjectPool.h"
 #include "DocumentTimeline.h"
-#include "DocumentTimelinesController.h"
 #include "DocumentType.h"
 #include "DragEvent.h"
 #include "Editing.h"
@@ -9915,10 +9915,10 @@ void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
     m_consoleMessageListener = listener;
 }
 
-DocumentTimelinesController& Document::ensureTimelinesController()
+AnimationTimelinesController& Document::ensureTimelinesController()
 {
     if (!m_timelinesController)
-        m_timelinesController = makeUnique<DocumentTimelinesController>(*this);
+        m_timelinesController = makeUnique<AnimationTimelinesController>(*this);
     return *m_timelinesController.get();
 }
 

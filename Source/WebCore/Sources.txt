@@ -584,6 +584,7 @@ animation/AnimationEffect.cpp
 animation/AnimationEffectTiming.cpp
 animation/AnimationEventBase.cpp
 animation/AnimationMalloc.cpp
+animation/AnimationTimelinesController.cpp
 animation/AnimationPlaybackEvent.cpp
 animation/AnimationTimeline.cpp
 animation/BlendingKeyframes.cpp
@@ -595,7 +596,6 @@ animation/CSSTransitionEvent.cpp
 animation/CompositeOperation.cpp
 animation/CustomEffect.cpp
 animation/DocumentTimeline.cpp
-animation/DocumentTimelinesController.cpp
 animation/ElementAnimationRareData.cpp
 animation/FrameRateAligner.cpp
 animation/KeyframeEffect.cpp

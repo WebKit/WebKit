@@ -47,7 +47,7 @@ Modules/webdatabase/SQLTransactionBackend.h
 accessibility/AXCoreObject.h
 accessibility/AXSearchManager.h
 accessibility/AXTextMarker.h
-animation/DocumentTimelinesController.h
+animation/AnimationTimelinesController.h
 animation/KeyframeEffect.h
 bindings/js/DOMWrapperWorld.h
 bindings/js/IDBBindingUtilities.cpp

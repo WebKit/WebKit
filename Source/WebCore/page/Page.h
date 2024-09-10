@@ -1115,7 +1115,7 @@ public:
     void setAccessibilityRootObject(AccessibilityRootAtspi*);
 #endif
 
-    void timelineControllerMaximumAnimationFrameRateDidChange(DocumentTimelinesController&);
+    void timelineControllerMaximumAnimationFrameRateDidChange(AnimationTimelinesController&);
 
     ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_contentSecurityPolicyModeForExtension; }
 

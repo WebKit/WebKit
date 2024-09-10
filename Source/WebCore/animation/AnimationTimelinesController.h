@@ -38,19 +38,19 @@ namespace WebCore {
 
 class CSSTransition;
 class Document;
-class DocumentTimeline;
+class AnimationTimeline;
 class WebAnimation;
 
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DocumentTimelinesController);
-class DocumentTimelinesController final : public CanMakeCheckedPtr<DocumentTimelinesController> {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DocumentTimelinesController);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DocumentTimelinesController);
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AnimationTimelinesController);
+class AnimationTimelinesController final : public CanMakeCheckedPtr<AnimationTimelinesController> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AnimationTimelinesController);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AnimationTimelinesController);
 public:
-    explicit DocumentTimelinesController(Document&);
-    ~DocumentTimelinesController();
+    explicit AnimationTimelinesController(Document&);
+    ~AnimationTimelinesController();
 
-    void addTimeline(DocumentTimeline&);
-    void removeTimeline(DocumentTimeline&);
+    void addTimeline(AnimationTimeline&);
+    void removeTimeline(AnimationTimeline&);
     void detachFromDocument();
     void updateAnimationsAndSendEvents(ReducedResolutionSeconds);
 
@@ -68,7 +68,7 @@ private:
     void maybeClearCachedCurrentTime();
 
     HashMap<FramesPerSecond, ReducedResolutionSeconds> m_animationFrameRateToLastTickTimeMap;
-    WeakHashSet<DocumentTimeline> m_timelines;
+    WeakHashSet<AnimationTimeline> m_timelines;
     TaskCancellationGroup m_currentTimeClearingTaskCancellationGroup;
     Document& m_document;
     FrameRateAligner m_frameRateAligner;

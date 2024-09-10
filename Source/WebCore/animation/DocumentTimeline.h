@@ -38,7 +38,7 @@ namespace WebCore {
 class AnimationEventBase;
 class CustomEffectCallback;
 class Document;
-class DocumentTimelinesController;
+class AnimationTimelinesController;
 class Element;
 class RenderBoxModelObject;
 class RenderElement;
@@ -94,7 +94,7 @@ private:
 
     bool isDocumentTimeline() const final { return true; }
 
-    DocumentTimelinesController* controller() const;
+    AnimationTimelinesController* controller() const;
     void applyPendingAcceleratedAnimations();
     void scheduleInvalidationTaskIfNeeded();
     void scheduleAnimationResolution();

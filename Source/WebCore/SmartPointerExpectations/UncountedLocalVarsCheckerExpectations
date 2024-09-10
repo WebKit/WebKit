@@ -605,12 +605,12 @@ accessibility/mac/WebAccessibilityObjectWrapperMac.mm
 animation/AcceleratedTimeline.cpp
 animation/AnimationEffect.cpp
 animation/AnimationTimeline.cpp
+animation/AnimationTimelinesController.cpp
 animation/BlendingKeyframes.cpp
 animation/CSSAnimation.cpp
 animation/CSSPropertyAnimation.cpp
 animation/CSSTransition.cpp
 animation/DocumentTimeline.cpp
-animation/DocumentTimelinesController.cpp
 animation/KeyframeEffect.cpp
 animation/KeyframeEffectStack.cpp
 animation/KeyframeInterpolation.cpp

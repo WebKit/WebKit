@@ -27,13 +27,13 @@
 #include "DocumentTimeline.h"
 
 #include "AnimationEventBase.h"
+#include "AnimationTimelinesController.h"
 #include "CSSProperty.h"
 #include "CSSTransition.h"
 #include "CustomAnimationOptions.h"
 #include "CustomEffect.h"
 #include "CustomEffectCallback.h"
 #include "Document.h"
-#include "DocumentTimelinesController.h"
 #include "EventNames.h"
 #include "GraphicsLayer.h"
 #include "KeyframeEffect.h"
@@ -74,7 +74,7 @@ DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
 
 DocumentTimeline::~DocumentTimeline() = default;
 
-DocumentTimelinesController* DocumentTimeline::controller() const
+AnimationTimelinesController* DocumentTimeline::controller() const
 {
     if (m_document)
         return &m_document->ensureTimelinesController();
@@ -379,7 +379,7 @@ void DocumentTimeline::scheduleNextTick()
             // Now let's get the time until any animation with this animation's frame rate would tick.
             // If that time is longer than what we previously computed without accounting for the frame
             // rate, we use this time instead since our animation wouldn't tick anyway since the
-            // DocumentTimelinesController would ignore it. Doing this ensures that we don't schedule
+            // AnimationTimelinesController would ignore it. Doing this ensures that we don't schedule
             // updates that wouldn't actually yield any work and guarantees that in a page with only
             // animations as the source for scheduling updates, updates are only scheduled at the minimal
             // frame rate.

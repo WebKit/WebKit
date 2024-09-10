@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "DocumentTimelinesController.h"
+#include "AnimationTimelinesController.h"
 
 #include "AnimationEventBase.h"
 #include "CSSTransition.h"
@@ -41,9 +41,9 @@
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DocumentTimelinesController);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AnimationTimelinesController);
 
-DocumentTimelinesController::DocumentTimelinesController(Document& document)
+AnimationTimelinesController::AnimationTimelinesController(Document& document)
     : m_document(document)
 {
     if (auto* page = document.page()) {
@@ -52,32 +52,41 @@ DocumentTimelinesController::DocumentTimelinesController(Document& document)
     }
 }
 
-DocumentTimelinesController::~DocumentTimelinesController() = default;
+AnimationTimelinesController::~AnimationTimelinesController() = default;
 
-void DocumentTimelinesController::addTimeline(DocumentTimeline& timeline)
+void AnimationTimelinesController::addTimeline(AnimationTimeline& timeline)
 {
     m_timelines.add(timeline);
 
+    auto* documentTimeline = dynamicDowncast<DocumentTimeline>(timeline);
+    if (!documentTimeline)
+        return;
+
     if (m_isSuspended)
-        timeline.suspendAnimations();
+        documentTimeline->suspendAnimations();
     else
-        timeline.resumeAnimations();
+        documentTimeline->resumeAnimations();
 }
 
-void DocumentTimelinesController::removeTimeline(DocumentTimeline& timeline)
+void AnimationTimelinesController::removeTimeline(AnimationTimeline& timeline)
 {
     m_timelines.remove(timeline);
 }
 
-void DocumentTimelinesController::detachFromDocument()
+void AnimationTimelinesController::detachFromDocument()
 {
     m_currentTimeClearingTaskCancellationGroup.cancel();
 
-    while (!m_timelines.isEmptyIgnoringNullReferences())
-        m_timelines.begin()->detachFromDocument();
+    while (!m_timelines.isEmptyIgnoringNullReferences()) {
+        auto& timeline = *m_timelines.begin();
+
+        // FIXME: implement this for other timeline types
+        if (RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(timeline))
+            documentTimeline->detachFromDocument();
+    }
 }
 
-void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutionSeconds timestamp)
+void AnimationTimelinesController::updateAnimationsAndSendEvents(ReducedResolutionSeconds timestamp)
 {
     auto previousMaximumAnimationFrameRate = maximumAnimationFrameRate();
     // This will hold the frame rate at which we would schedule updates not
@@ -93,10 +102,10 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
         });
     }
 
-    LOG_WITH_STREAM(Animations, stream << "DocumentTimelinesController::updateAnimationsAndSendEvents for time " << timestamp);
+    LOG_WITH_STREAM(Animations, stream << "AnimationTimelinesController::updateAnimationsAndSendEvents for time " << timestamp);
 
     // We need to copy m_timelines before iterating over its members since the steps in this procedure may mutate m_timelines.
-    auto protectedTimelines = copyToVectorOf<Ref<DocumentTimeline>>(m_timelines);
+    auto protectedTimelines = copyToVectorOf<Ref<AnimationTimeline>>(m_timelines);
 
     // We need to freeze the current time even if no animation is running.
     // document.timeline.currentTime may be called from a rAF callback and
@@ -107,11 +116,12 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
     m_frameRateAligner.beginUpdate(timestamp, previousTimelineFrameRate);
 
     // 1. Update the current time of all timelines associated with document passing now as the timestamp.
-    Vector<Ref<DocumentTimeline>> timelinesToUpdate;
+    Vector<Ref<AnimationTimeline>> timelinesToUpdate;
     Vector<Ref<WebAnimation>> animationsToRemove;
     Vector<Ref<CSSTransition>> completedTransitions;
     for (auto& timeline : protectedTimelines) {
-        auto shouldUpdateAnimationsAndSendEvents = timeline->documentWillUpdateAnimationsAndSendEvents();
+        RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(timeline);
+        auto shouldUpdateAnimationsAndSendEvents = documentTimeline ? documentTimeline->documentWillUpdateAnimationsAndSendEvents() : DocumentTimeline::ShouldUpdateAnimationsAndSendEvents::Yes;
         if (shouldUpdateAnimationsAndSendEvents == DocumentTimeline::ShouldUpdateAnimationsAndSendEvents::No)
             continue;
 
@@ -178,8 +188,10 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
         return;
 
     // 2. Remove replaced animations for document.
-    for (auto& timeline : protectedTimelines)
-        timeline->removeReplacedAnimations();
+    for (auto& timeline : protectedTimelines) {
+        if (RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(timeline))
+            documentTimeline->removeReplacedAnimations();
+    }
 
     // 3. Perform a microtask checkpoint.
     Ref { m_document }->eventLoop().performMicrotaskCheckpoint();
@@ -187,8 +199,10 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
     // 4. Let events to dispatch be a copy of doc's pending animation event queue.
     // 5. Clear doc's pending animation event queue.
     AnimationEvents events;
-    for (auto& timeline : timelinesToUpdate)
-        events.appendVector(timeline->prepareForPendingAnimationEventsDispatch());
+    for (auto& timeline : timelinesToUpdate) {
+        if (RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(timeline))
+            events.appendVector(documentTimeline->prepareForPendingAnimationEventsDispatch());
+    }
 
     // 6. Perform a stable sort of the animation events in events to dispatch as follows.
     std::stable_sort(events.begin(), events.end(), [] (const Ref<AnimationEventBase>& lhs, const Ref<AnimationEventBase>& rhs) {
@@ -217,18 +231,20 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
             documentTimeline->transitionDidComplete(WTFMove(completedTransition));
     }
 
-    for (auto& timeline : timelinesToUpdate)
-        timeline->documentDidUpdateAnimationsAndSendEvents();
+    for (auto& timeline : timelinesToUpdate) {
+        if (RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(timeline))
+            documentTimeline->documentDidUpdateAnimationsAndSendEvents();
+    }
 }
 
-std::optional<Seconds> DocumentTimelinesController::timeUntilNextTickForAnimationsWithFrameRate(FramesPerSecond frameRate) const
+std::optional<Seconds> AnimationTimelinesController::timeUntilNextTickForAnimationsWithFrameRate(FramesPerSecond frameRate) const
 {
     if (!m_cachedCurrentTime)
         return std::nullopt;
     return m_frameRateAligner.timeUntilNextUpdateForFrameRate(frameRate, *m_cachedCurrentTime);
 };
 
-void DocumentTimelinesController::suspendAnimations()
+void AnimationTimelinesController::suspendAnimations()
 {
     if (m_isSuspended)
         return;
@@ -236,13 +252,15 @@ void DocumentTimelinesController::suspendAnimations()
     if (!m_cachedCurrentTime)
         m_cachedCurrentTime = liveCurrentTime();
 
-    for (auto& timeline : m_timelines)
-        timeline.suspendAnimations();
+    for (auto& timeline : m_timelines) {
+        if (RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(timeline))
+            documentTimeline->suspendAnimations();
+    }
 
     m_isSuspended = true;
 }
 
-void DocumentTimelinesController::resumeAnimations()
+void AnimationTimelinesController::resumeAnimations()
 {
     if (!m_isSuspended)
         return;
@@ -251,16 +269,18 @@ void DocumentTimelinesController::resumeAnimations()
 
     m_isSuspended = false;
 
-    for (auto& timeline : m_timelines)
-        timeline.resumeAnimations();
+    for (auto& timeline : m_timelines) {
+        if (RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(timeline))
+            documentTimeline->resumeAnimations();
+    }
 }
 
-ReducedResolutionSeconds DocumentTimelinesController::liveCurrentTime() const
+ReducedResolutionSeconds AnimationTimelinesController::liveCurrentTime() const
 {
     return m_document.domWindow()->nowTimestamp();
 }
 
-std::optional<Seconds> DocumentTimelinesController::currentTime()
+std::optional<Seconds> AnimationTimelinesController::currentTime()
 {
     if (!m_document.domWindow())
         return std::nullopt;
@@ -271,7 +291,7 @@ std::optional<Seconds> DocumentTimelinesController::currentTime()
     return *m_cachedCurrentTime;
 }
 
-void DocumentTimelinesController::cacheCurrentTime(ReducedResolutionSeconds newCurrentTime)
+void AnimationTimelinesController::cacheCurrentTime(ReducedResolutionSeconds newCurrentTime)
 {
     m_cachedCurrentTime = newCurrentTime;
     // We want to be sure to keep this time cached until we've both finished running JS and finished updating
@@ -279,10 +299,10 @@ void DocumentTimelinesController::cacheCurrentTime(ReducedResolutionSeconds newC
     // fire syncronously if no JS is running.
     m_waitingOnVMIdle = true;
     if (!m_currentTimeClearingTaskCancellationGroup.hasPendingTask()) {
-        CancellableTask task(m_currentTimeClearingTaskCancellationGroup, std::bind(&DocumentTimelinesController::maybeClearCachedCurrentTime, this));
+        CancellableTask task(m_currentTimeClearingTaskCancellationGroup, std::bind(&AnimationTimelinesController::maybeClearCachedCurrentTime, this));
         m_document.eventLoop().queueTask(TaskSource::InternalAsyncTask, WTFMove(task));
     }
-    // We extent the associated Document's lifecycle until the VM became idle since the DocumentTimelinesController
+    // We extent the associated Document's lifecycle until the VM became idle since the AnimationTimelinesController
     // is owned by the Document.
     m_document.vm().whenIdle([this, protectedDocument = Ref { m_document }]() {
         m_waitingOnVMIdle = false;
@@ -290,7 +310,7 @@ void DocumentTimelinesController::cacheCurrentTime(ReducedResolutionSeconds newC
     });
 }
 
-void DocumentTimelinesController::maybeClearCachedCurrentTime()
+void AnimationTimelinesController::maybeClearCachedCurrentTime()
 {
     // We want to make sure we only clear the cached current time if we're not currently running
     // JS or waiting on all current animation updating code to have completed. This is so that
