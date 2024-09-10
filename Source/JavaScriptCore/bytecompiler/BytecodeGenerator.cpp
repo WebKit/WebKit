@@ -4498,6 +4498,58 @@ bool BytecodeGenerator::emitReadOnlyExceptionIfNeeded(const Variable& variable)
     return false;
 }
 
+void BytecodeGenerator::emitTryWithFinallyThatDoesNotShadowException(const ScopedLambda<void(BytecodeGenerator&)>& emitTry, const ScopedLambda<void(BytecodeGenerator&)>& emitFinally)
+{
+    Ref<Label> finallyLabel = newLabel();
+    FinallyContext finallyContext(*this, finallyLabel.get());
+    pushFinallyControlFlowScope(finallyContext);
+    emitTryWithFinallyThatDoesNotShadowException(finallyContext, emitTry, emitFinally);
+    popFinallyControlFlowScope();
+}
+
+void BytecodeGenerator::emitTryWithFinallyThatDoesNotShadowException(FinallyContext& finallyContext, const ScopedLambda<void(BytecodeGenerator&)>& emitTry, const ScopedLambda<void(BytecodeGenerator&)>& emitFinally)
+{
+    Ref<Label> tryStartLabel = newEmittedLabel();
+    TryData* tryData = pushTry(tryStartLabel.get(), *finallyContext.finallyLabel(), HandlerType::SynthesizedFinally);
+    emitTry(*this);
+    Ref<Label> tryEndLabel = newEmittedLabel();
+    popTry(tryData, tryEndLabel.get());
+
+    {
+        Ref<Label> done = newLabel();
+
+        emitLabel(*finallyContext.finallyLabel());
+        emitOutOfLineFinallyHandler(finallyContext.completionValueRegister(), finallyContext.completionTypeRegister(), tryData);
+
+        Ref<Label> tryInFinallyStartLabel = newEmittedLabel();
+        Ref<Label> catchInFinallyLabel = newLabel();
+        TryData* tryInFinallyData = pushTry(tryInFinallyStartLabel.get(), catchInFinallyLabel.get(), HandlerType::SynthesizedCatch);
+        emitFinally(*this);
+        Ref<Label> tryInFinallyEndLabel = newEmittedLabel();
+        popTry(tryInFinallyData, tryInFinallyEndLabel.get());
+
+        emitFinallyCompletion(finallyContext, done.get());
+
+        // Catch block for exceptions that may be thrown while executing the finally block.
+        // The only reason we need this catch block is because if the above finally block
+        // is entered due to a thrown exception, then we want to rethrow the original exception
+        // on exiting the finally block. Otherwise, we would let any new exception pass through.
+        {
+            emitLabel(catchInFinallyLabel.get());
+
+            RefPtr<RegisterID> exceptionRegister = newTemporary();
+            emitOutOfLineCatchHandler(exceptionRegister.get(), nullptr, tryInFinallyData);
+            // Since this is a synthesized catch block and we are guaranteed to never need to
+            // resolve any symbols from the scope, we can skip restoring the scope register here.
+
+            emitJumpIfTrue(emitEqualityOp<OpStricteq>(newTemporary(), finallyContext.completionTypeRegister(), emitLoad(nullptr, CompletionType::Throw)), tryInFinallyEndLabel.get());
+            emitThrow(exceptionRegister.get());
+        }
+
+        emitLabel(done.get());
+    }
+}
+
 void BytecodeGenerator::emitGenericEnumeration(ThrowableExpressionData* node, ExpressionNode* subjectNode, const ScopedLambda<void(BytecodeGenerator&, RegisterID*)>& callBack, ForOfNode* forLoopNode, RegisterID* forLoopSymbolTable)
 {
     bool isForAwait = forLoopNode ? forLoopNode->isForAwait() : false;
@@ -4510,13 +4562,9 @@ void BytecodeGenerator::emitGenericEnumeration(ThrowableExpressionData* node, Ex
     RefPtr<RegisterID> nextMethod = emitGetById(newTemporary(), iterator.get(), propertyNames().next);
 
     Ref<Label> loopDone = newLabel();
-    Ref<Label> tryStartLabel = newLabel();
-    Ref<Label> finallyViaThrowLabel = newLabel();
-    Ref<Label> finallyLabel = newLabel();
-    Ref<Label> catchLabel = newLabel();
-    Ref<Label> endCatchLabel = newLabel();
 
     // RefPtr<Register> iterator's lifetime must be longer than IteratorCloseContext.
+    Ref<Label> finallyLabel = newLabel();
     FinallyContext finallyContext(*this, finallyLabel.get());
     pushFinallyControlFlowScope(finallyContext);
 
@@ -4531,64 +4579,12 @@ void BytecodeGenerator::emitGenericEnumeration(ThrowableExpressionData* node, Ex
         emitLabel(loopStart.get());
         emitLoopHint();
 
-        emitLabel(tryStartLabel.get());
-        TryData* tryData = pushTry(tryStartLabel.get(), finallyViaThrowLabel.get(), HandlerType::SynthesizedFinally);
-        callBack(*this, value.get());
-        emitJump(*scope->continueTarget());
-
-        // IteratorClose sequence for abrupt completions.
-        {
-            // Finally block for the enumeration.
-            emitLabel(finallyViaThrowLabel.get());
-            popTry(tryData, finallyViaThrowLabel.get());
-
-            Ref<Label> finallyBodyLabel = newLabel();
-            RefPtr<RegisterID> finallyExceptionRegister = newTemporary();
-
-            emitOutOfLineFinallyHandler(finallyContext.completionValueRegister(), finallyContext.completionTypeRegister(), tryData);
-            move(finallyExceptionRegister.get(), finallyContext.completionValueRegister());
-            emitJump(finallyBodyLabel.get());
-
-            emitLabel(finallyLabel.get());
-            moveEmptyValue(finallyExceptionRegister.get());
-
-            // Finally fall through case.
-            emitLabel(finallyBodyLabel.get());
-
-            Ref<Label> returnCallTryStart = newLabel();
-            emitLabel(returnCallTryStart.get());
-            TryData* returnCallTryData = pushTry(returnCallTryStart.get(), catchLabel.get(), HandlerType::SynthesizedCatch);
-
-            emitIteratorGenericClose(iterator.get(), node, shouldEmitAwait);
-            Ref<Label> finallyDone = newEmittedLabel();
-            emitFinallyCompletion(finallyContext, endCatchLabel.get());
-
-            popTry(returnCallTryData, finallyDone.get());
-
-            // Catch block for exceptions that may be thrown while calling the return
-            // handler in the enumeration finally block. The only reason we need this
-            // catch block is because if entered the above finally block due to a thrown
-            // exception, then we want to re-throw the original exception on exiting
-            // the finally block. Otherwise, we'll let any new exception pass through.
-            {
-                emitLabel(catchLabel.get());
-
-                RefPtr<RegisterID> exceptionRegister = newTemporary();
-                emitOutOfLineFinallyHandler(exceptionRegister.get(), finallyContext.completionTypeRegister(), returnCallTryData);
-                // Since this is a synthesized catch block and we're guaranteed to never need
-                // to resolve any symbols from the scope, we can skip restoring the scope
-                // register here.
-
-                Ref<Label> throwLabel = newLabel();
-                emitJumpIfTrue(emitIsEmpty(newTemporary(), finallyExceptionRegister.get()), throwLabel.get());
-                move(exceptionRegister.get(), finallyExceptionRegister.get());
-
-                emitLabel(throwLabel.get());
-                emitThrow(exceptionRegister.get());
-
-                emitLabel(endCatchLabel.get());
-            }
-        }
+        emitTryWithFinallyThatDoesNotShadowException(finallyContext, scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
+            callBack(generator, value.get());
+            generator.emitJump(*scope->continueTarget());
+        }), scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
+            generator.emitIteratorGenericClose(iterator.get(), node, shouldEmitAwait);
+        }));
 
         emitLabel(*scope->continueTarget());
         if (forLoopNode) {
@@ -4638,21 +4634,16 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
     }
 
     Ref<Label> loopDone = newLabel();
-    Ref<Label> tryStartLabel = newLabel();
-    Ref<Label> finallyViaThrowLabel = newLabel();
-    Ref<Label> finallyLabel = newLabel();
-    Ref<Label> catchLabel = newLabel();
-    Ref<Label> endCatchLabel = newLabel();
-
-    RefPtr<RegisterID> value = newTemporary();
-    emitLoad(value.get(), jsUndefined());
 
     // RefPtr<RegisterID> iterator's lifetime must be longer than IteratorCloseContext.
+    Ref<Label> finallyLabel = newLabel();
     FinallyContext finallyContext(*this, finallyLabel.get());
     pushFinallyControlFlowScope(finallyContext);
 
     {
         Ref<LabelScope> scope = newLabelScope(LabelScope::Loop);
+        RefPtr<RegisterID> value = newTemporary();
+        emitLoad(value.get(), jsUndefined());
 
         Ref<Label> loopStart = newLabel();
         emitLabel(loopStart.get());
@@ -4674,64 +4665,12 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
             emitJumpIfTrue(done.get(), loopDone.get());
         }
 
-        emitLabel(tryStartLabel.get());
-        TryData* tryData = pushTry(tryStartLabel.get(), finallyViaThrowLabel.get(), HandlerType::SynthesizedFinally);
-        callBack(*this, value.get());
-        emitJump(loopStart.get());
-
-        // IteratorClose sequence for abrupt completions.
-        {
-            // Finally block for the enumeration.
-            emitLabel(finallyViaThrowLabel.get());
-            popTry(tryData, finallyViaThrowLabel.get());
-
-            Ref<Label> finallyBodyLabel = newLabel();
-            RefPtr<RegisterID> finallyExceptionRegister = newTemporary();
-
-            emitOutOfLineFinallyHandler(finallyContext.completionValueRegister(), finallyContext.completionTypeRegister(), tryData);
-            move(finallyExceptionRegister.get(), finallyContext.completionValueRegister());
-            emitJump(finallyBodyLabel.get());
-
-            emitLabel(finallyLabel.get());
-            moveEmptyValue(finallyExceptionRegister.get());
-
-            // Finally fall through case.
-            emitLabel(finallyBodyLabel.get());
-
-            Ref<Label> returnCallTryStart = newLabel();
-            emitLabel(returnCallTryStart.get());
-            TryData* returnCallTryData = pushTry(returnCallTryStart.get(), catchLabel.get(), HandlerType::SynthesizedCatch);
-
-            emitIteratorGenericClose(iterator.get(), node, EmitAwait::No);
-            Ref<Label> finallyDone = newEmittedLabel();
-            emitFinallyCompletion(finallyContext, endCatchLabel.get());
-
-            popTry(returnCallTryData, finallyDone.get());
-
-            // Catch block for exceptions that may be thrown while calling the return
-            // handler in the enumeration finally block. The only reason we need this
-            // catch block is because if entered the above finally block due to a thrown
-            // exception, then we want to re-throw the original exception on exiting
-            // the finally block. Otherwise, we'll let any new exception pass through.
-            {
-                emitLabel(catchLabel.get());
-
-                RefPtr<RegisterID> exceptionRegister = newTemporary();
-                emitOutOfLineFinallyHandler(exceptionRegister.get(), finallyContext.completionTypeRegister(), returnCallTryData);
-                // Since this is a synthesized catch block and we're guaranteed to never need
-                // to resolve any symbols from the scope, we can skip restoring the scope
-                // register here.
-
-                Ref<Label> throwLabel = newLabel();
-                emitJumpIfTrue(emitIsEmpty(newTemporary(), finallyExceptionRegister.get()), throwLabel.get());
-                move(exceptionRegister.get(), finallyExceptionRegister.get());
-
-                emitLabel(throwLabel.get());
-                emitThrow(exceptionRegister.get());
-
-                emitLabel(endCatchLabel.get());
-            }
-        }
+        emitTryWithFinallyThatDoesNotShadowException(finallyContext, scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
+            callBack(generator, value.get());
+            generator.emitJump(loopStart.get());
+        }), scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
+            generator.emitIteratorGenericClose(iterator.get(), node);
+        }));
 
         bool breakLabelIsBound = scope->breakTargetMayBeBound();
         if (breakLabelIsBound)

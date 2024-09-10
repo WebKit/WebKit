@@ -672,6 +672,7 @@ namespace JSC {
 
         const Identifier& identifier() const { return m_ident; }
         bool isArguments(VM& vm) const final { return m_ident == vm.propertyNames->arguments; }
+        bool getFromScopeCanThrow(BytecodeGenerator&) const;
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
@@ -2478,6 +2479,7 @@ namespace JSC {
         virtual bool isAssignmentElementNode() const { return false; }
         virtual bool isRestParameter() const { return false; }
 
+        virtual bool bindValueCanThrow(BytecodeGenerator&) const { return true; }
         virtual RegisterID* writableDirectBindingIfPossible(BytecodeGenerator&) const { return nullptr; }
         virtual void finishDirectBindingAssignment(BytecodeGenerator&) const { }
         
@@ -2566,6 +2568,7 @@ namespace JSC {
         const JSTextPosition& divotStart() const { return m_divotStart; }
         const JSTextPosition& divotEnd() const { return m_divotEnd; }
 
+        bool bindValueCanThrow(BytecodeGenerator&) const final;
         RegisterID* writableDirectBindingIfPossible(BytecodeGenerator&) const final;
         void finishDirectBindingAssignment(BytecodeGenerator&) const;
         
@@ -2607,6 +2610,7 @@ namespace JSC {
         const JSTextPosition& divotStart() const { return m_divotStart; }
         const JSTextPosition& divotEnd() const { return m_divotEnd; }
 
+        bool bindValueCanThrow(BytecodeGenerator&) const final;
         RegisterID* writableDirectBindingIfPossible(BytecodeGenerator&) const final;
         void finishDirectBindingAssignment(BytecodeGenerator&) const;
 
