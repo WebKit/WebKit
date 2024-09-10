@@ -366,9 +366,6 @@ class MediaController
 
         if (this.host && this.host.inWindowFullscreen) {
             this._stopPropagationOnClickEvents();
-            if (!this.host.supportsSeeking)
-                this.controls.timeControl.scrubber.disabled = true;
-
             if (!this.host.supportsRewind)
                 this.controls.rewindButton.dropped = true;
         }
