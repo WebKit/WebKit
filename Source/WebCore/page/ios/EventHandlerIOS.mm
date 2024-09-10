@@ -552,7 +552,7 @@ void EventHandler::dispatchSyntheticMouseMove(const PlatformMouseEvent& platform
     mouseMoved(platformMouseEvent);
 }
 
-bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
+HandleUserInputEventResult EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -563,7 +563,7 @@ bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& m
     return true;
 }
 
-bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe, HitTestResult* hitTestResult)
+HandleUserInputEventResult EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe, HitTestResult* hitTestResult)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))
@@ -573,7 +573,7 @@ bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mo
     return true;
 }
 
-bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
+HandleUserInputEventResult EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mouseEventAndResult, LocalFrame& subframe)
 {
     // WebKit1 code path.
     if (frameHasPlatformWidget(m_frame))

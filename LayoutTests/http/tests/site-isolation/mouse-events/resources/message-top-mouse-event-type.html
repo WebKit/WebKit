@@ -1,0 +1,7 @@
+<script>
+for (const event of ["mousemove", "mousedown", "mouseup"]) {
+    addEventListener(event, () => {
+        window.top.postMessage(event, "*");
+    });
+}
+</script>
