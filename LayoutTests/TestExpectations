@@ -4894,7 +4894,8 @@ webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/transform
 webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/transform-iframe-scroll-position.html [ ImageOnlyFailure ]
 webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/transforms-skewY.html [ ImageOnlyFailure ]
 webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/fractional-scale-gradient-bg-obscure-red-bg.html [ ImageOnlyFailure ]
-webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/transform-box/cssbox-content-box-002.html [ Crash ]
+
+webkit.org/b/279419 [ Debug ] imported/w3c/web-platform-tests/css/css-transforms/transform-box/cssbox-content-box-002.html [ Skip ] # Crash
 
 webkit.org/b/208396 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Pass Failure ]
 
