@@ -916,9 +916,14 @@ bool webkitGstSetElementStateSynchronously(GstElement* pipeline, GstState target
 
     auto cleanup = makeScopeExit([bus = GRefPtr<GstBus>(bus), pipeline, targetState] {
         gst_bus_disable_sync_message_emission(bus.get());
+#ifdef GST_DISABLE_GST_DEBUG
+        UNUSED_VARIABLE(pipeline);
+        UNUSED_VARIABLE(targetState);
+#else
         GstState currentState;
         auto result = gst_element_get_state(pipeline, &currentState, nullptr, 0);
         GST_DEBUG_OBJECT(pipeline, "Task finished, result: %s, target state reached: %s", gst_element_state_change_return_get_name(result), boolForPrinting(currentState == targetState));
+#endif
     });
 
     result = gst_element_set_state(pipeline, targetState);

@@ -38,7 +38,7 @@ GST_DEBUG_CATEGORY_STATIC(webkitGstMockDeviceDebug);
 #define webkit_mock_device_provider_parent_class parent_class
 WEBKIT_DEFINE_TYPE_WITH_CODE(GStreamerMockDevice, webkit_mock_device, GST_TYPE_DEVICE, GST_DEBUG_CATEGORY_INIT(webkitGstMockDeviceDebug, "webkitmockdevice", 0, "Mock Device"))
 
-static GstElement* webkitMockDeviceCreateElement(GstDevice* device, const char* name)
+static GstElement* webkitMockDeviceCreateElement([[maybe_unused]] GstDevice* device, const char* name)
 {
     GST_INFO_OBJECT(device, "Creating source element for device %s", name);
     auto* element = makeGStreamerElement("appsrc", name);

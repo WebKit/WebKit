@@ -261,7 +261,7 @@ enum class ResetType {
     Hard
 };
 
-static void webkitWebSrcReset(WebKitWebSrc* src, DataMutexLocker<WebKitWebSrcPrivate::StreamingMembers>& members, ResetType resetType)
+static void webkitWebSrcReset([[maybe_unused]] WebKitWebSrc* src, DataMutexLocker<WebKitWebSrcPrivate::StreamingMembers>& members, ResetType resetType)
 {
     GST_DEBUG_OBJECT(src, "Resetting internal state");
     gst_adapter_clear(members->adapter.get());
@@ -419,7 +419,7 @@ static void restartLoaderIfNeeded(WebKitWebSrc* src, DataMutexLocker<WebKitWebSr
 }
 
 
-static void stopLoaderIfNeeded(WebKitWebSrc* src, DataMutexLocker<WebKitWebSrcPrivate::StreamingMembers>& members)
+static void stopLoaderIfNeeded([[maybe_unused]] WebKitWebSrc* src, DataMutexLocker<WebKitWebSrcPrivate::StreamingMembers>& members)
 {
     ASSERT(isMainThread());
 
@@ -1164,9 +1164,11 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const S
     // sending time from the receiving time, it is better to ignore it.
     if (!members->downloadStartTime.isNaN()) {
         members->totalDownloadedBytes += data.size();
+#ifndef GST_DISABLE_GST_DEBUG
         double timeSinceStart = (WallTime::now() - members->downloadStartTime).seconds();
         GST_TRACE_OBJECT(src.get(), "R%u: downloaded %" G_GUINT64_FORMAT " bytes in %f seconds =~ %1.0f bytes/second", m_requestNumber, members->totalDownloadedBytes, timeSinceStart
             , timeSinceStart ? members->totalDownloadedBytes / timeSinceStart : 0);
+#endif
     } else {
         members->downloadStartTime = WallTime::now();
     }

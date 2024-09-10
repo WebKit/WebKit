@@ -347,8 +347,7 @@ void GStreamerDataChannelHandler::bufferedAmountChanged()
 
 void GStreamerDataChannelHandler::onMessageData(GBytes* bytes)
 {
-    auto size = g_bytes_get_size(bytes);
-    DC_DEBUG("Incoming data of size: %zu", size);
+    DC_DEBUG("Incoming data of size: %zu", g_bytes_get_size(bytes));
     Locker locker { m_clientLock };
 
     if (!m_client) {

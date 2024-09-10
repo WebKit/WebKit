@@ -189,13 +189,15 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
 {
     auto& self = *reinterpret_cast<PlatformRawAudioDataGStreamer*>(this);
 
-    auto [sourceFormat, sourceLayout] = convertAudioSampleFormatToGStreamerFormat(self.format());
+    [[maybe_unused]] auto [sourceFormat, sourceLayout] = convertAudioSampleFormatToGStreamerFormat(self.format());
     auto [destinationFormat, destinationLayout] = convertAudioSampleFormatToGStreamerFormat(format);
-
     auto sourceOffset = frameOffset.value_or(0);
-    const char* destinationFormatDescription = gst_audio_format_to_string(destinationFormat);
 
+#ifndef GST_DISABLE_GST_DEBUG
+    const char* destinationFormatDescription = gst_audio_format_to_string(destinationFormat);
     GST_TRACE("Copying %s data at planeIndex %zu, destination format is %s, source offset: %zu", gst_audio_format_to_string(sourceFormat), planeIndex, destinationFormatDescription, sourceOffset);
+#endif
+
     GST_TRACE("Input caps: %" GST_PTR_FORMAT, gst_sample_get_caps(self.sample()));
 
     GstMappedAudioBuffer mappedBuffer(self.sample(), GST_MAP_READ);

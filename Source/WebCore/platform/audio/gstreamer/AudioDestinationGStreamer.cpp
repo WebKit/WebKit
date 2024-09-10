@@ -270,6 +270,9 @@ void AudioDestinationGStreamer::notifyStartupResult(bool success)
         notifyIsPlaying(true);
 
     callOnMainThreadAndWait([this, completionHandler = WTFMove(m_startupCompletionHandler), success]() mutable {
+#ifdef GST_DISABLE_GST_DEBUG
+        UNUSED_VARIABLE(this);
+#endif
         GST_DEBUG_OBJECT(m_pipeline.get(), "Has start completion handler: %s", boolForPrinting(!!completionHandler));
         if (completionHandler)
             completionHandler(success);
@@ -282,6 +285,9 @@ void AudioDestinationGStreamer::notifyStopResult(bool success)
         notifyIsPlaying(false);
 
     callOnMainThreadAndWait([this, completionHandler = WTFMove(m_stopCompletionHandler), success]() mutable {
+#ifdef GST_DISABLE_GST_DEBUG
+        UNUSED_VARIABLE(this);
+#endif
         GST_DEBUG_OBJECT(m_pipeline.get(), "Has stop completion handler: %s", boolForPrinting(!!completionHandler));
         if (completionHandler)
             completionHandler(success);

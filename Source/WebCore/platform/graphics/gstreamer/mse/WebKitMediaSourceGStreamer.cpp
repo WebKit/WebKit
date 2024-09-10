@@ -212,12 +212,9 @@ static GRefPtr<GstElement> findPipeline(GRefPtr<GstElement> element)
 }
 #endif // GST_DISABLE_GST_DEBUG
 
-static void dumpPipeline(ASCIILiteral description, const RefPtr<Stream>& stream)
+static void dumpPipeline([[maybe_unused]] ASCIILiteral description, [[maybe_unused]] const RefPtr<Stream>& stream)
 {
-#ifdef GST_DISABLE_GST_DEBUG
-    [[maybe_unused]] description;
-    [[maybe_unused]] stream;
-#else
+#ifndef GST_DISABLE_GST_DEBUG
     auto pipeline = findPipeline(GRefPtr<GstElement>(GST_ELEMENT(stream->source)));
     auto fileName = makeString(span(GST_OBJECT_NAME(pipeline.get())), '-', stream->track->stringId(), '-', description);
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, fileName.utf8().data());
@@ -399,7 +396,7 @@ static void webKitMediaSrcTearDownStream(WebKitMediaSrc* source, const AtomStrin
     source->priv->streams.remove(name);
 }
 
-static gboolean webKitMediaSrcActivateMode(GstPad* pad, GstObject* source, GstPadMode mode, gboolean active)
+static gboolean webKitMediaSrcActivateMode(GstPad* pad, [[maybe_unused]] GstObject* source, GstPadMode mode, gboolean active)
 {
     if (mode != GST_PAD_MODE_PUSH) {
         GST_ERROR_OBJECT(source, "Unexpected pad mode in WebKitMediaSrc");
@@ -493,7 +490,7 @@ static void webKitMediaSrcLoop(void* userData)
 
     if (!streamingMembers->hasPushedStreamCollectionEvent) {
         GST_DEBUG_OBJECT(pad, "Pushing STREAM_COLLECTION event.");
-        bool wasStreamCollectionSent = gst_pad_push_event(stream->pad.get(), gst_event_new_stream_collection(stream->source->priv->collection.get()));
+        [[maybe_unused]] bool wasStreamCollectionSent = gst_pad_push_event(stream->pad.get(), gst_event_new_stream_collection(stream->source->priv->collection.get()));
         streamingMembers->hasPushedStreamCollectionEvent = true;
         GST_DEBUG_OBJECT(pad, "STREAM_COLLECTION event has been pushed, %s was returned.", boolForPrinting(wasStreamCollectionSent));
         // Initial events like this must go through, flushes (including tearing down the element) is not allowed until
@@ -518,7 +515,7 @@ static void webKitMediaSrcLoop(void* userData)
         GRefPtr<GstEvent> event = adoptGRef(gst_event_new_caps(streamingMembers->pendingInitialCaps.get()));
 
         GST_DEBUG_OBJECT(pad, "Pushing initial CAPS event: %" GST_PTR_FORMAT, streamingMembers->pendingInitialCaps.get());
-        bool wasCapsEventSent = gst_pad_push_event(pad, event.leakRef());
+        [[maybe_unused]] bool wasCapsEventSent = gst_pad_push_event(pad, event.leakRef());
         GST_DEBUG_OBJECT(pad, "Pushed initial CAPS event, %s was returned.", boolForPrinting(wasCapsEventSent));
 
         streamingMembers->previousCaps = WTFMove(streamingMembers->pendingInitialCaps);
@@ -565,7 +562,7 @@ static void webKitMediaSrcLoop(void* userData)
     // omit the flush (see webKitMediaSrcFlush) we actually emit the updated, correct segment.
     if (streamingMembers->doesNeedSegmentEvent) {
         GST_DEBUG_OBJECT(pad, "Need new SEGMENT event, pushing it: %" GST_SEGMENT_FORMAT, &streamingMembers->segment);
-        bool result = gst_pad_push_event(pad, gst_event_new_segment(&streamingMembers->segment));
+        [[maybe_unused]] bool result = gst_pad_push_event(pad, gst_event_new_segment(&streamingMembers->segment));
         GST_DEBUG_OBJECT(pad, "SEGMENT event pushed, result = %s.", boolForPrinting(result));
         ASSERT(result);
         streamingMembers->doesNeedSegmentEvent = false;
@@ -579,8 +576,11 @@ static void webKitMediaSrcLoop(void* userData)
             streamingMembers->previousCaps = gst_sample_get_caps(sample.get());
             // This CAPS event may block, so we release the lock and reevaluate later if there's been a flush in the meantime.
             streamingMembers.runUnlocked([&stream, &sample, &pad]() {
+#ifdef GST_DISABLE_GST_DEBUG
+                UNUSED_VARIABLE(pad);
+#endif
                 GST_DEBUG_OBJECT(pad, "Pushing new CAPS event: %" GST_PTR_FORMAT, gst_sample_get_caps(sample.get()));
-                bool result = gst_pad_push_event(stream->pad.get(), gst_event_new_caps(gst_sample_get_caps(sample.get())));
+                [[maybe_unused]] bool result = gst_pad_push_event(stream->pad.get(), gst_event_new_caps(gst_sample_get_caps(sample.get())));
                 GST_DEBUG_OBJECT(pad, "CAPS event pushed, result = %s.", boolForPrinting(result));
                 ASSERT(result);
             });

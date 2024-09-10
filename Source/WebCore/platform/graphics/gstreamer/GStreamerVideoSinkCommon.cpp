@@ -44,7 +44,7 @@ public:
         delete static_cast<WebKitVideoSinkProbe*>(userData);
     }
 
-    static GstPadProbeReturn doProbe(GstPad* pad, GstPadProbeInfo* info, gpointer userData)
+    static GstPadProbeReturn doProbe([[maybe_unused]] GstPad* pad, GstPadProbeInfo* info, gpointer userData)
     {
         auto* self = static_cast<WebKitVideoSinkProbe*>(userData);
         auto* player = self->m_player;
@@ -142,15 +142,19 @@ void webKitVideoSinkSetMediaPlayerPrivate(GstElement* appSink, MediaPlayerPrivat
 
     g_signal_connect(appSink, "new-sample", G_CALLBACK(+[](GstElement* sink, MediaPlayerPrivateGStreamer* player) -> GstFlowReturn {
         GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
+#ifndef GST_DISABLE_GST_DEBUG
         GstBuffer* buffer = gst_sample_get_buffer(sample.get());
         GST_TRACE_OBJECT(sink, "new-sample with PTS=%" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(buffer)));
+#endif
         player->triggerRepaint(WTFMove(sample));
         return GST_FLOW_OK;
     }), player);
     g_signal_connect(appSink, "new-preroll", G_CALLBACK(+[](GstElement* sink, MediaPlayerPrivateGStreamer* player) -> GstFlowReturn {
         GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_preroll(GST_APP_SINK(sink)));
+#ifndef GST_DISABLE_GST_DEBUG
         GstBuffer* buffer = gst_sample_get_buffer(sample.get());
         GST_DEBUG_OBJECT(sink, "new-preroll with PTS=%" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(buffer)));
+#endif
         player->triggerRepaint(WTFMove(sample));
         return GST_FLOW_OK;
     }), player);

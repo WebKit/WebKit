@@ -276,7 +276,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
     });
 }
 
-Ref<AudioDecoder::DecodePromise> GStreamerInternalAudioDecoder::decode(std::span<const uint8_t> frameData, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration)
+Ref<AudioDecoder::DecodePromise> GStreamerInternalAudioDecoder::decode(std::span<const uint8_t> frameData, [[maybe_unused]] bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration)
 {
     GST_DEBUG_OBJECT(m_harness->element(), "Decoding%s frame", isKeyFrame ? " key" : "");
 
