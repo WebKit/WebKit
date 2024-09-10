@@ -175,6 +175,7 @@ body.docked:is(.right, .left) #navigation-sidebar.collapsed > .resizer {
 #content {
     display: grid;
     height: 100%; /* This reduces paint areas when typing in the console. http://webkit.org/b/145324 */
+    flex: 1;
 }
 
 body:not(.narrow) #content {
