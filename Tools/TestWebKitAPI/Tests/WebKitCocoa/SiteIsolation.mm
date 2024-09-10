@@ -1361,12 +1361,8 @@ TEST(SiteIsolation, MultipleReloads)
     });
 }
 
-// FIXME when rdar://135589313 is resolved.
 #if PLATFORM(MAC)
-TEST(SiteIsolation, DISABLED_PropagateMouseEventsToSubframe)
-#else
 TEST(SiteIsolation, PropagateMouseEventsToSubframe)
-#endif
 {
     auto mainframeHTML = "<script>"
     "    window.eventTypes = [];"
