@@ -2,14 +2,12 @@ AutomationBackendDispatchers.cpp
 AutomationFrontendDispatchers.cpp
 AutomationProtocolObjects.h
 GPUProcess/GPUConnectionToWebProcess.cpp
-GPUProcess/GPUProcess.cpp
 GPUProcess/RemoteSharedResourceCache.cpp
 GPUProcess/ShapeDetection/RemoteFaceDetector.cpp
 GPUProcess/graphics/ImageBufferShareableAllocator.cpp
 GPUProcess/graphics/RemoteDisplayListRecorder.cpp
 GPUProcess/graphics/RemoteDisplayListRecorder.h
 GPUProcess/graphics/RemoteGraphicsContextGL.cpp
-GPUProcess/graphics/RemoteGraphicsContextGL.h
 GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp
 GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h
 GPUProcess/graphics/RemoteImageBuffer.cpp
@@ -18,9 +16,7 @@ GPUProcess/graphics/RemoteRenderingBackend.cpp
 GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp
 GPUProcess/graphics/WebGPU/RemoteAdapter.cpp
 GPUProcess/graphics/WebGPU/RemoteBindGroup.cpp
-GPUProcess/graphics/WebGPU/RemoteBindGroupLayout.cpp
 GPUProcess/graphics/WebGPU/RemoteBuffer.cpp
-GPUProcess/graphics/WebGPU/RemoteCommandBuffer.cpp
 GPUProcess/graphics/WebGPU/RemoteCommandEncoder.cpp
 GPUProcess/graphics/WebGPU/RemoteCompositorIntegration.cpp
 GPUProcess/graphics/WebGPU/RemoteComputePassEncoder.cpp
@@ -28,20 +24,14 @@ GPUProcess/graphics/WebGPU/RemoteComputePipeline.cpp
 GPUProcess/graphics/WebGPU/RemoteDevice.cpp
 GPUProcess/graphics/WebGPU/RemoteExternalTexture.cpp
 GPUProcess/graphics/WebGPU/RemoteGPU.cpp
-GPUProcess/graphics/WebGPU/RemoteGPU.h
-GPUProcess/graphics/WebGPU/RemotePipelineLayout.cpp
 GPUProcess/graphics/WebGPU/RemotePresentationContext.cpp
 GPUProcess/graphics/WebGPU/RemoteQuerySet.cpp
 GPUProcess/graphics/WebGPU/RemoteQueue.cpp
-GPUProcess/graphics/WebGPU/RemoteRenderBundle.cpp
 GPUProcess/graphics/WebGPU/RemoteRenderBundleEncoder.cpp
 GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.cpp
 GPUProcess/graphics/WebGPU/RemoteRenderPipeline.cpp
-GPUProcess/graphics/WebGPU/RemoteSampler.cpp
 GPUProcess/graphics/WebGPU/RemoteShaderModule.cpp
 GPUProcess/graphics/WebGPU/RemoteTexture.cpp
-GPUProcess/graphics/WebGPU/RemoteTextureView.cpp
-GPUProcess/graphics/WebGPU/WebGPUObjectHeap.cpp
 GPUProcess/mac/LocalAudioSessionRoutingArbitrator.cpp
 GPUProcess/media/RemoteAudioDestinationManager.cpp
 GPUProcess/media/RemoteAudioHardwareListenerProxy.cpp
@@ -70,7 +60,6 @@ GPUProcess/webrtc/LibWebRTCCodecsProxy.mm
 GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp
 GPUProcess/webrtc/RemoteMediaRecorder.cpp
 GPUProcess/webrtc/RemoteMediaRecorder.h
-GPUProcess/webrtc/RemoteMediaRecorderManager.cpp
 GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp
 GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp
 JSWebExtensionAPIAction.mm
@@ -113,7 +102,6 @@ NetworkProcess/Downloads/DownloadManager.cpp
 NetworkProcess/Downloads/cocoa/DownloadCocoa.mm
 NetworkProcess/Downloads/cocoa/WKDownloadProgress.mm
 NetworkProcess/EarlyHintsResourceLoader.cpp
-NetworkProcess/NetworkBroadcastChannelRegistry.cpp
 NetworkProcess/NetworkCORSPreflightChecker.cpp
 NetworkProcess/NetworkConnectionToWebProcess.cpp
 NetworkProcess/NetworkContentRuleListManager.cpp
@@ -124,8 +112,6 @@ NetworkProcess/NetworkLoadChecker.cpp
 NetworkProcess/NetworkProcess.cpp
 NetworkProcess/NetworkResourceLoader.cpp
 NetworkProcess/NetworkSession.cpp
-NetworkProcess/Notifications/NetworkNotificationManager.cpp
-NetworkProcess/Notifications/WebPushDaemonConnection.cpp
 NetworkProcess/PingLoad.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClientImpl.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp
@@ -135,12 +121,10 @@ NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.cpp
 NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp
 NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.cpp
 NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp
-NetworkProcess/ServiceWorker/WebSWRegistrationStore.cpp
 NetworkProcess/ServiceWorker/WebSWServerConnection.cpp
 NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp
 NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp
 NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp
-NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.cpp
 NetworkProcess/cache/NetworkCache.cpp
 NetworkProcess/cache/NetworkCacheEntry.cpp
 NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp
@@ -159,10 +143,8 @@ NetworkProcess/storage/IDBStorageRegistry.cpp
 NetworkProcess/storage/NetworkStorageManager.cpp
 NetworkProcess/storage/OriginStorageManager.cpp
 NetworkProcess/storage/SQLiteStorageArea.cpp
-NetworkProcess/webrtc/LibWebRTCSocketClient.cpp
 NetworkProcess/webrtc/NetworkRTCMonitor.cpp
 NetworkProcess/webrtc/NetworkRTCProvider.cpp
-NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm
 NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm
 NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.cpp
 Platform/IPC/ArgumentCoders.h
@@ -187,7 +169,6 @@ Shared/API/c/WKMutableArray.cpp
 Shared/API/c/WKMutableDictionary.cpp
 Shared/API/c/WKNumber.cpp
 Shared/API/c/WKSecurityOriginRef.cpp
-Shared/API/c/WKSerializedScriptValue.cpp
 Shared/API/c/WKSharedAPICast.h
 Shared/API/c/WKString.cpp
 Shared/API/c/WKType.cpp
@@ -220,7 +201,6 @@ Shared/Cocoa/WebKit2InitializeCocoa.mm
 Shared/ContextMenuContextData.cpp
 Shared/EditingRange.cpp
 Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm
-Shared/Extensions/WebExtensionFrameIdentifier.h
 Shared/IPCConnectionTester.cpp
 Shared/IPCStreamTester.cpp
 Shared/IPCTester.cpp
@@ -358,15 +338,6 @@ UIProcess/API/Cocoa/_WKThumbnailView.mm
 UIProcess/API/Cocoa/_WKUserStyleSheet.mm
 UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.mm
 UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm
-UIProcess/API/Cocoa/_WKWebExtension.mm
-UIProcess/API/Cocoa/_WKWebExtensionAction.mm
-UIProcess/API/Cocoa/_WKWebExtensionCommand.mm
-UIProcess/API/Cocoa/_WKWebExtensionContext.mm
-UIProcess/API/Cocoa/_WKWebExtensionController.mm
-UIProcess/API/Cocoa/_WKWebExtensionControllerConfiguration.mm
-UIProcess/API/Cocoa/_WKWebExtensionDataRecord.mm
-UIProcess/API/Cocoa/_WKWebExtensionMatchPattern.mm
-UIProcess/API/Cocoa/_WKWebExtensionMessagePort.mm
 UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm
 UIProcess/API/mac/WKWebViewMac.mm
 UIProcess/API/mac/WKWebViewTestingMac.mm
@@ -393,7 +364,6 @@ UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp
 UIProcess/Cocoa/UserMediaPermissionRequestManagerProxy.mm
 UIProcess/Cocoa/VideoPresentationManagerProxy.mm
 UIProcess/Cocoa/WKEditCommand.mm
-UIProcess/Cocoa/WKSafeBrowsingWarning.mm
 UIProcess/Cocoa/WKShareSheet.mm
 UIProcess/Cocoa/WebInspectorPreferenceObserver.mm
 UIProcess/Cocoa/WebPagePreferencesLockdownModeObserver.mm
@@ -442,10 +412,8 @@ UIProcess/Media/cocoa/AudioSessionRoutingArbitratorProxyCocoa.mm
 UIProcess/MediaKeySystemPermissionRequestManagerProxy.cpp
 UIProcess/Network/NetworkProcessProxy.cpp
 UIProcess/Network/NetworkProcessProxyCocoa.mm
-UIProcess/Notifications/WebNotificationManagerMessageHandler.cpp
 UIProcess/Notifications/WebNotificationManagerProxy.cpp
 UIProcess/PDF/WKPDFHUDView.mm
-UIProcess/PageLoadState.cpp
 UIProcess/ProcessAssertion.cpp
 UIProcess/ProcessThrottler.cpp
 UIProcess/ProvisionalFrameProxy.cpp
@@ -503,7 +471,6 @@ UIProcess/WebPageProxy.cpp
 UIProcess/WebPageProxy.h
 UIProcess/WebPageProxyInternals.h
 UIProcess/WebPageProxyMessageReceiverRegistration.cpp
-UIProcess/WebPermissionControllerProxy.cpp
 UIProcess/WebPreferences.cpp
 UIProcess/WebPreferences.h
 UIProcess/WebProcessCache.cpp
@@ -540,7 +507,6 @@ WebProcess/Automation/WebAutomationDOMWindowObserver.cpp
 WebProcess/Automation/WebAutomationSessionProxy.cpp
 WebProcess/Cache/WebCacheStorageConnection.cpp
 WebProcess/Cache/WebCacheStorageProvider.cpp
-WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp
 WebProcess/Databases/WebDatabaseProvider.cpp
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIAlarmsCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIDeclarativeNetRequestCocoa.mm
@@ -647,7 +613,6 @@ WebProcess/InjectedBundle/API/c/WKBundleRangeHandle.cpp
 WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp
 WebProcess/InjectedBundle/API/c/mac/WKBundleMac.mm
 WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.mm
-WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.mm
 WebProcess/InjectedBundle/API/mac/WKDOMDocument.mm
 WebProcess/InjectedBundle/API/mac/WKDOMElement.mm
 WebProcess/InjectedBundle/API/mac/WKDOMNode.mm
@@ -671,7 +636,6 @@ WebProcess/Inspector/WebInspectorUI.cpp
 WebProcess/Inspector/WebInspectorUIExtensionController.cpp
 WebProcess/Inspector/WebPageInspectorTarget.cpp
 WebProcess/MediaSession/RemoteMediaSessionCoordinator.cpp
-WebProcess/Model/WebModelPlayerProvider.cpp
 WebProcess/Network/NetworkProcessConnection.cpp
 WebProcess/Network/WebLoaderStrategy.cpp
 WebProcess/Network/WebMockContentFilterManager.cpp
@@ -708,7 +672,6 @@ WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp
 WebProcess/Storage/WebServiceWorkerFetchTaskClient.h
 WebProcess/Storage/WebServiceWorkerProvider.cpp
 WebProcess/Storage/WebSharedWorkerContextManagerConnection.cpp
-WebProcess/Storage/WebSharedWorkerProvider.cpp
 WebProcess/UserContent/WebUserContentController.cpp
 WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp
 WebProcess/WebCoreSupport/WebAttachmentElementClient.cpp
