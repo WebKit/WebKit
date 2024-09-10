@@ -1921,7 +1921,7 @@ class TestParseStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCase)
         return self.runStep()
 
 
-class TestCompareStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCase):
+class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         return self.setUpBuildStep()
 
@@ -1929,7 +1929,7 @@ class TestCompareStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCas
         return self.tearDownBuildStep()
 
     def configureStep(self):
-        self.setupStep(CompareStaticAnalyzerResults())
+        self.setupStep(FindUnexpectedStaticAnalyzerResults())
 
     def test_success_no_issues(self):
         self.configureStep()

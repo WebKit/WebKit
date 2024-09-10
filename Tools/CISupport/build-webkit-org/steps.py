@@ -1659,7 +1659,7 @@ class ScanBuildSmartPointer(steps.ShellSequence, ShellMixin):
         ]
 
         if rc == SUCCESS:
-            steps_to_add += [ParseStaticAnalyzerResults(), CompareStaticAnalyzerResults(), ArchiveStaticAnalyzerResults(), UploadStaticAnalyzerResults(), ExtractStaticAnalyzerTestResults()]
+            steps_to_add += [ParseStaticAnalyzerResults(), FindUnexpectedStaticAnalyzerResults(), ArchiveStaticAnalyzerResults(), UploadStaticAnalyzerResults(), ExtractStaticAnalyzerTestResults()]
         self.build.addStepsAfterCurrentStep(steps_to_add)
 
         defer.returnValue(rc)
@@ -1724,10 +1724,10 @@ class ParseStaticAnalyzerResults(shell.ShellCommandNewStyle):
         return {u'step': status}
 
 
-class CompareStaticAnalyzerResults(shell.ShellCommandNewStyle):
-    name = 'compare-static-analyzer-results'
-    description = ['comparing static analyzer results']
-    descriptionDone = ['compared static analyzer results']
+class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle):
+    name = 'find-unexpected-static-analyzer-results'
+    description = ['finding unexpected static analyzer results']
+    descriptionDone = ['found unexpected static analyzer results']
     resultMsg = ''
 
     @defer.inlineCallbacks
@@ -1904,7 +1904,7 @@ class ExtractStaticAnalyzerTestResults(ExtractTestResults):
         return None
 
     def addCustomURLs(self):
-        step = self.getLastBuildStepByName(CompareStaticAnalyzerResults.name)
+        step = self.getLastBuildStepByName(FindUnexpectedStaticAnalyzerResults.name)
         step.addURL("View full static analyzer results", self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/results.html")
         step.addURL("View unexpected static analyzer results", self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/unexpected-results.html")
         step.addURL("Download full static analyzer results", self.resultDownloadURL())
