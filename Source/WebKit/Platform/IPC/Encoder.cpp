@@ -183,7 +183,7 @@ std::span<uint8_t> Encoder::grow(size_t alignment, size_t size)
     size_t alignedSize = roundUpToAlignment(m_bufferSize, alignment);
     reserve(alignedSize + size);
 
-    memsetSpan(m_capacityBuffer.subspan(m_bufferSize), 0);
+    memsetSpan(m_capacityBuffer.subspan(m_bufferSize, alignedSize - m_bufferSize), 0);
 
     m_bufferSize = alignedSize + size;
 
