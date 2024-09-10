@@ -13,6 +13,7 @@ EXCLUDED_SOURCE_FILE_NAMES[arch=x86_64] = $(ARM_FILES) $(EXCLUDED_SOURCE_FILE_NA
 EXCLUDED_SOURCE_FILE_NAMES_YES = *_sse4.c *_avx.c
 EXCLUDED_SOURCE_FILE_NAMES[arch=arm64*] = $(X86_FILES) *_mmx.c
 EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvos*] = $(X86_FILES) *_mmx.c *_neon_dotprod.c
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=x86_64] = $(ARM_FILES) $(X86_FILES)
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=x86_64] = $(ARM_FILES) $(X86_FILES)
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = $(X86_FILES) *_mmx.c *_neon_dotprod.c
 EXCLUDED_SOURCE_FILE_NAMES[sdk=xrsimulator*][arch=x86_64] = $(ARM_FILES) $(X86_FILES)
