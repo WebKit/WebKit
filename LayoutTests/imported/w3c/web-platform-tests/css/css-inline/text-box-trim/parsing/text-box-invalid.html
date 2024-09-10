@@ -6,6 +6,17 @@
 <script src="/css/support/parsing-testcommon.js"></script>
 
 <script>
+// combinations with auto
+test_invalid_value('text-box', 'none auto');
+test_invalid_value('text-box', 'auto none');
+test_invalid_value('text-box', 'auto');
+test_invalid_value('text-box', 'auto trim-start');
+test_invalid_value('text-box', 'auto trim-end');
+test_invalid_value('text-box', 'auto trim-both');
+test_invalid_value('text-box', 'trim-start auto');
+test_invalid_value('text-box', 'trim-end auto');
+test_invalid_value('text-box', 'trim-both auto');
+
 // invalid keyword
 test_invalid_value('text-box', 'em');
 test_invalid_value('text-box', 'leading');

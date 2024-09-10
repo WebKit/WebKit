@@ -2630,6 +2630,10 @@ bool CSSPropertyParser::consumeTextBoxShorthand(bool important)
     RefPtr<CSSValue> textBoxEdge;
 
     for (unsigned propertiesParsed = 0; propertiesParsed < 2 && !m_range.atEnd(); ++propertiesParsed) {
+        // `auto` is disallowed to avoid ambiguity.
+        if (m_range.peek().id() == CSSValueAuto)
+            return false;
+
         if (!textBoxTrim && (textBoxTrim = CSSPropertyParsing::consumeTextBoxTrim(m_range)))
             continue;
         if (!textBoxEdge && (textBoxEdge = consumeTextEdge(CSSPropertyTextBoxEdge, m_range)))

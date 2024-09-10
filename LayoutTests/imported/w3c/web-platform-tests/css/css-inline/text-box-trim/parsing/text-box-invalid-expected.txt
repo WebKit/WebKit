@@ -1,4 +1,13 @@
 
+PASS e.style['text-box'] = "none auto" should not set the property value
+PASS e.style['text-box'] = "auto none" should not set the property value
+PASS e.style['text-box'] = "auto" should not set the property value
+PASS e.style['text-box'] = "auto trim-start" should not set the property value
+PASS e.style['text-box'] = "auto trim-end" should not set the property value
+PASS e.style['text-box'] = "auto trim-both" should not set the property value
+PASS e.style['text-box'] = "trim-start auto" should not set the property value
+PASS e.style['text-box'] = "trim-end auto" should not set the property value
+PASS e.style['text-box'] = "trim-both auto" should not set the property value
 PASS e.style['text-box'] = "em" should not set the property value
 PASS e.style['text-box'] = "leading" should not set the property value
 PASS e.style['text-box'] = "trim-both leading" should not set the property value

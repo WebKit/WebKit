@@ -9,9 +9,6 @@
 // initial values
 test_computed_value('text-box', 'normal');
 test_computed_value('text-box', 'none', 'normal');
-test_computed_value('text-box', 'none auto', 'normal');
-test_computed_value('text-box', 'auto none', 'normal');
-test_computed_value('text-box', 'auto', 'trim-both');
 
 // `<text-box-trim>`: `none | trim-start | trim-end | trim-both`
 test_computed_value('text-box', 'trim-start');
@@ -26,9 +23,6 @@ test_computed_value('text-box', 'cap alphabetic');
 test_computed_value('text-box', 'text alphabetic');
 
 // Mix initial and non-initial values
-test_computed_value('text-box', 'trim-start auto', 'trim-start');
-test_computed_value('text-box', 'trim-both auto', 'trim-both');
-test_computed_value('text-box', 'auto trim-both', 'trim-both');
 test_computed_value('text-box', 'none text', 'none text');
 test_computed_value('text-box', 'text text none', 'none text');
 test_computed_value('text-box', 'none cap', 'none cap');

@@ -1,9 +1,6 @@
 
 PASS e.style['text-box'] = "normal" should set the property value
 PASS e.style['text-box'] = "none" should set the property value
-PASS e.style['text-box'] = "none auto" should set the property value
-PASS e.style['text-box'] = "auto none" should set the property value
-PASS e.style['text-box'] = "auto" should set the property value
 PASS e.style['text-box'] = "trim-start" should set the property value
 PASS e.style['text-box'] = "trim-end" should set the property value
 PASS e.style['text-box'] = "trim-both" should set the property value
@@ -12,9 +9,6 @@ PASS e.style['text-box'] = "cap" should set the property value
 PASS e.style['text-box'] = "ideographic" should set the property value
 PASS e.style['text-box'] = "cap alphabetic" should set the property value
 PASS e.style['text-box'] = "text alphabetic" should set the property value
-PASS e.style['text-box'] = "trim-start auto" should set the property value
-PASS e.style['text-box'] = "trim-both auto" should set the property value
-PASS e.style['text-box'] = "auto trim-both" should set the property value
 PASS e.style['text-box'] = "none text" should set the property value
 PASS e.style['text-box'] = "text text none" should set the property value
 PASS e.style['text-box'] = "none cap" should set the property value
