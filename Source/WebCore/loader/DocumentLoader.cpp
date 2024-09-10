@@ -1466,6 +1466,20 @@ void DocumentLoader::applyPoliciesToSettings()
 #if USE(APPLE_INTERNAL_SDK)
     updateAdditionalSettingsIfNeeded();
 #endif
+
+    if (m_pushAndNotificationsEnabledPolicy != PushAndNotificationsEnabledPolicy::UseGlobalPolicy) {
+        bool enabled = m_pushAndNotificationsEnabledPolicy == PushAndNotificationsEnabledPolicy::Yes;
+        m_frame->settings().setPushAPIEnabled(enabled);
+#if ENABLE(NOTIFICATIONS)
+        m_frame->settings().setNotificationsEnabled(enabled);
+#endif
+#if ENABLE(NOTIFICATION_EVENT)
+        m_frame->settings().setNotificationEventEnabled(enabled);
+#endif
+#if PLATFORM(IOS)
+        m_frame->settings().setAppBadgeEnabled(enabled);
+#endif
+    }
 }
 
 ColorSchemePreference DocumentLoader::colorSchemePreference() const

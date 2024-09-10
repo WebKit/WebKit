@@ -2098,3 +2098,64 @@ TEST(WebpagePreferences, ExtensionPageAdvancedPrivacyProtectionsReferrer)
     EXPECT_WK_STREQ("http://webkit.org/", results[0]);
     EXPECT_WK_STREQ("", results[1]);
 }
+
+@interface PushAndNotificationsEnabledPoliciesDelegate : TestNavigationDelegate <WKNavigationDelegate, WKUIDelegatePrivate>
+@property (nonatomic, assign) BOOL pushAndNotificationAPIEnabled;
+@end
+
+@implementation PushAndNotificationsEnabledPoliciesDelegate
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
+{
+    auto websitePolicies = adoptNS([[WKWebpagePreferences alloc] init]);
+    [websitePolicies _setPushAndNotificationAPIEnabled:_pushAndNotificationAPIEnabled];
+    decisionHandler(WKNavigationActionPolicyAllow, websitePolicies.get());
+}
+
+@end
+
+TEST(WebpagePreferences, PushAndNotificationsEnabled)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[PushAndNotificationsEnabledPoliciesDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool finishedNavigation = false;
+    [delegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        finishedNavigation = true;
+    }];
+    [delegate setPushAndNotificationAPIEnabled:YES];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+
+    id result = [webView objectByEvaluatingJavaScript:@"'PushManager' in window && 'Notification' in window"];
+    EXPECT_TRUE([result boolValue]);
+}
+
+TEST(WebpagePreferences, PushAndNotificationsDisabled)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setPushAPIEnabled:YES];
+    [[configuration preferences] _setNotificationsEnabled:YES];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[PushAndNotificationsEnabledPoliciesDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool finishedNavigation = false;
+    [delegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        finishedNavigation = true;
+    }];
+    [delegate setPushAndNotificationAPIEnabled:NO];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+
+    id result = [webView objectByEvaluatingJavaScript:@"'PushManager' in window && 'Notification' in window"];
+    EXPECT_FALSE([result boolValue]);
+}
