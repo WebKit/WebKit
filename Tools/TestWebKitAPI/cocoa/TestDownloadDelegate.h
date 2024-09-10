@@ -32,6 +32,8 @@ enum class DownloadCallback : uint8_t {
     DecideDestination,
 #if HAVE(MODERN_DOWNLOADPROGRESS)
     DecidePlaceholderPolicy,
+    DidReceivePlaceholderURL,
+    DidReceiveFinalURL,
 #endif
     DidFinish,
     DidFailWithError,
@@ -53,6 +55,10 @@ enum class DownloadCallback : uint8_t {
 @property (nonatomic, copy) void (^navigationResponseDidBecomeDownload)(WKWebView *, WKNavigationResponse *, WKDownload *);
 @property (nonatomic, copy) void (^decidePolicyForNavigationAction)(WKNavigationAction *, void (^)(WKNavigationActionPolicy));
 @property (nonatomic, copy) void (^decidePolicyForNavigationResponse)(WKNavigationResponse *, void (^)(WKNavigationResponsePolicy));
+
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+@property (nonatomic, copy) void (^decidePlaceholderPolicy)(WKDownload *, void (^)(_WKPlaceholderPolicy, NSURL *));
+#endif
 
 - (void)waitForDownloadDidFinish;
 - (Vector<DownloadCallback>)takeCallbackRecord;

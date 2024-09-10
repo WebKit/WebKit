@@ -26,6 +26,7 @@
 #import "config.h"
 #import "DownloadProxy.h"
 
+#import "APIDownloadClient.h"
 #import "NetworkProcessMessages.h"
 #import "NetworkProcessProxy.h"
 #import "WebsiteDataStore.h"
@@ -53,5 +54,17 @@ void DownloadProxy::publishProgress(const URL& url)
     m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, url, WTFMove(*handle)), 0);
 #endif
 }
+
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+void DownloadProxy::didReceivePlaceholderURL(const URL& placeholderURL, std::span<const uint8_t> bookmarkData, CompletionHandler<void()>&& completionHandler)
+{
+    m_client->didReceivePlaceholderURL(*this, placeholderURL, bookmarkData, WTFMove(completionHandler));
+}
+
+void DownloadProxy::didReceiveFinalURL(const URL& finalURL, std::span<const uint8_t> bookmarkData)
+{
+    m_client->didReceiveFinalURL(*this, finalURL, bookmarkData);
+}
+#endif
 
 }

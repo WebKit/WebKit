@@ -2157,7 +2157,7 @@ void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTas
 {
     String suggestedFilename = networkDataTask.suggestedFilename();
 
-    downloadProxyConnection()->sendWithAsyncReply(Messages::DownloadProxy::DecideDestinationWithSuggestedFilename(response, suggestedFilename), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), networkDataTask = Ref { networkDataTask }] (String&& destination, SandboxExtension::Handle&& sandboxExtensionHandle, AllowOverwrite allowOverwrite, WebKit::UseDownloadPlaceholder usePlaceholder) mutable {
+    downloadProxyConnection()->sendWithAsyncReply(Messages::DownloadProxy::DecideDestinationWithSuggestedFilename(response, suggestedFilename), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), networkDataTask = Ref { networkDataTask }] (String&& destination, SandboxExtension::Handle&& sandboxExtensionHandle, AllowOverwrite allowOverwrite, WebKit::UseDownloadPlaceholder usePlaceholder, URL&& alternatePlaceholderURL) mutable {
         auto downloadID = *networkDataTask->pendingDownloadID();
         if (destination.isEmpty())
             return completionHandler(PolicyAction::Ignore);
@@ -2167,13 +2167,18 @@ void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTas
             return;
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-        bool shouldEnableModernDownloadProgress = CFPreferencesGetAppBooleanValue(CFSTR("EnableModernDownloadProgress"), CFSTR("com.apple.WebKit"), nullptr);
-        if (shouldEnableModernDownloadProgress)
-            publishDownloadProgress(downloadID, URL::fileURLWithFileSystemPath(destination), std::span<const uint8_t>(), usePlaceholder);
+        if (m_enableModernDownloadProgress) {
+            URL publishURL;
+            if (usePlaceholder == UseDownloadPlaceholder::No && !alternatePlaceholderURL.isEmpty())
+                publishURL = WTFMove(alternatePlaceholderURL);
+            else
+                publishURL = URL::fileURLWithFileSystemPath(destination);
+            publishDownloadProgress(downloadID, publishURL, { }, usePlaceholder);
+        }
 #else
         UNUSED_PARAM(usePlaceholder);
+        UNUSED_PARAM(alternatePlaceholderURL);
 #endif
-
         if (downloadManager().download(downloadID)) {
             // The completion handler already called dataTaskBecameDownloadTask().
             return;

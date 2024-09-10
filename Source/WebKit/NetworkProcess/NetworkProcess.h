@@ -432,6 +432,8 @@ public:
     void allowFilesAccessFromWebProcess(WebCore::ProcessIdentifier, const Vector<String>&, CompletionHandler<void()>&&);
     void allowFileAccessFromWebProcess(WebCore::ProcessIdentifier, const String&, CompletionHandler<void()>&&);
 
+    bool enableModernDownloadProgress() const { return m_enableModernDownloadProgress; }
+
 private:
     // CheckedPtr interface
     uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
@@ -599,6 +601,7 @@ private:
     int m_mediaStreamingActivitityToken { NOTIFY_TOKEN_INVALID };
     bool m_isParentProcessFullWebBrowserOrRunningTest { false };
 #endif
+    bool m_enableModernDownloadProgress { false };
 };
 
 #if !PLATFORM(COCOA)

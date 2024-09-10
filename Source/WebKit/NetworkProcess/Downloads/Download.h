@@ -92,6 +92,8 @@ public:
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
     void publishProgress(const URL&, std::span<const uint8_t>, WebKit::UseDownloadPlaceholder);
+    void setPlaceholderURL(NSURL *);
+    void setFinalURL(NSURL *);
 #endif
 
     DownloadID downloadID() const { return m_downloadID; }
@@ -117,6 +119,11 @@ private:
 
     void platformCancelNetworkLoad(CompletionHandler<void(std::span<const uint8_t>)>&&);
     void platformDestroyDownload();
+    void platformDidFinish(CompletionHandler<void()>&&);
+
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    void startUpdatingProgress() const;
+#endif
 
     CheckedRef<DownloadManager> m_downloadManager;
     DownloadID m_downloadID;
@@ -129,10 +136,10 @@ private:
 #if PLATFORM(COCOA)
     RetainPtr<NSURLSessionDownloadTask> m_downloadTask;
     RetainPtr<NSProgress> m_progress;
-#endif
 #if HAVE(MODERN_DOWNLOADPROGRESS)
     RetainPtr<NSData> m_bookmarkData;
     RetainPtr<NSURL> m_bookmarkURL;
+#endif
 #endif
     PAL::SessionID m_sessionID;
     bool m_hasReceivedData { false };

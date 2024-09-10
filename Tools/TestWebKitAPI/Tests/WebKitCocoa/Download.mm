@@ -853,6 +853,38 @@ static RetainPtr<NSString> destination;
 
 @end
 
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+@interface ProgressObserver : NSObject
+- (instancetype)init;
+@end
+
+@implementation ProgressObserver {
+    bool receivedProgress;
+}
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+    receivedProgress = false;
+    return self;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (![keyPath isEqualToString:@"fractionCompleted"])
+        return;
+    receivedProgress = true;
+}
+
+- (void)waitForProgress
+{
+    while (!receivedProgress)
+        TestWebKitAPI::Util::spinRunLoop();
+}
+@end
+#endif
+
 namespace TestWebKitAPI {
 
 void respondSlowly(const Connection& connection, double kbps)
@@ -2269,6 +2301,128 @@ TEST(WKDownload, DecidePlaceholderPolicy)
         };
     }];
     Util::run(&didFinish);
+
+    checkFileContents(expectedDownloadFile, "http body"_s);
+
+    checkCallbackRecord(delegate.get(), {
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DecidePlaceholderPolicy,
+        DownloadCallback::DidFinish,
+    });
+}
+
+TEST(WKDownload, PlaceholderPolicyEnableWithModernDownloadProgressEnabled)
+{
+    CFPreferencesSetAppValue(CFSTR("EnableModernDownloadProgress"), kCFBooleanTrue, kCFPreferencesAnyApplication);
+
+    HTTPServer server({
+        { "/"_s, { 404, { }, "http body"_s } }
+    });
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    auto delegate = adoptNS([TestDownloadDelegate new]);
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool didFinish = false;
+    [webView startDownloadUsingRequest:server.request() completionHandler:^(WKDownload *download) {
+        download.delegate = delegate.get();
+        delegate.get().decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            completionHandler(expectedDownloadFile);
+        };
+        delegate.get().decidePlaceholderPolicy = ^(WKDownload *, void (^completionHandler)(_WKPlaceholderPolicy, NSURL *)) {
+            completionHandler(_WKPlaceholderPolicyEnable, nil);
+        };
+        delegate.get().downloadDidFinish = ^(WKDownload *download) {
+            didFinish = true;
+        };
+    }];
+    Util::run(&didFinish);
+
+    checkFileContents(expectedDownloadFile, "http body"_s);
+
+    checkCallbackRecord(delegate.get(), {
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DecidePlaceholderPolicy,
+        DownloadCallback::DidReceivePlaceholderURL,
+        DownloadCallback::DidReceiveFinalURL,
+        DownloadCallback::DidFinish,
+    });
+}
+
+TEST(WKDownload, PlaceholderPolicyEnableWithModernDownloadProgressDisabled)
+{
+    CFPreferencesSetAppValue(CFSTR("EnableModernDownloadProgress"), kCFBooleanFalse, kCFPreferencesAnyApplication);
+
+    HTTPServer server({
+        { "/"_s, { 404, { }, "http body"_s } }
+    });
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    auto delegate = adoptNS([TestDownloadDelegate new]);
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool didFinish = false;
+    [webView startDownloadUsingRequest:server.request() completionHandler:^(WKDownload *download) {
+        download.delegate = delegate.get();
+        delegate.get().decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            completionHandler(expectedDownloadFile);
+        };
+        delegate.get().decidePlaceholderPolicy = ^(WKDownload *, void (^completionHandler)(_WKPlaceholderPolicy, NSURL *)) {
+            completionHandler(_WKPlaceholderPolicyEnable, nil);
+        };
+        delegate.get().downloadDidFinish = ^(WKDownload *download) {
+            didFinish = true;
+        };
+    }];
+    Util::run(&didFinish);
+
+    checkFileContents(expectedDownloadFile, "http body"_s);
+
+    checkCallbackRecord(delegate.get(), {
+        DownloadCallback::DecideDestination,
+        DownloadCallback::DecidePlaceholderPolicy,
+        DownloadCallback::DidFinish,
+    });
+}
+
+TEST(WKDownload, PlaceholderPolicyDisable)
+{
+    CFPreferencesSetAppValue(CFSTR("EnableModernDownloadProgress"), kCFBooleanTrue, kCFPreferencesAnyApplication);
+
+    HTTPServer server({
+        { "/"_s, { 404, { }, "http body"_s } }
+    });
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+    auto delegate = adoptNS([TestDownloadDelegate new]);
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURL *tempFile = tempFileThatDoesNotExist();
+
+    auto progressObserver = adoptNS([[ProgressObserver alloc] init]);
+    auto progress = adoptNS([[NSProgress alloc] init]);
+    [progress addObserver:progressObserver.get() forKeyPath:@"fractionCompleted" options:NSKeyValueObservingOptionNew context:NULL];
+    progress.get().kind = NSProgressKindFile;
+    progress.get().fileOperationKind = NSProgressFileOperationKindDownloading;
+    progress.get().fileURL = tempFile;
+
+    __block bool didFinish = false;
+    [webView startDownloadUsingRequest:server.request() completionHandler:^(WKDownload *download) {
+        download.delegate = delegate.get();
+        delegate.get().decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+            completionHandler(expectedDownloadFile);
+        };
+        delegate.get().decidePlaceholderPolicy = ^(WKDownload *, void (^completionHandler)(_WKPlaceholderPolicy, NSURL *)) {
+            completionHandler(_WKPlaceholderPolicyDisable, tempFile);
+        };
+        delegate.get().downloadDidFinish = ^(WKDownload *download) {
+            didFinish = true;
+        };
+    }];
+    Util::run(&didFinish);
+
+    [progressObserver waitForProgress];
+    EXPECT_GT(progress.get().fractionCompleted, 0);
 
     checkFileContents(expectedDownloadFile, "http body"_s);
 

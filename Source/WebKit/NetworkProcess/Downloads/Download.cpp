@@ -141,14 +141,19 @@ void Download::didFinish()
 {
     DOWNLOAD_RELEASE_LOG("didFinish: (id = %" PRIu64 ")", downloadID().toUInt64());
 
-    send(Messages::DownloadProxy::DidFinish());
+    platformDidFinish([weakThis = WeakPtr { *this }, this] {
+        RELEASE_ASSERT(isMainRunLoop());
+        if (!weakThis)
+            return;
+        send(Messages::DownloadProxy::DidFinish());
 
-    if (m_sandboxExtension) {
-        m_sandboxExtension->revoke();
-        m_sandboxExtension = nullptr;
-    }
+        if (m_sandboxExtension) {
+            m_sandboxExtension->revoke();
+            m_sandboxExtension = nullptr;
+        }
 
-    m_downloadManager->downloadFinished(*this);
+        m_downloadManager->downloadFinished(*this);
+    });
 }
 
 void Download::didFail(const ResourceError& error, std::span<const uint8_t> resumeData)
@@ -186,6 +191,11 @@ void Download::platformCancelNetworkLoad(CompletionHandler<void(std::span<const 
 
 void Download::platformDestroyDownload()
 {
+}
+
+void Download::platformDidFinish(CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
 }
 #endif
 

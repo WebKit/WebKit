@@ -209,7 +209,9 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     parameters.builtInNotificationsEnabled = DeprecatedGlobalSettings::builtInNotificationsEnabled();
 #endif
-
+#if PLATFORM(COCOA)
+    parameters.enableModernDownloadProgress = CFPreferencesGetAppBooleanValue(CFSTR("EnableModernDownloadProgress"), CFSTR("com.apple.WebKit"), nullptr);
+#endif
     parameters.allowedFirstPartiesForCookies = WebProcessProxy::allowedFirstPartiesForCookies();
 
 #if PLATFORM(COCOA)
