@@ -1680,9 +1680,9 @@ imported/w3c/web-platform-tests/css/css-grid/min-size-auto-overflow-clip.html [ 
 imported/w3c/web-platform-tests/css/css-grid/stretch-grid-item-text-input-overflow.html [ ImageOnlyFailure ]
 
 # Crashes:
-imported/w3c/web-platform-tests/css/css-grid/subgrid/alignment-in-subgridded-axes-002.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-010.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-012.html [ Skip ]
+webkit.org/b/279411 imported/w3c/web-platform-tests/css/css-grid/subgrid/alignment-in-subgridded-axes-002.html [ Skip ]
+webkit.org/b/279411 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-012.html [ Skip ]
+webkit.org/b/279412 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-010.html [ Skip ]
 
 # Masonry
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/alignment/masonry-align-content-001.html [ ImageOnlyFailure ]
