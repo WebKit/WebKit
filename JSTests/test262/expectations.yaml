@@ -58,9 +58,6 @@ test/built-ins/Function/internals/Construct/derived-this-uninitialized-realm.js:
 test/built-ins/Function/prototype/toString/built-in-function-object.js:
   default: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'
   strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'
-test/built-ins/Iterator/from/get-next-method-only-once.js:
-  default: "TypeError: iterator.toArray is not a function. (In 'iterator.toArray()', 'iterator.toArray' is undefined)"
-  strict mode: "TypeError: iterator.toArray is not a function. (In 'iterator.toArray()', 'iterator.toArray' is undefined)"
 test/built-ins/Iterator/prototype/drop/argument-effect-order.js:
   default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.drop.call')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.drop.call')"
@@ -916,48 +913,6 @@ test/built-ins/Iterator/prototype/take/underlying-iterator-closed-in-parallel.js
 test/built-ins/Iterator/prototype/take/underlying-iterator-closed.js:
   default: "TypeError: iterator.take is not a function. (In 'iterator.take(2)', 'iterator.take' is undefined)"
   strict mode: "TypeError: iterator.take is not a function. (In 'iterator.take(2)', 'iterator.take' is undefined)"
-test/built-ins/Iterator/prototype/toArray/callable.js:
-  default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.toArray.call')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.toArray.call')"
-test/built-ins/Iterator/prototype/toArray/get-next-method-only-once.js:
-  default: "TypeError: iterator.toArray is not a function. (In 'iterator.toArray()', 'iterator.toArray' is undefined)"
-  strict mode: "TypeError: iterator.toArray is not a function. (In 'iterator.toArray()', 'iterator.toArray' is undefined)"
-test/built-ins/Iterator/prototype/toArray/get-next-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/toArray/is-function.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-test/built-ins/Iterator/prototype/toArray/iterator-already-exhausted.js:
-  default: "TypeError: iterator.toArray is not a function. (In 'iterator.toArray()', 'iterator.toArray' is undefined)"
-  strict mode: "TypeError: iterator.toArray is not a function. (In 'iterator.toArray()', 'iterator.toArray' is undefined)"
-test/built-ins/Iterator/prototype/toArray/length.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/Iterator/prototype/toArray/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/Iterator/prototype/toArray/next-method-returns-throwing-done.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/toArray/next-method-returns-throwing-value-done.js:
-  default: "TypeError: iterator.toArray is not a function. (In 'iterator.toArray()', 'iterator.toArray' is undefined)"
-  strict mode: "TypeError: iterator.toArray is not a function. (In 'iterator.toArray()', 'iterator.toArray' is undefined)"
-test/built-ins/Iterator/prototype/toArray/next-method-returns-throwing-value.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/toArray/next-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/toArray/prop-desc.js:
-  default: 'Test262Error: obj should have an own property toArray'
-  strict mode: 'Test262Error: obj should have an own property toArray'
-test/built-ins/Iterator/prototype/toArray/proto.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Iterator.prototype.toArray)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Iterator.prototype.toArray)')"
-test/built-ins/Iterator/prototype/toArray/this-plain-iterator.js:
-  default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.toArray.call')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.toArray.call')"
 test/built-ins/Object/entries/order-after-define-property-with-function.js:
   default: 'Test262Error: Expected [a, name] and [name, a] to have the same contents. '
   strict mode: 'Test262Error: Expected [a, name] and [name, a] to have the same contents. '

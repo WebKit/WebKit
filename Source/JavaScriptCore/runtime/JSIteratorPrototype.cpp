@@ -28,6 +28,7 @@
 #include "config.h"
 #include "JSIteratorPrototype.h"
 
+#include "IteratorOperations.h"
 #include "JSCBuiltins.h"
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
@@ -45,6 +46,7 @@ static JSC_DECLARE_CUSTOM_GETTER(iteratorProtoConstructorGetter);
 static JSC_DECLARE_CUSTOM_SETTER(iteratorProtoConstructorSetter);
 static JSC_DECLARE_CUSTOM_GETTER(iteratorProtoToStringTagGetter);
 static JSC_DECLARE_CUSTOM_SETTER(iteratorProtoToStringTagSetter);
+static JSC_DECLARE_HOST_FUNCTION(iteratorProtoFuncToArray);
 
 void JSIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
@@ -58,6 +60,9 @@ void JSIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
         putDirectCustomGetterSetterWithoutTransition(vm, vm.propertyNames->constructor, CustomGetterSetter::create(vm, iteratorProtoConstructorGetter, iteratorProtoConstructorSetter), static_cast<unsigned>(PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor));
         // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype-@@tostringtag
         putDirectCustomGetterSetterWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, CustomGetterSetter::create(vm, iteratorProtoToStringTagGetter, iteratorProtoToStringTagSetter), static_cast<unsigned>(PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor));
+        // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.toarray
+        JSFunction* toArray = JSFunction::create(vm, globalObject, 0, "toArray"_s, iteratorProtoFuncToArray, ImplementationVisibility::Public);
+        putDirectWithoutTransition(vm, vm.propertyNames->toArray, toArray, static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
 }
 
@@ -121,6 +126,31 @@ JSC_DEFINE_CUSTOM_SETTER(iteratorProtoToStringTagSetter, (JSGlobalObject* global
     thisObject->putDirect(vm, propertyName, JSValue::decode(value), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 
     return JSValue::encode(jsUndefined());
+}
+
+// https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.toarray
+JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncToArray, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!thisValue.isObject())
+        return throwVMTypeError(globalObject, scope, "Iterator.prototype.toArray requires that |this| be an Object."_s);
+
+    // FIXME: Add a fast path when thisValue is a fast array
+    MarkedArgumentBuffer value;
+    forEachInIteratorProtocol(globalObject, thisValue, [&value, &scope](VM&, JSGlobalObject* globalObject, JSValue nextItem) {
+        value.append(nextItem);
+        if (UNLIKELY(value.hasOverflowed()))
+            throwOutOfMemoryError(globalObject, scope);
+    });
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto* array = constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), value);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    return JSValue::encode(array);
 }
 
 } // namespace JSC
