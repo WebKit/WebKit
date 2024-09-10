@@ -1,0 +1,3 @@
+
+PASS Validate response is taking a pending activity when reading a form data blob
+

@@ -82,6 +82,7 @@ public:
 
     void consumeOnceLoadingFinished(FetchBodyConsumer::Type, Ref<DeferredPromise>&&);
     void cleanConsumer() { m_consumer.clean(); }
+    bool hasConsumerPendingActivity() const { return m_consumer.hasPendingActivity(); }
 
     FetchBody clone();
 

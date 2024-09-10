@@ -424,7 +424,7 @@ std::optional<Exception> FetchBodyOwner::loadingException() const
 
 bool FetchBodyOwner::virtualHasPendingActivity() const
 {
-    return !!m_blobLoader;
+    return !!m_blobLoader || (m_body && m_body->hasConsumerPendingActivity());
 }
 
 bool FetchBodyOwner::hasLoadingError() const

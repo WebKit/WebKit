@@ -62,8 +62,6 @@ public:
 
     void loadBlob(const Blob&, FetchBodyConsumer*);
 
-    bool isActive() const { return !!m_blobLoader; }
-
     ExceptionOr<RefPtr<ReadableStream>> readableStream(JSC::JSGlobalObject&);
     bool hasReadableStreamBody() const { return m_body && m_body->hasReadableStream(); }
     bool isReadableStreamBody() const { return m_body && m_body->isReadableStream(); }
