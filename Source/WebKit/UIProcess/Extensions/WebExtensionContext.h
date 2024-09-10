@@ -690,7 +690,7 @@ private:
     // Storage
     void setSessionStorageAllowedInContentScripts(bool);
     bool isSessionStorageAllowedInContentScripts() const { return m_isSessionStorageAllowedInContentScripts; }
-    size_t quoataForStorageType(WebExtensionDataType);
+    size_t quotaForStorageType(WebExtensionDataType);
 
     _WKWebExtensionStorageSQLiteStore *localStorageStore();
     _WKWebExtensionStorageSQLiteStore *sessionStorageStore();
