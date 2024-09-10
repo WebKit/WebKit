@@ -1851,3 +1851,6 @@ fast/scrolling/mac/scrollbars/scrollbar-state.html [ Failure ]
 # webkit.org/b/279359 http/wpt/mediastream/mediastreamtrackprocessor-videoframe-timestamp.html  is asserting on debug
 [ Sonoma+ Debug ] http/wpt/mediastream/mediastreamtrackprocessor-videoframe-timestamp.html  [ Skip ]
 [ Sonoma+ Debug ] http/wpt/mediasession/voiceActivityDetection.html [ Skip ]
+
+# webkit.org/b/279404 [ Ventura ] http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.https.html is a flaky failure
+[ Ventura ] http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.https.html [ Pass Failure ]
