@@ -1194,9 +1194,12 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
     bool isRowAxis = direction == GridTrackSizingDirection::ForColumns;
     auto* renderGrid = dynamicDowncast<RenderGrid>(renderer);
     bool isSubgrid = isRowAxis ? style.gridSubgridColumns() : style.gridSubgridRows();
-    bool isMasonry = (direction == GridTrackSizingDirection::ForRows) ? style.gridMasonryRows() : style.gridMasonryColumns();
     auto& trackSizes = isRowAxis ? style.gridColumnTrackSizes() : style.gridRowTrackSizes();
     auto& autoRepeatTrackSizes = isRowAxis ? style.gridAutoRepeatColumns() : style.gridAutoRepeatRows();
+
+    if ((direction == GridTrackSizingDirection::ForRows && style.gridMasonryRows())
+        || (direction == GridTrackSizingDirection::ForColumns && style.gridMasonryColumns()))
+        return CSSPrimitiveValue::create(CSSValueMasonry);
 
     // Handle the 'none' case.
     bool trackListIsEmpty = trackSizes.isEmpty() && autoRepeatTrackSizes.isEmpty();
@@ -1208,7 +1211,7 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
     }
 
     if (trackListIsEmpty && !isSubgrid)
-        return isMasonry ? CSSPrimitiveValue::create(CSSValueMasonry) : CSSPrimitiveValue::create(CSSValueNone);
+        return CSSPrimitiveValue::create(CSSValueNone);
 
     CSSValueListBuilder list;
 
@@ -2621,7 +2624,7 @@ static inline bool isNonReplacedInline(RenderObject& renderer)
 static bool rendererCanHaveTrimmedMargin(const RenderBox& renderer, MarginTrimType marginTrimType)
 {
     // A renderer will have a specific margin marked as trimmed by setting its rare data bit if:
-    // 1.) The layout system the box is in has this logic (setting the rare data bit for this 
+    // 1.) The layout system the box is in has this logic (setting the rare data bit for this
     // specific margin) implemented
     // 2.) The block container/flexbox/grid has this margin specified in its margin-trim style
     // If marginTrimType is empty we will check if any of the supported margins are in the style
@@ -3808,7 +3811,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     }
     case CSSPropertyMasonryAutoFlow: {
         CSSValueListBuilder list;
-        // MasonryAutoFlow information is stored in a struct that should always 
+        // MasonryAutoFlow information is stored in a struct that should always
         // hold 2 pieces of information. It should contain both Pack/Next inside
         // the MasonryAutoFlowPlacementAlgorithm enum class and DefiniteFirst/Ordered
         // inside the MasonryAutoFlowPlacementOrder enum class
@@ -3940,7 +3943,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return CSSPrimitiveValue::createCustomIdent(style.specifiedLocale());
     case CSSPropertyMarginTop: {
         if (auto* box = dynamicDowncast<RenderBox>(renderer); box
-            && rendererCanHaveTrimmedMargin(*box, MarginTrimType::BlockStart) 
+            && rendererCanHaveTrimmedMargin(*box, MarginTrimType::BlockStart)
             && box->hasTrimmedMargin(toMarginTrimType(*box, propertyID)))
             return zoomAdjustedPixelValue(box->marginTop(), style);
         return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginTop, &RenderBoxModelObject::marginTop>(style, renderer);
@@ -3964,14 +3967,14 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return zoomAdjustedPixelValue(value, style);
     }
     case CSSPropertyMarginBottom:
-        if (auto* box = dynamicDowncast<RenderBox>(renderer); box 
-            && rendererCanHaveTrimmedMargin(*box, MarginTrimType::BlockEnd) 
+        if (auto* box = dynamicDowncast<RenderBox>(renderer); box
+            && rendererCanHaveTrimmedMargin(*box, MarginTrimType::BlockEnd)
             && box->hasTrimmedMargin(toMarginTrimType(*box, propertyID)))
             return zoomAdjustedPixelValue(box->marginBottom(), style);
         return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginBottom, &RenderBoxModelObject::marginBottom>(style, renderer);
     case CSSPropertyMarginLeft: {
-        if (auto* box = dynamicDowncast<RenderBox>(renderer);  box 
-            && rendererCanHaveTrimmedMargin(*box, MarginTrimType::InlineStart) 
+        if (auto* box = dynamicDowncast<RenderBox>(renderer);  box
+            && rendererCanHaveTrimmedMargin(*box, MarginTrimType::InlineStart)
             && box->hasTrimmedMargin(toMarginTrimType(*box, propertyID)))
             return zoomAdjustedPixelValue(box->marginLeft(), style);
         return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginLeft, &RenderBoxModelObject::marginLeft>(style, renderer);
