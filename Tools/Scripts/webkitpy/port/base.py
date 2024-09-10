@@ -166,6 +166,10 @@ class Port(object):
     def is_simulator(self):
         return False
 
+    @property
+    def reality(self):
+        return ''
+
     def architecture(self):
         return self.get_option('architecture') or self.DEFAULT_ARCHITECTURE
 
@@ -967,7 +971,7 @@ class Port(object):
                 style = 'asan'
             else:
                 style = self._options.configuration.lower()
-            self._test_configuration = TestConfiguration(self.version_name(), self.architecture(), style)
+            self._test_configuration = TestConfiguration(self.version_name(), self.architecture(), style, self.reality)
         return self._test_configuration
 
     # FIXME: Belongs on a Platform object.

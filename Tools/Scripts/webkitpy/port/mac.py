@@ -335,10 +335,7 @@ class MacPort(DarwinPort):
 
         # --model should override the detected model
         if not configuration.get('model'):
-            output = host.executive.run_command(['/usr/sbin/sysctl', 'hw.model']).rstrip()
-            match = re.match(r'hw.model: (?P<model>.*)', output)
-            if match:
-                configuration['model'] = match.group('model')
+            configuration['model'] = self.hw_model
 
         return configuration
 
