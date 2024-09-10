@@ -254,6 +254,27 @@ void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& pr
         return;
     }
 
+    if (options.name.isNull() && options.url.isNull()) {
+        promise->reject(ExceptionCode::TypeError);
+        return;
+    }
+
+    auto url = context->url();
+    if (!options.url.isNull()) {
+        auto parsed = context->completeURL(options.url);
+        if (context->isDocument() && parsed != url) {
+            promise->reject(ExceptionCode::TypeError);
+            return;
+        }
+
+        if (!origin->isSameOriginAs(SecurityOrigin::create(parsed))) {
+            promise->reject(ExceptionCode::TypeError);
+            return;
+        }
+        url = WTFMove(parsed);
+    }
+    options.url = url.string();
+
     m_promises.add(++m_nextPromiseIdentifier, WTFMove(promise));
     auto completionHandler = [promiseIdentifier = m_nextPromiseIdentifier](CookieStore& cookieStore, ExceptionOr<Vector<Cookie>>&& result) {
         auto promise = cookieStore.takePromise(promiseIdentifier);
@@ -309,7 +330,7 @@ void CookieStore::getAll(CookieStoreGetOptions&& options, Ref<DeferredPromise>&&
             return;
         }
 
-        if (!origin->isSameOriginDomain(SecurityOrigin::create(parsed))) {
+        if (!origin->isSameOriginAs(SecurityOrigin::create(parsed))) {
             promise->reject(ExceptionCode::TypeError);
             return;
         }
