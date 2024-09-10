@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBXR)
 
+#include "GPUProcessProxy.h"
 #include "MessageSenderInlines.h"
 #include "PlatformXRSystemMessages.h"
 #include "PlatformXRSystemProxyMessages.h"

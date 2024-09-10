@@ -473,6 +473,7 @@ class WebPageProxyTesting;
 class WebPopupMenuProxy;
 class WebPopupMenuProxyClient;
 class WebPreferences;
+class WebProcessActivityState;
 class WebProcessProxy;
 class WebScreenOrientationManagerProxy;
 class WebTouchEvent;
@@ -2477,7 +2478,6 @@ public:
     void sendScrollPositionChangedForNode(std::optional<WebCore::FrameIdentifier>, WebCore::ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, std::optional<WebCore::FloatPoint> layoutViewportOrigin, bool syncLayerPosition, bool isLastUpdate);
 #endif
 
-    bool hasValidAudibleActivity() const;
     bool hasAllowedToRunInTheBackgroundActivity() const;
 
     template<typename M> void sendToProcessContainingFrame(std::optional<WebCore::FrameIdentifier>, M&&, OptionSet<IPC::SendOption> = { });
@@ -2519,6 +2519,8 @@ public:
 
     void startNetworkRequestsForPageLoadTiming(WebCore::FrameIdentifier);
     void endNetworkRequestsForPageLoadTiming(WebCore::FrameIdentifier, WallTime);
+
+    WebProcessActivityState& processActivityState();
 
 private:
     void getWebCryptoMasterKey(CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
@@ -3135,45 +3137,27 @@ private:
     static WTF::MachSendRight createMachSendRightForRemoteLayerServer();
 #endif
 
-    class ProcessActivityState {
-    public:
-        explicit ProcessActivityState(WebPageProxy&);
-        void takeVisibleActivity();
-        void takeAudibleActivity();
-        void takeCapturingActivity();
-        void takeMutedCaptureAssertion();
+    void takeVisibleActivity();
+    void takeAudibleActivity();
+    void takeCapturingActivity();
+    void takeMutedCaptureAssertion();
 
-        void reset();
-        void dropVisibleActivity();
-        void dropAudibleActivity();
-        void dropCapturingActivity();
-        void dropMutedCaptureAssertion();
+    void resetActivityState();
+    void dropVisibleActivity();
+    void dropAudibleActivity();
+    void dropCapturingActivity();
+    void dropMutedCaptureAssertion();
 
-        bool hasValidVisibleActivity() const;
-        bool hasValidAudibleActivity() const;
-        bool hasValidCapturingActivity() const;
-        bool hasValidMutedCaptureAssertion() const;
+    bool hasValidVisibleActivity() const;
+    bool hasValidAudibleActivity() const;
+    bool hasValidCapturingActivity() const;
+    bool hasValidMutedCaptureAssertion() const;
 
 #if PLATFORM(IOS_FAMILY)
-        void takeOpeningAppLinkActivity();
-        void dropOpeningAppLinkActivity();
-        bool hasValidOpeningAppLinkActivity() const;
+    void takeOpeningAppLinkActivity();
+    void dropOpeningAppLinkActivity();
+    bool hasValidOpeningAppLinkActivity() const;
 #endif
-
-    private:
-        WeakRef<WebPageProxy> m_page;
-
-        std::unique_ptr<ProcessThrottlerActivity> m_isVisibleActivity;
-#if PLATFORM(MAC)
-        UniqueRef<ProcessThrottlerTimedActivity> m_wasRecentlyVisibleActivity;
-#endif
-        std::unique_ptr<ProcessThrottlerActivity> m_isAudibleActivity;
-        std::unique_ptr<ProcessThrottlerActivity> m_isCapturingActivity;
-        RefPtr<ProcessAssertion> m_isMutedCaptureAssertion;
-#if PLATFORM(IOS_FAMILY)
-        std::unique_ptr<ProcessThrottlerActivity> m_openingAppLinkActivity;
-#endif
-    };
 
     UniqueRef<Internals> m_internals;
 
@@ -3327,7 +3311,7 @@ private:
 #endif
     bool m_allowsMediaDocumentInlinePlayback { false };
 
-    ProcessActivityState m_legacyMainFrameProcessActivityState;
+    UniqueRef<WebProcessActivityState> m_mainFrameProcessActivityState;
 
     bool m_initialCapitalizationEnabled { false };
     std::optional<double> m_cpuLimit;

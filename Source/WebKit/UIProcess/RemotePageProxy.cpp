@@ -41,6 +41,7 @@
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
+#include "WebProcessActivityState.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 #include <WebCore/RemoteUserInputEventData.h>
@@ -55,6 +56,7 @@ RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, c
     , m_process(process)
     , m_page(page)
     , m_site(site)
+    , m_processActivityState(makeUniqueRef<WebProcessActivityState>(*this))
 {
     if (registrationToTransfer)
         m_messageReceiverRegistration.transferMessageReceivingFrom(*registrationToTransfer, *this);
@@ -233,6 +235,11 @@ RefPtr<WebPageProxy> RemotePageProxy::protectedPage() const
 WebPageProxy* RemotePageProxy::page() const
 {
     return m_page.get();
+}
+
+WebProcessActivityState& RemotePageProxy::processActivityState()
+{
+    return m_processActivityState;
 }
 
 }

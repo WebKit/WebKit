@@ -71,6 +71,7 @@ class RemotePageVisitedLinkStoreRegistration;
 class UserData;
 class WebFrameProxy;
 class WebPageProxy;
+class WebProcessActivityState;
 class WebProcessProxy;
 
 struct FrameInfoData;
@@ -98,6 +99,8 @@ public:
     WebCore::PageIdentifier identifierInSiteIsolatedProcess() const { return m_webPageID; }
     const Site& site() const { return m_site; }
 
+    WebProcessActivityState& processActivityState();
+
 private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
@@ -117,6 +120,7 @@ private:
     std::unique_ptr<RemotePageDrawingAreaProxy> m_drawingArea;
     std::unique_ptr<RemotePageVisitedLinkStoreRegistration> m_visitedLinkStoreRegistration;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
+    UniqueRef<WebProcessActivityState> m_processActivityState;
 };
 
 }
