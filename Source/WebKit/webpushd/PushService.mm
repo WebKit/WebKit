@@ -702,9 +702,9 @@ void PushService::removeRecordsForBundleIdentifierAndDataStore(const String& bun
 
 #if PLATFORM(IOS)
 
-void PushService::updateSubscriptionSetState(const Vector<String>& allowedBundleIdentifiers, const HashSet<String>& installedWebClipIdentifiers, CompletionHandler<void()>&& completionHandler)
+void PushService::updateSubscriptionSetState(const String& allowedBundleIdentifier, const HashSet<String>& installedWebClipIdentifiers, CompletionHandler<void()>&& completionHandler)
 {
-    m_database->getPushSubscriptionSetRecords([this, weakThis = WeakPtr { *this }, allowedBundleIdentifiers, installedWebClipIdentifiers, completionHandler = WTFMove(completionHandler)](auto&& records) mutable {
+    m_database->getPushSubscriptionSetRecords([this, weakThis = WeakPtr { *this }, allowedBundleIdentifier, installedWebClipIdentifiers, completionHandler = WTFMove(completionHandler)](auto&& records) mutable {
         if (!weakThis)
             return completionHandler();
 
@@ -713,7 +713,7 @@ void PushService::updateSubscriptionSetState(const Vector<String>& allowedBundle
         for (const auto& record : records) {
             auto bundleIdentifier = record.identifier.bundleIdentifier;
             auto webClipIdentifier = record.identifier.pushPartition;
-            if (!allowedBundleIdentifiers.contains(bundleIdentifier) || !installedWebClipIdentifiers.contains(webClipIdentifier))
+            if (bundleIdentifier != allowedBundleIdentifier || !installedWebClipIdentifiers.contains(webClipIdentifier))
                 identifiersToRemove.add(record.identifier);
         }
 

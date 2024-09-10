@@ -89,10 +89,6 @@ public:
 
     void didReceiveMessageWithReplyHandler(IPC::Decoder&, Function<void(UniqueRef<IPC::Encoder>&&)>&&) override;
 
-#if PLATFORM(IOS)
-    String associatedWebClipTitle() const;
-#endif
-
 private:
     PushClientConnection(xpc_connection_t, String&& hostAppCodeSigningIdentifier, bool hostAppHasPushInjectEntitlement, String&& pushPartitionString, std::optional<WTF::UUID>&& dataStoreIdentifier);
 
@@ -126,10 +122,6 @@ private:
     bool m_hostAppHasPushInjectEntitlement { false };
     String m_pushPartitionString;
     Markable<WTF::UUID> m_dataStoreIdentifier;
-
-#if PLATFORM(IOS)
-    mutable RetainPtr<UIWebClip> m_associatedWebClip;
-#endif
 };
 
 } // namespace WebPushD

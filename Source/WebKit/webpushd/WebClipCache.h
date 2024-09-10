@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,20 +25,33 @@
 
 #pragma once
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <dirhelper_priv.h>
-#else
+#if ENABLE(WEB_PUSH_NOTIFICATIONS) && PLATFORM(IOS)
 
-WTF_EXTERN_C_BEGIN
-char *_get_user_dir_suffix();
-bool _set_user_dir_suffix(const char *user_dir_suffix);
-WTF_EXTERN_C_END
+#include <WebCore/SecurityOriginData.h>
+#include <tuple>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
+
+namespace WebPushD {
+
+class WebClipCache {
+    WTF_MAKE_TZONE_ALLOCATED(WebClipCache);
+public:
+    WebClipCache(const String& path);
+
+    String preferredWebClipIdentifier(const String& bundleIdentifier, const WebCore::SecurityOriginData&);
+    HashSet<String> visibleWebClipIdentifiers(const String& bundleIdentifier);
+    bool isWebClipVisible(const String& bundleIdentifier, const String& webClipIdentifier);
+
+private:
+    void load();
+    void persist();
+
+    String m_path;
+    HashMap<std::tuple<String, WebCore::SecurityOriginData>, String> m_preferredWebClipIdentifiers;
+};
+
+} // namespace WebPushD
 
 #endif
-
-WTF_EXTERN_C_BEGIN
-
-void _CSCheckFixDisable();
-CFArrayRef _UTCopyDeclaredTypeIdentifiers(void);
-
-WTF_EXTERN_C_END

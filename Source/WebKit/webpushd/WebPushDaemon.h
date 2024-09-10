@@ -48,6 +48,8 @@
 #include <wtf/spi/darwin/XPCSPI.h>
 
 #if PLATFORM(IOS)
+#include "WebClipCache.h"
+
 @class FBSOpenApplicationService;
 #endif
 
@@ -76,8 +78,12 @@ public:
     void connectionRemoved(xpc_connection_t);
 
     void startMockPushService();
-    void startPushService(const String& incomingPushServiceName, const String& pushDatabasePath);
+    void startPushService(const String& incomingPushServiceName, const String& pushDatabasePath, const String& webClipCachePath);
     void handleIncomingPush(const WebCore::PushSubscriptionSetIdentifier&, WebKit::WebPushMessage&&);
+
+#if PLATFORM(IOS)
+    WebClipCache& ensureWebClipCache();
+#endif
 
     // Message handlers
     void setPushAndNotificationsEnabledForOrigin(PushClientConnection&, const String& originString, bool, CompletionHandler<void()>&& replySender);
@@ -162,6 +168,8 @@ private:
 
 #if PLATFORM(IOS)
     RetainPtr<FBSOpenApplicationService> m_openService;
+    std::unique_ptr<WebClipCache> m_webClipCache;
+    String m_webClipCachePath;
 #endif
 };
 

@@ -223,45 +223,6 @@ void PushClientConnection::getPushTopicsForTesting(CompletionHandler<void(Vector
     WebPushDaemon::singleton().getPushTopicsForTesting(*this, WTFMove(completionHandler));
 }
 
-#if PLATFORM(IOS)
-// FIXME: this should be cached rather than needing to walk through the web clips directory every time.
-static String webClipIdentifierForOrigin(const WebCore::SecurityOriginData& origin)
-{
-    RetainPtr<NSString> oldestMatchingIdentifier;
-    WallTime oldestMatchingCreationTime = WallTime::infinity();
-
-    @autoreleasepool {
-        NSArray *webClips = [UIWebClip webClips];
-
-        for (UIWebClip *webClip in webClips) {
-            NSString *identifier = [webClip identifier];
-            if (!identifier)
-                continue;
-
-            auto clipOrigin = WebCore::SecurityOriginData::fromURL(webClip.pageURL);
-            if (origin != clipOrigin)
-                continue;
-
-            NSString *path = [UIWebClip pathForWebClipWithIdentifier:identifier];
-            if (!path)
-                continue;
-
-            auto maybeCreationTime = FileSystem::fileCreationTime(path);
-            if (!maybeCreationTime)
-                continue;
-            auto creationTime = *maybeCreationTime;
-
-            if (creationTime < oldestMatchingCreationTime) {
-                oldestMatchingIdentifier = identifier;
-                oldestMatchingCreationTime = creationTime;
-            }
-        }
-    }
-
-    return oldestMatchingIdentifier.get();
-}
-#endif
-
 std::optional<WebCore::PushSubscriptionSetIdentifier> PushClientConnection::subscriptionSetIdentifierForOrigin(const WebCore::SecurityOriginData& origin) const
 {
     String pushPartitionString = m_pushPartitionString;
@@ -270,7 +231,9 @@ std::optional<WebCore::PushSubscriptionSetIdentifier> PushClientConnection::subs
     if (pushPartitionString.isEmpty()) {
         // On iOS, when the client doesn't explicitly specify a push partition (web clip id), we
         // implicitly choose the oldest web clip associated with that origin.
-        pushPartitionString = webClipIdentifierForOrigin(origin);
+        auto& webClipCache = WebPushDaemon::singleton().ensureWebClipCache();
+        pushPartitionString = webClipCache.preferredWebClipIdentifier(m_hostAppCodeSigningIdentifier, origin);
+
         if (pushPartitionString.isEmpty())
             return std::nullopt;
     }
@@ -420,15 +383,6 @@ void PushClientConnection::getAppBadgeForTesting(CompletionHandler<void(std::opt
     completionHandler(std::nullopt);
 #endif
 }
-
-#if PLATFORM(IOS)
-String PushClientConnection::associatedWebClipTitle() const
-{
-    if (!m_associatedWebClip)
-        m_associatedWebClip = [UIWebClip webClipWithIdentifier:(NSString *)m_pushPartitionString];
-    return m_associatedWebClip.get().title;
-}
-#endif // PLATFORM(IOS)
 
 } // namespace WebPushD
 
