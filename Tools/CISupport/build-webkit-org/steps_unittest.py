@@ -1956,7 +1956,7 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
             + ExpectShell.log('stdio', stdout='Total unexpected failing files: 123\nTotal unexpected passing files: 456\nTotal unexpected issues: 789\n')
             + 0,
         )
-        self.expectOutcome(result=FAILURE, state_string='Unexpected failing files: 123 Unexpected passing files: 456 Unexpected issues: 789 (failure)')
+        self.expectOutcome(result=SUCCESS, state_string='Unexpected failing files: 123 Unexpected passing files: 456 Unexpected issues: 789')
         return self.runStep()
 
 

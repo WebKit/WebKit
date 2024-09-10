@@ -1659,7 +1659,7 @@ class ScanBuildSmartPointer(steps.ShellSequence, ShellMixin):
         ]
 
         if rc == SUCCESS:
-            steps_to_add += [ParseStaticAnalyzerResults(), FindUnexpectedStaticAnalyzerResults(), ArchiveStaticAnalyzerResults(), UploadStaticAnalyzerResults(), ExtractStaticAnalyzerTestResults()]
+            steps_to_add += [ParseStaticAnalyzerResults(), FindUnexpectedStaticAnalyzerResults(), ArchiveStaticAnalyzerResults(), UploadStaticAnalyzerResults(), ExtractStaticAnalyzerTestResults(), DisplaySmartPointerResults()]
         self.build.addStepsAfterCurrentStep(steps_to_add)
 
         defer.returnValue(rc)
@@ -1746,8 +1746,6 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle):
 
         self.createResultMessage()
 
-        if self.getProperty('unexpected_failing_files', 0) or self.getProperty('unexpected_passing_files', 0):
-            return defer.returnValue(FAILURE)
         return defer.returnValue(rc)
 
     def createResultMessage(self):
@@ -1776,38 +1774,58 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle):
         return {u'step': status}
 
 
-class DisplayUnexpectedResults(buildstep.BuildStep, AddToLogMixin):
-    name = 'display-unexpected-results'
+class DisplaySmartPointerResults(buildstep.BuildStep, AddToLogMixin):
+    name = 'display-smart-pointer-results'
 
     @defer.inlineCallbacks
     def run(self):
-        result_directory = f"public_html/results/{self.getProperty('buildername')}/{self.getProperty('archive_revision')} ({self.getProperty('buildnumber')})"
-        unexpected_results_json = os.path.join(result_directory, SCAN_BUILD_OUTPUT_DIR, 'unexpected_results.json')
+        self.resultDirectory = f"public_html/results/{self.getProperty('buildername')}/{self.getProperty('archive_revision')} ({self.getProperty('buildnumber')})"
+        self.zipFile = self.resultDirectory + '.zip'
+
+        unexpected_results_json = os.path.join(self.resultDirectory, SCAN_BUILD_OUTPUT_DIR, 'unexpected_results.json')
         with open(unexpected_results_json) as f:
             unexpected_results_data = json.load(f)
-        yield self.getFilesPerProject(unexpected_results_data, 'passes')
-        yield self.getFilesPerProject(unexpected_results_data, 'failures')
+        is_log = yield self.getFilesPerProject(unexpected_results_data, 'passes')
+        is_log += yield self.getFilesPerProject(unexpected_results_data, 'failures')
+        if not is_log:
+            yield self.addToLog('stdio', 'No unexpected results.\n')
+
+        self.addURL("View full static analyzer results", self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/results.html")
+        self.addURL("Download full static analyzer results", self.resultDownloadURL())
         if self.getProperty('unexpected_failing_files', 0) or self.getProperty('unexpected_passing_files', 0):
+            self.addURL("View unexpected static analyzer results", self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/unexpected-results.html")
             return defer.returnValue(FAILURE)
         return defer.returnValue(SUCCESS)
 
     @defer.inlineCallbacks
     def getFilesPerProject(self, unexpected_results_data, type):
+        is_log = 0
         for project, data in unexpected_results_data[type].items():
             log_content = ''
             for checker, files in data.items():
                 if files:
-                    log_content += f'\n\n=> {checker}\n\n'
-                    log_content += '\n'.join(files)
+                    file_list = '\n'.join((sorted(files)))
+                    log_content += f'\n\n=> {checker}\n\n{file_list}\n\n'
             if log_content:
                 yield self._addToLog(f'{project}-unexpected-{type}', log_content)
+                is_log += 1
+        return defer.returnValue(is_log)
 
     def getResultSummary(self):
-        if self.results != SUCCESS:
-            return super().getResultSummary()
+        if self.results == SUCCESS:
+            return {'step': f'No unexpected results'}
+        elif self.results == WARNINGS:
+            return {'step': f'Results could not be displayed'}
         num_failures = self.getProperty('unexpected_failing_files', 0)
         num_passes = self.getProperty('unexpected_passing_files', 0)
         return {'step': f'Unexpected failing files: {num_failures} Unexpected passing files: {num_passes}'}
+
+    def resultDirectoryURL(self):
+        self.setProperty('result_directory', self.resultDirectory)
+        return self.resultDirectory.replace('public_html/', '/') + '/'
+
+    def resultDownloadURL(self):
+        return self.zipFile.replace('public_html/', '')
 
 
 class UpdateSmartPointerBaseline(steps.ShellSequence, ShellMixin):
@@ -1890,24 +1908,8 @@ class ExtractTestResults(master.MasterShellCommandNewStyle):
 class ExtractStaticAnalyzerTestResults(ExtractTestResults):
     name = 'extract-static-analyzer-test-results'
 
-    @defer.inlineCallbacks
-    def run(self):
-        rc = yield super().run()
-        if self.getProperty('unexpected_failing_files', 0) or self.getProperty('unexpected_passing_files', 0):
-            self.build.addStepsAfterCurrentStep([DisplayUnexpectedResults()])
-        defer.returnValue(rc)
-
-    def getLastBuildStepByName(self, name):
-        for step in reversed(self.build.executedSteps):
-            if name in step.name:
-                return step
-        return None
-
     def addCustomURLs(self):
-        step = self.getLastBuildStepByName(FindUnexpectedStaticAnalyzerResults.name)
-        step.addURL("View full static analyzer results", self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/results.html")
-        step.addURL("View unexpected static analyzer results", self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/unexpected-results.html")
-        step.addURL("Download full static analyzer results", self.resultDownloadURL())
+        pass
 
 
 class PrintConfiguration(steps.ShellSequence):
