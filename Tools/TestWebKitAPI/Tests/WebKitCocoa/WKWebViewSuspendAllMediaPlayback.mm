@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -114,7 +114,7 @@ TEST(WKWebViewSuspendAllMediaPlayback, PauseWhenResume)
 TEST(WKWebViewSuspendAllMediaPlayback, FullscreenWhileSuspended)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get().preferences.elementFullscreenEnabled = YES;
+    [configuration preferences].elementFullscreenEnabled = YES;
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get() addToWindow:YES]);
 

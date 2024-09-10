@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,7 @@ namespace TestWebKitAPI {
 TEST(CloseWebViewDuringEnterFullscreen, VideoFullscreen)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get().preferences.elementFullscreenEnabled = YES;
+    [configuration preferences].elementFullscreenEnabled = YES;
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
     RetainPtr<CloseWebViewDuringEnterFullscreenUIDelegate> handler = adoptNS([[CloseWebViewDuringEnterFullscreenUIDelegate alloc] init]);
     [webView _setFullscreenDelegate:handler.get()];
@@ -80,7 +80,7 @@ TEST(CloseWebViewDuringEnterFullscreen, VideoFullscreen)
 TEST(CloseWebViewDuringEnterFullscreen, DISABLED_ElementFullscreen)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get().preferences.elementFullscreenEnabled = YES;
+    [configuration preferences].elementFullscreenEnabled = YES;
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
     RetainPtr<CloseWebViewDuringEnterFullscreenUIDelegate> handler = adoptNS([[CloseWebViewDuringEnterFullscreenUIDelegate alloc] init]);
     [webView _setFullscreenDelegate:handler.get()];

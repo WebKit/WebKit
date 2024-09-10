@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,7 +67,7 @@ TEST(PictureInPicture, DISABLED_ExitPiPOnSuspendVideoElement)
     }];
 
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get().preferences.elementFullscreenEnabled = YES;
+    [configuration preferences].elementFullscreenEnabled = YES;
     [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
     RetainPtr<ExitPiPOnSuspendVideoElementUIDelegate> handler = adoptNS([[ExitPiPOnSuspendVideoElementUIDelegate alloc] init]);
