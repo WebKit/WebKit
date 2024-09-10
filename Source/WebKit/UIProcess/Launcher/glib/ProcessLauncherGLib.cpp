@@ -106,7 +106,7 @@ void ProcessLauncher::launchProcess()
 
 #if OS(LINUX)
     IPC::SocketPair pidSocketPair = IPC::createPlatformConnection(IPC::PlatformConnectionOptions::SetCloexecOnClient | IPC::PlatformConnectionOptions::SetCloexecOnServer | IPC::PlatformConnectionOptions::SetPasscredOnServer);
-    GUniquePtr<gchar> pidSocket(g_strdup_printf("%d", pidSocketPair.client));
+    GUniquePtr<gchar> pidSocketString(g_strdup_printf("%d", pidSocketPair.client));
 #endif
 
     String executablePath;
@@ -156,7 +156,7 @@ void ProcessLauncher::launchProcess()
     argv[i++] = const_cast<char*>(realExecutablePath.data());
     argv[i++] = processIdentifier.get();
     argv[i++] = webkitSocket.get();
-    argv[i++] = pidSocket.get();
+    argv[i++] = pidSocketString.get();
 #if ENABLE(DEVELOPER_MODE)
     if (configureJSCForTesting)
         argv[i++] = const_cast<char*>("--configure-jsc-for-testing");
@@ -214,8 +214,25 @@ void ProcessLauncher::launchProcess()
         g_error("Unable to spawn a new child process: %s", error->message);
 
 #if OS(LINUX)
-    m_processID = IPC::readPIDFromPeer(pidSocketPair.server);
-    RELEASE_ASSERT(!close(pidSocketPair.server));
+    GRefPtr<GSocket> pidSocket = adoptGRef(g_socket_new_from_fd(pidSocketPair.server, &error.outPtr()));
+    if (!pidSocket)
+        g_error("Failed to create pid socket wrapper: %s", error->message);
+
+    // We need to get the pid of the actual WebKit auxiliary process, not the bwrap or flatpak-spawn
+    // intermediate process. And do it without blocking, because process launching is slow.
+    g_socket_set_blocking(pidSocket.get(), FALSE);
+    m_socketMonitor.start(pidSocket.get(), G_IO_IN, RunLoop::main(), [protectedThis = Ref { *this }, this, pidSocket, serverSocket = webkitSocketPair.server](GIOCondition condition) -> gboolean {
+        if (!(condition & G_IO_IN))
+            g_error("Failed to read pid from child process");
+
+        m_processID = IPC::readPIDFromPeer(g_socket_get_fd(pidSocket.get()));
+        RELEASE_ASSERT(m_processID);
+
+        m_socketMonitor.stop();
+
+        didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { serverSocket });
+        return G_SOURCE_REMOVE;
+    });
 #else
     const char* processIdStr = g_subprocess_get_identifier(process.get());
     if (!processIdStr)
@@ -223,12 +240,11 @@ void ProcessLauncher::launchProcess()
 
     m_processID = g_ascii_strtoll(processIdStr, nullptr, 0);
     RELEASE_ASSERT(m_processID);
-#endif
 
-    // We've finished launching the process, message back to the main run loop.
     RunLoop::main().dispatch([protectedThis = Ref { *this }, this, serverSocket = webkitSocketPair.server] {
         didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { serverSocket });
     });
+#endif
 }
 
 void ProcessLauncher::terminateProcess()

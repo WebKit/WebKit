@@ -51,6 +51,10 @@ OBJC_CLASS BENetworkingProcess;
 OBJC_CLASS BERenderingProcess;
 #endif
 
+#if USE(GLIB) && OS(LINUX)
+#include <wtf/glib/GSocketMonitor.h>
+#endif
+
 namespace WebKit {
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -179,6 +183,10 @@ private:
     const LaunchOptions m_launchOptions;
     bool m_isLaunching { true };
     ProcessID m_processID { 0 };
+
+#if USE(GLIB) && OS(LINUX)
+    GSocketMonitor m_socketMonitor;
+#endif
 };
 
 } // namespace WebKit
