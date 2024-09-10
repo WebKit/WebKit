@@ -1343,6 +1343,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
                     selectorFragments = &matchesList.last();
                 }
 
+                if (subselector.matchesPseudoElement())
+                    return FunctionType::CannotCompile;
+
                 VisitedMode ignoreVisitedMode = VisitedMode::None;
                 FunctionType localFunctionType = constructFragments(&subselector, selectorContext, *selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, pseudoElementMatchingBehavior);
                 ASSERT_WITH_MESSAGE(ignoreVisitedMode == VisitedMode::None, ":visited is disabled in the functional pseudo classes");
@@ -1352,10 +1355,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
                     continue;
 
                 if (localFunctionType == FunctionType::CannotCompile)
-                    return FunctionType::CannotCompile;
-
-                // FIXME: Currently pseudo elements inside :is()/:matches() are supported in non-JIT code.
-                if (selectorFragments->first().pseudoElementSelector)
                     return FunctionType::CannotCompile;
 
                 functionType = mostRestrictiveFunctionType(functionType, localFunctionType);
