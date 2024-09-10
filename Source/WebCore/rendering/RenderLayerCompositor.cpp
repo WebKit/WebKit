@@ -1045,7 +1045,11 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 #endif
 
     // FIXME: optimize root-only update.
+#if ASSERT_ENABLED
+    {
+#else
     if (updateRoot->hasDescendantNeedingCompositingRequirementsTraversal() || updateRoot->needsCompositingRequirementsTraversal()) {
+#endif
         auto& rootLayer = rootRenderLayer();
         CompositingState compositingState(updateRoot);
         BackingSharingState backingSharingState(m_renderView.settings().overlappingBackingStoreProvidersEnabled());
@@ -1441,6 +1445,8 @@ void RenderLayerCompositor::traverseUnchangedSubtree(RenderLayer* ancestorLayer,
         provider->sharingLayers.add(layer);
         layerPaintsIntoProvidedBacking = true;
     }
+
+    ASSERT_IMPLIES(!layerPaintsIntoProvidedBacking && compositingState.testingOverlap && layerOverlaps(overlapMap, layer, layerExtent), layerIsComposited);
 
     CompositingState currentState = compositingState.stateForPaintOrderChildren(layer);
 
