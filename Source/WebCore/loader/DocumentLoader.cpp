@@ -1468,19 +1468,6 @@ void DocumentLoader::applyPoliciesToSettings()
 #endif
 }
 
-MouseEventPolicy DocumentLoader::mouseEventPolicy() const
-{
-#if ENABLE(IOS_TOUCH_EVENTS)
-    if (m_mouseEventPolicy == MouseEventPolicy::Default) {
-        if (auto* document = this->document()) {
-            if (document->quirks().shouldSynthesizeTouchEvents())
-                return MouseEventPolicy::SynthesizeTouchEvents;
-        }
-    }
-#endif
-    return m_mouseEventPolicy;
-}
-
 ColorSchemePreference DocumentLoader::colorSchemePreference() const
 {
     return m_colorSchemePreference;

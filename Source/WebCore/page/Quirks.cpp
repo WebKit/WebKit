@@ -569,19 +569,6 @@ bool Quirks::shouldPreventDispatchOfTouchEvent(const AtomString& touchEventType,
 
 #endif
 
-#if ENABLE(IOS_TOUCH_EVENTS)
-// mail.yahoo.com rdar://59824469
-bool Quirks::shouldSynthesizeTouchEvents() const
-{
-    if (!needsQuirks())
-        return false;
-
-    if (!m_shouldSynthesizeTouchEventsQuirk)
-        m_shouldSynthesizeTouchEventsQuirk = isYahooMail(*protectedDocument());
-    return m_shouldSynthesizeTouchEventsQuirk.value();
-}
-#endif
-
 // live.com rdar://52116170
 // sharepoint.com rdar://52116170
 // maps.google.com https://bugs.webkit.org/show_bug.cgi?id=214945
