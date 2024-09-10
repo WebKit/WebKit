@@ -348,7 +348,7 @@ void TextAnimationController::saveSnapshotOfTextPlaceholderForAnimation(const We
         WebCore::TextIndicatorOption::RespectTextColor
     };
 
-    auto textIndicator = TextIndicator::createWithRange(placeholderRange, textIndicatorOptions, TextIndicatorPresentationTransition::None, { });
+    auto textIndicator = WebCore::TextIndicator::createWithRange(placeholderRange, textIndicatorOptions, WebCore::TextIndicatorPresentationTransition::None, { });
     if (textIndicator)
         m_placeholderTextIndicatorData = textIndicator->data();
 }

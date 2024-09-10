@@ -29,6 +29,8 @@
 
 #include <WebCore/CharacterRange.h>
 #include <WebCore/SimpleRange.h>
+#include <WebCore/TextIndicator.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UUID.h>
@@ -37,8 +39,6 @@
 namespace WebCore {
 
 class Range;
-
-struct TextIndicatorData;
 
 enum class TextIndicatorOption : uint16_t;
 enum class TextAnimationRunMode : uint8_t;
