@@ -164,12 +164,15 @@ RefPtr<PushClientConnection> PushClientConnection::create(xpc_connection_t conne
     audit_token_t hostAppAuditToken = handle.hostProcess.auditToken;
 #else
     audit_token_t hostAppAuditToken { };
-    if (configuration.hostAppAuditTokenData.size() != sizeof(audit_token_t)) {
-        RELEASE_LOG_ERROR(Push, "PushClientConnection::create failed: client attempted to set audit token with incorrect size");
-        return nullptr;
-    }
+    if (auto hostAppAuditTokenData = configuration.hostAppAuditTokenData) {
+        if (hostAppAuditTokenData->size() != sizeof(audit_token_t)) {
+            RELEASE_LOG_ERROR(Push, "PushClientConnection::create failed: client attempted to set audit token with incorrect size");
+            return nullptr;
+        }
 
-    memcpy(&hostAppAuditToken, configuration.hostAppAuditTokenData.data(), sizeof(hostAppAuditToken));
+        memcpy(&hostAppAuditToken, hostAppAuditTokenData->data(), sizeof(hostAppAuditToken));
+    } else
+        hostAppAuditToken = peerAuditToken;
 #endif
 
     bool hostAppHasWebPushEntitlement = hostAppHasEntitlement(hostAppAuditToken, hostAppWebPushEntitlement);

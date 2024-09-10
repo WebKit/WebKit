@@ -2416,6 +2416,8 @@ TEST(WebPushD, WKWebPushDaemonConnectionRequestPushPermission)
     TestWebKitAPI::Util::run(&done);
 }
 
+#endif
+
 TEST(WebPushD, WKWebPushDaemonConnectionPushSubscription)
 {
     setUpTestWebPushD();
@@ -2462,8 +2464,6 @@ TEST(WebPushD, WKWebPushDaemonConnectionPushSubscription)
     }];
     TestWebKitAPI::Util::run(&done);
 }
-
-#endif
 
 class WebPushDPushNotificationEventTest : public WebPushDTest {
 public:
