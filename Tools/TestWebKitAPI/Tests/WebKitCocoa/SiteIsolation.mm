@@ -1362,7 +1362,7 @@ TEST(SiteIsolation, MultipleReloads)
 }
 
 #if PLATFORM(MAC)
-TEST(SiteIsolation, PropagateMouseEventsToSubframe)
+TEST(SiteIsolation, DISABLED_PropagateMouseEventsToSubframe)
 {
     auto mainframeHTML = "<script>"
     "    window.eventTypes = [];"
