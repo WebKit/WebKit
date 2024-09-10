@@ -40,6 +40,7 @@
 namespace WebCore {
 
     class IntSize;
+    class DateComponents;
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT String truncatedStringForMenuItem(const String&);
@@ -403,7 +404,7 @@ namespace WebCore {
 #endif
 
 #if ENABLE(INPUT_TYPE_WEEK_PICKER)
-    WEBCORE_EXPORT String inputWeekLabel();
+    WEBCORE_EXPORT String inputWeekLabel(const DateComponents&);
 #endif
 
 #if ENABLE(WEB_AUTHN)

@@ -1726,8 +1726,8 @@
 /* Unwanted software warning title */
 "Website With Harmful Software Warning" = "Website With Harmful Software Warning";
 
-/* Week label for week of year input type */
-"Week" = "Week";
+/* Week of year input type label with week number and year */
+"Week %1$d, %2$d" = "Week %1$d, %2$d";
 
 /* Writing Tools context menu item */
 "Writing Tools" = "Writing Tools";

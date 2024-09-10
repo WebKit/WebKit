@@ -93,11 +93,16 @@ String LocaleCocoa::formatDateTime(const DateComponents& dateComponents, FormatT
     DateComponentsType type = dateComponents.type();
 
     ASSERT(type != DateComponentsType::Invalid);
-#if !ENABLE(INPUT_TYPE_WEEK_PICKER)
-    // "week" type not supported.
-    if (type == DateComponentsType::Week)
+
+    if (type == DateComponentsType::Week) {
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
+        // NSDateFormatter is not used here because it handles week numbering differently than ISO-8601.
+        return inputWeekLabel(dateComponents);
+#else
         return String();
 #endif
+    }
+
     // Incoming msec value is milliseconds since 1970-01-01 00:00:00 UTC. The 1970 epoch.
     NSTimeInterval secondsSince1970 = (msec / 1000);
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:secondsSince1970];

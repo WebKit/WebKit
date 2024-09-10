@@ -120,22 +120,50 @@ RetainPtr<NSDateFormatter> LocalizedDateCache::createFormatterForType(DateCompon
         [dateFormatter setDateStyle:NSDateFormatterNoStyle];
         break;
     case DateComponentsType::Week:
-#if ENABLE(INPUT_TYPE_WEEK_PICKER)
-        [dateFormatter setDateFormat:[NSString stringWithFormat:@"'%@' w',' yyyy", (NSString *)inputWeekLabel()]];
-#else
         ASSERT_NOT_REACHED();
-#endif
         break;
-
     }
 
     return dateFormatter;
 }
 
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
+
+static float calculateMaximumWidthForWeek(const MeasureTextClient& measurer)
+{
+    std::array<float, 10> numLengths = { };
+    for (int i = 0; i < 10; i++)
+        numLengths[i] = measurer.measureText([NSString stringWithFormat:@"%d", i]);
+
+    int widestNum = std::distance(numLengths.data(), std::max_element(numLengths.data(), numLengths.data() + 10));
+    int widestNumOneThroughFour = std::distance(numLengths.data(), std::max_element(numLengths.data() + 1, numLengths.data() + 5));
+    int widestNumNonZero = std::distance(numLengths.data(), std::max_element(numLengths.data() + 1, numLengths.data() + 10));
+
+    RetainPtr<NSString> weekString;
+    // W50 is an edge case here; without this check, a suboptimal choice would be made when 5 and 0 are both large and all other numbers are narrow.
+    if (numLengths[5] + numLengths[0] > numLengths[widestNumOneThroughFour] + numLengths[widestNum])
+        weekString = adoptNS([NSString stringWithFormat:@"%d%d%d%d-W50", widestNumNonZero, widestNum, widestNum, widestNum]);
+    else
+        weekString = adoptNS([NSString stringWithFormat:@"%d%d%d%d-W%d%d", widestNumNonZero, widestNum, widestNum, widestNum, widestNumOneThroughFour, widestNum]);
+
+    if (auto components = DateComponents::fromParsingWeek((String)weekString.get()))
+        return measurer.measureText(inputWeekLabel(components.value()));
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+#endif
+
 // NOTE: This does not check for the widest day of the week.
 // We assume no formatter option shows that information.
 float LocalizedDateCache::calculateMaximumWidth(DateComponentsType type, const MeasureTextClient& measurer)
 {
+#if ENABLE(INPUT_TYPE_WEEK_PICKER)
+    if (type == DateComponentsType::Week)
+        return calculateMaximumWidthForWeek(measurer);
+#endif
+
     float maximumWidth = 0;
 
     // Get the formatter we would use, copy it because we will force its time zone to be UTC.
@@ -162,9 +190,6 @@ float LocalizedDateCache::calculateMaximumWidth(DateComponentsType type, const M
     if (type == DateComponentsType::Date
         || type == DateComponentsType::DateTimeLocal
         || type == DateComponentsType::Month
-#if ENABLE(INPUT_TYPE_WEEK_PICKER)
-        || type == DateComponentsType::Week
-#endif
         )
         totalMonthsToTest = numberOfGregorianMonths;
     for (NSUInteger i = 0; i < totalMonthsToTest; ++i) {
