@@ -110,6 +110,7 @@
                   { "name": "gtk-linux-bot-21", "platform": "gtk" },
                   { "name": "gtk-linux-bot-22", "platform": "gtk" },
                   { "name": "gtk-linux-bot-23", "platform": "gtk" },
+                  { "name": "gtk-linux-bot-24", "platform": "gtk" },
 
                   { "name": "jsconly-linux-igalia-bot-1", "platform": "jsc-only" },
                   { "name": "jsconly-linux-igalia-bot-2", "platform": "jsc-only" },
@@ -151,7 +152,8 @@
                   { "name": "wpe-linux-bot-33", "platform": "wpe" },
                   { "name": "wpe-linux-bot-34", "platform": "wpe" },
                   { "name": "wpe-linux-bot-35", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-36", "platform": "wpe" }
+                  { "name": "wpe-linux-bot-36", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-37", "platform": "wpe" }
                 ],
 
   "builders":   [
@@ -512,6 +514,11 @@
                     "workernames": ["gtk-linux-bot-20"]
                   },
                   {
+                    "name": "GTK-Linux-64-bit-Release-SDK-Container", "factory": "BuildAndTestAndArchiveAllButJSCFactory",
+                    "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                    "workernames": ["gtk-linux-bot-24"]
+                  },
+                  {
                     "name": "WinCairo-64-bit-Release-Build", "factory": "BuildFactory",
                     "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
                     "triggers": ["wincairo-release-tests", "wincairo-jsc-release-tests", "wincairo-wkl-release-tests"],
@@ -691,6 +698,11 @@
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                     "additionalArguments": ["--cmakeargs=-DUSE_SKIA=OFF"],
                     "workernames": ["wpe-linux-bot-35"]
+                  },
+                  {
+                    "name": "WPE-Linux-64-bit-Release-SDK-Container", "factory": "BuildAndTestAndArchiveAllButJSCFactory",
+                    "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                    "workernames": ["wpe-linux-bot-37"]
                   }
                 ],
 
@@ -702,8 +714,10 @@
                                      "GTK-Linux-64-bit-Release-Ubuntu-2204-Build",
                                      "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build",
                                      "GTK-Linux-64-bit-Release-GTK3-Tests",
+                                     "GTK-Linux-64-bit-Release-SDK-Container",
                                      "WPE-Linux-64-bit-Release-Ubuntu-2204-Build",
                                      "WPE-Linux-64-bit-Release-Ubuntu-LTS-Build",
+                                     "WPE-Linux-64-bit-Release-SDK-Container",
                                      "WPE-Linux-RPi4-32bits-Mesa-Release-Perf-Build",
                                      "WPE-Linux-RPi4-64bits-Mesa-Release-Perf-Build",
                                      "JSCOnly-Linux-AArch64-Release",
