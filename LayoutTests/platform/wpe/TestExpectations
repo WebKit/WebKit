@@ -792,7 +792,6 @@ webkit.org/b/219465 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 # Flaky tests detected from 29Jan2023 to 23Feb2023
 webkit.org/b/252878 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-altered.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/css3-text/css3-text-decoration/text-decoration-thickness-repaint.html [ ImageOnlyFailure Pass ]
-webkit.org/b/252878 fast/css-custom-paint/simple-hidpi.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/events/mouse-events-on-textarea-resize.html [ Failure ]
 webkit.org/b/252878 fast/hidpi/filters-and-image-buffer-resolution.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/hidpi/filters-component-transfer.html [ ImageOnlyFailure Pass ]
@@ -1003,7 +1002,7 @@ webkit.org/b/173419 fast/events/ime-compositionend-on-selection-change.html [ Fa
 webkit.org/b/173419 fast/events/input-events-drag-and-drop.html [ Failure ]
 webkit.org/b/173419 fast/events/input-events-insert-by-drop.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ]
-webkit.org/b/109469 [ Release ] fast/events/mouse-cursor-image-set.html [ Failure ]
+webkit.org/b/109469 fast/events/mouse-cursor-image-set.html [ Failure ]
 webkit.org/b/173419 fast/events/autoscroll-main-document.html [ Timeout ]
 webkit.org/b/173419 fast/events/autoscroll-should-not-stop-on-keypress.html [ Timeout ]
 webkit.org/b/173419 fast/events/autoscroll-when-zoomed.html [ Timeout ]
@@ -1327,6 +1326,8 @@ fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure 
 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Failure ]
 fast/canvas/webgl/texImage2D-mse-in-dom-flipY-true.html [ Failure ]
 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Failure Crash Timeout Pass ]
+
+fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]
 
 webgl/1.0.x/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
 webgl/1.0.x/conformance/extensions/oes-texture-half-float-with-video.html [ Timeout ]

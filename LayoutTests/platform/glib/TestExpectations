@@ -1582,7 +1582,7 @@ webkit.org/b/273396 fast/borders/outline-border-radius-simple.html [ ImageOnlyFa
 webkit.org/b/273396 fast/canvas/canvas-filter-drawing.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/clip/overflow-hidden-with-border-radius-overflow-clipping-parent.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/css/ignore-empty-focus-ring-rects.html [ ImageOnlyFailure ]
-webkit.org/b/273396 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ Pass ImageOnlyFailure ]
 webkit.org/b/273396 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-svg.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/encoding/denormalised-voiced-japanese-chars.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/filter-image/filter-image-blur.html [ ImageOnlyFailure ]
@@ -2116,8 +2116,6 @@ fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
 fast/canvas/webgl/colorspaces-test.html [ Failure ]
 http/tests/webgl/1.0.x/conformance/textures/misc/origin-clean-conformance-offscreencanvas.html [ Failure ]
-# WebGL on GTK renders pixels with opacity slightly differently
-fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]
 
 webgl/webgl-draft-extensions-flag-default.html [ Skip ]
 webgl/webgl-draft-extensions-flag-on.html [ Skip ]
@@ -3155,7 +3153,6 @@ webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [
 
 webkit.org/b/98146 accessibility/svg-bounds.html [ Failure ]
 webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure ]
-webkit.org/b/109469 [ Debug ] fast/events/mouse-cursor-image-set.html [ Crash ]
 webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
 webkit.org/b/117582 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
 webkit.org/b/118220 http/tests/cache/partitioned-cache-iframe.html [ Failure ]
@@ -3178,7 +3175,6 @@ webkit.org/b/131347 http/tests/loading/hidpi-preload-picture-sizes.html [ Failur
 webkit.org/b/131347 svg/custom/hidpi-masking-clipping.svg [ Failure ImageOnlyFailure Timeout ]
 webkit.org/b/131347 svg/text/hidpi-text-selection-rect-position.html [ ImageOnlyFailure ]
 
-webkit.org/b/131498 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html [ ImageOnlyFailure ]
 webkit.org/b/131934 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
 webkit.org/b/136109 fast/multicol/mixed-opacity-fixed-test.html [ ImageOnlyFailure ]
 webkit.org/b/136159 fast/borders/hidpi-border-painting-groove.html [ ImageOnlyFailure ]
@@ -3693,8 +3689,6 @@ webkit.org/b/232386 jquery/css.html [ Timeout ]
 # html with xmlns xhtml. Times out with some syntaxerrors in Js strings with &gt;
 webkit.org/b/232386 svg/as-object/embedded-svg-size-changes.html [ Timeout ]
 
-webkit.org/b/232967 fast/forms/auto-fill-button/input-auto-filled-and-obscured.html [ ImageOnlyFailure ]
-
 webkit.org/b/223830 inspector/debugger/csp-exceptions.html [ Timeout ]
 
 # This test not only fails but may end up leaving the setShowPaintRects setting enabled and affect other tests.
@@ -3735,7 +3729,6 @@ webkit.org/b/229761 http/tests/media/media-stream/audio-capture-and-category.htt
 
 # Flaky tests detected both on GTK and WPE from 29Jan2023 to 23Feb2023
 webkit.org/b/252878 fast/hidpi/hidpi-long-page-with-inset-element.html [ Crash ImageOnlyFailure Pass ]
-webkit.org/b/258157 fast/hidpi/filters-drop-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/252878 http/tests/media/modern-media-controls/skip-back-support/skip-back-support-live-broadcast.html [ Timeout ]
 webkit.org/b/252878 http/tests/workers/service/shownotification-allowed.html [ Pass Timeout ]
 # Uncomment when webkit.org/b/268068 is fixed
@@ -3789,13 +3782,6 @@ imported/w3c/web-platform-tests/preload/preload-type-match.html [ DumpJSConsoleL
 
 # Tests crashing in Debug only.
 [ Debug ] editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
-[ Debug ] fast/canvas/2d.backingStorePixelRatio.html [ Crash ]
-[ Debug ] fast/canvas/canvas-as-image-hidpi.html [ Crash ]
-[ Debug ] fast/canvas/canvas-resize-reset-pixelRatio.html [ Crash ]
-[ Debug ] fast/css-custom-paint/simple-hidpi.html [ Crash ]
-[ Debug ] fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Crash ]
-[ Debug ] fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Crash ]
-[ Debug ] fast/dom/HTMLImageElement/sizes/image-sizes-js-innerhtml.html [ Crash ]
 [ Debug ] fast/forms/textarea-node-removed-from-document-crash.html [ Crash ]
 [ Debug ] fast/media/mq-resolution.html [ Crash ]
 [ Debug ] http/tests/loading/sizes/preload-image-sizes-2x.html [ Crash ]
