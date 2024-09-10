@@ -249,7 +249,7 @@ static void wpe_view_class_init(WPEViewClass* viewClass)
         g_param_spec_double(
             "scale",
             nullptr, nullptr,
-            1., G_MAXDOUBLE, 1.,
+            0., G_MAXDOUBLE, 1.,
             WEBKIT_PARAM_READABLE);
 
     /**
