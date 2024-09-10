@@ -65,12 +65,12 @@ bool WebPageProxyTesting::sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&& en
 
 IPC::Connection* WebPageProxyTesting::messageSenderConnection() const
 {
-    return &m_page->legacyMainFrameProcess().connection();
+    return &protectedPage()->legacyMainFrameProcess().connection();
 }
 
 uint64_t WebPageProxyTesting::messageSenderDestinationID() const
 {
-    return m_page->webPageIDInMainFrameProcess().toUInt64();
+    return protectedPage()->webPageIDInMainFrameProcess().toUInt64();
 }
 
 void WebPageProxyTesting::setDefersLoading(bool defersLoading)
@@ -80,7 +80,7 @@ void WebPageProxyTesting::setDefersLoading(bool defersLoading)
 
 void WebPageProxyTesting::dispatchActivityStateUpdate()
 {
-    RunLoop::current().dispatch([protectedPage = Ref { m_page.get() }] {
+    RunLoop::current().dispatch([protectedPage = protectedPage()] {
         protectedPage->updateActivityState();
         protectedPage->dispatchActivityStateChange();
     });
@@ -93,7 +93,7 @@ void WebPageProxyTesting::isLayerTreeFrozen(CompletionHandler<void(bool)>&& comp
 
 void WebPageProxyTesting::setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&& completionHandler)
 {
-    protectedPage()->protectedWebsiteDataStore()->protectedNetworkProcess()->setCrossSiteLoadWithLinkDecorationForTesting(m_page->sessionID(), WebCore::RegistrableDomain { fromURL }, WebCore::RegistrableDomain { toURL }, wasFiltered, WTFMove(completionHandler));
+    protectedPage()->protectedWebsiteDataStore()->protectedNetworkProcess()->setCrossSiteLoadWithLinkDecorationForTesting(protectedPage()->sessionID(), WebCore::RegistrableDomain { fromURL }, WebCore::RegistrableDomain { toURL }, wasFiltered, WTFMove(completionHandler));
 }
 
 void WebPageProxyTesting::setPermissionLevel(const String& origin, bool allowed)
@@ -183,7 +183,7 @@ void WebPageProxyTesting::clearNotificationPermissionState()
 
 void WebPageProxyTesting::clearWheelEventTestMonitor()
 {
-    if (!m_page->hasRunningProcess())
+    if (!protectedPage()->hasRunningProcess())
         return;
     send(Messages::WebPageTesting::ClearWheelEventTestMonitor());
 }
