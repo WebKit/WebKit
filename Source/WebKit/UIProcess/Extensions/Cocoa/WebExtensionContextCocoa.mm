@@ -178,8 +178,10 @@ static constexpr NSInteger currentDeclarativeNetRequestRuleTranslatorVersion = 1
 #if PLATFORM(MAC)
 - (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> *URLs))completionHandler
 {
-    if (!_webExtensionContext)
+    if (!_webExtensionContext) {
+        completionHandler(nil);
         return;
+    }
 
     _webExtensionContext->runOpenPanel(webView, parameters, completionHandler);
 }
@@ -3788,7 +3790,7 @@ void WebExtensionContext::runOpenPanel(WKWebView *, WKOpenPanelParameters *param
     panel.canChooseDirectories = parameters.allowsDirectories;
     panel.canChooseFiles = YES;
 
-    panel.allowedContentTypes = WebKit::mapObjects((NSArray *)parameters._allowedFileExtensions, ^(id index, NSString *fileExtension) {
+    panel.allowedContentTypes = WebKit::mapObjects((NSArray *)parameters._allowedFileExtensions, ^(id, NSString *fileExtension) {
         return [UTType typeWithFilenameExtension:fileExtension];
     });
 
