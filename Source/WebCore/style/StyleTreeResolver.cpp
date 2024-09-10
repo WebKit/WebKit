@@ -675,7 +675,8 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
 
     auto applyAnimations = [&]() -> std::pair<std::unique_ptr<RenderStyle>, OptionSet<AnimationImpact>> {
         if (!styleable.hasKeyframeEffects()) {
-            styleable.setLastStyleChangeEventStyle(nullptr);
+            // FIXME: Push after-change style into parent stack instead.
+            styleable.setLastStyleChangeEventStyle(resolveAfterChangeStyleForNonAnimated(resolvedStyle, styleable, resolutionContext));
             styleable.setHasPropertiesOverridenAfterAnimation(false);
             return { WTFMove(resolvedStyle.style), OptionSet<AnimationImpact> { } };
         }
@@ -777,49 +778,79 @@ std::unique_ptr<RenderStyle> TreeResolver::resolveStartingStyle(const ResolvedSt
     if (!resolvedStyle.matchResult || !resolvedStyle.matchResult->hasStartingStyle)
         return nullptr;
 
+    // "Starting style inherits from the parent’s after-change style just like after-change style does."
+    auto& parentStyle = parentAfterChangeStyle(styleable, resolutionContext);
+
     // We now resolve the starting style by applying all rules (including @starting-style ones) again.
     // We could compute it along with the primary style and include it in MatchedPropertiesCache but it is not
     // clear this would be benefitial as it is typically only used once.
+    return resolveAgainWithParentStyle(resolvedStyle, styleable, parentStyle, PropertyCascade::startingStyleProperties(), resolutionContext);
+}
 
-    auto& parentAfterChangeStyle = [&]() -> const RenderStyle& {
-        if (auto* parentElement = !styleable.pseudoElementIdentifier ? parent().element : &styleable.element) {
-            // "Starting style inherits from the parent’s after-change style just like after-change style does."
-            if (auto* afterChangeStyle = parentElement->lastStyleChangeEventStyle(styleable.pseudoElementIdentifier))
-                return *afterChangeStyle;
-        }
-        return *resolutionContext.parentStyle;
-    }();
+std::unique_ptr<RenderStyle> TreeResolver::resolveAfterChangeStyleForNonAnimated(const ResolvedStyle& resolvedStyle, const Styleable& styleable, const ResolutionContext& resolutionContext) const
+{
+    // Element may have after-change style differing from the current style in case they are inheriting from a transitioning element.
+    // We need after-change style for non-animating elements only in case there @starting-style rules in the subtree.
+    if (!scope().resolver->usesStartingStyleRules())
+        return nullptr;
 
-    auto startingStyle = RenderStyle::createPtr();
-    startingStyle->inheritFrom(parentAfterChangeStyle);
+    if (!resolvedStyle.matchResult)
+        return nullptr;
 
     if (styleable.pseudoElementIdentifier)
-        startingStyle->setPseudoElementType(styleable.pseudoElementIdentifier->pseudoId);
+        return nullptr;
+
+    if (!parent().element || !parent().element->lastStyleChangeEventStyle({ }))
+        return nullptr;
+
+    // "Likewise, define the after-change style as.. and inheriting from the after-change style of the parent."
+    auto& parentStyle = parentAfterChangeStyle(styleable, resolutionContext);
+    return resolveAgainWithParentStyle(resolvedStyle, styleable, parentStyle, PropertyCascade::normalProperties(), resolutionContext);
+}
+
+std::unique_ptr<RenderStyle> TreeResolver::resolveAgainWithParentStyle(const ResolvedStyle& resolvedStyle, const Styleable& styleable, const RenderStyle& parentStyle, OptionSet<PropertyCascade::PropertyType> properties, const ResolutionContext& resolutionContext) const
+{
+    ASSERT(resolvedStyle.matchResult);
+
+    auto newStyle = RenderStyle::createPtr();
+    newStyle->inheritFrom(parentStyle);
+
+    if (styleable.pseudoElementIdentifier)
+        newStyle->setPseudoElementType(styleable.pseudoElementIdentifier->pseudoId);
 
     auto builderContext = BuilderContext {
         m_document.get(),
-        parentAfterChangeStyle,
+        parentStyle,
         resolutionContext.documentElementStyle,
         &styleable.element
     };
 
     auto styleBuilder = Builder {
-        *startingStyle,
+        *newStyle,
         WTFMove(builderContext),
         *resolvedStyle.matchResult,
         CascadeLevel::Author,
-        PropertyCascade::startingStyleProperties()
+        properties
     };
 
     styleBuilder.applyAllProperties();
 
-    if (startingStyle->display() == DisplayType::None)
+    if (newStyle->display() == DisplayType::None)
         return nullptr;
 
-    Adjuster adjuster(m_document, parentAfterChangeStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? &styleable.element : nullptr);
-    adjuster.adjust(*startingStyle, nullptr);
+    Adjuster adjuster(m_document, parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? &styleable.element : nullptr);
+    adjuster.adjust(*newStyle, nullptr);
 
-    return startingStyle;
+    return newStyle;
+}
+
+const RenderStyle& TreeResolver::parentAfterChangeStyle(const Styleable& styleable, const ResolutionContext& resolutionContext) const
+{
+    if (auto* parentElement = !styleable.pseudoElementIdentifier ? parent().element : &styleable.element) {
+        if (auto* afterChangeStyle = parentElement->lastStyleChangeEventStyle({ }))
+            return *afterChangeStyle;
+    }
+    return *resolutionContext.parentStyle;
 }
 
 HashSet<AnimatableCSSProperty> TreeResolver::applyCascadeAfterAnimation(RenderStyle& animatedStyle, const HashSet<AnimatableCSSProperty>& animatedProperties, bool isTransition, const MatchResult& matchResult, const Element& element, const ResolutionContext& resolutionContext)
@@ -873,6 +904,10 @@ void TreeResolver::popParent()
 
     parentElement.setHasValidStyle();
     parentElement.clearChildNeedsStyleRecalc();
+
+    // FIXME: Push after-change style into parent stack instead.
+    if (!parentElement.hasKeyframeEffects({ }))
+        parentElement.setLastStyleChangeEventStyle({ }, nullptr);
 
     if (parent().didPushScope)
         popScope();

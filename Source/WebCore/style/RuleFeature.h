@@ -130,6 +130,7 @@ struct RuleFeatureSet {
 
     bool usesFirstLineRules { false };
     bool usesFirstLetterRules { false };
+    bool hasStartingStyleRules { false };
 
 private:
     struct SelectorFeatures {
