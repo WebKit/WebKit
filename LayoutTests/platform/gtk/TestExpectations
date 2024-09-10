@@ -54,6 +54,9 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-width-ch-001.xht [ Pas
 
 fast/events/keyboardevent-modifier.html [ Pass ]
 
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-004.html [ Pass ]
+
 # PointerEvents not enabled globally, but enabled for GTK (EXPERIMENTAL_FEATURES)
 pointerevents/mouse [ Pass ]
 imported/w3c/web-platform-tests/pointerevents [ Pass ]
@@ -1806,6 +1809,9 @@ imported/w3c/web-platform-tests/css/css-tables/tentative/table-quirks.html [ Fai
 imported/w3c/web-platform-tests/css/css-color/system-color-consistency.html [ Failure ]
 
 webkit.org/b/234726 imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-rgb.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-rgb.html [ Pass ]
 
 # Timeout
 animations/animation-end-event-destroy-renderer.html [ Skip ]
