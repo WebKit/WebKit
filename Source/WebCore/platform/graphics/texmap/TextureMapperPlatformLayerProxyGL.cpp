@@ -127,6 +127,7 @@ void TextureMapperPlatformLayerProxyGL::pushNextBuffer(std::unique_ptr<Coordinat
     switch (contentType()) {
     case ContentType::WebGL:
     case ContentType::Canvas:
+    case ContentType::OffscreenCanvas:
         return;
     default:
         break;

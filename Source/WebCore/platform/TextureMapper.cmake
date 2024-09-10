@@ -52,6 +52,7 @@ if (USE_COORDINATED_GRAPHICS)
         "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
     )
     list(APPEND WebCore_SOURCES
+        platform/graphics/texmap/GraphicsLayerAsyncContentsDisplayDelegateTextureMapper.cpp
         platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp
         platform/graphics/texmap/TextureMapperPlatformLayerProxyGL.cpp
 
@@ -59,6 +60,7 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferExternalOES.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferHolePunch.cpp
+        platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferNativeImage.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferRGB.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferYUV.cpp
         platform/graphics/texmap/coordinated/Tile.cpp
