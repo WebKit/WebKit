@@ -1505,27 +1505,52 @@ bool CSSPropertyParser::consumeShorthandGreedily(const StylePropertyShorthand& s
 
 bool CSSPropertyParser::consumeFlex(bool important)
 {
-    static const double unsetValue = -1;
-    double flexGrow = unsetValue;
-    double flexShrink = unsetValue;
+    // <'flex'>        = none | [ <'flex-grow'> <'flex-shrink'>? || <'flex-basis'> ]
+    // <'flex-grow'>   = <number [0,∞]>
+    //     NOTE: When omitted from shorthand, it is set to 1.
+    // <'flex-shrink'> = <number [0,∞]>
+    //     NOTE: When omitted from shorthand, it is set to 1.
+    // <'flex-basis'>  = content | <'width'>
+    //    NOTE: When omitted from shorthand, it is set to 0.
+    // https://drafts.csswg.org/css-flexbox/#propdef-flex
+
+    auto isFlexBasisIdent = [](CSSValueID id) {
+        switch (id) {
+        case CSSValueAuto:
+        case CSSValueContent:
+        case CSSValueIntrinsic:
+        case CSSValueMinIntrinsic:
+        case CSSValueMinContent:
+        case CSSValueWebkitMinContent:
+        case CSSValueMaxContent:
+        case CSSValueWebkitMaxContent:
+        case CSSValueWebkitFillAvailable:
+        case CSSValueFitContent:
+        case CSSValueWebkitFitContent:
+            return true;
+        default:
+            return false;
+        }
+    };
+
+    RefPtr<CSSPrimitiveValue> flexGrow;
+    RefPtr<CSSPrimitiveValue> flexShrink;
     RefPtr<CSSPrimitiveValue> flexBasis;
 
     if (m_range.peek().id() == CSSValueNone) {
-        flexGrow = 0;
-        flexShrink = 0;
+        flexGrow = CSSPrimitiveValue::create(0);
+        flexShrink = CSSPrimitiveValue::create(0);
         flexBasis = CSSPrimitiveValue::create(CSSValueAuto);
         m_range.consumeIncludingWhitespace();
     } else {
         unsigned index = 0;
         while (!m_range.atEnd() && index++ < 3) {
-            if (auto number = consumeNumberRaw(m_range)) {
-                if (number->value < 0)
-                    return false;
-                if (flexGrow == unsetValue)
-                    flexGrow = number->value;
-                else if (flexShrink == unsetValue)
-                    flexShrink = number->value;
-                else if (!number->value) // flex only allows a basis of 0 (sans units) if flex-grow and flex-shrink values have already been set.
+            if (auto number = consumeNumber(m_range, ValueRange::NonNegative)) {
+                if (!flexGrow)
+                    flexGrow = WTFMove(number);
+                else if (!flexShrink)
+                    flexShrink = WTFMove(number);
+                else if (number->isZero() == true) // flex only allows a basis of 0 (sans units) if flex-grow and flex-shrink values have already been set.
                     flexBasis = CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX);
                 else
                     return false;
@@ -1540,10 +1565,10 @@ bool CSSPropertyParser::consumeFlex(bool important)
         }
         if (index == 0)
             return false;
-        if (flexGrow == unsetValue)
-            flexGrow = 1;
-        if (flexShrink == unsetValue)
-            flexShrink = 1;
+        if (!flexGrow)
+            flexGrow = CSSPrimitiveValue::create(1);
+        if (!flexShrink)
+            flexShrink = CSSPrimitiveValue::create(1);
         
         // FIXME: Using % here is a hack to work around intrinsic sizing implementation being
         // a mess (e.g., turned off for nested column flexboxes, failing to relayout properly even
@@ -1555,8 +1580,8 @@ bool CSSPropertyParser::consumeFlex(bool important)
 
     if (!m_range.atEnd())
         return false;
-    addProperty(CSSPropertyFlexGrow, CSSPropertyFlex, CSSPrimitiveValue::create(clampTo<float>(flexGrow)), important);
-    addProperty(CSSPropertyFlexShrink, CSSPropertyFlex, CSSPrimitiveValue::create(clampTo<float>(flexShrink)), important);
+    addProperty(CSSPropertyFlexGrow, CSSPropertyFlex, flexGrow.releaseNonNull(), important);
+    addProperty(CSSPropertyFlexShrink, CSSPropertyFlex, flexShrink.releaseNonNull(), important);
     addProperty(CSSPropertyFlexBasis, CSSPropertyFlex, flexBasis.releaseNonNull(), important);
     return true;
 }

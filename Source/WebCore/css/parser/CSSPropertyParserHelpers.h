@@ -58,9 +58,6 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange&, const CSSParser
 RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange&);
 
 RefPtr<CSSValue> consumeAspectRatio(CSSParserTokenRange&);
-
-bool isFlexBasisIdent(CSSValueID);
-
 RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange&);

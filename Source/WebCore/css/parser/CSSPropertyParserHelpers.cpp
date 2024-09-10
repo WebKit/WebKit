@@ -2008,26 +2008,6 @@ RefPtr<CSSValue> consumeSingleWebkitBackgroundSize(CSSParserTokenRange& range, c
     return consumeBackgroundSize<CSSPropertyWebkitBackgroundSize>(range, context.mode);
 }
 
-bool isFlexBasisIdent(CSSValueID id)
-{
-    switch (id) {
-    case CSSValueAuto:
-    case CSSValueContent:
-    case CSSValueIntrinsic:
-    case CSSValueMinIntrinsic:
-    case CSSValueMinContent:
-    case CSSValueWebkitMinContent:
-    case CSSValueMaxContent:
-    case CSSValueWebkitMaxContent:
-    case CSSValueWebkitFillAvailable:
-    case CSSValueFitContent:
-    case CSSValueWebkitFitContent:
-        return true;
-    default:
-        return false;
-    }
-}
-
 RefPtr<CSSValue> consumeLineBoxContain(CSSParserTokenRange& range)
 {
     if (range.peek().id() == CSSValueNone)
