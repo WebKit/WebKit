@@ -1958,9 +1958,6 @@ webkit.org/b/151949 streams/pipe-to.html [ Failure ]
 webkit.org/b/189739 svg/gradients/spreadMethodClose2.svg [ ImageOnlyFailure ]
 webkit.org/b/189739 imported/mozilla/svg/linearGradient-basic-03.svg [ ImageOnlyFailure ]
 
-webkit.org/b/107018 svg/animations/animate-linear-discrete-additive.svg  [ Pass ImageOnlyFailure ]
-webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-b.svg [ ImageOnlyFailure ]
-webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-c.svg [ Pass ImageOnlyFailure ]
 webkit.org/b/107018 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ Pass ImageOnlyFailure ]
 
 webkit.org/b/151267 imported/blink/svg/animations/no-attr-radialgradient-spreadmethod.svg [ ImageOnlyFailure ]
