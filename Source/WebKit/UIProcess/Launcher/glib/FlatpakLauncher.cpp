@@ -30,37 +30,12 @@
 
 #include <gio/gio.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/glib/Sandbox.h>
 
 namespace WebKit {
-
-#if OS(LINUX)
-static bool isFlatpakSpawnUsable()
-{
-    ASSERT(isInsideFlatpak());
-    static std::optional<bool> ret;
-    if (ret)
-        return *ret;
-
-    // For our usage to work we need flatpak >= 1.5.2 on the host and flatpak-xdg-utils > 1.0.1 in the sandbox
-    GRefPtr<GSubprocess> process = adoptGRef(g_subprocess_new(static_cast<GSubprocessFlags>(G_SUBPROCESS_FLAGS_STDOUT_SILENCE | G_SUBPROCESS_FLAGS_STDERR_SILENCE),
-        nullptr, "flatpak-spawn", "--sandbox", "--sandbox-expose-path-ro-try=/this_path_doesnt_exist", "echo", nullptr));
-
-    if (!process.get())
-        ret = false;
-    else
-        ret = g_subprocess_wait_check(process.get(), nullptr, nullptr);
-
-    return *ret;
-}
-#endif
 
 GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::ProcessLauncher::LaunchOptions& launchOptions, char** argv, int childProcessSocket, int pidSocket, GError** error)
 {
     ASSERT(launcher);
-
-    if (!isFlatpakSpawnUsable())
-        g_error("Cannot spawn WebKit auxiliary process because flatpak-spawn failed sanity check");
 
     // When we are running inside of flatpak's sandbox we do not have permissions to use the same
     // bubblewrap sandbox we do outside but flatpak offers the ability to create new sandboxes
