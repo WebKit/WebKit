@@ -1826,6 +1826,11 @@ private:
             // https://bugs.webkit.org/show_bug.cgi?id=152478
             m_tmpWidth.recompute<bank>(m_code);
 
+            if constexpr (bank == GP) {
+                if (numIterations == 1)
+                    removeUnnecessaryIndexExtends();
+            }
+
             auto doAllocation = [&] (auto& allocator) -> bool {
                 allocator.allocate();
                 if (!allocator.requiresSpilling()) {
@@ -2252,6 +2257,41 @@ private:
             if (hasAliasedTmps) {
                 block->insts().removeAllMatching([&] (const Inst& inst) {
                     return allocator.isUselessMove(inst);
+                });
+            }
+        }
+    }
+
+    void removeUnnecessaryIndexExtends()
+    {
+        if (!isARM64())
+            return;
+
+        // Removing ZExt for BaseIndex in ARM64 when index is ZDef with <= Width32.
+        // e.g.
+        //     From
+        //         add      w0, w21, w0, lsl #2
+        //         ldr      w4, [x22, w0, uxtw]
+        //     To
+        //         add      w0, w21, w0, lsl #2
+        //         ldr      w4, [x22, x0]
+        for (BasicBlock* block : m_code) {
+            for (Inst& inst : *block) {
+                inst.forEachArg([&](Arg& arg, Arg::Role, Bank bank, Width) {
+                    if (bank != GP)
+                        return;
+
+                    if (!arg.isIndex())
+                        return;
+
+                    if (!arg.index().isGP())
+                        return;
+
+                    if (arg.extend() != MacroAssembler::Extend::ZExt32)
+                        return;
+
+                    if (m_tmpWidth.defWidth(arg.index()) <= Width32)
+                        arg = Arg::index(arg.base(), arg.index(), arg.scale(), arg.offset());
                 });
             }
         }

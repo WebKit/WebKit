@@ -1091,6 +1091,12 @@ public:
         return m_scale;
     }
 
+    MacroAssembler::Extend extend() const
+    {
+        ASSERT(kind() == Index);
+        return m_extend;
+    }
+
     unsigned logScale() const
     {
         return logScale(scale());
