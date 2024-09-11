@@ -2270,10 +2270,12 @@ angle::Result UtilsVk::convertLineLoopArrayIndirectBuffer(
     return angle::Result::Continue;
 }
 
-angle::Result UtilsVk::convertVertexBuffer(ContextVk *contextVk,
-                                           vk::BufferHelper *dst,
-                                           vk::BufferHelper *src,
-                                           const ConvertVertexParameters &params)
+angle::Result UtilsVk::convertVertexBuffer(
+    ContextVk *contextVk,
+    vk::BufferHelper *dst,
+    vk::BufferHelper *src,
+    const ConvertVertexParameters &params,
+    const OffsetAndVertexCounts &additionalOffsetVertexCounts)
 {
     vk::CommandBufferAccess access;
     access.onBufferComputeShaderRead(src);
@@ -2377,7 +2379,8 @@ angle::Result UtilsVk::convertVertexBuffer(ContextVk *contextVk,
             UNREACHABLE();
     }
 
-    return convertVertexBufferImpl(contextVk, dst, src, flags, commandBufferHelper, shaderParams);
+    return convertVertexBufferImpl(contextVk, dst, src, flags, commandBufferHelper, shaderParams,
+                                   additionalOffsetVertexCounts);
 }
 
 angle::Result UtilsVk::convertVertexBufferImpl(
@@ -2386,7 +2389,8 @@ angle::Result UtilsVk::convertVertexBufferImpl(
     vk::BufferHelper *src,
     uint32_t flags,
     vk::OutsideRenderPassCommandBufferHelper *commandBufferHelper,
-    const ConvertVertexShaderParams &shaderParams)
+    const ConvertVertexShaderParams &shaderParams,
+    const OffsetAndVertexCounts &additionalOffsetVertexCounts)
 {
     ANGLE_TRY(ensureConvertVertexResourcesInitialized(contextVk));
 
@@ -2396,6 +2400,10 @@ angle::Result UtilsVk::convertVertexBufferImpl(
     VkDescriptorSet descriptorSet;
     ANGLE_TRY(allocateDescriptorSet(contextVk, commandBufferHelper, Function::ConvertVertexBuffer,
                                     &descriptorSet));
+
+    // ConvertVertexBuffer writes whole 4 bytes to dstOffset. Caller must ensure dstOffset is
+    // aligned on 4 bytes boundary.
+    ASSERT(dst->getOffset() % 4 == 0);
 
     VkWriteDescriptorSet writeInfo    = {};
     VkDescriptorBufferInfo buffers[2] = {
@@ -2422,6 +2430,33 @@ angle::Result UtilsVk::convertVertexBufferImpl(
                                   sizeof(shaderParams), commandBufferHelper));
 
     commandBuffer->dispatch(UnsignedCeilDivide(shaderParams.outputCount, 64), 1, 1);
+
+    if (!additionalOffsetVertexCounts.empty())
+    {
+        ConvertVertexShaderParams constants = shaderParams;
+
+        for (const OffsetAndVertexCount &offsetAndVertexCount : additionalOffsetVertexCounts)
+        {
+            // Total number of output components is simply the number of vertices by number of
+            // components in each.
+            constants.componentCount =
+                static_cast<uint32_t>(offsetAndVertexCount.vertexCount * shaderParams.Nd);
+            // Total number of 4-byte outputs is the number of components divided by how many
+            // components can fit in a 4-byte value.  Note that this value is also the invocation
+            // size of the shader.
+            constants.outputCount = UnsignedCeilDivide(constants.componentCount, shaderParams.Ed);
+            constants.srcOffset   = static_cast<uint32_t>(offsetAndVertexCount.srcOffset);
+            constants.dstOffset   = static_cast<uint32_t>(offsetAndVertexCount.dstOffset);
+
+            commandBuffer->pushConstants(mPipelineLayouts[Function::ConvertVertexBuffer].get(),
+                                         VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(constants),
+                                         &constants);
+            // Since multiple compute dispatch all convert from the same srcBuffer and write to the
+            // same dstBuffer, even if the ranges overlap, they should end up with writing the same
+            // values, thus no barrier is needed here.
+            commandBuffer->dispatch(UnsignedCeilDivide(constants.outputCount, 64), 1, 1);
+        }
+    }
 
     return angle::Result::Continue;
 }
@@ -3676,9 +3711,8 @@ angle::Result UtilsVk::copyImageBits(ContextVk *contextVk,
 
     // Use UintToUint conversion to preserve the bit pattern during transfer.
     const uint32_t flags = ConvertVertex_comp::kUintToUint;
-
     ANGLE_TRY(convertVertexBufferImpl(contextVk, &dstBuffer.get(), &srcBuffer.get(), flags,
-                                      commandBufferHelper, shaderParams));
+                                      commandBufferHelper, shaderParams, {}));
 
     // Add a barrier prior to copy.
     memoryBarrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
@@ -3869,7 +3903,7 @@ angle::Result UtilsVk::copyRgbToRgba(ContextVk *contextVk,
     }
 
     return convertVertexBufferImpl(contextVk, dstBuffer, srcBuffer, flags, commandBufferHelper,
-                                   shaderParams);
+                                   shaderParams, {});
 }
 
 uint32_t GetEtcToBcFlags(const angle::Format &format)

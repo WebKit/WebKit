@@ -78,11 +78,11 @@ Additions to the EGL 1.5 Specification
     Add a new paragrah to section 3.5.1 "Creating On-Screen Rendering
     Surfaces" and section 3.5.2 "Creating Off-Screen Rendering Surfaces":
 
-    "EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE specifies if the pixel
-    values of the surface are initialized.  If its value is EGL_TRUE then all
-    pixel values in the surface are initialized to zero, otherwise the contents
-    are undefined. The default value of
-    EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE is EGL_FALSE."
+    "EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE specifies if the pixel values of
+    the surface are initialized.  If its value is EGL_TRUE then all pixel and
+    stencil values in the surface are initialized to zero, depth values are
+    initialized to 1.0. Otherwise the contents are undefined. The default value
+    of EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE is EGL_FALSE."
 
     Add a new paragrah to section 3.5.6 "Surface Attributes" under
     eglQuerySurface:
@@ -92,10 +92,15 @@ Additions to the EGL 1.5 Specification
 
     Modify the 2nd paragraph of section 3.10.1 "Posting to a Window":
 
-    "... The contents of the color buffer are undefined if the value of the
-    EGL_SWAP_BEHAVIOR attribute of surface is not EGL_BUFFER_PRESERVED and
-    the value of the EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE is
-    EGL_FALSE. ..."
+    "... If EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE is EGL_TRUE, following
+    conditions apply. If EGL_SWAP_BEHAVIOR attribute is not
+    EGL_BUFFER_PRESERVED, color and stencil buffer values are set to zero, depth
+    buffer values are set to 1.0. Otherwise, color and ancillary buffer values
+    preserved.
+
+    If EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE is EGL_FALSE, the contents of
+    ancillary buffers are always undefined after calling eglSwapBuffers. ...
+    "
 
 Issues
 
@@ -119,3 +124,5 @@ Revision History
     Version 3, 2017/05/31 - renamed extension and made into display extension.
     Version 4, 2017/09/19 - renamed extension and changed into a
                             context/surface creation attribute.
+    Version 5, 2024/09/21 - specified that depth values are initialized to 1.0
+                            specified that stencil values are initialized to 0.0

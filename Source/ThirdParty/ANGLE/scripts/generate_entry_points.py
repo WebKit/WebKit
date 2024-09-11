@@ -1607,6 +1607,9 @@ EGL_PACKED_TYPES = {
     "EGLSyncKHR": "egl::SyncID",
 }
 
+EGL_CONTEXT_LOCK_PARAM_TYPES_FILTER = ["Thread *", "egl::Display *", "gl::ContextID"]
+EGL_CONTEXT_LOCK_PARAM_NAMES_FILTER = ["attribute", "flags"]
+
 CAPTURE_BLOCKLIST = ['eglGetProcAddress']
 
 
@@ -1924,9 +1927,10 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
         has_errcode_ret = False
 
     internal_context_lock_params = [
-        just_the_name_packed(param, packed_enums) for param in params if just_the_type_packed(
-            param, packed_enums) in ["Thread *", "egl::Display *", "gl::ContextID"] or
-        just_the_name_packed(param, packed_enums) in ["attribute"]
+        just_the_name_packed(param, packed_enums)
+        for param in params
+        if just_the_type_packed(param, packed_enums) in EGL_CONTEXT_LOCK_PARAM_TYPES_FILTER or
+        just_the_name_packed(param, packed_enums) in EGL_CONTEXT_LOCK_PARAM_NAMES_FILTER
     ]
 
     packed_gl_enum_conversions = []
@@ -2181,9 +2185,8 @@ def get_context_lock_params(api, cmd_name, params, cmd_packed_gl_enums, packed_p
             just_the_type_packed(param, packed_gl_enums),
             just_the_name_packed(param, packed_gl_enums))
         for param in params
-        if just_the_type_packed(
-            param, packed_gl_enums) in ["Thread *", "egl::Display *", "gl::ContextID"] or
-        just_the_name_packed(param, packed_gl_enums) in ["attribute"]
+        if just_the_type_packed(param, packed_gl_enums) in EGL_CONTEXT_LOCK_PARAM_TYPES_FILTER or
+        just_the_name_packed(param, packed_gl_enums) in EGL_CONTEXT_LOCK_PARAM_NAMES_FILTER
     ])
 
 

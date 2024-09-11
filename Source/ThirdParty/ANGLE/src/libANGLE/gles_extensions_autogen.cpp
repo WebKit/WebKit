@@ -149,6 +149,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_OES_sample_variables"] = enableableExtension(&Extensions::sampleVariablesOES);
         map["GL_EXT_semaphore"] = enableableExtension(&Extensions::semaphoreEXT);
         map["GL_EXT_semaphore_fd"] = enableableExtension(&Extensions::semaphoreFdEXT);
+        map["GL_EXT_separate_depth_stencil"] = enableableExtension(&Extensions::separateDepthStencilEXT);
         map["GL_EXT_separate_shader_objects"] = enableableExtension(&Extensions::separateShaderObjectsEXT);
         map["GL_ARM_shader_framebuffer_fetch"] = enableableExtension(&Extensions::shaderFramebufferFetchARM);
         map["GL_EXT_shader_framebuffer_fetch"] = enableableExtension(&Extensions::shaderFramebufferFetchEXT);

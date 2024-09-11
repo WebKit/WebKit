@@ -1665,6 +1665,8 @@ angle::CallCapture CaptureImportSemaphoreFdEXT(const State &glState,
                                                HandleType handleTypePacked,
                                                GLint fd);
 
+// GL_EXT_separate_depth_stencil
+
 // GL_EXT_separate_shader_objects
 angle::CallCapture CaptureActiveShaderProgramEXT(const State &glState,
                                                  bool isCallValid,

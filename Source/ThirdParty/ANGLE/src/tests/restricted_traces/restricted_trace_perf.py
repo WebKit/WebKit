@@ -446,10 +446,10 @@ class GPUPowerStats():
         # CH7(T=16086645)[S1M_VDD_MIF], 196512891
 
         id_map = {
-            r'\bS\d+S_VDD_G3D\b': 'gpu',
-            r'\bS\d+M_VDD_CPUCL2\b': 'big_cpu',
-            r'\bS\d+M_VDD_CPUCL1\b': 'mid_cpu',
-            r'\bS\d+M_VDD_CPUCL0\b': 'little_cpu',
+            r'S2S_VDD_G3D\b|S2S_VDD_GPU\b': 'gpu',
+            r'S\d+M_VDD_CPUCL2\b|S2M_VDD_CPU2\b': 'big_cpu',
+            r'S\d+M_VDD_CPUCL1\b|S3M_VDD_CPU1\b': 'mid_cpu',
+            r'S\d+M_VDD_CPUCL0\b|S4M_VDD_CPU\b': 'little_cpu',
         }
 
         for m in id_map.values():

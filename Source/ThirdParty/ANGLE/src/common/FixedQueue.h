@@ -64,7 +64,7 @@ class FixedQueue final : angle::NonCopyable
 
   private:
     Storage mData;
-    // The front and back indices are virtual indices (think about queue sizd is infinite). They
+    // The front and back indices are virtual indices (think about queue size is infinite). They
     // will never wrap around when hit N. The wrap around occur when element is referenced. Virtual
     // index for current head
     size_type mFrontIndex;

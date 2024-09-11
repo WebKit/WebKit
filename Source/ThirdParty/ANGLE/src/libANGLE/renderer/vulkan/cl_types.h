@@ -18,6 +18,21 @@ class CLDeviceVk;
 class CLPlatformVk;
 class CLProgramVk;
 
+// Specialization constant Types
+enum class SpecConstantType : uint32_t
+{
+    WorkgroupSizeX,
+    WorkgroupSizeY,
+    WorkgroupSizeZ,
+    WorkDimension,
+    GlobalOffsetX,
+    GlobalOffsetY,
+    GlobalOffsetZ,
+
+    InvalidEnum,
+    EnumCount = InvalidEnum
+};
+
 }  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_VULKAN_CL_TYPES_H_

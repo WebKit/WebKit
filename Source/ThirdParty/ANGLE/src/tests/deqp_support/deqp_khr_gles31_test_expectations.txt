@@ -64,6 +64,9 @@
 40644707 VULKAN NVIDIA : KHR-GLES31.core.shader_storage_buffer_object.advanced-unsizedArrayLength-vs-*-matR* = SKIP
 40644707 VULKAN NVIDIA : KHR-GLES31.core.shader_storage_buffer_object.advanced-unsizedArrayLength-fs-*-matR* = SKIP
 
+// New failures when upgrading to Ubuntu 22/newer driver.
+362486580 LINUX NVIDIA VULKAN : KHR-GLES31.core.tessellation_shader.tessellation_shader_tessellation.max_in_out_attributes = SKIP
+
 ////
 //// SwANGLE expectations
 ////

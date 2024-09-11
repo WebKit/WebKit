@@ -404,7 +404,10 @@ bool TCompiler::shouldLimitTypeSizes() const
     // Prevent unrealistically large variable sizes in shaders.  This works around driver bugs
     // around int-size limits (such as 2GB).  The limits are generously large enough that no real
     // shader should ever hit it.
-    return true;
+    //
+    // The size check does not take std430 into account, so this is limited to WebGL and shaders
+    // up to ES3.
+    return mShaderVersion <= 300;
 }
 
 bool TCompiler::Init(const ShBuiltInResources &resources)

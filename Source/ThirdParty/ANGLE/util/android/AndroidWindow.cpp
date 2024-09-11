@@ -9,6 +9,7 @@
 #include "util/android/AndroidWindow.h"
 
 #include <pthread.h>
+#include <filesystem>
 #include <iostream>
 
 #include "common/debug.h"
@@ -200,6 +201,100 @@ void android_main(struct android_app *app)
             source->process(app, source);
         }
     }
+}
+
+std::string AndroidWindow::GetApplicationDirectory()
+{
+    // Use reverse JNI.
+    JNIEnv *jni = GetJniEnv();
+    if (!jni)
+    {
+        std::cerr << "GetApplicationDirectory:: Failed to get JNI env";
+        return "";
+    }
+
+    // Get the ANativeActivity class
+    jclass nativeActivityClass = jni->GetObjectClass(sApp->activity->clazz);
+    if (!nativeActivityClass)
+    {
+        std::cerr << "GetApplicationDirectory: Failed to get ANativeActivity class";
+        return "";
+    }
+
+    // Get the getApplicationContext() method ID
+    jmethodID getApplicationContextMethod = jni->GetMethodID(
+        nativeActivityClass, "getApplicationContext", "()Landroid/content/Context;");
+    if (!getApplicationContextMethod)
+    {
+        std::cerr << "GetApplicationDirectory: Failed to find getApplicationContext method";
+        return "";
+    }
+
+    // Call getApplicationContext() to get the Context object
+    jobject context = jni->CallObjectMethod(sApp->activity->clazz, getApplicationContextMethod);
+    if (!context)
+    {
+        std::cerr << "GetApplicationDirectory: Failed to get Context object";
+        return "";
+    }
+
+    // Get the Context class
+    jclass contextClass = jni->GetObjectClass(context);
+    if (!contextClass)
+    {
+        std::cerr << "GetApplicationDirectory: Failed to get Context class";
+        return "";
+    }
+
+    // Get the getFilesDir() method ID
+    jmethodID getFilesDirMethod = jni->GetMethodID(contextClass, "getFilesDir", "()Ljava/io/File;");
+    if (!getFilesDirMethod)
+    {
+        std::cerr << "GetApplicationDirectory: Failed to find getFilesDir method";
+        return "";
+    }
+
+    // Call getFilesDir() to get the File object
+    jobject fileObject = jni->CallObjectMethod(context, getFilesDirMethod);
+    if (!fileObject)
+    {
+        std::cerr << "GetApplicationDirectory: Failed to get File object";
+        return "";
+    }
+
+    // Get the File class
+    jclass fileClass = jni->GetObjectClass(fileObject);
+    if (!fileClass)
+    {
+        std::cerr << "GetApplicationDirectory: Failed to get File class";
+        return "";
+    }
+
+    // Get the getAbsolutePath() method ID
+    jmethodID getAbsolutePathMethod =
+        jni->GetMethodID(fileClass, "getAbsolutePath", "()Ljava/lang/String;");
+    if (!getAbsolutePathMethod)
+    {
+        std::cerr << "GetApplicationDirectory: Failed to find getAbsolutePath method";
+        return "";
+    }
+
+    // Call getAbsolutePath() to get the path as a jstring
+    jstring pathString = (jstring)jni->CallObjectMethod(fileObject, getAbsolutePathMethod);
+    if (!pathString)
+    {
+        std::cerr << "GetApplicationDirectory: Failed to get path string";
+        return "";
+    }
+
+    // Convert the jstring to a std::string
+    const char *pathChars = jni->GetStringUTFChars(pathString, nullptr);
+    std::string filesDirPath(pathChars);
+    jni->ReleaseStringUTFChars(pathString, pathChars);
+
+    // Return the base directory, stripping "files" essentially
+    std::filesystem::path fullPath(filesDirPath);
+    return fullPath.parent_path();
 }
 
 // static

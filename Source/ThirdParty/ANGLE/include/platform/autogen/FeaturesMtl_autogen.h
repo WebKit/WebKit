@@ -414,13 +414,6 @@ struct FeaturesMtl : FeatureSetBase
         &members, "http://anglebug.com/40096869"
     };
 
-    FeatureInfo requireMsl21 = {
-        "requireMsl21",
-        FeatureCategory::MetalFeatures,
-        "MSL 2.1 is required to support all the features of OpenGL ES 2.0",
-        &members, "http://anglebug.com/42266694"
-    };
-
     FeatureInfo rescopeGlobalVariables = {
         "rescopeGlobalVariables",
         FeatureCategory::MetalFeatures,

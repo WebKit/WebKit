@@ -313,11 +313,22 @@ angle::Result ErrorScope::PopScope(ContextWgpu *context,
                                    const char *function,
                                    unsigned int line)
 {
+    if (!mActive)
+    {
+        return angle::Result::Continue;
+    }
+    mActive = false;
+
     bool hadError  = false;
     wgpu::Future f = mDevice.PopErrorScope(
         wgpu::CallbackMode::WaitAnyOnly,
         [context, file, function, line, &hadError](wgpu::PopErrorScopeStatus status,
                                                    wgpu::ErrorType type, char const *message) {
+            if (type == wgpu::ErrorType::NoError)
+            {
+                return;
+            }
+
             if (context)
             {
                 ASSERT(file);
