@@ -40,9 +40,20 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
     if (!AXObjectCache::accessibilityEnabled())
         return;
 
-    if (m_selection.start().isNotNull() && m_selection.end().isNotNull()) {
-        if (AXObjectCache* cache = m_document->existingAXObjectCache())
+    if (CheckedPtr cache = m_document->existingAXObjectCache()) {
+        if (m_selection.start().isNotNull() && m_selection.end().isNotNull())
             cache->postTextStateChangeNotification(m_selection.start(), intent, m_selection);
+        else {
+            // The selection was cleared, so use `onSelectedTextChanged` with an empty selection range to update the isolated tree.
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=279524: In the future, we should consider actually doing
+            // `postTextStateChangeNotification`, since right now, VoiceOver does not announce when text becomes unselected
+            // (because we don't post a notification), unless new text becomes selected at the same time. However, even if we
+            // did post this notification, changes would be needed in VoiceOver too, so just do onSelectedTextChanged for now.
+            // Handling selection removals should also not be platform-specific (as it is here with ENABLE(ACCESSIBILITY_ISOLATED_TREE)).
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+            cache->onSelectedTextChanged(m_selection);
+#endif
+        }
     }
 
 #if !PLATFORM(IOS_FAMILY)
