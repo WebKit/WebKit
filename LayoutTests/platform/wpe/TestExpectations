@@ -183,9 +183,6 @@ imported/w3c/web-platform-tests/pointerevents/pointerup_after_pointerdown_target
 imported/w3c/web-platform-tests/pointerevents/predicted_events_attributes.html?touch [ Skip ]
 
 http/tests/cookies/same-site [ Pass ]
-webkit.org/b/264804 http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
-webkit.org/b/264804 http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure ]
-webkit.org/b/264804 http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
 
 # Passing since added in r258661.
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/background-position-vrl-022.xht [ Pass ImageOnlyFailure ]
@@ -257,6 +254,10 @@ webkit.org/b/212145 http/tests/navigation/no-referrer-target-blank.html [ Skip ]
 # Mediastream
 webkit.org/b/213202 fast/mediastream/getUserMedia-grant-persistency3.html [ Failure ]
 http/wpt/mediastream/mediastreamtrackprocessor-videoframe-timestamp.html [ Pass Slow Failure ]
+fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
+fast/mediastream/mediastreamtrack-video-zoom.html [ Failure ]
+[ Release ] fast/mediastream/resize-trim.html [ Failure ]
+[ Debug ] fast/mediastream/resize-trim.html [ Failure Crash ]
 
 # Media Queries
 webkit.org/b/226521 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/source-media-outside-doc.html [ Pass Failure ]
@@ -572,6 +573,8 @@ webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-navigat
 
 webkit.org/b/208869 fast/images/inline-image-box-with-no-alt-should-collapse-no-quirks.html [ Failure ]
 webkit.org/b/208869 fast/images/inline-image-box-with-no-alt-should-collapse-quirks.html [ Failure ]
+
+webkit.org/b/223402 fast/inline/hyphenation-when-overflow-wrap-is-break-word.html [ ImageOnlyFailure ]
 
 webkit.org/b/208982 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/computed-style.html [ Failure ]
 
@@ -1126,6 +1129,8 @@ webkit.org/b/188964 fast/block/positioning/hittest-on-relative-positioned-childr
 webkit.org/b/188966 fast/images/image-map-outline-in-positioned-container.html [ ImageOnlyFailure ]
 webkit.org/b/188966 fast/images/image-map-outline-with-scale-transform.html [ ImageOnlyFailure ]
 
+fast/images/object-image-hide-show.html [ ImageOnlyFailure ]
+
 webkit.org/b/188967 fast/selectors/read-only-read-write-input-basics.html [ Failure ]
 
 webkit.org/b/188970 fast/hidpi/hidpi-3x-device-pixel-ratio.html [ Failure ]
@@ -1531,6 +1536,8 @@ fast/dom/no-scroll-when-command-click-fragment-URL.html [ Failure ]
 
 # [WPE] Missing implementation of TestController::setHidden()
 webkit.org/b/268470 fast/mediastream/device-change-event-2.html [ Timeout ]
+
+[ Debug ] fast/media/mq-resolution.html [ Crash ]
 
 webrtc/captureCanvas-webrtc-with-video-scaling-adaptation.html [ Failure Timeout ]
 

@@ -1776,8 +1776,6 @@ webkit.org/b/273487 svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 
 compositing/repaint/become-overlay-composited-layer.html  [ Pass Failure ]
 
-fast/images/object-image-hide-show.html [ ImageOnlyFailure ]
-
 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-018.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-019.html [ ImageOnlyFailure ]
@@ -1787,12 +1785,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-eleme
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/adopt-from-image-document.html [ Pass ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/svg/import/filters-displace-01-f-manual.svg [ Failure ]
-
-fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
-
-fast/mediastream/mediastreamtrack-video-zoom.html [ Failure ]
-
-fast/mediastream/resize-trim.html [ Failure ]
 
 fast/mediastream/camera-powerEfficient-track.html [ Failure ]
 
@@ -2018,8 +2010,6 @@ webkit.org/b/139322 svg/text/non-scaling-stroke-textRendering-geometricPrecision
 webkit.org/b/216024 fast/text/ahom.html [ ImageOnlyFailure ]
 
 webkit.org/b/222753 fast/text/multi-code-unit-simple-path.html [ ImageOnlyFailure ]
-
-webkit.org/b/223402 fast/inline/hyphenation-when-overflow-wrap-is-break-word.html [ ImageOnlyFailure ]
 
 webkit.org/b/223416 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
 
@@ -2273,7 +2263,6 @@ webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-local-pranswer.html 
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-remote-offer.html [ Failure ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-remote-pranswer.html [ Failure ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Failure ]
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-media-setup-callbacks-single-dialog.html [ Failure ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Failure Timeout ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Skip ] # Timeout.
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Pass Failure Timeout ]
@@ -2289,7 +2278,6 @@ webkit.org/b/235885 webrtc/peerconnection-page-cache.html [ Timeout ]
 webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure Timeout Crash ]
 webkit.org/b/252878 fast/mediastream/mediastreamtrack-video-clone.html [ Failure ]
-webkit.org/b/213202 fast/mediastream/getUserMedia-grant-persistency3.html [ Failure ]
 webkit.org/b/252878 fast/mediastream/video-mediastream-restricted-invisible-autoplay-not-allowed.html [ Pass Timeout ]
 webkit.org/b/252878 fast/mediastream/video-mediastream-restricted-invisible-autoplay-user-click.html [ Pass Timeout ]
 webkit.org/b/252878 http/tests/webrtc/video-mediastream-invisible-autoplay-detached.html [ Pass Timeout ]
@@ -3141,7 +3129,7 @@ webkit.org/b/77568 fast/text/locale-shaping.html [ ImageOnlyFailure ]
 webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure ]
 
 # The MediaStream implementation is almost completed
-webkit.org/b/79203 fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Timeout Failure ]
+webkit.org/b/79203 fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Pass Timeout Failure ]
 
 webkit.org/b/84692 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 
@@ -3780,7 +3768,6 @@ imported/w3c/web-platform-tests/preload/preload-type-match.html [ DumpJSConsoleL
 # Tests crashing in Debug only.
 [ Debug ] editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
 [ Debug ] fast/forms/textarea-node-removed-from-document-crash.html [ Crash ]
-[ Debug ] fast/media/mq-resolution.html [ Crash ]
 [ Debug ] http/tests/loading/sizes/preload-image-sizes-2x.html [ Crash ]
 [ Debug ] imported/blink/fast/hidpi/border-background-align.html [ Crash ]
 [ Debug ] imported/blink/svg/zoom/text/lowdpi-zoom-text.html [ Crash ]
