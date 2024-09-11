@@ -83,7 +83,7 @@ public:
 
     bool isEmpty() const { return !m_origin; }
 
-    bool contains(void* p) const
+    bool contains(const void* p) const
     {
         if (isEmpty())
             return false;

@@ -697,6 +697,17 @@ bool Heap::unprotect(JSValue k)
     return m_protectedValues.remove(k.asCell());
 }
 
+bool Heap::isProtected(JSValue k)
+{
+    ASSERT(k);
+    ASSERT(vm().currentThreadIsHoldingAPILock());
+
+    if (!k.isCell())
+        return true;
+
+    return m_protectedValues.contains(k.asCell());
+}
+
 void Heap::addReference(JSCell* cell, ArrayBuffer* buffer)
 {
     if (m_arrayBuffers.addReference(cell, buffer)) {
