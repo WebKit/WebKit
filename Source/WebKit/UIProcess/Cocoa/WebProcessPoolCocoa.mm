@@ -522,9 +522,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     // FIXME: Filter by process's site when site isolation is enabled
-    parameters.storageAccessUserAgentStringQuirksData = StorageAccessUserAgentStringQuirkController::shared().cachedQuirks();
+    parameters.storageAccessUserAgentStringQuirksData = StorageAccessUserAgentStringQuirkController::shared().cachedListData();
 
-    for (auto&& entry : StorageAccessPromptQuirkController::shared().cachedQuirks()) {
+    for (auto&& entry : StorageAccessPromptQuirkController::shared().cachedListData()) {
         if (!entry.triggerPages.isEmpty()) {
             for (auto&& page : entry.triggerPages)
                 parameters.storageAccessPromptQuirksDomains.add(RegistrableDomain { page });
@@ -556,7 +556,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.ftpEnabled = [defaults objectForKey:WebPreferencesKey::ftpEnabledKey()] && [defaults boolForKey:WebPreferencesKey::ftpEnabledKey()];
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::shared().cachedQuirks();
+    parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::shared().cachedListData();
 #endif
 }
 

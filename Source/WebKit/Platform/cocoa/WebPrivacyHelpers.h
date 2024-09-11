@@ -36,6 +36,9 @@
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 #import <WebCore/LinkDecorationFilteringData.h>
 #import <WebCore/OrganizationStorageAccessPromptQuirk.h>
+#ifdef __OBJC__
+#import <pal/spi/cocoa/WebPrivacySPI.h>
+#endif
 #endif
 
 OBJC_CLASS WKWebPrivacyNotificationListener;
@@ -50,19 +53,19 @@ enum class RestrictedOpenerType : uint8_t;
 void configureForAdvancedPrivacyProtections(NSURLSession *);
 void requestLinkDecorationFilteringData(CompletionHandler<void(Vector<WebCore::LinkDecorationFilteringData>&&)>&&);
 
-class LinkDecorationFilteringDataObserver : public RefCounted<LinkDecorationFilteringDataObserver>, public CanMakeWeakPtr<LinkDecorationFilteringDataObserver> {
+class ListDataObserver : public RefCounted<ListDataObserver>, public CanMakeWeakPtr<ListDataObserver> {
 public:
-    static Ref<LinkDecorationFilteringDataObserver> create(Function<void()>&& callback)
+    static Ref<ListDataObserver> create(Function<void()>&& callback)
     {
-        return adoptRef(*new LinkDecorationFilteringDataObserver(WTFMove(callback)));
+        return adoptRef(*new ListDataObserver(WTFMove(callback)));
     }
 
-    ~LinkDecorationFilteringDataObserver() = default;
+    ~ListDataObserver() = default;
 
     void invokeCallback() { m_callback(); }
 
 private:
-    explicit LinkDecorationFilteringDataObserver(Function<void()>&& callback)
+    explicit ListDataObserver(Function<void()>&& callback)
         : m_callback { WTFMove(callback) }
     {
     }
@@ -70,108 +73,88 @@ private:
     Function<void()> m_callback;
 };
 
-class LinkDecorationFilteringController {
+class ListDataControllerBase : public RefCounted<ListDataControllerBase>, public CanMakeWeakPtr<ListDataControllerBase> {
 public:
-    static LinkDecorationFilteringController& shared();
-
-    const Vector<WebCore::LinkDecorationFilteringData>& cachedStrings() const { return m_cachedStrings; }
-    void updateStrings(CompletionHandler<void()>&&);
-
-    Ref<LinkDecorationFilteringDataObserver> observeUpdates(Function<void()>&&);
-
-private:
-    friend class NeverDestroyed<LinkDecorationFilteringController, MainThreadAccessTraits>;
-    LinkDecorationFilteringController() = default;
-
-    void setCachedStrings(Vector<WebCore::LinkDecorationFilteringData>&&);
-
-    RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
-    Vector<WebCore::LinkDecorationFilteringData> m_cachedStrings;
-    WeakHashSet<LinkDecorationFilteringDataObserver> m_observers;
-};
-
-class StorageAccessPromptQuirkObserver : public RefCounted<StorageAccessPromptQuirkObserver>, public CanMakeWeakPtr<StorageAccessPromptQuirkObserver> {
-public:
-    static Ref<StorageAccessPromptQuirkObserver> create(Function<void()>&& callback)
-    {
-        return adoptRef(*new StorageAccessPromptQuirkObserver(WTFMove(callback)));
-    }
-
-    ~StorageAccessPromptQuirkObserver() = default;
-
-    void invokeCallback() { m_callback(); }
-
-private:
-    explicit StorageAccessPromptQuirkObserver(Function<void()>&& callback)
-        : m_callback { WTFMove(callback) }
-    {
-    }
-
-    Function<void()> m_callback;
-};
-
-class StorageAccessUserAgentStringQuirkObserver : public RefCounted<StorageAccessUserAgentStringQuirkObserver>, public CanMakeWeakPtr<StorageAccessUserAgentStringQuirkObserver> {
-public:
-    static Ref<StorageAccessUserAgentStringQuirkObserver> create(Function<void()>&& callback)
-    {
-        return adoptRef(*new StorageAccessUserAgentStringQuirkObserver(WTFMove(callback)));
-    }
-
-    ~StorageAccessUserAgentStringQuirkObserver() = default;
-
-    void invokeCallback() { m_callback(); }
-
-private:
-    explicit StorageAccessUserAgentStringQuirkObserver(Function<void()>&& callback)
-        : m_callback { WTFMove(callback) }
-    {
-    }
-
-    Function<void()> m_callback;
-};
-
-class StorageAccessPromptQuirkController {
-public:
-    static StorageAccessPromptQuirkController& shared();
-
-    const Vector<WebCore::OrganizationStorageAccessPromptQuirk>& cachedQuirks() const { return m_cachedQuirks; }
-    void updateQuirks(CompletionHandler<void()>&&);
-    void setCachedQuirksForTesting(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&&);
+    Ref<ListDataObserver> observeUpdates(Function<void()>&&);
     void initialize();
 
-    Ref<StorageAccessPromptQuirkObserver> observeUpdates(Function<void()>&&);
+protected:
+    virtual ~ListDataControllerBase() = default;
 
-private:
-    friend class NeverDestroyed<StorageAccessPromptQuirkController, MainThreadAccessTraits>;
-    StorageAccessPromptQuirkController() = default;
-    void setCachedQuirks(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&&);
+    virtual void updateList(CompletionHandler<void()>&&) = 0;
+#ifdef __OBJC__
+    virtual WPResourceType resourceType() const = 0;
+#endif
 
     RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
-    Vector<WebCore::OrganizationStorageAccessPromptQuirk> m_cachedQuirks;
-    WeakHashSet<StorageAccessPromptQuirkObserver> m_observers;
+    WeakHashSet<ListDataObserver> m_observers;
     bool m_wasInitialized { false };
 };
 
-class StorageAccessUserAgentStringQuirkController {
+template<typename DerivedType, typename BackingDataType>
+class ListDataController : public ListDataControllerBase {
 public:
-    static StorageAccessUserAgentStringQuirkController& shared();
+    static DerivedType& shared()
+    {
+        static MainThreadNeverDestroyed<DerivedType> sharedInstance;
+        return sharedInstance.get();
+    }
 
-    const HashMap<WebCore::RegistrableDomain, String>& cachedQuirks() const { return m_cachedQuirks; }
-    void updateQuirks(CompletionHandler<void()>&&);
-    void setCachedQuirksForTesting(HashMap<WebCore::RegistrableDomain, String>&&);
-    void initialize();
+    void setCachedListDataForTesting(BackingDataType&& data)
+    {
+        m_wasInitialized = true;
+        setCachedListData(WTFMove(data));
+        m_observers.forEach([](auto& observer) {
+            observer.invokeCallback();
+        });
+    }
 
-    Ref<StorageAccessUserAgentStringQuirkObserver> observeUpdates(Function<void()>&&);
+    const BackingDataType& cachedListData() const { return m_cachedListData; }
+
+protected:
+    friend class NeverDestroyed<DerivedType, MainThreadAccessTraits>;
+
+    void setCachedListData(BackingDataType&& data)
+    {
+        m_cachedListData = WTFMove(data);
+        didUpdateCachedListData();
+    }
+
+    virtual void didUpdateCachedListData() { }
+
+    BackingDataType m_cachedListData;
+};
+
+class LinkDecorationFilteringController : public ListDataController<LinkDecorationFilteringController, Vector<WebCore::LinkDecorationFilteringData>> {
+public:
+    void updateList(CompletionHandler<void()>&&) final;
 
 private:
-    friend class NeverDestroyed<StorageAccessUserAgentStringQuirkController, MainThreadAccessTraits>;
-    StorageAccessUserAgentStringQuirkController() = default;
-    void setCachedQuirks(HashMap<WebCore::RegistrableDomain, String>&&);
+    void didUpdateCachedListData() final { m_cachedListData.shrinkToFit(); }
+#ifdef __OBJC__
+    WPResourceType resourceType() const final;
+#endif
+};
 
-    RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
-    HashMap<WebCore::RegistrableDomain, String> m_cachedQuirks;
-    WeakHashSet<StorageAccessUserAgentStringQuirkObserver> m_observers;
-    bool m_wasInitialized { false };
+class StorageAccessPromptQuirkController : public ListDataController<StorageAccessPromptQuirkController, Vector<WebCore::OrganizationStorageAccessPromptQuirk>> {
+public:
+    void updateList(CompletionHandler<void()>&&) final;
+
+private:
+    void didUpdateCachedListData() final;
+#ifdef __OBJC__
+    WPResourceType resourceType() const final;
+#endif
+};
+
+class StorageAccessUserAgentStringQuirkController : public ListDataController<StorageAccessUserAgentStringQuirkController, HashMap<WebCore::RegistrableDomain, String>> {
+public:
+    void updateList(CompletionHandler<void()>&&) final;
+
+private:
+#ifdef __OBJC__
+    WPResourceType resourceType() const final;
+#endif
 };
 
 class RestrictedOpenerDomainsController {
@@ -190,8 +173,6 @@ private:
     HashMap<WebCore::RegistrableDomain, RestrictedOpenerType> m_restrictedOpenerTypes;
     uint64_t m_nextScheduledUpdateTime { 0 };
 };
-
-void configureForAdvancedPrivacyProtections(NSURLSession *);
 
 #endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 

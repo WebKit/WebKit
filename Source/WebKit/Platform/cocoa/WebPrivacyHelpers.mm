@@ -51,155 +51,89 @@ SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
 SOFT_LINK_OPTIONAL(libnetwork, nw_context_set_tracker_lookup_callback, void, __cdecl, (nw_context_t, nw_context_tracker_lookup_callback_t))
 #endif
 
-namespace WebKit {
-
-static bool canUseWebPrivacyFramework()
-{
-#if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
-    return PAL::isWebPrivacyFrameworkAvailable();
-#else
-    // On macOS Monterey where WebPrivacy is present as a staged framework, attempts to soft-link the framework may fail.
-    // Instead of using dlopen, we instead check for the presence of `WPResources`; the call to dlopen is not necessary because
-    // we weak-link against the framework, so the class should be present as long as the framework has been successfully linked.
-    // FIXME: This workaround can be removed once we drop support for macOS Monterey, and we can use the standard soft-linking
-    // helpers from WebPrivacySoftLink.
-    static bool hasWPResourcesClass = [&] {
-        return !!PAL::getWPResourcesClass();
-    }();
-    return hasWPResourcesClass;
-#endif
-}
-
-static NSNotificationName resourceDataChangedNotificationName()
-{
-#if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
-    return PAL::get_WebPrivacy_WPResourceDataChangedNotificationName();
-#else
-    // FIXME: This workaround can be removed once we drop support for macOS Monterey, and we can use the standard soft-linking
-    // helpers from WebPrivacySoftLink.
-    return @"WPResourceDataChangedNotificationName";
-#endif
-}
-
-static NSString *notificationUserInfoResourceTypeKey()
-{
-#if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
-    return PAL::get_WebPrivacy_WPNotificationUserInfoResourceTypeKey();
-#else
-    // FIXME: This workaround can be removed once we drop support for macOS Monterey, and we can use the standard soft-linking
-    // helpers from WebPrivacySoftLink.
-    return @"ResourceType";
-#endif
-}
-
-} // namespace WebKit
-
 @interface WKWebPrivacyNotificationListener : NSObject
 
 @end
 
 @implementation WKWebPrivacyNotificationListener {
-    BlockPtr<void()> _linkFilteringDataCallback;
-    BlockPtr<void()> _storageAccessPromptQuirksDataCallback;
-    BlockPtr<void()> _storageAccessUserAgentStringQuirksDataCallback;
-    BlockPtr<void()> _restrictedOpenerDomainsCallback;
+    BlockPtr<void()> _callback;
+    WPResourceType _resourceType;
 }
 
-- (instancetype)init
+- (instancetype)initWithType:(WPResourceType)resourceType callback:(void(^)())callback
 {
     if (!(self = [super init]))
         return nil;
 
-    if (WebKit::canUseWebPrivacyFramework())
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdate:) name:WebKit::resourceDataChangedNotificationName() object:nil];
+    _resourceType = resourceType;
+    _callback = callback;
+
+    if (PAL::isWebPrivacyFrameworkAvailable())
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdate:) name:PAL::get_WebPrivacy_WPResourceDataChangedNotificationName() object:nil];
     return self;
-}
-
-- (void)listenForLinkFilteringDataChanges:(void(^)())callback
-{
-    _linkFilteringDataCallback = callback;
-}
-
-- (void)listenForStorageAccessPromptQuirkChanges:(void(^)())callback
-{
-    _storageAccessPromptQuirksDataCallback = callback;
-}
-
-- (void)listenForStorageAccessUserAgentStringQuirkChanges:(void(^)())callback
-{
-    _storageAccessUserAgentStringQuirksDataCallback = callback;
-}
-
-- (void)listenForRestrictedOpenerDomainsChanges:(void(^)())callback
-{
-    _restrictedOpenerDomainsCallback = callback;
 }
 
 - (void)dealloc
 {
-    if (WebKit::canUseWebPrivacyFramework())
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:WebKit::resourceDataChangedNotificationName() object:nil];
+    if (PAL::isWebPrivacyFrameworkAvailable())
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:PAL::get_WebPrivacy_WPResourceDataChangedNotificationName() object:nil];
     [super dealloc];
 }
 
 - (void)didUpdate:(NSNotification *)notification
 {
-    ASSERT(WebKit::canUseWebPrivacyFramework());
-    auto type = dynamic_objc_cast<NSNumber>([notification.userInfo objectForKey:WebKit::notificationUserInfoResourceTypeKey()]);
+    ASSERT(PAL::isWebPrivacyFrameworkAvailable());
+    auto type = dynamic_objc_cast<NSNumber>([notification.userInfo objectForKey:PAL::get_WebPrivacy_WPNotificationUserInfoResourceTypeKey()]);
     if (!type)
         return;
 
-    if (_linkFilteringDataCallback && type.integerValue == WPResourceTypeLinkFilteringData)
-        _linkFilteringDataCallback();
-
-    if (_storageAccessPromptQuirksDataCallback && type.integerValue == WPResourceTypeStorageAccessPromptQuirksData)
-        _storageAccessPromptQuirksDataCallback();
-
-    if (_storageAccessUserAgentStringQuirksDataCallback && type.integerValue == WPResourceTypeStorageAccessUserAgentStringQuirksData)
-        _storageAccessUserAgentStringQuirksDataCallback();
-
-    if (_restrictedOpenerDomainsCallback && type.integerValue == WPResourceTypeRestrictedOpenerDomains)
-        _restrictedOpenerDomainsCallback();
+    if (_callback && type.integerValue == _resourceType)
+        _callback();
 }
 
 @end
 
 namespace WebKit {
 
-LinkDecorationFilteringController& LinkDecorationFilteringController::shared()
-{
-    static MainThreadNeverDestroyed<LinkDecorationFilteringController> sharedInstance;
-    return sharedInstance.get();
-}
-
-Ref<LinkDecorationFilteringDataObserver> LinkDecorationFilteringController::observeUpdates(Function<void()>&& callback)
+Ref<ListDataObserver> ListDataControllerBase::observeUpdates(Function<void()>&& callback)
 {
     ASSERT(RunLoop::isMain());
     if (!m_notificationListener) {
-        m_notificationListener = adoptNS([WKWebPrivacyNotificationListener new]);
-        [m_notificationListener listenForLinkFilteringDataChanges:^{
-            updateStrings([this] {
+        m_notificationListener = adoptNS([[WKWebPrivacyNotificationListener alloc] initWithType:resourceType() callback:^{
+            updateList([this] {
                 m_observers.forEach([](auto& observer) {
                     observer.invokeCallback();
                 });
             });
-        }];
+        }]);
     }
-    Ref observer = LinkDecorationFilteringDataObserver::create(WTFMove(callback));
+    Ref observer = ListDataObserver::create(WTFMove(callback));
     m_observers.add(observer.get());
     return observer;
 }
 
-void LinkDecorationFilteringController::setCachedStrings(Vector<WebCore::LinkDecorationFilteringData>&& strings)
+void ListDataControllerBase::initialize()
 {
-    m_cachedStrings = WTFMove(strings);
-    m_cachedStrings.shrinkToFit();
+    if (m_wasInitialized)
+        return;
+
+    updateList([this] {
+        m_observers.forEach([](auto& observer) {
+            observer.invokeCallback();
+        });
+    });
+    m_wasInitialized = true;
 }
 
-void LinkDecorationFilteringController::updateStrings(CompletionHandler<void()>&& completionHandler)
+WPResourceType LinkDecorationFilteringController::resourceType() const
+{
+    return WPResourceTypeLinkFilteringData;
+}
+
+void LinkDecorationFilteringController::updateList(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    if (!WebKit::canUseWebPrivacyFramework()) {
+    if (!PAL::isWebPrivacyFrameworkAvailable()) {
         completionHandler();
         return;
     }
@@ -225,7 +159,7 @@ void LinkDecorationFilteringController::updateStrings(CompletionHandler<void()>&
                     domain = WebCore::RegistrableDomain { URL { String { rule.domain } } };
                 result.append(WebCore::LinkDecorationFilteringData { WTFMove(domain), [rule respondsToSelector:@selector(path)] ? rule.path : @"", rule.queryParameter });
             }
-            setCachedStrings(WTFMove(result));
+            setCachedListData(WTFMove(result));
         }
 
         for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
@@ -237,7 +171,7 @@ void LinkDecorationFilteringController::updateStrings(CompletionHandler<void()>&
 using LinkFilteringRulesCallback = CompletionHandler<void(Vector<WebCore::LinkDecorationFilteringData>&&)>;
 void requestLinkDecorationFilteringData(LinkFilteringRulesCallback&& callback)
 {
-    if (!WebKit::canUseWebPrivacyFramework()) {
+    if (!PAL::isWebPrivacyFrameworkAvailable()) {
         callback({ });
         return;
     }
@@ -285,44 +219,15 @@ void requestLinkDecorationFilteringData(LinkFilteringRulesCallback&& callback)
     }];
 }
 
-StorageAccessPromptQuirkController& StorageAccessPromptQuirkController::shared()
+WPResourceType StorageAccessPromptQuirkController::resourceType() const
 {
-    static MainThreadNeverDestroyed<StorageAccessPromptQuirkController> sharedInstance;
-    return sharedInstance.get();
+    return static_cast<WPResourceType>(WPResourceTypeStorageAccessPromptQuirksData);
 }
 
-Ref<StorageAccessPromptQuirkObserver> StorageAccessPromptQuirkController::observeUpdates(Function<void()>&& completionHandler)
+void StorageAccessPromptQuirkController::didUpdateCachedListData()
 {
-    ASSERT(RunLoop::isMain());
-    if (!m_notificationListener) {
-        m_notificationListener = adoptNS([WKWebPrivacyNotificationListener new]);
-        [m_notificationListener listenForStorageAccessPromptQuirkChanges:^{
-            updateQuirks([this] {
-                m_observers.forEach([](auto& observer) {
-                    observer.invokeCallback();
-                });
-            });
-        }];
-    }
-    Ref observer = StorageAccessPromptQuirkObserver::create(WTFMove(completionHandler));
-    m_observers.add(observer.get());
-    return observer;
-}
-
-void StorageAccessPromptQuirkController::setCachedQuirks(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&& quirks)
-{
-    m_cachedQuirks = WTFMove(quirks);
-    m_cachedQuirks.shrinkToFit();
-    RELEASE_LOG(ResourceLoadStatistics, "StorageAccessPromptQuirkController::setCachedQuirks: Loaded %lu storage access prompt(s) quirks from WebPrivacy.", m_cachedQuirks.size());
-}
-
-void StorageAccessPromptQuirkController::setCachedQuirksForTesting(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&& quirks)
-{
-    m_wasInitialized = true;
-    setCachedQuirks(WTFMove(quirks));
-    m_observers.forEach([](auto& observer) {
-        observer.invokeCallback();
-    });
+    m_cachedListData.shrinkToFit();
+    RELEASE_LOG(ResourceLoadStatistics, "StorageAccessPromptQuirkController::didUpdateCachedListData: Loaded %lu storage access prompt(s) quirks from WebPrivacy.", m_cachedListData.size());
 }
 
 static HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> quirkDomainsDictToMap(NSDictionary<NSString *, NSArray<NSString *> *> *quirkDomains)
@@ -338,19 +243,6 @@ static HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> q
     return map;
 }
 
-void StorageAccessPromptQuirkController::initialize()
-{
-    if (m_wasInitialized)
-        return;
-
-    updateQuirks([this] {
-        m_observers.forEach([](auto& observer) {
-            observer.invokeCallback();
-        });
-    });
-    m_wasInitialized = true;
-}
-
 static Vector<URL> quirkPagesArrayToVector(NSArray<NSString *> *triggerPages)
 {
     Vector<URL> triggers;
@@ -361,10 +253,10 @@ static Vector<URL> quirkPagesArrayToVector(NSArray<NSString *> *triggerPages)
     return triggers;
 }
 
-void StorageAccessPromptQuirkController::updateQuirks(CompletionHandler<void()>&& completionHandler)
+void StorageAccessPromptQuirkController::updateList(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    if (!WebKit::canUseWebPrivacyFramework() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestStorageAccessPromptQuirksData:completionHandler:)]) {
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestStorageAccessPromptQuirksData:completionHandler:)]) {
         RunLoop::main().dispatch(WTFMove(completionHandler));
         return;
     }
@@ -390,7 +282,7 @@ void StorageAccessPromptQuirkController::updateQuirks(CompletionHandler<void()>&
                 else
                     result.append(WebCore::OrganizationStorageAccessPromptQuirk { quirk.name, quirkDomainsDictToMap(quirk.domainPairings), { } });
             }
-            setCachedQuirks(WTFMove(result));
+            setCachedListData(WTFMove(result));
         }
 
         for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
@@ -398,61 +290,15 @@ void StorageAccessPromptQuirkController::updateQuirks(CompletionHandler<void()>&
     }];
 }
 
-StorageAccessUserAgentStringQuirkController& StorageAccessUserAgentStringQuirkController::shared()
+WPResourceType StorageAccessUserAgentStringQuirkController::resourceType() const
 {
-    static MainThreadNeverDestroyed<StorageAccessUserAgentStringQuirkController> sharedInstance;
-    return sharedInstance.get();
+    return static_cast<WPResourceType>(WPResourceTypeStorageAccessUserAgentStringQuirksData);
 }
 
-Ref<StorageAccessUserAgentStringQuirkObserver> StorageAccessUserAgentStringQuirkController::observeUpdates(Function<void()>&& callback)
+void StorageAccessUserAgentStringQuirkController::updateList(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    if (!m_notificationListener) {
-        m_notificationListener = adoptNS([WKWebPrivacyNotificationListener new]);
-        [m_notificationListener listenForStorageAccessUserAgentStringQuirkChanges:^{
-            updateQuirks([this] {
-                m_observers.forEach([](auto& observer) {
-                    observer.invokeCallback();
-                });
-            });
-        }];
-    }
-    Ref observer = StorageAccessUserAgentStringQuirkObserver::create(WTFMove(callback));
-    m_observers.add(observer.get());
-    return observer;
-}
-
-void StorageAccessUserAgentStringQuirkController::setCachedQuirks(HashMap<WebCore::RegistrableDomain, String>&& quirks)
-{
-    m_cachedQuirks = WTFMove(quirks);
-}
-
-void StorageAccessUserAgentStringQuirkController::setCachedQuirksForTesting(HashMap<WebCore::RegistrableDomain, String>&& quirks)
-{
-    setCachedQuirks(WTFMove(quirks));
-    m_observers.forEach([](auto& observer) {
-        observer.invokeCallback();
-    });
-    m_wasInitialized = true;
-}
-
-void StorageAccessUserAgentStringQuirkController::initialize()
-{
-    if (m_wasInitialized)
-        return;
-
-    updateQuirks([this] {
-        m_observers.forEach([](auto& observer) {
-            observer.invokeCallback();
-        });
-    });
-    m_wasInitialized = true;
-}
-
-void StorageAccessUserAgentStringQuirkController::updateQuirks(CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-    if (!WebKit::canUseWebPrivacyFramework() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestStorageAccessUserAgentStringQuirksData:completionHandler:)]) {
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestStorageAccessUserAgentStringQuirksData:completionHandler:)]) {
         RunLoop::main().dispatch(WTFMove(completionHandler));
         return;
     }
@@ -473,7 +319,7 @@ void StorageAccessUserAgentStringQuirkController::updateQuirks(CompletionHandler
             auto quirks = [data quirks];
             for (WPStorageAccessUserAgentStringQuirk *quirk : quirks)
                 result.add(WebCore::RegistrableDomain::fromRawString(quirk.domain), quirk.userAgentString);
-            setCachedQuirks(WTFMove(result));
+            setCachedListData(WTFMove(result));
         }
 
         for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
@@ -497,10 +343,9 @@ RestrictedOpenerDomainsController::RestrictedOpenerDomainsController()
     scheduleNextUpdate(approximateContinuousTimeNanoseconds());
     update();
 
-    m_notificationListener = adoptNS([WKWebPrivacyNotificationListener new]);
-    [m_notificationListener listenForRestrictedOpenerDomainsChanges:^{
+    m_notificationListener = adoptNS([[WKWebPrivacyNotificationListener alloc] initWithType:static_cast<WPResourceType>(WPResourceTypeRestrictedOpenerDomains) callback:^{
         update();
-    }];
+    }]);
 }
 
 static RestrictedOpenerType restrictedOpenerType(WPRestrictedOpenerType type)
@@ -525,7 +370,7 @@ void RestrictedOpenerDomainsController::scheduleNextUpdate(uint64_t now)
 void RestrictedOpenerDomainsController::update()
 {
     ASSERT(RunLoop::isMain());
-    if (!WebKit::canUseWebPrivacyFramework() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestRestrictedOpenerDomains:completionHandler:)])
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestRestrictedOpenerDomains:completionHandler:)])
         return;
 
     auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
@@ -626,7 +471,7 @@ public:
     {
         static std::once_flag onceFlag;
         std::call_once(onceFlag, [&] {
-            if (!WebKit::canUseWebPrivacyFramework())
+            if (!PAL::isWebPrivacyFrameworkAvailable())
                 return;
 
             auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
@@ -756,7 +601,7 @@ public:
     {
         static std::once_flag onceFlag;
         std::call_once(onceFlag, [&] {
-            if (!WebKit::canUseWebPrivacyFramework())
+            if (!PAL::isWebPrivacyFrameworkAvailable())
                 return;
 
             static BOOL canRequestTrackerDomainNames = [] {

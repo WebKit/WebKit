@@ -219,7 +219,7 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
 #endif
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::shared().cachedQuirks();
+    parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::shared().cachedListData();
 #endif
 
     WebProcessPool::platformInitializeNetworkProcess(parameters);
@@ -265,7 +265,7 @@ NetworkProcessProxy::NetworkProcessProxy()
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     m_storageAccessPromptQuirksDataUpdateObserver = StorageAccessPromptQuirkController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
-            protectedThis->send(Messages::NetworkProcess::UpdateStorageAccessPromptQuirks(StorageAccessPromptQuirkController::shared().cachedQuirks()), 0);
+            protectedThis->send(Messages::NetworkProcess::UpdateStorageAccessPromptQuirks(StorageAccessPromptQuirkController::shared().cachedListData()), 0);
     });
 #endif
 }

@@ -318,13 +318,13 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     m_storageAccessUserAgentStringQuirksDataUpdateObserver = StorageAccessUserAgentStringQuirkController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
         // FIXME: Filter by process's site when site isolation is enabled
         if (RefPtr protectedThis = weakThis.get())
-            protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateStorageAccessUserAgentStringQuirks(StorageAccessUserAgentStringQuirkController::shared().cachedQuirks()));
+            protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateStorageAccessUserAgentStringQuirks(StorageAccessUserAgentStringQuirkController::shared().cachedListData()));
     });
 
     m_storageAccessPromptQuirksDataUpdateObserver = StorageAccessPromptQuirkController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get()) {
             HashSet<WebCore::RegistrableDomain> domainSet;
-            for (auto&& entry : StorageAccessPromptQuirkController::shared().cachedQuirks()) {
+            for (auto&& entry : StorageAccessPromptQuirkController::shared().cachedListData()) {
                 if (!entry.triggerPages.isEmpty()) {
                     for (auto&& page : entry.triggerPages)
                         domainSet.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(page.string()));
@@ -336,9 +336,9 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
             protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateDomainsWithStorageAccessQuirks(domainSet));
         }
     });
-    if (StorageAccessPromptQuirkController::shared().cachedQuirks().isEmpty())
+    if (StorageAccessPromptQuirkController::shared().cachedListData().isEmpty())
         StorageAccessPromptQuirkController::shared().initialize();
-    if (StorageAccessUserAgentStringQuirkController::shared().cachedQuirks().isEmpty())
+    if (StorageAccessUserAgentStringQuirkController::shared().cachedListData().isEmpty())
         StorageAccessUserAgentStringQuirkController::shared().initialize();
 #endif
 
