@@ -404,7 +404,7 @@ void NetworkManager::onGatheredNetworks(RTCNetwork::IPAddress&& ipv4, RTCNetwork
     RELEASE_LOG(WebRTC, "NetworkManagerWrapper::onGatheredNetworks - networks changed");
 
     auto networkList = copyToVector(m_networkMap.values());
-    std::sort(networkList.begin(), networkList.end(), sortNetworks);
+    std::stable_sort(networkList.begin(), networkList.end(), sortNetworks);
 
     int preference = std::max(127zu, networkList.size());
     for (auto& network : networkList)
