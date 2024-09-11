@@ -4337,6 +4337,9 @@ PatchpointExceptionHandle OMGIRGenerator::preparePatchpointForExceptions(BasicBl
     if (!mustSaveState)
         return { m_hasExceptionHandlers, callSiteIndex() };
 
+    unsigned firstStackmapChildOffset = patch->numChildren();
+    unsigned firstStackmapParamOffset = firstStackmapChildOffset + m_proc.resultCount(patch->type());
+
     Vector<Value*> liveValues;
     Origin origin = this->origin();
 
@@ -4365,7 +4368,7 @@ PatchpointExceptionHandle OMGIRGenerator::preparePatchpointForExceptions(BasicBl
     patch->effects.exitsSideways = true;
     patch->appendVectorWithRep(liveValues, ValueRep::LateColdAny);
 
-    return { m_hasExceptionHandlers, callSiteIndex(), static_cast<unsigned>(liveValues.size()) };
+    return { m_hasExceptionHandlers, callSiteIndex(), static_cast<unsigned>(liveValues.size()), firstStackmapParamOffset, firstStackmapChildOffset };
 }
 
 auto OMGIRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition& signature, ControlType& data, ResultList& results) -> PartialResult
