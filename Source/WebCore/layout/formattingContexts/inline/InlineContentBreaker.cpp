@@ -400,6 +400,33 @@ static std::optional<TextUtil::WordBreakLeft> midWordBreak(const InlineContentBr
     return TextUtil::WordBreakLeft { right - left, TextUtil::width(inlineTextItem, textRun.style.fontCascade(), left, right, runLogicalLeft) };
 }
 
+static std::optional<size_t> firstHyphenPosition(StringView content, const RenderStyle& style)
+{
+    // FIXME: We may produce slighly incorrect (less fine-grained) hyphenation here as the incoming content may just be a partial word.
+    // (same applies to hyphenPosition below)
+    auto contentLength = content.length();
+    size_t limitBefore = style.hyphenationLimitBefore() == RenderStyle::initialHyphenationLimitBefore() ? 0 : style.hyphenationLimitBefore();
+    size_t limitAfter = style.hyphenationLimitAfter() == RenderStyle::initialHyphenationLimitAfter() ? 0 : style.hyphenationLimitAfter();
+
+    if (limitBefore >= contentLength || limitAfter >= contentLength || limitBefore + limitAfter > contentLength)
+        return { };
+
+    auto candidatePosition = contentLength - limitAfter;
+    auto firstHyphenLocation = std::optional<size_t> { };
+    while (true) {
+        auto hyphenIndex = lastHyphenLocation(content, candidatePosition, style.computedLocale());
+        if (!hyphenIndex || hyphenIndex < limitBefore)
+            return firstHyphenLocation;
+        if (hyphenIndex >= candidatePosition) {
+            ASSERT_NOT_REACHED();
+            return { };
+        }
+        firstHyphenLocation = hyphenIndex;
+        candidatePosition = hyphenIndex;
+    }
+    return { };
+}
+
 static std::optional<size_t> hyphenPosition(StringView content, std::optional<size_t> overflowingPosition, const RenderStyle& style)
 {
     // Find the hyphen position as follows:
@@ -505,11 +532,17 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
 
     if (breakRules.contains(WordBreakRule::AtHyphenationOpportunities)) {
         auto tryBreakingAtHyphenationOpportunity = [&]() -> std::optional<PartialRun> {
+            auto hyphenWidth = InlineLayoutUnit { fontCascade.width(TextRun { StringView { style.hyphenString() } }) };
+            if (isMinimumInIntrinsicWidthMode()) {
+                if (auto hyphenLocation = firstHyphenPosition(inlineTextItem.inlineTextBox().content().substring(inlineTextItem.start(), inlineTextItem.length()), style)) {
+                    auto trailingPartialRunWidthWithHyphen = TextUtil::width(inlineTextItem, fontCascade, inlineTextItem.start(), inlineTextItem.start() + *hyphenLocation, candidateTextRun.logicalLeft);
+                    return PartialRun { *hyphenLocation, trailingPartialRunWidthWithHyphen, hyphenWidth };
+                }
+            }
             if (candidateTextRun.isOverflowingRun && !lineHasRoomForContent) {
                 // We won't be able to find hyphen location when there's no available space.
                 return { };
             }
-            auto hyphenWidth = InlineLayoutUnit { fontCascade.width(TextRun { StringView { style.hyphenString() } }) };
             auto leftSideLength = std::optional<size_t> { };
             if (candidateTextRun.isOverflowingRun) {
                 auto availableWidthExcludingHyphen = availableWidth - hyphenWidth;
