@@ -62,6 +62,10 @@ BackgroundPainter::BackgroundPainter(RenderBoxModelObject& renderer, const Paint
     : m_renderer(renderer)
     , m_paintInfo(paintInfo)
 {
+    // background-clip has no effect when painting the root background.
+    // https://www.w3.org/TR/css-backgrounds-3/#background-clip
+    if (m_renderer.isDocumentElementRenderer())
+        setOverrideClip(FillBox::BorderBox);
 }
 
 void BackgroundPainter::paintBackground(const LayoutRect& paintRect, BackgroundBleedAvoidance bleedAvoidance) const
