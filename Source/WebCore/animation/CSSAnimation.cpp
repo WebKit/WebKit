@@ -108,7 +108,7 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
         animationEffect->setDelay(Seconds(animation.delay()));
 
     if (!m_overriddenProperties.contains(Property::Duration))
-        animationEffect->setIterationDuration(Seconds(animation.duration()));
+        animationEffect->setIterationDuration(Seconds(animation.duration().value_or(0)));
 
     if (!m_overriddenProperties.contains(Property::CompositeOperation)) {
         if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(animationEffect))

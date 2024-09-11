@@ -338,6 +338,11 @@ void CSSToStyleMap::mapAnimationDuration(Animation& animation, const CSSValue& v
     if (!primitiveValue)
         return;
 
+    if (value.valueID() == CSSValueAuto) {
+        animation.setDuration(std::nullopt);
+        return;
+    }
+
     auto duration = std::max<double>(primitiveValue->resolveAsTime(m_builderState.cssToLengthConversionData()), 0);
     animation.setDuration(duration);
 }

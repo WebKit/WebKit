@@ -3725,7 +3725,7 @@ Ref<PlatformCAAnimation> GraphicsLayerCA::createSpringAnimation(const Animation*
 
 void GraphicsLayerCA::setupAnimation(PlatformCAAnimation* propertyAnim, const Animation* anim, bool additive, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    double duration = anim->duration();
+    double duration = anim->duration().value_or(0);
     if (duration <= 0)
         duration = cAnimationAlmostZeroDuration;
 

@@ -559,7 +559,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
             if (transitionMatchesProperty(backingAnimation.get(), property, newStyle)) {
                 hasMatchingTransitionProperty = true;
                 matchingBackingAnimation = backingAnimation.ptr();
-                matchingTransitionDuration = std::max(0.0, matchingBackingAnimation->duration()) + matchingBackingAnimation->delay();
+                matchingTransitionDuration = std::max(0.0, matchingBackingAnimation->duration().value_or(0)) + matchingBackingAnimation->delay();
             }
         }
     } else if (!document.quirks().needsResettingTransitionCancelsRunningTransitionQuirk()) {
@@ -648,7 +648,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
         //   - reversing shortening factor is 1.
         ASSERT(matchingBackingAnimation);
         auto delay = Seconds(matchingBackingAnimation->delay());
-        auto duration = Seconds(matchingBackingAnimation->duration());
+        auto duration = Seconds(matchingBackingAnimation->duration().value_or(0));
         auto& reversingAdjustedStartStyle = beforeChangeStyle;
         auto reversingShorteningFactor = 1;
         createCSSTransition(beforeChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor);
@@ -707,7 +707,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
             }
             auto reversingShorteningFactor = std::max(std::min(((transformedProgress * previouslyRunningTransition->reversingShorteningFactor()) + (1 - previouslyRunningTransition->reversingShorteningFactor())), 1.0), 0.0);
             auto delay = matchingBackingAnimation->delay() < 0 ? Seconds(matchingBackingAnimation->delay()) * reversingShorteningFactor : Seconds(matchingBackingAnimation->delay());
-            auto duration = Seconds(matchingBackingAnimation->duration()) * reversingShorteningFactor;
+            auto duration = Seconds(matchingBackingAnimation->duration().value_or(0)) * reversingShorteningFactor;
 
             previouslyRunningTransition->cancelFromStyle();
             createCSSTransition(beforeChangeStyle, delay, duration, reversingAdjustedStartStyle, reversingShorteningFactor);
@@ -721,7 +721,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
             //   - reversing shortening factor is 1.
             ASSERT(matchingBackingAnimation);
             auto delay = Seconds(matchingBackingAnimation->delay());
-            auto duration = Seconds(matchingBackingAnimation->duration());
+            auto duration = Seconds(matchingBackingAnimation->duration().value_or(0));
             auto& reversingAdjustedStartStyle = currentStyle;
             auto reversingShorteningFactor = 1;
             previouslyRunningTransition->cancelFromStyle();

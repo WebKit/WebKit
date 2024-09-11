@@ -940,6 +940,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     switch (longhand) {
     case CSSPropertyAccentColor:
     case CSSPropertyAlignSelf:
+    case CSSPropertyAnimationDuration:
     case CSSPropertyAspectRatio:
     case CSSPropertyBackgroundSize:
     case CSSPropertyBlockSize:
@@ -1056,7 +1057,6 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyVerticalAlign:
         return CSSValueBaseline;
     case CSSPropertyAnimationDelay:
-    case CSSPropertyAnimationDuration:
     case CSSPropertyTransitionDelay:
     case CSSPropertyTransitionDuration:
         return InitialNumericValue { 0, CSSUnitType::CSS_S };
@@ -1812,6 +1812,7 @@ static RefPtr<CSSValue> consumeAnimationValueForShorthand(CSSPropertyID property
     case CSSPropertyAnimationDirection:
         return CSSPropertyParsing::consumeSingleAnimationDirection(range);
     case CSSPropertyAnimationDuration:
+        return CSSPropertyParsing::consumeSingleAnimationDuration(range, context);
     case CSSPropertyTransitionDuration:
         return consumeTime(range, context.mode, ValueRange::NonNegative);
     case CSSPropertyAnimationFillMode:

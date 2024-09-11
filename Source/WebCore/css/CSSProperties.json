@@ -1493,11 +1493,11 @@
                 ],
                 "name-for-methods": "Duration",
                 "separator": ",",
-                "parser-grammar": "<time [0,inf]>#"
+                "parser-grammar": "<single-animation-duration>#"
             },
             "specification": {
                 "category": "css-animations",
-                "url": "https://www.w3.org/TR/css3-animations/#animation-duration-property",
+                "url": "https://drafts.csswg.org/css-animations-2/#animation-duration",
                 "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/CSS/animation-duration"
             }
         },
@@ -10856,6 +10856,14 @@
             "specification": {
                 "category": "css-animations",
                 "url": "https://drafts.csswg.org/css-animations-2/#animation-composition"
+            }
+        },
+        "<single-animation-duration>": {
+            "grammar": "auto | <time [0,inf]>",
+            "exported": true,
+            "specification": {
+                "category": "css-animations",
+                "url": "https://drafts.csswg.org/css-animations-2/#animation-duration"
             }
         },
         "<single-animation-direction>": {

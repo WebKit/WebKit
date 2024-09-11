@@ -260,7 +260,7 @@ void ContentChangeObserver::didAddTransition(const Element& element, const Anima
         return;
     if (!isObservedPropertyForTransition(transition.property().animatableProperty))
         return;
-    auto transitionEnd = Seconds { transition.duration() + std::max<double>(0, transition.isDelaySet() ? transition.delay() : 0) };
+    auto transitionEnd = Seconds { transition.duration().value_or(0) + std::max<double>(0, transition.isDelaySet() ? transition.delay() : 0) };
     if (transitionEnd > maximumDelayForTransitions)
         return;
     if (!isVisuallyHidden(element))

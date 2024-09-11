@@ -1515,9 +1515,35 @@ static Ref<CSSPrimitiveValue> valueForTransitionBehavior(bool allowsDiscreteTran
     return CSSPrimitiveValue::create(allowsDiscreteTransitions ? CSSValueAllowDiscrete : CSSValueNormal);
 }
 
-static Ref<CSSPrimitiveValue> valueForAnimationDuration(double duration)
+static Ref<CSSPrimitiveValue> valueForAnimationDuration(MarkableDouble duration, const Animation* animation = nullptr, const AnimationList* animationList = nullptr)
 {
-    return CSSPrimitiveValue::create(duration, CSSUnitType::CSS_S);
+    auto animationListHasMultipleExplicitTimelines = [&]() {
+        if (!animationList || animationList->size() <= 1)
+            return false;
+        auto explicitTimelines = 0;
+        for (auto& animation : *animationList) {
+            if (animation->isTimelineSet())
+                ++explicitTimelines;
+            if (explicitTimelines > 1)
+                return true;
+        }
+        return false;
+    };
+
+    auto animationHasExplicitNonAutoTimeline = [&]() {
+        if (!animation || !animation->isTimelineSet())
+            return false;
+        auto* timelineKeyword = std::get_if<Animation::TimelineKeyword>(&animation->timeline());
+        return !timelineKeyword || *timelineKeyword != Animation::TimelineKeyword::Auto;
+    };
+
+    // https://drafts.csswg.org/css-animations-2/#animation-duration
+    // For backwards-compatibility with Level 1, when the computed value of animation-timeline is auto
+    // (i.e. only one list value, and that value being auto), the resolved value of auto for
+    // animation-duration is 0s whenever its used value would also be 0s.
+    if (!duration && (animationListHasMultipleExplicitTimelines() || animationHasExplicitNonAutoTimeline()))
+        return CSSPrimitiveValue::create(CSSValueAuto);
+    return CSSPrimitiveValue::create(duration.value_or(0), CSSUnitType::CSS_S);
 }
 
 static Ref<CSSPrimitiveValue> valueForAnimationDelay(double delay)
@@ -1673,14 +1699,14 @@ static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timin
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static void addValueForAnimationPropertyToList(const RenderStyle& style, CSSValueListBuilder& list, CSSPropertyID property, const Animation* animation)
+static void addValueForAnimationPropertyToList(const RenderStyle& style, CSSValueListBuilder& list, CSSPropertyID property, const Animation* animation, const AnimationList* animationList)
 {
     if (property == CSSPropertyTransitionBehavior) {
         if (!animation || !animation->isAllowsDiscreteTransitionsFilled())
             list.append(valueForTransitionBehavior(animation ? animation->allowsDiscreteTransitions() : Animation::initialAllowsDiscreteTransitions()));
     } else if (property == CSSPropertyAnimationDuration || property == CSSPropertyTransitionDuration) {
         if (!animation || !animation->isDurationFilled())
-            list.append(valueForAnimationDuration(animation ? animation->duration() : Animation::initialDuration()));
+            list.append(valueForAnimationDuration(animation ? animation->duration() : Animation::initialDuration(), animation, animationList));
     } else if (property == CSSPropertyAnimationDelay || property == CSSPropertyTransitionDelay) {
         if (!animation || !animation->isDelayFilled())
             list.append(valueForAnimationDelay(animation ? animation->delay() : Animation::initialDelay()));
@@ -1725,9 +1751,9 @@ static Ref<CSSValueList> valueListForAnimationOrTransitionProperty(const RenderS
     CSSValueListBuilder list;
     if (animationList) {
         for (auto& animation : *animationList)
-            addValueForAnimationPropertyToList(style, list, property, animation.ptr());
+            addValueForAnimationPropertyToList(style, list, property, animation.ptr(), animationList);
     } else
-        addValueForAnimationPropertyToList(style, list, property, nullptr);
+        addValueForAnimationPropertyToList(style, list, property, nullptr, nullptr);
     return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
