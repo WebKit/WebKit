@@ -1032,6 +1032,7 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
         incrementDrawCount(renderBundle.drawCount());
 
         for (RenderBundleICBWithResources* icb in renderBundle.renderBundlesResources()) {
+            commandEncoder = renderCommandEncoder();
 
             if (id<MTLDepthStencilState> depthStencilState = icb.depthStencilState)
                 [commandEncoder setDepthStencilState:depthStencilState];
