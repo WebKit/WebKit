@@ -352,7 +352,7 @@ static bool hasNetworkChanged(const RTCNetwork& a, const RTCNetwork& b)
     return !isEqual(a.prefix, b.prefix) || a.prefixLength != b.prefixLength || a.type != b.type || a.scopeID != b.scopeID || !isEqual(a.ips, b.ips);
 }
 
-static int sortNetworks(const RTCNetwork& a, const RTCNetwork& b)
+static bool sortNetworks(const RTCNetwork& a, const RTCNetwork& b)
 {
     if (a.type != b.type)
         return a.type < b.type;
@@ -363,7 +363,7 @@ static int sortNetworks(const RTCNetwork& a, const RTCNetwork& b)
     if (precedenceA != precedenceB)
         return precedenceA < precedenceB;
 
-    return codePointCompare(StringView { std::span(a.description.data(), a.description.size()) }, StringView { std::span(b.description.data(), b.description.size()) });
+    return codePointCompare(StringView { std::span(a.description.data(), a.description.size()) }, StringView { std::span(b.description.data(), b.description.size()) }) < 0;
 }
 
 void NetworkManager::onGatheredNetworks(RTCNetwork::IPAddress&& ipv4, RTCNetwork::IPAddress&& ipv6, HashMap<String, RTCNetwork>&& networkMap)
