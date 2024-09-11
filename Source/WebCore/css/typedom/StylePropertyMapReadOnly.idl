@@ -28,6 +28,7 @@
     Exposed=(Window,Worker,PaintWorklet),
     SkipVTableValidation,
     JSGenerateToJSObject,
+    JSCustomMarkFunction
 ] interface StylePropertyMapReadOnly {
     iterable<USVString, sequence<CSSStyleValue>>;
     // FIXME: should be (undefined or CSSStyleValue), not null

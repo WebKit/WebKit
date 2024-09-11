@@ -41,6 +41,16 @@ class StyledElement;
 class StylePropertyMapReadOnly : public RefCounted<StylePropertyMapReadOnly> {
 public:
     using StylePropertyMapEntry = KeyValuePair<String, Vector<RefPtr<CSSStyleValue>>>;
+
+    enum class Type {
+        Computed,
+        Declared,
+        HashMap,
+        Inline,
+    };
+
+    virtual Type type() const = 0;
+
     class Iterator {
     public:
         explicit Iterator(StylePropertyMapReadOnly&, ScriptExecutionContext*);
@@ -66,3 +76,8 @@ protected:
 };
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_CSSOM_STYLE_PROPERTY_MAP(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::StylePropertyMapReadOnly& value) { return value.type() == predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
