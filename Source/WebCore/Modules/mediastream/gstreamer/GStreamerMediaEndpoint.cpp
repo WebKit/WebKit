@@ -110,6 +110,11 @@ bool GStreamerMediaEndpoint::initializePipeline()
         return false;
 
     auto rtpBin = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_webrtcBin.get()), "rtpbin"));
+    if (!rtpBin) {
+        GST_ERROR_OBJECT(m_webrtcBin.get(), "rtpbin not found. Please check that your GStreamer installation has the rtp and rtpmanager plugins.");
+        return false;
+    }
+
     if (gstObjectHasProperty(rtpBin.get(), "add-reference-timestamp-meta"))
         g_object_set(rtpBin.get(), "add-reference-timestamp-meta", TRUE, nullptr);
 
