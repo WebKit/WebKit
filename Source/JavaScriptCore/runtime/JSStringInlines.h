@@ -188,16 +188,61 @@ inline void JSRopeString::resolveToBuffer(JSString* fiber0, JSString* fiber1, JS
 
     // 3 fibers.
     if (fiber2) {
-        if (fiber0->isRope() || fiber1->isRope() || fiber2->isRope())
-            MUST_TAIL_CALL return JSRopeString::resolveToBufferSlow(fiber0, fiber1, fiber2, buffer, length, stackLimit);
+        unsigned ropeCount = !!fiber0->isRope() + !!fiber1->isRope() + !!fiber2->isRope();
+        if (!ropeCount) {
+            StringView view0 = fiber0->valueInternal().impl();
+            view0.getCharacters(buffer);
+            StringView view1 = fiber1->valueInternal().impl();
+            view1.getCharacters(buffer + view0.length());
+            StringView view2 = fiber2->valueInternal().impl();
+            view2.getCharacters(buffer + view0.length() + view1.length());
+            return;
+        }
 
-        StringView view0 = fiber0->valueInternal().impl();
-        view0.getCharacters(buffer);
-        StringView view1 = fiber1->valueInternal().impl();
-        view1.getCharacters(buffer + view0.length());
-        StringView view2 = fiber2->valueInternal().impl();
-        view2.getCharacters(buffer + view0.length() + view1.length());
-        return;
+        if (ropeCount == 1) {
+            unsigned targetOffset = 0;
+            unsigned offset = 0;
+            const JSRopeString* rope = nullptr;
+            if (!fiber0->isRope()) {
+                StringView view0 = fiber0->valueInternal().impl();
+                view0.getCharacters(buffer + offset);
+                offset += view0.length();
+            } else {
+                targetOffset = offset;
+                rope = static_cast<const JSRopeString*>(fiber0);
+                offset += rope->length();
+            }
+
+            if (!fiber1->isRope()) {
+                StringView view1 = fiber1->valueInternal().impl();
+                view1.getCharacters(buffer + offset);
+                offset += view1.length();
+            } else {
+                targetOffset = offset;
+                rope = static_cast<const JSRopeString*>(fiber1);
+                offset += rope->length();
+            }
+
+            if (!fiber2->isRope()) {
+                StringView view2 = fiber2->valueInternal().impl();
+                view2.getCharacters(buffer + offset);
+            } else {
+                targetOffset = offset;
+                rope = static_cast<const JSRopeString*>(fiber2);
+            }
+
+            if (rope->isSubstring()) {
+                StringView view = *rope->substringBase()->valueInternal().impl();
+                unsigned offset = rope->substringOffset();
+                unsigned length = rope->length();
+                view.substring(offset, length).getCharacters(buffer + targetOffset);
+                return;
+            }
+
+            MUST_TAIL_CALL return resolveToBuffer(rope->fiber0(), rope->fiber1(), rope->fiber2(), buffer + targetOffset, rope->length(), stackLimit);
+        }
+
+        MUST_TAIL_CALL return JSRopeString::resolveToBufferSlow(fiber0, fiber1, fiber2, buffer, length, stackLimit);
     }
 
     // 2 fibers.
