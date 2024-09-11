@@ -802,7 +802,7 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
                 }
             }
             if (styleString.isEmpty()) {
-                if (auto cssValue = computedStyleExtractor.customPropertyValue(customProperty))
+                if (auto* cssValue = style.customPropertyValue(customProperty))
                     styleString = cssValue->cssText();
             }
             computedKeyframe.customStyleStrings.set(customProperty, styleString);
