@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Metal/Metal.h>
+
 #if USE(INTERNAL_APPLE_SDK)
 #import <Metal/MTLCommandBuffer_Private.h>
 #import <Metal/MTLDevice_Private.h>
@@ -38,9 +40,11 @@ constexpr MTLPixelFormat MTLPixelFormatYCBCR10_444_2P_PACKED = static_cast<MTLPi
 - (kern_return_t)setOwnerWithIdentity:(mach_port_t)task_id_token;
 @end
 
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
 @interface MTLSharedTextureHandle(Private)
 - (instancetype)initWithMachPort:(mach_port_t)machPort;
 @end
+#endif
 
 @protocol MTLDeviceSPI <MTLDevice>
 - (id <MTLSharedEvent>)newSharedEventWithMachPort:(mach_port_t)machPort;
