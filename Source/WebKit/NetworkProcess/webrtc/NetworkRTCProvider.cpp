@@ -375,6 +375,11 @@ void NetworkRTCProvider::signalSocketIsClosed(LibWebRTCSocketIdentifier identifi
     m_connection->connection().send(Messages::LibWebRTCNetwork::SignalClose(identifier, 1), 0);
 }
 
+Ref<NetworkRTCMonitor> NetworkRTCProvider::protectedRTCMonitor()
+{
+    return m_rtcMonitor;
+}
+
 #undef RTC_RELEASE_LOG
 #undef RTC_RELEASE_LOG_ERROR
 

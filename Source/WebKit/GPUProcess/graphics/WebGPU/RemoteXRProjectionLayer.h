@@ -93,6 +93,7 @@ private:
     RemoteXRProjectionLayer& operator=(const RemoteXRProjectionLayer&) = delete;
     RemoteXRProjectionLayer& operator=(RemoteXRProjectionLayer&&) = delete;
 
+    Ref<WebCore::WebGPU::XRProjectionLayer> protectedBacking();
     Ref<IPC::StreamServerConnection> protectedStreamConnection();
     Ref<RemoteGPU> protectedGPU() const;
 

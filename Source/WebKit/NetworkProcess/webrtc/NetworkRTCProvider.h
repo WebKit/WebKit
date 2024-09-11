@@ -93,7 +93,7 @@ public:
     }
     ~NetworkRTCProvider();
 
-    void didReceiveNetworkRTCMonitorMessage(IPC::Connection& connection, IPC::Decoder& decoder) { m_rtcMonitor.didReceiveMessage(connection, decoder); }
+    void didReceiveNetworkRTCMonitorMessage(IPC::Connection& connection, IPC::Decoder& decoder) { protectedRTCMonitor()->didReceiveMessage(connection, decoder); }
 
     class Socket {
     public:
@@ -156,6 +156,8 @@ private:
     void signalSocketIsClosed(WebCore::LibWebRTCSocketIdentifier);
 
     void assertIsRTCNetworkThread();
+
+    Ref<NetworkRTCMonitor> protectedRTCMonitor();
 
     static constexpr size_t maxSockets { 256 };
 

@@ -88,9 +88,11 @@ private:
     RemoteXRSubImage& operator=(const RemoteXRSubImage&) = delete;
     RemoteXRSubImage& operator=(RemoteXRSubImage&&) = delete;
 
-    Ref<IPC::StreamServerConnection> protectedStreamConnection();
-
     WebCore::WebGPU::XRSubImage& backing() { return m_backing; }
+    Ref<WebCore::WebGPU::XRSubImage> protectedBacking();
+
+    Ref<IPC::StreamServerConnection> protectedStreamConnection();
+    Ref<RemoteGPU> protectedGPU() const;
 
     RefPtr<IPC::Connection> connection() const;
 

@@ -60,9 +60,19 @@ Ref<IPC::StreamServerConnection> RemoteXRSubImage::protectedStreamConnection()
     return m_streamConnection;
 }
 
+Ref<WebCore::WebGPU::XRSubImage> RemoteXRSubImage::protectedBacking()
+{
+    return m_backing;
+}
+
+Ref<RemoteGPU> RemoteXRSubImage::protectedGPU() const
+{
+    return m_gpu.get();
+}
+
 RefPtr<IPC::Connection> RemoteXRSubImage::connection() const
 {
-    RefPtr connection = m_gpu->gpuConnectionToWebProcess();
+    RefPtr connection = protectedGPU()->gpuConnectionToWebProcess();
     if (!connection)
         return nullptr;
     return &connection->connection();
@@ -75,26 +85,28 @@ void RemoteXRSubImage::destruct()
 
 void RemoteXRSubImage::getColorTexture(WebGPUIdentifier identifier)
 {
-    auto texture = m_backing->colorTexture();
+    auto texture = protectedBacking()->colorTexture();
     ASSERT(texture);
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!texture || !connection)
         return;
 
-    auto remoteTexture = RemoteTexture::create(*connection, m_gpu, *texture, m_objectHeap, m_streamConnection.copyRef(), identifier);
-    m_objectHeap->addObject(identifier, remoteTexture);
+    Ref objectHeap = m_objectHeap.get();
+    auto remoteTexture = RemoteTexture::create(*connection, protectedGPU(), *texture, objectHeap, protectedStreamConnection(), identifier);
+    objectHeap->addObject(identifier, remoteTexture);
 }
 
 void RemoteXRSubImage::getDepthTexture(WebGPUIdentifier identifier)
 {
-    auto texture = m_backing->depthStencilTexture();
+    auto texture = protectedBacking()->depthStencilTexture();
     ASSERT(texture);
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!texture || !connection)
         return;
 
-    auto remoteTexture = RemoteTexture::create(*connection, m_gpu, *texture, m_objectHeap, m_streamConnection.copyRef(), identifier);
-    m_objectHeap->addObject(identifier, remoteTexture);
+    Ref objectHeap = m_objectHeap.get();
+    auto remoteTexture = RemoteTexture::create(*connection, protectedGPU(), *texture, objectHeap, protectedStreamConnection(), identifier);
+    objectHeap->addObject(identifier, remoteTexture);
 }
 
 void RemoteXRSubImage::stopListeningForIPC()

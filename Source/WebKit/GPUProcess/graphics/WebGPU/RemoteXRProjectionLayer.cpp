@@ -56,6 +56,11 @@ RemoteXRProjectionLayer::RemoteXRProjectionLayer(WebCore::WebGPU::XRProjectionLa
 
 RemoteXRProjectionLayer::~RemoteXRProjectionLayer() = default;
 
+Ref<WebCore::WebGPU::XRProjectionLayer> RemoteXRProjectionLayer::protectedBacking()
+{
+    return m_backing;
+}
+
 Ref<IPC::StreamServerConnection> RemoteXRProjectionLayer::protectedStreamConnection()
 {
     return m_streamConnection;
@@ -82,7 +87,7 @@ void RemoteXRProjectionLayer::destruct()
 #if PLATFORM(COCOA)
 void RemoteXRProjectionLayer::startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex)
 {
-    m_backing->startFrame(frameIndex, WTFMove(colorBuffer), WTFMove(depthBuffer), WTFMove(completionSyncEvent), reusableTextureIndex);
+    protectedBacking()->startFrame(frameIndex, WTFMove(colorBuffer), WTFMove(depthBuffer), WTFMove(completionSyncEvent), reusableTextureIndex);
 }
 #endif
 
