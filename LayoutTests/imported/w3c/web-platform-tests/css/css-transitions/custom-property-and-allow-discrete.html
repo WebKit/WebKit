@@ -36,6 +36,26 @@ promise_test(async t => {
 
   assert_equals(transitionCount, 1, 'A single "transitionstart" event was dispatched');
 }, 'It is possible to transition an unregistered custom property using "transition-behavior: allows-discrete"');
+
+promise_test(async t => {
+  const div = addDiv(t);
+  div.style.setProperty('--foo', 'bar');
+
+  let transitionCount = 0;
+  div.addEventListener("transitionstart", () => transitionCount++);
+
+  // Wait one frame and set the custom property to trigger a transition.
+  await waitForFrame();
+  div.style.transition = "--foo 10s allow-discrete";
+  div.style.setProperty('--foo', 'baz');
+
+  // Wait two more frames to allow that transition to start and to ensure
+  // only a single transition was started.
+  await waitForFrame();
+  await waitForFrame();
+
+  assert_equals(transitionCount, 1, 'A single "transitionstart" event was dispatched');
+}, 'It is possible to transition an unregistered custom property using "transition-behavior: allows-discrete" when setting "transition-property" in the style change that yields the transition');
 </script>
 </body>
 </html>

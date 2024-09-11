@@ -825,7 +825,6 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
                 addProperty(property);
         }
 
-        transitionCustomProperties.clear();
         auto gatherAnimatableCustomProperties = [&](const StyleCustomPropertyData& customPropertyData) {
             if (!customPropertyData.mayHaveAnimatableProperties())
                 return;
