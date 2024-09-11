@@ -3029,6 +3029,14 @@ media/track/in-band/track-in-band-kate-ogg-kind.html [ Skip ]
 media/track/in-band/track-in-band-kate-ogg-language.html [ Skip ]
 media/track/in-band/track-in-band-kate-ogg-track-order.html [ Skip ]
 
+# Skip tests that require the GPU process.
+webkit.org/b/279434 fast/canvas/image-buffer-resource-limits.html [ Skip ]
+webkit.org/b/279434 fast/mediastream/media-stream-video-track-interrupted-from-audio.html [ Skip ]
+webkit.org/b/279434 fast/mediastream/media-stream-video-track-interrupted.html [ Skip ]
+webkit.org/b/279434 fast/transforms/interleaved-2d-transforms-with-gpu-process.html [ Skip ]
+webkit.org/b/279434 webgl/offscreen-webgl-errors-to-console.html [ Skip ]
+webkit.org/b/279434 webgl/webgl-and-dom-in-gpup.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
 #////////////////////////////////////////////////////////////////////////////////////////

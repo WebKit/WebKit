@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && USE(GBM)
 #include "GraphicsContextGLTextureMapperANGLE.h"
+#include "GraphicsLayerContentsDisplayDelegateGBM.h"
 
 typedef void* EGLImageKHR;
 struct gbm_bo;
@@ -38,8 +39,11 @@ class GraphicsLayerContentsDisplayDelegateGBM;
 
 class GraphicsContextGLTextureMapperGBM final : public GraphicsContextGLTextureMapperANGLE {
 public:
-    static RefPtr<GraphicsContextGLTextureMapperGBM> create(GraphicsContextGLAttributes&&, RefPtr<GraphicsLayerContentsDisplayDelegateGBM>&&);
+    static RefPtr<GraphicsContextGLTextureMapperGBM> create(GraphicsContextGLAttributes&&, RefPtr<GraphicsLayerContentsDisplayDelegateGBM>&& = nullptr);
     virtual ~GraphicsContextGLTextureMapperGBM();
+
+    void prepareForDisplayWithFinishedSignal(Function<void()>&&);
+    DMABufBuffer* displayBuffer() { return m_displayBuffer.dmabuf.get(); }
 
 private:
     GraphicsContextGLTextureMapperGBM(GraphicsContextGLAttributes&&, RefPtr<GraphicsLayerContentsDisplayDelegateGBM>&&);

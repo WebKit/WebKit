@@ -43,9 +43,21 @@ std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> CoordinatedPlatformLayerBu
     return makeUnique<CoordinatedPlatformLayerBufferDMABuf>(WTFMove(dmabuf), flags, WTFMove(fence));
 }
 
+std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> CoordinatedPlatformLayerBufferDMABuf::create(Ref<DMABufBuffer>&& dmabuf, OptionSet<TextureMapperFlags> flags, UnixFileDescriptor&& fenceFD)
+{
+    return makeUnique<CoordinatedPlatformLayerBufferDMABuf>(WTFMove(dmabuf), flags, WTFMove(fenceFD));
+}
+
 CoordinatedPlatformLayerBufferDMABuf::CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&& dmabuf, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
     : CoordinatedPlatformLayerBuffer(Type::DMABuf, dmabuf->attributes().size, flags, WTFMove(fence))
     , m_dmabuf(WTFMove(dmabuf))
+{
+}
+
+CoordinatedPlatformLayerBufferDMABuf::CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&& dmabuf, OptionSet<TextureMapperFlags> flags, UnixFileDescriptor&& fenceFD)
+    : CoordinatedPlatformLayerBuffer(Type::DMABuf, dmabuf->attributes().size, flags, nullptr)
+    , m_dmabuf(WTFMove(dmabuf))
+    , m_fenceFD(WTFMove(fenceFD))
 {
 }
 
@@ -111,6 +123,11 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferDM
 void CoordinatedPlatformLayerBufferDMABuf::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)
 {
     waitForContentsIfNeeded();
+
+    if (m_fenceFD) {
+        if (auto fence = GLFence::importFD(WTFMove(m_fenceFD)))
+            fence->serverWait();
+    }
 
     if (!m_dmabuf->buffer())
         m_dmabuf->setBuffer(importDMABuf(textureMapper));

@@ -35,31 +35,39 @@ namespace WebCore {
 
 class CoordinatedPlatformLayerBuffer;
 
+struct DMABufBufferAttributes {
+    IntSize size;
+    uint32_t fourcc { 0 };
+    Vector<WTF::UnixFileDescriptor> fds;
+    Vector<uint32_t> offsets;
+    Vector<uint32_t> strides;
+    uint64_t modifier { 0 };
+};
+
 class DMABufBuffer final : public ThreadSafeRefCounted<DMABufBuffer> {
 public:
+    using Attributes = DMABufBufferAttributes;
+
     static Ref<DMABufBuffer> create(const IntSize& size, uint32_t fourcc, Vector<WTF::UnixFileDescriptor>&& fds, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier)
     {
         return adoptRef(*new DMABufBuffer(size, fourcc, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier));
     }
+    static Ref<DMABufBuffer> create(uint64_t id, Attributes&& attributes)
+    {
+        return adoptRef(*new DMABufBuffer(id, WTFMove(attributes)));
+    }
     ~DMABufBuffer();
 
     uint64_t id() const { return m_id; }
-
-    struct Attributes {
-        IntSize size;
-        uint32_t fourcc { 0 };
-        Vector<WTF::UnixFileDescriptor> fds;
-        Vector<uint32_t> offsets;
-        Vector<uint32_t> strides;
-        uint64_t modifier { 0 };
-    };
     const Attributes& attributes() const { return m_attributes; }
+    std::optional<Attributes> takeAttributes();
 
     CoordinatedPlatformLayerBuffer* buffer() const { return m_buffer.get(); }
     void setBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&);
 
 private:
     DMABufBuffer(const IntSize&, uint32_t fourcc, Vector<WTF::UnixFileDescriptor>&&, Vector<uint32_t>&&, Vector<uint32_t>&&, uint64_t modifier);
+    DMABufBuffer(uint64_t id, Attributes&&);
 
     uint64_t m_id { 0 };
     Attributes m_attributes;

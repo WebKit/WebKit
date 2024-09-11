@@ -44,11 +44,25 @@ DMABufBuffer::DMABufBuffer(const IntSize& size, uint32_t fourcc, Vector<WTF::Uni
 {
 }
 
+DMABufBuffer::DMABufBuffer(uint64_t id, Attributes&& attributes)
+    : m_id(id)
+    , m_attributes(WTFMove(attributes))
+{
+}
+
 DMABufBuffer::~DMABufBuffer() = default;
 
 void DMABufBuffer::setBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer)
 {
     m_buffer = WTFMove(buffer);
+}
+
+std::optional<DMABufBuffer::Attributes> DMABufBuffer::takeAttributes()
+{
+    if (m_attributes.fds.isEmpty())
+        return std::nullopt;
+
+    return DMABufBuffer::Attributes { WTFMove(m_attributes.size), std::exchange(m_attributes.fourcc, 0), WTFMove(m_attributes.fds), WTFMove(m_attributes.offsets), WTFMove(m_attributes.strides), std::exchange(m_attributes.modifier, 0) };
 }
 
 } // namespace WebCore

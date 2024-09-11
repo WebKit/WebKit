@@ -2159,7 +2159,7 @@ void WebProcessPool::addMockMediaDevice(const MockMediaDevice& device)
 #if ENABLE(MEDIA_STREAM)
     MockRealtimeMediaSourceCenter::addDevice(device);
     sendToAllProcesses(Messages::WebProcess::AddMockMediaDevice { device });
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && !USE(GSTREAMER)
     ensureProtectedGPUProcess()->addMockMediaDevice(device);
 #endif
 #endif
@@ -2170,7 +2170,7 @@ void WebProcessPool::clearMockMediaDevices()
 #if ENABLE(MEDIA_STREAM)
     MockRealtimeMediaSourceCenter::setDevices({ });
     sendToAllProcesses(Messages::WebProcess::ClearMockMediaDevices { });
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && !USE(GSTREAMER)
     ensureProtectedGPUProcess()->clearMockMediaDevices();
 #endif
 #endif
@@ -2181,7 +2181,7 @@ void WebProcessPool::removeMockMediaDevice(const String& persistentId)
 #if ENABLE(MEDIA_STREAM)
     MockRealtimeMediaSourceCenter::removeDevice(persistentId);
     sendToAllProcesses(Messages::WebProcess::RemoveMockMediaDevice { persistentId });
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && !USE(GSTREAMER)
     ensureProtectedGPUProcess()->removeMockMediaDevice(persistentId);
 #endif
 #endif
@@ -2193,7 +2193,7 @@ void WebProcessPool::setMockMediaDeviceIsEphemeral(const String& persistentId, b
 #if ENABLE(MEDIA_STREAM)
     MockRealtimeMediaSourceCenter::setDeviceIsEphemeral(persistentId, isEphemeral);
     sendToAllProcesses(Messages::WebProcess::SetMockMediaDeviceIsEphemeral { persistentId, isEphemeral });
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && !USE(GSTREAMER)
     ensureProtectedGPUProcess()->setMockMediaDeviceIsEphemeral(persistentId, isEphemeral);
 #endif
 #endif
@@ -2204,7 +2204,7 @@ void WebProcessPool::resetMockMediaDevices()
 #if ENABLE(MEDIA_STREAM)
     MockRealtimeMediaSourceCenter::resetDevices();
     sendToAllProcesses(Messages::WebProcess::ResetMockMediaDevices { });
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && !USE(GSTREAMER)
     ensureProtectedGPUProcess()->resetMockMediaDevices();
 #endif
 #endif

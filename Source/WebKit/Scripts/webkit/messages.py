@@ -187,6 +187,7 @@ def types_that_must_be_moved():
         'std::optional<Win32Handle>',
         'WebKit::ImageBufferSetPrepareBufferForDisplayOutputData',
         'HashMap<WebKit::RemoteImageBufferSetIdentifier, std::unique_ptr<WebKit::BufferSetBackendHandle>>',
+        'std::optional<WebCore::DMABufBufferAttributes>',
     ]
 
 
@@ -541,6 +542,7 @@ def conditions_for_header(header):
         '"WCLayerTreeHostIdentifier.h"': ["USE(GRAPHICS_LAYER_WC)"],
         '<WebCore/AttributedString.h>': ["PLATFORM(COCOA)", ],
         '<WebCore/CVUtilities.h>': ["PLATFORM(COCOA)", ],
+        '<WebCore/DMABufBuffer.h>': ["USE(GBM)"],
         '<WebCore/DataDetectorType.h>': ["ENABLE(DATA_DETECTION)"],
         '<WebCore/DynamicContentScalingDisplayList.h>': ["ENABLE(RE_DYNAMIC_CONTENT_SCALING)"],
         '<WebCore/MediaPlaybackTargetContext.h>': ["ENABLE(WIRELESS_PLAYBACK_TARGET)"],
@@ -861,6 +863,7 @@ def headers_for_type(type):
         'WebCore::DiagnosticLoggingDictionary': ['<WebCore/DiagnosticLoggingClient.h>'],
         'WebCore::DiagnosticLoggingDomain': ['<WebCore/DiagnosticLoggingDomain.h>'],
         'WebCore::DictationContext': ['<WebCore/DictationContext.h>'],
+        'WebCore::DMABufBufferAttributes': ['<WebCore/DMABufBuffer.h>'],
         'WebCore::DocumentMarkerLineStyle': ['<WebCore/GraphicsTypes.h>'],
         'WebCore::DOMCacheIdentifierID': ['"GeneratedSerializers.h"'],
         'WebCore::DOMPasteAccessCategory': ['<WebCore/DOMPasteAccess.h>'],

@@ -22,6 +22,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/texmap/BitmapTexturePool.h
     platform/graphics/texmap/ClipStack.h
     platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.h
+    platform/graphics/texmap/GraphicsLayerContentsDisplayDelegateTextureMapper.h
     platform/graphics/texmap/GraphicsLayerTextureMapper.h
     platform/graphics/texmap/TextureMapper.h
     platform/graphics/texmap/TextureMapperBackingStore.h
@@ -69,6 +70,7 @@ if (USE_COORDINATED_GRAPHICS)
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.h
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h
+        platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBuffer.h
         platform/graphics/texmap/coordinated/Tile.h
         platform/graphics/texmap/coordinated/TiledBackingStore.h
         platform/graphics/texmap/coordinated/TiledBackingStoreClient.h
@@ -83,6 +85,9 @@ if (USE_COORDINATED_GRAPHICS)
     if (USE_GBM)
         list(APPEND WebCore_SOURCES
             platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferDMABuf.cpp
+        )
+        list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+            platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferDMABuf.h
         )
     endif ()
 
@@ -185,6 +190,7 @@ if (USE_GBM)
         platform/graphics/gbm/DRMDeviceManager.h
         platform/graphics/gbm/DRMDeviceNode.h
         platform/graphics/gbm/GBMBufferSwapchain.h
-        platform/graphics/gbm/GraphicsContextGLGBM.h
+        platform/graphics/gbm/GraphicsContextGLTextureMapperGBM.h
+        platform/graphics/gbm/GraphicsLayerContentsDisplayDelegateGBM.h
     )
 endif ()

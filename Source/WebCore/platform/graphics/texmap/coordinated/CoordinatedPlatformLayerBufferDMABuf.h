@@ -27,6 +27,7 @@
 
 #if USE(COORDINATED_GRAPHICS) && USE(GBM)
 #include "CoordinatedPlatformLayerBuffer.h"
+#include <wtf/unix/UnixFileDescriptor.h>
 
 namespace WebCore {
 
@@ -35,7 +36,9 @@ class DMABufBuffer;
 class CoordinatedPlatformLayerBufferDMABuf final : public CoordinatedPlatformLayerBuffer {
 public:
     static std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> create(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
+    static std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> create(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, WTF::UnixFileDescriptor&&);
     CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
+    CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, WTF::UnixFileDescriptor&&);
     virtual ~CoordinatedPlatformLayerBufferDMABuf();
 
 private:
@@ -44,6 +47,7 @@ private:
     std::unique_ptr<CoordinatedPlatformLayerBuffer> importDMABuf(TextureMapper&) const;
 
     Ref<DMABufBuffer> m_dmabuf;
+    WTF::UnixFileDescriptor m_fenceFD;
 };
 
 } // namespace WebCore

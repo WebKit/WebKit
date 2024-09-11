@@ -24,7 +24,7 @@
 GPUProcess/glib/GPUProcessGLib.cpp
 GPUProcess/glib/GPUProcessMainGLib.cpp
 
-GPUProcess/graphics/RemoteGraphicsContextGLGBM.cpp
+GPUProcess/graphics/RemoteGraphicsContextGLGBM.cpp @no-unify
 
 GPUProcess/media/RemoteAudioDestinationManager.cpp
 

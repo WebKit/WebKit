@@ -32,7 +32,6 @@
 #include "DRMDeviceManager.h"
 #include "GBMVersioning.h"
 #include "GLFence.h"
-#include "GraphicsLayerContentsDisplayDelegateGBM.h"
 #include "PlatformDisplay.h"
 #include <drm_fourcc.h>
 #include <wtf/unix/UnixFileDescriptor.h>
@@ -94,7 +93,9 @@ bool GraphicsContextGLTextureMapperGBM::platformInitializeExtensions()
 {
     if (!enableExtension("GL_OES_EGL_image"_s))
         return false;
-    return true;
+
+    const auto& eglExtensions = PlatformDisplay::sharedDisplay().eglExtensions();
+    return eglExtensions.KHR_image_base && eglExtensions.EXT_image_dma_buf_import;
 }
 
 GraphicsContextGLTextureMapperGBM::DrawingBuffer GraphicsContextGLTextureMapperGBM::createDrawingBuffer() const
@@ -207,6 +208,17 @@ bool GraphicsContextGLTextureMapperGBM::reshapeDrawingBuffer()
 
 void GraphicsContextGLTextureMapperGBM::prepareForDisplay()
 {
+    std::unique_ptr<GLFence> fence;
+    prepareForDisplayWithFinishedSignal([&fence] {
+        fence = GLFence::create();
+    });
+
+    RELEASE_ASSERT(m_layerContentsDisplayDelegate);
+    static_cast<GraphicsLayerContentsDisplayDelegateGBM*>(m_layerContentsDisplayDelegate.get())->setDisplayBuffer(m_displayBuffer.dmabuf, WTFMove(fence));
+}
+
+void GraphicsContextGLTextureMapperGBM::prepareForDisplayWithFinishedSignal(Function<void()>&& finishedSignalCreator)
+{
     if (!makeContextCurrent())
         return;
 
@@ -214,14 +226,12 @@ void GraphicsContextGLTextureMapperGBM::prepareForDisplay()
         return;
 
     prepareTexture();
-    auto fence = GLFence::create();
+    finishedSignalCreator();
 
     if (!bindNextDrawingBuffer()) {
         forceContextLost();
         return;
     }
-
-    static_cast<GraphicsLayerContentsDisplayDelegateGBM*>(m_layerContentsDisplayDelegate.get())->setDisplayBuffer(m_displayBuffer.dmabuf, WTFMove(fence));
 }
 
 } // namespace WebCore
