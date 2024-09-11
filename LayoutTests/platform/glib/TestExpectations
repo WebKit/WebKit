@@ -1580,6 +1580,8 @@ webkit.org/b/273396 fast/borders/border-painting-correctness-dashed.html [ Image
 webkit.org/b/273396 fast/borders/border-painting-correctness-dotted.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/borders/outline-border-radius-simple.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/canvas/canvas-filter-drawing.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/canvas/canvas-filter-text-drawing.html [ ImageOnlyFailure ]
+webkit.org/b/273396 fast/canvas/canvas-layer-filter-text-drawing.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/clip/overflow-hidden-with-border-radius-overflow-clipping-parent.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/css/ignore-empty-focus-ring-rects.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ Pass ImageOnlyFailure ]

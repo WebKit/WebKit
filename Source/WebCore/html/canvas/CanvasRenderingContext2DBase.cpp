@@ -2803,12 +2803,14 @@ void CanvasRenderingContext2DBase::drawText(const String& text, double x, double
 
 void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, double x, double y, bool fill, std::optional<double> maxWidth)
 {
-    auto& fontProxy = *this->fontProxy();
-    const auto& fontMetrics = fontProxy.metricsOfPrimaryFont();
+    auto measureTextRun = [&](const TextRun& textRun) -> std::tuple<float, FontMetrics>  {
+        auto& fontProxy = *this->fontProxy();
 
-    // FIXME: Need to turn off font smoothing.
+        // FIXME: Need to turn off font smoothing.
+        return { fontProxy.width(textRun), fontProxy.metricsOfPrimaryFont() };
+    };
 
-    float fontWidth = fontProxy.width(textRun);
+    auto [fontWidth, fontMetrics] = measureTextRun(textRun);
     bool useMaxWidth = maxWidth && maxWidth.value() < fontWidth;
     float width = useMaxWidth ? maxWidth.value() : fontWidth;
     FloatPoint location(x, y);
@@ -2822,7 +2824,10 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
 
     auto targetSwitcher = CanvasFilterContextSwitcher::create(*this, textRect);
 
+    // FIXME: Need to refetch fontProxy. CanvasFilterContextSwitcher might have called save().
+    // https://bugs.webkit.org/show_bug.cgi?id=193077.
     auto* c = effectiveDrawingContext();
+    auto& fontProxy = *this->fontProxy();
 
 #if USE(CG)
     const CanvasStyle& drawStyle = fill ? state().fillStyle : state().strokeStyle;
