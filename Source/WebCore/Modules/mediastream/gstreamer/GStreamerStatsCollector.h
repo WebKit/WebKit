@@ -26,6 +26,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {
 
@@ -37,7 +38,8 @@ public:
     static Ref<GStreamerStatsCollector> create() { return adoptRef(*new GStreamerStatsCollector()); }
 
     void setElement(GstElement* element) { m_webrtcBin = element; }
-    void getStats(CollectorCallback&&, GstPad*, const GstStructure*);
+    using PreprocessCallback = Function<GUniquePtr<GstStructure>(const GRefPtr<GstPad>&, const GstStructure*)>;
+    void getStats(CollectorCallback&&, const GRefPtr<GstPad>&, PreprocessCallback&&);
 
 private:
     GRefPtr<GstElement> m_webrtcBin;

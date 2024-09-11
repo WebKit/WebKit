@@ -66,7 +66,7 @@ public:
     void doCreateOffer(const RTCOfferOptions&);
     void doCreateAnswer();
 
-    void getStats(GstPad*, const GstStructure*, Ref<DeferredPromise>&&);
+    void getStats(const GRefPtr<GstPad>&, Ref<DeferredPromise>&&);
     void getStats(RTCRtpReceiver&, Ref<DeferredPromise>&&);
 
     std::unique_ptr<RTCDataChannelHandler> createDataChannel(const String&, const RTCDataChannelInit&);
@@ -110,15 +110,16 @@ public:
     GstElement* webrtcBin() const { return m_webrtcBin.get(); }
     bool handleMessage(GstMessage*);
 
+    GUniquePtr<GstStructure> preprocessStats(const GRefPtr<GstPad>&, const GstStructure*);
 #if !RELEASE_LOG_DISABLED
-    void processStats(const GValue*);
+    void processStatsItem(const GValue*);
 #endif
 
     void connectIncomingTrack(WebRTCTrackData&);
 
 protected:
 #if !RELEASE_LOG_DISABLED
-    void onStatsDelivered(const GstStructure*);
+    void onStatsDelivered(GUniquePtr<GstStructure>&&);
 #endif
 
 private:
