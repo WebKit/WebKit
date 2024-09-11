@@ -45,9 +45,6 @@ struct TextIndicatorData;
 
 namespace WebKit {
 
-using DragPreparationBlock = BOOL(^)(void);
-using AddDragItemBlock = BOOL(^)(NSArray<UIDragItem *> *);
-
 struct DragSourceState {
     OptionSet<WebCore::DragSourceAction> action;
     CGRect dragPreviewFrameInRootViewCoordinates { CGRectZero };
@@ -71,7 +68,7 @@ public:
     bool anyActiveDragSourceContainsSelection() const;
 
     // These helper methods are unique to UIDragInteraction.
-    void prepareForDragSession(id<UIDragSession>, DragPreparationBlock);
+    void prepareForDragSession(id <UIDragSession>, dispatch_block_t completionHandler);
     void dragSessionWillBegin();
     void stageDragItem(const WebCore::DragItem&, UIImage *);
     bool hasStagedDragSource() const;
@@ -82,7 +79,7 @@ public:
     UITargetedDragPreview *previewForCancelling(UIDragItem *, UIView *contentView, UIView *previewContainer);
     void dragSessionWillDelaySetDownAnimation(dispatch_block_t completion);
     bool shouldRequestAdditionalItemForDragSession(id <UIDragSession>) const;
-    void dragSessionWillRequestAdditionalItem(AddDragItemBlock);
+    void dragSessionWillRequestAdditionalItem(void (^completion)(NSArray <UIDragItem *> *));
 
     void dropSessionDidEnterOrUpdate(id <UIDropSession>, const WebCore::DragData&);
     void dropSessionDidExit() { m_dropSession = nil; }
@@ -95,8 +92,8 @@ public:
     bool isPerformingDrop() const { return m_isPerformingDrop; }
     id<UIDragSession> dragSession() const { return m_dragSession.get(); }
     id<UIDropSession> dropSession() const { return m_dropSession.get(); }
-    BlockPtr<BOOL()> takeDragStartCompletionBlock() { return std::exchange(m_dragStartCompletionBlock, { }); }
-    BlockPtr<BOOL(NSArray<UIDragItem *> *)> takeAddDragItemCompletionBlock() { return std::exchange(m_addDragItemCompletionBlock, { }); }
+    BlockPtr<void()> takeDragStartCompletionBlock() { return WTFMove(m_dragStartCompletionBlock); }
+    BlockPtr<void(NSArray<UIDragItem *> *)> takeAddDragItemCompletionBlock() { return WTFMove(m_addDragItemCompletionBlock); }
     RetainPtr<UIView> takePreviewViewForDragCancel() { return std::exchange(m_previewViewForDragCancel, { }); }
 
     void addDefaultDropPreview(UIDragItem *, UITargetedDragPreview *);
@@ -117,8 +114,8 @@ private:
     bool m_isPerformingDrop { false };
     RetainPtr<id <UIDragSession>> m_dragSession;
     RetainPtr<id <UIDropSession>> m_dropSession;
-    BlockPtr<BOOL()> m_dragStartCompletionBlock;
-    BlockPtr<BOOL(NSArray<UIDragItem *> *)> m_addDragItemCompletionBlock;
+    BlockPtr<void()> m_dragStartCompletionBlock;
+    BlockPtr<void(NSArray<UIDragItem *> *)> m_addDragItemCompletionBlock;
     RetainPtr<UIView> m_previewViewForDragCancel;
 
     std::optional<DragSourceState> m_stagedDragSource;

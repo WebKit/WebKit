@@ -32,7 +32,6 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "UIKitSPIForTesting.h"
-#import <BrowserEngineKit/BrowserEngineKit.h>
 #import <UIKit/UIDragInteraction.h>
 #import <UIKit/UIDragItem.h>
 #import <UIKit/UIDropInteraction.h>
@@ -42,6 +41,10 @@
 #import <WebKit/_WKFormInputSession.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
+
+#if USE(BROWSERENGINEKIT)
+#import <BrowserEngineKit/BrowserEngineKit.h>
+#endif
 
 using namespace TestWebKitAPI;
 
@@ -88,29 +91,45 @@ static char dragDropSimulatorKey;
     return (id<UIDropInteractionDelegate>)self._dragDropInteractionView;
 }
 
+template<typename InteractionType>
+InteractionType *findInteractionOfType(UIView *view)
+{
+    for (id<UIInteraction> interaction in view.interactions) {
+        if (auto foundInteraction = dynamic_objc_cast<InteractionType>(interaction))
+            return foundInteraction;
+    }
+    return nil;
+}
+
+#if USE(BROWSERENGINEKIT)
+
 - (id<BEDragInteractionDelegate>)dragInteractionDelegate
 {
     return (id<BEDragInteractionDelegate>)self._dragDropInteractionView;
 }
 
-- (UIDropInteraction *)dropInteraction
+- (BEDragInteraction *)dragInteraction
 {
-    UIView *interactionView = self._dragDropInteractionView;
-    for (id <UIInteraction> interaction in interactionView.interactions) {
-        if ([interaction isKindOfClass:[UIDropInteraction class]])
-            return (UIDropInteraction *)interaction;
-    }
-    return nil;
+    return findInteractionOfType<BEDragInteraction>(self._dragDropInteractionView);
+}
+
+#else
+
+- (id<UIDragInteractionDelegate>)dragInteractionDelegate
+{
+    return (id<UIDragInteractionDelegate>)self._dragDropInteractionView;
 }
 
 - (UIDragInteraction *)dragInteraction
 {
-    UIView *interactionView = self._dragDropInteractionView;
-    for (id <UIInteraction> interaction in interactionView.interactions) {
-        if ([interaction isKindOfClass:[UIDragInteraction class]])
-            return (UIDragInteraction *)interaction;
-    }
-    return nil;
+    return findInteractionOfType<UIDragInteraction>(self._dragDropInteractionView);
+}
+
+#endif
+
+- (UIDropInteraction *)dropInteraction
+{
+    return findInteractionOfType<UIDropInteraction>(self._dragDropInteractionView);
 }
 
 @end
@@ -484,6 +503,7 @@ IGNORE_WARNINGS_END
     } else {
         _dragSession = adoptNS([[MockDragSession alloc] initWithWindow:[_webView window] allowMove:self.shouldAllowMoveOperation]);
         [_dragSession setMockLocationInWindow:_startLocation];
+#if USE(BROWSERENGINEKIT)
         [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] prepareDragSession:_dragSession.get() completion:[strongSelf = retainPtr(self)] {
             if (strongSelf->_phase == DragAndDropPhaseCancelled)
                 return NO;
@@ -492,6 +512,15 @@ IGNORE_WARNINGS_END
             [strongSelf _advanceProgress];
             return YES;
         }];
+#else
+        [(id<UIDragInteractionDelegate_ForWebKitOnly>)[_webView dragInteractionDelegate] _dragInteraction:[_webView dragInteraction] prepareForSession:_dragSession.get() completion:[strongSelf = retainPtr(self)] {
+            if (strongSelf->_phase == DragAndDropPhaseCancelled)
+                return;
+
+            strongSelf->_phase = DragAndDropPhaseBeginning;
+            [strongSelf _advanceProgress];
+        }];
+#endif
     }
 
     Util::run(&_isDoneWithCurrentRun);
@@ -610,11 +639,18 @@ IGNORE_WARNINGS_END
     [_queuedAdditionalItemRequestLocations removeObjectAtIndex:0];
 
     auto requestLocation = [[_webView window] convertPoint:[requestLocationValue CGPointValue] toView:_webView.get()];
+#if USE(BROWSERENGINEKIT)
     [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] itemsForAddingToSession:_dragSession.get() forTouchAtPoint:requestLocation completion:[dragSession = _dragSession, dropSession = _dropSession](NSArray *items) {
         [dragSession addItems:items];
         [dropSession addItems:items];
         return YES;
     }];
+#else
+    [(id<UIDragInteractionDelegate_ForWebKitOnly>)[_webView dragInteractionDelegate] _dragInteraction:[_webView dragInteraction] itemsForAddingToSession:_dragSession.get() withTouchAtPoint:requestLocation completion:[dragSession = _dragSession, dropSession = _dropSession] (NSArray *items) {
+        [dragSession addItems:items];
+        [dropSession addItems:items];
+    }];
+#endif
     return YES;
 }
 

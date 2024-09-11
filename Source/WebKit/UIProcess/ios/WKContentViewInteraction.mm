@@ -10049,7 +10049,7 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
 
 - (void)_didHandleDragStartRequest:(BOOL)started
 {
-    auto savedCompletionBlock = _dragDropInteractionState.takeDragStartCompletionBlock();
+    BlockPtr<void()> savedCompletionBlock = _dragDropInteractionState.takeDragStartCompletionBlock();
     ASSERT(savedCompletionBlock);
 
     RELEASE_LOG(DragAndDrop, "Handling drag start request (started: %d, completion block: %p)", started, savedCompletionBlock.get());
@@ -10525,11 +10525,18 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     return dataOwner;
 }
 
-#if USE(BROWSERENGINEKIT)
+- (void)_dragInteraction:(UIDragInteraction *)interaction itemsForAddingToSession:(id<UIDragSession>)session withTouchAtPoint:(CGPoint)point completion:(void(^)(NSArray<UIDragItem *> *))completion
+{
+    if (!_dragDropInteractionState.shouldRequestAdditionalItemForDragSession(session)) {
+        completion(@[ ]);
+        return;
+    }
 
-#pragma mark - BEDragInteractionDelegate
+    _dragDropInteractionState.dragSessionWillRequestAdditionalItem(completion);
+    _page->requestAdditionalItemsForDragSession(WebCore::roundedIntPoint(point), WebCore::roundedIntPoint(point), self._allowedDragSourceActions);
+}
 
-- (void)dragInteraction:(BEDragInteraction *)interaction prepareDragSession:(id<UIDragSession>)session completion:(BOOL(^)(void))completion
+- (void)_dragInteraction:(UIDragInteraction *)interaction prepareForSession:(id<UIDragSession>)session completion:(dispatch_block_t)completion
 {
     RELEASE_LOG(DragAndDrop, "Preparing for drag session: %p", session);
     if (self.currentDragOrDropSession) {
@@ -10560,19 +10567,6 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     prepareForSession(WebKit::ProceedWithTextSelectionInImage::No);
 #endif
 }
-
-- (void)dragInteraction:(BEDragInteraction *)interaction itemsForAddingToSession:(id<UIDragSession>)session forTouchAtPoint:(CGPoint)point completion:(BOOL(^)(NSArray<UIDragItem *> *))completion
-{
-    if (!_dragDropInteractionState.shouldRequestAdditionalItemForDragSession(session)) {
-        completion(@[ ]);
-        return;
-    }
-
-    _dragDropInteractionState.dragSessionWillRequestAdditionalItem(completion);
-    _page->requestAdditionalItemsForDragSession(WebCore::roundedIntPoint(point), WebCore::roundedIntPoint(point), self._allowedDragSourceActions);
-}
-
-#endif // USE(BROWSERENGINEKIT)
 
 - (NSArray<UIDragItem *> *)dragInteraction:(UIDragInteraction *)interaction itemsForBeginningSession:(id<UIDragSession>)session
 {
@@ -10705,6 +10699,26 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 {
     [existingLocalDragSessionContext(session) cleanUpTemporaryDirectories];
 }
+
+#if USE(BROWSERENGINEKIT)
+
+#pragma mark - BEDragInteractionDelegate
+
+- (void)dragInteraction:(BEDragInteraction *)interaction prepareDragSession:(id<UIDragSession>)session completion:(BOOL(^)(void))completion
+{
+    [self _dragInteraction:interaction prepareForSession:session completion:[completion = makeBlockPtr(completion)] {
+        completion();
+    }];
+}
+
+- (void)dragInteraction:(BEDragInteraction *)interaction itemsForAddingToSession:(id<UIDragSession>)session forTouchAtPoint:(CGPoint)point completion:(BOOL(^)(NSArray<UIDragItem *> *))completion
+{
+    [self _dragInteraction:interaction itemsForAddingToSession:session withTouchAtPoint:point completion:[completion = makeBlockPtr(completion)](NSArray<UIDragItem *> *items) {
+        completion(items);
+    }];
+}
+
+#endif // USE(BROWSERENGINEKIT)
 
 #pragma mark - UIDropInteractionDelegate
 

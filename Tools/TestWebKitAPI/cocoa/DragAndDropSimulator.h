@@ -72,9 +72,14 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 
 @interface WKWebView (DragAndDropTesting)
 - (id<UIDropInteractionDelegate>)dropInteractionDelegate;
-- (id<BEDragInteractionDelegate>)dragInteractionDelegate;
 - (UIDropInteraction *)dropInteraction;
+#if USE(BROWSERENGINEKIT)
+- (id<BEDragInteractionDelegate>)dragInteractionDelegate;
 - (BEDragInteraction *)dragInteraction;
+#else
+- (id<UIDragInteractionDelegate>)dragInteractionDelegate;
+- (UIDragInteraction *)dragInteraction;
+#endif
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
