@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 
-# If the package $1 is available, prints it. Otherwise prints $2.
+# If the package $1 is available, prints it. Otherwise if package $2 is available, prints $2.
 # Useful for handling when a package is renamed on new versions of Debian/Ubuntu.
 aptIfElse() {
     if apt-cache show $1 &>/dev/null; then
         echo $1
-    else
+    elif apt-cache show $2 &>/dev/null; then
         echo $2
+    else
+        echo "Neither package is available: $1, $2" 1>&2
+        exit 1
     fi
 }
 
