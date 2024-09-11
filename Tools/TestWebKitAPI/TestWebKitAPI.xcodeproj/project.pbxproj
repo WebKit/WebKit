@@ -200,6 +200,7 @@
 		2EFF06CD1D8A429A0004BB30 /* input-field-in-scrollable-document.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EFF06CC1D8A42910004BB30 /* input-field-in-scrollable-document.html */; };
 		3128A81323763FAC00D90D40 /* link-with-image.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3128A81223763F0B00D90D40 /* link-with-image.html */; };
 		3128A8152376413300D90D40 /* image.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3128A814237640FD00D90D40 /* image.html */; };
+		313B8EFD2C6C76600031A0AC /* SizesCalcParserTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 313B8EFC2C6C76540031A0AC /* SizesCalcParserTests.cpp */; };
 		313C3A0221E567C300DBA86E /* SystemPreviewBlobNaming.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 313C3A0121E5677A00DBA86E /* SystemPreviewBlobNaming.html */; };
 		31727A5329F7518C00A7FB0F /* system-preview.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 31727A4A29F7338C00A7FB0F /* system-preview.html */; };
 		31727A5429F7519400A7FB0F /* UnitBox.usdz in Copy Resources */ = {isa = PBXBuildFile; fileRef = 31727A5229F733D300A7FB0F /* UnitBox.usdz */; };
@@ -2334,6 +2335,7 @@
 		2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewCandidateTests.mm; sourceTree = "<group>"; };
 		3128A81223763F0B00D90D40 /* link-with-image.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "link-with-image.html"; sourceTree = "<group>"; };
 		3128A814237640FD00D90D40 /* image.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = image.html; sourceTree = "<group>"; };
+		313B8EFC2C6C76540031A0AC /* SizesCalcParserTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SizesCalcParserTests.cpp; sourceTree = "<group>"; };
 		313C3A0121E5677A00DBA86E /* SystemPreviewBlobNaming.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SystemPreviewBlobNaming.html; sourceTree = "<group>"; };
 		31727A4A29F7338C00A7FB0F /* system-preview.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "system-preview.html"; sourceTree = "<group>"; };
 		31727A5229F733D300A7FB0F /* UnitBox.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = UnitBox.usdz; sourceTree = "<group>"; };
@@ -4576,6 +4578,7 @@
 				41973B5C1AF22875006C7B36 /* SharedBuffer.cpp */,
 				A17991891E1CA24100A505ED /* SharedBufferTest.cpp */,
 				A179918A1E1CA24100A505ED /* SharedBufferTest.h */,
+				313B8EFC2C6C76540031A0AC /* SizesCalcParserTests.cpp */,
 				ECA680CD1E68CC0900731D20 /* StringUtilities.mm */,
 				CE4D5DE51F6743BA0072CFC6 /* StringWithDirection.cpp */,
 				41E67A8425D16E83007B0A4C /* STUNMessageParsingTest.cpp */,
@@ -6887,6 +6890,7 @@
 				51EB126324CA6B66000CB030 /* ShenzhenLongshengweiTechnologyGamepad.mm in Sources */,
 				7CCE7F141A411AE600447C4C /* ShouldKeepCurrentBackForwardListItemInList.cpp in Sources */,
 				7CCE7ECD1A411A7E00447C4C /* SimplifyMarkup.mm in Sources */,
+				313B8EFD2C6C76600031A0AC /* SizesCalcParserTests.cpp in Sources */,
 				C149D550242E98DF003EBB12 /* SleepDisabler.mm in Sources */,
 				0F4FFA9E1ED3AA8500F7111F /* SnapshotViaRenderInContext.mm in Sources */,
 				510A91F824D3622100BFD89C /* SonyDualShock3.mm in Sources */,

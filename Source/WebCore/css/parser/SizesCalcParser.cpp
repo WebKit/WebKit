@@ -62,24 +62,19 @@ static bool operatorPriority(UChar cc, bool& highPriority)
 
 bool SizesCalcParser::handleOperator(Vector<CSSParserToken>& stack, const CSSParserToken& token)
 {
-    // If the token is an operator, o1, then:
-    // while there is an operator token, o2, at the top of the stack, and
-    // either o1 is left-associative and its precedence is equal to that of o2,
-    // or o1 has precedence less than that of o2,
-    // pop o2 off the stack, onto the output queue;
-    // push o1 onto the stack.
-    bool stackOperatorPriority;
     bool incomingOperatorPriority;
-
     if (!operatorPriority(token.delimiter(), incomingOperatorPriority))
         return false;
-    if (!stack.isEmpty() && stack.last().type() == DelimiterToken) {
+    while (!stack.isEmpty()) {
+        if (stack.last().type() != DelimiterToken)
+            break;
+        bool stackOperatorPriority;
         if (!operatorPriority(stack.last().delimiter(), stackOperatorPriority))
             return false;
-        if (!incomingOperatorPriority || stackOperatorPriority) {
-            appendOperator(stack.last());
-            stack.removeLast();
-        }
+        if (incomingOperatorPriority && !stackOperatorPriority)
+            break;
+        appendOperator(stack.last());
+        stack.removeLast();
     }
     stack.append(token);
     return true;
