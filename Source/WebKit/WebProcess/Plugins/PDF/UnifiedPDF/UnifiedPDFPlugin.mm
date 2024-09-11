@@ -364,7 +364,7 @@ void UnifiedPDFPlugin::createPasswordEntryForm()
 void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
 {
     std::optional<ShouldUpdateAutoSizeScale> shouldUpdateAutoSizeScaleOverride;
-    if (isLocked() && !m_documentLayout.pageCount())
+    if (isLocked())
         shouldUpdateAutoSizeScaleOverride = ShouldUpdateAutoSizeScale::Yes;
 
     if (![m_pdfDocument unlockWithPassword:password]) {
