@@ -1,3 +1,4 @@
+
 ByteLengthQueuingStrategyBuiltins.h
 CommandLineAPIModuleSourceBuiltins.h
 CompressionStreamBuiltins.h
@@ -44,7 +45,6 @@ JSCSSMathMax.cpp
 JSCSSMatrixComponent.cpp
 JSCSSNestedDeclarations.cpp
 JSCSSNumericArray.cpp
-JSCSSPageRule.cpp
 JSCSSRotate.cpp
 JSCSSRuleList.cpp
 JSCSSSkew.cpp
@@ -73,7 +73,6 @@ JSCrypto.cpp
 JSCryptoKey.cpp
 JSCustomAnimationOptions.cpp
 JSCustomElementRegistry.cpp
-JSCustomStateSet.cpp
 JSDOMApplicationCache.cpp
 JSDOMAudioSession.cpp
 JSDOMBindingInternalsBuiltins.h
@@ -123,7 +122,6 @@ JSGCObservation.cpp
 JSGPUBindGroup.cpp
 JSGPUCommandEncoder.cpp
 JSGPUComputePassEncoder.cpp
-JSGPUComputePipeline.cpp
 JSGPUQueue.cpp
 JSGPURenderBundleEncoder.cpp
 JSGPURenderPassEncoder.cpp
@@ -145,7 +143,6 @@ JSHTMLEmbedElement.cpp
 JSHTMLFormControlsCollection.cpp
 JSHTMLFormElement.cpp
 JSHTMLFrameElement.cpp
-JSHTMLFrameSetElement.cpp
 JSHTMLIFrameElement.cpp
 JSHTMLInputElement.cpp
 JSHTMLLinkElement.cpp
@@ -203,7 +200,6 @@ JSMediaStreamAudioDestinationNode.cpp
 JSMediaStreamAudioSourceNode.cpp
 JSMediaStreamTrack.cpp
 JSMemoryInfo.cpp
-JSMerchantValidationEvent.cpp
 JSMessageChannel.cpp
 JSMessageEvent.cpp
 JSMessagePort.cpp
@@ -231,7 +227,6 @@ JSOfflineAudioContext.cpp
 JSOffscreenCanvas.cpp
 JSOffscreenCanvasRenderingContext2D.cpp
 JSOscillatorNode.cpp
-JSOverconstrainedError.cpp
 JSPaintRenderingContext2D.cpp
 JSPaintWorkletGlobalScope.cpp
 JSPannerNode.cpp
@@ -347,7 +342,6 @@ JSSubscriber.cpp
 JSSubtleCrypto.cpp
 JSTextTrack.cpp
 JSTextTrackCue.cpp
-JSTextTrackCueList.cpp
 JSTextTrackList.cpp
 JSTransformStream.cpp
 JSTreeWalker.cpp
@@ -433,14 +427,12 @@ Modules/applicationmanifest/ApplicationManifestParser.cpp
 Modules/async-clipboard/Clipboard.cpp
 Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp
 Modules/async-clipboard/ClipboardItemPasteboardDataSource.cpp
-Modules/async-clipboard/NavigatorClipboard.cpp
 Modules/audiosession/NavigatorAudioSession.cpp
 Modules/cache/DOMCache.cpp
 Modules/cache/DOMCacheStorage.cpp
 Modules/cache/RetrieveRecordsOptions.h
 Modules/cache/WindowOrWorkerGlobalScopeCaches.cpp
 Modules/contact-picker/ContactsManager.cpp
-Modules/contact-picker/NavigatorContacts.cpp
 Modules/cookie-consent/NavigatorCookieConsent.cpp
 Modules/cookie-store/CookieStore.cpp
 Modules/credentialmanagement/CredentialsContainer.cpp
@@ -479,7 +471,6 @@ Modules/geolocation/GeoNotifier.cpp
 Modules/geolocation/Geolocation.cpp
 Modules/geolocation/GeolocationController.cpp
 Modules/geolocation/GeolocationPosition.h
-Modules/geolocation/NavigatorGeolocation.cpp
 Modules/highlight/AppHighlightStorage.cpp
 Modules/highlight/Highlight.cpp
 Modules/highlight/HighlightRegistry.cpp
@@ -499,15 +490,11 @@ Modules/indexeddb/IDBRequest.cpp
 Modules/indexeddb/IDBTransaction.cpp
 Modules/indexeddb/IDBTransaction.h
 Modules/indexeddb/client/IDBConnectionProxy.cpp
-Modules/indexeddb/client/IDBConnectionProxy.h
 Modules/indexeddb/client/IDBConnectionToServer.cpp
 Modules/indexeddb/client/TransactionOperation.h
 Modules/indexeddb/server/MemoryBackingStoreTransaction.cpp
 Modules/indexeddb/server/MemoryIDBBackingStore.cpp
 Modules/indexeddb/server/MemoryIndex.cpp
-Modules/indexeddb/server/MemoryIndexCursor.cpp
-Modules/indexeddb/server/MemoryObjectStore.cpp
-Modules/indexeddb/server/MemoryObjectStoreCursor.cpp
 Modules/indexeddb/server/ServerOpenDBRequest.cpp
 Modules/indexeddb/server/UniqueIDBDatabase.cpp
 Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp
@@ -573,7 +560,6 @@ Modules/paymentrequest/PaymentRequest.cpp
 Modules/paymentrequest/PaymentRequestUpdateEvent.cpp
 Modules/paymentrequest/PaymentResponse.cpp
 Modules/permissions/MainThreadPermissionObserver.cpp
-Modules/permissions/NavigatorPermissions.cpp
 Modules/permissions/Permissions.cpp
 Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp
 Modules/plugins/YouTubePluginReplacement.cpp
@@ -647,8 +633,6 @@ Modules/webcodecs/WebCodecsAudioData.cpp
 Modules/webcodecs/WebCodecsAudioDecoder.cpp
 Modules/webcodecs/WebCodecsAudioEncoder.cpp
 Modules/webcodecs/WebCodecsAudioInternalData.h
-Modules/webcodecs/WebCodecsVideoDecoder.cpp
-Modules/webcodecs/WebCodecsVideoEncoder.cpp
 Modules/webcodecs/WebCodecsVideoFrame.cpp
 Modules/webdatabase/ChangeVersionWrapper.cpp
 Modules/webdatabase/Database.cpp
@@ -724,7 +708,6 @@ accessibility/mac/AXObjectCacheMac.mm
 accessibility/mac/AccessibilityObjectMac.mm
 accessibility/mac/WebAccessibilityObjectWrapperBase.mm
 accessibility/mac/WebAccessibilityObjectWrapperMac.mm
-
 animation/AcceleratedTimeline.cpp
 animation/AnimationEffect.cpp
 animation/AnimationEffectTiming.cpp
@@ -816,7 +799,6 @@ bindings/js/JSMessageChannelCustom.cpp
 bindings/js/JSMessagePortCustom.cpp
 bindings/js/JSMutationObserverCustom.cpp
 bindings/js/JSMutationRecordCustom.cpp
-bindings/js/JSNavigatorCustom.cpp
 bindings/js/JSNodeCustom.cpp
 bindings/js/JSNodeListCustom.cpp
 bindings/js/JSNodeListCustom.h
@@ -846,7 +828,6 @@ bindings/js/JSWebGL2RenderingContextCustom.cpp
 bindings/js/JSWindowProxy.cpp
 bindings/js/JSWorkerGlobalScopeBase.cpp
 bindings/js/JSWorkerGlobalScopeCustom.cpp
-bindings/js/JSWorkerNavigatorCustom.cpp
 bindings/js/JSWorkletGlobalScopeBase.cpp
 bindings/js/JSXMLHttpRequestCustom.cpp
 bindings/js/ScheduledAction.cpp
@@ -862,7 +843,6 @@ bindings/js/WebAssemblyCachedScriptSourceProvider.h
 bindings/js/WebCoreJSClientData.cpp
 bindings/js/WebCoreTypedArrayController.cpp
 bindings/js/WindowProxy.cpp
-bindings/js/WorkerModuleScriptLoader.cpp
 bridge/jsc/BridgeJSC.cpp
 bridge/objc/WebScriptObject.mm
 bridge/objc/objc_instance.mm
@@ -980,32 +960,18 @@ css/StyleRuleImport.cpp
 css/StyleRuleImport.h
 css/StyleSheetContents.cpp
 css/StyleSheetList.cpp
-css/TransformFunctions.cpp
-css/calc/CSSCalcInvertNode.h
-css/calc/CSSCalcNegateNode.cpp
-css/calc/CSSCalcNegateNode.h
-css/calc/CSSCalcOperationNode.cpp
-css/calc/CSSCalcPrimitiveValueNode.cpp
-css/calc/CSSCalcValue.cpp
 css/color/CSSUnresolvedColorKeyword.cpp
 css/color/CSSUnresolvedLightDark.cpp
-css/parser/CSSCalcParser.cpp
-css/parser/CSSParserContext.cpp
 css/parser/CSSParserImpl.cpp
 css/parser/CSSPropertyParser.cpp
-css/parser/CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h
 css/parser/CSSPropertyParserConsumer+Grid.cpp
 css/parser/CSSPropertyParserConsumer+Image.cpp
-css/parser/CSSPropertyParserConsumer+RawResolver.h
 css/parser/CSSPropertyParserConsumer+UnevaluatedCalc.cpp
-css/parser/CSSPropertyParserHelpers.cpp
 css/parser/CSSSelectorParser.cpp
 css/parser/CSSTokenizerInputStream.cpp
 css/parser/CSSTokenizerInputStream.h
 css/parser/SizesCalcParser.cpp
 css/query/GenericMediaQuerySerialization.cpp
-css/query/MediaQueryFeatures.cpp
-css/typedom/CSSNumericValue.cpp
 css/typedom/CSSOMVariableReferenceValue.cpp
 css/typedom/CSSStyleImageValue.cpp
 css/typedom/CSSStyleImageValue.h
@@ -1019,7 +985,6 @@ css/typedom/StylePropertyMap.cpp
 css/typedom/numeric/CSSMathClamp.cpp
 css/typedom/numeric/CSSMathInvert.cpp
 css/typedom/numeric/CSSMathMax.cpp
-css/typedom/numeric/CSSMathMin.cpp
 css/typedom/numeric/CSSMathNegate.cpp
 css/typedom/numeric/CSSMathValue.h
 css/typedom/transform/CSSPerspective.cpp
@@ -1384,7 +1349,6 @@ html/parser/HTMLDocumentParserFastPath.cpp
 html/parser/HTMLElementStack.cpp
 html/parser/HTMLFormattingElementList.cpp
 html/parser/HTMLParserScheduler.cpp
-html/parser/HTMLResourcePreloader.cpp
 html/parser/HTMLScriptRunner.cpp
 html/parser/HTMLTreeBuilder.cpp
 html/shadow/DateTimeEditElement.cpp
@@ -1483,7 +1447,6 @@ loader/ImageLoader.h
 loader/LinkLoader.cpp
 loader/MediaResourceLoader.cpp
 loader/MixedContentChecker.cpp
-loader/NavigationAction.cpp
 loader/NavigationDisabler.h
 loader/NavigationScheduler.cpp
 loader/PingLoader.cpp
@@ -1550,7 +1513,6 @@ page/LocalFrameView.cpp
 page/LocalFrameView.h
 page/LocalFrameViewLayoutContext.cpp
 page/Location.cpp
-page/MemoryRelease.cpp
 page/Navigation.cpp
 page/NavigationDestination.cpp
 page/NavigationDestination.h
@@ -1562,7 +1524,6 @@ page/NavigatorLoginStatus.cpp
 page/OpportunisticTaskScheduler.cpp
 page/Page.cpp
 page/Page.h
-page/PageColorSampler.cpp
 page/PageConsoleClient.cpp
 page/PageDebuggable.cpp
 page/PageGroupLoadDeferrer.cpp
@@ -1648,14 +1609,12 @@ platform/ShareableResource.cpp
 platform/SharedBuffer.cpp
 platform/SharedBuffer.h
 platform/Timer.cpp
-platform/Widget.cpp
 platform/animation/AcceleratedEffectValues.cpp
 platform/animation/Animation.cpp
 platform/animation/AnimationList.cpp
 platform/audio/AudioResampler.cpp
 platform/audio/AudioSession.cpp
 platform/audio/HRTFDatabaseLoader.cpp
-platform/audio/MultiChannelResampler.cpp
 platform/audio/PlatformMediaSession.cpp
 platform/audio/PlatformMediaSessionManager.cpp
 platform/audio/Reverb.cpp
@@ -1802,16 +1761,12 @@ platform/graphics/mac/controls/ControlMac.mm
 platform/graphics/opentype/OpenTypeMathData.cpp
 platform/graphics/transforms/TransformOperations.cpp
 platform/image-decoders/ScalableImageDecoder.cpp
-platform/image-decoders/jpegxl/JPEGXLImageDecoder.cpp
-platform/libwebrtc/LibWebRTCVPXVideoDecoder.cpp
 platform/libwebrtc/LibWebRTCVPXVideoEncoder.cpp
 platform/mac/DataDetectorHighlight.mm
 platform/mac/PasteboardMac.mm
 platform/mac/PasteboardWriter.mm
 platform/mac/ScrollbarsControllerMac.mm
-platform/mac/VideoPresentationInterfaceMac.h
 platform/mac/VideoPresentationInterfaceMac.mm
-platform/mac/WebPlaybackControlsManager.mm
 platform/mediarecorder/MediaRecorderPrivate.h
 platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp
 platform/mediarecorder/MediaRecorderPrivateMock.cpp
@@ -1920,7 +1875,6 @@ rendering/RenderListMarker.cpp
 rendering/RenderMedia.cpp
 rendering/RenderMenuList.cpp
 rendering/RenderMeter.cpp
-rendering/RenderMultiColumnFlow.cpp
 rendering/RenderMultiColumnSet.cpp
 rendering/RenderObject.cpp
 rendering/RenderObject.h
@@ -2004,7 +1958,6 @@ rendering/svg/RenderSVGText.cpp
 rendering/svg/RenderSVGTextPath.cpp
 rendering/svg/SVGInlineTextBox.cpp
 rendering/svg/SVGLayerTransformComputation.h
-rendering/svg/SVGPaintServerHandling.h
 rendering/svg/SVGRenderSupport.cpp
 rendering/svg/SVGRenderTreeAsText.cpp
 rendering/svg/SVGRenderingContext.cpp
@@ -2016,7 +1969,6 @@ rendering/svg/legacy/LegacyRenderSVGForeignObject.cpp
 rendering/svg/legacy/LegacyRenderSVGImage.cpp
 rendering/svg/legacy/LegacyRenderSVGModelObject.cpp
 rendering/svg/legacy/LegacyRenderSVGRect.cpp
-rendering/svg/legacy/LegacyRenderSVGResource.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceClipper.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceClipperInlines.h
 rendering/svg/legacy/LegacyRenderSVGResourceContainer.cpp
@@ -2029,7 +1981,6 @@ rendering/svg/legacy/LegacyRenderSVGResourceMarkerInlines.h
 rendering/svg/legacy/LegacyRenderSVGResourceMasker.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceMaskerInlines.h
 rendering/svg/legacy/LegacyRenderSVGResourcePattern.cpp
-rendering/svg/legacy/LegacyRenderSVGResourceSolidColor.cpp
 rendering/svg/legacy/LegacyRenderSVGRoot.cpp
 rendering/svg/legacy/LegacyRenderSVGShape.cpp
 rendering/svg/legacy/LegacyRenderSVGViewportContainer.cpp
@@ -2206,7 +2157,6 @@ testing/MockPageOverlayClient.cpp
 testing/MockPaymentCoordinator.cpp
 testing/ServiceWorkerInternals.cpp
 testing/js/WebCoreTestSupport.cpp
-workers/AbstractWorker.cpp
 workers/DedicatedWorkerGlobalScope.cpp
 workers/ScriptBuffer.cpp
 workers/Worker.cpp
@@ -2231,7 +2181,6 @@ workers/service/ServiceWorkerClientData.cpp
 workers/service/ServiceWorkerClients.cpp
 workers/service/ServiceWorkerContainer.cpp
 workers/service/ServiceWorkerGlobalScope.cpp
-workers/service/ServiceWorkerJob.cpp
 workers/service/ServiceWorkerRegistration.cpp
 workers/service/ServiceWorkerWindowClient.cpp
 workers/service/background-fetch/BackgroundFetch.cpp
@@ -2258,12 +2207,10 @@ worklets/WorkletGlobalScope.cpp
 worklets/WorkletPendingTasks.cpp
 xml/DOMParser.cpp
 xml/NativeXPathNSResolver.cpp
-xml/XMLErrors.cpp
 xml/XMLHttpRequest.cpp
 xml/XMLHttpRequestProgressEventThrottle.cpp
 xml/XMLHttpRequestUpload.cpp
 xml/XMLHttpRequestUpload.h
-xml/XMLTreeViewer.cpp
 xml/XPathEvaluator.cpp
 xml/XPathExpression.cpp
 xml/XPathFunctions.cpp

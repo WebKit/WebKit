@@ -32,6 +32,8 @@ GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.cpp
 GPUProcess/graphics/WebGPU/RemoteRenderPipeline.cpp
 GPUProcess/graphics/WebGPU/RemoteShaderModule.cpp
 GPUProcess/graphics/WebGPU/RemoteTexture.cpp
+GPUProcess/graphics/WebGPU/RemoteXRProjectionLayer.cpp
+GPUProcess/graphics/WebGPU/RemoteXRSubImage.cpp
 GPUProcess/mac/LocalAudioSessionRoutingArbitrator.cpp
 GPUProcess/media/RemoteAudioDestinationManager.cpp
 GPUProcess/media/RemoteAudioHardwareListenerProxy.cpp
@@ -108,6 +110,7 @@ NetworkProcess/NetworkContentRuleListManager.cpp
 NetworkProcess/NetworkDataTask.cpp
 NetworkProcess/NetworkDataTaskBlob.cpp
 NetworkProcess/NetworkLoad.cpp
+NetworkProcess/NetworkLoad.h
 NetworkProcess/NetworkLoadChecker.cpp
 NetworkProcess/NetworkProcess.cpp
 NetworkProcess/NetworkResourceLoader.cpp
@@ -145,6 +148,7 @@ NetworkProcess/storage/OriginStorageManager.cpp
 NetworkProcess/storage/SQLiteStorageArea.cpp
 NetworkProcess/webrtc/NetworkRTCMonitor.cpp
 NetworkProcess/webrtc/NetworkRTCProvider.cpp
+NetworkProcess/webrtc/NetworkRTCProvider.h
 NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm
 NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.cpp
 Platform/IPC/ArgumentCoders.h
@@ -225,6 +229,7 @@ Shared/WebGPU/WebGPURenderPassColorAttachment.cpp
 Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.cpp
 Shared/WebGPU/WebGPURenderPassDescriptor.cpp
 Shared/WebGPU/WebGPURenderPassTimestampWrites.cpp
+Shared/WebGPU/WebGPUShaderModuleCompilationHint.cpp
 Shared/WebHitTestResultData.cpp
 Shared/WebImage.cpp
 Shared/WebMemorySampler.cpp
@@ -307,6 +312,14 @@ UIProcess/API/Cocoa/WKProcessPool.mm
 UIProcess/API/Cocoa/WKURLSchemeTask.mm
 UIProcess/API/Cocoa/WKUserContentController.mm
 UIProcess/API/Cocoa/WKUserScript.mm
+UIProcess/API/Cocoa/WKWebExtension.mm
+UIProcess/API/Cocoa/WKWebExtensionAction.mm
+UIProcess/API/Cocoa/WKWebExtensionCommand.mm
+UIProcess/API/Cocoa/WKWebExtensionController.mm
+UIProcess/API/Cocoa/WKWebExtensionControllerConfiguration.mm
+UIProcess/API/Cocoa/WKWebExtensionDataRecord.mm
+UIProcess/API/Cocoa/WKWebExtensionMatchPattern.mm
+UIProcess/API/Cocoa/WKWebExtensionMessagePort.mm
 UIProcess/API/Cocoa/WKWebView.mm
 UIProcess/API/Cocoa/WKWebViewConfiguration.mm
 UIProcess/API/Cocoa/WKWebViewTesting.mm
@@ -338,6 +351,9 @@ UIProcess/API/Cocoa/_WKThumbnailView.mm
 UIProcess/API/Cocoa/_WKUserStyleSheet.mm
 UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.mm
 UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm
+UIProcess/API/Cocoa/_WKWebPushDaemonConnection.mm
+UIProcess/API/Cocoa/_WKWebPushMessage.mm
+UIProcess/API/Cocoa/_WKWebPushSubscriptionData.mm
 UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm
 UIProcess/API/mac/WKWebViewMac.mm
 UIProcess/API/mac/WKWebViewTestingMac.mm
@@ -370,8 +386,10 @@ UIProcess/Cocoa/WebPagePreferencesLockdownModeObserver.mm
 UIProcess/Cocoa/WebPageProxyCocoa.mm
 UIProcess/Cocoa/WebProcessPoolCocoa.mm
 UIProcess/Cocoa/WebProcessProxyCocoa.mm
+UIProcess/Cocoa/_WKWarningView.mm
 UIProcess/DeviceIdHashSaltStorage.cpp
 UIProcess/Downloads/DownloadProxy.cpp
+UIProcess/Downloads/DownloadProxyCocoa.mm
 UIProcess/Downloads/DownloadProxyMap.cpp
 UIProcess/DrawingAreaProxy.cpp
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIActionCocoa.mm
@@ -383,11 +401,13 @@ UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIRuntimeCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIScriptingCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPITabsCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionActionCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionCommandCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionContextCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionControllerCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionMenuItemCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionTabCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionURLSchemeHandlerCocoa.mm
+UIProcess/Extensions/WebExtensionAlarm.cpp
 UIProcess/Extensions/WebExtensionCommand.cpp
 UIProcess/Extensions/WebExtensionContext.cpp
 UIProcess/Extensions/WebExtensionController.cpp
@@ -431,6 +451,7 @@ UIProcess/RemotePageDrawingAreaProxy.cpp
 UIProcess/RemotePageProxy.cpp
 UIProcess/RemotePageVisitedLinkStoreRegistration.h
 UIProcess/SpeechRecognitionPermissionManager.cpp
+UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp
 UIProcess/SpeechRecognitionServer.cpp
 UIProcess/SuspendedPageProxy.cpp
 UIProcess/TextCheckerCompletion.cpp
@@ -471,8 +492,10 @@ UIProcess/WebPageProxy.cpp
 UIProcess/WebPageProxy.h
 UIProcess/WebPageProxyInternals.h
 UIProcess/WebPageProxyMessageReceiverRegistration.cpp
+UIProcess/WebPageProxyTesting.cpp
 UIProcess/WebPreferences.cpp
 UIProcess/WebPreferences.h
+UIProcess/WebProcessActivityState.cpp
 UIProcess/WebProcessCache.cpp
 UIProcess/WebProcessPool.cpp
 UIProcess/WebProcessPool.h
@@ -542,6 +565,7 @@ WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp
 WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteAdapterProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteAdapterProxy.h
+WebProcess/GPU/graphics/WebGPU/RemoteBindGroupProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteCommandEncoderProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteCompositorIntegrationProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteComputePassEncoderProxy.cpp
@@ -554,6 +578,8 @@ WebProcess/GPU/graphics/WebGPU/RemoteQueueProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteRenderBundleEncoderProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteRenderPassEncoderProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteTextureProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteXRBindingProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteXRSubImageProxy.cpp
 WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp
 WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBitmapBackend.cpp
 WebProcess/GPU/graphics/cocoa/RemoteGraphicsContextGLProxyCocoa.mm
@@ -636,6 +662,7 @@ WebProcess/Inspector/WebInspectorUI.cpp
 WebProcess/Inspector/WebInspectorUIExtensionController.cpp
 WebProcess/Inspector/WebPageInspectorTarget.cpp
 WebProcess/MediaSession/RemoteMediaSessionCoordinator.cpp
+WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
 WebProcess/Network/NetworkProcessConnection.cpp
 WebProcess/Network/WebLoaderStrategy.cpp
 WebProcess/Network/WebMockContentFilterManager.cpp
@@ -662,6 +689,8 @@ WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm
 WebProcess/Plugins/PDF/PDFScriptEvaluator.mm
 WebProcess/Plugins/PDF/UnifiedPDF/AsyncPDFRenderer.mm
 WebProcess/Plugins/PDF/UnifiedPDF/PDFDataDetectorOverlayController.mm
+WebProcess/Plugins/PDF/UnifiedPDF/PDFDiscretePresentationController.mm
+WebProcess/Plugins/PDF/UnifiedPDF/PDFScrollingPresentationController.mm
 WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm
 WebProcess/Plugins/PDF/WKAccessibilityPDFDocumentObject.mm
 WebProcess/Plugins/PluginView.cpp
@@ -698,7 +727,6 @@ WebProcess/WebCoreSupport/WebPopupMenu.cpp
 WebProcess/WebCoreSupport/WebProgressTrackerClient.cpp
 WebProcess/WebCoreSupport/WebRemoteFrameClient.cpp
 WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp
-WebProcess/WebCoreSupport/WebUserMediaClient.cpp
 WebProcess/WebCoreSupport/WebValidationMessageClient.cpp
 WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm
 WebProcess/WebCoreSupport/mac/WebDragClientMac.mm
