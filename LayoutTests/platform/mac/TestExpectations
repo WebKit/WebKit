@@ -2390,10 +2390,6 @@ webkit.org/b/276624 fast/dynamic/layer-hit-test-crash.html [ Pass Failure ]
 
 webkit.org/b/276906 imported/w3c/web-platform-tests/IndexedDB/storage-buckets.https.any.worker.html [ Pass Failure ]
 
-# webkit.org/b/278239 [macOS Release] 2 tests in media/video are flaky failure (failing in EWS)
-[ Release ] media/video-playsinline.html [ Pass Failure ]
-[ Release ] media/video-webkit-playsinline.html [ Pass Failure ]
-
 # webkit.org/b/278318 [macOS Debug] ASSERTION FAILED: m_wrapper on media/video-playsinline.html, also flaky failure in Release
 [ Debug ] media/video-playsinline.html [ Pass Crash ]
 
