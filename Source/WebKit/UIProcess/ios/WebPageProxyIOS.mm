@@ -1542,9 +1542,9 @@ void WebPageProxy::processWillBecomeForeground()
 void WebPageProxy::Internals::isUserFacingChanged(bool isUserFacing)
 {
     if (!isUserFacing)
-        page.suspendAllMediaPlayback([] { });
+        protectedPage()->suspendAllMediaPlayback([] { });
     else
-        page.resumeAllMediaPlayback([] { });
+        protectedPage()->resumeAllMediaPlayback([] { });
 }
 
 #endif
