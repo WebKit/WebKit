@@ -165,7 +165,11 @@ bool WebExtensionAPIPermissions::parseDetailsDictionary(NSDictionary *details, H
 
 bool WebExtensionAPIPermissions::verifyRequestedPermissions(HashSet<String>& permissions, HashSet<Ref<WebExtensionMatchPattern>>& matchPatterns, NSString *callingAPIName, NSString **outExceptionString)
 {
-    auto extension = WebExtension::create(extensionContext().manifest(), @{ });
+    auto jsonString = String(encodeJSONString(extensionContext().manifest()));
+    auto jsonData = JSON::Value::parseJSON(jsonString);
+    if (!jsonData)
+        return false;
+    auto extension = WebExtension::create(*jsonData, HashMap<String, std::span<const uint8_t>>());
     HashSet<String> allowedPermissions = extension->requestedPermissions();
     WebExtension::MatchPatternSet allowedHostPermissions = extension->allRequestedMatchPatterns();
 

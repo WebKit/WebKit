@@ -282,7 +282,7 @@ CocoaMenuItem *WebExtensionCommand::platformMenuItem() const
     result.keyEquivalent = activationKey();
     result.keyEquivalentModifierMask = modifierFlags().toRaw();
     if (RefPtr context = extensionContext())
-        result.image = context->extension().icon(NSMakeSize(16, 16));
+        result.image = context->extension().icon(WebCore::FloatSize(16, 16))->image().get();
 
     return result;
 #else

@@ -340,10 +340,10 @@ String WebExtensionMatchPattern::stringWithScheme(const String& differentScheme)
     return makeString(differentScheme.isEmpty() ? scheme() : differentScheme, "://"_s, host(), path());
 }
 
-NSArray *WebExtensionMatchPattern::expandedStrings() const
+Vector<String> WebExtensionMatchPattern::expandedStrings() const
 {
     if (!isValid())
-        return @[ ];
+        return { };
 
     if (m_matchesAllURLs) {
         NSMutableArray<NSString *> *result = [NSMutableArray arrayWithCapacity:2];
@@ -354,10 +354,10 @@ NSArray *WebExtensionMatchPattern::expandedStrings() const
             [result addObject:(NSString *)makeString(scheme, "://*/*"_s)];
         }
 
-        return [result copy];
+        return makeVector<String>([result copy]);
     }
 
-    return @[ (NSString *)string() ];
+    return makeVector<String>(@[ (NSString *)string() ]);
 }
 
 bool WebExtensionMatchPattern::matchesAllHosts() const

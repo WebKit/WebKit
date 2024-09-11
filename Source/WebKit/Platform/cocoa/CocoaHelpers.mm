@@ -537,4 +537,43 @@ HashSet<String> toImpl(NSSet *set)
     return result;
 }
 
+HashMap<String, std::span<const uint8_t>> toDataMap(NSDictionary *dictionary)
+{
+    HashMap<String, std::span<const uint8_t>> result;
+    result.reserveInitialCapacity(dictionary.count);
+
+    for (id key in dictionary) {
+        auto *keyString = dynamic_objc_cast<NSString>(key);
+        if (!keyString)
+            continue;
+
+        id value = dictionary[key];
+        std::span<const uint8_t> dataSpan;
+
+        if (auto *valueString = dynamic_objc_cast<NSString>(value)) {
+            dataSpan = String(valueString).utf8().span();
+            result.add(keyString, dataSpan);
+            continue;
+        }
+
+        if (auto *valueData = dynamic_objc_cast<NSData>(value)) {
+            dataSpan = std::span<const uint8_t>(reinterpret_cast<const uint8_t*>(valueData.bytes), valueData.length);
+            result.add(keyString, dataSpan);
+            continue;
+        }
+
+        if ([value isKindOfClass:[NSDictionary class]] || [value isKindOfClass:[NSArray class]]) {
+            NSError *error;
+            auto *jsonData = encodeJSONData(value, JSONOptions::FragmentsAllowed, &error);
+            if (!jsonData || error)
+                continue;
+            dataSpan = std::span<const uint8_t>(reinterpret_cast<const uint8_t*>(jsonData.bytes), jsonData.length);
+            result.add(keyString, dataSpan);
+            continue;
+        }
+    }
+
+    return result;
+}
+
 } // namespace WebKit

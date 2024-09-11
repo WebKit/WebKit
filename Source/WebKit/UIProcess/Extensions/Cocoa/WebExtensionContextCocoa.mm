@@ -42,6 +42,9 @@
 #import "Logging.h"
 #import "PageLoadStateObserver.h"
 #import "ResourceLoadInfo.h"
+#import "WKNSArray.h"
+#import "WKNSData.h"
+#import "WKNSError.h"
 #import "WKNavigationActionPrivate.h"
 #import "WKNavigationDelegatePrivate.h"
 #import "WKOpenPanelParametersPrivate.h"
@@ -308,7 +311,10 @@ void WebExtensionContext::clearError(Error error)
 
 NSArray *WebExtensionContext::errors()
 {
-    return [extension().errors() arrayByAddingObjectsFromArray:m_errors.get()];
+    auto array = createNSArray(extension().errors(), [] (auto error) {
+        return ::WebKit::wrapper(error);
+    });
+    return [array.get() arrayByAddingObjectsFromArray:m_errors.get()];
 }
 
 bool WebExtensionContext::load(WebExtensionController& controller, String storageDirectory, NSError **outError)
@@ -3263,26 +3269,26 @@ WKWebView *WebExtensionContext::relatedWebView()
 NSString *WebExtensionContext::processDisplayName()
 {
 ALLOW_NONLITERAL_FORMAT_BEGIN
-    return [NSString localizedStringWithFormat:WEB_UI_STRING("%@ Web Extension", "Extension's process name that appears in Activity Monitor where the parameter is the name of the extension"), extension().displayShortName()];
+    return [NSString localizedStringWithFormat:WEB_UI_STRING("%@ Web Extension", "Extension's process name that appears in Activity Monitor where the parameter is the name of the extension"), extension().displayShortName().span8()]; // This fails as a span16
 ALLOW_NONLITERAL_FORMAT_END
 }
 
 NSArray *WebExtensionContext::corsDisablingPatterns()
 {
-    NSMutableSet<NSString *> *patterns = [NSMutableSet set];
+    Vector<String> patterns;
 
     auto requestedMatchPatterns = m_extension->allRequestedMatchPatterns();
     for (auto& requestedMatchPattern : requestedMatchPatterns)
-        [patterns addObjectsFromArray:requestedMatchPattern->expandedStrings()];
+        patterns.appendVector(requestedMatchPattern->expandedStrings());
 
     // Include manifest optional permission origins here, these should be dynamically added when the are granted
     // but we need SPI to update corsDisablingPatterns outside of the WKWebViewConfiguration to do that.
     // FIXME: rdar://102912898 (CORS for Web Extension pages should respect granted per-site permissions)
     auto optionalPermissionMatchPatterns = m_extension->optionalPermissionMatchPatterns();
     for (auto& optionalMatchPattern : optionalPermissionMatchPatterns)
-        [patterns addObjectsFromArray:optionalMatchPattern->expandedStrings()];
+        patterns.appendVector(optionalMatchPattern->expandedStrings());
 
-    return [patterns allObjects];
+    return [createNSArray(patterns).get() copy];
 }
 
 WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose purpose)
@@ -3470,9 +3476,9 @@ NSString *WebExtensionContext::backgroundWebViewInspectionName()
         return m_backgroundWebViewInspectionName;
 
     if (extension().backgroundContentIsServiceWorker())
-        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Service Worker", "Label for an inspectable Web Extension service worker", (__bridge CFStringRef)extension().displayShortName());
+        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Service Worker", "Label for an inspectable Web Extension service worker", extension().displayShortName().createCFString().get());
     else
-        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Background Page", "Label for an inspectable Web Extension background page", (__bridge CFStringRef)extension().displayShortName());
+        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Background Page", "Label for an inspectable Web Extension background page", extension().displayShortName().createCFString().get());
 
     return m_backgroundWebViewInspectionName;
 }
@@ -4247,7 +4253,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         if (!pattern.matchesPattern(deniedEntry.key, { WebExtensionMatchPattern::Options::IgnorePaths, WebExtensionMatchPattern::Options::MatchBidirectionally }))
             continue;
 
-        [baseExcludeMatchPatternsSet addObjectsFromArray:deniedEntry.key->expandedStrings()];
+        [baseExcludeMatchPatternsSet addObjectsFromArray:createNSArray(deniedEntry.key->expandedStrings()).get()];
     }
 
     auto& userContentControllers = this->userContentControllers();
@@ -4266,7 +4272,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
                 if (!restrictedPattern)
                     continue;
 
-                [includeMatchPatternsSet addObjectsFromArray:restrictedPattern->expandedStrings()];
+                [includeMatchPatternsSet addObjectsFromArray:createNSArray(restrictedPattern->expandedStrings()).get()];
                 continue;
             }
 
@@ -4285,7 +4291,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
             if (!restrictedPattern)
                 continue;
 
-            [includeMatchPatternsSet addObjectsFromArray:restrictedPattern->expandedStrings()];
+            [includeMatchPatternsSet addObjectsFromArray:createNSArray(restrictedPattern->expandedStrings()).get()];
         }
 
         if (!includeMatchPatternsSet.count)
@@ -4294,7 +4300,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         // FIXME: <rdar://problem/57613243> Support injecting into about:blank, honoring self.contentMatchesAboutBlank. Appending @"about:blank" to the includeMatchPatterns does not work currently.
         NSArray<NSString *> *includeMatchPatterns = includeMatchPatternsSet.allObjects;
 
-        NSMutableSet<NSString *> *excludeMatchPatternsSet = [NSMutableSet setWithArray:injectedContentData.expandedExcludeMatchPatternStrings()];
+        NSMutableSet<NSString *> *excludeMatchPatternsSet = [NSMutableSet setWithArray:(::WebKit::wrapper(API::Array::createStringArray(injectedContentData.expandedExcludeMatchPatternStrings()))).get()];
         [excludeMatchPatternsSet unionSet:baseExcludeMatchPatternsSet];
 
         NSArray<NSString *> *excludeMatchPatterns = excludeMatchPatternsSet.allObjects;
@@ -4308,15 +4314,14 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         auto scriptID = injectedContentData.identifier;
         bool isRegisteredScript = !scriptID.isEmpty();
 
-        for (NSString *scriptPath in injectedContentData.scriptPaths.get()) {
-            NSError *error;
-            auto *scriptString = m_extension->resourceStringForPath(scriptPath, &error, WebExtension::CacheResult::Yes);
+        for (NSString *scriptPath : injectedContentData.scriptPaths) {
+            auto scriptString = m_extension->resourceStringForPath(scriptPath, WebExtension::CacheResult::Yes);
             if (!scriptString) {
-                recordError(error);
+                recordError(::WebKit::wrapper(scriptString.error()));
                 continue;
             }
 
-            auto userScript = API::UserScript::create(WebCore::UserScript { scriptString, URL { m_baseURL, scriptPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectionTime, injectedFrames, waitForNotification }, executionWorld);
+            auto userScript = API::UserScript::create(WebCore::UserScript { WTFMove(scriptString.value()), URL { m_baseURL, scriptPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectionTime, injectedFrames, waitForNotification }, executionWorld);
             originInjectedScripts.append(userScript);
 
             for (auto& userContentController : userContentControllers)
@@ -4332,15 +4337,14 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
             }
         }
 
-        for (NSString *styleSheetPath in injectedContentData.styleSheetPaths.get()) {
-            NSError *error;
-            auto *styleSheetString = m_extension->resourceStringForPath(styleSheetPath, &error, WebExtension::CacheResult::Yes);
+        for (NSString *styleSheetPath : injectedContentData.styleSheetPaths) {
+            auto styleSheetString = m_extension->resourceStringForPath(styleSheetPath, WebExtension::CacheResult::Yes);
             if (!styleSheetString) {
-                recordError(error);
+                recordError(::WebKit::wrapper(styleSheetString.error()));
                 continue;
             }
 
-            auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheetString, URL { m_baseURL, styleSheetPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectedFrames, styleLevel, std::nullopt }, executionWorld);
+            auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheetString.value(), URL { m_baseURL, styleSheetPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectedFrames, styleLevel, std::nullopt }, executionWorld);
             originInjectedStyleSheets.append(userStyleSheet);
 
             for (auto& userContentController : userContentControllers)
@@ -4601,14 +4605,13 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
             if (!m_enabledStaticRulesetIDs.contains(ruleset.rulesetID))
                 continue;
 
-            NSError *error;
-            auto *jsonData = extension().resourceDataForPath(ruleset.jsonPath, &error);
-            if (!jsonData) {
-                recordError(error);
+            auto jsonData = extension().resourceDataForPath(ruleset.jsonPath);
+            if (!jsonData || !jsonData->size()) {
+                recordError(::WebKit::wrapper(jsonData.error()));
                 continue;
             }
 
-            [allJSONData addObject:jsonData];
+            [allJSONData addObject:(::WebKit::wrapper(API::Data::create(jsonData.value()))).get()];
         }
 
         applyDeclarativeNetRequestRules();

@@ -222,6 +222,8 @@ Shared/ContextMenuContextData.cpp
 Shared/DebuggableInfoData.cpp
 Shared/EditingRange.cpp
 Shared/EditorState.cpp
+Shared/Extensions/WebExtensionPermission.cpp
+Shared/Extensions/WebExtensionUtilities.cpp
 Shared/InspectorExtensionTypes.cpp
 Shared/IPCConnectionTester.cpp
 Shared/IPCStreamTester.cpp
@@ -556,6 +558,7 @@ UIProcess/Downloads/DownloadProxyMap.cpp
 
 UIProcess/DigitalCredentials/DigitalCredentialsCoordinatorProxy.cpp
 
+UIProcess/Extensions/WebExtension.cpp
 UIProcess/Extensions/WebExtensionAlarm.cpp
 UIProcess/Extensions/WebExtensionContext.cpp
 UIProcess/Extensions/WebExtensionController.cpp

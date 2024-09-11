@@ -35,6 +35,8 @@
 #import "CocoaHelpers.h"
 #import "WKContentWorld.h"
 #import "WKFrameInfoPrivate.h"
+#import "WKNSData.h"
+#import "WKNSError.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivate.h"
 #import "WebExtension.h"
@@ -82,14 +84,15 @@ Vector<RetainPtr<_WKFrameTreeNode>> getFrames(_WKFrameTreeNode *currentNode, std
 
 std::optional<SourcePair> sourcePairForResource(String path, WebExtensionContext& extensionContext)
 {
-    NSError *error;
-    auto *scriptData = extensionContext.protectedExtension()->resourceDataForPath(path, &error);
-    if (!scriptData) {
-        extensionContext.recordError(error);
+    auto resourceData = extensionContext.protectedExtension()->resourceDataForPath(path);
+    if (!resourceData || !resourceData->size()) {
+        extensionContext.recordError(wrapper(resourceData.error()));
         return std::nullopt;
     }
 
-    return SourcePair { [[NSString alloc] initWithData:scriptData encoding:NSUTF8StringEncoding], { extensionContext.baseURL(), path } };
+    auto scriptData = API::Data::create(resourceData.value());
+
+    return SourcePair { [[NSString alloc] initWithData:wrapper(scriptData) encoding:NSUTF8StringEncoding], { extensionContext.baseURL(), path } };
 }
 
 SourcePairs getSourcePairsForParameters(const WebExtensionScriptInjectionParameters& parameters, WebExtensionContext& extensionContext)

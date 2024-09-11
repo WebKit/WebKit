@@ -58,6 +58,9 @@ public:
 
     void operator delete(Value*, std::destroying_delete_t);
 
+    bool operator!() const;
+    bool operator==(Value&);
+
     ~Value()
     {
         switch (m_type) {
@@ -183,6 +186,8 @@ public:
 protected:
     ~ObjectBase();
 
+    inline bool operator==(const ObjectBase& other) { return m_map == other.m_map; }
+
     // FIXME: use templates to reduce the amount of duplicated set*() methods.
     void setBoolean(const String& name, bool);
     void setInteger(const String& name, int);
@@ -209,6 +214,8 @@ protected:
     iterator end() { return m_map.end(); }
     const_iterator begin() const { return m_map.begin(); }
     const_iterator end() const { return m_map.end(); }
+
+    DataStorage::KeysConstIteratorRange keys() const { return m_map.keys(); }
 
     unsigned size() const { return m_map.size(); }
 
@@ -257,6 +264,8 @@ public:
     using ObjectBase::begin;
     using ObjectBase::end;
 
+    using ObjectBase::keys;
+
     using ObjectBase::size;
 };
 
@@ -276,6 +285,8 @@ public:
 
 protected:
     ~ArrayBase();
+
+    inline bool operator==(const ArrayBase& other) { return m_map == other.m_map; }
 
     void pushBoolean(bool);
     void pushInteger(int);
@@ -467,6 +478,10 @@ public:
     using ArrayBase::end;
 };
 
+inline bool Value::operator!() const
+{
+    return isNull();
+}
 
 inline RefPtr<Value> Value::asValue()
 {

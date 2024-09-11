@@ -505,6 +505,32 @@ void Value::operator delete(Value* value, std::destroying_delete_t)
     });
 }
 
+bool Value::operator==(Value& other)
+{
+    if (other.type() != m_type)
+        return false;
+
+    switch (m_type) {
+    case Type::Null:
+        return true;
+    case Type::Boolean:
+        return m_value.boolean == other.m_value.boolean;
+    case Type::Double:
+        return m_value.number == other.m_value.number;
+    case Type::Integer:
+        return static_cast<int>(m_value.number) == *other.asInteger();
+    case Type::Object:
+        return asObject() == other.asObject();
+    case Type::Array:
+        return asArray() == other.asArray();
+    case Type::String:
+        return m_value.string == other.m_value.string;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
+}
+
 Ref<Value> Value::null()
 {
     return adoptRef(*new Value);

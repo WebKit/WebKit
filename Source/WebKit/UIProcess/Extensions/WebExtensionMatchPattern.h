@@ -108,7 +108,7 @@ public:
     bool matchesPattern(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
 
     String string() const { return stringWithScheme(nullString()); }
-    NSArray *expandedStrings() const;
+    Vector<String> expandedStrings() const;
 
     const WebCore::UserContentURLPattern& pattern() const { return m_pattern; }
 
