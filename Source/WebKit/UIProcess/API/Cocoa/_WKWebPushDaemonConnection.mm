@@ -29,6 +29,8 @@
 #import "APIWebPushMessage.h"
 #import "APIWebPushSubscriptionData.h"
 #import "WKError.h"
+#import "WKSecurityOriginInternal.h"
+#import "_WKNotificationDataInternal.h"
 #import "_WKWebPushSubscriptionDataInternal.h"
 #import <WebCore/ExceptionData.h>
 #import <WebCore/PushPermissionState.h>
@@ -148,6 +150,36 @@ static _WKWebPushPermissionState toWKPermissionsState(WebCore::PushPermissionSta
 
         return completionHandlerCopy(wrapper(API::WebPushMessage::create(WTFMove(result.value()))).get());
     });
+}
+
+
+- (void)showNotification:(_WKNotificationData *)notificationData completionHandler:(void (^)())completionHandler
+{
+    self._protectedConnection->showNotification([notificationData _getCoreData], [completionHandlerCopy = makeBlockPtr(completionHandler)] () {
+        completionHandlerCopy();
+    });
+}
+
+- (void)getNotifications:(NSURL *)scopeURL tag:(NSString *)tag completionHandler:(void (^)(NSArray<_WKNotificationData *> *, NSError *))completionHandler
+{
+    self._protectedConnection->getNotifications(scopeURL, tag, [completionHandlerCopy = makeBlockPtr(completionHandler)] (auto result) {
+        if (result) {
+            NSMutableArray<_WKNotificationData *> *nsResult = [NSMutableArray arrayWithCapacity:result.value().size()];
+            for (auto& data : result.value())
+                [nsResult addObject:[[[_WKNotificationData alloc] _initWithCoreData:data] autorelease]];
+
+            return completionHandlerCopy(nsResult, nil);
+        }
+
+        auto error = [NSError errorWithDomain:@"WKErrorDomain" code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey:result.error().message }];
+        completionHandlerCopy(nil, error);
+    });
+}
+
+- (void)cancelNotification:(NSURL *)securityOriginURL uuid:(NSUUID *)notificationIdentifier
+{
+    // UUID::fromNSUUID only fails if the passed in NSUUID is nil, which would be a crash-worthy misuse of this API
+    self._protectedConnection->cancelNotification(securityOriginURL, *WTF::UUID::fromNSUUID(notificationIdentifier));
 }
 
 - (API::Object&)_apiObject

@@ -192,7 +192,7 @@ private:
         if (!m_hasShowNotificationSelector || !m_delegate || !m_dataStore)
             return false;
 
-        RetainPtr<_WKNotificationData> notification = adoptNS([[_WKNotificationData alloc] initWithCoreData:data dataStore:m_dataStore.getAutoreleased()]);
+        RetainPtr<_WKNotificationData> notification = adoptNS([[_WKNotificationData alloc] _initWithCoreData:data]);
         [m_delegate.getAutoreleased() websiteDataStore:m_dataStore.getAutoreleased() showNotification:notification.get()];
         return true;
     }

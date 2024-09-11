@@ -72,11 +72,15 @@ std::optional<NotificationData> NotificationData::fromDictionary(NSDictionary *d
     if (!uuid)
         return std::nullopt;
 
+    std::optional<ScriptExecutionContextIdentifier> contextIdentifier;
     String contextUUIDString = dictionary[WebNotificationContextUUIDStringKey];
-    auto contextUUID = WTF::UUID::parseVersion4(contextUUIDString);
-    if (!contextUUID)
-        return std::nullopt;
-    ScriptExecutionContextIdentifier contextIdentifier(*contextUUID, Process::identifier());
+    if (!contextUUIDString.isEmpty()) {
+        auto contextUUID = WTF::UUID::parseVersion4(contextUUIDString);
+        if (!contextUUID)
+            return std::nullopt;
+
+        contextIdentifier = ScriptExecutionContextIdentifier { *contextUUID, Process::identifier() };
+    }
 
     NotificationDirection direction;
     NSNumber *directionNumber = dictionary[WebNotificationDirectionKey];
@@ -107,10 +111,12 @@ NSDictionary *NotificationData::dictionaryRepresentation() const
         WebNotificationDirectionKey : @((unsigned long)direction),
         WebNotificationServiceWorkerRegistrationURLKey : (NSString *)serviceWorkerRegistrationURL.string(),
         WebNotificationUUIDStringKey : (NSString *)notificationID.toString(),
-        WebNotificationContextUUIDStringKey : (NSString *)contextIdentifier.toString(),
         WebNotificationSessionIDKey : @(sourceSession.toUInt64()),
         WebNotificationDataKey: toNSData(data).autorelease(),
     }.mutableCopy;
+
+    if (contextIdentifier)
+        result[WebNotificationContextUUIDStringKey] = (NSString *)contextIdentifier->toString();
 
     if (silent != std::nullopt)
         result[WebNotificationSilentKey] = @(*silent);

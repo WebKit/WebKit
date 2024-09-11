@@ -997,7 +997,7 @@ void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL
                     continue;
                 }
 
-                if (notificationData->tag != tag || notificationData->serviceWorkerRegistrationURL != registrationURL)
+                if ((!tag.isEmpty() && notificationData->tag != tag) || notificationData->serviceWorkerRegistrationURL != registrationURL)
                     continue;
 
                 notificationDatas.append(*notificationData);

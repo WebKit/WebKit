@@ -234,7 +234,6 @@ TEST(PushAPI, firePushEvent)
 
 - (void)websiteDataStore:(WKWebsiteDataStore *)dataStore getDisplayedNotificationsForWorkerOrigin:(WKSecurityOrigin *)workerOrigin completionHandler:(void (^)(NSArray<NSDictionary *> *))completionHandler
 {
-
     NSMutableArray *notifications = [NSMutableArray new];
     for (id notification in _displayedNotifications)
         [notifications addObject:[notification dictionaryRepresentation]];

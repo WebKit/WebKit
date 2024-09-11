@@ -1502,7 +1502,7 @@ struct WebCore::NotificationData {
     String originString;
     URL serviceWorkerRegistrationURL;
     WTF::UUID notificationID;
-    WebCore::ScriptExecutionContextIdentifier contextIdentifier;
+    std::optional<WebCore::ScriptExecutionContextIdentifier> contextIdentifier;
     PAL::SessionID sourceSession;
     MonotonicTime creationTime;
     Vector<uint8_t> data;

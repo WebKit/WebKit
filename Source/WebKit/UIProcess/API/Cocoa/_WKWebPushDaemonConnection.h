@@ -32,6 +32,8 @@ typedef NS_ENUM(NSInteger, _WKWebPushPermissionState) {
     _WKWebPushPermissionStatePrompt,
 };
 
+@class WKSecurityOrigin;
+@class _WKNotificationData;
 @class _WKWebPushMessage;
 @class _WKWebPushSubscriptionData;
 
@@ -61,6 +63,9 @@ WK_EXTERN
 - (void)unsubscribeFromPushServiceForScope:(NSURL *)scopeURL completionHandler:(void (^)(BOOL unsubscribed, NSError *))completionHandler;
 - (void)getSubscriptionForScope:(NSURL *)scopeURL completionHandler:(void (^)(_WKWebPushSubscriptionData *, NSError *))completionHandler;
 - (void)getNextPendingPushMessage:(void (^)(_WKWebPushMessage *))completionHandler;
+- (void)showNotification:(_WKNotificationData *)notificationData completionHandler:(void (^)())completionHandler;
+- (void)getNotifications:(NSURL *)scopeURL tag:(NSString *)tag completionHandler:(void (^)(NSArray<_WKNotificationData *> *, NSError *))completionHandler;
+- (void)cancelNotification:(NSURL *)securityOriginURL uuid:(NSUUID *)notificationIdentifier;
 
 @end
 

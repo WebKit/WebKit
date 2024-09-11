@@ -211,7 +211,8 @@ bool WebNotificationManager::show(NotificationData&& notification, RefPtr<Notifi
 
     if (!notification.isPersistent()) {
         ASSERT(!m_nonPersistentNotificationsContexts.contains(notificationID));
-        m_nonPersistentNotificationsContexts.add(notificationID, notification.contextIdentifier);
+        RELEASE_ASSERT(notification.contextIdentifier);
+        m_nonPersistentNotificationsContexts.add(notificationID, *notification.contextIdentifier);
     }
     return true;
 #else

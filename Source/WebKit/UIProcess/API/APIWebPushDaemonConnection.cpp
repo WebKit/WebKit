@@ -103,4 +103,30 @@ void WebPushDaemonConnection::getNextPendingPushMessage(CompletionHandler<void(c
 #endif
 }
 
-};
+void WebPushDaemonConnection::showNotification(const WebCore::NotificationData& notificationData, CompletionHandler<void()>&& completionHandler)
+{
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::ShowNotification { notificationData, { } }, WTFMove(completionHandler));
+#else
+    completionHandler();
+#endif
+}
+
+void WebPushDaemonConnection::getNotifications(const WTF::URL& scopeURL, const WTF::String& tag, CompletionHandler<void(const Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&)>&& completionHandler)
+{
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetNotifications { scopeURL, tag }, WTFMove(completionHandler));
+#else
+    completionHandler({ });
+#endif
+}
+
+void WebPushDaemonConnection::cancelNotification(const WTF::URL& scopeURL, const WTF::UUID& uuid)
+{
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    m_connection->sendWithoutUsingIPCConnection(Messages::PushClientConnection::CancelNotification(SecurityOriginData::fromURL(scopeURL), uuid));
+#endif
+}
+
+} // namespace API
+
