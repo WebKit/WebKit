@@ -33,6 +33,7 @@ OBJC_CLASS UIScrollView;
 
 namespace WebCore {
 class FloatRect;
+class FloatPoint;
 class IntPoint;
 
 enum class EventListenerRegionType : uint8_t;
@@ -80,7 +81,7 @@ class WebPageProxy;
 
 namespace WebKit {
 
-OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const WebCore::IntPoint&);
+OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const WebCore::FloatPoint&);
 UIScrollView *findActingScrollParent(UIScrollView *, const RemoteLayerTreeHost&);
 
 OptionSet<WebCore::EventListenerRegionType> eventListenerTypesAtPoint(UIView *rootView, const WebCore::IntPoint&);

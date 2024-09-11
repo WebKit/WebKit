@@ -208,7 +208,7 @@ static bool hierarchyHasCapturingEventListeners(Element* target, const AtomStrin
     return false;
 }
 
-void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target, const PlatformTouchEvent& platformTouchEvent, unsigned index, bool isPrimary, WindowProxy& view, const IntPoint& touchDelta)
+void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target, const PlatformTouchEvent& platformTouchEvent, unsigned index, bool isPrimary, WindowProxy& view, const FloatPoint& touchDelta)
 {
     RELEASE_ASSERT(is<Element>(target));
 
@@ -315,7 +315,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
 
 #if PLATFORM(IOS_FAMILY)
     if (pointerEvent->type() == eventNames().pointercancelEvent) {
-        cancelPointer(pointerEvent->pointerId(), platformTouchEvent.touchLocationAtIndex(index), pointerEvent.ptr());
+        cancelPointer(pointerEvent->pointerId(), flooredIntPoint(platformTouchEvent.touchLocationAtIndex(index)), pointerEvent.ptr());
         return;
     }
 #endif

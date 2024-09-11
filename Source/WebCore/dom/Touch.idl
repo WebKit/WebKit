@@ -29,16 +29,16 @@
     Conditional=TOUCH_EVENTS,
     Exposed=Window
 ] interface Touch {
-    readonly attribute long                clientX;
-    readonly attribute long                clientY;
-    readonly attribute long                screenX;
-    readonly attribute long                screenY;
-    readonly attribute long                pageX;
-    readonly attribute long                pageY;
+    readonly attribute double              clientX;
+    readonly attribute double              clientY;
+    readonly attribute double              screenX;
+    readonly attribute double              screenY;
+    readonly attribute double              pageX;
+    readonly attribute double              pageY;
     readonly attribute EventTarget         target;
     readonly attribute long                identifier;
-    readonly attribute long                webkitRadiusX;
-    readonly attribute long               webkitRadiusY;
+    readonly attribute double              webkitRadiusX;
+    readonly attribute double              webkitRadiusY;
     readonly attribute unrestricted float webkitRotationAngle;
     readonly attribute unrestricted float webkitForce;
 };

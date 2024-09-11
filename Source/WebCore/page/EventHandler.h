@@ -236,7 +236,7 @@ public:
 #if ENABLE(IOS_TOUCH_EVENTS)
     enum class InTouchEventHandling : bool { No, Yes };
     enum class InMotion : bool { No, Yes };
-    void updateTouchLastGlobalPositionAndDelta(PointerID, const IntPoint&, InTouchEventHandling, InMotion);
+    void updateTouchLastGlobalPositionAndDelta(PointerID, const FloatPoint&, InTouchEventHandling, InMotion);
     bool dispatchTouchEvent(const PlatformTouchEvent&, const AtomString&, const EventTargetTouchArrayMap&, float, float);
     bool dispatchSimulatedTouchEvent(IntPoint location);
     Frame* touchEventTargetSubframe() const { return m_touchEventTargetSubframe.get(); }
@@ -713,7 +713,7 @@ private:
 
     TouchArray m_touches;
     RefPtr<Frame> m_touchEventTargetSubframe;
-    HashMap<PointerID, std::pair<IntPoint, IntPoint>, WTF::IntHash<PointerID>, WTF::UnsignedWithZeroKeyHashTraits<PointerID>> m_touchLastGlobalPositionAndDeltaMap;
+    HashMap<PointerID, std::pair<FloatPoint, FloatPoint>, WTF::IntHash<PointerID>, WTF::UnsignedWithZeroKeyHashTraits<PointerID>> m_touchLastGlobalPositionAndDeltaMap;
 #endif
 
 #if PLATFORM(COCOA)

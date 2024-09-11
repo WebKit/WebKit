@@ -343,6 +343,7 @@ public:
     // the entire widget hierarchy. It is up to the platform to decide what the precise definition
     // of containing window is. (For example on Mac it is the containing NSWindow.)
     WEBCORE_EXPORT IntPoint windowToContents(const IntPoint&) const;
+    WEBCORE_EXPORT FloatPoint windowToContents(const FloatPoint&) const;
     WEBCORE_EXPORT IntPoint contentsToWindow(const IntPoint&) const;
     WEBCORE_EXPORT IntRect windowToContents(const IntRect&) const;
     WEBCORE_EXPORT IntRect contentsToWindow(const IntRect&) const;

@@ -192,7 +192,7 @@ static bool isScrolledBy(WKChildScrollView* scrollView, UIView *hitView)
     return false;
 }
 
-OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const WebCore::IntPoint& point)
+OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const WebCore::FloatPoint& point)
 {
     Vector<RetainPtr<UIView>, 16> viewsAtPoint;
     collectDescendantViewsAtPoint(viewsAtPoint, rootView, point, nil);

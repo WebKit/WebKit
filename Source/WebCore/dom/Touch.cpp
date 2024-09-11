@@ -29,68 +29,52 @@
 
 #include "Touch.h"
 
+#include "FloatPoint.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 
 namespace WebCore {
 
-static int contentsX(LocalFrame* frame)
+static FloatPoint contentsOffset(LocalFrame* frame)
 {
     if (!frame)
-        return 0;
+        return FloatPoint();
     auto* frameView = frame->view();
     if (!frameView)
-        return 0;
-    return frameView->scrollX() / frame->pageZoomFactor() / frame->frameScaleFactor();
+        return FloatPoint();
+    float scale = 1.0f / frame->pageZoomFactor();
+    return FloatPoint(frameView->scrollPosition()).scaledBy(scale);
 }
 
-static int contentsY(LocalFrame* frame)
+static LayoutPoint scaledLocation(LocalFrame* frame, const FloatPoint& pagePos)
 {
     if (!frame)
-        return 0;
-    auto* frameView = frame->view();
-    if (!frameView)
-        return 0;
-    return frameView->scrollY() / frame->pageZoomFactor() / frame->frameScaleFactor();
-}
-
-static LayoutPoint scaledLocation(LocalFrame* frame, int pageX, int pageY)
-{
-    if (!frame)
-        return { pageX, pageY };
+        return LayoutPoint(pagePos);
     float scaleFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
-    return { pageX * scaleFactor, pageY * scaleFactor };
+    return LayoutPoint(pagePos.scaledBy(scaleFactor));
 }
 
-Touch::Touch(LocalFrame* frame, EventTarget* target, int identifier, int screenX, int screenY, int pageX, int pageY, int radiusX, int radiusY, float rotationAngle, float force)
+Touch::Touch(LocalFrame* frame, EventTarget* target, int identifier, const FloatPoint& screenPos, const FloatPoint& pagePos, const FloatSize& radius, float rotationAngle, float force)
     : m_target(target)
     , m_identifier(identifier)
-    , m_clientX(pageX - contentsX(frame))
-    , m_clientY(pageY - contentsY(frame))
-    , m_screenX(screenX)
-    , m_screenY(screenY)
-    , m_pageX(pageX)
-    , m_pageY(pageY)
-    , m_radiusX(radiusX)
-    , m_radiusY(radiusY)
+    , m_clientPos(pagePos - contentsOffset(frame))
+    , m_screenPos(screenPos)
+    , m_pagePos(pagePos)
+    , m_radius(radius)
     , m_rotationAngle(rotationAngle)
     , m_force(force)
-    , m_absoluteLocation(scaledLocation(frame, pageX, pageY))
+    , m_absoluteLocation(scaledLocation(frame, pagePos))
 {
 }
 
-Touch::Touch(EventTarget* target, int identifier, int clientX, int clientY, int screenX, int screenY, int pageX, int pageY, int radiusX, int radiusY, float rotationAngle, float force, LayoutPoint absoluteLocation)
+Touch::Touch(EventTarget* target, int identifier, const FloatPoint& clientPos, const FloatPoint& screenPos, const FloatPoint& pagePos, const FloatSize& radius, float rotationAngle, float force, LayoutPoint absoluteLocation)
     : m_target(target)
     , m_identifier(identifier)
-    , m_clientX(clientX)
-    , m_clientY(clientY)
-    , m_screenX(screenX)
-    , m_screenY(screenY)
-    , m_pageX(pageX)
-    , m_pageY(pageY)
-    , m_radiusX(radiusX)
-    , m_radiusY(radiusY)
+    , m_clientPos(clientPos)
+    , m_screenPos(screenPos)
+    , m_pagePos(pagePos)
+    , m_radius(radius)
     , m_rotationAngle(rotationAngle)
     , m_force(force)
     , m_absoluteLocation(absoluteLocation)
@@ -99,7 +83,7 @@ Touch::Touch(EventTarget* target, int identifier, int clientX, int clientY, int 
 
 Ref<Touch> Touch::cloneWithNewTarget(EventTarget* eventTarget) const
 {
-    return adoptRef(*new Touch(eventTarget, m_identifier, m_clientX, m_clientY, m_screenX, m_screenY, m_pageX, m_pageY, m_radiusX, m_radiusY, m_rotationAngle, m_force, m_absoluteLocation));
+    return adoptRef(*new Touch(eventTarget, m_identifier, m_clientPos, m_screenPos, m_pagePos, m_radius, m_rotationAngle, m_force, m_absoluteLocation));
 }
 
 } // namespace WebCore

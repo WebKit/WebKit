@@ -288,8 +288,7 @@ public:
         m_id = idDefaultValue; // There is only one active TouchPoint.
         m_screenPos = event.globalPosition();
         m_pos = event.position();
-        m_radiusY = radiusYDefaultValue;
-        m_radiusX = radiusXDefaultValue;
+        m_radius = WebCore::FloatSize(radiusYDefaultValue, radiusXDefaultValue);
         m_rotationAngle = rotationAngleDefaultValue;
         m_force = forceDefaultValue;
 
@@ -4969,7 +4968,7 @@ HandleUserInputEventResult EventHandler::handleTouchEvent(const PlatformTouchEve
     for (unsigned index = 0; index < points.size(); index++) {
         auto& point = points[index];
         PlatformTouchPoint::State pointState = point.state();
-        LayoutPoint pagePoint = documentPointForWindowPoint(frame, point.pos());
+        LayoutPoint pagePoint = LayoutPoint(frame->view()->windowToContents(point.pos()));
 
         OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::TouchEvent };
         // The HitTestRequest types used for mouse events map quite adequately
@@ -5013,8 +5012,8 @@ HandleUserInputEventResult EventHandler::handleTouchEvent(const PlatformTouchEve
                 m_originatingTouchPointTargetKey = touchPointTargetKey;
             } else if (m_originatingTouchPointDocument && m_originatingTouchPointDocument->frame()) {
                 Ref frame = *m_originatingTouchPointDocument->frame();
-                LayoutPoint pagePointInOriginatingDocument = documentPointForWindowPoint(frame, point.pos());
-                result = hitTestResultInFrame(frame.ptr(), pagePointInOriginatingDocument, hitType);
+                LayoutPoint framePoint = roundedIntPoint(frame->view()->windowToContents(point.pos()));
+                result = hitTestResultInFrame(frame.ptr(), framePoint, hitType);
                 if (!result.innerNode())
                     continue;
             } else
@@ -5090,19 +5089,16 @@ HandleUserInputEventResult EventHandler::handleTouchEvent(const PlatformTouchEve
             *pointerTarget, event, index, !index, *document->windowProxy(), { 0, 0 });
 #endif
 
-        if (frame.ptr() != targetFrame) {
-            // pagePoint should always be relative to the target elements containing frame.
-            pagePoint = documentPointForWindowPoint(*targetFrame, point.pos());
-        }
+        // pagePoint should always be relative to the target elements containing frame.
+        pagePoint = LayoutPoint(targetFrame->view()->windowToContents(point.pos()));
 
         float scaleFactor = targetFrame->pageZoomFactor() * targetFrame->frameScaleFactor();
 
-        int adjustedPageX = lroundf(pagePoint.x() / scaleFactor);
-        int adjustedPageY = lroundf(pagePoint.y() / scaleFactor);
+        FloatPoint adjustedPagePoint = FloatPoint(pagePoint.x() / scaleFactor, pagePoint.y() / scaleFactor);
+        FloatSize adjustedRadius = point.radius().scaledBy(scaleFactor);
 
         auto touch = Touch::create(targetFrame.get(), touchTarget.get(), point.id(),
-            point.screenPos().x(), point.screenPos().y(), adjustedPageX, adjustedPageY,
-            point.radiusX(), point.radiusY(), point.rotationAngle(), point.force());
+            point.screenPos(), adjustedPagePoint, adjustedRadius, point.rotationAngle(), point.force());
 
         // Ensure this target's touch list exists, even if it ends up empty, so it can always be passed to TouchEvent::Create below.
         TargetTouchesMap::iterator targetTouchesIterator = touchesByTarget.find(touchTarget.get());
