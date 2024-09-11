@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/cookie-utilities.js"></script>
+<body>
+<script>
+async function runTest() {
+    document.cookie = "testCookieName=testCookieValue;SameSite=None;Partitioned;httpOnly";
+    let cookies = Object.assign(getDOMCookies(), await getCookies());
+    window.top.postMessage(cookies, '*');
+}
+testRunner?.removeAllCookies(runTest);
+</script>
+</body>
+</html>

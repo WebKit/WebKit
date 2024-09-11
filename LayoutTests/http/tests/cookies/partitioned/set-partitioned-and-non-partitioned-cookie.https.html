@@ -1,0 +1,60 @@
+<!DOCTYPE html><!-- webkit-test-runner [ optInPartitionedCookiesEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="../resources/cookie-utilities.js"></script>
+
+<script>
+const crossOrigin = "https://localhost:8443";
+const crossOriginURLs = `${crossOrigin}/cookies/partitioned/resources`;
+const resourcePrefix = "iframe-set-partitioned-and-non-partitioned-";
+
+const resources = [
+    "cookie-js-not-secure.html",
+    "cookie-js-secure.html",
+    "cookie-http-header-not-secure.html",
+    "cookie-http-header-secure.html",
+    "httponly-cookie-http-header-not-secure.html",
+    "httponly-cookie-http-header-secure.html",
+    "httponly-cookie-js-not-secure.html",
+    "httponly-cookie-js-secure.html",
+];
+
+let resourceIndex = 0;
+async function runTest()
+{
+    if (resourceIndex == resources.length) {
+        finishJSTest();
+        return;
+    }
+    const resource = resources[resourceIndex++];
+    const url = `${crossOriginURLs}/${resourcePrefix}${resource}`;
+    let appendIframeAndWaitUntilLoadedPromise = new Promise((resolved) => {
+        let iframe = document.createElement("iframe");
+        iframe.onload = (e) => resolved(iframe);
+        window.onmessage = (event) => {
+            let cookies = "";
+            for (let cookieName in event.data)
+                cookies += `${cookieName}=${event.data[cookieName]};`;
+            debug(`${resource}: Found ${Object.keys(event.data).length} cookies: ${cookies}`);
+            document.body.removeChild(iframe);
+            runTest();
+        };
+        iframe.src = url;
+        document.body.appendChild(iframe);
+    });
+    let iframe = await appendIframeAndWaitUntilLoadedPromise;
+}
+</script>
+<body>
+<script>
+window.jsTestIsAsync = true;
+window.testRunner?.dumpAsText();
+window.testRunner?.dumpChildFramesAsText();
+
+description("Tests that setting Partitioned cookie from secure document is accepted when cookie has Secure attribute, and non-partitioned cookies are rejected");
+
+runTest();
+</script>
+</body>
+</html>
