@@ -108,6 +108,8 @@ private:
     PushServiceRequestMap m_getSubscriptionRequests;
     PushServiceRequestMap m_subscribeRequests;
     PushServiceRequestMap m_unsubscribeRequests;
+
+    size_t m_topicCount { 0 };
 };
 
 } // namespace WebPushD
