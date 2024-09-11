@@ -368,12 +368,6 @@ bool NetworkResourceLoader::shouldSendResourceLoadMessages() const
 
 void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoad load)
 {
-    if (request.wasSchemeOptimisticallyUpgraded()) {
-        // FIXME: This timeout should be adaptive based on network conditions
-        request.setTimeoutInterval(3);
-    }
-
-    LOADER_RELEASE_LOG("startNetworkLoad: (isFirstLoad=%d, timeout=%f)", load == FirstLoad::Yes, request.timeoutInterval());
     if (load == FirstLoad::Yes) {
         consumeSandboxExtensions();
 
@@ -397,6 +391,15 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
         didFailLoading(internalError(request.url()));
         return;
     }
+
+    if (request.wasSchemeOptimisticallyUpgraded()) {
+        double optimisticUpgradeTimeout { 3 };
+        if (double average = networkSession->currentHTTPSConnectionAverageTiming())
+            optimisticUpgradeTimeout = average;
+        request.setTimeoutInterval(optimisticUpgradeTimeout);
+    }
+
+    LOADER_RELEASE_LOG("startNetworkLoad: (isFirstLoad=%d, timeout=%f)", load == FirstLoad::Yes, request.timeoutInterval());
 
     if (request.url().protocolIsBlob()) {
         ASSERT(parameters.topOrigin);
@@ -876,6 +879,11 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         auto information = m_networkLoadChecker->takeNetworkLoadInformation();
         information.response = m_response;
         m_connection->addNetworkLoadInformation(coreIdentifier(), WTFMove(information));
+    }
+
+    if (CheckedPtr networkSession = m_response.url().protocolIs("https"_s) ? m_connection->networkSession() : nullptr) {
+        if (auto metrics = computeResponseMetrics(m_response))
+            networkSession->recordHTTPSConnectionTiming(*metrics);
     }
 
     auto resourceLoadInfo = this->resourceLoadInfo();
