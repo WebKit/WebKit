@@ -104,8 +104,8 @@ protected:
     JSWebAssemblyTable* m_owner;
 };
 
-class ExternRefTable final : public Table {
-    WTF_MAKE_TZONE_ALLOCATED(ExternRefTable);
+class ExternOrAnyRefTable final : public Table {
+    WTF_MAKE_TZONE_ALLOCATED(ExternOrAnyRefTable);
 public:
     friend class Table;
 
@@ -114,7 +114,7 @@ public:
     JSValue get(uint32_t index) const { return m_jsValues.get()[index].get(); }
 
 private:
-    ExternRefTable(uint32_t initial, std::optional<uint32_t> maximum, Type wasmType);
+    ExternOrAnyRefTable(uint32_t initial, std::optional<uint32_t> maximum, Type wasmType);
 
     MallocPtr<WriteBarrier<Unknown>, VMMalloc> m_jsValues;
 };

@@ -38,14 +38,14 @@
 namespace JSC { namespace Wasm {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Table);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ExternRefTable);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ExternOrAnyRefTable);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FuncRefTable);
 
 template<typename Visitor> constexpr decltype(auto) Table::visitDerived(Visitor&& visitor)
 {
     switch (type()) {
     case TableElementType::Externref:
-        return std::invoke(std::forward<Visitor>(visitor), static_cast<ExternRefTable&>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), static_cast<ExternOrAnyRefTable&>(*this));
     case TableElementType::Funcref:
         return std::invoke(std::forward<Visitor>(visitor), static_cast<FuncRefTable&>(*this));
     }
@@ -95,7 +95,7 @@ RefPtr<Table> Table::tryCreate(uint32_t initial, std::optional<uint32_t> maximum
         return nullptr;
     switch (type) {
     case TableElementType::Externref:
-        return adoptRef(new ExternRefTable(initial, maximum, wasmType));
+        return adoptRef(new ExternOrAnyRefTable(initial, maximum, wasmType));
     case TableElementType::Funcref: {
         if (maximum && maximum.value() == initial) {
             // If the table is fixed-sized, we should put table slots inline to avoid one-level indirection.
@@ -146,7 +146,7 @@ std::optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
     VM& vm = m_owner->vm();
     switch (type()) {
     case TableElementType::Externref: {
-        bool success = checkedGrow(static_cast<ExternRefTable*>(this)->m_jsValues, [&](auto& slot) {
+        bool success = checkedGrow(static_cast<ExternOrAnyRefTable*>(this)->m_jsValues, [&](auto& slot) {
             slot.set(vm, m_owner, defaultValue);
         });
         if (UNLIKELY(!success))
@@ -209,7 +209,7 @@ void Table::visitAggregateImpl(Visitor& visitor)
     Locker locker { m_owner->cellLock() };
     switch (type()) {
     case TableElementType::Externref: {
-        auto* table = static_cast<ExternRefTable*>(this);
+        auto* table = static_cast<ExternOrAnyRefTable*>(this);
         for (unsigned i = 0; i < m_length; ++i)
             visitor.append(table->m_jsValues.get()[i]);
         break;
@@ -230,10 +230,10 @@ FuncRefTable* Table::asFuncrefTable()
     return m_type == TableElementType::Funcref ? static_cast<FuncRefTable*>(this) : nullptr;
 }
 
-ExternRefTable::ExternRefTable(uint32_t initial, std::optional<uint32_t> maximum, Type wasmType)
+ExternOrAnyRefTable::ExternOrAnyRefTable(uint32_t initial, std::optional<uint32_t> maximum, Type wasmType)
     : Table(initial, maximum, wasmType, TableElementType::Externref)
 {
-    RELEASE_ASSERT(isExternref(wasmType) || (Options::useWasmGC() && isSubtype(wasmType, anyrefType())));
+    RELEASE_ASSERT(isExternref(wasmType) || (Options::useWasmGC() && (isSubtype(wasmType, externrefType()) || isSubtype(wasmType, anyrefType()))));
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
     // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
@@ -242,12 +242,12 @@ ExternRefTable::ExternRefTable(uint32_t initial, std::optional<uint32_t> maximum
         new (&m_jsValues.get()[i]) WriteBarrier<Unknown>(NullWriteBarrierTag);
 }
 
-void ExternRefTable::clear(uint32_t index)
+void ExternOrAnyRefTable::clear(uint32_t index)
 {
     m_jsValues.get()[index].setStartingValue(jsNull());
 }
 
-void ExternRefTable::set(uint32_t index, JSValue value)
+void ExternOrAnyRefTable::set(uint32_t index, JSValue value)
 {
     m_jsValues.get()[index].set(m_owner->vm(), m_owner, value);
 }
