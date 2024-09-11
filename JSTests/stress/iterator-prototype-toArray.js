@@ -112,7 +112,7 @@ function shouldThrow(fn, error, message) {
     ];
     for (const invalidIterator of invalidIterators) {
         shouldThrow(function () {
-            Iterator.prototype.toArray.call(3);
+            Iterator.prototype.toArray.call(invalidIterator);
         }, TypeError, "Iterator.prototype.toArray requires that |this| be an Object.");
     }
 }
