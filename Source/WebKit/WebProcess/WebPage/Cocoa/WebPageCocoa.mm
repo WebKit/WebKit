@@ -522,9 +522,10 @@ RetainPtr<CFDataRef> WebPage::pdfSnapshotAtSize(IntRect rect, IntSize bitmapSize
 
     auto data = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
 
-    auto dataConsumer = adoptCF(CGDataConsumerCreateWithCFData(data.get()));
+    CGDataConsumerRef dataConsumer = CGDataConsumerCreateWithCFData(data.get());
     auto mediaBox = CGRectMake(0, 0, bitmapSize.width(), bitmapSize.height());
-    auto pdfContext = adoptCF(CGPDFContextCreate(dataConsumer.get(), &mediaBox, nullptr));
+    CGContextRef pdfContext = CGPDFContextCreate(dataConsumer.get(), &mediaBox, nullptr);
+    CGDataConsumerRelease(dataConsumer);
 
     int64_t remainingHeight = bitmapSize.height();
     int64_t nextRectY = rect.y();
@@ -538,25 +539,32 @@ RetainPtr<CFDataRef> WebPage::pdfSnapshotAtSize(IntRect rect, IntSize bitmapSize
 
         CGRect mediaBox = CGRectMake(0, 0, bitmapSize.width(), bitmapSize.height());
         auto mediaBoxData = adoptCF(CFDataCreate(NULL, (const UInt8 *)&mediaBox, sizeof(CGRect)));
-        auto dictionary = (CFDictionaryRef)@{
-            (NSString *)kCGPDFContextMediaBox : (NSData *)mediaBoxData.get()
-        };
 
-        CGPDFContextBeginPage(pdfContext.get(), dictionary);
+        auto dictionary = adoptCF(CFDictionaryCreate(
+            kCFAllocatorDefault,
+            &kCGPDFContextMediaBox,
+            &mediaBoxData.get(),
+            1,
+            &kCFTypeDictionaryKeyCallBacks,
+            &kCFTypeDictionaryValueCallBacks
+        ));
 
-        GraphicsContextCG graphicsContext { pdfContext.get() };
+        CGPDFContextBeginPage(pdfContext, dictionary.get());
+
+        GraphicsContextCG graphicsContext { pdfContext };
         graphicsContext.scale({ 1, -1 });
         graphicsContext.translate(0, -bitmapSize.height());
 
         paintSnapshotAtSize(rect, bitmapSize, options, *coreFrame, *frameView, graphicsContext);
 
-        CGPDFContextEndPage(pdfContext.get());
+        CGPDFContextEndPage(pdfContext);
 
         nextRectY += bitmapSize.height();
         remainingHeight -= maxPageHeight;
     }
 
-    CGPDFContextClose(pdfContext.get());
+    CGPDFContextClose(pdfContext);
+    CGPDFContextRelease(pdfContext);
 
     return data;
 }

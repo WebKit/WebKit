@@ -127,8 +127,9 @@ static bool encode(CGImageRef image, const String& mimeType, std::optional<doubl
         nullptr
     };
 
-    auto consumer = adoptCF(CGDataConsumerCreate(const_cast<ScopedLambda<PutBytesCallback>*>(&function), &callbacks));
-    auto destination = adoptCF(CGImageDestinationCreateWithDataConsumer(consumer.get(), destinationUTI.get(), 1, nullptr));
+    CGDataConsumerRef consumer = CGDataConsumerCreate(const_cast<ScopedLambda<PutBytesCallback>*>(&function), &callbacks);
+    auto destination = adoptCF(CGImageDestinationCreateWithDataConsumer(consumer, destinationUTI.get(), 1, nullptr));
+    CGDataConsumerRelease(consumer);
     
     auto imageProperties = imagePropertiesForDestinationUTIAndQuality(destinationUTI.get(), quality);
     CGImageDestinationAddImage(destination.get(), image, imageProperties.get());
@@ -212,8 +213,9 @@ static bool encode(std::span<const uint8_t> data, const String& mimeType, std::o
         nullptr
     };
 
-    auto consumer = adoptCF(CGDataConsumerCreate(const_cast<ScopedLambda<PutBytesCallback>*>(&function), &callbacks));
-    auto destination = adoptCF(CGImageDestinationCreateWithDataConsumer(consumer.get(), destinationUTI.get(), 1, nullptr));
+    CGDataConsumerRef consumer = CGDataConsumerCreate(const_cast<ScopedLambda<PutBytesCallback>*>(&function), &callbacks);
+    auto destination = adoptCF(CGImageDestinationCreateWithDataConsumer(consumer, destinationUTI.get(), 1, nullptr));
+    CGDataConsumerRelease(consumer);
 
     auto imageProperties = imagePropertiesForDestinationUTIAndQuality(destinationUTI.get(), quality);
     CGImageDestinationAddImageFromSource(destination.get(), source.get(), 0, nullptr);

@@ -51,10 +51,11 @@ static RetainPtr<NSData> createPDFWithLinkToURL(NSURL *url)
     CGDataConsumerCallbacks callbacks;
     callbacks.putBytes = (CGDataConsumerPutBytesCallback)putPDFBytesCallback;
     callbacks.releaseConsumer = (CGDataConsumerReleaseInfoCallback)emptyReleaseInfoCallback;
-    auto consumer = adoptCF(CGDataConsumerCreate(pdfData.get(), &callbacks));
+    CGDataConsumerRef consumer = CGDataConsumerCreate(pdfData.get(), &callbacks);
     auto contextDictionary = adoptCF(CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     CGRect rectangle = CGRectMake(0, 0, 1000, 1000);
-    auto pdfContext = adoptCF(CGPDFContextCreate(consumer.get(), &rectangle, contextDictionary.get()));
+    auto pdfContext = adoptCF(CGPDFContextCreate(consumer, &rectangle, contextDictionary.get()));
+    CGDataConsumerRelease(pdfDataConsumer);
 
     auto pageDictionary = adoptCF(CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     auto boxData = adoptCF(CFDataCreate(NULL, (const UInt8 *)&rectangle, sizeof(CGRect)));

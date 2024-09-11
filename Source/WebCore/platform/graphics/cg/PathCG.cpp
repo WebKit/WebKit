@@ -442,14 +442,15 @@ static size_t putBytesNowhere(void*, const void*, size_t count)
 static RetainPtr<CGContextRef> createScratchContext()
 {
     CGDataConsumerCallbacks callbacks = { putBytesNowhere, 0 };
-    auto consumer = adoptCF(CGDataConsumerCreate(0, &callbacks));
-    auto context = adoptCF(CGPDFContextCreate(consumer.get(), 0, 0));
+    CGDataConsumerRef consumer = CGDataConsumerCreate(0, &callbacks);
+    CGContextRef context = CGPDFContextCreate(consumer.get(), 0, 0);
+    CGDataConsumerRelease(consumer);
 
     CGFloat black[4] = { 0, 0, 0, 1 };
-    CGContextSetFillColor(context.get(), black);
-    CGContextSetStrokeColor(context.get(), black);
+    CGContextSetFillColor(context, black);
+    CGContextSetStrokeColor(context, black);
 
-    return context;
+    return adoptCF(context);
 }
 
 static inline CGContextRef scratchContext()

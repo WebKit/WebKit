@@ -82,8 +82,9 @@ static String transcodeImage(const String& path, const String& destinationUTI, c
         nullptr
     };
 
-    auto consumer = adoptCF(CGDataConsumerCreate(&destinationFileHandle, &callbacks));
-    auto destination = adoptCF(CGImageDestinationCreateWithDataConsumer(consumer.get(), destinationUTI.createCFString().get(), 1, nullptr));
+    CGDataConsumerRef consumer = CGDataConsumerCreate(&destinationFileHandle, &callbacks);
+    auto destination = adoptCF(CGImageDestinationCreateWithDataConsumer(consumer, destinationUTI.createCFString().get(), 1, nullptr));
+    CGDataConsumerRelease(consumer);
 
     CGImageDestinationAddImageFromSource(destination.get(), source.get(), 0, nullptr);
 

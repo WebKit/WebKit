@@ -6581,16 +6581,15 @@ void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& print
 #endif
 
         // FIXME: Use CGDataConsumerCreate with callbacks to avoid copying the data.
-        RetainPtr<CGDataConsumerRef> pdfDataConsumer = adoptCF(CGDataConsumerCreateWithCFData(pdfPageData.get()));
-
+        CGDataConsumerRef pdfDataConsumer = adoptCF(CGDataConsumerCreateWithCFData(pdfPageData.get()));
         CGRect mediaBox = (m_printContext && m_printContext->pageCount()) ? m_printContext->pageRect(0) : CGRectMake(0, 0, printInfo.availablePaperWidth, printInfo.availablePaperHeight);
 
-        RetainPtr<CGContextRef> context = adoptCF(CGPDFContextCreate(pdfDataConsumer.get(), &mediaBox, 0));
-
+        CGContextRef context = CGPDFContextCreate(pdfDataConsumer, &mediaBox, 0);
+        CGDataConsumerRelease(pdfDataConsumer);
 #if PLATFORM(MAC)
         if (RetainPtr<PDFDocument> pdfDocument = pdfDocumentForPrintingFrame(coreFrame.get())) {
             ASSERT(!m_printContext);
-            drawPagesToPDFFromPDFDocument(context.get(), pdfDocument.get(), printInfo, first, count);
+            drawPagesToPDFFromPDFDocument(context, pdfDocument.get(), printInfo, first, count);
         } else
 #endif
         {
@@ -6602,17 +6601,18 @@ void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& print
                     break;
 
                 RetainPtr<CFDictionaryRef> pageInfo = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-                CGPDFContextBeginPage(context.get(), pageInfo.get());
+                CGPDFContextBeginPage(context, pageInfo.get());
 
-                GraphicsContextCG ctx(context.get());
+                GraphicsContextCG ctx(context);
                 ctx.scale(FloatSize(1, -1));
                 ctx.translate(0, -m_printContext->pageRect(page).height());
                 m_printContext->spoolPage(ctx, page, m_printContext->pageRect(page).width());
 
-                CGPDFContextEndPage(context.get());
+                CGPDFContextEndPage(context);
             }
         }
-        CGPDFContextClose(context.get());
+        CGPDFContextClose(context);
+        CGPDFContextRelease(context);
     }
 #endif
 }
