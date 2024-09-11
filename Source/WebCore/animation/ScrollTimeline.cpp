@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScrollTimeline.h"
 
+#include "AnimationTimelinesController.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSScrollValue.h"
 #include "CSSValuePool.h"
@@ -73,6 +74,8 @@ ScrollTimeline::ScrollTimeline(ScrollTimelineOptions&& options)
     : m_source(WTFMove(options.source))
     , m_axis(options.axis)
 {
+    if (m_source)
+        m_source->protectedDocument()->ensureTimelinesController().addTimeline(*this);
 }
 
 ScrollTimeline::ScrollTimeline(const AtomString& name, ScrollAxis axis)

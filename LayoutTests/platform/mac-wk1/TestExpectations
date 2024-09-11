@@ -2887,6 +2887,9 @@ imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-101.svg [ Ski
 imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-001.svg [ Skip ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-002.svg [ Skip ]
 
+imported/w3c/web-platform-tests/scroll-animations/ [ Skip ]
+imported/w3c/web-platform-tests/web-animations/interfaces/Animation/scroll-timeline-progress.tentative.html [ Skip ]
+
 # webkit.org/b/278316
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/white-space_normal_wrapped.html
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/white-space_nowrap_wrapped.html

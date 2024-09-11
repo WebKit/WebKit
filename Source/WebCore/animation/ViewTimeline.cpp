@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ViewTimeline.h"
 
+#include "AnimationTimelinesController.h"
 #include "CSSNumericFactory.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
@@ -76,6 +77,8 @@ ViewTimeline::ViewTimeline(ViewTimelineOptions&& options)
     , m_startOffset(CSSNumericFactory::px(0))
     , m_endOffset(CSSNumericFactory::px(0))
 {
+    if (m_subject)
+        m_subject->protectedDocument()->ensureTimelinesController().addTimeline(*this);
 }
 
 ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, ViewTimelineInsets&& insets)
