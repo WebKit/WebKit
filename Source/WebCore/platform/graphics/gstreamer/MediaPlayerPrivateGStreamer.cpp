@@ -136,7 +136,6 @@ GST_DEBUG_CATEGORY(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
 
 namespace WebCore {
-using namespace std;
 
 static const FloatSize s_holePunchDefaultFrameSize(1280, 720);
 
