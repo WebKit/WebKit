@@ -74,8 +74,10 @@ SVGTextChunk::SVGTextChunk(const Vector<InlineIterator::SVGTextBoxIterator>& lin
     }
 
     for (auto box : lineLayoutBoxes.subspan(first, limit - first)) {
-        auto& fragments = fragmentMap.find(makeKey(*box))->value;
-        m_boxes.append({ box, fragments });
+        auto it = fragmentMap.find(makeKey(*box));
+        if (it == fragmentMap.end())
+            continue;
+        m_boxes.append({ box, it->value });
     }
 }
 
