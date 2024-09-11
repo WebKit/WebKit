@@ -320,9 +320,6 @@ fast/forms/validation-message-on-radio.html [ Skip ]
 fast/forms/validation-message-on-range.html [ Skip ]
 fast/forms/validation-message-on-textarea.html [ Skip ]
 
-# Opera-submitted tests to W3C for <track>, a lot of failures still.
-webkit.org/b/103926 media/track/opera [ Skip ]
-
 # TODO Impossible to test text-only-zoom from DRT on Windows
 webkit.org/b/35013 svg/zoom/text/ [ Skip ]
 
@@ -1221,19 +1218,10 @@ css3/blending/blend-mode-clip-rect-accelerated-blending.html [ Skip ] # ImageOnl
 # DOM
 #//////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/141756 fast/dom/Range/getClientRects.html [ Pass Failure ]
-
-webkit.org/b/182694 fast/dom/crash-moving-subtree-between-documents.html [ Pass Failure ]
-
-webkit.org/b/182694 fast/dom/event-handler-attributes.html [ Pass Timeout ]
-
-webkit.org/b/182128 fast/dom/navigator-detached-no-crash.html [ Pass Failure ]
-
-webkit.org/b/257624 fast/dom/SelectorAPI/caseID.html [ Failure Pass ]
+# Needs platform getClientRects-expected.txt
+webkit.org/b/141756 fast/dom/Range/getClientRects.html [ Skip ]
 
 webkit.org/b/265213 fast/dom/Range/detach-range-during-deletecontents.html [ Skip ] # Timeout
-
-webkit.org/b/227753 [ Debug ] fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Pass Failure ]
 
 webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Skip ] # Timeout
 
@@ -1243,9 +1231,7 @@ fast/dom/Window/mozilla-focus-blur.html [ Pass Failure ]
 
 # Neither this port nor the mac port support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html [ Skip ]
-fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ Failure ]
-
-fast/dom/set-attribute-and-normalize-in-event.html [ Failure Pass ]
+fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ Skip ]
 
 # TODO HIDDEN_PAGE_DOM_TIMER_THROTTLING is disabled
 fast/dom/timer-throttling-hidden-page.html [ Skip ] # Timeout
@@ -1253,9 +1239,6 @@ fast/dom/timer-throttling-hidden-page-2.html [ Skip ] # Timeout
 
 # <rdar://5313536> Times out
 fast/dom/frame-loading-via-document-write.html [ Skip ]
-
-# This test is WebKit2 only.
-fast/dom/Window/child-window-focus.html [ Skip ]
 
 fast/dom/Window/get-set-properties.html [ Failure ]
 fast/dom/Window/open-window-min-size.html [ Skip ]
@@ -1514,9 +1497,6 @@ streams/readable-stream-byob-request-worker.html [ Skip ]
 # The CookieStore API is not fully implemented on Windows port yet.
 imported/w3c/web-platform-tests/cookie-store [ Skip ]
 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Skip ]
-
-# Makes a subsequent test crash
-webkit.org/b/272127 fast/text/remove-renderer-and-select-crash.html [ Skip ]
 
 webkit.org/b/271132 [ Debug ] fast/text/crash-grapheme-cluster-spanning-adjacent-textitems.html [ Skip ] # Crash
 
