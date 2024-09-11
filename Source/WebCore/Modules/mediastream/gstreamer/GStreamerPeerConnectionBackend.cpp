@@ -132,7 +132,7 @@ bool GStreamerPeerConnectionBackend::setConfiguration(MediaEndpointConfiguration
     return m_endpoint->setConfiguration(configuration);
 }
 
-static inline GStreamerRtpSenderBackend& backendFromRTPSender(RTCRtpSender& sender)
+GStreamerRtpSenderBackend& GStreamerPeerConnectionBackend::backendFromRTPSender(RTCRtpSender& sender)
 {
     ASSERT(!sender.isStopped());
     return static_cast<GStreamerRtpSenderBackend&>(*sender.backend());
@@ -140,59 +140,24 @@ static inline GStreamerRtpSenderBackend& backendFromRTPSender(RTCRtpSender& send
 
 void GStreamerPeerConnectionBackend::getStats(Ref<DeferredPromise>&& promise)
 {
-    GUniquePtr<GstStructure> additionalStats(gst_structure_new_empty("stats"));
-    for (auto& sender : connection().getSenders()) {
-        auto& backend = backendFromRTPSender(sender);
-        const GstStructure* stats = nullptr;
-        if (auto* videoSource = backend.videoSource())
-            stats = videoSource->stats();
-
-        if (!stats)
-            continue;
-
-        gst_structure_foreach(stats, [](GQuark quark, const GValue* value, gpointer userData) -> gboolean {
-            auto* resultStructure = static_cast<GstStructure*>(userData);
-            gst_structure_set_value(resultStructure, g_quark_to_string(quark), value);
-            return TRUE;
-        }, additionalStats.get());
-    }
-    for (auto& receiver : connection().getReceivers()) {
-        auto& track = receiver.get().track();
-        if (!is<RealtimeIncomingVideoSourceGStreamer>(track.source()))
-            continue;
-
-        auto& source = static_cast<RealtimeIncomingVideoSourceGStreamer&>(track.source());
-        const auto* stats = source.stats();
-        if (!stats)
-            continue;
-
-        gst_structure_foreach(stats, [](GQuark quark, const GValue* value, gpointer userData) -> gboolean {
-            auto* resultStructure = static_cast<GstStructure*>(userData);
-            gst_structure_set_value(resultStructure, g_quark_to_string(quark), value);
-            return TRUE;
-        }, additionalStats.get());
-    }
-    m_endpoint->getStats(nullptr, additionalStats.get(), WTFMove(promise));
+    m_endpoint->getStats(nullptr, WTFMove(promise));
 }
 
 void GStreamerPeerConnectionBackend::getStats(RTCRtpSender& sender, Ref<DeferredPromise>&& promise)
 {
     if (!sender.backend()) {
-        m_endpoint->getStats(nullptr, nullptr, WTFMove(promise));
+        m_endpoint->getStats(nullptr, WTFMove(promise));
         return;
     }
 
     auto& backend = backendFromRTPSender(sender);
     GRefPtr<GstPad> pad;
-    const GstStructure* additionalStats = nullptr;
     if (RealtimeOutgoingAudioSourceGStreamer* source = backend.audioSource())
         pad = source->pad();
-    else if (RealtimeOutgoingVideoSourceGStreamer* source = backend.videoSource()) {
+    else if (RealtimeOutgoingVideoSourceGStreamer* source = backend.videoSource())
         pad = source->pad();
-        additionalStats = source->stats();
-    }
 
-    m_endpoint->getStats(pad.get(), additionalStats, WTFMove(promise));
+    m_endpoint->getStats(pad.get(), WTFMove(promise));
 }
 
 void GStreamerPeerConnectionBackend::getStats(RTCRtpReceiver& receiver, Ref<DeferredPromise>&& promise)
@@ -262,7 +227,7 @@ std::unique_ptr<RTCDataChannelHandler> GStreamerPeerConnectionBackend::createDat
     return m_endpoint->createDataChannel(label, options);
 }
 
-static inline RefPtr<RTCRtpSender> findExistingSender(const Vector<RefPtr<RTCRtpTransceiver>>& transceivers, GStreamerRtpSenderBackend& senderBackend)
+RefPtr<RTCRtpSender> GStreamerPeerConnectionBackend::findExistingSender(const Vector<RefPtr<RTCRtpTransceiver>>& transceivers, GStreamerRtpSenderBackend& senderBackend)
 {
     ASSERT(senderBackend.rtcSender());
     for (auto& transceiver : transceivers) {
