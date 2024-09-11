@@ -39,6 +39,11 @@ WebUserMediaClient::WebUserMediaClient(WebPage& page)
 {
 }
 
+Ref<WebPage> WebUserMediaClient::protectedPage() const
+{
+    return m_page.get();
+}
+
 void WebUserMediaClient::pageDestroyed()
 {
     delete this;
@@ -46,37 +51,37 @@ void WebUserMediaClient::pageDestroyed()
 
 void WebUserMediaClient::requestUserMediaAccess(UserMediaRequest& request)
 {
-    m_page.userMediaPermissionRequestManager().startUserMediaRequest(request);
+    protectedPage()->userMediaPermissionRequestManager().startUserMediaRequest(request);
 }
 
 void WebUserMediaClient::cancelUserMediaAccessRequest(UserMediaRequest& request)
 {
-    m_page.userMediaPermissionRequestManager().cancelUserMediaRequest(request);
+    protectedPage()->userMediaPermissionRequestManager().cancelUserMediaRequest(request);
 }
 
 void WebUserMediaClient::enumerateMediaDevices(Document& document, UserMediaClient::EnumerateDevicesCallback&& completionHandler)
 {
-    m_page.userMediaPermissionRequestManager().enumerateMediaDevices(document, WTFMove(completionHandler));
+    protectedPage()->userMediaPermissionRequestManager().enumerateMediaDevices(document, WTFMove(completionHandler));
 }
 
 WebUserMediaClient::DeviceChangeObserverToken WebUserMediaClient::addDeviceChangeObserver(WTF::Function<void()>&& observer)
 {
-    return m_page.userMediaPermissionRequestManager().addDeviceChangeObserver(WTFMove(observer));
+    return protectedPage()->userMediaPermissionRequestManager().addDeviceChangeObserver(WTFMove(observer));
 }
 
 void WebUserMediaClient::removeDeviceChangeObserver(DeviceChangeObserverToken token)
 {
-    m_page.userMediaPermissionRequestManager().removeDeviceChangeObserver(token);
+    protectedPage()->userMediaPermissionRequestManager().removeDeviceChangeObserver(token);
 }
 
 void WebUserMediaClient::updateCaptureState(const WebCore::Document& document, bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
-    m_page.userMediaPermissionRequestManager().updateCaptureState(document, isActive, kind, WTFMove(completionHandler));
+    protectedPage()->userMediaPermissionRequestManager().updateCaptureState(document, isActive, kind, WTFMove(completionHandler));
 }
 
 void WebUserMediaClient::setShouldListenToVoiceActivity(bool shouldListen)
 {
-    m_page.send(Messages::WebPageProxy::SetShouldListenToVoiceActivity { shouldListen });
+    protectedPage()->send(Messages::WebPageProxy::SetShouldListenToVoiceActivity { shouldListen });
 }
 
 } // namespace WebKit;

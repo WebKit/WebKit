@@ -24,6 +24,7 @@
 
 #include <WebCore/UserMediaClient.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -36,6 +37,8 @@ public:
     ~WebUserMediaClient() { }
 
 private:
+    Ref<WebPage> protectedPage() const;
+
     void pageDestroyed() override;
 
     void requestUserMediaAccess(WebCore::UserMediaRequest&) override;
@@ -50,7 +53,7 @@ private:
 
     void initializeFactories();
 
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
 };
 
 } // namespace WebCore

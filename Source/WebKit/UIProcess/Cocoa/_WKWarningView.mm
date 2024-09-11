@@ -466,7 +466,7 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
     ButtonType *showDetails = box.subviews.lastObject;
     [showDetails removeFromSuperview];
 
-    auto text = adoptNS([_warning->details() mutableCopy]);
+    auto text = adoptNS([self._protectedWarning->details() mutableCopy]);
     [text addAttributes:@{ NSFontAttributeName:fontOfSize(WarningTextSize::Body) } range:NSMakeRange(0, [text length])];
     auto details = adoptNS([[_WKWarningViewTextView alloc] initWithAttributedString:text.get() forWarning:self]);
     _details = details.get();
@@ -621,6 +621,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (BOOL)forMainFrameNavigation
 {
     return _warning->forMainFrameNavigation();
+}
+
+- (RefPtr<const WebKit::BrowsingWarning>)_protectedWarning
+{
+    return _warning;
 }
 
 @end
