@@ -46,8 +46,8 @@ static void emptyReleaseInfoCallback(void*)
 
 static RetainPtr<NSData> createPDFWithLinkToURL(NSURL *url)
 {
-    auto pdfData = adoptNS([[NSMutableData alloc] init]);
-    
+    auto pdfData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
+
     CGDataConsumerCallbacks callbacks;
     callbacks.putBytes = (CGDataConsumerPutBytesCallback)putPDFBytesCallback;
     callbacks.releaseConsumer = (CGDataConsumerReleaseInfoCallback)emptyReleaseInfoCallback;

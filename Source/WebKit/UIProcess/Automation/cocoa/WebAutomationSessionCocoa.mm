@@ -42,9 +42,9 @@ using namespace WebCore;
 
 static std::optional<String> getBase64EncodedPNGData(const RetainPtr<CGImageRef>&& cgImage)
 {
-    RetainPtr<NSMutableData> imageData = adoptNS([[NSMutableData alloc] init]);
+    auto imageData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData((CFMutableDataRef)imageData.get(), kUTTypePNG, 1, 0));
+    RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData(imageData.get(), kUTTypePNG, 1, 0));
 ALLOW_DEPRECATED_DECLARATIONS_END
     if (!destination)
         return std::nullopt;
