@@ -3045,7 +3045,9 @@ webkit.org/b/279434 webgl/webgl-and-dom-in-gpup.html [ Skip ]
 # NEEDS TRIAGING. If unsure, put it in this section.
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/264936 http/wpt/webrtc/transfer-datachannel-service-worker.https.html [ Pass Crash ]
+# This test is almost the same as http/wpt/webrtc/transfer-datachannel-service-worker.https.html.
+# The main difference is that in this test an additional message is sent on the data-channel.
+webkit.org/b/264936 imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel-service-worker.https.html [ Pass Failure ]
 
 webkit.org/b/264933 fast/mediastream/image-capture-take-photo.html [ Pass Failure Crash ]
 

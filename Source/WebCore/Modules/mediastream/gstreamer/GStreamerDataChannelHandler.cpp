@@ -258,12 +258,19 @@ bool GStreamerDataChannelHandler::checkState()
 
     GstWebRTCDataChannelState channelState;
     g_object_get(m_channel.get(), "ready-state", &channelState, nullptr);
+    if (!channelState) {
+        DC_DEBUG("Data-channel ready-state hasn't been set yet.");
+        return false;
+    }
 
     RTCDataChannelState state;
     switch (channelState) {
 #if !GST_CHECK_VERSION(1, 22, 0)
-    // Removed in https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/2099.
+    // Removed in https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/2099. In
+    // GStreamer < 1.22 GST_WEBRTC_DATA_CHANNEL_STATE_NEW had the 0 value. We keep this case only to
+    // avoid adding a default case.
     case GST_WEBRTC_DATA_CHANNEL_STATE_NEW:
+        break;
 #endif
     case GST_WEBRTC_DATA_CHANNEL_STATE_CONNECTING:
         state = RTCDataChannelState::Connecting;
