@@ -210,6 +210,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-container-for-shadow-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-container-invalidation-inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-not-sharing-float.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-query-no-cycle.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/style-query-with-unknown-width.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/svg-foreignobject-child-container.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/container-queries/svg-foreignobject-no-size-container-expected.html
