@@ -57,7 +57,6 @@ RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(const
     gst_element_set_name(m_bin.get(), makeString("outgoing-video-source-"_s, sourceCounter.exchangeAdd(1)).ascii().data());
 
     m_stats.reset(gst_structure_new_empty("webrtc-outgoing-video-stats"));
-    startUpdatingStats();
 
     m_videoConvert = makeGStreamerElement("videoconvert", nullptr);
 
@@ -72,6 +71,7 @@ RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(const
 
     m_encoder = gst_element_factory_make("webkitvideoencoder", nullptr);
     gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_videoRate.get(), m_frameRateCapsFilter.get(), m_videoFlip.get(), m_videoConvert.get(), m_encoder.get(), nullptr);
+    startUpdatingStats();
 }
 
 RTCRtpCapabilities RealtimeOutgoingVideoSourceGStreamer::rtpCapabilities() const
@@ -244,6 +244,7 @@ void RealtimeOutgoingVideoSourceGStreamer::connectFallbackSource()
         gst_element_sync_state_with_parent(m_fallbackSource.get());
     }
 
+    stopUpdatingStats();
     g_object_set(m_inputSelector.get(), "active-pad", m_fallbackPad.get(), nullptr);
 }
 
@@ -283,7 +284,7 @@ void RealtimeOutgoingVideoSourceGStreamer::startUpdatingStats()
     GST_DEBUG_OBJECT(m_bin.get(), "Starting buffer monitoring for stats gathering");
     auto holder = createRealtimeOutgoingVideoSourceHolder();
     holder->source = this;
-    auto pad = adoptGRef(gst_element_get_static_pad(m_bin.get(), "src"));
+    auto pad = adoptGRef(gst_element_get_static_pad(m_encoder.get(), "src"));
     m_statsPadProbeId = gst_pad_add_probe(pad.get(), GST_PAD_PROBE_TYPE_BUFFER, [](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
         auto* holder = static_cast<RealtimeOutgoingVideoSourceHolder*>(userData);
         auto* buffer = GST_PAD_PROBE_INFO_BUFFER(info);
@@ -298,8 +299,8 @@ void RealtimeOutgoingVideoSourceGStreamer::stopUpdatingStats()
         return;
 
     GST_DEBUG_OBJECT(m_bin.get(), "Stopping buffer monitoring for stats gathering");
-    auto binSrcPad = adoptGRef(gst_element_get_static_pad(m_bin.get(), "src"));
-    gst_pad_remove_probe(binSrcPad.get(), m_statsPadProbeId);
+    auto pad = adoptGRef(gst_element_get_static_pad(m_encoder.get(), "src"));
+    gst_pad_remove_probe(pad.get(), m_statsPadProbeId);
     m_statsPadProbeId = 0;
 }
 
