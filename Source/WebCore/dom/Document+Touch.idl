@@ -25,8 +25,8 @@
     // FIXME: This has been dropped from the standard now that Touch has a constructor.
     [NewObject] Touch createTouch(optional WindowProxy? window = null, optional EventTarget? target = null,
         optional long identifier = 0,
-        optional long pageX = 0, optional long pageY = 0, optional long screenX = 0, optional long screenY = 0,
-        optional long webkitRadiusX = 0, optional long webkitRadiusY = 0,
+        optional double pageX = 0, optional double pageY = 0, optional double screenX = 0, optional double screenY = 0,
+        optional double webkitRadiusX = 0, optional double webkitRadiusY = 0,
         optional unrestricted float webkitRotationAngle = NaN, optional unrestricted float webkitForce = NaN);
     [NewObject] TouchList createTouchList(Touch... touches);
 };

@@ -91,9 +91,9 @@ bool ScrollAnimatorIOS::handleTouchEvent(const PlatformTouchEvent& touchEvent)
         return false;
     }
     
-    IntPoint currentPoint = touchEvent.touchLocationAtIndex(0);
+    FloatPoint currentPoint = touchEvent.touchLocationAtIndex(0);
 
-    IntSize touchDelta = m_lastTouchPoint - currentPoint;
+    FloatSize touchDelta = m_lastTouchPoint - currentPoint;
     m_lastTouchPoint = currentPoint;
 
     if (!m_scrollableAreaForTouchSequence)
@@ -107,7 +107,7 @@ bool ScrollAnimatorIOS::handleTouchEvent(const PlatformTouchEvent& touchEvent)
         if (!horizontallyScrollable && !verticallyScrollable)
             return false;
 
-        IntSize deltaFromStart = m_firstTouchPoint - currentPoint;
+        FloatSize deltaFromStart = m_firstTouchPoint - currentPoint;
     
         const int latchAxisMovementThreshold = 10;
         if (!horizontallyScrollable && verticallyScrollable) {
@@ -141,13 +141,13 @@ bool ScrollAnimatorIOS::handleTouchEvent(const PlatformTouchEvent& touchEvent)
     
     // Horizontal
     if (m_touchScrollAxisLatch != AxisLatchVertical) {
-        int delta = touchDelta.width();
+        float delta = touchDelta.width();
         handled |= m_scrollableAreaForTouchSequence->scroll(delta < 0 ? ScrollDirection::ScrollLeft : ScrollDirection::ScrollRight, ScrollGranularity::Pixel, std::abs(delta));
     }
     
     // Vertical
     if (m_touchScrollAxisLatch != AxisLatchHorizontal) {
-        int delta = touchDelta.height();
+        float delta = touchDelta.height();
         handled |= m_scrollableAreaForTouchSequence->scroll(delta < 0 ? ScrollDirection::ScrollUp : ScrollDirection::ScrollDown, ScrollGranularity::Pixel, std::abs(delta));
     }
     
@@ -163,7 +163,7 @@ bool ScrollAnimatorIOS::handleTouchEvent(const PlatformTouchEvent& touchEvent)
     return true;
 }
 
-void ScrollAnimatorIOS::determineScrollableAreaForTouchSequence(const IntSize& scrollDelta)
+void ScrollAnimatorIOS::determineScrollableAreaForTouchSequence(const FloatSize& scrollDelta)
 {
     ASSERT(!m_scrollableAreaForTouchSequence);
 
