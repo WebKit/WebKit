@@ -528,7 +528,7 @@ inline static Vector<AuthenticatorTransport> toTransports(NSArray<ASAuthorizatio
 void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestData &&requestData, RequestCompletionHandler &&handler)
 {
 #if HAVE(UNIFIED_ASC_AUTH_UI)
-    if (!m_webPageProxy.preferences().webAuthenticationASEnabled()) {
+    if (!protectedWebPageProxy()->protectedPreferences()->webAuthenticationASEnabled()) {
         auto context = contextForRequest(WTFMove(requestData));
         if (context.get() == nullptr) {
             handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
@@ -1117,12 +1117,12 @@ void WebAuthenticatorCoordinatorProxy::performRequestLegacy(RetainPtr<ASCCredent
     }
 #endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #if PLATFORM(IOS) || PLATFORM(VISION)
-    requestContext.get().windowSceneIdentifier = m_webPageProxy.pageClient().sceneID();
+    requestContext.get().windowSceneIdentifier = m_webPageProxy->pageClient().sceneID();
 
     [m_proxy performAuthorizationRequestsForContext:requestContext.get() withCompletionHandler:makeBlockPtr([weakThis = WeakPtr { *this }, handler = WTFMove(handler)](id<ASCCredentialProtocol> credential, NSError *error) mutable {
         callOnMainRunLoop([weakThis, handler = WTFMove(handler), credential = retainPtr(credential), error = retainPtr(error)] () mutable {
 #elif PLATFORM(MAC)
-    RetainPtr<NSWindow> window = m_webPageProxy.platformWindow();
+    RetainPtr<NSWindow> window = m_webPageProxy->platformWindow();
     [m_proxy performAuthorizationRequestsForContext:requestContext.get() withClearanceHandler:makeBlockPtr([weakThis = WeakPtr { *this }, handler = WTFMove(handler), window = WTFMove(window)](NSXPCListenerEndpoint *daemonEndpoint, NSError *error) mutable {
         callOnMainRunLoop([weakThis, handler = WTFMove(handler), window = WTFMove(window), daemonEndpoint = retainPtr(daemonEndpoint), error = retainPtr(error)] () mutable {
             if (!weakThis || !daemonEndpoint) {

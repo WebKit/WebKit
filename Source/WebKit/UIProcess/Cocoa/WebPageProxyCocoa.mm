@@ -466,42 +466,42 @@ WebPageProxy::Internals::~Internals() = default;
 
 IPC::Connection* WebPageProxy::Internals::paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&)
 {
-    return &page.legacyMainFrameProcess().connection();
+    return &page->legacyMainFrameProcess().connection();
 }
 
 const String& WebPageProxy::Internals::paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&)
 {
-    return page.websiteDataStore().configuration().boundInterfaceIdentifier();
+    return page->websiteDataStore().configuration().boundInterfaceIdentifier();
 }
 
 void WebPageProxy::Internals::getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&& completionHandler)
 {
-    completionHandler(page.userAgent());
+    completionHandler(page->userAgent());
 }
 
 CocoaWindow *WebPageProxy::Internals::paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const
 {
-    return page.pageClient().platformWindow();
+    return page->pageClient().platformWindow();
 }
 
 const String& WebPageProxy::Internals::paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&)
 {
-    return page.websiteDataStore().configuration().sourceApplicationBundleIdentifier();
+    return page->websiteDataStore().configuration().sourceApplicationBundleIdentifier();
 }
 
 const String& WebPageProxy::Internals::paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&)
 {
-    return page.websiteDataStore().configuration().sourceApplicationSecondaryIdentifier();
+    return page->websiteDataStore().configuration().sourceApplicationSecondaryIdentifier();
 }
 
 void WebPageProxy::Internals::paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName receiverName, IPC::MessageReceiver& messageReceiver)
 {
-    page.legacyMainFrameProcess().addMessageReceiver(receiverName, webPageID, messageReceiver);
+    protectedPage()->protectedLegacyMainFrameProcess()->addMessageReceiver(receiverName, webPageID, messageReceiver);
 }
 
 void WebPageProxy::Internals::paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName receiverName)
 {
-    page.legacyMainFrameProcess().removeMessageReceiver(receiverName, webPageID);
+    protectedPage()->protectedLegacyMainFrameProcess()->removeMessageReceiver(receiverName, webPageID);
 }
 
 #endif // ENABLE(APPLE_PAY)
@@ -534,17 +534,20 @@ void WebPageProxy::Internals::didResumeSpeaking(WebCore::PlatformSpeechSynthesis
 
 void WebPageProxy::Internals::speakingErrorOccurred(WebCore::PlatformSpeechSynthesisUtterance&)
 {
-    page.legacyMainFrameProcess().send(Messages::WebPage::SpeakingErrorOccurred(), page.webPageIDInMainFrameProcess());
+    Ref protectedPage = page.get();
+    protectedPage->protectedLegacyMainFrameProcess()->send(Messages::WebPage::SpeakingErrorOccurred(), protectedPage->webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::Internals::boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary speechBoundary, unsigned charIndex, unsigned charLength)
 {
-    page.legacyMainFrameProcess().send(Messages::WebPage::BoundaryEventOccurred(speechBoundary == WebCore::SpeechBoundary::SpeechWordBoundary, charIndex, charLength), page.webPageIDInMainFrameProcess());
+    Ref protectedPage = page.get();
+    protectedPage->protectedLegacyMainFrameProcess()->send(Messages::WebPage::BoundaryEventOccurred(speechBoundary == WebCore::SpeechBoundary::SpeechWordBoundary, charIndex, charLength), protectedPage->webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::Internals::voicesDidChange()
 {
-    page.legacyMainFrameProcess().send(Messages::WebPage::VoicesDidChange(), page.webPageIDInMainFrameProcess());
+    Ref protectedPage = page.get();
+    protectedPage->protectedLegacyMainFrameProcess()->send(Messages::WebPage::VoicesDidChange(), protectedPage->webPageIDInMainFrameProcess());
 }
 
 #endif // ENABLE(SPEECH_SYNTHESIS)

@@ -45,10 +45,10 @@ class WebBackForwardCache final : public CanMakeCheckedPtr<WebBackForwardCache> 
     WTF_MAKE_TZONE_ALLOCATED(WebBackForwardCache);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebBackForwardCache);
 public:
-    explicit WebBackForwardCache(WebProcessPool&);
+    explicit WebBackForwardCache();
     ~WebBackForwardCache();
 
-    void setCapacity(unsigned);
+    void setCapacity(WebProcessPool&, unsigned);
     unsigned capacity() const { return m_capacity; }
     unsigned size() const { return m_itemsWithCachedPage.computeSize(); }
 
@@ -66,11 +66,12 @@ public:
     std::unique_ptr<SuspendedPageProxy> takeSuspendedPage(WebBackForwardListItem&);
 
 private:
+    Ref<WebProcessPool> protectedProcessPool() const;
+
     void removeOldestEntry();
     void removeEntriesMatching(const Function<bool(WebBackForwardListItem&)>&);
     void addEntry(WebBackForwardListItem&, std::unique_ptr<WebBackForwardCacheEntry>&&);
 
-    WebProcessPool& m_processPool;
     unsigned m_capacity { 0 };
     WeakListHashSet<WebBackForwardListItem> m_itemsWithCachedPage;
 };

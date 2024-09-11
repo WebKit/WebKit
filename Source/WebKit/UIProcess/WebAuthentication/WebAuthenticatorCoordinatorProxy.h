@@ -100,6 +100,8 @@ public:
 private:
     using QueryCompletionHandler = CompletionHandler<void(bool)>;
 
+    Ref<WebPageProxy> protectedWebPageProxy() const;
+
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
@@ -113,7 +115,7 @@ private:
 
     void handleRequest(WebAuthenticationRequestData&&, RequestCompletionHandler&&);
 
-    WebPageProxy& m_webPageProxy;
+    WeakRef<WebPageProxy> m_webPageProxy;
 
 #if HAVE(UNIFIED_ASC_AUTH_UI) || HAVE(WEB_AUTHN_AS_MODERN)
     bool isASCAvailable();

@@ -244,7 +244,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #endif
     , m_foregroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
     , m_backgroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
-    , m_backForwardCache(makeUniqueRef<WebBackForwardCache>(*this))
+    , m_backForwardCache(makeUniqueRef<WebBackForwardCache>())
     , m_webProcessCache(makeUniqueRef<WebProcessCache>(*this))
     , m_webProcessWithAudibleMediaCounter([this](RefCounterEvent) { updateAudibleMediaAssertions(); })
     , m_audibleActivityTimer(RunLoop::main(), this, &WebProcessPool::clearAudibleActivity)
@@ -1503,7 +1503,7 @@ void WebProcessPool::updateBackForwardCacheCapacity()
     unsigned backForwardCacheCapacity = 0;
     calculateMemoryCacheSizes(LegacyGlobalSettings::singleton().cacheModel(), dummy, dummy, dummy, dummyInterval, backForwardCacheCapacity);
 
-    checkedBackForwardCache()->setCapacity(backForwardCacheCapacity);
+    checkedBackForwardCache()->setCapacity(*this, backForwardCacheCapacity);
 }
 
 void WebProcessPool::setCacheModel(CacheModel cacheModel)

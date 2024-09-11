@@ -1295,12 +1295,12 @@ UIViewController *WebPageProxy::Internals::paymentCoordinatorPresentingViewContr
     // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
     // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
     // We should call PageClientImpl::presentingViewController() instead.
-    return page.uiClient().presentingViewController();
+    return page->uiClient().presentingViewController();
 }
 
 const String& WebPageProxy::Internals::paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&)
 {
-    return page.websiteDataStore().configuration().dataConnectionServiceType();
+    return page->websiteDataStore().configuration().dataConnectionServiceType();
 }
 
 #endif

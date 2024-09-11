@@ -38,6 +38,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/WeakRef.h>
 
 OBJC_CLASS CALayer;
 
@@ -153,7 +154,7 @@ public:
     bool supportsPartialRepaint() const;
     bool drawingRequiresClearedPixels() const;
 
-    PlatformCALayerRemote& layer() const { return m_layer; }
+    PlatformCALayerRemote& layer() const;
 
     void encode(IPC::Encoder&) const;
 
@@ -200,7 +201,7 @@ protected:
 
     WebCore::IntRect layerBounds() const;
 
-    PlatformCALayerRemote& m_layer;
+    WeakRef<PlatformCALayerRemote> m_layer;
 
     Parameters m_parameters;
 

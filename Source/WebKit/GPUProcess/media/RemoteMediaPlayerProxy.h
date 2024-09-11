@@ -441,7 +441,7 @@ private:
     RefPtr<WebCore::VideoFrame> m_videoFrameForCurrentTime;
     bool m_shouldCheckHardwareSupport { false };
 #if !RELEASE_LOG_DISABLED
-    const Logger& m_logger;
+    Ref<const Logger> m_logger;
 #endif
 };
 

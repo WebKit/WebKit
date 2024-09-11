@@ -631,7 +631,7 @@ std::optional<IPC::AsyncReplyID> WebPageProxy::willPerformPasteCommand(DOMPasteA
 
 RetainPtr<NSView> WebPageProxy::Internals::platformView() const
 {
-    return [page.protectedPageClient()->platformWindow() contentView];
+    return [page->protectedPageClient()->platformWindow() contentView];
 }
 
 #if ENABLE(PDF_PLUGIN)

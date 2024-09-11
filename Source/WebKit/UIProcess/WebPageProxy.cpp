@@ -879,6 +879,11 @@ WebPageProxy::~WebPageProxy()
 #endif
 }
 
+Ref<WebPageProxy> WebPageProxy::Internals::protectedPage() const
+{
+    return page.get();
+}
+
 void WebPageProxy::addAllMessageReceivers()
 {
     Ref process = m_legacyMainFrameProcess;
@@ -8550,10 +8555,11 @@ WebColorPickerClient& WebPageProxy::colorPickerClient()
 
 void WebPageProxy::Internals::didChooseColor(const WebCore::Color& color)
 {
-    if (!page.hasRunningProcess())
+    Ref protectedPage = page.get();
+    if (!protectedPage->hasRunningProcess())
         return;
 
-    page.send(Messages::WebPage::DidChooseColor(color));
+    protectedPage->send(Messages::WebPage::DidChooseColor(color));
 }
 
 void WebPageProxy::Internals::didEndColorPicker()
@@ -8561,10 +8567,11 @@ void WebPageProxy::Internals::didEndColorPicker()
     if (!std::exchange(colorPicker, nullptr))
         return;
 
-    if (!page.hasRunningProcess())
+    Ref protectedPage = page.get();
+    if (!protectedPage->hasRunningProcess())
         return;
 
-    page.send(Messages::WebPage::DidEndColorPicker());
+    protectedPage->send(Messages::WebPage::DidEndColorPicker());
 }
 
 #endif
@@ -9040,16 +9047,16 @@ void WebPageProxy::setTextIndicatorAnimationProgress(float progress)
 
 void WebPageProxy::Internals::valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex)
 {
-    Ref page = this->page;
-    RefPtr frame = page->focusedOrMainFrame();
+    Ref protectedPage = page.get();
+    RefPtr frame = protectedPage->focusedOrMainFrame();
     if (!frame)
         return;
-    page->sendToProcessContainingFrame(frame->frameID(), Messages::WebPage::DidChangeSelectedIndexForActivePopupMenu(newSelectedIndex));
+    protectedPage->sendToProcessContainingFrame(frame->frameID(), Messages::WebPage::DidChangeSelectedIndexForActivePopupMenu(newSelectedIndex));
 }
 
 void WebPageProxy::Internals::setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index)
 {
-    Ref { page }->send(Messages::WebPage::SetTextForActivePopupMenu(index));
+    protectedPage()->send(Messages::WebPage::SetTextForActivePopupMenu(index));
 }
 
 bool WebPageProxy::isProcessingKeyboardEvents() const
@@ -9097,7 +9104,7 @@ void WebPageProxy::postMessageToInjectedBundle(const String& messageName, API::O
 #if PLATFORM(GTK)
 void WebPageProxy::Internals::failedToShowPopupMenu()
 {
-    Ref { page }->send(Messages::WebPage::FailedToShowPopupMenu());
+    protectedPage()->send(Messages::WebPage::FailedToShowPopupMenu());
 }
 #endif
 
@@ -9637,7 +9644,7 @@ void WebPageProxy::ignoreWord(IPC::Connection& connection, const String& word)
 
 void WebPageProxy::requestCheckingOfString(TextCheckerRequestID requestID, const TextCheckingRequestData& request, int32_t insertionPoint)
 {
-    TextChecker::requestCheckingOfString(TextCheckerCompletion::create(requestID, request, this), insertionPoint);
+    TextChecker::requestCheckingOfString(TextCheckerCompletion::create(requestID, request, *this), insertionPoint);
 }
 
 void WebPageProxy::didFinishCheckingText(TextCheckerRequestID requestID, const Vector<WebCore::TextCheckingResult>& result)
@@ -12682,34 +12689,38 @@ void WebPageProxy::mockMediaPlaybackTargetPickerDismissPopup()
 
 void WebPageProxy::Internals::setPlaybackTarget(PlaybackTargetClientContextIdentifier contextId, Ref<MediaPlaybackTarget>&& target)
 {
-    if (!page.hasRunningProcess())
+    Ref protectedPage = page.get();
+    if (!protectedPage->hasRunningProcess())
         return;
 
-    page.send(Messages::WebPage::PlaybackTargetSelected(contextId, MediaPlaybackTargetContextSerialized { target->targetContext() }));
+    protectedPage->send(Messages::WebPage::PlaybackTargetSelected(contextId, MediaPlaybackTargetContextSerialized { target->targetContext() }));
 }
 
 void WebPageProxy::Internals::externalOutputDeviceAvailableDidChange(PlaybackTargetClientContextIdentifier contextId, bool available)
 {
-    if (!page.hasRunningProcess())
+    Ref protectedPage = page.get();
+    if (!protectedPage->hasRunningProcess())
         return;
 
-    page.send(Messages::WebPage::PlaybackTargetAvailabilityDidChange(contextId, available));
+    protectedPage->send(Messages::WebPage::PlaybackTargetAvailabilityDidChange(contextId, available));
 }
 
 void WebPageProxy::Internals::setShouldPlayToPlaybackTarget(PlaybackTargetClientContextIdentifier contextId, bool shouldPlay)
 {
-    if (!page.hasRunningProcess())
+    Ref protectedPage = page.get();
+    if (!protectedPage->hasRunningProcess())
         return;
 
-    page.send(Messages::WebPage::SetShouldPlayToPlaybackTarget(contextId, shouldPlay));
+    protectedPage->send(Messages::WebPage::SetShouldPlayToPlaybackTarget(contextId, shouldPlay));
 }
 
 void WebPageProxy::Internals::playbackTargetPickerWasDismissed(PlaybackTargetClientContextIdentifier contextId)
 {
-    if (!page.hasRunningProcess())
+    Ref protectedPage = page.get();
+    if (!protectedPage->hasRunningProcess())
         return;
 
-    page.send(Messages::WebPage::PlaybackTargetPickerWasDismissed(contextId));
+    protectedPage->send(Messages::WebPage::PlaybackTargetPickerWasDismissed(contextId));
 }
 
 #endif

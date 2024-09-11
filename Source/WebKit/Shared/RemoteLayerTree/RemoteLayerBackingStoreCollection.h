@@ -94,7 +94,7 @@ public:
 
     virtual void gpuProcessConnectionWasDestroyed();
 
-    RemoteLayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
+    RemoteLayerTreeContext& layerTreeContext() const;
 
 protected:
 
@@ -124,7 +124,7 @@ protected:
     static constexpr auto volatileBackingStoreAgeThreshold = 1_s;
     static constexpr auto volatileSecondaryBackingStoreAgeThreshold = 200_ms;
 
-    RemoteLayerTreeContext& m_layerTreeContext;
+    WeakRef<RemoteLayerTreeContext> m_layerTreeContext;
 
     WeakHashSet<RemoteLayerBackingStore> m_liveBackingStore;
     WeakHashSet<RemoteLayerBackingStore> m_unparentedBackingStore;

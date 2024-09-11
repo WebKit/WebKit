@@ -107,9 +107,10 @@ class WebBackForwardListItem;
 class WebPageProxy;
 class WebProcessProxy;
 
-class ViewGestureController : public IPC::MessageReceiver {
+class ViewGestureController final : public IPC::MessageReceiver, public CanMakeCheckedPtr<ViewGestureController> {
     WTF_MAKE_TZONE_ALLOCATED(ViewGestureController);
     WTF_MAKE_NONCOPYABLE(ViewGestureController);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ViewGestureController);
 public:
 
     static constexpr double defaultMinMagnification { 1 };
@@ -223,6 +224,8 @@ private:
 
     static ViewGestureController* controllerForGesture(WebPageProxyIdentifier, GestureID);
 
+    Ref<WebPageProxy> protectedWebPageProxy() const;
+
     static GestureID takeNextGestureID();
     void willBeginGesture(ViewGestureType);
     void didEndGesture();
@@ -330,6 +333,9 @@ private:
         void setShouldIgnorePinnedState(bool ignore) { m_shouldIgnorePinnedState = ignore; }
 
     private:
+        CheckedRef<ViewGestureController> checkedViewGestureController() const;
+        Ref<WebPageProxy> protectedWebPageProxy() const;
+
         bool tryToStartSwipe(PlatformScrollEvent);
         bool scrollEventCanBecomeSwipe(PlatformScrollEvent, SwipeDirection&);
 
@@ -351,8 +357,8 @@ private:
 
         bool m_shouldIgnorePinnedState { false };
 
-        ViewGestureController& m_viewGestureController;
-        WebPageProxy& m_webPageProxy;
+        WeakRef<ViewGestureController> m_viewGestureController;
+        WeakRef<WebPageProxy> m_webPageProxy;
     };
 #endif
 
@@ -360,7 +366,7 @@ private:
     GRefPtr<GtkStyleContext> createStyleContext(const char*);
 #endif
 
-    WebPageProxy& m_webPageProxy;
+    WeakRef<WebPageProxy> m_webPageProxy;
     ViewGestureType m_activeGestureType { ViewGestureType::None };
 
     bool m_swipeGestureEnabled { true };
