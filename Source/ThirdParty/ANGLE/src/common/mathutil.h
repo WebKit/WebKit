@@ -715,6 +715,11 @@ class Range
     Range() {}
     Range(T lo, T hi) : mLow(lo), mHigh(hi) {}
 
+    bool operator==(const Range<T> &other) const
+    {
+        return mLow == other.mLow && mHigh == other.mHigh;
+    }
+
     T length() const { return (empty() ? 0 : (mHigh - mLow)); }
 
     bool intersects(const Range<T> &other) const

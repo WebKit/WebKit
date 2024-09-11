@@ -1305,7 +1305,7 @@ bool ProgramExecutableD3D::usesPointSpriteEmulation(RendererD3D *renderer) const
 
 bool ProgramExecutableD3D::usesGeometryShaderForPointSpriteEmulation(RendererD3D *renderer) const
 {
-    return usesPointSpriteEmulation(renderer) && !usesInstancedPointSpriteEmulation(renderer);
+    return usesPointSpriteEmulation(renderer);
 }
 
 bool ProgramExecutableD3D::usesGeometryShader(RendererD3D *renderer,
@@ -1325,11 +1325,6 @@ bool ProgramExecutableD3D::usesGeometryShader(RendererD3D *renderer,
         return provokingVertex == gl::ProvokingVertexConvention::LastVertexConvention;
     }
     return usesGeometryShaderForPointSpriteEmulation(renderer);
-}
-
-bool ProgramExecutableD3D::usesInstancedPointSpriteEmulation(RendererD3D *renderer) const
-{
-    return renderer->getFeatures().useInstancedPointSpriteEmulation.enabled;
 }
 
 angle::Result ProgramExecutableD3D::getVertexExecutableForCachedInputLayout(

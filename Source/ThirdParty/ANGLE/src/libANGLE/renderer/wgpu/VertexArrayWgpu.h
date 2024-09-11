@@ -11,6 +11,7 @@
 #define LIBANGLE_RENDERER_WGPU_VERTEXARRAYWGPU_H_
 
 #include "libANGLE/renderer/VertexArrayImpl.h"
+#include "libANGLE/renderer/wgpu/wgpu_pipeline_state.h"
 
 namespace rx
 {
@@ -24,6 +25,13 @@ class VertexArrayWgpu : public VertexArrayImpl
                             const gl::VertexArray::DirtyBits &dirtyBits,
                             gl::VertexArray::DirtyAttribBitsArray *attribBits,
                             gl::VertexArray::DirtyBindingBitsArray *bindingBits) override;
+
+  private:
+    angle::Result syncDirtyAttrib(ContextWgpu *contextWgpu,
+                                  const gl::VertexAttribute &attrib,
+                                  const gl::VertexBinding &binding,
+                                  size_t attribIndex);
+    gl::AttribArray<webgpu::PackedVertexAttribute> mCurrentAttribs;
 };
 
 }  // namespace rx

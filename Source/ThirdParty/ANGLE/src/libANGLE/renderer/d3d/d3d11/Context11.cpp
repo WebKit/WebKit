@@ -45,31 +45,13 @@ ANGLE_INLINE bool DrawCallHasDynamicAttribs(const gl::Context *context)
     return vertexArray11->hasActiveDynamicAttrib(context);
 }
 
-bool InstancedPointSpritesActive(RendererD3D *renderer,
-                                 ProgramExecutableD3D *executableD3D,
-                                 gl::PrimitiveMode mode)
-{
-    return executableD3D->usesPointSize() &&
-           executableD3D->usesInstancedPointSpriteEmulation(renderer) &&
-           mode == gl::PrimitiveMode::Points;
-}
-
 bool DrawCallHasStreamingVertexArrays(const gl::Context *context, gl::PrimitiveMode mode)
 {
-    RendererD3D *renderer = GetImplAs<Context11>(context)->getRenderer();
-
     // Direct drawing doesn't support dynamic attribute storage since it needs the first and count
     // to translate when applyVertexBuffer. GL_LINE_LOOP and GL_TRIANGLE_FAN are not supported
     // either since we need to simulate them in D3D.
     if (DrawCallHasDynamicAttribs(context) || mode == gl::PrimitiveMode::LineLoop ||
         mode == gl::PrimitiveMode::TriangleFan)
-    {
-        return true;
-    }
-
-    ProgramExecutableD3D *executableD3D =
-        GetImplAs<ProgramExecutableD3D>(context->getState().getProgramExecutable());
-    if (InstancedPointSpritesActive(renderer, executableD3D, mode))
     {
         return true;
     }

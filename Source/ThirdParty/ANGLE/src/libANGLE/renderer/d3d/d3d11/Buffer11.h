@@ -40,7 +40,6 @@ enum BufferUsage
     BUFFER_USAGE_PIXEL_PACK,
     BUFFER_USAGE_UNIFORM,
     BUFFER_USAGE_STRUCTURED,
-    BUFFER_USAGE_EMULATED_INDEXED_VERTEX,
     BUFFER_USAGE_RAW_UAV,
     BUFFER_USAGE_TYPED_UAV,
 
@@ -58,11 +57,6 @@ class Buffer11 : public BufferD3D
     angle::Result getBuffer(const gl::Context *context,
                             BufferUsage usage,
                             ID3D11Buffer **bufferOut);
-    angle::Result getEmulatedIndexedBuffer(const gl::Context *context,
-                                           SourceIndexData *indexInfo,
-                                           const TranslatedAttribute &attribute,
-                                           GLint startVertex,
-                                           ID3D11Buffer **bufferOut);
     angle::Result getConstantBufferRange(const gl::Context *context,
                                          GLintptr offset,
                                          GLsizeiptr size,

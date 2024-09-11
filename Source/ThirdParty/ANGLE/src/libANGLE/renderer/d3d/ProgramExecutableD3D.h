@@ -368,7 +368,6 @@ class ProgramExecutableD3D : public ProgramExecutableImpl
                             const gl::ProvokingVertexConvention provokingVertex,
                             gl::PrimitiveMode drawMode) const;
     bool usesGeometryShaderForPointSpriteEmulation(RendererD3D *renderer) const;
-    bool usesInstancedPointSpriteEmulation(RendererD3D *renderer) const;
 
     angle::Result getVertexExecutableForCachedInputLayout(d3d::Context *context,
                                                           RendererD3D *renderer,

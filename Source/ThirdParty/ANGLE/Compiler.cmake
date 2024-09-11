@@ -248,6 +248,7 @@ set(angle_translator_sources
     "src/compiler/translator/tree_util/Visit.h"
     "src/compiler/translator/util.cpp"
     "src/compiler/translator/util.h"
+    "src/compiler/translator/wgsl/TranslatorWGSL.h"
 )
 
 set(angle_translator_glsl_base_sources
@@ -460,7 +461,13 @@ set(angle_translator_lib_msl_sources
     "src/compiler/translator/tree_ops/msl/WrapMain.h"
 )
 
-set(angle_translator_lib_wgsl_sources "src/compiler/translator/wgsl/TranslatorWGSL.cpp")
+set(angle_translator_lib_wgsl_sources
+    "src/compiler/translator/wgsl/RewritePipelineVariables.cpp"
+    "src/compiler/translator/wgsl/RewritePipelineVariables.h"
+    "src/compiler/translator/wgsl/TranslatorWGSL.cpp"
+    "src/compiler/translator/wgsl/WriteTypeName.cpp"
+    "src/compiler/translator/wgsl/WriteTypeName.h"
+)
 
 set(angle_preprocessor_sources
     "src/compiler/preprocessor/DiagnosticsBase.cpp"

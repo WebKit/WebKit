@@ -1840,7 +1840,8 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
             traceNameIs("marvel_snap") || traceNameIs("nier_reincarnation") ||
             traceNameIs("pokemon_unite") || traceNameIs("slingshot_test1") ||
             traceNameIs("slingshot_test2") || traceNameIs("supertuxkart") ||
-            traceNameIs("the_witcher_monster_slayer") || traceNameIs("warcraft_rumble"))
+            traceNameIs("the_witcher_monster_slayer") || traceNameIs("warcraft_rumble") ||
+            traceNameIs("critical_ops"))
         {
             skipTest("https://issuetracker.google.com/267953710 Trace needs triage on Galaxy S22");
         }
