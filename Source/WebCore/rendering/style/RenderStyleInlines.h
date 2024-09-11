@@ -966,7 +966,7 @@ inline bool isSkippedContentRoot(const RenderStyle& style, const Element* elemen
         return false;
     // FIXME (https://bugs.webkit.org/show_bug.cgi?id=265020): check more display types.
     // FIXME: try to avoid duplication with shouldApplySizeOrStyleContainment.
-    if (style.isDisplayTableOrTablePart() && style.display() != DisplayType::TableCaption)
+    if (auto displayType = style.display(); (displayType != DisplayType::TableCaption && style.isDisplayTableOrTablePart()) || displayType == DisplayType::Contents)
         return false;
     if (style.contentVisibility() == ContentVisibility::Hidden)
         return true;
