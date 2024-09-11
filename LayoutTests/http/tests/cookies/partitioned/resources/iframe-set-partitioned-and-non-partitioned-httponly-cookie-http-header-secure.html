@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/cookie-utilities.js"></script>
+<body>
+<script>
+async function runTest() {
+    const crossOrigin = `${location.protocol}//127.0.0.1:${location.port}`;
+
+    await setCookie("testCookieName", "testCookieValue", {"SameSite": "None", "Secure": undefined, "Partitioned": undefined, "httpOnly": undefined});
+    await setCookie("testNonPartitionedCookieName", "testCookieValue", {"SameSite": "None", "Secure": undefined, "httpOnly": undefined});
+    await setCookie("testCrossSiteCookieName", "testCookieValue", {"SameSite": "None", "Secure": undefined, "Partitioned": undefined, "httpOnly": undefined}, crossOrigin);
+    await setCookie("testNonPartitionedCrossSiteCookieName", "testCookieValue", {"SameSite": "None", "Secure": undefined, "httpOnly": undefined}, crossOrigin);
+    let cookies = Object.assign(await getCookies(), getDOMCookies());
+    invalidateCachedCookies();
+    setBaseURLWhenFetchingCookies(crossOrigin);
+    cookies = Object.assign(cookies, await getCookies());
+    window.top.postMessage(cookies, '*');
+}
+testRunner?.removeAllCookies(runTest);
+</script>
+</body>
+</html>

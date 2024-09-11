@@ -62,7 +62,7 @@ class WebStorageSessionProvider : public WebCore::StorageSessionProvider {
 WebCookieJar::WebCookieJar()
     : WebCore::CookieJar(adoptRef(*new WebStorageSessionProvider)) { }
 
-static bool shouldBlockCookies(WebFrame* frame, const URL& firstPartyForCookies, const URL& resourceURL, ApplyTrackingPrevention& applyTrackingPreventionInNetworkProcess)
+static bool shouldBlockCookies(WebFrame* frame, const URL& firstPartyForCookies, const URL& resourceURL, ApplyTrackingPrevention& applyTrackingPreventionInNetworkProcess, bool shouldAttemptHandlingPartitionedCookies)
 {
     if (!WebCore::DeprecatedGlobalSettings::trackingPreventionEnabled())
         return false;
@@ -98,7 +98,7 @@ static bool shouldBlockCookies(WebFrame* frame, const URL& firstPartyForCookies,
         return false;
     }
 
-    return true;
+    return !shouldAttemptHandlingPartitionedCookies;
 }
 
 bool WebCookieJar::isEligibleForCache(WebFrame& frame, const URL& firstPartyForCookies, const URL& resourceURL) const
@@ -139,7 +139,8 @@ String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
 
     auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);
     ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
-    if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess))
+    bool shouldAttemptHandlingPartitionedCookies { document.settings().optInPartitionedCookiesEnabled() };
+    if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess, shouldAttemptHandlingPartitionedCookies))
         return cookiesInPartitionedCookieStorage(document, url, sameSiteInfo);
 
     auto includeSecureCookies = CookieJar::shouldIncludeSecureCookies(document, url);
@@ -163,7 +164,10 @@ void WebCookieJar::setCookies(WebCore::Document& document, const URL& url, const
 
     auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);
     ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
-    if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess)) {
+    bool shouldAttemptHandlingPartitionedCookies { document.settings().optInPartitionedCookiesEnabled() };
+    if (auto firstSemicolon = cookieString.find(";"_s); firstSemicolon != notFound)
+        shouldAttemptHandlingPartitionedCookies = cookieString.findIgnoringASCIICase("partitioned;"_s, firstSemicolon) != notFound;
+    if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess, shouldAttemptHandlingPartitionedCookies)) {
         setCookiesInPartitionedCookieStorage(document, url, sameSiteInfo, cookieString);
         return;
     }
@@ -221,7 +225,8 @@ bool WebCookieJar::cookiesEnabled(Document& document)
         return false;
 
     ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
-    if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), document.cookieURL(), applyTrackingPreventionInNetworkProcess))
+    bool shouldAttemptHandlingPartitionedCookies { document.settings().optInPartitionedCookiesEnabled() };
+    if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), document.cookieURL(), applyTrackingPreventionInNetworkProcess, shouldAttemptHandlingPartitionedCookies))
         return false;
 
     if (applyTrackingPreventionInNetworkProcess == ApplyTrackingPrevention::No)
@@ -270,7 +275,9 @@ std::pair<String, WebCore::SecureCookiesAccessed> WebCookieJar::cookieRequestHea
 {
     ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
     RefPtr webFrame = frameID ? WebProcess::singleton().webFrame(*frameID) : nullptr;
-    if (shouldBlockCookies(webFrame.get(), firstParty, url, applyTrackingPreventionInNetworkProcess))
+    // FIXME: Check that optInPartitionedCookiesEnabled is enabled.
+    bool shouldAttemptHandlingPartitionedCookies { false };
+    if (shouldBlockCookies(webFrame.get(), firstParty, url, applyTrackingPreventionInNetworkProcess, shouldAttemptHandlingPartitionedCookies))
         return { };
 
     auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies, applyTrackingPreventionInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame.get())), 0);
@@ -285,7 +292,8 @@ bool WebCookieJar::getRawCookies(const WebCore::Document& document, const URL& u
 {
     RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
     ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
-    if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess))
+    bool shouldAttemptHandlingPartitionedCookies { document.settings().optInPartitionedCookiesEnabled() };
+    if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess, shouldAttemptHandlingPartitionedCookies))
         return { };
 
     std::optional<FrameIdentifier> frameID = webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt;
@@ -318,7 +326,8 @@ void WebCookieJar::getCookiesAsync(WebCore::Document& document, const URL& url, 
     RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
 
     ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
-    if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess)) {
+    bool shouldAttemptHandlingPartitionedCookies { document.settings().optInPartitionedCookiesEnabled() };
+    if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess, shouldAttemptHandlingPartitionedCookies)) {
         completionHandler({ });
         return;
     }
@@ -341,7 +350,8 @@ void WebCookieJar::setCookieAsync(WebCore::Document& document, const URL& url, c
     RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
 
     ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
-    if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess)) {
+    bool shouldAttemptHandlingPartitionedCookies { document.settings().optInPartitionedCookiesEnabled() && cookie.partitioned };
+    if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess, shouldAttemptHandlingPartitionedCookies)) {
         completionHandler(false);
         return;
     }

@@ -1,0 +1,17 @@
+Tests that setting Partitioned cookie from non-secure document is rejected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+cookie-js-not-secure.html: Found 0 cookies:
+cookie-js-secure.html: Found 0 cookies:
+cookie-http-header-not-secure.html: Found 0 cookies:
+cookie-http-header-secure.html: Found 0 cookies:
+httponly-cookie-http-header-not-secure.html: Found 0 cookies:
+httponly-cookie-http-header-secure.html: Found 0 cookies:
+httponly-cookie-js-not-secure.html: Found 0 cookies:
+httponly-cookie-js-secure.html: Found 0 cookies:
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
