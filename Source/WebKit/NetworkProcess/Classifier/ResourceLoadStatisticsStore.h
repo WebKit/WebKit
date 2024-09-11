@@ -52,7 +52,9 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ResourceLoadS
 namespace WebCore {
 class KeyedDecoder;
 class KeyedEncoder;
+class LoginStatus;
 class SQLiteStatement;
+enum class IsLoggedIn : uint8_t;
 enum class StorageAccessPromptWasShown : bool;
 enum class StorageAccessWasGranted : uint8_t;
 struct ResourceLoadStatistics;
@@ -186,6 +188,9 @@ public:
     void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::StorageAccessScope, CanRequestStorageAccessWithoutUserInteraction, CompletionHandler<void(StorageAccessStatus)>&&);
     void grantStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::StorageAccessPromptWasShown, WebCore::StorageAccessScope, CompletionHandler<void(WebCore::StorageAccessWasGranted)>&&);
 
+    void setLoginStatus(const RegistrableDomain&, WebCore::IsLoggedIn, std::optional<WebCore::LoginStatus>&&);
+    bool isLoggedIn(const RegistrableDomain&);
+
     void logFrameNavigation(const NavigatedToDomain&, const TopFrameDomain&, const NavigatedFromDomain&, bool isRedirect, bool isMainFrame, Seconds delayAfterMainFrameDocumentLoad, bool wasPotentiallyInitiatedByUser);
     void logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain&, const NavigatedToDomain&, DidFilterKnownLinkDecoration);
 
@@ -253,10 +258,15 @@ private:
     void merge(WebCore::SQLiteStatement*, const ResourceLoadStatistics&);
     void incrementRecordsDeletedCountForDomains(HashSet<RegistrableDomain>&&);
     bool insertObservedDomain(const ResourceLoadStatistics&) WARN_UNUSED_RETURN;
+    void insertLoginStatus(const RegistrableDomain&, WebCore::IsLoggedIn loggedInStatus, const std::optional<WebCore::LoginStatus>& lastAuthentication);
+    bool loginStatusExists(const RegistrableDomain&);
+    void removeLoginStatus(const RegistrableDomain&);
     void insertDomainRelationships(const ResourceLoadStatistics&);
     void insertDomainRelationshipList(const String&, const HashSet<RegistrableDomain>&, unsigned);
     bool relationshipExists(WebCore::SQLiteStatementAutoResetScope&, std::optional<unsigned> firstDomainID, const RegistrableDomain& secondDomain) const;
     std::optional<unsigned> domainID(const RegistrableDomain&) const;
+    std::optional<unsigned> domainIDWithTable(const RegistrableDomain&, std::unique_ptr<WebCore::SQLiteStatement>&, ASCIILiteral query) const;
+    std::optional<unsigned> loginStatusDomainID(const RegistrableDomain&) const;
     bool domainExists(const RegistrableDomain&) const;
     void updateLastSeen(const RegistrableDomain&, WallTime);
     void updateDataRecordsRemoved(const RegistrableDomain&, int);
@@ -409,6 +419,10 @@ private:
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_observedDomainsExistsStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_removeAllDataStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_checkIfTableExistsStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_loginStatusDomainIDFromStringStatement;
+    std::unique_ptr<WebCore::SQLiteStatement> m_insertLoginstatusStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_removeLoginStatusStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_loginStatusExistsStatement;
 
     Vector<CompletionHandler<void()>> m_dataRecordRemovalCompletionHandlers;
     Seconds m_timeAdvanceForTesting;

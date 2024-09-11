@@ -60,6 +60,9 @@ public:
     WallTime loggedInTime() const { return m_loggedInTime; }
     Seconds timeToLive() const { return m_timeToLive; }
 
+    WEBCORE_EXPORT LoginStatus isolatedCopy() const &;
+    WEBCORE_EXPORT LoginStatus isolatedCopy() &&;
+
 private:
     LoginStatus(const RegistrableDomain&, const String& username, CredentialTokenType, AuthenticationType, Seconds timeToLive);
 
