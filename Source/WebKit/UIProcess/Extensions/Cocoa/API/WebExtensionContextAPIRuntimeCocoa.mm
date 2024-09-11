@@ -33,7 +33,9 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "FoundationSPI.h"
 #import "WKWebExtensionControllerDelegatePrivate.h"
+#import "WKWebExtensionMessagePortInternal.h"
 #import "WKWebExtensionTabConfigurationInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebExtensionContextProxyMessages.h"
@@ -220,16 +222,99 @@ void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtension
     });
 }
 
-void WebExtensionContext::runtimeSendNativeMessage(const String& applicationID, const String& messageJSON, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::sendNativeMessage(const String& applicationID, id message, CompletionHandler<void(Expected<RetainPtr<id>, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"runtime.sendNativeMessage()";
 
-    id message = parseJSON(messageJSON, JSONOptions::FragmentsAllowed);
-
     auto delegate = extensionController()->delegate();
     if (![delegate respondsToSelector:@selector(webExtensionController:sendMessage:toApplicationWithIdentifier:forExtensionContext:replyHandler:)]) {
-        // FIXME: <https://webkit.org/b/262081> Implement default native messaging with NSExtension.
-        completionHandler(toWebExtensionError(apiName, nil, @"native messaging is not supported"));
+        // Fallback to sending the native message via NSExtension. This is only supported for
+        // extensions loaded from an app extension bundle.
+
+        // These counts are static since NSExtension has a per-app limit of 200.
+        static constexpr size_t maximumActiveRequestCount = 150;
+        static size_t activeRequestCount = 0;
+
+        // This must stay in sync with SafariServices's SFExtensionMessageKey.
+        static auto * const messageKey = @"message";
+
+        auto *bundle = extension().bundle();
+        if (!bundle) {
+            completionHandler(toWebExtensionError(apiName, nil, @"native messaging is not supported"));
+            return;
+        }
+
+        if (activeRequestCount >= maximumActiveRequestCount) {
+            RELEASE_LOG_INFO(Extensions, "Dropping native message due to too many active native messages");
+            completionHandler(toWebExtensionError(apiName, nil, @"there are too many active native message requests"));
+            return;
+        }
+
+        // Make an NSExtension each time, since each instance has context specific blocks.
+        NSError *error;
+        auto *nativeExtension = [NSExtension extensionWithIdentifier:bundle.bundleIdentifier error:&error];
+        if (!nativeExtension || error) {
+            RELEASE_LOG_ERROR(Extensions, "Error creating NSExtension: %{public}@", privacyPreservingDescription(error));
+            completionHandler(toWebExtensionError(apiName, nil, @"native messaging is not supported"));
+            return;
+        }
+
+        Ref callbackAggregator = EagerCallbackAggregator<void(Expected<RetainPtr<id>, WebExtensionError>&&)>::create(WTFMove(completionHandler), { });
+
+        nativeExtension.requestCancellationBlock = makeBlockPtr([callbackAggregator](id<NSCopying> requestIdentifier, NSError *error) {
+            RELEASE_LOG_ERROR(Extensions, "NSExtension request with identifier %{public}@ was canceled: %{public}@", requestIdentifier, privacyPreservingDescription(error));
+
+            dispatch_async(dispatch_get_main_queue(), makeBlockPtr([callbackAggregator] {
+                --activeRequestCount;
+
+                callbackAggregator.get()(toWebExtensionError(apiName, nil, @"the native extension canceled the request or encountered an error"));
+            }).get());
+        }).get();
+
+        nativeExtension.requestInterruptionBlock = makeBlockPtr([callbackAggregator, nativeExtension = WeakObjCPtr { nativeExtension }](id<NSCopying> requestIdentifier) {
+            RELEASE_LOG_ERROR(Extensions, "NSExtension request with identifier %{public}@ was interrupted", requestIdentifier);
+
+            dispatch_async(dispatch_get_main_queue(), makeBlockPtr([callbackAggregator] {
+                --activeRequestCount;
+
+                callbackAggregator.get()(toWebExtensionError(apiName, nil, @"the native extension was interrupted or crashed"));
+            }).get());
+
+            // NSExtension does not release the interrupted request and assertions unless we cancel it. See: rdar://80093371
+            [nativeExtension cancelExtensionRequestWithIdentifier:requestIdentifier];
+        }).get();
+
+        nativeExtension.requestCompletionBlock = ^(id<NSCopying> requestIdentifier, NSArray<NSExtensionItem *> *items) {
+            id replyMessage = items.firstObject.userInfo[messageKey];
+
+            dispatch_async(dispatch_get_main_queue(), makeBlockPtr([callbackAggregator, replyMessage = RetainPtr { replyMessage }] {
+                --activeRequestCount;
+
+                callbackAggregator.get()({ replyMessage.get() });
+            }).get());
+        };
+
+        auto *messageItem = [[NSExtensionItem alloc] init];
+        messageItem.userInfo = @{ messageKey: message };
+
+        ++activeRequestCount;
+
+        [nativeExtension beginExtensionRequestWithInputItems:@[ messageItem ] completion:makeBlockPtr([callbackAggregator, nativeExtension = RetainPtr { nativeExtension }](id<NSCopying> requestIdentifier, NSError *error) {
+            if (!error)
+                return;
+
+            RELEASE_LOG_ERROR(Extensions, "NSExtension request with identifier %{public}@ failed: %{public}@", requestIdentifier, privacyPreservingDescription(error));
+
+            dispatch_async(dispatch_get_main_queue(), makeBlockPtr([callbackAggregator, nativeExtension, requestIdentifier = RetainPtr { requestIdentifier }] {
+                --activeRequestCount;
+
+                callbackAggregator.get()(toWebExtensionError(apiName, nil, @"the native extension encountered an unknown error"));
+
+                // NSExtension does not release the failed request and assertions unless we cancel it. See: rdar://80093371
+                [nativeExtension cancelExtensionRequestWithIdentifier:requestIdentifier.get()];
+            }).get());
+        }).get()];
+
         return;
     }
 
@@ -246,8 +331,20 @@ void WebExtensionContext::runtimeSendNativeMessage(const String& applicationID, 
             return;
         }
 
-        completionHandler(String(encodeJSONString(replyMessage, JSONOptions::FragmentsAllowed)));
+        completionHandler({ replyMessage });
     }).get()];
+}
+
+void WebExtensionContext::runtimeSendNativeMessage(const String& applicationID, const String& messageJSON, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
+{
+    sendNativeMessage(applicationID, parseJSON(messageJSON, JSONOptions::FragmentsAllowed), [completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
+        if (!result) {
+            completionHandler(makeUnexpected(result.error()));
+            return;
+        }
+
+        completionHandler(String(encodeJSONString(result.value().get(), JSONOptions::FragmentsAllowed)));
+    });
 }
 
 void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebExtensionPortChannelIdentifier channelIdentifier, WebPageProxyIdentifier pageProxyIdentifier, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -260,12 +357,45 @@ void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebE
     // Add 1 for the starting port here so disconnect will balance with a decrement.
     addPorts(sourceContentWorldType, targetContentWorldType, channelIdentifier, { pageProxyIdentifier });
 
-    auto nativePort = WebExtensionMessagePort::create(*this, applicationID, channelIdentifier);
+    Ref nativePort = WebExtensionMessagePort::create(*this, applicationID, channelIdentifier);
 
     auto delegate = extensionController()->delegate();
     if (![delegate respondsToSelector:@selector(webExtensionController:connectUsingMessagePort:forExtensionContext:completionHandler:)]) {
-        // FIXME: <https://webkit.org/b/262081> Implement default native messaging with NSExtension.
-        completionHandler(toWebExtensionError(apiName, nil, @"native messaging is not supported"));
+        // Fallback to sending single native messages for each port message.
+        // Weak reference the native port to prevent a reference cycle.
+
+        nativePort->wrapper().messageHandler = makeBlockPtr([this, protectedThis = Ref { *this }, weakNativePort = WeakPtr { nativePort.get() }](id message, NSError *error) {
+            RefPtr nativePort = weakNativePort.get();
+            if (!nativePort)
+                return;
+
+            if (error) {
+                nativePort->disconnect(toWebExtensionMessagePortError(error));
+                return;
+            }
+
+            sendNativeMessage(nativePort->applicationIdentifier(), message, [weakNativePort](auto&& result) {
+                RefPtr nativePort = weakNativePort.get();
+                if (!nativePort)
+                    return;
+
+                if (!result) {
+                    nativePort->disconnect();
+                    return;
+                }
+
+                // Send the reply back to the port.
+                nativePort->sendMessage(result.value().get());
+            });
+        }).get();
+
+        addNativePort(nativePort);
+
+        completionHandler({ });
+
+        sendQueuedNativePortMessagesIfNeeded(channelIdentifier);
+        firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
+        clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
         return;
     }
 

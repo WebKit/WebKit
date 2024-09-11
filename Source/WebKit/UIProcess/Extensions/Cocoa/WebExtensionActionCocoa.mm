@@ -1087,6 +1087,9 @@ void WebExtensionAction::popupSizeDidChange()
 
 void WebExtensionAction::closePopup()
 {
+    if (!popupPresented())
+        return;
+
     ASSERT(hasPopupWebView());
 
     RELEASE_LOG_DEBUG(Extensions, "Popup closed");

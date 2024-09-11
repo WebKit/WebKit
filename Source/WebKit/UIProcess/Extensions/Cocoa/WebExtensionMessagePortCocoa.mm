@@ -116,6 +116,8 @@ void WebExtensionMessagePort::remove()
     if (isDisconnected())
         return;
 
+    Ref protectedThis { *this };
+
     m_extensionContext->removeNativePort(*this);
     m_extensionContext->firePortDisconnectEventIfNeeded(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, m_channelIdentifier);
     m_extensionContext = nullptr;
@@ -124,18 +126,21 @@ void WebExtensionMessagePort::remove()
 void WebExtensionMessagePort::sendMessage(id message, CompletionHandler<void(Error error)>&& completionHandler)
 {
     if (isDisconnected()) {
-        completionHandler({ { ErrorType::NotConnected, std::nullopt } });
+        if (completionHandler)
+            completionHandler({ { ErrorType::NotConnected, std::nullopt } });
         return;
     }
 
     if (message && !isValidJSONObject(message, JSONOptions::FragmentsAllowed)) {
-        completionHandler({ { ErrorType::MessageInvalid, std::nullopt } });
+        if (completionHandler)
+            completionHandler({ { ErrorType::MessageInvalid, std::nullopt } });
         return;
     }
 
     m_extensionContext->portPostMessage(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, std::nullopt, m_channelIdentifier, encodeJSONString(message, JSONOptions::FragmentsAllowed) );
 
-    completionHandler(std::nullopt);
+    if (completionHandler)
+        completionHandler(std::nullopt);
 }
 
 void WebExtensionMessagePort::receiveMessage(id message, Error error)

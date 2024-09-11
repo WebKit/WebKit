@@ -204,6 +204,7 @@ public:
 
     Ref<API::Data> serializeLocalization();
 
+    NSBundle *bundle() const { return m_bundle.get(); }
     SecStaticCodeRef bundleStaticCode() const;
     NSData *bundleHash() const;
 

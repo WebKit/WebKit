@@ -508,6 +508,8 @@ public:
     void runOpenPanel(WKWebView *, WKOpenPanelParameters *, void (^)(NSArray *));
 #endif
 
+    void sendNativeMessage(const String& applicationID, id message, CompletionHandler<void(Expected<RetainPtr<id>, WebExtensionError>&&)>&&);
+
     void addInjectedContent(WebUserContentControllerProxy&);
     void removeInjectedContent(WebUserContentControllerProxy&);
 
