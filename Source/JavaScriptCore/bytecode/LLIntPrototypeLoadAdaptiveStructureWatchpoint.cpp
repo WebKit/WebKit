@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LLIntPrototypeLoadAdaptiveStructureWatchpoint.h"
 
-#include "CodeBlock.h"
+#include "CodeBlockInlines.h"
 #include "Instruction.h"
 #include "JSCellInlines.h"
 
@@ -48,6 +48,11 @@ LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructu
 {
 }
 
+LLIntPrototypeLoadAdaptiveStructureWatchpoint::~LLIntPrototypeLoadAdaptiveStructureWatchpoint()
+{
+    ASSERT(!m_owner || !m_owner->wasDestructed());
+}
+
 void LLIntPrototypeLoadAdaptiveStructureWatchpoint::initialize(CodeBlock* codeBlock, const ObjectPropertyCondition& key, BytecodeIndex bytecodeOffset)
 {
     m_owner = codeBlock;
@@ -64,6 +69,7 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::install(VM&)
 
 void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail&)
 {
+    ASSERT(!m_owner->wasDestructed());
     if (!m_owner->isLive())
         return;
 
