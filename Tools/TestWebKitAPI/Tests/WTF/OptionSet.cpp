@@ -89,6 +89,20 @@ TEST(WTF_OptionSet, Or)
     EXPECT_TRUE(((set | set2) == OptionSet<ExampleFlags> { ExampleFlags::A, ExampleFlags::B, ExampleFlags::C, ExampleFlags::D }));
 }
 
+TEST(WTF_OptionSet, OrAssignment)
+{
+    OptionSet<ExampleFlags> set { ExampleFlags::A, ExampleFlags::B, ExampleFlags::C };
+
+    set |= { };
+    EXPECT_TRUE((set == OptionSet<ExampleFlags> { ExampleFlags::A, ExampleFlags::B, ExampleFlags::C }));
+
+    set |= { ExampleFlags::A };
+    EXPECT_TRUE((set == OptionSet<ExampleFlags> { ExampleFlags::A, ExampleFlags::B, ExampleFlags::C }));
+
+    set |= { ExampleFlags::C, ExampleFlags::D };
+    EXPECT_TRUE((set == OptionSet<ExampleFlags> { ExampleFlags::A, ExampleFlags::B, ExampleFlags::C, ExampleFlags::D }));
+}
+
 TEST(WTF_OptionSet, Minus)
 {
     OptionSet<ExampleFlags> set { ExampleFlags::A, ExampleFlags::B, ExampleFlags::C };

@@ -364,7 +364,7 @@ void UnifiedPDFPlugin::createPasswordEntryForm()
 void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
 {
     std::optional<ShouldUpdateAutoSizeScale> shouldUpdateAutoSizeScaleOverride;
-    if (isLocked() && !m_documentLayout.pageCount())
+    if (isLocked())
         shouldUpdateAutoSizeScaleOverride = ShouldUpdateAutoSizeScale::Yes;
 
     if (![m_pdfDocument unlockWithPassword:password]) {
@@ -934,6 +934,16 @@ std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::pageIndexWithHover
     return pageIndexForAnnotation(trackedAnnotation.get());
 }
 
+double UnifiedPDFPlugin::minScaleFactor() const
+{
+    return minimumZoomScale;
+}
+
+double UnifiedPDFPlugin::maxScaleFactor() const
+{
+    return maximumZoomScale;
+}
+
 double UnifiedPDFPlugin::scaleForActualSize() const
 {
 #if PLATFORM(MAC)
@@ -1189,13 +1199,13 @@ void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale, st
 
     auto anchoringInfo = m_presentationController->pdfPositionForCurrentView(shouldAdjustScale == AdjustScaleAfterLayout::Yes || autoSizeMode == ShouldUpdateAutoSizeScale::Yes);
 
-    m_documentLayout.updateLayout(layoutSize, autoSizeMode);
+    auto layoutUpdateChanges = m_documentLayout.updateLayout(layoutSize, autoSizeMode);
     updateScrollbars();
 
     // Do a second layout pass if the first one changed scrollbars.
     auto newLayoutSize = availableContentsRect().size();
     if (layoutSize != newLayoutSize) {
-        m_documentLayout.updateLayout(newLayoutSize, autoSizeMode);
+        layoutUpdateChanges |= m_documentLayout.updateLayout(newLayoutSize, autoSizeMode);
         updateScrollbars();
     }
 
@@ -1215,7 +1225,7 @@ void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale, st
 
     LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin::updateLayout - scale " << m_scaleFactor << " normalization factor " << m_scaleNormalizationFactor << " layout scale " << m_documentLayout.scale());
 
-    if (anchoringInfo)
+    if (anchoringInfo && layoutUpdateChanges.isEmpty())
         m_presentationController->restorePDFPosition(*anchoringInfo);
 }
 
