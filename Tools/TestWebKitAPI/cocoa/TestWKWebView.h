@@ -213,7 +213,7 @@ struct AutocorrectionContext {
 
 @interface TestWKWebView (SiteIsolation)
 - (_WKFrameTreeNode *)mainFrame;
-- (_WKFrameTreeNode *)firstChildFrame;
+- (WKFrameInfo *)firstChildFrame;
 - (void)evaluateJavaScript:(NSString *)string inFrame:(WKFrameInfo *)frame completionHandler:(void(^)(id, NSError *))completionHandler;
 - (WKFindResult *)findStringAndWait:(NSString *)string withConfiguration:(WKFindConfiguration *)configuration;
 @end

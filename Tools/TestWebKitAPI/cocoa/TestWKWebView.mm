@@ -1458,9 +1458,9 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
     return frame.autorelease();
 }
 
-- (_WKFrameTreeNode *)firstChildFrame
+- (WKFrameInfo *)firstChildFrame
 {
-    return [self mainFrame].childFrames.firstObject;
+    return [self mainFrame].childFrames.firstObject.info;
 }
 
 - (void)evaluateJavaScript:(NSString *)string inFrame:(WKFrameInfo *)frame completionHandler:(void(^)(id, NSError *))completionHandler
