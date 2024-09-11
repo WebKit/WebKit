@@ -776,6 +776,8 @@ public:
     requires (!isExceptionOperationResult<T>)
     static constexpr GPRReg operationExceptionRegister() { return InvalidGPRReg; }
 
+    template<auto operation>
+    static constexpr GPRReg operationExceptionRegister() { return operationExceptionRegister<OperationReturnType<decltype(operation)>>(); }
 
     void prepareForTailCallSlow(RegisterSet preserved = { })
     {

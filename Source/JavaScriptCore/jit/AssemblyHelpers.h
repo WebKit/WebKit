@@ -1730,6 +1730,7 @@ public:
         return argumentCount(codeOrigin.inlineCallFrame());
     }
     
+    void emitLoadStructure(RegisterID cell, RegisterID dest);
     void emitNonNullDecodeZeroExtendedStructureID(RegisterID source, RegisterID dest);
     void emitLoadStructure(VM&, RegisterID source, RegisterID dest);
     void emitLoadPrototype(VM&, GPRReg objectGPR, JSValueRegs resultRegs, JumpList& slowPath);

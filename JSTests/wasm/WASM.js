@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import * as utilities from './utilities.js';
-
 const _mapValues = from => {
     let values = {};
     for (const key in from)
@@ -32,7 +30,7 @@ const _mapValues = from => {
     return values;
 };
 
-export const description = utilities.json("wasm.json");
+export const description = JSON.parse(read("wasm.json", "caller relative")); // utilities.json("wasm.json");
 export const type = Object.keys(description.type);
 const _typeSet = new Set(type);
 export const isValidType = v => _typeSet.has(v);

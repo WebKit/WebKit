@@ -31,6 +31,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyStruct.h"
+#include "WasmCallee.h"
 #include "WasmFormat.h"
 #include "WasmTypeDefinitionInlines.h"
 #include "WebAssemblyFunctionBase.h"
@@ -92,6 +93,16 @@ void FunctionSignature::dump(PrintStream& out) const
             out.print(comma, makeString(returnType(ret).kind));
         out.print("]"_s);
     }
+}
+
+FunctionSignature::FunctionSignature(Type* payload, FunctionArgCount argumentCount, FunctionArgCount returnCount)
+    : m_payload(payload)
+    , m_argCount(argumentCount)
+    , m_retCount(returnCount)
+{ }
+
+FunctionSignature::~FunctionSignature()
+{
 }
 
 String StructType::toString() const

@@ -195,6 +195,13 @@ void JSEntrypointJITCallee::setEntrypoint(Wasm::Entrypoint&& entrypoint)
     m_entrypoint = WTFMove(entrypoint);
     NativeCalleeRegistry::singleton().registerCallee(this);
 }
+
+void JSToWasmICCallee::setEntrypoint(MacroAssemblerCodeRef<JSEntryPtrTag>&& entrypoint)
+{
+    ASSERT(!m_jsToWasmICEntrypoint);
+    m_jsToWasmICEntrypoint = WTFMove(entrypoint);
+    NativeCalleeRegistry::singleton().registerCallee(this);
+}
 #endif
 
 WasmToJSCallee::WasmToJSCallee()

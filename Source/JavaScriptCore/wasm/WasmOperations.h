@@ -74,7 +74,7 @@ JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationConvertToAnyref, EncodedJSValue, (JS
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (JSWebAssemblyInstance*, EncodedWasmValue));
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyInstance*, const TypeDefinition*, EncodedJSValue, uint64_t*, uint64_t*));
-JSC_DECLARE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (JSWebAssemblyInstance*, const TypeDefinition*, IndexingType, JSValue*));
+JSC_DECLARE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (JSWebAssemblyInstance*, const FunctionSignature*, IndexingType, JSValue*));
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmWriteBarrierSlowPath, void, (JSCell*, VM*));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationPopcount32, uint32_t, (int32_t));

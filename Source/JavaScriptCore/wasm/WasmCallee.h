@@ -63,6 +63,7 @@ public:
 
     CodePtr<WasmEntryPtrTag> entrypoint() const;
     RegisterAtOffsetList* calleeSaveRegisters();
+    // Used by Wasm's fault signal handler to determine if the fault came from Wasm.
     std::tuple<void*, void*> range() const;
 
     const HandlerInfo* handlerForIndex(JSWebAssemblyInstance&, unsigned, const Tag*);
@@ -236,37 +237,42 @@ public:
     static WasmToJSCallee& singleton();
 
 private:
-
     WasmToJSCallee();
-
-    std::tuple<void*, void*> rangeImpl() const
-    {
-        return { nullptr, nullptr };
-    }
-
+    std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; }
     CodePtr<WasmEntryPtrTag> entrypointImpl() const { return { }; }
-
     RegisterAtOffsetList* calleeSaveRegistersImpl() { return nullptr; }
 };
 
 #if ENABLE(JIT)
 
-class JSToWasmICCallee final : public JITCallee {
+class JSToWasmICCallee final : public Callee {
     WTF_MAKE_TZONE_ALLOCATED(JSToWasmICCallee);
 public:
-    static Ref<JSToWasmICCallee> create()
+    static Ref<JSToWasmICCallee> create(RegisterAtOffsetList&& calleeSaves)
     {
-        return adoptRef(*new JSToWasmICCallee);
+        return adoptRef(*new JSToWasmICCallee(WTFMove(calleeSaves)));
     }
 
-    using JITCallee::setEntrypoint;
+    RegisterAtOffsetList* calleeSaveRegistersImpl() { return &m_calleeSaves; }
+    CodePtr<JSEntryPtrTag> jsEntrypoint() { return m_jsToWasmICEntrypoint.code(); }
+
+    void setEntrypoint(MacroAssemblerCodeRef<JSEntryPtrTag>&&);
 
 private:
-    JSToWasmICCallee()
-        : JITCallee(Wasm::CompilationMode::JSToWasmICMode)
+    friend class Callee;
+    JSToWasmICCallee(RegisterAtOffsetList&& calleeSaves)
+        : Callee(Wasm::CompilationMode::JSToWasmICMode)
+        , m_calleeSaves(WTFMove(calleeSaves))
     {
     }
+
+    std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; }
+    CodePtr<WasmEntryPtrTag> entrypointImpl() const { return { }; }
+
+    MacroAssemblerCodeRef<JSEntryPtrTag> m_jsToWasmICEntrypoint;
+    RegisterAtOffsetList m_calleeSaves;
 };
+
 #endif
 
 #if ENABLE(WEBASSEMBLY_BBQJIT) || ENABLE(WEBASSEMBLY_OMGJIT)

@@ -1861,7 +1861,7 @@ end
 def runWebAssemblySuite(*optionalTestSpecificOptions)
     return unless $isWasmPlatform
     modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
-    prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
+    modules << "wasm.json"
     prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
     if optionalTestSpecificOptions[0] == :no_module
       optionalTestSpecificOptions.shift
@@ -1989,9 +1989,9 @@ def runWebAssemblySpecTestBase(mode, specHarnessPath, postfix, *optionalTestSpec
         return
     end
     return unless $isWasmPlatform
-    prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
 
     modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
+    modules << "wasm.json"
     prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
 
     harness = Dir[WASMTESTS_PATH + (specHarnessPath + "/") + "*.js"].map { |f| File.basename(f) }
@@ -2042,7 +2042,7 @@ end
 def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)
     return unless $isWasmPlatform
     modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
-    prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
+    modules << "wasm.json"
     prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
     # Only let WebAssembly get executable memory.
     run("default-wasm", "--useConcurrentGC=0" , "--useConcurrentJIT=0", "--jitMemoryReservationSize=80000", "--useBaselineJIT=0", "--useDFGJIT=0", "--useFTLJIT=0", "-m")

@@ -4731,7 +4731,7 @@ auto OMGIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expre
 
 auto OMGIRGenerator::createCallPatchpoint(BasicBlock* block, Value* jsCalleeAnchor, const TypeDefinition& signature, const CallInformation& wasmCalleeInfo, const ArgumentList& tmpArgs) -> CallPatchpointData
 {
-    auto functionSignature = *signature.as<FunctionSignature>();
+    auto& functionSignature = *signature.as<FunctionSignature>();
     auto returnType = toB3ResultType(&signature);
     Vector<B3::ConstrainedValue> constrainedPatchArgs;
     Vector<B3::ConstrainedValue> constrainedPatchArgsHighBits;
