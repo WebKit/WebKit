@@ -2605,8 +2605,6 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-channelmergernode-int
 
 webkit.org/b/148922 svg/as-object/svg-in-object-dynamic-attribute-change.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/150541 imported/blink/transitions/unprefixed-perspective.html [ Pass Failure Timeout ]
-
 # Subpixel table failures.
 # This test makes no sense (ceil on table and expect the same result)
 fast/text/hyphen-min-preferred-width.html [ ImageOnlyFailure ]
