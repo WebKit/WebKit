@@ -27,7 +27,9 @@
 [
     Conditional=WEBXR_LAYERS,
     EnabledBySetting=WebXRLayersAPIEnabled,
-    Exposed=Window
+    Exposed=Window,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] interface XRSubImage {
     [SameObject] readonly attribute WebXRViewport viewport;
 };
