@@ -135,40 +135,10 @@ VkMemoryPropertyFlags GetStorageMemoryType(vk::Renderer *renderer,
 
 bool ShouldAllocateNewMemoryForUpdate(ContextVk *contextVk, size_t subDataSize, size_t bufferSize)
 {
-    // A sub-data update with size > 50% of buffer size meets the threshold to acquire a new
-    // BufferHelper from the pool.
-    size_t halfBufferSize = bufferSize / 2;
-    if (subDataSize > halfBufferSize)
-    {
-        return true;
-    }
-
-    // If the GPU is busy, it is possible to use the CPU for updating sub-data instead, but since it
-    // would need to create a duplicate of the buffer, a large enough buffer copy could result in a
-    // performance regression.
-    if (contextVk->getFeatures().preferCPUForBufferSubData.enabled)
-    {
-        // If the buffer is small enough, the cost of barrier associated with the GPU copy likely
-        // exceeds the overhead with the CPU copy. Duplicating the buffer allows the CPU to write to
-        // the buffer immediately, thus avoiding the barrier that prevents parallel operation.
-        constexpr size_t kCpuCopyBufferSizeThreshold = 32 * 1024;
-        if (bufferSize < kCpuCopyBufferSizeThreshold)
-        {
-            return true;
-        }
-
-        // To use CPU for the sub-data update in larger buffers, the update should be sizable enough
-        // compared to the whole buffer size. The threshold is chosen based on perf data collected
-        // from Pixel devices. At 1/8 of buffer size, the CPU overhead associated with extra data
-        // copy weighs less than serialization caused by barriers.
-        size_t subDataThreshold = bufferSize / 8;
-        if (subDataSize > subDataThreshold)
-        {
-            return true;
-        }
-    }
-
-    return false;
+    // A sub data update with size > 50% of buffer size meets the threshold
+    // to acquire a new BufferHelper from the pool.
+    return contextVk->getRenderer()->getFeatures().preferCPUForBufferSubData.enabled ||
+           subDataSize > (bufferSize / 2);
 }
 
 bool ShouldUseCPUToCopyData(ContextVk *contextVk,
@@ -314,13 +284,12 @@ ConversionBuffer::ConversionBuffer(vk::Renderer *renderer,
     : mEntireBufferDirty(true)
 {
     mData = std::make_unique<vk::BufferHelper>();
-    mDirtyRanges.reserve(32);
+    mDirtyRange.invalidate();
 }
 
 ConversionBuffer::~ConversionBuffer()
 {
     ASSERT(!mData || !mData->valid());
-    mDirtyRanges.clear();
 }
 
 ConversionBuffer::ConversionBuffer(ConversionBuffer &&other) = default;
@@ -362,15 +331,6 @@ void BufferVk::destroy(const gl::Context *context)
     (void)release(contextVk);
 }
 
-void BufferVk::releaseConversionBuffers(vk::Renderer *renderer)
-{
-    for (ConversionBuffer &buffer : mVertexConversionBuffers)
-    {
-        buffer.release(renderer);
-    }
-    mVertexConversionBuffers.clear();
-}
-
 angle::Result BufferVk::release(ContextVk *contextVk)
 {
     vk::Renderer *renderer = contextVk->getRenderer();
@@ -383,7 +343,11 @@ angle::Result BufferVk::release(ContextVk *contextVk)
         mStagingBuffer.release(renderer);
     }
 
-    releaseConversionBuffers(renderer);
+    for (ConversionBuffer &buffer : mVertexConversionBuffers)
+    {
+        buffer.release(renderer);
+    }
+    mVertexConversionBuffers.clear();
 
     return angle::Result::Continue;
 }
@@ -491,14 +455,6 @@ angle::Result BufferVk::setDataWithMemoryType(const gl::Context *context,
     {
         // Nothing to do.
         return angle::Result::Continue;
-    }
-
-    if (!mVertexConversionBuffers.empty())
-    {
-        for (ConversionBuffer &buffer : mVertexConversionBuffers)
-        {
-            buffer.clearDirty();
-        }
     }
 
     const BufferUsageType usageType = GetBufferUsageType(usage);
@@ -659,6 +615,7 @@ angle::Result BufferVk::mapRange(const gl::Context *context,
                                  GLbitfield access,
                                  void **mapPtr)
 {
+    ANGLE_TRACE_EVENT0("gpu.angle", "BufferVk::mapRange");
     return mapRangeImpl(vk::GetImpl(context), offset, length, access, mapPtr);
 }
 

@@ -159,7 +159,14 @@ void Context11::onDestroy(const gl::Context *context)
 
 CompilerImpl *Context11::createCompiler()
 {
-    return new CompilerD3D(SH_HLSL_4_1_OUTPUT);
+    if (mRenderer->getRenderer11DeviceCaps().featureLevel <= D3D_FEATURE_LEVEL_9_3)
+    {
+        return new CompilerD3D(SH_HLSL_4_0_FL9_3_OUTPUT);
+    }
+    else
+    {
+        return new CompilerD3D(SH_HLSL_4_1_OUTPUT);
+    }
 }
 
 ShaderImpl *Context11::createShader(const gl::ShaderState &data)

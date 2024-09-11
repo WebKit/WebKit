@@ -143,6 +143,12 @@ angle::Result DisplayMtl::initializeImpl(egl::Display *display)
             return angle::Result::Stop;
         }
 
+        if (mFeatures.requireMsl21.enabled && !supportsMetal2_1())
+        {
+            ANGLE_MTL_LOG("Could not initialize: MSL 2.1 is not available.");
+            return angle::Result::Stop;
+        }
+
         if (mFeatures.disableMetalOnNvidia.enabled && isNVIDIA())
         {
             ANGLE_MTL_LOG("Could not initialize: Metal not supported on NVIDIA GPUs.");
@@ -240,7 +246,7 @@ DeviceImpl *DisplayMtl::createDevice()
 mtl::AutoObjCPtr<id<MTLDevice>> DisplayMtl::getMetalDeviceMatchingAttribute(
     const egl::AttributeMap &attribs)
 {
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
     auto deviceList = mtl::adoptObjCObj(MTLCopyAllDevices());
 
     EGLAttrib high = attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0);
@@ -761,7 +767,7 @@ void DisplayMtl::ensureCapsInitialized() const
     // for now. http://anglebug.com/42263403
 
     // NOTE(kpiddington): This seems to be fixed in macOS Monterey
-    if (@available(macOS 12.0, *))
+    if (ANGLE_APPLE_AVAILABLE_XCI(12.0, 15.0, 15.0))
     {
         mNativeCaps.maxAliasedPointSize = 511;
     }
@@ -918,6 +924,16 @@ void DisplayMtl::ensureCapsInitialized() const
 
     // Apple platforms require PVRTC1 textures to be squares.
     mNativeLimitations.squarePvrtc1 = true;
+
+    // Older Metal does not support compressed formats for TEXTURE_3D target.
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.1, 13.0))
+    {
+        mNativeLimitations.noCompressedTexture3D = !supportsEitherGPUFamily(3, 1);
+    }
+    else
+    {
+        mNativeLimitations.noCompressedTexture3D = true;
+    }
 }
 
 void DisplayMtl::initializeExtensions() const
@@ -946,7 +962,11 @@ void DisplayMtl::initializeExtensions() const
     mNativeExtensions.copyTextureCHROMIUM           = true;
     mNativeExtensions.copyCompressedTextureCHROMIUM = false;
     mNativeExtensions.textureMirrorClampToEdgeEXT   = true;
-    mNativeExtensions.depthClampEXT                 = true;
+
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.11, 13.1, 11.0))
+    {
+        mNativeExtensions.depthClampEXT = true;
+    }
 
     // EXT_debug_marker is not implemented yet, but the entry points must be exposed for the
     // Metal backend to be used in Chrome (http://anglebug.com/42263519)
@@ -1007,7 +1027,7 @@ void DisplayMtl::initializeExtensions() const
 
     mNativeExtensions.sampleVariablesOES = true;
 
-    if (@available(macOS 11.0, *))
+    if (ANGLE_APPLE_AVAILABLE_XCI(11.0, 14.0, 14.0))
     {
         mNativeExtensions.shaderMultisampleInterpolationOES =
             [mMetalDevice supportsPullModelInterpolation];
@@ -1080,8 +1100,11 @@ void DisplayMtl::initializeExtensions() const
     mNativeExtensions.provokingVertexANGLE = true;
 
     // GL_EXT_blend_func_extended
-    mNativeExtensions.blendFuncExtendedEXT = true;
-    mNativeCaps.maxDualSourceDrawBuffers   = 1;
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.12, 13.1, 11.0))
+    {
+        mNativeExtensions.blendFuncExtendedEXT = true;
+        mNativeCaps.maxDualSourceDrawBuffers   = 1;
+    }
 
     // GL_ANGLE_shader_pixel_local_storage.
     if (!mFeatures.disableProgrammableBlending.enabled && supportsAppleGPUFamily(1))
@@ -1223,7 +1246,8 @@ void DisplayMtl::initializeFeatures()
 
     ANGLE_FEATURE_CONDITION((&mFeatures), allowGenMultipleMipsPerPass, true);
     ANGLE_FEATURE_CONDITION((&mFeatures), forceBufferGPUStorage, false);
-    ANGLE_FEATURE_CONDITION((&mFeatures), hasExplicitMemBarrier, (isOSX || isCatalyst) && !isARM);
+    ANGLE_FEATURE_CONDITION((&mFeatures), hasExplicitMemBarrier,
+                            supportsMetal2_1() && (isOSX || isCatalyst) && !isARM);
     ANGLE_FEATURE_CONDITION((&mFeatures), hasDepthAutoResolve, supportsEitherGPUFamily(3, 2));
     ANGLE_FEATURE_CONDITION((&mFeatures), hasStencilAutoResolve, supportsEitherGPUFamily(5, 2));
     ANGLE_FEATURE_CONDITION((&mFeatures), hasVariableRasterizationRate,
@@ -1240,16 +1264,17 @@ void DisplayMtl::initializeFeatures()
 
     // http://anglebug.com/40644746
     // Stencil blit shader is not compiled on Intel & NVIDIA, need investigation.
-    ANGLE_FEATURE_CONDITION((&mFeatures), hasShaderStencilOutput, !isIntel() && !isNVIDIA());
+    ANGLE_FEATURE_CONDITION((&mFeatures), hasShaderStencilOutput,
+                            supportsMetal2_1() && !isIntel() && !isNVIDIA());
 
     ANGLE_FEATURE_CONDITION((&mFeatures), hasTextureSwizzle,
-                            supportsEitherGPUFamily(3, 2) && !isSimulator);
+                            supportsMetal2_2() && supportsEitherGPUFamily(3, 2) && !isSimulator);
 
     ANGLE_FEATURE_CONDITION((&mFeatures), avoidStencilTextureSwizzle, isIntel());
 
     // http://crbug.com/1136673
     // Fence sync is flaky on Nvidia
-    ANGLE_FEATURE_CONDITION((&mFeatures), hasEvents, !isNVIDIA());
+    ANGLE_FEATURE_CONDITION((&mFeatures), hasEvents, supportsMetal2_1() && !isNVIDIA());
 
     ANGLE_FEATURE_CONDITION((&mFeatures), hasCheapRenderPass, (isOSX || isCatalyst) && !isARM);
 
@@ -1265,7 +1290,7 @@ void DisplayMtl::initializeFeatures()
                             isOSX || isCatalyst || supportsAppleGPUFamily(4));
 
     ANGLE_FEATURE_CONDITION((&mFeatures), allowSeparateDepthStencilBuffers,
-                            supportsAppleGPUFamily(1) && !isSimulator);
+                            !isOSX && !isCatalyst && !isSimulator);
     ANGLE_FEATURE_CONDITION((&mFeatures), emulateTransformFeedback, true);
 
     ANGLE_FEATURE_CONDITION((&mFeatures), intelExplicitBoolCastWorkaround,
@@ -1326,6 +1351,9 @@ void DisplayMtl::initializeFeatures()
     // unsupported by the Metal backend.
     ANGLE_FEATURE_CONDITION((&mFeatures), requireGpuFamily2, true);
 
+    // anglebug.com/42266694 Builtin shaders currently require MSL 2.1
+    ANGLE_FEATURE_CONDITION((&mFeatures), requireMsl21, true);
+
     // http://anglebug.com/42266744: Rescope global variables which are only used in one function to
     // be function local. Disabled on AMD FirePro devices: http://anglebug.com/40096898
     ANGLE_FEATURE_CONDITION((&mFeatures), rescopeGlobalVariables, !isAMDFireProDevice());
@@ -1379,6 +1407,29 @@ bool DisplayMtl::supportsMacGPUFamily(uint8_t macFamily) const
 bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) const
 {
     return supportsAppleGPUFamily(iOSFamily) || supportsMacGPUFamily(macFamily);
+}
+
+bool DisplayMtl::supportsMetal2_1() const
+{
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.14, 13.1, 12.0))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+bool DisplayMtl::supportsMetal2_2() const
+{
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.1, 13.0))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 bool DisplayMtl::supports32BitFloatFiltering() const

@@ -111,8 +111,7 @@ class SurfaceMtl : public SurfaceImpl
     bool mAutoResolveMSColorTexture = false;
 
     bool mRobustResourceInit = false;
-    bool mColorTextureInitialized         = true;
-    bool mDepthStencilTexturesInitialized = true;
+    bool mContentInitialized = false;
 
     mtl::Format mColorFormat;
     mtl::Format mDepthFormat;

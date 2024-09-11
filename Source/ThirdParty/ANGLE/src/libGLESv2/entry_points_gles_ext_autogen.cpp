@@ -7949,8 +7949,6 @@ void GL_APIENTRY GL_ImportSemaphoreFdEXT(GLuint semaphore, GLenum handleType, GL
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
-// GL_EXT_separate_depth_stencil
-
 // GL_EXT_separate_shader_objects
 void GL_APIENTRY GL_ActiveShaderProgramEXT(GLuint pipeline, GLuint program)
 {

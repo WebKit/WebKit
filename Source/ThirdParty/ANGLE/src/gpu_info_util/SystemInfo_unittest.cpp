@@ -77,7 +77,7 @@ TEST(SystemInfoTest, AMDCatalystVersionParsing)
     ASSERT_EQ("42.0.56", version);
 }
 
-#if defined(ANGLE_PLATFORM_MACOS)
+#if defined(ANGLE_PLATFORM_APPLE)
 
 // Test Mac machine model parsing
 TEST(SystemInfoTest, MacMachineModelParsing)
@@ -107,7 +107,7 @@ TEST(SystemInfoTest, MacMachineModelParsing)
     EXPECT_EQ(2, minor);
 }
 
-#endif  // defined(ANGLE_PLATFORM_MACOS)
+#endif  // defined(ANGLE_PLATFORM_APPLE)
 
 // Test Windows CM Device ID parsing
 TEST(SystemInfoTest, CMDeviceIDToDeviceAndVendorID)

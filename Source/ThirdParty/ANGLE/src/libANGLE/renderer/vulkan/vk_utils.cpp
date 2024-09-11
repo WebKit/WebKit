@@ -1062,10 +1062,10 @@ void InitImagePipeSurfaceFUCHSIAFunctions(VkInstance instance)
 #    endif
 
 #    if defined(ANGLE_PLATFORM_ANDROID)
-void InitExternalMemoryHardwareBufferANDROIDFunctions(VkDevice device)
+void InitExternalMemoryHardwareBufferANDROIDFunctions(VkInstance instance)
 {
-    GET_DEVICE_FUNC(vkGetAndroidHardwareBufferPropertiesANDROID);
-    GET_DEVICE_FUNC(vkGetMemoryAndroidHardwareBufferANDROID);
+    GET_INSTANCE_FUNC(vkGetAndroidHardwareBufferPropertiesANDROID);
+    GET_INSTANCE_FUNC(vkGetMemoryAndroidHardwareBufferANDROID);
 }
 #    endif
 
@@ -1076,9 +1076,9 @@ void InitGGPStreamDescriptorSurfaceFunctions(VkInstance instance)
 }
 #    endif  // defined(ANGLE_PLATFORM_GGP)
 
-void InitExternalSemaphoreFdFunctions(VkDevice device)
+void InitExternalSemaphoreFdFunctions(VkInstance instance)
 {
-    GET_DEVICE_FUNC(vkImportSemaphoreFdKHR);
+    GET_INSTANCE_FUNC(vkImportSemaphoreFdKHR);
 }
 
 void InitHostQueryResetFunctions(VkDevice device)
@@ -1087,10 +1087,10 @@ void InitHostQueryResetFunctions(VkDevice device)
 }
 
 // VK_KHR_external_fence_fd
-void InitExternalFenceFdFunctions(VkDevice device)
+void InitExternalFenceFdFunctions(VkInstance instance)
 {
-    GET_DEVICE_FUNC(vkGetFenceFdKHR);
-    GET_DEVICE_FUNC(vkImportFenceFdKHR);
+    GET_INSTANCE_FUNC(vkGetFenceFdKHR);
+    GET_INSTANCE_FUNC(vkImportFenceFdKHR);
 }
 
 // VK_KHR_shared_presentable_image

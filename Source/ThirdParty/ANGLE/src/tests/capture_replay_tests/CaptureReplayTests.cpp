@@ -16,10 +16,6 @@
 #include "util/OSWindow.h"
 #include "util/shader_utils.h"
 
-#if defined(ANGLE_PLATFORM_ANDROID)
-#    include "util/android/AndroidWindow.h"
-#endif
-
 #include <stdint.h>
 #include <string.h>
 #include <fstream>
@@ -297,12 +293,8 @@ class CaptureReplayTests
         }
 #endif
 
-        std::string baseDir = "";
-#if defined(ANGLE_TRACE_EXTERNAL_BINARIES)
-        baseDir += AndroidWindow::GetApplicationDirectory() + "/angle_traces/";
-#endif
         // Load trace
-        mTraceLibrary.reset(new angle::TraceLibrary(traceInfo.name, traceInfo, baseDir));
+        mTraceLibrary.reset(new angle::TraceLibrary(traceInfo.name, traceInfo));
         if (!mTraceLibrary->valid())
         {
             std::cout << "Failed to load trace library: " << traceInfo.name << "\n";

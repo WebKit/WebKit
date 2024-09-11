@@ -1206,7 +1206,7 @@ void InitImagePipeSurfaceFUCHSIAFunctions(VkInstance instance);
 
 #    if defined(ANGLE_PLATFORM_ANDROID)
 // VK_ANDROID_external_memory_android_hardware_buffer
-void InitExternalMemoryHardwareBufferANDROIDFunctions(VkDevice device);
+void InitExternalMemoryHardwareBufferANDROIDFunctions(VkInstance instance);
 #    endif
 
 #    if defined(ANGLE_PLATFORM_GGP)
@@ -1215,13 +1215,13 @@ void InitGGPStreamDescriptorSurfaceFunctions(VkInstance instance);
 #    endif  // defined(ANGLE_PLATFORM_GGP)
 
 // VK_KHR_external_semaphore_fd
-void InitExternalSemaphoreFdFunctions(VkDevice device);
+void InitExternalSemaphoreFdFunctions(VkInstance instance);
 
 // VK_EXT_host_query_reset
-void InitHostQueryResetFunctions(VkDevice device);
+void InitHostQueryResetFunctions(VkDevice instance);
 
 // VK_KHR_external_fence_fd
-void InitExternalFenceFdFunctions(VkDevice device);
+void InitExternalFenceFdFunctions(VkInstance instance);
 
 // VK_KHR_shared_presentable_image
 void InitGetSwapchainStatusKHRFunctions(VkDevice device);

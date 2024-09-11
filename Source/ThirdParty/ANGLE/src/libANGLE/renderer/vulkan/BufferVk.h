@@ -26,7 +26,7 @@ class ConversionBuffer
     ConversionBuffer() : mEntireBufferDirty(true)
     {
         mData = std::make_unique<vk::BufferHelper>();
-        mDirtyRanges.reserve(32);
+        mDirtyRange.invalidate();
     }
     ConversionBuffer(vk::Renderer *renderer,
                      VkBufferUsageFlags usageFlags,
@@ -37,15 +37,15 @@ class ConversionBuffer
 
     ConversionBuffer(ConversionBuffer &&other);
 
-    bool dirty() const { return mEntireBufferDirty || !mDirtyRanges.empty(); }
+    bool dirty() const { return mEntireBufferDirty || !mDirtyRange.empty(); }
     bool isEntireBufferDirty() const { return mEntireBufferDirty; }
     void setEntireBufferDirty() { mEntireBufferDirty = true; }
-    void addDirtyBufferRange(const RangeDeviceSize &range) { mDirtyRanges.emplace_back(range); }
-    const std::vector<RangeDeviceSize> &getDirtyBufferRanges() const { return mDirtyRanges; }
+    void addDirtyBufferRange(const RangeDeviceSize &range) { mDirtyRange.merge(range); }
+    const RangeDeviceSize &getDirtyBufferRange() const { return mDirtyRange; }
     void clearDirty()
     {
         mEntireBufferDirty = false;
-        mDirtyRanges.clear();
+        mDirtyRange.invalidate();
     }
 
     bool valid() const { return mData && mData->valid(); }
@@ -59,7 +59,7 @@ class ConversionBuffer
     // true. If mEntireBufferDirty is false, mDirtyRange is the ranges of data that has been
     // modified. Note that there is no guarantee that ranges will not overlap.
     bool mEntireBufferDirty;
-    std::vector<RangeDeviceSize> mDirtyRanges;
+    RangeDeviceSize mDirtyRange;
 
     // Where the conversion data is stored.
     std::unique_ptr<vk::BufferHelper> mData;
@@ -74,7 +74,6 @@ class VertexConversionBuffer : public ConversionBuffer
         GLuint stride;
         size_t offset;
         bool hostVisible;
-        bool offsetMustMatchExactly;
     };
 
     VertexConversionBuffer(vk::Renderer *renderer, const CacheKey &cacheKey);
@@ -82,39 +81,10 @@ class VertexConversionBuffer : public ConversionBuffer
 
     VertexConversionBuffer(VertexConversionBuffer &&other);
 
-    bool match(const CacheKey &cacheKey)
+    bool match(const CacheKey &cacheKey) const
     {
-        // If anything other than offset mismatch, it can't reuse.
-        if (mCacheKey.formatID != cacheKey.formatID || mCacheKey.stride != cacheKey.stride ||
-            mCacheKey.offsetMustMatchExactly != cacheKey.offsetMustMatchExactly ||
-            mCacheKey.hostVisible != cacheKey.hostVisible)
-        {
-            return false;
-        }
-
-        // If offset matches, for sure we can reuse.
-        if (mCacheKey.offset == cacheKey.offset)
-        {
-            return true;
-        }
-
-        // If offset exact match is not required and offsets are multiple strides apart, then we
-        // adjust the offset to reuse the buffer. The benefit of reused the buffer is that the
-        // previous conversion result is still valid. We only need to convert the modified data.
-        if (!cacheKey.offsetMustMatchExactly)
-        {
-            int64_t offsetGap = cacheKey.offset - mCacheKey.offset;
-            if ((offsetGap % cacheKey.stride) == 0)
-            {
-                if (cacheKey.offset < mCacheKey.offset)
-                {
-                    addDirtyBufferRange(RangeDeviceSize(cacheKey.offset, mCacheKey.offset));
-                    mCacheKey.offset = cacheKey.offset;
-                }
-                return true;
-            }
-        }
-        return false;
+        return mCacheKey.formatID == cacheKey.formatID && mCacheKey.stride == cacheKey.stride &&
+               mCacheKey.offset == cacheKey.offset && mCacheKey.hostVisible == cacheKey.hostVisible;
     }
 
     const CacheKey &getCacheKey() const { return mCacheKey; }
@@ -287,8 +257,6 @@ class BufferVk : public BufferImpl
                                BufferUsageType usageType,
                                VkMemoryPropertyFlags memoryPropertyFlags,
                                size_t size) const;
-
-    void releaseConversionBuffers(vk::Renderer *renderer);
 
     vk::BufferHelper mBuffer;
 

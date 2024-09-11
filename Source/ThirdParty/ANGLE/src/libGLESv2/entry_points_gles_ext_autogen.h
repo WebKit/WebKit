@@ -1175,8 +1175,6 @@ ANGLE_EXPORT void GL_APIENTRY GL_ImportSemaphoreFdEXT(GLuint semaphore,
                                                       GLenum handleType,
                                                       GLint fd);
 
-// GL_EXT_separate_depth_stencil
-
 // GL_EXT_separate_shader_objects
 ANGLE_EXPORT void GL_APIENTRY GL_ActiveShaderProgramEXT(GLuint pipeline, GLuint program);
 ANGLE_EXPORT void GL_APIENTRY GL_BindProgramPipelineEXT(GLuint pipeline);

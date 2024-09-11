@@ -4700,8 +4700,6 @@ void GL_APIENTRY glImportSemaphoreFdEXT(GLuint semaphore, GLenum handleType, GLi
     return GL_ImportSemaphoreFdEXT(semaphore, handleType, fd);
 }
 
-// GL_EXT_separate_depth_stencil
-
 // GL_EXT_separate_shader_objects
 void GL_APIENTRY glActiveShaderProgramEXT(GLuint pipeline, GLuint program)
 {

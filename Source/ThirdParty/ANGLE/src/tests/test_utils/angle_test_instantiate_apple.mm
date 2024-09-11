@@ -16,13 +16,24 @@ namespace angle
 
 bool IsMetalTextureSwizzleAvailable()
 {
-#if ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR
+    // NOTE(hqle): This might not be accurate, since the capabilities also depend on underlying
+    // hardwares, however, it is OK for testing.
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.1, 13))
+    {
+        // All NVIDIA and older Intel don't support swizzle because they are GPU family 1.
+        // We don't have a way to detect Metal family here, so skip all Intel for now.
+        return !IsIntel() && !IsNVIDIA();
+    }
     return false;
-#else
-    // All NVIDIA and older Intel don't support swizzle because they are GPU family 1.
-    // We don't have a way to detect Metal family here, so skip all Intel for now.
-    return !IsIntel() && !IsNVIDIA();
-#endif
+}
+
+bool IsMetalCompressedTexture3DAvailable()
+{
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.1, 13.0))
+    {
+        return true;
+    }
+    return false;
 }
 
 }  // namespace angle

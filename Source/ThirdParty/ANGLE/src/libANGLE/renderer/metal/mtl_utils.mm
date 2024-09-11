@@ -188,34 +188,51 @@ void StartFrameCapture(id<MTLDevice> metalDevice, id<MTLCommandQueue> metalCmdQu
         return;
     }
 
-    auto captureDescriptor                = mtl::adoptObjCObj([[MTLCaptureDescriptor alloc] init]);
-    captureDescriptor.get().captureObject = metalDevice;
-    const std::string filePath            = GetMetalCaptureFile();
-    NSString *frameCapturePath            = nil;
-    if (filePath != "")
+#    ifdef __MAC_10_15
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.1, 13))
     {
-        frameCapturePath =
-            [NSString stringWithFormat:@"%s%zu.gputrace", filePath.c_str(), gFrameCaptured - 1];
-        captureDescriptor.get().destination = MTLCaptureDestinationGPUTraceDocument;
-        captureDescriptor.get().outputURL   = [NSURL fileURLWithPath:frameCapturePath
-                                                       isDirectory:false];
-    }
-    else
-    {
-        // This will pause execution only if application is being debugged inside Xcode
-        captureDescriptor.get().destination = MTLCaptureDestinationDeveloperTools;
-    }
+        auto captureDescriptor = mtl::adoptObjCObj([[MTLCaptureDescriptor alloc] init]);
+        captureDescriptor.get().captureObject = metalDevice;
+        const std::string filePath            = GetMetalCaptureFile();
+        NSString *frameCapturePath            = nil;
+        if (filePath != "")
+        {
+            frameCapturePath =
+                [NSString stringWithFormat:@"%s%zu.gputrace", filePath.c_str(), gFrameCaptured - 1];
+            captureDescriptor.get().destination = MTLCaptureDestinationGPUTraceDocument;
+            captureDescriptor.get().outputURL   = [NSURL fileURLWithPath:frameCapturePath
+                                                           isDirectory:false];
+        }
+        else
+        {
+            // This will pause execution only if application is being debugged inside Xcode
+            captureDescriptor.get().destination = MTLCaptureDestinationDeveloperTools;
+        }
 
-    NSError *error;
-    if ([captureManager startCaptureWithDescriptor:captureDescriptor.get() error:&error])
-    {
-        ASSERT(!gFrameCapturePath);
-        gFrameCapturePath = frameCapturePath;
+        NSError *error;
+        if ([captureManager startCaptureWithDescriptor:captureDescriptor.get() error:&error])
+        {
+            ASSERT(!gFrameCapturePath);
+            gFrameCapturePath = frameCapturePath;
+        }
+        else
+        {
+            NSLog(@"Failed to start capture, error %@", error);
+        }
     }
     else
-    {
-        NSLog(@"Failed to start capture, error %@", error);
-    }
+#    endif  // __MAC_10_15
+        if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.1, 13))
+        {
+            auto captureDescriptor = mtl::adoptObjCObj([[MTLCaptureDescriptor alloc] init]);
+            captureDescriptor.get().captureObject = metalDevice;
+
+            NSError *error;
+            if (![captureManager startCaptureWithDescriptor:captureDescriptor.get() error:&error])
+            {
+                NSLog(@"Failed to start capture, error %@", error);
+            }
+        }
 #endif  // ANGLE_METAL_FRAME_CAPTURE_ENABLED
 }
 
@@ -659,6 +676,7 @@ angle::Result InitializeDepthStencilTextureContentsGPU(const gl::Context *contex
     {
         rtMTL.toRenderPassAttachmentDesc(&rpDesc.depthAttachment);
         rpDesc.depthAttachment.loadAction = MTLLoadActionClear;
+        rpDesc.depthAttachment.clearDepth = 1.0;
     }
     if (angleFormat.stencilBits)
     {
@@ -806,7 +824,10 @@ uint32_t GetDeviceVendorId(id<MTLDevice> metalDevice)
 {
     uint32_t vendorId = 0;
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-    vendorId = GetDeviceVendorIdFromIOKit(metalDevice);
+    if (ANGLE_APPLE_AVAILABLE_XC(10.13, 13.1))
+    {
+        vendorId = GetDeviceVendorIdFromIOKit(metalDevice);
+    }
 #endif
     if (!vendorId)
     {

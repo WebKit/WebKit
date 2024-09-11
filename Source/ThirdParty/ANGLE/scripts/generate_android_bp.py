@@ -22,11 +22,11 @@ ROOT_TARGETS = [
     "//:libEGL",
 ]
 
-END2END_TEST_TARGET = "//src/tests:angle_end2end_tests__library"
-
 # Used only in generated Android.bp file for DMA-BUF-enabled builds on Android.
 # See b/353262025 for details.
-DMA_BUF_TARGET = "//src/libANGLE/renderer/vulkan:angle_android_vulkan_dma_buf"
+DMA_BUF_TARGETS = [
+    "//src/libANGLE/renderer/vulkan:angle_android_vulkan_dma_buf",
+]
 
 BLUEPRINT_COMMENT_PROPERTY = '__android_bp_comment'
 
@@ -138,15 +138,10 @@ def gn_target_to_blueprint_target(target, target_info):
     if 'output_name' in target_info:
         return target_info['output_name']
 
-    if target_info.get('type') == 'shared_library':
-        # Deduce name from the shared library path
-        # end2end tests lib and libangle_util.so don't have output_name set for the early return above
-        return os.path.splitext(os.path.basename(target_info['outputs'][0]))[0]
-
     # Split the gn target name (in the form of //gn_file_path:target_name) into gn_file_path and
     # target_name
     match = re.match(r"^//([a-zA-Z0-9\-\+_/]*):([a-zA-Z0-9\-\+_.]+)$", target)
-    assert match is not None, target
+    assert match is not None
 
     gn_file_path = match.group(1)
     target_name = match.group(2)
@@ -215,12 +210,6 @@ target_blockist = [
     '//build/config:shared_library_deps',
     '//third_party/zlib:zlib',
     '//third_party/zlib/google:compression_utils_portable',
-
-    # end2end tests: -> platform libgtest, libgmock
-    '//testing/gtest:gtest',
-    '//testing/gmock:gmock',
-    '//third_party/googletest:gtest',
-    '//third_party/googletest:gmock',
 ]
 
 third_party_target_allowlist = [
@@ -243,15 +232,6 @@ include_blocklist = [
     '//out/Android/gen/third_party/glslang/src/include/',
     '//third_party/zlib/',
     '//third_party/zlib/google/',
-    # end2end tests: -> platform libgtest, libgmock
-    '//third_party/googletest/custom/',
-    '//third_party/googletest/src/googletest/include/',
-    '//third_party/googletest/src/googlemock/include/',
-]
-
-targets_using_jni = [
-    '//src/tests:native_test_support_android',
-    '//util:angle_util',
 ]
 
 
@@ -263,8 +243,6 @@ def gn_deps_to_blueprint_deps(abi, target, build_info):
     defaults = []
     generated_headers = []
     header_libs = []
-    if target in targets_using_jni:
-        header_libs.append('jni_headers')
     if 'deps' not in target_info:
         return static_libs, defaults
 
@@ -308,10 +286,6 @@ def gn_deps_to_blueprint_deps(abi, target, build_info):
             # Replace zlib by Android's zlib, compression_utils_portable is the root dependency
             shared_libs.append('libz')
             static_libs.extend(['zlib_google_compression_utils_portable', 'cpufeatures'])
-        elif dep == '//testing/gtest:gtest':
-            static_libs.append('libgtest')
-        elif dep == '//testing/gmock:gmock':
-            static_libs.append('libgmock')
 
     return static_libs, shared_libs, defaults, generated_headers, header_libs
 
@@ -431,6 +405,7 @@ def library_target_to_blueprint(target, build_info):
 
         bp['defaults'].append('angle_common_library_cflags')
 
+        bp['sdk_version'] = MIN_SDK_VERSION
         bp['stl'] = STL
         if target in ROOT_TARGETS:
             bp['defaults'].append('angle_vendor_cc_defaults')
@@ -569,6 +544,8 @@ def action_target_to_blueprint(abi, target, build_info):
 
     bp['cmd'] = ' '.join(cmd)
 
+    bp['sdk_version'] = MIN_SDK_VERSION
+
     return blueprint_type, bp
 
 
@@ -676,7 +653,9 @@ def get_angle_android_dma_buf_flag_config(build_info):
         'name': 'angle_dma_buf_cc_defaults',
         'soong_config_variables': {
             'angle_android_dma_buf': {
-                'defaults': [gn_target_to_blueprint_target(DMA_BUF_TARGET, {})],
+                'defaults': [
+                    gn_target_to_blueprint_target(target, {}) for target in DMA_BUF_TARGETS
+                ],
             }
         },
     }))
@@ -688,7 +667,7 @@ def get_angle_android_dma_buf_flag_config(build_info):
 def get_blueprint_targets_from_build_info(build_info: BuildInfo) -> List[Tuple[str, dict]]:
     targets_to_write = collections.OrderedDict()
     for abi in ABI_TARGETS:
-        for root_target in ROOT_TARGETS + [END2END_TEST_TARGET, DMA_BUF_TARGET]:
+        for root_target in ROOT_TARGETS + DMA_BUF_TARGETS:
             targets_to_write.update(get_gn_target_dependencies(abi, root_target, build_info))
 
     generated_targets = []

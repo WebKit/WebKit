@@ -75,9 +75,7 @@ ScopedContextMutexLock GetContextLock_WaitClient(Thread *thread);
 ScopedContextMutexLock GetContextLock_GetCurrentContext(Thread *thread);
 
 // EGL 1.5
-ScopedContextMutexLock GetContextLock_ClientWaitSync(Thread *thread,
-                                                     egl::Display *dpyPacked,
-                                                     EGLint flags);
+ScopedContextMutexLock GetContextLock_ClientWaitSync(Thread *thread, egl::Display *dpyPacked);
 ScopedContextMutexLock GetContextLock_CreateImage(Thread *thread,
                                                   egl::Display *dpyPacked,
                                                   gl::ContextID ctxPacked);
@@ -92,9 +90,7 @@ ScopedContextMutexLock GetContextLock_GetPlatformDisplay(Thread *thread);
 ScopedContextMutexLock GetContextLock_GetSyncAttrib(Thread *thread,
                                                     egl::Display *dpyPacked,
                                                     EGLint attribute);
-ScopedContextMutexLock GetContextLock_WaitSync(Thread *thread,
-                                               egl::Display *dpyPacked,
-                                               EGLint flags);
+ScopedContextMutexLock GetContextLock_WaitSync(Thread *thread, egl::Display *dpyPacked);
 
 // EGL_ANDROID_blob_cache
 ScopedContextMutexLock GetContextLock_SetBlobCacheFuncsANDROID(Thread *thread,
@@ -228,9 +224,7 @@ ScopedContextMutexLock GetContextLock_LabelObjectKHR(Thread *thread, egl::Displa
 ScopedContextMutexLock GetContextLock_QueryDebugKHR(Thread *thread, EGLint attribute);
 
 // EGL_KHR_fence_sync
-ScopedContextMutexLock GetContextLock_ClientWaitSyncKHR(Thread *thread,
-                                                        egl::Display *dpyPacked,
-                                                        EGLint flags);
+ScopedContextMutexLock GetContextLock_ClientWaitSyncKHR(Thread *thread, egl::Display *dpyPacked);
 ScopedContextMutexLock GetContextLock_CreateSyncKHR(Thread *thread, egl::Display *dpyPacked);
 ScopedContextMutexLock GetContextLock_DestroySyncKHR(Thread *thread, egl::Display *dpyPacked);
 ScopedContextMutexLock GetContextLock_GetSyncAttribKHR(Thread *thread,
@@ -282,9 +276,7 @@ ScopedContextMutexLock GetContextLock_SwapBuffersWithDamageKHR(Thread *thread,
                                                                egl::Display *dpyPacked);
 
 // EGL_KHR_wait_sync
-ScopedContextMutexLock GetContextLock_WaitSyncKHR(Thread *thread,
-                                                  egl::Display *dpyPacked,
-                                                  EGLint flags);
+ScopedContextMutexLock GetContextLock_WaitSyncKHR(Thread *thread, egl::Display *dpyPacked);
 
 // EGL_NV_post_sub_buffer
 ScopedContextMutexLock GetContextLock_PostSubBufferNV(Thread *thread, egl::Display *dpyPacked);

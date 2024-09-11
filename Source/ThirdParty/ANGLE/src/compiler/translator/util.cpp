@@ -812,6 +812,7 @@ bool IsOutputHLSL(ShShaderOutput output)
     {
         case SH_HLSL_3_0_OUTPUT:
         case SH_HLSL_4_1_OUTPUT:
+        case SH_HLSL_4_0_FL9_3_OUTPUT:
             return true;
         default:
             break;

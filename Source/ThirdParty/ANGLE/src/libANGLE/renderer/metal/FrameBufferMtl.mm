@@ -665,26 +665,26 @@ bool FramebufferMtl::totalBitsUsedIsLessThanOrEqualToMaxBitsSupported(
 
 gl::FramebufferStatus FramebufferMtl::checkStatus(const gl::Context *context) const
 {
-    if (mState.hasSeparateDepthAndStencilAttachments())
+    ContextMtl *contextMtl = mtl::GetImpl(context);
+    if (!contextMtl->getDisplay()->getFeatures().allowSeparateDepthStencilBuffers.enabled &&
+        mState.hasSeparateDepthAndStencilAttachments())
     {
-        ContextMtl *contextMtl = mtl::GetImpl(context);
-        if (!contextMtl->getDisplay()->getFeatures().allowSeparateDepthStencilBuffers.enabled)
-        {
-            return gl::FramebufferStatus::Incomplete(
-                GL_FRAMEBUFFER_UNSUPPORTED,
-                gl::err::kFramebufferIncompleteUnsupportedSeparateDepthStencilBuffers);
-        }
+        return gl::FramebufferStatus::Incomplete(
+            GL_FRAMEBUFFER_UNSUPPORTED,
+            gl::err::kFramebufferIncompleteUnsupportedSeparateDepthStencilBuffers);
+    }
 
-        ASSERT(mState.getDepthAttachment()->getFormat().info->depthBits > 0);
-        ASSERT(mState.getStencilAttachment()->getFormat().info->stencilBits > 0);
-        if (mState.getDepthAttachment()->getFormat().info->stencilBits != 0 ||
-            mState.getStencilAttachment()->getFormat().info->depthBits != 0)
-        {
-            return gl::FramebufferStatus::Incomplete(
-                GL_FRAMEBUFFER_UNSUPPORTED,
-                gl::err::
-                    kFramebufferIncompleteUnsupportedSeparateDepthStencilBuffersCombinedFormat);
-        }
+    if (mState.getDepthAttachment() && mState.getDepthAttachment()->getFormat().info->depthBits &&
+        mState.getDepthAttachment()->getFormat().info->stencilBits)
+    {
+        return checkPackedDepthStencilAttachment();
+    }
+
+    if (mState.getStencilAttachment() &&
+        mState.getStencilAttachment()->getFormat().info->depthBits &&
+        mState.getStencilAttachment()->getFormat().info->stencilBits)
+    {
+        return checkPackedDepthStencilAttachment();
     }
 
     if (!totalBitsUsedIsLessThanOrEqualToMaxBitsSupported(context))
@@ -694,6 +694,38 @@ gl::FramebufferStatus FramebufferMtl::checkStatus(const gl::Context *context) co
             gl::err::kFramebufferIncompleteColorBitsUsedExceedsMaxColorBitsSupported);
     }
 
+    return gl::FramebufferStatus::Complete();
+}
+
+gl::FramebufferStatus FramebufferMtl::checkPackedDepthStencilAttachment() const
+{
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.14, 13.1, 12.0))
+    {
+        // If depth/stencil attachment has depth & stencil bits, then depth & stencil must not have
+        // separate attachment. i.e. They must be the same texture or one of them has no
+        // attachment.
+        if (mState.hasSeparateDepthAndStencilAttachments())
+        {
+            WARN() << "Packed depth stencil texture/buffer must not be mixed with other "
+                      "texture/buffer.";
+            return gl::FramebufferStatus::Incomplete(
+                GL_FRAMEBUFFER_UNSUPPORTED,
+                gl::err::kFramebufferIncompleteUnsupportedSeparateDepthStencilBuffers);
+        }
+    }
+    else
+    {
+        // Metal 2.0 and below doesn't allow packed depth stencil texture to be attached only as
+        // depth or stencil buffer. i.e. None of the depth & stencil attachment can be null.
+        if (!mState.getDepthStencilAttachment())
+        {
+            WARN() << "Packed depth stencil texture/buffer must be bound to both depth & stencil "
+                      "attachment point.";
+            return gl::FramebufferStatus::Incomplete(
+                GL_FRAMEBUFFER_UNSUPPORTED,
+                gl::err::kFramebufferIncompleteUnsupportedSeparateDepthStencilBuffers);
+        }
+    }
     return gl::FramebufferStatus::Complete();
 }
 

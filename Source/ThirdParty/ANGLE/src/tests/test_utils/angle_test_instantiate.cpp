@@ -201,6 +201,11 @@ bool IsMetalTextureSwizzleAvailable()
 {
     return false;
 }
+
+bool IsMetalCompressedTexture3DAvailable()
+{
+    return false;
+}
 #endif
 
 SystemInfo *GetTestSystemInfo()

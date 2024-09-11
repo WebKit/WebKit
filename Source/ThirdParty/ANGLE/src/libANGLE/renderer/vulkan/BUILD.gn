@@ -176,8 +176,7 @@ template("angle_vulkan_backend_template") {
       data_deps += [ "$angle_root/src/common/vulkan:vulkan_validation_layers" ]
     }
 
-    if (angle_enable_vulkan_api_dump_layer &&
-        current_toolchain == default_toolchain) {
+    if (angle_enable_vulkan_api_dump_layer) {
       data_deps += [ "$angle_root/src/common/vulkan:lunarg_vulkantools" ]
     }
 

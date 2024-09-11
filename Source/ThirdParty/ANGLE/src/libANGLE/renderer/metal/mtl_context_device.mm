@@ -131,7 +131,12 @@ void ContextDevice::setOwnerWithIdentity(id<MTLResource> resource) const
 
 bool ContextDevice::hasUnifiedMemory() const
 {
-    return [get() hasUnifiedMemory];
+    if (@available(iOS 13.0, macOS 10.15, macCatalyst 13.1, tvOS 13.0, *))
+    {
+        return [get() hasUnifiedMemory];
+    }
+
+    return false;
 }
 
 }  // namespace mtl

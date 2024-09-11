@@ -813,6 +813,7 @@ class Renderer : angle::NonCopyable
     void enableDeviceExtensionsPromotedTo12(const vk::ExtensionNameList &deviceExtensionNames);
     void enableDeviceExtensionsPromotedTo13(const vk::ExtensionNameList &deviceExtensionNames);
 
+    void initInstanceExtensionEntryPoints();
     void initDeviceExtensionEntryPoints();
     // Initialize extension entry points from core ones if needed
     void initializeInstanceExtensionEntryPointsFromCore() const;
@@ -962,7 +963,6 @@ class Renderer : angle::NonCopyable
     VkPhysicalDevice16BitStorageFeatures m16BitStorageFeatures;
     VkPhysicalDeviceSynchronization2Features mSynchronization2Features;
     VkPhysicalDeviceVariablePointersFeatures mVariablePointersFeatures;
-    VkPhysicalDeviceFloatControlsProperties mFloatControlProperties;
 
     uint32_t mLegacyDitheringVersion = 0;
 

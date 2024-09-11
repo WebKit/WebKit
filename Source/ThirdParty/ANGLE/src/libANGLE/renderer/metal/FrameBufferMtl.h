@@ -129,6 +129,7 @@ class FramebufferMtl : public FramebufferImpl
 
   private:
     void reset();
+    gl::FramebufferStatus checkPackedDepthStencilAttachment() const;
     angle::Result invalidateImpl(const gl::Context *context,
                                  size_t count,
                                  const GLenum *attachments);

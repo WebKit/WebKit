@@ -597,6 +597,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
     mtl::RenderCommandEncoder mRenderEncoder;
     mtl::BlitCommandEncoder mBlitEncoder;
     mtl::ComputeCommandEncoder mComputeEncoder;
+    bool mHasMetalSharedEvents = false;
 
     mtl::PipelineCache mPipelineCache;
 

@@ -241,9 +241,7 @@ bool LoadTraceInfoFromJSON(const std::string &traceName,
     return true;
 }
 
-TraceLibrary::TraceLibrary(const std::string &traceName,
-                           const TraceInfo &traceInfo,
-                           const std::string &baseDir)
+TraceLibrary::TraceLibrary(const std::string &traceName, const TraceInfo &traceInfo)
 {
     std::stringstream libNameStr;
     SearchType searchType = SearchType::ModuleDir;
@@ -252,7 +250,7 @@ TraceLibrary::TraceLibrary(const std::string &traceName,
     // This means we are using the binary build of traces on Android, which are
     // not bundled in the APK, but located in the app's home directory.
     searchType = SearchType::SystemDir;
-    libNameStr << baseDir;
+    libNameStr << "/data/user/0/com.android.angle.test/angle_traces/";
 #endif  // defined(ANGLE_TRACE_EXTERNAL_BINARIES)
 #if !defined(ANGLE_PLATFORM_WINDOWS)
     libNameStr << "lib";
@@ -260,7 +258,6 @@ TraceLibrary::TraceLibrary(const std::string &traceName,
     libNameStr << traceName;
     std::string libName = libNameStr.str();
     std::string loadError;
-
     mTraceLibrary.reset(OpenSharedLibraryAndGetError(libName.c_str(), searchType, &loadError));
     if (mTraceLibrary->getNative() == nullptr)
     {

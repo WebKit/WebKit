@@ -131,7 +131,6 @@ gles_requestable_extensions = [
     "GL_EXT_render_snorm",
     "GL_EXT_semaphore",
     "GL_EXT_semaphore_fd",
-    "GL_EXT_separate_depth_stencil",
     "GL_EXT_separate_shader_objects",
     "GL_EXT_shader_framebuffer_fetch",
     "GL_EXT_shader_framebuffer_fetch_non_coherent",

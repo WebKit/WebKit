@@ -87,8 +87,7 @@
 /third_party/siso
 /third_party/qemu-linux-x64
 /third_party/qemu-mac-x64
-/third_party/r8/cipd
-/third_party/r8/d8/cipd
+/third_party/r8/d8
 /third_party/r8/lib
 /third_party/rapidjson/src
 /third_party/requests/src
@@ -98,7 +97,7 @@
 /third_party/spirv-headers/src
 /third_party/spirv-tools/src
 /third_party/SwiftShader
-/third_party/turbine/cipd
+/third_party/turbine/*.jar
 /third_party/VK-GL-CTS/src
 /third_party/vulkan-deps
 /third_party/vulkan-headers/src

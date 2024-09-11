@@ -128,13 +128,6 @@ if (angle_build_all) {
   }
 }
 
-if (build_angle_end2end_tests_aosp) {
-  group("angle_end2end_tests_aosp") {
-    testonly = true
-    deps = [ "src/tests:angle_end2end_tests" ]
-  }
-}
-
 import("src/angle_program_serialize_data_version.gni")
 import("src/compiler.gni")
 import("src/libGLESv2.gni")
@@ -1158,7 +1151,7 @@ angle_source_set("libANGLE_no_vulkan") {
   }
 
   # Enable extra Chromium style warnings for libANGLE.
-  if (is_clang && angle_has_build && !is_nacl) {
+  if (is_clang && angle_has_build) {
     suppressed_configs -= [ "//build/config/clang:find_bad_constructs" ]
   }
 
@@ -1702,7 +1695,7 @@ angle_executable("angle_shader_translator") {
   }
 }
 
-if (angle_standalone || build_with_chromium || build_angle_end2end_tests_aosp) {
+if (angle_standalone || build_with_chromium) {
   config("angle_feature_support_config") {
     include_dirs = [
       "include",
@@ -1773,8 +1766,7 @@ if (is_android && symbol_level != 0 &&
       }
     }
 
-    if (angle_enable_vulkan_api_dump_layer &&
-        current_toolchain == default_toolchain) {
+    if (angle_enable_vulkan_api_dump_layer) {
       sources += [ "$root_out_dir/libVkLayer_lunarg_api_dump$shlib_extension" ]
     }
 
@@ -1792,8 +1784,7 @@ if (is_android && symbol_level != 0 &&
       }
     }
 
-    if (angle_enable_vulkan_api_dump_layer &&
-        current_toolchain == default_toolchain) {
+    if (angle_enable_vulkan_api_dump_layer) {
       deps += [ "$angle_lunarg_vulkantools_dir:VkLayer_lunarg_api_dump" ]
     }
 

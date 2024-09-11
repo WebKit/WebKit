@@ -64,17 +64,12 @@ void RenderTargetVk::init(vk::ImageHelper *image,
     mTransience = transience;
 }
 
-void RenderTargetVk::invalidateImageAndViews()
-{
-    mImage             = nullptr;
-    mImageViews        = nullptr;
-    mResolveImage      = nullptr;
-    mResolveImageViews = nullptr;
-}
-
 void RenderTargetVk::reset()
 {
-    invalidateImageAndViews();
+    mImage              = nullptr;
+    mImageViews         = nullptr;
+    mResolveImage       = nullptr;
+    mResolveImageViews  = nullptr;
     mImageSiblingSerial = {};
     mLevelIndexGL       = gl::LevelIndex(0);
     mLayerIndex         = 0;
