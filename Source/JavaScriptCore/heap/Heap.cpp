@@ -1283,10 +1283,12 @@ void Heap::collectSync(GCRequest request)
 
 bool Heap::shouldCollectInCollectorThread(const AbstractLocker&)
 {
+    constexpr bool verbose = false;
+
     RELEASE_ASSERT(m_requests.isEmpty() == (m_lastServedTicket == m_lastGrantedTicket));
     RELEASE_ASSERT(m_lastServedTicket <= m_lastGrantedTicket);
     
-    if (false)
+    if (verbose)
         dataLog("Mutator has the conn = ", !!(m_worldState.load() & mutatorHasConnBit), "\n");
     
     return !m_requests.isEmpty() && !(m_worldState.load() & mutatorHasConnBit);
@@ -1329,6 +1331,8 @@ void Heap::checkConn(GCConductor conn)
 
 auto Heap::runCurrentPhase(GCConductor conn, CurrentThreadState* currentThreadState) -> RunCurrentPhaseResult
 {
+    constexpr bool verbose = false;
+
     checkConn(conn);
     m_currentThreadState = currentThreadState;
     m_currentThread = &Thread::current();
@@ -1340,7 +1344,7 @@ auto Heap::runCurrentPhase(GCConductor conn, CurrentThreadState* currentThreadSt
     if (!finishChangingPhase(conn)) {
         // A mischevious mutator could repeatedly relinquish the conn back to us. We try to avoid doing
         // this, but it's probably not the end of the world if it did happen.
-        if (false)
+        if (verbose)
             dataLog("Conn bounce-back.\n");
         return RunCurrentPhaseResult::Finished;
     }
@@ -1624,6 +1628,8 @@ NEVER_INLINE bool Heap::runReloopPhase(GCConductor conn)
 
 NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
 {
+    constexpr bool verbose = false;
+
     m_scheduler->endCollection();
         
     {
@@ -1698,7 +1704,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     if (m_currentRequest.didFinishEndPhase)
         m_currentRequest.didFinishEndPhase->run();
     
-    if (false) {
+    if (verbose) {
         dataLog("Heap state after GC:\n");
         m_objectSpace.dumpBits();
     }
@@ -1740,12 +1746,14 @@ bool Heap::changePhase(GCConductor conn, CollectorPhase nextPhase)
 
 NEVER_INLINE bool Heap::finishChangingPhase(GCConductor conn)
 {
+    constexpr bool verbose = false;
+
     checkConn(conn);
     
     if (m_nextPhase == m_currentPhase)
         return true;
 
-    if (false)
+    if (verbose)
         dataLog(conn, ": Going to phase: ", m_nextPhase, " (from ", m_currentPhase, ")\n");
     
     m_phaseVersion++;
@@ -1769,7 +1777,7 @@ NEVER_INLINE bool Heap::finishChangingPhase(GCConductor conn)
             if (conn == GCConductor::Collector) {
                 waitWhileNeedFinalize();
                 if (!stopTheMutator()) {
-                    if (false)
+                    if (verbose)
                         dataLog("Returning false.\n");
                     return false;
                 }
@@ -1872,6 +1880,7 @@ NEVER_INLINE void Heap::resumeThePeriphery()
 
 bool Heap::stopTheMutator()
 {
+    constexpr bool verbose = false;
     for (;;) {
         unsigned oldState = m_worldState.load();
         if (oldState & stoppedBit) {
@@ -1901,7 +1910,7 @@ bool Heap::stopTheMutator()
         RELEASE_ASSERT(!(oldState & stoppedBit));
         unsigned newState = (oldState | mutatorHasConnBit) & ~mutatorWaitingBit;
         if (m_worldState.compareExchangeWeak(oldState, newState)) {
-            if (false)
+            if (verbose)
                 dataLog("Handed off the conn.\n");
             m_stopIfNecessaryTimer->scheduleSoon();
             ParkingLot::unparkAll(&m_worldState);
@@ -1912,7 +1921,8 @@ bool Heap::stopTheMutator()
 
 NEVER_INLINE void Heap::resumeTheMutator()
 {
-    if (false)
+    constexpr bool verbose = false;
+    if (verbose)
         dataLog("Resuming the mutator.\n");
     for (;;) {
         unsigned oldState = m_worldState.load();
@@ -1926,13 +1936,13 @@ NEVER_INLINE void Heap::resumeTheMutator()
         }
         
         if (!(oldState & stoppedBit)) {
-            if (false)
+            if (verbose)
                 dataLog("Returning because not stopped.\n");
             return;
         }
         
         if (m_worldState.compareExchangeWeak(oldState, oldState & ~stoppedBit)) {
-            if (false)
+            if (verbose)
                 dataLog("CASing and returning.\n");
             ParkingLot::unparkAll(&m_worldState);
             return;
@@ -2130,7 +2140,8 @@ bool Heap::relinquishConn(unsigned oldState)
 
 void Heap::finishRelinquishingConn()
 {
-    if (false)
+    constexpr bool verbose = false;
+    if (verbose)
         dataLog("Relinquished the conn.\n");
     
     sanitizeStackForVM(vm());
@@ -2250,6 +2261,8 @@ void Heap::finalize()
 
 Heap::Ticket Heap::requestCollection(GCRequest request)
 {
+    constexpr bool verbose = false;
+
     stopIfNecessary();
     
     ASSERT(vm().currentThreadIsHoldingAPILock());
@@ -2261,7 +2274,7 @@ Heap::Ticket Heap::requestCollection(GCRequest request)
     // cases.
     ASSERT(m_lastServedTicket <= m_lastGrantedTicket);
     if ((m_lastServedTicket == m_lastGrantedTicket) && !m_collectorThreadIsRunning) {
-        if (false)
+        if (verbose)
             dataLog("Taking the conn.\n");
         m_worldState.exchangeOr(mutatorHasConnBit);
     }
