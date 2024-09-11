@@ -101,7 +101,7 @@ public:
     // Return the viewport for eye in Screen Space
     IntRect drawViewport(PlatformXR::Eye) const;
 
-    void startFrame(const PlatformXR::FrameData::LayerData&);
+    void startFrame(PlatformXR::FrameData::LayerData&);
     void endFrame();
     bool usesLayeredMode() const;
 

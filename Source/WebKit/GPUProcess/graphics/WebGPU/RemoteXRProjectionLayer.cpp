@@ -33,11 +33,16 @@
 #include "RemoteXRProjectionLayerMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
+#include <WebCore/PlatformXR.h>
 #include <WebCore/WebGPUXRProjectionLayer.h>
+#include <wtf/MachSendRight.h>
+#include <wtf/TZoneMalloc.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRProjectionLayer);
 
 RemoteXRProjectionLayer::RemoteXRProjectionLayer(WebCore::WebGPU::XRProjectionLayer& xrProjectionLayer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     : m_backing(xrProjectionLayer)
@@ -74,14 +79,15 @@ void RemoteXRProjectionLayer::destruct()
     m_objectHeap->removeObject(m_identifier);
 }
 
-void RemoteXRProjectionLayer::startFrame()
+#if PLATFORM(COCOA)
+void RemoteXRProjectionLayer::startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    m_backing->startFrame(frameIndex, WTFMove(colorBuffer), WTFMove(depthBuffer), WTFMove(completionSyncEvent), reusableTextureIndex);
 }
+#endif
 
 void RemoteXRProjectionLayer::endFrame()
 {
-    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void RemoteXRProjectionLayer::stopListeningForIPC()

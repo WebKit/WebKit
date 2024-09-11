@@ -42,9 +42,10 @@ class Device;
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
+class RemoteTextureProxy;
 
 class RemoteXRSubImageProxy final : public WebCore::WebGPU::XRSubImage {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteXRSubImageProxy);
 public:
     static Ref<RemoteXRSubImageProxy> create(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
@@ -67,6 +68,9 @@ private:
     RemoteXRSubImageProxy& operator=(RemoteXRSubImageProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
+    RefPtr<WebCore::WebGPU::Texture> colorTexture() final;
+    RefPtr<WebCore::WebGPU::Texture> depthStencilTexture() final;
+    RefPtr<WebCore::WebGPU::Texture> motionVectorTexture() final;
 
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
@@ -82,6 +86,9 @@ private:
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteGPUProxy> m_parent;
+
+    RefPtr<RemoteTextureProxy> m_currentTexture;
+    RefPtr<RemoteTextureProxy> m_currentDepthTexture;
 };
 
 } // namespace WebKit::WebGPU

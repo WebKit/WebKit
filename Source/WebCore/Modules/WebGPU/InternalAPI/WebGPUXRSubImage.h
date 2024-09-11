@@ -32,11 +32,15 @@
 namespace WebCore::WebGPU {
 
 class Device;
-class GPUTexture;
+class Texture;
 
 class XRSubImage : public RefCounted<XRSubImage>, public CanMakeWeakPtr<XRSubImage> {
 public:
     virtual ~XRSubImage() = default;
+
+    virtual RefPtr<Texture> colorTexture() = 0;
+    virtual RefPtr<Texture> depthStencilTexture() = 0;
+    virtual RefPtr<Texture> motionVectorTexture() = 0;
 
 protected:
     XRSubImage() = default;

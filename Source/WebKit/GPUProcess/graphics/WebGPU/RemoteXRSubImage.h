@@ -58,6 +58,7 @@ class StreamServerConnection;
 
 namespace WebKit {
 
+class GPUConnectionToWebProcess;
 class RemoteGPU;
 
 namespace WebGPU {
@@ -65,11 +66,11 @@ class ObjectHeap;
 }
 
 class RemoteXRSubImage final : public IPC::StreamMessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteXRSubImage);
 public:
-    static Ref<RemoteXRSubImage> create(WebCore::WebGPU::XRSubImage& xrSubImage, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteXRSubImage> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::XRSubImage& xrSubImage, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteXRSubImage(xrSubImage, objectHeap, WTFMove(streamConnection), gpu, identifier));
+        return adoptRef(*new RemoteXRSubImage(gpuConnectionToWebProcess, xrSubImage, objectHeap, WTFMove(streamConnection), gpu, identifier));
     }
 
     virtual ~RemoteXRSubImage();
@@ -80,7 +81,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteXRSubImage(WebCore::WebGPU::XRSubImage&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteXRSubImage(GPUConnectionToWebProcess&, WebCore::WebGPU::XRSubImage&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
 
     RemoteXRSubImage(const RemoteXRSubImage&) = delete;
     RemoteXRSubImage(RemoteXRSubImage&&) = delete;
@@ -95,10 +96,13 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
     void destruct();
+    void getColorTexture(WebGPUIdentifier);
+    void getDepthTexture(WebGPUIdentifier);
 
     Ref<WebCore::WebGPU::XRSubImage> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     WebGPUIdentifier m_identifier;
     WeakRef<RemoteGPU> m_gpu;
 };

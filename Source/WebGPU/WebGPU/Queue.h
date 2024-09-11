@@ -73,6 +73,7 @@ public:
 
     bool isValid() const { return m_commandQueue; }
     void makeInvalid();
+    void setCommittedSignalEvent(id<MTLSharedEvent>, size_t frameIndex);
 
     const Device& device() const;
     void clearTextureIfNeeded(const WGPUImageCopyTexture&, NSUInteger);

@@ -29,7 +29,9 @@
 typedef [EnforceRange] unsigned long GPUIntegerCoordinate;
 
 [
-    EnabledBySetting=WebGPUEnabled
+    EnabledBySetting=WebGPUEnabled,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ]
 dictionary GPUTextureViewDescriptor : GPUObjectDescriptorBase {
     GPUTextureFormat format;

@@ -280,7 +280,7 @@ void WebXRWebGLLayer::sessionEnded()
 #endif
 }
 
-void WebXRWebGLLayer::startFrame(const PlatformXR::FrameData& data)
+void WebXRWebGLLayer::startFrame(PlatformXR::FrameData& data)
 {
     ASSERT(m_framebuffer);
 

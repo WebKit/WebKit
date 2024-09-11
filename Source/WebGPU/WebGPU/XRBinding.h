@@ -61,7 +61,7 @@ public:
 
     bool isValid() const;
     Ref<XRProjectionLayer> createXRProjectionLayer(WGPUTextureFormat, WGPUTextureFormat*, WGPUTextureUsageFlags, double);
-    RefPtr<XRSubImage> getViewSubImage(WGPUXREye);
+    RefPtr<XRSubImage> getViewSubImage(XRProjectionLayer&);
     Device& device();
 
 private:

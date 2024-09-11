@@ -25,7 +25,9 @@
 
 [EnabledBy=WebXRWebGPUBindingsEnabled]
 messages -> RemoteXRProjectionLayer NotRefCounted Stream {
-void StartFrame()
+#if PLATFORM(COCOA)
+void StartFrame(size_t frameIndex, MachSendRight colorBuffer, MachSendRight depthBuffer, MachSendRight completionSyncEvent, size_t textureIndex) NotStreamEncodable
+#endif
 void EndFrame()
 void Destruct()
 }

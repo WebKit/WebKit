@@ -71,7 +71,7 @@ private:
 
     RefPtr<XRProjectionLayer> createProjectionLayer(const XRProjectionLayerInit&) final;
     RefPtr<XRSubImage> getSubImage(XRProjectionLayer&, WebCore::WebXRFrame&, std::optional<XREye>/* = "none"*/) final;
-    RefPtr<XRSubImage> getViewSubImage(XRProjectionLayer&, XREye) final;
+    RefPtr<XRSubImage> getViewSubImage(XRProjectionLayer&) final;
     TextureFormat getPreferredColorFormat() final;
 
     WebGPUPtr<WGPUXRBinding> m_backing;

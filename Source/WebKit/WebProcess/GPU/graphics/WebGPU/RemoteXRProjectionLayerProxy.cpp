@@ -30,11 +30,16 @@
 
 #include "RemoteGPUProxy.h"
 #include "RemoteXRProjectionLayerMessages.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebGPUConvertToBackingContext.h"
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/PlatformXR.h>
 #include <WebCore/WebGPUTextureFormat.h>
+#include <wtf/MachSendRight.h>
 
 namespace WebKit::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRProjectionLayerProxy);
 
 RemoteXRProjectionLayerProxy::RemoteXRProjectionLayerProxy(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)
@@ -49,11 +54,13 @@ RemoteXRProjectionLayerProxy::~RemoteXRProjectionLayerProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteXRProjectionLayerProxy::startFrame()
+#if PLATFORM(COCOA)
+void RemoteXRProjectionLayerProxy::startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex)
 {
-    auto sendResult = send(Messages::RemoteXRProjectionLayer::StartFrame());
+    auto sendResult = send(Messages::RemoteXRProjectionLayer::StartFrame(frameIndex, WTFMove(colorBuffer), WTFMove(depthBuffer), WTFMove(completionSyncEvent), reusableTextureIndex));
     UNUSED_VARIABLE(sendResult);
 }
+#endif
 
 void RemoteXRProjectionLayerProxy::endFrame()
 {
@@ -91,12 +98,12 @@ void RemoteXRProjectionLayerProxy::setFixedFoveation(std::optional<float>)
     return;
 }
 
-WebCore::WebGPU::WebXRRigidTransform* RemoteXRProjectionLayerProxy::deltaPose() const
+WebCore::WebXRRigidTransform* RemoteXRProjectionLayerProxy::deltaPose() const
 {
     return nullptr;
 }
 
-void RemoteXRProjectionLayerProxy::setDeltaPose(WebCore::WebGPU::WebXRRigidTransform*)
+void RemoteXRProjectionLayerProxy::setDeltaPose(WebCore::WebXRRigidTransform*)
 {
     return;
 }

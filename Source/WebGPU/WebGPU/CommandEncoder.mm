@@ -1268,8 +1268,9 @@ void CommandEncoder::addBuffer(id<MTLBuffer> buffer)
     if (buffer.storageMode == MTLStorageModeManaged)
         [m_managedBuffers addObject:buffer];
 }
-void CommandEncoder::addTexture(id<MTLTexture> texture)
+void CommandEncoder::addTexture(const Texture& baseTexture)
 {
+    id<MTLTexture> texture = baseTexture.texture();
     if (texture.storageMode == MTLStorageModeManaged)
         [m_managedTextures addObject:texture];
 }
@@ -1277,8 +1278,12 @@ void CommandEncoder::addTexture(id<MTLTexture> texture)
 void CommandEncoder::addBuffer(id<MTLBuffer>)
 {
 }
-void CommandEncoder::addTexture(id<MTLTexture>)
+void CommandEncoder::addTexture(const Texture& baseTexture)
 {
+    if (id<MTLSharedEvent> event = baseTexture.sharedEvent()) {
+        m_sharedEvent = event;
+        m_sharedEventSignalValue = baseTexture.sharedEventSignalValue();
+    }
 }
 #endif
 
@@ -1833,7 +1838,8 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
     }
 #endif
 
-    auto result = CommandBuffer::create(commandBuffer, m_device);
+    auto result = CommandBuffer::create(commandBuffer, m_device, m_sharedEvent, m_sharedEventSignalValue);
+    m_sharedEvent = nil;
     m_cachedCommandBuffer = result;
     m_cachedCommandBuffer->setBufferMapCount(m_bufferMapCount);
     if (m_makeSubmitInvalid)

@@ -8468,7 +8468,7 @@ WebXRWebGPUBindingsEnabled:
   type: bool
   status: Webgpu_webxr_feature_status
   category: dom
-  humanReadableName: "WebGPU Support for WebXR"
+  humanReadableName: "WebGPU support for WebXR"
   humanReadableDescription: "Adds WebGPU support for WebXR"
   defaultValue:
     WebKitLegacy:

@@ -49,7 +49,7 @@ namespace WebKit::WebGPU {
 class ConvertToBackingContext;
 
 class RemoteXRViewProxy final : public WebCore::WebGPU::XRView {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteXRViewProxy);
 public:
     static Ref<RemoteXRViewProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {

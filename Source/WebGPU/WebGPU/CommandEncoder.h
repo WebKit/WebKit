@@ -107,7 +107,7 @@ public:
     bool encoderIsCurrent(id<MTLCommandEncoder>) const;
     bool submitWillBeInvalid() const;
     void addBuffer(id<MTLBuffer>);
-    void addTexture(id<MTLTexture>);
+    void addTexture(const Texture&);
     id<MTLCommandBuffer> commandBuffer() const;
     void setExistingEncoder(id<MTLCommandEncoder>);
 
@@ -146,6 +146,8 @@ private:
     NSMutableSet<id<MTLTexture>> *m_managedTextures { nil };
     NSMutableSet<id<MTLBuffer>> *m_managedBuffers { nil };
 #endif
+    id<MTLSharedEvent> m_sharedEvent { nil };
+    uint64_t m_sharedEventSignalValue { 0 };
     const Ref<Device> m_device;
 };
 

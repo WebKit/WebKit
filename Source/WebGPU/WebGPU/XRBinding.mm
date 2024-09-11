@@ -86,8 +86,8 @@ WGPUXRProjectionLayer wgpuBindingCreateXRProjectionLayer(WGPUXRBinding binding, 
     return WebGPU::releaseToAPI(WebGPU::fromAPI(binding).createXRProjectionLayer(colorFormat, optionalDepthStencilFormat, flags, scale));
 }
 
-WGPUXRSubImage wgpuBindingGetViewSubImage(WGPUXRBinding binding, WGPUXREye eye)
+WGPUXRSubImage wgpuBindingGetViewSubImage(WGPUXRBinding binding, WGPUXRProjectionLayer layer)
 {
-    return WebGPU::releaseToAPI(WebGPU::fromAPI(binding).getViewSubImage(eye));
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(binding).getViewSubImage(WebGPU::fromAPI(layer)));
 }
 

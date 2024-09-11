@@ -39,6 +39,7 @@ namespace WebGPU {
 
 class CommandEncoder;
 class Device;
+class Texture;
 
 class XRSubImage : public WGPUXRSubImageImpl, public RefCounted<XRSubImage>, public CanMakeWeakPtr<XRSubImage> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -57,12 +58,19 @@ public:
     void setLabel(String&&);
 
     bool isValid() const;
+    void update(id<MTLTexture> colorTexture, id<MTLTexture> depthTexture, size_t currentTextureIndex, const std::pair<id<MTLSharedEvent>, uint64_t>&);
+    Texture* colorTexture();
+    Texture* depthTexture();
 
 private:
     XRSubImage(bool, Device&);
     XRSubImage(Device&);
 
-    const Ref<Device> m_device;
+    HashMap<uint64_t, RefPtr<Texture>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_colorTextures;
+    HashMap<uint64_t, RefPtr<Texture>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_depthTextures;
+    uint64_t m_currentTextureIndex { 0 };
+
+    Ref<Device> m_device;
 };
 
 } // namespace WebGPU

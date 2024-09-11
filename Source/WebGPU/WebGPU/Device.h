@@ -164,7 +164,7 @@ public:
         simd::float4x3 colorSpaceConversionMatrix;
     };
     ExternalTextureData createExternalTextureFromPixelBuffer(CVPixelBufferRef, WGPUColorSpace) const;
-    RefPtr<XRSubImage> getXRViewSubImage(WGPUXREye);
+    RefPtr<XRSubImage> getXRViewSubImage(XRProjectionLayer&);
     const std::optional<const MachSendRight> webProcessID() const;
 #if CPU(X86_64)
     bool isIntel() const { return [m_device.name localizedCaseInsensitiveContainsString:@"intel"]; }
@@ -203,7 +203,7 @@ private:
 
     Function<void(WGPUErrorType, String&&)> m_uncapturedErrorCallback;
     Vector<ErrorScope> m_errorScopeStack;
-    Vector<RefPtr<XRSubImage>> m_xrSubImages;
+    RefPtr<XRSubImage> m_xrSubImage;
 
     Function<void(WGPUDeviceLostReason, String&&)> m_deviceLostCallback;
     bool m_isLost { false };

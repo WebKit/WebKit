@@ -30,6 +30,8 @@
 
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUDevice.h"
+#include "WebGPUTextureDimension.h"
+#include "WebGPUTextureImpl.h"
 
 namespace WebCore::WebGPU {
 
@@ -40,6 +42,29 @@ XRSubImageImpl::XRSubImageImpl(WebGPUPtr<WGPUXRSubImage>&& backing, ConvertToBac
 }
 
 XRSubImageImpl::~XRSubImageImpl() = default;
+
+RefPtr<Texture> XRSubImageImpl::colorTexture()
+{
+    auto texturePtr = wgpuXRSubImageGetColorTexture(m_backing.get());
+    if (!texturePtr)
+        return nullptr;
+
+    return TextureImpl::create(WebGPUPtr<WGPUTexture> { texturePtr }, TextureFormat::Bgra8unormSRGB, TextureDimension::_2d, m_convertToBackingContext);
+}
+
+RefPtr<Texture> XRSubImageImpl::depthStencilTexture()
+{
+    auto texturePtr = wgpuXRSubImageGetDepthStencilTexture(m_backing.get());
+    if (!texturePtr)
+        return nullptr;
+
+    return TextureImpl::create(WebGPUPtr<WGPUTexture> { texturePtr }, TextureFormat::Depth24plusStencil8, TextureDimension::_2d, m_convertToBackingContext);
+}
+
+RefPtr<Texture> XRSubImageImpl::motionVectorTexture()
+{
+    return nullptr;
+}
 
 } // namespace WebCore::WebGPU
 

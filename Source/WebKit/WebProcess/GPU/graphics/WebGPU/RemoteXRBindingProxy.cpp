@@ -39,6 +39,8 @@
 
 namespace WebKit::WebGPU {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRBindingProxy);
+
 RemoteXRBindingProxy::RemoteXRBindingProxy(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
@@ -70,10 +72,10 @@ RefPtr<WebCore::WebGPU::XRSubImage> RemoteXRBindingProxy::getSubImage(WebCore::W
     return nullptr;
 }
 
-RefPtr<WebCore::WebGPU::XRSubImage> RemoteXRBindingProxy::getViewSubImage(WebCore::WebGPU::XRProjectionLayer& projectionLayer, WebCore::WebGPU::XREye eye)
+RefPtr<WebCore::WebGPU::XRSubImage> RemoteXRBindingProxy::getViewSubImage(WebCore::WebGPU::XRProjectionLayer& projectionLayer)
 {
     auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = send(Messages::RemoteXRBinding::GetViewSubImage(static_cast<RemoteXRProjectionLayerProxy&>(projectionLayer).backing(), eye, identifier));
+    auto sendResult = send(Messages::RemoteXRBinding::GetViewSubImage(static_cast<RemoteXRProjectionLayerProxy&>(projectionLayer).backing(), identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
@@ -83,7 +85,7 @@ RefPtr<WebCore::WebGPU::XRSubImage> RemoteXRBindingProxy::getViewSubImage(WebCor
 
 WebCore::WebGPU::TextureFormat RemoteXRBindingProxy::getPreferredColorFormat()
 {
-    return WebCore::WebGPU::TextureFormat::Bgra8unorm;
+    return WebCore::WebGPU::TextureFormat::Bgra8unormSRGB;
 }
 
 } // namespace WebKit::WebGPU

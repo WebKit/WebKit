@@ -37,13 +37,17 @@
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUXRBinding.h>
 #include <WebCore/WebGPUXRProjectionLayer.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
-RemoteXRBinding::RemoteXRBinding(WebCore::WebGPU::XRBinding& xrBinding, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRBinding);
+
+RemoteXRBinding::RemoteXRBinding(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::XRBinding& xrBinding, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(xrBinding)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
+    , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_identifier(identifier)
     , m_gpu(gpu)
 {
@@ -91,7 +95,7 @@ void RemoteXRBinding::createProjectionLayer(WebCore::WebGPU::TextureFormat color
     objectHeap->addObject(identifier, remoteProjectionLayer);
 }
 
-void RemoteXRBinding::getViewSubImage(WebGPUIdentifier projectionLayerIdentifier, WebCore::WebGPU::XREye eye, WebGPUIdentifier identifier)
+void RemoteXRBinding::getViewSubImage(WebGPUIdentifier projectionLayerIdentifier, WebGPUIdentifier identifier)
 {
     Ref objectHeap = m_objectHeap.get();
     auto projectionLayer = objectHeap->convertXRProjectionLayerFromBacking(projectionLayerIdentifier);
@@ -100,13 +104,13 @@ void RemoteXRBinding::getViewSubImage(WebGPUIdentifier projectionLayerIdentifier
         return;
     }
 
-    RefPtr subImage = protectedBacking()->getViewSubImage(*projectionLayer, eye);
+    RefPtr subImage = protectedBacking()->getViewSubImage(*projectionLayer);
     if (!subImage) {
         // FIXME: Add MESSAGE_CHECK call
         return;
     }
 
-    Ref remoteSubImage = RemoteXRSubImage::create(*subImage, objectHeap, protectedStreamConnection(), protectedGPU(), identifier);
+    Ref remoteSubImage = RemoteXRSubImage::create(*m_gpuConnectionToWebProcess.get(), *subImage, objectHeap, protectedStreamConnection(), protectedGPU(), identifier);
     objectHeap->addObject(identifier, remoteSubImage);
 }
 

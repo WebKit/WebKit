@@ -26,6 +26,8 @@
 #include "config.h"
 #include "XRProjectionLayer.h"
 
+#include "PlatformXR.h"
+
 #if ENABLE(WEBXR_LAYERS)
 
 namespace WebCore {
@@ -40,9 +42,21 @@ XRProjectionLayer::XRProjectionLayer(ScriptExecutionContext& scriptExecutionCont
 
 XRProjectionLayer::~XRProjectionLayer() = default;
 
-void XRProjectionLayer::startFrame(const PlatformXR::FrameData&)
+void XRProjectionLayer::startFrame(PlatformXR::FrameData& data)
 {
-    m_backing->startFrame();
+    static constexpr auto defaultLayerHandle = 1;
+    auto it = data.layers.find(defaultLayerHandle);
+    if (it == data.layers.end()) {
+        // For some reason the device didn't provide a texture for this frame.
+        // The frame is ignored and the device can recover the texture in future frames;
+        return;
+    }
+
+    auto& frameData = it->value;
+    if (frameData->layerSetup && frameData->textureData) {
+        auto& textureData = frameData->textureData;
+        m_backing->startFrame(frameData->renderingFrameIndex, WTFMove(textureData->colorTexture.handle), WTFMove(textureData->depthStencilBuffer.handle), WTFMove(frameData->layerSetup->completionSyncEvent), textureData->reusableTextureIndex);
+    }
 }
 
 PlatformXR::Device::Layer XRProjectionLayer::endFrame()
