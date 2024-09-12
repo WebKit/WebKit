@@ -54,8 +54,8 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-width-ch-001.xht [ Pas
 
 fast/events/keyboardevent-modifier.html [ Pass ]
 
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-003.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-004.html [ Pass ]
+# FAIL results are platform dependent
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-invalid-fallback.html [ Failure ]
 
 # PointerEvents not enabled globally, but enabled for GTK (EXPERIMENTAL_FEATURES)
 pointerevents/mouse [ Pass ]

@@ -7361,6 +7361,15 @@ fast/forms/ios/time-picker-value-change.html [ Pass Failure ]
 # webkit.org/b/277897 (Regression: 282030@main? [ iOS 17 Release ] imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-inline-004.html is a flaky text failure (277897))
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-inline-004.html [ Pass Failure ]
 
+# FAIL results are platform dependent
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-invalid-fallback.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-borders-001.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-borders-002.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-007.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-008.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-010.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-anchor-positioning-001.html [ Failure ]
+
 # webkit.org/b/277898 [ iOS 17 ] imported/w3c/web-platform-tests/css/css-tables/tentative/td-box-sizing-003.html is a flaky text failure
 imported/w3c/web-platform-tests/css/css-tables/tentative/td-box-sizing-003.html [ Pass Failure ]
 

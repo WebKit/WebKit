@@ -8007,8 +8007,6 @@ webkit.org/b/271692 imported/w3c/web-platform-tests/css/css-align/blocks/align-c
 
 # -- Anchor Positioning -- #
 
-# Anchor positioning is not yet implemented...
-
 # general failures
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-scroll.html [ ImageOnlyFailure ]
@@ -8057,28 +8055,6 @@ imported/w3c/web-platform-tests/css/css-anchor-position/position-visibility-no-o
 imported/w3c/web-platform-tests/css/css-anchor-position/position-visibility-remove-anchors-visible.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/position-visibility-remove-no-overflow.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/sticky-anchor-position-invalid.html [ ImageOnlyFailure ]
-
-# The following failures are left in the general TestExpectations for now since these are not useful failures
-
-# ios-wk2-wpt failures
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-borders-001.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-dynamic-001.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-anchor-positioning-001.html [ Failure ]
-
-# ios-wk2-wpt AND wpe-wk2 AND gtk-wk2 failures
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-invalid-fallback.html [ Failure ]
-
-# ios-wk2-wpt AND mac-AS-debug-wk2 failures
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-borders-002.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-007.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-008.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-010.html [ Failure ]
-
-# wpe-wk2 AND gtk-wk2 AND wincairo failures
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-htb-htb.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-htb-vrl.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-vrl-htb.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-vrl-vrl.html [ Failure ]
 
 # timeouts
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-js-expose.html [ Skip ]
