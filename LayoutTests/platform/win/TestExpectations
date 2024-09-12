@@ -1240,6 +1240,9 @@ fast/dom/timer-throttling-hidden-page-2.html [ Skip ] # Timeout
 # <rdar://5313536> Times out
 fast/dom/frame-loading-via-document-write.html [ Skip ]
 
+# onfocus is called twice only for Windows port
+fast/dom/Window/child-window-focus.html [ Failure Pass ]
+
 fast/dom/Window/get-set-properties.html [ Failure ]
 fast/dom/Window/open-window-min-size.html [ Skip ]
 webkit.org/b/116564 fast/dom/Window/window-onFocus.html [ Failure ]
