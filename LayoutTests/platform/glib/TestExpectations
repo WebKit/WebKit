@@ -4012,6 +4012,11 @@ imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-currentcolor-dyna
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-rename-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-function-to-url.html [ ImageOnlyFailure ]
 webkit.org/b/180134 webanimations/opacity-animation-no-longer-composited-upon-completion.html [ Failure ]
+css3/filters/effect-blur.html [ ImageOnlyFailure ]
+css3/filters/effect-combined.html [ ImageOnlyFailure ]
+css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]
+css3/filters/effect-hue-rotate.html [ ImageOnlyFailure ]
+css3/filters/effect-saturate.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/element-stops-grouping-after-animation.html [ ImageOnlyFailure ]

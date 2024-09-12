@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+ <html class="reftest-wait">
+ <head>
+     <style>
+         .composited {
+           width: 200px;
+           height: 200px;
+           background: green;
+           position: relative;
+           transform: translateZ(0px);
+           display: flow-root;
+         }
+
+         .overflow {
+           width: 100px;
+           height: 100px;
+           background: red;
+         }
+
+        .overlap-overflow {
+           width: 200px;
+           height: 200px;
+           background: green;
+           position: relative;
+         }
+
+     </style>
+ </head>
+
+ <script>
+     function waitAndResizeContainers() {
+         requestAnimationFrame(() => requestAnimationFrame(() => {
+             overflow.style.marginTop = "200px";
+             document.documentElement.classList.remove("reftest-wait");
+         }));
+     }
+ </script>
+ <body onload="waitAndResizeContainers()">
+
+     <div class="composited">
+         <div id="overflow" class="overflow"></div>
+     </div>
+     <div class="overlap-overflow"></div>
+ </body>
+

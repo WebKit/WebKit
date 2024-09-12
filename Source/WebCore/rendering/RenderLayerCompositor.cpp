@@ -432,8 +432,6 @@ auto RenderLayerCompositor::BackingSharingState::backingProviderCandidateForLaye
     }
 
     auto& providerLayer = *candidate.providerLayer;
-
-    LOG_WITH_STREAM(Compositing, stream << "Provider: composited scroll(" << providerLayer.canUseCompositedScrolling() << ") scrollableArea(" << providerLayer.scrollableArea() << ") horizontalOverflow(" << (providerLayer.scrollableArea() && providerLayer.scrollableArea()->hasScrollableHorizontalOverflow()) << ") verticalOverflow(" << (providerLayer.scrollableArea() && providerLayer.scrollableArea()->hasScrollableVerticalOverflow()) << ")");
     LayoutRect overlapBounds = candidate.absoluteBounds;
     if (providerLayer.canUseCompositedScrolling() && providerLayer.scrollableArea() && providerLayer.scrollableArea()->hasScrollableHorizontalOverflow() != providerLayer.scrollableArea()->hasScrollableVerticalOverflow()) {
         // If the provider uses composited scrolling but only supports scrolling
@@ -450,11 +448,14 @@ auto RenderLayerCompositor::BackingSharingState::backingProviderCandidateForLaye
         }
     }
 
+    LOG_WITH_STREAM(Compositing, stream << "Provider: composited scroll(" << providerLayer.canUseCompositedScrolling() << ") scrollableArea(" << providerLayer.scrollableArea() << ") horizontalOverflow(" << (providerLayer.scrollableArea() && providerLayer.scrollableArea()->hasScrollableHorizontalOverflow()) << ") verticalOverflow(" << (providerLayer.scrollableArea() && providerLayer.scrollableArea()->hasScrollableVerticalOverflow()) << ")" << " overlapBounds(" << overlapBounds << ")");
+
     // Check if any of the other candidates that are in front of the selected provider will
     // overlap the bounds of the layer to be added.
     for (auto& provider : m_backingProviderCandidates.subspan(candidateIndex + 1)) {
+        LOG_WITH_STREAM(Compositing, stream << "Considering " << provider.providerLayer  << " with bounds " << provider.absoluteBounds);
         if (overlapBounds.intersects(provider.absoluteBounds)) {
-            LOG_WITH_STREAM(Compositing, stream << "Aborting due to " << overlapBounds << " intersecting with " << provider.providerLayer << " " << provider.absoluteBounds);
+            LOG_WITH_STREAM(Compositing, stream << "Aborting due to overlap");
             return nullptr;
         }
     }

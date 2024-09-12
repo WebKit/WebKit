@@ -1020,6 +1020,7 @@ void RenderLayerBacking::updateAfterLayout(bool needsClippingUpdate, bool needsF
         m_owningLayer.setNeedsCompositingGeometryUpdate();
         // This layer's geometry affects those of its children.
         m_owningLayer.setChildrenNeedCompositingGeometryUpdate();
+        m_owningLayer.setSubsequentLayersNeedCompositingRequirementsTraversal();
     } else if (needsClippingUpdate) {
         m_owningLayer.setNeedsCompositingConfigurationUpdate();
         m_owningLayer.setNeedsCompositingGeometryUpdate();
