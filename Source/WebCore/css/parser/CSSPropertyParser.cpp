@@ -56,6 +56,7 @@
 #include "CSSPropertyParserConsumer+Image.h"
 #include "CSSPropertyParserConsumer+Integer.h"
 #include "CSSPropertyParserConsumer+Length.h"
+#include "CSSPropertyParserConsumer+LengthPercentage.h"
 #include "CSSPropertyParserConsumer+List.h"
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+Percent.h"
@@ -384,7 +385,7 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> CSSPropertyParser::co
         case CSSCustomPropertySyntax::Type::Length:
             return consumeLength(range, m_context.mode);
         case CSSCustomPropertySyntax::Type::LengthPercentage:
-            return consumeLengthOrPercent(range, m_context.mode);
+            return consumeLengthPercentage(range, m_context.mode);
         case CSSCustomPropertySyntax::Type::CustomIdent:
             if (RefPtr value = consumeCustomIdent(range)) {
                 if (component.ident.isNull() || value->stringValue() == component.ident)
@@ -1558,7 +1559,7 @@ bool CSSPropertyParser::consumeFlex(bool important)
                 if (isFlexBasisIdent(m_range.peek().id()))
                     flexBasis = consumeIdent(m_range);
                 if (!flexBasis)
-                    flexBasis = consumeLengthOrPercent(m_range, m_context.mode, ValueRange::NonNegative);
+                    flexBasis = consumeLengthPercentage(m_range, m_context.mode, ValueRange::NonNegative);
                 if (index == 2 && !m_range.atEnd())
                     return false;
             }

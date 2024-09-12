@@ -37,7 +37,6 @@ namespace CSSPropertyParserHelpers {
 
 // MARK: - Consumer functions
 
-std::optional<NumberRaw> consumeNumberRaw(CSSParserTokenRange&, ValueRange = ValueRange::All);
 RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange&, ValueRange = ValueRange::All);
 
 } // namespace CSSPropertyParserHelpers

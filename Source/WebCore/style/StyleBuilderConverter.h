@@ -2,6 +2,7 @@
  * Copyright (C) 2013 Google Inc. All rights reserved.
  * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2023 ChangSeok Oh <changseok@webkit.org>
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1580,7 +1581,7 @@ inline FontFeatureSettings BuilderConverter::convertFontFeatureSettings(BuilderS
     FontFeatureSettings settings;
     for (auto& item : downcast<CSSValueList>(value)) {
         auto& feature = downcast<CSSFontFeatureValue>(item);
-        settings.insert(FontFeature(feature.tag(), feature.value()->resolveAsNumber<int>(conversionData)));
+        settings.insert(FontFeature(feature.tag(), feature.value().resolveAsNumber<int>(conversionData)));
     }
     return settings;
 }
@@ -1590,7 +1591,7 @@ inline FontSelectionValue BuilderConverter::convertFontWeightFromValue(const CSS
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
     if (primitiveValue.isNumber())
-        return FontSelectionValue::clampFloat(primitiveValue.resolveAsNumberDeprecated<float>());
+        return FontSelectionValue(clampTo<float>(primitiveValue.resolveAsNumberDeprecated(), 1, 1000));
 
     ASSERT(primitiveValue.isValueID());
     switch (primitiveValue.valueID()) {
@@ -1659,17 +1660,19 @@ inline FontSelectionValue BuilderConverter::convertFontStretch(BuilderState&, co
     return convertFontStretchFromValue(value);
 }
 
-inline FontVariationSettings BuilderConverter::convertFontVariationSettings(BuilderState&, const CSSValue& value)
+inline FontVariationSettings BuilderConverter::convertFontVariationSettings(BuilderState& builderState, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
         ASSERT(value.valueID() == CSSValueNormal || CSSPropertyParserHelpers::isSystemFontShorthand(value.valueID()));
         return { };
     }
 
+    auto& conversionData = builderState.cssToLengthConversionData();
+
     FontVariationSettings settings;
     for (auto& item : downcast<CSSValueList>(value)) {
         auto& feature = downcast<CSSFontVariationValue>(item);
-        settings.insert({ feature.tag(), feature.value() });
+        settings.insert({ feature.tag(), feature.value().resolveAsNumber<float>(conversionData) });
     }
     return settings;
 }

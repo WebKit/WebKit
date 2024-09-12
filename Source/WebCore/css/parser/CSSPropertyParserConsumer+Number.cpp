@@ -32,7 +32,6 @@
 #include "CSSCalcValue.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
-#include "CSSPropertyParserConsumer+RawResolver.h"
 #include "CalculationCategory.h"
 
 namespace WebCore {
@@ -70,14 +69,6 @@ std::optional<NumberRaw> NumberKnownTokenTypeNumberConsumer::consume(CSSParserTo
 }
 
 // MARK: - Consumer functions
-
-std::optional<NumberRaw> consumeNumberRaw(CSSParserTokenRange& range, ValueRange valueRange)
-{
-    const auto options = CSSPropertyParserOptions {
-        .valueRange = valueRange
-    };
-    return RawResolver<NumberRaw>::consumeAndResolve(range, { }, { }, options);
-}
 
 RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange& range, ValueRange valueRange)
 {

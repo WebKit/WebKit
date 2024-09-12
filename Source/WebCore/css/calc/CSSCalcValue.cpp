@@ -231,6 +231,17 @@ double CSSCalcValue::computeLengthPx(const CSSToLengthConversionData& conversion
     return clampToPermittedRange(CSSPrimitiveValue::computeNonCalcLengthDouble(conversionData, CSSUnitType::CSS_PX, CSSCalc::evaluateDouble(m_tree, options).value_or(0)));
 }
 
+Ref<CalculationValue> CSSCalcValue::createCalculationValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
+{
+    ASSERT(!m_tree.requiresConversionData);
+
+    auto options = CSSCalc::EvaluationOptions {
+        .conversionData = std::nullopt,
+        .symbolTable = symbolTable
+    };
+    return CSSCalc::toCalculationValue(m_tree, options);
+}
+
 Ref<CalculationValue> CSSCalcValue::createCalculationValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
 {
     auto options = CSSCalc::EvaluationOptions {
@@ -310,6 +321,28 @@ TimeRaw CSSCalcValue::timeValue(const CSSToLengthConversionData& conversionData,
 {
     ASSERT(m_tree.category == Calculation::Category::Time);
     return { CSSUnitType::CSS_S, doubleValue(conversionData, symbolTable) };
+}
+
+Length CSSCalcValue::lengthPercentageValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
+{
+    ASSERT(m_tree.category == Calculation::Category::PercentLength);
+
+    if (!m_tree.type.percentHint)
+        return Length { doubleValueNoConversionDataRequired(symbolTable), LengthType::Fixed };
+    if (std::holds_alternative<CSSCalc::Percent>(m_tree.root))
+        return Length { doubleValueNoConversionDataRequired(symbolTable), LengthType::Percent };
+    return Length { createCalculationValueNoConversionDataRequired(symbolTable) };
+}
+
+Length CSSCalcValue::lengthPercentageValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
+{
+    ASSERT(m_tree.category == Calculation::Category::PercentLength);
+
+    if (!m_tree.type.percentHint)
+        return Length { doubleValue(conversionData, symbolTable), LengthType::Fixed };
+    if (std::holds_alternative<CSSCalc::Percent>(m_tree.root))
+        return Length { doubleValue(conversionData, symbolTable), LengthType::Percent };
+    return Length { createCalculationValue(conversionData, symbolTable) };
 }
 
 void CSSCalcValue::dump(TextStream& ts) const

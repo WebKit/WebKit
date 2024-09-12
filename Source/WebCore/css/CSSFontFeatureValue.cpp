@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,10 +42,7 @@ CSSFontFeatureValue::CSSFontFeatureValue(FontTag&& tag, Ref<CSSPrimitiveValue>&&
 String CSSFontFeatureValue::customCSSText() const
 {
     StringBuilder builder;
-    builder.append('"');
-    for (char c : m_tag)
-        builder.append(c);
-    builder.append('"');
+    builder.append('"', m_tag[0], m_tag[1], m_tag[2], m_tag[3], '"');
     // Omit the value if it's `1` as `1` is implied by default.
     if (m_value->resolveAsIntegerIfNotCalculated() != 1)
         builder.append(' ', m_value->customCSSText());

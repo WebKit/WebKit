@@ -57,6 +57,11 @@ void serializationForCSS(StringBuilder& builder, const TimeRaw& value)
     formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
 }
 
+void serializationForCSS(StringBuilder& builder, const LengthPercentageRaw& value)
+{
+    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
+}
+
 void serializationForCSS(StringBuilder& builder, const ResolutionRaw& value)
 {
     formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));

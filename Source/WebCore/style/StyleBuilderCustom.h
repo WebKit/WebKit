@@ -257,7 +257,7 @@ inline void BuilderCustom::applyInitialTextIndent(BuilderState& builderState)
 
 inline void BuilderCustom::applyValueTextIndent(BuilderState& builderState, CSSValue& value)
 {
-    Length lengthOrPercentageValue;
+    Length lengthPercentageValue;
     TextIndentLine textIndentLineValue = RenderStyle::initialTextIndentLine();
     TextIndentType textIndentTypeValue = RenderStyle::initialTextIndentType();
 
@@ -265,7 +265,7 @@ inline void BuilderCustom::applyValueTextIndent(BuilderState& builderState, CSSV
         for (auto& item : *valueList) {
             auto& primitiveValue = downcast<CSSPrimitiveValue>(item);
             if (!primitiveValue.valueID())
-                lengthOrPercentageValue = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
+                lengthPercentageValue = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
             else if (primitiveValue.valueID() == CSSValueEachLine)
                 textIndentLineValue = TextIndentLine::EachLine;
             else if (primitiveValue.valueID() == CSSValueHanging)
@@ -273,14 +273,14 @@ inline void BuilderCustom::applyValueTextIndent(BuilderState& builderState, CSSV
         }
     } else if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         // Values coming from CSSTypedOM didn't go through the parser and may not have been converted to a CSSValueList.
-        lengthOrPercentageValue = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
+        lengthPercentageValue = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
     } else
         return;
 
-    if (lengthOrPercentageValue.isUndefined())
+    if (lengthPercentageValue.isUndefined())
         return;
 
-    builderState.style().setTextIndent(WTFMove(lengthOrPercentageValue));
+    builderState.style().setTextIndent(WTFMove(lengthPercentageValue));
     builderState.style().setTextIndentLine(textIndentLineValue);
     builderState.style().setTextIndentType(textIndentTypeValue);
 }

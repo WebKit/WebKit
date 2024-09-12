@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2020 Metrological Group B.V.
  * Copyright (C) 2020 Igalia S.L.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,12 +38,12 @@ class FontCascadeDescription;
 class ScriptExecutionContext;
 
 namespace CSSPropertyParserHelpers {
-struct FontRaw;
+struct UnresolvedFont;
 }
 
 namespace Style {
 
-std::optional<FontCascade> resolveForFontRaw(const CSSPropertyParserHelpers::FontRaw&, FontCascadeDescription&&, ScriptExecutionContext&);
+std::optional<FontCascade> resolveForUnresolvedFont(const CSSPropertyParserHelpers::UnresolvedFont&, FontCascadeDescription&&, ScriptExecutionContext&);
 
 }
 }

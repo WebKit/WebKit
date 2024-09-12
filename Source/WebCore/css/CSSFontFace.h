@@ -80,7 +80,7 @@ public:
     void setSizeAdjust(CSSValue&);
     void setUnicodeRange(CSSValueList&);
     void setFeatureSettings(CSSValue&);
-    void setDisplay(CSSPrimitiveValue&);
+    void setDisplay(CSSValue&);
 
     String family() const;
     String style() const;

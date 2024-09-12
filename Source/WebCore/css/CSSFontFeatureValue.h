@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,10 +41,17 @@ public:
     }
 
     const FontTag& tag() const { return m_tag; }
-    const Ref<CSSPrimitiveValue>& value() const { return m_value; }
+    const CSSPrimitiveValue& value() const { return m_value; }
     String customCSSText() const;
 
     bool equals(const CSSFontFeatureValue&) const;
+
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (func(m_value.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        return IterationStatus::Continue;
+    }
 
 private:
     CSSFontFeatureValue(FontTag&&, Ref<CSSPrimitiveValue>&&);

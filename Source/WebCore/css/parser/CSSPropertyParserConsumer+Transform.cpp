@@ -33,6 +33,7 @@
 #include "CSSPropertyParserConsumer+Angle.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Length.h"
+#include "CSSPropertyParserConsumer+LengthPercentage.h"
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+Percent.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
@@ -297,13 +298,13 @@ static std::optional<CSSValueListBuilder> consumeTranslateFunctionArguments(CSSP
 
     CSSValueListBuilder arguments;
 
-    auto firstValue = consumeLengthOrPercent(args, context.mode);
+    auto firstValue = consumeLengthPercentage(args, context.mode);
     if (!firstValue)
         return { };
     arguments.append(firstValue.releaseNonNull());
 
     if (consumeCommaIncludingWhitespace(args)) {
-        auto secondValue = consumeLengthOrPercent(args, context.mode);
+        auto secondValue = consumeLengthPercentage(args, context.mode);
         if (!secondValue)
             return { };
         // A second value of `0` is the same as no second argument, so there is no need to store one if we know it is `0`.
@@ -319,14 +320,14 @@ static std::optional<CSSValueListBuilder> consumeTranslate3dFunctionArguments(CS
     // https://drafts.csswg.org/css-transforms-2/#funcdef-translate3d
     // translate3d() = translate3d( <length-percentage> , <length-percentage> , <length> )
 
-    auto firstValue = consumeLengthOrPercent(args, context.mode);
+    auto firstValue = consumeLengthPercentage(args, context.mode);
     if (!firstValue)
         return { };
 
     if (!consumeCommaIncludingWhitespace(args))
         return { };
 
-    auto secondValue = consumeLengthOrPercent(args, context.mode);
+    auto secondValue = consumeLengthPercentage(args, context.mode);
     if (!secondValue)
         return { };
 
@@ -349,7 +350,7 @@ static std::optional<CSSValueListBuilder> consumeTranslateXFunctionArguments(CSS
     // https://drafts.csswg.org/css-transforms-1/#funcdef-transform-translatex
     // translateX() = translateX( <length-percentage> )
 
-    auto value = consumeLengthOrPercent(args, context.mode);
+    auto value = consumeLengthPercentage(args, context.mode);
     if (!value)
         return { };
 
@@ -361,7 +362,7 @@ static std::optional<CSSValueListBuilder> consumeTranslateYFunctionArguments(CSS
     // https://drafts.csswg.org/css-transforms-1/#funcdef-transform-translatey
     // translateY() = translateY( <length-percentage> )
 
-    auto value = consumeLengthOrPercent(args, context.mode);
+    auto value = consumeLengthPercentage(args, context.mode);
     if (!value)
         return { };
 
@@ -528,7 +529,7 @@ RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange& range, const CSSParserCon
     // value is missing, it defaults to 0px. If three values are given, this specifies a 3d translation, equivalent to the
     // translate3d() function.
 
-    auto x = consumeLengthOrPercent(range, context.mode);
+    auto x = consumeLengthPercentage(range, context.mode);
     if (!x)
         return nullptr;
 
@@ -537,7 +538,7 @@ RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange& range, const CSSParserCon
     if (range.atEnd())
         return CSSValueList::createSpaceSeparated(x.releaseNonNull());
 
-    auto y = consumeLengthOrPercent(range, context.mode);
+    auto y = consumeLengthPercentage(range, context.mode);
     if (!y)
         return nullptr;
 

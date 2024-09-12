@@ -49,6 +49,8 @@ class CSSToLengthConversionData;
 class CalculationValue;
 class RenderStyle;
 
+struct Length;
+
 enum CSSValueID : uint16_t;
 
 enum class CSSUnitType : uint8_t;
@@ -79,6 +81,8 @@ public:
     double doubleValueDeprecated(const CSSCalcSymbolTable&) const;
 
     double computeLengthPx(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+
+    Ref<CalculationValue> createCalculationValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
     Ref<CalculationValue> createCalculationValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
 
     NumberRaw numberValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
@@ -93,6 +97,9 @@ public:
     ResolutionRaw resolutionValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
     TimeRaw timeValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
     TimeRaw timeValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+
+    Length lengthPercentageValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
+    Length lengthPercentageValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
 
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
 

@@ -35,9 +35,9 @@ shouldBeEqualToString("setFontFaceWeight(fontFace, '800')", "800");
 shouldBeEqualToString("setFontFaceWeight(fontFace, '900')", "900");
 shouldThrow("setFontFaceWeight(fontFace, 'garbage')");
 shouldThrow("setFontFaceWeight(fontFace, 'initial')");
-shouldBeEqualToString("setFontFaceWeight(fontFace, 'calc(3 + 4)')", "7");
-shouldBeEqualToString("setFontFaceWeight(fontFace, 'calc(100 + 200)')", "300");
-shouldBeEqualToString("setFontFaceWeight(fontFace, 'calc(150 + 50)')", "200");
+shouldBeEqualToString("setFontFaceWeight(fontFace, 'calc(3 + 4)')", "calc(7)");
+shouldBeEqualToString("setFontFaceWeight(fontFace, 'calc(100 + 200)')", "calc(300)");
+shouldBeEqualToString("setFontFaceWeight(fontFace, 'calc(150 + 50)')", "calc(200)");
 
 shouldBeEqualToString("setFontFaceStretch(fontFace, '1%')", "1%");
 shouldThrow("setFontFaceStretch(fontFace, '2')");

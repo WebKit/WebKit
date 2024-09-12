@@ -3816,7 +3816,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return CSSPrimitiveValue::create(CSSValueNormal);
         CSSValueListBuilder list;
         for (auto& feature : variationSettings)
-            list.append(CSSFontVariationValue::create(feature.tag(), feature.value()));
+            list.append(CSSFontVariationValue::create(feature.tag(), CSSPrimitiveValue::create(feature.value())));
         return CSSValueList::createCommaSeparated(WTFMove(list));
     }
     case CSSPropertyFontOpticalSizing:

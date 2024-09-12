@@ -40,9 +40,5 @@ namespace CSSPropertyParserHelpers {
 // MARK: - Length
 RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange&, CSSParserMode, ValueRange = ValueRange::All, UnitlessQuirk = UnitlessQuirk::Forbid);
 
-// MARK: - Length or Percent
-std::optional<LengthOrPercentRaw> consumeLengthOrPercentRaw(CSSParserTokenRange&, CSSParserMode);
-RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange&, CSSParserMode, ValueRange = ValueRange::All, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Allow, NegativePercentagePolicy = NegativePercentagePolicy::Forbid, AnchorPolicy = AnchorPolicy::Forbid);
-
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore
