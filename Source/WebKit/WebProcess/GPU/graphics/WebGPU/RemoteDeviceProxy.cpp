@@ -116,7 +116,7 @@ RefPtr<WebCore::WebGPU::Texture> RemoteDeviceProxy::createTexture(const WebCore:
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteTextureProxy::create(protectedRoot().get(), m_convertToBackingContext, identifier);
+    auto result = RemoteTextureProxy::create(protectedRoot(), m_convertToBackingContext, identifier);
     result->setLabel(WTFMove(convertedDescriptor->label));
     return result;
 }
