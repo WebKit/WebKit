@@ -63,7 +63,7 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
     , m_ipcConnection(connection.connection())
     , m_rtcMonitor(*this)
 #if PLATFORM(COCOA)
-    , m_sourceApplicationAuditToken(connection.networkProcess().sourceApplicationAuditToken())
+    , m_sourceApplicationAuditToken(connection.protectedNetworkProcess()->sourceApplicationAuditToken())
     , m_rtcNetworkThreadQueue(WorkQueue::create("NetworkRTCProvider Queue"_s, WorkQueue::QOS::UserInitiated))
 #else
     , m_packetSocketFactory(makeUniqueRefWithoutFastMallocCheck<rtc::BasicPacketSocketFactory>(rtcNetworkThread().socketserver()))
@@ -80,7 +80,7 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
 
 void NetworkRTCProvider::startListeningForIPC()
 {
-    m_connection->connection().addMessageReceiver(*this, *this, Messages::NetworkRTCProvider::messageReceiverName());
+    protectedConnection()->addMessageReceiver(*this, *this, Messages::NetworkRTCProvider::messageReceiverName());
 }
 
 NetworkRTCProvider::~NetworkRTCProvider()
@@ -94,9 +94,9 @@ void NetworkRTCProvider::close()
 {
     RTC_RELEASE_LOG("close");
 
-    m_connection->connection().removeMessageReceiver(Messages::NetworkRTCProvider::messageReceiverName());
+    protectedConnection()->removeMessageReceiver(Messages::NetworkRTCProvider::messageReceiverName());
     m_connection = nullptr;
-    m_rtcMonitor.stopUpdating();
+    protectedRTCMonitor()->stopUpdating();
 
     callOnRTCNetworkThread([this, protectedThis = Ref { *this }] {
         auto sockets = std::exchange(m_sockets, { });
@@ -183,11 +183,12 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
     RefPtr connection = m_connection.get();
     if (connection && connection->mdnsRegister().hasRegisteredName(address)) {
         Vector<WebKit::RTC::Network::IPAddress> ipAddresses;
-        if (!m_rtcMonitor.ipv4().isUnspecified())
-            ipAddresses.append(m_rtcMonitor.ipv4());
-        if (!m_rtcMonitor.ipv6().isUnspecified())
-            ipAddresses.append(m_rtcMonitor.ipv6());
-        connection->connection().send(Messages::WebRTCResolver::SetResolvedAddress(ipAddresses), identifier);
+        Ref rtcMonitor = m_rtcMonitor;
+        if (!rtcMonitor->ipv4().isUnspecified())
+            ipAddresses.append(rtcMonitor->ipv4());
+        if (!rtcMonitor->ipv6().isUnspecified())
+            ipAddresses.append(rtcMonitor->ipv6());
+        protectedConnection()->send(Messages::WebRTCResolver::SetResolvedAddress(ipAddresses), identifier);
         return;
     }
 
@@ -195,10 +196,11 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
         ASSERT(isMainRunLoop());
         if (!connection)
             return;
+        RefPtr protectedConnection = connection.get();
 
         if (!result.has_value()) {
             if (result.error() != WebCore::DNSError::Cancelled)
-                connection->connection().send(Messages::WebRTCResolver::ResolvedAddressError(1), identifier);
+                protectedConnection->protectedConnection()->send(Messages::WebRTCResolver::ResolvedAddressError(1), identifier);
             return;
         }
 
@@ -210,7 +212,7 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
             return std::nullopt;
         });
 
-        connection->connection().send(Messages::WebRTCResolver::SetResolvedAddress(ipAddresses), identifier);
+        protectedConnection->protectedConnection()->send(Messages::WebRTCResolver::SetResolvedAddress(ipAddresses), identifier);
     };
 
     WebCore::resolveDNS(address, identifier.toUInt64(), WTFMove(completionHandler));
@@ -372,7 +374,7 @@ void NetworkRTCProvider::assertIsRTCNetworkThread()
 
 void NetworkRTCProvider::signalSocketIsClosed(LibWebRTCSocketIdentifier identifier)
 {
-    m_connection->connection().send(Messages::LibWebRTCNetwork::SignalClose(identifier, 1), 0);
+    protectedConnection()->send(Messages::LibWebRTCNetwork::SignalClose(identifier, 1), 0);
 }
 
 Ref<NetworkRTCMonitor> NetworkRTCProvider::protectedRTCMonitor()
