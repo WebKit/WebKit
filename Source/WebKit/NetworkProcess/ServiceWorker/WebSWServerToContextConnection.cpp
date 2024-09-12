@@ -78,6 +78,11 @@ WebSWServerToContextConnection::~WebSWServerToContextConnection()
         server->removeContextConnection(*this);
 }
 
+Ref<NetworkConnectionToWebProcess> WebSWServerToContextConnection::protectedConnection() const
+{
+    return m_connection.get();
+}
+
 NetworkProcess& WebSWServerToContextConnection::networkProcess()
 {
     return m_connection->networkProcess();
@@ -148,14 +153,14 @@ void WebSWServerToContextConnection::fireActivateEvent(ServiceWorkerIdentifier s
 void WebSWServerToContextConnection::firePushEvent(ServiceWorkerIdentifier serviceWorkerIdentifier, const std::optional<Vector<uint8_t>>& data, std::optional<NotificationPayload>&& proposedPayload, CompletionHandler<void(bool, std::optional<NotificationPayload>&&)>&& callback)
 {
     if (!m_processingFunctionalEventCount++)
-        m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::StartServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
+        protectedConnection()->protectedNetworkProcess()->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::StartServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
 
     std::optional<std::span<const uint8_t>> ipcData;
     if (data)
         ipcData = std::span<const uint8_t> { data->data(), data->size() };
     sendWithAsyncReply(Messages::WebSWContextManagerConnection::FirePushEvent(serviceWorkerIdentifier, ipcData, WTFMove(proposedPayload)), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](bool wasProcessed, std::optional<NotificationPayload>&& resultPayload) mutable {
         if (CheckedPtr checkedThis = weakThis.get(); checkedThis && !--checkedThis->m_processingFunctionalEventCount)
-            checkedThis->m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { checkedThis->webProcessIdentifier() }, 0);
+            checkedThis->protectedConnection()->protectedNetworkProcess()->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { checkedThis->webProcessIdentifier() }, 0);
 
         callback(wasProcessed, WTFMove(resultPayload));
     });
@@ -272,7 +277,7 @@ void WebSWServerToContextConnection::didSaveScriptsToDisk(ServiceWorkerIdentifie
 
 void WebSWServerToContextConnection::terminateDueToUnresponsiveness()
 {
-    m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::TerminateUnresponsiveServiceWorkerProcesses { webProcessIdentifier() }, 0);
+    protectedConnection()->protectedNetworkProcess()->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::TerminateUnresponsiveServiceWorkerProcesses { webProcessIdentifier() }, 0);
 }
 
 void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier identifier, const URL& url, OpenWindowCallback&& callback)
@@ -305,7 +310,7 @@ void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier
         callback(server->topLevelServiceWorkerClientFromPageIdentifier(origin, *pageIdentifier));
     };
 
-    m_connection->networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::OpenWindowFromServiceWorker { m_connection->sessionID(), url.string(), worker->origin().clientOrigin }, WTFMove(innerCallback));
+    protectedConnection()->protectedNetworkProcess()->protectedParentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::OpenWindowFromServiceWorker { m_connection->sessionID(), url.string(), worker->origin().clientOrigin }, WTFMove(innerCallback));
 }
 
 void WebSWServerToContextConnection::reportConsoleMessage(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
@@ -314,7 +319,7 @@ void WebSWServerToContextConnection::reportConsoleMessage(WebCore::ServiceWorker
     RefPtr worker = server ? server->workerByID(serviceWorkerIdentifier) : nullptr;
     if (!worker)
         return;
-    m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ReportConsoleMessage { m_connection->sessionID(), worker->scriptURL(), worker->origin().clientOrigin, source, level, message, requestIdentifier }, 0);
+    protectedConnection()->protectedNetworkProcess()->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::ReportConsoleMessage { m_connection->sessionID(), worker->scriptURL(), worker->origin().clientOrigin, source, level, message, requestIdentifier }, 0);
 }
 
 void WebSWServerToContextConnection::matchAllCompleted(uint64_t requestIdentifier, const Vector<ServiceWorkerClientData>& clientsData)
@@ -340,11 +345,11 @@ void WebSWServerToContextConnection::startFetch(ServiceWorkerFetchTask& task)
 
 void WebSWServerToContextConnection::didReceiveFetchTaskMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    auto iterator = m_ongoingFetches.find(ObjectIdentifier<FetchIdentifierType>(decoder.destinationID()));
-    if (iterator == m_ongoingFetches.end())
+    RefPtr fetch = m_ongoingFetches.get(ObjectIdentifier<FetchIdentifierType>(decoder.destinationID())).get();
+    if (!fetch)
         return;
 
-    iterator->value->didReceiveMessage(connection, decoder);
+    fetch->didReceiveMessage(connection, decoder);
 }
 
 void WebSWServerToContextConnection::registerFetch(ServiceWorkerFetchTask& task)
@@ -406,7 +411,7 @@ void WebSWServerToContextConnection::navigate(ScriptExecutionContextIdentifier c
     }
 
     auto frameIdentifier = *data->frameIdentifier;
-    m_connection->networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::NavigateServiceWorkerClient { frameIdentifier, clientIdentifier, url }, [weakThis = WeakPtr { *this }, url, clientOrigin = worker->origin(), callback = WTFMove(callback)](auto pageIdentifier, auto frameIdentifier) mutable {
+    protectedConnection()->protectedNetworkProcess()->protectedParentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::NavigateServiceWorkerClient { frameIdentifier, clientIdentifier, url }, [weakThis = WeakPtr { *this }, url, clientOrigin = worker->origin(), callback = WTFMove(callback)](auto pageIdentifier, auto frameIdentifier) mutable {
         CheckedPtr checkedThis = weakThis.get();
         if (!checkedThis || !checkedThis->server()) {
             callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "service worker is gone"_s }));

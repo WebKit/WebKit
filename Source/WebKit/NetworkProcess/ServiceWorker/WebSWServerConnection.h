@@ -38,6 +38,7 @@
 #include <WebCore/PushSubscriptionData.h>
 #include <WebCore/SWServer.h>
 #include <pal/SessionID.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
@@ -172,6 +173,7 @@ private:
     
     template<typename U> static void sendToContextProcess(WebCore::SWServerToContextConnection&, U&& message);
     NetworkProcess& networkProcess();
+    CheckedRef<NetworkProcess> checkedNetworkProcess();
 
     WeakPtr<NetworkConnectionToWebProcess> m_networkConnectionToWebProcess;
     Ref<IPC::Connection> m_contentConnection;

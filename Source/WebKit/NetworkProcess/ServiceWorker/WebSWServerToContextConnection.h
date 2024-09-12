@@ -93,6 +93,8 @@ public:
     void didFinishActivation(WebCore::ServiceWorkerIdentifier);
 
 private:
+    Ref<NetworkConnectionToWebProcess> protectedConnection() const;
+
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;

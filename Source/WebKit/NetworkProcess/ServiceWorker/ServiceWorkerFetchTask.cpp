@@ -70,7 +70,7 @@ RefPtr<ServiceWorkerFetchTask> ServiceWorkerFetchTask::fromNavigationPreloader(W
     if (!loader.parameters().navigationPreloadIdentifier)
         return nullptr;
 
-    auto task = session ? session->navigationPreloaderTaskFromFetchIdentifier(*loader.parameters().navigationPreloadIdentifier) : nullptr;
+    RefPtr task = session ? session->navigationPreloaderTaskFromFetchIdentifier(*loader.parameters().navigationPreloadIdentifier) : nullptr;
     if (!task || !task->m_preloader || task->m_isLoadingFromPreloader) {
         RELEASE_LOG_ERROR(ServiceWorker, "Unable to retrieve preloader, load will go to the network");
         return nullptr;
@@ -147,7 +147,7 @@ template<typename Message> bool ServiceWorkerFetchTask::sendToServiceWorker(Mess
 template<typename Message> bool ServiceWorkerFetchTask::sendToClient(Message&& message)
 {
     Ref loader = *m_loader;
-    return loader->connectionToWebProcess().connection().send(std::forward<Message>(message), loader->coreIdentifier()) == IPC::Error::NoError;
+    return loader->protectedConnectionToWebProcess()->protectedConnection()->send(std::forward<Message>(message), loader->coreIdentifier()) == IPC::Error::NoError;
 }
 
 void ServiceWorkerFetchTask::start(WebSWServerToContextConnection& serviceWorkerConnection)
@@ -267,7 +267,8 @@ void ServiceWorkerFetchTask::processResponse(ResourceResponse&& response, bool n
         }
     }
     if (loader->parameters().options.mode == FetchOptions::Mode::NoCors) {
-        if (auto error = validateCrossOriginResourcePolicy(loader->parameters().crossOriginEmbedderPolicy.value, *loader->parameters().sourceOrigin.copyRef(), m_currentRequest.url(), response, ForNavigation::No, loader->connectionToWebProcess().originAccessPatterns())) {
+        Ref sourceOrigin = *loader->parameters().sourceOrigin;
+        if (auto error = validateCrossOriginResourcePolicy(loader->parameters().crossOriginEmbedderPolicy.value, sourceOrigin, m_currentRequest.url(), response, ForNavigation::No, loader->connectionToWebProcess().originAccessPatterns())) {
             didFail(*error);
             return;
         }
@@ -397,7 +398,7 @@ void ServiceWorkerFetchTask::cannotHandle()
 {
     SWFETCH_RELEASE_LOG("cannotHandle:");
     // Make sure we call didNotHandle asynchronously because failing synchronously would get the NetworkResourceLoader in a bad state.
-    RunLoop::main().dispatch([weakThis = WeakPtr { *this }] {
+    RunLoop::protectedMain()->dispatch([weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->didNotHandle();
     });
@@ -459,7 +460,7 @@ void ServiceWorkerFetchTask::softUpdateIfNeeded()
     CheckedPtr swConnection = loader->connectionToWebProcess().swConnection();
     if (!swConnection)
         return;
-    if (RefPtr registration = swConnection->server().getRegistration(*m_serviceWorkerRegistrationIdentifier))
+    if (RefPtr registration = swConnection->protectedServer()->getRegistration(*m_serviceWorkerRegistrationIdentifier))
         registration->scheduleSoftUpdate(loader->isAppInitiated() ? WebCore::IsAppInitiated::Yes : WebCore::IsAppInitiated::No);
 }
 
