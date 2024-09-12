@@ -74,7 +74,7 @@ protected:
     void willBeDestroyed() override;
 
 private:
-    LayoutUnit computeConstrainedLogicalWidth() const;
+    LayoutUnit computeConstrainedLogicalWidth(ShouldComputePreferred) const;
 
     virtual RenderBox* embeddedContentBox() const { return 0; }
     ASCIILiteral renderName() const override { return "RenderReplaced"_s; }
