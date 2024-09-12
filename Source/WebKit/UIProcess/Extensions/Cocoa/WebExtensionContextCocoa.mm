@@ -608,6 +608,13 @@ void WebExtensionContext::setUniqueIdentifier(String&& uniqueIdentifier)
     m_uniqueIdentifier = uniqueIdentifier;
 }
 
+_WKWebExtensionLocalization *WebExtensionContext::localization()
+{
+    if (!m_localization)
+        m_localization = [[_WKWebExtensionLocalization alloc] initWithLocalizedDictionary:extension().localization().localizationDictionary uniqueIdentifier:baseURL().host().toString()];
+    return m_localization.get();
+}
+
 void WebExtensionContext::setInspectable(bool inspectable)
 {
     m_inspectable = inspectable;
