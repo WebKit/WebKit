@@ -389,6 +389,7 @@ public:
 
 #if ENABLE(WEB_RTC)
     RTCDataChannelRemoteManagerProxy& rtcDataChannelProxy();
+    Ref<RTCDataChannelRemoteManagerProxy> protectedRTCDataChannelProxy();
 #endif
 
     bool ftpEnabled() const { return m_ftpEnabled; }

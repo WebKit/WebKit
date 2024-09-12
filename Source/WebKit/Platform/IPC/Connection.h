@@ -129,8 +129,7 @@ extern ASCIILiteral errorAsString(Error);
 #define MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection) do { \
     if (UNLIKELY(!(assertion))) { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
-        if (RefPtr processConnection = connection) \
-            processConnection->markCurrentlyDispatchedMessageAsInvalid(); \
+        (connection)->markCurrentlyDispatchedMessageAsInvalid(); \
         return; \
     } \
 } while (0)
@@ -355,7 +354,7 @@ public:
     // Ensures that messages sent prior to the call are not affected by invalidate() or crash done after the call returns.
     Error flushSentMessages(Timeout);
     void invalidate();
-    void markCurrentlyDispatchedMessageAsInvalid();
+    inline void markCurrentlyDispatchedMessageAsInvalid();
 
     template<typename PC, typename BasePromise>
     struct ConvertedPromise {
@@ -936,6 +935,13 @@ void Connection::cancelReply(C&& completionHandler)
     {
         completionHandler(AsyncReplyError<std::tuple_element_t<Indices, typename T::ReplyArguments>>::create()...);
     }(std::make_index_sequence<std::tuple_size_v<typename T::ReplyArguments>> { });
+}
+
+inline void Connection::markCurrentlyDispatchedMessageAsInvalid()
+{
+    // This should only be called while processing a message.
+    ASSERT(m_inDispatchMessageCount > 0);
+    m_didReceiveInvalidMessage = true;
 }
 
 class UnboundedSynchronousIPCScope {
