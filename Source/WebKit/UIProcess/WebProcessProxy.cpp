@@ -1150,7 +1150,7 @@ void WebProcessProxy::createModelProcessConnection(IPC::Connection::Handle&& con
 {
     bool anyPageHasModelProcessEnabled = false;
     for (auto& page : m_pageMap.values())
-        anyPageHasModelProcessEnabled |= page->preferences().modelProcessEnabled();
+        anyPageHasModelProcessEnabled |= page->preferences().modelElementEnabled() && page->preferences().modelProcessEnabled();
     MESSAGE_CHECK(anyPageHasModelProcessEnabled);
 
 #if ENABLE(IPC_TESTING_API)
