@@ -442,12 +442,15 @@ static std::optional<GStreamerMediaEndpointTransceiverState> toGStreamerMediaEnd
 {
     GRefPtr<GstWebRTCRTPReceiver> receiver;
     GUniqueOutPtr<char> mid;
-    GstWebRTCRTPTransceiverDirection currentDirection;
+    GstWebRTCRTPTransceiverDirection direction;
     guint mLineIndex;
-    g_object_get(transceiver, "receiver", &receiver.outPtr(), "current-direction", &currentDirection, "mlineindex", &mLineIndex, "mid", &mid.outPtr(), nullptr);
+    // GstWebRTCRTPTransceiver doesn't have a fired-direction property, so use direction. Until
+    // GStreamer 1.26 direction and current-direction always had the same value. This was fixed by:
+    // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/cafb999fb0cdf32803fcc3f85f2652212f05c2d0
+    g_object_get(transceiver, "receiver", &receiver.outPtr(), "direction", &direction, "mlineindex", &mLineIndex, "mid", &mid.outPtr(), nullptr);
 #ifndef GST_DISABLE_GST_DEBUG
-    GUniquePtr<char> desc(g_enum_to_string(GST_TYPE_WEBRTC_RTP_TRANSCEIVER_DIRECTION, currentDirection));
-    GST_TRACE_OBJECT(webrtcBin, "Receiver = %" GST_PTR_FORMAT ", current-direction = %s, mlineindex = %u, mid = %s", receiver.get(), desc.get(), mLineIndex, GST_STR_NULL(mid.get()));
+    GUniquePtr<char> desc(g_enum_to_string(GST_TYPE_WEBRTC_RTP_TRANSCEIVER_DIRECTION, direction));
+    GST_TRACE_OBJECT(webrtcBin, "Receiver = %" GST_PTR_FORMAT ", direction = %s, mlineindex = %u, mid = %s", receiver.get(), desc.get(), mLineIndex, GST_STR_NULL(mid.get()));
 #endif
 
     GUniqueOutPtr<GstWebRTCSessionDescription> localDescription, remoteDescription;
@@ -467,14 +470,14 @@ static std::optional<GStreamerMediaEndpointTransceiverState> toGStreamerMediaEnd
     Vector<String> streamIds;
     if (remoteDescription && remoteDescription->sdp && mLineIndex < gst_sdp_message_medias_len(remoteDescription->sdp)) {
         const GstSDPMedia* media = gst_sdp_message_get_media(remoteDescription->sdp, mLineIndex);
-        if (isRecvDirection(currentDirection))
+        if (isRecvDirection(direction))
             streamIds = getMediaStreamIdsFromSDPMedia(*media);
     }
 
     if (UNLIKELY(!mid))
         return { };
 
-    return { { String::fromUTF8(mid.get()), WTFMove(streamIds), { toRTCRtpTransceiverDirection(currentDirection) } } };
+    return { { String::fromUTF8(mid.get()), WTFMove(streamIds), { toRTCRtpTransceiverDirection(direction) } } };
 }
 
 static Vector<GStreamerMediaEndpointTransceiverState> transceiverStatesFromWebRTCBin(GstElement* webrtcBin)
