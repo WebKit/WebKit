@@ -1,7 +1,6 @@
-CONSOLE MESSAGE: Error: assert_equals: container(target) expected "multiply" but got "normal"
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: container(target) expected "multiply" but got "normal"
 
-Harness Error (FAIL), message = Unhandled rejection: Type error
+Harness Error (FAIL), message = Unhandled rejection: assert_equals: container(target) expected "multiply" but got "normal"
 
 TIMEOUT position property of pseudo elements Test timed out
 NOTRUN properties of pseudo elements outside of transition

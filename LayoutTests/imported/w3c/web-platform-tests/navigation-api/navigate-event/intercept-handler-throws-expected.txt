@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: TypeError: a message
 
-Harness Error (FAIL), message = TypeError: a message
-
-FAIL event.intercept() should abort if the handler throws assert_true: expected true got false
+PASS event.intercept() should abort if the handler throws
 

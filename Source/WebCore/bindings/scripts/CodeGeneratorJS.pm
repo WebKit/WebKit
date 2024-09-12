@@ -6960,16 +6960,23 @@ sub GenerateCallbackImplementationContent
                 push(@$contentRef, "    auto jsResult = ${callbackInvocation};\n");
             }
 
+            my $hasPromiseReturnType = $codeGenerator->IsPromiseType($operation->type);
+
             $includesRef->{"JSDOMExceptionHandling.h"} = 1;
             push(@$contentRef, "    if (returnedException) {\n");
-            if ($operation->extendedAttributes->{RethrowException}) {
+            if ($hasPromiseReturnType) {
+                push(@$contentRef, "        auto* jsPromise = JSC::JSPromise::create(vm, globalObject.promiseStructure());\n");
+                push(@$contentRef, "        jsPromise->reject(&globalObject, returnedException->value());\n");
+                push(@$contentRef, "        return { DOMPromise::create(globalObject, *jsPromise) };\n");
+            } elsif ($operation->extendedAttributes->{RethrowException}) {
                 push(@$contentRef, "        auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
                 push(@$contentRef, "        throwException(&lexicalGlobalObject, throwScope, returnedException);\n");
+                push(@$contentRef, "        return CallbackResultType::ExceptionThrown;\n");
             } else {
                 push(@$contentRef, "        UNUSED_PARAM(lexicalGlobalObject);\n");
                 push(@$contentRef, "        reportException(m_data->callback()->globalObject(), returnedException);\n");
+                push(@$contentRef, "        return CallbackResultType::ExceptionThrown;\n");
             }
-            push(@$contentRef, "        return CallbackResultType::ExceptionThrown;\n");
             push(@$contentRef, "     }\n\n");
 
             if ($operation->type->name eq "undefined") {

@@ -25,12 +25,14 @@
 #include "JSTestCallbackInterface.h"
 
 #include "ContextDestructionObserverInlines.h"
+#include "DOMPromiseProxy.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvertBase.h"
 #include "JSDOMConvertBoolean.h"
 #include "JSDOMConvertBufferSource.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertNumbers.h"
+#include "JSDOMConvertPromise.h"
 #include "JSDOMConvertSerializedScriptValue.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMConvertUnion.h"
@@ -416,6 +418,38 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterfac
 
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto returnValue = convert<IDLDOMString>(lexicalGlobalObject, jsResult);
+    if (UNLIKELY(returnValue.hasException(throwScope)))
+        return CallbackResultType::ExceptionThrown;
+    return { returnValue.releaseReturnValue() };
+}
+
+CallbackResult<typename IDLPromise<IDLUndefined>::CallbackReturnType> JSTestCallbackInterface::callbackThatTreatsExceptionAsRejectedPromise(typename IDLEnumeration<TestCallbackInterface::Enum>::ParameterType enumParam)
+{
+    if (!canInvokeCallback())
+        return CallbackResultType::UnableToExecute;
+
+    Ref<JSTestCallbackInterface> protectedThis(*this);
+
+    auto& globalObject = *m_data->globalObject();
+    auto& vm = globalObject.vm();
+
+    JSLockHolder lock(vm);
+    auto& lexicalGlobalObject = globalObject;
+    JSValue thisValue = jsUndefined();
+    MarkedArgumentBuffer args;
+    args.append(toJS<IDLEnumeration<TestCallbackInterface::Enum>>(lexicalGlobalObject, enumParam));
+    ASSERT(!args.hasOverflowed());
+
+    NakedPtr<JSC::Exception> returnedException;
+    auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "callbackThatTreatsExceptionAsRejectedPromise"_s), returnedException);
+    if (returnedException) {
+        auto* jsPromise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
+        jsPromise->reject(&globalObject, returnedException->value());
+        return { DOMPromise::create(globalObject, *jsPromise) };
+     }
+
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto returnValue = convert<IDLPromise<IDLUndefined>>(lexicalGlobalObject, jsResult);
     if (UNLIKELY(returnValue.hasException(throwScope)))
         return CallbackResultType::ExceptionThrown;
     return { returnValue.releaseReturnValue() };
