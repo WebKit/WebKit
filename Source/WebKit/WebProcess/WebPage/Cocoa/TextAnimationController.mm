@@ -197,6 +197,8 @@ void TextAnimationController::addInitialTextAnimationForActiveWritingToolsSessio
     if (!textIndicatorData)
         return;
 
+    removeInitialTextAnimationForActiveWritingToolsSession();
+
     m_webPage->addTextAnimationForAnimationID(initialAnimationID, { WebCore::TextAnimationType::Initial, WebCore::TextAnimationRunMode::RunAnimation }, *textIndicatorData);
 
     m_initialAnimationID = initialAnimationID;
