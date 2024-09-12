@@ -1120,6 +1120,9 @@ webkit.org/b/117322 css2.1/20110323/word-spacing-remove-space-003.htm [ ImageOnl
 webkit.org/b/117322 css2.1/20110323/word-spacing-remove-space-006.htm [ ImageOnlyFailure ]
 webkit.org/b/117322 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 
+# This seems to affect a subsequent test fast/css/transform-infinity.html.
+webkit.org/b/279576 fast/css/transform-function-perspective-crash.html [ Skip ]
+
 # Don't run these time-outs for now
 css3/filters/huge-region-composited.html [ Skip ]
 
@@ -4272,6 +4275,7 @@ fast/text/simple-line-hyphens-with-text-align.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-hyphen-limit-after.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-hyphen-limit-before.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-hyphen-limit-lines.html [ ImageOnlyFailure ]
+fast/text/simple-line-layout-hyphenation-constrains.html [ ImageOnlyFailure ]
 
 # Failure only on Buildbot
 fast/text/justify-ideograph-leading-expansion.html [ Pass Failure ]
