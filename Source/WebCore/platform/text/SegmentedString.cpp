@@ -182,13 +182,14 @@ void SegmentedString::advanceAndUpdateLineNumber16()
 inline void SegmentedString::advancePastSingleCharacterSubstringWithoutUpdatingLineNumber()
 {
     ASSERT(m_currentSubstring.length == 1);
+    m_currentSubstring.length = 0;
+    m_numberOfCharactersConsumedPriorToCurrentSubstring += m_currentSubstring.numberOfCharactersConsumed();
     if (m_otherSubstrings.isEmpty()) {
-        m_currentSubstring.length = 0;
+        m_currentSubstring = { };
         m_currentCharacter = 0;
         updateAdvanceFunctionPointersForEmptyString();
         return;
     }
-    m_numberOfCharactersConsumedPriorToCurrentSubstring += m_currentSubstring.numberOfCharactersConsumed();
     m_currentSubstring = m_otherSubstrings.takeFirst();
     // If we've previously consumed some characters of the non-current string, we now account for those
     // characters as part of the current string, not as part of "prior to current string."
