@@ -529,6 +529,8 @@ const GLContext::GLExtensions& GLContext::glExtensions() const
         m_glExtensions.EXT_unpack_subimage = isExtensionSupported(extensionsString, "GL_EXT_unpack_subimage");
         m_glExtensions.APPLE_sync = isExtensionSupported(extensionsString, "GL_APPLE_sync");
         m_glExtensions.OES_packed_depth_stencil = isExtensionSupported(extensionsString, "GL_OES_packed_depth_stencil");
+        m_glExtensions.ARB_texture_rg = isExtensionSupported(extensionsString, "GL_ARB_texture_rg");
+        m_glExtensions.EXT_texture_rg = isExtensionSupported(extensionsString, "GL_EXT_texture_rg");
     });
     return m_glExtensions;
 }

@@ -80,6 +80,8 @@ public:
         bool EXT_unpack_subimage { false };
         bool APPLE_sync { false };
         bool OES_packed_depth_stencil { false };
+        bool ARB_texture_rg { false };
+        bool EXT_texture_rg { false };
     };
     const GLExtensions& glExtensions() const;
 

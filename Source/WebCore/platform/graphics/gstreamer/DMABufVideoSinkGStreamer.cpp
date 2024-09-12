@@ -29,6 +29,8 @@
 
 #if USE(GBM)
 #include "DRMDeviceManager.h"
+#include "GLContext.h"
+#include "PlatformDisplay.h"
 #endif
 
 using namespace WebCore;
@@ -185,6 +187,22 @@ bool webKitDMABufVideoSinkIsEnabled()
         if (!s_disabled && !DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render)) {
             WTFLogAlways("Unable to access the GBM device, disabling DMABuf video sink.");
             s_disabled = true;
+        }
+        if (!s_disabled) {
+            auto* glContext = PlatformDisplay::sharedDisplay().sharingGLContext();
+            if (glContext) {
+                GLContext::ScopedGLContextCurrent scopedGLContextCurrent(*glContext);
+                // DMABuf video sink will create R8 textures which would fail in a context without texture_rg
+                if (glContext->version() < 300
+                    && !glContext->glExtensions().ARB_texture_rg
+                    && !glContext->glExtensions().EXT_texture_rg) {
+                    WTFLogAlways("OpenGL lacks texture_rg capabilities, disabling DMABuf video sink.");
+                    s_disabled = true;
+                }
+            } else {
+                WTFLogAlways("Unable to check OpenGL capabilities, disabling DMABuf video sink.");
+                s_disabled = true;
+            }
         }
     });
 #else
