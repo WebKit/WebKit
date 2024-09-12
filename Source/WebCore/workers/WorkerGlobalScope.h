@@ -89,6 +89,7 @@ public:
     virtual Type type() const = 0;
 
     const URL& url() const final { return m_url; }
+    const URL& creationURL() const final { return url(); }
     const URL& ownerURL() const { return m_ownerURL; }
     String origin() const;
     const String& inspectorIdentifier() const { return m_inspectorIdentifier; }

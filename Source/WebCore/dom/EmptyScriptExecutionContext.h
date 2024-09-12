@@ -55,6 +55,7 @@ public:
         return *m_eventLoopTaskGroup;
     }
     const URL& url() const final { return m_url; }
+    const URL& creationURL() const final { return url(); }
     URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final { return { }; };
     String userAgent(const URL&) const final { return emptyString(); }
     ReferrerPolicy referrerPolicy() const final { return ReferrerPolicy::EmptyString; }
