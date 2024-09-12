@@ -199,6 +199,8 @@ angle::Result IOSurfaceSurfaceMtl::ensureColorTextureCreated(const gl::Context *
         // Disable subsequent rendering to alpha channel.
         mColorTexture->setColorWritableMask(MTLColorWriteMaskAll & (~MTLColorWriteMaskAlpha));
     }
+    // Robust resource init: currently we do not allow passing contents with IOSurfaces.
+    mColorTextureInitialized = false;
 
     return angle::Result::Continue;
 }

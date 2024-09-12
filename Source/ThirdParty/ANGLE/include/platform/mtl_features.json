@@ -427,14 +427,6 @@
             "issue": "http://anglebug.com/40096869"
         },
         {
-            "name": "require_msl_2_1",
-            "category": "Features",
-            "description": [
-                "MSL 2.1 is required to support all the features of OpenGL ES 2.0"
-            ],
-            "issue": "http://anglebug.com/42266694"
-        },
-        {
             "name": "rescope_global_variables",
             "category": "Features",
             "description": [

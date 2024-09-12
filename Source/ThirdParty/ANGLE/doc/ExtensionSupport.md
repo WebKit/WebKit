@@ -133,6 +133,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_OES_sample_variables](https://khronos.org/registry/OpenGL/extensions/OES/OES_sample_variables.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_semaphore](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_semaphore.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_semaphore_fd](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_external_objects_fd.txt) |  |  | &#x2714; | &#x2714; |  | &#x2714; | &#x2714; |
+| [GL_EXT_separate_depth_stencil](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_separate_depth_stencil.txt) |  |  |  |  |  |  |  |
 | [GL_EXT_separate_shader_objects](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_separate_shader_objects.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ARM_shader_framebuffer_fetch](https://khronos.org/registry/OpenGL/extensions/ARM/ARM_shader_framebuffer_fetch.txt) |  |  |  |  | &#x2714; |  | &#x2714; |
 | [GL_EXT_shader_framebuffer_fetch](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_framebuffer_fetch.txt) |  |  |  |  | &#x2714; |  | &#x2714; |

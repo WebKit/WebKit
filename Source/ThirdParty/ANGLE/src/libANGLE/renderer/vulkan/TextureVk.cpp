@@ -2018,16 +2018,12 @@ void TextureVk::setImageHelper(ContextVk *contextVk,
     mEGLImageLayerOffset = imageLayerOffset;
     mImage               = imageHelper;
 
-    // Force re-creation of render targets next time they are needed
+    // All render targets must be already destroyed prior to this call.
     for (auto &renderTargets : mSingleLayerRenderTargets)
     {
-        for (RenderTargetVector &renderTargetLevels : renderTargets)
-        {
-            renderTargetLevels.clear();
-        }
-        renderTargets.clear();
+        ASSERT(renderTargets.empty());
     }
-    mMultiLayerRenderTargets.clear();
+    ASSERT(mMultiLayerRenderTargets.empty());
 
     if (!selfOwned)
     {
@@ -3207,7 +3203,7 @@ vk::BufferHelper *TextureVk::getRGBAConversionBufferHelper(vk::Renderer *rendere
     BufferVk *bufferVk                                        = vk::GetImpl(getBuffer().get());
     const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding = mState.getBuffer();
     const VertexConversionBuffer::CacheKey cacheKey{
-        formatID, 16, static_cast<size_t>(bufferBinding.getOffset()), false};
+        formatID, 16, static_cast<size_t>(bufferBinding.getOffset()), false, true};
     ConversionBuffer *conversion = bufferVk->getVertexConversionBuffer(renderer, cacheKey);
     return conversion->getBuffer();
 }
@@ -3227,7 +3223,7 @@ angle::Result TextureVk::convertBufferToRGBA(ContextVk *contextVk, size_t &conve
                                                4 * sizeof(uint32_t));
 
     const VertexConversionBuffer::CacheKey cacheKey{imageUniformFormat->getIntendedFormatID(), 16,
-                                                    bindingOffset, false};
+                                                    bindingOffset, false, true};
     ConversionBuffer *conversion = bufferVk->getVertexConversionBuffer(renderer, cacheKey);
     mBufferContentsObservers->enableForBuffer(getBuffer().get());
     if (!conversion->valid())
@@ -3850,7 +3846,10 @@ void TextureVk::releaseImageViews(ContextVk *contextVk)
             }
             mMultisampledImageViews.reset();
         }
-        ASSERT(mSingleLayerRenderTargets.empty());
+        for (auto &renderTargets : mSingleLayerRenderTargets)
+        {
+            ASSERT(renderTargets.empty());
+        }
         ASSERT(mMultiLayerRenderTargets.empty());
         return;
     }
@@ -3875,7 +3874,7 @@ void TextureVk::releaseImageViews(ContextVk *contextVk)
         {
             for (RenderTargetVk &renderTargetVk : renderTargetLevels)
             {
-                renderTargetVk.release(contextVk);
+                renderTargetVk.releaseFramebuffers(contextVk);
             }
             // Clear the layers tracked for each level
             renderTargetLevels.clear();
@@ -3886,7 +3885,7 @@ void TextureVk::releaseImageViews(ContextVk *contextVk)
 
     for (auto &renderTargetPair : mMultiLayerRenderTargets)
     {
-        renderTargetPair.second->release(contextVk);
+        renderTargetPair.second->releaseFramebuffers(contextVk);
     }
     mMultiLayerRenderTargets.clear();
 }
@@ -4191,13 +4190,13 @@ angle::Result TextureVk::refreshImageViews(ContextVk *contextVk)
             {
                 for (RenderTargetVk &renderTargetVk : renderTargetLevels)
                 {
-                    renderTargetVk.release(contextVk);
+                    renderTargetVk.releaseFramebuffers(contextVk);
                 }
             }
         }
         for (auto &renderTargetPair : mMultiLayerRenderTargets)
         {
-            renderTargetPair.second->release(contextVk);
+            renderTargetPair.second->releaseFramebuffers(contextVk);
         }
     }
 

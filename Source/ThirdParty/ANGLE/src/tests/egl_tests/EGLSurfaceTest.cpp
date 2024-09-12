@@ -2562,6 +2562,78 @@ TEST_P(EGLSingleBufferTest, WaitOneOffSubmission)
     context2 = EGL_NO_CONTEXT;
 }
 
+// Checks that |WindowSurfaceVk::swamImpl| acquires and process next swapchain image in case of
+// shared present mode, when called from flush.
+TEST_P(EGLSingleBufferTest, AcquireImageFromSwapImpl)
+{
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(mDisplay, "EGL_KHR_mutable_render_buffer"));
+
+    EGLConfig config = EGL_NO_CONFIG_KHR;
+    ANGLE_SKIP_TEST_IF(!chooseConfig(&config, true));
+
+    EGLContext context = EGL_NO_CONTEXT;
+    EXPECT_EGL_TRUE(createContext(config, &context));
+    ASSERT_EGL_SUCCESS() << "eglCreateContext failed.";
+
+    EGLSurface surface = EGL_NO_SURFACE;
+    OSWindow *osWindow = OSWindow::New();
+    osWindow->initialize("EGLSingleBufferTest", kWidth, kHeight);
+    EXPECT_EGL_TRUE(
+        createWindowSurface(config, osWindow->getNativeWindow(), &surface, EGL_BACK_BUFFER));
+    ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+
+    if (eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER))
+    {
+        eglSwapBuffers(mDisplay, surface);
+
+        ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+        // Draw into the single buffered surface.
+        // Acquire next swapchain image should be deferred (Vulkan back-end).
+        drawQuad(greenProgram, essl1_shaders::PositionAttrib(), 0.5f);
+        glFlush();
+
+        // Prepare auxilary framebuffer.
+        GLRenderbuffer renderBuffer;
+        GLFramebuffer framebuffer;
+        glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 50, 50);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                  renderBuffer);
+        EXPECT_GL_NO_ERROR();
+
+        // Draw into the auxilary framebuffer just to generate commands into the command buffers.
+        // Otherwise below flush will be ignored.
+        drawQuad(greenProgram, essl1_shaders::PositionAttrib(), 0.5f);
+
+        // Switch back to the Windows Surface and perform flush.
+        // In Vulkan back-end flush will translate into |swapImpl| call while acquire next swapchain
+        // image is still deferred. |swapImpl| must perform the acquire in that case, otherwise
+        // ASSERT will trigger in |present|.
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glFlush();
+    }
+    else
+    {
+        std::cout << "EGL_SINGLE_BUFFER mode is not supported." << std::endl;
+    }
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent - uncurrent failed.";
+
+    eglDestroySurface(mDisplay, surface);
+    surface = EGL_NO_SURFACE;
+    osWindow->destroy();
+    OSWindow::Delete(&osWindow);
+
+    eglDestroyContext(mDisplay, context);
+    context = EGL_NO_CONTEXT;
+}
+
 // Test that setting a surface to EGL_SINGLE_BUFFER after enabling
 // EGL_FRONT_BUFFER_AUTO_REFRESH_ANDROID does not disable auto refresh
 TEST_P(EGLAndroidAutoRefreshTest, Basic)

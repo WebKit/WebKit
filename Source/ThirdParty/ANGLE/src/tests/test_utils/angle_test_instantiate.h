@@ -359,9 +359,6 @@ bool IsConfigSelected();
 // Check whether texture swizzle is natively supported on Metal device.
 bool IsMetalTextureSwizzleAvailable();
 
-// Check whether TEXTURE_3D target is supported for compressed formats on Metal device.
-bool IsMetalCompressedTexture3DAvailable();
-
 extern bool gEnableANGLEPerTestCaptureLabel;
 
 // For use with ANGLE_INSTANTIATE_TEST_ARRAY

@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 358
+#define ANGLE_SH_VERSION 359
 
 enum ShShaderSpec
 {
@@ -67,7 +67,6 @@ enum ShShaderOutput
     // Prefer using these to specify HLSL output type:
     SH_HLSL_3_0_OUTPUT       = 0x8B48,  // D3D 9
     SH_HLSL_4_1_OUTPUT       = 0x8B49,  // D3D 11
-    SH_HLSL_4_0_FL9_3_OUTPUT = 0x8B4A,  // D3D 11 feature level 9_3
 
     // Output SPIR-V for the Vulkan backend.
     SH_SPIRV_VULKAN_OUTPUT = 0x8B4B,

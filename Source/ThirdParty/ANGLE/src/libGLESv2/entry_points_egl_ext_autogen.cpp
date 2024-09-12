@@ -1722,7 +1722,7 @@ EGLint EGLAPIENTRY EGL_ClientWaitSyncKHR(EGLDisplay dpy,
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ClientWaitSyncKHR, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ClientWaitSyncKHR, thread, dpyPacked, flags);
             if (IsEGLValidationEnabled())
             {
                 ANGLE_EGL_VALIDATE(thread, ClientWaitSyncKHR, GetDisplayIfValid(dpyPacked), EGLint,
@@ -2473,7 +2473,7 @@ EGLint EGLAPIENTRY EGL_WaitSyncKHR(EGLDisplay dpy, EGLSyncKHR sync, EGLint flags
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(WaitSyncKHR, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(WaitSyncKHR, thread, dpyPacked, flags);
             if (IsEGLValidationEnabled())
             {
                 ANGLE_EGL_VALIDATE(thread, WaitSyncKHR, GetDisplayIfValid(dpyPacked), EGLint,

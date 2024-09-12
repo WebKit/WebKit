@@ -1649,6 +1649,126 @@
                 "Prefer host cached + non-coherent memory for buffers with dynamic/stream usage."
             ],
             "issue": "https://issuetracker.google.com/347601787"
+        },
+        {
+            "name": "supports_rounding_mode_rte_fp16",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the RTEFloat16 rounding mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_rounding_mode_rte_fp32",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the RTEFloat32 rounding mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_rounding_mode_rte_fp64",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the RTEFloat64 rounding mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_rounding_mode_rtz_fp16",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the RTZFloat16 rounding mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_rounding_mode_rtz_fp32",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the RTZFloat32 rounding mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_rounding_mode_rtz_fp64",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the RTZFloat64 rounding mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_denorm_preserve_fp16",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the DenormPreserveFloat16 mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_denorm_preserve_fp32",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the DenormPreserveFloat32 mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_denorm_preserve_fp64",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the DenormPreserveFloat64 mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_denorm_ftz_fp16",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the DenormFlushToZeroFloat16 mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_denorm_ftz_fp32",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the DenormFlushToZeroFloat32 mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_denorm_ftz_fp64",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the DenormFlushToZeroFloat64 mode from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_signed_zero_inf_nan_preserve_fp16",
+            "category": "Features",
+            "description": [
+                "VkDevice supports SignedZeroInfNanPreserve execution mode for 16-bit floating point from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_signed_zero_inf_nan_preserve_fp32",
+            "category": "Features",
+            "description": [
+                "VkDevice supports SignedZeroInfNanPreserve execution mode for 32-bit floating point from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "supports_signed_zero_inf_nan_preserve_fp64",
+            "category": "Features",
+            "description": [
+                "VkDevice supports SignedZeroInfNanPreserve execution mode for 64-bit floating point from VK_KHR_shader_float_controls extension"
+            ],
+            "issue": "https://anglebug.com/360031000"
         }
     ]
 }

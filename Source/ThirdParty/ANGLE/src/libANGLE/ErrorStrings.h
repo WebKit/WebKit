@@ -199,6 +199,7 @@ MSG kFramebufferIncompleteSurfaceless = "Framebuffer is incomplete: Framebuffer 
 MSG kFramebufferIncompleteUnsupportedMissmatchedDimensions = "Framebuffer is incomplete: Mismatched attachment sizes are unsupported.";
 MSG kFramebufferIncompleteUnsupportedNonUniqueAttachments = "Framebuffer is incomplete: Non-unique attachments are unsupported.";
 MSG kFramebufferIncompleteUnsupportedSeparateDepthStencilBuffers = "Framebuffer is incomplete: Separate depth and stencil buffers are unsupported.";
+MSG kFramebufferIncompleteUnsupportedSeparateDepthStencilBuffersCombinedFormat = "Framebuffer is incomplete: Combined depth/stencil formats cannot be used with separate depth and stencil buffers.";
 MSG kFramebufferIncompleteWebGLDepthStencilInconsistant = "Framebuffer is incomplete: WebGL depth stencil state is inconsistent.";
 MSG kFramebufferTextureInvalidLayer = "Layer invalid for framebuffer texture attachment.";
 MSG kFramebufferTextureInvalidMipLevel = "Mip level invalid for framebuffer texture attachment.";

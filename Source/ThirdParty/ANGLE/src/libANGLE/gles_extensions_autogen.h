@@ -413,6 +413,9 @@ struct Extensions
     // GL_EXT_semaphore_fd
     bool semaphoreFdEXT = false;
 
+    // GL_EXT_separate_depth_stencil
+    bool separateDepthStencilEXT = false;
+
     // GL_EXT_separate_shader_objects
     bool separateShaderObjectsEXT = false;
 

@@ -30,6 +30,8 @@ declare_args() {
 
   # Enable Desktop GL frontend support.
   angle_enable_gl_desktop_frontend = false
+
+  build_angle_end2end_tests_aosp = false
 }
 
 declare_args() {
@@ -544,7 +546,7 @@ template("angle_static_library") {
   }
 }
 
-if (angle_standalone || build_with_chromium) {
+if (angle_standalone || build_with_chromium || build_angle_end2end_tests_aosp) {
   template("angle_test") {
     test(target_name) {
       forward_variables_from(invoker,
@@ -575,13 +577,15 @@ if (angle_standalone || build_with_chromium) {
                       "$angle_root:angle_common",
                       "$angle_root:includes",
                       "$angle_root/src/tests:angle_test_expectations",
-                      "$angle_root/third_party/rapidjson:rapidjson",
                       "$angle_root/util:angle_test_utils",
                       "//testing/gmock",
                       "//testing/gtest",
                       "//third_party/googletest:gmock",
                       "//third_party/googletest:gtest",
                     ]
+      if (angle_has_rapidjson) {
+        public_deps += [ "$angle_root/third_party/rapidjson:rapidjson" ]
+      }
 
       data = invoker.data + [
                "$angle_root/src/tests/py_utils/android_helper.py",
@@ -591,11 +595,13 @@ if (angle_standalone || build_with_chromium) {
                "//testing/xvfb.py",
              ]
 
-      sources += [
-        "$angle_root/src/tests/test_utils/runner/HistogramWriter.h",
-        "$angle_root/src/tests/test_utils/runner/TestSuite.cpp",
-        "$angle_root/src/tests/test_utils/runner/TestSuite.h",
-      ]
+      if (angle_has_rapidjson) {
+        sources += [
+          "$angle_root/src/tests/test_utils/runner/HistogramWriter.h",
+          "$angle_root/src/tests/test_utils/runner/TestSuite.cpp",
+          "$angle_root/src/tests/test_utils/runner/TestSuite.h",
+        ]
+      }
 
       if (angle_has_histograms) {
         sources +=

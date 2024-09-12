@@ -78,6 +78,11 @@ function generate_Android_bp_file() {
 
             # rapidJSON is used for ANGLE's frame capture (among other things), which is unnecessary for AOSP builds.
             "angle_has_rapidjson = false"
+
+            # end2end tests
+            "build_angle_end2end_tests_aosp = true"
+            "build_angle_trace_tests = false"
+            "angle_test_enable_system_egl = true"
         )
 
         if [[ "$1" == "--enableApiTrace" ]]; then
@@ -182,7 +187,8 @@ unsupported_third_party_deps=(
    "third_party/android_build_tools"
    "third_party/android_sdk"
    "third_party/android_toolchain"
-   "third_party/jdk"
+   "third_party/jdk/current"  # subdirs only to keep third_party/jdk/BUILD.gn (not pulled by gclient as it comes from ANGLE repo)
+   "third_party/jdk/extras"
    "third_party/llvm-build"
    "third_party/rust-toolchain"
    "third_party/zlib"  # Replaced by Android's zlib

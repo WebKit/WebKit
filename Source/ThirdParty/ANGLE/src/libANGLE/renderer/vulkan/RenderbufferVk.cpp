@@ -319,7 +319,7 @@ void RenderbufferVk::releaseImage(ContextVk *contextVk)
     }
     else
     {
-        mRenderTarget.release(contextVk);
+        mRenderTarget.releaseImageAndViews(contextVk);
         mImageViews.release(renderer, mImage->getResourceUse());
         mMultisampledImageViews.release(renderer, mImage->getResourceUse());
     }

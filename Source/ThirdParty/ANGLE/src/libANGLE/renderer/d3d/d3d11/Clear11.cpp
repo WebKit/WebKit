@@ -22,12 +22,10 @@
 #include "libANGLE/trace.h"
 
 // Precompiled shaders
-#include "libANGLE/renderer/d3d/d3d11/shaders/compiled/clear11_fl9vs.h"
 #include "libANGLE/renderer/d3d/d3d11/shaders/compiled/clear11multiviewgs.h"
 #include "libANGLE/renderer/d3d/d3d11/shaders/compiled/clear11multiviewvs.h"
 #include "libANGLE/renderer/d3d/d3d11/shaders/compiled/clear11vs.h"
 #include "libANGLE/renderer/d3d/d3d11/shaders/compiled/cleardepth11ps.h"
-#include "libANGLE/renderer/d3d/d3d11/shaders/compiled/clearfloat11_fl9ps.h"
 #include "libANGLE/renderer/d3d/d3d11/shaders/compiled/clearfloat11ps1.h"
 #include "libANGLE/renderer/d3d/d3d11/shaders/compiled/clearfloat11ps2.h"
 #include "libANGLE/renderer/d3d/d3d11/shaders/compiled/clearfloat11ps3.h"
@@ -112,10 +110,7 @@ bool UpdateDataCache(RtvDsvClearInfo<T> *dataCache,
                                          "Clear11 PS " ANGLE_STRINGIFY(Index))
 
 Clear11::ShaderManager::ShaderManager()
-    : mIl9(),
-      mVs9(g_VS_Clear_FL9, ArraySize(g_VS_Clear_FL9), "Clear11 VS FL9"),
-      mPsFloat9(g_PS_ClearFloat_FL9, ArraySize(g_PS_ClearFloat_FL9), "Clear11 PS FloatFL9"),
-      mVs(g_VS_Clear, ArraySize(g_VS_Clear), "Clear11 VS"),
+    : mVs(g_VS_Clear, ArraySize(g_VS_Clear), "Clear11 VS"),
       mVsMultiview(g_VS_Multiview_Clear, ArraySize(g_VS_Multiview_Clear), "Clear11 VS Multiview"),
       mGsMultiview(g_GS_Multiview_Clear, ArraySize(g_GS_Multiview_Clear), "Clear11 GS Multiview"),
       mPsDepth(g_PS_ClearDepth, ArraySize(g_PS_ClearDepth), "Clear11 PS Depth"),
@@ -142,31 +137,6 @@ angle::Result Clear11::ShaderManager::getShadersAndLayout(const gl::Context *con
                                                           const d3d11::PixelShader **ps)
 {
     Context11 *context11 = GetImplAs<Context11>(context);
-
-    if (renderer->getRenderer11DeviceCaps().featureLevel <= D3D_FEATURE_LEVEL_9_3)
-    {
-        ASSERT(clearType == GL_FLOAT);
-
-        ANGLE_TRY(mVs9.resolve(context11, renderer));
-        ANGLE_TRY(mPsFloat9.resolve(context11, renderer));
-
-        if (!mIl9.valid())
-        {
-            const D3D11_INPUT_ELEMENT_DESC ilDesc[] = {
-                {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}};
-
-            InputElementArray ilDescArray(ilDesc);
-            ShaderData vertexShader(g_VS_Clear_FL9);
-
-            ANGLE_TRY(renderer->allocateResource(context11, ilDescArray, &vertexShader, &mIl9));
-        }
-
-        *vs = &mVs9.getObj();
-        *gs = nullptr;
-        *il = &mIl9;
-        *ps = &mPsFloat9.getObj();
-        return angle::Result::Continue;
-    }
 
     if (!hasLayeredLayout)
     {

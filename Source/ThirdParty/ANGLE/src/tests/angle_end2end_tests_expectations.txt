@@ -163,6 +163,15 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 42266128 LINUX INTEL OPENGL : CopyTexImageTest.CopyTexImageMesaYFlipPartial/* = SKIP
 342316794 LINUX INTEL VULKAN : GLSLTest_ES31.TernaryOnStructsInDifferentBlockStorages/* = SKIP
 347282472 LINUX NVIDIA OPENGL : CopyTextureTest.CopyOutsideMipmap/* = SKIP
+// New failures when upgrading to Ubuntu 22/newer driver.
+362545033 LINUX NVIDIA VULKAN : EGLBufferAgeTest.SingleBuffer/* = SKIP
+362545033 LINUX NVIDIA VULKAN : GLSLTest.NestedPowStatements/* = SKIP
+362545033 LINUX NVIDIA VULKAN : VulkanPerformanceCounterTest.PipelineCacheIsRestoredWithProgramBinary/* = SKIP
+362545033 LINUX NVIDIA VULKAN : VulkanPerformanceCounterTest.PipelineCacheIsRestoredWithProgramBinaryTwice/* = SKIP
+362545033 LINUX NVIDIA VULKAN : VulkanPerformanceCounterTest.PipelineCacheIsWarmedUpAtLinkTime/* = SKIP
+362545033 LINUX NVIDIA VULKAN : VulkanPerformanceCounterTest_SingleBuffer.SwapBuffersAfterFlushIgnored/* = SKIP
+362545033 LINUX NVIDIA OPENGL : PointSpriteTest.TrianglesNotTreatedAsPointSprites/* = SKIP
+362545033 LINUX NVIDIA OPENGL : TextureCubeTestES3.SpecifyAndSampleFromBaseLevel1/* = SKIP
 
 // Nvidia
 42264645 NVIDIA OPENGL : GLSLTestLoops.DoWhileContinue/* = SKIP
@@ -369,8 +378,6 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 40644761 MAC METAL NVIDIA : OcclusionQueriesTest.CopyNotCounted/* = SKIP
 40644783 MAC METAL NVIDIA : OcclusionQueriesTestES3.BlitNotCounted/* = SKIP
 
-40644831 MAC METAL AMD : RobustResourceInitTest.SurfaceInitializedAfterSwap/* = SKIP
-
 40644762 MAC METAL AMD : SRGBTextureTestES3.GenerateMipmaps/* = SKIP
 
 40644833 MAC METAL NVIDIA : Texture2DBaseMaxTestES3.Fuzz545ImmutableTexRenderFeedback/* = SKIP
@@ -492,6 +499,7 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 42264513 PIXEL4ORXL GLES : MipmapTest.TextureCubeRenderToLevelZero/* = SKIP
 42264513 PIXEL4ORXL GLES : PbufferTest.ClearAndBindTexImageSrgb/* = SKIP
 42264513 PIXEL4ORXL GLES : ReadPixelsPBOTest.ExistingDataPreserved/* = SKIP
+42264981 PIXEL4ORXL GLES : RobustResourceInitTestES3.CheckDefaultDepthStencilRenderbufferIsCleared/* = SKIP
 42264981 PIXEL4ORXL GLES : RobustResourceInitTestES3.CheckDepthStencilRenderbufferIsCleared/* = SKIP
 42264981 PIXEL4ORXL GLES : RobustResourceInitTestES3.CheckMultisampleDepthStencilRenderbufferIsCleared/* = SKIP
 42264513 PIXEL4ORXL GLES : SimpleStateChangeTestES31.ClearThenSampleWithCompute/* = SKIP

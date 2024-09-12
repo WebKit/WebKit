@@ -62,9 +62,6 @@ class Clear11 : angle::NonCopyable
       private:
         constexpr static size_t kNumShaders = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT;
 
-        d3d11::InputLayout mIl9;
-        d3d11::LazyShader<ID3D11VertexShader> mVs9;
-        d3d11::LazyShader<ID3D11PixelShader> mPsFloat9;
         d3d11::LazyShader<ID3D11VertexShader> mVs;
         d3d11::LazyShader<ID3D11VertexShader> mVsMultiview;
         d3d11::LazyShader<ID3D11GeometryShader> mGsMultiview;

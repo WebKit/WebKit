@@ -2400,6 +2400,35 @@ TEST_P(RobustResourceInitTestES3, CheckDepthStencilRenderbufferIsCleared)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that default framebuffer depth and stencil are cleared to values that
+// are consistent with non-default framebuffer clear values. Depth 1.0, stencil 0.0.
+TEST_P(RobustResourceInitTestES3, CheckDefaultDepthStencilRenderbufferIsCleared)
+{
+    ANGLE_SKIP_TEST_IF(!hasRobustSurfaceInit());
+
+    // Render a quad at Z = 1.0 with depth test on and depth function set to GL_EQUAL.
+    // If the depth buffer is not cleared to 1.0 this will fail
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_EQUAL);
+
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 1.0f, 1.0f, true);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
+
+    // Render with stencil test on and stencil function set to GL_EQUAL
+    // If the stencil is not zero this will fail.
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    glStencilFunc(GL_EQUAL, 0, 0xFF);
+
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 1.0f, 1.0f, true);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::red);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 TEST_P(RobustResourceInitTestES3, CheckMultisampleDepthStencilRenderbufferIsCleared)
 {
     ANGLE_SKIP_TEST_IF(!hasRobustSurfaceInit());

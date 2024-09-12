@@ -197,6 +197,8 @@ void OcclusionQueryPool::prepareRenderPassVisibilityPoolBuffer(ContextMtl *conte
         return;
     }
 
+    mUsed = false;
+
     // If the current visibility pool buffer was used before,
     // ensure that it does not contain previous results.
     auto blitEncoder = contextMtl->getBlitCommandEncoderWithoutEndingRenderEncoder();

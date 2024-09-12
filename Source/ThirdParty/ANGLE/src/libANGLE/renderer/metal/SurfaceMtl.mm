@@ -254,11 +254,6 @@ angle::Result SurfaceMtl::initializeContents(const gl::Context *context,
 {
     ASSERT(mColorTexture);
 
-    if (mContentInitialized)
-    {
-        return angle::Result::Continue;
-    }
-
     ContextMtl *contextMtl = mtl::GetImpl(context);
 
     // Use loadAction=clear
@@ -269,17 +264,26 @@ angle::Result SurfaceMtl::initializeContents(const gl::Context *context,
     {
         case GL_BACK:
         {
+            if (mColorTextureInitialized)
+            {
+                return angle::Result::Continue;
+            }
             rpDesc.numColorAttachments = 1;
             mColorRenderTarget.toRenderPassAttachmentDesc(&rpDesc.colorAttachments[0]);
             rpDesc.colorAttachments[0].loadAction = MTLLoadActionClear;
             MTLClearColor black                   = {};
             rpDesc.colorAttachments[0].clearColor =
                 mtl::EmulatedAlphaClearColor(black, mColorTexture->getColorWritableMask());
+            mColorTextureInitialized = true;
             break;
         }
         case GL_DEPTH:
         case GL_STENCIL:
         {
+            if (mDepthStencilTexturesInitialized)
+            {
+                return angle::Result::Continue;
+            }
             if (mDepthTexture)
             {
                 mDepthRenderTarget.toRenderPassAttachmentDesc(&rpDesc.depthAttachment);
@@ -290,6 +294,7 @@ angle::Result SurfaceMtl::initializeContents(const gl::Context *context,
                 mStencilRenderTarget.toRenderPassAttachmentDesc(&rpDesc.stencilAttachment);
                 rpDesc.stencilAttachment.loadAction = MTLLoadActionClear;
             }
+            mDepthStencilTexturesInitialized = true;
             break;
         }
         default:
@@ -298,7 +303,6 @@ angle::Result SurfaceMtl::initializeContents(const gl::Context *context,
     }
     mtl::RenderCommandEncoder *encoder = contextMtl->getRenderPassCommandEncoder(rpDesc);
     encoder->setStoreAction(MTLStoreActionStore);
-    mContentInitialized = true;
 
     return angle::Result::Continue;
 }
@@ -374,6 +378,8 @@ angle::Result SurfaceMtl::ensureCompanionTexturesSizeCorrect(const gl::Context *
                                         /** renderTargetOnly */ false, &mDepthTexture));
 
         mDepthRenderTarget.set(mDepthTexture, mtl::kZeroNativeMipLevel, 0, mDepthFormat);
+        // Robust resource init: should initialize depth to 1.0.
+        mDepthStencilTexturesInitialized = false;
     }
 
     if (mStencilFormat.valid() && (!mStencilTexture || mStencilTexture->sizeAt0() != size))
@@ -390,6 +396,8 @@ angle::Result SurfaceMtl::ensureCompanionTexturesSizeCorrect(const gl::Context *
         }
 
         mStencilRenderTarget.set(mStencilTexture, mtl::kZeroNativeMipLevel, 0, mStencilFormat);
+        // Robust resource init: should initialize stencil to zero.
+        mDepthStencilTexturesInitialized = false;
     }
 
     return angle::Result::Continue;
@@ -471,7 +479,7 @@ egl::Error WindowSurfaceMtl::initialize(const egl::Display *display)
         mMetalLayer.get().pixelFormat     = mColorFormat.metalFormat;
         mMetalLayer.get().framebufferOnly = NO;  // Support blitting and glReadPixels
 
-#if ANGLE_PLATFORM_MACOS || ANGLE_PLATFORM_MACCATALYST
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         // Autoresize with parent layer.
         mMetalLayer.get().autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
 #endif
@@ -498,7 +506,7 @@ egl::Error WindowSurfaceMtl::swap(const gl::Context *context)
 
 void WindowSurfaceMtl::setSwapInterval(EGLint interval)
 {
-#if ANGLE_PLATFORM_MACOS || ANGLE_PLATFORM_MACCATALYST
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
     mMetalLayer.get().displaySyncEnabled = interval != 0;
 #endif
 }
@@ -616,7 +624,7 @@ bool WindowSurfaceMtl::checkIfLayerResized(const gl::Context *context)
             // Parent layer's content scale has changed, update Metal layer's scale factor.
             mMetalLayer.get().contentsScale = mLayer.contentsScale;
         }
-#if !ANGLE_PLATFORM_MACOS && !ANGLE_PLATFORM_MACCATALYST
+#if !TARGET_OS_OSX && !TARGET_OS_MACCATALYST
         // Only macOS supports autoresizing mask. Thus, the metal layer has to be manually
         // updated.
         if (!CGRectEqualToRect(mMetalLayer.get().bounds, mLayer.bounds))
@@ -671,7 +679,6 @@ angle::Result WindowSurfaceMtl::obtainNextDrawable(const gl::Context *context)
             mMetalLayer.get().allowsNextDrawableTimeout = NO;
             mCurrentDrawable.retainAssign([mMetalLayer nextDrawable]);
             mMetalLayer.get().allowsNextDrawableTimeout = YES;
-            mContentInitialized                         = false;
         }
 
         if (!mColorTexture)
@@ -685,6 +692,7 @@ angle::Result WindowSurfaceMtl::obtainNextDrawable(const gl::Context *context)
         {
             mColorTexture->set(mCurrentDrawable.get().texture);
         }
+        mColorTextureInitialized = false;
 
         ANGLE_MTL_LOG("Current metal drawable size=%d,%d", mColorTexture->width(mtl::MipmapNativeLevel(0)),  mColorTexture->height(mtl::MipmapNativeLevel(0)));
 
@@ -717,7 +725,11 @@ angle::Result WindowSurfaceMtl::swapImpl(const gl::Context *context)
         mColorTexture->set(nil);
         mCurrentDrawable = nil;
     }
-
+    // Robust resource init: should initialize stencil zero and depth to 1.0 after swap.
+    if (mDepthTexture || mStencilTexture)
+    {
+        mDepthStencilTexturesInitialized = false;
+    }
     return angle::Result::Continue;
 }
 
