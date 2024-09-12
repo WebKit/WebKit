@@ -64,9 +64,6 @@ public:
 
     static JSAsyncFromSyncIterator* createWithInitialValues(VM&, Structure*);
 
-    JSObject* syncIterator() const { return jsCast<JSObject*>(internalField(Field::SyncIterator).get()); }
-    JSObject* nextMethod() const { return jsCast<JSObject*>(internalField(Field::NextMethod).get()); }
-
     void setSyncIterator(VM& vm, JSObject* syncIterator) { internalField(Field::SyncIterator).set(vm, this, syncIterator); }
     void setNextMethod(VM& vm, JSObject* nextMethod) { internalField(Field::NextMethod).set(vm, this, nextMethod); }
 
