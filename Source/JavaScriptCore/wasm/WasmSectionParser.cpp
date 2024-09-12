@@ -1007,7 +1007,7 @@ auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition
         }
         // Checking subtyping requirements has to be deferred until we construct projections in case recursive references show up in the type.
         for (uint32_t i = 0; i < typeCount; ++i) {
-            const TypeDefinition& def = m_info->typeSignatures[i].get().unroll();
+            const TypeDefinition& def = TypeInformation::get(types[i]).replacePlaceholders(recursionGroup->index());
             if (def.is<Subtype>())
                 WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(def));
         }
