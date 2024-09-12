@@ -32,6 +32,7 @@
 OBJC_CLASS AVOutputContext;
 #endif
 OBJC_CLASS NSSomeFoundationType;
+OBJC_CLASS class NSSomeOtherFoundationType;
 #if ENABLE(DATA_DETECTION)
 OBJC_CLASS DDScannerResult;
 #endif
@@ -88,6 +89,24 @@ private:
     RetainPtr<NSArray> m_OptionalArrayKey;
     RetainPtr<NSDictionary> m_DictionaryKey;
     RetainPtr<NSDictionary> m_OptionalDictionaryKey;
+};
+
+class CoreIPCclass NSSomeOtherFoundationType {
+public:
+    CoreIPCclass NSSomeOtherFoundationType(class NSSomeOtherFoundationType *);
+    CoreIPCclass NSSomeOtherFoundationType(const RetainPtr<class NSSomeOtherFoundationType>& object)
+        : CoreIPCclass NSSomeOtherFoundationType(object.get()) { }
+
+    RetainPtr<id> toID() const;
+
+private:
+    friend struct IPC::ArgumentCoder<CoreIPCclass NSSomeOtherFoundationType, void>;
+
+    CoreIPCclass NSSomeOtherFoundationType(
+        RetainPtr<NSDictionary>&&
+    );
+
+    RetainPtr<NSDictionary> m_DictionaryKey;
 };
 
 #if ENABLE(DATA_DETECTION)
