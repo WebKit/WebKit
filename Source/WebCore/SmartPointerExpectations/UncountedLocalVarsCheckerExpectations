@@ -318,6 +318,7 @@ JSStorage.cpp
 JSStringCallback.cpp
 JSStyleMedia.cpp
 JSStylePropertyMap.cpp
+JSStylePropertyMapReadOnly.h
 JSStyleSheet.cpp
 JSStyleSheet.h
 JSStyleSheetList.cpp
@@ -421,7 +422,6 @@ Modules/cache/DOMCache.cpp
 Modules/cache/DOMCacheStorage.cpp
 Modules/cookie-store/CookieStore.cpp
 Modules/encryptedmedia/CDM.cpp
-Modules/encryptedmedia/MediaKeySession.cpp
 Modules/encryptedmedia/MediaKeySystemRequest.cpp
 Modules/fetch/FetchBody.cpp
 Modules/fetch/FetchRequest.cpp
@@ -462,7 +462,6 @@ Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp
 Modules/model-element/HTMLModelElement.cpp
 Modules/notifications/Notification.cpp
 Modules/paymentrequest/PaymentRequest.cpp
-Modules/permissions/PermissionStatus.cpp
 Modules/permissions/Permissions.cpp
 Modules/pictureinpicture/DocumentPictureInPicture.cpp
 Modules/speech/SpeechRecognition.cpp
@@ -494,7 +493,6 @@ Modules/webaudio/PannerNode.cpp
 Modules/webaudio/ScriptProcessorNode.cpp
 Modules/webaudio/StereoPannerNode.cpp
 Modules/webaudio/WaveShaperDSPKernel.cpp
-Modules/webaudio/WaveShaperNode.cpp
 Modules/webauthn/AuthenticatorCoordinator.cpp
 Modules/webauthn/PublicKeyCredential.cpp
 Modules/webcodecs/WebCodecsAudioData.cpp
@@ -636,6 +634,7 @@ bindings/js/JSPluginElementFunctions.cpp
 bindings/js/JSPopStateEventCustom.cpp
 bindings/js/JSRTCRtpSFrameTransformCustom.cpp
 bindings/js/JSResizeObserverCustom.cpp
+bindings/js/JSStylePropertyMapReadOnlyCustom.cpp
 bindings/js/JSStyleSheetCustom.h
 bindings/js/JSSubscriberCustom.cpp
 bindings/js/JSTextTrackCueCustom.cpp
@@ -743,12 +742,9 @@ dom/DocumentFragment.cpp
 dom/DocumentStorageAccess.cpp
 dom/Element.cpp
 dom/ElementAndTextDescendantIterator.h
-dom/ElementInlines.h
 dom/ElementIteratorInlines.h
 dom/ElementTextDirection.cpp
 dom/ElementTraversal.h
-dom/EventContext.cpp
-dom/EventDispatcher.cpp
 dom/EventLoop.cpp
 dom/EventLoop.h
 dom/EventPath.cpp
@@ -763,11 +759,9 @@ dom/MessageEvent.cpp
 dom/MessagePort.cpp
 dom/MouseRelatedEvent.cpp
 dom/Node.cpp
-dom/Node.h
 dom/NodeTraversal.cpp
 dom/NodeTraversal.h
 dom/Position.cpp
-dom/Position.h
 dom/QualifiedNameCache.cpp
 dom/RadioButtonGroups.cpp
 dom/Range.cpp
@@ -794,7 +788,6 @@ domjit/JSDocumentDOMJIT.cpp
 editing/ApplyStyleCommand.cpp
 editing/ChangeListTypeCommand.cpp
 editing/CompositeEditCommand.cpp
-editing/DeleteSelectionCommand.cpp
 editing/Editing.cpp
 editing/EditingStyle.cpp
 editing/Editor.cpp
@@ -808,7 +801,6 @@ editing/MergeIdenticalElementsCommand.cpp
 editing/RemoveNodePreservingChildrenCommand.cpp
 editing/ReplaceSelectionCommand.cpp
 editing/SplitElementCommand.cpp
-editing/TextCheckingHelper.cpp
 editing/TextManipulationController.cpp
 editing/VisibleSelection.cpp
 editing/VisibleUnits.cpp
@@ -847,7 +839,6 @@ html/HTMLDetailsElement.cpp
 html/HTMLDialogElement.cpp
 html/HTMLDocument.cpp
 html/HTMLElement.cpp
-html/HTMLEmbedElement.cpp
 html/HTMLFieldSetElement.cpp
 html/HTMLFormControlsCollection.cpp
 html/HTMLFormElement.cpp
@@ -868,14 +859,12 @@ html/HTMLSlotElement.cpp
 html/HTMLSourceElement.cpp
 html/HTMLStyleElement.cpp
 html/HTMLSummaryElement.cpp
-html/HTMLTableCellElement.cpp
 html/HTMLTableElement.cpp
 html/HTMLTableRowElement.cpp
 html/HTMLTableRowsCollection.cpp
 html/HTMLTextFormControlElement.cpp
 html/ImageBitmap.cpp
 html/ImageInputType.cpp
-html/InputType.cpp
 html/LazyLoadFrameObserver.cpp
 html/LazyLoadImageObserver.cpp
 html/LinkIconCollector.cpp
@@ -907,7 +896,6 @@ html/canvas/OffscreenCanvasRenderingContext2D.cpp
 html/canvas/WebGL2RenderingContext.cpp
 html/canvas/WebGLDebugShaders.cpp
 html/canvas/WebGLLoseContext.cpp
-html/canvas/WebGLObject.cpp
 html/canvas/WebGLRenderingContextBase.cpp
 html/canvas/WebGLUtilities.h
 html/parser/HTMLConstructionSite.cpp
@@ -923,11 +911,9 @@ html/track/InbandGenericTextTrack.cpp
 html/track/TextTrack.cpp
 html/track/TextTrackCue.cpp
 html/track/TextTrackCueGeneric.cpp
-html/track/TextTrackList.cpp
 html/track/TrackBase.cpp
 html/track/VTTCue.cpp
 html/track/VTTRegion.cpp
-html/track/VideoTrackList.cpp
 inspector/CommandLineAPIHost.cpp
 inspector/DOMPatchSupport.cpp
 inspector/InspectorAuditAccessibilityObject.cpp
@@ -977,10 +963,8 @@ loader/CookieJar.cpp
 loader/DocumentLoader.cpp
 loader/FrameLoader.cpp
 loader/HistoryController.cpp
-loader/ImageLoader.cpp
 loader/MixedContentChecker.cpp
 loader/NavigationAction.cpp
-loader/NavigationDisabler.h
 loader/NavigationScheduler.cpp
 loader/ThreadableLoader.cpp
 loader/WorkerThreadableLoader.cpp
@@ -997,7 +981,6 @@ page/BarProp.cpp
 page/CaptionUserPreferences.cpp
 page/CaptionUserPreferencesMediaAF.cpp
 page/ContextMenuController.cpp
-page/DOMTimer.cpp
 page/DOMWindow.cpp
 page/DebugPageOverlays.cpp
 page/DeviceController.cpp
@@ -1033,7 +1016,6 @@ page/PageGroupLoadDeferrer.cpp
 page/PageOverlayController.cpp
 page/PageSerializer.cpp
 page/Performance.cpp
-page/PerformanceLogging.cpp
 page/PerformanceMark.cpp
 page/PerformanceMonitor.cpp
 page/PerformanceNavigation.cpp
@@ -1092,7 +1074,6 @@ platform/ScrollbarsController.cpp
 platform/SharedBuffer.cpp
 platform/ThreadGlobalData.h
 platform/Timer.cpp
-platform/Widget.cpp
 platform/animation/AcceleratedEffect.cpp
 platform/animation/AcceleratedEffectValues.cpp
 platform/audio/AudioBus.cpp
@@ -1181,11 +1162,9 @@ rendering/MotionPath.cpp
 rendering/ReferencedSVGResources.cpp
 rendering/RenderAttachment.cpp
 rendering/RenderBlock.cpp
-rendering/RenderBlockFlow.cpp
 rendering/RenderBox.cpp
 rendering/RenderCombineText.cpp
 rendering/RenderCounter.cpp
-rendering/RenderDetailsMarker.cpp
 rendering/RenderElement.cpp
 rendering/RenderEmbeddedObject.cpp
 rendering/RenderFileUploadControl.cpp
@@ -1201,14 +1180,12 @@ rendering/RenderListBox.cpp
 rendering/RenderListItem.cpp
 rendering/RenderMarquee.cpp
 rendering/RenderMenuList.cpp
-rendering/RenderMeter.cpp
 rendering/RenderObject.cpp
 rendering/RenderProgress.cpp
 rendering/RenderQuote.cpp
 rendering/RenderReplaced.cpp
 rendering/RenderSlider.cpp
 rendering/RenderTableCell.cpp
-rendering/RenderTableCol.cpp
 rendering/RenderText.cpp
 rendering/RenderTextControl.cpp
 rendering/RenderTextControlSingleLine.cpp
@@ -1234,12 +1211,10 @@ rendering/style/StyleGradientImage.cpp
 rendering/style/StylePaintImage.cpp
 rendering/svg/RenderSVGPath.cpp
 rendering/svg/RenderSVGResourcePattern.cpp
-rendering/svg/RenderSVGRoot.cpp
 rendering/svg/RenderSVGShape.cpp
 rendering/svg/RenderSVGTransformableContainer.cpp
 rendering/svg/SVGRenderSupport.cpp
 rendering/svg/SVGRenderTreeAsText.cpp
-rendering/svg/SVGRenderingContext.cpp
 rendering/svg/SVGTextBoxPainter.cpp
 rendering/svg/SVGTextChunk.cpp
 rendering/svg/legacy/LegacyRenderSVGModelObject.cpp
@@ -1281,7 +1256,6 @@ style/StyleBuilder.cpp
 style/StyleBuilderConverter.h
 style/StyleBuilderCustom.h
 style/StyleBuilderState.cpp
-style/StyleFontSizeFunctions.cpp
 style/StyleInvalidationFunctions.h
 style/StyleInvalidator.cpp
 style/StylePendingResources.cpp
@@ -1307,18 +1281,14 @@ svg/SVGFELightElement.cpp
 svg/SVGFEMergeElement.cpp
 svg/SVGFontFaceSrcElement.cpp
 svg/SVGGradientElement.cpp
-svg/SVGLengthContext.cpp
 svg/SVGLinearGradientElement.cpp
 svg/SVGLocatable.cpp
 svg/SVGMPathElement.cpp
 svg/SVGMaskElement.cpp
 svg/SVGSVGElement.cpp
 svg/SVGSwitchElement.cpp
-svg/SVGTextContentElement.cpp
-svg/SVGTextPositioningElement.cpp
 svg/SVGToOTFFontConversion.cpp
 svg/SVGUseElement.cpp
-svg/animation/SVGSMILElement.cpp
 svg/graphics/SVGImage.cpp
 svg/graphics/SVGImageCache.cpp
 svg/graphics/filters/SVGFilter.cpp

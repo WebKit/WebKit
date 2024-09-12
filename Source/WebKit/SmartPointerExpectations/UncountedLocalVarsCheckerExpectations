@@ -19,7 +19,6 @@ Shared/API/c/cg/WKImageCG.cpp
 Shared/APIWebArchive.mm
 Shared/Cocoa/APIObject.mm
 Shared/ContextMenuContextData.cpp
-Shared/RemoteLayerTree/RemoteLayerBackingStore.mm
 Shared/WebBackForwardListItem.cpp
 Shared/WebContextMenuItem.cpp
 Shared/WebHitTestResultData.cpp
@@ -76,7 +75,6 @@ UIProcess/WebAuthentication/AuthenticatorManager.cpp
 UIProcess/WebBackForwardCache.cpp
 UIProcess/WebBackForwardCacheEntry.cpp
 UIProcess/WebBackForwardList.cpp
-UIProcess/WebFrameProxy.cpp
 UIProcess/WebFullScreenManagerProxy.cpp
 UIProcess/WebGeolocationManagerProxy.cpp
 UIProcess/WebPageProxy.cpp
