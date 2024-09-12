@@ -293,8 +293,8 @@ void ViewGestureController::SwipeProgressTracker::endAnimation()
 #if !USE(GTK4)
 GRefPtr<GtkStyleContext> ViewGestureController::createStyleContext(const char* name)
 {
-    bool isRTL = m_webPageProxy.userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL;
-    GtkWidget* widget = m_webPageProxy.viewWidget();
+    bool isRTL = m_webPageProxy->userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL;
+    GtkWidget* widget = m_webPageProxy->viewWidget();
 
     GRefPtr<GtkWidgetPath> path = adoptGRef(gtk_widget_path_copy(gtk_widget_get_path(widget)));
 
