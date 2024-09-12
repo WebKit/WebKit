@@ -206,8 +206,9 @@ public:
     ServiceWorkerFetchTask* navigationPreloaderTaskFromFetchIdentifier(WebCore::FetchIdentifier);
     void removeNavigationPreloaderTask(ServiceWorkerFetchTask&);
 
-    WebCore::SWServer* swServer() { return m_swServer.get(); }
-    WebCore::SWServer& ensureSWServer();
+    WebCore::SWServer* swServer() { return m_swServer.get(); } // FIXME: Rename this to swServerIfExists
+    WebCore::SWServer& ensureSWServer(); // FIXME: Rename this to swServer.
+    Ref<WebCore::SWServer> protectedSWServer();
     WebSWOriginStore* swOriginStore() const; // FIXME: Can be private?
     void registerSWServerConnection(WebSWServerConnection&);
     void unregisterSWServerConnection(WebSWServerConnection&);

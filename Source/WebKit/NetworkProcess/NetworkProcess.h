@@ -466,6 +466,7 @@ private:
     void didCreateDownload() override;
     void didDestroyDownload() override;
     IPC::Connection* downloadProxyConnection() override;
+    RefPtr<IPC::Connection> protectedDownloadProxyConnection();
     IPC::Connection* parentProcessConnectionForDownloads() override { return parentProcessConnection(); }
     AuthenticationManager& downloadsAuthenticationManager() override;
 
