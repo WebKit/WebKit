@@ -89,7 +89,7 @@ void WebExtensionContext::storageSet(WebPageProxyIdentifier webPageProxyIdentifi
             return;
         }
 
-        if (size > quoataForStorageType(dataType)) {
+        if (size > quotaForStorageType(dataType)) {
             completionHandler(toWebExtensionError(callingAPIName, nil, @"exceeded storage quota"));
             return;
         }
