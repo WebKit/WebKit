@@ -75,9 +75,8 @@ private:
     explicit History(LocalDOMWindow&);
 
     ExceptionOr<void> stateObjectAdded(RefPtr<SerializedScriptValue>&&, const String& url, NavigationHistoryBehavior);
+    ExceptionOr<void> updateAndCheckStateObjectQuota(const URL&, SerializedScriptValue*, NavigationHistoryBehavior);
     bool stateChanged() const;
-
-    URL urlForState(const String& url);
 
     SerializedScriptValue* stateInternal() const;
     uint32_t totalStateObjectPayloadLimit() const;
