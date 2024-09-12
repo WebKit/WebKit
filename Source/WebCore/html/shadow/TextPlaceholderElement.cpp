@@ -46,7 +46,8 @@ TextPlaceholderElement::TextPlaceholderElement(Document& document, const LayoutS
     setInlineStyleProperty(CSSPropertyDisplay, size.width() ? CSSValueInlineBlock : CSSValueBlock, false);
     setInlineStyleProperty(CSSPropertyVerticalAlign, CSSValueTop, false);
     setInlineStyleProperty(CSSPropertyVisibility, CSSValueHidden, true);
-    setInlineStyleProperty(CSSPropertyWidth, size.width(), CSSUnitType::CSS_PX);
+    if (size.width())
+        setInlineStyleProperty(CSSPropertyWidth, size.width(), CSSUnitType::CSS_PX);
     setInlineStyleProperty(CSSPropertyHeight, size.height(), CSSUnitType::CSS_PX);
 }
 
