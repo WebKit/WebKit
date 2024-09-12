@@ -56,6 +56,8 @@ public:
     const CSSNumericValue& startOffset() const { return m_startOffset.get(); }
     const CSSNumericValue& endOffset() const { return m_endOffset.get(); }
     const ViewTimelineInsets& insets() const { return m_insets; }
+    AnimationTimeline::ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents() override;
+    AnimationTimelinesController* controller() const override;
 
 private:
     explicit ViewTimeline(ViewTimelineOptions&& = { });

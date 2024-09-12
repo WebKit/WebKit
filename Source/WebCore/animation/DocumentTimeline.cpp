@@ -83,15 +83,9 @@ AnimationTimelinesController* DocumentTimeline::controller() const
 
 void DocumentTimeline::detachFromDocument()
 {
-    Ref<DocumentTimeline> protectedThis(*this);
-    if (auto* controller = this->controller())
-        controller->removeTimeline(*this);
+    AnimationTimeline::detachFromDocument();
 
     m_pendingAnimationEvents.clear();
-
-    auto& animationsToRemove = m_animations;
-    while (!animationsToRemove.isEmpty())
-        animationsToRemove.first()->remove();
 
     clearTickScheduleTimer();
     m_document = nullptr;
@@ -107,8 +101,7 @@ Seconds DocumentTimeline::animationInterval() const
 
 void DocumentTimeline::suspendAnimations()
 {
-    for (const auto& animation : m_animations)
-        animation->setSuspended(true);
+    AnimationTimeline::suspendAnimations();
 
     applyPendingAcceleratedAnimations();
 
@@ -117,15 +110,9 @@ void DocumentTimeline::suspendAnimations()
 
 void DocumentTimeline::resumeAnimations()
 {
-    for (const auto& animation : m_animations)
-        animation->setSuspended(false);
+    AnimationTimeline::resumeAnimations();
 
     scheduleAnimationResolution();
-}
-
-bool DocumentTimeline::animationsAreSuspended() const
-{
-    return controller() && controller()->animationsAreSuspended();
 }
 
 unsigned DocumentTimeline::numberOfActiveAnimationsForTesting() const
@@ -189,14 +176,14 @@ bool DocumentTimeline::shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionS
     return !m_animations.isEmpty() || !m_pendingAnimationEvents.isEmpty() || !m_acceleratedAnimationsPendingRunningStateChange.isEmpty();
 }
 
-DocumentTimeline::ShouldUpdateAnimationsAndSendEvents DocumentTimeline::documentWillUpdateAnimationsAndSendEvents()
+AnimationTimeline::ShouldUpdateAnimationsAndSendEvents DocumentTimeline::documentWillUpdateAnimationsAndSendEvents()
 {
     // Updating animations and sending events may invalidate the timing of some animations, so we must set the m_animationResolutionScheduled
     // flag to false prior to running that procedure to allow animation with timing model updates to schedule updates.
     bool wasAnimationResolutionScheduled = std::exchange(m_animationResolutionScheduled, false);
 
     if (!wasAnimationResolutionScheduled || animationsAreSuspended() || !shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
-        return DocumentTimeline::ShouldUpdateAnimationsAndSendEvents::No;
+        return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::No;
 
     m_numberOfAnimationTimelineInvalidationsForTesting++;
 
@@ -205,7 +192,7 @@ DocumentTimeline::ShouldUpdateAnimationsAndSendEvents DocumentTimeline::document
     // this procedure is running should not schedule animation resolution until the event queue has been cleared.
     m_shouldScheduleAnimationResolutionForNewPendingEvents = false;
 
-    return DocumentTimeline::ShouldUpdateAnimationsAndSendEvents::Yes;
+    return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::Yes;
 }
 
 void DocumentTimeline::documentDidUpdateAnimationsAndSendEvents()

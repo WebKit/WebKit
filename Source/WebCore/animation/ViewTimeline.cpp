@@ -124,4 +124,18 @@ Ref<CSSValue> ViewTimeline::toCSSValue(const RenderStyle& style) const
     );
 }
 
+AnimationTimelinesController* ViewTimeline::controller() const
+{
+    if (m_subject)
+        return &m_subject->document().ensureTimelinesController();
+    return nullptr;
+}
+
+AnimationTimeline::ShouldUpdateAnimationsAndSendEvents ViewTimeline::documentWillUpdateAnimationsAndSendEvents()
+{
+    if (m_subject && m_subject->isConnected())
+        return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::Yes;
+    return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::No;
+}
+
 } // namespace WebCore

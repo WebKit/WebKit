@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class AnimationTimelinesController;
 class WebAnimation;
 
 class AnimationTimeline : public RefCounted<AnimationTimeline>, public CanMakeWeakPtr<AnimationTimeline> {
@@ -51,6 +52,17 @@ public:
 
     std::optional<double> bindingsCurrentTime();
     virtual std::optional<Seconds> currentTime() { return m_currentTime; }
+
+    virtual void detachFromDocument();
+
+    enum class ShouldUpdateAnimationsAndSendEvents : bool { No, Yes };
+    virtual ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents() { return ShouldUpdateAnimationsAndSendEvents::No; }
+
+    virtual void suspendAnimations();
+    virtual void resumeAnimations();
+    bool animationsAreSuspended() const;
+
+    virtual AnimationTimelinesController* controller() const { return nullptr; }
 
 protected:
     AnimationTimeline();

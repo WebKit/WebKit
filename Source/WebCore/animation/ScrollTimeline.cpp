@@ -124,4 +124,18 @@ Ref<CSSValue> ScrollTimeline::toCSSValue(const RenderStyle&) const
     return CSSScrollValue::create(CSSPrimitiveValue::create(scroller), CSSPrimitiveValue::create(toCSSValueID(m_axis)));
 }
 
+AnimationTimelinesController* ScrollTimeline::controller() const
+{
+    if (m_source)
+        return &m_source->document().ensureTimelinesController();
+    return nullptr;
+}
+
+AnimationTimeline::ShouldUpdateAnimationsAndSendEvents ScrollTimeline::documentWillUpdateAnimationsAndSendEvents()
+{
+    if (m_source && m_source->isConnected())
+        return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::Yes;
+    return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::No;
+}
+
 } // namespace WebCore

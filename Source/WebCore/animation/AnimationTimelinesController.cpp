@@ -58,14 +58,10 @@ void AnimationTimelinesController::addTimeline(AnimationTimeline& timeline)
 {
     m_timelines.add(timeline);
 
-    auto* documentTimeline = dynamicDowncast<DocumentTimeline>(timeline);
-    if (!documentTimeline)
-        return;
-
     if (m_isSuspended)
-        documentTimeline->suspendAnimations();
+        timeline.suspendAnimations();
     else
-        documentTimeline->resumeAnimations();
+        timeline.resumeAnimations();
 }
 
 void AnimationTimelinesController::removeTimeline(AnimationTimeline& timeline)
@@ -79,10 +75,7 @@ void AnimationTimelinesController::detachFromDocument()
 
     while (!m_timelines.isEmptyIgnoringNullReferences()) {
         auto& timeline = *m_timelines.begin();
-
-        // FIXME: implement this for other timeline types
-        if (RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(timeline))
-            documentTimeline->detachFromDocument();
+        timeline.detachFromDocument();
     }
 }
 
@@ -120,9 +113,8 @@ void AnimationTimelinesController::updateAnimationsAndSendEvents(ReducedResoluti
     Vector<Ref<WebAnimation>> animationsToRemove;
     Vector<Ref<CSSTransition>> completedTransitions;
     for (auto& timeline : protectedTimelines) {
-        RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(timeline);
-        auto shouldUpdateAnimationsAndSendEvents = documentTimeline ? documentTimeline->documentWillUpdateAnimationsAndSendEvents() : DocumentTimeline::ShouldUpdateAnimationsAndSendEvents::Yes;
-        if (shouldUpdateAnimationsAndSendEvents == DocumentTimeline::ShouldUpdateAnimationsAndSendEvents::No)
+        auto shouldUpdateAnimationsAndSendEvents = timeline->documentWillUpdateAnimationsAndSendEvents();
+        if (shouldUpdateAnimationsAndSendEvents == AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::No)
             continue;
 
         timelinesToUpdate.append(timeline.copyRef());
@@ -252,10 +244,8 @@ void AnimationTimelinesController::suspendAnimations()
     if (!m_cachedCurrentTime)
         m_cachedCurrentTime = liveCurrentTime();
 
-    for (auto& timeline : m_timelines) {
-        if (RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(timeline))
-            documentTimeline->suspendAnimations();
-    }
+    for (auto& timeline : m_timelines)
+        timeline.suspendAnimations();
 
     m_isSuspended = true;
 }
@@ -269,10 +259,8 @@ void AnimationTimelinesController::resumeAnimations()
 
     m_isSuspended = false;
 
-    for (auto& timeline : m_timelines) {
-        if (RefPtr documentTimeline = dynamicDowncast<DocumentTimeline>(timeline))
-            documentTimeline->resumeAnimations();
-    }
+    for (auto& timeline : m_timelines)
+        timeline.resumeAnimations();
 }
 
 ReducedResolutionSeconds AnimationTimelinesController::liveCurrentTime() const
