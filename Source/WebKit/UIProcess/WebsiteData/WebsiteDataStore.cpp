@@ -1891,14 +1891,32 @@ bool WebsiteDataStore::isBlobRegistryPartitioningEnabled() const
     });
 }
 
-void WebsiteDataStore::updateBlobRegistryPartitioningState()
+bool WebsiteDataStore::isOptInCookiePartitioningEnabled() const
+{
+    return WTF::anyOf(m_processes, [] (const WebProcessProxy& process) {
+        return WTF::anyOf(process.pages(), [](auto& page) {
+            return page->preferences().optInPartitionedCookiesEnabled();
+        });
+    });
+}
+
+void WebsiteDataStore::propagateSettingUpdatesToNetworkProcess()
 {
     auto enabled = isBlobRegistryPartitioningEnabled();
     if (m_isBlobRegistryPartitioningEnabled == enabled)
         return;
     if (RefPtr networkProcess = networkProcessIfExists()) {
         m_isBlobRegistryPartitioningEnabled = enabled;
+        // FIXME: Send these updates in a single message.
         networkProcess->send(Messages::NetworkProcess::SetBlobRegistryTopOriginPartitioningEnabled(sessionID(), enabled), 0);
+    }
+
+    enabled = isOptInCookiePartitioningEnabled();
+    if (m_isOptInCookiePartitioningEnabled == enabled)
+        return;
+    if (RefPtr networkProcess = networkProcessIfExists()) {
+        m_isOptInCookiePartitioningEnabled = enabled;
+        networkProcess->send(Messages::NetworkProcess::SetOptInCookiePartitioningEnabled(sessionID(), enabled), 0);
     }
 }
 

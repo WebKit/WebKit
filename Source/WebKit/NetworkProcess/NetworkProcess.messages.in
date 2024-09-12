@@ -161,6 +161,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
     SetBlobRegistryTopOriginPartitioningEnabled(PAL::SessionID sessionID, bool enabled)
     SetShouldSendPrivateTokenIPCForTesting(PAL::SessionID sessionID, bool enabled)
+    SetOptInCookiePartitioningEnabled(PAL::SessionID sessionID, bool enabled)
 
     SetSessionIsControlledByAutomation(PAL::SessionID sessionID, bool controlled);
 

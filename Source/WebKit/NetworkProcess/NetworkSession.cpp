@@ -514,6 +514,13 @@ void NetworkSession::setShouldSendPrivateTokenIPCForTesting(bool enabled)
     m_shouldSendPrivateTokenIPCForTesting = enabled;
 }
 
+void NetworkSession::setOptInCookiePartitioningEnabled(bool enabled)
+{
+    RELEASE_LOG(Storage, "NetworkSession::setOptInCookiePartitioningEnabled as %" PUBLIC_LOG_STRING " for session %" PRIu64, enabled ? "enabled" : "disabled", m_sessionID.toUInt64());
+    if (auto* storageSession = networkStorageSession())
+        storageSession->setOptInCookiePartitioningEnabled(enabled);
+}
+
 void NetworkSession::allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo& certificateInfo)
 {
     privateClickMeasurement().allowTLSCertificateChainForLocalPCMTesting(certificateInfo);

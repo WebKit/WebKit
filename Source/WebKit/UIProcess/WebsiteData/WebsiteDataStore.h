@@ -184,7 +184,8 @@ public:
     void didAllowPrivateTokenUsageByThirdPartyForTesting(bool wasAllowed, URL&& resourceURL);
 
     bool isBlobRegistryPartitioningEnabled() const;
-    void updateBlobRegistryPartitioningState();
+    bool isOptInCookiePartitioningEnabled() const;
+    void propagateSettingUpdatesToNetworkProcess();
 
 #if PLATFORM(IOS_FAMILY)
     String resolvedCookieStorageDirectory();
@@ -608,6 +609,7 @@ private:
 
     bool m_inspectionForServiceWorkersAllowed { true };
     bool m_isBlobRegistryPartitioningEnabled { false };
+    bool m_isOptInCookiePartitioningEnabled { false };
 
     HashMap<WebCore::RegistrableDomain, RestrictedOpenerType> m_restrictedOpenerTypesForTesting;
 
