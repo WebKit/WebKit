@@ -58,7 +58,7 @@ PlayStationWebView::PlayStationWebView(struct wpe_view_backend* backend, const A
     wpe_view_backend_initialize(m_backend);
 
     auto& openerInfo = m_page->configuration().openerInfo();
-    m_page->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()));
+    m_page->initializeWebPage(openerInfo ? openerInfo->site : WebCore::Site(aboutBlankURL()));
 }
 
 #else
