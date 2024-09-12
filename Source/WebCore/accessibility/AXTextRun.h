@@ -28,6 +28,7 @@
 #if ENABLE(AX_THREAD_TEXT_APIS)
 
 #include <wtf/text/MakeString.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -66,7 +67,7 @@ struct AXTextRun {
     String debugDescription(void* containingBlock) const
     {
         AXTextRunLineID lineID = { containingBlock, lineIndex };
-        return makeString(lineID.debugDescription(), ": |", makeStringByReplacingAll(text, '\n', "{newline}"_s), "|(len ", text.length(), ")");
+        return makeString(lineID.debugDescription(), ": |"_s, makeStringByReplacingAll(text, '\n', "{newline}"_s), "|(len "_s, text.length(), ")"_s);
     }
 };
 
