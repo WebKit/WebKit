@@ -30,6 +30,7 @@
 #include "Logging.h"
 #include "MessageFlags.h"
 #include <stdio.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -93,6 +94,11 @@ Decoder::Decoder(std::span<const uint8_t> buffer, BufferDeallocator&& bufferDeal
     auto destinationID = decode<uint64_t>();
     if (UNLIKELY(!destinationID))
         return;
+    // 0 is a valid destinationID but we can at least reject -1 which is the HashTable deleted value.
+    if (*destinationID && !WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*destinationID)) {
+        markInvalid();
+        return;
+    }
     m_destinationID = WTFMove(*destinationID);
 }
 
@@ -102,6 +108,12 @@ Decoder::Decoder(std::span<const uint8_t> stream, uint64_t destinationID)
     , m_bufferDeallocator { nullptr }
     , m_destinationID { destinationID }
 {
+    // 0 is a valid destinationID but we can at least reject -1 which is the HashTable deleted value.
+    if (destinationID && !WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(destinationID)) {
+        markInvalid();
+        return;
+    }
+
     auto messageName = decode<MessageName>();
     if (UNLIKELY(!messageName))
         return;
