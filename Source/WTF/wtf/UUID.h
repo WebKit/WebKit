@@ -105,10 +105,10 @@ public:
     {
     }
 
-    bool isHashTableDeletedValue() const { return m_data == deletedValue; }
+    constexpr bool isHashTableDeletedValue() const { return m_data == deletedValue; }
     WTF_EXPORT_PRIVATE String toString() const;
 
-    operator bool() const { return !!m_data; }
+    constexpr operator bool() const { return !!m_data; }
     bool isValid() const { return m_data != emptyValue && m_data != deletedValue; }
 
     UInt128 data() const { return m_data; }
