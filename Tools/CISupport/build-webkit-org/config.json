@@ -493,7 +493,6 @@
                   {
                     "name": "GTK-Linux-64-bit-Release-GTK3-Tests", "factory": "BuildAndTestAndArchiveAllButJSCFactory",
                     "platform": "gtk-3", "configuration": "release", "architectures": ["x86_64"],
-                    "additionalArguments": ["--cmakeargs=-DUSE_GTK4=OFF"],
                     "workernames": ["gtk-linux-bot-18"]
                   },
                   {
