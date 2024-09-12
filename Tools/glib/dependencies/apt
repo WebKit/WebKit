@@ -36,50 +36,49 @@ PACKAGES=(
     cmake
     flite1-dev
     gawk
-    $(aptIfExists gi-docgen)
     gperf
     gtk-doc-tools
     intltool
     itstool
     libasound2-dev
     libatk1.0-dev
-    $(aptIfExists libavif-dev)
     libdrm-dev
-    $(aptIfExists libenchant-2-dev)
+    libenchant-2-dev
     libepoxy-dev
     libevent-dev
     libfile-copy-recursive-perl
-    libinput-dev
-    $(aptIfExists libjxl-dev)
-    $(aptIfElse libgcrypt20-dev libgcrypt11-dev)
+    libgcrypt20-dev
     libgstreamer1.0-dev
     libgstreamer-plugins-bad1.0-dev
     libgstreamer-plugins-base1.0-dev
+    libinput-dev
     libjpeg-dev
     libkate-dev
     liblcms2-dev
-    $(aptIfExists libmanette-0.2-dev)
+    libmanette-0.2-dev
     libnghttp2-dev
     libopenjp2-7-dev
     libpng-dev
     libseccomp-dev
-    $(aptIfExists libsoup-3.0-dev)
     libsqlite3-dev
-    $(aptIfExists libsysprof-capture-4-dev)
     libsystemd-dev
     libtasn1-6-dev
     libtool
     libwayland-dev
     libwebp-dev
     libwoff-dev
-    $(aptIfExists libwpe-1.0-dev)
-    $(aptIfExists libwpebackend-fdo-1.0-dev)
     libxml2-utils
     libxslt1-dev
     mesa-common-dev
     ninja-build
     patch
+    patchelf
     ruby
+    $(aptIfExists gi-docgen)
+    $(aptIfExists libavif-dev)
+    $(aptIfExists libjxl-dev)
+    $(aptIfExists libsoup-3.0-dev)
+    $(aptIfExists libsysprof-capture-4-dev)
 
     # These are dependencies necessary for running tests.
     apache2
@@ -89,9 +88,9 @@ PACKAGES=(
     libcgi-pm-perl
     psmisc
     pulseaudio-utils
+    python3-gi
     ruby-highline
     ruby-json
-    python3-gi
 
     # These are dependencies necessary for building with the Flatpak SDK.
     flatpak
@@ -106,7 +105,7 @@ PACKAGES=(
     gyp
     libegl1-mesa-dev
     libexpat1-dev
-    $(aptIfExists libfdk-aac-dev)
+    libfdk-aac-dev
     libgirepository1.0-dev
     libgles2-mesa-dev
     liborc-0.4-dev

@@ -10,8 +10,7 @@ PACKAGES+=(
     libfaad-dev
     libffi-dev
     libgl1-mesa-dev
-    $(aptIfExists libgl1-mesa-glx)
-    $(aptIfExists libgtk-4-dev)
+    libgl1-mesa-glx
     libgtk-3-dev
     libgudev-1.0-dev
     libhyphen-dev
@@ -33,6 +32,7 @@ PACKAGES+=(
     libxtst-dev
     unifdef
     xfonts-utils
+    $(aptIfExists libgtk-4-dev)
 
     # These are dependencies necessary for running tests.
     cups-daemon
@@ -42,8 +42,8 @@ PACKAGES+=(
     hunspell-en-us
     weston
     xvfb
-    $(aptIfExists python-psutil)
-    $(aptIfExists python-yaml)
+    python-psutil
+    python-yaml
 
     # These are dependencies necessary for building the jhbuild.
     icon-naming-utils
@@ -66,19 +66,19 @@ PACKAGES+=(
     libxfont-dev
     libxkbcommon-x11-dev
     libxkbfile-dev
+    python-dev
     ragel
+    x11proto-bigreqs-dev
+    x11proto-composite-dev
     x11proto-gl-dev
     x11proto-input-dev
     x11proto-randr-dev
+    x11proto-resource-dev
     x11proto-scrnsaver-dev
     x11proto-video-dev
+    x11proto-xcmisc-dev
     x11proto-xf86dri-dev
     xtrans-dev
     xutils-dev
     $(aptIfExists libcroco3-dev)
-    $(aptIfExists python-dev)
-    $(aptIfExists x11proto-bigreqs-dev)
-    $(aptIfExists x11proto-composite-dev)
-    $(aptIfExists x11proto-resource-dev)
-    $(aptIfExists x11proto-xcmisc-dev)
 )
