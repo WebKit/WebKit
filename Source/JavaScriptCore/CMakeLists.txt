@@ -1263,8 +1263,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/WeakGCMapInlines.h
     runtime/WeakGCSet.h
     runtime/WeakGCSetInlines.h
-    # runtime/WeakMapImpl.h
-    # runtime/WeakMapImplInlines.h
     runtime/WrapForValidIteratorPrototype.h
     runtime/WrapForValidIteratorPrototypeInlines.h
     runtime/WriteBarrier.h
