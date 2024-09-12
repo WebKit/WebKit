@@ -746,6 +746,9 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
 
 - (void)_setResourceLoadDelegate:(id<_WKResourceLoadDelegate>)delegate
 {
+    if (!_page || !_resourceLoadDelegate)
+        return;
+
     if (delegate) {
         _page->setResourceLoadClient(_resourceLoadDelegate->createResourceLoadClient());
         _resourceLoadDelegate->setDelegate(delegate);
