@@ -66,8 +66,9 @@ void RemoteRenderPipeline::getBindGroupLayout(uint32_t index, WebGPUIdentifier i
 {
     // "A new GPUBindGroupLayout wrapper is returned each time"
     auto bindGroupLayout = m_backing->getBindGroupLayout(index);
-    auto remoteBindGroupLayout = RemoteBindGroupLayout::create(bindGroupLayout, m_objectHeap, m_streamConnection.copyRef(), m_gpu, identifier);
-    m_objectHeap->addObject(identifier, remoteBindGroupLayout);
+    Ref objectHeap = m_objectHeap.get();
+    auto remoteBindGroupLayout = RemoteBindGroupLayout::create(bindGroupLayout, objectHeap, m_streamConnection.copyRef(), protectedGPU(), identifier);
+    objectHeap->addObject(identifier, remoteBindGroupLayout);
 }
 
 void RemoteRenderPipeline::setLabel(String&& label)
