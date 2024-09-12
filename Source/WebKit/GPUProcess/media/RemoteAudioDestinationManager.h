@@ -55,6 +55,7 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 class RemoteAudioDestination;
+struct SharedPreferencesForWebProcess;
 
 class RemoteAudioDestinationManager : private IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAudioDestinationManager);
@@ -66,6 +67,7 @@ public:
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
 
     bool allowsExitUnderMemoryPressure() const;
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
 private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);

@@ -1261,6 +1261,14 @@ WTFLogChannel& RemoteMediaPlayerProxy::logChannel() const
 }
 #endif
 
+const SharedPreferencesForWebProcess& RemoteMediaPlayerProxy::sharedPreferencesForWebProcess() const
+{
+    RefPtr<GPUConnectionToWebProcess> gpuProcessConnectionToWebProcess = m_manager ? m_manager->gpuConnectionToWebProcess() : nullptr;
+    RELEASE_ASSERT(gpuProcessConnectionToWebProcess);
+
+    return gpuProcessConnectionToWebProcess->sharedPreferencesForWebProcess();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

@@ -118,8 +118,8 @@ messages -> RemoteMediaPlayerProxy {
 #endif
 
 #if ENABLE(WEB_AUDIO)
-    CreateAudioSourceProvider()
-    SetShouldEnableAudioSourceProvider(bool shouldEnable)
+    [EnabledBy=WebAudioEnabled] CreateAudioSourceProvider()
+    [EnabledBy=WebAudioEnabled] SetShouldEnableAudioSourceProvider(bool shouldEnable)
 #endif
 
 #if PLATFORM(COCOA)

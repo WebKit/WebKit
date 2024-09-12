@@ -7839,6 +7839,7 @@ WebAudioEnabled:
       default: true
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
   disableInLockdownMode: true
 
 WebAuthenticationASEnabled:
