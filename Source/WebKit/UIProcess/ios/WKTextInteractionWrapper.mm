@@ -60,7 +60,7 @@
 
     _textInteractionAssistant = adoptNS([[UIWKTextInteractionAssistant alloc] initWithView:view]);
 
-#if PLATFORM(APPLETV) && USE(UICONTEXTMENU)
+#if PLATFORM(APPLETV) && HAVE(UI_TEXT_CONTEXT_MENU_INTERACTION)
     if (RetainPtr contextMenuInteraction = [self contextMenuInteraction]) {
         [view removeInteraction:contextMenuInteraction.get()];
         [self setExternalContextMenuInteractionDelegate:nil];
