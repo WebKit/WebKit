@@ -40,7 +40,6 @@
 #import "PickerDismissalReason.h"
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingAreaProxyIOS.h"
-#import "Site.h"
 #import "SmartMagnificationController.h"
 #import "UIKitSPI.h"
 #import "VisibleContentRectUpdateInfo.h"
@@ -69,6 +68,7 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/Quirks.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/Site.h>
 #import <WebCore/VelocityData.h>
 #import <objc/message.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
@@ -265,7 +265,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
     _page = processPool.createWebPage(*_pageClient, WTFMove(configuration));
     auto& openerInfo = _page->configuration().openerInfo();
-    _page->initializeWebPage(openerInfo ? openerInfo->site : WebKit::Site(aboutBlankURL()));
+    _page->initializeWebPage(openerInfo ? openerInfo->site : WebCore::Site(aboutBlankURL()));
 
     [self _updateRuntimeProtocolConformanceIfNeeded];
 

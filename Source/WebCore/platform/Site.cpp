@@ -28,7 +28,7 @@
 
 #include <wtf/HashFunctions.h>
 
-namespace WebKit {
+namespace WebCore {
 
 Site::Site(const URL& url)
     : m_protocol(url.protocol().toString())

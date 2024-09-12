@@ -27,13 +27,13 @@
 
 #include "MessageReceiver.h"
 #include "NavigationActionData.h"
-#include "Site.h"
 #include "WebPageProxyMessageReceiverRegistration.h"
 #include "WebProcessProxy.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/Site.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
@@ -81,7 +81,7 @@ struct NavigationActionData;
 class RemotePageProxy : public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemotePageProxy);
 public:
-    RemotePageProxy(WebPageProxy&, WebProcessProxy&, const Site&, WebPageProxyMessageReceiverRegistration* = nullptr);
+    RemotePageProxy(WebPageProxy&, WebProcessProxy&, const WebCore::Site&, WebPageProxyMessageReceiverRegistration* = nullptr);
     ~RemotePageProxy();
 
     WebPageProxy* page() const;
@@ -97,7 +97,7 @@ public:
     WebProcessProxy& siteIsolatedProcess() const { return m_process.get(); }
     WebCore::PageIdentifier pageID() const { return m_webPageID; } // FIXME: Remove this in favor of identifierInSiteIsolatedProcess.
     WebCore::PageIdentifier identifierInSiteIsolatedProcess() const { return m_webPageID; }
-    const Site& site() const { return m_site; }
+    const WebCore::Site& site() const { return m_site; }
 
     WebProcessActivityState& processActivityState();
 
@@ -116,7 +116,7 @@ private:
     const WebCore::PageIdentifier m_webPageID;
     const Ref<WebProcessProxy> m_process;
     WeakPtr<WebPageProxy> m_page;
-    const Site m_site;
+    const WebCore::Site m_site;
     std::unique_ptr<RemotePageDrawingAreaProxy> m_drawingArea;
     std::unique_ptr<RemotePageVisitedLinkStoreRegistration> m_visitedLinkStoreRegistration;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;

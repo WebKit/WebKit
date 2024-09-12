@@ -52,7 +52,6 @@
 #import "RemoteLayerTreeDrawingAreaProxyMac.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
-#import "Site.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
@@ -117,6 +116,7 @@
 #import <WebCore/PlaybackSessionInterfaceMac.h>
 #import <WebCore/PromisedAttachmentInfo.h>
 #import <WebCore/ShareableBitmap.h>
+#import <WebCore/Site.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextRecognitionResult.h>
 #import <WebCore/TextUndoInsertionMarkupMac.h>
@@ -1309,7 +1309,7 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
     m_page->setAddsVisitedLinks(processPool.historyClient().addsVisitedLinks());
 
     auto& openerInfo = m_page->configuration().openerInfo();
-    m_page->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()));
+    m_page->initializeWebPage(openerInfo ? openerInfo->site : WebCore::Site(aboutBlankURL()));
 
     registerDraggedTypes();
 

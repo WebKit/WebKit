@@ -238,6 +238,7 @@
 #include <WebCore/ShareData.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
+#include <WebCore/Site.h>
 #include <WebCore/SleepDisabler.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <WebCore/TextCheckerClient.h>

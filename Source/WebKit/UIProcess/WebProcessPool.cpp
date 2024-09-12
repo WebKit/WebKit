@@ -103,6 +103,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeApplicationChecks.h>
+#include <WebCore/Site.h>
 #include <pal/SessionID.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/MainThread.h>

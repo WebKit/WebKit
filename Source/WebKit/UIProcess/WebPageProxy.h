@@ -385,6 +385,7 @@ namespace WebCore {
 class ShareableBitmap;
 class ShareableBitmapHandle;
 class ShareableResourceHandle;
+class Site;
 struct TextAnimationData;
 enum class ExceptionCode : uint8_t;
 }
@@ -433,7 +434,6 @@ class RemoteScrollingCoordinatorProxy;
 class RevealItem;
 class SandboxExtensionHandle;
 class SecKeyProxyStore;
-class Site;
 class SpeechRecognitionPermissionManager;
 class SuspendedPageProxy;
 class SystemPreviewController;
@@ -806,7 +806,7 @@ public:
 
     void setPageLoadStateObserver(std::unique_ptr<PageLoadStateObserverBase>&&);
 
-    void initializeWebPage(const Site&);
+    void initializeWebPage(const WebCore::Site&);
     void setDrawingArea(std::unique_ptr<DrawingAreaProxy>&&);
 
     WeakPtr<SecKeyProxyStore> secKeyProxyStore(const WebCore::AuthenticationChallenge&);
@@ -2303,7 +2303,7 @@ public:
     WKQuickLookPreviewController *quickLookPreviewController() const { return m_quickLookPreviewController.get(); }
 #endif
 
-    WebProcessProxy* processForSite(const Site&);
+    WebProcessProxy* processForSite(const WebCore::Site&);
 
     void createRemoteSubframesInOtherProcesses(WebFrameProxy&, const String& frameName);
     void broadcastMainFrameURLChangeToOtherProcesses(IPC::Connection&, const URL&);
@@ -2704,11 +2704,11 @@ private:
         Crash
     };
 
-    void launchProcess(const Site&, ProcessLaunchReason);
+    void launchProcess(const WebCore::Site&, ProcessLaunchReason);
     void swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy>);
     void didFailToSuspendAfterProcessSwap();
     void didSuspendAfterProcessSwap();
-    void finishAttachingToWebProcess(const Site&, ProcessLaunchReason);
+    void finishAttachingToWebProcess(const WebCore::Site&, ProcessLaunchReason);
 
     RefPtr<API::Navigation> launchProcessForReload();
 

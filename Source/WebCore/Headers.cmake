@@ -1829,6 +1829,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/SharedMemory.h
     platform/SharedStringHash.h
     platform/SimpleCaretAnimator.h
+    platform/Site.h
     platform/SleepDisabler.h
     platform/SleepDisablerClient.h
     platform/SleepDisablerIdentifier.h

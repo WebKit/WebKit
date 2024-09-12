@@ -2257,6 +2257,7 @@ platform/SharedBufferChunkReader.cpp
 platform/SharedMemory.cpp
 platform/SharedStringHash.cpp
 platform/SimpleCaretAnimator.cpp
+platform/Site.cpp
 platform/SleepDisabler.cpp
 platform/SleepDisablerClient.cpp
 platform/SystemSoundManager.cpp

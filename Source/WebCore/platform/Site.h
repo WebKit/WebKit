@@ -25,15 +25,15 @@
 
 #pragma once
 
-#include <WebCore/RegistrableDomain.h>
+#include "RegistrableDomain.h"
 #include <wtf/HashTraits.h>
 
-namespace WebKit {
+namespace WebCore {
 
 // https://html.spec.whatwg.org/multipage/browsers.html#site
 class Site {
 public:
-    explicit Site(const URL&);
+    WEBCORE_EXPORT explicit Site(const URL&);
 
     Site(const Site&) = default;
     Site& operator=(const Site&) = default;
@@ -41,13 +41,13 @@ public:
     const String& protocol() const { return m_protocol; }
     const WebCore::RegistrableDomain& domain() const { return m_domain; }
     bool isEmpty() const { return m_domain.isEmpty(); }
-    bool matches(const URL&) const;
+    WEBCORE_EXPORT bool matches(const URL&) const;
 
     Site(WTF::HashTableEmptyValueType) { }
     Site(WTF::HashTableDeletedValueType deleted)
         : m_protocol(deleted) { }
     bool isHashTableDeletedValue() const { return m_protocol.isHashTableDeletedValue(); }
-    unsigned hash() const;
+    WEBCORE_EXPORT unsigned hash() const;
 
     bool operator==(const Site&) const = default;
     bool operator!=(const Site&) const = default;
@@ -63,11 +63,11 @@ private:
     WebCore::RegistrableDomain m_domain;
 };
 
-}
+} // namespace WebCore
 
 namespace WTF {
-template<> struct DefaultHash<WebKit::Site> : WebKit::Site::Hash { };
-template<> struct HashTraits<WebKit::Site> : SimpleClassHashTraits<WebKit::Site> {
-    static WebKit::Site emptyValue() { return { WTF::HashTableEmptyValue }; }
+template<> struct DefaultHash<WebCore::Site> : WebCore::Site::Hash { };
+template<> struct HashTraits<WebCore::Site> : SimpleClassHashTraits<WebCore::Site> {
+    static WebCore::Site emptyValue() { return { WTF::HashTableEmptyValue }; }
 };
 }
