@@ -136,16 +136,16 @@ static os_log_t webkitSubsystemForGenericOSLog()
 }
 #endif
 
-static void logToStderr(const char* buffer)
+static void logToStderr([[maybe_unused]] WTFLogChannel* channel, const char* buffer)
 {
 #if PLATFORM(COCOA)
-    os_log(webkitSubsystemForGenericOSLog(), "%s", buffer);
+    os_log(channel ? channel->osLogChannel : webkitSubsystemForGenericOSLog(), "%s", buffer);
 #endif
     fputs(buffer, stderr);
 }
 
-WTF_ATTRIBUTE_PRINTF(1, 0)
-static void vprintf_stderr_common(const char* format, va_list args)
+WTF_ATTRIBUTE_PRINTF(2, 0)
+static void vprintf_stderr_common([[maybe_unused]] WTFLogChannel* channel, const char* format, va_list args)
 {
 #if USE(CF)
     if (strstr(format, "%@")) {
@@ -160,15 +160,16 @@ ALLOW_NONLITERAL_FORMAT_END
 
         CFStringGetCString(str.get(), buffer.data(), length, kCFStringEncodingUTF8);
 
-        logToStderr(buffer.data());
+        logToStderr(channel, buffer.data());
         return;
     }
 
 #if PLATFORM(COCOA)
     if (!g_wtfConfig.disableForwardingVPrintfStdErrToOSLog) {
+        os_log_t osLogChannel = channel ? channel->osLogChannel : webkitSubsystemForGenericOSLog();
         va_list copyOfArgs;
         va_copy(copyOfArgs, args);
-        os_log_with_args(webkitSubsystemForGenericOSLog(), OS_LOG_TYPE_DEFAULT, format, copyOfArgs, __builtin_return_address(0));
+        os_log_with_args(osLogChannel, OS_LOG_TYPE_DEFAULT, format, copyOfArgs, __builtin_return_address(0));
         va_end(copyOfArgs);
     }
 #endif
@@ -203,16 +204,16 @@ static void vprintf_stderr_with_prefix(const char* prefix, const char* format, v
     formatWithPrefix[prefixLength + formatLength] = 0;
 
 ALLOW_NONLITERAL_FORMAT_BEGIN
-    vprintf_stderr_common(formatWithPrefix.data(), args);
+    vprintf_stderr_common(nullptr, formatWithPrefix.data(), args);
 ALLOW_NONLITERAL_FORMAT_END
 }
 
-WTF_ATTRIBUTE_PRINTF(1, 0)
-static void vprintf_stderr_with_trailing_newline(const char* format, va_list args)
+WTF_ATTRIBUTE_PRINTF(2, 0)
+static void vprintf_stderr_with_trailing_newline(WTFLogChannel* channel, const char* format, va_list args)
 {
     size_t formatLength = strlen(format);
     if (formatLength && format[formatLength - 1] == '\n') {
-        vprintf_stderr_common(format, args);
+        vprintf_stderr_common(channel, format, args);
         return;
     }
 
@@ -222,7 +223,7 @@ static void vprintf_stderr_with_trailing_newline(const char* format, va_list arg
     formatWithNewline[formatLength + 1] = 0;
 
 ALLOW_NONLITERAL_FORMAT_BEGIN
-    vprintf_stderr_common(formatWithNewline.data(), args);
+    vprintf_stderr_common(channel, formatWithNewline.data(), args);
 ALLOW_NONLITERAL_FORMAT_END
 }
 
@@ -231,7 +232,7 @@ static void printf_stderr_common(const char* format, ...)
 {
     va_list args;
     va_start(args, format);
-    vprintf_stderr_common(format, args);
+    vprintf_stderr_common(nullptr, format, args);
     va_end(args);
 }
 
@@ -283,7 +284,7 @@ public:
     WTF_ATTRIBUTE_PRINTF(2, 0)
     void vprintf(const char* format, va_list argList) final
     {
-        vprintf_stderr_common(format, argList);
+        vprintf_stderr_common(nullptr, format, argList);
     }
 };
 
@@ -491,7 +492,7 @@ static void WTFLogVaList(WTFLogChannel* channel, const char* format, va_list arg
         return;
 
     if (channel->state == WTFLogChannelState::On) {
-        vprintf_stderr_with_trailing_newline(format, args);
+        vprintf_stderr_with_trailing_newline(channel, format, args);
         return;
     }
 
@@ -506,7 +507,7 @@ ALLOW_NONLITERAL_FORMAT_END
 
     loggingAccumulator().accumulate(loggingString);
 
-    logToStderr(loggingString.utf8().data());
+    logToStderr(channel, loggingString.utf8().data());
 }
 
 void WTFLog(WTFLogChannel* channel, const char* format, ...)
@@ -538,7 +539,7 @@ ALLOW_NONLITERAL_FORMAT_END
 
 void WTFLogAlwaysV(const char* format, va_list args)
 {
-    vprintf_stderr_with_trailing_newline(format, args);
+    vprintf_stderr_with_trailing_newline(nullptr, format, args);
 }
 
 void WTFLogAlways(const char* format, ...)
