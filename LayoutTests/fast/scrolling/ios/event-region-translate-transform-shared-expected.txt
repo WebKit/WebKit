@@ -5,7 +5,7 @@
     (GraphicsLayer
       (bounds 800.00 600.00)
       (contentsOpaque 1)
-      (children 3
+      (children 4
         (GraphicsLayer
           (position 8.00 508.00)
           (bounds 50.00 50.00)
@@ -40,12 +40,21 @@
         )
         (GraphicsLayer
           (position 30.00 30.00)
-          (bounds 451.00 451.00)
+          (bounds 12.00 12.00)
           (drawsContent 1)
           (event region
             (rect (0,0) width=12 height=12)
-            (rect (151,151) width=200 height=200)
-            (rect (351,351) width=100 height=100)
+          )
+        )
+        (GraphicsLayer
+          (position 81.00 81.00)
+          (anchor 0.00 0.00)
+          (bounds 300.00 300.00)
+          (drawsContent 1)
+          (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [100.00 100.00 0.00 1.00])
+          (event region
+            (rect (0,0) width=200 height=200)
+            (rect (200,200) width=100 height=100)
           )
         )
       )
