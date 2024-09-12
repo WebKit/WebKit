@@ -137,10 +137,6 @@
 #define IS_MAIN_FRAME (m_frame ? m_frame->isMainFrame() : false)
 #define DOCUMENTLOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] DocumentLoader::" fmt, this, PAGE_ID, FRAME_ID, IS_MAIN_FRAME, ##__VA_ARGS__)
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/DocumentLoaderAdditions.cpp>
-#endif
-
 namespace WebCore {
 
 #if ENABLE(CONTENT_FILTERING)
@@ -1462,9 +1458,6 @@ void DocumentLoader::applyPoliciesToSettings()
 #endif
 #if ENABLE(TEXT_AUTOSIZING)
     m_frame->settings().setIdempotentModeAutosizingOnlyHonorsPercentages(m_idempotentModeAutosizingOnlyHonorsPercentages);
-#endif
-#if USE(APPLE_INTERNAL_SDK)
-    updateAdditionalSettingsIfNeeded();
 #endif
 
     if (m_pushAndNotificationsEnabledPolicy != PushAndNotificationsEnabledPolicy::UseGlobalPolicy) {
