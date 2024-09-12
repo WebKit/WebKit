@@ -41,6 +41,7 @@
 #include "JSMapIterator.h"
 #include "JSModuleLoader.h"
 #include "JSPromise.h"
+#include "JSRegExpStringIterator.h"
 #include "JSSetIterator.h"
 #include "JSStringIterator.h"
 #include "JSWrapForValidIterator.h"
@@ -129,6 +130,11 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
     m_abstractModuleRecordFieldState.set(m_vm, jsNumber(static_cast<int32_t>(AbstractModuleRecord::Field::State)));
     m_wrapForValidIteratorFieldIteratedIterator.set(m_vm, jsNumber(static_cast<int32_t>(JSWrapForValidIterator::Field::IteratedIterator)));
     m_wrapForValidIteratorFieldIteratedNextMethod.set(m_vm, jsNumber(static_cast<int32_t>(JSWrapForValidIterator::Field::IteratedNextMethod)));
+    m_regExpStringIteratorFieldRegExp.set(m_vm, jsNumber(static_cast<int32_t>(JSRegExpStringIterator::Field::RegExp)));
+    m_regExpStringIteratorFieldString.set(m_vm, jsNumber(static_cast<int32_t>(JSRegExpStringIterator::Field::String)));
+    m_regExpStringIteratorFieldGlobal.set(m_vm, jsNumber(static_cast<int32_t>(JSRegExpStringIterator::Field::Global)));
+    m_regExpStringIteratorFieldFullUnicode.set(m_vm, jsNumber(static_cast<int32_t>(JSRegExpStringIterator::Field::FullUnicode)));
+    m_regExpStringIteratorFieldDone.set(m_vm, jsNumber(static_cast<int32_t>(JSRegExpStringIterator::Field::Done)));
 }
 
 std::optional<BytecodeIntrinsicRegistry::Entry> BytecodeIntrinsicRegistry::lookup(const Identifier& ident) const

@@ -122,6 +122,7 @@ void printInternal(PrintStream& out, JSC::JSType type)
     CASE(DerivedStringObjectType)
     CASE(MaxJSType)
     CASE(JSWrapForValidIteratorType)
+    CASE(JSRegExpStringIteratorType)
     }
 }
 

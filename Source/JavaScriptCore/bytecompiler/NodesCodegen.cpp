@@ -40,6 +40,7 @@
 #include "JSImmutableButterfly.h"
 #include "JSMapIterator.h"
 #include "JSPromise.h"
+#include "JSRegExpStringIterator.h"
 #include "JSSetIterator.h"
 #include "JSStringIterator.h"
 #include "JSWrapForValidIterator.h"
@@ -1662,6 +1663,23 @@ static JSWrapForValidIterator::Field wrapForValidIteratorInternalFieldIndex(Byte
     return JSWrapForValidIterator::Field::IteratedNextMethod;
 }
 
+static JSRegExpStringIterator::Field regExpStringIteratorInternalFieldIndex(BytecodeIntrinsicNode* node)
+{
+    ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_regExpStringIteratorFieldRegExp)
+        return JSRegExpStringIterator::Field::RegExp;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_regExpStringIteratorFieldString)
+        return JSRegExpStringIterator::Field::String;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_regExpStringIteratorFieldGlobal)
+        return JSRegExpStringIterator::Field::Global;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_regExpStringIteratorFieldFullUnicode)
+        return JSRegExpStringIterator::Field::FullUnicode;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_regExpStringIteratorFieldDone)
+        return JSRegExpStringIterator::Field::Done;
+    RELEASE_ASSERT_NOT_REACHED();
+    return JSRegExpStringIterator::Field::RegExp;
+}
+
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getPromiseInternalField(BytecodeGenerator& generator, RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;
@@ -1800,6 +1818,19 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getWrapForValidIteratorInterna
     RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
     unsigned index = static_cast<unsigned>(wrapForValidIteratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
     ASSERT(index < JSWrapForValidIterator::numberOfInternalFields);
+    ASSERT(!node->m_next);
+
+    return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getRegExpStringIteratorInternalField(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+    RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
+    unsigned index = static_cast<unsigned>(regExpStringIteratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
+    ASSERT(index < JSRegExpStringIterator::numberOfInternalFields);
     ASSERT(!node->m_next);
 
     return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
@@ -1991,6 +2022,22 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putSetIteratorInternalField(By
     RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
     unsigned index = static_cast<unsigned>(setIteratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
     ASSERT(index < JSSetIterator::numberOfInternalFields);
+    node = node->m_next;
+    RefPtr<RegisterID> value = generator.emitNode(node);
+
+    ASSERT(!node->m_next);
+
+    return generator.move(dst, generator.emitPutInternalField(base.get(), index, value.get()));
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putRegExpStringIteratorInternalField(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+    RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
+    unsigned index = static_cast<unsigned>(regExpStringIteratorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
+    ASSERT(index < JSRegExpStringIterator::numberOfInternalFields);
     node = node->m_next;
     RefPtr<RegisterID> value = generator.emitNode(node);
 
@@ -2191,6 +2238,7 @@ CREATE_INTRINSIC_FOR_BRAND_CHECK(isMapIterator, IsMapIterator)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isSetIterator, IsSetIterator)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isUndefinedOrNull, IsUndefinedOrNull)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isWrapForValidIterator, IsWrapForValidIterator)
+CREATE_INTRINSIC_FOR_BRAND_CHECK(isRegExpStringIterator, IsRegExpStringIterator)
 
 #undef CREATE_INTRINSIC_FOR_BRAND_CHECK
 

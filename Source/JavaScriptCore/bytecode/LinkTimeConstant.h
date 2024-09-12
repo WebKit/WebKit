@@ -151,6 +151,7 @@ class JSGlobalObject;
     v(BigUint64Array, nullptr) \
     v(wrapForValidIteratorCreate, nullptr) \
     v(asyncFromSyncIteratorCreate, nullptr) \
+    v(regExpStringIteratorCreate, nullptr) \
 
 
 #define DECLARE_LINK_TIME_CONSTANT(name, code) name,

@@ -102,6 +102,7 @@ class ObjectConstructor;
 class ObjectPrototype;
 class RegExpConstructor;
 class RegExpPrototype;
+class RegExpStringIteratorPrototype;
 class SetIteratorPrototype;
 class SetPrototype;
 class ShadowRealmConstructor;
@@ -301,6 +302,7 @@ public:
     WriteBarrier<SetIteratorPrototype> m_setIteratorPrototype;
     WriteBarrier<WrapForValidIteratorPrototype> m_wrapForValidIteratorPrototype;
     WriteBarrier<AsyncFromSyncIteratorPrototype> m_asyncFromSyncIteratorPrototype;
+    WriteBarrier<RegExpStringIteratorPrototype> m_regExpStringIteratorPrototype;
 
     LazyProperty<JSGlobalObject, Structure> m_debuggerScopeStructure;
     LazyProperty<JSGlobalObject, Structure> m_withScopeStructure;
@@ -362,6 +364,7 @@ public:
     WriteBarrierStructureID m_regExpMatchesArrayStructure;
     WriteBarrierStructureID m_regExpMatchesArrayWithIndicesStructure;
     WriteBarrierStructureID m_regExpMatchesIndicesArrayStructure;
+    WriteBarrierStructureID m_regExpStringIteratorStructure;
 
     LazyProperty<JSGlobalObject, Structure> m_customGetterFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_customSetterFunctionStructure;
@@ -765,6 +768,7 @@ public:
     MapIteratorPrototype* mapIteratorPrototype() const { return m_mapIteratorPrototype.get(); }
     SetIteratorPrototype* setIteratorPrototype() const { return m_setIteratorPrototype.get(); }
     WrapForValidIteratorPrototype* wrapForValidIteratorPrototype() const { return m_wrapForValidIteratorPrototype.get(); }
+    RegExpStringIteratorPrototype* regExpStringIteratorPrototype() const { return m_regExpStringIteratorPrototype.get(); }
     JSObject* mapPrototype() const { return m_mapStructure.prototype(this); }
     // Workaround for the name conflict between JSCell::setPrototype.
     JSObject* jsSetPrototype() const { return m_setStructure.prototype(this); }
@@ -866,6 +870,7 @@ public:
     Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
     Structure* regExpMatchesArrayWithIndicesStructure() const { return m_regExpMatchesArrayWithIndicesStructure.get(); }
     Structure* regExpMatchesIndicesArrayStructure() const { return m_regExpMatchesIndicesArrayStructure.get(); }
+    Structure* regExpStringIteratorStructure() const { return m_regExpStringIteratorStructure.get(); }
     Structure* remoteFunctionStructure() const { return m_remoteFunctionStructure.get(this); }
     Structure* moduleRecordStructure() const { return m_moduleRecordStructure.get(this); }
     Structure* syntheticModuleRecordStructure() const { return m_syntheticModuleRecordStructure.get(this); }

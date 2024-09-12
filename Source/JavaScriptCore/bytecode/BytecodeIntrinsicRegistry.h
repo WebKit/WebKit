@@ -56,6 +56,7 @@ enum class LinkTimeConstant : int32_t;
     macro(getStringIteratorInternalField) \
     macro(getMapIteratorInternalField) \
     macro(getSetIteratorInternalField) \
+    macro(getRegExpStringIteratorInternalField) \
     macro(getProxyInternalField) \
     macro(getWrapForValidIteratorInternalField) \
     macro(idWithProfile) \
@@ -78,6 +79,7 @@ enum class LinkTimeConstant : int32_t;
     macro(isSetIterator) \
     macro(isUndefinedOrNull) \
     macro(isWrapForValidIterator) \
+    macro(isRegExpStringIterator) \
     macro(tailCallForwardArguments) \
     macro(throwTypeError) \
     macro(throwRangeError) \
@@ -96,6 +98,7 @@ enum class LinkTimeConstant : int32_t;
     macro(putStringIteratorInternalField) \
     macro(putMapIteratorInternalField) \
     macro(putSetIteratorInternalField) \
+    macro(putRegExpStringIteratorInternalField) \
     macro(superSamplerBegin) \
     macro(superSamplerEnd) \
     macro(toNumber) \
@@ -180,6 +183,11 @@ enum class LinkTimeConstant : int32_t;
     macro(abstractModuleRecordFieldState) \
     macro(wrapForValidIteratorFieldIteratedIterator) \
     macro(wrapForValidIteratorFieldIteratedNextMethod) \
+    macro(regExpStringIteratorFieldRegExp) \
+    macro(regExpStringIteratorFieldString) \
+    macro(regExpStringIteratorFieldGlobal) \
+    macro(regExpStringIteratorFieldFullUnicode) \
+    macro(regExpStringIteratorFieldDone) \
 
 
 #define JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_CUSTOM_EACH_NAME(macro) \
