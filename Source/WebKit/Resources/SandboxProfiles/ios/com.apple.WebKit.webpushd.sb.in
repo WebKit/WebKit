@@ -242,3 +242,6 @@
 
 ;; Set home-relative tmpdir.
 (allow file* (home-subpath "/tmp/com.apple.webkit.webpushd"))
+
+;; os_eligibility
+(allow file-read* (literal "/private/var/db/os_eligibility/eligibility.plist"))

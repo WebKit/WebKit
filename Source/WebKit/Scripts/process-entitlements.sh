@@ -553,6 +553,9 @@ function ios_family_process_webpushd_entitlements()
     plistbuddy Add :com.apple.uikitservices.app.value-access bool YES
     plistbuddy Add :com.apple.private.usernotifications.app-management-domain.proxy string com.apple.WebKit.PushBundles
     plistbuddy Add :com.apple.frontboard.launchapplications bool YES
+    plistbuddy Add :com.apple.private.security.storage.os_eligibility.readonly bool YES
+    plistbuddy Add :com.apple.security.exception.files.absolute-path.read-only array
+    plistbuddy Add :com.apple.security.exception.files.absolute-path.read-only:0 string /private/var/db/os_eligibility/eligibility.plist
 }
 
 function ios_family_process_network_entitlements()
