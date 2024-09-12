@@ -1587,7 +1587,7 @@ TEST(DragAndDropTests, UnresponsivePageDoesNotHangUI)
         return NO;
     }];
 #else
-    [(id<UIDragInteractionDelegate_ForWebKitOnly>)[webView dragInteractionDelegate] _dragInteraction:[webView dragInteraction] prepareForSession:dragSession.get() completion:^{ }];
+    [(id<UIDragInteractionDelegate_SPI>)[webView dragInteractionDelegate] _dragInteraction:[webView dragInteraction] prepareForSession:dragSession.get() completion:^{ }];
 #endif
 }
 

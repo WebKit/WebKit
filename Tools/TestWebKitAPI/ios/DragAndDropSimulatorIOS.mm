@@ -513,7 +513,7 @@ IGNORE_WARNINGS_END
             return YES;
         }];
 #else
-        [(id<UIDragInteractionDelegate_ForWebKitOnly>)[_webView dragInteractionDelegate] _dragInteraction:[_webView dragInteraction] prepareForSession:_dragSession.get() completion:[strongSelf = retainPtr(self)] {
+        [(id<UIDragInteractionDelegate_SPI>)[_webView dragInteractionDelegate] _dragInteraction:[_webView dragInteraction] prepareForSession:_dragSession.get() completion:[strongSelf = retainPtr(self)] {
             if (strongSelf->_phase == DragAndDropPhaseCancelled)
                 return;
 
@@ -646,7 +646,7 @@ IGNORE_WARNINGS_END
         return YES;
     }];
 #else
-    [(id<UIDragInteractionDelegate_ForWebKitOnly>)[_webView dragInteractionDelegate] _dragInteraction:[_webView dragInteraction] itemsForAddingToSession:_dragSession.get() withTouchAtPoint:requestLocation completion:[dragSession = _dragSession, dropSession = _dropSession] (NSArray *items) {
+    [(id<UIDragInteractionDelegate_SPI>)[_webView dragInteractionDelegate] _dragInteraction:[_webView dragInteraction] itemsForAddingToSession:_dragSession.get() withTouchAtPoint:requestLocation completion:[dragSession = _dragSession, dropSession = _dropSession] (NSArray *items) {
         [dragSession addItems:items];
         [dropSession addItems:items];
     }];
