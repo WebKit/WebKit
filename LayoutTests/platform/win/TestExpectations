@@ -1193,10 +1193,6 @@ fast/css/caret-color-with-initial-color-property.html [ Skip ] # ImageOnlyFailur
 
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-multiple-001.html [ Skip ]
 
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-htb-htb.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-htb-vrl.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-vrl-htb.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-vrl-vrl.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-invalid-fallback.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-borders-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-borders-002.html [ Pass ]
