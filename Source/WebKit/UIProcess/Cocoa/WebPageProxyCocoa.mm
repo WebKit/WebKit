@@ -1336,14 +1336,14 @@ void WebPageProxy::updateUnderlyingTextVisibilityForTextAnimationID(const WTF::U
     legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::UpdateUnderlyingTextVisibilityForTextAnimationID(uuid, visible), WTFMove(completionHandler), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::didEndPartialIntelligenceTextPonderingAnimationImpl()
+void WebPageProxy::didEndPartialIntelligenceTextAnimationImpl()
 {
-    protectedPageClient()->didEndPartialIntelligenceTextPonderingAnimation();
+    protectedPageClient()->didEndPartialIntelligenceTextAnimation();
 }
 
-void WebPageProxy::didEndPartialIntelligenceTextPonderingAnimation(IPC::Connection&)
+void WebPageProxy::didEndPartialIntelligenceTextAnimation(IPC::Connection&)
 {
-    didEndPartialIntelligenceTextPonderingAnimationImpl();
+    didEndPartialIntelligenceTextAnimationImpl();
 }
 
 bool WebPageProxy::writingToolsTextReplacementsFinished()

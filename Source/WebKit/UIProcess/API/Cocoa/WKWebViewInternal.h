@@ -251,7 +251,7 @@ struct PerWebProcessState {
     RetainPtr<NSMapTable<NSUUID *, WTTextSuggestion *>> _writingToolsTextSuggestions;
     RetainPtr<WTSession> _activeWritingToolsSession;
 
-    NSUInteger _partialIntelligenceTextPonderingAnimationCount;
+    NSUInteger _partialIntelligenceTextAnimationCount;
     BOOL _writingToolsTextReplacementsFinished;
 #endif
 
@@ -424,7 +424,7 @@ struct PerWebProcessState {
 - (PlatformWritingToolsResultOptions)allowedWritingToolsResultOptions;
 #endif
 
-- (void)_didEndPartialIntelligenceTextPonderingAnimation;
+- (void)_didEndPartialIntelligenceTextAnimation;
 - (BOOL)_writingToolsTextReplacementsFinished;
 
 - (void)_addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebCore::TextAnimationData&)styleData;

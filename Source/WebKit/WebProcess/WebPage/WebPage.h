@@ -1796,7 +1796,7 @@ public:
     std::optional<WebCore::TextIndicatorData> createTextIndicatorForRange(const WebCore::SimpleRange&);
     void createTextIndicatorForTextAnimationID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
 
-    void didEndPartialIntelligenceTextPonderingAnimation();
+    void didEndPartialIntelligenceTextAnimation();
 #endif
 
     void startObservingNowPlayingMetadata();

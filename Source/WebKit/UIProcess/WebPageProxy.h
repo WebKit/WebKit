@@ -2458,8 +2458,8 @@ public:
     bool writingToolsTextReplacementsFinished();
     void intelligenceTextAnimationsDidComplete();
 
-    void didEndPartialIntelligenceTextPonderingAnimation(IPC::Connection&);
-    void didEndPartialIntelligenceTextPonderingAnimationImpl();
+    void didEndPartialIntelligenceTextAnimation(IPC::Connection&);
+    void didEndPartialIntelligenceTextAnimationImpl();
 #endif
 
     void resetVisibilityAdjustmentsForTargetedElements(const Vector<Ref<API::TargetedElementInfo>>&, CompletionHandler<void(bool)>&&);
