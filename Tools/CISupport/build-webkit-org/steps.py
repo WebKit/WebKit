@@ -76,7 +76,7 @@ class CustomFlagsMixin(object):
                     return
 
     def customBuildFlag(self, platform, fullPlatform):
-        if platform not in ('gtk', 'wincairo', 'ios', 'visionos', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos'):
+        if platform not in ('gtk', 'win', 'ios', 'visionos', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos'):
             return []
         if 'simulator' in fullPlatform:
             platform = platform + '-simulator'
@@ -85,7 +85,7 @@ class CustomFlagsMixin(object):
         return ['--' + platform]
 
     def appendCustomBuildFlags(self, platform, fullPlatform):
-        if platform not in ('gtk', 'wincairo', 'ios', 'visionos', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos',):
+        if platform not in ('gtk', 'win', 'ios', 'visionos', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos',):
             return
         if 'simulator' in fullPlatform:
             platform = platform + '-simulator'
@@ -94,7 +94,7 @@ class CustomFlagsMixin(object):
         self.command += ['--' + platform]
 
     def appendCustomTestingFlags(self, platform, device_model):
-        if platform not in ('gtk', 'wincairo', 'ios', 'visionos', 'jsc-only', 'wpe'):
+        if platform not in ('gtk', 'win', 'ios', 'visionos', 'jsc-only', 'wpe'):
             return
         if device_model == 'iphone':
             device_model = 'iphone-simulator'
@@ -108,7 +108,7 @@ class CustomFlagsMixin(object):
 
 
 class ShellMixin(object):
-    WINDOWS_SHELL_PLATFORMS = ['wincairo']
+    WINDOWS_SHELL_PLATFORMS = ['win']
 
     def has_windows_shell(self):
         return self.getProperty('platform', '*') in self.WINDOWS_SHELL_PLATFORMS
@@ -263,7 +263,7 @@ class CleanUpGitIndexLock(shell.ShellCommandNewStyle):
     @defer.inlineCallbacks
     def run(self):
         platform = self.getProperty('platform', '*')
-        if platform == 'wincairo':
+        if platform == 'win':
             self.command = ['del', r'.git\index.lock']
 
         rc = yield super().run()
@@ -349,10 +349,10 @@ class DeleteStaleBuildFiles(shell.Compile):
         return shell.Compile.start(self)
 
 
-class InstallWinCairoDependencies(shell.ShellCommandNewStyle):
-    name = 'wincairo-requirements'
-    description = ['updating wincairo dependencies']
-    descriptionDone = ['updated wincairo dependencies']
+class InstallWindowsDependencies(shell.ShellCommandNewStyle):
+    name = 'windows-requirements'
+    description = ['updating windows dependencies']
+    descriptionDone = ['updated windows dependencies']
     command = ['python3', './Tools/Scripts/update-webkit-win-libs.py']
     haltOnFailure = True
 
@@ -764,8 +764,8 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
         # Check: https://bugs.webkit.org/show_bug.cgi?id=175140
         if platform in ('gtk', 'wpe', 'jsc-only'):
             self.command += ['--memory-limited', '--verbose']
-        # WinCairo uses the Windows command prompt, not Cygwin.
-        elif platform == 'wincairo':
+        # Windows port uses the Windows command prompt, not Cygwin.
+        elif platform == 'win':
             self.command += ['--test-writer=ruby']
 
         self.appendCustomBuildFlags(platform, self.getProperty('fullPlatform'))

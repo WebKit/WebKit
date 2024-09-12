@@ -95,8 +95,8 @@ class TestFactory(Factory):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
         self.getProduct()
 
-        if platform == 'wincairo':
-            self.addStep(InstallWinCairoDependencies())
+        if platform == 'win':
+            self.addStep(InstallWindowsDependencies())
 
         if platform.startswith(('mac', 'ios-simulator', 'visionos-simulator')):
             self.addStep(WaitForCrashCollection())
@@ -209,8 +209,8 @@ class TestJSCFactory(Factory):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
-        if platform == 'wincairo':
-            self.addStep(InstallWinCairoDependencies())
+        if platform == 'win':
+            self.addStep(InstallWindowsDependencies())
         self.addStep(RunJavaScriptCoreTests())
 
 
