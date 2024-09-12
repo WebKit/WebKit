@@ -33,8 +33,12 @@
 #include <WebCore/MediaRecorderPrivate.h>
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderProvider);
+
 using namespace WebCore;
 
 std::unique_ptr<WebCore::MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)

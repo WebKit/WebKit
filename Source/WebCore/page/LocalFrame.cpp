@@ -30,6 +30,7 @@
 #include "config.h"
 #include "LocalFrame.h"
 
+#include "AnimationTimelinesController.h"
 #include "ApplyStyleCommand.h"
 #include "BackForwardCache.h"
 #include "BackForwardController.h"
@@ -41,7 +42,6 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DocumentLoader.h"
-#include "DocumentTimelinesController.h"
 #include "DocumentType.h"
 #include "Editing.h"
 #include "Editor.h"

@@ -24,19 +24,6 @@
  */
 
 @linkTimeConstant
-@constructor
-function RegExpStringIterator(regExp, string, global, fullUnicode)
-{
-    "use strict";
-
-    @putByIdDirectPrivate(this, "regExpStringIteratorRegExp", regExp);
-    @putByIdDirectPrivate(this, "regExpStringIteratorString", string);
-    @putByIdDirectPrivate(this, "regExpStringIteratorGlobal", global);
-    @putByIdDirectPrivate(this, "regExpStringIteratorUnicode", fullUnicode);
-    @putByIdDirectPrivate(this, "regExpStringIteratorDone", false);
-}
-
-@linkTimeConstant
 function advanceStringIndex(string, index, unicode)
 {
     // This function implements AdvanceStringIndex described in ES6 21.2.5.2.3.
@@ -175,7 +162,7 @@ function matchAll(strArg)
     var global = @stringIncludesInternal.@call(flags, "g");
     var fullUnicode = @stringIncludesInternal.@call(flags, "u") || @stringIncludesInternal.@call(flags, "v");
 
-    return new @RegExpStringIterator(matcher, string, global, fullUnicode);
+    return @regExpStringIteratorCreate(matcher, string, global, fullUnicode);
 }
 
 @linkTimeConstant

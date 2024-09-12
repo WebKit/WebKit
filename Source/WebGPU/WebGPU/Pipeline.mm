@@ -30,12 +30,10 @@
 
 namespace WebGPU {
 
-std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, PipelineLayout* pipelineLayout, const String& untransformedEntryPoint, NSString *label, uint32_t constantCount, const WGPUConstantEntry* constants, BufferBindingSizesForPipeline& mininumBufferSizes, NSError **error)
+std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, PipelineLayout* pipelineLayout, const String& entryPoint, NSString *label, uint32_t constantCount, const WGPUConstantEntry* constants, BufferBindingSizesForPipeline& mininumBufferSizes, NSError **error)
 {
-    // FIXME: Remove below line when https://bugs.webkit.org/show_bug.cgi?id=266774 is completed
     HashMap<String, WGSL::ConstantValue> wgslConstantValues;
 
-    auto entryPoint = shaderModule.transformedEntryPoint(untransformedEntryPoint);
     if (!entryPoint.length() || !shaderModule.isValid())
         return std::nullopt;
 
@@ -88,19 +86,9 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
         const auto& entry = constants[i];
         auto keyEntry = fromAPI(entry.key);
         auto indexIterator = entryPointInformation.specializationConstants.find(keyEntry);
-        // FIXME: Remove code inside the following conditional statement when https://bugs.webkit.org/show_bug.cgi?id=266774 is completed
-        if (indexIterator == entryPointInformation.specializationConstants.end()) {
-            if (!shaderModule.hasOverride(keyEntry))
-                return { };
+        if (indexIterator == entryPointInformation.specializationConstants.end())
+            return { };
 
-            NSString *nsConstant = [NSString stringWithUTF8String:keyEntry.utf8().data()];
-            nsConstant = [nsConstant stringByApplyingTransform:NSStringTransformToLatin reverse:NO];
-            nsConstant = [nsConstant stringByFoldingWithOptions:NSDiacriticInsensitiveSearch locale:NSLocale.currentLocale];
-            keyEntry = nsConstant;
-            indexIterator = entryPointInformation.specializationConstants.find(keyEntry);
-            if (indexIterator == entryPointInformation.specializationConstants.end())
-                return { };
-        }
         const auto& specializationConstant = indexIterator->value;
         switch (specializationConstant.type) {
         case WGSL::Reflection::SpecializationConstantType::Boolean: {

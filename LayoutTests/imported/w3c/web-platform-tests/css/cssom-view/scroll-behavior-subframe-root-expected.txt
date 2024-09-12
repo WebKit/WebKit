@@ -1,5 +1,6 @@
 
 PASS iframe loaded
+PASS Make sure the page is ready for animation.
 PASS Subframe with auto scroll-behavior ; scroll() with default behavior
 PASS Subframe with auto scroll-behavior ; scroll() with auto behavior
 PASS Subframe with auto scroll-behavior ; scroll() with instant behavior

@@ -69,6 +69,16 @@ LoginStatus::LoginStatus(const RegistrableDomain& domain, const String& username
     setTimeToLive(timeToLive);
 }
 
+LoginStatus::LoginStatus(const RegistrableDomain& domain, const String& username, CredentialTokenType tokenType, AuthenticationType authType, WallTime loggedInTime, Seconds timeToLive)
+    : m_domain { domain }
+    , m_username { username }
+    , m_tokenType { tokenType }
+    , m_authType { authType }
+    , m_loggedInTime { loggedInTime }
+{
+    setTimeToLive(timeToLive);
+}
+
 void LoginStatus::setTimeToLive(Seconds timeToLive)
 {
     m_timeToLive = std::min(timeToLive, m_authType == AuthenticationType::Unmanaged ? TimeToLiveShort : TimeToLiveLong);
@@ -83,6 +93,14 @@ bool LoginStatus::hasExpired() const
 WallTime LoginStatus::expiry() const
 {
     return WallTime::now() + m_timeToLive;
+}
+
+LoginStatus LoginStatus::isolatedCopy() const & {
+    return LoginStatus { m_domain.isolatedCopy(), m_username.isolatedCopy(), m_tokenType, m_authType, m_loggedInTime, m_timeToLive };
+}
+
+LoginStatus LoginStatus::isolatedCopy() && {
+    return LoginStatus { WTFMove(m_domain).isolatedCopy(), WTFMove(m_username).isolatedCopy(), m_tokenType, m_authType, m_loggedInTime, m_timeToLive };
 }
 
 }

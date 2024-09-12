@@ -44,8 +44,8 @@ public:
 #if PLATFORM(COCOA)
     using ClickHandlerMap = HashMap<String, Ref<WebExtensionCallbackHandler>>;
 
-    id createMenu(WebPage&, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void update(WebPage&, id identifier, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    id createMenu(WebPage&, WebFrame&, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void update(WebPage&, WebFrame&, id identifier, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     void remove(id identifier, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void removeAll(Ref<WebExtensionCallbackHandler>&&);
@@ -58,7 +58,7 @@ public:
 
 private:
     enum class ForUpdate : bool { No, Yes };
-    bool parseCreateAndUpdateProperties(ForUpdate, NSDictionary *, std::optional<WebExtensionMenuItemParameters>&, RefPtr<WebExtensionCallbackHandler>&, NSString **outExceptionString);
+    bool parseCreateAndUpdateProperties(ForUpdate, NSDictionary *, const URL& baseURL, std::optional<WebExtensionMenuItemParameters>&, RefPtr<WebExtensionCallbackHandler>&, NSString **outExceptionString);
 
     WebPageProxyIdentifier m_pageProxyIdentifier;
     RefPtr<WebExtensionAPIEvent> m_onClicked;

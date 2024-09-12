@@ -50,6 +50,10 @@
 #import <wtf/Seconds.h>
 #import <wtf/SoftLinking.h>
 
+#if USE(BROWSERENGINEKIT)
+#import <BrowserEngineKit/BrowserEngineKit.h>
+#endif
+
 SOFT_LINK_FRAMEWORK(Contacts)
 SOFT_LINK_CLASS(Contacts, CNMutableContact)
 
@@ -1578,7 +1582,13 @@ TEST(DragAndDropTests, UnresponsivePageDoesNotHangUI)
 
     // The test passes if we can prepare for a drag session without timing out.
     auto dragSession = adoptNS([[MockDragSession alloc] init]);
-    [(id <UIDragInteractionDelegate_ForWebKitOnly>)[webView dragInteractionDelegate] _dragInteraction:[webView dragInteraction] prepareForSession:dragSession.get() completion:^() { }];
+#if USE(BROWSERENGINEKIT)
+    [[webView dragInteractionDelegate] dragInteraction:[webView dragInteraction] prepareDragSession:dragSession.get() completion:^{
+        return NO;
+    }];
+#else
+    [(id<UIDragInteractionDelegate_SPI>)[webView dragInteractionDelegate] _dragInteraction:[webView dragInteraction] prepareForSession:dragSession.get() completion:^{ }];
+#endif
 }
 
 TEST(DragAndDropTests, WebItemProviderPasteboardLoading)

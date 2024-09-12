@@ -32,12 +32,14 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "WebExtension.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionMenuItem.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/text/StringBuilder.h>
 
 #if USE(APPKIT)
+#import "AppKitSPI.h"
 #import <Carbon/Carbon.h>
 #endif
 
@@ -113,9 +115,13 @@ bool WebExtensionCommand::setActivationKey(String activationKey)
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         auto *allowedCharacterSet = [NSMutableCharacterSet alphanumericCharacterSet];
+        // F1-F12.
         [allowedCharacterSet addCharactersInRange:NSMakeRange(0xF704, 12)];
+        // Insert, Delete, Home.
         [allowedCharacterSet addCharactersInRange:NSMakeRange(0xF727, 3)];
+        // End, Page Up, Page Down.
         [allowedCharacterSet addCharactersInRange:NSMakeRange(0xF72B, 3)];
+        // Up, Down, Left, Right.
         [allowedCharacterSet addCharactersInRange:NSMakeRange(0xF700, 4)];
         [allowedCharacterSet addCharactersInString:@",. "];
 
@@ -202,6 +208,69 @@ String WebExtensionCommand::shortcutString() const
     return stringBuilder.toString();
 }
 
+String WebExtensionCommand::userVisibleShortcut() const
+{
+    auto flags = modifierFlags();
+    auto key = activationKey();
+
+    if (!flags || key.isEmpty())
+        return emptyString();
+
+#if PLATFORM(MAC)
+    NSKeyboardShortcut *shortcut = [NSKeyboardShortcut shortcutWithKeyEquivalent:key modifierMask:flags.toRaw()];
+    return shortcut.localizedDisplayName ?: @"";
+#else
+    static NeverDestroyed<HashMap<String, String>> specialKeyMap = HashMap<String, String> {
+        { ","_s, ","_s },
+        { "."_s, "."_s },
+        { " "_s, "Space"_s },
+        { @"\uF704", "F1"_s },
+        { @"\uF705", "F2"_s },
+        { @"\uF706", "F3"_s },
+        { @"\uF707", "F4"_s },
+        { @"\uF708", "F5"_s },
+        { @"\uF709", "F6"_s },
+        { @"\uF70A", "F7"_s },
+        { @"\uF70B", "F8"_s },
+        { @"\uF70C", "F9"_s },
+        { @"\uF70D", "F10"_s },
+        { @"\uF70E", "F11"_s },
+        { @"\uF70F", "F12"_s },
+        { @"\uF727", "Ins"_s },
+        { @"\uF728", @"⌫" },
+        { @"\uF729", @"↖︎" },
+        { @"\uF72B", @"↘︎" },
+        { @"\uF72C", @"⇞" },
+        { @"\uF72D", @"⇟" },
+        { @"\uF700", @"↑" },
+        { @"\uF701", @"↓" },
+        { @"\uF702", @"←" },
+        { @"\uF703", @"→" }
+    };
+
+    StringBuilder stringBuilder;
+
+    if (flags.contains(ModifierFlags::Control))
+        stringBuilder.append(String(@"⌃"));
+
+    if (flags.contains(ModifierFlags::Option))
+        stringBuilder.append(String(@"⌥"));
+
+    if (flags.contains(ModifierFlags::Shift))
+        stringBuilder.append(String(@"⇧"));
+
+    if (flags.contains(ModifierFlags::Command))
+        stringBuilder.append(String(@"⌘"));
+
+    if (auto specialKey = specialKeyMap.get().get(key); !specialKey.isEmpty())
+        stringBuilder.append(specialKey);
+    else
+        stringBuilder.append(key.convertToASCIIUppercase());
+
+    return stringBuilder.toString();
+#endif
+}
+
 CocoaMenuItem *WebExtensionCommand::platformMenuItem() const
 {
 #if USE(APPKIT)
@@ -212,6 +281,8 @@ CocoaMenuItem *WebExtensionCommand::platformMenuItem() const
 
     result.keyEquivalent = activationKey();
     result.keyEquivalentModifierMask = modifierFlags().toRaw();
+    if (RefPtr context = extensionContext())
+        result.image = context->extension().icon(NSMakeSize(16, 16));
 
     return result;
 #else

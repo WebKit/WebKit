@@ -27,6 +27,7 @@
 #include "config.h"
 #include "AnimationTimeline.h"
 
+#include "AnimationTimelinesController.h"
 #include "KeyframeEffect.h"
 #include "KeyframeEffectStack.h"
 #include "StyleResolver.h"
@@ -80,6 +81,34 @@ std::optional<double> AnimationTimeline::bindingsCurrentTime()
     if (!time)
         return std::nullopt;
     return secondsToWebAnimationsAPITime(*time);
+}
+
+void AnimationTimeline::detachFromDocument()
+{
+    Ref<AnimationTimeline> protectedThis(*this);
+    if (CheckedPtr controller = this->controller())
+        controller->removeTimeline(*this);
+
+    auto& animationsToRemove = m_animations;
+    while (!animationsToRemove.isEmpty())
+        animationsToRemove.first()->remove();
+}
+
+void AnimationTimeline::suspendAnimations()
+{
+    for (const auto& animation : m_animations)
+        animation->setSuspended(true);
+}
+
+void AnimationTimeline::resumeAnimations()
+{
+    for (const auto& animation : m_animations)
+        animation->setSuspended(false);
+}
+
+bool AnimationTimeline::animationsAreSuspended() const
+{
+    return controller() && controller()->animationsAreSuspended();
 }
 
 } // namespace WebCore

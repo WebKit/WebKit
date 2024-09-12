@@ -305,28 +305,26 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(FetchResponseLoader, FetchResponse::Loader)
 
 void FetchResponse::Loader::didSucceed(const NetworkLoadMetrics& metrics)
 {
-    ASSERT(m_response.hasPendingActivity());
+    Ref response = m_response.get();
+    ASSERT(response->hasPendingActivity());
 
-    m_response.didSucceed(metrics);
+    response->didSucceed(metrics);
 
-    if (m_loader->isStarted()) {
-        Ref<FetchResponse> protector(m_response);
-        m_response.m_loader = nullptr;
-    }
+    if (m_loader->isStarted())
+        response->m_loader = nullptr;
 }
 
 void FetchResponse::Loader::didFail(const ResourceError& error)
 {
-    ASSERT(m_response.hasPendingActivity());
+    Ref response = m_response.get();
+    ASSERT(response->hasPendingActivity());
 
-    m_response.setLoadingError(ResourceError { error });
-    m_response.processReceivedError();
+    response->setLoadingError(ResourceError { error });
+    response->processReceivedError();
 
     // Check whether didFail is called as part of FetchLoader::start.
-    if (m_loader && m_loader->isStarted()) {
-        Ref<FetchResponse> protector(m_response);
-        m_response.m_loader = nullptr;
-    }
+    if (m_loader && m_loader->isStarted())
+        response->m_loader = nullptr;
 }
 
 static std::atomic<uint64_t> nextOpaqueLoadIdentifier;
@@ -351,7 +349,7 @@ void FetchResponse::setReceivedInternalResponse(const ResourceResponse& resource
 FetchResponse::Loader::Loader(FetchResponse& response, NotificationCallback&& responseCallback)
     : m_response(response)
     , m_responseCallback(WTFMove(responseCallback))
-    , m_pendingActivity(m_response.makePendingActivity(m_response))
+    , m_pendingActivity(response.makePendingActivity(response))
 {
 }
 
@@ -359,15 +357,17 @@ FetchResponse::Loader::~Loader() = default;
 
 void FetchResponse::Loader::didReceiveResponse(const ResourceResponse& resourceResponse)
 {
-    m_response.setReceivedInternalResponse(resourceResponse, m_credentials);
+    Ref response = m_response.get();
+    response->setReceivedInternalResponse(resourceResponse, m_credentials);
 
     if (auto responseCallback = WTFMove(m_responseCallback))
-        responseCallback(Ref { m_response });
+        responseCallback(WTFMove(response));
 }
 
 void FetchResponse::Loader::didReceiveData(const SharedBuffer& buffer)
 {
-    ASSERT(m_response.m_readableStreamSource || m_consumeDataCallback);
+    Ref response = m_response.get();
+    ASSERT(response->m_readableStreamSource || m_consumeDataCallback);
 
     if (m_consumeDataCallback) {
         auto chunk = buffer.span();
@@ -375,14 +375,14 @@ void FetchResponse::Loader::didReceiveData(const SharedBuffer& buffer)
         return;
     }
 
-    auto& source = *m_response.m_readableStreamSource;
+    auto& source = *response->m_readableStreamSource;
 
     if (!source.isPulling()) {
-        m_response.body().consumer().append(buffer);
+        response->body().consumer().append(buffer);
         return;
     }
 
-    if (m_response.body().consumer().hasData() && !source.enqueue(m_response.body().consumer().takeAsArrayBuffer())) {
+    if (response->body().consumer().hasData() && !source.enqueue(response->body().consumer().takeAsArrayBuffer())) {
         stop();
         return;
     }
@@ -396,7 +396,7 @@ void FetchResponse::Loader::didReceiveData(const SharedBuffer& buffer)
 bool FetchResponse::Loader::start(ScriptExecutionContext& context, const FetchRequest& request, const String& initiator)
 {
     m_credentials = request.fetchOptions().credentials;
-    m_loader = makeUnique<FetchLoader>(*this, &m_response.m_body->consumer());
+    m_loader = makeUnique<FetchLoader>(*this, &m_response->m_body->consumer());
     m_loader->start(context, request, initiator);
 
     if (!m_loader->isStarted())

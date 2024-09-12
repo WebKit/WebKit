@@ -91,7 +91,7 @@ public:
 #endif
 
     void checkPlayingConsistency() final;
-#ifndef GST_DISABLE_DEBUG
+#ifndef GST_DISABLE_GST_DEBUG
     void setShouldDisableSleep(bool) final;
 #endif
 

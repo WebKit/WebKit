@@ -175,13 +175,14 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
 {
     UNUSED_PARAM(pointerType);
 
+    auto location = deviceScaleLocationInView(page, locationInView);
+
     if (page.viewBackend()) {
-        platformSimulateMouseInteractionLibWPE(page, interaction, button, locationInView, keyModifiers, pointerType, m_currentModifiers);
+        platformSimulateMouseInteractionLibWPE(page, interaction, button, location, keyModifiers, pointerType, m_currentModifiers);
         return;
     }
 
 #if ENABLE(WPE_PLATFORM)
-    auto location = deviceScaleLocationInView(page, locationInView);
     unsigned wpeButton = libWPEMouseButtonToWPEButton(button);
     auto modifier = libWPEStateModifierForWPEButton(wpeButton);
     uint32_t state = modifiersToEventState(keyModifiers) | m_currentModifiers;

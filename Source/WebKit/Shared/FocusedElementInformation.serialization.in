@@ -113,6 +113,6 @@ enum class WebKit::InputType : uint8_t {
 
     WebKit::FocusedElementInformationIdentifier identifier;
     Markable<WebCore::ScrollingNodeID> containerScrollingNodeID;
-    WebCore::FrameIdentifier frameID;
+    Markable<WebCore::FrameIdentifier> frameID;
 }
 #endif

@@ -98,7 +98,7 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
         // FIXME: Add support for partial, yet paragraph level bidi content handling.
         breakAndComputeBidiLevels(inlineItemList);
     }
-    computeInlineBoxBoundaryTextSpacingsIfNeeded();
+    computeInlineBoxBoundaryTextSpacingsIfNeeded(inlineItemList);
     computeInlineTextItemWidths(inlineItemList);
 
     auto adjustInlineContentCacheWithNewInlineItems = [&] {
@@ -135,7 +135,7 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
 #endif
 }
 
-void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacingsIfNeeded()
+void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacingsIfNeeded(const InlineItemList& inlineItemList)
 {
     if (!m_hasTextAutospace)
         return;
@@ -146,7 +146,6 @@ void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacingsIfNeeded()
     InlineBoxBoundaryTextSpacings spacings;
     Vector<unsigned> inlineBoxStartIndexesOnInlineItemsList;
     bool processInlineBoxBoundary = false;
-    auto& inlineItemList = inlineContentCache().inlineItems().content();
     for (unsigned inlineItemIndex = 0; inlineItemIndex < inlineItemList.size(); ++inlineItemIndex) {
         auto& inlineItem = inlineItemList[inlineItemIndex];
         if (inlineItem.isInlineBoxStart()) {
@@ -174,7 +173,6 @@ void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacingsIfNeeded()
         }
 
         size_t boundaryDepth = std::min(currentCharacterDepth, lastCharacterDepth);
-        ASSERT((inlineBoxStartIndexesOnInlineItemsList.size() - 1 - (currentCharacterDepth - boundaryDepth)) >= 0);
         size_t boundaryIndex = inlineBoxStartIndexesOnInlineItemsList.size() - 1 - (currentCharacterDepth - boundaryDepth);
         const RenderStyle& boundaryOwnerStyle = inlineItemList[boundaryIndex].layoutBox().parent().style();
         const TextAutospace& boundaryTextAutospace = boundaryOwnerStyle.textAutospace();
@@ -753,7 +751,7 @@ void InlineItemsBuilder::computeInlineTextItemWidths(InlineItemList& inlineItemL
         auto needsMeasuring = length && !inlineTextItem->isZeroWidthSpaceSeparator();
         if (!needsMeasuring || !canCacheMeasuredWidthOnInlineTextItem(inlineTextBox, inlineTextItem->isWhitespace()))
             continue;
-        if (auto inlineBoxBoundaryTextSpacing = inlineBoxBoundaryTextSpacings.find(inlineItemIndex); inlineBoxBoundaryTextSpacing != inlineBoxBoundaryTextSpacings.end())
+        if (auto inlineBoxBoundaryTextSpacing = inlineBoxBoundaryTextSpacings.find(inlineItemIndex - 1); inlineBoxBoundaryTextSpacing != inlineBoxBoundaryTextSpacings.end())
             extraInlineTextSpacing = inlineBoxBoundaryTextSpacing->value;
 
         inlineTextItem->setWidth(TextUtil::width(*inlineTextItem, inlineTextItem->style().fontCascade(), start, start + length, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::Yes, spacingState) + extraInlineTextSpacing);

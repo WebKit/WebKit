@@ -1073,8 +1073,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
                 return true;
             break;
         case CSSSelector::PseudoClass::Lang:
-            ASSERT(selector.argumentList() && !selector.argumentList()->isEmpty());
-            return matchesLangPseudoClass(element, *selector.argumentList());
+            ASSERT(selector.langList() && !selector.langList()->isEmpty());
+            return matchesLangPseudoClass(element, *selector.langList());
 #if ENABLE(FULLSCREEN_API)
         case CSSSelector::PseudoClass::Fullscreen:
             return matchesFullscreenPseudoClass(element);
@@ -1247,6 +1247,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
             for (auto& partName : element.partNames())
                 appendTranslatedPartNameToRuleScope(translatedPartNames, partName);
 
+            ASSERT(selector.argumentList());
+
             for (auto& part : *selector.argumentList()) {
                 if (!translatedPartNames.contains(part))
                     return false;
@@ -1281,8 +1283,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
                 return true;
 
             return std::ranges::all_of(list.begin() + 1, list.end(),
-                [&](const PossiblyQuotedIdentifier& classSelector) {
-                    return checkingContext.classList.contains(classSelector.identifier);
+                [&](const AtomString& classSelector) {
+                    return checkingContext.classList.contains(classSelector);
                 }
             );
         }

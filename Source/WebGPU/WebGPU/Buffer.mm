@@ -151,6 +151,9 @@ Buffer::Buffer(id<MTLBuffer> buffer, uint64_t initialSize, WGPUBufferUsageFlags 
     , m_state(initialState)
     , m_mappingRange(initialMappingRange)
     , m_device(device)
+#if CPU(X86_64)
+    , m_mappedAtCreation(m_state == State::MappedAtCreation)
+#endif
 {
     if (m_usage & WGPUBufferUsage_Indirect)
         m_indirectBuffer = device.safeCreateBuffer(sizeof(MTLDrawPrimitivesIndirectArguments), MTLStorageModePrivate);
@@ -375,10 +378,14 @@ void Buffer::unmap()
     decrementBufferMapCount();
     indirectBufferInvalidated();
 
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if CPU(X86_64) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
     if (m_buffer.storageMode == MTLStorageModeManaged) {
-        for (const auto& mappedRange : m_mappedRanges)
-            [m_buffer didModifyRange:NSMakeRange(static_cast<NSUInteger>(mappedRange.begin()), static_cast<NSUInteger>(mappedRange.end() - mappedRange.begin()))];
+        if (m_mappedAtCreation)
+            [m_buffer didModifyRange:NSMakeRange(0, m_buffer.length)];
+        else {
+            for (const auto& mappedRange : m_mappedRanges)
+                [m_buffer didModifyRange:NSMakeRange(static_cast<NSUInteger>(mappedRange.begin()), static_cast<NSUInteger>(mappedRange.end() - mappedRange.begin()))];
+        }
     }
 #endif
 

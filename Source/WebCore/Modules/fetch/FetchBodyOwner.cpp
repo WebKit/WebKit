@@ -40,10 +40,12 @@
 #include "ResourceError.h"
 #include "ResourceResponse.h"
 #include "WindowEventLoop.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FetchBodyOwner);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(FetchBodyOwnerBlobLoader, FetchBodyOwner::BlobLoader);
 
 FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext* context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers)
     : ActiveDOMObject(context)
@@ -422,7 +424,7 @@ std::optional<Exception> FetchBodyOwner::loadingException() const
 
 bool FetchBodyOwner::virtualHasPendingActivity() const
 {
-    return !!m_blobLoader;
+    return !!m_blobLoader || (m_body && m_body->hasConsumerPendingActivity());
 }
 
 bool FetchBodyOwner::hasLoadingError() const

@@ -60,6 +60,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/NativePromise.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakPtr.h>
 
 #import "CoreVideoSoftLink.h"
@@ -223,6 +224,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
 #pragma mark MediaPlayer Factory Methods
 
 class MediaPlayerFactoryMediaSourceAVFObjC final : public MediaPlayerFactory {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MediaPlayerFactoryMediaSourceAVFObjC);
 public:
     MediaPlayerFactoryMediaSourceAVFObjC()
     {
@@ -576,7 +578,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::maybeCompleteSeek()
 {
     if (m_seekState == SeekCompleted)
         return;
-    if (hasVideo() && !m_hasAvailableVideoFrame) {
+    if (hasVideo() && hasVideoRenderer() && !m_hasAvailableVideoFrame) {
         ALWAYS_LOG(LOGIDENTIFIER, "waiting for video frame");
         m_seekState = WaitingForAvailableFame;
         return;
@@ -1249,7 +1251,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateAllRenderersHaveAvailableSample
     bool allRenderersHaveAvailableSamples = true;
 
     do {
-        if (hasVideo() && !m_hasAvailableVideoFrame) {
+        if (hasVideo() && hasVideoRenderer() && !m_hasAvailableVideoFrame) {
             allRenderersHaveAvailableSamples = false;
             break;
         }
@@ -1463,7 +1465,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setReadyState(MediaPlayer::ReadyState
     else
         setSynchronizerRate(0);
 
-    if (m_readyState >= MediaPlayer::ReadyState::HaveCurrentData && hasVideo() && !m_hasAvailableVideoFrame) {
+    if (m_readyState >= MediaPlayer::ReadyState::HaveCurrentData && hasVideo() && hasVideoRenderer() && !m_hasAvailableVideoFrame) {
         m_readyStateIsWaitingForAvailableFrame = true;
         return;
     }

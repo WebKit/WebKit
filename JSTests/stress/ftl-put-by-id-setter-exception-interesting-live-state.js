@@ -43,7 +43,7 @@ for (var i = 0; i < 100000; ++i) {
 // Now throw an exception.
 var o = {};
 o.__defineSetter__("f", function() {
-    throw "Error42";
+    throw new Error("Error42");
 });
 var result = foo(o, {g:300});
 if (result.outcome !== "exception")

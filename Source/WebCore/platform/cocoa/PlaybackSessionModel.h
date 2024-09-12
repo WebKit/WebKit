@@ -27,9 +27,9 @@
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
+#include "NowPlayingMetadataObserver.h"
 #include "PlatformMediaSession.h"
 #include "VideoReceiverEndpoint.h"
-#include <WebCore/NowPlayingMetadataObserver.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -46,6 +46,7 @@ namespace WebCore {
 class TimeRanges;
 class PlaybackSessionModelClient;
 struct MediaSelectionOption;
+struct SpatialVideoMetadata;
 
 enum class AudioSessionSoundStageSize : uint8_t;
 
@@ -179,6 +180,7 @@ public:
     virtual void isInWindowFullscreenActiveChanged(bool) { }
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     virtual void supportsLinearMediaPlayerChanged(bool) { }
+    virtual void spatialVideoMetadataChanged(const std::optional<SpatialVideoMetadata>&) { };
 #endif
     virtual void ensureControlsManager() { }
     virtual void modelDestroyed() { }

@@ -1224,14 +1224,6 @@ void MediaPlayerPrivateRemote::paintCurrentFrameInContext(GraphicsContext& conte
     context.drawNativeImage(*nativeImage, rect, FloatRect { { }, nativeImage->size() });
 }
 
-#if !USE(AVFOUNDATION)
-bool MediaPlayerPrivateRemote::copyVideoTextureToPlatformTexture(WebCore::GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool)
-{
-    notImplemented();
-    return false;
-}
-#endif
-
 #if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
 void MediaPlayerPrivateRemote::willBeAskedToPaintGL()
 {

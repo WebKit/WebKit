@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class CryptoAlgorithmAesCtrParams final : public CryptoAlgorithmParameters {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CryptoAlgorithmAesCtrParams);
 public:
     BufferSource counter;
     size_t length;

@@ -29,7 +29,7 @@
         consoleWrite('RUN(video.querySelector("track").src = "captions-webvtt/no-snap-to-lines-overlap.vtt")');
         consoleWrite('RUN(video.textTracks[0].mode = "showing")');
         consoleWrite('EVENT(load)');
-        consoleWrite('RUN(video.src = findMediaFile("video", "w3c/track/webvtt/media/white"))');
+        consoleWrite('RUN(video.src = findMediaFile("video", "../resources/white"))');
         consoleWrite('EVENT(canplaythrough)');
         endTest();
     });

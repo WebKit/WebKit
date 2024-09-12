@@ -42,16 +42,6 @@ namespace WebCore {
 
 #if !USE(APPKIT)
 
-static bool isSkipCharacter(char32_t c)
-{
-    return c == 0xA0 || c == '\n' || c == '.' || c == ',' || c == '!'  || c == '?' || c == ';' || c == ':' || u_isspace(c);
-}
-
-static bool isWhitespaceCharacter(char32_t c)
-{
-    return c == 0xA0 || c == '\n' || u_isspace(c);
-}
-
 static bool isWordDelimitingCharacter(char32_t c)
 {
     // Ampersand is an exception added to treat AT&T as a single word (see <rdar://problem/5022264>).
@@ -237,9 +227,12 @@ void findEndWordBoundary(StringView text, int position, int* end)
     findWordBoundary(text, position, &start, end);
 }
 
+#if USE(APPKIT)
+
+// FIXME: Is this special Mac implementation actually important, or can
+// we share with all the other platforms?
 int findNextWordFromIndex(StringView text, int position, bool forward)
 {   
-#if USE(APPKIT)
     String textWithoutUnpairedSurrogates;
     if (hasUnpairedSurrogate(text)) {
         textWithoutUnpairedSurrogates = replaceUnpairedSurrogatesWithReplacementCharacter(text.toStringWithoutCopying());
@@ -247,30 +240,8 @@ int findNextWordFromIndex(StringView text, int position, bool forward)
     }
     auto attributedString = adoptNS([[NSAttributedString alloc] initWithString:text.createNSStringWithoutCopying().get()]);
     return [attributedString nextWordFromIndex:position forward:forward];
-#else
-    // This very likely won't behave exactly like the non-iPhone version, but it works
-    // for the contexts in which it is used on iPhone, and in the future will be
-    // tuned to improve the iPhone-specific behavior for the keyboard and text editing.
-    int pos = position;
-    UBreakIterator* boundary = wordBreakIterator(text);
-    if (boundary) {
-        if (forward) {
-            do {
-                pos = ubrk_following(boundary, pos);
-                if (pos == UBRK_DONE)
-                    pos = text.length();
-            } while (static_cast<unsigned>(pos) < text.length() && (pos == 0 || !isSkipCharacter(text[pos - 1])) && isSkipCharacter(text[pos]));
-        }
-        else {
-            do {
-                pos = ubrk_preceding(boundary, pos);
-                if (pos == UBRK_DONE)
-                    pos = 0;
-            } while (pos > 0 && isSkipCharacter(text[pos]) && !isWhitespaceCharacter(text[pos - 1]));
-        }
-    }
-    return pos;
-#endif
 }
+
+#endif // USE(APPKIT)
 
 }

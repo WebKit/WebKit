@@ -72,50 +72,50 @@ InspectorExtensionDelegate::InspectorExtensionClient::~InspectorExtensionClient(
 
 void InspectorExtensionDelegate::InspectorExtensionClient::didShowExtensionTab(const Inspector::ExtensionTabID& extensionTabID, WebCore::FrameIdentifier frameID)
 {
-    if (!m_inspectorExtensionDelegate.m_delegateMethods.inspectorExtensionDidShowTabWithIdentifier)
+    if (!m_inspectorExtensionDelegate->m_delegateMethods.inspectorExtensionDidShowTabWithIdentifier)
         return;
 
-    auto& delegate = m_inspectorExtensionDelegate.m_delegate;
+    auto& delegate = m_inspectorExtensionDelegate->m_delegate;
     if (!delegate)
         return;
 
-    [delegate inspectorExtension:m_inspectorExtensionDelegate.m_inspectorExtension.get().get() didShowTabWithIdentifier:extensionTabID withFrameHandle:wrapper(API::FrameHandle::create(frameID)).get()];
+    [delegate inspectorExtension:m_inspectorExtensionDelegate->m_inspectorExtension.get().get() didShowTabWithIdentifier:extensionTabID withFrameHandle:wrapper(API::FrameHandle::create(frameID)).get()];
 }
 
 void InspectorExtensionDelegate::InspectorExtensionClient::didHideExtensionTab(const Inspector::ExtensionTabID& extensionTabID)
 {
-    if (!m_inspectorExtensionDelegate.m_delegateMethods.inspectorExtensionDidHideTabWithIdentifier)
+    if (!m_inspectorExtensionDelegate->m_delegateMethods.inspectorExtensionDidHideTabWithIdentifier)
         return;
 
-    auto& delegate = m_inspectorExtensionDelegate.m_delegate;
+    auto& delegate = m_inspectorExtensionDelegate->m_delegate;
     if (!delegate)
         return;
 
-    [delegate inspectorExtension:m_inspectorExtensionDelegate.m_inspectorExtension.get().get() didHideTabWithIdentifier:extensionTabID];
+    [delegate inspectorExtension:m_inspectorExtensionDelegate->m_inspectorExtension.get().get() didHideTabWithIdentifier:extensionTabID];
 }
 
 void InspectorExtensionDelegate::InspectorExtensionClient::didNavigateExtensionTab(const Inspector::ExtensionTabID& extensionTabID, const WTF::URL& newURL)
 {
-    if (!m_inspectorExtensionDelegate.m_delegateMethods.inspectorExtensionDidNavigateTabWithIdentifier)
+    if (!m_inspectorExtensionDelegate->m_delegateMethods.inspectorExtensionDidNavigateTabWithIdentifier)
         return;
 
-    auto& delegate = m_inspectorExtensionDelegate.m_delegate;
+    auto& delegate = m_inspectorExtensionDelegate->m_delegate;
     if (!delegate)
         return;
 
-    [delegate inspectorExtension:m_inspectorExtensionDelegate.m_inspectorExtension.get().get() didNavigateTabWithIdentifier:extensionTabID newURL:newURL];
+    [delegate inspectorExtension:m_inspectorExtensionDelegate->m_inspectorExtension.get().get() didNavigateTabWithIdentifier:extensionTabID newURL:newURL];
 }
 
 void InspectorExtensionDelegate::InspectorExtensionClient::inspectedPageDidNavigate(const WTF::URL& newURL)
 {
-    if (!m_inspectorExtensionDelegate.m_delegateMethods.inspectorExtensionInspectedPageDidNavigate)
+    if (!m_inspectorExtensionDelegate->m_delegateMethods.inspectorExtensionInspectedPageDidNavigate)
         return;
 
-    auto& delegate = m_inspectorExtensionDelegate.m_delegate;
+    auto& delegate = m_inspectorExtensionDelegate->m_delegate;
     if (!delegate)
         return;
 
-    [delegate inspectorExtension:m_inspectorExtensionDelegate.m_inspectorExtension.get().get() inspectedPageDidNavigate:newURL];
+    [delegate inspectorExtension:m_inspectorExtensionDelegate->m_inspectorExtension.get().get() inspectedPageDidNavigate:newURL];
 }
 
 } // namespace WebKit

@@ -267,21 +267,21 @@ CSSUnitType CSSPrimitiveValue::primitiveType() const
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(CSSPropertyID propertyID)
-    : CSSValue(PrimitiveClass)
+    : CSSValue(ClassType::Primitive)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_PROPERTY_ID);
     m_value.propertyID = propertyID;
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(double number, CSSUnitType type)
-    : CSSValue(PrimitiveClass)
+    : CSSValue(ClassType::Primitive)
 {
     setPrimitiveUnitType(type);
     m_value.number = number;
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(const String& string, CSSUnitType type)
-    : CSSValue(PrimitiveClass)
+    : CSSValue(ClassType::Primitive)
 {
     ASSERT(isStringType(type));
     setPrimitiveUnitType(type);
@@ -290,7 +290,7 @@ CSSPrimitiveValue::CSSPrimitiveValue(const String& string, CSSUnitType type)
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(Color color)
-    : CSSValue(PrimitiveClass)
+    : CSSValue(ClassType::Primitive)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_RGBCOLOR);
     static_assert(sizeof(m_value.colorAsInteger) == sizeof(color));
@@ -313,7 +313,7 @@ Color CSSPrimitiveValue::absoluteColor() const
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, CSSValueID valueID)
-    : CSSValue(PrimitiveClass)
+    : CSSValue(ClassType::Primitive)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
     m_value.valueID = valueID;
@@ -339,21 +339,21 @@ CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, ImplicitInitialValueTag)
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(Ref<CSSCalcValue> value)
-    : CSSValue(PrimitiveClass)
+    : CSSValue(ClassType::Primitive)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_CALC);
     m_value.calc = &value.leakRef();
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(CSSUnresolvedColor unresolvedColor)
-    : CSSValue(PrimitiveClass)
+    : CSSValue(ClassType::Primitive)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_UNRESOLVED_COLOR);
     m_value.unresolvedColor = new CSSUnresolvedColor(WTFMove(unresolvedColor));
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(Ref<CSSAnchorValue> value)
-    : CSSValue(PrimitiveClass)
+    : CSSValue(ClassType::Primitive)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_ANCHOR);
     m_value.anchor = &value.leakRef();
@@ -625,9 +625,19 @@ template<> unsigned CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversi
     return roundForImpreciseConversion<unsigned>(resolveAsLengthDouble(conversionData));
 }
 
+template<> float CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
+{
+    return narrowPrecisionToFloat(resolveAsLengthDouble(conversionData));
+}
+
+template<> double CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
+{
+    return resolveAsLengthDouble(conversionData);
+}
+
 template<> Length CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return Length(clampTo<double>(resolveAsLengthDouble(conversionData), minValueForCssLength, maxValueForCssLength), LengthType::Fixed);
+    return Length(clampTo<float>(resolveAsLength(conversionData), minValueForCssLength, maxValueForCssLength), LengthType::Fixed);
 }
 
 template<> short CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
@@ -638,16 +648,6 @@ template<> short CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionD
 template<> unsigned short CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
     return roundForImpreciseConversion<unsigned short>(resolveAsLengthDouble(conversionData));
-}
-
-template<> float CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
-{
-    return narrowPrecisionToFloat(resolveAsLengthDouble(conversionData));
-}
-
-template<> double CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
-{
-    return resolveAsLengthDouble(conversionData);
 }
 
 template<> LayoutUnit CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
@@ -1093,12 +1093,6 @@ double CSSPrimitiveValue::doubleValue(const CSSToLengthConversionData& conversio
     return isCalculated() ? m_value.calc->doubleValue(conversionData, { }) : m_value.number;
 }
 
-double CSSPrimitiveValue::doubleValueNoConversionDataRequired() const
-{
-    ASSERT(!isCalculated());
-    return m_value.number;
-}
-
 double CSSPrimitiveValue::doubleValueDeprecated() const
 {
     return isCalculated() ? m_value.calc->doubleValueDeprecated({ }) : m_value.number;
@@ -1143,6 +1137,13 @@ std::optional<bool> CSSPrimitiveValue::isZero() const
     if (isCalculated())
         return std::nullopt;
     return !m_value.number;
+}
+
+std::optional<bool> CSSPrimitiveValue::isOne() const
+{
+    if (isCalculated())
+        return std::nullopt;
+    return m_value.number == 1;
 }
 
 std::optional<bool> CSSPrimitiveValue::isPositive() const
@@ -1901,20 +1902,7 @@ bool CSSPrimitiveValue::convertingToLengthHasRequiredConversionData(int lengthCo
     if (!isFixedNumberConversion)
         return true;
 
-    auto dependencies = computedStyleDependencies();
-    if (!dependencies.rootProperties.isEmpty() && !conversionData.rootStyle())
-        return false;
-
-    if (!dependencies.properties.isEmpty() && !conversionData.style())
-        return false;
-
-    if (dependencies.containerDimensions && !conversionData.elementForContainerUnitResolution())
-        return false;
-
-    if (dependencies.viewportDimensions && !conversionData.renderView())
-        return false;
-
-    return true;
+    return canResolveDependenciesWithConversionData(conversionData);
 }
 
 IterationStatus CSSPrimitiveValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const

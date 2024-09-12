@@ -34,6 +34,7 @@
 #include "CSSFontSelector.h"
 #include "CSSKeyframesRule.h"
 #include "CSSSelectorParser.h"
+#include "CSSViewTransitionRule.h"
 #include "CustomPropertyRegistry.h"
 #include "Document.h"
 #include "DocumentInlines.h"
@@ -116,6 +117,11 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
     case StyleRuleType::Style:
         if (m_ruleSet)
             addStyleRule(uncheckedDowncast<StyleRule>(rule));
+        return;
+
+    case StyleRuleType::NestedDeclarations:
+        if (m_ruleSet)
+            addStyleRule(uncheckedDowncast<StyleRuleNestedDeclarations>(rule));
         return;
 
     case StyleRuleType::Scope: {
@@ -309,6 +315,14 @@ void RuleSetBuilder::addStyleRule(StyleRuleWithNesting& rule)
 
 void RuleSetBuilder::addStyleRule(const StyleRule& rule)
 {
+    addStyleRuleWithSelectorList(rule.selectorList(), rule);
+}
+
+void RuleSetBuilder::addStyleRule(StyleRuleNestedDeclarations& rule)
+{
+    ASSERT(m_selectorListStack.size());
+    auto selectorList =  *m_selectorListStack.last();
+    rule.wrapperAdoptSelectorList(WTFMove(selectorList));
     addStyleRuleWithSelectorList(rule.selectorList(), rule);
 }
 

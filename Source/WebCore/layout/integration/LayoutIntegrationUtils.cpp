@@ -27,6 +27,8 @@
 #include "LayoutIntegrationUtils.h"
 
 #include "LayoutBox.h"
+#include "LayoutState.h"
+#include "RenderObject.h"
 
 namespace WebCore {
 namespace Layout {

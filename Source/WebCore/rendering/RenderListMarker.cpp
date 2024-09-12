@@ -310,21 +310,29 @@ void RenderListMarker::updateContent()
         return;
     }
 
+    auto isLeftToRightDirectionContent = [&](auto content) {
+        // FIXME: Depending on the string value, we may need the real bidi algorithm. (rdar://106139180)
+        // Also we may need to start checking for the entire content for directionality (and whether we need to check for additional
+        // directionality characters like U_RIGHT_TO_LEFT_EMBEDDING).
+        auto bidiCategory = u_charDirection(content[0]);
+        return bidiCategory != U_RIGHT_TO_LEFT && bidiCategory != U_RIGHT_TO_LEFT_ARABIC;
+    };
+
     auto styleType = style().listStyleType();
     switch (styleType.type) {
-    case ListStyleType::Type::String:
+    case ListStyleType::Type::String: {
         m_textWithSuffix = styleType.identifier;
         m_textWithoutSuffixLength = m_textWithSuffix.length();
-        // FIXME: Depending on the string value, we may need the real bidi algorithm. (rdar://106139180)
-        m_textIsLeftToRightDirection = u_charDirection(m_textWithSuffix[0]) != U_RIGHT_TO_LEFT;
+        m_textIsLeftToRightDirection = isLeftToRightDirectionContent(m_textWithSuffix);
         break;
+    }
     case ListStyleType::Type::CounterStyle: {
         auto counter = counterStyle();
         ASSERT(counter);
         auto text = makeString(counter->prefix().text, counter->text(m_listItem->value(), makeTextFlow(style().writingMode(), style().direction())));
         m_textWithSuffix = makeString(text, counter->suffix().text);
         m_textWithoutSuffixLength = text.length();
-        m_textIsLeftToRightDirection = u_charDirection(text[0]) != U_RIGHT_TO_LEFT;
+        m_textIsLeftToRightDirection = isLeftToRightDirectionContent(text);
         break;
     }
     case ListStyleType::Type::None:

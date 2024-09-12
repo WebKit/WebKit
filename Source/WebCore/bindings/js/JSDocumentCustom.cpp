@@ -56,7 +56,7 @@ JSObject* cachedDocumentWrapper(JSGlobalObject& lexicalGlobalObject, JSDOMGlobal
     if (auto* wrapper = getCachedWrapper(globalObject.world(), document))
         return wrapper;
 
-    auto* window = document.domWindow();
+    RefPtr window = document.domWindow();
     if (!window)
         return nullptr;
 

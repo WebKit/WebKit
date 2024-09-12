@@ -32,10 +32,13 @@
 #include "JITExceptions.h"
 #include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyHelpers.h"
+#include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyStruct.h"
 #include "TypedArrayController.h"
 #include "WaiterListManager.h"
 #include "WasmLLIntGenerator.h"
+#include "WasmModuleInformation.h"
+#include "WasmTypeDefinition.h"
 
 namespace JSC {
 namespace Wasm {
@@ -295,8 +298,15 @@ inline EncodedJSValue arrayNewElem(JSWebAssemblyInstance* instance, uint32_t typ
 
     // Ensure that adding the offset to the desired array length doesn't overflow int32 or
     // overflow the length of the element segment
-    size_t segmentLength = instance->elementAt(elemSegmentIndex) ? instance->elementAt(elemSegmentIndex)->length() : 0U;
-    if (UNLIKELY(sumOverflows<uint32_t>(offset, arraySize) || ((offset + arraySize) > segmentLength)))
+    auto element = instance->elementAt(elemSegmentIndex);
+    size_t segmentLength = element ? element->length() : 0U;
+    auto calculatedArrayEnd = CheckedUint32 { offset } + arraySize;
+    if (UNLIKELY(calculatedArrayEnd.hasOverflowed() || calculatedArrayEnd > segmentLength))
+        return JSValue::encode(jsNull());
+
+    size_t elementTypeSize = typeSizeInBytes(StorageType(element->elementType));
+    auto newArraySizeInBytes = CheckedSize { elementTypeSize } * arraySize;
+    if (UNLIKELY(newArraySizeInBytes.hasOverflowed() || newArraySizeInBytes > maxArraySizeInBytes))
         return JSValue::encode(jsNull());
 
     FixedVector<uint64_t> values(arraySize);
@@ -551,24 +561,10 @@ inline bool tableSet(JSWebAssemblyInstance* instance, unsigned tableIndex, uint3
         return false;
 
     JSValue value = JSValue::decode(encValue);
-    if (instance->table(tableIndex)->type() == Wasm::TableElementType::Externref)
+    if (value.isNull())
+        instance->table(tableIndex)->clear(index);
+    else
         instance->table(tableIndex)->set(index, value);
-    else if (instance->table(tableIndex)->type() == Wasm::TableElementType::Funcref) {
-        WebAssemblyFunction* wasmFunction;
-        WebAssemblyWrapperFunction* wasmWrapperFunction;
-
-        if (isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction)) {
-            ASSERT(!!wasmFunction || !!wasmWrapperFunction);
-            if (wasmFunction)
-                instance->table(tableIndex)->asFuncrefTable()->setFunction(index, jsCast<JSObject*>(value), wasmFunction->importableFunction(), wasmFunction->instance());
-            else
-                instance->table(tableIndex)->asFuncrefTable()->setFunction(index, jsCast<JSObject*>(value), wasmWrapperFunction->importableFunction(), wasmWrapperFunction->instance());
-        } else if (value.isNull())
-            instance->table(tableIndex)->clear(index);
-        else
-            ASSERT_NOT_REACHED();
-    } else
-        ASSERT_NOT_REACHED();
 
     return true;
 }

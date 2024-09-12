@@ -33,6 +33,7 @@
 #include "LengthPoint.h"
 #include "LengthSize.h"
 #include "RotationDirection.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 class TextStream;
@@ -239,6 +240,7 @@ public:
 
 // https://drafts.csswg.org/css-shapes-2/#shape-function
 class BasicShapeShape final : public BasicShape {
+    WTF_MAKE_TZONE_ALLOCATED(BasicShapeShape);
 public:
     Ref<BasicShape> clone() const final;
 

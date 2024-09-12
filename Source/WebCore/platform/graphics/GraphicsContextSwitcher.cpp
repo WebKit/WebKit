@@ -36,10 +36,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextSwitcher);
 
-std::unique_ptr<GraphicsContextSwitcher> GraphicsContextSwitcher::create(GraphicsContext& destinationContext, const FloatRect &sourceImageRect, const DestinationColorSpace& colorSpace, RefPtr<Filter>&& filter, FilterResults* results)
+std::unique_ptr<GraphicsContextSwitcher> GraphicsContextSwitcher::create(GraphicsContext& destinationContext, const FloatRect& sourceImageRect, const DestinationColorSpace& colorSpace, RefPtr<Filter>&& filter, FilterResults* results)
 {
     if (filter && filter->filterRenderingModes().contains(FilterRenderingMode::GraphicsContext))
         return makeUnique<TransparencyLayerContextSwitcher>(destinationContext, sourceImageRect, WTFMove(filter));
+
     return makeUnique<ImageBufferContextSwitcher>(destinationContext, sourceImageRect, colorSpace, WTFMove(filter), results);
 }
 

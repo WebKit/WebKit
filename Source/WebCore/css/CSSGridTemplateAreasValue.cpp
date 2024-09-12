@@ -41,7 +41,7 @@
 namespace WebCore {
 
 CSSGridTemplateAreasValue::CSSGridTemplateAreasValue(NamedGridAreaMap map, size_t rowCount, size_t columnCount)
-    : CSSValue(GridTemplateAreasClass)
+    : CSSValue(ClassType::GridTemplateAreas)
     , m_map(WTFMove(map))
     , m_rowCount(rowCount)
     , m_columnCount(columnCount)

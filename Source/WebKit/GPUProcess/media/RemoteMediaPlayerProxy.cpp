@@ -863,7 +863,7 @@ CachedResourceLoader* RemoteMediaPlayerProxy::mediaPlayerCachedResourceLoader()
 
 Ref<PlatformMediaResourceLoader> RemoteMediaPlayerProxy::mediaPlayerCreateResourceLoader()
 {
-    return adoptRef(*new RemoteMediaResourceLoader(*this));
+    return RemoteMediaResourceLoader::create(*this);
 }
 
 bool RemoteMediaPlayerProxy::doesHaveAttribute(const AtomString&, AtomString*) const
@@ -1260,6 +1260,14 @@ WTFLogChannel& RemoteMediaPlayerProxy::logChannel() const
     return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, Media);
 }
 #endif
+
+const SharedPreferencesForWebProcess& RemoteMediaPlayerProxy::sharedPreferencesForWebProcess() const
+{
+    RefPtr<GPUConnectionToWebProcess> gpuProcessConnectionToWebProcess = m_manager ? m_manager->gpuConnectionToWebProcess() : nullptr;
+    RELEASE_ASSERT(gpuProcessConnectionToWebProcess);
+
+    return gpuProcessConnectionToWebProcess->sharedPreferencesForWebProcess();
+}
 
 } // namespace WebKit
 

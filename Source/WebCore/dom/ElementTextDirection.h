@@ -25,7 +25,17 @@
 
 #pragma once
 
+#include <optional>
+
+namespace WTF {
+class AtomString;
+};
+
 namespace WebCore {
+
+class Element;
+
+enum class TextDirection : bool;
 
 // https://html.spec.whatwg.org/multipage/dom.html#attr-dir
 enum class TextDirectionState : uint8_t {
@@ -35,7 +45,7 @@ enum class TextDirectionState : uint8_t {
     Undefined,
 };
 
-TextDirectionState parseTextDirectionState(const AtomString&);
+TextDirectionState parseTextDirectionState(const WTF::AtomString&);
 TextDirectionState elementTextDirectionState(const Element&);
 
 bool elementHasValidTextDirectionState(const Element&);

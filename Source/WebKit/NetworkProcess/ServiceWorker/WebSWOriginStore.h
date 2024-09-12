@@ -27,6 +27,7 @@
 
 #include "SharedStringHashStore.h"
 #include <WebCore/SWOriginStore.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebKit {
@@ -34,6 +35,7 @@ namespace WebKit {
 class WebSWServerConnection;
 
 class WebSWOriginStore final : public WebCore::SWOriginStore, private SharedStringHashStore::Client {
+    WTF_MAKE_TZONE_ALLOCATED(WebSWOriginStore);
 public:
     WebSWOriginStore();
 

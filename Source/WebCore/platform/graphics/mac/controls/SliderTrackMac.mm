@@ -31,8 +31,11 @@
 #import "ColorSpaceCG.h"
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SliderTrackMac);
 
 SliderTrackMac::SliderTrackMac(SliderTrackPart& part, ControlFactoryMac& controlFactory)
     : ControlMac(part, controlFactory)

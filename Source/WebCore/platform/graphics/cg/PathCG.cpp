@@ -33,8 +33,12 @@
 #include "PathStream.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMallocInlines.h>
+
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PathCG);
 
 Ref<PathCG> PathCG::create()
 {

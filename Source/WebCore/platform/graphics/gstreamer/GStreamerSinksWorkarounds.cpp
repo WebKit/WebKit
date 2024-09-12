@@ -204,7 +204,10 @@ private:
             return false;
         }
 
-        GST_DEBUG("AppSinkFlushCapsWorkaroundProbe: gst-plugins-base version is %s, bug was fixed in 1.21.1 and backported to 1.20.3.", gst_plugins_base_version_string());
+#ifndef GST_DISABLE_GST_DEBUG
+        GUniquePtr<char> version(gst_plugins_base_version_string());
+        GST_DEBUG("AppSinkFlushCapsWorkaroundProbe: gst-plugins-base version is %s, bug was fixed in 1.21.1 and backported to 1.20.3.", version.get());
+#endif
         WorkaroundMode mode = getWorkAroundModeFromEnvironment("WEBKIT_GST_WORKAROUND_APP_SINK_FLUSH_CAPS", WEBKIT_GST_WORKAROUND_APP_SINK_FLUSH_CAPS_DEFAULT_MODE);
         if (mode == WorkaroundMode::ForceEnable) {
             GST_DEBUG("AppSinkFlushCapsWorkaroundProbe: forcing workaround to be enabled.");
@@ -265,7 +268,7 @@ private:
             GRefPtr<GstCaps> caps = adoptGRef(gst_pad_get_current_caps(pad));
             GST_DEBUG_OBJECT(pad, "Sending stored pad caps to appsink: %" GST_PTR_FORMAT, caps.get());
             // This will cause a recursive call to appsinkWorkaroundProbe() which will also set `needsResendCaps` to false.
-            bool wereCapsSent = gst_pad_send_event(pad, gst_event_new_caps(caps.get()));
+            [[maybe_unused]] bool wereCapsSent = gst_pad_send_event(pad, gst_event_new_caps(caps.get()));
             GST_DEBUG_OBJECT(pad, "wereCapsSent = %s. Returning from the probe so that the buffer is sent: %" GST_PTR_FORMAT, boolForPrinting(wereCapsSent), info->data);
         }
 

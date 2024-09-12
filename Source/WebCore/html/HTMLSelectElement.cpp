@@ -226,18 +226,20 @@ int HTMLSelectElement::activeSelectionEndListIndex() const
 ExceptionOr<void> HTMLSelectElement::add(const OptionOrOptGroupElement& element, const std::optional<HTMLElementOrInt>& before)
 {
     RefPtr<HTMLElement> beforeElement;
+    Ref<ContainerNode> parent = *this;
     if (before) {
         beforeElement = WTF::switchOn(before.value(),
             [](const RefPtr<HTMLElement>& element) -> HTMLElement* { return element.get(); },
             [this](int index) -> HTMLElement* { return item(index); }
         );
+        if (std::holds_alternative<int>(before.value()) && beforeElement && beforeElement->parentNode())
+            parent = *beforeElement->parentNode();
     }
     Ref toInsert = WTF::switchOn(element,
         [](const auto& htmlElement) -> HTMLElement& { return *htmlElement; }
     );
 
-
-    return insertBefore(toInsert, WTFMove(beforeElement));
+    return parent->insertBefore(toInsert, WTFMove(beforeElement));
 }
 
 void HTMLSelectElement::remove(int optionIndex)

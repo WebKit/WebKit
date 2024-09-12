@@ -173,7 +173,7 @@ private:
     CodecLookupResult isAVC1CodecSupported(Configuration, const String& codec, bool shouldCheckForHardwareUse) const;
     CodecLookupResult isHEVCCodecSupported(Configuration, const String& codec, bool shouldCheckForHardwareUse) const;
 
-    const char* configurationNameForLogging(Configuration) const;
+    ASCIILiteral configurationNameForLogging(Configuration) const;
     bool supportsFeatures(const String& features) const;
 
 #if USE(GSTREAMER_WEBRTC)

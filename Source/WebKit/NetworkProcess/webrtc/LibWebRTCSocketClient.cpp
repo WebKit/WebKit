@@ -89,7 +89,7 @@ void LibWebRTCSocketClient::close()
     RELEASE_LOG_ERROR_IF(result, Network, "LibWebRTCSocketClient::close (ID=%" PRIu64 ") failed with error %d", m_identifier.toUInt64(), m_socket->GetError());
 
     m_socket->DeregisterReceivedPacketCallback();
-    m_rtcProvider.takeSocket(m_identifier);
+    Ref { m_rtcProvider.get() }->takeSocket(m_identifier);
 }
 
 void LibWebRTCSocketClient::setOption(int option, int value)
@@ -137,7 +137,8 @@ void LibWebRTCSocketClient::signalClose(rtc::AsyncPacketSocket* socket, int erro
 
     // We want to remove 'this' from the socket map now but we will destroy it asynchronously
     // so that the socket parameter of signalClose remains alive as the caller of signalClose may actually being using it afterwards.
-    m_rtcProvider.callOnRTCNetworkThread([socket = m_rtcProvider.takeSocket(m_identifier)] { });
+    Ref rtcProvider = m_rtcProvider.get();
+    rtcProvider->callOnRTCNetworkThread([socket = rtcProvider->takeSocket(m_identifier)] { });
 }
 
 } // namespace WebKit

@@ -5,9 +5,9 @@
 if (window.testRunner && window.internals) {
     testRunner.dumpAsText();
     document.body.offsetTop;
-    const layoutCountBefore = internals.layoutCount;
+    internals.startTrackingLayoutUpdates();
     target.style.color = "blue";
     document.body.offsetTop;
-    log.textContent = `Layout count: ${internals.layoutCount - layoutCountBefore}`;
+    log.textContent = `Layout count: ${internals.layoutUpdateCount()}`;
 }
 </script>

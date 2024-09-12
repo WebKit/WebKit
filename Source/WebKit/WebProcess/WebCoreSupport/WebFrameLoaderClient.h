@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/NavigationIdentifier.h>
+#include <WebCore/SandboxFlags.h>
 #include <optional>
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
@@ -34,13 +35,13 @@
 namespace WebCore {
 enum class PolicyAction : uint8_t;
 enum class PolicyDecisionMode;
+enum class IsPerformingHTTPFallback : bool;
 class FormState;
 class HitTestResult;
 class NavigationAction;
 class ResourceRequest;
 class ResourceResponse;
 using FramePolicyFunction = CompletionHandler<void(PolicyAction)>;
-using SandboxFlags = int;
 }
 
 namespace WebKit {
@@ -53,7 +54,7 @@ class WebFrameLoaderClient {
 public:
     WebFrame& webFrame() const { return m_frame.get(); }
 
-    std::optional<NavigationActionData> navigationActionData(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::SandboxFlags) const;
+    std::optional<NavigationActionData> navigationActionData(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::IsPerformingHTTPFallback, WebCore::SandboxFlags) const;
 
     virtual void applyWebsitePolicies(WebsitePoliciesData&&) = 0;
 
@@ -64,7 +65,7 @@ public:
 protected:
     WebFrameLoaderClient(Ref<WebFrame>&&, ScopeExit<Function<void()>>&& frameInvalidator);
 
-    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String&, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&);
+    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String&, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool, WebCore::IsPerformingHTTPFallback, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&);
 
     Ref<WebFrame> m_frame;
     ScopeExit<Function<void()>> m_frameInvalidator;

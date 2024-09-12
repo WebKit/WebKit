@@ -551,14 +551,6 @@ void Connection::invalidate()
     });
 }
 
-void Connection::markCurrentlyDispatchedMessageAsInvalid()
-{
-    // This should only be called while processing a message.
-    ASSERT(m_inDispatchMessageCount > 0);
-
-    m_didReceiveInvalidMessage = true;
-}
-
 UniqueRef<Encoder> Connection::createSyncMessageEncoder(MessageName messageName, uint64_t destinationID, SyncRequestID& syncRequestID)
 {
     auto encoder = makeUniqueRef<Encoder>(messageName, destinationID);

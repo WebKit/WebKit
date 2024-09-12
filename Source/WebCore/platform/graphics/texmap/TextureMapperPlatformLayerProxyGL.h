@@ -40,6 +40,8 @@
 
 namespace WebCore {
 
+class CoordinatedPlatformLayerBuffer;
+
 class TextureMapperPlatformLayerProxyGL final : public TextureMapperPlatformLayerProxy {
 public:
     static Ref<TextureMapperPlatformLayerProxy> create(ContentType contentType)
@@ -54,35 +56,27 @@ public:
     WEBCORE_EXPORT void invalidate() override;
     WEBCORE_EXPORT void swapBuffer() override;
 
-    std::unique_ptr<TextureMapperPlatformLayerBuffer> getAvailableBuffer(const IntSize&, int internalFormat);
-    void pushNextBuffer(std::unique_ptr<TextureMapperPlatformLayerBuffer>&&);
+    void pushNextBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&);
 
-    void dropCurrentBufferWhilePreservingTexture(bool shouldWait = false);
+    void dropCurrentBufferWhilePreservingTexture(bool shouldWait);
 
     bool scheduleUpdateOnCompositorThread(Function<void()>&&);
 
 private:
     explicit TextureMapperPlatformLayerProxyGL(ContentType);
 
-    void appendToUnusedBuffers(std::unique_ptr<TextureMapperPlatformLayerBuffer>);
-    void scheduleReleaseUnusedBuffers();
-    void releaseUnusedBuffersTimerFired();
+    void compositorThreadUpdateTimerFired();
 
-    std::unique_ptr<TextureMapperPlatformLayerBuffer> m_currentBuffer;
-    std::unique_ptr<TextureMapperPlatformLayerBuffer> m_pendingBuffer;
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_currentBuffer;
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_pendingBuffer;
+#if ASSERT_ENABLED
+    RefPtr<Thread> m_compositorThread;
+#endif
 
     Lock m_wasBufferDroppedLock;
     Condition m_wasBufferDroppedCondition;
     bool m_wasBufferDropped WTF_GUARDED_BY_LOCK(m_wasBufferDroppedLock) { false };
 
-    Vector<std::unique_ptr<TextureMapperPlatformLayerBuffer>> m_usedBuffers;
-    std::unique_ptr<RunLoop::Timer> m_releaseUnusedBuffersTimer;
-
-#if ASSERT_ENABLED
-    RefPtr<Thread> m_compositorThread;
-#endif
-
-    void compositorThreadUpdateTimerFired();
     std::unique_ptr<RunLoop::Timer> m_compositorThreadUpdateTimer;
     Function<void()> m_compositorThreadUpdateFunction;
 };

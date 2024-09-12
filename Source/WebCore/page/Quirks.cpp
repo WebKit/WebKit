@@ -215,7 +215,6 @@ bool Quirks::shouldAutoplayWebAudioForArbitraryUserGesture() const
     return isDomain("zoom.us"_s);
 }
 
-// hulu.com https://bugs.webkit.org/show_bug.cgi?id=190051
 // youtube.com https://bugs.webkit.org/show_bug.cgi?id=195598
 bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 {
@@ -229,7 +228,7 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
     if (m_hasBrokenEncryptedMediaAPISupportQuirk)
         return m_hasBrokenEncryptedMediaAPISupportQuirk.value();
 
-    m_hasBrokenEncryptedMediaAPISupportQuirk = isDomain("youtube.com"_s) || isDomain("hulu.com"_s);
+    m_hasBrokenEncryptedMediaAPISupportQuirk = isDomain("youtube.com"_s);
 
     return m_hasBrokenEncryptedMediaAPISupportQuirk.value();
 #endif
@@ -539,7 +538,6 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
 }
 
 // maps.google.com https://bugs.webkit.org/show_bug.cgi?id=199904
-// desmos.com rdar://50925173
 std::optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(EventTarget* target) const
 {
     if (!shouldDispatchSimulatedMouseEvents(target))
@@ -552,40 +550,7 @@ std::optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(Even
         return { };
     }
 
-    if (isDomain("desmos.com"_s))
-        return Event::IsCancelable::No;
-
     return Event::IsCancelable::Yes;
-}
-
-// youtube.com rdar://53415195
-bool Quirks::shouldMakeTouchEventNonCancelableForTarget(EventTarget* target) const
-{
-    if (!needsQuirks())
-        return false;
-
-    auto host = m_document->topDocument().url().host();
-
-    if (host == "www.youtube.com"_s) {
-        if (RefPtr element = dynamicDowncast<Element>(target)) {
-            unsigned depth = 3;
-            for (; element && depth; element = element->parentElement(), --depth) {
-                if (element->localName() == "paper-item"_s && element->classList().contains("yt-dropdown-menu"_s))
-                    return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-// shutterstock.com rdar://58844166
-bool Quirks::shouldPreventPointerMediaQueryFromEvaluatingToCoarse() const
-{
-    if (!needsQuirks())
-        return false;
-
-    return isDomain("shutterstock.com"_s);
 }
 
 // sites.google.com rdar://58653069
@@ -602,19 +567,6 @@ bool Quirks::shouldPreventDispatchOfTouchEvent(const AtomString& touchEventType,
     return false;
 }
 
-#endif
-
-#if ENABLE(IOS_TOUCH_EVENTS)
-// mail.yahoo.com rdar://59824469
-bool Quirks::shouldSynthesizeTouchEvents() const
-{
-    if (!needsQuirks())
-        return false;
-
-    if (!m_shouldSynthesizeTouchEventsQuirk)
-        m_shouldSynthesizeTouchEventsQuirk = isYahooMail(*protectedDocument());
-    return m_shouldSynthesizeTouchEventsQuirk.value();
-}
 #endif
 
 // live.com rdar://52116170
@@ -1925,6 +1877,21 @@ std::optional<TargetedElementSelectors> Quirks::defaultVisibilityAdjustmentSelec
     UNUSED_PARAM(requestURL);
     return { };
 #endif
+}
+
+String Quirks::scriptToEvaluateBeforeRunningScriptFromURL(const URL& scriptURL)
+{
+#if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
+    if (!needsQuirks())
+        return { };
+
+    auto topDomain = RegistrableDomain(m_document->topDocument().url()).string();
+    if (UNLIKELY(topDomain == "webex.com"_s && scriptURL.lastPathComponent().startsWith("pushdownload."_s)))
+        return "Object.defineProperty(window, 'Touch', { get: () => undefined });"_s;
+#else
+    UNUSED_PARAM(scriptURL);
+#endif
+    return { };
 }
 
 }

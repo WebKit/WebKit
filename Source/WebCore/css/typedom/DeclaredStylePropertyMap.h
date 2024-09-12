@@ -40,6 +40,7 @@ public:
 
     Vector<StylePropertyMapEntry> entries(ScriptExecutionContext*) const final;
     unsigned size() const final;
+    Type type() const final { return Type::Declared; }
 
 private:
     explicit DeclaredStylePropertyMap(CSSStyleRule&);
@@ -60,3 +61,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSSOM_STYLE_PROPERTY_MAP(DeclaredStylePropertyMap, WebCore::StylePropertyMapReadOnly::Type::Declared);

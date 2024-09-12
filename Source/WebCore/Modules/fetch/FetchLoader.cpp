@@ -56,7 +56,7 @@ void FetchLoader::startLoadingBlobURL(ScriptExecutionContext& context, const URL
     m_urlForReading = { BlobURL::createPublicURL(context.securityOrigin()), context.topOrigin().data() };
 
     if (m_urlForReading.isEmpty()) {
-        m_client.didFail({ errorDomainWebKitInternal, 0, URL(), "Could not create URL for Blob"_s });
+        m_client->didFail({ errorDomainWebKitInternal, 0, URL(), "Could not create URL for Blob"_s });
         return;
     }
 
@@ -105,7 +105,7 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
         contentSecurityPolicy->upgradeInsecureRequestIfNeeded(fetchRequest, ContentSecurityPolicy::InsecureRequestType::Load);
 
         if (!context.shouldBypassMainWorldContentSecurityPolicy() && !contentSecurityPolicy->allowConnectToSource(fetchRequest.url())) {
-            m_client.didFail({ errorDomainWebKitInternal, 0, fetchRequest.url(), "Not allowed by ContentSecurityPolicy"_s, ResourceError::Type::AccessControl });
+            m_client->didFail({ errorDomainWebKitInternal, 0, fetchRequest.url(), "Not allowed by ContentSecurityPolicy"_s, ResourceError::Type::AccessControl });
             return;
         }
     }
@@ -147,13 +147,13 @@ RefPtr<FragmentedSharedBuffer> FetchLoader::startStreaming()
 
 void FetchLoader::didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse& response)
 {
-    m_client.didReceiveResponse(response);
+    m_client->didReceiveResponse(response);
 }
 
 void FetchLoader::didReceiveData(const SharedBuffer& buffer)
 {
     if (!m_consumer) {
-        m_client.didReceiveData(buffer);
+        m_client->didReceiveData(buffer);
         return;
     }
     m_consumer->append(buffer);
@@ -161,12 +161,12 @@ void FetchLoader::didReceiveData(const SharedBuffer& buffer)
 
 void FetchLoader::didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics& metrics)
 {
-    m_client.didSucceed(metrics);
+    m_client->didSucceed(metrics);
 }
 
 void FetchLoader::didFail(ScriptExecutionContextIdentifier, const ResourceError& error)
 {
-    m_client.didFail(error);
+    m_client->didFail(error);
 }
 
 } // namespace WebCore

@@ -88,7 +88,12 @@ using namespace WebKit;
     if (!handle)
         return;
 
-    dispatch_async(_database.queue, ^{
+    auto *database = _database;
+    dispatch_async(database.queue, ^{
+        // The database might have closed already.
+        if (!database.handle)
+            return;
+
         sqlite3_finalize(handle);
     });
 }

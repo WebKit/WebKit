@@ -43,13 +43,13 @@ GRefPtr<GBytes> backendCommands()
     static std::once_flag flag;
     std::call_once(flag, [] {
         const char* libDir = PKGLIBDIR;
-#if ENABLE(DEVELOPER_MODE)
+
         // Probably no need for a specific env var here. Assume the inspector resources.so file is
         // in the same directory as the injected bundle lib, for developer builds.
         const char* path = g_getenv("WEBKIT_INJECTED_BUNDLE_PATH");
         if (path && g_file_test(path, G_FILE_TEST_IS_DIR))
             libDir = path;
-#endif
+
         GUniquePtr<char> bundleFilename(g_build_filename(libDir, "libWPEWebInspectorResources.so", nullptr));
         GModule* resourcesModule = g_module_open(bundleFilename.get(), G_MODULE_BIND_LAZY);
         if (!resourcesModule) {

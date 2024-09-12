@@ -217,6 +217,8 @@ private:
 
     ExceptionOr<void> initializeConfiguration(RTCConfiguration&&);
 
+    ExceptionOr<Ref<RTCRtpTransceiver>> addReceiveOnlyTransceiver(String&&);
+
     void registerToController(RTCController&);
     void unregisterFromController();
 

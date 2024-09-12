@@ -316,19 +316,11 @@ void OutputTextureFunctionArgumentList(TInfoSinkBase &out,
     }
     else
     {
-        if (outputType == SH_HLSL_4_0_FL9_3_OUTPUT)
-        {
-            out << TextureString(textureFunction.sampler) << " x, "
-                << SamplerString(textureFunction.sampler) << " s";
-        }
-        else
-        {
-            ASSERT(outputType == SH_HLSL_4_1_OUTPUT);
-            // A bug in the D3D compiler causes some nested sampling operations to fail.
-            // See http://anglebug.com/42260714
-            // TODO(jmadill): Reinstate the const keyword when possible.
-            out << /*"const"*/ "uint samplerIndex";
-        }
+        ASSERT(outputType == SH_HLSL_4_1_OUTPUT);
+        // A bug in the D3D compiler causes some nested sampling operations to fail.
+        // See http://anglebug.com/42260714
+        // TODO(jmadill): Reinstate the const keyword when possible.
+        out << /*"const"*/ "uint samplerIndex";
     }
 
     if (textureFunction.method ==
@@ -1089,7 +1081,7 @@ void OutputTextureSampleFunctionReturnStatement(
                 UNREACHABLE();
         }
     }
-    else if (outputType == SH_HLSL_4_1_OUTPUT || outputType == SH_HLSL_4_0_FL9_3_OUTPUT)
+    else if (outputType == SH_HLSL_4_1_OUTPUT)
     {
         OutputHLSL4SampleFunctionPrefix(out, textureFunction, textureReference, samplerReference);
     }
@@ -1154,7 +1146,7 @@ void OutputTextureSampleFunctionReturnStatement(
 
         out << ")";
     }
-    else if (outputType == SH_HLSL_4_1_OUTPUT || outputType == SH_HLSL_4_0_FL9_3_OUTPUT)
+    else if (outputType == SH_HLSL_4_1_OUTPUT)
     {
         if (hlslCoords >= 3)
         {

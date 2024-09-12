@@ -192,7 +192,7 @@ private:
         if (!m_hasShowNotificationSelector || !m_delegate || !m_dataStore)
             return false;
 
-        RetainPtr<_WKNotificationData> notification = adoptNS([[_WKNotificationData alloc] initWithCoreData:data dataStore:m_dataStore.getAutoreleased()]);
+        RetainPtr<_WKNotificationData> notification = adoptNS([[_WKNotificationData alloc] _initWithCoreData:data]);
         [m_delegate.getAutoreleased() websiteDataStore:m_dataStore.getAutoreleased() showNotification:notification.get()];
         return true;
     }
@@ -362,17 +362,24 @@ private:
 
 #if PLATFORM(IOS)
 
-@interface _WKWebsiteDataStoreBSActionHandler : NSObject <_UIApplicationBSActionHandler>
+@interface _WKWebsiteDataStoreBSActionHandler : NSObject <_UIApplicationBSActionHandler> {
+    BlockPtr<WKWebsiteDataStore *(_WKWebPushAction *)> _webPushActionHandler;
+}
 + (_WKWebsiteDataStoreBSActionHandler *)shared;
 - (void)setWebPushActionHandler:(WKWebsiteDataStore *(^)(_WKWebPushAction *action))handler;
+- (BOOL)handleNotificationResponse:(UNNotificationResponse *)response;
 @end
 
 @interface _WKWebsiteDataStoreNotificationCenterDelegate : NSObject <UNUserNotificationCenterDelegate>
 @end
 
 @implementation _WKWebsiteDataStoreNotificationCenterDelegate
+
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler
 {
+#if PLATFORM(IOS)
+    [WKWebsiteDataStore handleNotificationResponse:response];
+#endif
     completionHandler();
 }
 
@@ -1343,7 +1350,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #if PLATFORM(IOS)
     static dispatch_once_t once;
     dispatch_once(&once, ^{
-        [UIApplication.sharedApplication _registerInternalBSActionHandler:_WKWebsiteDataStoreBSActionHandler.shared];
+        [UIApplication.sharedApplication _registerBSActionHandler:_WKWebsiteDataStoreBSActionHandler.shared];
 
         if (!UNUserNotificationCenter.currentNotificationCenter.delegate) {
             static NeverDestroyed<RetainPtr<_WKWebsiteDataStoreNotificationCenterDelegate>> notificationDelegate = adoptNS([[_WKWebsiteDataStoreNotificationCenterDelegate alloc] init]);
@@ -1357,39 +1364,63 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
-- (void)_handleNextPushMessage
++ (BOOL)handleNotificationResponse:(UNNotificationResponse *)response
+{
+#if PLATFORM(IOS)
+    return [_WKWebsiteDataStoreBSActionHandler.shared handleNotificationResponse:response];
+#else
+    return NO;
+#endif
+}
+
+- (void)_handleNextPushMessageWithCompletionHandler:(void(^)())completionHandler
 {
     [self _getPendingPushMessage:^(NSDictionary *payload) {
-        if (!payload)
+        if (!payload) {
+            completionHandler();
             return;
+        }
 
         [self _processPushMessage:payload completionHandler:^(bool showedNotification) {
-            [self _handleNextPushMessage];
+            [self _handleNextPushMessageWithCompletionHandler:completionHandler];
         }];
     }];
 }
 
 - (void)_handleWebPushAction:(_WKWebPushAction *)webPushAction
 {
+    UIBackgroundTaskIdentifier backgroundTaskIdentifier = [webPushAction beginBackgroundTaskForHandling];
+    auto completionHandler = ^{
+#if PLATFORM(IOS)
+        [UIApplication.sharedApplication endBackgroundTask:backgroundTaskIdentifier];
+#else
+        UNUSED_PARAM(backgroundTaskIdentifier);
+#endif
+    };
+
     if ([webPushAction.type isEqualToString:_WKWebPushActionTypePushEvent])
-        [self _handleNextPushMessage];
+        [self _handleNextPushMessageWithCompletionHandler:completionHandler];
     else if ([webPushAction.type isEqualToString:_WKWebPushActionTypeNotificationClick]) {
         RELEASE_ASSERT(webPushAction.coreNotificationData);
-        [self _processWebCorePersistentNotificationClick:*webPushAction.coreNotificationData completionHandler:^(bool) { }];
+        [self _processWebCorePersistentNotificationClick:*webPushAction.coreNotificationData completionHandler:^(bool) {
+            completionHandler();
+        }];
     } else if ([webPushAction.type isEqualToString:_WKWebPushActionTypeNotificationClose]) {
         RELEASE_ASSERT(webPushAction.coreNotificationData);
-        [self _processWebCorePersistentNotificationClose:*webPushAction.coreNotificationData completionHandler:^(bool) { }];
-    } else
+        [self _processWebCorePersistentNotificationClose:*webPushAction.coreNotificationData completionHandler:^(bool) {
+            completionHandler();
+        }];
+    } else {
         RELEASE_LOG_ERROR(Push, "Unhandled webPushAction: %@", webPushAction);
+        completionHandler();
+    }
 }
 
 @end
 
 #if PLATFORM(IOS)
 
-@implementation _WKWebsiteDataStoreBSActionHandler {
-    BlockPtr<WKWebsiteDataStore *(_WKWebPushAction *)> _webPushActionHandler;
-}
+@implementation _WKWebsiteDataStoreBSActionHandler
 
 + (_WKWebsiteDataStoreBSActionHandler *)shared
 {
@@ -1403,38 +1434,25 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     _webPushActionHandler = handler;
 }
 
+- (BOOL)handleNotificationResponse:(UNNotificationResponse *)response
+{
+    RetainPtr<_WKWebPushAction> webPushAction = [_WKWebPushAction _webPushActionWithNotificationResponse:response];
+    if (!webPushAction)
+        return NO;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        WKWebsiteDataStore *dataStore = _WKWebsiteDataStoreBSActionHandler.shared->_webPushActionHandler.get()(webPushAction.get());
+        [dataStore _handleWebPushAction:webPushAction.get()];
+    });
+
+    return YES;
+}
+
 - (NSSet<BSAction *> *)_respondToApplicationActions:(NSSet<BSAction *> *)applicationActions fromTransitionContext:(FBSSceneTransitionContext *)transitionContext
 {
     RetainPtr unhandled = adoptNS([[NSMutableSet alloc] init]);
 
     for (BSAction *action in applicationActions) {
-        if (action.UIActionType == UIActionTypeNotificationResponse) {
-            // Try to pull out a notification response from the action
-            UNNotificationResponse *response = nil;
-            if ([action respondsToSelector:@selector(response)])
-                response = [action response];
-            if (!response || ![response isKindOfClass:[UNNotificationResponse class]]) {
-                [unhandled addObject:action];
-                continue;
-            }
-
-            RetainPtr<_WKWebPushAction> webPushAction = [_WKWebPushAction _webPushActionWithNotificationResponse:response];
-            if (!webPushAction) {
-                [unhandled addObject:action];
-                continue;
-            }
-
-            WKWebsiteDataStore *dataStore = _webPushActionHandler.get()(webPushAction.get());
-            [dataStore _handleWebPushAction:webPushAction.get()];
-
-            // Whether or not the data store truly handled the _WKWebPushAction, the BSAction definitely represents
-            // a web push notification activation, so we consume it.
-            if ([action canSendResponse])
-                [action sendResponse:nil];
-
-            continue;
-        }
-
         NSDictionary *object = [action.info objectForSetting:WebKit::WebPushD::pushActionSetting];
         _WKWebPushAction *pushAction = [_WKWebPushAction webPushActionWithDictionary:object];
         if (!pushAction) {

@@ -116,7 +116,7 @@ InlineBoxIterator firstInlineBoxFor(const RenderInline& renderInline)
 
 InlineBoxIterator firstRootInlineBoxFor(const RenderBlockFlow& block)
 {
-    if (auto* lineLayout = block.modernLineLayout())
+    if (auto* lineLayout = block.inlineLayout())
         return lineLayout->firstRootInlineBox();
     return { BoxLegacyPath { block.legacyRootBox() } };
 }

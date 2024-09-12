@@ -1,0 +1,18 @@
+diff --git a/src/common/filesystem_utils.cpp b/src/common/filesystem_utils.cpp
+index 3b0685d..f76d06a 100644
+--- a/src/common/filesystem_utils.cpp
++++ b/src/common/filesystem_utils.cpp
+@@ -34,11 +34,6 @@
+ #define USE_FINAL_FS 1
+ #endif  // !_HAS_CXX17
+
+-// Right now, GCC still only supports the experimental filesystem items starting in GCC 6
+-#elif (__GNUC__ >= 6)
+-#define USE_EXPERIMENTAL_FS 1
+-#define USE_FINAL_FS 0
+-
+ // If Clang, check for feature support
+ #elif defined(__clang__) && (__cpp_lib_filesystem || __cpp_lib_experimental_filesystem)
+ #if __cpp_lib_filesystem
+
+

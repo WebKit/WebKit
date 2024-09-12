@@ -28,6 +28,7 @@
 #pragma once
 
 #include "CSSPropertyParserConsumer+RawTypes.h"
+#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include "CSSValueKeywords.h"
 #include "SystemFontDatabase.h"
 #include <optional>
@@ -58,29 +59,61 @@ namespace CSSPropertyParserHelpers {
 
 // MARK: - Font
 
-struct FontStyleRaw {
-    CSSValueID style;
-    std::optional<AngleRaw> angle;
-};
+// normal | italic | oblique <angle [-90deg,90deg]>?
+using UnresolvedFontStyleAngle = std::variant<AngleRaw, UnevaluatedCalc<AngleRaw>>;
+using UnresolvedFontStyle = std::variant<CSSValueID, AngleRaw, UnevaluatedCalc<AngleRaw>>;
 
-using FontWeightRaw = std::variant<CSSValueID, double>;
-using FontSizeRaw = std::variant<CSSValueID, LengthOrPercentRaw>;
-using LineHeightRaw = std::variant<CSSValueID, double, LengthOrPercentRaw>;
-using FontFamilyRaw = std::variant<CSSValueID, AtomString>;
+// normal | small-caps
+using UnresolvedFontVariantCaps = CSSValueID;
 
-struct FontRaw {
-    std::optional<FontStyleRaw> style;
-    std::optional<CSSValueID> variantCaps;
-    std::optional<FontWeightRaw> weight;
-    std::optional<CSSValueID> stretch;
-    FontSizeRaw size;
-    std::optional<LineHeightRaw> lineHeight;
-    Vector<FontFamilyRaw> family;
+// normal | bold | bolder | lighter | <number [1,1000]>
+using UnresolvedFontWeightNumber = std::variant<NumberRaw, UnevaluatedCalc<NumberRaw>>;
+using UnresolvedFontWeight = std::variant<CSSValueID, NumberRaw, UnevaluatedCalc<NumberRaw>>;
+
+// normal | <percentage [0,∞]> | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded
+using UnresolvedFontStretchPercentage = std::variant<PercentRaw, UnevaluatedCalc<PercentRaw>>;
+using UnresolvedFontStretch = std::variant<CSSValueID, PercentRaw, UnevaluatedCalc<PercentRaw>>;
+
+// <absolute-size> | <relative-size> | <length-percentage [0,∞]>
+using UnresolvedFontSize = std::variant<CSSValueID, LengthPercentageRaw, UnevaluatedCalc<LengthPercentageRaw>>;
+
+// normal | <number [0,∞]> | <length-percentage [0,∞]>
+using UnresolvedFontLineHeight = std::variant<CSSValueID, NumberRaw, UnevaluatedCalc<NumberRaw>, LengthPercentageRaw, UnevaluatedCalc<LengthPercentageRaw>>;
+
+// [ <family-name> | <generic-family> ]#
+using UnresolvedFontFamilyName = std::variant<CSSValueID, AtomString>;
+using UnresolvedFontFamily = Vector<UnresolvedFontFamilyName>;
+
+
+struct UnresolvedFont {
+    UnresolvedFontStyle style;
+    UnresolvedFontVariantCaps variantCaps;
+    UnresolvedFontWeight weight;
+    UnresolvedFontStretch stretch;
+    UnresolvedFontSize size;
+    UnresolvedFontLineHeight lineHeight;
+    UnresolvedFontFamily family;
 };
 
 // MARK: 'font' (shorthand)
 // https://drafts.csswg.org/css-fonts-4/#font-prop
-std::optional<CSSPropertyParserHelpers::FontRaw> parseFont(const String&, CSSParserMode);
+std::optional<UnresolvedFont> parseUnresolvedFont(const String&, CSSParserMode);
+
+// MARK: 'font-weight'
+// https://drafts.csswg.org/css-fonts-4/#font-weight-prop
+RefPtr<CSSValue> consumeFontWeight(CSSParserTokenRange&);
+
+// MARK: 'font-style'
+// https://drafts.csswg.org/css-fonts-4/#font-style-prop
+RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange&, CSSParserMode);
+
+// MARK: 'font-family'
+// https://drafts.csswg.org/css-fonts-4/#font-family-prop
+RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange&);
+// Sub-production of 'font-family': <generic-family>
+// https://drafts.csswg.org/css-fonts-4/#generic-family-name-syntax
+const AtomString& genericFontFamily(CSSValueID);
+WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID);
 
 // MARK: 'font-variant-ligatures'
 // https://drafts.csswg.org/css-fonts-4/#propdef-font-variant-ligatures
@@ -102,37 +135,6 @@ RefPtr<CSSValue> consumeFontVariantNumeric(CSSParserTokenRange&);
 // https://drafts.csswg.org/css-fonts-4/#font-size-adjust-prop
 RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange&);
 
-// MARK: 'font-family'
-// https://drafts.csswg.org/css-fonts-4/#font-family-prop
-RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange&);
-// Sub-production of 'font-family': <generic-family>
-// https://drafts.csswg.org/css-fonts-4/#generic-family-name-syntax
-const AtomString& genericFontFamily(CSSValueID);
-WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID);
-
-// MARK: 'font-style'
-// https://drafts.csswg.org/css-fonts-4/#font-style-prop
-RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange&, CSSParserMode);
-#if ENABLE(VARIATION_FONTS)
-RefPtr<CSSValue> consumeFontStyleRange(CSSParserTokenRange&, CSSParserMode);
-#endif
-
-// MARK: 'font-stretch'
-// https://drafts.csswg.org/css-fonts-4/#font-stretch-prop
-#if ENABLE(VARIATION_FONTS)
-RefPtr<CSSValue> consumeFontStretchRange(CSSParserTokenRange&);
-#else
-RefPtr<CSSValue> consumeFontStretch(CSSParserTokenRange&);
-#endif
-
-// MARK: 'font-weight'
-// https://drafts.csswg.org/css-fonts-4/#font-weight-prop
-RefPtr<CSSValue> consumeFontWeight(CSSParserTokenRange&);
-#if ENABLE(VARIATION_FONTS)
-RefPtr<CSSValue> consumeFontWeightAbsoluteRange(CSSParserTokenRange&);
-#else
-RefPtr<CSSPrimitiveValue> consumeFontWeightAbsolute(CSSParserTokenRange&);
-#endif
 
 // MARK: - @font-face descriptor consumers
 
@@ -162,30 +164,36 @@ RefPtr<CSSValueList> consumeFontFaceUnicodeRange(CSSParserTokenRange&);
 
 // MARK: @font-face 'font-display'
 // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-display
-RefPtr<CSSPrimitiveValue> parseFontFaceDisplay(const String&, ScriptExecutionContext&);
-RefPtr<CSSPrimitiveValue> consumeFontFaceFontDisplay(CSSParserTokenRange&);
+RefPtr<CSSValue> parseFontFaceDisplay(const String&, ScriptExecutionContext&);
 
 // MARK: @font-face 'font-style'
 // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-style
-RefPtr<CSSValue> parseFontFaceStyle(const String&, ScriptExecutionContext&);
+RefPtr<CSSValue> parseFontFaceFontStyle(const String&, ScriptExecutionContext&);
+RefPtr<CSSValue> consumeFontFaceFontStyle(CSSParserTokenRange&, CSSParserMode);
 
-// MARK: @font-face 'font-feature-settings' / @font-face 'font-variation-settings'
-// https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-feature-settings
-// https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-variation-settings
+// MARK: @font-face 'font-feature-tag'
 // https://drafts.csswg.org/css-fonts-4/#feature-tag-value
-RefPtr<CSSValue> parseFontFaceFeatureSettings(const String&, ScriptExecutionContext&);
 RefPtr<CSSValue> consumeFeatureTagValue(CSSParserTokenRange&);
+
+// MARK: @font-face 'font-feature-settings'
+// https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-feature-settings
+RefPtr<CSSValue> parseFontFaceFeatureSettings(const String&, ScriptExecutionContext&);
+
+// MARK: @font-face 'font-variation-settings'
+// https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-variation-settings
 #if ENABLE(VARIATION_FONTS)
 RefPtr<CSSValue> consumeVariationTagValue(CSSParserTokenRange&);
 #endif
 
 // MARK: @font-face 'font-stretch'
 // https://drafts.csswg.org/css-fonts-4/#font-stretch-desc
-RefPtr<CSSValue> parseFontFaceStretch(const String&, ScriptExecutionContext&);
+RefPtr<CSSValue> parseFontFaceFontStretch(const String&, ScriptExecutionContext&);
+RefPtr<CSSValue> consumeFontFaceFontStretch(CSSParserTokenRange&);
 
 // MARK: @font-face 'font-weight'
 // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-weight
-RefPtr<CSSValue> parseFontFaceWeight(const String&, ScriptExecutionContext&);
+RefPtr<CSSValue> parseFontFaceFontWeight(const String&, ScriptExecutionContext&);
+RefPtr<CSSValue> consumeFontFaceFontWeight(CSSParserTokenRange&);
 
 // MARK: - @font-palette-values descriptor consumers:
 
@@ -198,9 +206,9 @@ RefPtr<CSSValue> consumeFontPaletteValuesOverrideColors(CSSParserTokenRange&, co
 
 // MARK: - @font-feature-values descriptor consumers
 
-// MARK: @font-feature-values basic syntax
+// MARK: @font-feature-values 'prelude family name list'
 // https://drafts.csswg.org/css-fonts-4/#font-feature-values-syntax
-Vector<AtomString> consumeFontFeatureValuesFamilyNameList(CSSParserTokenRange&);
+Vector<AtomString> consumeFontFeatureValuesPreludeFamilyNameList(CSSParserTokenRange&);
 
 // Template and inline implementations are at the bottom of the file for readability.
 

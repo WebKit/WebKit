@@ -60,8 +60,7 @@ imported/w3c/web-platform-tests/fetch/h1-parsing/lone-cr.window.html [ Pass ]
 
 # rdar://129872343 (REGRESSION: [ iOS 18 ] 19x http/tests/resourceLoadStatistics/* layout-tests are constant failures)
 # FIXME: needs new bug.
-http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Pass ]
-http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Pass ]
+http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.https.html [ Pass ]
 
 # webkit.org/b/276558 ([ iOS18 ] 7 wpt/intersection-observer/* layout tests are flakily failing.)
 imported/w3c/web-platform-tests/intersection-observer/callback-cross-realm-report-exception.html [ Pass ]
@@ -98,6 +97,9 @@ http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure
 http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
 imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
+
+# Fails with SameSite=None cookies by default
+http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Failure ]
 
 ###
 ### NOTICE: Unless you know that the issue for which you're setting expectations specifically only occurs on iOS 17, 

@@ -41,6 +41,9 @@
 #import "PageGroup.h"
 #import "TextTrackList.h"
 #import "TimeRanges.h"
+#import "VideoTrack.h"
+#import "VideoTrackConfiguration.h"
+#import "VideoTrackList.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SoftLinking.h>
@@ -490,6 +493,17 @@ void PlaybackSessionModelMediaElement::updateMediaSelectionOptions()
         client->audioMediaSelectionOptionsChanged(audioOptions, audioIndex);
         client->legibleMediaSelectionOptionsChanged(legibleOptions, legibleIndex);
     }
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    RefPtr videoTracks = mediaElement->videoTracks();
+    auto* selectedItem = videoTracks ? videoTracks->selectedItem() : nullptr;
+    auto spatialVideoMetadata = selectedItem ? selectedItem->configuration().spatialVideoMetadata() : std::nullopt;
+    if (spatialVideoMetadata != m_spatialVideoMetadata) {
+        for (auto& client : m_clients)
+            client->spatialVideoMetadataChanged(spatialVideoMetadata);
+        m_spatialVideoMetadata = WTFMove(spatialVideoMetadata);
+    }
+#endif
 }
 
 void PlaybackSessionModelMediaElement::updateMediaSelectionIndices()

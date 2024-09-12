@@ -30,6 +30,7 @@
 #define CGCOLORTAGGEDPOINTER_H_
 
 #import <AppKit/NSInspectorBar.h>
+#import <AppKit/NSMenu_Private.h>
 #import <AppKit/NSTextInputClient_Private.h>
 #import <AppKit/NSWindow_Private.h>
 
@@ -41,6 +42,11 @@
 
 @interface NSInspectorBar : NSObject
 @property (getter=isVisible) BOOL visible;
+@end
+
+@interface NSKeyboardShortcut
++ (id)shortcutWithKeyEquivalent:(NSString *)keyEquivalent modifierMask:(NSUInteger)modifierMask;
+@property (readonly) NSString *localizedDisplayName;
 @end
 
 #if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)

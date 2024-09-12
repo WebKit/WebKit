@@ -132,6 +132,12 @@ class Renderer;
 // Used for memory allocation tracking.
 enum class MemoryAllocationType;
 
+enum class MemoryHostVisibility
+{
+    NonVisible,
+    Visible
+};
+
 // Encapsulate the graphics family index and VkQueue index (as seen in vkGetDeviceQueue API
 // arguments) into one integer so that we can easily pass around without introduce extra overhead..
 class DeviceQueueIndex final
@@ -1200,7 +1206,7 @@ void InitImagePipeSurfaceFUCHSIAFunctions(VkInstance instance);
 
 #    if defined(ANGLE_PLATFORM_ANDROID)
 // VK_ANDROID_external_memory_android_hardware_buffer
-void InitExternalMemoryHardwareBufferANDROIDFunctions(VkInstance instance);
+void InitExternalMemoryHardwareBufferANDROIDFunctions(VkDevice device);
 #    endif
 
 #    if defined(ANGLE_PLATFORM_GGP)
@@ -1209,13 +1215,13 @@ void InitGGPStreamDescriptorSurfaceFunctions(VkInstance instance);
 #    endif  // defined(ANGLE_PLATFORM_GGP)
 
 // VK_KHR_external_semaphore_fd
-void InitExternalSemaphoreFdFunctions(VkInstance instance);
+void InitExternalSemaphoreFdFunctions(VkDevice device);
 
 // VK_EXT_host_query_reset
-void InitHostQueryResetFunctions(VkDevice instance);
+void InitHostQueryResetFunctions(VkDevice device);
 
 // VK_KHR_external_fence_fd
-void InitExternalFenceFdFunctions(VkInstance instance);
+void InitExternalFenceFdFunctions(VkDevice device);
 
 // VK_KHR_shared_presentable_image
 void InitGetSwapchainStatusKHRFunctions(VkDevice device);

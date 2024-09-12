@@ -716,19 +716,19 @@ assertThrows(
   /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
     () => set.call(tbl1, 0, undefined), TypeError,
-    /WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function/);
+    /Argument value did not match the reference type/);
 assertThrows(
     () => set.call(tbl1, undefined, undefined), TypeError,
     /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
     () => set.call(tbl1, 0, {}), TypeError,
-    /WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function/);
+    /Argument value did not match the reference type/);
 assertThrows(
     () => set.call(tbl1, 0, function() {}), TypeError,
-    /WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function/);
+    /Argument value did not match the reference type/);
 assertThrows(
     () => set.call(tbl1, 0, Math.sin), TypeError,
-    /WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function/);
+    /Argument value did not match the reference type/);
 assertThrows(
     () => set.call(tbl1, {valueOf() { throw Error('hai') }}, null), Error,
     'hai');

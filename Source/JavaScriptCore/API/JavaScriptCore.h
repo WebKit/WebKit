@@ -29,14 +29,10 @@
 #include <JavaScriptCore/JavaScript.h>
 #include <JavaScriptCore/JSStringRefCF.h>
 
-#if defined(__OBJC__) && JSC_OBJC_API_ENABLED
-
-#import <JavaScriptCore/JSContext.h>
-#import <JavaScriptCore/JSValue.h>
-#import <JavaScriptCore/JSManagedValue.h>
-#import <JavaScriptCore/JSVirtualMachine.h>
-#import <JavaScriptCore/JSExport.h>
-
-#endif
+#include <JavaScriptCore/JSContext.h>
+#include <JavaScriptCore/JSValue.h>
+#include <JavaScriptCore/JSManagedValue.h>
+#include <JavaScriptCore/JSVirtualMachine.h>
+#include <JavaScriptCore/JSExport.h>
 
 #endif /* JavaScriptCore_h */

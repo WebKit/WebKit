@@ -520,7 +520,7 @@ struct WebCore::IDBCursorRecord {
 class WebCore::IDBCursorInfo {
     WebCore::IDBResourceIdentifier identifier();
     WebCore::IDBResourceIdentifier transactionIdentifier();
-    uint64_t objectStoreIdentifier();
+    WebCore::IDBObjectStoreIdentifier objectStoreIdentifier();
     uint64_t sourceIdentifier();
 
     WebCore::IDBKeyRangeData range();
@@ -539,7 +539,7 @@ struct WebCore::IDBGetAllRecordsData {
     WebCore::IDBKeyRangeData keyRangeData;
     WebCore::IndexedDB::GetAllType getAllType;
     std::optional<uint32_t> count;
-    uint64_t objectStoreIdentifier;
+    WebCore::IDBObjectStoreIdentifier objectStoreIdentifier;
     uint64_t indexIdentifier;
 }
 
@@ -563,8 +563,7 @@ class WebCore::IDBDatabaseInfo {
     String m_name
     uint64_t m_version
     uint64_t m_maxIndexID
-    uint64_t m_maxObjectStoreID
-    HashMap<uint64_t, WebCore::IDBObjectStoreInfo> m_objectStoreMap
+    HashMap<WebCore::IDBObjectStoreIdentifier, WebCore::IDBObjectStoreInfo> m_objectStoreMap
 }
 
 struct WebCore::IDBKeyRangeData {
@@ -593,7 +592,7 @@ struct WebCore::IDBGetRecordData {
 
 class WebCore::IDBIndexInfo {
     uint64_t identifier()
-    uint64_t objectStoreIdentifier()
+    WebCore::IDBObjectStoreIdentifier objectStoreIdentifier()
     String name()
     WebCore::IDBKeyPath keyPath()
     bool unique()
@@ -601,7 +600,7 @@ class WebCore::IDBIndexInfo {
 }
 
 class WebCore::IDBObjectStoreInfo {
-    uint64_t identifier()
+    WebCore::IDBObjectStoreIdentifier identifier()
     String name()
     std::optional<WebCore::IDBKeyPath> keyPath()
     bool autoIncrement()
@@ -639,7 +638,7 @@ class WebCore::IDBRequestData {
     [Validator='!m_requestIdentifier->isEmpty()'] WebCore::IDBResourceIdentifier m_requestIdentifier;
     [Validator='!m_transactionIdentifier->isEmpty()'] WebCore::IDBResourceIdentifier m_transactionIdentifier;
     std::optional<WebCore::IDBResourceIdentifier> m_cursorIdentifier;
-    uint64_t m_objectStoreIdentifier;
+    Markable<WebCore::IDBObjectStoreIdentifier> m_objectStoreIdentifier;
     uint64_t m_indexIdentifier;
     WebCore::IndexedDB::IndexRecordType m_indexRecordType;
     uint64_t m_requestedVersion;
@@ -844,6 +843,25 @@ struct CGAffineTransform {
     AvailTop,
     AvailHeight,
     AvailWidth
+};
+
+[OptionSet] enum class WebCore::SandboxFlag : uint16_t {
+    Navigation,
+    Plugins,
+    Origin,
+    Forms,
+    Scripts,
+    TopNavigation,
+    Popups,
+    AutomaticFeatures,
+    PointerLock,
+    PropagatesToAuxiliaryBrowsingContexts,
+    TopNavigationByUserActivation,
+    DocumentDomain,
+    Modals,
+    StorageAccessByUserActivation,
+    TopNavigationToCustomProtocols,
+    Downloads
 };
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
@@ -1484,7 +1502,7 @@ struct WebCore::NotificationData {
     String originString;
     URL serviceWorkerRegistrationURL;
     WTF::UUID notificationID;
-    WebCore::ScriptExecutionContextIdentifier contextIdentifier;
+    std::optional<WebCore::ScriptExecutionContextIdentifier> contextIdentifier;
     PAL::SessionID sourceSession;
     MonotonicTime creationTime;
     Vector<uint8_t> data;
@@ -1823,6 +1841,25 @@ enum class WebCore::IsLoggedIn : uint8_t {
     LoggedIn
 };
 
+header: <WebCore/LoginStatus.h>
+[Nested] enum class WebCore::LoginStatus::CredentialTokenType : bool
+
+header: <WebCore/LoginStatus.h>
+[Nested] enum class WebCore::LoginStatus::AuthenticationType : uint8_t {
+    WebAuthn,
+    PasswordManager,
+    Unmanaged
+};
+
+class WebCore::LoginStatus {
+    WebCore::RegistrableDomain domain();
+    String username();
+    WebCore::LoginStatus::CredentialTokenType tokenType();
+    WebCore::LoginStatus::AuthenticationType authType();
+    WallTime loggedInTime();
+    Seconds timeToLive();
+};
+
 header: <WebCore/AutoplayEvent.h>
 enum class WebCore::AutoplayEvent : uint8_t {
     DidPreventMediaFromPlaying,
@@ -1982,7 +2019,7 @@ class WebCore::HTTPHeaderMap {
 
 struct WebCore::ElementContext {
     WebCore::FloatRect boundingRect;
-    WebCore::PageIdentifier webPageIdentifier;
+    Markable<WebCore::PageIdentifier> webPageIdentifier;
     WebCore::ScriptExecutionContextIdentifier documentIdentifier;
     Markable<WebCore::ElementIdentifier> elementIdentifier;
 };
@@ -2288,7 +2325,7 @@ struct WebCore::MediaStreamRequest {
     WebCore::MediaConstraints audioConstraints;
     WebCore::MediaConstraints videoConstraints;
     bool isUserGesturePriviledged;
-    WebCore::PageIdentifier pageIdentifier;
+    Markable<WebCore::PageIdentifier> pageIdentifier;
 }
 [LegacyPopulateFromEmptyConstructor, CustomHeader] class WebCore::MediaTrackConstraintSetMap {
     std::optional<WebCore::IntConstraint> m_width;
@@ -2662,7 +2699,7 @@ struct WebCore::EventTrackingRegions {
 enum class WebCore::HasInsecureContent : bool
 
 struct WebCore::TextManipulationItem {
-    WebCore::FrameIdentifier frameID;
+    Markable<WebCore::FrameIdentifier> frameID;
     bool isSubframe;
     bool isCrossSiteSubframe;
     WebCore::TextManipulationItemIdentifier identifier;
@@ -3002,10 +3039,7 @@ class WebCore::SVGPathByteStream {
 }
 
 header: <WebCore/BasicShapes.h>
-[Nested, CustomHeader] enum class WebCore::BasicShapeCenterCoordinate::Direction : bool
-
 [CustomHeader] class WebCore::BasicShapeCenterCoordinate {
-    WebCore::BasicShapeCenterCoordinate::Direction direction();
     WebCore::Length length();
 }
 
@@ -7077,6 +7111,7 @@ struct WebCore::NowPlayingInfo {
     WebCore::MediaUniqueIdentifier uniqueIdentifier;
     bool isPlaying;
     bool allowsNowPlayingControlsVisibility;
+    bool isVideo;
 }
 
 struct WebCore::VideoConfiguration {
@@ -8213,7 +8248,7 @@ using WebCore::DOMCacheEngine::CrossThreadRecordsOrError = Expected<Vector<WebCo
 using WebCore::DOMCacheEngine::RemoveCacheIdentifierOrError = Expected<bool, WebCore::DOMCacheEngine::Error>
 
 using WebCore::SVGFilterExpression = Vector<WebCore::SVGFilterExpressionTerm>;
-using WebCore::SandboxFlags = int
+using WebCore::SandboxFlags = OptionSet<WebCore::SandboxFlag>;
 #if ENABLE(VIDEO)
 using WebCore::MediaPlayerEnums::VideoFullscreenMode = uint32_t
 using WebCore::MediaPlayer::VideoFullscreenMode = uint32_t

@@ -44,6 +44,8 @@ public:
     {
     }
 
+    CoreIPCString() = default;
+
     RetainPtr<id> toID() const { return (NSString *)m_string; }
 
 private:

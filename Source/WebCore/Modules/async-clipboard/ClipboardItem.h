@@ -45,7 +45,7 @@ class PasteboardCustomData;
 class ScriptExecutionContext;
 struct PasteboardItemInfo;
 
-class ClipboardItem : public RefCounted<ClipboardItem> {
+class ClipboardItem : public RefCounted<ClipboardItem>, public CanMakeWeakPtr<ClipboardItem> {
 public:
     ~ClipboardItem();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JITCompilation.h"
 #include "SIMDInfo.h"
 #include "WasmLLIntBuiltin.h"
 #include "WasmOps.h"
@@ -59,6 +60,8 @@
 namespace JSC {
 
 namespace Wasm {
+
+class JSToWasmICCallee;
 
 #define CREATE_ENUM_VALUE(name, id, ...) name = id,
 enum class ExtSIMDOpType : uint32_t {
@@ -329,12 +332,8 @@ constexpr size_t typeKindSizeInBytes(TypeKind kind)
 
 class FunctionSignature {
 public:
-    FunctionSignature(Type* payload, FunctionArgCount argumentCount, FunctionArgCount returnCount)
-        : m_payload(payload)
-        , m_argCount(argumentCount)
-        , m_retCount(returnCount)
-    {
-    }
+    FunctionSignature(Type* payload, FunctionArgCount argumentCount, FunctionArgCount returnCount);
+    ~FunctionSignature();
 
     FunctionArgCount argumentCount() const { return m_argCount; }
     FunctionArgCount returnCount() const { return m_retCount; }
@@ -392,12 +391,26 @@ public:
     Type* storage(FunctionArgCount i) { return i + m_payload; }
     const Type* storage(FunctionArgCount i) const { return const_cast<FunctionSignature*>(this)->storage(i); }
 
+#if ENABLE(JIT)
+    // This is const because we generally think of FunctionSignatures as immutable.
+    // Conceptually this more like using the `const FunctionSignature*` as a global HashMap
+    // key to the JIT code though.
+    CodePtr<JSEntryPtrTag> jsToWasmICEntrypoint() const;
+#endif
+
 private:
     friend class TypeInformation;
 
     Type* m_payload;
     FunctionArgCount m_argCount;
     FunctionArgCount m_retCount;
+#if ENABLE(JIT)
+    // FIXME: We shouldn't need this instead WebAssemblyFunction should know, which registers it saved from the PC.
+    mutable RefPtr<JSToWasmICCallee> m_jsToWasmICCallee;
+    // FIXME: We should have a WTF::Once that uses ParkingLot and the low bits of a pointer as a lock and use that here.
+    mutable Lock m_jitCodeLock;
+    // FIXME: Support caching wasmToJSEntrypoints too.
+#endif
     bool m_hasRecursiveReference { false };
     bool m_argumentsOrResultsIncludeV128 { false };
 };
@@ -742,12 +755,13 @@ enum class TypeDefinitionKind : uint8_t {
 
 class TypeDefinition : public ThreadSafeRefCounted<TypeDefinition> {
     WTF_MAKE_TZONE_ALLOCATED(TypeDefinition);
+    WTF_MAKE_NONCOPYABLE(TypeDefinition);
 
     TypeDefinition() = delete;
-    TypeDefinition(const TypeDefinition&) = delete;
 
     TypeDefinition(TypeDefinitionKind kind, FunctionArgCount retCount, FunctionArgCount argCount)
-        : m_typeHeader { FunctionSignature { static_cast<Type*>(payload()), argCount, retCount } }
+        // FunctionSignature is not moveable.
+        : m_typeHeader(std::in_place_index<0>, static_cast<Type*>(payload()), argCount, retCount)
     {
         RELEASE_ASSERT(kind == TypeDefinitionKind::FunctionSignature);
     }
@@ -774,7 +788,7 @@ class TypeDefinition : public ThreadSafeRefCounted<TypeDefinition> {
         : m_typeHeader { ArrayType { static_cast<FieldType*>(payload()) } }
     {
         if (kind == TypeDefinitionKind::Projection)
-            m_typeHeader = { Projection { static_cast<TypeIndex*>(payload()) } };
+            m_typeHeader = Projection { static_cast<TypeIndex*>(payload()) };
         else
             RELEASE_ASSERT(kind == TypeDefinitionKind::ArrayType);
     }
@@ -937,7 +951,7 @@ public:
     static const TypeDefinition& get(TypeIndex);
     static TypeIndex get(const TypeDefinition&);
 
-    static const FunctionSignature& getFunctionSignature(TypeIndex);
+    inline static const FunctionSignature& getFunctionSignature(TypeIndex);
 
     static void tryCleanup();
 private:

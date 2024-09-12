@@ -112,7 +112,6 @@ class ScriptController;
 class ScriptExecutionContext;
 class SleepDisabler;
 class SourceBuffer;
-struct SpatialVideoMetadata;
 class SpeechSynthesis;
 class TextTrackList;
 class TimeRanges;
@@ -695,7 +694,6 @@ public:
     const String& spatialTrackingLabel() const;
     void setSpatialTrackingLabel(const String&);
 #endif
-    WEBCORE_EXPORT std::optional<SpatialVideoMetadata> spatialVideoMetadata() const;
 
     void mediaSourceWasDetached();
 

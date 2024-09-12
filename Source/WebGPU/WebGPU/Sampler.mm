@@ -51,6 +51,7 @@ namespace WebGPU {
 
 NSMutableDictionary<SamplerIdentifier*, id<MTLSamplerState>> *Sampler::cachedSamplerStates = nil;
 NSMutableOrderedSet<SamplerIdentifier*> *Sampler::lastAccessedKeys = nil;
+Lock Sampler::samplerStateLock;
 
 static bool validateCreateSampler(Device& device, const WGPUSamplerDescriptor& descriptor)
 {
@@ -252,7 +253,14 @@ Sampler::Sampler(Device& device)
 {
 }
 
-Sampler::~Sampler() = default;
+Sampler::~Sampler()
+{
+    if (m_samplerIdentifier) {
+        Locker locker { samplerStateLock };
+        [cachedSamplerStates removeObjectForKey:m_samplerIdentifier];
+        [lastAccessedKeys removeObject:m_samplerIdentifier];
+    }
+}
 
 void Sampler::setLabel(String&& label)
 {
@@ -269,6 +277,7 @@ id<MTLSamplerState> Sampler::samplerState() const
     if (!m_samplerIdentifier)
         return nil;
 
+    Locker locker { samplerStateLock };
     if (!cachedSamplerStates) {
         cachedSamplerStates = [NSMutableDictionary dictionary];
         lastAccessedKeys = [NSMutableOrderedSet orderedSet];

@@ -39,7 +39,9 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/DocumentStorageAccess.h>
+#include <WebCore/IsLoggedIn.h>
 #include <WebCore/KeyedCoding.h>
+#include <WebCore/LoginStatus.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/OrganizationStorageAccessPromptQuirk.h>
 #include <WebCore/ResourceLoadStatistics.h>
@@ -85,6 +87,7 @@ constexpr auto countSubresourceUniqueRedirectsToQuery = "SELECT COUNT(*) FROM Su
 constexpr auto insertObservedDomainQuery = "INSERT INTO ObservedDomains (registrableDomain, lastSeen, hadUserInteraction,"
     "mostRecentUserInteractionTime, grandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, timesAccessedAsFirstPartyDueToUserInteraction,"
     "timesAccessedAsFirstPartyDueToStorageAccessAPI, isScheduledForAllButCookieDataRemoval, mostRecentWebPushInteractionTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
+constexpr auto insertLoginStatusQuery = "INSERT INTO LoginStatus (registrableDomain, username, tokenType, authenticationType, loggedInTime, timeToLive, status) VALUES (?, ?, ?, ?, ?, ?, ?)"_s;
 constexpr auto storageAccessUnderTopFrameDomainsQuery = "INSERT OR IGNORE INTO StorageAccessUnderTopFrameDomains (domainID, topLevelDomainID) SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain in ( "_s;
 constexpr auto topFrameUniqueRedirectsToQuery = "INSERT OR IGNORE into TopFrameUniqueRedirectsTo (sourceDomainID, toDomainID) SELECT ?, domainID FROM ObservedDomains where registrableDomain in ( "_s;
 constexpr auto topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery = "INSERT OR IGNORE into TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement (sourceDomainID, toDomainID) SELECT ?, domainID FROM ObservedDomains where registrableDomain in ( "_s;
@@ -106,6 +109,7 @@ constexpr auto subresourceUnderTopFrameDomainExistsQuery = "SELECT EXISTS (SELEC
 constexpr auto subresourceUniqueRedirectsToExistsQuery = "SELECT EXISTS (SELECT 1 FROM SubresourceUniqueRedirectsTo WHERE subresourceDomainID = ? "
     "AND toDomainID = (SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?))"_s;
 constexpr auto storageAccessExistsQuery = "SELECT EXISTS (SELECT 1 FROM StorageAccessUnderTopFrameDomains WHERE domainID = ? AND topLevelDomainID = (SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?))"_s;
+constexpr auto loginStatusExistsQuery = "SELECT EXISTS (SELECT 1 FROM LoginStatus WHERE domainID = ?)"_s;
 
 // UPDATE Queries
 constexpr auto mostRecentUserInteractionQuery = "UPDATE ObservedDomains SET hadUserInteraction = ?, mostRecentUserInteractionTime = ? "_s
@@ -121,6 +125,7 @@ constexpr auto updateMostRecentWebPushInteractionTimeQuery = "UPDATE ObservedDom
 
 // SELECT Queries
 constexpr auto domainIDFromStringQuery = "SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?"_s;
+constexpr auto loginStatusDomainIDFromStringQuery = "SELECT domainID FROM LoginStatus WHERE registrableDomain = ?"_s;
 constexpr auto domainStringFromDomainIDQuery = "SELECT registrableDomain FROM ObservedDomains WHERE domainID = ?"_s;
 constexpr auto isPrevalentResourceQuery = "SELECT isPrevalent FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto isVeryPrevalentResourceQuery = "SELECT isVeryPrevalent FROM ObservedDomains WHERE registrableDomain = ?"_s;
@@ -147,6 +152,7 @@ constexpr auto observedDomainsExistsQuery = "SELECT EXISTS (SELECT * FROM Observ
 
 // DELETE Queries
 constexpr auto removeAllDataQuery = "DELETE FROM ObservedDomains WHERE domainID = ?"_s;
+constexpr auto removeLoginStatusQuery = "DELETE FROM LoginStatus WHERE domainID = ?"_s;
 
 constexpr auto createObservedDomain = "CREATE TABLE ObservedDomains ("
     "domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL, lastSeen REAL NOT NULL, "
@@ -228,6 +234,11 @@ constexpr auto createSubresourceUniqueRedirectsFrom = "CREATE TABLE SubresourceU
 
 constexpr auto createOperatingDates = "CREATE TABLE OperatingDates ("
     "year INTEGER NOT NULL, month INTEGER NOT NULL, monthDay INTEGER NOT NULL)"_s;
+
+constexpr auto createLoginStatus = "CREATE TABLE LoginStatus ("
+    "domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL, username TEXT, "
+    "tokenType INTEGER, authenticationType INTEGER, loggedInTime REAL, "
+    "timeToLive REAL, status INTEGER NOT NULL)"_s;
 
 // CREATE UNIQUE INDEX Queries.
 constexpr auto createUniqueIndexStorageAccessUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS StorageAccessUnderTopFrameDomains_domainID_topLevelDomainID on StorageAccessUnderTopFrameDomains ( domainID, topLevelDomainID )"_s;
@@ -423,7 +434,7 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
 
     setDataRecordsBeingRemoved(true);
 
-    RunLoop::main().dispatch([store = Ref { m_store }, domainsToDeleteOrRestrictWebsiteDataFor = crossThreadCopy(WTFMove(domainsToDeleteOrRestrictWebsiteDataFor)), completionHandler = WTFMove(completionHandler), weakThis = WeakPtr { *this }, workQueue = m_workQueue] () mutable {
+    RunLoop::main().dispatch([store = Ref { m_store.get() }, domainsToDeleteOrRestrictWebsiteDataFor = crossThreadCopy(WTFMove(domainsToDeleteOrRestrictWebsiteDataFor)), completionHandler = WTFMove(completionHandler), weakThis = WeakPtr { *this }, workQueue = m_workQueue] () mutable {
         store->deleteAndRestrictWebsiteDataForRegistrableDomains(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTFMove(domainsToDeleteOrRestrictWebsiteDataFor), [completionHandler = WTFMove(completionHandler), weakThis = WTFMove(weakThis), workQueue](HashSet<RegistrableDomain>&& domainsWithDeletedWebsiteData) mutable {
             workQueue->dispatch([domainsWithDeletedWebsiteData = crossThreadCopy(WTFMove(domainsWithDeletedWebsiteData)), completionHandler = WTFMove(completionHandler), weakThis = WTFMove(weakThis)] () mutable {
                 if (!weakThis) {
@@ -471,7 +482,7 @@ void ResourceLoadStatisticsStore::grandfatherExistingWebsiteData(CompletionHandl
 {
     ASSERT(!RunLoop::isMain());
 
-    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, callback = WTFMove(callback), workQueue = m_workQueue, store = Ref { m_store }] () mutable {
+    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, callback = WTFMove(callback), workQueue = m_workQueue, store = Ref { m_store.get() }] () mutable {
         store->registrableDomainsWithWebsiteData(WebResourceLoadStatisticsStore::monitoredDataTypes(), [weakThis = WTFMove(weakThis), callback = WTFMove(callback), workQueue] (HashSet<RegistrableDomain>&& domainsWithWebsiteData) mutable {
             workQueue->dispatch([weakThis = WTFMove(weakThis), domainsWithWebsiteData = crossThreadCopy(WTFMove(domainsWithWebsiteData)), callback = WTFMove(callback)] () mutable {
                 if (!weakThis) {
@@ -594,7 +605,7 @@ void ResourceLoadStatisticsStore::updateCacheMaxAgeCap()
 {
     ASSERT(!RunLoop::isMain());
     
-    RunLoop::main().dispatch([store = Ref { m_store }, seconds = m_parameters.cacheMaxAgeCapTime] () {
+    RunLoop::main().dispatch([store = Ref { m_store.get() }, seconds = m_parameters.cacheMaxAgeCapTime] () {
         store->setCacheMaxAgeCap(seconds, [] { });
     });
 }
@@ -610,7 +621,7 @@ void ResourceLoadStatisticsStore::updateClientSideCookiesAgeCap()
     capTime = m_parameters.clientSideCookiesAgeCapTime;
 #endif
 
-    RunLoop::main().dispatch([store = Ref { m_store }, seconds = capTime] () {
+    RunLoop::main().dispatch([store = Ref { m_store.get() }, seconds = capTime] () {
         if (auto* networkSession = store->networkSession()) {
             if (auto* storageSession = networkSession->networkStorageSession())
                 storageSession->setAgeCapForClientSideCookies(seconds);
@@ -641,7 +652,7 @@ void ResourceLoadStatisticsStore::updateCookieBlockingForDomains(RegistrableDoma
 {
     ASSERT(!RunLoop::isMain());
     
-    RunLoop::main().dispatch([store = Ref { m_store }, domainsToBlock = crossThreadCopy(WTFMove(domainsToBlock)), completionHandler = WTFMove(completionHandler)] () mutable {
+    RunLoop::main().dispatch([store = Ref { m_store.get() }, domainsToBlock = crossThreadCopy(WTFMove(domainsToBlock)), completionHandler = WTFMove(completionHandler)] () mutable {
         store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, [store, completionHandler = WTFMove(completionHandler)]() mutable {
             store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler();
@@ -687,7 +698,7 @@ void ResourceLoadStatisticsStore::logTestingEvent(String&& event)
 {
     ASSERT(!RunLoop::isMain());
 
-    RunLoop::main().dispatch([store = Ref { m_store }, event = WTFMove(event).isolatedCopy()] {
+    RunLoop::main().dispatch([store = Ref { m_store.get() }, event = WTFMove(event).isolatedCopy()] {
         store->logTestingEvent(event);
     });
 }
@@ -695,7 +706,7 @@ void ResourceLoadStatisticsStore::logTestingEvent(String&& event)
 void ResourceLoadStatisticsStore::removeAllStorageAccess(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
-    RunLoop::main().dispatch([store = Ref { m_store }, completionHandler = WTFMove(completionHandler)]() mutable {
+    RunLoop::main().dispatch([store = Ref { m_store.get() }, completionHandler = WTFMove(completionHandler)]() mutable {
         store->removeAllStorageAccess([store, completionHandler = WTFMove(completionHandler)]() mutable {
             store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler();
@@ -725,7 +736,7 @@ void ResourceLoadStatisticsStore::debugBroadcastConsoleMessage(MessageSource sou
         return;
     }
 
-    if (auto* networkSession = m_store.networkSession())
+    if (auto* networkSession = m_store->networkSession())
         networkSession->networkProcess().broadcastConsoleMessage(networkSession->sessionID(), source, level, message);
 }
 
@@ -801,6 +812,7 @@ const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& Resour
         { "SubresourceUniqueRedirectsTo"_s, std::make_pair<String, std::optional<String>>(createSubresourceUniqueRedirectsTo, stripIndexQueryToMatchStoredValue(createUniqueIndexSubresourceUniqueRedirectsTo)) },
         { "SubresourceUniqueRedirectsFrom"_s, std::make_pair<String, std::optional<String>>(createSubresourceUniqueRedirectsFrom, stripIndexQueryToMatchStoredValue(createUniqueIndexSubresourceUniqueRedirectsFrom)) },
         { "OperatingDates"_s, std::make_pair<String, std::optional<String>>(createOperatingDates, stripIndexQueryToMatchStoredValue(createUniqueIndexOperatingDates)) },
+        { "LoginStatus"_s, std::make_pair<String, std::optional<String>>(createLoginStatus, std::nullopt) },
     };
     return expectedTableAndIndexQueries;
 }
@@ -820,7 +832,8 @@ std::span<const ASCIILiteral> ResourceLoadStatisticsStore::sortedTables()
         "SubresourceUnderTopFrameDomains"_s,
         "SubresourceUniqueRedirectsTo"_s,
         "SubresourceUniqueRedirectsFrom"_s,
-        "OperatingDates"_s
+        "OperatingDates"_s,
+        "LoginStatus"_s
     };
 
     return sortedTables;
@@ -1144,6 +1157,11 @@ bool ResourceLoadStatisticsStore::createSchema()
         return false;
     }
 
+    if (!m_database.executeCommand(createLoginStatus)) {
+        ITP_RELEASE_LOG_DATABASE_ERROR("createSchema: failed to execute statement createLoginStatus");
+        return false;
+    }
+
     if (!createUniqueIndices())
         return false;
 
@@ -1193,6 +1211,9 @@ void ResourceLoadStatisticsStore::destroyStatements()
     m_removeAllDataStatement = nullptr;
     m_checkIfTableExistsStatement = nullptr;
     m_updateMostRecentWebPushInteractionTimeStatement = nullptr;
+    m_insertObservedDomainStatement = nullptr;
+    m_removeLoginStatusStatement = nullptr;
+    m_loginStatusExistsStatement = nullptr;
 }
 
 bool ResourceLoadStatisticsStore::insertObservedDomain(const ResourceLoadStatistics& loadStatistics)
@@ -1228,6 +1249,105 @@ bool ResourceLoadStatisticsStore::insertObservedDomain(const ResourceLoadStatist
     return true;
 }
 
+void ResourceLoadStatisticsStore::insertLoginStatus(const RegistrableDomain& domain, IsLoggedIn loggedInStatus, const std::optional<LoginStatus>& lastAuthentication)
+{
+    ASSERT(!RunLoop::isMain());
+
+    if (loginStatusDomainID(domain)) {
+        ITP_RELEASE_LOG_ERROR("insertLoginStatus: failed to find domain");
+        return;
+    }
+
+    enum {
+        DomainIDIndex,
+        RegistrableDomainIndex,
+        UsernameIndex,
+        TokenTypeIndex,
+        AuthenticationTypeIndex,
+        LoggedInTimeIndex,
+        TimeToLiveIndex,
+        StatusIndex
+    };
+
+    auto scopedStatement = this->scopedStatement(m_insertLoginstatusStatement, insertLoginStatusQuery, "insertLoginstatus"_s);
+    if (!scopedStatement) {
+        ITP_RELEASE_LOG_DATABASE_ERROR("insertLoginStatus: failed to create scoped statement");
+        return;
+    }
+
+    if (scopedStatement->bindText(RegistrableDomainIndex, domain.string()) != SQLITE_OK) {
+        ITP_RELEASE_LOG_DATABASE_ERROR("insertLoginStatus: failed to bind registrableDomain");
+        return;
+    }
+
+    if (lastAuthentication) {
+        if (scopedStatement->bindText(UsernameIndex, lastAuthentication->username()) != SQLITE_OK
+            || scopedStatement->bindInt(TokenTypeIndex, static_cast<int>(lastAuthentication->tokenType())) != SQLITE_OK
+            || scopedStatement->bindInt(AuthenticationTypeIndex, static_cast<int>(lastAuthentication->authType())) != SQLITE_OK
+            || scopedStatement->bindDouble(LoggedInTimeIndex, lastAuthentication->loggedInTime().secondsSinceEpoch().value()) != SQLITE_OK
+            || scopedStatement->bindDouble(TimeToLiveIndex, lastAuthentication->timeToLive().seconds()) != SQLITE_OK) {
+            ITP_RELEASE_LOG_DATABASE_ERROR("insertLoginStatus: failed to bind lastAuthentication values");
+            return;
+        }
+    } else {
+        if (scopedStatement->bindNull(UsernameIndex) != SQLITE_OK
+            || scopedStatement->bindNull(TokenTypeIndex) != SQLITE_OK
+            || scopedStatement->bindNull(AuthenticationTypeIndex) != SQLITE_OK
+            || scopedStatement->bindNull(LoggedInTimeIndex) != SQLITE_OK
+            || scopedStatement->bindNull(TimeToLiveIndex) != SQLITE_OK) {
+            ITP_RELEASE_LOG_DATABASE_ERROR("insertLoginStatus: failed to bind NULL values for lastAuthentication");
+            return;
+        }
+    }
+
+    if (scopedStatement->bindInt(StatusIndex, static_cast<int>(loggedInStatus)) != SQLITE_OK) {
+        ITP_RELEASE_LOG_DATABASE_ERROR("insertLoginStatus: failed to bind status");
+        return;
+    }
+
+    if (scopedStatement->step() != SQLITE_DONE) {
+        ITP_RELEASE_LOG_DATABASE_ERROR("insertLoginStatus: failed to step statement");
+        return;
+    }
+    return;
+}
+
+void ResourceLoadStatisticsStore::removeLoginStatus(const RegistrableDomain& domain)
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto domainIDToRemove = loginStatusDomainID(domain);
+    if (!domainIDToRemove) {
+        ITP_RELEASE_LOG_ERROR("removeLoginStatus: failed to find domain");
+        return;
+    }
+
+    auto scopedStatement = this->scopedStatement(m_removeLoginStatusStatement, removeLoginStatusQuery, "removeLoginStatus"_s);
+    if (!scopedStatement
+        || scopedStatement->bindInt(1, *domainIDToRemove) != SQLITE_OK
+        || scopedStatement->step() != SQLITE_DONE) {
+        ITP_RELEASE_LOG_DATABASE_ERROR("removeLoginstatus: failed to step statement");
+        }
+}
+
+bool ResourceLoadStatisticsStore::loginStatusExists(const RegistrableDomain& domain)
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto domainID = loginStatusDomainID(domain);
+    if (!domainID)
+        return false;
+
+    auto scopedStatement = this->scopedStatement(m_loginStatusExistsStatement, loginStatusExistsQuery, "loginStatusExists"_s);
+    if (!scopedStatement
+        || scopedStatement->bindInt(1, *domainID) != SQLITE_OK
+        || scopedStatement->step() != SQLITE_ROW) {
+        ITP_RELEASE_LOG_DATABASE_ERROR("loginStatusExists: failed to step statement");
+        return false;
+    }
+    return true;
+}
+
 bool ResourceLoadStatisticsStore::relationshipExists(SQLiteStatementAutoResetScope& statement, std::optional<unsigned> firstDomainID, const RegistrableDomain& secondDomain) const
 {
     if (!firstDomainID)
@@ -1249,7 +1369,21 @@ std::optional<unsigned> ResourceLoadStatisticsStore::domainID(const RegistrableD
 {
     ASSERT(!RunLoop::isMain());
 
-    auto scopedStatement = this->scopedStatement(m_domainIDFromStringStatement, domainIDFromStringQuery, "domainID"_s);
+    return domainIDWithTable(domain, m_domainIDFromStringStatement, domainIDFromStringQuery);
+}
+
+std::optional<unsigned> ResourceLoadStatisticsStore::loginStatusDomainID(const RegistrableDomain& domain) const
+{
+    ASSERT(!RunLoop::isMain());
+
+    return domainIDWithTable(domain, m_loginStatusDomainIDFromStringStatement, loginStatusDomainIDFromStringQuery);
+}
+
+std::optional<unsigned> ResourceLoadStatisticsStore::domainIDWithTable(const RegistrableDomain& domain, std::unique_ptr<WebCore::SQLiteStatement>& statement, ASCIILiteral query) const
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto scopedStatement = this->scopedStatement(statement, query, "domainID"_s);
     if (!scopedStatement || scopedStatement->bindText(1, domain.string()) != SQLITE_OK) {
         ITP_RELEASE_LOG_DATABASE_ERROR("domainID: failed to bind parameter");
         return std::nullopt;
@@ -1751,6 +1885,27 @@ void ResourceLoadStatisticsStore::requestStorageAccess(SubFrameDomain&& subFrame
     grantStorageAccessInternal(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, userWasPromptedEarlier, scope, canRequestStorageAccessWithoutUserInteraction, [completionHandler = WTFMove(completionHandler)] (StorageAccessWasGranted wasGranted) mutable {
         completionHandler(wasGranted == StorageAccessWasGranted::Yes ? StorageAccessStatus::HasAccess : StorageAccessStatus::CannotRequestAccess);
     });
+}
+
+void ResourceLoadStatisticsStore::setLoginStatus(const RegistrableDomain& domain, IsLoggedIn loggedInStatus, std::optional<LoginStatus>&& lastAuthentication)
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto loginStatusToSet = lastAuthentication && lastAuthentication->hasExpired() ? std::nullopt : std::optional(WTFMove(lastAuthentication));
+    if (loginStatusToSet)
+        loginStatusToSet->setTimeToLive(WebCore::LoginStatus::TimeToLiveLong);
+
+    if (loggedInStatus == IsLoggedIn::LoggedIn)
+        insertLoginStatus(domain, loggedInStatus, lastAuthentication);
+    else if (loggedInStatus == IsLoggedIn::LoggedOut)
+        removeLoginStatus(domain);
+}
+
+bool ResourceLoadStatisticsStore::isLoggedIn(const RegistrableDomain& domain)
+{
+    ASSERT(!RunLoop::isMain());
+
+    return loginStatusExists(domain);
 }
 
 void ResourceLoadStatisticsStore::requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&& domainInNeedOfStorageAccess, PageIdentifier openerPageID, OpenerDomain&& openerDomain, CanRequestStorageAccessWithoutUserInteraction canRequestStorageAccessWithoutUserInteraction)

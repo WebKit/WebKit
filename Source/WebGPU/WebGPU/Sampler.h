@@ -26,6 +26,7 @@
 #pragma once
 
 #import <wtf/FastMalloc.h>
+#import <wtf/Lock.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/TZoneMalloc.h>
@@ -81,6 +82,7 @@ private:
 
     const Ref<Device> m_device;
     // static is intentional here as the limit is per process
+    static Lock samplerStateLock;
     static NSMutableDictionary<SamplerIdentifier*, id<MTLSamplerState>> *cachedSamplerStates;
     static NSMutableOrderedSet<SamplerIdentifier*> *lastAccessedKeys;
 

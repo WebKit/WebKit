@@ -54,7 +54,8 @@ public:
     void endTextPathLayout();
 
     void layoutInlineTextBox(InlineIterator::SVGTextBoxIterator);
-    void finishLayout();
+
+    SVGTextFragmentMap finishLayout();
 
 private:
     void updateCharacterPositionIfNeeded(float& x, float& y);
@@ -79,7 +80,12 @@ private:
 
     Vector<InlineIterator::SVGTextBoxIterator> m_lineLayoutBoxes;
     Vector<InlineIterator::SVGTextBoxIterator> m_pathLayoutBoxes;
+
+    // Output.
+    HashMap<InlineIterator::SVGTextBox::Key, Vector<SVGTextFragment>> m_fragmentMap;
+
     SVGTextChunkBuilder m_chunkLayoutBuilder;
+    HashSet<InlineIterator::SVGTextBox::Key> m_lineLayoutChunkStarts;
 
     SVGTextFragment m_currentTextFragment;
     unsigned m_layoutAttributesPosition { 0 };

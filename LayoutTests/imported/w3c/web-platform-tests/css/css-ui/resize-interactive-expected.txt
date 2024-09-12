@@ -1,0 +1,12 @@
+
+PASS test resize-both wm-horizontal
+PASS test resize-both wm-vertical
+PASS test resize-horizontal wm-horizontal
+PASS test resize-horizontal wm-vertical
+PASS test resize-vertical wm-horizontal
+PASS test resize-vertical wm-vertical
+PASS test resize-block wm-horizontal
+PASS test resize-block wm-vertical
+PASS test resize-inline wm-horizontal
+PASS test resize-inline wm-vertical
+

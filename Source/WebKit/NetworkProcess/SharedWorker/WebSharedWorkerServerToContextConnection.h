@@ -89,6 +89,8 @@ private:
     void idleTerminationTimerFired();
     void connectionIsNoLongerNeeded();
 
+    Ref<NetworkConnectionToWebProcess> protectedConnection() const;
+
     // IPC messages.
     void postErrorToWorkerObject(WebCore::SharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent);
     void sharedWorkerTerminated(WebCore::SharedWorkerIdentifier);
@@ -97,7 +99,7 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    NetworkConnectionToWebProcess& m_connection;
+    WeakRef<NetworkConnectionToWebProcess> m_connection;
     WeakPtr<WebSharedWorkerServer> m_server;
     WebCore::RegistrableDomain m_registrableDomain;
     HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::SharedWorkerObjectIdentifier>> m_sharedWorkerObjects;

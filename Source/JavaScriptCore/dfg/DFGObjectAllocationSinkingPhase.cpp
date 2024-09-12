@@ -1909,11 +1909,6 @@ private:
                 if (m_heapAtHead[block].getAllocation(location.base()).isEscapedAllocation())
                     return nullptr;
 
-                // If we point to a single allocation, we will
-                // directly use its materialization
-                if (m_heapAtHead[block].follow(location))
-                    return nullptr;
-
                 Node* phiNode = m_graph.addNode(SpecHeapTop, Phi, block->at(0)->origin.withInvalidExit());
                 phiNode->mergeFlags(NodeResultJS);
                 return phiNode;

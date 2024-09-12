@@ -49,6 +49,7 @@
 #import "WebBackForwardCache.h"
 #import "WebMemoryPressureHandler.h"
 #import "WebPageGroup.h"
+#import "WebPageMessages.h"
 #import "WebPageProxy.h"
 #import "WebPreferencesKeys.h"
 #import "WebPrivacyHelpers.h"
@@ -77,6 +78,7 @@
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
 #import <sys/param.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SoftLinking.h>
@@ -93,8 +95,6 @@
 #if ENABLE(NOTIFY_BLOCKING) || PLATFORM(MAC)
 #include <notify.h>
 #endif
-
-#import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #import <JavaScriptCore/RemoteInspector.h>
@@ -115,6 +115,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #endif
 
@@ -141,6 +142,8 @@
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
+#import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
+
 
 NSString *WebServiceWorkerRegistrationDirectoryDefaultsKey = @"WebServiceWorkerRegistrationDirectory";
 NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
@@ -304,6 +307,10 @@ static void logProcessPoolState(const WebProcessPool& pool)
 
 void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization needsGlobalStaticInitialization)
 {
+#if PLATFORM(IOS_FAMILY)
+    initializeHardwareKeyboardAvailability();
+#endif
+
     registerNotificationObservers();
 
     if (needsGlobalStaticInitialization == NeedsGlobalStaticInitialization::No)
@@ -515,9 +522,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     // FIXME: Filter by process's site when site isolation is enabled
-    parameters.storageAccessUserAgentStringQuirksData = StorageAccessUserAgentStringQuirkController::shared().cachedQuirks();
+    parameters.storageAccessUserAgentStringQuirksData = StorageAccessUserAgentStringQuirkController::shared().cachedListData();
 
-    for (auto&& entry : StorageAccessPromptQuirkController::shared().cachedQuirks()) {
+    for (auto&& entry : StorageAccessPromptQuirkController::shared().cachedListData()) {
         if (!entry.triggerPages.isEmpty()) {
             for (auto&& page : entry.triggerPages)
                 parameters.storageAccessPromptQuirksDomains.add(RegistrableDomain { page });
@@ -549,7 +556,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.ftpEnabled = [defaults objectForKey:WebPreferencesKey::ftpEnabledKey()] && [defaults boolForKey:WebPreferencesKey::ftpEnabledKey()];
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::shared().cachedQuirks();
+    parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::shared().cachedListData();
 #endif
 }
 
@@ -665,6 +672,43 @@ void WebProcessPool::powerLogTaskModeStartedCallback(CFNotificationCenterRef, vo
         gpuProcess->enablePowerLogging();
 }
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+void WebProcessPool::hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
+{
+    auto pool = extractWebProcessPool(observer);
+    if (!pool)
+        return;
+    auto keyboardState = currentHardwareKeyboardState();
+    if (keyboardState == pool->cachedHardwareKeyboardState())
+        return;
+    pool->setCachedHardwareKeyboardState(keyboardState);
+    pool->hardwareKeyboardAvailabilityChanged();
+}
+
+void WebProcessPool::hardwareKeyboardAvailabilityChanged()
+{
+    for (Ref process : processes()) {
+        auto pages = process->pages();
+        for (auto& page : pages)
+            page->hardwareKeyboardAvailabilityChanged(cachedHardwareKeyboardState());
+    }
+}
+
+void WebProcessPool::initializeHardwareKeyboardAvailability()
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([weakThis = WeakPtr { *this }] {
+        auto keyboardState = currentHardwareKeyboardState();
+        callOnMainRunLoop([weakThis = WTFMove(weakThis), keyboardState] {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            protectedThis->setCachedHardwareKeyboardState(keyboardState);
+            protectedThis->hardwareKeyboardAvailabilityChanged();
+        });
+    }).get());
+}
+#endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
 void WebProcessPool::startObservingPreferenceChanges()
@@ -840,6 +884,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif // !PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(IOS_FAMILY)
+    auto notificationName = adoptNS([[NSString alloc] initWithCString:kGSEventHardwareKeyboardAvailabilityChangedNotification encoding:NSUTF8StringEncoding]);
+    addCFNotificationObserver(hardwareKeyboardAvailabilityChangedCallback, (__bridge CFStringRef)notificationName.get(), CFNotificationCenterGetDarwinNotifyCenter());
+
     m_accessibilityEnabledObserver = [[NSNotificationCenter defaultCenter] addObserverForName:(__bridge id)kAXSApplicationAccessibilityEnabledNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *) {
         if (!_AXSApplicationAccessibilityEnabled())
             return;
@@ -926,6 +973,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] removeObserver:m_accessibilityEnabledObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_applicationLaunchObserver.get()];
+    auto notificationName = adoptNS([[NSString alloc] initWithCString:kGSEventHardwareKeyboardAvailabilityChangedNotification encoding:NSUTF8StringEncoding]);
+    removeCFNotificationObserver((__bridge CFStringRef)notificationName.get());
 #endif
 
     [[NSNotificationCenter defaultCenter] removeObserver:m_activationObserver.get()];
@@ -1266,6 +1315,20 @@ RefPtr<WebProcessProxy> WebProcessPool::webProcessForCapabilityGranter(const Ext
         return nullptr;
 
     return processes()[index].ptr();
+}
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+HardwareKeyboardState WebProcessPool::cachedHardwareKeyboardState() const
+{
+    RELEASE_ASSERT(isMainRunLoop());
+    return m_hardwareKeyboardState;
+}
+
+void WebProcessPool::setCachedHardwareKeyboardState(HardwareKeyboardState hardwareKeyboardState)
+{
+    RELEASE_ASSERT(isMainRunLoop());
+    m_hardwareKeyboardState = hardwareKeyboardState;
 }
 #endif
 

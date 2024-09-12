@@ -40,7 +40,7 @@ class RemoteMediaPlayerProxy;
 class RemoteMediaResourceLoader final
     : public WebCore::PlatformMediaResourceLoader {
 public:
-    explicit RemoteMediaResourceLoader(RemoteMediaPlayerProxy&);
+    static Ref<RemoteMediaResourceLoader> create(RemoteMediaPlayerProxy& proxy) { return adoptRef(*new RemoteMediaResourceLoader(proxy)); }
     ~RemoteMediaResourceLoader();
 
     static Ref<WorkQueue> defaultQueue()
@@ -54,6 +54,8 @@ public:
     }
 
 private:
+    explicit RemoteMediaResourceLoader(RemoteMediaPlayerProxy&);
+
     RefPtr<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, LoadOptions) final;
     void sendH2Ping(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&) final;
     Ref<RefCountedSerialFunctionDispatcher> targetDispatcher() final { return defaultQueue(); }

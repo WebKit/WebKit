@@ -59,16 +59,15 @@ bool AudioDecoder::isCodecSupported(const StringView& codec)
     return result;
 }
 
-void AudioDecoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
+void AudioDecoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback)
 {
 #if USE(GSTREAMER)
-    GStreamerAudioDecoder::create(codecName, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
+    GStreamerAudioDecoder::create(codecName, config, WTFMove(callback), WTFMove(outputCallback));
     return;
 #else
     UNUSED_PARAM(codecName);
     UNUSED_PARAM(config);
     UNUSED_PARAM(outputCallback);
-    UNUSED_PARAM(postCallback);
 #endif
 
     callback(makeUnexpected("Not supported"_s));

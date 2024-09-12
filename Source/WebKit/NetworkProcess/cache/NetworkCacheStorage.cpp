@@ -214,9 +214,21 @@ RefPtr<Storage> Storage::open(const String& baseCachePath, Mode mode, size_t cap
     ASSERT(!baseCachePath.isNull());
 
     auto cachePath = makeCachePath(baseCachePath);
+    bool hasMarkedExcludedFromBackup = false;
+    if (cachePath != baseCachePath) {
+        if (!FileSystem::makeAllDirectories(cachePath))
+            return nullptr;
 
-    if (!FileSystem::makeAllDirectories(makeVersionedDirectoryPath(cachePath)))
+        FileSystem::setExcludedFromBackup(cachePath, true);
+        hasMarkedExcludedFromBackup = true;
+    }
+
+    auto versionedDirectoryPath = makeVersionedDirectoryPath(cachePath);
+    if (!FileSystem::makeAllDirectories(versionedDirectoryPath))
         return nullptr;
+
+    if (!hasMarkedExcludedFromBackup)
+        FileSystem::setExcludedFromBackup(versionedDirectoryPath, true);
 
     auto salt = FileSystem::readOrMakeSalt(makeSaltFilePath(cachePath));
     if (!salt)

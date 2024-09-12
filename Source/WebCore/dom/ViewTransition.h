@@ -35,6 +35,7 @@
 #include "Styleable.h"
 #include "ViewTransitionTypeSet.h"
 #include "ViewTransitionUpdateCallback.h"
+#include "VisibilityChangeClient.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
@@ -148,9 +149,10 @@ public:
     OrderedNamedElementsMap namedElements;
     FloatSize initialLargeViewportSize;
     float initialPageZoom;
+    MonotonicTime startTime;
 };
 
-class ViewTransition : public RefCounted<ViewTransition>, public CanMakeWeakPtr<ViewTransition>, public ActiveDOMObject {
+class ViewTransition : public RefCounted<ViewTransition>, public VisibilityChangeClient, public ActiveDOMObject {
     WTF_MAKE_TZONE_ALLOCATED(ViewTransition);
 public:
     static Ref<ViewTransition> createSamePage(Document&, RefPtr<ViewTransitionUpdateCallback>&&, Vector<AtomString>&&);
@@ -189,6 +191,7 @@ public:
 
     RenderViewTransitionCapture* viewTransitionNewPseudoForCapturedElement(RenderLayerModelObject&);
 
+    static constexpr Seconds defaultTimeout = 4_s;
 private:
     ViewTransition(Document&, RefPtr<ViewTransitionUpdateCallback>&&, Vector<AtomString>&&);
     ViewTransition(Document&, Vector<AtomString>&&);
@@ -207,6 +210,9 @@ private:
     ExceptionOr<void> checkForViewportSizeChange();
 
     void clearViewTransition();
+
+    // VisibilityChangeClient.
+    void visibilityStateChanged() final;
 
     // ActiveDOMObject.
     void stop() final;

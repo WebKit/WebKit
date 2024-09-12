@@ -66,7 +66,7 @@ private:
     void didFail(ScriptExecutionContextIdentifier, const ResourceError&) final;
 
 private:
-    FetchLoaderClient& m_client;
+    CheckedRef<FetchLoaderClient> m_client;
     RefPtr<ThreadableLoader> m_loader;
     FetchBodyConsumer* m_consumer;
     bool m_isStarted { false };

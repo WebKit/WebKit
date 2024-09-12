@@ -270,9 +270,15 @@
 
 /* MUST_TAIL_CALL */
 
+// 32-bit platforms use different calling conventions, so a MUST_TAIL_CALL function
+// written for 64-bit may fail to tail call on 32-bit.
+#if COMPILER(CLANG)
+#if __SIZEOF_POINTER__ == 8
 #if !defined(MUST_TAIL_CALL) && defined(__cplusplus) && defined(__has_cpp_attribute)
 #if __has_cpp_attribute(clang::musttail)
 #define MUST_TAIL_CALL [[clang::musttail]]
+#endif
+#endif
 #endif
 #endif
 
@@ -329,6 +335,12 @@
 
 #if !defined(UNUSED_FUNCTION)
 #define UNUSED_FUNCTION __attribute__((unused))
+#endif
+
+/* UNUSED_MEMBER_VARIABLE */
+
+#if !defined(UNUSED_MEMBER_VARIABLE)
+#define UNUSED_MEMBER_VARIABLE __attribute__((unused))
 #endif
 
 /* UNUSED_TYPE_ALIAS */

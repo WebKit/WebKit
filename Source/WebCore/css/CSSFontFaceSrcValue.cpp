@@ -41,7 +41,7 @@
 namespace WebCore {
 
 CSSFontFaceSrcLocalValue::CSSFontFaceSrcLocalValue(AtomString&& fontFaceName)
-    : CSSValue(FontFaceSrcLocalClass)
+    : CSSValue(ClassType::FontFaceSrcLocal)
     , m_fontFaceName(WTFMove(fontFaceName))
 {
 }
@@ -74,7 +74,7 @@ bool CSSFontFaceSrcLocalValue::equals(const CSSFontFaceSrcLocalValue& other) con
 }
 
 CSSFontFaceSrcResourceValue::CSSFontFaceSrcResourceValue(ResolvedURL&& location, String&& format, Vector<FontTechnology>&& technologies, LoadedFromOpaqueSource source)
-    : CSSValue(FontFaceSrcResourceClass)
+    : CSSValue(ClassType::FontFaceSrcResource)
     , m_location(WTFMove(location))
     , m_format(WTFMove(format))
     , m_technologies(WTFMove(technologies))

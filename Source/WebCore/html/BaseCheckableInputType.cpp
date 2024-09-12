@@ -39,8 +39,11 @@
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BaseCheckableInputType);
 
 using namespace HTMLNames;
 
@@ -95,7 +98,7 @@ bool BaseCheckableInputType::canSetStringValue() const
 bool BaseCheckableInputType::accessKeyAction(bool sendMouseEvents)
 {
     ASSERT(element());
-    return InputType::accessKeyAction(sendMouseEvents) || element()->dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
+    return InputType::accessKeyAction(sendMouseEvents) || protectedElement()->dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
 String BaseCheckableInputType::fallbackValue() const

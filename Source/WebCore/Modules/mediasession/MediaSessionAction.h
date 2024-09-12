@@ -42,6 +42,7 @@ enum class MediaSessionAction : uint8_t {
     Togglemicrophone,
     Togglecamera,
     Togglescreenshare,
+    Voiceactivity,
     Settrack,
 };
 

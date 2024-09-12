@@ -28,12 +28,14 @@
 #if PLATFORM(MAC)
 
 #import "ButtonControlMac.h"
+#import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ButtonPart;
 
 class ButtonMac final : public ButtonControlMac {
+    WTF_MAKE_TZONE_ALLOCATED(ButtonMac);
 public:
     ButtonMac(ButtonPart& owningPart, ControlFactoryMac&, NSButtonCell *);
 

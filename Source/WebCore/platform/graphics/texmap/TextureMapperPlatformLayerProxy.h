@@ -35,7 +35,6 @@ namespace WebCore {
 
 class IntSize;
 class TextureMapperLayer;
-class TextureMapperPlatformLayerBuffer;
 
 class TextureMapperPlatformLayerProxy : public ThreadSafeRefCounted<TextureMapperPlatformLayerProxy> {
 public:

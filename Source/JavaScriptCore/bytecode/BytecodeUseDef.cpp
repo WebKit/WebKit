@@ -277,6 +277,11 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
         useAtEachCheckpoint(bytecode.m_callee, bytecode.m_thisValue, bytecode.m_arguments);
         return;
     }
+    case op_super_construct_varargs: {
+        auto bytecode = instruction->as<OpSuperConstructVarargs>();
+        useAtEachCheckpoint(bytecode.m_callee, bytecode.m_thisValue, bytecode.m_arguments);
+        return;
+    }
 
     USES(OpSwitchString, scrutinee)
     USES(OpSwitchChar, scrutinee)
@@ -325,6 +330,11 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     case op_construct:
         handleOpCallLike(instruction->as<OpConstruct>());
         return;
+
+    case op_super_construct:
+        handleOpCallLike(instruction->as<OpSuperConstruct>());
+        return;
+
     case op_call_direct_eval: {
         auto bytecode = instruction->as<OpCallDirectEval>();
         handleOpCallLike(bytecode);
@@ -477,6 +487,11 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
         defAt(OpConstructVarargs::makeCall, bytecode.m_dst);
         return;
     }
+    case op_super_construct_varargs: {
+        auto bytecode = instruction->as<OpSuperConstructVarargs>();
+        defAt(OpSuperConstructVarargs::makeCall, bytecode.m_dst);
+        return;
+    }
 
     DEFS(OpTailCallForwardArguments, dst)
     DEFS(OpGetFromScope, dst)
@@ -484,6 +499,7 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
     DEFS(OpTailCall, dst)
     DEFS(OpCallDirectEval, dst)
     DEFS(OpConstruct, dst)
+    DEFS(OpSuperConstruct, dst)
     DEFS(OpTryGetById, dst)
     DEFS(OpGetById, dst)
     DEFS(OpGetLength, dst)

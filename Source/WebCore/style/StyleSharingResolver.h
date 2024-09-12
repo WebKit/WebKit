@@ -60,7 +60,7 @@ private:
     bool sharingCandidateHasIdenticalStyleAffectingAttributes(const Context&, const StyledElement& sharingCandidate) const;
     bool classNamesAffectedByRules(const SpaceSplitString& classNames) const;
 
-    const Document& m_document;
+    CheckedRef<const Document> m_document;
     const ScopeRuleSets& m_ruleSets;
     SelectorMatchingState& m_selectorMatchingState;
 

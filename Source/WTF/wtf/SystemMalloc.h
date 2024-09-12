@@ -81,6 +81,11 @@ struct SystemMalloc {
     {
         ::free(p);
     }
+
+    static constexpr ALWAYS_INLINE size_t nextCapacity(size_t capacity)
+    {
+        return capacity + capacity / 4 + 1;
+    }
 };
 
 #if HAVE(PROBABILISTIC_GUARD_MALLOC)

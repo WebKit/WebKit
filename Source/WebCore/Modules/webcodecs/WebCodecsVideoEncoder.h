@@ -31,7 +31,6 @@
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include "VideoEncoder.h"
-#include "WebCodecsBaseClass.h"
 #include "WebCodecsCodecState.h"
 #include "WebCodecsControlMessage.h"
 #include "WebCodecsVideoEncoderConfig.h"
@@ -47,8 +46,7 @@ struct WebCodecsEncodedVideoChunkMetadata;
 struct WebCodecsVideoEncoderEncodeOptions;
 
 class WebCodecsVideoEncoder
-    : private WebCodecsBaseClass
-    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsVideoEncoder>
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsVideoEncoder>
     , public ActiveDOMObject
     , public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebCodecsVideoEncoder);
@@ -102,7 +100,7 @@ private:
     void queueControlMessageAndProcess(WebCodecsControlMessage<WebCodecsVideoEncoder>&&);
     void processControlMessageQueue();
     WebCodecsEncodedVideoChunkMetadata createEncodedChunkMetadata(std::optional<unsigned>);
-    bool updateRates(const WebCodecsVideoEncoderConfig&);
+    void updateRates(const WebCodecsVideoEncoderConfig&);
 
     WebCodecsCodecState m_state { WebCodecsCodecState::Unconfigured };
     size_t m_encodeQueueSize { 0 };
@@ -118,6 +116,7 @@ private:
     WebCodecsVideoEncoderConfig m_baseConfiguration;
     VideoEncoder::ActiveConfiguration m_activeConfiguration;
     bool m_hasNewActiveConfiguration { false };
+    size_t m_encoderCount { 0 };
 };
 
 }

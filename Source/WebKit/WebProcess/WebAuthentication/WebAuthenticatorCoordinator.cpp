@@ -45,6 +45,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <WebCore/WebAuthenticationConstants.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #undef WEBAUTHN_RELEASE_LOG
 #define PAGE_ID (m_webPage.identifier().toUInt64())
@@ -54,6 +55,8 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebAuthenticatorCoordinator);
 
 namespace {
 inline bool isWebBrowser()

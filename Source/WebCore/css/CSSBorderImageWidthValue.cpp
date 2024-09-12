@@ -31,7 +31,7 @@
 namespace WebCore {
 
 CSSBorderImageWidthValue::CSSBorderImageWidthValue(Quad widths, bool overridesBorderWidths)
-    : CSSValue(BorderImageWidthClass)
+    : CSSValue(ClassType::BorderImageWidth)
     , m_widths(WTFMove(widths))
     , m_overridesBorderWidths(overridesBorderWidths)
 {

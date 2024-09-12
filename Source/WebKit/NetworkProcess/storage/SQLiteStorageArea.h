@@ -26,6 +26,7 @@
 #pragma once
 
 #include "StorageAreaBase.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class SQLiteDatabase;
@@ -46,6 +47,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::SQLiteStorage
 namespace WebKit {
 
 class SQLiteStorageArea final : public StorageAreaBase {
+    WTF_MAKE_TZONE_ALLOCATED(SQLiteStorageArea);
 public:
     SQLiteStorageArea(unsigned quota, const WebCore::ClientOrigin&, const String& path, Ref<WorkQueue>&&);
     ~SQLiteStorageArea();

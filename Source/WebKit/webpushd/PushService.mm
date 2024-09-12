@@ -56,6 +56,10 @@ namespace WebPushD {
 using namespace WebKit;
 using namespace WebCore;
 
+// The system has a limited number of push topics available. We don't want to monopolize all topics
+// for ourselves, so let's limit ourselves to a reasonable amount of topics.
+static constexpr size_t maxTopicCount = 64;
+
 #if HAVE(APPLE_PUSH_SERVICE_URL_TOKEN_SUPPORT)
 
 #if !HAVE(MOBILE_KEY_BAG)
@@ -577,6 +581,11 @@ void PushService::subscribe(const PushSubscriptionSetIdentifier& identifier, con
         return;
     }
 
+    if (m_topicCount >= maxTopicCount) {
+        RELEASE_LOG_ERROR(Push, "Subscribe request from %{public}s and scope %{sensitive}s failed: reached max push topic count", identifier.debugDescription().ascii().data(), scope.ascii().data());
+        return completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "Reached maximum push subscription count"_s }));
+    }
+
     enqueuePushServiceRequest(m_subscribeRequests, makeUnique<SubscribeRequest>(*this, identifier, scope, vapidPublicKey, WTFMove(completionHandler)));
 }
 
@@ -702,9 +711,9 @@ void PushService::removeRecordsForBundleIdentifierAndDataStore(const String& bun
 
 #if PLATFORM(IOS)
 
-void PushService::updateSubscriptionSetState(const Vector<String>& allowedBundleIdentifiers, const HashSet<String>& installedWebClipIdentifiers, CompletionHandler<void()>&& completionHandler)
+void PushService::updateSubscriptionSetState(const String& allowedBundleIdentifier, const HashSet<String>& installedWebClipIdentifiers, CompletionHandler<void()>&& completionHandler)
 {
-    m_database->getPushSubscriptionSetRecords([this, weakThis = WeakPtr { *this }, allowedBundleIdentifiers, installedWebClipIdentifiers, completionHandler = WTFMove(completionHandler)](auto&& records) mutable {
+    m_database->getPushSubscriptionSetRecords([this, weakThis = WeakPtr { *this }, allowedBundleIdentifier, installedWebClipIdentifiers, completionHandler = WTFMove(completionHandler)](auto&& records) mutable {
         if (!weakThis)
             return completionHandler();
 
@@ -713,7 +722,7 @@ void PushService::updateSubscriptionSetState(const Vector<String>& allowedBundle
         for (const auto& record : records) {
             auto bundleIdentifier = record.identifier.bundleIdentifier;
             auto webClipIdentifier = record.identifier.pushPartition;
-            if (!allowedBundleIdentifiers.contains(bundleIdentifier) || !installedWebClipIdentifiers.contains(webClipIdentifier))
+            if (bundleIdentifier != allowedBundleIdentifier || !installedWebClipIdentifiers.contains(webClipIdentifier))
                 identifiersToRemove.add(record.identifier);
         }
 
@@ -758,6 +767,7 @@ void PushService::updateTopicLists(CompletionHandler<void()>&& completionHandler
         topicLists.enabledTopics = WTFMove(topics.enabledTopics);
         topicLists.ignoredTopics = WTFMove(topics.ignoredTopics);
         m_connection->setTopicLists(WTFMove(topicLists));
+        m_topicCount = topicLists.enabledTopics.size() + topicLists.ignoredTopics.size();
         completionHandler();
     });
 }

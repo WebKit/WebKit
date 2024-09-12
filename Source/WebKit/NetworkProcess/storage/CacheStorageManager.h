@@ -95,7 +95,7 @@ private:
     std::pair<uint64_t, HashSet<WebCore::DOMCacheIdentifier>> m_pendingSize;
     String m_path;
     FileSystem::Salt m_salt;
-    CacheStorageRegistry& m_registry;
+    CheckedRef<CacheStorageRegistry> m_registry;
     QuotaCheckFunction m_quotaCheckFunction;
     Vector<std::unique_ptr<CacheStorageCache>> m_caches;
     HashMap<WebCore::DOMCacheIdentifier, std::unique_ptr<CacheStorageCache>> m_removedCaches;

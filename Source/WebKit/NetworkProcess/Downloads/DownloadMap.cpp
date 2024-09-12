@@ -33,6 +33,9 @@
 
 namespace WebKit {
 
+DownloadMap::DownloadMap() = default;
+
+DownloadMap::~DownloadMap() = default;
 
 Download* DownloadMap::get(DownloadID downloadID) const
 {

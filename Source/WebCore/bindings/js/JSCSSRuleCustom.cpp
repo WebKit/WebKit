@@ -38,6 +38,7 @@
 #include "CSSLayerStatementRule.h"
 #include "CSSMediaRule.h"
 #include "CSSNamespaceRule.h"
+#include "CSSNestedDeclarations.h"
 #include "CSSPageRule.h"
 #include "CSSPropertyRule.h"
 #include "CSSScopeRule.h"
@@ -57,6 +58,7 @@
 #include "JSCSSLayerStatementRule.h"
 #include "JSCSSMediaRule.h"
 #include "JSCSSNamespaceRule.h"
+#include "JSCSSNestedDeclarations.h"
 #include "JSCSSPageRule.h"
 #include "JSCSSPropertyRule.h"
 #include "JSCSSScopeRule.h"
@@ -87,6 +89,8 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
         return createWrapper<CSSStyleRule>(globalObject, WTFMove(rule));
     case StyleRuleType::StyleWithNesting:
         return createWrapper<CSSStyleRule>(globalObject, WTFMove(rule));
+    case StyleRuleType::NestedDeclarations:
+        return createWrapper<CSSNestedDeclarations>(globalObject, WTFMove(rule));
     case StyleRuleType::Media:
         return createWrapper<CSSMediaRule>(globalObject, WTFMove(rule));
     case StyleRuleType::FontFace:

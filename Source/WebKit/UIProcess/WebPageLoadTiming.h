@@ -41,6 +41,9 @@ public:
 
     WallTime navigationStart() const { return m_navigationStart; }
 
+    WallTime firstVisualLayout() const { return m_firstVisualLayout; }
+    void setFirstVisualLayout(WallTime timestamp) { m_firstVisualLayout = timestamp; }
+
     WallTime firstMeaningfulPaint() const { return m_firstMeaningfulPaint; }
     void setFirstMeaningfulPaint(WallTime timestamp) { m_firstMeaningfulPaint = timestamp; }
 
@@ -56,6 +59,7 @@ public:
 
 private:
     WallTime m_navigationStart;
+    WallTime m_firstVisualLayout;
     WallTime m_firstMeaningfulPaint;
     WallTime m_documentFinishedLoading;
     WallTime m_allSubresourcesFinishedLoading;

@@ -9,7 +9,7 @@ var testDiv = document.getElementById("testDiv");
 
 shouldBeEmptyString("testDiv.style['-webkit-animation-timing-function']");
 evalAndLog("testDiv.style['-webkit-animation-timing-function'] = 'steps(calc(1 + 2), end)'");
-shouldBeEqualToString("testDiv.style['-webkit-animation-timing-function']", "steps(3)");
+shouldBeEqualToString("testDiv.style['-webkit-animation-timing-function']", "steps(calc(3))");
 shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-animation-timing-function')", "steps(3)");
 
 </script>

@@ -63,9 +63,10 @@ class PageDebugger;
 class WebInjectedScriptManager;
 struct PageAgentContext;
 
-class InspectorController final : public Inspector::InspectorEnvironment {
+class InspectorController final : public Inspector::InspectorEnvironment, public CanMakeCheckedPtr<InspectorController> {
     WTF_MAKE_NONCOPYABLE(InspectorController);
     WTF_MAKE_TZONE_ALLOCATED(InspectorController);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorController);
 public:
     InspectorController(Page&, std::unique_ptr<InspectorClient>&&);
     ~InspectorController() override;

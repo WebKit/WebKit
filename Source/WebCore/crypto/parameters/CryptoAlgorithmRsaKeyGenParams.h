@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class CryptoAlgorithmRsaKeyGenParams : public CryptoAlgorithmParameters {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CryptoAlgorithmRsaKeyGenParams);
 public:
     size_t modulusLength;
     RefPtr<Uint8Array> publicExponent;

@@ -1,0 +1,12 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-tvos, arm64e-tvos]
+install-name: /System/Library/Frameworks/IOKit.framework/Versions/A/IOKit
+current-version: 275
+exports:
+-       targets: [arm64-tvos, arm64e-tvos]
+        symbols: [_IOHIDEventAppendEvent, _IOHIDEventCreateDigitizerEvent, _IOHIDEventCreateDigitizerFingerEvent, _IOHIDEventCreateDigitizerStylusEventWithPolarOrientation,
+                _IOHIDEventCreateKeyboardEvent, _IOHIDEventCreateVendorDefinedEvent, _IOHIDEventGetIntegerValue, _IOHIDEventGetType,
+                _IOHIDEventSetFloatValue, _IOHIDEventSetIntegerValue, _IOHIDEventSystemClientCreate, _IOPMAssertionCreateWithDescription,
+                _IOPMAssertionRelease]
+...

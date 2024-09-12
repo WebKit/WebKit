@@ -102,7 +102,7 @@ RealtimeMediaSourceObserver::RealtimeMediaSourceObserver() = default;
 
 RealtimeMediaSourceObserver::~RealtimeMediaSourceObserver() = default;
 
-RealtimeMediaSource::RealtimeMediaSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
+RealtimeMediaSource::RealtimeMediaSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
     : m_pageIdentifier(pageIdentifier)
     , m_idHashSalts(WTFMove(hashSalts))
     , m_type(toSourceType(device.type()))

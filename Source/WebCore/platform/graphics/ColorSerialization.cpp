@@ -553,7 +553,10 @@ String serializationForCSS(const SRGBA<float>& color, bool useColorFunctionSeria
 
 String serializationForHTML(const SRGBA<float>& color, bool useColorFunctionSerialization)
 {
-    return serializationForCSS(color, useColorFunctionSerialization);
+    if (useColorFunctionSerialization)
+        return serializationUsingColorFunction(color);
+
+    return serializationForHTML(convertColor<SRGBA<uint8_t>>(color), false);
 }
 
 String serializationForRenderTreeAsText(const SRGBA<float>& color, bool useColorFunctionSerialization)

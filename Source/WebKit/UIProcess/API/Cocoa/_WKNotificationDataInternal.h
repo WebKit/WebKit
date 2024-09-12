@@ -32,5 +32,6 @@ struct NotificationData;
 };
 
 @interface _WKNotificationData ()
--(instancetype)initWithCoreData:(const WebCore::NotificationData&)coreData dataStore:(WKWebsiteDataStore *)dataStore;
+-(instancetype)_initWithCoreData:(const WebCore::NotificationData&)coreData;
+-(const WebCore::NotificationData&)_getCoreData;
 @end

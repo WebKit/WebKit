@@ -28,12 +28,14 @@
 #include "PathImpl.h"
 #include "PathSegment.h"
 #include <wtf/DataRef.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class PathStream final : public PathImpl {
+    WTF_MAKE_TZONE_ALLOCATED(PathStream);
 public:
     static Ref<PathStream> create();
     static Ref<PathStream> create(PathSegment&&);

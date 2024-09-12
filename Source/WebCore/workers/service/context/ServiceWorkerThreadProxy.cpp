@@ -32,6 +32,7 @@
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FetchLoader.h"
+#include "FetchLoaderClient.h"
 #include "FrameLoader.h"
 #include "LoaderStrategy.h"
 #include "LocalFrame.h"

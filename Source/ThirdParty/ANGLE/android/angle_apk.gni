@@ -66,11 +66,6 @@ if (enable_java_templates) {
                     "($android_secondary_abi_toolchain)" ]
             }
           }
-          if (angle_enable_vulkan_api_dump_layer) {
-            secondary_abi_shared_libraries +=
-                [ "$angle_lunarg_vulkantools_dir:VkLayer_lunarg_api_dump" +
-                  "($android_secondary_abi_toolchain)" ]
-          }
         } else {
           _secondary_out_dir = get_label_info(
                   ":compressed_symbols($android_secondary_abi_toolchain)",
@@ -83,9 +78,6 @@ if (enable_java_templates) {
             foreach(_layer, vulkan_validation_layers) {
               secondary_abi_loadable_modules += [ "${_secondary_out_dir}/lib.compressed/lib${_layer}${shlib_extension}" ]
             }
-          }
-          if (angle_enable_vulkan_api_dump_layer) {
-            secondary_abi_loadable_modules += [ "${_secondary_out_dir}/lib.compressed/libVkLayer_lunarg_api_dump${shlib_extension}" ]
           }
         }
       }

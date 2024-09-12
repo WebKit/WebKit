@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ViewTimeline.h"
 
+#include "AnimationTimelinesController.h"
 #include "CSSNumericFactory.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
@@ -33,6 +34,7 @@
 #include "CSSValuePool.h"
 #include "CSSViewValue.h"
 #include "Element.h"
+#include "StyleBuilderConverter.h"
 
 namespace WebCore {
 
@@ -46,26 +48,15 @@ Ref<ViewTimeline> ViewTimeline::create(const AtomString& name, ScrollAxis axis, 
     return adoptRef(*new ViewTimeline(name, axis, WTFMove(insets)));
 }
 
-Ref<ViewTimeline> ViewTimeline::createFromCSSValue(const CSSViewValue& cssViewValue)
+Ref<ViewTimeline> ViewTimeline::createFromCSSValue(Style::BuilderState& builderState, const CSSViewValue& cssViewValue)
 {
     auto axisValue = cssViewValue.axis();
     auto axis = axisValue ? fromCSSValueID<ScrollAxis>(axisValue->valueID()) : ScrollAxis::Block;
 
-    auto convertInsetValue = [](CSSValue* value) -> std::optional<Length> {
+    auto convertInsetValue = [&](CSSValue* value) -> std::optional<Length> {
         if (!value)
             return std::nullopt;
-
-        if (value->valueID() == CSSValueAuto)
-            return Length();
-
-        auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-        if (primitiveValue.isPercentage())
-            return Length(primitiveValue.resolveAsPercentageDeprecated(), LengthType::Percent);
-        if (primitiveValue.isLength())
-            return Length(primitiveValue.resolveAsLengthDeprecated(), LengthType::Fixed);
-
-        ASSERT_NOT_REACHED();
-        return std::nullopt;
+        return Style::BuilderConverter::convertLengthOrAuto(builderState, *value);
     };
 
     auto startInset = convertInsetValue(cssViewValue.startInset().get());
@@ -86,6 +77,8 @@ ViewTimeline::ViewTimeline(ViewTimelineOptions&& options)
     , m_startOffset(CSSNumericFactory::px(0))
     , m_endOffset(CSSNumericFactory::px(0))
 {
+    if (m_subject)
+        m_subject->protectedDocument()->ensureTimelinesController().addTimeline(*this);
 }
 
 ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, ViewTimelineInsets&& insets)
@@ -96,12 +89,32 @@ ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, ViewTimeline
 {
 }
 
-Ref<CSSValue> ViewTimeline::toCSSValue() const
+void ViewTimeline::dump(TextStream& ts) const
 {
-    auto insetCSSValue = [](const std::optional<Length>& inset) -> RefPtr<CSSValue> {
+    auto hasAxis = axis() != ScrollAxis::Block;
+    auto hasEndInset = m_insets.end && m_insets.end != m_insets.start;
+    auto hasStartInset = (m_insets.start && !m_insets.start->isAuto()) || (m_insets.start && m_insets.start->isAuto() && hasEndInset);
+
+    ts << "view(";
+    if (hasAxis)
+        ts << axis();
+    if (hasAxis && hasStartInset)
+        ts << " ";
+    if (hasStartInset)
+        ts << *m_insets.start;
+    if (hasStartInset && hasEndInset)
+        ts << " ";
+    if (hasEndInset)
+        ts << *m_insets.end;
+    ts << ")";
+}
+
+Ref<CSSValue> ViewTimeline::toCSSValue(const RenderStyle& style) const
+{
+    auto insetCSSValue = [&](const std::optional<Length>& inset) -> RefPtr<CSSValue> {
         if (!inset)
             return nullptr;
-        return CSSPrimitiveValue::create(*inset);
+        return CSSPrimitiveValue::create(*inset, style);
     };
 
     return CSSViewValue::create(
@@ -109,6 +122,20 @@ Ref<CSSValue> ViewTimeline::toCSSValue() const
         insetCSSValue(m_insets.start),
         insetCSSValue(m_insets.end)
     );
+}
+
+AnimationTimelinesController* ViewTimeline::controller() const
+{
+    if (m_subject)
+        return &m_subject->document().ensureTimelinesController();
+    return nullptr;
+}
+
+AnimationTimeline::ShouldUpdateAnimationsAndSendEvents ViewTimeline::documentWillUpdateAnimationsAndSendEvents()
+{
+    if (m_subject && m_subject->isConnected())
+        return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::Yes;
+    return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::No;
 }
 
 } // namespace WebCore

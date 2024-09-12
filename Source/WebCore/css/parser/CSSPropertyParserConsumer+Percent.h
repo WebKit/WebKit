@@ -39,11 +39,9 @@ namespace CSSPropertyParserHelpers {
 // MARK: - Consumer functions
 
 // MARK: - Percent
-std::optional<PercentRaw> consumePercentRaw(CSSParserTokenRange&, ValueRange = ValueRange::All);
 RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange&, ValueRange = ValueRange::All);
 
 // MARK: - Percent or Number
-std::optional<PercentOrNumberRaw> consumePercentOrNumberRaw(CSSParserTokenRange&, ValueRange = ValueRange::All);
 RefPtr<CSSPrimitiveValue> consumePercentOrNumber(CSSParserTokenRange&, ValueRange = ValueRange::All);
 
 // FIXME: Users of this function are likely getting incorrect results when used with calc() producing a percent, as it is not getting divided by 100.

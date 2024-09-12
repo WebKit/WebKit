@@ -169,6 +169,11 @@ imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-contro
 
 webkit.org/b/259089 imported/w3c/web-platform-tests/css/css-ui/text-overflow-028.html [ ImageOnlyFailure ]
 
+webkit.org/b/279302 imported/w3c/web-platform-tests/css/css-ui/outline-width-rounding.tentative.html [ Failure ]
+webkit.org/b/279302 imported/w3c/web-platform-tests/css/css-ui/parsing/outline-width-computed.html [ Failure ]
+webkit.org/b/279302 imported/w3c/web-platform-tests/css/css-ui/resize-interactive.html [ Failure ]
+webkit.org/b/279302 imported/w3c/web-platform-tests/css/css-ui/subpixel-outline-width.tentative.html [ ImageOnlyFailure ]
+
 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Pass ]
 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Pass ]
 http/wpt/content-security-policy/sandbox-manifest-blocked.html [ Pass ]
@@ -1280,6 +1285,9 @@ fast/scrolling/v-rl-scrollbars-initial-position-dynamic.html [ Skip ]
 fast/scrolling/v-rl-scrollbars-initial-position.html [ Skip ]
 fast/scrolling/vertical-scrollbar-position.html [ Skip ]
 
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-root-both-edges.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-root.html [ ImageOnlyFailure ]
+
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-004.html [ ImageOnlyFailure ]
@@ -1337,6 +1345,8 @@ fast/css/variables/env/ios [ Pass ]
 
 # Tests use resizable popups which are not a thing on iOS.
 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/transition-in-hidden-page.html [ Failure ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/hide-before-reveal.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-push-from-click.html [ Failure ]
@@ -1458,20 +1468,6 @@ imported/w3c/web-platform-tests/compat/webkit-box-clamp-bottom-border.html [ Ima
 # editing/deleting tests to triage
 editing/deleting/delete-all-text-in-text-field-assertion.html [ Failure ]
 editing/deleting/delete-cell-contents.html [ Failure ]
-editing/deleting/smart-delete-across-editable-boundaries.html [ Failure ]
-editing/deleting/smart-editing-disabled-mac.html [ Failure ]
-
-# editing/execCommand tests to triage
-webkit.org/b/180270 editing/execCommand/button.html [ Failure ]
-webkit.org/b/180269 editing/execCommand/createLink.html [ Failure ]
-webkit.org/b/180271 editing/execCommand/hilitecolor.html [ Failure ]
-webkit.org/b/180268 editing/execCommand/query-command-state.html [ Failure ]
-webkit.org/b/180267 editing/execCommand/remove-format-multiple-elements-mac.html [ Failure ]
-webkit.org/b/180267 editing/execCommand/remove-format-multiple-elements-win.html [ Failure ]
-webkit.org/b/180267 editing/execCommand/remove-formatting-2.html [ Failure ]
-webkit.org/b/180269 editing/execCommand/toggle-link-mac.html [ Failure ]
-webkit.org/b/180269 editing/execCommand/toggle-unlink-mac.html
-webkit.org/b/180269 editing/execCommand/unlink.html [ Failure ]
 
 webkit.org/b/180275 editing/caret/color-span-inside-editable-background.html [ ImageOnlyFailure ]
 webkit.org/b/180725 editing/caret/color-span-inside-editable.html [ ImageOnlyFailure ]
@@ -1909,7 +1905,7 @@ fast/sub-pixel/selection/selection-rect-in-sub-pixel-table.html [ Failure ]
 fast/sub-pixel/sub-pixel-root-layer.html [ ImageOnlyFailure ]
 
 fast/text/decorations-transformed.html [ Failure ]
-fast/text/emphasis-avoid-ruby.html [ Failure ]
+fast/text/emphasis-avoid-ruby-001.html [ Failure ]
 fast/text/emphasis-overlap.html [ Failure ]
 fast/text/glyph-reordering.html [ Failure ]
 fast/text/international/001.html [ Failure ]
@@ -2157,7 +2153,6 @@ fast/text/fallback-language-han.html [ Skip ]
 editing/pasteboard/copy-null-characters.html [ Failure ]
 
 # Failing pasteboard to triage
-editing/pasteboard/4242293-1.html [ Failure ]
 editing/pasteboard/5780697-2.html [ Failure ]
 editing/pasteboard/clipboard-customData.html [ Failure ]
 editing/pasteboard/copy-backslash-with-euc.html [ Failure ]
@@ -2165,23 +2160,15 @@ editing/pasteboard/copy-in-password-field.html [ Failure ]
 editing/pasteboard/copy-text-with-backgroundcolor.html [ Failure ]
 webkit.org/b/177961 editing/pasteboard/data-transfer-items.html [ Skip ]
 editing/pasteboard/dataTransfer-setData-getData.html [ Failure ]
-editing/pasteboard/display-block-on-spans.html [ Failure ]
 editing/pasteboard/emacs-ctrl-k-with-move.html [ Failure ]
 editing/pasteboard/emacs-ctrl-k-y-001.html [ Failure ]
 editing/pasteboard/emacs-killring-alternating-append-prepend.html [ Failure ]
 editing/pasteboard/emacs-killring-backward-delete-prepend.html [ Failure ]
 editing/pasteboard/input-with-display-none-div.html [ Failure ]
 editing/pasteboard/input-with-visibility-hidden.html [ Failure ]
-editing/pasteboard/insert-div-text-into-text.html [ Failure ]
-editing/pasteboard/merge-end-3.html [ Failure ]
-editing/pasteboard/merge-end-5.html [ Failure ]
-editing/pasteboard/merge-end-list-2.html [ Failure ]
-editing/pasteboard/merge-end-table-2.html [ Failure ]
 editing/pasteboard/page-zoom.html [ Failure ]
 editing/pasteboard/paste-before-tab-span.html [ Failure ]
-editing/pasteboard/paste-blockquote-3.html [ Failure ]
 editing/pasteboard/paste-global-selection.html [ Failure ]
-editing/pasteboard/paste-list-004.html [ Failure ]
 editing/pasteboard/paste-plaintext-user-select-none.html [ Failure ]
 editing/pasteboard/paste-sanitize-crash-1.html [ Failure ]
 editing/pasteboard/paste-sanitize-crash-2.html [ Failure ]
@@ -2313,9 +2300,8 @@ accessibility/list-with-dynamically-changing-content.html [ Pass ]
 accessibility/live-region-attributes-update-after-dynamic-change.html [ Pass ]
 accessibility/menu-list-crash2.html [ Pass ]
 accessibility/menu-with-menuitem-grandchildren.html [ Pass ]
-# rdar://132587324 These two tests have been flakey on iOS since they were introduced — temporarily disable them for now.
-# accessibility/mixed-contenteditable-visible-character-range-hang.html [ Pass ]
-# accessibility/mixed-contenteditable-double-br-visible-character-range-hang.html [ Pass ]
+accessibility/mixed-contenteditable-visible-character-range-hang.html [ Pass ]
+accessibility/mixed-contenteditable-double-br-visible-character-range-hang.html [ Pass ]
 accessibility/multiple-attribute-change-crash.html [ Pass ]
 accessibility/nested-custom-element-accname.html [ Pass ]
 accessibility/node-only-inert-object.html [ Pass ]
@@ -2599,7 +2585,6 @@ media/media-higher-prio-audio-stream.html [ Failure ]
 media/restore-from-page-cache.html [ Failure ]
 media/track/track-forced-subtitles-in-band.html [ Failure ]
 media/track/track-in-band-mode.html [ Pass Failure ]
-media/track/w3c/interfaces/TextTrackCue/align.html [ Failure ]
 media/video-autoplay-allowed-but-fullscreen-required.html [ Failure ]
 media/video-background-tab-playback.html [ Failure ]
 media/video-colorspace-yuv420.html [ Failure ]
@@ -3199,7 +3184,10 @@ webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--width.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--height.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--width.html [ ImageOnlyFailure ]
-
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/borders-on-sub-unit-sized-elements.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/subpixel-border-width.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/subpixel-borders-with-child-border-box-sizing.html [ ImageOnlyFailure ]
+webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/subpixel-borders-with-child.html [ ImageOnlyFailure ]
 
 webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height-viewbox.html [ Skip ]
 webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height.html [ Skip ]
@@ -3627,8 +3615,6 @@ webkit.org/b/253095 imported/w3c/web-platform-tests/css/css-images/image-set/ima
 pointerevents/mouse/pointer-event-basic-properties.html [ Timeout ]
 imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004.html [ Failure Pass ]
 [ Release ] perf/nested-combined-selectors.html [ Failure ]
-
-webkit.org/b/238227 fast/dom/intersection-observer-document-leak.html [ Pass Failure ]
 
 webkit.org/b/238519 animations/shadow-host-child-change.html [ Pass ImageOnlyFailure ]
 
@@ -4412,7 +4398,6 @@ webkit.org/b/254398 webgl/2.0.y/conformance/extensions/webgl-compressed-texture-
 
 # webkit.org/b/255177 Batch mark expectations for newly failing tests introduced with iOS 16.4 update
 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-multi-line.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-5.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-color-mix-function.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/disabled-elements/event-propagate-disabled.tentative.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html [ Failure ]
@@ -5103,7 +5088,6 @@ editing/inserting/insert-3654864-fix.html [ Failure ]
 editing/inserting/insert-3775316-fix.html [ Failure ]
 editing/inserting/insert-3800346-fix.html [ Failure ]
 editing/inserting/insert-after-delete-001.html [ Failure ]
-editing/inserting/insert-before-link-1.html [ Failure ]
 editing/inserting/insert-br-001.html [ Failure ]
 editing/inserting/insert-br-002.html [ Failure ]
 editing/inserting/insert-br-003.html [ Failure ]
@@ -5125,7 +5109,6 @@ editing/inserting/insert-space-in-empty-doc.html [ Failure ]
 editing/inserting/insert-tab-001.html [ Failure ]
 editing/inserting/insert-tab-002.html [ Failure ]
 editing/inserting/insert-tab-004.html [ Failure ]
-editing/inserting/paragraph-outside-nested-divs.html [ Failure ]
 editing/inserting/typing-around-br-001.html [ Failure ]
 editing/secure-input/password-input-changed-type.html [ Failure ]
 editing/secure-input/password-input-focusing.html [ Failure ]
@@ -5139,13 +5122,8 @@ editing/selection/double-click-selection-with-dom-mutation.html [ Failure ]
 editing/selection/extend-by-character-006.html [ Failure ]
 editing/selection/extend-by-sentence-001.html [ Failure ]
 editing/selection/extend-by-word-001.html [ Failure ]
-editing/selection/extend-forward-by-word-over-non-editable.html [ Failure ]
 editing/selection/extend-inside-transforms-backward.html [ Failure ]
 editing/selection/extend-inside-transforms-forward.html [ Failure ]
-editing/selection/extend-selection-bidi.html [ Failure ]
-editing/selection/extend-selection-enclosing-block-mac.html [ Failure ]
-editing/selection/extend-selection-enclosing-block-win.html [ Failure ]
-editing/selection/extend-selection-word.html [ Failure ]
 editing/selection/extend-to-line-boundary.html [ Failure ]
 editing/selection/find-yensign-and-backslash.html [ Failure ]
 editing/selection/focus-body.html [ Failure ]
@@ -5163,7 +5141,6 @@ editing/selection/select-all-004.html [ Failure ]
 editing/selection/select-out-of-floated-contenteditable.html [ Failure ]
 editing/selection/select-out-of-floated-input.html [ Failure ]
 editing/selection/select-out-of-floated-textarea.html [ Failure ]
-editing/selection/selection-extend-should-not-move-across-caret-on-mac.html [ Failure ]
 editing/selection/unrendered-001.html [ Failure ]
 editing/selection/unrendered-002.html [ Failure ]
 editing/selection/unrendered-003.html [ Failure ]
@@ -5172,16 +5149,6 @@ editing/selection/unrendered-005.html [ Failure ]
 editing/spelling/centering-misspelling-dots.html [ Failure ]
 editing/spelling/misspelling-dots-dont-extend-beyond-words.html [ Failure ]
 editing/spelling/spelling-unified-emulation.html [ Failure ]
-editing/style/fore-color-by-name.html [ Failure ]
-editing/style/make-text-writing-direction-inline-mac.html [ Failure ]
-editing/style/push-down-font-styles-mac.html [ Failure ]
-editing/style/push-down-implicit-styles-around-list-mac.html [ Failure ]
-editing/style/push-down-implicit-styles-mac.html [ Failure ]
-editing/style/remove-underline-across-paragraph-in-bold.html [ Failure ]
-editing/style/remove-underline-across-paragraph.html [ Failure ]
-editing/style/remove-underline-from-stylesheet.html [ Failure ]
-editing/style/remove-underline-in-bold.html [ Failure ]
-editing/style/remove-underline.html [ Failure ]
 # editing/style/smoosh-styles-003.html [ Failure ] # TODO: marked Skip above. Uncomment this line when that is resolved.
 editing/style/style-3681552-fix-001.html [ Failure ]
 editing/style/style-boundary-002.html [ Failure ]
@@ -5189,10 +5156,8 @@ editing/style/style-boundary-003.html [ Failure ]
 editing/style/text-indent.html [ Failure ]
 editing/style/typing-style-001.html [ Failure ]
 editing/style/typing-style-002.html [ Failure ]
-editing/text-iterator/first-letter-word-boundary.html [ Failure ]
 editing/undo/5378473.html [ Failure ]
 editing/undo/redo-typing-001.html [ Failure ]
-editing/undo/replace-text-in-node-preserving-markers-crash.html [ Failure ]
 editing/undo/undo-delete-boundary.html [ Failure ]
 editing/undo/undo-delete.html [ Failure ]
 editing/undo/undo-misspellings.html [ Failure ]
@@ -5548,9 +5513,6 @@ compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ ImageOnlyFailure ]
 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ ImageOnlyFailure ]
 css3/filters/backdrop/backdrop-filter-with-clip-path.html [ ImageOnlyFailure ]
-svg/animations/animate-linear-discrete-additive-b.svg [ ImageOnlyFailure ]
-svg/animations/animate-linear-discrete-additive-c.svg [ ImageOnlyFailure ]
-svg/animations/animate-linear-discrete-additive.svg [ ImageOnlyFailure ]
 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ ImageOnlyFailure ]
 
 webkit.org/b/192045 css3/filters/blur-filter-page-scroll-parents.html
@@ -7327,7 +7289,7 @@ imported/w3c/web-platform-tests/fetch/h1-parsing/lone-cr.window.html [ Pass Fail
 
 # rdar://129872343 (REGRESSION: [ iOS 18 ] 19x http/tests/resourceLoadStatistics/* layout-tests are constant failures)
 # FIXME: needs new bug.
-http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.html [ Failure ]
+http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.https.html [ Failure ]
 http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Failure ]
 
 # webkit.org/b/276558 ([ iOS18 ] 7 wpt/intersection-observer/* layout tests are flakily failing.)
@@ -7375,9 +7337,6 @@ imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-popover-
 # webkit.org/b/277308 (webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html needs to be marked as slow.)
 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Slow ]
 
-# webkit.org/b/27730 (REGRESSION (280752@main?): [ macOS iOS ] http/wpt/service-workers/fetch-service-worker-preload-cache.https.html is flaky failing.)
-http/wpt/service-workers/fetch-service-worker-preload-cache.https.html [ Pass Failure ]
-
 # webkit.org/b/277710 [ iOS ] [ Release ] editing/execCommand/insert-ordered-list-and-delete.html is a flaky text failure
 editing/execCommand/insert-ordered-list-and-delete.html [ Pass Failure ]
 
@@ -7386,12 +7345,6 @@ fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html [ Pass
 
 # webkit.org/b/277717 [ iOS ] fast/forms/ios/show-software-keyboard-on-programmatic-focus-during-dblclick.html is a flaky timeout
 fast/forms/ios/show-software-keyboard-on-programmatic-focus-during-dblclick.html [ Pass Timeout ]
-
-# webkit.org/b/277720 [ iOS MacOS ] 4x http/wpt/service-workers/fetch-service-worker-preload* (layout-tests) are flaky failures
-http/wpt/service-workers/fetch-service-worker-preload-changing-request.https.html [ Pass Failure ]
-http/wpt/service-workers/fetch-service-worker-preload-download-through-direct-preload.https.html [ Pass Timeout Failure ]
-http/wpt/service-workers/fetch-service-worker-preload-download.https.html [ Pass Timeout ]
-http/wpt/service-workers/fetch-service-worker-preload.https.html [ Pass Failure ]
 
 # webkit.org/b/277758 [ iOS ] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html is a constant text failure
 imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Failure ]
@@ -7407,6 +7360,15 @@ fast/forms/ios/time-picker-value-change.html [ Pass Failure ]
 
 # webkit.org/b/277897 (Regression: 282030@main? [ iOS 17 Release ] imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-inline-004.html is a flaky text failure (277897))
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-inline-004.html [ Pass Failure ]
+
+# FAIL results are platform dependent
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-invalid-fallback.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-borders-001.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-borders-002.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-007.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-008.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-010.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-anchor-positioning-001.html [ Failure ]
 
 # webkit.org/b/277898 [ iOS 17 ] imported/w3c/web-platform-tests/css/css-tables/tentative/td-box-sizing-003.html is a flaky text failure
 imported/w3c/web-platform-tests/css/css-tables/tentative/td-box-sizing-003.html [ Pass Failure ]
@@ -7438,7 +7400,7 @@ imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenera
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Failure ]
 
-webkit.org/b/278353 http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Failure ]
+webkit.org/b/278353 http/tests/privateClickMeasurement/send-attribution-conversion-request.https.html [ Failure ]
 
 # webkit.org/b/277933 (REGRESSION (iOS 18): 5 WPT CSS layout tests are constantly failing (ImageOnlyFailure). (277933))
 imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ ImageOnlyFailure ]
@@ -7450,14 +7412,6 @@ fast/text/text-underline-position-under.html [ ImageOnlyFailure ]
 
 # webkit.org/b/269496 [ iOS17 ] fast/forms/datalist/datalist-option-labels.html is a flaky timeout
 fast/forms/datalist/datalist-option-labels.html [ Pass Timeout ]
-
-# webkit.org/b/277986 [ iOS MacOS ] http/tests/navigation/page-cache-shared-worker.html is a flaky timeout
-http/tests/navigation/page-cache-shared-worker.html [ Pass Timeout ]
-
-# webkit.org/b/277989 [ iOS ] 3x imported/w3c/web-platform-tests/mathml/presentation-markup/* (layout-tests) are flaky failures
-imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/stretch-along-block-axis-001.html [ Pass Failure ]
-imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-minsize-maxsize-001.html [ Pass Failure ]
-imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001.html [ Pass Failure ]
 
 # webkit.org/b/278080 (6+ fast/forms/ios/* layout tests are flakily timing out (<20%).)
 fast/forms/ios/focus-button.html [ Pass Timeout ]
@@ -7502,4 +7456,9 @@ css3/filters/backdrop-filter-page-scale.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-intrinsic-aspect-ratio.html [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/278934 [ macOS iOS wk2 ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html is a flaky failure.
-[ Debug ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure Pass ] 
+[ Debug ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure Pass ]
+
+webkit.org/b/279295 fast/inline/list-marker-inside-container-with-margin.html [ ImageOnlyFailure ]
+
+# webkit.org/b/279477 REGRESSION (283102@main?): [macOS iOS wk2 Debug EWS ] ASSERTION FAILED: WebKit::WebPageProxy::startNetworkRequestsForPageLoadTiming(WebCore::FrameIdentifier) result of http/tests/site-isolation/window-open-with-name-cross-site.html to crash
+[ Debug ] http/tests/site-isolation/window-open-with-name-cross-site.html [ Skip ]

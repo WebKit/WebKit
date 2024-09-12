@@ -129,7 +129,7 @@ ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& co
     m_backingStore = AcceleratedBackingStoreDMABuf::create(*m_pageProxy, m_wpeView.get());
 
     auto& openerInfo = m_pageProxy->configuration().openerInfo();
-    m_pageProxy->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()));
+    m_pageProxy->initializeWebPage(openerInfo ? openerInfo->site : WebCore::Site(aboutBlankURL()));
 }
 
 ViewPlatform::~ViewPlatform()

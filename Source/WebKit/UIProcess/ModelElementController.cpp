@@ -40,6 +40,11 @@ ModelElementController::ModelElementController(WebPageProxy& webPageProxy)
 {
 }
 
+WebPageProxy& ModelElementController::page()
+{
+    return m_webPageProxy.get();
+}
+
 }
 
 #endif

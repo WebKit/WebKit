@@ -100,7 +100,7 @@ Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystem
     m_handlesByConnection.ensure(connection, [&] {
         return HashSet<WebCore::FileSystemHandleIdentifier> { };
     }).iterator->value.add(newHandleIdentifier);
-    m_registry.registerHandle(newHandleIdentifier, *newHandle);
+    m_registry->registerHandle(newHandleIdentifier, *newHandle);
     m_handles.add(newHandleIdentifier, WTFMove(newHandle));
     return newHandleIdentifier;
 }
@@ -126,7 +126,7 @@ void FileSystemStorageManager::closeHandle(FileSystemStorageHandle& handle)
         if (handles.remove(identifier))
             break;
     }
-    m_registry.unregisterHandle(identifier);
+    m_registry->unregisterHandle(identifier);
 }
 
 void FileSystemStorageManager::connectionClosed(IPC::Connection::UniqueID connection)
@@ -140,7 +140,7 @@ void FileSystemStorageManager::connectionClosed(IPC::Connection::UniqueID connec
     auto identifiers = connectionHandles->value;
     for (auto identifier : identifiers) {
         m_handles.remove(identifier);
-        m_registry.unregisterHandle(identifier);
+        m_registry->unregisterHandle(identifier);
     }
 
     m_lockMap.removeIf([&identifiers](auto& entry) {
@@ -183,7 +183,7 @@ void FileSystemStorageManager::close()
     for (auto& [connectionID, identifiers] : m_handlesByConnection) {
         for (auto identifier : identifiers) {
             auto takenHandle = m_handles.take(identifier);
-            m_registry.unregisterHandle(identifier);
+            m_registry->unregisterHandle(identifier);
 
             // Send message to web process to invalidate active sync access handle.
             if (auto accessHandleIdentifier = takenHandle->activeSyncAccessHandle())

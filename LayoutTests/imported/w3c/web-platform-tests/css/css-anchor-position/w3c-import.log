@@ -95,6 +95,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-top-layer-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-top-layer-006-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-top-layer-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-top-layer-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-top-layer-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-writing-modes-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-writing-modes-002.html
@@ -204,6 +205,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/at-position-try-invalidation-shadow-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/at-position-try-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/at-position-try-parse.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/auto-margins-position-area.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/base-style-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/chrome-1512373-2-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/chrome-1512373-crash.html

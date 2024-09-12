@@ -33,21 +33,23 @@ namespace IPC {
 enum class ReceiverName : uint8_t {
     TestWithCVPixelBuffer = 1
     , TestWithEnabledBy = 2
-    , TestWithEnabledIf = 3
-    , TestWithIfMessage = 4
-    , TestWithImageData = 5
-    , TestWithLegacyReceiver = 6
-    , TestWithSemaphore = 7
-    , TestWithStream = 8
-    , TestWithStreamBatched = 9
-    , TestWithStreamBuffer = 10
-    , TestWithStreamServerConnectionHandle = 11
-    , TestWithSuperclass = 12
-    , TestWithoutAttributes = 13
-    , TestWithoutUsingIPCConnection = 14
-    , IPC = 15
-    , AsyncReply = 16
-    , Invalid = 17
+    , TestWithEnabledByAndConjunction = 3
+    , TestWithEnabledByOrConjunction = 4
+    , TestWithEnabledIf = 5
+    , TestWithIfMessage = 6
+    , TestWithImageData = 7
+    , TestWithLegacyReceiver = 8
+    , TestWithSemaphore = 9
+    , TestWithStream = 10
+    , TestWithStreamBatched = 11
+    , TestWithStreamBuffer = 12
+    , TestWithStreamServerConnectionHandle = 13
+    , TestWithSuperclass = 14
+    , TestWithoutAttributes = 15
+    , TestWithoutUsingIPCConnection = 16
+    , IPC = 17
+    , AsyncReply = 18
+    , Invalid = 19
 };
 
 enum class MessageName : uint16_t {
@@ -55,6 +57,8 @@ enum class MessageName : uint16_t {
     TestWithCVPixelBuffer_ReceiveCVPixelBuffer,
     TestWithCVPixelBuffer_SendCVPixelBuffer,
 #endif
+    TestWithEnabledByAndConjunction_AlwaysEnabled,
+    TestWithEnabledByOrConjunction_AlwaysEnabled,
     TestWithEnabledBy_AlwaysEnabled,
     TestWithEnabledBy_ConditionallyEnabled,
     TestWithEnabledBy_ConditionallyEnabledAnd,

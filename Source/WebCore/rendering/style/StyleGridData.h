@@ -80,7 +80,7 @@ struct MasonryAutoFlow {
     MasonryAutoFlowPlacementOrder placementOrder;
 };
 
-typedef std::variant<GridTrackSize, Vector<String>, GridTrackEntryRepeat, GridTrackEntryAutoRepeat, GridTrackEntrySubgrid, GridTrackEntryMasonry> GridTrackEntry;
+using GridTrackEntry = std::variant<GridTrackSize, Vector<String>, GridTrackEntryRepeat, GridTrackEntryAutoRepeat, GridTrackEntrySubgrid, GridTrackEntryMasonry>;
 struct GridTrackList {
     Vector<GridTrackEntry> list;
     friend bool operator==(const GridTrackList&, const GridTrackList&) = default;

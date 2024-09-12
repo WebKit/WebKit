@@ -387,18 +387,6 @@ WGPUTextureDimension ConvertToBackingContext::convertToBacking(TextureDimension 
     }
 }
 
-WGPUXREye ConvertToBackingContext::convertToBacking(XREye eye)
-{
-    switch (eye) {
-    case XREye::None:
-        return WGPUXREye_None;
-    case XREye::Left:
-        return WGPUXREye_Left;
-    case XREye::Right:
-        return WGPUXREye_Right;
-    }
-}
-
 WGPUTextureFormat ConvertToBackingContext::convertToBacking(TextureFormat textureFormat)
 {
     switch (textureFormat) {

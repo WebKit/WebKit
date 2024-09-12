@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller ( mueller@kde.org )
- * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -42,6 +42,12 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Length);
+
+struct SameSizeAsLength {
+    int32_t value;
+    int32_t metaData;
+};
+static_assert(sizeof(Length) == sizeof(SameSizeAsLength), "length should stay small");
 
 static Length parseLength(std::span<const UChar> data)
 {
@@ -468,12 +474,6 @@ Length blend(const Length& from, const Length& to, const BlendingContext& contex
     }
     return blended;
 }
-
-struct SameSizeAsLength {
-    int32_t value;
-    int32_t metaData;
-};
-static_assert(sizeof(Length) == sizeof(SameSizeAsLength), "length should stay small");
 
 static TextStream& operator<<(TextStream& ts, LengthType type)
 {

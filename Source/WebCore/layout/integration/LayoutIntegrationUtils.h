@@ -25,9 +25,14 @@
 
 #pragma once
 
+#include "LayoutUnit.h"
+
+#include <optional>
+
 namespace WebCore {
 namespace Layout {
 
+class ElementBox;
 class LayoutState;
 
 class IntegrationUtils {

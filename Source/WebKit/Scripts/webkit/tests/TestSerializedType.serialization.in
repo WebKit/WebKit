@@ -248,6 +248,10 @@ webkit_secure_coding NSSomeFoundationType {
     OptionalDictionaryKey: Dictionary?
 }
 
+[SupportWKKeyedCoder] webkit_secure_coding class NSSomeOtherFoundationType {
+    DictionaryKey: Dictionary
+}
+
 #if ENABLE(DATA_DETECTION)
 # Test a comment
 secure_coding_headers: <pal/cocoa/DataDetectorsCoreSoftLink.h>

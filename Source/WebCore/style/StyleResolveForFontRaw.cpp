@@ -3,6 +3,7 @@
  * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2020 Metrological Group B.V.
  * Copyright (C) 2020 Igalia S.L.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,13 +32,16 @@
 #include "config.h"
 #include "StyleResolveForFontRaw.h"
 
+#include "CSSCalcSymbolTable.h"
 #include "CSSFontSelector.h"
 #include "CSSPropertyParserConsumer+Font.h"
+#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include "CSSPropertyParserHelpers.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "FontCascade.h"
 #include "FontCascadeDescription.h"
+#include "FontSelectionValueInlines.h"
 #include "RenderStyle.h"
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
@@ -48,7 +52,6 @@ namespace WebCore {
 
 namespace Style {
 
-using namespace CSSPropertyParserHelpers;
 using namespace WebKitFontFamilyNames;
 
 static bool useFixedDefaultSize(const FontCascadeDescription& fontDescription)
@@ -56,7 +59,7 @@ static bool useFixedDefaultSize(const FontCascadeDescription& fontDescription)
     return fontDescription.familyCount() == 1 && fontDescription.firstFamily() == familyNamesData->at(FamilyNamesIndex::MonospaceFamily);
 }
 
-std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescription&& fontDescription, ScriptExecutionContext& context)
+std::optional<FontCascade> resolveForUnresolvedFont(const CSSPropertyParserHelpers::UnresolvedFont& fontRaw, FontCascadeDescription&& fontDescription, ScriptExecutionContext& context)
 {
     ASSERT(context.cssFontSelector());
 
@@ -69,24 +72,25 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
 
     bool isFirstFont = true;
     auto families = WTF::compactMap(fontRaw.family, [&](auto& item) -> std::optional<AtomString> {
-        AtomString family;
-        bool isGenericFamily = false;
-        switchOn(item, [&] (CSSValueID ident) {
-            isGenericFamily = ident != CSSValueWebkitBody;
-            if (isGenericFamily) {
-                // FIXME: Treat system-ui like other generic font families
-                if (ident == CSSValueSystemUi)
-                    family = nameString(CSSValueSystemUi);
-                else
-                    family = familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(ident));
-            } else
-                family = AtomString(context.settingsValues().fontGenericFamilies.standardFontFamily());
-        }, [&] (const AtomString& familyString) {
-            family = familyString;
-        });
+        auto [family, isGenericFamily] = switchOn(item,
+            [&](CSSValueID ident) -> std::pair<AtomString, bool> {
+                if (ident != CSSValueWebkitBody) {
+                    // FIXME: Treat system-ui like other generic font families
+                    if (ident == CSSValueSystemUi)
+                        return { nameString(CSSValueSystemUi), true };
+                    else
+                        return { familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(ident)), true };
+                } else
+                    return { AtomString(context.settingsValues().fontGenericFamilies.standardFontFamily()), false };
+            },
+            [&](const AtomString& familyString) -> std::pair<AtomString, bool> {
+                return { familyString, false };
+            }
+        );
 
         if (family.isEmpty())
             return std::nullopt;
+
         if (isFirstFont) {
             fontDescription.setIsSpecifiedFont(!isGenericFamily);
             isFirstFont = false;
@@ -107,63 +111,72 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
     }
 
     // Font style applied in the same way as BuilderConverter::convertFontStyleFromValue
-    if (fontRaw.style) {
-        switch (fontRaw.style->style) {
-        case CSSValueNormal:
-            break;
+    WTF::switchOn(fontRaw.style,
+        [&](CSSValueID ident) {
+            switch (ident) {
+            case CSSValueNormal:
+                fontDescription.setFontStyleAxis(FontStyleAxis::slnt);
+                break;
 
-        case CSSValueItalic:
-            fontDescription.setItalic(italicValue());
-            break;
+            case CSSValueItalic:
+                fontDescription.setFontStyleAxis(FontStyleAxis::ital);
+                fontDescription.setItalic(italicValue());
+                break;
 
-        case CSSValueOblique: {
-            float degrees;
-            if (fontRaw.style->angle)
-                degrees = static_cast<float>(CSSPrimitiveValue::computeDegrees(fontRaw.style->angle->type, fontRaw.style->angle->value));
-            else
-                degrees = 0;
-            fontDescription.setItalic(FontSelectionValue(degrees));
-            break;
+            case CSSValueOblique:
+                fontDescription.setFontStyleAxis(FontStyleAxis::slnt);
+                fontDescription.setItalic(FontSelectionValue(0.0f)); // FIXME: Spec says this should be 14deg.
+                break;
+
+            default:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+        },
+        [&](AngleRaw angle) {
+            fontDescription.setFontStyleAxis(FontStyleAxis::slnt);
+            fontDescription.setItalic(FontSelectionValue::clampFloat(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)));
+        },
+        [&](const UnevaluatedCalc<AngleRaw>& calc) {
+            fontDescription.setFontStyleAxis(FontStyleAxis::slnt);
+
+            // FIXME: Figure out correct behavior when conversion data is required.
+            if (requiresConversionData(calc))
+                return;
+
+            fontDescription.setItalic(normalizedFontItalicValue(static_cast<float>(evaluateCalcNoConversionDataRequired(calc, { }).value)));
         }
+    );
 
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
+    switch (fontRaw.variantCaps) {
+    case CSSValueNormal:
+        fontDescription.setVariantCaps(FontVariantCaps::Normal);
+        break;
+    case CSSValueSmallCaps:
+        fontDescription.setVariantCaps(FontVariantCaps::Small);
+        break;
+    case CSSValueAllSmallCaps:
+        fontDescription.setVariantCaps(FontVariantCaps::AllSmall);
+        break;
+    case CSSValuePetiteCaps:
+        fontDescription.setVariantCaps(FontVariantCaps::Petite);
+        break;
+    case CSSValueAllPetiteCaps:
+        fontDescription.setVariantCaps(FontVariantCaps::AllPetite);
+        break;
+    case CSSValueUnicase:
+        fontDescription.setVariantCaps(FontVariantCaps::Unicase);
+        break;
+    case CSSValueTitlingCaps:
+        fontDescription.setVariantCaps(FontVariantCaps::Titling);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
     }
-    fontDescription.setFontStyleAxis((fontRaw.style && fontRaw.style->style == CSSValueItalic) ? FontStyleAxis::ital : FontStyleAxis::slnt);
 
-    if (fontRaw.variantCaps) {
-        switch (*fontRaw.variantCaps) {
-        case CSSValueNormal:
-            fontDescription.setVariantCaps(FontVariantCaps::Normal);
-            break;
-        case CSSValueSmallCaps:
-            fontDescription.setVariantCaps(FontVariantCaps::Small);
-            break;
-        case CSSValueAllSmallCaps:
-            fontDescription.setVariantCaps(FontVariantCaps::AllSmall);
-            break;
-        case CSSValuePetiteCaps:
-            fontDescription.setVariantCaps(FontVariantCaps::Petite);
-            break;
-        case CSSValueAllPetiteCaps:
-            fontDescription.setVariantCaps(FontVariantCaps::AllPetite);
-            break;
-        case CSSValueUnicase:
-            fontDescription.setVariantCaps(FontVariantCaps::Unicase);
-            break;
-        case CSSValueTitlingCaps:
-            fontDescription.setVariantCaps(FontVariantCaps::Titling);
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-    }
-
-    if (fontRaw.weight) {
-        auto weight = WTF::switchOn(*fontRaw.weight, [&] (CSSValueID ident) {
+    auto weight = WTF::switchOn(fontRaw.weight,
+        [&](CSSValueID ident) {
             switch (ident) {
             case CSSValueNormal:
                 return normalWeightValue();
@@ -177,56 +190,78 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
                 ASSERT_NOT_REACHED();
                 return normalWeightValue();
             }
-        }, [&] (double weight) {
-            return FontSelectionValue::clampFloat(weight);
-        });
-        fontDescription.setWeight(weight);
-    }
+        },
+        [&](NumberRaw weight) {
+            return FontSelectionValue::clampFloat(weight.value);
+        },
+        [&](const UnevaluatedCalc<NumberRaw>& calc) {
+            // FIXME: Figure out correct behavior when conversion data is required.
+            if (requiresConversionData(calc))
+                return normalWeightValue();
+
+            return FontSelectionValue(clampTo<float>(evaluateCalcNoConversionDataRequired(calc, { }).value, 1, 1000));
+        }
+    );
+    fontDescription.setWeight(weight);
 
     fontDescription.setKeywordSizeFromIdentifier(CSSValueInvalid);
-    float size = WTF::switchOn(fontRaw.size, [&] (CSSValueID ident) {
-        switch (ident) {
-        case CSSValueXxSmall:
-        case CSSValueXSmall:
-        case CSSValueSmall:
-        case CSSValueMedium:
-        case CSSValueLarge:
-        case CSSValueXLarge:
-        case CSSValueXxLarge:
-        case CSSValueXxxLarge:
-            fontDescription.setKeywordSizeFromIdentifier(ident);
-            return Style::fontSizeForKeyword(ident, fontDescription.useFixedDefaultSize(), context.settingsValues());
-        case CSSValueLarger:
-            return parentSize * 1.2f;
-        case CSSValueSmaller:
-            return parentSize / 1.2f;
-        default:
-            return 0.f;
+
+    float size = WTF::switchOn(fontRaw.size,
+        [&](CSSValueID ident) {
+            switch (ident) {
+            case CSSValueXxSmall:
+            case CSSValueXSmall:
+            case CSSValueSmall:
+            case CSSValueMedium:
+            case CSSValueLarge:
+            case CSSValueXLarge:
+            case CSSValueXxLarge:
+            case CSSValueXxxLarge:
+                fontDescription.setKeywordSizeFromIdentifier(ident);
+                return Style::fontSizeForKeyword(ident, fontDescription.useFixedDefaultSize(), context.settingsValues());
+            case CSSValueLarger:
+                return parentSize * 1.02f;
+            case CSSValueSmaller:
+                return parentSize / 1.02f;
+            default:
+                return 0.0f;
+            }
+        },
+        [&](const LengthPercentageRaw& lengthPercentage) {
+            if (lengthPercentage.type == CSSUnitType::CSS_PERCENTAGE)
+                return static_cast<float>((parentSize * lengthPercentage.value) / 100.0);
+            else {
+                auto fontCascade = FontCascade(FontCascadeDescription(fontDescription));
+                fontCascade.update(context.cssFontSelector());
+
+                // FIXME: Passing null for the RenderView parameter means that vw and vh units will evaluate to
+                //        zero and vmin and vmax units will evaluate as if they were px units.
+                //        It's unclear in the specification if they're expected to work on OffscreenCanvas, given
+                //        that it's off-screen and therefore doesn't strictly have an associated viewport.
+                //        This needs clarification and possibly fixing.
+                // FIXME: How should root font units work in OffscreenCanvas?
+
+                auto* document = dynamicDowncast<Document>(context);
+                return static_cast<float>(CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(lengthPercentage.type, lengthPercentage.value, CSSPropertyFontSize, &fontCascade, document ? document->renderView() : nullptr));
+            }
+        },
+        [&](const UnevaluatedCalc<LengthPercentageRaw>& calc) {
+            // FIXME: Figure out correct behavior when conversion data is required.
+            if (requiresConversionData(calc))
+                return 0.0f;
+
+            auto length = calc.calc->lengthPercentageValueNoConversionDataRequired({ });
+            return floatValueForLength(length, parentSize);
         }
-    }, [&] (const LengthOrPercentRaw& lengthOrPercent) {
-        return WTF::switchOn(lengthOrPercent, [&] (const LengthRaw& length) {
-            auto fontCascade = FontCascade(FontCascadeDescription(fontDescription));
-            fontCascade.update(context.cssFontSelector());
-            // FIXME: Passing null for the RenderView parameter means that vw and vh units will evaluate to
-            //        zero and vmin and vmax units will evaluate as if they were px units.
-            //        It's unclear in the specification if they're expected to work on OffscreenCanvas, given
-            //        that it's off-screen and therefore doesn't strictly have an associated viewport.
-            //        This needs clarification and possibly fixing.
-            // FIXME: How should root font units work in OffscreenCanvas?
-            auto* document = dynamicDowncast<Document>(context);
-            return static_cast<float>(CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(length.type, length.value, CSSPropertyFontSize, &fontCascade, document ? document->renderView() : nullptr));
-        }, [&] (const PercentRaw& percentage) {
-            return static_cast<float>((parentSize * percentage.value) / 100.0);
-        });
-    });
+    );
 
     if (size > 0) {
         fontDescription.setSpecifiedSize(size);
         fontDescription.setComputedSize(size);
     }
 
-    // As there is no line-height on FontCascade, there's no need to resolve
-    // it, even though there is line-height information on FontRaw.
+    // As there is no line-height on FontCascade, there's no need to resolve it, even
+    // though there is line-height information on CSSPropertyParserHelpers::UnresolvedFont.
 
     auto fontCascade = FontCascade(WTFMove(fontDescription));
     fontCascade.update(context.cssFontSelector());

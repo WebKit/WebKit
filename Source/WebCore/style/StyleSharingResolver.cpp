@@ -93,7 +93,7 @@ std::unique_ptr<RenderStyle> SharingResolver::resolve(const Styleable& searchSty
         return nullptr;
     if (parentElementPreventsSharing(parentElement))
         return nullptr;
-    if (element == m_document.cssTarget())
+    if (element == m_document->cssTarget())
         return nullptr;
     if (is<HTMLElement>(*element) && element->hasAutoTextDirectionState())
         return nullptr;
@@ -113,7 +113,7 @@ std::unique_ptr<RenderStyle> SharingResolver::resolve(const Styleable& searchSty
         update,
         *element,
         element->hasClass() && classNamesAffectedByRules(element->classNames()),
-        m_document.visitedLinkState().determineLinkState(*element)
+        m_document->visitedLinkState().determineLinkState(*element)
     };
 
     // Check previous siblings and their cousins.
@@ -214,7 +214,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
         return false;
     if (element.isInShadowTree() && candidateElement.partNames() != element.partNames())
         return false;
-    if (&candidateElement == m_document.cssTarget())
+    if (&candidateElement == m_document->cssTarget())
         return false;
     if (!sharingCandidateHasIdenticalStyleAffectingAttributes(context, candidateElement))
         return false;
@@ -290,11 +290,11 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
         return false;
 #endif
 
-    if (&candidateElement == m_document.activeModalDialog() || &element == m_document.activeModalDialog())
+    if (&candidateElement == m_document->activeModalDialog() || &element == m_document->activeModalDialog())
         return false;
 
 #if ENABLE(FULLSCREEN_API)
-    if (CheckedPtr fullscreenManager = m_document.fullscreenManagerIfExists(); fullscreenManager && (&candidateElement == fullscreenManager->currentFullscreenElement() || &element == fullscreenManager->currentFullscreenElement()))
+    if (CheckedPtr fullscreenManager = m_document->fullscreenManagerIfExists(); fullscreenManager && (&candidateElement == fullscreenManager->currentFullscreenElement() || &element == fullscreenManager->currentFullscreenElement()))
         return false;
 #endif
 

@@ -24,7 +24,7 @@
         run(`video.textTracks[0].mode = "showing"`);
         await waitFor(video.querySelector('track'), 'load');
 
-        run(`video.src = findMediaFile("video", "w3c/track/webvtt/media/white")`);
+        run(`video.src = findMediaFile("video", "../resources/white")`);
         await waitFor(video, 'canplaythrough');
 
         endTest();

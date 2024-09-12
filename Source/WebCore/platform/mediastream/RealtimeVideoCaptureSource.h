@@ -56,7 +56,7 @@ public:
     ThreadSafeWeakPtrControlBlock& controlBlock() const final;
 
 protected:
-    RealtimeVideoCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, PageIdentifier);
+    RealtimeVideoCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
 
     void setSizeFrameRateAndZoom(const VideoPresetConstraints&) override;
 

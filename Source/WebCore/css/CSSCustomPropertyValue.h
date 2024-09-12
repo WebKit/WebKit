@@ -45,7 +45,7 @@ public:
         double value;
         CSSUnitType unitType;
 
-        friend bool operator==(const NumericSyntaxValue&, const NumericSyntaxValue&) = default;
+        bool operator==(const NumericSyntaxValue&) const = default;
     };
 
     struct TransformSyntaxValue {
@@ -120,7 +120,7 @@ public:
 
 private:
     CSSCustomPropertyValue(const AtomString& name, VariantValue&& value)
-        : CSSValue(CustomPropertyClass)
+        : CSSValue(ClassType::CustomProperty)
         , m_name(name)
         , m_value(WTFMove(value))
     {

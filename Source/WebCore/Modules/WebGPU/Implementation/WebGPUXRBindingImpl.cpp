@@ -60,15 +60,15 @@ RefPtr<XRSubImage> XRBindingImpl::getSubImage(XRProjectionLayer&, WebCore::WebXR
     return nullptr;
 }
 
-RefPtr<XRSubImage> XRBindingImpl::getViewSubImage(XRProjectionLayer& projectionLayer, XREye eye)
+RefPtr<XRSubImage> XRBindingImpl::getViewSubImage(XRProjectionLayer& projectionLayer)
 {
-    UNUSED_PARAM(projectionLayer);
-    return XRSubImageImpl::create(adoptWebGPU(wgpuBindingGetViewSubImage(m_backing.get(), m_convertToBackingContext->convertToBacking(eye))), m_convertToBackingContext);
+    auto& projectionLayerImpl = static_cast<XRProjectionLayerImpl&>(projectionLayer);
+    return XRSubImageImpl::create(adoptWebGPU(wgpuBindingGetViewSubImage(m_backing.get(), projectionLayerImpl.backing())), m_convertToBackingContext);
 }
 
 TextureFormat XRBindingImpl::getPreferredColorFormat()
 {
-    return TextureFormat::Bgra8unorm;
+    return TextureFormat::Bgra8unormSRGB;
 }
 
 } // namespace WebCore::WebGPU

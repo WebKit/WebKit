@@ -28,7 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "WebExtensionUtilities.h"
-#import <WebKit/WKWebExtensionCommand.h>
+#import <WebKit/WKWebExtensionCommandPrivate.h>
 
 #if USE(APPKIT)
 #import <Carbon/Carbon.h>
@@ -72,6 +72,29 @@ static auto *commandsManifest = @{
     }
 };
 
+static auto *emptyCommandsManifest = @{
+    @"manifest_version": @3,
+
+    @"name": @"Test Commands",
+    @"description": @"Test Commands",
+    @"version": @"1.0",
+
+    @"permissions": @[ @"webNavigation" ],
+
+    @"background": @{
+        @"scripts": @[ @"background.js" ],
+        @"type": @"module",
+        @"persistent": @NO,
+    },
+
+    @"action": @{
+        @"default_title": @"Test Action"
+    },
+
+    @"commands": @{
+    }
+};
+
 TEST(WKWebExtensionAPICommands, GetAllCommands)
 {
     auto *backgroundScript = Util::constructScript(@[
@@ -93,6 +116,23 @@ TEST(WKWebExtensionAPICommands, GetAllCommands)
     ]);
 
     Util::loadAndRunExtension(commandsManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPICommands, GetAllCommandsEmptyManifest)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"let commands = await browser.commands.getAll()",
+        @"browser.test.assertEq(commands.length, 1, 'Should be one command.')",
+
+        @"let executeActionCommand = commands.find(command => command.name === '_execute_action')",
+
+        @"browser.test.assertTrue(!!executeActionCommand, '_execute_action command should exist')",
+        @"browser.test.assertEq(executeActionCommand.description, 'Test Action', 'The description should be')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    Util::loadAndRunExtension(emptyCommandsManifest, @{ @"background.js": backgroundScript });
 }
 
 TEST(WKWebExtensionAPICommands, CommandEvent)
@@ -135,6 +175,7 @@ TEST(WKWebExtensionAPICommands, CommandForEvent)
 
     EXPECT_NOT_NULL(command);
     EXPECT_NS_EQUAL(command.identifier, @"test-command");
+    EXPECT_NS_EQUAL(command._userVisibleShortcut, @"⌥⌘Z");
 
     keyCommandEvent = [NSEvent keyEventWithType:NSEventTypeKeyDown location:NSZeroPoint modifierFlags:(NSEventModifierFlagControl | NSEventModifierFlagShift)
         timestamp:0 windowNumber:0 context:nil characters:@"Á" charactersIgnoringModifiers:@"y" isARepeat:NO keyCode:kVK_ANSI_A];
@@ -142,6 +183,7 @@ TEST(WKWebExtensionAPICommands, CommandForEvent)
 
     EXPECT_NOT_NULL(command);
     EXPECT_NS_EQUAL(command.identifier, @"_execute_action");
+    EXPECT_NS_EQUAL(command._userVisibleShortcut, @"⌃⇧Y");
 
     keyCommandEvent = [NSEvent keyEventWithType:NSEventTypeKeyDown location:NSZeroPoint modifierFlags:(NSEventModifierFlagCommand | NSEventModifierFlagOption)
         timestamp:0 windowNumber:0 context:nil characters:@"å" charactersIgnoringModifiers:@"a" isARepeat:NO keyCode:kVK_ANSI_A];

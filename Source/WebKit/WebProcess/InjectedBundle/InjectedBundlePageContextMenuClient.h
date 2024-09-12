@@ -30,6 +30,7 @@
 #include "APIClient.h"
 #include "APIInjectedBundlePageContextMenuClient.h"
 #include "WKBundlePageContextMenuClient.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace API {
 class Object;
@@ -50,6 +51,7 @@ class WebContextMenuItemData;
 class WebPage;
 
 class InjectedBundlePageContextMenuClient : public API::Client<WKBundlePageContextMenuClientBase>, public API::InjectedBundle::PageContextMenuClient {
+    WTF_MAKE_TZONE_ALLOCATED(InjectedBundlePageContextMenuClient);
 public:
     explicit InjectedBundlePageContextMenuClient(const WKBundlePageContextMenuClientBase*);
 

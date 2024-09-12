@@ -575,7 +575,7 @@ RenderPipelineDesc GetComputingVertexShaderOnlyRenderPipelineDesc(RenderCommandE
 
     renderPassDesc.populateRenderPipelineOutputDesc(&pipelineDesc.outputDescriptor);
     pipelineDesc.rasterizationType      = RenderPipelineRasterization::Disabled;
-    pipelineDesc.inputPrimitiveTopology = kPrimitiveTopologyClassPoint;
+    pipelineDesc.inputPrimitiveTopology = MTLPrimitiveTopologyClassPoint;
 
     return pipelineDesc;
 }
@@ -1192,7 +1192,7 @@ angle::Result ClearUtils::getClearRenderPipelineState(
     renderPassDesc.populateRenderPipelineOutputDesc(clearWriteMaskArray,
                                                     &pipelineDesc.outputDescriptor);
 
-    pipelineDesc.inputPrimitiveTopology = kPrimitiveTopologyClassTriangle;
+    pipelineDesc.inputPrimitiveTopology = MTLPrimitiveTopologyClassTriangle;
 
     ANGLE_TRY(ensureShadersInitialized(contextMtl, renderPassDesc.numColorAttachments));
 
@@ -1375,7 +1375,7 @@ angle::Result ColorBlitUtils::getColorBlitRenderPipelineState(
     // Disable blit for some outputs that are not enabled
     pipelineDesc.outputDescriptor.updateEnabledDrawBuffers(params.enabledBuffers);
 
-    pipelineDesc.inputPrimitiveTopology = kPrimitiveTopologyClassTriangle;
+    pipelineDesc.inputPrimitiveTopology = MTLPrimitiveTopologyClassTriangle;
 
     ShaderKey key;
     key.numColorAttachments   = renderPassDesc.numColorAttachments;
@@ -1577,7 +1577,7 @@ angle::Result DepthStencilBlitUtils::getDepthStencilBlitRenderPipelineState(
     // Disable all color outputs
     pipelineDesc.outputDescriptor.updateEnabledDrawBuffers(gl::DrawBufferMask());
 
-    pipelineDesc.inputPrimitiveTopology = kPrimitiveTopologyClassTriangle;
+    pipelineDesc.inputPrimitiveTopology = MTLPrimitiveTopologyClassTriangle;
 
     AutoObjCPtr<id<MTLFunction>> *fragmentShader = nullptr;
     int depthTextureType                         = GetShaderTextureType(params.src);
@@ -2723,7 +2723,8 @@ angle::Result VertexFormatConversionUtils::convertVertexFormatToFloatVS(
 
     cmdEncoder->draw(MTLPrimitiveTypePoint, 0, params.vertexCount);
 
-    cmdEncoder->memoryBarrierWithResource(params.dstBuffer, kRenderStageVertex, kRenderStageVertex);
+    cmdEncoder->memoryBarrierWithResource(params.dstBuffer, MTLRenderStageVertex,
+                                          MTLRenderStageVertex);
 
     // Invalidate current context's state.
     // NOTE(hqle): Consider invalidating only affected states.
@@ -2802,7 +2803,8 @@ angle::Result VertexFormatConversionUtils::expandVertexFormatComponentsVS(
 
     cmdEncoder->draw(MTLPrimitiveTypePoint, 0, params.vertexCount);
 
-    cmdEncoder->memoryBarrierWithResource(params.dstBuffer, kRenderStageVertex, kRenderStageVertex);
+    cmdEncoder->memoryBarrierWithResource(params.dstBuffer, MTLRenderStageVertex,
+                                          MTLRenderStageVertex);
 
     // Invalidate current context's state.
     // NOTE(hqle): Consider invalidating only affected states.

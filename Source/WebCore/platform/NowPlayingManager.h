@@ -74,7 +74,7 @@ public:
 
 private:
     virtual void clearNowPlayingInfoPrivate();
-    virtual void setNowPlayingInfoPrivate(const NowPlayingInfo&);
+    virtual void setNowPlayingInfoPrivate(const NowPlayingInfo&, bool shouldUpdateNowPlayingSuppression);
     void ensureRemoteCommandListenerCreated();
     RefPtr<RemoteCommandListener> m_remoteCommandListener;
     WeakPtr<NowPlayingManagerClient> m_client;

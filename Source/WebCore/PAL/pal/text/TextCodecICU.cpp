@@ -32,6 +32,7 @@
 #include "ThreadGlobalData.h"
 #include <array>
 #include <unicode/ucnv_cb.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -39,6 +40,8 @@
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace PAL {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCodecICU);
 
 const size_t ConversionBufferSize = 16384;
 

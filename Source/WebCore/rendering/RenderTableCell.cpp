@@ -332,11 +332,11 @@ RectEdges<LayoutUnit> RenderTableCell::padding() const
     auto left = computedCSSPaddingLeft();
 
     if (isHorizontalWritingMode()) {
-        bool isTopToBottom = style().blockFlowDirection() == BlockFlowDirection::TopToBottom;
+        bool isTopToBottom = style().blockFlowDirection() == FlowDirection::TopToBottom;
         top += isTopToBottom ? intrinsicPaddingBefore() : intrinsicPaddingAfter();
         bottom += isTopToBottom ? intrinsicPaddingAfter() : intrinsicPaddingBefore();
     } else {
-        bool isLeftToRight = style().blockFlowDirection() == BlockFlowDirection::LeftToRight;
+        bool isLeftToRight = style().blockFlowDirection() == FlowDirection::LeftToRight;
         left += isLeftToRight ? intrinsicPaddingBefore() : intrinsicPaddingAfter();
         right += isLeftToRight ? intrinsicPaddingAfter() : intrinsicPaddingBefore();
     }
@@ -354,7 +354,7 @@ LayoutUnit RenderTableCell::paddingTop() const
     LayoutUnit result = computedCSSPaddingTop();
     if (!isHorizontalWritingMode())
         return result;
-    return result + (style().blockFlowDirection() == BlockFlowDirection::TopToBottom ? intrinsicPaddingBefore() : intrinsicPaddingAfter());
+    return result + (style().blockFlowDirection() == FlowDirection::TopToBottom ? intrinsicPaddingBefore() : intrinsicPaddingAfter());
 }
 
 LayoutUnit RenderTableCell::paddingBottom() const
@@ -362,7 +362,7 @@ LayoutUnit RenderTableCell::paddingBottom() const
     LayoutUnit result = computedCSSPaddingBottom();
     if (!isHorizontalWritingMode())
         return result;
-    return result + (style().blockFlowDirection() == BlockFlowDirection::TopToBottom ? intrinsicPaddingAfter() : intrinsicPaddingBefore());
+    return result + (style().blockFlowDirection() == FlowDirection::TopToBottom ? intrinsicPaddingAfter() : intrinsicPaddingBefore());
 }
 
 LayoutUnit RenderTableCell::paddingLeft() const
@@ -370,7 +370,7 @@ LayoutUnit RenderTableCell::paddingLeft() const
     LayoutUnit result = computedCSSPaddingLeft();
     if (isHorizontalWritingMode())
         return result;
-    return result + (style().blockFlowDirection() == BlockFlowDirection::LeftToRight ? intrinsicPaddingBefore() : intrinsicPaddingAfter());
+    return result + (style().blockFlowDirection() == FlowDirection::LeftToRight ? intrinsicPaddingBefore() : intrinsicPaddingAfter());
 }
 
 LayoutUnit RenderTableCell::paddingRight() const
@@ -378,7 +378,7 @@ LayoutUnit RenderTableCell::paddingRight() const
     LayoutUnit result = computedCSSPaddingRight();
     if (isHorizontalWritingMode())
         return result;
-    return result + (style().blockFlowDirection() == BlockFlowDirection::LeftToRight ? intrinsicPaddingAfter() : intrinsicPaddingBefore());
+    return result + (style().blockFlowDirection() == FlowDirection::LeftToRight ? intrinsicPaddingAfter() : intrinsicPaddingBefore());
 }
 
 LayoutUnit RenderTableCell::paddingBefore() const

@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: eventTarget.addEventListener is not a function. (In 'eventTarget.addEventListener(type, eventListener)', 'eventTarget.addEventListener' is undefined)
+
+
+Harness Error (FAIL), message = Unhandled rejection: eventTarget.addEventListener is not a function. (In 'eventTarget.addEventListener(type, eventListener)', 'eventTarget.addEventListener' is undefined)
+
+FAIL Simultaneous smooth scrollIntoViews run to completion promise_test: Unhandled rejection with value: object "TypeError: getValue is not a function. (In 'getValue()', 'getValue' is undefined)"
+FAIL Simultaneous smooth,instant scrollIntoViews run to completion assert_equals: scroller1's scrollTop is reset expected 0 but got 27
+TIMEOUT Simultaneous instant,smooth scrollIntoViews run to completion Test timed out
+NOTRUN Simultaneous instant scrollIntoViews run to completion
+

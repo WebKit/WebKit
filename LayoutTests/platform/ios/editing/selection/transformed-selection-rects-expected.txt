@@ -20,4 +20,4 @@ layer at (28,48) size 622x100
       RenderText {#text} at (521,1) size 43x28
         text run at (521,1) width 43: " elit."
 selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 1 {P} of child 3 {DIV} of body
-selection end:   position 6 of child 0 {#text} of child 1 {SPAN} of child 1 {P} of child 3 {DIV} of body
+selection end:   position 5 of child 0 {#text} of child 1 {SPAN} of child 1 {P} of child 3 {DIV} of body

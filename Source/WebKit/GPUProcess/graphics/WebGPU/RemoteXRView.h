@@ -64,7 +64,7 @@ class ObjectHeap;
 }
 
 class RemoteXRView final : public IPC::StreamMessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRView);
 public:
     static Ref<RemoteXRView> create(WebCore::WebGPU::XRView& xrView, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
@@ -85,6 +85,8 @@ private:
     RemoteXRView(RemoteXRView&&) = delete;
     RemoteXRView& operator=(const RemoteXRView&) = delete;
     RemoteXRView& operator=(RemoteXRView&&) = delete;
+
+    Ref<IPC::StreamServerConnection> protectedStreamConnection();
 
     WebCore::WebGPU::XRView& backing() { return m_backing; }
 

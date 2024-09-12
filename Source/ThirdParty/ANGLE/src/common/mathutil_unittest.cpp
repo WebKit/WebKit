@@ -351,6 +351,60 @@ TEST(MathUtilTest, RangeExtend)
     EXPECT_EQ(12, range.length());
 }
 
+// Test that Range::merge works as expected.
+TEST(MathUtilTest, RangMerge)
+{
+    // merge valid range to invalid range
+    RangeI range1;
+    range1.invalidate();
+    RangeI range2(1, 2);
+    range1.merge(range2);
+    EXPECT_EQ(1, range1.low());
+    EXPECT_EQ(2, range1.high());
+    EXPECT_EQ(1, range1.length());
+
+    // merge invalid range to valid range
+    RangeI range3(1, 2);
+    RangeI range4;
+    range4.invalidate();
+    range3.merge(range4);
+    EXPECT_EQ(1, range3.low());
+    EXPECT_EQ(2, range3.high());
+    EXPECT_EQ(1, range3.length());
+
+    // merge two valid non-overlapping ranges
+    RangeI range5(1, 2);
+    RangeI range6(3, 4);
+    range5.merge(range6);
+    EXPECT_EQ(1, range5.low());
+    EXPECT_EQ(4, range5.high());
+    EXPECT_EQ(3, range5.length());
+
+    // merge two valid non-overlapping ranges
+    RangeI range7(2, 3);
+    RangeI range8(1, 2);
+    range7.merge(range8);
+    EXPECT_EQ(1, range7.low());
+    EXPECT_EQ(3, range7.high());
+    EXPECT_EQ(2, range7.length());
+
+    // merge two valid overlapping ranges
+    RangeI range9(2, 4);
+    RangeI range10(1, 3);
+    range9.merge(range10);
+    EXPECT_EQ(1, range9.low());
+    EXPECT_EQ(4, range9.high());
+    EXPECT_EQ(3, range9.length());
+
+    // merge two valid overlapping ranges
+    RangeI range11(1, 3);
+    RangeI range12(2, 4);
+    range11.merge(range12);
+    EXPECT_EQ(1, range11.low());
+    EXPECT_EQ(4, range11.high());
+    EXPECT_EQ(3, range11.length());
+}
+
 // Test that Range iteration works as expected.
 TEST(MathUtilTest, RangeIteration)
 {

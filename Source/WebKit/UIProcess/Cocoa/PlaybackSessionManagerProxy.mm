@@ -470,6 +470,18 @@ void PlaybackSessionModelContext::supportsLinearMediaPlayerChanged(bool supports
     if (RefPtr manager = m_manager.get())
         manager->updateVideoControlsManager(m_contextId);
 }
+
+void PlaybackSessionModelContext::spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>& metadata)
+{
+    if (m_spatialVideoMetadata == metadata)
+        return;
+    if (metadata)
+        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, *metadata);
+    m_spatialVideoMetadata = metadata;
+
+    for (auto& client : m_clients)
+        client.spatialVideoMetadataChanged(m_spatialVideoMetadata);
+}
 #endif
 
 void PlaybackSessionModelContext::invalidate()
@@ -720,6 +732,12 @@ void PlaybackSessionManagerProxy::supportsLinearMediaPlayerChanged(PlaybackSessi
 {
     ensureModel(contextId)->supportsLinearMediaPlayerChanged(supportsLinearMediaPlayer);
 }
+
+void PlaybackSessionManagerProxy::spatialVideoMetadataChanged(PlaybackSessionContextIdentifier contextId, const std::optional<WebCore::SpatialVideoMetadata>& metadata)
+{
+    ensureModel(contextId)->spatialVideoMetadataChanged(metadata);
+}
+
 #endif
 
 void PlaybackSessionManagerProxy::handleControlledElementIDResponse(PlaybackSessionContextIdentifier contextId, String identifier) const

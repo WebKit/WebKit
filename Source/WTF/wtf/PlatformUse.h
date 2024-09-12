@@ -246,10 +246,6 @@
 #define USE_SOURCE_APPLICATION_AUDIT_DATA 1
 #endif
 
-#if PLATFORM(COCOA) && USE(CA)
-#define USE_IOSURFACE_CANVAS_BACKING_STORE 1
-#endif
-
 /* The override isn't needed on iOS family, as the default behavior is to not sniff. */
 #if PLATFORM(MAC)
 #define USE_CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE 1

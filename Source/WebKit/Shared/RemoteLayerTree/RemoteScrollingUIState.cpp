@@ -28,6 +28,7 @@
 
 #import "ArgumentCoders.h"
 #import "GeneratedSerializers.h"
+#import <WebCore/ScrollingNodeID.h>
 #import <wtf/text/TextStream.h>
 
 namespace WebKit {

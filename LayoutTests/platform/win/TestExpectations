@@ -220,6 +220,7 @@ fast/images/jpegxl-as-image.html [ Pass ]
 fast/images/jpegxl-image-decoding.html [ Pass ]
 fast/images/jpegxl-with-color-profile.html [ Pass ]
 fast/images/animated-jpegxl-loop-count.html [ Pass ]
+fast/images/image-size-unsigned-overflow.html [ Skip ]
 
 # DataTransferItems is not yet implemented
 fast/events/clipboard-dataTransferItemList.html [ Skip ]
@@ -318,9 +319,6 @@ fast/forms/validation-message-on-menulist.html [ Skip ]
 fast/forms/validation-message-on-radio.html [ Skip ]
 fast/forms/validation-message-on-range.html [ Skip ]
 fast/forms/validation-message-on-textarea.html [ Skip ]
-
-# Opera-submitted tests to W3C for <track>, a lot of failures still.
-webkit.org/b/103926 media/track/opera [ Skip ]
 
 # TODO Impossible to test text-only-zoom from DRT on Windows
 webkit.org/b/35013 svg/zoom/text/ [ Skip ]
@@ -999,6 +997,8 @@ http/tests/workers/service/openwindow-from-notification-click.html [ Failure ]
 http/tests/workers/service/service-worker-download-body.https.html [ Failure ]
 http/tests/workers/service/service-worker-download-stream.https.html [ Failure ]
 http/tests/workers/service/shownotification-denied.html [ Failure ]
+
+http/wpt/service-workers/fetch-service-worker-preload-download.https.html [ Failure ]
 http/wpt/service-workers/fetch-service-worker-preload-download-through-direct-preload.https.html [ Failure ]
 http/wpt/service-workers/fetch-service-worker-preload-use-download-and-clone.https.html [ Failure ]
 http/wpt/service-workers/fetch-service-worker-preload-use-download.https.html [ Failure ]
@@ -1120,6 +1120,9 @@ webkit.org/b/117322 css2.1/20110323/word-spacing-remove-space-003.htm [ ImageOnl
 webkit.org/b/117322 css2.1/20110323/word-spacing-remove-space-006.htm [ ImageOnlyFailure ]
 webkit.org/b/117322 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 
+# This seems to affect a subsequent test fast/css/transform-infinity.html.
+webkit.org/b/279576 fast/css/transform-function-perspective-crash.html [ Skip ]
+
 # Don't run these time-outs for now
 css3/filters/huge-region-composited.html [ Skip ]
 
@@ -1190,10 +1193,6 @@ fast/css/caret-color-with-initial-color-property.html [ Skip ] # ImageOnlyFailur
 
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-multiple-001.html [ Skip ]
 
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-htb-htb.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-htb-vrl.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-vrl-htb.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-center-vrl-vrl.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-invalid-fallback.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-borders-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-position-borders-002.html [ Pass ]
@@ -1218,21 +1217,10 @@ css3/blending/blend-mode-clip-rect-accelerated-blending.html [ Skip ] # ImageOnl
 # DOM
 #//////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/141756 fast/dom/Range/getClientRects.html [ Pass Failure ]
-
-webkit.org/b/182694 fast/dom/crash-moving-subtree-between-documents.html [ Pass Failure ]
-
-webkit.org/b/182694 fast/dom/event-handler-attributes.html [ Pass Timeout ]
-
-webkit.org/b/182128 fast/dom/navigator-detached-no-crash.html [ Pass Failure ]
-
-webkit.org/b/257624 fast/dom/SelectorAPI/caseID.html [ Failure Pass ]
-
-webkit.org/b/238227 fast/dom/intersection-observer-document-leak.html [ Pass Failure ]
+# Needs platform getClientRects-expected.txt
+webkit.org/b/141756 fast/dom/Range/getClientRects.html [ Skip ]
 
 webkit.org/b/265213 fast/dom/Range/detach-range-during-deletecontents.html [ Skip ] # Timeout
-
-webkit.org/b/227753 [ Debug ] fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Pass Failure ]
 
 webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Skip ] # Timeout
 
@@ -1242,9 +1230,7 @@ fast/dom/Window/mozilla-focus-blur.html [ Pass Failure ]
 
 # Neither this port nor the mac port support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html [ Skip ]
-fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ Failure ]
-
-fast/dom/set-attribute-and-normalize-in-event.html [ Failure Pass ]
+fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ Skip ]
 
 # TODO HIDDEN_PAGE_DOM_TIMER_THROTTLING is disabled
 fast/dom/timer-throttling-hidden-page.html [ Skip ] # Timeout
@@ -1253,8 +1239,8 @@ fast/dom/timer-throttling-hidden-page-2.html [ Skip ] # Timeout
 # <rdar://5313536> Times out
 fast/dom/frame-loading-via-document-write.html [ Skip ]
 
-# This test is WebKit2 only.
-fast/dom/Window/child-window-focus.html [ Skip ]
+# onfocus is called twice only for Windows port
+fast/dom/Window/child-window-focus.html [ Failure Pass ]
 
 fast/dom/Window/get-set-properties.html [ Failure ]
 fast/dom/Window/open-window-min-size.html [ Skip ]
@@ -1513,9 +1499,6 @@ streams/readable-stream-byob-request-worker.html [ Skip ]
 # The CookieStore API is not fully implemented on Windows port yet.
 imported/w3c/web-platform-tests/cookie-store [ Skip ]
 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Skip ]
-
-# Makes a subsequent test crash
-webkit.org/b/272127 fast/text/remove-renderer-and-select-crash.html [ Skip ]
 
 webkit.org/b/271132 [ Debug ] fast/text/crash-grapheme-cluster-spanning-adjacent-textitems.html [ Skip ] # Crash
 
@@ -4288,6 +4271,7 @@ fast/text/simple-line-hyphens-with-text-align.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-hyphen-limit-after.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-hyphen-limit-before.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-hyphen-limit-lines.html [ ImageOnlyFailure ]
+fast/text/simple-line-layout-hyphenation-constrains.html [ ImageOnlyFailure ]
 
 # Failure only on Buildbot
 fast/text/justify-ideograph-leading-expansion.html [ Pass Failure ]

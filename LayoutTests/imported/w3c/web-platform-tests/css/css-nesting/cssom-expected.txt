@@ -16,4 +16,5 @@ PASS Simple CSSOM manipulation of subrules 8
 PASS Simple CSSOM manipulation of subrules 9
 PASS Simple CSSOM manipulation of subrules 10
 PASS Mutating the selectorText of outer rule invalidates inner rules
+PASS Manipulation of nested declarations through CSSOM
 

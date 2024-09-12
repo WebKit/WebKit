@@ -111,8 +111,6 @@ public:
 
     bool showContextMenuAtPoint(const WebCore::IntPoint&);
 
-    WebCore::AXObjectCache* axObjectCache() const;
-
     WebCore::IntPoint convertFromPluginToPDFView(const WebCore::IntPoint&) const;
     WebCore::IntPoint convertFromPDFViewToRootView(const WebCore::IntPoint&) const;
     WebCore::IntRect convertFromPDFViewToRootView(const WebCore::IntRect&) const;

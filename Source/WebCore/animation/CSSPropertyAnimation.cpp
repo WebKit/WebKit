@@ -2844,7 +2844,7 @@ private:
             auto toValue = toTextUnderlineOffset.resolve(to.computedFontSize());
 
             auto blendedValue = blendFunc(fromValue, toValue, context);
-            return TextUnderlineOffset::createWithLength(Length(clampTo<float>(blendedValue, minValueForCssLength, static_cast<float>(maxValueForCssLength)), LengthType::Fixed));
+            return TextUnderlineOffset::createWithLength(Length(clampTo<float>(blendedValue, minValueForCssLength, maxValueForCssLength), LengthType::Fixed));
         };
 
         destination.setTextUnderlineOffset(blendedTextUnderlineOffset());
@@ -2886,7 +2886,7 @@ private:
             auto toValue = toTextDecorationThickness.resolve(to.computedFontSize(), to.metricsOfPrimaryFont());
 
             auto blendedValue = blendFunc(fromValue, toValue, context);
-            return TextDecorationThickness::createWithLength(Length(clampTo<float>(blendedValue, minValueForCssLength, static_cast<float>(maxValueForCssLength)), LengthType::Fixed));
+            return TextDecorationThickness::createWithLength(Length(clampTo<float>(blendedValue, minValueForCssLength, maxValueForCssLength), LengthType::Fixed));
         };
 
         destination.setTextDecorationThickness(blendedTextDecorationThickness());
@@ -4141,6 +4141,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyGridRow,
         CSSPropertyGridTemplate,
         CSSPropertyInsetBlock, // logical shorthand
+        CSSPropertyLineClamp,
         CSSPropertyListStyle, // for list-style-image
         CSSPropertyMargin,
         CSSPropertyMarginBlock, // logical shorthand
@@ -4642,15 +4643,9 @@ bool CSSPropertyAnimation::propertiesEqual(const AnimatableCSSProperty& property
             return true;
         }, [&] (const AtomString& customProperty) {
             auto [aCustomPropertyValue, bCustomPropertyValue] = customPropertyValuesForBlending(customProperty, a, b);
-            if (!aCustomPropertyValue && !bCustomPropertyValue)
-                return true;
-            if (!aCustomPropertyValue || !bCustomPropertyValue)
-                return false;
-            if (std::holds_alternative<CSSCustomPropertyValue::SyntaxValueList>(aCustomPropertyValue->value()) && std::holds_alternative<CSSCustomPropertyValue::SyntaxValueList>(bCustomPropertyValue->value()))
+            if (aCustomPropertyValue && bCustomPropertyValue)
                 return aCustomPropertyValue->equals(*bCustomPropertyValue);
-            if (std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(aCustomPropertyValue->value()) && std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(bCustomPropertyValue->value()))
-                return aCustomPropertyValue->equals(*bCustomPropertyValue);
-            return false;
+            return !aCustomPropertyValue && !bCustomPropertyValue;
         }
     );
 }

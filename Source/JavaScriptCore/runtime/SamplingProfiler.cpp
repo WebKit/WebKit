@@ -973,7 +973,7 @@ static String descriptionForLocation(SamplingProfiler::StackFrame::CodeLocation 
     if (wasmCompilationMode) {
         StringPrintStream description;
         description.print(":");
-        description.print(Wasm::makeString(wasmCompilationMode.value()));
+        description.print(wasmCompilationMode.value());
         description.print(":");
         if (wasmOffset) {
             uintptr_t offset = wasmOffset.offset();

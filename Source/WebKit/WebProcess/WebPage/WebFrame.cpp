@@ -302,12 +302,6 @@ FrameTreeNodeData WebFrame::frameTreeData() const
     return data;
 }
 
-WebCore::FrameIdentifier WebFrame::frameID() const
-{
-    ASSERT(m_frameID);
-    return m_frameID;
-}
-
 void WebFrame::invalidate()
 {
     ASSERT(!WebProcess::singleton().webFrame(m_frameID) || WebProcess::singleton().webFrame(m_frameID) == this);

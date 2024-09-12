@@ -30,6 +30,10 @@
 #import "UserNotificationsSPI.h"
 #import "WebPushDaemonConstants.h"
 
+#if PLATFORM(IOS)
+#import "UIKitSPI.h"
+#endif
+
 NSString * const _WKWebPushActionTypePushEvent = @"_WKWebPushActionTypePushEvent";
 NSString * const _WKWebPushActionTypeNotificationClick = @"_WKWebPushActionTypeNotificationClick";
 NSString * const _WKWebPushActionTypeNotificationClose = @"_WKWebPushActionTypeNotificationClose";
@@ -91,8 +95,36 @@ NSString * const _WKWebPushActionTypeNotificationClose = @"_WKWebPushActionTypeN
     return result;
 #else
     return nil;
-#endif
+#endif // PLATFORM(IOS)
 }
 
+- (NSString *)_nameForBackgroundTaskAndLogging
+{
+    if ([_type isEqualToString:_WKWebPushActionTypePushEvent])
+        return @"Web Push Event";
+    if ([_type isEqualToString:_WKWebPushActionTypeNotificationClick])
+        return @"Web Notification Click";
+    if ([_type isEqualToString:_WKWebPushActionTypeNotificationClose])
+        return @"Web Notification Close";
+
+    return @"Unknown Web Push event";
+}
+
+- (UIBackgroundTaskIdentifier)beginBackgroundTaskForHandling
+{
+#if PLATFORM(IOS)
+    NSString *taskName;
+    if (_pushPartition)
+        taskName = [NSString stringWithFormat:@"%@ for %@", self._nameForBackgroundTaskAndLogging, _pushPartition];
+    else
+        taskName = [NSString stringWithFormat:@"%@", self._nameForBackgroundTaskAndLogging];
+
+    return [UIApplication.sharedApplication beginBackgroundTaskWithName:taskName expirationHandler:^{
+        RELEASE_LOG_ERROR(Push, "Took too long to handle Web Push action: '%@'", taskName);
+    }];
+#else
+    return 0;
+#endif // PLATFORM(IOS)
+}
 
 @end

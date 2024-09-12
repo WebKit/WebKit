@@ -1,0 +1,24 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Verifies that an isolated iframe created within the srcdoc of another iframe can receive mouse events.");
+jsTestIsAsync = true;
+
+var events = [];
+addEventListener("message", (event) => {
+    events.push(event.data);
+    if (event.data == "mouseup") {
+        shouldBe("events[0]", "'mousemove'");
+        shouldBe("events[1]", "'mousedown'");
+        shouldBe("events[2]", "'mouseup'");
+        finishJSTest();
+    }
+});
+
+async function runTest() {
+    await eventSender.asyncMouseMoveTo(100, 100);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+}
+</script>
+<iframe onload="runTest()" srcdoc="<iframe src='http://localhost:8000/site-isolation/mouse-events/resources/message-top-mouse-event-type.html'></iframe>"></iframe>

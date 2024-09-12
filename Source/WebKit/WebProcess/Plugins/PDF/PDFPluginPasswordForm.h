@@ -32,6 +32,8 @@
 namespace WebKit {
 
 class PDFPluginPasswordForm : public PDFPluginAnnotation {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PDFPluginPasswordForm);
 public:
     static Ref<PDFPluginPasswordForm> create(PDFPluginBase*);
     virtual ~PDFPluginPasswordForm();

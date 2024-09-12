@@ -86,7 +86,7 @@ public:
     void didReceivePushMessage(NSString *topic, NSDictionary *userInfo, CompletionHandler<void()>&& = [] { });
 
 #if PLATFORM(IOS)
-    void updateSubscriptionSetState(const Vector<String>& allowedBundleIdentifiers, const HashSet<String>& webClipIdentifiers, CompletionHandler<void()>&&);
+    void updateSubscriptionSetState(const String& allowedBundleIdentifier, const HashSet<String>& webClipIdentifiers, CompletionHandler<void()>&&);
 #endif
 
 private:
@@ -108,6 +108,8 @@ private:
     PushServiceRequestMap m_getSubscriptionRequests;
     PushServiceRequestMap m_subscribeRequests;
     PushServiceRequestMap m_unsubscribeRequests;
+
+    size_t m_topicCount { 0 };
 };
 
 } // namespace WebPushD

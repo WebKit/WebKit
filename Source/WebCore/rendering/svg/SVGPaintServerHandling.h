@@ -20,6 +20,7 @@
 #pragma once
 
 #include "RenderSVGResourceGradient.h"
+#include "RenderView.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderSupport.h"
 

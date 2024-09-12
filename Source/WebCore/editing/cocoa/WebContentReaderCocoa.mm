@@ -872,7 +872,7 @@ bool WebContentReader::readURL(const URL& url, const String& title)
 #endif // PLATFORM(IOS_FAMILY)
 
     auto sanitizedURLString = [&] {
-        if (auto* page = frame->page())
+        if (RefPtr page = frame->page())
             return page->applyLinkDecorationFiltering(url, LinkDecorationFilteringTrigger::Paste);
         return url;
     }().string();

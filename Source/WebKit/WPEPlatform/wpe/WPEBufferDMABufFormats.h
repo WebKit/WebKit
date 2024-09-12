@@ -52,7 +52,6 @@ typedef enum {
     WPE_BUFFER_DMA_BUF_FORMAT_USAGE_SCANOUT
 } WPEBufferDMABufFormatUsage;
 
-WPE_API WPEBufferDMABufFormats    *wpe_buffer_dma_buf_formats_new                  (void);
 WPE_API const char                *wpe_buffer_dma_buf_formats_get_device           (WPEBufferDMABufFormats *formats);
 WPE_API guint                      wpe_buffer_dma_buf_formats_get_n_groups         (WPEBufferDMABufFormats *formats);
 WPE_API WPEBufferDMABufFormatUsage wpe_buffer_dma_buf_formats_get_group_usage      (WPEBufferDMABufFormats *formats,

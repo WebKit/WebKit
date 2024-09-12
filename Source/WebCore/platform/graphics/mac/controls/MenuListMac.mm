@@ -32,8 +32,11 @@
 #import "GraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "MenuListPart.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MenuListMac);
 
 MenuListMac::MenuListMac(MenuListPart& owningPart, ControlFactoryMac& controlFactory, NSPopUpButtonCell *popUpButtonCell)
     : ControlMac(owningPart, controlFactory)

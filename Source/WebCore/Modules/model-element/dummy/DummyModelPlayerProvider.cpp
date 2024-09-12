@@ -27,8 +27,11 @@
 #include "DummyModelPlayerProvider.h"
 
 #include "DummyModelPlayer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DummyModelPlayerProvider);
 
 DummyModelPlayerProvider::DummyModelPlayerProvider() = default;
 DummyModelPlayerProvider::~DummyModelPlayerProvider() = default;

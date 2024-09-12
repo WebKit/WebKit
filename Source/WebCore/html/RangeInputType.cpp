@@ -54,6 +54,7 @@
 #include "UserAgentParts.h"
 #include <limits>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(TOUCH_EVENTS)
 #include "Touch.h"
@@ -67,6 +68,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RangeInputType);
 
 using namespace HTMLNames;
 
@@ -319,7 +322,7 @@ String RangeInputType::serialize(const Decimal& value) const
 // FIXME: Could share this with BaseClickableWithKeyInputType and BaseCheckableInputType if we had a common base class.
 bool RangeInputType::accessKeyAction(bool sendMouseEvents)
 {
-    auto* element = this->element();
+    RefPtr element = this->element();
     return InputType::accessKeyAction(sendMouseEvents) || (element && element->dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents));
 }
 

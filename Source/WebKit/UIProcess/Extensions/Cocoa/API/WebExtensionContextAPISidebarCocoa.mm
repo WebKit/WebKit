@@ -91,14 +91,11 @@ static Expected<Ref<WebExtensionSidebar>, WebExtensionError> getOrCreateSidebarW
 }
 
 using UserTriggered = WebExtensionContext::UserTriggered;
-void WebExtensionContext::openSidebarForTab(WebExtensionTab& tab, const UserTriggered userTriggered)
+void WebExtensionContext::openSidebarForTab(WebExtensionTab& tab)
 {
     ASSERT(isLoaded());
     if (!isLoaded())
         return;
-
-    if (userTriggered == UserTriggered::Yes)
-        userGesturePerformed(tab);
 
     auto maybeSidebar = getOrCreateSidebar(tab);
     if (!maybeSidebar)
@@ -111,14 +108,11 @@ void WebExtensionContext::openSidebarForTab(WebExtensionTab& tab, const UserTrig
     fireActionClickedEventIfNeeded(&tab);
 }
 
-void WebExtensionContext::closeSidebarForTab(WebExtensionTab& tab, const UserTriggered userTriggered)
+void WebExtensionContext::closeSidebarForTab(WebExtensionTab& tab)
 {
     ASSERT(isLoaded());
     if (!isLoaded())
         return;
-
-    if (userTriggered == UserTriggered::Yes)
-        userGesturePerformed(tab);
 
     auto maybeSidebar = getOrCreateSidebar(tab);
     if (!maybeSidebar)
@@ -193,7 +187,7 @@ void WebExtensionContext::sidebarOpen(const std::optional<WebExtensionWindowIden
     }
 
     if (sidebar.value()->opensSidebar())
-        openSidebarForTab(*tab, UserTriggered::No);
+        openSidebarForTab(*tab);
 
     completionHandler({ });
 }
@@ -225,7 +219,7 @@ void WebExtensionContext::sidebarClose(CompletionHandler<void(Expected<void, Web
         return;
     }
 
-    closeSidebarForTab(*tab, UserTriggered::No);
+    closeSidebarForTab(*tab);
 
     completionHandler({ });
 }
@@ -285,14 +279,14 @@ void WebExtensionContext::sidebarToggle(CompletionHandler<void(Expected<void, We
             return;
         }
 
-        closeSidebarForTab(*tab, UserTriggered::No);
+        closeSidebarForTab(*tab);
     } else {
         if (!sidebar->canProgrammaticallyOpenSidebar()) {
             completionHandler(toWebExtensionError(nil, nil, @"it is not implemented"));
             return;
         }
 
-        openSidebarForTab(*tab, UserTriggered::No);
+        openSidebarForTab(*tab);
     }
 
     completionHandler({ });

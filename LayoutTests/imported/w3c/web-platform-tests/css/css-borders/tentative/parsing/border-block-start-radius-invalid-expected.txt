@@ -1,0 +1,12 @@
+
+PASS e.style['border-block-start-radius'] = "auto" should not set the property value
+PASS e.style['border-block-start-radius'] = "none" should not set the property value
+PASS e.style['border-block-start-radius'] = "1px 2px 3px" should not set the property value
+PASS e.style['border-block-start-radius'] = "-1px" should not set the property value
+PASS e.style['border-block-start-radius'] = "1px -2px" should not set the property value
+PASS e.style['border-block-start-radius'] = "1em /" should not set the property value
+PASS e.style['border-block-start-radius'] = "1px / 2px 3px 4px" should not set the property value
+PASS e.style['border-block-start-radius'] = "1px / 2px / 3px" should not set the property value
+PASS e.style['border-block-start-radius'] = "4" should not set the property value
+PASS e.style['border-block-start-radius'] = "4 / 5" should not set the property value
+

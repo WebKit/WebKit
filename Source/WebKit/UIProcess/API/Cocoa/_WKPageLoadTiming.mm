@@ -38,6 +38,7 @@ static NSDate *nsDateFromMonotonicTime(WallTime time)
 
 @implementation _WKPageLoadTiming {
     WallTime _navigationStart;
+    WallTime _firstVisualLayout;
     WallTime _firstMeaningfulPaint;
     WallTime _documentFinishedLoading;
     WallTime _allSubresourcesFinishedLoading;
@@ -49,6 +50,7 @@ static NSDate *nsDateFromMonotonicTime(WallTime time)
         return nil;
 
     _navigationStart = timing.navigationStart();
+    _firstVisualLayout = timing.firstVisualLayout();
     _firstMeaningfulPaint = timing.firstMeaningfulPaint();
     _documentFinishedLoading = timing.documentFinishedLoading();
     _allSubresourcesFinishedLoading = timing.allSubresourcesFinishedLoading();
@@ -59,6 +61,11 @@ static NSDate *nsDateFromMonotonicTime(WallTime time)
 - (NSDate *)navigationStart
 {
     return nsDateFromMonotonicTime(_navigationStart);
+}
+
+- (NSDate *)firstVisualLayout
+{
+    return nsDateFromMonotonicTime(_firstVisualLayout);
 }
 
 - (NSDate *)firstMeaningfulPaint

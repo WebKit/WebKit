@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -389,7 +389,8 @@ private:
     }
 
 public:
-    CallInformation callInformationFor(const TypeDefinition& signature, CallRole role = CallRole::Callee) const
+    CallInformation callInformationFor(const TypeDefinition& signature, CallRole role = CallRole::Callee) const { return callInformationFor(*signature.as<FunctionSignature>(), role); }
+    CallInformation callInformationFor(const FunctionSignature& signature, CallRole role = CallRole::Callee) const
     {
         size_t gpArgumentCount = 0;
         size_t fpArgumentCount = 0;
@@ -401,8 +402,8 @@ public:
         stackOffset += sizeof(Register);
 
         Vector<ArgumentLocation, 8> params;
-        for (size_t i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i)
-            params.append(marshallLocation(role, signature.as<FunctionSignature>()->argumentType(i), gpArgumentCount, fpArgumentCount, stackOffset));
+        for (size_t i = 0; i < signature.argumentCount(); ++i)
+            params.append(marshallLocation(role, signature.argumentType(i), gpArgumentCount, fpArgumentCount, stackOffset));
 
         Vector<ArgumentLocation, 1> results { ArgumentLocation { ValueLocation { JSRInfo::returnValueJSR }, Width64 } };
         return CallInformation(thisArgument, WTFMove(params), WTFMove(results), stackOffset);

@@ -51,6 +51,14 @@
 
 static const size_t kLowPowerVideoBufferSize = 4096;
 
+#if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
+// FIXME (135444366): Remove staging code once -suppressPresentationOverBundleIdentifiers: is available in SDKs
+@protocol WKStagedNowPlayingActivityUIControllable <MRNowPlayingActivityUIControllable>
+@optional
+- (void)suppressPresentationOverBundleIdentifiers:(NSSet *)bundleIdentifiers;
+@end
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSessionManagerCocoa);
@@ -405,12 +413,23 @@ void MediaSessionManagerCocoa::clearNowPlayingInfo()
             WTFLogAlways("MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(stopped) failed with error %d", error);
 #endif
     });
+
+#if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
+    updateNowPlayingSuppression(nullptr);
+#endif
 }
 
-void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication, const NowPlayingInfo& nowPlayingInfo)
+void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication, bool shouldUpdateNowPlayingSuppression, const NowPlayingInfo& nowPlayingInfo)
 {
     if (!isMediaRemoteFrameworkAvailable())
         return;
+
+#if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
+    if (shouldUpdateNowPlayingSuppression)
+        updateNowPlayingSuppression(&nowPlayingInfo);
+#else
+    ASSERT_UNUSED(shouldUpdateNowPlayingSuppression, !shouldUpdateNowPlayingSuppression);
+#endif
 
     if (setAsNowPlayingApplication)
         MRMediaRemoteSetCanBeNowPlayingApplication(true);
@@ -607,6 +626,30 @@ std::optional<bool> MediaSessionManagerCocoa::supportsSpatialAudioPlaybackForCon
     return this->supportsSpatialAudioPlayback();
 }
 #endif
+
+#if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
+
+static id<WKStagedNowPlayingActivityUIControllable> nowPlayingActivityController()
+{
+    static id<MRNowPlayingActivityUIControllable> controller = RetainPtr([getMRUIControllerProviderClass() nowPlayingActivityController]).leakRef();
+
+    // FIXME (135444366): Remove staging code once -suppressPresentationOverBundleIdentifiers: is available in SDKs
+    return (id<WKStagedNowPlayingActivityUIControllable>)controller;
+}
+
+void MediaSessionManagerCocoa::updateNowPlayingSuppression(const NowPlayingInfo* nowPlayingInfo)
+{
+    // FIXME (135444366): Remove staging code once -suppressPresentationOverBundleIdentifiers: is available in SDKs
+    if (![nowPlayingActivityController() respondsToSelector:@selector(suppressPresentationOverBundleIdentifiers:)])
+        return;
+
+    if (!nowPlayingInfo || !nowPlayingInfo->isVideo)
+        [nowPlayingActivityController() suppressPresentationOverBundleIdentifiers:nil];
+    else
+        [nowPlayingActivityController() suppressPresentationOverBundleIdentifiers:[NSSet setWithArray:@[nowPlayingInfo->metadata.sourceApplicationIdentifier]]];
+}
+
+#endif // USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
 
 } // namespace WebCore
 

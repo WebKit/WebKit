@@ -56,8 +56,8 @@ enum class StorageError : uint8_t {
 };
 
 class StorageAreaBase : public CanMakeWeakPtr<StorageAreaBase>, public Identified<StorageAreaIdentifier> {
-    WTF_MAKE_NONCOPYABLE(StorageAreaBase);
     WTF_MAKE_TZONE_ALLOCATED(StorageAreaBase);
+    WTF_MAKE_NONCOPYABLE(StorageAreaBase);
 public:
     static uint64_t nextMessageIdentifier();
     virtual ~StorageAreaBase();

@@ -131,6 +131,7 @@ private:
     bool platformValidateCapability(const String&, const Ref<JSON::Value>&) const;
     bool platformMatchCapability(const String&, const Ref<JSON::Value>&) const;
     bool platformSupportProxyType(const String&) const;
+    bool platformSupportBidi() const;
     void parseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
     void platformParseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
     void connectToBrowser(Vector<Capabilities>&&, Function<void (CommandResult&&)>&&);

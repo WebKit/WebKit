@@ -74,16 +74,15 @@ ExceptionOr<void> SpeechRecognition::startRecognition()
 
     Ref document = downcast<Document>(*scriptExecutionContext());
     RefPtr frame = document->frame();
-    if (!frame)
+    if (!frame || !document->frameID())
         return Exception { ExceptionCode::UnknownError, "Recognition is not in a valid frame"_s };
 
-    auto optionalFrameIdentifier = document->frameID();
+    auto frameIdentifier = *document->frameID();
     if (!PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Microphone, document.get(), PermissionsPolicy::ShouldReportViolation::No)) {
         didError({ SpeechRecognitionErrorType::NotAllowed, "Permission is denied"_s });
         return { };
     }
 
-    auto frameIdentifier = optionalFrameIdentifier ? *optionalFrameIdentifier : FrameIdentifier { };
     m_connection->start(identifier(), m_lang, m_continuous, m_interimResults, m_maxAlternatives, ClientOrigin { document->topOrigin().data(), document->securityOrigin().data() }, frameIdentifier);
     m_state = State::Starting;
     return { };

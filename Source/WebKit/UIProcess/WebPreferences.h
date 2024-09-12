@@ -94,16 +94,16 @@ private:
         explicit UpdateBatch(WebPreferences& preferences)
             : m_preferences(preferences)
         {
-            m_preferences.startBatchingUpdates();
+            m_preferences->startBatchingUpdates();
         }
         
         ~UpdateBatch()
         {
-            m_preferences.endBatchingUpdates();
+            m_preferences->endBatchingUpdates();
         }
         
     private:
-        WebPreferences& m_preferences;
+        Ref<WebPreferences> m_preferences;
     };
 
     void updateStringValueForKey(const String& key, const String& value, bool ephemeral);

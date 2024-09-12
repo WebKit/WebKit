@@ -20,7 +20,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-[Nested] enum class WebCore::ProtectionSpace::ServerType : uint8_t {
+webkit_platform_headers: <WebCore/ProtectionSpaceBase.h>
+
+header: <WebCore/ProtectionSpaceBase.h>
+[CustomHeader, WebKitPlatform] enum class WebCore::ProtectionSpaceBaseServerType : uint8_t {
     HTTP,
     HTTPS,
     FTP,
@@ -30,8 +33,10 @@
     ProxyFTP,
     ProxySOCKS,
 };
+using WebCore::ProtectionSpace::ServerType = WebCore::ProtectionSpaceBaseServerType;
 
-[Nested] enum class WebCore::ProtectionSpace::AuthenticationScheme : uint8_t {
+header: <WebCore/ProtectionSpaceBase.h>
+[CustomHeader, WebKitPlatform] enum class WebCore::ProtectionSpaceBaseAuthenticationScheme : uint8_t {
     Default,
     HTTPBasic,
     HTTPDigest,
@@ -40,9 +45,19 @@
     Negotiate,
     ClientCertificateRequested,
     ServerTrustEvaluationRequested,
+#if PLATFORM(COCOA)
+    XMobileMeAuthToken,
+#endif
     OAuth,
+#if PLATFORM(COCOA)
+    PrivateAccessToken,
+    OAuthBearerToken,
+#endif
 #if USE(GLIB)
     ClientCertificatePINRequested,
 #endif
-    Unknown,
+#if !PLATFORM(COCOA)
+    Unknown
+#endif
 };
+using WebCore::ProtectionSpace::AuthenticationScheme = WebCore::ProtectionSpaceBaseAuthenticationScheme;

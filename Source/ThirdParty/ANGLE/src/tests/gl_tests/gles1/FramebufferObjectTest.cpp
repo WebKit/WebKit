@@ -114,6 +114,8 @@ TEST_P(FramebufferObjectTest, TextureObjectDifferentFormats)
 // Checks that renderbuffer object can be used and can be bound for framebuffer object.
 TEST_P(FramebufferObjectTest, RenderbufferObject)
 {
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_framebuffer_object"));
+
     GLuint fboId;
     GLuint rboId;
     GLint params;
@@ -126,6 +128,12 @@ TEST_P(FramebufferObjectTest, RenderbufferObject)
     glIsRenderbufferOES(rboId);
     EXPECT_GL_NO_ERROR();
     glBindRenderbufferOES(GL_RENDERBUFFER, rboId);
+    EXPECT_GL_NO_ERROR();
+    glRenderbufferStorageOES(GL_RENDERBUFFER, GL_RGBA4, 32, 32);
+    EXPECT_GL_NO_ERROR();
+    glRenderbufferStorageOES(GL_RENDERBUFFER, GL_RGB5_A1, 32, 32);
+    EXPECT_GL_NO_ERROR();
+    glRenderbufferStorageOES(GL_RENDERBUFFER, GL_RGB565, 32, 32);
     EXPECT_GL_NO_ERROR();
     glRenderbufferStorageOES(GL_RENDERBUFFER, GL_RGBA8, 32, 32);
     EXPECT_GL_NO_ERROR();

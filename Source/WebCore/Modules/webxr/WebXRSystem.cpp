@@ -654,7 +654,7 @@ WebXRSystem::DummyInlineDevice::DummyInlineDevice(ScriptExecutionContext& script
     setSupportedFeatures(XRSessionMode::Inline, { PlatformXR::SessionFeature::ReferenceSpaceTypeViewer });
 }
 
-void WebXRSystem::DummyInlineDevice::requestFrame(PlatformXR::Device::RequestFrameCallback&& callback)
+void WebXRSystem::DummyInlineDevice::requestFrame(std::optional<PlatformXR::RequestData>&&, PlatformXR::Device::RequestFrameCallback&& callback)
 {
     if (!scriptExecutionContext())
         return;

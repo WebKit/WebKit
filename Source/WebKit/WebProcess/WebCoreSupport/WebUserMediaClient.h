@@ -24,6 +24,7 @@
 
 #include <WebCore/UserMediaClient.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -36,6 +37,8 @@ public:
     ~WebUserMediaClient() { }
 
 private:
+    Ref<WebPage> protectedPage() const;
+
     void pageDestroyed() override;
 
     void requestUserMediaAccess(WebCore::UserMediaRequest&) override;
@@ -46,10 +49,11 @@ private:
     DeviceChangeObserverToken addDeviceChangeObserver(WTF::Function<void()>&&) final;
     void removeDeviceChangeObserver(DeviceChangeObserverToken) final;
     void updateCaptureState(const WebCore::Document&, bool isActive, WebCore::MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&) final;
+    void setShouldListenToVoiceActivity(bool) final;
 
     void initializeFactories();
 
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
 };
 
 } // namespace WebCore

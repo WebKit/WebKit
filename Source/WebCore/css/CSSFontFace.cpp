@@ -303,7 +303,7 @@ void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
     if (auto* list = dynamicDowncast<CSSValueList>(featureSettings)) {
         for (auto& rangeValue : *list) {
             auto& feature = downcast<CSSFontFeatureValue>(rangeValue);
-            settings.insert({ feature.tag(), feature.value()->resolveAsIntegerDeprecated() });
+            settings.insert({ feature.tag(), feature.value().resolveAsIntegerDeprecated() });
         }
     }
 
@@ -334,7 +334,7 @@ void CSSFontFace::setSizeAdjust(CSSValue& value)
     });
 }
 
-void CSSFontFace::setDisplay(CSSPrimitiveValue& loadingBehaviorValue)
+void CSSFontFace::setDisplay(CSSValue& loadingBehaviorValue)
 {
     mutableProperties().setProperty(CSSPropertyFontDisplay, &loadingBehaviorValue);
 

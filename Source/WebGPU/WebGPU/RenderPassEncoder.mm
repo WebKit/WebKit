@@ -46,6 +46,7 @@ namespace WebGPU {
 #define RETURN_IF_FINISHED() \
 if (!m_parentEncoder->isLocked() || m_parentEncoder->isFinished()) { \
     m_device->generateAValidationError([NSString stringWithFormat:@"%s: failed as encoding has finished", __PRETTY_FUNCTION__]); \
+    m_renderCommandEncoder = nil; \
     return; \
 } \
 if (!m_renderCommandEncoder || !m_parentEncoder->isValid() || !m_parentEncoder->encoderIsCurrent(m_renderCommandEncoder)) { \
@@ -95,7 +96,6 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     m_parentEncoder->lock(true);
 
     m_attachmentsToClear = [NSMutableDictionary dictionary];
-    m_allColorAttachments = [NSMutableDictionary dictionary];
     for (uint32_t i = 0; i < descriptor.colorAttachmentCount; ++i) {
         const auto& attachment = descriptor.colorAttachments[i];
         if (!attachment.view)
@@ -128,7 +128,6 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         }
 
         textureWithClearColor.depthPlane = texture.isDestroyed() ? 0 : attachment.depthSlice.value_or(0);
-        [m_allColorAttachments setObject:textureWithClearColor forKey:@(i)];
     }
 
     if (const auto* attachment = descriptor.depthStencilAttachment) {
@@ -184,7 +183,8 @@ RenderPassEncoder::RenderPassEncoder(CommandEncoder& parentEncoder, Device& devi
 RenderPassEncoder::~RenderPassEncoder()
 {
     if (m_renderCommandEncoder)
-        m_parentEncoder->endEncoding(m_renderCommandEncoder);
+        m_parentEncoder->makeInvalid(@"GPURenderPassEncoder.finish was never called");
+
     m_renderCommandEncoder = nil;
 }
 
@@ -945,10 +945,9 @@ void RenderPassEncoder::endPass()
     auto endEncoder = ^{
         m_parentEncoder->endEncoding(m_renderCommandEncoder);
     };
-    bool useDiscardTextures = m_attachmentsToClear.count || m_clearDepthAttachment || m_clearStencilAttachment;
-    bool hasTexturesToClear = m_allColorAttachments.count || m_attachmentsToClear.count || (m_depthStencilAttachmentToClear && (m_clearDepthAttachment || m_clearStencilAttachment));
+    bool hasTexturesToClear = m_attachmentsToClear.count || (m_depthStencilAttachmentToClear && (m_clearDepthAttachment || m_clearStencilAttachment));
 
-    if (useDiscardTextures && hasTexturesToClear) {
+    if (hasTexturesToClear) {
         endEncoder();
         m_parentEncoder->runClearEncoder(m_attachmentsToClear, m_depthStencilAttachmentToClear, m_clearDepthAttachment, m_clearStencilAttachment, m_depthClearValue, m_stencilClearValue, nil);
     } else
@@ -1033,6 +1032,7 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
         incrementDrawCount(renderBundle.drawCount());
 
         for (RenderBundleICBWithResources* icb in renderBundle.renderBundlesResources()) {
+            commandEncoder = renderCommandEncoder();
 
             if (id<MTLDepthStencilState> depthStencilState = icb.depthStencilState)
                 [commandEncoder setDepthStencilState:depthStencilState];

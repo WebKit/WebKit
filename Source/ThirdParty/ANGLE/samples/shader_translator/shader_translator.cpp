@@ -350,7 +350,6 @@ int main(int argc, char *argv[])
                 {
                     case SH_HLSL_3_0_OUTPUT:
                     case SH_HLSL_4_1_OUTPUT:
-                    case SH_HLSL_4_0_FL9_3_OUTPUT:
                         compileOptions.selectViewInNvGLSLVertexShader = false;
                         break;
                     default:

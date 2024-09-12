@@ -22,6 +22,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/texmap/BitmapTexturePool.h
     platform/graphics/texmap/ClipStack.h
     platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.h
+    platform/graphics/texmap/GraphicsLayerContentsDisplayDelegateTextureMapper.h
     platform/graphics/texmap/GraphicsLayerTextureMapper.h
     platform/graphics/texmap/TextureMapper.h
     platform/graphics/texmap/TextureMapperBackingStore.h
@@ -52,22 +53,43 @@ if (USE_COORDINATED_GRAPHICS)
         "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
     )
     list(APPEND WebCore_SOURCES
-        platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp
+        platform/graphics/texmap/GraphicsLayerAsyncContentsDisplayDelegateTextureMapper.cpp
         platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp
         platform/graphics/texmap/TextureMapperPlatformLayerProxyGL.cpp
 
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
+        platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferExternalOES.cpp
+        platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferHolePunch.cpp
+        platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferNativeImage.cpp
+        platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferRGB.cpp
+        platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferYUV.cpp
         platform/graphics/texmap/coordinated/Tile.cpp
         platform/graphics/texmap/coordinated/TiledBackingStore.cpp
     )
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.h
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h
+        platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBuffer.h
         platform/graphics/texmap/coordinated/Tile.h
         platform/graphics/texmap/coordinated/TiledBackingStore.h
         platform/graphics/texmap/coordinated/TiledBackingStoreClient.h
     )
+
+    if (USE_GSTREAMER)
+        list(APPEND WebCore_SOURCES
+            platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferVideo.cpp
+        )
+    endif ()
+
+    if (USE_GBM)
+        list(APPEND WebCore_SOURCES
+            platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferDMABuf.cpp
+        )
+        list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+            platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferDMABuf.h
+        )
+    endif ()
 
     if (USE_CAIRO)
         list(APPEND WebCore_SOURCES
@@ -159,6 +181,7 @@ endif ()
 
 if (USE_GBM)
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        platform/graphics/gbm/DMABufBuffer.h
         platform/graphics/gbm/DMABufColorSpace.h
         platform/graphics/gbm/DMABufEGLUtilities.h
         platform/graphics/gbm/DMABufFormat.h
@@ -167,6 +190,7 @@ if (USE_GBM)
         platform/graphics/gbm/DRMDeviceManager.h
         platform/graphics/gbm/DRMDeviceNode.h
         platform/graphics/gbm/GBMBufferSwapchain.h
-        platform/graphics/gbm/GraphicsContextGLGBM.h
+        platform/graphics/gbm/GraphicsContextGLTextureMapperGBM.h
+        platform/graphics/gbm/GraphicsLayerContentsDisplayDelegateGBM.h
     )
 endif ()

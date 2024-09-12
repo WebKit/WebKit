@@ -123,15 +123,24 @@
 #endif      // !defined(ANGLE_LIKELY) || !defined(ANGLE_UNLIKELY)
 
 #ifdef ANGLE_PLATFORM_APPLE
+#    include <AvailabilityMacros.h>
 #    include <TargetConditionals.h>
 #    if TARGET_OS_OSX
+#        if __MAC_OS_X_VERSION_MAX_ALLOWED < 120000
+#            error macOS 12 SDK or newer is required.
+#        endif
 #        define ANGLE_PLATFORM_MACOS 1
 #    elif TARGET_OS_IPHONE
 #        define ANGLE_PLATFORM_IOS_FAMILY 1
 #        if TARGET_OS_SIMULATOR
 #            define ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR 1
 #        endif
-#        if TARGET_OS_IOS
+#        if TARGET_OS_VISION  // Must be checked before iOS
+#            define ANGLE_PLATFORM_VISIONOS 1
+#        elif TARGET_OS_IOS
+#            if __IPHONE_OS_VERSION_MAX_ALLOWED < 170000
+#                error iOS 17 SDK or newer is required.
+#            endif
 #            define ANGLE_PLATFORM_IOS 1
 #            if TARGET_OS_MACCATALYST
 #                define ANGLE_PLATFORM_MACCATALYST 1
@@ -139,13 +148,11 @@
 #        elif TARGET_OS_WATCH
 #            define ANGLE_PLATFORM_WATCHOS 1
 #        elif TARGET_OS_TV
+#            if __TV_OS_VERSION_MAX_ALLOWED < 170000
+#                error tvOS 17 SDK or newer is required.
+#            endif
 #            define ANGLE_PLATFORM_APPLETV 1
 #        endif
-#    endif
-#    // Identify Metal API >= what shipped on macOS Catalina.
-#    if (ANGLE_PLATFORM_MACOS && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101500) || \
-        (ANGLE_PLATFORM_IOS_FAMILY && __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000)
-#        define ANGLE_WITH_MODERN_METAL_API 1
 #    endif
 #endif
 

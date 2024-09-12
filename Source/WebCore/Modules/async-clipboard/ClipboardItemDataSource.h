@@ -26,8 +26,8 @@
 #pragma once
 
 #include <wtf/CompletionHandler.h>
-#include <wtf/Ref.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -51,7 +51,7 @@ public:
     virtual void collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&&) = 0;
 
 protected:
-    ClipboardItem& m_item;
+    WeakRef<ClipboardItem> m_item;
 };
 
 } // namespace WebCore

@@ -62,7 +62,7 @@ private:
     static void didReceiveErrorCallback(WebSocketTask*, GError*);
     static void didCloseCallback(WebSocketTask*);
 
-    NetworkSocketChannel& m_channel;
+    CheckedRef<NetworkSocketChannel> m_channel;
     WebCore::ResourceRequest m_request;
     GRefPtr<SoupMessage> m_handshakeMessage;
     GRefPtr<SoupWebsocketConnection> m_connection;

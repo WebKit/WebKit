@@ -1097,18 +1097,6 @@ const String& ShaderModule::defaultComputeEntryPoint() const
     return m_defaultComputeEntryPoint;
 }
 
-const String& ShaderModule::transformedEntryPoint(const String& entryPoint) const
-{
-    if (!entryPoint.length())
-        return entryPoint;
-
-    auto transformed = m_originalFunctionNames.find(entryPoint);
-    if (transformed != m_originalFunctionNames.end())
-        return transformed->value;
-
-    return entryPoint;
-}
-
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs

@@ -45,6 +45,10 @@ TEST(WebKit, GetTextFragmentMatch)
 
         __block bool isDone;
         [webView _getTextFragmentMatchWithCompletionHandler:^(NSString *string) {
+            // Explicitly test for null, because EXPECT_WK_STREQ coalesces null
+            // to an empty string, and we want to be specific here.
+            if (!expectedResult)
+                EXPECT_NULL(string);
             EXPECT_WK_STREQ(string, expectedResult);
             isDone = true;
         }];

@@ -69,9 +69,9 @@ Connection::Connection(PreferTestService preferTestService, String bundleIdentif
     , m_pushPartition(pushPartition)
 {
     if (preferTestService == PreferTestService::Yes)
-        m_serviceName = "org.webkit.webpushtestdaemon.service";
+        m_serviceName = "org.webkit.webpushtestdaemon.service"_s;
     else
-        m_serviceName = "com.apple.webkit.webpushd.service";
+        m_serviceName = "com.apple.webkit.webpushd.service"_s;
 }
 
 void Connection::connectToService(WaitForServiceToExist waitForServiceToExist)
@@ -91,7 +91,7 @@ void Connection::connectToService(WaitForServiceToExist waitForServiceToExist)
     if (waitForServiceToExist == WaitForServiceToExist::Yes) {
         auto result = maybeConnectToService(m_serviceName);
         if (result == MACH_PORT_NULL)
-            printf("Waiting for service '%s' to be available\n", m_serviceName);
+            printf("Waiting for service '%s' to be available\n", m_serviceName.characters());
 
         while (result == MACH_PORT_NULL) {
             usleep(1000);
@@ -99,7 +99,7 @@ void Connection::connectToService(WaitForServiceToExist waitForServiceToExist)
         }
     }
 
-    printf("Connecting to service '%s'\n", m_serviceName);
+    printf("Connecting to service '%s'\n", m_serviceName.characters());
     xpc_connection_activate(m_connection.get());
 
     sendAuditToken();

@@ -209,7 +209,9 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     parameters.builtInNotificationsEnabled = DeprecatedGlobalSettings::builtInNotificationsEnabled();
 #endif
-
+#if PLATFORM(COCOA)
+    parameters.enableModernDownloadProgress = CFPreferencesGetAppBooleanValue(CFSTR("EnableModernDownloadProgress"), CFSTR("com.apple.WebKit"), nullptr);
+#endif
     parameters.allowedFirstPartiesForCookies = WebProcessProxy::allowedFirstPartiesForCookies();
 
 #if PLATFORM(COCOA)
@@ -217,7 +219,7 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
 #endif
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::shared().cachedQuirks();
+    parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::shared().cachedListData();
 #endif
 
     WebProcessPool::platformInitializeNetworkProcess(parameters);
@@ -263,7 +265,7 @@ NetworkProcessProxy::NetworkProcessProxy()
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     m_storageAccessPromptQuirksDataUpdateObserver = StorageAccessPromptQuirkController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
-            protectedThis->send(Messages::NetworkProcess::UpdateStorageAccessPromptQuirks(StorageAccessPromptQuirkController::shared().cachedQuirks()), 0);
+            protectedThis->send(Messages::NetworkProcess::UpdateStorageAccessPromptQuirks(StorageAccessPromptQuirkController::shared().cachedListData()), 0);
     });
 #endif
 }

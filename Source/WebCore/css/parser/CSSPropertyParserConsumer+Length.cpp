@@ -34,7 +34,6 @@
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+PercentDefinitions.h"
-#include "CSSPropertyParserConsumer+RawResolver.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CalculationCategory.h"
 
@@ -163,66 +162,6 @@ RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange& range, CSSParserMod
         .unitlessZero = UnitlessZeroQuirk::Allow
     };
     return CSSPrimitiveValueResolver<LengthRaw>::consumeAndResolve(range, { }, { }, options);
-}
-
-std::optional<LengthOrPercentRaw> consumeLengthOrPercentRaw(CSSParserTokenRange& range, CSSParserMode parserMode)
-{
-    const auto options = CSSPropertyParserOptions {
-        .parserMode = parserMode,
-        .valueRange = ValueRange::NonNegative
-    };
-    return RawResolver<LengthRaw, PercentRaw>::consumeAndResolve(range, { }, { }, options);
-}
-
-RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange& range, CSSParserMode parserMode, ValueRange valueRange, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero, NegativePercentagePolicy negativePercentage, AnchorPolicy anchorPolicy)
-{
-    auto& token = range.peek();
-
-    const auto options = CSSPropertyParserOptions {
-        .parserMode = parserMode,
-        .valueRange = valueRange,
-        .anchorPolicy = anchorPolicy,
-        .negativePercentage = negativePercentage,
-        .unitless = unitless,
-        .unitlessZero = unitlessZero
-    };
-
-    switch (token.type()) {
-    case FunctionToken: {
-        if (range.peek().functionId() == CSSValueAnchor) {
-            if (anchorPolicy == AnchorPolicy::Allow)
-                return consumeAnchor(range, parserMode);
-            return nullptr;
-        }
-
-        auto rangeCopy = range;
-        if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, Calculation::Category::PercentLength, { }, options)) {
-            range = rangeCopy;
-            return CSSPrimitiveValue::create(value.releaseNonNull());
-        }
-        break;
-    }
-
-    case DimensionToken:
-        if (auto value = LengthKnownTokenTypeDimensionConsumer::consume(range, { }, options))
-            return CSSPrimitiveValueResolver<LengthRaw>::resolve(*value, { }, options);
-        break;
-
-    case NumberToken:
-        if (auto value = LengthKnownTokenTypeNumberConsumer::consume(range, { }, options))
-            return CSSPrimitiveValueResolver<LengthRaw>::resolve(*value, { }, options);
-        break;
-
-    case PercentageToken:
-        if (auto value = PercentKnownTokenTypePercentConsumer::consume(range, { }, options))
-            return CSSPrimitiveValueResolver<PercentRaw>::resolve(*value, { }, options);
-        break;
-
-    default:
-        break;
-    }
-
-    return nullptr;
 }
 
 } // namespace CSSPropertyParserHelpers

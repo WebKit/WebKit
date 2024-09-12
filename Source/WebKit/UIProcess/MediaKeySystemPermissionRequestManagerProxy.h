@@ -57,7 +57,7 @@ public:
     explicit MediaKeySystemPermissionRequestManagerProxy(WebPageProxy&);
     ~MediaKeySystemPermissionRequestManagerProxy();
 
-    WebPageProxy& page() const { return m_page; }
+    WebPageProxy& page() const { return m_page.get(); }
 
     void invalidatePendingRequests();
 
@@ -72,7 +72,7 @@ private:
     const void* logIdentifier() const { return m_logIdentifier; }
 #endif
 
-    WebPageProxy& m_page;
+    WeakRef<WebPageProxy> m_page;
 
     HashMap<WebCore::MediaKeySystemRequestIdentifier, RefPtr<MediaKeySystemPermissionRequestProxy>> m_pendingRequests;
     HashSet<String> m_validAuthorizationTokens;

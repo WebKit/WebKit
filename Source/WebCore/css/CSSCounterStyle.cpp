@@ -242,11 +242,11 @@ static String counterForSystemCJK(int number, const std::array<UChar, 17>& table
 String CSSCounterStyle::counterForSystemDisclosureClosed(TextFlow flow)
 {
     switch (flow.blockDirection) {
-    case BlockFlowDirection::TopToBottom:
-    case BlockFlowDirection::BottomToTop:
+    case FlowDirection::TopToBottom:
+    case FlowDirection::BottomToTop:
         return span(flow.textDirection == TextDirection::LTR ? blackRightPointingSmallTriangle : blackLeftPointingSmallTriangle);
-    case BlockFlowDirection::LeftToRight:
-    case BlockFlowDirection::RightToLeft:
+    case FlowDirection::LeftToRight:
+    case FlowDirection::RightToLeft:
         return span(flow.textDirection == TextDirection::LTR ? blackDownPointingSmallTriangle : blackUpPointingSmallTriangle);
     }
     ASSERT_NOT_REACHED();
@@ -256,13 +256,13 @@ String CSSCounterStyle::counterForSystemDisclosureClosed(TextFlow flow)
 String CSSCounterStyle::counterForSystemDisclosureOpen(TextFlow flow)
 {
     switch (flow.blockDirection) {
-    case BlockFlowDirection::TopToBottom:
+    case FlowDirection::TopToBottom:
         return span(blackDownPointingSmallTriangle);
-    case BlockFlowDirection::BottomToTop:
+    case FlowDirection::BottomToTop:
         return span(blackUpPointingSmallTriangle);
-    case BlockFlowDirection::LeftToRight:
+    case FlowDirection::LeftToRight:
         return span(blackRightPointingSmallTriangle);
-    case BlockFlowDirection::RightToLeft:
+    case FlowDirection::RightToLeft:
         return span(blackLeftPointingSmallTriangle);
     }
     ASSERT_NOT_REACHED();
@@ -486,8 +486,8 @@ bool CSSCounterStyle::isInRange(int value) const
 }
 
 CSSCounterStyle::CSSCounterStyle(const CSSCounterStyleDescriptors& descriptors, bool isPredefinedCounterStyle)
-    : m_descriptors { descriptors },
-    m_predefinedCounterStyle { isPredefinedCounterStyle }
+    : m_descriptors { descriptors }
+    , m_predefinedCounterStyle { isPredefinedCounterStyle }
 {
 }
 

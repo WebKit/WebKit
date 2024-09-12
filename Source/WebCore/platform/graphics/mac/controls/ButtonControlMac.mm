@@ -29,8 +29,11 @@
 #if PLATFORM(MAC)
 
 #import <pal/spi/cocoa/NSButtonCellSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ButtonControlMac);
 
 ButtonControlMac::ButtonControlMac(ControlPart& part, ControlFactoryMac& controlFactory, NSButtonCell *buttonCell)
     : ControlMac(part, controlFactory)

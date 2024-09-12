@@ -1,3 +1,3 @@
 
-FAIL seek to negative time assert_equals: currentTime after setting expected 0 but got -1
+PASS seek to negative time
 

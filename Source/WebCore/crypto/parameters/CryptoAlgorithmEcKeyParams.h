@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class CryptoAlgorithmEcKeyParams final : public CryptoAlgorithmParameters {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CryptoAlgorithmEcKeyParams);
 public:
     String namedCurve;
 

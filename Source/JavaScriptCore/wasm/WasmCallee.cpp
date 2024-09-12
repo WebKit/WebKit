@@ -195,6 +195,13 @@ void JSEntrypointJITCallee::setEntrypoint(Wasm::Entrypoint&& entrypoint)
     m_entrypoint = WTFMove(entrypoint);
     NativeCalleeRegistry::singleton().registerCallee(this);
 }
+
+void JSToWasmICCallee::setEntrypoint(MacroAssemblerCodeRef<JSEntryPtrTag>&& entrypoint)
+{
+    ASSERT(!m_jsToWasmICEntrypoint);
+    m_jsToWasmICEntrypoint = WTFMove(entrypoint);
+    NativeCalleeRegistry::singleton().registerCallee(this);
+}
 #endif
 
 WasmToJSCallee::WasmToJSCallee()
@@ -446,14 +453,14 @@ CodePtr<WasmEntryPtrTag> JITLessJSEntrypointCallee::entrypointImpl() const
     if (Options::useWasmSIMD() && (wasmCallingConvention().callInformationFor(typeDefinition).argumentsOrResultsIncludeV128)) {
 #if ENABLE(JIT)
         if (Options::useJIT())
-            return createJSToWasmJITInterpreterCrashForSIMDParameters()->entrypoint.compilation->code().retagged<WasmEntryPtrTag>();
+            return createJSToWasmJITSharedCrashForSIMDParameters()->entrypoint.compilation->code().retagged<WasmEntryPtrTag>();
 #endif
         return LLInt::getCodeFunctionPtr<CFunctionPtrTag>(js_to_wasm_wrapper_entry_crash_for_simd_parameters);
     }
 
 #if ENABLE(JIT)
     if (Options::useJIT())
-        return createJSToWasmJITInterpreter()->entrypoint.compilation->code().retagged<WasmEntryPtrTag>();
+        return createJSToWasmJITShared()->entrypoint.compilation->code().retagged<WasmEntryPtrTag>();
 #endif
     return LLInt::getCodeFunctionPtr<CFunctionPtrTag>(js_to_wasm_wrapper_entry);
 }

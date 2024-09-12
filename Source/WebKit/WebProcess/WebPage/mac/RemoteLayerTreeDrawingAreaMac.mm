@@ -34,9 +34,12 @@
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/RenderLayerBacking.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeDrawingAreaMac);
 
 RemoteLayerTreeDrawingAreaMac::RemoteLayerTreeDrawingAreaMac(WebPage& webPage, const WebPageCreationParameters& parameters)
     : RemoteLayerTreeDrawingArea(webPage, parameters)

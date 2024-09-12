@@ -28,12 +28,14 @@
 #include <WebCore/GraphicsLayerCA.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/PlatformLayer.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class RemoteLayerTreeContext;
 
 class GraphicsLayerCARemote final : public WebCore::GraphicsLayerCA, public CanMakeWeakPtr<GraphicsLayerCARemote> {
+    WTF_MAKE_TZONE_ALLOCATED(GraphicsLayerCARemote);
 public:
     GraphicsLayerCARemote(Type layerType, WebCore::GraphicsLayerClient&, RemoteLayerTreeContext&);
     virtual ~GraphicsLayerCARemote();

@@ -873,6 +873,8 @@ EXPORTS
     ; GL_EXT_semaphore_fd
     glImportSemaphoreFdEXT
 
+    ; GL_EXT_separate_depth_stencil
+
     ; GL_EXT_separate_shader_objects
     glActiveShaderProgramEXT
     glBindProgramPipelineEXT

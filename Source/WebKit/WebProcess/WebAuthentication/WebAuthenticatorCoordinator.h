@@ -29,12 +29,14 @@
 
 #include <WebCore/AuthenticatorCoordinatorClient.h>
 #include <WebCore/FrameIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebPage;
 
 class WebAuthenticatorCoordinator final : public WebCore::AuthenticatorCoordinatorClient {
+    WTF_MAKE_TZONE_ALLOCATED(WebAuthenticatorCoordinator);
 public:
     explicit WebAuthenticatorCoordinator(WebPage&);
 

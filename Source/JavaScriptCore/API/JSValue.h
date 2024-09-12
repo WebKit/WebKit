@@ -26,7 +26,7 @@
 #ifndef JSValue_h
 #define JSValue_h
 
-#if JSC_OBJC_API_ENABLED
+#if defined(__OBJC__) && JSC_OBJC_API_ENABLED
 
 #import <CoreGraphics/CGGeometry.h>
 
@@ -821,4 +821,4 @@ JS_EXPORT extern NSString * _Null_unspecified const JSPropertyDescriptorSetKey;
 
 #endif
 
-#endif // JSValue_h
+#endif /* JSValue_h */

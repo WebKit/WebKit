@@ -126,7 +126,7 @@ Color createColor(const CSSUnresolvedRelativeColor<Descriptor>& unresolved, CSSU
     if (state.conversionData)
         return resolve(WTFMove(resolver), *state.conversionData);
 
-    if (!requiresConversionData(resolver))
+    if (!requiresConversionData(resolver.components))
         return resolveNoConversionDataRequired(WTFMove(resolver));
 
     return { };

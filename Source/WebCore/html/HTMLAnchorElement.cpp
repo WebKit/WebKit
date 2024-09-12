@@ -160,7 +160,7 @@ static void appendServerMapMousePosition(StringBuilder& url, Event& event)
     if (!mouseEvent)
         return;
 
-    auto* imageElement = dynamicDowncast<HTMLImageElement>(mouseEvent->target());
+    RefPtr imageElement = dynamicDowncast<HTMLImageElement>(mouseEvent->target());
     if (!imageElement)
         return;
 
@@ -261,7 +261,7 @@ void HTMLAnchorElement::attributeChanged(const QualifiedName& name, const AtomSt
         if (m_relList)
             m_relList->associatedAttributeValueChanged();
     } else if (name == nameAttr)
-        document().processInternalResourceLinks(*this);
+        document().processInternalResourceLinks(this);
 }
 
 bool HTMLAnchorElement::isURLAttribute(const Attribute& attribute) const
@@ -607,7 +607,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     if (systemPreviewInfo.isPreview) {
         systemPreviewInfo.element.elementIdentifier = identifier();
         systemPreviewInfo.element.documentIdentifier = document->identifier();
-        systemPreviewInfo.element.webPageIdentifier = valueOrDefault(document->pageID());
+        systemPreviewInfo.element.webPageIdentifier = document->pageID();
         if (auto* child = firstElementChild())
             systemPreviewInfo.previewRect = child->boundsInRootViewSpace();
 
@@ -750,7 +750,7 @@ ReferrerPolicy HTMLAnchorElement::referrerPolicy() const
 Node::InsertedIntoAncestorResult HTMLAnchorElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     auto result = HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    document().processInternalResourceLinks(*this);
+    document().processInternalResourceLinks(this);
     return result;
 }
 

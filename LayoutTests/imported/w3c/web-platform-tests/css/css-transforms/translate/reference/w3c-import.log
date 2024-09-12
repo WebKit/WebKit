@@ -1,0 +1,25 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/translate/reference/svg-translate-abs-unit-combinations-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/translate/reference/svg-translate-ex-unit-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/translate/reference/svg-translate-multiple-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/translate/reference/svg-translate-multiple-relative-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/translate/reference/svg-translate-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/translate/reference/svg-translate-relative-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/translate/reference/translate-and-transform-attribute-in-svg-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/translate/reference/translate-and-transform-css-property-in-svg-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/translate/reference/translate-in-svg-ref.html

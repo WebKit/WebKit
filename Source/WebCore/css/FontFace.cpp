@@ -193,7 +193,7 @@ ExceptionOr<void> FontFace::setFamily(ScriptExecutionContext& context, const Str
 
 ExceptionOr<void> FontFace::setStyle(ScriptExecutionContext& context, const String& style)
 {
-    if (auto value = CSSPropertyParserHelpers::parseFontFaceStyle(style, context)) {
+    if (auto value = CSSPropertyParserHelpers::parseFontFaceFontStyle(style, context)) {
         m_backing->setStyle(*value);
         return { };
     }
@@ -202,7 +202,7 @@ ExceptionOr<void> FontFace::setStyle(ScriptExecutionContext& context, const Stri
 
 ExceptionOr<void> FontFace::setWeight(ScriptExecutionContext& context, const String& weight)
 {
-    if (auto value = CSSPropertyParserHelpers::parseFontFaceWeight(weight, context)) {
+    if (auto value = CSSPropertyParserHelpers::parseFontFaceFontWeight(weight, context)) {
         m_backing->setWeight(*value);
         return { };
     }
@@ -211,7 +211,7 @@ ExceptionOr<void> FontFace::setWeight(ScriptExecutionContext& context, const Str
 
 ExceptionOr<void> FontFace::setStretch(ScriptExecutionContext& context, const String& stretch)
 {
-    if (auto value = CSSPropertyParserHelpers::parseFontFaceStretch(stretch, context)) {
+    if (auto value = CSSPropertyParserHelpers::parseFontFaceFontStretch(stretch, context)) {
         m_backing->setStretch(*value);
         return { };
     }

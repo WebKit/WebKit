@@ -33,8 +33,10 @@
 
 namespace WebCore {
 
+class AnimationTimelinesController;
 class CSSScrollValue;
 class Element;
+class RenderStyle;
 
 class ScrollTimeline : public AnimationTimeline {
 public:
@@ -50,7 +52,12 @@ public:
     const AtomString& name() const { return m_name; }
     void setName(const AtomString& name) { m_name = name; }
 
-    virtual Ref<CSSValue> toCSSValue() const;
+    virtual void dump(TextStream&) const;
+    virtual Ref<CSSValue> toCSSValue(const RenderStyle&) const;
+
+    AnimationTimeline::ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents() override;
+
+    AnimationTimelinesController* controller() const override;
 
 protected:
     explicit ScrollTimeline(const AtomString&, ScrollAxis);

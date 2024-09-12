@@ -1394,7 +1394,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyI
 // FIXME: It would be much easier to inline this when we have a global GC, which could probably mean we could avoid
 // spilling the results onto the stack.
 // Saved result registers should be placed on the stack just above the last stack result.
-JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (JSWebAssemblyInstance* instance, const TypeDefinition* type, IndexingType indexingType, JSValue* stackPointerFromCallee))
+JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (JSWebAssemblyInstance* instance, const FunctionSignature* signature, IndexingType indexingType, JSValue* stackPointerFromCallee))
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     VM& vm = instance->vm();
@@ -1403,13 +1403,12 @@ JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (JSWebAssembly
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     ObjectInitializationScope initializationScope(vm);
-    const FunctionSignature* signature = type->as<FunctionSignature>();
     JSArray* result = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType), signature->returnCount());
 
     if (!result)
         throwOutOfMemoryError(globalObject, scope);
 
-    auto wasmCallInfo = wasmCallingConvention().callInformationFor(*type);
+    auto wasmCallInfo = wasmCallingConvention().callInformationFor(*signature);
     RegisterAtOffsetList registerResults = wasmCallInfo.computeResultsOffsetList();
 
     for (unsigned i = 0; i < signature->returnCount(); ++i) {

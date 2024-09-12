@@ -36,6 +36,7 @@
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/ScrollView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 
 constexpr WebCore::FramesPerSecond DisplayLinkFramesPerSecond = 60;
 
@@ -180,6 +181,8 @@ static void* displayRefreshRateObservationContext = &displayRefreshRateObservati
 namespace WebKit {
 using namespace IPC;
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeDrawingAreaProxyIOS);
 
 RemoteLayerTreeDrawingAreaProxyIOS::RemoteLayerTreeDrawingAreaProxyIOS(WebPageProxy& pageProxy, WebProcessProxy& webProcessProxy)
     : RemoteLayerTreeDrawingAreaProxy(pageProxy, webProcessProxy)

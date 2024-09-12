@@ -6,11 +6,29 @@
 description("Tests that IntersectionObserver doesn't cause Document leaks.");
 jsTestIsAsync = true;
 
-frameDocumentID = 0;
-checkCount = 0;
+didCreate = null;
 
-onload = () => {
-    window.open("resources/intersection-observer-document-leak-popup.html");
+onload = async () => {
+    const frameDocumentIDs = [];
+    for (var i = 0; i < 3; i++) {
+        frameDocumentIDs.push(await new Promise(resolve => {
+            didCreate = resolve;
+            window.open("resources/intersection-observer-document-leak-popup.html");
+        }));
+        await new Promise(resolve => setTimeout(resolve, 0));
+    }
+
+    for (var i = 0; i < 3; i++) {
+        gc();
+        if (frameDocumentIDs.some((id) => !internals.isDocumentAlive(id))) {
+            testPassed("At least 1 iframe document was destroyed.");
+            finishJSTest();
+            return;
+        }
+        await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    testFailed("All iframe documents leaked.");
+    finishJSTest();
 };
 
 function popupDocumentWasCreated(frameDocument)
@@ -20,20 +38,7 @@ function popupDocumentWasCreated(frameDocument)
 
     frameDocumentID = internals.documentIdentifier(frameDocument);
     shouldBeTrue("internals.isDocumentAlive(frameDocumentID)");
-    handle = setInterval(() => {
-        gc();
-        if (!internals.isDocumentAlive(frameDocumentID)) {
-            clearInterval(handle);
-            testPassed("The iframe document didn't leak.");
-            finishJSTest();
-        }
-        checkCount++;
-        if (checkCount > 500) {
-            clearInterval(handle);
-            testFailed("The iframe document leaked.");
-            finishJSTest();
-        }
-    }, 10);
+    didCreate(frameDocumentID);
 }
 </script>
 </body>

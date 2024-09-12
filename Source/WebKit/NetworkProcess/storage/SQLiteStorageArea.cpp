@@ -34,8 +34,11 @@
 #include <WebCore/SQLiteTransaction.h>
 #include <WebCore/StorageMap.h>
 #include <wtf/FileSystem.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SQLiteStorageArea);
 
 constexpr Seconds transactionDuration { 500_ms };
 constexpr unsigned maximumSizeForValuesKeptInMemory { 1 * KB };

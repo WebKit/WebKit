@@ -28,10 +28,12 @@
 
 #import "ControlMac.h"
 #import "SwitchThumbPart.h"
+#import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SwitchThumbMac final : public ControlMac {
+    WTF_MAKE_TZONE_ALLOCATED(SwitchThumbMac);
 public:
     SwitchThumbMac(SwitchThumbPart&, ControlFactoryMac&);
 

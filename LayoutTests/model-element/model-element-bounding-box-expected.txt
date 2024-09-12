@@ -1,0 +1,7 @@
+
+PASS <model> with empty source gets the expected bounding box
+PASS <model> gets the expected bounding box after model content with center way-out is ready.
+PASS <model> gets the expected bounding box after model content with center at (0, 0, 0) is ready.
+PASS <model> gets the expected bounding box after model content with center at (1, 1, 1) is ready.
+PASS <model> gets the expected bounding box after model source changes.
+

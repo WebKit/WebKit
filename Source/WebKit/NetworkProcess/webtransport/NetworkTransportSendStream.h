@@ -29,12 +29,24 @@
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 
+#if PLATFORM(COCOA)
+#include <Network/Network.h>
+#include <wtf/RetainPtr.h>
+#endif
+
 namespace WebKit {
 
 class NetworkTransportSendStream {
     WTF_MAKE_TZONE_ALLOCATED(NetworkTransportSendStream);
 public:
+#if PLATFORM(COCOA)
+    NetworkTransportSendStream(nw_connection_t);
+#endif
     void sendBytes(std::span<const uint8_t>, bool withFin);
+private:
+#if PLATFORM(COCOA)
+    const RetainPtr<nw_connection_t> m_connection;
+#endif
 };
 
 }

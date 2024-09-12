@@ -156,10 +156,26 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
         ASSERT(!mFramebufferCacheManager.containsKey(sharedFramebufferCacheKey));
         mFramebufferCacheManager.addKey(sharedFramebufferCacheKey);
     }
-    void release(ContextVk *contextVk) { mFramebufferCacheManager.releaseKeys(contextVk); }
-    void destroy(vk::Renderer *renderer) { mFramebufferCacheManager.destroyKeys(renderer); }
+    void releaseFramebuffers(ContextVk *contextVk)
+    {
+        mFramebufferCacheManager.releaseKeys(contextVk);
+    }
+    // Releases framebuffers and resets Image and ImageView pointers, while keeping other
+    // members intact, in order to allow |updateSwapchainImage| call later.
+    void releaseImageAndViews(ContextVk *contextVk)
+    {
+        releaseFramebuffers(contextVk);
+        invalidateImageAndViews();
+    }
+    // Releases framebuffers and resets all members to the initial state.
+    void destroy(vk::Renderer *renderer)
+    {
+        mFramebufferCacheManager.destroyKeys(renderer);
+        reset();
+    }
 
   private:
+    void invalidateImageAndViews();
     void reset();
 
     angle::Result getImageViewImpl(vk::Context *context,

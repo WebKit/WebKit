@@ -82,9 +82,7 @@ inline WebCore::FrameIdentifier toWebCoreFrameIdentifier(const WebExtensionFrame
     if (isMainFrame(identifier))
         return page.mainWebFrame().frameID();
 
-    WebCore::FrameIdentifier result { LegacyNullableObjectIdentifier<WebCore::FrameIdentifierType> { identifier.toUInt64() }, WebCore::Process::identifier() };
-    ASSERT(result.object().isValid());
-    return result;
+    return { ObjectIdentifier<WebCore::FrameIdentifierType> { identifier.toUInt64() }, WebCore::Process::identifier() };
 }
 
 inline bool matchesFrame(const WebExtensionFrameIdentifier& identifier, const WebFrame& frame)
@@ -98,9 +96,13 @@ inline bool matchesFrame(const WebExtensionFrameIdentifier& identifier, const We
     return frame.frameID().object().toUInt64() == identifier.toUInt64();
 }
 
-inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(WebCore::FrameIdentifier frameIdentifier)
+inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(std::optional<WebCore::FrameIdentifier> frameIdentifier)
 {
-    WebExtensionFrameIdentifier result { frameIdentifier.object().toUInt64() };
+    if (!frameIdentifier) {
+        ASSERT_NOT_REACHED();
+        return WebExtensionFrameConstants::NoneIdentifier;
+    }
+    WebExtensionFrameIdentifier result { frameIdentifier->object().toUInt64() };
     if (!result.isValid()) {
         ASSERT_NOT_REACHED();
         return WebExtensionFrameConstants::NoneIdentifier;

@@ -46,6 +46,12 @@ public:
     void hidePopup();
     WEBCORE_EXPORT std::span<const RecentSearch> recentSearches();
 
+    // CheckedPtr interface.
+    uint32_t ptrCount() const final { return RenderTextControlSingleLine::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return RenderTextControlSingleLine::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { RenderTextControlSingleLine::incrementPtrCount(); }
+    void decrementPtrCount() const final { RenderTextControlSingleLine::decrementPtrCount(); }
+
 private:
     void willBeDestroyed() override;
     LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;

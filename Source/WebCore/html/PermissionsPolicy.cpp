@@ -278,7 +278,7 @@ static std::pair<StringView, StringView> splitOnAsciiWhiteSpace(StringView input
 // https://w3c.github.io/webappsec-permissions-policy/#declared-origin
 static Ref<SecurityOrigin> declaredOrigin(const HTMLIFrameElement& iframe)
 {
-    if (iframe.document().isSandboxed(SandboxOrigin) || (iframe.sandboxFlags() & SandboxOrigin))
+    if (iframe.document().isSandboxed(SandboxFlag::Origin) || (iframe.sandboxFlags().contains(SandboxFlag::Origin)))
         return SecurityOrigin::createOpaque();
 
     if (iframe.hasAttributeWithoutSynchronization(srcdocAttr))

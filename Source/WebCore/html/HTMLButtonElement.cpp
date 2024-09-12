@@ -151,7 +151,7 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
             // the Form or button relationships.
             protectedDocument()->updateLayoutIgnorePendingStylesheets();
 
-            if (auto currentForm = form()) {
+            if (RefPtr currentForm = form()) {
                 if (m_type == SUBMIT)
                     currentForm->submitIfPossible(&event, this);
 

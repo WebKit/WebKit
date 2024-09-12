@@ -433,6 +433,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSMediaRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSMediaRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNamespaceRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNamespaceRule.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNestedDeclarations.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNestedDeclarations.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNumericArray.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNumericArray.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNumericBaseType.cpp

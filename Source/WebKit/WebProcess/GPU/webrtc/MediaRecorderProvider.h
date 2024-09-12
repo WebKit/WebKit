@@ -26,12 +26,14 @@
 #pragma once
 
 #include <WebCore/MediaRecorderProvider.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebPage;
 
 class MediaRecorderProvider final : public WebCore::MediaRecorderProvider {
+    WTF_MAKE_TZONE_ALLOCATED(MediaRecorderProvider);
 public:
     explicit MediaRecorderProvider(WebPage&);
 

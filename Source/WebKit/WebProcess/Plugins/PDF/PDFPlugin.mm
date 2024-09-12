@@ -301,20 +301,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)accessibilityAssociatedControlForAnnotation:(PDFAnnotation *)annotation
 {
-    // Only active annotations seem to have their associated controls available.
     RefPtr activeAnnotation = _pdfPlugin->activeAnnotation();
-    if (!activeAnnotation || ![activeAnnotation->annotation() isEqual:annotation])
-        return nil;
-    
-    WebCore::AXObjectCache* cache = _pdfPlugin->axObjectCache();
-    if (!cache)
-        return nil;
-    
-    RefPtr object = cache->getOrCreate(activeAnnotation->element());
-    if (!object)
+    if (!activeAnnotation)
         return nil;
 
-    return object->wrapper();
+    id wrapper = nil;
+    callOnMainRunLoopAndWait([activeAnnotation, protectedSelf = retainPtr(self), &wrapper] {
+        if (auto* axObjectCache = protectedSelf->_pdfPlugin->axObjectCache()) {
+            if (RefPtr annotationElementAxObject = axObjectCache->getOrCreate(activeAnnotation->element()))
+                wrapper = annotationElementAxObject->wrapper();
+        }
+    });
+
+    return wrapper;
 }
 
 - (id)accessibilityHitTestIntPoint:(const WebCore::IntPoint&)point
@@ -1560,13 +1559,6 @@ static NSRect rectInViewSpaceForRectInLayoutSpace(PDFLayerController* pdfLayerCo
     newRect.origin.y -= scrollOffset.y;
 
     return NSRectFromCGRect(newRect);
-}
-    
-WebCore::AXObjectCache* PDFPlugin::axObjectCache() const
-{
-    if (!m_frame || !m_frame->coreLocalFrame() || !m_frame->coreLocalFrame()->document())
-        return nullptr;
-    return m_frame->coreLocalFrame()->document()->axObjectCache();
 }
 
 WebCore::FloatRect PDFPlugin::rectForSelectionInRootView(PDFSelection *selection) const

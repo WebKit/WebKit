@@ -372,7 +372,7 @@ bool MediaRecorderPrivateBackend::preparePipeline()
     }), this);
 
     m_signalAdapter = adoptGRef(gst_transcoder_get_sync_signal_adapter(m_transcoder.get()));
-    g_signal_connect(m_signalAdapter.get(), "warning", G_CALLBACK(+[](GstTranscoder*, GError* error, GstStructure* details) {
+    g_signal_connect(m_signalAdapter.get(), "warning", G_CALLBACK(+[](GstTranscoder*, [[maybe_unused]] GError* error, [[maybe_unused]] GstStructure* details) {
         GST_WARNING("%s details: %" GST_PTR_FORMAT, error->message, details);
     }), nullptr);
 

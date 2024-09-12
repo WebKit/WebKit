@@ -254,7 +254,7 @@ public:
 
     // The following sandbox flags will be forced, regardless of changes to
     // the sandbox attribute of any parent frames.
-    void forceSandboxFlags(SandboxFlags flags) { m_forcedSandboxFlags |= flags; }
+    void forceSandboxFlags(SandboxFlags flags) { m_forcedSandboxFlags.add(flags); }
     WEBCORE_EXPORT SandboxFlags effectiveSandboxFlags() const;
 
     bool checkIfFormActionAllowedByCSP(const URL&, bool didReceiveRedirectResponse, const URL& preRedirectURL) const;

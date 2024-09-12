@@ -96,14 +96,14 @@ bool SecurityContext::isSecureTransitionTo(const URL& url) const
     return securityOriginPolicy()->origin().isSameOriginDomain(SecurityOrigin::create(url).get());
 }
 
-void SecurityContext::enforceSandboxFlags(SandboxFlags mask, SandboxFlagsSource source)
+void SecurityContext::enforceSandboxFlags(SandboxFlags flags, SandboxFlagsSource source)
 {
     if (source != SandboxFlagsSource::CSP)
-        m_creationSandboxFlags |= mask;
-    m_sandboxFlags |= mask;
+        m_creationSandboxFlags.add(flags);
+    m_sandboxFlags.add(flags);
 
-    // The SandboxOrigin is stored redundantly in the security origin.
-    if (isSandboxed(SandboxOrigin) && securityOriginPolicy() && !securityOriginPolicy()->origin().isOpaque())
+    // The SandboxFlag::Origin is stored redundantly in the security origin.
+    if (isSandboxed(SandboxFlag::Origin) && securityOriginPolicy() && !securityOriginPolicy()->origin().isOpaque())
         setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::createOpaque()));
 }
 
@@ -128,7 +128,7 @@ SandboxFlags SecurityContext::parseSandboxPolicy(StringView policy, String& inva
 {
     // http://www.w3.org/TR/html5/the-iframe-element.html#attr-iframe-sandbox
     // Parse the unordered set of unique space-separated tokens.
-    SandboxFlags flags = SandboxAll;
+    SandboxFlags flags = SandboxFlags::all();
     unsigned length = policy.length();
     unsigned start = 0;
     unsigned numberOfTokenErrors = 0;
@@ -145,31 +145,31 @@ SandboxFlags SecurityContext::parseSandboxPolicy(StringView policy, String& inva
         // Turn off the corresponding sandbox flag if it's set as "allowed".
         auto sandboxToken = policy.substring(start, end - start);
         if (equalLettersIgnoringASCIICase(sandboxToken, "allow-same-origin"_s))
-            flags &= ~SandboxOrigin;
+            flags.remove(SandboxFlag::Origin);
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-downloads"_s))
-            flags &= ~SandboxDownloads;
+            flags.remove(SandboxFlag::Downloads);
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-forms"_s))
-            flags &= ~SandboxForms;
+            flags.remove(SandboxFlag::Forms);
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-scripts"_s)) {
-            flags &= ~SandboxScripts;
-            flags &= ~SandboxAutomaticFeatures;
+            flags.remove(SandboxFlag::Scripts);
+            flags.remove(SandboxFlag::AutomaticFeatures);
         } else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-top-navigation"_s)) {
-            flags &= ~SandboxTopNavigation;
-            flags &= ~SandboxTopNavigationByUserActivation;
+            flags.remove(SandboxFlag::TopNavigation);
+            flags.remove(SandboxFlag::TopNavigationByUserActivation);
         } else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-popups"_s))
-            flags &= ~SandboxPopups;
+            flags.remove(SandboxFlag::Popups);
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-pointer-lock"_s))
-            flags &= ~SandboxPointerLock;
+            flags.remove(SandboxFlag::PointerLock);
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-popups-to-escape-sandbox"_s))
-            flags &= ~SandboxPropagatesToAuxiliaryBrowsingContexts;
+            flags.remove(SandboxFlag::PropagatesToAuxiliaryBrowsingContexts);
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-top-navigation-by-user-activation"_s))
-            flags &= ~SandboxTopNavigationByUserActivation;
+            flags.remove(SandboxFlag::TopNavigationByUserActivation);
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-top-navigation-to-custom-protocols"_s))
-            flags &= ~SandboxTopNavigationToCustomProtocols;
+            flags.remove(SandboxFlag::TopNavigationToCustomProtocols);
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-modals"_s))
-            flags &= ~SandboxModals;
+            flags.remove(SandboxFlag::Modals);
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-storage-access-by-user-activation"_s))
-            flags &= ~SandboxStorageAccessByUserActivation;
+            flags.remove(SandboxFlag::StorageAccessByUserActivation);
         else {
             if (numberOfTokenErrors)
                 tokenErrors.append(", '"_s);

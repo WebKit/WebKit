@@ -50,10 +50,12 @@ namespace JSC {
     v(op_call, JSEntryPtrTag) \
     v(op_call_ignore_result, JSEntryPtrTag) \
     v(op_construct, JSEntryPtrTag) \
+    v(op_super_construct, JSEntryPtrTag) \
     v(op_iterator_next, JSEntryPtrTag) \
     v(op_iterator_open, JSEntryPtrTag) \
     v(op_call_varargs, JSEntryPtrTag) \
     v(op_construct_varargs, JSEntryPtrTag) \
+    v(op_super_construct_varargs, JSEntryPtrTag) \
     v(op_call_direct_eval_slow, JSEntrySlowPathPtrTag) \
 
 #if ENABLE(WEBASSEMBLY)

@@ -179,7 +179,7 @@ Animation::Animation(const String& name, const KeyframeValueList& keyframes, con
     , m_boxSize(boxSize)
     , m_timingFunction(animation.timingFunction()->clone())
     , m_iterationCount(animation.iterationCount())
-    , m_duration(animation.duration())
+    , m_duration(animation.duration().value_or(0))
     , m_direction(animation.direction())
     , m_fillsForwards(animation.fillsForwards())
     , m_startTime(startTime)

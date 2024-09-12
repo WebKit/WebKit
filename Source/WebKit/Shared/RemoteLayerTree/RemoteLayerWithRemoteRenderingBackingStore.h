@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RemoteLayerBackingStore.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 class RemoteLayerWithRemoteRenderingBackingStore;
@@ -42,6 +43,7 @@ class RemoteDisplayListRecorderProxy;
 class RemoteImageBufferSetProxy;
 
 class RemoteLayerWithRemoteRenderingBackingStore : public RemoteLayerBackingStore {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerWithRemoteRenderingBackingStore);
 public:
     RemoteLayerWithRemoteRenderingBackingStore(PlatformCALayerRemote&);
     ~RemoteLayerWithRemoteRenderingBackingStore();

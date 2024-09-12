@@ -142,7 +142,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)loadRequest:(NSURLRequest *)request userData:(id)userData
 {
     ASSERT(!userData);
-    _page->loadRequest(request, WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow, { });
+    _page->loadRequest(request, WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
 }
 
 - (void)loadFileURL:(NSURL *)URL restrictToFilesWithin:(NSURL *)allowedDirectory

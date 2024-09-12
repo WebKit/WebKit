@@ -45,8 +45,8 @@ struct Length;
 
 // Max/min values for CSS, needs to slightly smaller/larger than the true max/min values to allow for rounding without overflowing.
 // Subtract two (rather than one) to allow for values to be converted to float and back without exceeding the LayoutUnit::max.
-const int maxValueForCssLength = intMaxForLayoutUnit - 2;
-const int minValueForCssLength = intMinForLayoutUnit + 2;
+constexpr float maxValueForCssLength = static_cast<float>(intMaxForLayoutUnit - 2);
+constexpr float minValueForCssLength = static_cast<float>(intMinForLayoutUnit + 2);
 
 // Dimension calculations are imprecise, often resulting in values of e.g.
 // 44.99998. We need to round if we're really close to the next integer value.
@@ -156,7 +156,7 @@ public:
 
     ~CSSPrimitiveValue();
 
-    CSSUnitType primitiveType() const;
+    WEBCORE_EXPORT CSSUnitType primitiveType() const;
 
     // Exposed for DeprecatedCSSOMPrimitiveValue. Throws if conversion to `targetUnit` is not allowed.
     ExceptionOr<float> getFloatValueDeprecated(CSSUnitType targetUnit) const;
@@ -165,16 +165,19 @@ public:
     template<typename T = int> T resolveAsInteger(const CSSToLengthConversionData&) const;
     template<typename T = int> T resolveAsIntegerNoConversionDataRequired() const;
     template<typename T = int> T resolveAsIntegerDeprecated() const;
+    template<typename T = int> std::optional<T> resolveAsIntegerIfNotCalculated() const;
 
     // MARK: Number (requires `isNumberOrInteger() == true`)
     template<typename T = double> T resolveAsNumber(const CSSToLengthConversionData&) const;
     template<typename T = double> T resolveAsNumberNoConversionDataRequired() const;
     template<typename T = double> T resolveAsNumberDeprecated() const;
+    template<typename T = double> std::optional<T> resolveAsNumberIfNotCalculated() const;
 
     // MARK: Percentage (requires `isPercentage() == true`)
     template<typename T = double> T resolveAsPercentage(const CSSToLengthConversionData&) const;
     template<typename T = double> T resolveAsPercentageNoConversionDataRequired() const;
     template<typename T = double> T resolveAsPercentageDeprecated() const;
+    template<typename T = double> std::optional<T> resolveAsPercentageIfNotCalculated() const;
 
     // MARK: Angle (requires `isAngle() == true`)
     template<typename T = double, AngleUnit = AngleUnit::Canonical> T resolveAsAngle(const CSSToLengthConversionData&) const;
@@ -202,16 +205,18 @@ public:
     template<int> Length convertToLength(const CSSToLengthConversionData&) const;
 
     // MARK: Non-converting
-    template<typename T = double> inline T value(const CSSToLengthConversionData& conversionData) const { return clampTo<T>(doubleValue(conversionData)); }
-    template<typename T = double> inline T valueNoConversionDataRequired() const { return clampTo<T>(doubleValueNoConversionDataRequired()); }
+    template<typename T = double> T value(const CSSToLengthConversionData& conversionData) const { return clampTo<T>(doubleValue(conversionData)); }
+    template<typename T = double> T valueNoConversionDataRequired() const { return clampTo<T>(doubleValueNoConversionDataRequired()); }
+    template<typename T = double> std::optional<T> valueIfNotCalculated() const;
 
     // MARK: Divides value by 100 if percentage.
-    template<typename T = double> inline T valueDividingBy100IfPercentage(const CSSToLengthConversionData& conversionData) const { return clampTo<T>(doubleValueDividingBy100IfPercentage(conversionData)); }
-    template<typename T = double> inline T valueDividingBy100IfPercentageNoConversionDataRequired() const { return clampTo<T>(doubleValueDividingBy100IfPercentageNoConversionDataRequired()); }
-    template<typename T = double> inline T valueDividingBy100IfPercentageDeprecated() const { return clampTo<T>(doubleValueDividingBy100IfPercentageDeprecated()); }
+    template<typename T = double> T valueDividingBy100IfPercentage(const CSSToLengthConversionData& conversionData) const { return clampTo<T>(doubleValueDividingBy100IfPercentage(conversionData)); }
+    template<typename T = double> T valueDividingBy100IfPercentageNoConversionDataRequired() const { return clampTo<T>(doubleValueDividingBy100IfPercentageNoConversionDataRequired()); }
+    template<typename T = double> T valueDividingBy100IfPercentageDeprecated() const { return clampTo<T>(doubleValueDividingBy100IfPercentageDeprecated()); }
 
     // These return nullopt for calc, for which range checking is not done at parse time: <https://www.w3.org/TR/css3-values/#calc-range>.
     std::optional<bool> isZero() const;
+    std::optional<bool> isOne() const;
     std::optional<bool> isPositive() const;
     std::optional<bool> isNegative() const;
 
@@ -274,7 +279,7 @@ private:
 
     // MARK: Non-converting
     double doubleValue(const CSSToLengthConversionData&) const;
-    double doubleValueNoConversionDataRequired() const;
+    double doubleValueNoConversionDataRequired() const { ASSERT(!isCalculated()); return m_value.number; }
     double doubleValueDeprecated() const;
     double doubleValueDividingBy100IfPercentage(const CSSToLengthConversionData&) const;
     double doubleValueDividingBy100IfPercentageNoConversionDataRequired() const;
@@ -376,6 +381,13 @@ constexpr bool CSSPrimitiveValue::isViewportPercentageLength(CSSUnitType type)
     return type >= CSSUnitType::FirstViewportCSSUnitType && type <= CSSUnitType::LastViewportCSSUnitType;
 }
 
+template<typename T> std::optional<T> CSSPrimitiveValue::valueIfNotCalculated() const
+{
+    if (isCalculated())
+        return std::nullopt;
+    return m_value.number;
+}
+
 // MARK: Integer
 
 template<typename T> T CSSPrimitiveValue::resolveAsInteger(const CSSToLengthConversionData& conversionData) const
@@ -394,6 +406,12 @@ template<typename T> T CSSPrimitiveValue::resolveAsIntegerDeprecated() const
 {
     ASSERT(isInteger());
     return valueDeprecated<T>();
+}
+
+template<typename T> std::optional<T> CSSPrimitiveValue::resolveAsIntegerIfNotCalculated() const
+{
+    ASSERT(isInteger());
+    return valueIfNotCalculated<T>();
 }
 
 // MARK: Number
@@ -416,6 +434,12 @@ template<typename T> T CSSPrimitiveValue::resolveAsNumberDeprecated() const
     return valueDeprecated<T>(CSSUnitType::CSS_NUMBER);
 }
 
+template<typename T> std::optional<T> CSSPrimitiveValue::resolveAsNumberIfNotCalculated() const
+{
+    ASSERT(isNumberOrInteger());
+    return valueIfNotCalculated<T>();
+}
+
 // MARK: Percentage
 
 template<typename T> T CSSPrimitiveValue::resolveAsPercentage(const CSSToLengthConversionData& conversionData) const
@@ -434,6 +458,12 @@ template<typename T> T CSSPrimitiveValue::resolveAsPercentageDeprecated() const
 {
     ASSERT(isPercentage());
     return valueDeprecated<T>();
+}
+
+template<typename T> std::optional<T> CSSPrimitiveValue::resolveAsPercentageIfNotCalculated() const
+{
+    ASSERT(isPercentage());
+    return valueIfNotCalculated<T>();
 }
 
 // MARK: Angle

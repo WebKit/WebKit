@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RemoteLayerTreeDrawingArea.h"
+#include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(MAC)
 
@@ -36,6 +37,7 @@ class TiledBacking;
 namespace WebKit {
 
 class RemoteLayerTreeDrawingAreaMac final : public RemoteLayerTreeDrawingArea {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeDrawingAreaMac);
 public:
     RemoteLayerTreeDrawingAreaMac(WebPage&, const WebPageCreationParameters&);
     virtual ~RemoteLayerTreeDrawingAreaMac();

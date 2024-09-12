@@ -43,11 +43,14 @@ ALLOW_COMMA_END
 #include <webrtc/webkit_sdk/WebKit/WebKitVP8Decoder.h>
 #include <webrtc/webkit_sdk/WebKit/WebKitVP9Decoder.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/darwin/WeakLinking.h>
 
 WTF_WEAK_LINK_FORCE_IMPORT(webrtc::CreatePeerConnectionFactory);
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCProviderCocoa);
 
 UniqueRef<WebRTCProvider> WebRTCProvider::create()
 {

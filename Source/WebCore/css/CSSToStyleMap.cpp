@@ -338,6 +338,11 @@ void CSSToStyleMap::mapAnimationDuration(Animation& animation, const CSSValue& v
     if (!primitiveValue)
         return;
 
+    if (value.valueID() == CSSValueAuto) {
+        animation.setDuration(std::nullopt);
+        return;
+    }
+
     auto duration = std::max<double>(primitiveValue->resolveAsTime(m_builderState.cssToLengthConversionData()), 0);
     animation.setDuration(duration);
 }
@@ -452,7 +457,7 @@ void CSSToStyleMap::mapAnimationTimeline(Animation& animation, const CSSValue& v
     if (treatAsInitialValue(value, CSSPropertyAnimationTimeline))
         animation.setTimeline(Animation::initialTimeline());
     else if (auto* viewValue = dynamicDowncast<CSSViewValue>(value))
-        animation.setTimeline(ViewTimeline::createFromCSSValue(*viewValue));
+        animation.setTimeline(ViewTimeline::createFromCSSValue(m_builderState, *viewValue));
     else if (auto* scrollValue = dynamicDowncast<CSSScrollValue>(value))
         animation.setTimeline(ScrollTimeline::createFromCSSValue(*scrollValue));
     else if (value.isCustomIdent())
@@ -476,7 +481,7 @@ void CSSToStyleMap::mapAnimationTimingFunction(Animation& animation, const CSSVa
 {
     if (treatAsInitialValue(value, CSSPropertyAnimationTimingFunction))
         animation.setTimingFunction(Animation::initialTimingFunction());
-    else if (auto timingFunction = TimingFunction::createFromCSSValue(value))
+    else if (auto timingFunction = Style::BuilderConverter::convertTimingFunction(m_builderState, value))
         animation.setTimingFunction(WTFMove(timingFunction));
 }
 

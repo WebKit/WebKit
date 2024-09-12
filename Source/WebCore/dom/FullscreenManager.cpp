@@ -135,7 +135,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
     }
 
     // There is a previously-established user preference, security risk, or platform limitation.
-    if (!page() || !page()->settings().fullScreenEnabled()) {
+    if (!page() || !page()->isFullscreenManagerEnabled()) {
         handleError("Fullscreen API is disabled."_s, EmitErrorEvent::Yes, WTFMove(element), WTFMove(promise), WTFMove(completionHandler));
         return;
     }
@@ -488,7 +488,7 @@ bool FullscreenManager::willEnterFullscreen(Element& element, HTMLMediaElementEn
     }
 
     INFO_LOG(LOGIDENTIFIER);
-    ASSERT(page()->settings().fullScreenEnabled());
+    ASSERT(page()->isFullscreenManagerEnabled());
 
 #if ENABLE(VIDEO)
     if (RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(element))

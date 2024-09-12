@@ -108,7 +108,7 @@ FindStringCallbackAggregator::~FindStringCallbackAggregator()
     };
 
     Ref targetFrame = frameContainingMatch ? *frameContainingMatch : *focusedFrame;
-    targetFrame->protectedProcess()->sendWithAsyncReply(WTFMove(message), WTFMove(completionHandler), protectedPage->webPageIDInProcess(targetFrame->process()));
+    targetFrame->protectedProcess()->sendWithAsyncReply(WTFMove(message), WTFMove(completionHandler), protectedPage->webPageIDInProcess(targetFrame->protectedProcess()));
     if (frameContainingMatch && focusedFrame && focusedFrame->process() != frameContainingMatch->process())
         protectedPage->clearSelection(focusedFrame->frameID());
 }

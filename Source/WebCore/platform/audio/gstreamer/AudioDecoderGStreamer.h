@@ -34,14 +34,14 @@ class GStreamerAudioDecoder : public ThreadSafeRefCounted<GStreamerAudioDecoder>
     WTF_MAKE_TZONE_ALLOCATED(GStreamerAudioDecoder);
 
 public:
-    static void create(const String& codecName, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+    static void create(const String& codecName, const Config&, CreateCallback&&, OutputCallback&&);
 
-    GStreamerAudioDecoder(const String& codecName, const Config&, OutputCallback&&, PostTaskCallback&&, GRefPtr<GstElement>&&);
+    GStreamerAudioDecoder(const String& codecName, const Config&, OutputCallback&&, GRefPtr<GstElement>&&);
     ~GStreamerAudioDecoder();
 
 private:
-    void decode(EncodedData&&, DecodeCallback&&) final;
-    void flush(Function<void()>&&) final;
+    Ref<DecodePromise> decode(EncodedData&&) final;
+    Ref<GenericPromise> flush() final;
     void reset() final;
     void close() final;
 

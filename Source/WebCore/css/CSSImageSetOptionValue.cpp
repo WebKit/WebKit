@@ -31,14 +31,14 @@
 namespace WebCore {
 
 CSSImageSetOptionValue::CSSImageSetOptionValue(Ref<CSSValue>&& image, Ref<CSSPrimitiveValue>&& resolution)
-    : CSSValue(ImageSetOptionClass)
+    : CSSValue(ClassType::ImageSetOption)
     , m_image(WTFMove(image))
     , m_resolution(WTFMove(resolution))
 {
 }
 
 CSSImageSetOptionValue::CSSImageSetOptionValue(Ref<CSSValue>&& image, Ref<CSSPrimitiveValue>&& resolution, String&& type)
-    : CSSValue(ImageSetOptionClass)
+    : CSSValue(ClassType::ImageSetOption)
     , m_image(WTFMove(image))
     , m_resolution(WTFMove(resolution))
     , m_mimeType(WTFMove(type))

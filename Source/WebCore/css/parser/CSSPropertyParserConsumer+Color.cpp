@@ -27,6 +27,7 @@
 
 #include "CSSAbsoluteColorResolver.h"
 #include "CSSCalcSymbolsAllowed.h"
+#include "CSSColorConversion+Normalize.h"
 #include "CSSColorDescriptors.h"
 #include "CSSParser.h"
 #include "CSSParserContext.h"
@@ -162,6 +163,55 @@ static bool consumeAlphaDelimiter(CSSParserTokenRange& args)
         return consumeSlashIncludingWhitespace(args);
 }
 
+template<typename Descriptor> static CSSUnresolvedAbsoluteColor<typename Descriptor::Canonical> normalizeNonCalcComponents(const CSSUnresolvedAbsoluteColor<Descriptor>& unresolved, ColorParserState& state)
+{
+    ASSERT(containsUnevaluatedCalc<Descriptor>(unresolved.components));
+
+    // The canonical descriptor is normally the descriptor itself, except for legacy rgb and hsl, which use the modern counterparts.
+    using CanonicalDescriptor = typename Descriptor::Canonical;
+
+    if (state.nestingLevel > 1) {
+        // If this is a nested color, we want to only normalize the numeric color channel components, leaving them unclamped. The alpha channel can be both normalized and clamped.
+        //
+        // This behavior is described in section on the processing of relative colors: https://drafts.csswg.org/css-color-5/#rcs-intro.
+        return CSSUnresolvedAbsoluteColor<CanonicalDescriptor> {
+            CSSColorParseTypeWithCalc<CanonicalDescriptor> {
+                normalizeNumericComponentsIntoCanonicalRepresentation<Descriptor, 0>(std::get<0>(unresolved.components)),
+                normalizeNumericComponentsIntoCanonicalRepresentation<Descriptor, 1>(std::get<1>(unresolved.components)),
+                normalizeNumericComponentsIntoCanonicalRepresentation<Descriptor, 2>(std::get<2>(unresolved.components)),
+                normalizeAndClampNumericComponentsIntoCanonicalRepresentation<Descriptor, 3>(std::get<3>(unresolved.components))
+            }
+        };
+    }
+
+    // For non-nested colors, we want to normalize and clamp the numeric color and alpha channel components.
+    return CSSUnresolvedAbsoluteColor<CanonicalDescriptor> {
+        CSSColorParseTypeWithCalc<CanonicalDescriptor> {
+            normalizeAndClampNumericComponentsIntoCanonicalRepresentation<Descriptor, 0>(std::get<0>(unresolved.components)),
+            normalizeAndClampNumericComponentsIntoCanonicalRepresentation<Descriptor, 1>(std::get<1>(unresolved.components)),
+            normalizeAndClampNumericComponentsIntoCanonicalRepresentation<Descriptor, 2>(std::get<2>(unresolved.components)),
+            normalizeAndClampNumericComponentsIntoCanonicalRepresentation<Descriptor, 3>(std::get<3>(unresolved.components))
+        }
+    };
+}
+
+template<typename Descriptor> static CSSUnresolvedAbsoluteColor<typename Descriptor::Canonical> normalizeNonCalcRequiringConversionDataComponents(const CSSUnresolvedAbsoluteColor<Descriptor>& unresolved, ColorParserState& state)
+{
+    ASSERT(containsUnevaluatedCalc<Descriptor>(unresolved.components));
+
+    // Evaluated any calc values that don't require conversion data.
+    auto partiallyResolved = CSSUnresolvedAbsoluteColor<Descriptor> {
+        CSSColorParseTypeWithCalc<Descriptor> {
+            evaluateCalcIfNoConversionDataRequired(std::get<0>(unresolved.components), CSSCalcSymbolTable { }),
+            evaluateCalcIfNoConversionDataRequired(std::get<1>(unresolved.components), CSSCalcSymbolTable { }),
+            evaluateCalcIfNoConversionDataRequired(std::get<2>(unresolved.components), CSSCalcSymbolTable { }),
+            evaluateCalcIfNoConversionDataRequired(std::get<3>(unresolved.components), CSSCalcSymbolTable { })
+        }
+    };
+
+    return normalizeNonCalcComponents(WTFMove(partiallyResolved), state);
+}
+
 // Overload of `consumeAbsoluteFunctionParameters` for callers that already have the initial component consumed.
 template<typename Descriptor>
 static std::optional<CSSUnresolvedColor> consumeAbsoluteFunctionParameters(CSSParserTokenRange& args, ColorParserState& state, CSSUnresolvedAbsoluteColorComponent<Descriptor, 0> c1)
@@ -193,19 +243,37 @@ static std::optional<CSSUnresolvedColor> consumeAbsoluteFunctionParameters(CSSPa
         .components = { WTFMove(c1), WTFMove(*c2), WTFMove(*c3), WTFMove(alpha) },
     };
 
+    if constexpr (Descriptor::allowEagerEvaluationOfResolvableCalc) {
+        // From CSS Color 4:
+        //    "For historical reasons, when calc() in sRGB colors resolves to a single
+        //     value, the declared value serializes without the calc() wrapper."
+        //       - https://drafts.csswg.org/css-color-4/#resolving-sRGB-values
+        //
+        // calc() will "resolve to a single value" when no conversion data is required.
+
+        // For this legacy / eager evaluating case, we want to preserve any calc() components that require conversion data.
+        if (requiresConversionData<Descriptor>(unresolved.components))
+            return makeCSSUnresolvedColor(normalizeNonCalcRequiringConversionDataComponents(unresolved, state));
+    } else {
+        // For the non-legacy / non-eager evaluating cases, we want preserve any calc(), not just calc() requiring conversion data, so the check is a bit more permissive.
+        if (containsUnevaluatedCalc<Descriptor>(unresolved.components))
+            return makeCSSUnresolvedColor(normalizeNonCalcComponents(unresolved, state));
+    }
+
+    ASSERT(!requiresConversionData<Descriptor>(unresolved.components));
+
+    // In all other cases, we can fully resolve the color all the way to an absolute Color value.
+
     auto resolver = CSSAbsoluteColorResolver<Descriptor> {
         .components = unresolved.components,
         .nestingLevel = state.nestingLevel
     };
 
-    if (!requiresConversionData(resolver)) {
-        // CSS Color 4 specifies that absolute colors do not need to retain `calc()`
-        // for declared value serialization (as distinct from relative colors, that
-        // always do), when the `calc()` can be resolved to a single value.
-        return makeCSSUnresolvedColor(CSSUnresolvedAbsoluteResolvedColor { resolveNoConversionDataRequired(WTFMove(resolver)) });
-    }
+    auto unresolvedResolved = CSSUnresolvedAbsoluteResolvedColor {
+        resolveNoConversionDataRequired(WTFMove(resolver))
+    };
 
-    return makeCSSUnresolvedColor(WTFMove(unresolved));
+    return makeCSSUnresolvedColor(WTFMove(unresolvedResolved));
 }
 
 template<typename Descriptor>

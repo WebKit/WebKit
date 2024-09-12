@@ -108,7 +108,7 @@ private:
     bool isStreamInvalidated() { return m_streamID == WebCore::invalidCurlStreamID; }
     void destructStream();
 
-    NetworkSocketChannel& m_channel;
+    CheckedRef<NetworkSocketChannel> m_channel;
     WebPageProxyIdentifier m_webProxyPageID;
     WebCore::ResourceRequest m_request;
     String m_protocol;

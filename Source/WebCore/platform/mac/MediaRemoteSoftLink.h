@@ -93,3 +93,7 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteCommandInfoPre
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteCopyPickableRoutes, CFArrayRef, (), ())
 #define MRMediaRemoteCopyPickableRoutes softLink_MediaRemote_MRMediaRemoteCopyPickableRoutes
 #endif
+
+#if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
+SOFT_LINK_CLASS_FOR_HEADER(WebCore, MRUIControllerProvider);
+#endif

@@ -23,12 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKit/WKDownloadDelegatePrivate.h>
 #import <WebKit/WebKit.h>
 
 enum class DownloadCallback : uint8_t {
     WillRedirect,
     AuthenticationChallenge,
     DecideDestination,
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    DecidePlaceholderPolicy,
+    DidReceivePlaceholderURL,
+    DidReceiveFinalURL,
+#endif
     DidFinish,
     DidFailWithError,
     NavigationActionBecameDownload,
@@ -37,7 +43,7 @@ enum class DownloadCallback : uint8_t {
     NavigationResponse,
 };
 
-@interface TestDownloadDelegate : NSObject<WKDownloadDelegate, WKNavigationDelegate>
+@interface TestDownloadDelegate : NSObject<WKDownloadDelegatePrivate, WKNavigationDelegate>
 
 @property (nonatomic, copy) void (^willPerformHTTPRedirection)(WKDownload *, NSHTTPURLResponse *, NSURLRequest *, void (^)(WKDownloadRedirectPolicy));
 @property (nonatomic, copy) void (^didReceiveAuthenticationChallenge)(WKDownload *, NSURLAuthenticationChallenge *, void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential*));
@@ -49,6 +55,10 @@ enum class DownloadCallback : uint8_t {
 @property (nonatomic, copy) void (^navigationResponseDidBecomeDownload)(WKWebView *, WKNavigationResponse *, WKDownload *);
 @property (nonatomic, copy) void (^decidePolicyForNavigationAction)(WKNavigationAction *, void (^)(WKNavigationActionPolicy));
 @property (nonatomic, copy) void (^decidePolicyForNavigationResponse)(WKNavigationResponse *, void (^)(WKNavigationResponsePolicy));
+
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+@property (nonatomic, copy) void (^decidePlaceholderPolicy)(WKDownload *, void (^)(_WKPlaceholderPolicy, NSURL *));
+#endif
 
 - (void)waitForDownloadDidFinish;
 - (Vector<DownloadCallback>)takeCallbackRecord;

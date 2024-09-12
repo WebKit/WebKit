@@ -28,6 +28,7 @@
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcTree+Simplification.h"
 #include "CSSCalcTree.h"
+#include "CalculationExecutor.h"
 
 namespace WebCore {
 namespace CSSCalc {

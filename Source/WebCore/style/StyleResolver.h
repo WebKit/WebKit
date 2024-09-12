@@ -147,7 +147,8 @@ public:
 
     bool usesFirstLineRules() const { return m_ruleSets.features().usesFirstLineRules; }
     bool usesFirstLetterRules() const { return m_ruleSets.features().usesFirstLetterRules; }
-    
+    bool usesStartingStyleRules() const { return m_ruleSets.features().hasStartingStyleRules; }
+
     void invalidateMatchedDeclarationsCache();
     void clearCachedDeclarationsAffectedByViewportUnits();
 

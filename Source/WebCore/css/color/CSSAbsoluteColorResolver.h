@@ -48,15 +48,6 @@ struct CSSAbsoluteColorResolver {
 };
 
 template<typename Descriptor>
-bool requiresConversionData(const CSSAbsoluteColorResolver<Descriptor>& absolute)
-{
-    return requiresConversionData(std::get<0>(absolute.components))
-        || requiresConversionData(std::get<1>(absolute.components))
-        || requiresConversionData(std::get<2>(absolute.components))
-        || requiresConversionData(std::get<3>(absolute.components));
-}
-
-template<typename Descriptor>
 Color resolve(const CSSAbsoluteColorResolver<Descriptor>& absolute, const CSSToLengthConversionData& conversionData)
 {
     // Evaluated any calc values to their corresponding channel value.
@@ -78,7 +69,7 @@ Color resolve(const CSSAbsoluteColorResolver<Descriptor>& absolute, const CSSToL
 template<typename Descriptor>
 Color resolveNoConversionDataRequired(const CSSAbsoluteColorResolver<Descriptor>& absolute)
 {
-    ASSERT(!requiresConversionData(absolute));
+    ASSERT(!requiresConversionData(absolute.components));
 
     // Evaluated any calc values to their corresponding channel value.
     auto components = CSSColorParseType<Descriptor> {

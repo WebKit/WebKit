@@ -80,6 +80,7 @@ struct CSSParserContext {
     bool transformStyleOptimized3DEnabled : 1 { false };
 #endif
     bool masonryEnabled : 1 { false };
+    bool cssAppearanceBaseEnabled : 1 { false };
     bool cssNestingEnabled : 1 { false };
     bool cssPaintingAPIEnabled : 1 { false };
     bool cssScopeAtRuleEnabled : 1 { false };

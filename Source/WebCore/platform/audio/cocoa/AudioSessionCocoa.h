@@ -28,6 +28,7 @@
 #if USE(AUDIO_SESSION) && PLATFORM(COCOA)
 
 #include "AudioSession.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 class WorkQueue;
@@ -36,6 +37,7 @@ class WorkQueue;
 namespace WebCore {
 
 class AudioSessionCocoa : public AudioSession {
+    WTF_MAKE_TZONE_ALLOCATED(AudioSessionCocoa);
 public:
     virtual ~AudioSessionCocoa();
 

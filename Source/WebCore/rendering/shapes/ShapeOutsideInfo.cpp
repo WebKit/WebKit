@@ -201,10 +201,10 @@ static inline LayoutUnit borderBeforeInWritingMode(const RenderBox& renderer, Wr
 {
     auto blockFlowDirection = writingModeToBlockFlowDirection(writingMode);
     switch (blockFlowDirection) {
-    case BlockFlowDirection::TopToBottom: return renderer.borderTop();
-    case BlockFlowDirection::BottomToTop: return renderer.borderBottom();
-    case BlockFlowDirection::LeftToRight: return renderer.borderLeft();
-    case BlockFlowDirection::RightToLeft: return renderer.borderRight();
+    case FlowDirection::TopToBottom: return renderer.borderTop();
+    case FlowDirection::BottomToTop: return renderer.borderBottom();
+    case FlowDirection::LeftToRight: return renderer.borderLeft();
+    case FlowDirection::RightToLeft: return renderer.borderRight();
     }
 
     ASSERT_NOT_REACHED();
@@ -215,10 +215,10 @@ static inline LayoutUnit borderAndPaddingBeforeInWritingMode(const RenderBox& re
 {
     auto blockFlowDirection = writingModeToBlockFlowDirection(writingMode);
     switch (blockFlowDirection) {
-    case BlockFlowDirection::TopToBottom: return renderer.borderTop() + renderer.paddingTop();
-    case BlockFlowDirection::BottomToTop: return renderer.borderBottom() + renderer.paddingBottom();
-    case BlockFlowDirection::LeftToRight: return renderer.borderLeft() + renderer.paddingLeft();
-    case BlockFlowDirection::RightToLeft: return renderer.borderRight() + renderer.paddingRight();
+    case FlowDirection::TopToBottom: return renderer.borderTop() + renderer.paddingTop();
+    case FlowDirection::BottomToTop: return renderer.borderBottom() + renderer.paddingBottom();
+    case FlowDirection::LeftToRight: return renderer.borderLeft() + renderer.paddingLeft();
+    case FlowDirection::RightToLeft: return renderer.borderRight() + renderer.paddingRight();
     }
 
     ASSERT_NOT_REACHED();

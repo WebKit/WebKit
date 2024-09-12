@@ -202,7 +202,7 @@ ALWAYS_INLINE bool containslanguageSubtagMatchingRange(StringView language, Stri
     return false;
 }
 
-ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const FixedVector<PossiblyQuotedIdentifier>& argumentList)
+ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const FixedVector<PossiblyQuotedIdentifier>& langList)
 {
     AtomString language;
 #if ENABLE(VIDEO)
@@ -218,7 +218,7 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const FixedVec
     // Implement basic and extended filterings of given language tags as specified in www.ietf.org/rfc/rfc4647.txt.
     StringView languageStringView = language;
     unsigned languageLength = language.length();
-    for (auto& range : argumentList) {
+    for (auto& range : langList) {
         StringView rangeStringView = range.identifier;
         if (rangeStringView.isEmpty())
             continue;
@@ -587,7 +587,7 @@ ALWAYS_INLINE bool matchesActiveViewTransitionPseudoClass(const Element& element
     return !!element.document().activeViewTransition();
 }
 
-ALWAYS_INLINE bool matchesActiveViewTransitionTypePseudoClass(const Element& element, const FixedVector<PossiblyQuotedIdentifier>& typesInSelector)
+ALWAYS_INLINE bool matchesActiveViewTransitionTypePseudoClass(const Element& element, const FixedVector<AtomString>& types)
 {
     // This pseudo class only matches the root element.
     if (&element != element.document().documentElement())
@@ -596,16 +596,13 @@ ALWAYS_INLINE bool matchesActiveViewTransitionTypePseudoClass(const Element& ele
     if (const auto* viewTransition = element.document().activeViewTransition()) {
         const auto& activeTypes = viewTransition->types();
 
-        for (const auto& type : typesInSelector) {
-            ASSERT(!type.wasQuoted);
-
+        for (const auto& type : types) {
             // https://github.com/w3c/csswg-drafts/issues/9534#issuecomment-1802364085
             // RESOLVED: type can accept any idents, except 'none' or '-ua-' prefixes
-            const auto& ident = type.identifier;
-            if (ident.convertToASCIILowercase() == "none"_s || ident.convertToASCIILowercase().startsWith("-ua-"_s))
+            if (type.convertToASCIILowercase() == "none"_s || type.convertToASCIILowercase().startsWith("-ua-"_s))
                 continue;
 
-            if (activeTypes.hasType(ident))
+            if (activeTypes.hasType(type))
                 return true;
         }
     }

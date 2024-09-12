@@ -28,6 +28,7 @@
 #if USE(AUDIO_SESSION) && PLATFORM(IOS_FAMILY)
 
 #include "AudioSessionCocoa.h"
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WebInterruptionObserverHelper;
 
@@ -38,6 +39,7 @@ class WorkQueue;
 namespace WebCore {
 
 class AudioSessionIOS final : public AudioSessionCocoa {
+    WTF_MAKE_TZONE_ALLOCATED(AudioSessionIOS);
 public:
     AudioSessionIOS();
     virtual ~AudioSessionIOS();

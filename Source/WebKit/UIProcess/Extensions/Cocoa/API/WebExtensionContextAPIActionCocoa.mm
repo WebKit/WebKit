@@ -114,7 +114,7 @@ void WebExtensionContext::actionSetTitle(std::optional<WebExtensionWindowIdentif
     completionHandler({ });
 }
 
-void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& iconDictionaryJSON, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& iconsJSON, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"action.setIcon()";
 
@@ -124,7 +124,19 @@ void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifi
         return;
     }
 
-    action.value()->setIconsDictionary(parseJSON(iconDictionaryJSON));
+    id parsedIcons = parseJSON(iconsJSON, JSONOptions::FragmentsAllowed);
+    if (auto *dictionary = dynamic_objc_cast<NSDictionary>(parsedIcons))
+        action.value()->setIcons(dictionary);
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    else if (auto *array = dynamic_objc_cast<NSArray>(parsedIcons))
+        action.value()->setIconVariants(array);
+#endif
+    else {
+        action.value()->setIcons(nil);
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        action.value()->setIconVariants(nil);
+#endif
+    }
 
     completionHandler({ });
 }

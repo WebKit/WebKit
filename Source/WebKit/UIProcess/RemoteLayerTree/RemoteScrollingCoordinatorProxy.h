@@ -116,7 +116,8 @@ public:
     WebCore::ScrollingNodeID rootScrollingNodeID() const;
 
     const RemoteLayerTreeHost* layerTreeHost() const;
-    WebPageProxy& webPageProxy() const { return m_webPageProxy; }
+    WebPageProxy& webPageProxy() const;
+    Ref<WebPageProxy> protectedWebPageProxy() const;
 
     std::optional<WebCore::RequestedScrollData> commitScrollingTreeState(IPC::Connection&, const RemoteScrollingCoordinatorTransaction&, std::optional<WebCore::LayerHostingContextIdentifier> = std::nullopt);
 
@@ -200,7 +201,7 @@ protected:
     void sendUIStateChangedIfNecessary();
 
 private:
-    WebPageProxy& m_webPageProxy;
+    WeakRef<WebPageProxy> m_webPageProxy;
     RefPtr<RemoteScrollingTree> m_scrollingTree;
 
 protected:

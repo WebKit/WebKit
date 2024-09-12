@@ -56,7 +56,7 @@ Ref<GeolocationPermissionRequestProxy> GeolocationPermissionRequestManagerProxy:
 
 void GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDecision(GeolocationIdentifier geolocationID, bool allowed)
 {
-    if (!m_page.hasRunningProcess())
+    if (!m_page->hasRunningProcess())
         return;
 
     auto it = m_pendingRequests.find(geolocationID);
@@ -68,7 +68,7 @@ void GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDe
     if (!authorizationToken.isNull())
         m_validAuthorizationTokens.add(authorizationToken);
     if (RefPtr process = it->value->process())
-        process->send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, authorizationToken), m_page.webPageIDInProcess(*process));
+        process->send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, authorizationToken), m_page->webPageIDInProcess(*process));
 #else
     UNUSED_PARAM(allowed);
 #endif

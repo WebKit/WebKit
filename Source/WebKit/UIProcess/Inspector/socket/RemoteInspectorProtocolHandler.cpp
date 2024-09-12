@@ -81,7 +81,7 @@ public:
             return;
 
         URL requestURL { page.pageLoadState().url() };
-        m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), connectionID, targetID, type);
+        m_inspectorProtocolHandler->inspect(requestURL.hostAndPort(), connectionID, targetID, type);
     }
     
     bool supportsAsyncReply() override
@@ -94,7 +94,7 @@ public:
     }
 
 private:
-    RemoteInspectorProtocolHandler& m_inspectorProtocolHandler;
+    CheckedRef<RemoteInspectorProtocolHandler> m_inspectorProtocolHandler;
 };
 
 class LoaderClient final : public API::LoaderClient {
@@ -140,9 +140,14 @@ void RemoteInspectorProtocolHandler::inspect(const String& hostAndPort, Connecti
         m_inspectorClient->inspect(connectionID, targetID, debuggableType.value());
 }
 
+Ref<WebPageProxy> RemoteInspectorProtocolHandler::protectedPage() const
+{
+    return m_page.get();
+}
+
 void RemoteInspectorProtocolHandler::runScript(const String& script)
 {
-    m_page.runJavaScriptInMainFrame({ script, JSC::SourceTaintedOrigin::Untainted, URL { }, false, std::nullopt, false, RemoveTransientActivation::Yes },
+    protectedPage()->runJavaScriptInMainFrame({ script, JSC::SourceTaintedOrigin::Untainted, URL { }, false, std::nullopt, false, RemoveTransientActivation::Yes },
         [] (auto&& result) {
         if (!result.has_value())
             LOG_ERROR("Exception running script \"%s\"", result.error().message.utf8().data());
@@ -194,7 +199,7 @@ void RemoteInspectorProtocolHandler::platformStartTask(WebPageProxy& pageProxy, 
     pageProxy.configuration().userContentController().addUserScriptMessageHandler(handler.get());
 
     // Setup loader client to get notified of page load
-    m_page.setLoaderClient(makeUnique<LoaderClient>([this] {
+    protectedPage()->setLoaderClient(makeUnique<LoaderClient>([this] {
         m_pageLoaded = true;
         updateTargetList();
     }));

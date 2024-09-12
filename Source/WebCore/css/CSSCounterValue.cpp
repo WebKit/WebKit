@@ -35,7 +35,7 @@
 namespace WebCore {
 
 CSSCounterValue::CSSCounterValue(AtomString identifier, AtomString separator, RefPtr<CSSValue> counterStyle)
-    : CSSValue(CounterClass)
+    : CSSValue(ClassType::Counter)
     , m_identifier(WTFMove(identifier))
     , m_separator(WTFMove(separator))
     , m_counterStyle(WTFMove(counterStyle))

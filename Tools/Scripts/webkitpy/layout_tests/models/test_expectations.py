@@ -585,6 +585,7 @@ class TestExpectationsModel(object):
 
         # Maps a test to a TestExpectationLine instance.
         self._test_to_expectation_line = {}  # type: Dict[str, TestExpectationLine]
+        self._test_to_expectation_lines = {}  # type: Dict[str, List[TestExpectationLine]]
 
         self._modifier_to_tests = self._dict_of_sets(TestExpectations.MODIFIERS)  # type: Dict[int, Set[str]]
         self._expectation_to_tests = self._dict_of_sets(TestExpectations.EXPECTATIONS)  # type: Dict[int, Set[str]]
@@ -664,6 +665,10 @@ class TestExpectationsModel(object):
         # type: (str) -> Optional[TestExpectationLine]
         return self._test_to_expectation_line.get(test)
 
+    def get_expectation_lines(self, test):
+        # type: (str) -> Optional[List[TestExpectationLine]]
+        return self._test_to_expectation_lines.get(test)
+
     def get_expectations(self, test):
         # type: (str) -> Set[int]
         return self._test_to_expectations[test]
@@ -715,6 +720,8 @@ class TestExpectationsModel(object):
             return
 
         for test in expectation_line.matching_tests:
+            self._test_to_expectation_lines.setdefault(test, []).append(expectation_line)
+
             if not in_skipped and self._already_seen_better_match(test, expectation_line):
                 continue
 

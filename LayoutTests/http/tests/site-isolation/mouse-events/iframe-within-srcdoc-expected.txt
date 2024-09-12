@@ -1,0 +1,12 @@
+Verifies that an isolated iframe created within the srcdoc of another iframe can receive mouse events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS events[0] is 'mousemove'
+PASS events[1] is 'mousedown'
+PASS events[2] is 'mouseup'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

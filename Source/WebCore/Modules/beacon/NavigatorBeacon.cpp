@@ -86,7 +86,7 @@ void NavigatorBeacon::logError(const ResourceError& error)
 {
     ASSERT(!error.isNull());
 
-    RefPtr frame = m_navigator.frame();
+    RefPtr frame = m_navigator->frame();
     if (!frame)
         return;
 

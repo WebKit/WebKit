@@ -28,12 +28,14 @@
 
 #include "ContentSecurityPolicyDirective.h"
 #include "ContentSecurityPolicySourceList.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ContentSecurityPolicyDirectiveList;
 
 class ContentSecurityPolicySourceListDirective : public ContentSecurityPolicyDirective {
+    WTF_MAKE_TZONE_ALLOCATED(ContentSecurityPolicySourceListDirective);
 public:
     ContentSecurityPolicySourceListDirective(const ContentSecurityPolicyDirectiveList&, const String& name, const String& value);
 

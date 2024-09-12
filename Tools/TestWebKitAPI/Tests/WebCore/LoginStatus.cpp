@@ -43,10 +43,10 @@ TEST(LoginStatus, DefaultExpiryWebAuthn)
     auto loggedInResult = LoginStatus::create(loginDomain, "admin"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::WebAuthn);
     auto& loggedIn = loggedInResult.returnValue().get();
     auto now = WallTime::now();
-    ASSERT_EQ(loggedIn.registrableDomain().string(), "example.com"_s);
+    ASSERT_EQ(loggedIn.domain().string(), "example.com"_s);
     ASSERT_EQ(loggedIn.username(), "admin"_s);
-    ASSERT_EQ(loggedIn.credentialTokenType(), LoginStatus::CredentialTokenType::HTTPStateToken);
-    ASSERT_EQ(loggedIn.authenticationType(), LoginStatus::AuthenticationType::WebAuthn);
+    ASSERT_EQ(loggedIn.tokenType(), LoginStatus::CredentialTokenType::HTTPStateToken);
+    ASSERT_EQ(loggedIn.authType(), LoginStatus::AuthenticationType::WebAuthn);
     ASSERT_TRUE(loggedIn.loggedInTime() < now + 60_s);
     ASSERT_TRUE(loggedIn.loggedInTime() > now - 60_s);
     ASSERT_TRUE(loggedIn.expiry() < now + LoginStatus::TimeToLiveLong + 60_s);
@@ -61,7 +61,7 @@ TEST(LoginStatus, DefaultExpiryPasswordManager)
     auto loggedInResult = LoginStatus::create(loginDomain, "admin"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::PasswordManager);
     auto& loggedIn = loggedInResult.returnValue().get();
     auto now = WallTime::now();
-    ASSERT_EQ(loggedIn.authenticationType(), LoginStatus::AuthenticationType::PasswordManager);
+    ASSERT_EQ(loggedIn.authType(), LoginStatus::AuthenticationType::PasswordManager);
     ASSERT_TRUE(loggedIn.expiry() < now + LoginStatus::TimeToLiveLong + 60_s);
     ASSERT_TRUE(loggedIn.expiry() > now + LoginStatus::TimeToLiveLong - 60_s);
     ASSERT_FALSE(loggedIn.hasExpired());
@@ -74,7 +74,7 @@ TEST(LoginStatus, DefaultExpiryUnmanaged)
     auto loggedInResult = LoginStatus::create(loginDomain, "admin"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::Unmanaged);
     auto& loggedIn = loggedInResult.returnValue().get();
     auto now = WallTime::now();
-    ASSERT_EQ(loggedIn.authenticationType(), LoginStatus::AuthenticationType::Unmanaged);
+    ASSERT_EQ(loggedIn.authType(), LoginStatus::AuthenticationType::Unmanaged);
     ASSERT_TRUE(loggedIn.expiry() < now + LoginStatus::TimeToLiveShort + 60_s);
     ASSERT_TRUE(loggedIn.expiry() > now + LoginStatus::TimeToLiveShort - 60_s);
     ASSERT_FALSE(loggedIn.hasExpired());
@@ -88,7 +88,7 @@ TEST(LoginStatus, CustomExpiryBelowLong)
     auto loggedInResult = LoginStatus::create(loginDomain, "admin"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::WebAuthn, customExpiry);
     auto& loggedIn = loggedInResult.returnValue().get();
     auto now = WallTime::now();
-    ASSERT_EQ(loggedIn.authenticationType(), LoginStatus::AuthenticationType::WebAuthn);
+    ASSERT_EQ(loggedIn.authType(), LoginStatus::AuthenticationType::WebAuthn);
     ASSERT_TRUE(loggedIn.expiry() < now + customExpiry + 60_s);
     ASSERT_TRUE(loggedIn.expiry() > now + customExpiry - 60_s);
     ASSERT_FALSE(loggedIn.hasExpired());
@@ -102,7 +102,7 @@ TEST(LoginStatus, CustomExpiryBelowShort)
     auto loggedInResult = LoginStatus::create(loginDomain, "admin"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::PasswordManager, customExpiry);
     auto& loggedIn = loggedInResult.returnValue().get();
     auto now = WallTime::now();
-    ASSERT_EQ(loggedIn.authenticationType(), LoginStatus::AuthenticationType::PasswordManager);
+    ASSERT_EQ(loggedIn.authType(), LoginStatus::AuthenticationType::PasswordManager);
     ASSERT_TRUE(loggedIn.expiry() < now + customExpiry + 60_s);
     ASSERT_TRUE(loggedIn.expiry() > now + customExpiry - 60_s);
     ASSERT_FALSE(loggedIn.hasExpired());
@@ -116,13 +116,13 @@ TEST(LoginStatus, RenewedExpiry)
     auto loggedInResult = LoginStatus::create(loginDomain, "admin"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::WebAuthn, customExpiry);
     auto loggedIn = loggedInResult.releaseReturnValue();
     auto now = WallTime::now();
-    ASSERT_EQ(loggedIn->authenticationType(), LoginStatus::AuthenticationType::WebAuthn);
+    ASSERT_EQ(loggedIn->authType(), LoginStatus::AuthenticationType::WebAuthn);
     ASSERT_TRUE(loggedIn->expiry() < now + customExpiry + 60_s);
     ASSERT_TRUE(loggedIn->expiry() > now + customExpiry - 60_s);
     ASSERT_FALSE(loggedIn->hasExpired());
     auto newCustomExpiry = 24_h;
     loggedIn->setTimeToLive(newCustomExpiry);
-    ASSERT_EQ(loggedIn->authenticationType(), LoginStatus::AuthenticationType::WebAuthn);
+    ASSERT_EQ(loggedIn->authType(), LoginStatus::AuthenticationType::WebAuthn);
     ASSERT_TRUE(loggedIn->expiry() < now + newCustomExpiry + 60_s);
     ASSERT_TRUE(loggedIn->expiry() > now + newCustomExpiry - 60_s);
     ASSERT_FALSE(loggedIn->hasExpired());
@@ -158,7 +158,7 @@ TEST(LoginStatus, ClampedExpiryLong)
     auto loggedInResult = LoginStatus::create(loginDomain, "admin"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::WebAuthn, LoginStatus::TimeToLiveLong + 24_h);
     auto loggedIn = loggedInResult.releaseReturnValue();
     auto now = WallTime::now();
-    ASSERT_EQ(loggedIn->authenticationType(), LoginStatus::AuthenticationType::WebAuthn);
+    ASSERT_EQ(loggedIn->authType(), LoginStatus::AuthenticationType::WebAuthn);
     ASSERT_TRUE(loggedIn->expiry() < now + LoginStatus::TimeToLiveLong + 60_s);
     ASSERT_TRUE(loggedIn->expiry() > now + LoginStatus::TimeToLiveLong - 60_s);
     ASSERT_FALSE(loggedIn->hasExpired());
@@ -166,7 +166,7 @@ TEST(LoginStatus, ClampedExpiryLong)
     // Renewed, too long expiries for managed auth types should also be clamped to LoginStatus::TimeToLiveLong.
     auto newCustomExpiry = LoginStatus::TimeToLiveLong + 24_h;
     loggedIn->setTimeToLive(newCustomExpiry);
-    ASSERT_EQ(loggedIn->authenticationType(), LoginStatus::AuthenticationType::WebAuthn);
+    ASSERT_EQ(loggedIn->authType(), LoginStatus::AuthenticationType::WebAuthn);
     ASSERT_TRUE(loggedIn->expiry() < now + LoginStatus::TimeToLiveLong + 60_s);
     ASSERT_TRUE(loggedIn->expiry() > now + LoginStatus::TimeToLiveLong - 60_s);
     ASSERT_FALSE(loggedIn->hasExpired());
@@ -180,7 +180,7 @@ TEST(LoginStatus, ClampedExpiryShort)
     auto loggedInResult = LoginStatus::create(loginDomain, "admin"_s, LoginStatus::CredentialTokenType::HTTPStateToken, LoginStatus::AuthenticationType::Unmanaged, LoginStatus::TimeToLiveShort + 24_h);
     auto loggedIn = loggedInResult.returnValue().get();
     auto now = WallTime::now();
-    ASSERT_EQ(loggedIn.authenticationType(), LoginStatus::AuthenticationType::Unmanaged);
+    ASSERT_EQ(loggedIn.authType(), LoginStatus::AuthenticationType::Unmanaged);
     ASSERT_TRUE(loggedIn.expiry() < now + LoginStatus::TimeToLiveShort + 60_s);
     ASSERT_TRUE(loggedIn.expiry() > now + LoginStatus::TimeToLiveShort - 60_s);
     ASSERT_FALSE(loggedIn.hasExpired());
@@ -188,7 +188,7 @@ TEST(LoginStatus, ClampedExpiryShort)
     // Renewed, too long expiries for unmanaged auth types should also be clamped to LoginStatus::TimeToLiveShort.
     auto newCustomExpiry = LoginStatus::TimeToLiveShort + 24_h;
     loggedIn.setTimeToLive(newCustomExpiry);
-    ASSERT_EQ(loggedIn.authenticationType(), LoginStatus::AuthenticationType::Unmanaged);
+    ASSERT_EQ(loggedIn.authType(), LoginStatus::AuthenticationType::Unmanaged);
     ASSERT_TRUE(loggedIn.expiry() < now + LoginStatus::TimeToLiveShort + 60_s);
     ASSERT_TRUE(loggedIn.expiry() > now + LoginStatus::TimeToLiveShort - 60_s);
     ASSERT_FALSE(loggedIn.hasExpired());

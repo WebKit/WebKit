@@ -29,10 +29,12 @@
 
 #import "ControlMac.h"
 #import "SliderTrackPart.h"
+#import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SliderTrackMac final : public ControlMac {
+    WTF_MAKE_TZONE_ALLOCATED(SliderTrackMac);
 public:
     SliderTrackMac(SliderTrackPart&, ControlFactoryMac&);
 

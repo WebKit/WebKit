@@ -27,6 +27,7 @@
 
 #include "IDBIndexInfo.h"
 #include "IDBResourceIdentifier.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
@@ -54,7 +55,9 @@ class MemoryBackingStoreTransaction;
 class MemoryIndexCursor;
 class MemoryObjectStore;
 
-class MemoryIndex : public RefCounted<MemoryIndex> {
+class MemoryIndex : public RefCounted<MemoryIndex>, public CanMakeThreadSafeCheckedPtr<MemoryIndex> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MemoryIndex);
 public:
     static Ref<MemoryIndex> create(const IDBIndexInfo&, MemoryObjectStore&);
 
@@ -81,7 +84,8 @@ public:
 
     IndexValueStore* valueStore() { return m_records.get(); }
 
-    WeakPtr<MemoryObjectStore> objectStore() { return m_objectStore; }
+    WeakPtr<MemoryObjectStore> objectStore();
+    RefPtr<MemoryObjectStore> protectedObjectStore();
 
     void cursorDidBecomeClean(MemoryIndexCursor&);
     void cursorDidBecomeDirty(MemoryIndexCursor&);

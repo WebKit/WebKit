@@ -122,6 +122,8 @@ private:
 
     static String removeAmpersands(const String&);
 
+    void clearIconCache() const;
+
     enum class ForceUnchecked : bool { No, Yes };
     CocoaMenuItem *platformMenuItem(const WebExtensionMenuItemContextParameters&, ForceUnchecked = ForceUnchecked::No) const;
 
@@ -132,7 +134,15 @@ private:
     String m_title;
 
     RefPtr<WebExtensionCommand> m_command;
+
+    mutable RetainPtr<CocoaImage> m_cachedIcon;
+    mutable RetainPtr<NSSet> m_cachedIconScales;
+    mutable CGSize m_cachedIconIdealSize { CGSizeZero };
+
     RetainPtr<NSDictionary> m_icons;
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+    RetainPtr<NSArray> m_iconVariants;
+#endif
 
     bool m_checked : 1 { false };
     bool m_enabled : 1 { true };

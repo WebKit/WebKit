@@ -101,7 +101,7 @@ public:
     // Return the viewport for eye in Screen Space
     IntRect drawViewport(PlatformXR::Eye) const;
 
-    void startFrame(const PlatformXR::FrameData::LayerData&);
+    void startFrame(PlatformXR::FrameData::LayerData&);
     void endFrame();
     bool usesLayeredMode() const;
 
@@ -152,6 +152,7 @@ private:
     MachSendRight m_completionSyncEvent;
     uint64_t m_renderingFrameIndex { ~0u };
     bool m_usingFoveation { false };
+    bool m_blitDepth { false };
 #else
     PlatformGLObject m_colorTexture;
 #endif

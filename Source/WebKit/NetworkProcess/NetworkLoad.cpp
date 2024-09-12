@@ -339,4 +339,9 @@ String NetworkLoad::attributedBundleIdentifier(WebPageProxyIdentifier pageID)
     return { };
 }
 
+RefPtr<NetworkDataTask> NetworkLoad::protectedTask()
+{
+    return m_task;
+}
+
 } // namespace WebKit

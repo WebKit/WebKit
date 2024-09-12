@@ -38,14 +38,14 @@ using namespace WebCore;
 namespace TestWebKitAPI {
 
 constexpr std::array<TextFlow, 8> flows = {
-    TextFlow { BlockFlowDirection::TopToBottom, TextDirection::LTR },
-    TextFlow { BlockFlowDirection::TopToBottom, TextDirection::RTL },
-    TextFlow { BlockFlowDirection::BottomToTop, TextDirection::LTR },
-    TextFlow { BlockFlowDirection::BottomToTop, TextDirection::RTL },
-    TextFlow { BlockFlowDirection::LeftToRight, TextDirection::LTR },
-    TextFlow { BlockFlowDirection::LeftToRight, TextDirection::RTL },
-    TextFlow { BlockFlowDirection::RightToLeft, TextDirection::LTR },
-    TextFlow { BlockFlowDirection::RightToLeft, TextDirection::RTL }
+    TextFlow { FlowDirection::TopToBottom, TextDirection::LTR },
+    TextFlow { FlowDirection::TopToBottom, TextDirection::RTL },
+    TextFlow { FlowDirection::BottomToTop, TextDirection::LTR },
+    TextFlow { FlowDirection::BottomToTop, TextDirection::RTL },
+    TextFlow { FlowDirection::LeftToRight, TextDirection::LTR },
+    TextFlow { FlowDirection::LeftToRight, TextDirection::RTL },
+    TextFlow { FlowDirection::RightToLeft, TextDirection::LTR },
+    TextFlow { FlowDirection::RightToLeft, TextDirection::RTL }
 };
 
 inline std::string textFlowString(TextFlow flow)

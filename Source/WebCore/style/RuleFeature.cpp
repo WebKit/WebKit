@@ -408,6 +408,8 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData, const Vector<Ref<
         siblingRules.append({ ruleData });
     if (ruleData.containsUncommonAttributeSelector())
         uncommonAttributeRules.append({ ruleData });
+    if (ruleData.isStartingStyle() == IsStartingStyle::Yes)
+        hasStartingStyleRules = true;
 
     auto addToMap = [&]<typename HostAffectingNames>(auto& map, auto& entries, HostAffectingNames hostAffectingNames) {
         for (auto& entry : entries) {
@@ -505,6 +507,7 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
 
     usesFirstLineRules = usesFirstLineRules || other.usesFirstLineRules;
     usesFirstLetterRules = usesFirstLetterRules || other.usesFirstLetterRules;
+    hasStartingStyleRules = hasStartingStyleRules || other.hasStartingStyleRules;
 }
 
 void RuleFeatureSet::registerContentAttribute(const AtomString& attributeName)
@@ -535,6 +538,7 @@ void RuleFeatureSet::clear()
     pseudoClasses.clear();
     usesFirstLineRules = false;
     usesFirstLetterRules = false;
+    hasStartingStyleRules = false;
 }
 
 void RuleFeatureSet::shrinkToFit()

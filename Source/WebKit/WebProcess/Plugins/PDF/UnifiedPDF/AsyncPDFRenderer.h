@@ -177,6 +177,8 @@ private:
 
     void paintPDFPageIntoBuffer(RetainPtr<PDFDocument>&&, Ref<WebCore::ImageBuffer>, PDFDocumentLayout::PageIndex, const WebCore::FloatRect& pageBounds);
 
+    Ref<ConcurrentWorkQueue> protectedPaintingWorkQueue() { return m_paintingWorkQueue; }
+
     static WebCore::FloatRect convertTileRectToPaintingCoords(const WebCore::FloatRect&, float pageScaleFactor);
     static WebCore::AffineTransform tileToPaintingTransform(float tilingScaleFactor);
     static WebCore::AffineTransform paintingToTileTransform(float tilingScaleFactor);
@@ -201,6 +203,8 @@ private:
     struct RenderedTile {
         RefPtr<WebCore::ImageBuffer> buffer;
         TileRenderInfo tileInfo;
+
+        RefPtr<WebCore::ImageBuffer> protectedBuffer() { return buffer; }
     };
     HashMap<TileForGrid, RenderedTile> m_rendereredTiles;
 

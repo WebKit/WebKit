@@ -195,7 +195,6 @@ private:
     Vector<WGPUTextureFormat> m_descriptorColorFormats;
     NSString* m_lastErrorString { nil };
     bool m_requiresCommandReplay { false };
-    bool m_requiresMetalWorkaround { true };
     bool m_finished { false };
     uint32_t m_sampleMask { defaultSampleMask };
 };

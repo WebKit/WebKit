@@ -142,6 +142,9 @@ private:
 
     const Ref<Device> m_device;
     mutable WeakHashSet<CommandEncoder> m_commandEncoders;
+#if CPU(X86_64)
+    bool m_mappedAtCreation { false };
+#endif
 };
 
 } // namespace WebGPU

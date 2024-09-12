@@ -142,7 +142,7 @@ void RemoteDevice::destruct()
 void RemoteDevice::createXRBinding(WebGPUIdentifier identifier)
 {
     auto binding = m_backing->createXRBinding();
-    auto remoteBinding = RemoteXRBinding::create(*binding, m_objectHeap, m_gpu, m_streamConnection.copyRef(), identifier);
+    auto remoteBinding = RemoteXRBinding::create(*m_gpuConnectionToWebProcess.get(), *binding, m_objectHeap, m_gpu, m_streamConnection.copyRef(), identifier);
     m_objectHeap->addObject(identifier, remoteBinding);
 }
 

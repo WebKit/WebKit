@@ -46,47 +46,52 @@ WebPageDebuggable::WebPageDebuggable(WebPageProxy& page)
 
 String WebPageDebuggable::name() const
 {
-    if (!m_page.mainFrame())
+    if (!m_page->mainFrame())
         return String();
 
-    return m_page.mainFrame()->title();
+    return m_page->mainFrame()->title();
 }
 
 String WebPageDebuggable::url() const
 {
-    if (!m_page.mainFrame())
+    if (!m_page->mainFrame())
         return aboutBlankURL().string();
 
-    String url = m_page.mainFrame()->url().string();
+    String url = m_page->mainFrame()->url().string();
     if (url.isEmpty())
         return aboutBlankURL().string();
 
     return url;
 }
 
+Ref<WebPageProxy> WebPageDebuggable::protectedPage() const
+{
+    return m_page.get();
+}
+
 bool WebPageDebuggable::hasLocalDebugger() const
 {
-    return m_page.inspectorController().hasLocalFrontend();
+    return protectedPage()->inspectorController().hasLocalFrontend();
 }
 
 void WebPageDebuggable::connect(FrontendChannel& channel, bool isAutomaticConnection, bool immediatelyPause)
 {
-    m_page.inspectorController().connectFrontend(channel, isAutomaticConnection, immediatelyPause);
+    protectedPage()->inspectorController().connectFrontend(channel, isAutomaticConnection, immediatelyPause);
 }
 
 void WebPageDebuggable::disconnect(FrontendChannel& channel)
 {
-    m_page.inspectorController().disconnectFrontend(channel);
+    protectedPage()->inspectorController().disconnectFrontend(channel);
 }
 
 void WebPageDebuggable::dispatchMessageFromRemote(String&& message)
 {
-    m_page.inspectorController().dispatchMessageFromFrontend(WTFMove(message));
+    protectedPage()->inspectorController().dispatchMessageFromFrontend(WTFMove(message));
 }
 
 void WebPageDebuggable::setIndicating(bool indicating)
 {
-    m_page.inspectorController().setIndicating(indicating);
+    protectedPage()->inspectorController().setIndicating(indicating);
 }
 
 void WebPageDebuggable::setNameOverride(const String& name)

@@ -8,6 +8,7 @@
 #include "libANGLE/renderer/vulkan/CLProgramVk.h"
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
+#include "libANGLE/renderer/vulkan/clspv_utils.h"
 
 #include "libANGLE/CLContext.h"
 #include "libANGLE/CLKernel.h"
@@ -163,10 +164,15 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
                 }
                 case NonSemanticClspvReflectionSpecConstantWorkgroupSize:
                 {
-                    reflectionData.specConstantWorkgroupSizeIDs = {
-                        reflectionData.spvIntLookup[spvInstr.words[5]],
-                        reflectionData.spvIntLookup[spvInstr.words[6]],
-                        reflectionData.spvIntLookup[spvInstr.words[7]]};
+                    reflectionData.specConstantIDs[SpecConstantType::WorkgroupSizeX] =
+                        reflectionData.spvIntLookup[spvInstr.words[5]];
+                    reflectionData.specConstantIDs[SpecConstantType::WorkgroupSizeY] =
+                        reflectionData.spvIntLookup[spvInstr.words[6]];
+                    reflectionData.specConstantIDs[SpecConstantType::WorkgroupSizeZ] =
+                        reflectionData.spvIntLookup[spvInstr.words[7]];
+                    reflectionData.specConstantsUsed[SpecConstantType::WorkgroupSizeX] = true;
+                    reflectionData.specConstantsUsed[SpecConstantType::WorkgroupSizeY] = true;
+                    reflectionData.specConstantsUsed[SpecConstantType::WorkgroupSizeZ] = true;
                     break;
                 }
                 case NonSemanticClspvReflectionPropertyRequiredWorkgroupSize:
@@ -178,6 +184,24 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
                         reflectionData.spvIntLookup[spvInstr.words[8]]};
                     break;
                 }
+                case NonSemanticClspvReflectionSpecConstantWorkDim:
+                {
+                    reflectionData.specConstantIDs[SpecConstantType::WorkDimension] =
+                        reflectionData.spvIntLookup[spvInstr.words[5]];
+                    reflectionData.specConstantsUsed[SpecConstantType::WorkDimension] = true;
+                    break;
+                }
+                case NonSemanticClspvReflectionSpecConstantGlobalOffset:
+                    reflectionData.specConstantIDs[SpecConstantType::GlobalOffsetX] =
+                        reflectionData.spvIntLookup[spvInstr.words[5]];
+                    reflectionData.specConstantIDs[SpecConstantType::GlobalOffsetY] =
+                        reflectionData.spvIntLookup[spvInstr.words[6]];
+                    reflectionData.specConstantIDs[SpecConstantType::GlobalOffsetZ] =
+                        reflectionData.spvIntLookup[spvInstr.words[7]];
+                    reflectionData.specConstantsUsed[SpecConstantType::GlobalOffsetX] = true;
+                    reflectionData.specConstantsUsed[SpecConstantType::GlobalOffsetY] = true;
+                    reflectionData.specConstantsUsed[SpecConstantType::GlobalOffsetZ] = true;
+                    break;
                 default:
                     break;
             }
@@ -228,9 +252,6 @@ std::string ProcessBuildOptions(const std::vector<std::string> &optionTokens,
         default:
             break;
     }
-
-    // Other internal Clspv compiler flags that are needed/required
-    processedOptions += " --long-vector";
 
     return processedOptions;
 }
@@ -779,10 +800,8 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
         const cl::RefPointer<cl::Device> &device = devices.at(i);
         DeviceProgramData &deviceProgramData     = mAssociatedDevicePrograms[device->getNative()];
 
-        cl_uint addressBits;
-        ANGLE_CL_IMPL_TRY(
-            device->getInfo(cl::DeviceInfo::AddressBits, sizeof(cl_uint), &addressBits, nullptr));
-        processedOptions += addressBits == 64 ? " -arch=spir64" : " -arch=spir";
+        // add clspv compiler options based on device features
+        processedOptions += ClspvGetCompilerOptions(&device->getImpl<CLDeviceVk>());
 
         cl_uint addressBits;
         ANGLE_CL_IMPL_TRY(

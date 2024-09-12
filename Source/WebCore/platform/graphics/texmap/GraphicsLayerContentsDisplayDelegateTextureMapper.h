@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class GraphicsLayerContentsDisplayDelegateTextureMapper final : public GraphicsLayerContentsDisplayDelegate {
+class GraphicsLayerContentsDisplayDelegateTextureMapper : public GraphicsLayerContentsDisplayDelegate {
 public:
     static Ref<GraphicsLayerContentsDisplayDelegateTextureMapper> create(Ref<TextureMapperPlatformLayerProxy>&& proxy)
     {
@@ -42,13 +42,13 @@ public:
 
     TextureMapperPlatformLayerProxy& proxy() const { return m_proxy.get(); }
 
-private:
+protected:
     explicit GraphicsLayerContentsDisplayDelegateTextureMapper(Ref<TextureMapperPlatformLayerProxy>&& proxy)
         : m_proxy(WTFMove(proxy))
     {
     }
 
-    PlatformLayer* platformLayer() const override { return m_proxy.ptr(); }
+    PlatformLayer* platformLayer() const final { return m_proxy.ptr(); }
 
     Ref<TextureMapperPlatformLayerProxy> m_proxy;
 };

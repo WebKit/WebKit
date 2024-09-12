@@ -119,10 +119,10 @@ RetainPtr<NSArray> AXTextMarkerRange::platformData() const
     auto* cache = object->axObjectCache();
     if (!cache)
         return nil;
-    return adoptNS(@[
-        adoptNS([[WebAccessibilityTextMarker alloc] initWithTextMarker:&m_start.m_data cache:cache]).autorelease(),
-        adoptNS([[WebAccessibilityTextMarker alloc] initWithTextMarker:&m_end.m_data cache:cache]).autorelease()
-    ]);
+
+    auto start = adoptNS([[WebAccessibilityTextMarker alloc] initWithTextMarker:&m_start.m_data cache:cache]);
+    auto end = adoptNS([[WebAccessibilityTextMarker alloc] initWithTextMarker:&m_end.m_data cache:cache]);
+    return adoptNS([[NSArray alloc] initWithObjects:start.get(), end.get(), nil]);
 }
 
 #endif // PLATFORM(IOS_FAMILY)

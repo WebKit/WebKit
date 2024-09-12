@@ -38,7 +38,7 @@ class AXCoreObject;
 
 @interface WKAccessibilityWebPageObjectBase : NSObject {
     NakedPtr<WebKit::WebPage> m_page;
-    WebCore::PageIdentifier m_pageID;
+    Markable<WebCore::PageIdentifier> m_pageID;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     Lock m_cacheLock;
     WebCore::FloatPoint m_position WTF_GUARDED_BY_LOCK(m_cacheLock);

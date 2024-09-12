@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScrollTimeline.h"
 
+#include "AnimationTimelinesController.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSScrollValue.h"
 #include "CSSValuePool.h"
@@ -73,6 +74,8 @@ ScrollTimeline::ScrollTimeline(ScrollTimelineOptions&& options)
     : m_source(WTFMove(options.source))
     , m_axis(options.axis)
 {
+    if (m_source)
+        m_source->protectedDocument()->ensureTimelinesController().addTimeline(*this);
 }
 
 ScrollTimeline::ScrollTimeline(const AtomString& name, ScrollAxis axis)
@@ -87,7 +90,22 @@ ScrollTimeline::ScrollTimeline(Scroller scroller, ScrollAxis axis)
 {
 }
 
-Ref<CSSValue> ScrollTimeline::toCSSValue() const
+void ScrollTimeline::dump(TextStream& ts) const
+{
+    auto hasScroller = m_scroller != Scroller::Nearest;
+    auto hasAxis = m_axis != ScrollAxis::Block;
+
+    ts << "scroll(";
+    if (hasScroller)
+        ts << (m_scroller == Scroller::Root ? "root" : "self");
+    if (hasScroller && hasAxis)
+        ts << " ";
+    if (hasAxis)
+        ts << m_axis;
+    ts << ")";
+}
+
+Ref<CSSValue> ScrollTimeline::toCSSValue(const RenderStyle&) const
 {
     auto scroller = [&]() {
         switch (m_scroller) {
@@ -104,6 +122,20 @@ Ref<CSSValue> ScrollTimeline::toCSSValue() const
     }();
 
     return CSSScrollValue::create(CSSPrimitiveValue::create(scroller), CSSPrimitiveValue::create(toCSSValueID(m_axis)));
+}
+
+AnimationTimelinesController* ScrollTimeline::controller() const
+{
+    if (m_source)
+        return &m_source->document().ensureTimelinesController();
+    return nullptr;
+}
+
+AnimationTimeline::ShouldUpdateAnimationsAndSendEvents ScrollTimeline::documentWillUpdateAnimationsAndSendEvents()
+{
+    if (m_source && m_source->isConnected())
+        return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::Yes;
+    return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::No;
 }
 
 } // namespace WebCore

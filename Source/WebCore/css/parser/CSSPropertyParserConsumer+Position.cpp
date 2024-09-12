@@ -29,7 +29,7 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserConsumer+Ident.h"
-#include "CSSPropertyParserConsumer+Length.h"
+#include "CSSPropertyParserConsumer+LengthPercentage.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePair.h"
 #include "CSSValuePool.h"
@@ -67,7 +67,7 @@ static RefPtr<CSSPrimitiveValue> consumePositionComponent(CSSParserTokenRange& r
 {
     if (range.peek().type() == IdentToken)
         return consumeIdent<CSSValueLeft, CSSValueTop, CSSValueBottom, CSSValueRight, CSSValueCenter>(range);
-    return consumeLengthOrPercent(range, parserMode, ValueRange::All, unitless, UnitlessZeroQuirk::Allow, negativePercentagePolicy);
+    return consumeLengthPercentage(range, parserMode, ValueRange::All, unitless, UnitlessZeroQuirk::Allow, negativePercentagePolicy);
 }
 
 static bool isHorizontalPositionKeywordOnly(const CSSPrimitiveValue& value)
@@ -259,7 +259,7 @@ static RefPtr<CSSValue> consumeSingleAxisPosition(CSSParserTokenRange& range, CS
             return value1;
     }
 
-    auto value2 = consumeLengthOrPercent(range, parserMode);
+    auto value2 = consumeLengthPercentage(range, parserMode);
     if (value1 && value2)
         return CSSValuePair::create(value1.releaseNonNull(), value2.releaseNonNull());
 

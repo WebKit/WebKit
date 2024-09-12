@@ -46,7 +46,8 @@
 #import "VisibleUnits.h"
 #import "WebContentReader.h"
 #import <ranges>
-#include <wtf/TZoneMallocInlines.h>
+#import <wtf/Scope.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -369,8 +370,34 @@ void WritingToolsController::proofreadingSessionDidUpdateStateForSuggestion(cons
     }
 }
 
-void WritingToolsController::showSelection() const
+template<WritingToolsController::CompositionState::ClearStateDeferralReason Reason>
+void WritingToolsController::removeCompositionClearStateDeferralReason()
 {
+    // Don't clear the state until all animations have completed *and* the session has been ended.
+    // (Since animations are done async, they may end up still being in progress after the session
+    // has ended, and since they depend on the current state this would lead to issues in the animation).
+
+    CheckedPtr state = std::get_if<CompositionState>(&m_state);
+    if (!state) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    state->clearStateDeferralReasons.remove(Reason);
+
+    if (!state->clearStateDeferralReasons.isEmpty())
+        return;
+
+    state = nullptr;
+    m_state = { };
+}
+
+void WritingToolsController::intelligenceTextAnimationsDidComplete()
+{
+    auto clearState = WTF::makeScopeExit([&] mutable {
+        this->removeCompositionClearStateDeferralReason<CompositionState::ClearStateDeferralReason::AnimationInProgress>();
+    });
+
     RefPtr document = this->document();
     if (!document) {
         ASSERT_NOT_REACHED();
@@ -378,8 +405,12 @@ void WritingToolsController::showSelection() const
     }
 
     CheckedPtr state = std::get_if<CompositionState>(&m_state);
-    if (!state)
+    if (!state) {
+        ASSERT_NOT_REACHED();
         return;
+    }
+
+    m_page->chrome().client().clearAnimationsForActiveWritingToolsSession();
 
     if (state->reappliedCommands.isEmpty()) {
         ASSERT_NOT_REACHED();
@@ -402,15 +433,16 @@ void WritingToolsController::showSelection() const
 void WritingToolsController::compositionSessionDidFinishReplacement()
 {
     // An empty optional range implies that an animation should be considered to have already been finished.
-    m_page->chrome().client().addDestinationTextAnimationForActiveWritingToolsSession(std::nullopt, ""_s);
+    WTF::UUID emptyUUID { WTF::UUID::emptyValue };
+    m_page->chrome().client().addDestinationTextAnimationForActiveWritingToolsSession(emptyUUID, emptyUUID, std::nullopt, ""_s);
 }
 
-void WritingToolsController::compositionSessionDidFinishReplacement(const CharacterRange& updatedRange, const String& replacementText)
+void WritingToolsController::compositionSessionDidFinishReplacement(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, const CharacterRange& updatedRange, const String& replacementText)
 {
-    m_page->chrome().client().addDestinationTextAnimationForActiveWritingToolsSession(updatedRange, replacementText);
+    m_page->chrome().client().addDestinationTextAnimationForActiveWritingToolsSession(sourceAnimationUUID, destinationAnimationUUID, updatedRange, replacementText);
 }
 
-void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRangeAsync(const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished, TextAnimationRunMode runMode)
+void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRangeAsync(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished, TextAnimationRunMode runMode)
 {
     RefPtr document = this->document();
     if (!document) {
@@ -451,26 +483,6 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
     Ref currentCommand = state->reappliedCommands.takeLast();
 
-    // Save all the existing transparent document markers before the command is undone, since such
-    // operation is not guaranteed to persist all the markers; some may be discarded if the nodes end
-    // up changing.
-    //
-    // The character ranges are relative to the range of the document, since the document node is the
-    // only guaranteed common ancestor node before the undo and after the replace.
-
-    Vector<std::tuple<CharacterRange, WTF::UUID>> existingTransparentContentDocumentMarkers;
-
-    auto documentRange = makeRangeSelectingNodeContents(*document);
-    document->markers().forEach(documentRange, { DocumentMarker::Type::TransparentContent }, [&](auto& node, auto& marker) mutable {
-        auto markerRange = makeSimpleRange(node, marker);
-        auto data = std::get<DocumentMarker::TransparentContentData>(marker.data());
-
-        auto resolvedCharacterRange = characterRange(documentRange, markerRange);
-        existingTransparentContentDocumentMarkers.append({ resolvedCharacterRange, data.uuid });
-
-        return false;
-    });
-
     // The prior replacement command must be undone in such a way as to not have it be added to the undo stack
     currentCommand->ensureComposition().unapply(EditCommandComposition::AddToUndoStack::No);
 
@@ -507,27 +519,11 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
     auto commandState = finished ? WritingToolsCompositionCommand::State::Complete : WritingToolsCompositionCommand::State::InProgress;
     replaceContentsOfRangeInSession(*state, resolvedRange, attributedText, commandState);
 
-    // Restore the transparent content document markers after the undo + replace is complete.
-    // Since only some markers may have been discarded, all transparent content markers are first
-    // removed, and then the saved ones are re-added. This ensures that there are not duplicate
-    // markers added.
-    //
-    // This methodology is valid since subsequent replacements always have a prefix that is their prior replacement.
-
-    document->markers().removeMarkers({ WebCore::DocumentMarker::Type::TransparentContent });
-
-    for (const auto& [characterRange, markerIdentifier] : existingTransparentContentDocumentMarkers) {
-        auto resolvedRange = resolveCharacterRange(documentRange, characterRange);
-        document->markers().addTransparentContentMarker(resolvedRange, markerIdentifier);
-    }
-
     if (runMode == TextAnimationRunMode::OnlyReplaceText) {
         compositionSessionDidFinishReplacement();
         return;
     }
 
-    // FIXME: We won't be setting the selection after every replace, we need a different way to
-    // calculate this range.
     auto selectionRange = state->reappliedCommands.last()->endingSelection().firstRange();
     if (!selectionRange) {
         compositionSessionDidFinishReplacement();
@@ -537,11 +533,11 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
     auto rangeAfterReplace = characterRange(sessionRange, *selectionRange);
 
-    compositionSessionDidFinishReplacement(rangeAfterReplace, attributedText.string);
+    compositionSessionDidFinishReplacement(sourceAnimationUUID, destinationAnimationUUID, rangeAfterReplace, attributedText.string);
     document->selection().clear();
 }
 
-void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange(const WritingTools::Session&, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished)
+void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange(const WritingTools::Session& session, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished)
 {
     RELEASE_LOG(WritingTools, "WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange [range: %llu, %llu; finished: %d]", range.location, range.length, finished);
 
@@ -553,15 +549,21 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
     m_page->chrome().client().removeInitialTextAnimationForActiveWritingToolsSession();
 
-    auto addDestinationTextAnimation = [weakThis = WeakPtr { *this }, attributedText, range, context, finished](TextAnimationRunMode runMode) mutable {
-        weakThis->compositionSessionDidReceiveTextWithReplacementRangeAsync(attributedText, range, context, finished, runMode);
+    // Must generate these UUID now to pass into the source animation for iOS to work.
+    auto sourceAnimationUUID = WTF::UUID::createVersion4();
+    auto destinationAnimationUUID = WTF::UUID::createVersion4();
+
+    auto addDestinationTextAnimation = [weakThis = WeakPtr { *this }, attributedText, range, context, finished, sourceAnimationUUID, destinationAnimationUUID](TextAnimationRunMode runMode) mutable {
+        if (weakThis)
+            weakThis->compositionSessionDidReceiveTextWithReplacementRangeAsync(sourceAnimationUUID, destinationAnimationUUID, attributedText, range, context, finished, runMode);
     };
 
-#if PLATFORM(MAC)
-    m_page->chrome().client().addSourceTextAnimationForActiveWritingToolsSession(range, attributedText.string, WTFMove(addDestinationTextAnimation));
-#else
-    addDestinationTextAnimation(WebCore::TextAnimationRunMode::RunAnimation);
-#endif
+    // We only get a single replace call for smart replies with finished = true. We use this flag to not run the final replace for a compsition
+    // session, so for smart replies, we need to make sure to not send with this flag, so that we can be sure to do the animation for smart replies.
+    if (session.compositionType == WritingTools::SessionCompositionType::SmartReply)
+        finished = false;
+
+    m_page->chrome().client().addSourceTextAnimationForActiveWritingToolsSession(sourceAnimationUUID, destinationAnimationUUID, finished, range, attributedText.string, WTFMove(addDestinationTextAnimation));
 }
 
 template<>
@@ -698,11 +700,18 @@ void WritingToolsController::didEndWritingToolsSession<WritingTools::Session::Ty
 
         return false;
     });
+
+    state = nullptr;
+    m_state = { };
 }
 
 template<>
 void WritingToolsController::didEndWritingToolsSession<WritingTools::Session::Type::Composition>(bool accepted)
 {
+    auto clearState = WTF::makeScopeExit([&] mutable {
+        this->removeCompositionClearStateDeferralReason<CompositionState::ClearStateDeferralReason::SessionInProgress>();
+    });
+
     if (accepted)
         return;
 
@@ -731,18 +740,6 @@ void WritingToolsController::didEndWritingToolsSession(const WritingTools::Sessi
         didEndWritingToolsSession<WritingTools::Session::Type::Composition>(accepted);
         break;
     }
-
-    auto sessionRange = activeSessionRange();
-    if (!sessionRange) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    m_page->chrome().client().removeInitialTextAnimationForActiveWritingToolsSession();
-
-    m_page->chrome().client().removeTransparentMarkersForActiveWritingToolsSession();
-
-    m_state = { };
 }
 
 #pragma mark - Methods invoked via editing.
@@ -903,6 +900,8 @@ void WritingToolsController::restartCompositionForSession()
         ASSERT_NOT_REACHED();
         return;
     }
+
+    state->clearStateDeferralReasons.add({ CompositionState::ClearStateDeferralReason::AnimationInProgress, CompositionState::ClearStateDeferralReason::SessionInProgress });
 
     m_page->chrome().client().clearAnimationsForActiveWritingToolsSession();
 

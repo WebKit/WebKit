@@ -83,13 +83,13 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::Resou
     {
         // No need to subscribe to the "request-certificate" signal, just set the client certificate upfront.
         auto protectionSpace = WebCore::AuthenticationChallenge::protectionSpaceForClientCertificate(WebCore::soupURIToURL(soup_message_get_uri(msg)));
-        auto certificate = m_channel.session()->networkStorageSession()->credentialStorage().get(m_request.cachePartition(), protectionSpace).certificate();
+        auto certificate = m_channel->session()->networkStorageSession()->credentialStorage().get(m_request.cachePartition(), protectionSpace).certificate();
         soup_message_set_tls_client_certificate(msg, certificate);
     }
 
     g_signal_connect(msg, "request-certificate-password", G_CALLBACK(+[](SoupMessage* msg, GTlsPassword* tlsPassword, WebSocketTask* task) -> gboolean {
         auto protectionSpace = WebCore::AuthenticationChallenge::protectionSpaceForClientCertificatePassword(WebCore::soupURIToURL(soup_message_get_uri(msg)), tlsPassword);
-        auto password = task->m_channel.session()->networkStorageSession()->credentialStorage().get(task->m_request.cachePartition(), protectionSpace).password().utf8();
+        auto password = task->m_channel->session()->networkStorageSession()->credentialStorage().get(task->m_request.cachePartition(), protectionSpace).password().utf8();
         g_tls_password_set_value(tlsPassword, reinterpret_cast<const unsigned char*>(password.data()), password.length());
         soup_message_tls_client_certificate_password_request_complete(msg);
         return TRUE;
@@ -116,7 +116,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::Resou
 
     g_signal_connect(msg, "starting", G_CALLBACK(+[](SoupMessage* msg, WebSocketTask* task) {
         task->m_request.updateFromSoupMessageHeaders(soup_message_get_request_headers(msg));
-        task->m_channel.didSendHandshakeRequest(WTFMove(task->m_request));
+        task->m_channel->didSendHandshakeRequest(WTFMove(task->m_request));
     }), this);
 }
 
@@ -164,9 +164,9 @@ void WebSocketTask::didConnect(GRefPtr<SoupWebsocketConnection>&& connection)
     g_signal_connect_swapped(m_connection.get(), "error", reinterpret_cast<GCallback>(didReceiveErrorCallback), this);
     g_signal_connect_swapped(m_connection.get(), "closed", reinterpret_cast<GCallback>(didCloseCallback), this);
 
-    m_channel.didConnect(String::fromLatin1(soup_websocket_connection_get_protocol(m_connection.get())), acceptedExtensions());
+    m_channel->didConnect(String::fromLatin1(soup_websocket_connection_get_protocol(m_connection.get())), acceptedExtensions());
 
-    m_channel.didReceiveHandshakeResponse(m_handshakeMessage.get());
+    m_channel->didReceiveHandshakeResponse(m_handshakeMessage.get());
     g_signal_handlers_disconnect_by_data(m_handshakeMessage.get(), this);
     m_handshakeMessage = nullptr;
 }
@@ -182,10 +182,10 @@ void WebSocketTask::didReceiveMessageCallback(WebSocketTask* task, SoupWebsocket
 
     switch (dataType) {
     case SOUP_WEBSOCKET_DATA_TEXT:
-        task->m_channel.didReceiveText(String::fromUTF8(dataSpan));
+        task->m_channel->didReceiveText(String::fromUTF8(dataSpan));
         break;
     case SOUP_WEBSOCKET_DATA_BINARY:
-        task->m_channel.didReceiveBinaryData(dataSpan);
+        task->m_channel->didReceiveBinaryData(dataSpan);
         break;
     }
 }
@@ -205,11 +205,11 @@ void WebSocketTask::didFail(String&& errorMessage)
 
     m_receivedDidFail = true;
     if (m_handshakeMessage) {
-        m_channel.didReceiveHandshakeResponse(m_handshakeMessage.get());
+        m_channel->didReceiveHandshakeResponse(m_handshakeMessage.get());
         g_signal_handlers_disconnect_by_data(m_handshakeMessage.get(), this);
         m_handshakeMessage = nullptr;
     }
-    m_channel.didReceiveMessageError(WTFMove(errorMessage));
+    m_channel->didReceiveMessageError(WTFMove(errorMessage));
     if (!m_connection) {
         didClose(SOUP_WEBSOCKET_CLOSE_ABNORMAL, { });
         return;
@@ -235,7 +235,7 @@ void WebSocketTask::didClose(unsigned short code, const String& reason)
         return;
 
     m_receivedDidClose = true;
-    m_channel.didClose(code, reason);
+    m_channel->didClose(code, reason);
 }
 
 void WebSocketTask::sendString(std::span<const uint8_t> utf8, CompletionHandler<void()>&& callback)

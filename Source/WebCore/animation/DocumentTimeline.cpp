@@ -27,13 +27,13 @@
 #include "DocumentTimeline.h"
 
 #include "AnimationEventBase.h"
+#include "AnimationTimelinesController.h"
 #include "CSSProperty.h"
 #include "CSSTransition.h"
 #include "CustomAnimationOptions.h"
 #include "CustomEffect.h"
 #include "CustomEffectCallback.h"
 #include "Document.h"
-#include "DocumentTimelinesController.h"
 #include "EventNames.h"
 #include "GraphicsLayer.h"
 #include "KeyframeEffect.h"
@@ -74,7 +74,7 @@ DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
 
 DocumentTimeline::~DocumentTimeline() = default;
 
-DocumentTimelinesController* DocumentTimeline::controller() const
+AnimationTimelinesController* DocumentTimeline::controller() const
 {
     if (m_document)
         return &m_document->ensureTimelinesController();
@@ -83,15 +83,9 @@ DocumentTimelinesController* DocumentTimeline::controller() const
 
 void DocumentTimeline::detachFromDocument()
 {
-    Ref<DocumentTimeline> protectedThis(*this);
-    if (auto* controller = this->controller())
-        controller->removeTimeline(*this);
+    AnimationTimeline::detachFromDocument();
 
     m_pendingAnimationEvents.clear();
-
-    auto& animationsToRemove = m_animations;
-    while (!animationsToRemove.isEmpty())
-        animationsToRemove.first()->remove();
 
     clearTickScheduleTimer();
     m_document = nullptr;
@@ -107,8 +101,7 @@ Seconds DocumentTimeline::animationInterval() const
 
 void DocumentTimeline::suspendAnimations()
 {
-    for (const auto& animation : m_animations)
-        animation->setSuspended(true);
+    AnimationTimeline::suspendAnimations();
 
     applyPendingAcceleratedAnimations();
 
@@ -117,15 +110,9 @@ void DocumentTimeline::suspendAnimations()
 
 void DocumentTimeline::resumeAnimations()
 {
-    for (const auto& animation : m_animations)
-        animation->setSuspended(false);
+    AnimationTimeline::resumeAnimations();
 
     scheduleAnimationResolution();
-}
-
-bool DocumentTimeline::animationsAreSuspended() const
-{
-    return controller() && controller()->animationsAreSuspended();
 }
 
 unsigned DocumentTimeline::numberOfActiveAnimationsForTesting() const
@@ -189,14 +176,14 @@ bool DocumentTimeline::shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionS
     return !m_animations.isEmpty() || !m_pendingAnimationEvents.isEmpty() || !m_acceleratedAnimationsPendingRunningStateChange.isEmpty();
 }
 
-DocumentTimeline::ShouldUpdateAnimationsAndSendEvents DocumentTimeline::documentWillUpdateAnimationsAndSendEvents()
+AnimationTimeline::ShouldUpdateAnimationsAndSendEvents DocumentTimeline::documentWillUpdateAnimationsAndSendEvents()
 {
     // Updating animations and sending events may invalidate the timing of some animations, so we must set the m_animationResolutionScheduled
     // flag to false prior to running that procedure to allow animation with timing model updates to schedule updates.
     bool wasAnimationResolutionScheduled = std::exchange(m_animationResolutionScheduled, false);
 
     if (!wasAnimationResolutionScheduled || animationsAreSuspended() || !shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState())
-        return DocumentTimeline::ShouldUpdateAnimationsAndSendEvents::No;
+        return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::No;
 
     m_numberOfAnimationTimelineInvalidationsForTesting++;
 
@@ -205,7 +192,7 @@ DocumentTimeline::ShouldUpdateAnimationsAndSendEvents DocumentTimeline::document
     // this procedure is running should not schedule animation resolution until the event queue has been cleared.
     m_shouldScheduleAnimationResolutionForNewPendingEvents = false;
 
-    return DocumentTimeline::ShouldUpdateAnimationsAndSendEvents::Yes;
+    return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::Yes;
 }
 
 void DocumentTimeline::documentDidUpdateAnimationsAndSendEvents()
@@ -379,7 +366,7 @@ void DocumentTimeline::scheduleNextTick()
             // Now let's get the time until any animation with this animation's frame rate would tick.
             // If that time is longer than what we previously computed without accounting for the frame
             // rate, we use this time instead since our animation wouldn't tick anyway since the
-            // DocumentTimelinesController would ignore it. Doing this ensures that we don't schedule
+            // AnimationTimelinesController would ignore it. Doing this ensures that we don't schedule
             // updates that wouldn't actually yield any work and guarantees that in a page with only
             // animations as the source for scheduling updates, updates are only scheduled at the minimal
             // frame rate.
@@ -513,7 +500,7 @@ ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallbac
         customEffectOptions = customEffectOptionsVariant;
     }
 
-    auto customEffectResult = CustomEffect::create(WTFMove(callback), WTFMove(customEffectOptions));
+    auto customEffectResult = CustomEffect::create(*m_document, WTFMove(callback), WTFMove(customEffectOptions));
     if (customEffectResult.hasException())
         return customEffectResult.releaseException();
 

@@ -36,7 +36,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BaselineGroup);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BaselineAlignmentState);
 
-BaselineGroup::BaselineGroup(BlockFlowDirection blockFlow, ItemPosition childPreference)
+BaselineGroup::BaselineGroup(FlowDirection blockFlow, ItemPosition childPreference)
     : m_maxAscent(0), m_items()
 {
     m_blockFlow = blockFlow;
@@ -49,36 +49,36 @@ void BaselineGroup::update(const RenderBox& child, LayoutUnit ascent)
         m_maxAscent = std::max(m_maxAscent, ascent);
 }
 
-bool BaselineGroup::isOppositeBlockFlow(BlockFlowDirection blockFlow) const
+bool BaselineGroup::isOppositeBlockFlow(FlowDirection blockFlow) const
 {
     switch (blockFlow) {
-    case BlockFlowDirection::TopToBottom:
+    case FlowDirection::TopToBottom:
         return false;
-    case BlockFlowDirection::LeftToRight:
-        return m_blockFlow == BlockFlowDirection::RightToLeft;
-    case BlockFlowDirection::RightToLeft:
-        return m_blockFlow == BlockFlowDirection::LeftToRight;
+    case FlowDirection::LeftToRight:
+        return m_blockFlow == FlowDirection::RightToLeft;
+    case FlowDirection::RightToLeft:
+        return m_blockFlow == FlowDirection::LeftToRight;
     default:
         ASSERT_NOT_REACHED();
         return false;
     }
 }
 
-bool BaselineGroup::isOrthogonalBlockFlow(BlockFlowDirection blockFlow) const
+bool BaselineGroup::isOrthogonalBlockFlow(FlowDirection blockFlow) const
 {
     switch (blockFlow) {
-    case BlockFlowDirection::TopToBottom:
-        return m_blockFlow != BlockFlowDirection::TopToBottom;
-    case BlockFlowDirection::LeftToRight:
-    case BlockFlowDirection::RightToLeft:
-        return m_blockFlow == BlockFlowDirection::TopToBottom;
+    case FlowDirection::TopToBottom:
+        return m_blockFlow != FlowDirection::TopToBottom;
+    case FlowDirection::LeftToRight:
+    case FlowDirection::RightToLeft:
+        return m_blockFlow == FlowDirection::TopToBottom;
     default:
         ASSERT_NOT_REACHED();
         return false;
     }
 }
 
-bool BaselineGroup::isCompatible(BlockFlowDirection childBlockFlow, ItemPosition childPreference) const
+bool BaselineGroup::isCompatible(FlowDirection childBlockFlow, ItemPosition childPreference) const
 {
     ASSERT(isBaselinePosition(childPreference));
     ASSERT(computeSize() > 0);

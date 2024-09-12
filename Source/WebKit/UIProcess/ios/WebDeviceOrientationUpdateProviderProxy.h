@@ -55,7 +55,7 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    WebPageProxy& m_page;
+    WeakRef<WebPageProxy> m_page;
 };
 
 } // namespace WebKit

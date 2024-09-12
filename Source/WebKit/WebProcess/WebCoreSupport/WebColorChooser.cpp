@@ -50,7 +50,7 @@ WebColorChooser::~WebColorChooser()
     if (!m_page)
         return;
 
-    m_page->setActiveColorChooser(0);
+    m_page->setActiveColorChooser(nullptr);
 }
 
 void WebColorChooser::didChooseColor(const Color& color)

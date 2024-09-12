@@ -53,19 +53,22 @@ public:
 #endif
     RefPtr<PixelBuffer> readCompositedResults() final;
 
-    bool reshapeDrawingBuffer() final;
-    void prepareForDisplay() final;
+    bool reshapeDrawingBuffer() override;
+    void prepareForDisplay() override;
 #if ENABLE(WEBXR)
     bool addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) final;
     void enableFoveation(GCGLuint) final;
     void disableFoveation() final;
 #endif
 
-private:
-    GraphicsContextGLTextureMapperANGLE(WebCore::GraphicsContextGLAttributes&&);
+protected:
+    explicit GraphicsContextGLTextureMapperANGLE(WebCore::GraphicsContextGLAttributes&&);
 
+    RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
+
+private:
     bool platformInitializeContext() final;
-    bool platformInitialize() final;
+    bool platformInitialize() override;
 
     void swapCompositorTexture();
 
@@ -77,8 +80,6 @@ private:
     GLContextWrapper::Type type() const override;
     bool makeCurrentImpl() override;
     bool unmakeCurrentImpl() override;
-
-    RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
 
     GCGLuint m_compositorTexture { 0 };
     bool m_isCompositorTextureInitialized { false };

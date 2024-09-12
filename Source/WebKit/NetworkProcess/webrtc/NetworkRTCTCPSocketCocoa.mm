@@ -164,7 +164,7 @@ void NetworkRTCTCPSocketCocoa::close()
 #endif
     if (m_nwConnection)
         nw_connection_cancel(m_nwConnection.get());
-    m_rtcProvider.takeSocket(m_identifier);
+    Ref { m_rtcProvider.get() }->takeSocket(m_identifier);
 }
 
 void NetworkRTCTCPSocketCocoa::setOption(int option, int value)

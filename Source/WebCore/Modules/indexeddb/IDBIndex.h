@@ -108,7 +108,7 @@ private:
 
     // IDBIndex objects are always owned by their referencing IDBObjectStore.
     // Indexes will never outlive ObjectStores so its okay to keep a raw C++ reference here.
-    IDBObjectStore& m_objectStore;
+    CheckedRef<IDBObjectStore> m_objectStore;
 };
 
 WebCoreOpaqueRoot root(IDBIndex*);

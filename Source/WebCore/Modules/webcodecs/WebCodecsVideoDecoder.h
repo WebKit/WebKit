@@ -31,7 +31,6 @@
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include "VideoDecoder.h"
-#include "WebCodecsBaseClass.h"
 #include "WebCodecsCodecState.h"
 #include "WebCodecsControlMessage.h"
 #include "WebCodecsEncodedVideoChunkType.h"
@@ -46,8 +45,7 @@ class WebCodecsErrorCallback;
 class WebCodecsVideoFrameOutputCallback;
 
 class WebCodecsVideoDecoder
-    : private WebCodecsBaseClass
-    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsVideoDecoder>
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsVideoDecoder>
     , public ActiveDOMObject
     , public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebCodecsVideoDecoder);
@@ -112,6 +110,7 @@ private:
     bool m_isKeyChunkRequired { false };
     Deque<WebCodecsControlMessage<WebCodecsVideoDecoder>> m_controlMessageQueue;
     bool m_isMessageQueueBlocked { false };
+    size_t m_decoderCount { 0 };
 };
 
 }

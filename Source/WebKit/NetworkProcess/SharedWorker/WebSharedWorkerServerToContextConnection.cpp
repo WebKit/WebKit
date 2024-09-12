@@ -65,18 +65,18 @@ WebSharedWorkerServerToContextConnection::WebSharedWorkerServerToContextConnecti
 WebSharedWorkerServerToContextConnection::~WebSharedWorkerServerToContextConnection()
 {
     CONTEXT_CONNECTION_RELEASE_LOG("~WebSharedWorkerServerToContextConnection:");
-    if (m_server && m_server->contextConnectionForRegistrableDomain(registrableDomain()) == this)
-        m_server->removeContextConnection(*this);
+    if (CheckedPtr server = m_server.get(); server && server->contextConnectionForRegistrableDomain(registrableDomain()) == this)
+        server->removeContextConnection(*this);
 }
 
 WebCore::ProcessIdentifier WebSharedWorkerServerToContextConnection::webProcessIdentifier() const
 {
-    return m_connection.webProcessIdentifier();
+    return m_connection->webProcessIdentifier();
 }
 
 IPC::Connection& WebSharedWorkerServerToContextConnection::ipcConnection() const
 {
-    return m_connection.connection();
+    return m_connection->connection();
 }
 
 IPC::Connection* WebSharedWorkerServerToContextConnection::messageSenderConnection() const
@@ -89,40 +89,46 @@ uint64_t WebSharedWorkerServerToContextConnection::messageSenderDestinationID() 
     return 0;
 }
 
+Ref<NetworkConnectionToWebProcess> WebSharedWorkerServerToContextConnection::protectedConnection() const
+{
+    return m_connection.get();
+}
+
 void WebSharedWorkerServerToContextConnection::connectionIsNoLongerNeeded()
 {
     CONTEXT_CONNECTION_RELEASE_LOG("connectionIsNoLongerNeeded:");
-    m_connection.sharedWorkerServerToContextConnectionIsNoLongerNeeded();
+    protectedConnection()->sharedWorkerServerToContextConnectionIsNoLongerNeeded();
 }
 
 void WebSharedWorkerServerToContextConnection::postErrorToWorkerObject(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent)
 {
     CONTEXT_CONNECTION_RELEASE_LOG("postErrorToWorkerObject: sharedWorkerIdentifier=%" PRIu64, sharedWorkerIdentifier.toUInt64());
-    if (m_server)
-        m_server->postErrorToWorkerObject(sharedWorkerIdentifier, errorMessage, lineNumber, columnNumber, sourceURL, isErrorEvent);
+    if (CheckedPtr server = m_server.get())
+        server->postErrorToWorkerObject(sharedWorkerIdentifier, errorMessage, lineNumber, columnNumber, sourceURL, isErrorEvent);
 }
 
 void WebSharedWorkerServerToContextConnection::sharedWorkerTerminated(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier)
 {
     CONTEXT_CONNECTION_RELEASE_LOG("sharedWorkerTerminated: sharedWorkerIdentifier=%" PRIu64, sharedWorkerIdentifier.toUInt64());
-    if (m_server)
-        m_server->sharedWorkerTerminated(sharedWorkerIdentifier);
+    if (CheckedPtr server = m_server.get())
+        server->sharedWorkerTerminated(sharedWorkerIdentifier);
 }
 
 void WebSharedWorkerServerToContextConnection::launchSharedWorker(WebSharedWorker& sharedWorker)
 {
-    m_connection.networkProcess().addAllowedFirstPartyForCookies(m_connection.webProcessIdentifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(sharedWorker.origin().topOrigin.host()), LoadedWebArchive::No, [] { });
+    Ref connection = m_connection.get();
+    connection->protectedNetworkProcess()->addAllowedFirstPartyForCookies(connection->webProcessIdentifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(sharedWorker.origin().topOrigin.host()), LoadedWebArchive::No, [] { });
 
     CONTEXT_CONNECTION_RELEASE_LOG("launchSharedWorker: sharedWorkerIdentifier=%" PRIu64, sharedWorker.identifier().toUInt64());
     sharedWorker.markAsRunning();
     auto initializationData = sharedWorker.initializationData();
     if (auto contextIdentifier = initializationData.clientIdentifier) {
         initializationData.clientIdentifier = WebCore::ScriptExecutionContextIdentifier { contextIdentifier->object(), webProcessIdentifier() };
-        if (auto* serviceWorkerOldConnection = m_connection.networkProcess().webProcessConnection(contextIdentifier->processIdentifier())) {
-            if (auto* swOldConnection = serviceWorkerOldConnection->swConnection()) {
+        if (RefPtr serviceWorkerOldConnection = connection->protectedNetworkProcess()->webProcessConnection(contextIdentifier->processIdentifier())) {
+            if (CheckedPtr swOldConnection = serviceWorkerOldConnection->swConnection()) {
                 if (auto clientData = swOldConnection->gatherClientData(*contextIdentifier)) {
                     swOldConnection->unregisterServiceWorkerClient(*contextIdentifier);
-                    if (auto* swNewConnection = m_connection.swConnection()) {
+                    if (CheckedPtr swNewConnection = connection->swConnection()) {
                         clientData->serviceWorkerClientData.identifier = *initializationData.clientIdentifier;
                         swNewConnection->registerServiceWorkerClient(WTFMove(clientData->clientOrigin), WTFMove(clientData->serviceWorkerClientData), clientData->controllingServiceWorkerRegistrationIdentifier, WTFMove(clientData->userAgent));
                     }
@@ -166,7 +172,7 @@ void WebSharedWorkerServerToContextConnection::addSharedWorkerObject(WebCore::Sh
     sharedWorkerObjects.add(sharedWorkerObjectIdentifier);
 
     if (webProcessIdentifier() != sharedWorkerObjectIdentifier.processIdentifier() && sharedWorkerObjects.size() == 1)
-        m_connection.networkProcess().send(Messages::NetworkProcessProxy::RegisterRemoteWorkerClientProcess { RemoteWorkerType::SharedWorker, sharedWorkerObjectIdentifier.processIdentifier(), webProcessIdentifier() }, 0);
+        m_connection->protectedNetworkProcess()->send(Messages::NetworkProcessProxy::RegisterRemoteWorkerClientProcess { RemoteWorkerType::SharedWorker, sharedWorkerObjectIdentifier.processIdentifier(), webProcessIdentifier() }, 0);
 
     m_idleTerminationTimer.stop();
 }
@@ -184,7 +190,7 @@ void WebSharedWorkerServerToContextConnection::removeSharedWorkerObject(WebCore:
 
     m_sharedWorkerObjects.remove(it);
     if (webProcessIdentifier() != sharedWorkerObjectIdentifier.processIdentifier())
-        m_connection.networkProcess().send(Messages::NetworkProcessProxy::UnregisterRemoteWorkerClientProcess { RemoteWorkerType::SharedWorker, sharedWorkerObjectIdentifier.processIdentifier(), webProcessIdentifier() }, 0);
+        m_connection->protectedNetworkProcess()->send(Messages::NetworkProcessProxy::UnregisterRemoteWorkerClientProcess { RemoteWorkerType::SharedWorker, sharedWorkerObjectIdentifier.processIdentifier(), webProcessIdentifier() }, 0);
 
     if (m_sharedWorkerObjects.isEmpty()) {
         CONTEXT_CONNECTION_RELEASE_LOG("removeSharedWorkerObject: connection is now idle, starting a timer to terminate it");

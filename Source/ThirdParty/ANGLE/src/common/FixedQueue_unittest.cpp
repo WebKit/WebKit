@@ -263,6 +263,11 @@ TEST(FixedQueue, ConcurrentPushPopWithResize)
                 dequeueLock.lock();
             }
 
+            if (enqueueThreadFinished)
+            {
+                break;
+            }
+
             ASSERT(expectedValue == q.front());
             // test pop
             q.pop();

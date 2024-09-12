@@ -483,24 +483,6 @@ Renderer11::Renderer11(egl::Display *display)
             }
         }
 
-        if (requestedMajorVersion == EGL_DONT_CARE || requestedMajorVersion >= 9)
-        {
-            if (requestedMinorVersion == EGL_DONT_CARE || requestedMinorVersion >= 3)
-            {
-                mAvailableFeatureLevels.push_back(D3D_FEATURE_LEVEL_9_3);
-            }
-#if defined(ANGLE_ENABLE_WINDOWS_UWP)
-            if (requestedMinorVersion == EGL_DONT_CARE || requestedMinorVersion >= 2)
-            {
-                mAvailableFeatureLevels.push_back(D3D_FEATURE_LEVEL_9_2);
-            }
-            if (requestedMinorVersion == EGL_DONT_CARE || requestedMinorVersion >= 1)
-            {
-                mAvailableFeatureLevels.push_back(D3D_FEATURE_LEVEL_9_1);
-            }
-#endif
-        }
-
         EGLint requestedDeviceType = static_cast<EGLint>(attributes.get(
             EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE));
         switch (requestedDeviceType)

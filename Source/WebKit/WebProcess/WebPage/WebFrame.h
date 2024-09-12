@@ -131,7 +131,7 @@ public:
     FrameInfoData info() const;
     FrameTreeNodeData frameTreeData() const;
 
-    WebCore::FrameIdentifier frameID() const;
+    WebCore::FrameIdentifier frameID() const { return m_frameID; }
 
     enum class ForNavigationAction : bool { No, Yes };
     uint64_t setUpPolicyListener(WebCore::FramePolicyFunction&&, ForNavigationAction);

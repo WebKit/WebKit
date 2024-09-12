@@ -52,6 +52,8 @@ public:
     {
     }
 
+    ~StructureStubInfoClearingWatchpoint();
+
     void fireInternal(VM&, const FireDetail&);
 
 private:

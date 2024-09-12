@@ -33,6 +33,7 @@ class StylePropertyMap;
 class StyleRuleCSSStyleDeclaration;
 class StyleRule;
 class StyleRuleWithNesting;
+class StyleRuleCSSStyleDeclaration;
 
 class CSSStyleRule final : public CSSRule, public CanMakeWeakPtr<CSSStyleRule> {
 public:

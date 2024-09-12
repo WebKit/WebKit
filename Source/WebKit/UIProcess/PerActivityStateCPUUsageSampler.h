@@ -47,7 +47,7 @@ private:
     void loggingTimerFired();
     RefPtr<WebPageProxy> pageForLogging() const;
 
-    WebProcessPool& m_processPool;
+    WeakRef<WebProcessPool> m_processPool;
     RunLoop::Timer m_loggingTimer;
     typedef HashMap<WebCore::ActivityStateForCPUSampling, Seconds, WTF::IntHash<WebCore::ActivityStateForCPUSampling>, WTF::StrongEnumHashTraits<WebCore::ActivityStateForCPUSampling>> CPUTimeInActivityStateMap;
     CPUTimeInActivityStateMap m_cpuTimeInActivityState;

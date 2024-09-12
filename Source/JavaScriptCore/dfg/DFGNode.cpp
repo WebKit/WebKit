@@ -274,6 +274,18 @@ void Node::convertToNewArrayWithConstantSize(Graph&, uint32_t size)
     m_opInfo2 = size;
 }
 
+void Node::convertToNewArrayWithSizeAndStructure(Graph& graph, RegisteredStructure structure)
+{
+    ASSERT(op() == Construct);
+    Node* node = graph.child(this, 2).node();
+    setOpAndDefaultFlags(NewArrayWithSizeAndStructure);
+    children.reset();
+    children.child1() = Edge(node, Int32Use);
+    children.child2() = Edge();
+    children.child3() = Edge();
+    m_opInfo = structure;
+}
+
 void Node::convertToNewBoundFunction(FrozenValue* executable)
 {
     m_op = NewBoundFunction;

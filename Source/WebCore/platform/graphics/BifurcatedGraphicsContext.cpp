@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "BifurcatedGraphicsContext.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ASSERT_ENABLED
 #define VERIFY_STATE_SYNCHRONIZATION() do { \
@@ -35,6 +36,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BifurcatedGraphicsContext);
 
 BifurcatedGraphicsContext::BifurcatedGraphicsContext(GraphicsContext& primaryContext, GraphicsContext& secondaryContext)
     : m_primaryContext(primaryContext)

@@ -123,8 +123,8 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path=None):
             category = 'GTK'
         elif platform.startswith('wpe'):
             category = 'WPE'
-        elif platform == 'wincairo':
-            category = 'WinCairo'
+        elif platform == 'win':
+            category = 'Windows'
         elif platform.startswith('playstation'):
             category = 'PlayStation'
         else:

@@ -91,7 +91,7 @@ public:
     SuspendedPageProxy* suspendedPage() const;
 
     void setFrameID(WebCore::FrameIdentifier frameID) { m_frameID = frameID; }
-    WebCore::FrameIdentifier frameID() const { return m_frameID; }
+    std::optional<WebCore::FrameIdentifier> frameID() const { return m_frameID; }
 
     void addRootChildFrameItem(Ref<WebBackForwardListItem>&& item) { m_rootChildFrameItems.append(WTFMove(item)); }
     WebBackForwardListItem* childItemForFrameID(WebCore::FrameIdentifier) const;
@@ -119,7 +119,7 @@ private:
     URL m_resourceDirectoryURL;
     WebPageProxyIdentifier m_pageID;
     WebCore::ProcessIdentifier m_lastProcessIdentifier;
-    WebCore::FrameIdentifier m_frameID;
+    Markable<WebCore::FrameIdentifier> m_frameID;
     std::unique_ptr<WebBackForwardCacheEntry> m_backForwardCacheEntry;
     WeakPtr<WebBackForwardListItem> m_mainFrameItem;
     Vector<Ref<WebBackForwardListItem>> m_rootChildFrameItems;

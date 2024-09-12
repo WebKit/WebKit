@@ -123,7 +123,6 @@ HLSLBlockEncoder::HLSLBlockEncoderStrategy HLSLBlockEncoder::GetStrategyFor(
         case SH_HLSL_3_0_OUTPUT:
             return ENCODE_LOOSE;
         case SH_HLSL_4_1_OUTPUT:
-        case SH_HLSL_4_0_FL9_3_OUTPUT:
             return ENCODE_PACKED;
         default:
             UNREACHABLE();

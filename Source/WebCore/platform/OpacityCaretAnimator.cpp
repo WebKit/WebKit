@@ -30,8 +30,11 @@
 
 #include "FloatRoundedRect.h"
 #include "VisibleSelection.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpacityCaretAnimator);
 
 static constexpr std::array keyframes = {
     KeyFrame { 0.0_s   , 1.00 },

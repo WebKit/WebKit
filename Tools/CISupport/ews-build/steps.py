@@ -6781,8 +6781,8 @@ class UpdatePullRequest(shell.ShellCommandNewStyle, GitHubMixin, AddToLogMixin):
         re.compile(r'\Awebkit.org/b/(?P<id>\d+)\Z'),
         re.compile(r'\Ahttps?://webkit.org/b/(?P<id>\d+)\Z'),
         re.compile(r'\Awebkit.org/b/(?P<id>\d+)\Z'),
-        re.compile(r'\Abugs.webkit.org/show_bug.cgi\?id=(?P<id>\d+)\Z'),
-        re.compile(r'\Ahttps?://bugs.webkit.org/show_bug.cgi\?id=(?P<id>\d+)\Z'),
+        re.compile(r'\A<?bugs.webkit.org/show_bug.cgi\?id=(?P<id>\d+)>?\Z'),
+        re.compile(r'\A<?https?://bugs.webkit.org/show_bug.cgi\?id=(?P<id>\d+)>?\Z'),
     ]
 
     @classmethod

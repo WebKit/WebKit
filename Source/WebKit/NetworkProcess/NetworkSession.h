@@ -46,6 +46,7 @@
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <pal/SessionID.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/Deque.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
@@ -270,6 +271,9 @@ public:
 
     void setInspectionForServiceWorkersAllowed(bool);
     void setPersistedDomains(HashSet<WebCore::RegistrableDomain>&&);
+
+    void recordHTTPSConnectionTiming(const WebCore::NetworkLoadMetrics&);
+    double currentHTTPSConnectionAverageTiming() const { return m_recentHTTPSConnectionTiming.currentMovingAverage; }
                                     
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
@@ -352,6 +356,12 @@ protected:
     RefPtr<BackgroundFetchStoreImpl> m_backgroundFetchStore;
     bool m_inspectionForServiceWorkersAllowed { true };
     std::unique_ptr<WebSharedWorkerServer> m_sharedWorkerServer;
+
+    struct RecentHTTPSConnectionTiming {
+        static constexpr unsigned maxEntries { 25 };
+        Deque<Seconds, maxEntries> recentConnectionTimings;
+        double currentMovingAverage { 0 };
+    } m_recentHTTPSConnectionTiming;
 
     Ref<NetworkStorageManager> m_storageManager;
     String m_cacheStorageDirectory;

@@ -12,7 +12,6 @@ PACKAGES+=(
     libgnutls28-dev
     libharfbuzz-dev
     libicu-dev
-    $(aptIfExists libopenxr-dev)
     libxml2-dev
     pkg-config
     qtbase5-dev
@@ -21,13 +20,13 @@ PACKAGES+=(
     unifdef
     wayland-protocols
     zlib1g-dev
+    $(aptIfExists libopenxr-dev)
 
     # These are dependencies necessary for running tests.
     python3-psutil
 
     # These are dependencies necessary for building the jhbuild.
     libegl-mesa0
-    libluajit-5.1-dev
     libmount-dev
     libopus-dev
     libpulse-dev
@@ -39,10 +38,9 @@ PACKAGES+=(
     libxcb-xkb-dev
     libxkbcommon-dev
     libxrandr-dev
-    luajit
 
     # These are dependencies necessary for building Cog.
-    libportal-dev
-    libportal-gtk4-dev
     libxcb-cursor-dev
+    $(aptIfExists libportal-dev)
+    $(aptIfExists libportal-gtk4-dev)
 )

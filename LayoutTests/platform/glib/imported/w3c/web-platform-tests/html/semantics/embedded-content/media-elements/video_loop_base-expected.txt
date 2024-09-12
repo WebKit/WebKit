@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN Check if video.loop is set to true that expecting the seeking event is fired more than once
+PASS Check if video.loop is set to true that expecting the seeking event is fired more than once
 

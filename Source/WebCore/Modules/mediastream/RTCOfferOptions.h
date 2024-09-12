@@ -33,6 +33,9 @@ namespace WebCore {
 
 struct RTCOfferOptions : RTCOfferAnswerOptions {
     bool iceRestart { false };
+
+    std::optional<bool> offerToReceiveVideo;
+    std::optional<bool> offerToReceiveAudio;
 };
 
 } // namespace WebCore

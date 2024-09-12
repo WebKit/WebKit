@@ -189,7 +189,7 @@ void ARKitCoordinator::endSessionIfExists(WebPageProxy& page)
     endSessionIfExists(page.webPageIDInMainFrameProcess());
 }
 
-void ARKitCoordinator::scheduleAnimationFrame(WebPageProxy& page, PlatformXR::Device::RequestFrameCallback&& onFrameUpdateCallback)
+void ARKitCoordinator::scheduleAnimationFrame(WebPageProxy& page, std::optional<PlatformXR::RequestData>&&, PlatformXR::Device::RequestFrameCallback&& onFrameUpdateCallback)
 {
     RELEASE_LOG(XR, "ARKitCoordinator::scheduleAnimationFrame");
     WTF::switchOn(m_state,

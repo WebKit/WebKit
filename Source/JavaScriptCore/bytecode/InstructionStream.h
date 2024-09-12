@@ -34,6 +34,10 @@ namespace JSC {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(InstructionStream);
 
+struct InstructionStreamBufferMalloc final : public InstructionStreamMalloc {
+    static constexpr ALWAYS_INLINE size_t nextCapacity(size_t capacity) { return capacity + capacity; }
+};
+
 template<typename InstructionType>
 class InstructionStream {
     WTF_MAKE_FAST_ALLOCATED;
@@ -41,7 +45,7 @@ class InstructionStream {
     template<typename> friend class InstructionStreamWriter;
     friend class CachedInstructionStream;
 public:
-    using InstructionBuffer = Vector<uint8_t, 0, UnsafeVectorOverflow, 16, InstructionStreamMalloc>;
+    using InstructionBuffer = Vector<uint8_t, 0, UnsafeVectorOverflow, 16, InstructionStreamBufferMalloc>;
 
     size_t sizeInBytes() const
     {

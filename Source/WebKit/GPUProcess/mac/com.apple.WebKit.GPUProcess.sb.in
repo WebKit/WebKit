@@ -226,6 +226,7 @@
         "kern.osversion"
         "kern.version"
         "kern.willshutdown"
+        "machdep.ptrauth_enabled" ;; <rdar://123398972>
         "vm.malloc_ranges") ;; <rdar://problem/105161083>
     (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/71462790>
     (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76783596>

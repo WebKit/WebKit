@@ -383,6 +383,7 @@ private:
             case NewArray:
             case NewArrayWithSize:
             case NewArrayWithConstantSize:
+            case NewArrayWithSizeAndStructure:
             case NewArrayBuffer:
             case NewInternalFieldObject:
             case NewTypedArray:

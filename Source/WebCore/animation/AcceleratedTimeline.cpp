@@ -47,7 +47,7 @@ AcceleratedTimeline::AcceleratedTimeline(Document& document)
 {
     auto now = MonotonicTime::now();
     m_timeOrigin = now.secondsSinceEpoch();
-    if (auto* domWindow = document.domWindow())
+    if (RefPtr domWindow = document.domWindow())
         m_timeOrigin -= Seconds::fromMilliseconds(domWindow->performance().relativeTimeFromTimeOriginInReducedResolution(now));
 }
 

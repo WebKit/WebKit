@@ -155,7 +155,7 @@ VertexArrayImpl *ContextGL::createVertexArray(const gl::VertexArrayState &data)
     // external user.
     if (features.syncAllVertexArraysToDefault.enabled ||
         (features.syncDefaultVertexArraysToDefault.enabled && data.isDefault() &&
-         mState.areClientArraysEnabled() && !mState.isExternal()))
+         mState.areClientArraysEnabled()))
     {
         StateManagerGL *stateManager = getStateManager();
 

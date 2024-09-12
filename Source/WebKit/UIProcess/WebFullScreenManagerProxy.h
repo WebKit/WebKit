@@ -120,6 +120,8 @@ public:
     void unlockFullscreenOrientation();
 
 private:
+    Ref<WebPageProxy> protectedPage() const;
+
     void supportsFullScreen(bool withKeyboard, CompletionHandler<void(bool)>&&);
     void enterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, FullScreenMediaDetails&&);
     void exitFullScreen();
@@ -137,7 +139,7 @@ private:
     WTFLogChannel& logChannel() const;
 #endif
 
-    WebPageProxy& m_page;
+    WeakRef<WebPageProxy> m_page;
     WebFullScreenManagerProxyClient& m_client;
     FullscreenState m_fullscreenState { FullscreenState::NotInFullscreen };
     bool m_blocksReturnToFullscreenFromPictureInPicture { false };

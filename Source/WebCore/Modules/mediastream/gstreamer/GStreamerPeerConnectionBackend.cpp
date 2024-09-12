@@ -51,6 +51,7 @@ GST_DEBUG_CATEGORY(webkit_webrtc_pc_backend_debug);
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebRTCLogObserver);
 
+#ifndef GST_DISABLE_GST_DEBUG
 class WebRTCLogObserver : public WebCoreLogObserver {
 public:
     GstDebugCategory* debugCategory() const final
@@ -68,6 +69,7 @@ WebRTCLogObserver& webrtcLogObserverSingleton()
     static NeverDestroyed<WebRTCLogObserver> sharedInstance;
     return sharedInstance;
 }
+#endif // GST_DISABLE_GST_DEBUG
 
 static std::unique_ptr<PeerConnectionBackend> createGStreamerPeerConnectionBackend(RTCPeerConnection& peerConnection)
 {
@@ -91,6 +93,7 @@ GStreamerPeerConnectionBackend::GStreamerPeerConnectionBackend(RTCPeerConnection
 {
     disableICECandidateFiltering();
 
+#if !RELEASE_LOG_DISABLED && !defined(GST_DISABLE_GST_DEBUG)
     // PeerConnectionBackend relies on the Document logger, so to prevent duplicate messages in case
     // more than one PeerConnection is created, we register a single observer.
     auto& logObserver = webrtcLogObserverSingleton();
@@ -98,12 +101,15 @@ GStreamerPeerConnectionBackend::GStreamerPeerConnectionBackend(RTCPeerConnection
 
     auto logIdentifier = makeString(hex(reinterpret_cast<uintptr_t>(this->logIdentifier())));
     GST_INFO_OBJECT(m_endpoint->pipeline(), "WebCore logs identifier for this pipeline is: %s", logIdentifier.ascii().data());
+#endif
 }
 
 GStreamerPeerConnectionBackend::~GStreamerPeerConnectionBackend()
 {
+#if !RELEASE_LOG_DISABLED && !defined(GST_DISABLE_GST_DEBUG)
     auto& logObserver = webrtcLogObserverSingleton();
     logObserver.removeWatch(logger());
+#endif
 }
 
 void GStreamerPeerConnectionBackend::suspend()
@@ -126,7 +132,7 @@ bool GStreamerPeerConnectionBackend::setConfiguration(MediaEndpointConfiguration
     return m_endpoint->setConfiguration(configuration);
 }
 
-static inline GStreamerRtpSenderBackend& backendFromRTPSender(RTCRtpSender& sender)
+GStreamerRtpSenderBackend& GStreamerPeerConnectionBackend::backendFromRTPSender(RTCRtpSender& sender)
 {
     ASSERT(!sender.isStopped());
     return static_cast<GStreamerRtpSenderBackend&>(*sender.backend());
@@ -134,59 +140,24 @@ static inline GStreamerRtpSenderBackend& backendFromRTPSender(RTCRtpSender& send
 
 void GStreamerPeerConnectionBackend::getStats(Ref<DeferredPromise>&& promise)
 {
-    GUniquePtr<GstStructure> additionalStats(gst_structure_new_empty("stats"));
-    for (auto& sender : connection().getSenders()) {
-        auto& backend = backendFromRTPSender(sender);
-        const GstStructure* stats = nullptr;
-        if (auto* videoSource = backend.videoSource())
-            stats = videoSource->stats();
-
-        if (!stats)
-            continue;
-
-        gst_structure_foreach(stats, [](GQuark quark, const GValue* value, gpointer userData) -> gboolean {
-            auto* resultStructure = static_cast<GstStructure*>(userData);
-            gst_structure_set_value(resultStructure, g_quark_to_string(quark), value);
-            return TRUE;
-        }, additionalStats.get());
-    }
-    for (auto& receiver : connection().getReceivers()) {
-        auto& track = receiver.get().track();
-        if (!is<RealtimeIncomingVideoSourceGStreamer>(track.source()))
-            continue;
-
-        auto& source = static_cast<RealtimeIncomingVideoSourceGStreamer&>(track.source());
-        const auto* stats = source.stats();
-        if (!stats)
-            continue;
-
-        gst_structure_foreach(stats, [](GQuark quark, const GValue* value, gpointer userData) -> gboolean {
-            auto* resultStructure = static_cast<GstStructure*>(userData);
-            gst_structure_set_value(resultStructure, g_quark_to_string(quark), value);
-            return TRUE;
-        }, additionalStats.get());
-    }
-    m_endpoint->getStats(nullptr, additionalStats.get(), WTFMove(promise));
+    m_endpoint->getStats(nullptr, WTFMove(promise));
 }
 
 void GStreamerPeerConnectionBackend::getStats(RTCRtpSender& sender, Ref<DeferredPromise>&& promise)
 {
     if (!sender.backend()) {
-        m_endpoint->getStats(nullptr, nullptr, WTFMove(promise));
+        m_endpoint->getStats(nullptr, WTFMove(promise));
         return;
     }
 
     auto& backend = backendFromRTPSender(sender);
     GRefPtr<GstPad> pad;
-    const GstStructure* additionalStats = nullptr;
     if (RealtimeOutgoingAudioSourceGStreamer* source = backend.audioSource())
         pad = source->pad();
-    else if (RealtimeOutgoingVideoSourceGStreamer* source = backend.videoSource()) {
+    else if (RealtimeOutgoingVideoSourceGStreamer* source = backend.videoSource())
         pad = source->pad();
-        additionalStats = source->stats();
-    }
 
-    m_endpoint->getStats(pad.get(), additionalStats, WTFMove(promise));
+    m_endpoint->getStats(pad.get(), WTFMove(promise));
 }
 
 void GStreamerPeerConnectionBackend::getStats(RTCRtpReceiver& receiver, Ref<DeferredPromise>&& promise)
@@ -256,7 +227,7 @@ std::unique_ptr<RTCDataChannelHandler> GStreamerPeerConnectionBackend::createDat
     return m_endpoint->createDataChannel(label, options);
 }
 
-static inline RefPtr<RTCRtpSender> findExistingSender(const Vector<RefPtr<RTCRtpTransceiver>>& transceivers, GStreamerRtpSenderBackend& senderBackend)
+RefPtr<RTCRtpSender> GStreamerPeerConnectionBackend::findExistingSender(const Vector<RefPtr<RTCRtpTransceiver>>& transceivers, GStreamerRtpSenderBackend& senderBackend)
 {
     ASSERT(senderBackend.rtcSender());
     for (auto& transceiver : transceivers) {
@@ -294,10 +265,10 @@ ExceptionOr<Ref<RTCRtpSender>> GStreamerPeerConnectionBackend::addTrack(MediaStr
 }
 
 template<typename T>
-ExceptionOr<Ref<RTCRtpTransceiver>> GStreamerPeerConnectionBackend::addTransceiverFromTrackOrKind(T&& trackOrKind, const RTCRtpTransceiverInit& init)
+ExceptionOr<Ref<RTCRtpTransceiver>> GStreamerPeerConnectionBackend::addTransceiverFromTrackOrKind(T&& trackOrKind, const RTCRtpTransceiverInit& init, IgnoreNegotiationNeededFlag ignoreNegotiationNeededFlag)
 {
     GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Adding new transceiver.");
-    auto result = m_endpoint->addTransceiver(trackOrKind, init);
+    auto result = m_endpoint->addTransceiver(trackOrKind, init, ignoreNegotiationNeededFlag);
     if (result.hasException())
         return result.releaseException();
 
@@ -310,14 +281,14 @@ ExceptionOr<Ref<RTCRtpTransceiver>> GStreamerPeerConnectionBackend::addTransceiv
     return transceiver;
 }
 
-ExceptionOr<Ref<RTCRtpTransceiver>> GStreamerPeerConnectionBackend::addTransceiver(const String& trackKind, const RTCRtpTransceiverInit& init)
+ExceptionOr<Ref<RTCRtpTransceiver>> GStreamerPeerConnectionBackend::addTransceiver(const String& trackKind, const RTCRtpTransceiverInit& init, IgnoreNegotiationNeededFlag ignoreNegotiationNeededFlag)
 {
-    return addTransceiverFromTrackOrKind(String { trackKind }, init);
+    return addTransceiverFromTrackOrKind(String { trackKind }, init, ignoreNegotiationNeededFlag);
 }
 
 ExceptionOr<Ref<RTCRtpTransceiver>> GStreamerPeerConnectionBackend::addTransceiver(Ref<MediaStreamTrack>&& track, const RTCRtpTransceiverInit& init)
 {
-    return addTransceiverFromTrackOrKind(WTFMove(track), init);
+    return addTransceiverFromTrackOrKind(WTFMove(track), init, IgnoreNegotiationNeededFlag::No);
 }
 
 GStreamerRtpSenderBackend::Source GStreamerPeerConnectionBackend::createLinkedSourceForTrack(MediaStreamTrack& track)

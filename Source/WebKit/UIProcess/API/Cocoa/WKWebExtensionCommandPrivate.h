@@ -34,6 +34,13 @@
  */
 @property (nonatomic, readonly, copy) NSString *_shortcut;
 
+/*!
+ @abstract Represents the user visible shortcut for the web extension, formatted according to the system.
+ @discussion Provides a string representation of the shortcut, incorporating any customizations made to the ``activationKey``
+ and ``modifierFlags`` properties. It will be empty if no shortcut is defined for the command.
+ */
+@property (nonatomic, readonly, copy) NSString *_userVisibleShortcut;
+
 #if TARGET_OS_OSX
 /*!
  @abstract Determines whether an event matches the command's activation key and modifier flags.

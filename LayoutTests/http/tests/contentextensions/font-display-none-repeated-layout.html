@@ -19,17 +19,16 @@ description("Make sure that a content-blocker rule which is triggered by a webfo
 
 window.jsTestIsAsync = true;
 
-var startLayoutCount = -1;
-var endLayoutCount = -1;
+var layoutCount = -1;
 
 if (window.internals)
-    startLayoutCount = window.internals.layoutCount;
+    internals.startTrackingLayoutUpdates();
 
 window.setTimeout(function() {
     if (window.internals) {
-        endLayoutCount = window.internals.layoutCount;
+        layoutCount = internals.layoutUpdateCount();
     }
-    shouldBeTrue("endLayoutCount - startLayoutCount < 5");
+    shouldBeTrue("layoutCount < 5");
     finishJSTest();
 }, 500);
 </script>

@@ -15,7 +15,7 @@
 #include "common/PackedEnums.h"
 #include "common/platform.h"
 #include "gpu_info_util/SystemInfo.h"
-#include "test_utils/runner/TestSuite.h"
+#include "test_expectations/GPUTestConfig.h"
 #include "util/EGLWindow.h"
 #include "util/OSWindow.h"
 #include "util/random_utils.h"
@@ -24,6 +24,10 @@
 #if defined(ANGLE_PLATFORM_WINDOWS)
 #    include <VersionHelpers.h>
 #endif  // defined(ANGLE_PLATFORM_WINDOWS)
+
+#if defined(ANGLE_HAS_RAPIDJSON)
+#    include "test_utils/runner/TestSuite.h"
+#endif  // defined(ANGLE_HAS_RAPIDJSON)
 
 namespace angle
 {
@@ -649,6 +653,9 @@ void ANGLETestBase::ANGLETestSetUp()
     fullTestNameStr << testInfo->test_suite_name() << "." << testInfo->name();
     std::string fullTestName = fullTestNameStr.str();
 
+    // TODO(b/279980674): TestSuite depends on rapidjson which we don't have in aosp builds,
+    // for now disable both TestSuite and expectations.
+#if defined(ANGLE_HAS_RAPIDJSON)
     TestSuite *testSuite = TestSuite::GetInstance();
     int32_t testExpectation =
         testSuite->getTestExpectationWithConfigAndUpdateTimeout(testConfig, fullTestName);
@@ -657,6 +664,7 @@ void ANGLETestBase::ANGLETestSetUp()
     {
         GTEST_SKIP() << "Test skipped on this config";
     }
+#endif
 
     if (IsWindows())
     {

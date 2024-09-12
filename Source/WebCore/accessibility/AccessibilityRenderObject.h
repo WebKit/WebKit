@@ -137,7 +137,6 @@ public:
     
     String secureFieldValue() const override;
     void labelText(Vector<AccessibilityText>&) const override;
-
 protected:
     explicit AccessibilityRenderObject(RenderObject&);
     explicit AccessibilityRenderObject(Node&);

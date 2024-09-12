@@ -33,7 +33,6 @@
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include "WebCodecsAudioEncoderConfig.h"
-#include "WebCodecsBaseClass.h"
 #include "WebCodecsCodecState.h"
 #include "WebCodecsControlMessage.h"
 #include <wtf/RefCounted.h>
@@ -48,8 +47,7 @@ class WebCodecsAudioData;
 struct WebCodecsEncodedAudioChunkMetadata;
 
 class WebCodecsAudioEncoder
-    : private WebCodecsBaseClass
-    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsAudioEncoder>
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsAudioEncoder>
     , public ActiveDOMObject
     , public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebCodecsAudioEncoder);
@@ -117,6 +115,7 @@ private:
     WebCodecsAudioEncoderConfig m_baseConfiguration;
     AudioEncoder::ActiveConfiguration m_activeConfiguration;
     bool m_hasNewActiveConfiguration { false };
+    size_t m_encoderCount { 0 };
 };
 
 }

@@ -36,7 +36,7 @@
 // Only DisplayCGL and DisplayEAGL need to be notified about an EGL call about to be made to prepare
 // per-thread data. Disable Display::prepareForCall on other platforms for performance.
 #if !defined(ANGLE_USE_DISPLAY_PREPARE_FOR_CALL)
-#    if ANGLE_PLATFORM_APPLE
+#    if ANGLE_ENABLE_CGL || ANGLE_ENABLE_EAGL
 #        define ANGLE_USE_DISPLAY_PREPARE_FOR_CALL 1
 #    else
 #        define ANGLE_USE_DISPLAY_PREPARE_FOR_CALL 0

@@ -1,0 +1,10 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+install-name: /usr/lib/swift/libswiftXPC.dylib
+current-version: 62.0.1
+swift-abi-version: 7
+exports:
+-       targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+        symbols: [__swift_FORCE_LOAD_$_swiftXPC]
+...

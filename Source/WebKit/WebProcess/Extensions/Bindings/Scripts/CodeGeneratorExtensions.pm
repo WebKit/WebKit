@@ -678,11 +678,11 @@ EOF
             unshift(@methodSignatureNames, "context") if $needsScriptContext;
             unshift(@parameters, "context") if $needsScriptContext;
 
-            unshift(@methodSignatureNames, "page") if $needsPage;
-            unshift(@parameters, "*page") if $needsPage;
-
             unshift(@methodSignatureNames, "frame") if $needsFrame;
             unshift(@parameters, "*frame") if $needsFrame;
+
+            unshift(@methodSignatureNames, "page") if $needsPage;
+            unshift(@parameters, "*page") if $needsPage;
 
             push(@methodSignatureNames, "outExceptionString") if $needsExceptionString;
             push(@parameters, "&exceptionString") if $needsExceptionString;

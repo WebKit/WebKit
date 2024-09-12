@@ -105,6 +105,7 @@
                                 // Results in TypeError when allowed, NotAllowedError when disallowed
                                 providers: [],
                             },
+                            mediation: "required",
                         };
                         const { data } = await new Promise((resolve) => {
                             window.addEventListener("message", resolve, {

@@ -41,6 +41,7 @@
 #include "RTCIceCandidate.h"
 #include "RTCOfferOptions.h"
 #include "RTCPeerConnection.h"
+#include "RTCRtpSender.h"
 #include "RTCSctpTransportBackend.h"
 #include "RTCSessionDescription.h"
 #include "RTCStatsReport.h"
@@ -54,6 +55,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/Scope.h>
+#include <wtf/SetForScope.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -108,6 +110,11 @@ bool GStreamerMediaEndpoint::initializePipeline()
         return false;
 
     auto rtpBin = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_webrtcBin.get()), "rtpbin"));
+    if (!rtpBin) {
+        GST_ERROR_OBJECT(m_webrtcBin.get(), "rtpbin not found. Please check that your GStreamer installation has the rtp and rtpmanager plugins.");
+        return false;
+    }
+
     if (gstObjectHasProperty(rtpBin.get(), "add-reference-timestamp-meta"))
         g_object_set(rtpBin.get(), "add-reference-timestamp-meta", TRUE, nullptr);
 
@@ -435,12 +442,15 @@ static std::optional<GStreamerMediaEndpointTransceiverState> toGStreamerMediaEnd
 {
     GRefPtr<GstWebRTCRTPReceiver> receiver;
     GUniqueOutPtr<char> mid;
-    GstWebRTCRTPTransceiverDirection currentDirection;
+    GstWebRTCRTPTransceiverDirection direction;
     guint mLineIndex;
-    g_object_get(transceiver, "receiver", &receiver.outPtr(), "current-direction", &currentDirection, "mlineindex", &mLineIndex, "mid", &mid.outPtr(), nullptr);
+    // GstWebRTCRTPTransceiver doesn't have a fired-direction property, so use direction. Until
+    // GStreamer 1.26 direction and current-direction always had the same value. This was fixed by:
+    // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/cafb999fb0cdf32803fcc3f85f2652212f05c2d0
+    g_object_get(transceiver, "receiver", &receiver.outPtr(), "direction", &direction, "mlineindex", &mLineIndex, "mid", &mid.outPtr(), nullptr);
 #ifndef GST_DISABLE_GST_DEBUG
-    GUniquePtr<char> desc(g_enum_to_string(GST_TYPE_WEBRTC_RTP_TRANSCEIVER_DIRECTION, currentDirection));
-    GST_TRACE_OBJECT(webrtcBin, "Receiver = %" GST_PTR_FORMAT ", current-direction = %s, mlineindex = %u, mid = %s", receiver.get(), desc.get(), mLineIndex, GST_STR_NULL(mid.get()));
+    GUniquePtr<char> desc(g_enum_to_string(GST_TYPE_WEBRTC_RTP_TRANSCEIVER_DIRECTION, direction));
+    GST_TRACE_OBJECT(webrtcBin, "Receiver = %" GST_PTR_FORMAT ", direction = %s, mlineindex = %u, mid = %s", receiver.get(), desc.get(), mLineIndex, GST_STR_NULL(mid.get()));
 #endif
 
     GUniqueOutPtr<GstWebRTCSessionDescription> localDescription, remoteDescription;
@@ -460,14 +470,14 @@ static std::optional<GStreamerMediaEndpointTransceiverState> toGStreamerMediaEnd
     Vector<String> streamIds;
     if (remoteDescription && remoteDescription->sdp && mLineIndex < gst_sdp_message_medias_len(remoteDescription->sdp)) {
         const GstSDPMedia* media = gst_sdp_message_get_media(remoteDescription->sdp, mLineIndex);
-        if (isRecvDirection(currentDirection))
+        if (isRecvDirection(direction))
             streamIds = getMediaStreamIdsFromSDPMedia(*media);
     }
 
     if (UNLIKELY(!mid))
         return { };
 
-    return { { String::fromUTF8(mid.get()), WTFMove(streamIds), { toRTCRtpTransceiverDirection(currentDirection) } } };
+    return { { String::fromUTF8(mid.get()), WTFMove(streamIds), { toRTCRtpTransceiverDirection(direction) } } };
 }
 
 static Vector<GStreamerMediaEndpointTransceiverState> transceiverStatesFromWebRTCBin(GstElement* webrtcBin)
@@ -1047,24 +1057,8 @@ void GStreamerMediaEndpoint::initiate(bool isInitiator, GstStructure* rawOptions
     }, holder, reinterpret_cast<GDestroyNotify>(destroyGStreamerMediaEndpointHolder)));
 }
 
-void GStreamerMediaEndpoint::getStats(GstPad* pad, const GstStructure* additionalStats, Ref<DeferredPromise>&& promise)
+void GStreamerMediaEndpoint::getStats(const GRefPtr<GstPad>& pad, Ref<DeferredPromise>&& promise)
 {
-    GUniquePtr<GstStructure> aggregatedStats(additionalStats ? gst_structure_copy(additionalStats) : gst_structure_new_empty("stats"));
-    for (auto& processor : m_trackProcessors.values()) {
-        if (pad && pad != processor->pad())
-            continue;
-
-        const auto stats = processor->stats();
-        if (!stats)
-            continue;
-
-        gst_structure_foreach(stats, [](GQuark quark, const GValue* value, gpointer userData) -> gboolean {
-            auto resultStructure = static_cast<GstStructure*>(userData);
-            gst_structure_set_value(resultStructure, g_quark_to_string(quark), value);
-            return TRUE;
-        }, aggregatedStats.get());
-    }
-
     m_statsCollector->getStats([promise = WTFMove(promise), protectedThis = Ref(*this)](auto&& report) mutable {
         ASSERT(isMainThread());
         if (protectedThis->isStopped() || !report) {
@@ -1073,21 +1067,23 @@ void GStreamerMediaEndpoint::getStats(GstPad* pad, const GstStructure* additiona
         }
 
         promise->resolve<IDLInterface<RTCStatsReport>>(report.releaseNonNull());
-    }, pad, aggregatedStats.get());
+    }, pad, [weakThis = ThreadSafeWeakPtr { *this }, this](const auto& pad, const auto* stats) -> GUniquePtr<GstStructure> {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return nullptr;
+        return preprocessStats(pad, stats);
+    });
 }
 
 void GStreamerMediaEndpoint::getStats(RTCRtpReceiver& receiver, Ref<DeferredPromise>&& promise)
 {
     GstElement* bin = nullptr;
-    const GstStructure* additionalStats = nullptr;
     auto& source = receiver.track().privateTrack().source();
-    if (source.isIncomingAudioSource()) {
+    if (source.isIncomingAudioSource())
         bin = static_cast<RealtimeIncomingAudioSourceGStreamer&>(source).bin();
-    } else if (source.isIncomingVideoSource()) {
-        auto& incomingVideoSource = static_cast<RealtimeIncomingVideoSourceGStreamer&>(source);
-        bin = incomingVideoSource.bin();
-        additionalStats = incomingVideoSource.stats();
-    } else
+    else if (source.isIncomingVideoSource())
+        bin = static_cast<RealtimeIncomingVideoSourceGStreamer&>(source).bin();
+    else
         RELEASE_ASSERT_NOT_REACHED();
 
     if (!bin) {
@@ -1098,7 +1094,7 @@ void GStreamerMediaEndpoint::getStats(RTCRtpReceiver& receiver, Ref<DeferredProm
     auto sinkPad = adoptGRef(gst_element_get_static_pad(bin, "sink"));
     if (!sinkPad) {
         // The incoming source bin is not linked yet, so look for a matching upstream track processor.
-        GstPad* pad = nullptr;
+        GRefPtr<GstPad> pad;
         const auto& trackId = receiver.track().id();
         for (auto& processor : m_trackProcessors.values()) {
             if (processor->trackId() != trackId)
@@ -1106,11 +1102,11 @@ void GStreamerMediaEndpoint::getStats(RTCRtpReceiver& receiver, Ref<DeferredProm
             pad = processor->pad();
             break;
         }
-        getStats(pad, additionalStats, WTFMove(promise));
+        getStats(pad, WTFMove(promise));
         return;
     }
     auto srcPad = adoptGRef(gst_pad_get_peer(sinkPad.get()));
-    getStats(srcPad.get(), additionalStats, WTFMove(promise));
+    getStats(srcPad, WTFMove(promise));
 }
 
 MediaStream& GStreamerMediaEndpoint::mediaStreamFromRTCStream(String mediaStreamId)
@@ -1264,10 +1260,16 @@ int GStreamerMediaEndpoint::pickAvailablePayloadType()
     return payloadType;
 }
 
-ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::createTransceiverBackends(const String& kind, const RTCRtpTransceiverInit& init, GStreamerRtpSenderBackend::Source&& source)
+ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::createTransceiverBackends(const String& kind, const RTCRtpTransceiverInit& init, GStreamerRtpSenderBackend::Source&& source, PeerConnectionBackend::IgnoreNegotiationNeededFlag ignoreNegotiationNeededFlag)
 {
     if (!m_webrtcBin)
         return Exception { ExceptionCode::InvalidStateError, "End-point has not been configured yet"_s };
+
+    // The current add-transceiver implementation in webrtcbin is synchronous and doesn't trigger
+    // negotiation-needed signals but we keep the m_shouldIgnoreNegotiationNeededSignal in case this
+    // changes in future versions of webrtcbin.
+    bool shouldIgnoreNegotiationNeededSignal = ignoreNegotiationNeededFlag == PeerConnectionBackend::IgnoreNegotiationNeededFlag::Yes ? true : false;
+    SetForScope scopedIgnoreNegotiationNeededSignal(m_shouldIgnoreNegotiationNeededSignal, shouldIgnoreNegotiationNeededSignal, false);
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "%zu streams in init data", init.streams.size());
 
@@ -1368,10 +1370,10 @@ ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::createTran
     return GStreamerMediaEndpoint::Backends { transceiver->createSenderBackend(m_peerConnectionBackend, WTFMove(source), WTFMove(initData)), transceiver->createReceiverBackend(), WTFMove(transceiver) };
 }
 
-ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::addTransceiver(const String& trackKind, const RTCRtpTransceiverInit& init)
+ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::addTransceiver(const String& trackKind, const RTCRtpTransceiverInit& init, PeerConnectionBackend::IgnoreNegotiationNeededFlag ignoreNegotiationNeededFlag)
 {
     GST_DEBUG_OBJECT(m_pipeline.get(), "Creating transceiver for %s track kind", trackKind.ascii().data());
-    return createTransceiverBackends(trackKind, init, nullptr);
+    return createTransceiverBackends(trackKind, init, nullptr, ignoreNegotiationNeededFlag);
 }
 
 GStreamerRtpSenderBackend::Source GStreamerMediaEndpoint::createSourceForTrack(MediaStreamTrack& track)
@@ -1405,10 +1407,10 @@ GStreamerRtpSenderBackend::Source GStreamerMediaEndpoint::createLinkedSourceForT
     return source;
 }
 
-ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::addTransceiver(MediaStreamTrack& track, const RTCRtpTransceiverInit& init)
+ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::addTransceiver(MediaStreamTrack& track, const RTCRtpTransceiverInit& init, PeerConnectionBackend::IgnoreNegotiationNeededFlag ignoreNegotiationNeededFlag)
 {
     GST_DEBUG_OBJECT(m_pipeline.get(), "Creating transceiver associated with %s track %s", track.kind().string().ascii().data(), track.id().ascii().data());
-    return createTransceiverBackends(track.kind(), init, createSourceForTrack(track));
+    return createTransceiverBackends(track.kind(), init, createSourceForTrack(track), ignoreNegotiationNeededFlag);
 }
 
 std::unique_ptr<GStreamerRtpTransceiverBackend> GStreamerMediaEndpoint::transceiverBackendFromSender(GStreamerRtpSenderBackend& backend)
@@ -1617,6 +1619,11 @@ void GStreamerMediaEndpoint::resume()
 
 void GStreamerMediaEndpoint::onNegotiationNeeded()
 {
+    if (m_shouldIgnoreNegotiationNeededSignal) {
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Ignoring negotiation-needed signal");
+        return;
+    }
+
     if (GST_STATE(m_webrtcBin.get()) < GST_STATE_PAUSED) {
         GST_DEBUG_OBJECT(m_pipeline.get(), "Deferring negotiation-needed until webrtc is ready");
         return;
@@ -1790,7 +1797,8 @@ void GStreamerMediaEndpoint::gatherStatsForLogging()
             return;
 
         auto* holder = static_cast<GStreamerMediaEndpointHolder*>(userData);
-        holder->endPoint->onStatsDelivered(reply);
+        auto stats = holder->endPoint->preprocessStats(nullptr, reply);
+        holder->endPoint->onStatsDelivered(WTFMove(stats));
     }, holder, reinterpret_cast<GDestroyNotify>(destroyGStreamerMediaEndpointHolder)));
 }
 
@@ -1806,7 +1814,96 @@ private:
     const GstStructure* m_stats;
 };
 
-void GStreamerMediaEndpoint::processStats(const GValue* value)
+GUniquePtr<GstStructure> GStreamerMediaEndpoint::preprocessStats(const GRefPtr<GstPad>& pad, const GstStructure* stats)
+{
+    GUniquePtr<GstStructure> additionalStats(gst_structure_new_empty("stats"));
+    auto mergeStructureInAdditionalStats = [&](const GstStructure* stats) {
+        gst_structure_foreach(stats, [](GQuark quark, const GValue* value, gpointer userData) -> gboolean {
+            auto* resultStructure = static_cast<GstStructure*>(userData);
+            gst_structure_set_value(resultStructure, g_quark_to_string(quark), value);
+            return TRUE;
+        }, additionalStats.get());
+    };
+    if (!pad) {
+        for (auto& sender : m_peerConnectionBackend.connection().getSenders()) {
+            auto& backend = m_peerConnectionBackend.backendFromRTPSender(sender);
+            const GstStructure* stats = nullptr;
+            if (auto* videoSource = backend.videoSource())
+                stats = videoSource->stats();
+
+            if (!stats)
+                continue;
+
+            mergeStructureInAdditionalStats(stats);
+        }
+        for (auto& receiver : m_peerConnectionBackend.connection().getReceivers()) {
+            auto& track = receiver.get().track();
+            if (!is<RealtimeIncomingVideoSourceGStreamer>(track.source()))
+                continue;
+
+            auto& source = static_cast<RealtimeIncomingVideoSourceGStreamer&>(track.source());
+            const auto* stats = source.stats();
+            if (!stats)
+                continue;
+
+            mergeStructureInAdditionalStats(stats);
+        }
+    }
+
+    for (auto& processor : m_trackProcessors.values()) {
+        if (pad && pad != processor->pad())
+            continue;
+
+        const auto stats = processor->stats();
+        if (!stats)
+            continue;
+
+        mergeStructureInAdditionalStats(stats);
+    }
+
+    GUniquePtr<GstStructure> result(gst_structure_copy(stats));
+    gst_structure_map_in_place(result.get(), [](GQuark, GValue* value, gpointer userData) -> gboolean {
+        if (!GST_VALUE_HOLDS_STRUCTURE(value))
+            return TRUE;
+
+        GUniquePtr<GstStructure> structure(gst_structure_copy(gst_value_get_structure(value)));
+        GstWebRTCStatsType statsType;
+        if (!gst_structure_get(structure.get(), "type", GST_TYPE_WEBRTC_STATS_TYPE, &statsType, nullptr))
+            return TRUE;
+
+        auto additionalStats = GST_STRUCTURE_CAST(userData);
+        switch (statsType) {
+        case GST_WEBRTC_STATS_INBOUND_RTP: {
+            if (auto framesDecoded = gstStructureGet<uint64_t>(additionalStats, "frames-decoded"_s))
+                gst_structure_set(structure.get(), "frames-decoded", G_TYPE_UINT64, *framesDecoded, nullptr);
+            if (auto framesDropped = gstStructureGet<uint64_t>(additionalStats, "frames-dropped"_s))
+                gst_structure_set(structure.get(), "frames-dropped", G_TYPE_UINT64, *framesDropped, nullptr);
+            if (auto frameWidth = gstStructureGet<unsigned>(additionalStats, "frame-width"_s))
+                gst_structure_set(structure.get(), "frame-width", G_TYPE_UINT, *frameWidth, nullptr);
+            if (auto frameHeight = gstStructureGet<unsigned>(additionalStats, "frame-height"_s))
+                gst_structure_set(structure.get(), "frame-height", G_TYPE_UINT, *frameHeight, nullptr);
+            break;
+        }
+        case GST_WEBRTC_STATS_OUTBOUND_RTP: {
+            if (auto framesSent = gstStructureGet<uint64_t>(additionalStats, "frames-sent"_s))
+                gst_structure_set(structure.get(), "frames-sent", G_TYPE_UINT64, *framesSent, nullptr);
+            if (auto framesEncoded = gstStructureGet<uint64_t>(additionalStats, "frames-encoded"_s))
+                gst_structure_set(structure.get(), "frames-encoded", G_TYPE_UINT64, *framesEncoded, nullptr);
+            if (auto targetBitrate = gstStructureGet<double>(additionalStats, "bitrate"_s))
+                gst_structure_set(structure.get(), "target-bitrate", G_TYPE_DOUBLE, *targetBitrate, nullptr);
+            break;
+        }
+        default:
+            break;
+        };
+        gst_value_set_structure(value, structure.get());
+        return TRUE;
+    }, additionalStats.get());
+
+    return result;
+}
+
+void GStreamerMediaEndpoint::processStatsItem(const GValue* value)
 {
     if (!GST_VALUE_HOLDS_STRUCTURE(value))
         return;
@@ -1841,13 +1938,12 @@ void GStreamerMediaEndpoint::processStats(const GValue* value)
     }
 }
 
-void GStreamerMediaEndpoint::onStatsDelivered(const GstStructure* stats)
+void GStreamerMediaEndpoint::onStatsDelivered(GUniquePtr<GstStructure>&& stats)
 {
-    GUniquePtr<GstStructure> statsCopy(gst_structure_copy(stats));
-    callOnMainThread([protectedThis = Ref(*this), this, stats = WTFMove(statsCopy)] {
+    callOnMainThread([protectedThis = Ref(*this), this, stats = WTFMove(stats)] {
         gst_structure_foreach(stats.get(), static_cast<GstStructureForeachFunc>([](GQuark, const GValue* value, gpointer userData) -> gboolean {
             auto* endPoint = reinterpret_cast<GStreamerMediaEndpoint*>(userData);
-            endPoint->processStats(value);
+            endPoint->processStatsItem(value);
             return TRUE;
         }), this);
     });

@@ -341,7 +341,7 @@ angle::Result RenderPipelineDesc::createPipeline(ContextWgpu *context,
     }
 
     wgpu::Device device = context->getDevice();
-    *pipelineOut        = device.CreateRenderPipeline(&pipelineDesc);
+    ANGLE_WGPU_SCOPED_DEBUG_TRY(context, *pipelineOut = device.CreateRenderPipeline(&pipelineDesc));
 
     return angle::Result::Continue;
 }

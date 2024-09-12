@@ -52,6 +52,8 @@ SpeculatedType PredictionFileCreatingFuzzerAgent::getPredictionInternal(CodeBloc
     case op_enumerator_get_by_val:
     case op_construct:
     case op_construct_varargs:
+    case op_super_construct:
+    case op_super_construct_varargs:
     case op_call:
     case op_call_ignore_result:
     case op_call_direct_eval:

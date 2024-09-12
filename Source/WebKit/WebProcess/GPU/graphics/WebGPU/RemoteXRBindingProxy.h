@@ -49,7 +49,7 @@ namespace WebKit::WebGPU {
 class ConvertToBackingContext;
 
 class RemoteXRBindingProxy final : public WebCore::WebGPU::XRBinding {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteXRBindingProxy);
 public:
     static Ref<RemoteXRBindingProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
@@ -75,7 +75,7 @@ private:
 
     RefPtr<WebCore::WebGPU::XRProjectionLayer> createProjectionLayer(const WebCore::WebGPU::XRProjectionLayerInit&) final;
     RefPtr<WebCore::WebGPU::XRSubImage> getSubImage(WebCore::WebGPU::XRProjectionLayer&, WebCore::WebXRFrame&, std::optional<WebCore::WebGPU::XREye>/* = "none"*/) final;
-    RefPtr<WebCore::WebGPU::XRSubImage> getViewSubImage(WebCore::WebGPU::XRProjectionLayer&, WebCore::WebGPU::XREye) final;
+    RefPtr<WebCore::WebGPU::XRSubImage> getViewSubImage(WebCore::WebGPU::XRProjectionLayer&) final;
     WebCore::WebGPU::TextureFormat getPreferredColorFormat() final;
 
     template<typename T>

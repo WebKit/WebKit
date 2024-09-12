@@ -46,6 +46,7 @@
 #import <WebCore/VideoFrameCV.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MediaTime.h>
+#import <wtf/Scope.h>
 #import <wtf/TZoneMallocInlines.h>
 
 ALLOW_COMMA_BEGIN
@@ -226,11 +227,12 @@ void LibWebRTCCodecsProxy::releaseDecoder(VideoDecoderIdentifier identifier)
     m_hasEncodersOrDecoders = !m_encoders.isEmpty() || !m_decoders.isEmpty();
 }
 
-void LibWebRTCCodecsProxy::flushDecoder(VideoDecoderIdentifier identifier)
+void LibWebRTCCodecsProxy::flushDecoder(VideoDecoderIdentifier identifier, CompletionHandler<void()>&& completionHandler)
 {
     doDecoderTask(identifier, [&](auto& decoder) {
         decoder.webrtcDecoder->flush();
-        m_connection->send(Messages::LibWebRTCCodecs::FlushDecoderCompleted { identifier }, 0);
+        // FIXME: It would be nice to ASSERT that when executing callback, the decoding task deque is empty.
+        workQueue().dispatch(WTFMove(completionHandler));
     });
 }
 
@@ -492,8 +494,12 @@ void LibWebRTCCodecsProxy::flushEncoder(VideoEncoderIdentifier identifier, Compl
     workQueue().dispatch(WTFMove(callback));
 }
 
-void LibWebRTCCodecsProxy::setEncodeRates(VideoEncoderIdentifier identifier, uint32_t bitRate, uint32_t frameRate)
+void LibWebRTCCodecsProxy::setEncodeRates(VideoEncoderIdentifier identifier, uint32_t bitRate, uint32_t frameRate, CompletionHandler<void()>&& callback)
 {
+    auto scope = makeScopeExit([&] {
+        callback();
+    });
+
     assertIsCurrent(workQueue());
     auto* encoder = findEncoder(identifier);
     if (!encoder)

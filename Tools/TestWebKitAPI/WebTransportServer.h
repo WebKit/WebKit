@@ -25,6 +25,8 @@
 
 #pragma once
 
+#import "CoroutineUtilities.h"
+#import "NetworkConnection.h"
 #import <Network/Network.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
@@ -33,14 +35,13 @@ namespace TestWebKitAPI {
 
 class WebTransportServer {
 public:
-    WebTransportServer();
+    WebTransportServer(Function<Task(Connection)>&&);
+    ~WebTransportServer();
+
     uint16_t port() const;
-    size_t bytesReceived() const { return m_bytesReceived; }
-    void setBytesReceived(size_t br) { m_bytesReceived = br; }
 private:
-    RetainPtr<nw_listener_t> m_listener;
-    Vector<RetainPtr<nw_connection_t>> m_connections;
-    size_t m_bytesReceived { 0 };
+    struct Data;
+    Ref<Data> m_data;
 };
 
 } // namespace TestWebKitAPI

@@ -23,9 +23,12 @@
 import os
 import time
 
+from mock import patch
+from mock.mock import Mock
 from webkitcorepy import OutputCapture, testing
 from webkitcorepy.mocks import Time as MockTime
 from webkitscmpy import program, mocks, local, Contributor, Commit
+from webkitbugspy import mocks as bmocks
 
 
 class TestConflict(testing.PathTestCase):
@@ -45,8 +48,20 @@ class TestConflict(testing.PathTestCase):
 
         self.assertEqual(captured.stderr.getvalue(), 'No repository provided\n')
 
+    def _mock_radar_response(self, *args, **kwargs):
+        rdar = bmocks.Radar()
+        rdar.sourceChanges = 'WebKit, merge, sha123'
+        rdar.source_changes = rdar.sourceChanges.splitlines()
+        rdar.id = 1234
+        return rdar
+
     def test_conflict_not_found(self):
-        with OutputCapture() as captured, mocks.remote.GitHub() as remote, mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)):
+        with (
+            OutputCapture() as captured,
+            mocks.remote.GitHub() as remote,
+            mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)),
+            patch('webkitscmpy.program.conflict.Tracker.from_string', TestConflict._mock_radar_response)
+        ):
             self.assertEqual(1, program.main(
                 args=('conflict', '1234'),
                 path=self.path,
@@ -55,8 +70,14 @@ class TestConflict(testing.PathTestCase):
             self.assertEqual(captured.stderr.getvalue(), 'No conflict pull request found with branch integration/conflict/1234\n')
 
     def test_conflict_found(self):
-        with OutputCapture(), mocks.remote.GitHub() as remote, \
-                mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+        with (
+            OutputCapture(),
+            mocks.remote.GitHub() as remote,
+            mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo,
+            mocks.local.Svn(),
+            patch('webkitscmpy.program.conflict.Tracker.from_string', TestConflict._mock_radar_response),
+            patch('webkitscmpy.program.conflict.Conflict.get_open_integration_prs', lambda x: [Mock(head='integration/conflict/sha123_sha123/target_branch', _metadata={'full_name': 'tcontributor'})])
+        ):
             remote.users = dict(
                 rreviewer=Contributor('Ricky Reviewer', ['rreviewer@webkit.org'], github='rreviewer'),
                 tcontributor=Contributor('Tim Contributor', ['tcontributor@webkit.org'], github='tcontributor'),
@@ -79,18 +100,18 @@ class TestConflict(testing.PathTestCase):
             Reviewed by NOBODY (OOPS!).
             </pre>
             ''',
-                head=dict(ref='tcontributor:integration/conflict/1234'),
+                head=dict(ref='tcontributor:integration/conflict/sha123_sha123/target_branch'),
                 base=dict(ref='main'),
                 requested_reviews=[dict(login='rreviewer')],
                 reviews=[dict(user=dict(login='rreviewer'), state='CHANGES_REQUESTED')],
                 draft=False,
             )]
             repo.edit_config('remote.tcontributor.url', 'https://github.com/tcontributor/WebKit')
-            repo.commits['remotes/tcontributor/integration/conflict/1234'] = [
+            repo.commits['remotes/tcontributor/integration/conflict/sha123_sha123/target_branch'] = [
                 repo.commits[repo.default_branch][2],
                 Commit(
                     hash='a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd',
-                    identifier="3.1@integration/conflict/1234",
+                    identifier="3.1@integration/conflict/sha123_sha123/target_branch",
                     timestamp=int(time.time()) - 60,
                     author=Contributor('Tim Committer', ['tcommitter@webkit.org']),
                     message='To Be Committed\n\nReviewed by NOBODY (OOPS!).\n',
@@ -98,7 +119,7 @@ class TestConflict(testing.PathTestCase):
             ]
             self.assertEqual('d8bce26fa65c6fc8f39c17927abb77f69fab82fc', local.Git(self.path).commit().hash)
 
-            self.assertEqual('integration/conflict/1234', program.main(
+            self.assertEqual('integration/conflict/sha123_sha123/target_branch', program.main(
                 args=('conflict', '1234'),
                 path=self.path,
             ).branch)

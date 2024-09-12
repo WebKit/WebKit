@@ -102,7 +102,6 @@ using namespace WebCore;
 
 void WebPageProxy::platformInitialize()
 {
-    internals().hardwareKeyboardState = currentHardwareKeyboardState();
 }
 
 PlatformDisplayID WebPageProxy::generateDisplayIDFromPageID() const
@@ -626,7 +625,7 @@ void WebPageProxy::applicationWillEnterForeground()
 
     m_legacyMainFrameProcess->send(Messages::WebPage::ApplicationWillEnterForeground(isSuspendedUnderLock), webPageIDInMainFrameProcess());
 
-    hardwareKeyboardAvailabilityChanged();
+    hardwareKeyboardAvailabilityChanged(m_legacyMainFrameProcess->processPool().cachedHardwareKeyboardState());
 }
 
 void WebPageProxy::applicationWillResignActive()
@@ -734,10 +733,10 @@ void WebPageProxy::setSmartInsertDeleteEnabled(bool)
     notImplemented();
 }
 
-void WebPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t> data, FrameIdentifier frameID)
+void WebPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t> data)
 {
     // Note: The WebFrameProxy with this FrameIdentifier might not exist in the UI process. See rdar://130998804.
-    pageClient().accessibilityWebProcessTokenReceived(data, frameID, legacyMainFrameProcess().connection().remoteProcessID());
+    pageClient().accessibilityWebProcessTokenReceived(data, legacyMainFrameProcess().connection().remoteProcessID());
 }
 
 void WebPageProxy::relayAccessibilityNotification(const String& notificationName, std::span<const uint8_t> data)
@@ -1148,14 +1147,8 @@ void WebPageProxy::setIsScrollingOrZooming(bool isScrollingOrZooming)
         m_validationBubble->show();
 }
 
-void WebPageProxy::hardwareKeyboardAvailabilityChanged()
+void WebPageProxy::hardwareKeyboardAvailabilityChanged(HardwareKeyboardState hardwareKeyboardState)
 {
-    auto hardwareKeyboardState = currentHardwareKeyboardState();
-    if (hardwareKeyboardState == internals().hardwareKeyboardState)
-        return;
-
-    internals().hardwareKeyboardState = hardwareKeyboardState;
-
     protectedPageClient()->hardwareKeyboardAvailabilityChanged();
 
     updateCurrentModifierState();
@@ -1302,12 +1295,12 @@ UIViewController *WebPageProxy::Internals::paymentCoordinatorPresentingViewContr
     // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
     // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
     // We should call PageClientImpl::presentingViewController() instead.
-    return page.uiClient().presentingViewController();
+    return page->uiClient().presentingViewController();
 }
 
 const String& WebPageProxy::Internals::paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&)
 {
-    return page.websiteDataStore().configuration().dataConnectionServiceType();
+    return page->websiteDataStore().configuration().dataConnectionServiceType();
 }
 
 #endif
@@ -1509,17 +1502,17 @@ void WebPageProxy::setScreenIsBeingCaptured(bool captured)
 
 void WebPageProxy::willOpenAppLink()
 {
-    if (m_legacyMainFrameProcessActivityState.hasValidOpeningAppLinkActivity())
+    if (hasValidOpeningAppLinkActivity())
         return;
 
     // We take a background activity for 25 seconds when switching to another app via an app link in case the WebPage
     // needs to run script to pass information to the native app.
     // We chose 25 seconds because the system only gives us 30 seconds and we don't want to get too close to that limit
     // to avoid assertion invalidation (or even termination).
-    m_legacyMainFrameProcessActivityState.takeOpeningAppLinkActivity();
+    takeOpeningAppLinkActivity();
     WorkQueue::main().dispatchAfter(25_s, [weakThis = WeakPtr { *this }] {
-        if (weakThis)
-            weakThis->m_legacyMainFrameProcessActivityState.dropOpeningAppLinkActivity();
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->dropOpeningAppLinkActivity();
     });
 }
 
@@ -1549,9 +1542,9 @@ void WebPageProxy::processWillBecomeForeground()
 void WebPageProxy::Internals::isUserFacingChanged(bool isUserFacing)
 {
     if (!isUserFacing)
-        page.suspendAllMediaPlayback([] { });
+        protectedPage()->suspendAllMediaPlayback([] { });
     else
-        page.resumeAllMediaPlayback([] { });
+        protectedPage()->resumeAllMediaPlayback([] { });
 }
 
 #endif

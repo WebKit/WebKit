@@ -50,7 +50,7 @@ public:
     RenderFlexibleBox(Type, Document&, RenderStyle&&);
     virtual ~RenderFlexibleBox();
 
-    using Direction = BlockFlowDirection;
+    using Direction = FlowDirection;
 
     ASCIILiteral renderName() const override;
 
@@ -71,19 +71,19 @@ public:
     inline Direction crossAxisDirection() const
     {
         switch (writingModeToBlockFlowDirection(style().writingMode())) {
-        case BlockFlowDirection::TopToBottom:
+        case FlowDirection::TopToBottom:
             if (style().isRowFlexDirection())
                 return (style().flexWrap() == FlexWrap::Reverse) ? Direction::BottomToTop : Direction::TopToBottom;
             return (style().flexWrap() == FlexWrap::Reverse) ? Direction::RightToLeft : Direction::LeftToRight;
-        case BlockFlowDirection::BottomToTop:
+        case FlowDirection::BottomToTop:
             if (style().isRowFlexDirection())
                 return (style().flexWrap() == FlexWrap::Reverse) ? Direction::TopToBottom : Direction::BottomToTop;
             return (style().flexWrap() == FlexWrap::Reverse) ? Direction::RightToLeft : Direction::LeftToRight;
-        case BlockFlowDirection::LeftToRight:
+        case FlowDirection::LeftToRight:
             if (style().isRowFlexDirection())
                 return (style().flexWrap() == FlexWrap::Reverse) ? Direction::RightToLeft : Direction::LeftToRight;
             return (style().flexWrap() == FlexWrap::Reverse) ? Direction::BottomToTop : Direction::TopToBottom;
-        case BlockFlowDirection::RightToLeft:
+        case FlowDirection::RightToLeft:
             if (style().isRowFlexDirection())
                 return (style().flexWrap() == FlexWrap::Reverse) ? Direction::LeftToRight : Direction::RightToLeft;
             return (style().flexWrap() == FlexWrap::Reverse) ? Direction::BottomToTop : Direction::TopToBottom;
@@ -168,7 +168,7 @@ private:
     LayoutUnit crossAxisContentExtent() const;
     LayoutUnit mainAxisContentExtent(LayoutUnit contentLogicalHeight);
     std::optional<LayoutUnit> computeMainAxisExtentForFlexItem(RenderBox& flexItem, SizeType, const Length& size);
-    BlockFlowDirection transformedBlockFlowDirection() const;
+    FlowDirection transformedBlockFlowDirection() const;
     LayoutUnit flowAwareBorderStart() const;
     LayoutUnit flowAwareBorderEnd() const;
     LayoutUnit flowAwareBorderBefore() const;

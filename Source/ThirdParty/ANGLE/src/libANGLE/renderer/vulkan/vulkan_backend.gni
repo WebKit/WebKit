@@ -130,6 +130,8 @@ if (angle_enable_cl) {
     "CLSamplerVk.cpp",
     "CLSamplerVk.h",
     "cl_types.h",
+    "clspv_utils.cpp",
+    "clspv_utils.h",
   ]
 }
 

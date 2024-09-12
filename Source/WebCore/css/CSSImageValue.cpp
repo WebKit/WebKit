@@ -37,13 +37,13 @@
 namespace WebCore {
 
 CSSImageValue::CSSImageValue()
-    : CSSValue(ImageClass)
+    : CSSValue(ClassType::Image)
     , m_isInvalid(true)
 {
 }
 
 CSSImageValue::CSSImageValue(ResolvedURL&& location, LoadedFromOpaqueSource loadedFromOpaqueSource, AtomString&& initiatorType)
-    : CSSValue(ImageClass)
+    : CSSValue(ClassType::Image)
     , m_location(WTFMove(location))
     , m_initiatorType(WTFMove(initiatorType))
     , m_loadedFromOpaqueSource(loadedFromOpaqueSource)

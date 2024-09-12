@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/AsyncScrollingCoordinator.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace IPC {
 class Decoder;
@@ -42,6 +43,7 @@ class RemoteScrollingCoordinatorTransaction;
 class RemoteScrollingUIState;
 
 class RemoteScrollingCoordinator final : public WebCore::AsyncScrollingCoordinator, public IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteScrollingCoordinator);
 public:
     static Ref<RemoteScrollingCoordinator> create(WebPage* page)
     {

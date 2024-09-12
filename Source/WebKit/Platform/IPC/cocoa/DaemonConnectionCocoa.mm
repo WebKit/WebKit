@@ -39,6 +39,8 @@ namespace Daemon {
 void Connection::send(xpc_object_t message) const
 {
     ASSERT(RunLoop::isMain());
+    initializeConnectionIfNeeded();
+
     ASSERT(m_connection.get());
     ASSERT(xpc_get_type(message) == XPC_TYPE_DICTIONARY);
     xpc_connection_send_message(m_connection.get(), message);

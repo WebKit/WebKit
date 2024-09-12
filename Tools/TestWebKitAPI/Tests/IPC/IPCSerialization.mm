@@ -549,8 +549,10 @@ static BOOL wkDDActionContext_isEqual(WKDDActionContext *a, SEL, WKDDActionConte
 
 static bool wkNSURLProtectionSpace_isEqual(NSURLProtectionSpace *a, SEL, NSURLProtectionSpace* b)
 {
-    if (![a.host isEqual: b.host])
-        return false;
+    if (![a.host isEqual: b.host]) {
+        if (!(a.host == nil && b.host == nil))
+            return false;
+    }
     if (!(a.port == b.port))
         return false;
     if (![a.protocol isEqual:b.protocol])
@@ -1311,6 +1313,12 @@ TEST(IPCSerialization, Basic)
     [protectionSpace2.get() _setDistinguishedNames:distinguishedNames];
     runTestNS({ protectionSpace2.get() });
 
+    NSString* nilString = nil;
+    RetainPtr<NSURLProtectionSpace> protectionSpace3 = adoptNS([[NSURLProtectionSpace alloc] initWithHost:nilString port:443 protocol:NSURLProtectionSpaceHTTPS realm:nil authenticationMethod:NSURLAuthenticationMethodServerTrust]);
+    [protectionSpace3.get() _setServerTrust:nil];
+    [protectionSpace3.get() _setDistinguishedNames:nil];
+    runTestNS({ protectionSpace3.get() });
+
     runTestNS({ [NSURLCredential credentialForTrust:trust.get()] });
 #if HAVE(DICTIONARY_SERIALIZABLE_NSURLCREDENTIAL)
     runTestNS({ [NSURLCredential credentialWithIdentity:identity.get() certificates:@[(id)cert.get()] persistence:NSURLCredentialPersistencePermanent] });
@@ -1333,6 +1341,32 @@ TEST(IPCSerialization, NSShadow)
 
     RetainPtr<PlatformColor> platformColor = cocoaColor(WebCore::Color::blue);
     runTestNSShadow({ 10.5, 5.7 }, 0.79, platformColor.get());
+}
+
+TEST(IPCSerialization, NSURLRequest)
+{
+    RetainPtr url = [NSURL URLWithString:@"https://webkit.org/"];
+    RetainPtr urlRequest = [NSURLRequest requestWithURL:url.get()];
+    runTestNS({ urlRequest });
+
+    NSDictionary *jsonDict = @{
+        @"a" : @1,
+        @"b" : @2
+    };
+    RetainPtr postData = [NSJSONSerialization dataWithJSONObject:jsonDict options:0 error:Nil];
+    RetainPtr postRequest = [[NSMutableURLRequest alloc] initWithURL:url.get()];
+
+    [postRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    [postRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [postRequest setHTTPMethod:@"POST"];
+    [postRequest setHTTPBody:postData.get()];
+    [postRequest _setPrivacyProxyFailClosed:YES];
+
+    runTestNS({ postRequest.get() });
+
+    url = nil;
+    urlRequest = [NSURLRequest requestWithURL:url.get()];
+    runTestNS({ urlRequest });
 }
 
 #if PLATFORM(MAC)
@@ -1379,26 +1413,6 @@ static RetainPtr<DDScannerResult> fakeDataDetectorResultForTesting()
 
 TEST(IPCSerialization, SecureCoding)
 {
-    // NSURLRequest
-    NSURL *url = [NSURL URLWithString:@"https://webkit.org/"];
-    NSURLRequest *urlRequest = [NSURLRequest requestWithURL:url];
-    runTestNS({ urlRequest });
-
-    NSDictionary *jsonDict = @{
-        @"a" : @1,
-        @"b" : @2
-    };
-    NSData *postData = [NSJSONSerialization dataWithJSONObject:jsonDict options:0 error:Nil];
-    NSMutableURLRequest *postRequest = [[NSMutableURLRequest alloc] initWithURL:url];
-
-    [postRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    [postRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [postRequest setHTTPMethod:@"POST"];
-    [postRequest setHTTPBody:postData];
-    [postRequest _setPrivacyProxyFailClosed:YES];
-
-    runTestNS({ postRequest });
-
     // DDScannerResult
     //   - Note: For now, there's no reasonable way to create anything but an empty DDScannerResult object
     auto scannerResult = fakeDataDetectorResultForTesting();

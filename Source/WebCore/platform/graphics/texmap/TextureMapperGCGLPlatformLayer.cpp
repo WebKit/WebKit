@@ -21,7 +21,7 @@
 #include "config.h"
 #include "TextureMapperGCGLPlatformLayer.h"
 
-#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA)
+#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(COORDINATED_GRAPHICS)
 
 #include "ANGLEHeaders.h"
 #include "BitmapTexture.h"
@@ -29,8 +29,6 @@
 #include "TextureMapper.h"
 #include "TextureMapperFlags.h"
 #include "TextureMapperGLHeaders.h"
-#include "TextureMapperPlatformLayerBuffer.h"
-#include "TextureMapperPlatformLayerProxy.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -62,4 +60,4 @@ void TextureMapperGCGLPlatformLayer::paintToTextureMapper(TextureMapper& texture
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER)
+#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(COORDINATED_GRAPHICS)

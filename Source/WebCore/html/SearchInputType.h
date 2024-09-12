@@ -33,12 +33,14 @@
 
 #include "BaseTextInputType.h"
 #include "Timer.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class SearchFieldResultsButtonElement;
 
 class SearchInputType final : public BaseTextInputType {
+    WTF_MAKE_TZONE_ALLOCATED(SearchInputType);
 public:
     static Ref<SearchInputType> create(HTMLInputElement& element)
     {

@@ -27,6 +27,7 @@ class CLDeviceVk : public CLDeviceImpl
 
     Info createInfo(cl::DeviceType type) const override;
 
+    const vk::Renderer *getRenderer() const { return mRenderer; }
     angle::Result getInfoUInt(cl::DeviceInfo name, cl_uint *value) const override;
     angle::Result getInfoULong(cl::DeviceInfo name, cl_ulong *value) const override;
     angle::Result getInfoSizeT(cl::DeviceInfo name, size_t *value) const override;

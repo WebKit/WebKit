@@ -4,16 +4,25 @@
 <script src="../../../resources/js-test-pre.js"></script>
 </head>
 <body>
+<style>
+  #container {
+    container-type: inline-size;
+    width: 100px;
+  }
+</style>
+<div id=container></div>
 <script type="text/javascript">
 
+const container = document.getElementById("container");
+    
 function testCrossfade(css, queryProp)
 {
     var div = document.createElement('div');
     div.setAttribute('style', css);
-    document.body.appendChild(div);
+    container.appendChild(div);
 
     var result = getComputedStyle(div).getPropertyValue(queryProp);
-    document.body.removeChild(div);
+    container.removeChild(div);
     return result;
 }
 
@@ -37,6 +46,15 @@ shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(d
 shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), 700%)", "background-image")', "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 1)");
 
 shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), -20)", "background-image")', "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0)");
+
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), calc(50%))", "background-image")', "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0.5)");
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), calc(-50%))", "background-image")', "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0)");
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), calc(150%))", "background-image")', "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 1)");
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), calc(0.5))", "background-image")', "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0.5)");
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), calc(-0.5))", "background-image")', "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0)");
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), calc(1.5))", "background-image")', "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 1)");
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), calc(100% + (50% * sign(2cqw - 10px))))", "background-image")', "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0.5)");
+shouldBeEqualToString('testCrossfade("background-image: -webkit-cross-fade(url(dummy://example.png), url(dummy://example.png), calc(1 + (0.5 * sign(2cqw - 10px))))", "background-image")', "-webkit-cross-fade(url(\"dummy://example.png\"), url(\"dummy://example.png\"), 0.5)");
 
 debug('<h2>Unprefixed</h2>');
 

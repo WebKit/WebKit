@@ -244,7 +244,7 @@ const WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>& SVGElement::insta
 std::optional<FloatRect> SVGElement::getBoundingBox() const
 {
     if (is<SVGGraphicsElement>(*this)) {
-        if (auto renderer = this->renderer())
+        if (CheckedPtr renderer = this->renderer())
             return renderer->objectBoundingBox();
     }
     return std::nullopt;

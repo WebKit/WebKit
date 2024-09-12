@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SESSION)
 
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "EventNames.h"
 #include "HTMLMediaElement.h"
@@ -129,6 +130,7 @@ static std::optional<std::pair<PlatformMediaSession::RemoteControlCommandType, P
     case MediaSessionAction::Togglecamera:
     case MediaSessionAction::Togglemicrophone:
     case MediaSessionAction::Togglescreenshare:
+    case MediaSessionAction::Voiceactivity:
         break;
     }
     if (command == PlatformMediaSession::RemoteControlCommandType::NoCommand)
@@ -260,8 +262,13 @@ ExceptionOr<void> MediaSession::setActionHandler(MediaSessionAction action, RefP
 {
 #if ENABLE(MEDIA_STREAM)
     RefPtr document = this->document();
-    if (document && !document->settings().mediaSessionCaptureToggleAPIEnabled() && (action == MediaSessionAction::Togglecamera || action == MediaSessionAction::Togglemicrophone || action == MediaSessionAction::Togglescreenshare))
+    if (document && !document->settings().mediaSessionCaptureToggleAPIEnabled() && (action == MediaSessionAction::Togglecamera || action == MediaSessionAction::Togglemicrophone || action == MediaSessionAction::Togglescreenshare || action == MediaSessionAction::Voiceactivity))
         return Exception { ExceptionCode::TypeError, makeString("Argument 1 ('action') to MediaSession.setActionHandler must be a value other than '"_s, convertEnumerationToString(action), "'"_s) };
+
+    if (action == MediaSessionAction::Voiceactivity) {
+        if (RefPtr document = this->document())
+            document->setShouldListenToVoiceActivity(!!handler);
+    }
 #endif
 
     if (handler) {
@@ -464,6 +471,27 @@ void MediaSession::willPausePlayback()
     notifyPositionStateObservers();
 }
 
+static Vector<URL> fallbackArtwork(DocumentLoader* loader)
+{
+    if (!loader)
+        return { };
+    size_t size = 0;
+    for (const auto& icon : loader->linkIcons()) {
+        if (icon.url.protocolIsInHTTPFamily())
+            size++;
+    }
+    if (!size)
+        return { };
+
+    Vector<URL> images;
+    images.reserveInitialCapacity(size);
+    for (const auto& icon : loader->linkIcons()) {
+        if (icon.url.protocolIsInHTTPFamily())
+            images.append(icon.url);
+    };
+    return images;
+}
+
 void MediaSession::updateNowPlayingInfo(NowPlayingInfo& info)
 {
     if (auto positionState = this->positionState()) {
@@ -473,13 +501,10 @@ void MediaSession::updateNowPlayingInfo(NowPlayingInfo& info)
     if (auto currentPosition = this->currentPosition())
         info.currentTime = *currentPosition;
 
-    if (!m_defaultMetadata && (!m_metadata || m_metadata->artwork().isEmpty())) {
-        if (RefPtr loader = document() ? document()->loader() : nullptr; loader && loader->linkIcons().size()) {
-            Vector<URL> images { document()->loader()->linkIcons().size(), [&](size_t index) {
-                return loader->linkIcons()[index].url;
-            } };
+    if (!m_defaultArtworkAttempted && (!m_metadata || m_metadata->artwork().isEmpty())) {
+        m_defaultArtworkAttempted = true;
+        if (auto images = fallbackArtwork(document() ? document()->loader() : nullptr); images.size())
             m_defaultMetadata = MediaMetadata::create(*this, WTFMove(images));
-        }
     }
 
     if (RefPtr metadataWithImage = m_metadata && m_metadata->artworkImage() ? m_metadata : (m_defaultMetadata && m_defaultMetadata->artworkImage() ? m_defaultMetadata : nullptr)) {

@@ -25,8 +25,12 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 enum class ScrollAxis : uint8_t { Block, Inline, X, Y };
+
+TextStream& operator<<(TextStream&, ScrollAxis);
 
 } // namespace WebCore

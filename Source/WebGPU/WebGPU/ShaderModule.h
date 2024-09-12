@@ -79,7 +79,6 @@ public:
     const PipelineLayout* pipelineLayoutHint(const String&) const;
     const WGSL::Reflection::EntryPointInformation* entryPointInformation(const String&) const;
     id<MTLLibrary> library() const { return m_library; }
-    const String& transformedEntryPoint(const String&) const;
 
     Device& device() const { return m_device; }
     const String& defaultVertexEntryPoint() const;

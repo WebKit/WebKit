@@ -1243,6 +1243,7 @@ $(PROJECT_DIR)/css/CSSLayerBlockRule.idl
 $(PROJECT_DIR)/css/CSSLayerStatementRule.idl
 $(PROJECT_DIR)/css/CSSMediaRule.idl
 $(PROJECT_DIR)/css/CSSNamespaceRule.idl
+$(PROJECT_DIR)/css/CSSNestedDeclarations.idl
 $(PROJECT_DIR)/css/CSSPageRule.idl
 $(PROJECT_DIR)/css/CSSPaintCallback.idl
 $(PROJECT_DIR)/css/CSSPaintSize.idl

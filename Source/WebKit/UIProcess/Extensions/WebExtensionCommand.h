@@ -94,6 +94,7 @@ public:
     void setModifierFlags(OptionSet<ModifierFlags> modifierFlags) { dispatchChangedEventSoonIfNeeded(); m_modifierFlags = modifierFlags; }
 
     String shortcutString() const;
+    String userVisibleShortcut() const;
 
     CocoaMenuItem *platformMenuItem() const;
 

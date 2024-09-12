@@ -26,6 +26,7 @@
 #import "config.h"
 #import "DownloadProxy.h"
 
+#import "APIDownloadClient.h"
 #import "NetworkProcessMessages.h"
 #import "NetworkProcessProxy.h"
 #import "WebsiteDataStore.h"
@@ -43,15 +44,27 @@ void DownloadProxy::publishProgress(const URL& url)
     RetainPtr localURL = adoptNS([[NSURL alloc] initFileURLWithPath:url.fileSystemPath() relativeToURL:nil]);
     NSError *error = nil;
     RetainPtr bookmark = [localURL bookmarkDataWithOptions:NSURLBookmarkCreationMinimalBookmark includingResourceValuesForKeys:nil relativeToURL:nil error:&error];
-    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, url, span(bookmark.get())), 0);
+    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, url, span(bookmark.get()), UseDownloadPlaceholder::No), 0);
 #else
     auto handle = SandboxExtension::createHandle(url.fileSystemPath(), SandboxExtension::Type::ReadWrite);
     ASSERT(handle);
     if (!handle)
         return;
 
-    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, url, WTFMove(*handle)), 0);
+    m_dataStore->protectedNetworkProcess()->send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, url, WTFMove(*handle)), 0);
 #endif
 }
+
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+void DownloadProxy::didReceivePlaceholderURL(const URL& placeholderURL, std::span<const uint8_t> bookmarkData, CompletionHandler<void()>&& completionHandler)
+{
+    m_client->didReceivePlaceholderURL(*this, placeholderURL, bookmarkData, WTFMove(completionHandler));
+}
+
+void DownloadProxy::didReceiveFinalURL(const URL& finalURL, std::span<const uint8_t> bookmarkData)
+{
+    m_client->didReceiveFinalURL(*this, finalURL, bookmarkData);
+}
+#endif
 
 }

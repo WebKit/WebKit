@@ -238,6 +238,8 @@ public:
     void addRemoteVideoTrackProxy(WebCore::VideoTrackPrivate&);
     void addRemoteTextTrackProxy(WebCore::InbandTextTrackPrivate&);
 
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+
 private:
     RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy&, WebCore::MediaPlayerIdentifier, WebCore::MediaPlayerClientIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, RemoteVideoFrameObjectHeap&, const WebCore::ProcessIdentity&);
 
@@ -441,7 +443,7 @@ private:
     RefPtr<WebCore::VideoFrame> m_videoFrameForCurrentTime;
     bool m_shouldCheckHardwareSupport { false };
 #if !RELEASE_LOG_DISABLED
-    const Logger& m_logger;
+    Ref<const Logger> m_logger;
 #endif
 };
 

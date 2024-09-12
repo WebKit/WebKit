@@ -107,6 +107,7 @@
 #import <wtf/NativePromise.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/OSObjectPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -256,6 +257,7 @@ static dispatch_queue_t globalLoaderDelegateQueue()
 }
 
 class MediaPlayerPrivateAVFoundationObjC::Factory final : public MediaPlayerFactory {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Factory);
 public:
     Factory()
     {

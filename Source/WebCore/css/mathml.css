@@ -44,6 +44,8 @@
 /* Universal rules */
 * {
     writing-mode: horizontal-tb !important;
+    /* FIXME: It should be 'display: block math'. (webkit.org/b/278533) */
+    display: block;
 }
 
 /* The <math> element */
@@ -139,16 +141,16 @@ math {
 }
 
 math[display="block" i] {
+    /* FIXME: It should be 'display: block math'. (webkit.org/b/278533) */
     display: block;
     page-break-inside: avoid;
     math-style: normal;
 }
-math[display="inline" i] {
-  math-style: compact;
-}
 
-ms, mspace, mtext, mi, mn, mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot, merror, mphantom, mstyle, menclose, semantics, mpadded, maction {
-    display: block;
+math[display="inline" i] {
+    /* FIXME: It should be 'display: inline math'. (webkit.org/b/278533) */
+    display: inline;
+    math-style: compact;
 }
 
 ms, mtext, mi, mn, mo, annotation, mtd {

@@ -446,10 +446,10 @@ class GPUPowerStats():
         # CH7(T=16086645)[S1M_VDD_MIF], 196512891
 
         id_map = {
-            r'\bS\d+S_VDD_G3D\b': 'gpu',
-            r'\bS\d+M_VDD_CPUCL2\b': 'big_cpu',
-            r'\bS\d+M_VDD_CPUCL1\b': 'mid_cpu',
-            r'\bS\d+M_VDD_CPUCL0\b': 'little_cpu',
+            r'S2S_VDD_G3D\b|S2S_VDD_GPU\b': 'gpu',
+            r'S\d+M_VDD_CPUCL2\b|S2M_VDD_CPU2\b': 'big_cpu',
+            r'S\d+M_VDD_CPUCL1\b|S3M_VDD_CPU1\b': 'mid_cpu',
+            r'S\d+M_VDD_CPUCL0\b|S4M_VDD_CPU\b': 'little_cpu',
         }
 
         for m in id_map.values():
@@ -961,6 +961,9 @@ def run_traces(args):
 
     android_version = run_adb_command('shell getprop ro.build.fingerprint').stdout.strip()
     angle_version = run_command('git rev-parse HEAD').stdout.strip()
+    origin_main_version = run_command('git rev-parse origin/main').stdout.strip()
+    if origin_main_version != angle_version:
+        angle_version += ' (origin/main %s)' % origin_main_version
     # test_time = run_command('date \"+%Y%m%d\"').stdout.read().strip()
 
     summary_writer.writerow([

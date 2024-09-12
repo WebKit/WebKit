@@ -2551,6 +2551,29 @@ ANGLE_ALWAYS_INLINE auto ANGLE_textureProj_impl(
 {
     return texture.sample(sampler, coord.xyz/coord.w, metal::bias(bias));
 }
+
+template <typename T>
+ANGLE_ALWAYS_INLINE auto ANGLE_textureProj_impl(
+    thread metal::depth2d<T> &texture,
+    thread metal::sampler const &sampler,
+    metal::float4 const coord)
+{
+    return texture.sample_compare(sampler, coord.xy/coord.w, coord.z/coord.w);
+}
+
+template <typename T>
+ANGLE_ALWAYS_INLINE auto ANGLE_textureProj_impl(
+    thread metal::depth2d<T> &texture,
+    thread metal::sampler const &sampler,
+    metal::float4 const coord,
+    float bias)
+{
+#if defined(__METAL_IOS__) || (__METAL_VERSION__ >= 230)
+    return texture.sample_compare(sampler, coord.xy/coord.w, coord.z/coord.w, metal::bias(bias));
+#else
+    return texture.sample_compare(sampler, coord.xy/coord.w, coord.z/coord.w);
+#endif
+}
 )",
                         textureEnv())
 
@@ -2869,6 +2892,31 @@ ANGLE_ALWAYS_INLINE auto ANGLE_textureProjOffset_impl(
     float bias = 0)
 {
     return texture.sample(sampler, coord.xyz/coord.w, metal::bias(bias), offset);
+}
+
+template <typename T>
+ANGLE_ALWAYS_INLINE auto ANGLE_textureProjOffset_impl(
+    thread metal::depth2d<T> &texture,
+    thread metal::sampler const &sampler,
+    metal::float4 const coord,
+    int2 const offset)
+{
+    return texture.sample_compare(sampler, coord.xy/coord.w, coord.z/coord.w, offset);
+}
+
+template <typename T>
+ANGLE_ALWAYS_INLINE auto ANGLE_textureProjOffset_impl(
+    thread metal::depth2d<T> &texture,
+    thread metal::sampler const &sampler,
+    metal::float4 const coord,
+    int2 const offset,
+    float bias)
+{
+#if defined(__METAL_IOS__) || (__METAL_VERSION__ >= 230)
+    return texture.sample_compare(sampler, coord.xy/coord.w, coord.z/coord.w, metal::bias(bias), offset);
+#else
+    return texture.sample_compare(sampler, coord.xy/coord.w, coord.z/coord.w, offset);
+#endif
 }
 )",
                         textureEnv())

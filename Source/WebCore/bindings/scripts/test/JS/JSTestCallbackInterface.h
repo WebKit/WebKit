@@ -54,6 +54,7 @@ public:
     CallbackResult<typename IDLUndefined::CallbackReturnType> callbackRequiresThisToPass(typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam) override;
     CallbackResult<typename IDLDOMString::CallbackReturnType> callbackWithAReturnValue() override;
     CallbackResult<typename IDLDOMString::CallbackReturnType> callbackThatRethrowsExceptions(typename IDLEnumeration<TestCallbackInterface::Enum>::ParameterType enumParam) override;
+    CallbackResult<typename IDLPromise<IDLUndefined>::CallbackReturnType> callbackThatTreatsExceptionAsRejectedPromise(typename IDLEnumeration<TestCallbackInterface::Enum>::ParameterType enumParam) override;
     CallbackResult<typename IDLDOMString::CallbackReturnType> callbackWithThisObject(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLInterface<TestObj>::ParameterType testObjParam) override;
 
 private:

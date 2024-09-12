@@ -291,7 +291,7 @@ public:
     virtual bool setShouldApplyRotation(bool) { return false; }
     virtual void setIsInBackground(bool);
 
-    PageIdentifier pageIdentifier() const { return m_pageIdentifier; }
+    std::optional<PageIdentifier> pageIdentifier() const { return m_pageIdentifier.asOptional(); }
 
     const CaptureDevice& captureDevice() const { return m_device; }
     bool isEphemeral() const { return m_device.isEphemeral(); }
@@ -304,7 +304,7 @@ public:
     virtual bool isPowerEfficient() const { return false; }
 
 protected:
-    RealtimeMediaSource(const CaptureDevice&, MediaDeviceHashSalts&& hashSalts = { }, PageIdentifier = { });
+    RealtimeMediaSource(const CaptureDevice&, MediaDeviceHashSalts&& hashSalts = { }, std::optional<PageIdentifier> = std::nullopt);
 
     void scheduleDeferredTask(Function<void()>&&);
 
@@ -373,7 +373,7 @@ private:
     unsigned m_frameCount { 0 };
 #endif
 
-    PageIdentifier m_pageIdentifier;
+    Markable<PageIdentifier> m_pageIdentifier;
     MediaDeviceHashSalts m_idHashSalts;
     String m_hashedID;
     String m_ephemeralHashedID;

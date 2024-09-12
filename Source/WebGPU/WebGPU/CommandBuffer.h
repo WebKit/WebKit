@@ -43,9 +43,9 @@ class Device;
 class CommandBuffer : public WGPUCommandBufferImpl, public RefCounted<CommandBuffer>, public CanMakeWeakPtr<CommandBuffer> {
     WTF_MAKE_TZONE_ALLOCATED(CommandBuffer);
 public:
-    static Ref<CommandBuffer> create(id<MTLCommandBuffer> commandBuffer, id<MTLSharedEvent> event, Device& device)
+    static Ref<CommandBuffer> create(id<MTLCommandBuffer> commandBuffer, Device& device, id<MTLSharedEvent> sharedEvent, uint64_t sharedEventSignalValue)
     {
-        return adoptRef(*new CommandBuffer(commandBuffer, event, device));
+        return adoptRef(*new CommandBuffer(commandBuffer, device, sharedEvent, sharedEventSignalValue));
     }
     static Ref<CommandBuffer> createInvalid(Device& device)
     {
@@ -69,16 +69,17 @@ public:
     bool waitForCompletion();
 
 private:
-    CommandBuffer(id<MTLCommandBuffer>, id<MTLSharedEvent>, Device&);
+    CommandBuffer(id<MTLCommandBuffer>, Device&, id<MTLSharedEvent>, uint64_t sharedEventSignalValue);
     CommandBuffer(Device&);
 
     id<MTLCommandBuffer> m_commandBuffer { nil };
-    id<MTLSharedEvent> m_abortEvent { nil };
     id<MTLCommandBuffer> m_cachedCommandBuffer { nil };
     int m_bufferMapCount { 0 };
 
     const Ref<Device> m_device;
     NSString* m_lastErrorString { nil };
+    id<MTLSharedEvent> m_sharedEvent { nil };
+    const uint64_t m_sharedEventSignalValue { 0 };
     // FIXME: we should not need this semaphore - https://bugs.webkit.org/show_bug.cgi?id=272353
     BinarySemaphore m_commandBufferComplete;
 };

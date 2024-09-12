@@ -58,7 +58,7 @@ AngleRaw evaluateCalc(const UnevaluatedCalc<AngleRaw>& calc, const CSSToLengthCo
 
 AngleRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<AngleRaw>& calc, const CSSCalcSymbolTable& symbolTable)
 {
-    return calc.calc->angleValueDeprecated(symbolTable);
+    return calc.calc->angleValueNoConversionDataRequired(symbolTable);
 }
 
 NumberRaw evaluateCalc(const UnevaluatedCalc<NumberRaw>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
@@ -68,7 +68,7 @@ NumberRaw evaluateCalc(const UnevaluatedCalc<NumberRaw>& calc, const CSSToLength
 
 NumberRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<NumberRaw>& calc, const CSSCalcSymbolTable& symbolTable)
 {
-    return calc.calc->numberValueDeprecated(symbolTable);
+    return calc.calc->numberValueNoConversionDataRequired(symbolTable);
 }
 
 PercentRaw evaluateCalc(const UnevaluatedCalc<PercentRaw>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
@@ -78,7 +78,7 @@ PercentRaw evaluateCalc(const UnevaluatedCalc<PercentRaw>& calc, const CSSToLeng
 
 PercentRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<PercentRaw>& calc, const CSSCalcSymbolTable& symbolTable)
 {
-    return calc.calc->percentValueDeprecated(symbolTable);
+    return calc.calc->percentValueNoConversionDataRequired(symbolTable);
 }
 
 LengthRaw evaluateCalc(const UnevaluatedCalc<LengthRaw>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
@@ -88,7 +88,7 @@ LengthRaw evaluateCalc(const UnevaluatedCalc<LengthRaw>& calc, const CSSToLength
 
 LengthRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<LengthRaw>& calc, const CSSCalcSymbolTable& symbolTable)
 {
-    return calc.calc->lengthValueDeprecated(symbolTable);
+    return calc.calc->lengthValueNoConversionDataRequired(symbolTable);
 }
 
 ResolutionRaw evaluateCalc(const UnevaluatedCalc<ResolutionRaw>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
@@ -98,7 +98,7 @@ ResolutionRaw evaluateCalc(const UnevaluatedCalc<ResolutionRaw>& calc, const CSS
 
 ResolutionRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<ResolutionRaw>& calc, const CSSCalcSymbolTable& symbolTable)
 {
-    return calc.calc->resolutionValueDeprecated(symbolTable);
+    return calc.calc->resolutionValueNoConversionDataRequired(symbolTable);
 }
 
 TimeRaw evaluateCalc(const UnevaluatedCalc<TimeRaw>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
@@ -108,7 +108,7 @@ TimeRaw evaluateCalc(const UnevaluatedCalc<TimeRaw>& calc, const CSSToLengthConv
 
 TimeRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<TimeRaw>& calc, const CSSCalcSymbolTable& symbolTable)
 {
-    return calc.calc->timeValueDeprecated(symbolTable);
+    return calc.calc->timeValueNoConversionDataRequired(symbolTable);
 }
 
 } // namespace WebCore

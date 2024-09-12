@@ -2,6 +2,7 @@
  * Copyright (C) 2006 Rob Buis <buis@kde.org>
  *           (C) 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,23 +37,23 @@
 
 namespace WebCore {
 
-Ref<CSSCursorImageValue> CSSCursorImageValue::create(Ref<CSSValue>&& value, const std::optional<IntPoint>& hotSpot, LoadedFromOpaqueSource loadedFromOpaqueSource)
+Ref<CSSCursorImageValue> CSSCursorImageValue::create(Ref<CSSValue>&& value, RefPtr<CSSValue>&& hotSpot, LoadedFromOpaqueSource loadedFromOpaqueSource)
 {
     auto* imageValue = dynamicDowncast<CSSImageValue>(value.get());
     auto originalURL = imageValue ? imageValue->imageURL() : URL();
-    return adoptRef(*new CSSCursorImageValue(WTFMove(value), hotSpot, WTFMove(originalURL), loadedFromOpaqueSource));
+    return adoptRef(*new CSSCursorImageValue(WTFMove(value), WTFMove(hotSpot), WTFMove(originalURL), loadedFromOpaqueSource));
 }
 
-Ref<CSSCursorImageValue> CSSCursorImageValue::create(Ref<CSSValue>&& imageValue, const std::optional<IntPoint>& hotSpot, URL originalURL, LoadedFromOpaqueSource loadedFromOpaqueSource)
+Ref<CSSCursorImageValue> CSSCursorImageValue::create(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, URL originalURL, LoadedFromOpaqueSource loadedFromOpaqueSource)
 {
-    return adoptRef(*new CSSCursorImageValue(WTFMove(imageValue), hotSpot, WTFMove(originalURL), loadedFromOpaqueSource));
+    return adoptRef(*new CSSCursorImageValue(WTFMove(imageValue), WTFMove(hotSpot), WTFMove(originalURL), loadedFromOpaqueSource));
 }
 
-CSSCursorImageValue::CSSCursorImageValue(Ref<CSSValue>&& imageValue, const std::optional<IntPoint>& hotSpot, URL originalURL, LoadedFromOpaqueSource loadedFromOpaqueSource)
-    : CSSValue(CursorImageClass)
+CSSCursorImageValue::CSSCursorImageValue(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, URL originalURL, LoadedFromOpaqueSource loadedFromOpaqueSource)
+    : CSSValue(ClassType::CursorImage)
     , m_originalURL(WTFMove(originalURL))
     , m_imageValue(WTFMove(imageValue))
-    , m_hotSpot(hotSpot)
+    , m_hotSpot(WTFMove(hotSpot))
     , m_loadedFromOpaqueSource(loadedFromOpaqueSource)
 {
 }
@@ -61,23 +62,33 @@ CSSCursorImageValue::~CSSCursorImageValue() = default;
 
 String CSSCursorImageValue::customCSSText() const
 {
-    auto text = m_imageValue.get().cssText();
+    auto text = m_imageValue->cssText();
     if (!m_hotSpot)
         return text;
-    return makeString(text, ' ', m_hotSpot->x(), ' ', m_hotSpot->y());
+    return makeString(text, ' ', m_hotSpot->first().cssText(), ' ', m_hotSpot->second().cssText());
 }
 
 bool CSSCursorImageValue::equals(const CSSCursorImageValue& other) const
 {
-    return m_hotSpot == other.m_hotSpot && compareCSSValue(m_imageValue, other.m_imageValue);
+    return compareCSSValue(m_imageValue, other.m_imageValue)
+        && compareCSSValuePtr(m_hotSpot, other.m_hotSpot);
 }
 
-RefPtr<StyleImage> CSSCursorImageValue::createStyleImage(Style::BuilderState& state) const
+RefPtr<StyleCursorImage> CSSCursorImageValue::createStyleImage(Style::BuilderState& state) const
 {
     auto styleImage = state.createStyleImage(m_imageValue.get());
     if (!styleImage)
         return nullptr;
-    return StyleCursorImage::create(styleImage.releaseNonNull(), m_hotSpot, m_originalURL, m_loadedFromOpaqueSource);
+
+    std::optional<IntPoint> hotSpot;
+    if (m_hotSpot) {
+        // FIXME: Should we clamp or round instead of just casting from double to int?
+        hotSpot = IntPoint {
+            static_cast<int>(downcast<CSSPrimitiveValue>(m_hotSpot->first()).resolveAsNumber(state.cssToLengthConversionData())),
+            static_cast<int>(downcast<CSSPrimitiveValue>(m_hotSpot->second()).resolveAsNumber(state.cssToLengthConversionData()))
+        };
+    }
+    return StyleCursorImage::create(styleImage.releaseNonNull(), hotSpot, m_originalURL, m_loadedFromOpaqueSource);
 }
 
 } // namespace WebCore

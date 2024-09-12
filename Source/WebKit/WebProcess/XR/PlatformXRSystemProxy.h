@@ -59,7 +59,7 @@ public:
     void initializeTrackingAndRendering();
     void shutDownTrackingAndRendering();
     void didCompleteShutdownTriggeredBySystem();
-    void requestFrame(PlatformXR::Device::RequestFrameCallback&&);
+    void requestFrame(std::optional<PlatformXR::RequestData>&&, PlatformXR::Device::RequestFrameCallback&&);
     std::optional<PlatformXR::LayerHandle> createLayerProjection(uint32_t, uint32_t, bool);
     void submitFrame();
 

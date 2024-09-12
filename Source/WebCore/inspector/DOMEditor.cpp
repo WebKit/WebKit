@@ -40,7 +40,7 @@
 #include "Text.h"
 #include "markup.h"
 #include <wtf/RefPtr.h>
-#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 

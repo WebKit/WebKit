@@ -26,12 +26,14 @@
 #pragma once
 
 #include "CaretAnimator.h"
+#include <wtf/TZoneMalloc.h>
 
 #if HAVE(REDESIGNED_TEXT_CURSOR)
 
 namespace WebCore {
 
 class OpacityCaretAnimator final : public CaretAnimator {
+    WTF_MAKE_TZONE_ALLOCATED(OpacityCaretAnimator);
 public:
     explicit OpacityCaretAnimator(CaretAnimationClient&, std::optional<LayoutRect> = std::nullopt);
 

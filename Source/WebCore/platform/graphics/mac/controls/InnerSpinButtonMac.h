@@ -28,12 +28,14 @@
 #if PLATFORM(MAC)
 
 #import "ControlMac.h"
+#import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class InnerSpinButtonPart;
 
 class InnerSpinButtonMac final : public ControlMac {
+    WTF_MAKE_TZONE_ALLOCATED(InnerSpinButtonMac);
 public:
     InnerSpinButtonMac(InnerSpinButtonPart&, ControlFactoryMac&);
 

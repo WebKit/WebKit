@@ -33,31 +33,38 @@
 
 namespace WebCore {
 
+namespace Style {
+class BuilderState;
+}
+
 class CSSViewValue;
 class Element;
 
 struct ViewTimelineInsets {
     std::optional<Length> start;
     std::optional<Length> end;
-    bool operator==(const auto& other) const { return start == other.start && end == other.end; }
+    bool operator==(const ViewTimelineInsets&) const = default;
 };
 
 class ViewTimeline final : public ScrollTimeline {
 public:
     static Ref<ViewTimeline> create(ViewTimelineOptions&& = { });
     static Ref<ViewTimeline> create(const AtomString&, ScrollAxis, ViewTimelineInsets&&);
-    static Ref<ViewTimeline> createFromCSSValue(const CSSViewValue&);
+    static Ref<ViewTimeline> createFromCSSValue(Style::BuilderState&, const CSSViewValue&);
 
     Element* subject() const { return m_subject.get(); }
     const CSSNumericValue& startOffset() const { return m_startOffset.get(); }
     const CSSNumericValue& endOffset() const { return m_endOffset.get(); }
     const ViewTimelineInsets& insets() const { return m_insets; }
+    AnimationTimeline::ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents() override;
+    AnimationTimelinesController* controller() const override;
 
 private:
     explicit ViewTimeline(ViewTimelineOptions&& = { });
     explicit ViewTimeline(const AtomString&, ScrollAxis, ViewTimelineInsets&&);
 
-    Ref<CSSValue> toCSSValue() const final;
+    void dump(TextStream&) const final;
+    Ref<CSSValue> toCSSValue(const RenderStyle&) const final;
     bool isViewTimeline() const final { return true; }
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_subject;

@@ -122,7 +122,7 @@ public:
     template<typename... Arguments>
     inline void logAlways(const char* methodName, const Arguments&... arguments) const
     {
-        if (!m_manager.alwaysOnLoggingAllowed())
+        if (!m_manager->alwaysOnLoggingAllowed())
             return;
 
         m_logger->logAlways(LogMedia, makeString("WebMediaSessionManager::"_s, span(methodName), ' '), arguments...);
@@ -136,7 +136,7 @@ private:
     {
     }
 
-    WebMediaSessionManager& m_manager;
+    CheckedRef<WebMediaSessionManager> m_manager;
     Ref<Logger> m_logger;
 };
 

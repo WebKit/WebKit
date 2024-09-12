@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-backdrop-infinite-duration-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-element-not-visible-at-current-viewport-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-element-not-visible-at-current-viewport-ref.html
@@ -95,6 +96,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-scroll-into-viewport-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-scroll-into-viewport-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-scroll-into-viewport.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-transition-colormix.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-transition-currentcolor-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-transition-currentcolor-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-transition-currentcolor.html

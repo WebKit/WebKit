@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: Skipping view transition because viewport size changed.
-CONSOLE MESSAGE: TypeError: e.data.startsWith is not a function. (In 'e.data.startsWith('FAIL:')', 'e.data.startsWith' is undefined)
 
 PASS
 View transitions: mismatched snapshot containing block size skips transition.

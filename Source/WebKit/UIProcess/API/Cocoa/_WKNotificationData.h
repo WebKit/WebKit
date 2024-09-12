@@ -30,14 +30,48 @@ typedef NS_ENUM(NSUInteger, _WKNotificationAlert) {
     _WKNotificationAlertEnabled
 };
 
+typedef NS_ENUM(NSUInteger, _WKNotificationDirection) {
+    _WKNotificationDirectionAuto,
+    _WKNotificationDirectionLTR,
+    _WKNotificationDirectionRTL
+};
+
 WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @interface _WKNotificationData : NSObject
-@property (nonatomic, readonly, copy) NSString *title;
-@property (nonatomic, readonly, copy) NSString *body;
-@property (nonatomic, readonly, copy) NSString *origin;
-@property (nonatomic, readonly, copy) NSString *identifier;
-@property (nonatomic, readonly, copy) NSDictionary *userInfo;
+- (instancetype)init NS_UNAVAILABLE;
+
+@property (nonatomic, readonly) NSString *title;
+@property (nonatomic, readonly) _WKNotificationDirection dir;
+@property (nonatomic, readonly) NSString *lang;
+@property (nonatomic, readonly) NSString *body;
+@property (nonatomic, readonly) NSString *tag;
 @property (nonatomic, readonly) _WKNotificationAlert alert;
+@property (nonatomic, readonly) NSData *data;
+
+@property (nonatomic, readonly) NSString *origin;
+@property (nonatomic, readonly) NSURL *securityOrigin;
+@property (nonatomic, readonly) NSURL *serviceWorkerRegistrationURL;
+
+@property (nonatomic, readonly) NSString *identifier;
+@property (nonatomic, readonly) NSUUID *uuid;
+@property (nonatomic, readonly, copy) NSDictionary *userInfo;
 
 - (NSDictionary *)dictionaryRepresentation;
+
+@end
+
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKMutableNotificationData : _WKNotificationData
+- (instancetype)init;
+
+@property (nonatomic, readwrite, copy) NSString *title;
+@property (nonatomic, readwrite) _WKNotificationDirection dir;
+@property (nonatomic, readwrite, copy) NSString *lang;
+@property (nonatomic, readwrite, copy) NSString *body;
+@property (nonatomic, readwrite, copy) NSString *tag;
+@property (nonatomic, readwrite) _WKNotificationAlert alert;
+@property (nonatomic, readwrite, copy) NSData *data;
+@property (nonatomic, readwrite, copy) NSURL *securityOrigin;
+@property (nonatomic, readwrite, copy) NSURL *serviceWorkerRegistrationURL;
+@property (nonatomic, readwrite, copy) NSUUID *uuid;
 @end

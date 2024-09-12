@@ -94,7 +94,7 @@ private:
     WTFLogChannel& logChannel() const;
 #endif
 
-    WebPageProxy& m_webPageProxy;
+    WeakRef<WebPageProxy> m_webPageProxy;
     Ref<MediaSessionCoordinatorProxyPrivate> m_privateCoordinator;
 #if !RELEASE_LOG_DISABLED
     Ref<const WTF::Logger> m_logger;

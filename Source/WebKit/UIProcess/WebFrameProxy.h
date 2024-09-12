@@ -82,7 +82,7 @@ public:
         return adoptRef(*new WebFrameProxy(page, process, frameID, isMainFrame));
     }
 
-    static WebFrameProxy* webFrame(WebCore::FrameIdentifier);
+    static WebFrameProxy* webFrame(std::optional<WebCore::FrameIdentifier>);
     static bool canCreateFrame(WebCore::FrameIdentifier);
 
     virtual ~WebFrameProxy();

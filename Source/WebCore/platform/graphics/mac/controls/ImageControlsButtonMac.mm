@@ -34,8 +34,11 @@
 #import "ImageControlsButtonPart.h"
 #import "LocalDefaultSystemAppearance.h"
 #import <pal/spi/mac/NSServicesRolloverButtonCellSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageControlsButtonMac);
 
 ImageControlsButtonMac::ImageControlsButtonMac(ImageControlsButtonPart& owningPart, ControlFactoryMac& controlFactory, NSServicesRolloverButtonCell *servicesRolloverButtonCell)
     : ControlMac(owningPart, controlFactory)

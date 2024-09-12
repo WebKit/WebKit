@@ -62,6 +62,16 @@ WebSharedWorkerServerConnection::~WebSharedWorkerServerConnection()
     CONNECTION_RELEASE_LOG("~WebSharedWorkerServerConnection:");
 }
 
+WebSharedWorkerServer& WebSharedWorkerServerConnection::server()
+{
+    return m_server.get();
+}
+
+const WebSharedWorkerServer& WebSharedWorkerServerConnection::server() const
+{
+    return m_server.get();
+}
+
 IPC::Connection* WebSharedWorkerServerConnection::messageSenderConnection() const
 {
     return m_contentConnection.ptr();

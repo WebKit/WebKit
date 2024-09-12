@@ -18,6 +18,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/100x100-gr-rr.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/100x100-green-with-red-corners.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/100x100-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/12x12-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/1pxgreen-98pxred.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/1x1-green.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/1x1-lime.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/1x1-maroon.png
@@ -25,12 +27,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/1x1-red.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/1x1-white.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/40px-wide-20px-tall-green-rect.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/4bicolor-squares.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/500x500-red-with-green-center.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/500x500-white-red-green-irreg-polygon.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/50x50-green.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/60x60-gg-rr.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/60x60-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/9-colored-areas-40-30-20-10.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/9-colored-areas-40-30-20-10.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/9-colored-areas.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/9grid20-40-red.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/9grid40-30-20-10-green.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/9grid40-30-20-10-red-old.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/9grid40-30-20-10-red.png
@@ -48,6 +54,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/blue-diamond.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/blue96x96.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/blue_color.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/border-image-repeat-space-011.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/border-image.jpg
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/border.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/c-red.css
@@ -58,6 +65,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/green-150-150.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/green-60-60.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/green-60x60-red-5px-border.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/green-dot.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/green.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/green_color.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/support/img-ref-1.png

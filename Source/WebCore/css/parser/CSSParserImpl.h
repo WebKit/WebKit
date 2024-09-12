@@ -1,5 +1,5 @@
 // Copyright 2014 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2024 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -114,6 +114,8 @@ public:
 
     static IsImportant consumeTrailingImportantAndWhitespace(CSSParserTokenRange&);
 
+    static RefPtr<StyleRuleNestedDeclarations> parseNestedDeclarations(const CSSParserContext&, const String&);
+
     CSSTokenizer* tokenizer() const { return m_tokenizer.get(); }
 
 private:
@@ -184,7 +186,7 @@ private:
 
     RefPtr<StyleSheetContents> protectedStyleSheet() const;
 
-    Ref<StyleRuleBase> createNestingParentRule();
+    Ref<StyleRuleBase> createNestedDeclarationsRule();
     void runInNewNestingContext(auto&& run);
     NestingContext& topContext()
     {

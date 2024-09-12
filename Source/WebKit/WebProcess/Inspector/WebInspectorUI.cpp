@@ -72,11 +72,11 @@ void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIde
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     if (!m_extensionController)
-        m_extensionController = makeUnique<WebInspectorUIExtensionController>(*this, m_page.identifier());
+        m_extensionController = makeUnique<WebInspectorUIExtensionController>(*this, m_page->identifier());
 #endif
 
     m_frontendAPIDispatcher->reset();
-    m_frontendController = &m_page.corePage()->inspectorController();
+    m_frontendController = &m_page->corePage()->inspectorController();
     m_frontendController->setInspectorFrontendClient(this);
 
     updateConnection();
@@ -105,7 +105,7 @@ void WebInspectorUI::windowObjectCleared()
     if (m_frontendHost)
         m_frontendHost->disconnectClient();
 
-    m_frontendHost = InspectorFrontendHost::create(this, m_page.corePage());
+    m_frontendHost = InspectorFrontendHost::create(this, m_page->corePage());
     m_frontendHost->addSelfToGlobalObjectInWorld(mainThreadNormalWorld());
 }
 
@@ -131,9 +131,9 @@ void WebInspectorUI::startWindowDrag()
 
 void WebInspectorUI::moveWindowBy(float x, float y)
 {
-    FloatRect frameRect = m_page.corePage()->chrome().windowRect();
+    FloatRect frameRect = m_page->corePage()->chrome().windowRect();
     frameRect.move(x, y);
-    m_page.corePage()->chrome().setWindowRect(frameRect);
+    m_page->corePage()->chrome().setWindowRect(frameRect);
 }
 
 void WebInspectorUI::bringToFront()
@@ -188,7 +188,7 @@ void WebInspectorUI::effectiveAppearanceDidChange(WebCore::InspectorFrontendClie
 
 WebCore::UserInterfaceLayoutDirection WebInspectorUI::userInterfaceLayoutDirection() const
 {
-    return m_page.corePage()->userInterfaceLayoutDirection();
+    return m_page->corePage()->userInterfaceLayoutDirection();
 }
 
 bool WebInspectorUI::supportsDockSide(DockSide dockSide)
@@ -328,12 +328,12 @@ void WebInspectorUI::setInspectorPageDeveloperExtrasEnabled(bool enabled)
 #if ENABLE(INSPECTOR_TELEMETRY)
 bool WebInspectorUI::supportsDiagnosticLogging()
 {
-    return m_page.corePage()->settings().diagnosticLoggingEnabled();
+    return m_page->corePage()->settings().diagnosticLoggingEnabled();
 }
 
 void WebInspectorUI::logDiagnosticEvent(const String& eventName, const DiagnosticLoggingClient::ValueDictionary& dictionary)
 {
-    m_page.corePage()->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(eventName, "Web Inspector Frontend Diagnostics"_s, dictionary, ShouldSample::No);
+    m_page->corePage()->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(eventName, "Web Inspector Frontend Diagnostics"_s, dictionary, ShouldSample::No);
 }
 
 void WebInspectorUI::setDiagnosticLoggingAvailable(bool available)
@@ -462,7 +462,7 @@ String WebInspectorUI::targetProductVersion() const
 
 WebCore::Page* WebInspectorUI::frontendPage()
 {
-    return m_page.corePage();
+    return m_page->corePage();
 }
 
 #if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN) && !ENABLE(WPE_PLATFORM)

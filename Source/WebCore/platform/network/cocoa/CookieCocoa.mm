@@ -81,7 +81,7 @@ static std::optional<double> cookieExpiry(NSHTTPCookie *cookie)
 
 static Cookie::SameSitePolicy coreSameSitePolicy(NSHTTPCookieStringPolicy _Nullable policy)
 {
-    if (!policy)
+    if (!policy || [policy isEqualToString:@"none"]) // FIXME: This should use a string constant (rdar://135227277)
         return Cookie::SameSitePolicy::None;
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if ([policy isEqualToString:NSHTTPCookieSameSiteLax])
@@ -97,7 +97,7 @@ static NSHTTPCookieStringPolicy _Nullable nsSameSitePolicy(Cookie::SameSitePolic
 {
     switch (policy) {
     case Cookie::SameSitePolicy::None:
-        return nil;
+        return @"none"; // FIXME: This should use a string constant (rdar://135227277)
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     case Cookie::SameSitePolicy::Lax:
         return NSHTTPCookieSameSiteLax;

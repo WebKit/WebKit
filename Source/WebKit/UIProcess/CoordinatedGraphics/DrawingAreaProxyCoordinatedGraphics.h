@@ -52,6 +52,9 @@ class Region;
 namespace WebKit {
 
 class DrawingAreaProxyCoordinatedGraphics final : public DrawingAreaProxy {
+    WTF_MAKE_TZONE_ALLOCATED(DrawingAreaProxyCoordinatedGraphics);
+    WTF_MAKE_NONCOPYABLE(DrawingAreaProxyCoordinatedGraphics);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DrawingAreaProxyCoordinatedGraphics);
 public:
     DrawingAreaProxyCoordinatedGraphics(WebPageProxy&, WebProcessProxy&);
     virtual ~DrawingAreaProxyCoordinatedGraphics();

@@ -27,12 +27,14 @@
 
 #include <WebCore/PerformanceLoggingClient.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class WebPage;
 
 class WebPerformanceLoggingClient : public WebCore::PerformanceLoggingClient {
+    WTF_MAKE_TZONE_ALLOCATED(WebPerformanceLoggingClient);
 public:
     WebPerformanceLoggingClient(WebPage&);
     virtual ~WebPerformanceLoggingClient() = default;

@@ -46,14 +46,14 @@ public:
         AV1
 #endif
     };
-    static void create(Type, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+    static void create(Type, const Config&, CreateCallback&&, OutputCallback&&);
 
-    LibWebRTCVPXVideoDecoder(Type, const Config&, OutputCallback&&, PostTaskCallback&&);
+    LibWebRTCVPXVideoDecoder(Type, const Config&, OutputCallback&&);
     ~LibWebRTCVPXVideoDecoder();
 
 private:
-    void decode(EncodedFrame&&, DecodeCallback&&) final;
-    void flush(Function<void()>&&) final;
+    Ref<DecodePromise> decode(EncodedFrame&&) final;
+    Ref<GenericPromise> flush() final;
     void reset() final;
     void close() final;
 

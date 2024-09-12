@@ -64,7 +64,7 @@ public:
 
     std::optional<NowPlayingInfo> nowPlayingInfo() const final { return m_nowPlayingInfo; }
     static WEBCORE_EXPORT void clearNowPlayingInfo();
-    static WEBCORE_EXPORT void setNowPlayingInfo(bool setAsNowPlayingApplication, const NowPlayingInfo&);
+    static WEBCORE_EXPORT void setNowPlayingInfo(bool setAsNowPlayingApplication, bool shouldUpdateNowPlayingSuppression, const NowPlayingInfo&);
 
     static WEBCORE_EXPORT void updateMediaUsage(PlatformMediaSession&);
 
@@ -122,6 +122,10 @@ private:
     void possiblyChangeAudioCategory();
 
     std::optional<bool> supportsSpatialAudioPlaybackForConfiguration(const MediaConfiguration&) final;
+
+#if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
+    static void updateNowPlayingSuppression(const NowPlayingInfo*);
+#endif
 
     bool m_nowPlayingActive { false };
     bool m_registeredAsNowPlayingApplication { false };

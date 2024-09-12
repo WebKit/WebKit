@@ -43,7 +43,7 @@
 #include "DocumentInlines.h"
 #include "HTMLElement.h"
 #include "PaintWorkletGlobalScope.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyleSetters.h"
 #include "Settings.h"
 #include "StyleBuilderGenerated.h"
 #include "StyleCustomPropertyData.h"

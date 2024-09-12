@@ -38,7 +38,7 @@ namespace WebCore {
 class FEBlend;
 
 class FEBlendNeonApplier final : public FilterEffectConcreteApplier<FEBlend> {
-    FELightingNeonParallelApplier(FELightingNeonParallelApplier);
+    WTF_MAKE_TZONE_ALLOCATED(FEBlendNeonApplier);
     using Base = FilterEffectConcreteApplier<FEBlend>;
 
 public:

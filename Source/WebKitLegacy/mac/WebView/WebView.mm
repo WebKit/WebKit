@@ -2760,17 +2760,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // type.  (See behavior matrix at the top of WebFramePrivate.)  So we copy all the items
     // in the back forward list, and go to the current one.
 
-    auto& backForward = _private->page->backForward();
-    ASSERT(!backForward.currentItem()); // destination list should be empty
+    CheckedRef backForward = _private->page->backForward();
+    ASSERT(!backForward->currentItem()); // destination list should be empty
 
-    auto& otherBackForward = otherView->_private->page->backForward();
-    if (!otherBackForward.currentItem())
+    CheckedRef otherBackForward = otherView->_private->page->backForward();
+    if (!otherBackForward->currentItem())
         return; // empty back forward list, bail
 
     WebCore::HistoryItem* newItemToGoTo = nullptr;
 
-    int lastItemIndex = otherBackForward.forwardCount();
-    for (int i = -otherBackForward.backCount(); i <= lastItemIndex; ++i) {
+    int lastItemIndex = otherBackForward->forwardCount();
+    for (int i = -otherBackForward->backCount(); i <= lastItemIndex; ++i) {
         if (i == 0) {
             // If this item is showing , save away its current scroll and form state,
             // since that might have changed since loading and it is normally not saved
@@ -2778,10 +2778,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(otherView->_private->page->mainFrame()))
                 localMainFrame->history().saveDocumentAndScrollState();
         }
-        Ref<WebCore::HistoryItem> newItem = otherBackForward.itemAtIndex(i)->copy();
+        Ref newItem = otherBackForward->itemAtIndex(i)->copy();
         if (i == 0)
             newItemToGoTo = newItem.ptr();
-        backForward.client().addItem(_private->page->mainFrame().frameID(), WTFMove(newItem));
+        backForward->client().addItem(_private->page->mainFrame().frameID(), WTFMove(newItem));
     }
 
     ASSERT(newItemToGoTo);

@@ -193,7 +193,7 @@ void SimulatedXRDevice::frameTimerFired()
         m_FrameCallback(WTFMove(data));
 }
 
-void SimulatedXRDevice::requestFrame(RequestFrameCallback&& callback)
+void SimulatedXRDevice::requestFrame(std::optional<PlatformXR::RequestData>&&, RequestFrameCallback&& callback)
 {
     m_FrameCallback = WTFMove(callback);
     if (!m_frameTimer.isActive())

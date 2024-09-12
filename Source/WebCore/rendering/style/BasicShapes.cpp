@@ -51,21 +51,14 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShape);
-
-void BasicShapeCenterCoordinate::updateComputedLength()
-{
-    if (m_direction == BasicShapeCenterCoordinate::Direction::TopLeft) {
-        m_computedLength = m_length.isUndefined() ? Length(0, LengthType::Fixed) : m_length;
-        return;
-    }
-
-    if (m_length.isUndefined()) {
-        m_computedLength = Length(100, LengthType::Percent);
-        return;
-    }
-    
-    m_computedLength = convertTo100PercentMinusLength(m_length);
-}
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShapeCircleOrEllipse);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShapeCircle);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShapeEllipse);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShapePolygon);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShapePath);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShapeInset);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShapeRect);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicShapeXywh);
 
 struct SVGPathTransformedByteStream {
     friend bool operator==(const SVGPathTransformedByteStream&, const SVGPathTransformedByteStream&) = default;
@@ -862,7 +855,6 @@ TextStream& operator<<(TextStream& ts, const BasicShapeRadius& radius)
 
 TextStream& operator<<(TextStream& ts, const BasicShapeCenterCoordinate& coordinate)
 {
-    ts.dumpProperty("direction", coordinate.direction() == BasicShapeCenterCoordinate::Direction::TopLeft ? "top left" : "bottom right");
     ts.dumpProperty("length", coordinate.length());
     return ts;
 }

@@ -33,8 +33,11 @@
 #import "LocalDefaultSystemAppearance.h"
 #import "MeterPart.h"
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MeterMac);
 
 MeterMac::MeterMac(MeterPart& owningMeterPart, ControlFactoryMac& controlFactory, NSLevelIndicatorCell* levelIndicatorCell)
     : ControlMac(owningMeterPart, controlFactory)

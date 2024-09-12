@@ -35,7 +35,7 @@
 namespace WebCore {
 
 CSSPaintImageValue::CSSPaintImageValue(String&& name, Ref<CSSVariableData>&& arguments)
-    : CSSValue { PaintImageClass }
+    : CSSValue { ClassType::PaintImage }
     , m_name { WTFMove(name) }
     , m_arguments { WTFMove(arguments) }
 {

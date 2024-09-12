@@ -35,14 +35,14 @@ class GStreamerVideoDecoder : public ThreadSafeRefCounted<GStreamerVideoDecoder>
     WTF_MAKE_TZONE_ALLOCATED(GStreamerVideoDecoder);
 
 public:
-    static void create(const String& codecName, const Config&, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+    static void create(const String& codecName, const Config&, CreateCallback&&, OutputCallback&&);
 
-    GStreamerVideoDecoder(const String& codecName, const Config&, OutputCallback&&, PostTaskCallback&&, GRefPtr<GstElement>&&);
+    GStreamerVideoDecoder(const String& codecName, const Config&, OutputCallback&&, GRefPtr<GstElement>&&);
     ~GStreamerVideoDecoder();
 
 private:
-    void decode(EncodedFrame&&, DecodeCallback&&) final;
-    void flush(Function<void()>&&) final;
+    Ref<DecodePromise> decode(EncodedFrame&&) final;
+    Ref<GenericPromise> flush() final;
     void reset() final;
     void close() final;
 

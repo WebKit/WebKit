@@ -34,6 +34,7 @@
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSUnits.h"
+#include "CalculationCategory.h"
 #include "CalculationOperator.h"
 #include "Logging.h"
 #include <wtf/SortedArrayMap.h>

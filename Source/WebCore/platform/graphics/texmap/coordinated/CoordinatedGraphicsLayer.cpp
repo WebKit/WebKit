@@ -29,6 +29,7 @@
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
+#include "GraphicsLayerAsyncContentsDisplayDelegateTextureMapper.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "GraphicsLayerFactory.h"
 #include "NicosiaBackingStore.h"
@@ -535,6 +536,15 @@ void CoordinatedGraphicsLayer::setContentsDisplayDelegate(RefPtr<GraphicsLayerCo
 {
     PlatformLayer* platformLayer = displayDelegate ? displayDelegate->platformLayer() : nullptr;
     setContentsToPlatformLayer(platformLayer, purpose);
+}
+
+RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> CoordinatedGraphicsLayer::createAsyncContentsDisplayDelegate(GraphicsLayerAsyncContentsDisplayDelegate* existing)
+{
+    if (existing) {
+        static_cast<GraphicsLayerAsyncContentsDisplayDelegateTextureMapper*>(existing)->updateGraphicsLayer(*this);
+        return existing;
+    }
+    return GraphicsLayerAsyncContentsDisplayDelegateTextureMapper::create(*this);
 }
 
 bool CoordinatedGraphicsLayer::filtersCanBeComposited(const FilterOperations& filters) const

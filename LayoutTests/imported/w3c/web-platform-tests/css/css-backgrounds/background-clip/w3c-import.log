@@ -9,11 +9,30 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+box-decoration-break
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-background-geometry-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-background-geometry-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-background-geometry.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-border-image-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-border-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-border-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-border-on-top-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-border-on-top-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-border-on-top.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-box-decoration-break-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-box-decoration-break-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-box-decoration-break.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-multiple-backgrounds-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-multiple-backgrounds-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-multiple-backgrounds.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-box.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-box_with_position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-box_with_radius.html
@@ -29,13 +48,24 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-rounded-corner-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-rounded-corner-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-rounded-corner.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-animated-text-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-animated-text-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-animated-text.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-dynamic-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-dynamic-2-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-dynamic-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-ellipsis-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-ellipsis-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-ellipsis.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-flex-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-flex-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-flex.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-multi-line-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-multi-line-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-multi-line.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/list.txt
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-text-decorations-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-text-decorations-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-text-decorations.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-text-emphasis-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-text-emphasis-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-text-emphasis.html

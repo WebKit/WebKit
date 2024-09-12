@@ -2,7 +2,7 @@ This page should go back. If a test outputs the contents of this
 page, then the test page failed to enter the page cache.
 <script>
 var channel = new BroadcastChannel('shared-worker');
-async function doTest(counter)
+async function doSW1Test(counter)
 {
     if (!counter)
         counter = 0;
@@ -16,17 +16,25 @@ async function doTest(counter)
              clearTimeout(myTimer);
              // We received a message from shared worker, let's call doTest to retry.
              await new Promise(resolve => setTimeout(resolve, 50));
-             doTest(++counter).then(resolve, reject);
+             doSW1Test(++counter).then(resolve, reject);
          };
     });
+}
 
+async function doSW2Test(counter)
+{
     const sw2 = new SharedWorker('shared-worker-script.js?2');
     sw2.port.postMessage({ action: 'setState', state: 'hungry' });
     await new Promise(resolve => sw2.port.onmessage = resolve);
 }
 
 window.addEventListener("load", async () => {
-    await doTest();
+    try {
+        await doSW1Test();
+        await doSW2Test();
+    } catch (e) {
+        console.log(e);
+    }
     history.back();
 }, false);
 </script>

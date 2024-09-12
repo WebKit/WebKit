@@ -159,7 +159,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
 
     // If the new document is for a Plugin but we're supposed to be sandboxed from Plugins,
     // then replace the document with one whose parser will ignore the incoming data (bug 39323)
-    if (document->isPluginDocument() && document->isSandboxed(SandboxPlugins))
+    if (document->isPluginDocument() && document->isSandboxed(SandboxFlag::Plugins))
         document = SinkDocument::create(frame, url);
 
     // FIXME: Do we need to consult the content security policy here about blocked plug-ins?
@@ -171,7 +171,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     if (shouldReuseDefaultView) {
         ASSERT(frameLoader->documentLoader());
         if (CheckedPtr contentSecurityPolicy = frameLoader->documentLoader()->contentSecurityPolicy())
-            shouldReuseDefaultView = !(contentSecurityPolicy->sandboxFlags() & SandboxOrigin);
+            shouldReuseDefaultView = !contentSecurityPolicy->sandboxFlags().contains(SandboxFlag::Origin);
     }
 
     // Temporarily extend the lifetime of the existing document so that FrameLoader::clear() doesn't destroy it as

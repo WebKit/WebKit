@@ -550,6 +550,9 @@ void WebDriverService::parseCapabilities(const JSON::Object& matchedCapabilities
     if (!!unhandledPromptBehavior)
         capabilities.unhandledPromptBehavior = deserializeUnhandledPromptBehavior(unhandledPromptBehavior);
 
+    if (auto webSocketURL = matchedCapabilities.getBoolean("webSocketUrl"_s))
+        capabilities.webSocketURL = *webSocketURL;
+
     platformParseCapabilities(matchedCapabilities, capabilities);
 }
 
@@ -623,6 +626,11 @@ RefPtr<JSON::Object> WebDriverService::validatedCapabilities(const JSON::Object&
             if (!platformValidateCapability(it->key, it->value))
                 return nullptr;
             result->setValue(it->key, it->value.copyRef());
+        } else if (it->key == "webSocketUrl"_s) {
+            auto webSocketURL = it->value->asBoolean();
+            if (!webSocketURL)
+                return nullptr;
+            result->setBoolean(it->key, *webSocketURL);
         } else
             return nullptr;
     }
@@ -688,6 +696,10 @@ RefPtr<JSON::Object> WebDriverService::matchCapabilities(const JSON::Object& mer
         } else if (it->key == "proxy"_s) {
             auto proxyType = it->value->asObject()->getString("proxyType"_s);
             if (!platformSupportProxyType(proxyType))
+                return nullptr;
+        } else if (it->key == "webSocketUrl"_s) {
+            auto webSocketURL = it->value->asBoolean();
+            if (webSocketURL && !platformSupportBidi())
                 return nullptr;
         } else if (!platformMatchCapability(it->key, it->value))
             return nullptr;

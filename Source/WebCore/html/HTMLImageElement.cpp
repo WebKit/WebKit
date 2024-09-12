@@ -107,7 +107,7 @@ HTMLImageElement::~HTMLImageElement()
     document().removeDynamicMediaQueryDependentImage(*this);
     setForm(nullptr);
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    if (auto* page = document().page())
+    if (RefPtr page = document().page())
         page->removeIndividuallyPlayingAnimationElement(*this);
 #endif
 }
@@ -880,7 +880,7 @@ void HTMLImageElement::setAllowsAnimation(std::optional<bool> allowsAnimation)
         if (auto* renderer = this->renderer())
             renderer->repaint();
 
-        if (auto* page = document().page()) {
+        if (RefPtr page = document().page()) {
             if (allowsAnimation.value_or(false))
                 page->addIndividuallyPlayingAnimationElement(*this);
             else

@@ -38,6 +38,7 @@ namespace WebCore {
 // which are not containing block descendants (i.e. position:absolute). These layers must have their position inside their ancestor clipping
 // layer adjusted on the scrolling thread.
 class ScrollingStatePositionedNode final : public ScrollingStateNode {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingStatePositionedNode, WEBCORE_EXPORT);
 public:
     template<typename... Args> static Ref<ScrollingStatePositionedNode> create(Args&&... args) { return adoptRef(*new ScrollingStatePositionedNode(std::forward<Args>(args)...)); }
 

@@ -219,6 +219,9 @@ namespace JSC {
         void store32ToMetadata(GPRReg, const Bytecode&, size_t offset);
 
         template <typename Bytecode>
+        void storePtrToMetadata(GPRReg, const Bytecode&, size_t offset);
+
+        template <typename Bytecode>
         void materializePointerIntoMetadata(const Bytecode&, size_t offset, GPRReg);
 
     public:
@@ -364,8 +367,10 @@ namespace JSC {
         void emit_op_tail_call_varargs(const JSInstruction*);
         void emit_op_tail_call_forward_arguments(const JSInstruction*);
         void emit_op_construct_varargs(const JSInstruction*);
+        void emit_op_super_construct_varargs(const JSInstruction*);
         void emit_op_catch(const JSInstruction*);
         void emit_op_construct(const JSInstruction*);
+        void emit_op_super_construct(const JSInstruction*);
         void emit_op_create_this(const JSInstruction*);
         void emit_op_to_this(const JSInstruction*);
         void emit_op_get_argument(const JSInstruction*);

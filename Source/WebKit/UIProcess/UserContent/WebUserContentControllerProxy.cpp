@@ -112,32 +112,34 @@ void WebUserContentControllerProxy::addProcess(WebProcessProxy& webProcessProxy)
 
 UserContentControllerParameters WebUserContentControllerProxy::parameters() const
 {
-    UserContentControllerParameters parameters;
-
-    parameters.identifier = identifier();
-    
-    ASSERT(parameters.userContentWorlds.isEmpty());
-    parameters.userContentWorlds = WTF::map(m_associatedContentWorlds, [](auto& identifier) {
+    auto userContentWorlds = WTF::map(m_associatedContentWorlds, [](auto& identifier) {
         auto* world = API::ContentWorld::worldForIdentifier(identifier);
         RELEASE_ASSERT(world);
         return world->worldData();
     });
 
+    Vector<WebUserScriptData> userScripts;
     for (auto userScript : m_userScripts->elementsOfType<API::UserScript>())
-        parameters.userScripts.append({ userScript->identifier(), userScript->contentWorld().identifier(), userScript->userScript() });
+        userScripts.append({ userScript->identifier(), userScript->contentWorld().identifier(), userScript->userScript() });
 
+    Vector<WebUserStyleSheetData> userStyleSheets;
     for (auto userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>())
-        parameters.userStyleSheets.append({ userStyleSheet->identifier(), userStyleSheet->contentWorld().identifier(), userStyleSheet->userStyleSheet() });
+        userStyleSheets.append({ userStyleSheet->identifier(), userStyleSheet->contentWorld().identifier(), userStyleSheet->userStyleSheet() });
 
-    parameters.messageHandlers = WTF::map(m_scriptMessageHandlers, [](auto entry) {
+    auto messageHandlers = WTF::map(m_scriptMessageHandlers, [](auto entry) {
         return WebScriptMessageHandlerData { entry.value->identifier(), entry.value->world().identifier(), entry.value->name() };
     });
 
+    return {
+        identifier()
+        , WTFMove(userContentWorlds)
+        , WTFMove(userScripts)
+        , WTFMove(userStyleSheets)
+        , WTFMove(messageHandlers)
 #if ENABLE(CONTENT_EXTENSIONS)
-    parameters.contentRuleLists = contentRuleListData();
+        , contentRuleListData()
 #endif
-    
-    return parameters;
+    };
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)

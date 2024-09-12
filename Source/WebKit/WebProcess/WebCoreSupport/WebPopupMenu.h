@@ -48,7 +48,7 @@ public:
     void didChangeSelectedIndex(int newIndex);
     void setTextForIndex(int newIndex);
 #if PLATFORM(GTK)
-    WebCore::PopupMenuClient* client() const { return m_popupClient; }
+    WebCore::PopupMenuClient* client() const { return m_popupClient.get(); }
 #endif
 
     void show(const WebCore::IntRect&, WebCore::LocalFrameView&, int selectedIndex) override;
@@ -62,7 +62,7 @@ private:
     Vector<WebPopupItem> populateItems();
     void setUpPlatformData(const WebCore::IntRect& pageCoordinates, PlatformPopupMenuData&);
 
-    WebCore::PopupMenuClient* m_popupClient;
+    CheckedPtr<WebCore::PopupMenuClient> m_popupClient;
     WeakPtr<WebPage> m_page;
 };
 

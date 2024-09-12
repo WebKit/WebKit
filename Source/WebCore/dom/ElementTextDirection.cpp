@@ -28,8 +28,10 @@
 
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
+#include "ElementRareData.h"
 #include "HTMLBDIElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLSlotElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "NodeTraversal.h"
 #include "PseudoClassChangeInvalidation.h"
@@ -50,7 +52,7 @@ TextDirectionState parseTextDirectionState(const AtomString& value)
 
 TextDirectionState elementTextDirectionState(const Element& element)
 {
-    return parseTextDirectionState(element.attributeWithoutSynchronization(dirAttr));
+    return parseTextDirectionState(element.attributeWithoutSynchronization(HTMLNames::dirAttr));
 }
 
 bool elementHasValidTextDirectionState(const Element& element)
@@ -154,7 +156,7 @@ static std::optional<TextDirection> computeContainedTextAutoDirection(const Elem
 {
     for (RefPtr child = element.firstChild(); child; ) {
         // Specs: Skip bdi, script, style nodes.
-        if (child->hasTagName(bdiTag) || child->hasTagName(scriptTag) || child->hasTagName(styleTag)) {
+        if (child->hasTagName(HTMLNames::bdiTag) || child->hasTagName(HTMLNames::scriptTag) || child->hasTagName(HTMLNames::styleTag)) {
             child = NodeTraversal::nextSkippingChildren(*child, &element);
             continue;
         }

@@ -27,11 +27,13 @@
 
 #include "BufferSource.h"
 #include "CryptoAlgorithmParameters.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class CryptoAlgorithmAesCbcCfbParams final : public CryptoAlgorithmParameters {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CryptoAlgorithmAesCbcCfbParams);
 public:
     BufferSource iv;
 

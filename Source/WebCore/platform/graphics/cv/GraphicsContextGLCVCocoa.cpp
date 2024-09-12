@@ -593,7 +593,7 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
         ) {
         convertedImage = convertPixelBuffer(image);
         if (!convertedImage) {
-            LOG(WebGL, "GraphicsContextGLCVCocoa::copyVideoTextureToPlatformTexture(%p) - failed converting an image with pixel format ('%s').", this, FourCC(pixelFormat).string().data());
+            LOG(WebGL, "GraphicsContextGLCVCocoa(%p) - failed converting an image with pixel format ('%s').", this, FourCC(pixelFormat).string().data());
             return false;
         }
         image = convertedImage.get();
@@ -685,7 +685,7 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
     GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, outputTexture, level);
     GLenum status = GL_CheckFramebufferStatus(GL_FRAMEBUFFER);
     if (status != GL_FRAMEBUFFER_COMPLETE) {
-        LOG(WebGL, "GraphicsContextGLCVCocoa::copyVideoTextureToPlatformTexture(%p) - Unable to create framebuffer for outputTexture.", this);
+        LOG(WebGL, "GraphicsContextGLCVCocoa(%p) - Unable to create framebuffer for outputTexture.", this);
         return false;
     }
     GL_BindTexture(GL_TEXTURE_2D, 0);

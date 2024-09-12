@@ -66,7 +66,7 @@ public:
 private:
     static ASCIILiteral supplementName() { return "WorkerGlobalScopeCaches"_s; }
 
-    WorkerGlobalScope& m_scope;
+    WeakRef<WorkerGlobalScope, WeakPtrImplWithEventTargetData> m_scope;
     mutable RefPtr<DOMCacheStorage> m_caches;
 };
 
@@ -121,8 +121,10 @@ WorkerGlobalScopeCaches* WorkerGlobalScopeCaches::from(WorkerGlobalScope& scope)
 
 DOMCacheStorage* WorkerGlobalScopeCaches::caches() const
 {
-    if (!m_caches)
-        m_caches = DOMCacheStorage::create(m_scope, m_scope.cacheStorageConnection());
+    if (!m_caches) {
+        Ref scope = m_scope.get();
+        m_caches = DOMCacheStorage::create(scope, scope->cacheStorageConnection());
+    }
     return m_caches.get();
 }
 
@@ -130,7 +132,7 @@ DOMCacheStorage* WorkerGlobalScopeCaches::caches() const
 
 ExceptionOr<DOMCacheStorage*> WindowOrWorkerGlobalScopeCaches::caches(ScriptExecutionContext& context, DOMWindow& window)
 {
-    if (downcast<Document>(context).isSandboxed(SandboxOrigin))
+    if (downcast<Document>(context).isSandboxed(SandboxFlag::Origin))
         return Exception { ExceptionCode::SecurityError, "Cache storage is disabled because the context is sandboxed and lacks the 'allow-same-origin' flag"_s };
 
     RefPtr localWindow = dynamicDowncast<LocalDOMWindow>(window);

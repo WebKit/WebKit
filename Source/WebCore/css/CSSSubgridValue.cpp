@@ -46,7 +46,7 @@ String CSSSubgridValue::customCSSText() const
 }
 
 CSSSubgridValue::CSSSubgridValue(CSSValueListBuilder builder)
-    : CSSValueContainingVector(SubgridClass, SpaceSeparator, WTFMove(builder))
+    : CSSValueContainingVector(ClassType::Subgrid, SpaceSeparator, WTFMove(builder))
 {
 }
 

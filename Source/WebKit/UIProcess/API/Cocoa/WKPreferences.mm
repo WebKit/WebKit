@@ -1657,6 +1657,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->allowPrivacySensitiveOperationsInNonPersistentDataStores();
 }
 
+- (void)_setVideoFullscreenRequiresElementFullscreen:(BOOL)videoFullscreenRequiresElementFullscreen
+{
+    _preferences->setVideoFullscreenRequiresElementFullscreen(videoFullscreenRequiresElementFullscreen);
+}
+
+- (BOOL)_videoFullscreenRequiresElementFullscreen
+{
+    return _preferences->videoFullscreenRequiresElementFullscreen();
+}
+
 @end
 
 @implementation WKPreferences (WKDeprecated)

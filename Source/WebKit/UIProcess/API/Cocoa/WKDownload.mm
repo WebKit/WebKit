@@ -30,6 +30,7 @@
 #import "CompletionHandlerCallChecker.h"
 #import "DownloadProxy.h"
 #import "WKDownloadDelegate.h"
+#import "WKDownloadDelegatePrivate.h"
 #import "WKFrameInfoInternal.h"
 #import "WKNSData.h"
 #import "WKNSURLAuthenticationChallenge.h"
@@ -41,12 +42,18 @@
 
 class DownloadClient final : public API::DownloadClient {
 public:
-    explicit DownloadClient(id <WKDownloadDelegate> delegate)
+    explicit DownloadClient(id<WKDownloadDelegatePrivate> delegate)
         : m_delegate(delegate)
         , m_respondsToWillPerformHTTPRedirection([delegate respondsToSelector:@selector(download:willPerformHTTPRedirection:newRequest:decisionHandler:)])
         , m_respondsToDidReceiveAuthenticationChallenge([delegate respondsToSelector:@selector(download:didReceiveAuthenticationChallenge:completionHandler:)])
         , m_respondsToDidFinish([m_delegate respondsToSelector:@selector(downloadDidFinish:)])
         , m_respondsToDidFailWithError([delegate respondsToSelector:@selector(download:didFailWithError:resumeData:)])
+        , m_respondsToDecidePlaceholderPolicy([delegate respondsToSelector:@selector(_download:decidePlaceholderPolicy:)])
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+        , m_respondsToDidReceivePlaceholderURL([delegate respondsToSelector:@selector(_download:didReceivePlaceholderURL:completionHandler:)])
+        , m_respondsToDidReceiveFinalURL([delegate respondsToSelector:@selector(_download:didReceiveFinalURL:)])
+#endif
+
     {
         ASSERT([delegate respondsToSelector:@selector(download:decideDestinationUsingResponse:suggestedFilename:completionHandler:)]);
     }
@@ -142,6 +149,28 @@ private:
         }).get()];
     }
 
+    void decidePlaceholderPolicy(WebKit::DownloadProxy& download, CompletionHandler<void(WebKit::UseDownloadPlaceholder, const WTF::URL&)>&& completionHandler)
+    {
+        if (!m_respondsToDecidePlaceholderPolicy) {
+            completionHandler(WebKit::UseDownloadPlaceholder::No, { });
+            return;
+        }
+        [m_delegate _download:wrapper(download) decidePlaceholderPolicy:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (_WKPlaceholderPolicy policy, NSURL *alternatePlaceholderURL) mutable {
+            switch (policy) {
+            case _WKPlaceholderPolicyDisable: {
+                completionHandler(WebKit::UseDownloadPlaceholder::No, alternatePlaceholderURL);
+                break;
+            }
+            case _WKPlaceholderPolicyEnable: {
+                completionHandler(WebKit::UseDownloadPlaceholder::Yes, alternatePlaceholderURL);
+                break;
+            }
+            default:
+                [NSException raise:NSInvalidArgumentException format:@"Invalid WKPlaceholderPolicy (%ld)", (long)policy];
+            }
+        }).get()];
+    }
+
     void didReceiveData(WebKit::DownloadProxy& download, uint64_t, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite) final
     {
         NSProgress *progress = wrapper(download).progress;
@@ -173,12 +202,55 @@ private:
         [m_delegate download:wrapper(download) didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNetworkConnectionLost userInfo:nil] resumeData:nil];
     }
 
-    WeakObjCPtr<id <WKDownloadDelegate> > m_delegate;
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    void didReceivePlaceholderURL(WebKit::DownloadProxy& download, const WTF::URL& url, std::span<const uint8_t> bookmarkData, CompletionHandler<void()>&& completionHandler) final
+    {
+        if (!m_delegate || !m_respondsToDidReceivePlaceholderURL) {
+            completionHandler();
+            return;
+        }
+
+        BOOL bookmarkDataIsStale = NO;
+        NSError *bookmarkResolvingError;
+        RetainPtr data = toNSData(bookmarkData);
+        RetainPtr urlFromBookmark = adoptNS([[NSURL alloc] initByResolvingBookmarkData:data.get() options:0 relativeToURL:nil bookmarkDataIsStale:&bookmarkDataIsStale error:&bookmarkResolvingError]);
+        if (bookmarkResolvingError || bookmarkDataIsStale)
+            RELEASE_LOG_ERROR(Network, "Failed to resolve URL from bookmark data");
+
+        NSURL *placeholderURL = urlFromBookmark ? urlFromBookmark.get() : (NSURL *)url;
+
+        [m_delegate _download:wrapper(download) didReceivePlaceholderURL:placeholderURL completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
+    }
+
+    void didReceiveFinalURL(WebKit::DownloadProxy& download, const WTF::URL& url, std::span<const uint8_t> bookmarkData) final
+    {
+        if (!m_delegate || !m_respondsToDidReceiveFinalURL)
+            return;
+
+        BOOL bookmarkDataIsStale = NO;
+        NSError *bookmarkResolvingError;
+        RetainPtr data = toNSData(bookmarkData);
+        RetainPtr urlFromBookmark = adoptNS([[NSURL alloc] initByResolvingBookmarkData:data.get() options:0 relativeToURL:nil bookmarkDataIsStale:&bookmarkDataIsStale error:&bookmarkResolvingError]);
+        if (bookmarkResolvingError || bookmarkDataIsStale)
+            RELEASE_LOG_ERROR(Network, "Failed to resolve URL from bookmark data");
+
+        NSURL *finalURL = urlFromBookmark.get() ?: (NSURL *)url;
+
+        [m_delegate _download:wrapper(download) didReceiveFinalURL:finalURL];
+    }
+#endif
+
+    WeakObjCPtr<id<WKDownloadDelegatePrivate>> m_delegate;
 
     bool m_respondsToWillPerformHTTPRedirection : 1;
     bool m_respondsToDidReceiveAuthenticationChallenge : 1;
     bool m_respondsToDidFinish : 1;
     bool m_respondsToDidFailWithError : 1;
+    bool m_respondsToDecidePlaceholderPolicy : 1;
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    bool m_respondsToDidReceivePlaceholderURL : 1;
+    bool m_respondsToDidReceiveFinalURL : 1;
+#endif
 };
 
 @implementation WKDownload
@@ -219,7 +291,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     return _delegate.get().get();
 }
 
-- (void)setDelegate:(id <WKDownloadDelegate>)delegate
+- (void)setDelegate:(id<WKDownloadDelegatePrivate>)delegate
 {
     _delegate = delegate;
     _download->setClient(adoptRef(*new DownloadClient(delegate)));

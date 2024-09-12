@@ -320,6 +320,7 @@ Type Type::determineType(CSSUnitType unitType)
 Type::PercentHintValue Type::determinePercentHint(Calculation::Category category)
 {
     switch (category) {
+    case Calculation::Category::Integer:
     case Calculation::Category::Number:
     case Calculation::Category::Percent:
     case Calculation::Category::Length:
@@ -341,6 +342,7 @@ Type::PercentHintValue Type::determinePercentHint(Calculation::Category category
 bool Type::matches(Calculation::Category category) const
 {
     switch (category) {
+    case Calculation::Category::Integer:
     case Calculation::Category::Number:
         return matchesAny<Match::Number>();
     case Calculation::Category::Percent:

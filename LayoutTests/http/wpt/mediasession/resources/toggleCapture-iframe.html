@@ -3,6 +3,7 @@ var stream;
 async function startCapture(audio, video)
 {
     stream = await navigator.mediaDevices.getUserMedia({ audio, video });
+    return stream;
 }
 
 function stopCapture()

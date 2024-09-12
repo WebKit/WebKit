@@ -107,6 +107,12 @@ protected:
 private:
     mutable std::atomic<unsigned> m_refCount { 1 };
 
+#if ASSERT_ENABLED
+    // Match the layout of RefCounted, which has flag bits for threading checks.
+    UNUSED_MEMBER_VARIABLE bool m_unused1;
+    UNUSED_MEMBER_VARIABLE bool m_unused2;
+#endif
+
 #if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
     bool deletionHasEnded() const;
 
@@ -116,6 +122,8 @@ private:
         Yes = 0xFEEDB0BA
     };
     mutable std::atomic<IsAllocatedMemory> m_isAllocatedMemory { IsAllocatedMemory::Yes };
+    // Match the layout of RefCounted.
+    UNUSED_MEMBER_VARIABLE bool m_unused3;
 #endif
 };
 

@@ -103,6 +103,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeApplicationChecks.h>
+#include <WebCore/Site.h>
 #include <pal/SessionID.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/MainThread.h>
@@ -244,7 +245,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #endif
     , m_foregroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
     , m_backgroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
-    , m_backForwardCache(makeUniqueRef<WebBackForwardCache>(*this))
+    , m_backForwardCache(makeUniqueRef<WebBackForwardCache>())
     , m_webProcessCache(makeUniqueRef<WebProcessCache>(*this))
     , m_webProcessWithAudibleMediaCounter([this](RefCounterEvent) { updateAudibleMediaAssertions(); })
     , m_audibleActivityTimer(RunLoop::main(), this, &WebProcessPool::clearAudibleActivity)
@@ -318,13 +319,13 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     m_storageAccessUserAgentStringQuirksDataUpdateObserver = StorageAccessUserAgentStringQuirkController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
         // FIXME: Filter by process's site when site isolation is enabled
         if (RefPtr protectedThis = weakThis.get())
-            protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateStorageAccessUserAgentStringQuirks(StorageAccessUserAgentStringQuirkController::shared().cachedQuirks()));
+            protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateStorageAccessUserAgentStringQuirks(StorageAccessUserAgentStringQuirkController::shared().cachedListData()));
     });
 
     m_storageAccessPromptQuirksDataUpdateObserver = StorageAccessPromptQuirkController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get()) {
             HashSet<WebCore::RegistrableDomain> domainSet;
-            for (auto&& entry : StorageAccessPromptQuirkController::shared().cachedQuirks()) {
+            for (auto&& entry : StorageAccessPromptQuirkController::shared().cachedListData()) {
                 if (!entry.triggerPages.isEmpty()) {
                     for (auto&& page : entry.triggerPages)
                         domainSet.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(page.string()));
@@ -336,9 +337,9 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
             protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateDomainsWithStorageAccessQuirks(domainSet));
         }
     });
-    if (StorageAccessPromptQuirkController::shared().cachedQuirks().isEmpty())
+    if (StorageAccessPromptQuirkController::shared().cachedListData().isEmpty())
         StorageAccessPromptQuirkController::shared().initialize();
-    if (StorageAccessUserAgentStringQuirkController::shared().cachedQuirks().isEmpty())
+    if (StorageAccessUserAgentStringQuirkController::shared().cachedListData().isEmpty())
         StorageAccessUserAgentStringQuirkController::shared().initialize();
 #endif
 
@@ -1503,7 +1504,7 @@ void WebProcessPool::updateBackForwardCacheCapacity()
     unsigned backForwardCacheCapacity = 0;
     calculateMemoryCacheSizes(LegacyGlobalSettings::singleton().cacheModel(), dummy, dummy, dummy, dummyInterval, backForwardCacheCapacity);
 
-    checkedBackForwardCache()->setCapacity(backForwardCacheCapacity);
+    checkedBackForwardCache()->setCapacity(*this, backForwardCacheCapacity);
 }
 
 void WebProcessPool::setCacheModel(CacheModel cacheModel)
@@ -2159,7 +2160,7 @@ void WebProcessPool::addMockMediaDevice(const MockMediaDevice& device)
 #if ENABLE(MEDIA_STREAM)
     MockRealtimeMediaSourceCenter::addDevice(device);
     sendToAllProcesses(Messages::WebProcess::AddMockMediaDevice { device });
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && !USE(GSTREAMER)
     ensureProtectedGPUProcess()->addMockMediaDevice(device);
 #endif
 #endif
@@ -2170,7 +2171,7 @@ void WebProcessPool::clearMockMediaDevices()
 #if ENABLE(MEDIA_STREAM)
     MockRealtimeMediaSourceCenter::setDevices({ });
     sendToAllProcesses(Messages::WebProcess::ClearMockMediaDevices { });
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && !USE(GSTREAMER)
     ensureProtectedGPUProcess()->clearMockMediaDevices();
 #endif
 #endif
@@ -2181,7 +2182,7 @@ void WebProcessPool::removeMockMediaDevice(const String& persistentId)
 #if ENABLE(MEDIA_STREAM)
     MockRealtimeMediaSourceCenter::removeDevice(persistentId);
     sendToAllProcesses(Messages::WebProcess::RemoveMockMediaDevice { persistentId });
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && !USE(GSTREAMER)
     ensureProtectedGPUProcess()->removeMockMediaDevice(persistentId);
 #endif
 #endif
@@ -2193,7 +2194,7 @@ void WebProcessPool::setMockMediaDeviceIsEphemeral(const String& persistentId, b
 #if ENABLE(MEDIA_STREAM)
     MockRealtimeMediaSourceCenter::setDeviceIsEphemeral(persistentId, isEphemeral);
     sendToAllProcesses(Messages::WebProcess::SetMockMediaDeviceIsEphemeral { persistentId, isEphemeral });
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && !USE(GSTREAMER)
     ensureProtectedGPUProcess()->setMockMediaDeviceIsEphemeral(persistentId, isEphemeral);
 #endif
 #endif
@@ -2204,7 +2205,7 @@ void WebProcessPool::resetMockMediaDevices()
 #if ENABLE(MEDIA_STREAM)
     MockRealtimeMediaSourceCenter::resetDevices();
     sendToAllProcesses(Messages::WebProcess::ResetMockMediaDevices { });
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && !USE(GSTREAMER)
     ensureProtectedGPUProcess()->resetMockMediaDevices();
 #endif
 #endif

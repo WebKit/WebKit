@@ -32,6 +32,7 @@
 #include "MediaPlaybackTargetPickerMock.h"
 #include "MediaProducer.h"
 #include "PlaybackTargetClientContextIdentifier.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
@@ -43,8 +44,10 @@ class IntRect;
 class WebMediaSessionLogger;
 class WebMediaSessionManagerClient;
 
-class WebMediaSessionManager : public MediaPlaybackTargetPicker::Client {
+class WebMediaSessionManager : public MediaPlaybackTargetPicker::Client, public CanMakeCheckedPtr<WebMediaSessionManager> {
     WTF_MAKE_NONCOPYABLE(WebMediaSessionManager);
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebMediaSessionManager);
 public:
 
     WEBCORE_EXPORT static WebMediaSessionManager& shared();

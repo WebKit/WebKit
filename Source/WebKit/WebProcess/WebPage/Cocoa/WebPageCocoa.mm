@@ -434,9 +434,9 @@ void WebPage::clearDictationAlternatives(Vector<DictationContext>&& contexts)
     }, DocumentMarker::Type::DictationAlternatives);
 }
 
-void WebPage::accessibilityTransferRemoteToken(RetainPtr<NSData> remoteToken, FrameIdentifier frameID)
+void WebPage::accessibilityTransferRemoteToken(RetainPtr<NSData> remoteToken)
 {
-    send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(span(remoteToken.get()), frameID));
+    send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(span(remoteToken.get())));
 }
 
 void WebPage::accessibilityManageRemoteElementStatus(bool registerStatus, int processIdentifier)
@@ -981,11 +981,6 @@ void WebPage::removeTextAnimationForAnimationID(const WTF::UUID& uuid)
     send(Messages::WebPageProxy::RemoveTextAnimationForAnimationID(uuid));
 }
 
-void WebPage::removeTransparentMarkersForActiveWritingToolsSession()
-{
-    m_textAnimationController->removeTransparentMarkersForActiveWritingToolsSession();
-}
-
 void WebPage::removeInitialTextAnimationForActiveWritingToolsSession()
 {
     m_textAnimationController->removeInitialTextAnimationForActiveWritingToolsSession();
@@ -996,14 +991,19 @@ void WebPage::addInitialTextAnimationForActiveWritingToolsSession()
     m_textAnimationController->addInitialTextAnimationForActiveWritingToolsSession();
 }
 
-void WebPage::addSourceTextAnimationForActiveWritingToolsSession(const CharacterRange& range, const String& string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
+void WebPage::addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, bool finished, const CharacterRange& range, const String& string, CompletionHandler<void(WebCore::TextAnimationRunMode)>&& completionHandler)
 {
-    m_textAnimationController->addSourceTextAnimationForActiveWritingToolsSession(range, string, WTFMove(completionHandler));
+    m_textAnimationController->addSourceTextAnimationForActiveWritingToolsSession(sourceAnimationUUID, destinationAnimationUUID, finished, range, string, WTFMove(completionHandler));
 }
 
-void WebPage::addDestinationTextAnimationForActiveWritingToolsSession(const std::optional<CharacterRange>& range, const String& string)
+void WebPage::addDestinationTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, const std::optional<CharacterRange>& range, const String& string)
 {
-    m_textAnimationController->addDestinationTextAnimationForActiveWritingToolsSession(range, string);
+    m_textAnimationController->addDestinationTextAnimationForActiveWritingToolsSession(sourceAnimationUUID, destinationAnimationUUID, range, string);
+}
+
+void WebPage::saveSnapshotOfTextPlaceholderForAnimation(const WebCore::SimpleRange& placeholderRange)
+{
+    m_textAnimationController->saveSnapshotOfTextPlaceholderForAnimation(placeholderRange);
 }
 
 void WebPage::clearAnimationsForActiveWritingToolsSession()
@@ -1031,9 +1031,9 @@ void WebPage::enableTextAnimationTypeForElementWithID(const String& elementID)
     m_textAnimationController->enableTextAnimationTypeForElementWithID(elementID);
 }
 
-void WebPage::showSelectionForActiveWritingToolsSession()
+void WebPage::intelligenceTextAnimationsDidComplete()
 {
-    corePage()->showSelectionForActiveWritingToolsSession();
+    corePage()->intelligenceTextAnimationsDidComplete();
 }
 
 void WebPage::didEndPartialIntelligenceTextPonderingAnimation()

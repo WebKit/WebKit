@@ -136,7 +136,6 @@ public:
     WGPUTextureViewDimension convertToBacking(TextureViewDimension);
     WGPUVertexFormat convertToBacking(VertexFormat);
     WGPUVertexStepMode convertToBacking(VertexStepMode);
-    WGPUXREye convertToBacking(XREye);
 
     WGPUBufferUsageFlags convertBufferUsageFlagsToBacking(BufferUsageFlags);
     WGPUColorWriteMaskFlags convertColorWriteFlagsToBacking(ColorWriteFlags);

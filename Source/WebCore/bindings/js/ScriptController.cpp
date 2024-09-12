@@ -47,6 +47,7 @@
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
 #include "PaymentCoordinator.h"
+#include "Quirks.h"
 #include "RunJavaScriptParameters.h"
 #include "RuntimeApplicationChecks.h"
 #include "ScriptDisallowedScope.h"
@@ -156,6 +157,11 @@ ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourc
 
     Ref protector { m_frame };
     SetForScope sourceURLScope(m_sourceURL, &sourceURL);
+
+    if (RefPtr document = m_frame.document()) {
+        if (auto script = document->quirks().scriptToEvaluateBeforeRunningScriptFromURL(sourceURL); !script.isEmpty())
+            evaluateIgnoringException({ WTFMove(script), JSC::SourceTaintedOrigin::Untainted });
+    }
 
     InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), sourceCode.startLine(), sourceCode.startColumn());
 
@@ -621,7 +627,7 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
     if (parameters.forceUserGesture == ForceUserGesture::Yes && UserGestureIndicator::currentUserGesture() && parameters.removeTransientActivation == RemoveTransientActivation::Yes) {
         UserGestureIndicator::currentUserGesture()->addDestructionObserver([](UserGestureToken& token) {
             token.forEachImpactedDocument([](Document& document) {
-                if (auto* window = document.domWindow())
+                if (RefPtr window = document.domWindow())
                     window->consumeTransientActivation();
             });
         });
@@ -810,7 +816,7 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
     if (reason == ReasonForCallingCanExecuteScripts::AboutToExecuteScript)
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
 
-    if (m_frame.document() && m_frame.document()->isSandboxed(SandboxScripts)) {
+    if (m_frame.document() && m_frame.document()->isSandboxed(SandboxFlag::Scripts)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
         if (reason == ReasonForCallingCanExecuteScripts::AboutToExecuteScript || reason == ReasonForCallingCanExecuteScripts::AboutToCreateEventListener)
             m_frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked script execution in '"_s, m_frame.document()->url().stringCenterEllipsizedToLength(), "' because the document's frame is sandboxed and the 'allow-scripts' permission is not set."_s));

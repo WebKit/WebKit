@@ -61,7 +61,7 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, Netw
     , m_sessionID(session.sessionID())
     , m_testSpeedMultiplier(session.testSpeedMultiplier())
 {
-    m_downloadManager.didCreateDownload();
+    m_downloadManager->didCreateDownload();
 }
 
 #if PLATFORM(COCOA)
@@ -73,14 +73,14 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSUR
     , m_sessionID(session.sessionID())
     , m_testSpeedMultiplier(session.testSpeedMultiplier())
 {
-    m_downloadManager.didCreateDownload();
+    m_downloadManager->didCreateDownload();
 }
 #endif
 
 Download::~Download()
 {
     platformDestroyDownload();
-    m_downloadManager.didDestroyDownload();
+    m_downloadManager->didDestroyDownload();
 }
 
 void Download::cancel(CompletionHandler<void(std::span<const uint8_t>)>&& completionHandler, IgnoreDidFailCallback ignoreDidFailCallback)
@@ -99,7 +99,7 @@ void Download::cancel(CompletionHandler<void(std::span<const uint8_t>)>&& comple
         DOWNLOAD_RELEASE_LOG("didCancel: (id = %" PRIu64 ")", downloadID().toUInt64());
         if (auto extension = std::exchange(m_sandboxExtension, nullptr))
             extension->revoke();
-        m_downloadManager.downloadFinished(*this);
+        m_downloadManager->downloadFinished(*this);
     };
 
     if (m_download) {
@@ -141,14 +141,19 @@ void Download::didFinish()
 {
     DOWNLOAD_RELEASE_LOG("didFinish: (id = %" PRIu64 ")", downloadID().toUInt64());
 
-    send(Messages::DownloadProxy::DidFinish());
+    platformDidFinish([weakThis = WeakPtr { *this }, this] {
+        RELEASE_ASSERT(isMainRunLoop());
+        if (!weakThis)
+            return;
+        send(Messages::DownloadProxy::DidFinish());
 
-    if (m_sandboxExtension) {
-        m_sandboxExtension->revoke();
-        m_sandboxExtension = nullptr;
-    }
+        if (m_sandboxExtension) {
+            m_sandboxExtension->revoke();
+            m_sandboxExtension = nullptr;
+        }
 
-    m_downloadManager.downloadFinished(*this);
+        m_downloadManager->downloadFinished(*this);
+    });
 }
 
 void Download::didFail(const ResourceError& error, std::span<const uint8_t> resumeData)
@@ -165,12 +170,12 @@ void Download::didFail(const ResourceError& error, std::span<const uint8_t> resu
         m_sandboxExtension->revoke();
         m_sandboxExtension = nullptr;
     }
-    m_downloadManager.downloadFinished(*this);
+    m_downloadManager->downloadFinished(*this);
 }
 
 IPC::Connection* Download::messageSenderConnection() const
 {
-    return m_downloadManager.downloadProxyConnection();
+    return m_downloadManager->downloadProxyConnection();
 }
 
 uint64_t Download::messageSenderDestinationID() const
@@ -186,6 +191,11 @@ void Download::platformCancelNetworkLoad(CompletionHandler<void(std::span<const 
 
 void Download::platformDestroyDownload()
 {
+}
+
+void Download::platformDidFinish(CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
 }
 #endif
 

@@ -735,8 +735,9 @@ static bool isCenterPosition(const CSSValue& value)
 {
     if (isValueID(value, CSSValueCenter))
         return true;
-    auto* number = dynamicDowncast<CSSPrimitiveValue>(value);
-    return number && !number->isCalculated() && number->isPercentage() && number->resolveAsPercentageNoConversionDataRequired() == 50;
+
+    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
+    return primitiveValue && primitiveValue->isPercentage() && primitiveValue->resolveAsPercentageIfNotCalculated() == 50;
 }
 
 static bool isCenterPosition(const CSSGradientPosition& position)

@@ -436,8 +436,9 @@ size_t TextOnlySimpleLineBuilder::revertToLastNonOverflowingItem(const RenderSty
 
 InlineLayoutUnit TextOnlySimpleLineBuilder::availableWidth() const
 {
+    auto epsilon = intrinsicWidthMode() == IntrinsicWidthMode::Minimum ? 0.f : LayoutUnit::epsilon();
     auto contentLogicalRight = m_line.contentLogicalRight();
-    return (m_lineLogicalRect.width() + LayoutUnit::epsilon()) - (!std::isnan(contentLogicalRight) ? contentLogicalRight : 0.f);
+    return (m_lineLogicalRect.width() + epsilon) - (!std::isnan(contentLogicalRight) ? contentLogicalRight : 0.f);
 }
 
 bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayoutByContent(const InlineContentCache::InlineItems& inlineItems, const PlacedFloats& placedFloats)

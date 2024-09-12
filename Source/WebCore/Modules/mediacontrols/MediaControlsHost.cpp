@@ -52,6 +52,7 @@
 #include "Logging.h"
 #include "MediaControlTextTrackContainerElement.h"
 #include "MediaControlsContextMenuItem.h"
+#include "Navigator.h"
 #include "NavigatorMediaSession.h"
 #include "Node.h"
 #include "Page.h"

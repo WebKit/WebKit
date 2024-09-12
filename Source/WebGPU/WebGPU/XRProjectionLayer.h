@@ -57,12 +57,25 @@ public:
     void setLabel(String&&);
 
     bool isValid() const;
+    void startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex);
+
+    id<MTLTexture> colorTexture() const;
+    id<MTLTexture> depthTexture() const;
+    const std::pair<id<MTLSharedEvent>, uint64_t>& completionEvent() const;
+    size_t reusableTextureIndex() const;
 
 private:
     XRProjectionLayer(bool, Device&);
     XRProjectionLayer(Device&);
 
-    const Ref<Device> m_device;
+    NSMutableDictionary<NSNumber*, id<MTLTexture>>* m_colorTextures { nil };
+    NSMutableDictionary<NSNumber*, id<MTLTexture>>* m_depthTextures { nil };
+    id<MTLTexture> m_colorTexture { nil };
+    id<MTLTexture> m_depthTexture { nil };
+    std::pair<id<MTLSharedEvent>, uint64_t> m_sharedEvent;
+    size_t m_reusableTextureIndex { 0 };
+
+    Ref<Device> m_device;
 };
 
 } // namespace WebGPU

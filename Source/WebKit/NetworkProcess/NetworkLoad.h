@@ -75,7 +75,7 @@ public:
     void setPendingDownloadID(DownloadID);
     void setSuggestedFilename(const String&);
     void setPendingDownload(PendingDownload&);
-    std::optional<DownloadID> pendingDownloadID() { return m_task->pendingDownloadID(); }
+    std::optional<DownloadID> pendingDownloadID() { return protectedTask()->pendingDownloadID(); }
 
     bool shouldCaptureExtraNetworkLoadMetrics() const final;
 
@@ -98,6 +98,8 @@ private:
     void wasBlockedByRestrictions() final;
     void wasBlockedByDisabledFTP() final;
     void didNegotiateModernTLS(const URL&) final;
+
+    RefPtr<NetworkDataTask> protectedTask();
 
     void notifyDidReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&&);
 

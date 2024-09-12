@@ -48,7 +48,7 @@ CallLinkInfo::CallType CallLinkInfo::callTypeFor(OpcodeID opcodeID)
     switch (opcodeID) {
     case op_tail_call_varargs:
     case op_tail_call_forward_arguments:
-        return TailCallVarargs;        
+        return TailCallVarargs;
 
     case op_call:
     case op_call_ignore_result:
@@ -61,9 +61,11 @@ CallLinkInfo::CallType CallLinkInfo::callTypeFor(OpcodeID opcodeID)
         return CallVarargs;
 
     case op_construct:
+    case op_super_construct:
         return Construct;
 
     case op_construct_varargs:
+    case op_super_construct_varargs:
         return ConstructVarargs;
 
     case op_tail_call:

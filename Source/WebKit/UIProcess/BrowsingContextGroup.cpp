@@ -36,6 +36,8 @@
 
 namespace WebKit {
 
+using namespace WebCore;
+
 BrowsingContextGroup::BrowsingContextGroup() = default;
 
 BrowsingContextGroup::~BrowsingContextGroup() = default;

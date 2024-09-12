@@ -26,8 +26,10 @@
 #include "config.h"
 #include "TextBoxTrimmer.h"
 
-#include "RenderBlockFlow.h"
+#include "InlineIteratorLineBox.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderView.h"
 
 namespace WebCore {
 

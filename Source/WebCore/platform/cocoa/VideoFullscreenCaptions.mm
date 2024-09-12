@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+VideoFullscreenCaptions::VideoFullscreenCaptions() = default;
 VideoFullscreenCaptions::~VideoFullscreenCaptions() = default;
 
 void VideoFullscreenCaptions::setTrackRepresentationImage(PlatformImagePtr textTrack)

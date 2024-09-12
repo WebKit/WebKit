@@ -41,7 +41,7 @@ enum class TypographicMode : bool {
     Vertical,
 };
 
-enum class BlockFlowDirection : uint8_t {
+enum class FlowDirection : uint8_t {
     TopToBottom,
     BottomToTop,
     LeftToRight,
@@ -57,28 +57,28 @@ enum class WritingMode : uint8_t {
     SidewaysRl,
 };
 
-constexpr inline BlockFlowDirection writingModeToBlockFlowDirection(WritingMode writingMode)
+constexpr inline FlowDirection writingModeToBlockFlowDirection(WritingMode writingMode)
 {
     switch (writingMode) {
     case WritingMode::HorizontalTb:
-        return BlockFlowDirection::TopToBottom;
+        return FlowDirection::TopToBottom;
     case WritingMode::HorizontalBt:
-        return BlockFlowDirection::BottomToTop;
+        return FlowDirection::BottomToTop;
     case WritingMode::SidewaysLr:
     case WritingMode::VerticalLr:
-        return BlockFlowDirection::LeftToRight;
+        return FlowDirection::LeftToRight;
     case WritingMode::SidewaysRl:
     case WritingMode::VerticalRl:
-        return BlockFlowDirection::RightToLeft;
+        return FlowDirection::RightToLeft;
     }
     ASSERT_NOT_REACHED();
-    return BlockFlowDirection::TopToBottom;
+    return FlowDirection::TopToBottom;
 }
 
 // Define the text flow in terms of the writing mode and the text direction. The first
 // part is the block flow direction and the second part is the inline base direction.
 struct TextFlow {
-    BlockFlowDirection blockDirection;
+    FlowDirection blockDirection;
     TextDirection textDirection;
 
     constexpr inline bool isReversed()
@@ -88,14 +88,14 @@ struct TextFlow {
 
     constexpr inline bool isFlipped()
     {
-        return blockDirection == BlockFlowDirection::BottomToTop
-            || blockDirection == BlockFlowDirection::RightToLeft;
+        return blockDirection == FlowDirection::BottomToTop
+            || blockDirection == FlowDirection::RightToLeft;
     }
 
     constexpr inline bool isVertical()
     {
-        return blockDirection == BlockFlowDirection::LeftToRight
-            || blockDirection == BlockFlowDirection::RightToLeft;
+        return blockDirection == FlowDirection::LeftToRight
+            || blockDirection == FlowDirection::RightToLeft;
     }
 
     constexpr inline bool isFlippedLines()
@@ -255,19 +255,19 @@ constexpr LogicalBoxAxis mapPhysicalAxisToLogicalAxis(TextFlow flow, BoxAxis axi
     return isBlock ? LogicalBoxAxis::Block : LogicalBoxAxis::Inline;
 }
 
-inline TextStream& operator<<(TextStream& stream, BlockFlowDirection blockFlow)
+inline TextStream& operator<<(TextStream& stream, FlowDirection blockFlow)
 {
     switch (blockFlow) {
-    case BlockFlowDirection::TopToBottom:
+    case FlowDirection::TopToBottom:
         stream << "top-to-bottom";
         break;
-    case BlockFlowDirection::BottomToTop:
+    case FlowDirection::BottomToTop:
         stream << "bottom-to-top";
         break;
-    case BlockFlowDirection::LeftToRight:
+    case FlowDirection::LeftToRight:
         stream << "left-to-right";
         break;
-    case BlockFlowDirection::RightToLeft:
+    case FlowDirection::RightToLeft:
         stream << "right-to-left";
         break;
     }

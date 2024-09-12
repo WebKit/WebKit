@@ -129,7 +129,7 @@ private:
 
     WebCore::LayerPool m_layerPool;
 
-    RemoteLayerTreeTransaction* m_currentTransaction { nullptr };
+    CheckedPtr<RemoteLayerTreeTransaction> m_currentTransaction;
 
     bool m_nextRenderingUpdateRequiresSynchronousImageDecoding { false };
     bool m_useDynamicContentScalingDisplayListsForDOMRendering { false };

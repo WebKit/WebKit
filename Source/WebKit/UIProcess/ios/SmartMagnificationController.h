@@ -59,7 +59,7 @@ private:
     void scrollToRect(WebCore::FloatPoint origin, WebCore::FloatRect targetRect);
     std::tuple<WebCore::FloatRect, double, double> smartMagnificationTargetRectAndZoomScales(WebCore::FloatRect targetRect, double minimumScale, double maximumScale, bool addMagnificationPadding);
 
-    WebPageProxy& m_webPageProxy;
+    WeakRef<WebPageProxy> m_webPageProxy;
     WKContentView *m_contentView;
 };
     

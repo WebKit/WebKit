@@ -30,7 +30,7 @@ let mutationObserver = null;
 function handleMutation()
 {
     mutationObserver.disconnect();
-    shouldBeEqualToString('document.getElementById("test").textContent', "world");
+    shouldBeEqualToString('document.getElementById("test").textContent', "\xa0world");
     document.body.removeChild(testElement);
     finishJSTest();
 }

@@ -63,7 +63,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMessagePort, WebExtensionMes
 
 - (BOOL)isDisconnected
 {
-    return _webExtensionMessagePort->isDisconnected();
+    return self._protectedWebExtensionMessagePort->isDisconnected();
 }
 
 - (void)sendMessage:(id)message completionHandler:(void (^)(NSError *))completionHandler
@@ -71,7 +71,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMessagePort, WebExtensionMes
     if (!completionHandler)
         completionHandler = ^(NSError *) { };
 
-    _webExtensionMessagePort->sendMessage(message, [completionHandler = makeBlockPtr(completionHandler)](WebKit::WebExtensionMessagePort::Error error) {
+    self._protectedWebExtensionMessagePort->sendMessage(message, [completionHandler = makeBlockPtr(completionHandler)](WebKit::WebExtensionMessagePort::Error error) {
         if (error) {
             completionHandler(toAPI(error.value()));
             return;
@@ -88,7 +88,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMessagePort, WebExtensionMes
 
 - (void)disconnectWithError:(NSError *)error
 {
-    _webExtensionMessagePort->disconnect(WebKit::toWebExtensionMessagePortError(error));
+    self._protectedWebExtensionMessagePort->disconnect(WebKit::toWebExtensionMessagePortError(error));
 }
 
 #pragma mark WKObject protocol implementation
@@ -99,6 +99,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMessagePort, WebExtensionMes
 }
 
 - (WebKit::WebExtensionMessagePort&)_webExtensionMessagePort
+{
+    return *_webExtensionMessagePort;
+}
+
+- (Ref<WebKit::WebExtensionMessagePort>)_protectedWebExtensionMessagePort
 {
     return *_webExtensionMessagePort;
 }

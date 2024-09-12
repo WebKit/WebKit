@@ -479,7 +479,7 @@ static IntSize reducePrecision(FloatSize size)
     };
 }
 
-static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets, ContainerNode& node, BlockFlowDirection direction)
+static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets, ContainerNode& node, FlowDirection direction)
 {
     CheckedPtr renderer = node.renderer();
     if (!renderer)
@@ -492,13 +492,13 @@ static void extractRenderedTokens(Vector<TokenAndBlockOffset>& tokensAndOffsets,
 
         auto offset = [&] {
             switch (direction) {
-            case BlockFlowDirection::TopToBottom:
+            case FlowDirection::TopToBottom:
                 return bounds.y();
-            case BlockFlowDirection::BottomToTop:
+            case FlowDirection::BottomToTop:
                 return bounds.maxY();
-            case BlockFlowDirection::LeftToRight:
+            case FlowDirection::LeftToRight:
                 return bounds.x();
-            case BlockFlowDirection::RightToLeft:
+            case FlowDirection::RightToLeft:
                 return bounds.maxX();
             }
             ASSERT_NOT_REACHED();
@@ -583,11 +583,11 @@ RenderedText extractRenderedText(Element& element)
 
     bool ascendingOrder = [&] {
         switch (direction) {
-        case BlockFlowDirection::TopToBottom:
-        case BlockFlowDirection::LeftToRight:
+        case FlowDirection::TopToBottom:
+        case FlowDirection::LeftToRight:
             return true;
-        case BlockFlowDirection::BottomToTop:
-        case BlockFlowDirection::RightToLeft:
+        case FlowDirection::BottomToTop:
+        case FlowDirection::RightToLeft:
             return false;
         }
         ASSERT_NOT_REACHED();

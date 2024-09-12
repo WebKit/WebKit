@@ -41,13 +41,7 @@ static AudioHardwareActivityType isAudioHardwareProcessRunning()
     AudioObjectPropertyAddress propertyAddress = {
         kAudioHardwarePropertyProcessIsRunning,
         kAudioObjectPropertyScopeGlobal,
-#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
-#else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        kAudioObjectPropertyElementMaster
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
     };
     
     if (!AudioObjectHasProperty(kAudioObjectSystemObject, &propertyAddress))
@@ -72,13 +66,7 @@ static AudioHardwareListener::BufferSizeRange currentDeviceSupportedBufferSizes(
     AudioObjectPropertyAddress defaultOutputDeviceDescriptor = {
         kAudioHardwarePropertyDefaultOutputDevice,
         kAudioObjectPropertyScopeGlobal,
-#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
-#else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        kAudioObjectPropertyElementMaster
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
     };
 
     if (AudioObjectGetPropertyData(kAudioObjectSystemObject, &defaultOutputDeviceDescriptor, 0, 0, &descriptorSize, (void*)&deviceID))
@@ -90,13 +78,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     AudioObjectPropertyAddress bufferSizeDescriptor = {
         kAudioDevicePropertyBufferFrameSizeRange,
         kAudioObjectPropertyScopeGlobal,
-#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
-#else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        kAudioObjectPropertyElementMaster,
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
     };
 
     if (AudioObjectGetPropertyData(deviceID, &bufferSizeDescriptor, 0, 0, &descriptorSize, &bufferSizes))
@@ -111,13 +93,7 @@ static const AudioObjectPropertyAddress& processIsRunningPropertyDescriptor()
     static const AudioObjectPropertyAddress processIsRunningProperty = {
         kAudioHardwarePropertyProcessIsRunning,
         kAudioObjectPropertyScopeGlobal,
-#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
-#else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        kAudioObjectPropertyElementMaster
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
     };
 
     return processIsRunningProperty;
@@ -128,13 +104,7 @@ static const AudioObjectPropertyAddress& outputDevicePropertyDescriptor()
     static const AudioObjectPropertyAddress outputDeviceProperty = {
         kAudioHardwarePropertyDefaultOutputDevice,
         kAudioObjectPropertyScopeGlobal,
-#if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
         kAudioObjectPropertyElementMain
-#else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        kAudioObjectPropertyElementMaster
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
     };
 
     return outputDeviceProperty;

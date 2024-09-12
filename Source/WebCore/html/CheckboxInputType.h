@@ -33,6 +33,7 @@
 
 #include "BaseCheckableInputType.h"
 #include "SwitchTrigger.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -44,6 +45,7 @@ enum class WasSetByJavaScript : bool;
 enum class SwitchAnimationType : bool { VisuallyOn, Held };
 
 class CheckboxInputType final : public BaseCheckableInputType {
+    WTF_MAKE_TZONE_ALLOCATED(CheckboxInputType);
 public:
     static Ref<CheckboxInputType> create(HTMLInputElement& element)
     {

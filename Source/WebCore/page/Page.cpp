@@ -24,6 +24,7 @@
 #include "AdvancedPrivacyProtections.h"
 #include "AlternativeTextClient.h"
 #include "AnimationFrameRate.h"
+#include "AnimationTimelinesController.h"
 #include "AppHighlightStorage.h"
 #include "ApplicationCacheStorage.h"
 #include "ArchiveResource.h"
@@ -59,7 +60,6 @@
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
-#include "DocumentTimelinesController.h"
 #include "DragController.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -171,6 +171,7 @@
 #include "ThermalMitigationNotifier.h"
 #include "UserContentProvider.h"
 #include "UserContentURLPattern.h"
+#include "UserMediaController.h"
 #include "UserScript.h"
 #include "UserStyleSheet.h"
 #include "ValidationMessageClient.h"
@@ -2368,7 +2369,7 @@ void Page::resumeScriptedAnimations()
     });
 }
 
-void Page::timelineControllerMaximumAnimationFrameRateDidChange(DocumentTimelinesController&)
+void Page::timelineControllerMaximumAnimationFrameRateDidChange(AnimationTimelinesController&)
 {
     if (CheckedPtr scheduler = existingRenderingUpdateScheduler())
         scheduler->adjustRenderingUpdateFrequency();
@@ -2379,7 +2380,7 @@ std::optional<FramesPerSecond> Page::preferredRenderingUpdateFramesPerSecond(Opt
 {
     // Unless the call site specifies an explicit set of options, this method will account for both
     // throttling reasons and the frame rate of animations to determine its return value. The only
-    // place where we specify an explicit set of options is DocumentTimelinesController::updateAnimationsAndSendEvents()
+    // place where we specify an explicit set of options is AnimationTimelinesController::updateAnimationsAndSendEvents()
     // where we need to identify what the update frame rate would be _not_ accounting for animations.
 
     auto throttlingReasons = m_throttlingReasons;
@@ -2817,6 +2818,12 @@ void Page::updateCaptureState(bool isActive, MediaProducerMediaCaptureKind kind)
     forEachDocument([&] (Document& document) {
         document.pageMutedStateDidChange();
     });
+}
+
+void Page::voiceActivityDetected()
+{
+    if (auto* controller = UserMediaController::from(this))
+        controller->voiceActivityDetected();
 }
 #endif
 
@@ -5008,9 +5015,9 @@ std::optional<SimpleRange> Page::contextRangeForActiveWritingToolsSession() cons
     return m_writingToolsController->activeSessionRange();
 }
 
-void Page::showSelectionForActiveWritingToolsSession() const
+void Page::intelligenceTextAnimationsDidComplete()
 {
-    return m_writingToolsController->showSelection();
+    m_writingToolsController->intelligenceTextAnimationsDidComplete();
 }
 #endif
 
@@ -5029,5 +5036,21 @@ void Page::activeNowPlayingSessionUpdateTimerFired()
     m_hasActiveNowPlayingSession = hasActiveNowPlayingSession;
     chrome().client().hasActiveNowPlayingSessionChanged(hasActiveNowPlayingSession);
 }
+
+void Page::setLastAuthentication(LoginStatus::AuthenticationType authType)
+{
+    auto loginStatus = LoginStatus::create(RegistrableDomain(mainFrameURL()), emptyString(), LoginStatus::CredentialTokenType::HTTPStateToken, authType, LoginStatus::TimeToLiveAuthentication);
+    if (loginStatus.hasException())
+        return;
+    m_lastAuthentication = loginStatus.releaseReturnValue();
+}
+
+#if ENABLE(FULLSCREEN_API)
+bool Page::isFullscreenManagerEnabled() const
+{
+    Ref settings = protectedSettings();
+    return settings->fullScreenEnabled() || settings->videoFullscreenRequiresElementFullscreen();
+}
+#endif
 
 } // namespace WebCore

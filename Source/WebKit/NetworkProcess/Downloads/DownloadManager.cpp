@@ -45,6 +45,8 @@ DownloadManager::DownloadManager(Client& client)
 {
 }
 
+DownloadManager::~DownloadManager() = default;
+
 void DownloadManager::startDownload(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, const String& suggestedName)
 {
     auto* networkSession = client().networkSession(sessionID);
@@ -127,12 +129,12 @@ void DownloadManager::cancelDownload(DownloadID downloadID, CompletionHandler<vo
 
 #if PLATFORM(COCOA)
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-void DownloadManager::publishDownloadProgress(DownloadID downloadID, const URL& url, std::span<const uint8_t> bookmarkData)
+void DownloadManager::publishDownloadProgress(DownloadID downloadID, const URL& url, std::span<const uint8_t> bookmarkData, WebKit::UseDownloadPlaceholder useDownloadPlaceholder)
 {
     if (auto* download = m_downloads.get(downloadID))
-        download->publishProgress(url, bookmarkData);
+        download->publishProgress(url, bookmarkData, useDownloadPlaceholder);
     else if (auto* pendingDownload = m_pendingDownloads.get(downloadID))
-        pendingDownload->publishProgress(url, bookmarkData);
+        pendingDownload->publishProgress(url, bookmarkData, useDownloadPlaceholder);
 }
 #else
 void DownloadManager::publishDownloadProgress(DownloadID downloadID, const URL& url, SandboxExtension::Handle&& sandboxExtensionHandle)

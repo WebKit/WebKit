@@ -14,5 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-position/background-position-bottom-right-repeat-round-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-position/background-position-bottom-right-repeat-round.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-position/background-position-right-in-body-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-position/background-position-right-in-body.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-position/subpixel-position-center.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/background-position/subpixel-position-center.tentative.html

@@ -65,6 +65,7 @@
 #include "UserAgentParts.h"
 #include "UserTypingGestureIndicator.h"
 #include "WheelEvent.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(DATALIST_ELEMENT)
 #include "HTMLDataListElement.h"
@@ -72,6 +73,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextFieldInputType);
 
 using namespace HTMLNames;
 

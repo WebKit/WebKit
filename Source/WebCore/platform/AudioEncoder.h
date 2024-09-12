@@ -34,7 +34,7 @@
 #include "WebCodecsAudioInternalData.h"
 #include <span>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Expected.h>
+#include <wtf/NativePromise.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -79,17 +79,16 @@ public:
     };
     using CreateResult = Expected<UniqueRef<AudioEncoder>, String>;
 
-    using PostTaskCallback = Function<void(Function<void()>&&)>;
     using DescriptionCallback = Function<void(ActiveConfiguration&&)>;
     using OutputCallback = Function<void(EncodedFrame&&)>;
     using CreateCallback = Function<void(CreateResult&&)>;
 
-    static void create(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
+    static void create(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&);
 
-    using EncodeCallback = Function<void(String&&)>;
-    virtual void encode(RawFrame&&, EncodeCallback&&) = 0;
+    using EncodePromise = NativePromise<void, String>;
+    virtual Ref<EncodePromise> encode(RawFrame&&) = 0;
 
-    virtual void flush(Function<void()>&&) = 0;
+    virtual Ref<GenericPromise> flush() = 0;
     virtual void reset() = 0;
     virtual void close() = 0;
 };

@@ -34,8 +34,11 @@
 #import "LocalDefaultSystemAppearance.h"
 #import "ToggleButtonPart.h"
 #import <pal/spi/cocoa/NSButtonCellSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ToggleButtonMac);
 
 ToggleButtonMac::ToggleButtonMac(ToggleButtonPart& owningPart, ControlFactoryMac& controlFactory, NSButtonCell *buttonCell)
     : ButtonControlMac(owningPart, controlFactory, buttonCell)

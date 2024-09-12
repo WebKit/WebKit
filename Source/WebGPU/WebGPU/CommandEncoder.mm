@@ -99,20 +99,19 @@ Ref<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescrip
 
     auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
     commandBufferDescriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
-    auto commandBufferWithEvent = getQueue().commandBufferWithDescriptor(commandBufferDescriptor);
-    if (!commandBufferWithEvent.first)
+    auto commandBuffer = getQueue().commandBufferWithDescriptor(commandBufferDescriptor);
+    if (!commandBuffer)
         return CommandEncoder::createInvalid(*this);
 
-    commandBufferWithEvent.first.label = fromAPI(descriptor.label);
+    commandBuffer.label = fromAPI(descriptor.label);
 
-    return CommandEncoder::create(commandBufferWithEvent.first, commandBufferWithEvent.second, *this);
+    return CommandEncoder::create(commandBuffer, *this);
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CommandEncoder);
 
-CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, id<MTLSharedEvent> event, Device& device)
+CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, Device& device)
     : m_commandBuffer(commandBuffer)
-    , m_abortCommandBuffer(event)
     , m_device(device)
 {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -129,7 +128,7 @@ CommandEncoder::CommandEncoder(Device& device)
 CommandEncoder::~CommandEncoder()
 {
     finalizeBlitCommandEncoder();
-    m_device->getQueue().commitMTLCommandBuffer(m_commandBuffer);
+    m_device->getQueue().removeMTLCommandBuffer(m_commandBuffer);
 }
 
 id<MTLBlitCommandEncoder> CommandEncoder::ensureBlitCommandEncoder()
@@ -145,6 +144,9 @@ id<MTLBlitCommandEncoder> CommandEncoder::ensureBlitCommandEncoder()
 
         finalizeBlitCommandEncoder();
     }
+
+    if (!m_device->isValid())
+        return nil;
 
     MTLBlitPassDescriptor *descriptor = [MTLBlitPassDescriptor new];
     m_blitCommandEncoder = [m_commandBuffer blitCommandEncoderWithDescriptor:descriptor];
@@ -215,6 +217,9 @@ Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDe
 
     finalizeBlitCommandEncoder();
 
+    if (!m_device->isValid())
+        return ComputePassEncoder::createInvalid(*this, m_device, @"GPUDevice was invalid, this will be an error submitting the command buffer");
+
     MTLComputePassDescriptor* computePassDescriptor = [MTLComputePassDescriptor new];
     computePassDescriptor.dispatchType = MTLDispatchTypeSerial;
 
@@ -234,13 +239,14 @@ void CommandEncoder::setExistingEncoder(id<MTLCommandEncoder> encoder)
 
 void CommandEncoder::discardCommandBuffer()
 {
-    if (!m_commandBuffer || m_commandBuffer.status >= MTLCommandBufferStatusCommitted)
+    if (!m_commandBuffer || m_commandBuffer.status >= MTLCommandBufferStatusCommitted) {
+        m_commandBuffer = nil;
         return;
+    }
 
     id<MTLCommandEncoder> existingEncoder = m_device->getQueue().encoderForBuffer(m_commandBuffer);
     m_device->getQueue().endEncoding(existingEncoder, m_commandBuffer);
-    [m_abortCommandBuffer setSignaledValue:1];
-    m_device->getQueue().commitMTLCommandBuffer(m_commandBuffer);
+    m_device->getQueue().removeMTLCommandBuffer(m_commandBuffer);
     m_commandBuffer = nil;
 }
 
@@ -250,6 +256,8 @@ void CommandEncoder::endEncoding(id<MTLCommandEncoder> encoder)
     if (existingEncoder != encoder) {
         m_device->getQueue().endEncoding(existingEncoder, m_commandBuffer);
         setExistingEncoder(nil);
+        if (m_lastErrorString)
+            discardCommandBuffer();
         return;
     }
 
@@ -665,6 +673,9 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
 
         runClearEncoder(attachmentsToClear, depthStencilAttachmentToClear, depthAttachmentToClear, stencilAttachmentToClear);
     }
+
+    if (!m_device->isValid())
+        return RenderPassEncoder::createInvalid(*this, m_device, @"GPUDevice was invalid, this will be an error submitting the command buffer");
 
     auto mtlRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:mtlDescriptor];
     ASSERT(!m_existingCommandEncoder);
@@ -1237,8 +1248,8 @@ void CommandEncoder::makeInvalid(NSString* errorString)
 
     endEncoding(m_existingCommandEncoder);
     m_blitCommandEncoder = nil;
-    [m_abortCommandBuffer setSignaledValue:1];
-    m_device->getQueue().commitMTLCommandBuffer(m_commandBuffer);
+    m_existingCommandEncoder = nil;
+    m_device->getQueue().removeMTLCommandBuffer(m_commandBuffer);
 
     m_commandBuffer = nil;
     m_lastErrorString = errorString;
@@ -1257,8 +1268,9 @@ void CommandEncoder::addBuffer(id<MTLBuffer> buffer)
     if (buffer.storageMode == MTLStorageModeManaged)
         [m_managedBuffers addObject:buffer];
 }
-void CommandEncoder::addTexture(id<MTLTexture> texture)
+void CommandEncoder::addTexture(const Texture& baseTexture)
 {
+    id<MTLTexture> texture = baseTexture.texture();
     if (texture.storageMode == MTLStorageModeManaged)
         [m_managedTextures addObject:texture];
 }
@@ -1266,8 +1278,12 @@ void CommandEncoder::addTexture(id<MTLTexture> texture)
 void CommandEncoder::addBuffer(id<MTLBuffer>)
 {
 }
-void CommandEncoder::addTexture(id<MTLTexture>)
+void CommandEncoder::addTexture(const Texture& baseTexture)
 {
+    if (id<MTLSharedEvent> event = baseTexture.sharedEvent()) {
+        m_sharedEvent = event;
+        m_sharedEventSignalValue = baseTexture.sharedEventSignalValue();
+    }
 }
 #endif
 
@@ -1807,6 +1823,7 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
 
     auto *commandBuffer = m_commandBuffer;
     m_commandBuffer = nil;
+    m_existingCommandEncoder = nil;
 
     commandBuffer.label = fromAPI(descriptor.label);
 
@@ -1821,8 +1838,8 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
     }
 #endif
 
-    auto result = CommandBuffer::create(commandBuffer, m_abortCommandBuffer, m_device);
-    m_abortCommandBuffer = nil;
+    auto result = CommandBuffer::create(commandBuffer, m_device, m_sharedEvent, m_sharedEventSignalValue);
+    m_sharedEvent = nil;
     m_cachedCommandBuffer = result;
     m_cachedCommandBuffer->setBufferMapCount(m_bufferMapCount);
     if (m_makeSubmitInvalid)

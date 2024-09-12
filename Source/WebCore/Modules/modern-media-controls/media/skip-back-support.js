@@ -46,7 +46,8 @@ class SkipBackSupport extends MediaControllerSupport
 
     syncControl()
     {
-        this.control.enabled = this.mediaController.media.duration <= maxNonLiveDuration;
+        const supportsSeeking = !this.mediaController.host || this.mediaController.host.supportsSeeking;
+        this.control.enabled = supportsSeeking && this.mediaController.media.duration <= maxNonLiveDuration;
     }
 
 }

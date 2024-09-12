@@ -94,7 +94,7 @@ private:
     bool supportsSessionShutdownNotification() const final { return m_supportsShutdownNotification; }
     void initializeReferenceSpace(PlatformXR::ReferenceSpaceType) final { }
     Vector<PlatformXR::Device::ViewData> views(PlatformXR::SessionMode) const final;
-    void requestFrame(RequestFrameCallback&&) final;
+    void requestFrame(std::optional<PlatformXR::RequestData>&&, RequestFrameCallback&&) final;
     std::optional<PlatformXR::LayerHandle> createLayerProjection(uint32_t width, uint32_t height, bool alpha) final;
     void deleteLayer(PlatformXR::LayerHandle) final;
 

@@ -177,6 +177,23 @@ Once the build completes, all ANGLE libraries, tests, and samples will be locate
 
 See the Android specific [documentation](DevSetupAndroid.md#ANGLE-for-Android).
 
+### Building ANGLE for iOS simulator
+
+This is currently possible only from Chromium checkout.
+Follow [Chromium for iOS build instructions](https://chromium.googlesource.com/chromium/src/+/HEAD/docs/ios/build_instructions.md).
+GN args used by [ANGLE for iOS builder](https://ci.chromium.org/ui/p/chromium/builders/luci.chromium.ci/ios-angle-builder) are supported, e.g.:
+```
+dcheck_always_on = true
+enable_run_ios_unittests_with_xctest = true
+is_component_build = false
+is_debug = false
+symbol_level = 1
+target_cpu = "x64"
+target_environment = "simulator"
+target_os = "ios"
+```
+Building `angle_end2end_tests` and `angle_white_box_tests` targets is supported.
+
 ## Application Development with ANGLE
 
 This sections describes how to use ANGLE to build an OpenGL ES application.

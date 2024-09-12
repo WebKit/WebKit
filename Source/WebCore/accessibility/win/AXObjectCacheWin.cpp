@@ -56,11 +56,11 @@ void AXObjectCache::attachWrapper(AccessibilityObject&)
     // software requests them via get_accChild.
 }
 
-void AXObjectCache::handleScrolledToAnchor(const Node* anchorNode)
+void AXObjectCache::handleScrolledToAnchor(const Node& anchorNode)
 {
     // The anchor node may not be accessible. Post the notification for the
     // first accessible object.
-    if (RefPtr object = AccessibilityObject::firstAccessibleObjectFromNode(anchorNode))
+    if (RefPtr object = AccessibilityObject::firstAccessibleObjectFromNode(&anchorNode))
         postPlatformNotification(*object, AXScrolledToAnchor);
 }
 

@@ -2242,8 +2242,7 @@ LayoutUnit RenderBox::shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStar
     }
 
     LayoutUnit logicalHeight = cb.logicalHeightForChild(*this);
-    LayoutUnit result = cb.availableLogicalWidthForLineInFragment(logicalTopPosition, containingBlockFragment, logicalHeight) - childMarginStart - childMarginEnd;
-
+    LayoutUnit availableLogicalWidthAtLogicalTopPosition = cb.availableLogicalWidthForLineInFragment(logicalTopPosition, containingBlockFragment, logicalHeight);
     // We need to see if margins on either the start side or the end side can contain the floats in question. If they can,
     // then just using the line width is inaccurate. In the case where a float completely fits, we don't need to use the line
     // offset at all, but can instead push all the way to the content edge of the containing block. In the case where the float
@@ -2253,23 +2252,23 @@ LayoutUnit RenderBox::shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStar
         LayoutUnit startContentSide = cb.startOffsetForContent(containingBlockFragment);
         LayoutUnit startContentSideWithMargin = startContentSide + childMarginStart;
         LayoutUnit startOffset = cb.startOffsetForLineInFragment(logicalTopPosition, containingBlockFragment, logicalHeight);
-        if (startOffset > startContentSideWithMargin)
-            result += childMarginStart;
-        else
-            result += startOffset - startContentSide;
+        if (startOffset <= startContentSideWithMargin) {
+            availableLogicalWidthAtLogicalTopPosition -= childMarginStart;
+            availableLogicalWidthAtLogicalTopPosition += startOffset - startContentSide;
+        }
     }
     
     if (childMarginEnd > 0) {
         LayoutUnit endContentSide = cb.endOffsetForContent(containingBlockFragment);
         LayoutUnit endContentSideWithMargin = endContentSide + childMarginEnd;
         LayoutUnit endOffset = cb.endOffsetForLineInFragment(logicalTopPosition, containingBlockFragment, logicalHeight);
-        if (endOffset > endContentSideWithMargin)
-            result += childMarginEnd;
-        else
-            result += endOffset - endContentSide;
+        if (endOffset <= endContentSideWithMargin) {
+            availableLogicalWidthAtLogicalTopPosition -= childMarginEnd;
+            availableLogicalWidthAtLogicalTopPosition += endOffset - endContentSide;
+        }
     }
 
-    return result;
+    return availableLogicalWidthAtLogicalTopPosition;
 }
 
 LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
@@ -3077,17 +3076,17 @@ static bool shouldFlipBeforeAfterMargins(const RenderStyle& containingBlockStyle
     auto childBlockFlowDirection = childStyle->blockFlowDirection();
     bool shouldFlip = false;
     switch (containingBlockStyle.blockFlowDirection()) {
-    case BlockFlowDirection::TopToBottom:
-        shouldFlip = (childBlockFlowDirection == BlockFlowDirection::RightToLeft);
+    case FlowDirection::TopToBottom:
+        shouldFlip = (childBlockFlowDirection == FlowDirection::RightToLeft);
         break;
-    case BlockFlowDirection::BottomToTop:
-        shouldFlip = (childBlockFlowDirection == BlockFlowDirection::RightToLeft);
+    case FlowDirection::BottomToTop:
+        shouldFlip = (childBlockFlowDirection == FlowDirection::RightToLeft);
         break;
-    case BlockFlowDirection::RightToLeft:
-        shouldFlip = (childBlockFlowDirection == BlockFlowDirection::BottomToTop);
+    case FlowDirection::RightToLeft:
+        shouldFlip = (childBlockFlowDirection == FlowDirection::BottomToTop);
         break;
-    case BlockFlowDirection::LeftToRight:
-        shouldFlip = (childBlockFlowDirection == BlockFlowDirection::BottomToTop);
+    case FlowDirection::LeftToRight:
+        shouldFlip = (childBlockFlowDirection == FlowDirection::BottomToTop);
         break;
     }
 
@@ -4275,27 +4274,23 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length lo
 
         const LayoutUnit availableSpace = containerLogicalWidth - (marginLogicalLeftValue + marginLogicalRightValue + bordersPlusPadding);
 
+        auto shrinkToFitLogicalWidth = [&](auto availableLogicalWidth, auto bordersPlusPadding) -> LayoutUnit {
+            LayoutUnit preferredMaxLogicalWidth = maxPreferredLogicalWidth() - bordersPlusPadding;
+            LayoutUnit preferredMinLogicalWidth = minPreferredLogicalWidth() - bordersPlusPadding;
+            return std::clamp(availableLogicalWidth, preferredMinLogicalWidth, preferredMaxLogicalWidth);
+        };
+
         // FIXME: Is there a faster way to find the correct case?
         // Use rule/case that applies.
         if (logicalLeftIsAuto && logicalWidthIsAuto && !logicalRightIsAuto) {
             // RULE 1: (use shrink-to-fit for width, and solve of left)
             LayoutUnit logicalRightValue = valueForLength(logicalRight, containerLogicalWidth);
-
-            // FIXME: would it be better to have shrink-to-fit in one step?
-            LayoutUnit preferredWidth = maxPreferredLogicalWidth() - bordersPlusPadding;
-            LayoutUnit preferredMinWidth = minPreferredLogicalWidth() - bordersPlusPadding;
-            LayoutUnit availableWidth = availableSpace - logicalRightValue;
-            computedValues.m_extent = std::min(std::max(preferredMinWidth, availableWidth), preferredWidth);
+            computedValues.m_extent = shrinkToFitLogicalWidth(availableSpace - logicalRightValue, bordersPlusPadding);
             logicalLeftValue = availableSpace - (computedValues.m_extent + logicalRightValue);
         } else if (!logicalLeftIsAuto && logicalWidthIsAuto && logicalRightIsAuto) {
             // RULE 3: (use shrink-to-fit for width, and no need solve of right)
             logicalLeftValue = valueForLength(logicalLeft, containerLogicalWidth);
-
-            // FIXME: would it be better to have shrink-to-fit in one step?
-            LayoutUnit preferredWidth = maxPreferredLogicalWidth() - bordersPlusPadding;
-            LayoutUnit preferredMinWidth = minPreferredLogicalWidth() - bordersPlusPadding;
-            LayoutUnit availableWidth = availableSpace - logicalLeftValue;
-            computedValues.m_extent = std::min(std::max(preferredMinWidth, availableWidth), preferredWidth);
+            computedValues.m_extent = shrinkToFitLogicalWidth(availableSpace - logicalLeftValue, bordersPlusPadding);
         } else if (logicalLeftIsAuto && !logicalWidthIsAuto && !logicalRightIsAuto) {
             // RULE 4: (solve for left)
             computedValues.m_extent = adjustContentBoxLogicalWidthForBoxSizing(valueForLength(logicalWidth, containerLogicalWidth), originalLogicalWidthType);
@@ -5354,9 +5349,9 @@ LayoutRect RenderBox::visualOverflowRectForPropagation(const RenderStyle* parent
     
     // We are putting ourselves into our parent's coordinate space.  If there is a flipped block mismatch
     // in a particular axis, then we have to flip the rect along that axis.
-    if (style().blockFlowDirection() == BlockFlowDirection::RightToLeft || parentStyle->blockFlowDirection() == BlockFlowDirection::RightToLeft)
+    if (style().blockFlowDirection() == FlowDirection::RightToLeft || parentStyle->blockFlowDirection() == FlowDirection::RightToLeft)
         rect.setX(width() - rect.maxX());
-    else if (style().blockFlowDirection() == BlockFlowDirection::BottomToTop || parentStyle->blockFlowDirection() == BlockFlowDirection::BottomToTop)
+    else if (style().blockFlowDirection() == FlowDirection::BottomToTop || parentStyle->blockFlowDirection() == FlowDirection::BottomToTop)
         rect.setY(height() - rect.maxY());
 
     return rect;
@@ -5424,9 +5419,9 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(const RenderStyle* parent
     
     // We are putting ourselves into our parent's coordinate space.  If there is a flipped block mismatch
     // in a particular axis, then we have to flip the rect along that axis.
-    if (style().blockFlowDirection() == BlockFlowDirection::RightToLeft || parentStyle->blockFlowDirection() == BlockFlowDirection::RightToLeft)
+    if (style().blockFlowDirection() == FlowDirection::RightToLeft || parentStyle->blockFlowDirection() == FlowDirection::RightToLeft)
         rect.setX(width() - rect.maxX());
-    else if (style().blockFlowDirection() == BlockFlowDirection::BottomToTop || parentStyle->blockFlowDirection() == BlockFlowDirection::BottomToTop)
+    else if (style().blockFlowDirection() == FlowDirection::BottomToTop || parentStyle->blockFlowDirection() == FlowDirection::BottomToTop)
         rect.setY(height() - rect.maxY());
 
     return rect;

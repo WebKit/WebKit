@@ -66,7 +66,7 @@
 #include "StyleImageSet.h"
 #include "StyleNamedImage.h"
 #include "StylePaintImage.h"
-#include "TransformFunctions.h"
+#include "TransformOperationsBuilder.h"
 
 namespace WebCore {
 namespace Style {
@@ -133,7 +133,7 @@ RefPtr<StyleImage> BuilderState::createStyleImage(const CSSValue& value)
     return nullptr;
 }
 
-std::optional<FilterOperations> BuilderState::createFilterOperations(const CSSValue& inValue)
+FilterOperations BuilderState::createFilterOperations(const CSSValue& inValue)
 {
     return WebCore::Style::createFilterOperations(document(), m_style, m_cssToLengthConversionData, inValue);
 }

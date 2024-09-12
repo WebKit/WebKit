@@ -1007,7 +1007,7 @@ auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition
         }
         // Checking subtyping requirements has to be deferred until we construct projections in case recursive references show up in the type.
         for (uint32_t i = 0; i < typeCount; ++i) {
-            const TypeDefinition& def = m_info->typeSignatures[i].get().unroll();
+            const TypeDefinition& def = TypeInformation::get(types[i]).replacePlaceholders(recursionGroup->index());
             if (def.is<Subtype>())
                 WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(def));
         }
@@ -1363,7 +1363,7 @@ auto SectionParser::parseException() -> PartialResult
         WASM_PARSER_FAIL_IF(!parseVarUInt32(typeNumber), "can't get "_s, exceptionNumber, "th Exception's type number"_s);
         WASM_PARSER_FAIL_IF(typeNumber >= m_info->typeCount(), exceptionNumber, "th Exception type number is invalid "_s, typeNumber);
         TypeIndex typeIndex = TypeInformation::get(m_info->typeSignatures[typeNumber]);
-        auto signature = TypeInformation::getFunctionSignature(typeIndex);
+        auto& signature = TypeInformation::getFunctionSignature(typeIndex);
         WASM_PARSER_FAIL_IF(!signature.returnsVoid(), exceptionNumber, "th Exception type cannot have a non-void return type "_s, typeNumber);
         m_info->internalExceptionTypeIndices.append(typeIndex);
     }

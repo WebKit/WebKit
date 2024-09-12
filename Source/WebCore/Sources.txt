@@ -584,6 +584,7 @@ animation/AnimationEffect.cpp
 animation/AnimationEffectTiming.cpp
 animation/AnimationEventBase.cpp
 animation/AnimationMalloc.cpp
+animation/AnimationTimelinesController.cpp
 animation/AnimationPlaybackEvent.cpp
 animation/AnimationTimeline.cpp
 animation/BlendingKeyframes.cpp
@@ -595,12 +596,12 @@ animation/CSSTransitionEvent.cpp
 animation/CompositeOperation.cpp
 animation/CustomEffect.cpp
 animation/DocumentTimeline.cpp
-animation/DocumentTimelinesController.cpp
 animation/ElementAnimationRareData.cpp
 animation/FrameRateAligner.cpp
 animation/KeyframeEffect.cpp
 animation/KeyframeEffectStack.cpp
 animation/KeyframeInterpolation.cpp
+animation/ScrollAxis.cpp
 animation/ScrollTimeline.cpp
 animation/StyleOriginatedAnimation.cpp
 animation/StyleOriginatedAnimationEvent.cpp
@@ -732,6 +733,7 @@ bindings/js/JSServiceWorkerGlobalScopeCustom.cpp
 bindings/js/JSShadowRootCustom.cpp
 bindings/js/JSSourceBufferCustom.cpp
 bindings/js/JSStaticRangeCustom.cpp
+bindings/js/JSStylePropertyMapReadOnlyCustom.cpp
 bindings/js/JSStyleSheetCustom.cpp
 bindings/js/JSSubscriberCustom.cpp
 bindings/js/JSTextCustom.cpp
@@ -881,6 +883,7 @@ css/CSSGradientValue.cpp
 css/CSSGridAutoRepeatValue.cpp
 css/CSSGridIntegerRepeatValue.cpp
 css/CSSGridLineNamesValue.cpp
+css/CSSGridLineValue.cpp
 css/CSSGridTemplateAreasValue.cpp
 css/CSSGroupingRule.cpp
 css/CSSImageSetOptionValue.cpp
@@ -896,6 +899,7 @@ css/CSSMarkup.cpp
 css/CSSMediaRule.cpp
 css/CSSNamedImageValue.cpp
 css/CSSNamespaceRule.cpp
+css/CSSNestedDeclarations.cpp
 css/CSSOffsetRotateValue.cpp
 css/CSSPageRule.cpp
 css/CSSPaintImageValue.cpp
@@ -971,7 +975,6 @@ css/StyleRuleImport.cpp
 css/StyleSheet.cpp
 css/StyleSheetContents.cpp
 css/StyleSheetList.cpp
-css/TransformFunctions.cpp
 css/calc/CSSCalcSymbolTable.cpp
 css/calc/CSSCalcSymbolsAllowed.cpp
 css/calc/CSSCalcTree+CalculationValue.cpp
@@ -1014,15 +1017,21 @@ css/parser/CSSParserObserverWrapper.cpp
 css/parser/CSSParserToken.cpp
 css/parser/CSSParserTokenRange.cpp
 css/parser/CSSPropertyParser.cpp
+css/parser/CSSPropertyParserConsumer+Align.cpp
 css/parser/CSSPropertyParserConsumer+Angle.cpp
 css/parser/CSSPropertyParserConsumer+CSSPrimitiveValueResolver.cpp
 css/parser/CSSPropertyParserConsumer+Color.cpp
 css/parser/CSSPropertyParserConsumer+ColorInterpolationMethod.cpp
+css/parser/CSSPropertyParserConsumer+CounterStyles.cpp
+css/parser/CSSPropertyParserConsumer+Filter.cpp
 css/parser/CSSPropertyParserConsumer+Font.cpp
+css/parser/CSSPropertyParserConsumer+Grid.cpp
 css/parser/CSSPropertyParserConsumer+Ident.cpp
 css/parser/CSSPropertyParserConsumer+Image.cpp
 css/parser/CSSPropertyParserConsumer+Integer.cpp
 css/parser/CSSPropertyParserConsumer+Length.cpp
+css/parser/CSSPropertyParserConsumer+LengthPercentage.cpp
+css/parser/CSSPropertyParserConsumer+Lists.cpp
 css/parser/CSSPropertyParserConsumer+None.cpp
 css/parser/CSSPropertyParserConsumer+Number.cpp
 css/parser/CSSPropertyParserConsumer+Percent.cpp
@@ -1034,10 +1043,13 @@ css/parser/CSSPropertyParserConsumer+Resolution.cpp
 css/parser/CSSPropertyParserConsumer+String.cpp
 css/parser/CSSPropertyParserConsumer+Symbol.cpp
 css/parser/CSSPropertyParserConsumer+Time.cpp
+css/parser/CSSPropertyParserConsumer+Timeline.cpp
+css/parser/CSSPropertyParserConsumer+TimingFunction.cpp
+css/parser/CSSPropertyParserConsumer+Transform.cpp
 css/parser/CSSPropertyParserConsumer+URL.cpp
 css/parser/CSSPropertyParserConsumer+UnevaluatedCalc.cpp
+css/parser/CSSPropertyParserConsumer+ViewTransition.cpp
 css/parser/CSSPropertyParserHelpers.cpp
-css/parser/CSSPropertyParserWorkerSafe.cpp
 css/parser/CSSSelectorParser.cpp
 css/parser/CSSSelectorParserContext.cpp
 css/parser/CSSSupportsParser.cpp
@@ -1187,6 +1199,7 @@ dom/FormDataEvent.cpp
 dom/FragmentDirectiveGenerator.cpp
 dom/FragmentDirectiveRangeFinder.cpp
 dom/FragmentDirectiveParser.cpp
+dom/FragmentDirectiveUtilities.cpp
 dom/FullscreenManager.cpp
 dom/GCReachableRef.cpp
 dom/HashChangeEvent.cpp
@@ -2245,6 +2258,7 @@ platform/SharedBufferChunkReader.cpp
 platform/SharedMemory.cpp
 platform/SharedStringHash.cpp
 platform/SimpleCaretAnimator.cpp
+platform/Site.cpp
 platform/SleepDisabler.cpp
 platform/SleepDisablerClient.cpp
 platform/SystemSoundManager.cpp
@@ -2952,6 +2966,7 @@ rendering/svg/SVGRenderSupport.cpp
 rendering/svg/SVGRenderTreeAsText.cpp
 rendering/svg/SVGRenderingContext.cpp
 rendering/svg/SVGRootInlineBox.cpp
+rendering/svg/SVGTextBoxPainter.cpp
 rendering/svg/SVGTextChunk.cpp
 rendering/svg/SVGTextChunkBuilder.cpp
 rendering/svg/SVGTextLayoutAttributes.cpp
@@ -3025,6 +3040,7 @@ style/StyleSheetContentsCache.cpp
 style/StyleTreeResolver.cpp
 style/StyleUpdate.cpp
 style/Styleable.cpp
+style/TransformOperationsBuilder.cpp
 style/UserAgentStyle.cpp
 svg/DocumentSVG.cpp
 svg/SVGAElement.cpp
@@ -3412,6 +3428,7 @@ JSCSSLayerBlockRule.cpp
 JSCSSLayerStatementRule.cpp
 JSCSSMediaRule.cpp
 JSCSSNamespaceRule.cpp
+JSCSSNestedDeclarations.cpp
 JSCSSPageRule.cpp
 JSCSSPaintCallback.cpp
 JSCSSPaintSize.cpp

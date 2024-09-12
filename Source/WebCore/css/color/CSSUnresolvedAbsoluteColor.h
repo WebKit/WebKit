@@ -85,7 +85,7 @@ Color createColor(const CSSUnresolvedAbsoluteColor<Descriptor>& unresolved, CSSU
     if (state.conversionData)
         return resolve(WTFMove(resolver), *state.conversionData);
 
-    if (!requiresConversionData(resolver))
+    if (!requiresConversionData(resolver.components))
         return resolveNoConversionDataRequired(WTFMove(resolver));
 
     return { };

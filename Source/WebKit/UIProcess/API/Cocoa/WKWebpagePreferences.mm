@@ -715,4 +715,14 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     return selectors.autorelease();
 }
 
+- (BOOL)_pushAndNotificationAPIEnabled
+{
+    return _websitePolicies->pushAndNotificationsEnabledPolicy() == WebKit::WebsitePushAndNotificationsEnabledPolicy::Yes;
+}
+
+- (void)_setPushAndNotificationAPIEnabled:(BOOL)enabled
+{
+    _websitePolicies->setPushAndNotificationsEnabledPolicy(enabled ? WebKit::WebsitePushAndNotificationsEnabledPolicy::Yes : WebKit::WebsitePushAndNotificationsEnabledPolicy::No);
+}
+
 @end

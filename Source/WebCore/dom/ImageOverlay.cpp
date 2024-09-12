@@ -261,19 +261,19 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
         if (!mediaElement)
             return nullptr;
 
-        Ref shadowRoot = mediaElement->ensureUserAgentShadowRoot();
-        RefPtr controlsHost = mediaElement->mediaControlsHost();
-        if (!controlsHost) {
-            ASSERT_NOT_REACHED();
+        RefPtr shadowRoot = mediaElement->userAgentShadowRoot();
+        if (!shadowRoot)
             return nullptr;
-        }
+
+        RefPtr controlsHost = mediaElement->mediaControlsHost();
+        if (!controlsHost)
+            return nullptr;
 
         auto& containerClass = controlsHost->mediaControlsContainerClassName();
-        for (Ref child : childrenOfType<HTMLDivElement>(shadowRoot.get())) {
+        for (Ref child : childrenOfType<HTMLDivElement>(*shadowRoot)) {
             if (child->hasClassName(containerClass))
                 return &child.get();
         }
-        ASSERT_NOT_REACHED();
         return nullptr;
     })();
 #endif // ENABLE(MODERN_MEDIA_CONTROLS)

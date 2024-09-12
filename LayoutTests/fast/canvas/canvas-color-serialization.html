@@ -214,6 +214,8 @@ trySettingColor("'border-box'", "'#666666'");
 trySettingColor("'content'", "'#666666'");
 trySettingColor("'logical'", "'#666666'");
 trySettingColor("'visual'", "'#666666'");
+trySettingColor("'rgb(none none none)'", "'#000000'");
+trySettingColor("'rgb(300 none 400)'", "'#ff00ff'");
 
 trySettingColorWithSetter("'transparent'", "'rgba(0, 0, 0, 0)'");
 trySettingColorWithSetter("'red'", "'#ff0000'");
@@ -224,6 +226,8 @@ trySettingColorWithSetter("'rgba(0,255,0,1.0)'", "'#00ff00'");
 trySettingColorWithSetter("'rgba(1,2,3,0.4)'", "'rgba(1, 2, 3, 0.4)'");
 trySettingColorWithSetter("'RgB(1,2,3)'", "'#010203'");
 trySettingColorWithSetter("'rGbA(1,2,3,0)'", "'rgba(1, 2, 3, 0)'");
+trySettingColorWithSetter("'rgb(none none none)'", "'#000000'");
+trySettingColorWithSetter("'rgb(300 none 400)'", "'#ff00ff'");
 
 shouldBe("tryClearShadowAfterSettingColor('red')", "'rgba(0, 0, 0, 0)'");
 shouldBe("tryClearShadowAfterSettingColor('rgba(0, 5, 10, 0.4)')", "'rgba(0, 0, 0, 0)'");

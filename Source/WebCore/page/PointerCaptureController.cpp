@@ -313,6 +313,13 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
         dispatchEnterOrLeaveEvent(eventNames().pointerenterEvent, *currentTarget);
     }
 
+#if PLATFORM(IOS_FAMILY)
+    if (pointerEvent->type() == eventNames().pointercancelEvent) {
+        cancelPointer(pointerEvent->pointerId(), platformTouchEvent.touchLocationAtIndex(index), pointerEvent.ptr());
+        return;
+    }
+#endif
+
     dispatchEvent(pointerEvent, &target);
 
     if (pointerEvent->type() == eventNames().pointerupEvent) {
@@ -467,7 +474,7 @@ void PointerCaptureController::pointerEventWasDispatched(const PointerEvent& eve
         capturingData->preventsCompatibilityMouseEvents = event.defaultPrevented();
 }
 
-void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint& documentPoint)
+void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint& documentPoint, PointerEvent* existingCancelEvent)
 {
     // https://w3c.github.io/pointerevents/#the-pointercancel-event
 
@@ -517,8 +524,14 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
     // followed by firing a pointer event named pointerleave.
     auto isPrimary = capturingData->isPrimary ? PointerEvent::IsPrimary::Yes : PointerEvent::IsPrimary::No;
     auto& eventNames = WebCore::eventNames();
-    auto cancelEvent = PointerEvent::create(eventNames.pointercancelEvent, pointerId, capturingData->pointerType, isPrimary);
-    target->dispatchEvent(cancelEvent);
+
+    if (existingCancelEvent)
+        target->dispatchEvent(*existingCancelEvent);
+    else {
+        auto cancelEvent = PointerEvent::create(eventNames.pointercancelEvent, pointerId, capturingData->pointerType, isPrimary);
+        target->dispatchEvent(cancelEvent);
+    }
+
     target->dispatchEvent(PointerEvent::create(eventNames.pointeroutEvent, pointerId, capturingData->pointerType, isPrimary));
     target->dispatchEvent(PointerEvent::create(eventNames.pointerleaveEvent, pointerId, capturingData->pointerType, isPrimary));
     processPendingPointerCapture(pointerId);

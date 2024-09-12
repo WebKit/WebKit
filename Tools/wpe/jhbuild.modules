@@ -24,6 +24,7 @@
       <dep package="libsoup"/>
       <dep package="libwpe"/>
       <dep package="libxml2"/>
+      <dep package="openxr"/>
       <dep package="shared-mime-info"/>
       <dep package="wayland"/>
       <dep package="wayland-protocols"/>
@@ -102,10 +103,10 @@
       <dep package="glib-networking"/>
       <dep package="libpsl"/>
     </dependencies>
-    <branch module="/sources/libsoup/3.0/libsoup-${version}.tar.xz"
-            version="3.0.7"
+    <branch module="/sources/libsoup/3.6/libsoup-${version}.tar.xz"
+            version="3.6.0"
             repo="download.gnome.org"
-            hash="sha256:ebdf90cf3599c11acbb6818a9d9e3fc9d2c68e56eb829b93962972683e1bf7c8">
+            hash="sha256:62959f791e8e8442f8c13cedac8c4919d78f9120d5bb5301be67a5e53318b4a3">
     </branch>
   </meson>
 
@@ -321,6 +322,17 @@
             repo="xmlsoft.org"
             hash="sha256:4031c1ecee9ce7ba4f313e91ef6284164885cdb69937a123f6a83bb6a72dcd38"/>
   </autotools>
+
+  <!-- OpenXR required for WebXR support -->
+  <cmake id="openxr">
+    <pkg-config>openxr.pc</pkg-config>
+    <branch module="KhronosGroup/OpenXR-SDK/archive/release-${version}.tar.gz" version="1.0.20"
+            checkoutdir="openxr-${version}"
+            repo="github-tarball"
+            hash="sha256:b32703d30b4f40f5cb1a16e7242e3587ad5b3b47893c90dce884b162c5ca0e02">
+      <patch file="openxr-skip-experimental-filesystem-detection.patch" strip="1"/>
+    </branch>
+  </cmake>
 
   <autotools id="shared-mime-info"
              autogen-sh="configure"

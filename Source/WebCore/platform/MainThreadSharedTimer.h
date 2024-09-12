@@ -28,6 +28,7 @@
 
 #include "SharedTimer.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 #if !USE(CF) && !OS(WINDOWS)
 #include <wtf/RunLoop.h>
@@ -36,6 +37,7 @@
 namespace WebCore {
 
 class MainThreadSharedTimer final : public SharedTimer {
+    WTF_MAKE_TZONE_ALLOCATED(MainThreadSharedTimer);
     friend class NeverDestroyed<MainThreadSharedTimer>;
 public:
     static MainThreadSharedTimer& singleton();

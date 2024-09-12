@@ -45,7 +45,7 @@
 #include <WebCore/CookieJar.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
-#include <WebCore/IsLoggedIn.h>
+#include <WebCore/LoginStatus.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/SQLiteDatabase.h>
@@ -444,23 +444,43 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(RegistrableDomain&& su
     });
 }
 
-void WebResourceLoadStatisticsStore::setLoginStatus(RegistrableDomain&& domain, IsLoggedIn loggedInStatus, CompletionHandler<void()>&& completionHandler)
+void WebResourceLoadStatisticsStore::setLoginStatus(RegistrableDomain&& domain, IsLoggedIn loggedInStatus, std::optional<LoginStatus>&& lastAuthentication, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
-    if (loggedInStatus == IsLoggedIn::LoggedIn)
-        m_loginStatus.set(domain, loggedInStatus);
-    else
-        m_loginStatus.remove(domain);
-    completionHandler();
+    auto loginStatusToSet = lastAuthentication && lastAuthentication->hasExpired() ? std::nullopt : std::optional(WTFMove(lastAuthentication));
+    if (loginStatusToSet)
+        loginStatusToSet->setTimeToLive(WebCore::LoginStatus::TimeToLiveLong);
+
+    postTask([this, domain = WTFMove(domain).isolatedCopy(), loggedInStatus, loginStatusToSet = crossThreadCopy(WTFMove(loginStatusToSet)), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (!m_statisticsStore) {
+            postTaskReply(WTFMove(completionHandler));
+            return;
+        }
+
+        m_statisticsStore->setLoginStatus(domain, loggedInStatus, WTFMove(loginStatusToSet));
+        postTaskReply(WTFMove(completionHandler));
+    });
 }
 
 void WebResourceLoadStatisticsStore::isLoggedIn(RegistrableDomain&& domain, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
-    auto it = m_loginStatus.find(domain);
-    completionHandler(it != m_loginStatus.end() && it->value == IsLoggedIn::LoggedIn);
+    postTask([this, domain = crossThreadCopy(WTFMove(domain)), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (!m_statisticsStore) {
+            postTaskReply([completionHandler = WTFMove(completionHandler)]() mutable {
+                completionHandler(false);
+            });
+            return;
+        }
+
+        auto isloggedIn = m_statisticsStore->isLoggedIn(WTFMove(domain));
+
+        postTaskReply([isloggedIn, completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler(isloggedIn);
+        });
+    });
 }
 
 void WebResourceLoadStatisticsStore::requestStorageAccessEphemeral(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, FrameIdentifier frameID, PageIdentifier webPageID, WebPageProxyIdentifier webPageProxyID, StorageAccessScope scope, CanRequestStorageAccessWithoutUserInteraction canRequestStorageAccessWithoutUserInteraction, std::optional<OrganizationStorageAccessPromptQuirk>&& storageAccessPromptQuirk, CompletionHandler<void(RequestStorageAccessResult)>&& completionHandler)

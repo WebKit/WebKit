@@ -41,8 +41,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebBackForwardCache);
 
-WebBackForwardCache::WebBackForwardCache(WebProcessPool& processPool)
-    : m_processPool(processPool)
+WebBackForwardCache::WebBackForwardCache()
 {
 }
 
@@ -58,7 +57,7 @@ inline void WebBackForwardCache::removeOldestEntry()
         item->setBackForwardCacheEntry(nullptr);
 }
 
-void WebBackForwardCache::setCapacity(unsigned capacity)
+void WebBackForwardCache::setCapacity(WebProcessPool& pool, unsigned capacity)
 {
     if (m_capacity == capacity)
         return;
@@ -67,7 +66,7 @@ void WebBackForwardCache::setCapacity(unsigned capacity)
     while (size() > capacity)
         removeOldestEntry();
 
-    m_processPool.sendToAllProcesses(Messages::WebProcess::SetBackForwardCacheCapacity(m_capacity));
+    pool.sendToAllProcesses(Messages::WebProcess::SetBackForwardCacheCapacity(m_capacity));
 }
 
 void WebBackForwardCache::addEntry(WebBackForwardListItem& item, std::unique_ptr<WebBackForwardCacheEntry>&& backForwardCacheEntry)

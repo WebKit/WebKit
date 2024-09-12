@@ -38,14 +38,14 @@ public:
     typedef InternalFunction Base;
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-    static JSIteratorConstructor* create(VM&, Structure*, JSIteratorPrototype*);
+    static JSIteratorConstructor* create(VM&, JSGlobalObject*, Structure*, JSIteratorPrototype*);
 
     DECLARE_INFO;
     DECLARE_VISIT_CHILDREN;
 private:
     JSIteratorConstructor(VM&, Structure*);
 
-    void finishCreation(VM&, JSIteratorPrototype*);
+    void finishCreation(VM&, JSGlobalObject*, JSIteratorPrototype*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSIteratorConstructor, InternalFunction);
 

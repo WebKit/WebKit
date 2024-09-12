@@ -665,26 +665,26 @@ bool FramebufferMtl::totalBitsUsedIsLessThanOrEqualToMaxBitsSupported(
 
 gl::FramebufferStatus FramebufferMtl::checkStatus(const gl::Context *context) const
 {
-    ContextMtl *contextMtl = mtl::GetImpl(context);
-    if (!contextMtl->getDisplay()->getFeatures().allowSeparateDepthStencilBuffers.enabled &&
-        mState.hasSeparateDepthAndStencilAttachments())
+    if (mState.hasSeparateDepthAndStencilAttachments())
     {
-        return gl::FramebufferStatus::Incomplete(
-            GL_FRAMEBUFFER_UNSUPPORTED,
-            gl::err::kFramebufferIncompleteUnsupportedSeparateDepthStencilBuffers);
-    }
+        ContextMtl *contextMtl = mtl::GetImpl(context);
+        if (!contextMtl->getDisplay()->getFeatures().allowSeparateDepthStencilBuffers.enabled)
+        {
+            return gl::FramebufferStatus::Incomplete(
+                GL_FRAMEBUFFER_UNSUPPORTED,
+                gl::err::kFramebufferIncompleteUnsupportedSeparateDepthStencilBuffers);
+        }
 
-    if (mState.getDepthAttachment() && mState.getDepthAttachment()->getFormat().info->depthBits &&
-        mState.getDepthAttachment()->getFormat().info->stencilBits)
-    {
-        return checkPackedDepthStencilAttachment();
-    }
-
-    if (mState.getStencilAttachment() &&
-        mState.getStencilAttachment()->getFormat().info->depthBits &&
-        mState.getStencilAttachment()->getFormat().info->stencilBits)
-    {
-        return checkPackedDepthStencilAttachment();
+        ASSERT(mState.getDepthAttachment()->getFormat().info->depthBits > 0);
+        ASSERT(mState.getStencilAttachment()->getFormat().info->stencilBits > 0);
+        if (mState.getDepthAttachment()->getFormat().info->stencilBits != 0 ||
+            mState.getStencilAttachment()->getFormat().info->depthBits != 0)
+        {
+            return gl::FramebufferStatus::Incomplete(
+                GL_FRAMEBUFFER_UNSUPPORTED,
+                gl::err::
+                    kFramebufferIncompleteUnsupportedSeparateDepthStencilBuffersCombinedFormat);
+        }
     }
 
     if (!totalBitsUsedIsLessThanOrEqualToMaxBitsSupported(context))
@@ -694,38 +694,6 @@ gl::FramebufferStatus FramebufferMtl::checkStatus(const gl::Context *context) co
             gl::err::kFramebufferIncompleteColorBitsUsedExceedsMaxColorBitsSupported);
     }
 
-    return gl::FramebufferStatus::Complete();
-}
-
-gl::FramebufferStatus FramebufferMtl::checkPackedDepthStencilAttachment() const
-{
-    if (ANGLE_APPLE_AVAILABLE_XCI(10.14, 13.1, 12.0))
-    {
-        // If depth/stencil attachment has depth & stencil bits, then depth & stencil must not have
-        // separate attachment. i.e. They must be the same texture or one of them has no
-        // attachment.
-        if (mState.hasSeparateDepthAndStencilAttachments())
-        {
-            WARN() << "Packed depth stencil texture/buffer must not be mixed with other "
-                      "texture/buffer.";
-            return gl::FramebufferStatus::Incomplete(
-                GL_FRAMEBUFFER_UNSUPPORTED,
-                gl::err::kFramebufferIncompleteUnsupportedSeparateDepthStencilBuffers);
-        }
-    }
-    else
-    {
-        // Metal 2.0 and below doesn't allow packed depth stencil texture to be attached only as
-        // depth or stencil buffer. i.e. None of the depth & stencil attachment can be null.
-        if (!mState.getDepthStencilAttachment())
-        {
-            WARN() << "Packed depth stencil texture/buffer must be bound to both depth & stencil "
-                      "attachment point.";
-            return gl::FramebufferStatus::Incomplete(
-                GL_FRAMEBUFFER_UNSUPPORTED,
-                gl::err::kFramebufferIncompleteUnsupportedSeparateDepthStencilBuffers);
-        }
-    }
     return gl::FramebufferStatus::Complete();
 }
 
@@ -899,7 +867,7 @@ RenderTargetMtl *FramebufferMtl::getColorReadRenderTargetNoCache(const gl::Conte
 
 int FramebufferMtl::getSamples() const
 {
-    return mRenderPassDesc.sampleCount;
+    return mRenderPassDesc.rasterSampleCount;
 }
 
 gl::Rectangle FramebufferMtl::getCompleteRenderArea() const
@@ -1121,7 +1089,7 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
     mRenderPassAttachmentsSameColorType   = true;
     uint32_t maxColorAttachments = static_cast<uint32_t>(mState.getColorAttachments().size());
     desc.numColorAttachments     = 0;
-    desc.sampleCount             = 1;
+    desc.rasterSampleCount       = 1;
     for (uint32_t colorIndexGL = 0; colorIndexGL < maxColorAttachments; ++colorIndexGL)
     {
         ASSERT(colorIndexGL < mColorRenderTargets.size());
@@ -1146,7 +1114,8 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
 #endif
 
             desc.numColorAttachments = std::max(desc.numColorAttachments, colorIndexGL + 1);
-            desc.sampleCount = std::max(desc.sampleCount, colorRenderTarget->getRenderSamples());
+            desc.rasterSampleCount =
+                std::max(desc.rasterSampleCount, colorRenderTarget->getRenderSamples());
 
             if (!mRenderPassFirstColorAttachmentFormat)
             {
@@ -1178,7 +1147,8 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
             mDepthResolveRenderTarget->toRenderPassResolveAttachmentDesc(&desc.depthAttachment);
         }
 #endif
-        desc.sampleCount = std::max(desc.sampleCount, mDepthRenderTarget->getRenderSamples());
+        desc.rasterSampleCount =
+            std::max(desc.rasterSampleCount, mDepthRenderTarget->getRenderSamples());
     }
     else
     {
@@ -1194,7 +1164,8 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
             mStencilResolveRenderTarget->toRenderPassResolveAttachmentDesc(&desc.stencilAttachment);
         }
 #endif
-        desc.sampleCount = std::max(desc.sampleCount, mStencilRenderTarget->getRenderSamples());
+        desc.rasterSampleCount =
+            std::max(desc.rasterSampleCount, mStencilRenderTarget->getRenderSamples());
     }
     else
     {

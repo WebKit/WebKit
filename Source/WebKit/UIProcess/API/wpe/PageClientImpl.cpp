@@ -41,6 +41,7 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/NotImplemented.h>
+#include <wpe/wpe.h>
 
 #if USE(ATK)
 #include <atk/atk.h>

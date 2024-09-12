@@ -268,7 +268,7 @@ public:
 
     void createScrollbarsController() final;
 
-    FrameIdentifier rootFrameID() const final;
+    std::optional<FrameIdentifier> rootFrameID() const final;
 
     void scrollbarWidthChanged(ScrollbarWidth) override;
 

@@ -91,10 +91,6 @@
 #include "MediaCapability.h"
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-#include "HardwareKeyboardState.h"
-#endif
-
 #if PLATFORM(COCOA)
 #include "CocoaWindow.h"
 #endif
@@ -223,7 +219,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
 public:
     virtual ~Internals();
 
-    WebPageProxy& page;
+    WeakRef<WebPageProxy> page;
     OptionSet<WebCore::ActivityState> activityState;
     RunLoop::Timer audibleActivityTimer;
     std::optional<WebCore::Color> backgroundColor;
@@ -349,6 +345,8 @@ public:
 #if ENABLE(WRITING_TOOLS)
     HashMap<WTF::UUID, WebCore::TextIndicatorData> textIndicatorDataForAnimationID;
     HashMap<WTF::UUID, CompletionHandler<void(WebCore::TextAnimationRunMode)>> completionHandlerForAnimationID;
+    HashMap<WTF::UUID, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>)>> completionHandlerForDestinationTextIndicatorForSourceID;
+    HashMap<WTF::UUID, WTF::UUID> sourceAnimationIDtoDestinationAnimationID;
 #endif
 
     MonotonicTime didFinishDocumentLoadForMainFrameTimestamp;
@@ -372,10 +370,6 @@ public:
     std::optional<MediaCapability> mediaCapability;
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-    HardwareKeyboardState hardwareKeyboardState;
-#endif
-
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
     std::unique_ptr<WebPageProxyFrameLoadStateObserver> frameLoadStateObserver;
     HashMap<WebCore::RegistrableDomain, OptionSet<WebCore::WindowProxyProperty>> windowOpenerAccessedProperties;
@@ -388,6 +382,8 @@ public:
     bool allowsLayoutViewportHeightExpansion { true };
 
     explicit Internals(WebPageProxy&);
+
+    Ref<WebPageProxy> protectedPage() const;
 
     SpeechSynthesisData& speechSynthesisData();
 
@@ -451,7 +447,7 @@ public:
     void externalOutputDeviceAvailableDidChange(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
     void setShouldPlayToPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
     void playbackTargetPickerWasDismissed(WebCore::PlaybackTargetClientContextIdentifier) final;
-    bool alwaysOnLoggingAllowed() const final { return page.sessionID().isAlwaysOnLoggingAllowed(); }
+    bool alwaysOnLoggingAllowed() const final { return protectedPage()->sessionID().isAlwaysOnLoggingAllowed(); }
     RetainPtr<PlatformView> platformView() const final;
 #endif
 };

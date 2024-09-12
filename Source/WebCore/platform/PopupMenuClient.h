@@ -74,6 +74,12 @@ public:
     virtual HostWindow* hostWindow() const = 0;
 
     virtual Ref<Scrollbar> createScrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarWidth) = 0;
+
+    // CheckedPtr interface.
+    virtual uint32_t ptrCount() const = 0;
+    virtual uint32_t ptrCountWithoutThreadCheck() const = 0;
+    virtual void incrementPtrCount() const = 0;
+    virtual void decrementPtrCount() const = 0;
 };
 
 }

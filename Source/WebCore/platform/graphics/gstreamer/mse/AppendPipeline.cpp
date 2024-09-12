@@ -257,7 +257,7 @@ void AppendPipeline::handleErrorConditionFromStreamingThread()
     });
 }
 
-void AppendPipeline::handleErrorSyncMessage(GstMessage* message)
+void AppendPipeline::handleErrorSyncMessage([[maybe_unused]] GstMessage* message)
 {
     ASSERT(!isMainThread());
     GST_WARNING_OBJECT(pipeline(), "Demuxing error: %" GST_PTR_FORMAT, message);
@@ -557,7 +557,7 @@ void AppendPipeline::consumeAppsinksAvailableSamples()
     ASSERT(isMainThread());
 
     GRefPtr<GstSample> sample;
-    int batchedSampleCount = 0;
+    [[maybe_unused]] int batchedSampleCount = 0;
     for (std::unique_ptr<Track>& track : m_tracks) {
         while ((sample = adoptGRef(gst_app_sink_try_pull_sample(GST_APP_SINK(track->appsink.get()), 0)))) {
             appsinkNewSample(*track, WTFMove(sample));
@@ -684,7 +684,7 @@ void AppendPipeline::handleAppsinkNewSampleFromStreamingThread(GstElement*)
     }
 }
 
-GRefPtr<GstElement> createOptionalParserForFormat(GstBin* bin, const AtomString& trackStringId, const GstCaps* caps)
+GRefPtr<GstElement> createOptionalParserForFormat([[maybe_unused]] GstBin* bin, const AtomString& trackStringId, const GstCaps* caps)
 {
     // Parser elements have either or both of two functions:
     //
@@ -1069,7 +1069,7 @@ static GstPadProbeReturn appendPipelinePadProbeDebugInformation(GstPad* pad, Gst
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-static GstPadProbeReturn appendPipelineAppsinkPadEventProbe(GstPad* pad, GstPadProbeInfo* info, struct PadProbeInformation *padProbeInformation)
+static GstPadProbeReturn appendPipelineAppsinkPadEventProbe([[maybe_unused]] GstPad* pad, GstPadProbeInfo* info, struct PadProbeInformation *padProbeInformation)
 {
     ASSERT(GST_PAD_PROBE_INFO_TYPE(info) & GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM);
     GstEvent* event = gst_pad_probe_info_get_event(info);
@@ -1089,11 +1089,13 @@ static GstPadProbeReturn appendPipelineAppsinkPadEventProbe(GstPad* pad, GstPadP
 }
 #endif
 
-static GstPadProbeReturn appendPipelineDemuxerBlackHolePadProbe(GstPad* pad, GstPadProbeInfo* info, gpointer)
+static GstPadProbeReturn appendPipelineDemuxerBlackHolePadProbe([[maybe_unused]] GstPad* pad, [[maybe_unused]] GstPadProbeInfo* info, gpointer)
 {
     ASSERT(GST_PAD_PROBE_INFO_TYPE(info) & GST_PAD_PROBE_TYPE_BUFFER);
+#ifndef GST_DISABLE_GST_DEBUG
     GstBuffer* buffer = GST_PAD_PROBE_INFO_BUFFER(info);
     GST_TRACE_OBJECT(pad, "buffer of size %" G_GSIZE_FORMAT " ignored", gst_buffer_get_size(buffer));
+#endif
     return GST_PAD_PROBE_DROP;
 }
 

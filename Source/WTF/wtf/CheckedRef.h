@@ -266,7 +266,9 @@ template<typename P> struct PtrHash<CheckedRef<P>> : PtrHashBase<CheckedRef<P>, 
 
 template<typename P> struct DefaultHash<CheckedRef<P>> : PtrHash<CheckedRef<P>> { };
 
-template <typename StorageType, typename PtrCounterType> class CanMakeCheckedPtrBase {
+enum class DefaultedOperatorEqual : bool { No, Yes };
+
+template <typename StorageType, typename PtrCounterType, DefaultedOperatorEqual defaultedOperatorEqual> class CanMakeCheckedPtrBase {
 public:
     CanMakeCheckedPtrBase() = default;
     CanMakeCheckedPtrBase(CanMakeCheckedPtrBase&&) { }
@@ -295,13 +297,18 @@ public:
             return m_count.valueWithoutThreadCheck();
     }
 
-    friend bool operator==(const CanMakeCheckedPtrBase&, const CanMakeCheckedPtrBase&) { return true; }
+    friend bool operator==(const CanMakeCheckedPtrBase&, const CanMakeCheckedPtrBase&)
+    {
+        static_assert(defaultedOperatorEqual == DefaultedOperatorEqual::Yes, "Derived class should opt-in when defaulting operator==, or invalid/undefined comparison should be reworked/defined");
+        return true;
+    }
 
 private:
     mutable StorageType m_count { 0 };
 };
 
-template<typename T> class CanMakeCheckedPtr : public CanMakeCheckedPtrBase<SingleThreadIntegralWrapper<uint32_t>, uint32_t> {
+template<typename T, DefaultedOperatorEqual defaultedOperatorEqual = DefaultedOperatorEqual::No>
+class CanMakeCheckedPtr : public CanMakeCheckedPtrBase<SingleThreadIntegralWrapper<uint32_t>, uint32_t, defaultedOperatorEqual> {
 public:
     ~CanMakeCheckedPtr()
     {
@@ -310,7 +317,7 @@ public:
     }
 };
 
-template<typename T> class CanMakeThreadSafeCheckedPtr : public CanMakeCheckedPtrBase<std::atomic<uint32_t>, uint32_t> {
+template<typename T, DefaultedOperatorEqual defaultedOperatorEqual = DefaultedOperatorEqual::No> class CanMakeThreadSafeCheckedPtr : public CanMakeCheckedPtrBase<std::atomic<uint32_t>, uint32_t, defaultedOperatorEqual> {
 public:
     ~CanMakeThreadSafeCheckedPtr()
     {

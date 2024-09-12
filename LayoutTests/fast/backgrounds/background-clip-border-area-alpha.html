@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<meta name="fuzzy" content="maxDifference=0-75; totalPixels=0-520" />
+<head>
+    <style>
+        .box {
+            display: inline-block;
+            margin: 50px;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+            border: 40px solid transparent;
+            background-clip: border-area;
+            opacity: 0.5;
+        }
+        
+        .radius {
+            border-radius: 20px;
+        }
+
+        .double {
+            border-right-style: double;
+        }
+    </style>
+</head>
+<body>
+    <div class="box"></div>
+    <div class="radius box"></div>
+    <div class="double box" ></div>
+    <div class="radius double box"></div>
+</body>
+</html>

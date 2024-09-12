@@ -88,14 +88,14 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionContext, WebExtensionContext
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebExtensionContext>(self, extension._webExtension);
+    API::Object::constructInWrapper<WebKit::WebExtensionContext>(self, extension._protectedWebExtension.get());
 
     return self;
 }
 
 - (WKWebExtension *)webExtension
 {
-    return wrapper(&_webExtensionContext->extension());
+    return wrapper(_webExtensionContext->protectedExtension().get());
 }
 
 - (WKWebExtensionController *)webExtensionController
@@ -498,7 +498,7 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(WKWebExtension
     if (tab)
         NSParameterAssert([tab conformsToProtocol:@protocol(WKWebExtensionTab)]);
 
-    return toAPI(_webExtensionContext->permissionState(pattern._webExtensionMatchPattern, toImplNullable(tab, *_webExtensionContext).get()));
+    return toAPI(_webExtensionContext->permissionState(pattern._protectedWebExtensionMatchPattern, toImplNullable(tab, *_webExtensionContext).get()));
 }
 
 - (void)setPermissionStatus:(WKWebExtensionContextPermissionStatus)status forMatchPattern:(WKWebExtensionMatchPattern *)pattern
@@ -514,7 +514,7 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(WKWebExtension
     NSParameterAssert(status == WKWebExtensionContextPermissionStatusDeniedExplicitly || status == WKWebExtensionContextPermissionStatusUnknown || status == WKWebExtensionContextPermissionStatusGrantedExplicitly);
     NSParameterAssert([pattern isKindOfClass:WKWebExtensionMatchPattern.class]);
 
-    _webExtensionContext->setPermissionState(toImpl(status), pattern._webExtensionMatchPattern, toImpl(expirationDate));
+    _webExtensionContext->setPermissionState(toImpl(status), pattern._protectedWebExtensionMatchPattern, toImpl(expirationDate));
 }
 
 - (BOOL)hasAccessToAllURLs
@@ -576,7 +576,7 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(WKWebExtension
 {
     NSParameterAssert([command isKindOfClass:WKWebExtensionCommand.class]);
 
-    _webExtensionContext->performCommand(command._webExtensionCommand, WebKit::WebExtensionContext::UserTriggered::Yes);
+    _webExtensionContext->performCommand([command _protectedWebExtensionCommand].get(), WebKit::WebExtensionContext::UserTriggered::Yes);
 }
 
 #if TARGET_OS_IPHONE

@@ -42,7 +42,7 @@
 namespace WebCore {
 
 CSSCircleValue::CSSCircleValue(RefPtr<CSSValue>&& radius, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY)
-    : CSSValue(CircleClass)
+    : CSSValue(ClassType::Circle)
     , m_radius(WTFMove(radius))
     , m_centerX(WTFMove(centerX))
     , m_centerY(WTFMove(centerY))
@@ -52,58 +52,6 @@ CSSCircleValue::CSSCircleValue(RefPtr<CSSValue>&& radius, RefPtr<CSSValue>&& cen
 Ref<CSSCircleValue> CSSCircleValue::create(RefPtr<CSSValue>&& radius, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY)
 {
     return adoptRef(*new CSSCircleValue(WTFMove(radius), WTFMove(centerX), WTFMove(centerY)));
-}
-
-struct SerializablePositionOffset {
-    CSSValueID side;
-    Ref<const CSSValue> amount;
-};
-
-static String serializePositionOffset(const SerializablePositionOffset& offset, const SerializablePositionOffset& other)
-{
-    if ((offset.side == CSSValueLeft && other.side == CSSValueTop) || (offset.side == CSSValueTop && other.side == CSSValueLeft))
-        return offset.amount->cssText();
-    return makeString(nameLiteral(offset.side), ' ', offset.amount->cssText());
-}
-
-static bool isZeroLength(const CSSValue& value)
-{
-    auto* primitive = dynamicDowncast<CSSPrimitiveValue>(value);
-    return primitive && primitive->isLength() && primitive->isZero().value_or(false);
-}
-
-static SerializablePositionOffset buildSerializablePositionOffset(CSSValue* offset, CSSValueID defaultSide)
-{
-    CSSValueID side = defaultSide;
-    RefPtr<const CSSValue> amount;
-
-    if (!offset)
-        side = CSSValueCenter;
-    else if (offset->isValueID())
-        side = offset->valueID();
-    else if (offset->isPair()) {
-        side = offset->first().valueID();
-        amount = &offset->second();
-    } else
-        amount = offset;
-
-    if (!amount)
-        amount = CSSPrimitiveValue::create(Length(side == CSSValueCenter ? 50 : 0, LengthType::Percent));
-    
-    if (side == CSSValueCenter)
-        side = defaultSide;
-    else if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*amount); (side == CSSValueRight || side == CSSValueBottom) && primitiveValue && primitiveValue->isPercentage()) {
-        side = defaultSide;
-        amount = CSSPrimitiveValue::create(Length(100 - primitiveValue->resolveAsPercentageDeprecated<float>(), LengthType::Percent));
-    } else if (isZeroLength(*amount)) {
-        if (side == CSSValueRight || side == CSSValueBottom)
-            amount = CSSPrimitiveValue::create(Length(100, LengthType::Percent));
-        else
-            amount = CSSPrimitiveValue::create(Length(0, LengthType::Percent));
-        side = defaultSide;
-    }
-
-    return { side, amount.releaseNonNull() };
 }
 
 String CSSCircleValue::customCSSText() const
@@ -117,10 +65,7 @@ String CSSCircleValue::customCSSText() const
         return makeString("circle("_s, radius, ')');
     }
 
-    auto x = buildSerializablePositionOffset(m_centerX.get(), CSSValueLeft);
-    auto y = buildSerializablePositionOffset(m_centerY.get(), CSSValueTop);
-    return makeString("circle("_s, radius, radius.isNull() ? ""_s : " "_s,
-        "at "_s, serializePositionOffset(x, y), ' ', serializePositionOffset(y, x), ')');
+    return makeString("circle("_s, radius, radius.isNull() ? ""_s : " "_s, "at "_s, m_centerX->cssText(), ' ', m_centerY->cssText(), ')');
 }
 
 bool CSSCircleValue::equals(const CSSCircleValue& other) const
@@ -133,7 +78,7 @@ bool CSSCircleValue::equals(const CSSCircleValue& other) const
 // MARK: -
 
 CSSEllipseValue::CSSEllipseValue(RefPtr<CSSValue>&& radiusX, RefPtr<CSSValue>&& radiusY, RefPtr<CSSValue>&& centerX, RefPtr<CSSValue>&& centerY)
-    : CSSValue(EllipseClass)
+    : CSSValue(ClassType::Ellipse)
     , m_radiusX(WTFMove(radiusX))
     , m_radiusY(WTFMove(radiusY))
     , m_centerX(WTFMove(centerX))
@@ -188,9 +133,9 @@ String CSSEllipseValue::customCSSText() const
         return buildEllipseString(radiusX, radiusY, nullString(), nullString());
     }
 
-    auto x = buildSerializablePositionOffset(m_centerX.get(), CSSValueLeft);
-    auto y = buildSerializablePositionOffset(m_centerY.get(), CSSValueTop);
-    return buildEllipseString(radiusX, radiusY, serializePositionOffset(x, y), serializePositionOffset(y, x));
+    auto x = m_centerX->cssText();
+    auto y = m_centerY->cssText();
+    return buildEllipseString(radiusX, radiusY, x, y);
 }
 
 bool CSSEllipseValue::equals(const CSSEllipseValue& other) const
@@ -204,7 +149,7 @@ bool CSSEllipseValue::equals(const CSSEllipseValue& other) const
 // MARK: -
 
 CSSXywhValue::CSSXywhValue(Ref<CSSValue>&& insetX, Ref<CSSValue>&& insetY, Ref<CSSValue>&& width, Ref<CSSValue>&& height, RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius)
-    : CSSValue(XywhShapeClass)
+    : CSSValue(ClassType::XywhShape)
     , m_insetX(WTFMove(insetX))
     , m_insetY(WTFMove(insetY))
     , m_width(WTFMove(width))
@@ -324,7 +269,7 @@ String CSSXywhValue::customCSSText() const
 // MARK: -
 
 CSSRectShapeValue::CSSRectShapeValue(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left, RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius)
-    : CSSValue(RectShapeClass)
+    : CSSValue(ClassType::RectShape)
     , m_top(WTFMove(top))
     , m_right(WTFMove(right))
     , m_bottom(WTFMove(bottom))
@@ -392,7 +337,7 @@ String CSSRectShapeValue::customCSSText() const
 // MARK: -
 
 CSSPathValue::CSSPathValue(SVGPathByteStream data, WindRule rule)
-    : CSSValue(PathClass)
+    : CSSValue(ClassType::Path)
     , m_pathData(WTFMove(data))
     , m_windRule(rule)
 {
@@ -425,7 +370,7 @@ bool CSSPathValue::equals(const CSSPathValue& other) const
 // MARK: -
 
 CSSPolygonValue::CSSPolygonValue(CSSValueListBuilder&& values, WindRule rule)
-    : CSSValueContainingVector(PolygonClass, SpaceSeparator, WTFMove(values))
+    : CSSValueContainingVector(ClassType::Polygon, SpaceSeparator, WTFMove(values))
     , m_windRule(rule)
 {
 }
@@ -457,7 +402,7 @@ bool CSSPolygonValue::equals(const CSSPolygonValue& other) const
 // MARK: -
 
 CSSInsetShapeValue::CSSInsetShapeValue(Ref<CSSValue>&& top, Ref<CSSValue>&& right, Ref<CSSValue>&& bottom, Ref<CSSValue>&& left, RefPtr<CSSValue>&& topLeftRadius, RefPtr<CSSValue>&& topRightRadius, RefPtr<CSSValue>&& bottomRightRadius, RefPtr<CSSValue>&& bottomLeftRadius)
-    : CSSValue(InsetShapeClass)
+    : CSSValue(ClassType::InsetShape)
     , m_top(WTFMove(top))
     , m_right(WTFMove(right))
     , m_bottom(WTFMove(bottom))
@@ -542,7 +487,7 @@ Ref<CSSShapeValue> CSSShapeValue::create(WindRule windRule, Ref<CSSValuePair>&& 
 }
 
 CSSShapeValue::CSSShapeValue(WindRule windRule, Ref<CSSValuePair>&& fromCoordinates, CSSValueListBuilder&& shapeSegments)
-    : CSSValueContainingVector(ShapeClass, CommaSeparator, WTFMove(shapeSegments))
+    : CSSValueContainingVector(ClassType::Shape, CommaSeparator, WTFMove(shapeSegments))
     , m_fromCoordinates(WTFMove(fromCoordinates))
     , m_windRule(windRule)
 {

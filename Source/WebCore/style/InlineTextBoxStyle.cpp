@@ -325,7 +325,7 @@ float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineBo
     auto overBecomesUnder = [&] {
         // If 'right' causes the underline to be drawn on the "over" side of the text, then an overline also switches sides and is drawn on the "under" side.
         if (underlinePosition.contains(TextUnderlinePosition::Right))
-            return style.typographicMode() == TypographicMode::Vertical || style.blockFlowDirection() == BlockFlowDirection::RightToLeft;
+            return style.typographicMode() == TypographicMode::Vertical || style.blockFlowDirection() == FlowDirection::RightToLeft;
         return false;
     };
     return overBecomesUnder() ? inlineBoxContentBoxHeight(inlineBox) + defaultGap(style) : (0.f - defaultGap(style));

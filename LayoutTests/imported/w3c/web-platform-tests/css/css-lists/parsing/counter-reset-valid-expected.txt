@@ -9,4 +9,7 @@ PASS e.style['counter-reset'] = "section -1" should set the property value
 FAIL e.style['counter-reset'] = "reversed(section) -1" should set the property value assert_not_equals: property should be set got disallowed value ""
 PASS e.style['counter-reset'] = "first -1 second third 99" should set the property value
 FAIL e.style['counter-reset'] = "reversed(first) -1 reversed(second) third 99" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['counter-reset'] = "section calc(1)" should set the property value
+PASS e.style['counter-reset'] = "section calc(-2.5)" should set the property value
+PASS e.style['counter-reset'] = "section calc(10 + (5 * sign(2cqw - 10px)))" should set the property value
 

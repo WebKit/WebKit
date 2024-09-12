@@ -142,7 +142,8 @@ public:
     const QualifiedName& attribute() const;
     const AtomString& argument() const { return m_hasRareData ? m_data.rareData->argument : nullAtom(); }
     bool attributeValueMatchingIsCaseInsensitive() const;
-    const FixedVector<PossiblyQuotedIdentifier>* argumentList() const { return m_hasRareData ? &m_data.rareData->argumentList : nullptr; }
+    const FixedVector<AtomString>* argumentList() const { return m_hasRareData ? &m_data.rareData->argumentList : nullptr; }
+    const FixedVector<PossiblyQuotedIdentifier>* langList() const { return m_hasRareData ? &m_data.rareData->langList : nullptr; }
     const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.rareData->selectorList.get() : nullptr; }
     CSSSelectorList* selectorList() { return m_hasRareData ? m_data.rareData->selectorList.get() : nullptr; }
 
@@ -187,7 +188,8 @@ private:
     void setAttribute(const QualifiedName&, AttributeMatchType);
     void setNth(int a, int b);
     void setArgument(const AtomString&);
-    void setArgumentList(FixedVector<PossiblyQuotedIdentifier>);
+    void setArgumentList(FixedVector<AtomString>);
+    void setLangList(FixedVector<PossiblyQuotedIdentifier>);
     void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
     void setPseudoClass(PseudoClass);
@@ -240,7 +242,8 @@ private:
         int b { 0 }; // Used for :nth-*
         QualifiedName attribute; // used for attribute selector
         AtomString argument; // Used for :contains and :nth-*
-        FixedVector<PossiblyQuotedIdentifier> argumentList; // Used for :lang, :active-view-transition-type, and ::part arguments.
+        FixedVector<AtomString> argumentList; // Used for :active-view-transition-type, ::highlight, ::view-transition-{group, image-pair, new, old}, ::part arguments.
+        FixedVector<PossiblyQuotedIdentifier> langList; // Used for :lang arguments.
         std::unique_ptr<CSSSelectorList> selectorList; // Used for :is(), :matches(), and :not().
 
         Ref<RareData> deepCopy() const;

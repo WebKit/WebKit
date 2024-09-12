@@ -480,12 +480,16 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
     auto color = [this, cssValueID, options, useDarkAppearance]() -> Color {
         LocalDefaultSystemAppearance localAppearance(useDarkAppearance);
 
-        auto selectCocoaColor = [cssValueID] () -> SEL {
+        auto selectCocoaColor = [cssValueID, useDarkAppearance] () -> SEL {
             switch (cssValueID) {
             case CSSValueActivecaption:
                 return @selector(windowFrameTextColor);
             case CSSValueAppworkspace:
                 return @selector(headerColor);
+            case CSSValueButtonface:
+            case CSSValueThreedface:
+                // Fallback to hardcoded color below in light mode.
+                return useDarkAppearance ? @selector(controlColor) : nullptr;
             case CSSValueButtonhighlight:
                 return @selector(controlHighlightColor);
             case CSSValueButtonshadow:
@@ -573,11 +577,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
                 return @selector(quaternaryLabelColor);
 #if HAVE(NSCOLOR_FILL_COLOR_HIERARCHY)
             case CSSValueAppleSystemTertiaryFill:
-                // FIXME: Remove selector check when AppKit without tertiary-fill is not used anymore; see rdar://108340604.
-                if ([NSColor respondsToSelector:@selector(tertiarySystemFillColor)])
-                    return @selector(tertiarySystemFillColor);
-                // Handled below.
-                return nullptr;
+                return @selector(tertiarySystemFillColor);
 #endif
             case CSSValueAppleSystemGrid:
                 return @selector(gridColor);
@@ -618,8 +618,10 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
 
         case CSSValueButtonface:
         case CSSValueThreedface:
+            // Dark mode uses [NSColor controlColor].
             // We selected this value instead of [NSColor controlColor] to avoid website incompatibilities.
             // We may want to consider changing to [NSColor controlColor] some day.
+            ASSERT(!localAppearance.usingDarkAppearance());
             return Color::lightGray;
 
         case CSSValueInfobackground:
@@ -1392,11 +1394,9 @@ static void paintAttachmentTitleBackground(const RenderAttachment& attachment, G
     });
 
     Color backgroundColor;
-    if (attachment.frame().selection().isFocusedAndActive()) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        backgroundColor = colorFromCocoaColor([NSColor alternateSelectedControlColor]);
-ALLOW_DEPRECATED_DECLARATIONS_END
-    } else
+    if (attachment.frame().selection().isFocusedAndActive())
+        backgroundColor = colorFromCocoaColor([NSColor selectedContentBackgroundColor]);
+    else
         backgroundColor = attachmentTitleInactiveBackgroundColor;
 
     backgroundColor = attachment.style().colorByApplyingColorFilter(backgroundColor);

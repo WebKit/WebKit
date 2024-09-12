@@ -41,6 +41,7 @@
 #import <WebKit/_WKNotificationData.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <objc/runtime.h>
 
 static const NSString * const kURLArgumentString = @"--url";
 
@@ -280,12 +281,22 @@ static NSNumber *_currentBadge;
     BOOL useWebKit2 = NO;
     BOOL makeEditable = NO;
 
-    if (![sender respondsToSelector:@selector(tag)]) {
+    BOOL hasNSIntegerTag = NO;
+    if ([sender respondsToSelector:@selector(tag)]) {
+        Method tagMethod = class_getInstanceMethod([sender class], @selector(tag));
+        char *tagReturnType = method_copyReturnType(tagMethod);
+        if (!strcmp(tagReturnType, @encode(NSInteger)))
+            hasNSIntegerTag = YES;
+        free(tagReturnType);
+    }
+
+    if (!hasNSIntegerTag) {
         useWebKit2 = _settingsController.useWebKit2ByDefault;
         makeEditable = _settingsController.createEditorByDefault;
     } else {
-        useWebKit2 = [sender tag] == WebKit2NewWindowTag || [sender tag] == WebKit2NewEditorTag;
-        makeEditable = [sender tag] == WebKit1NewEditorTag || [sender tag] == WebKit2NewEditorTag;
+        NSInteger senderTag = (NSInteger)[sender performSelector:@selector(tag)];
+        useWebKit2 = senderTag == WebKit2NewWindowTag || senderTag == WebKit2NewEditorTag;
+        makeEditable = senderTag == WebKit1NewEditorTag || senderTag == WebKit2NewEditorTag;
     }
 
     if (!useWebKit2)
@@ -399,8 +410,12 @@ static NSNumber *_currentBadge;
     if (!controller)
         return NO;
 
+    NSURL *url = [NSURL URLWithString:filename];
+    if (!url || !url.scheme)
+        url = [NSURL fileURLWithPath:filename];
+
     [controller.window makeKeyAndOrderFront:self];
-    [controller loadURLString:[NSURL fileURLWithPath:filename].absoluteString];
+    [controller loadURLString:url.absoluteString];
     _openNewWindowAtStartup = false;
     return YES;
 }

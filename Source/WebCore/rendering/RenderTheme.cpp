@@ -193,7 +193,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     auto autoAppearance = autoAppearanceForElement(style, element);
     auto appearance = adjustAppearanceForElement(style, element, autoAppearance);
 
-    if (appearance == StyleAppearance::None)
+    if (appearance == StyleAppearance::None || appearance == StyleAppearance::Base)
         return;
 
     // Force inline and table display styles to be inline-block (except for table- which is block)
@@ -536,6 +536,7 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
     switch (appearance) {
     case StyleAppearance::None:
     case StyleAppearance::Auto:
+    case StyleAppearance::Base:
         break;
 
     case StyleAppearance::Checkbox:
@@ -876,7 +877,7 @@ bool RenderTheme::paintBorderOnly(const RenderBox& box, const PaintInfo& paintIn
 
 #if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(rect);
-    return box.style().usedAppearance() != StyleAppearance::None;
+    return box.style().usedAppearance() != StyleAppearance::None && box.style().usedAppearance() != StyleAppearance::Base;
 #else
     FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, box.document().deviceScaleFactor());
     // Call the appropriate paint method based off the appearance value.

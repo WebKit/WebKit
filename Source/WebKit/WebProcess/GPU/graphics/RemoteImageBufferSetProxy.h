@@ -85,9 +85,9 @@ public:
 
     OptionSet<BufferInSetType> requestedVolatility() { return m_requestedVolatility; }
     OptionSet<BufferInSetType> confirmedVolatility() { return m_confirmedVolatility; }
-    void clearVolatilityUntilAfter(MarkSurfacesAsVolatileRequestIdentifier previousVolatilityRequest);
+    void clearVolatility();
     void addRequestedVolatility(OptionSet<BufferInSetType> request);
-    void setConfirmedVolatility(MarkSurfacesAsVolatileRequestIdentifier, OptionSet<BufferInSetType> types);
+    void setConfirmedVolatility(OptionSet<BufferInSetType> types);
 
 #if PLATFORM(COCOA)
     void didPrepareForDisplay(ImageBufferSetPrepareBufferForDisplayOutputData, RenderingUpdateID);
@@ -125,7 +125,6 @@ private:
     WebCore::RenderingResourceIdentifier m_displayListIdentifier;
     std::unique_ptr<RemoteDisplayListRecorderProxy> m_displayListRecorder;
 
-    MarkSurfacesAsVolatileRequestIdentifier m_minimumVolatilityRequest;
     OptionSet<BufferInSetType> m_requestedVolatility;
     OptionSet<BufferInSetType> m_confirmedVolatility;
 

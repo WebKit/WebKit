@@ -127,7 +127,7 @@ public:
     void generateAnOutOfMemoryError(String&& message);
     void generateAnInternalError(String&& message);
 
-    Instance& instance() const { return m_adapter->instance(); }
+    RefPtr<Instance> instance() const { return m_adapter->instance(); }
     bool hasUnifiedMemory() const { return m_device.hasUnifiedMemory; }
 
     uint32_t maxBuffersPlusVertexBuffersForVertexStage() const;
@@ -164,7 +164,13 @@ public:
         simd::float4x3 colorSpaceConversionMatrix;
     };
     ExternalTextureData createExternalTextureFromPixelBuffer(CVPixelBufferRef, WGPUColorSpace) const;
-    RefPtr<XRSubImage> getXRViewSubImage(WGPUXREye);
+    RefPtr<XRSubImage> getXRViewSubImage(XRProjectionLayer&);
+    const std::optional<const MachSendRight> webProcessID() const;
+#if CPU(X86_64)
+    bool isIntel() const { return [m_device.name localizedCaseInsensitiveContainsString:@"intel"]; }
+#else
+    constexpr bool isIntel() const { return false; }
+#endif
 
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&&, Adapter&);
@@ -177,7 +183,7 @@ private:
 
     bool validateRenderPipeline(const WGPURenderPipelineDescriptor&);
 
-    void makeInvalid() { m_device = nil; }
+    void makeInvalid();
     NSString* addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>&, const std::optional<WGSL::PipelineLayout>&);
     Ref<PipelineLayout> generatePipelineLayout(const Vector<Vector<WGPUBindGroupLayoutEntry>> &bindGroupEntries);
 
@@ -197,7 +203,7 @@ private:
 
     Function<void(WGPUErrorType, String&&)> m_uncapturedErrorCallback;
     Vector<ErrorScope> m_errorScopeStack;
-    Vector<RefPtr<XRSubImage>> m_xrSubImages;
+    RefPtr<XRSubImage> m_xrSubImage;
 
     Function<void(WGPUDeviceLostReason, String&&)> m_deviceLostCallback;
     bool m_isLost { false };

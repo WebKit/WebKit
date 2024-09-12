@@ -20,4 +20,4 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 23x19
               text run at (0,0) width 23: "baz"
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of child 2 {DIV} of body
-selection end:   position 0 of child 1 {#text} of child 1 {DIV} of child 2 {DIV} of body
+selection end:   position 3 of child 0 {#text} of child 0 {DIV} of child 1 {DIV} of child 2 {DIV} of body

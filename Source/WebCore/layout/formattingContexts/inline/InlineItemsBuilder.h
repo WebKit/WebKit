@@ -61,7 +61,7 @@ private:
     
     bool contentRequiresVisualReordering() const { return m_contentRequiresVisualReordering; }
 
-    void computeInlineBoxBoundaryTextSpacingsIfNeeded();
+    void computeInlineBoxBoundaryTextSpacingsIfNeeded(const InlineItemList&);
 
     const ElementBox& root() const { return m_root; }
     InlineContentCache& inlineContentCache() { return m_inlineContentCache; }

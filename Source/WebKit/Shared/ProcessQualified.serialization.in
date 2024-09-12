@@ -23,7 +23,7 @@
 
 additional_forward_declaration: namespace WebCore { using BackForwardItemIdentifierID = LegacyNullableObjectIdentifier<BackForwardItemIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using DOMCacheIdentifierID = LegacyNullableAtomicObjectIdentifier<DOMCacheIdentifierType>; }
-additional_forward_declaration: namespace WebCore { using FrameIdentifierID = LegacyNullableObjectIdentifier<FrameIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using FrameIdentifierID = ObjectIdentifier<FrameIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using OpaqueOriginIdentifier = LegacyNullableAtomicObjectIdentifier<OpaqueOriginIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using PlatformLayerIdentifierID = ObjectIdentifier<PlatformLayerIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using ScrollingNodeIdentifier = LegacyNullableObjectIdentifier<ScrollingNodeIDType>; }

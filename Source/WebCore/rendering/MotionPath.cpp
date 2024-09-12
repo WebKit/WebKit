@@ -64,7 +64,6 @@ static FloatPoint normalPositionForOffsetPath(PathOperation* operation, const Fl
 
 std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const RenderElement& renderer)
 {
-    MotionPathData data;
     auto pathOperation = renderer.style().offsetPath();
     if (!is<RenderLayerModelObject>(renderer) || !pathOperation)
         return std::nullopt;
@@ -83,22 +82,24 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
         return floatPointForLengthPoint(offsetPosition, referenceRect.size());
     };
 
-    if (auto* container = renderer.containingBlock()) {
-        data.containingBlockBoundingRect = containingBlockRectForRenderer(renderer, *container, *pathOperation);
-        data.offsetFromContainingBlock = offsetFromContainer(renderer, *container, data.containingBlockBoundingRect.rect());
+    auto* container = renderer.containingBlock();
+    if (!container)
+        return std::nullopt;
 
-        auto offsetPosition = renderer.style().offsetPosition();
+    MotionPathData data;
+    data.containingBlockBoundingRect = containingBlockRectForRenderer(renderer, *container, *pathOperation);
+    data.offsetFromContainingBlock = offsetFromContainer(renderer, *container, data.containingBlockBoundingRect.rect());
 
-        if (is<ShapePathOperation>(pathOperation))
-            data.usedStartingPosition = startingPositionForOffsetPosition(offsetPosition, data.containingBlockBoundingRect.rect(), *container);
-        if (auto* rayPathOperation = dynamicDowncast<RayPathOperation>(pathOperation)) {
-            auto startingPosition = rayPathOperation->position();
-            data.usedStartingPosition = startingPosition.x().isAuto() ? startingPositionForOffsetPosition(offsetPosition, data.containingBlockBoundingRect.rect(), *container) : floatPointForLengthPoint(startingPosition, data.containingBlockBoundingRect.rect().size());
-        }
-        return data;
+    auto offsetPosition = renderer.style().offsetPosition();
+    if (is<ShapePathOperation>(pathOperation))
+        data.usedStartingPosition = startingPositionForOffsetPosition(offsetPosition, data.containingBlockBoundingRect.rect(), *container);
+
+    if (auto* rayPathOperation = dynamicDowncast<RayPathOperation>(pathOperation)) {
+        auto startingPosition = rayPathOperation->position();
+        data.usedStartingPosition = startingPosition.x().isAuto() ? startingPositionForOffsetPosition(offsetPosition, data.containingBlockBoundingRect.rect(), *container) : floatPointForLengthPoint(startingPosition, data.containingBlockBoundingRect.rect().size());
     }
 
-    return std::nullopt;
+    return data;
 }
 
 static PathTraversalState traversalStateAtDistance(const Path& path, const Length& distance)
@@ -122,7 +123,7 @@ static PathTraversalState traversalStateAtDistance(const Path& path, const Lengt
 
 void MotionPath::applyMotionPathTransform(TransformationMatrix& matrix, const TransformOperationData& transformData, const FloatPoint& transformOrigin, const PathOperation& offsetPath, const LengthPoint& offsetAnchor, const Length& offsetDistance, const OffsetRotation& offsetRotate, TransformBox transformBox)
 {
-    auto& boundingBox = transformData.boundingBox;
+    auto boundingBox = transformData.boundingBox;
     auto anchor = transformOrigin;
     if (!offsetAnchor.x().isAuto())
         anchor = floatPointForLengthPoint(offsetAnchor, boundingBox.size()) + boundingBox.location();
@@ -131,6 +132,7 @@ void MotionPath::applyMotionPathTransform(TransformationMatrix& matrix, const Tr
     auto path = offsetPath.getPath(transformData);
     if (!path)
         return;
+
     auto traversalState = traversalStateAtDistance(*path, offsetDistance);
     matrix.translate(traversalState.current().x(), traversalState.current().y());
 
@@ -200,10 +202,10 @@ static FloatPoint currentOffsetForData(const MotionPathData& data)
     return FloatPoint(data.usedStartingPosition - data.offsetFromContainingBlock);
 }
 
-std::optional<Path> MotionPath::computePathForRay(const RayPathOperation& rayPathOperation, const TransformOperationData& data)
+std::optional<Path> MotionPath::computePathForRay(const RayPathOperation& rayPathOperation, const TransformOperationData& transformData)
 {
-    auto motionPathData = data.motionPathData;
-    auto elementBoundingBox = data.boundingBox;
+    auto motionPathData = transformData.motionPathData;
+    auto elementBoundingBox = transformData.boundingBox;
     if (!motionPathData || motionPathData->containingBlockBoundingRect.rect().isZero())
         return std::nullopt;
 
@@ -229,9 +231,9 @@ static FloatRoundedRect offsetRectForData(const MotionPathData& data)
     return rect;
 }
 
-std::optional<Path> MotionPath::computePathForBox(const BoxPathOperation&, const TransformOperationData& data)
+std::optional<Path> MotionPath::computePathForBox(const BoxPathOperation&, const TransformOperationData& transformData)
 {
-    if (auto motionPathData = data.motionPathData) {
+    if (auto motionPathData = transformData.motionPathData) {
         Path path;
         path.addRoundedRect(offsetRectForData(*motionPathData), PathRoundedRect::Strategy::PreferBezier);
         return path;
@@ -239,9 +241,9 @@ std::optional<Path> MotionPath::computePathForBox(const BoxPathOperation&, const
     return std::nullopt;
 }
 
-std::optional<Path> MotionPath::computePathForShape(const ShapePathOperation& pathOperation, const TransformOperationData& data)
+std::optional<Path> MotionPath::computePathForShape(const ShapePathOperation& pathOperation, const TransformOperationData& transformData)
 {
-    if (auto motionPathData = data.motionPathData) {
+    if (auto motionPathData = transformData.motionPathData) {
         auto& shape = pathOperation.basicShape();
         auto containingBlockRect = offsetRectForData(*motionPathData).rect();
         if (auto* centerCoordShape = dynamicDowncast<BasicShapeCircleOrEllipse>(shape)) {
@@ -250,7 +252,7 @@ std::optional<Path> MotionPath::computePathForShape(const ShapePathOperation& pa
         }
         return pathOperation.pathForReferenceRect(containingBlockRect);
     }
-    return pathOperation.pathForReferenceRect(data.boundingBox);
+    return pathOperation.pathForReferenceRect(transformData.boundingBox);
 
 }
 

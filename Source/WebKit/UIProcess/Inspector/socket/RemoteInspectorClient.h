@@ -30,6 +30,7 @@
 #include <JavaScriptCore/RemoteControllableTarget.h>
 #include <JavaScriptCore/RemoteInspectorConnectionClient.h>
 #include <WebCore/InspectorDebuggableType.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
@@ -41,7 +42,9 @@ namespace WebKit {
 class RemoteInspectorClient;
 class RemoteInspectorProxy;
 
-class RemoteInspectorObserver {
+class RemoteInspectorObserver : public CanMakeCheckedPtr<RemoteInspectorObserver> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteInspectorObserver);
 public:
     virtual ~RemoteInspectorObserver() { }
     virtual void targetListChanged(RemoteInspectorClient&) = 0;
@@ -51,8 +54,9 @@ public:
 using ConnectionID = Inspector::ConnectionID;
 using TargetID = Inspector::TargetID;
 
-class RemoteInspectorClient final : public Inspector::RemoteInspectorConnectionClient {
+class RemoteInspectorClient final : public Inspector::RemoteInspectorConnectionClient, public CanMakeCheckedPtr<RemoteInspectorClient> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteInspectorClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteInspectorClient);
 public:
     RemoteInspectorClient(URL, RemoteInspectorObserver&);
     ~RemoteInspectorClient();
@@ -89,7 +93,7 @@ private:
     void sendWebInspectorEvent(const String&);
 
     String m_backendCommandsURL;
-    RemoteInspectorObserver& m_observer;
+    CheckedRef<RemoteInspectorObserver> m_observer;
     std::optional<ConnectionID> m_connectionID;
     HashMap<ConnectionID, Vector<Target>> m_targets;
     HashMap<std::pair<ConnectionID, TargetID>, std::unique_ptr<RemoteInspectorProxy>> m_inspectorProxyMap;

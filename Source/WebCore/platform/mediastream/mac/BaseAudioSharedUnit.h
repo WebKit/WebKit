@@ -29,6 +29,7 @@
 
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceCenter.h"
+#include "Timer.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -93,6 +94,8 @@ public:
 
     void handleNewCurrentMicrophoneDevice(CaptureDevice&&);
 
+    uint32_t captureDeviceID() const { return m_capturingDevice ? m_capturingDevice->second : 0; }
+
 protected:
     BaseAudioSharedUnit();
 
@@ -112,7 +115,6 @@ protected:
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/);
 
     const String& persistentID() const { return m_capturingDevice ? m_capturingDevice->first : emptyString(); }
-    uint32_t captureDeviceID() const { return m_capturingDevice ? m_capturingDevice->second : 0; }
 
     void setIsRenderingAudio(bool);
 
@@ -124,6 +126,12 @@ protected:
     virtual void isProducingMicrophoneSamplesChanged() { }
     virtual void validateOutputDevice(uint32_t /* currentOutputDeviceID */) { }
     virtual bool migrateToNewDefaultDevice(const CaptureDevice&) { return false; }
+
+    void setVoiceActivityListenerCallback(Function<void()>&& callback) { m_voiceActivityCallback = WTFMove(callback); }
+    void voiceActivityDetected();
+    bool isListeningToVoiceActivity() const { return !!m_voiceActivityCallback; }
+
+    void disableVoiceActivityThrottleTimerForTesting() { m_voiceActivityThrottleTimer.stop(); }
 
 private:
     OSStatus startUnit();
@@ -151,6 +159,8 @@ private:
     bool m_isCapturingWithDefaultMicrophone { false };
     bool m_isProducingMicrophoneSamples { true };
     Vector<Function<void()>> m_whenNotRunningCallbacks;
+    Function<void()> m_voiceActivityCallback;
+    Timer m_voiceActivityThrottleTimer;
 };
 
 } // namespace WebCore

@@ -121,9 +121,6 @@ angle::Result CLKernelVk::getOrCreateComputePipeline(vk::PipelineCacheAccess *pi
                                                      vk::PipelineHelper **pipelineOut,
                                                      cl::WorkgroupCount *workgroupCountOut)
 {
-    uint32_t constantDataOffset = 0;
-    angle::FixedVector<size_t, 3> specConstantData;
-    angle::FixedVector<VkSpecializationMapEntry, 3> mapEntries;
     const CLProgramVk::DeviceProgramData *devProgramData =
         getProgram()->getDeviceProgramData(device.getNative());
     ASSERT(devProgramData != nullptr);
@@ -144,21 +141,6 @@ angle::Result CLKernelVk::getOrCreateComputePipeline(vk::PipelineCacheAccess *pi
             // Local work size (LWS) was valid, use that as WGS
             workgroupSize = ndrange.localWorkSize;
         }
-
-        // If at least one of the kernels does not use the reqd_work_group_size attribute, the
-        // Vulkan SPIR-V produced by the compiler will contain specialization constants
-        const std::array<uint32_t, 3> &specConstantWorkgroupSizeIDs =
-            devProgramData->reflectionData.specConstantWorkgroupSizeIDs;
-        ASSERT(ndrange.workDimensions <= 3);
-        for (cl_uint i = 0; i < ndrange.workDimensions; ++i)
-        {
-            mapEntries.push_back(
-                VkSpecializationMapEntry{.constantID = specConstantWorkgroupSizeIDs.at(i),
-                                         .offset     = constantDataOffset,
-                                         .size       = sizeof(uint32_t)});
-            constantDataOffset += sizeof(uint32_t);
-            specConstantData.push_back(workgroupSize[i]);
-        }
     }
 
     // Calculate the workgroup count
@@ -171,10 +153,49 @@ angle::Result CLKernelVk::getOrCreateComputePipeline(vk::PipelineCacheAccess *pi
     (*workgroupCountOut)[1] = static_cast<uint32_t>((ndrange.globalWorkSize[1] / workgroupSize[1]));
     (*workgroupCountOut)[2] = static_cast<uint32_t>((ndrange.globalWorkSize[2] / workgroupSize[2]));
 
+    // Populate program specialization constants (if any)
+    uint32_t constantDataOffset = 0;
+    std::vector<uint32_t> specConstantData;
+    std::vector<VkSpecializationMapEntry> mapEntries;
+    for (const auto specConstantUsed : devProgramData->reflectionData.specConstantsUsed)
+    {
+        switch (specConstantUsed)
+        {
+            case SpecConstantType::WorkDimension:
+                specConstantData.push_back(ndrange.workDimensions);
+                break;
+            case SpecConstantType::WorkgroupSizeX:
+                specConstantData.push_back(static_cast<uint32_t>(workgroupSize[0]));
+                break;
+            case SpecConstantType::WorkgroupSizeY:
+                specConstantData.push_back(static_cast<uint32_t>(workgroupSize[1]));
+                break;
+            case SpecConstantType::WorkgroupSizeZ:
+                specConstantData.push_back(static_cast<uint32_t>(workgroupSize[2]));
+                break;
+            case SpecConstantType::GlobalOffsetX:
+                specConstantData.push_back(static_cast<uint32_t>(ndrange.globalWorkOffset[0]));
+                break;
+            case SpecConstantType::GlobalOffsetY:
+                specConstantData.push_back(static_cast<uint32_t>(ndrange.globalWorkOffset[1]));
+                break;
+            case SpecConstantType::GlobalOffsetZ:
+                specConstantData.push_back(static_cast<uint32_t>(ndrange.globalWorkOffset[2]));
+                break;
+            default:
+                UNIMPLEMENTED();
+                continue;
+        }
+        mapEntries.push_back(VkSpecializationMapEntry{
+            .constantID = devProgramData->reflectionData.specConstantIDs[specConstantUsed],
+            .offset     = constantDataOffset,
+            .size       = sizeof(uint32_t)});
+        constantDataOffset += sizeof(uint32_t);
+    }
     VkSpecializationInfo computeSpecializationInfo{
         .mapEntryCount = static_cast<uint32_t>(mapEntries.size()),
         .pMapEntries   = mapEntries.data(),
-        .dataSize      = specConstantData.size() * sizeof(specConstantData[0]),
+        .dataSize      = specConstantData.size() * sizeof(uint32_t),
         .pData         = specConstantData.data(),
     };
 

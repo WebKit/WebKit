@@ -25,61 +25,19 @@
 
 #pragma once
 
-#import <Network/Network.h>
+#import "NetworkConnection.h"
 #import <wtf/CompletionHandler.h>
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringHash.h>
 
-#if (_LIBCPP_VERSION >= 14000) && !defined(_LIBCPP_HAS_NO_CXX20_COROUTINES)
-#import <coroutine>
-#else
-// FIXME: Remove this once all supported toolchains have non-experimental coroutine support.
-#import <experimental/coroutine>
-namespace std {
-using std::experimental::coroutine_handle;
-using std::experimental::suspend_never;
-using std::experimental::suspend_always;
-}
-#endif
-
 OBJC_CLASS NSURLRequest;
 
 namespace TestWebKitAPI {
 
-class Connection;
 class WebTransportServer;
 struct HTTPResponse;
-
-template<typename PromiseType>
-struct CoroutineHandle {
-    CoroutineHandle(std::coroutine_handle<PromiseType>&& handle)
-        : handle(WTFMove(handle)) { }
-    CoroutineHandle(const CoroutineHandle&) = delete;
-    CoroutineHandle(CoroutineHandle&& other)
-        : handle(std::exchange(other.handle, nullptr)) { }
-    ~CoroutineHandle()
-    {
-        if (handle)
-            handle.destroy();
-    }
-    std::coroutine_handle<PromiseType> handle;
-};
-
-struct Task {
-    struct promise_type {
-        Task get_return_object() { return { std::coroutine_handle<promise_type>::from_promise(*this) }; }
-        std::suspend_never initial_suspend() { return { }; }
-        std::suspend_always final_suspend() noexcept { return { }; }
-        void unhandled_exception() { }
-        void return_void() { }
-    };
-    CoroutineHandle<promise_type> handle;
-};
-
-class ReceiveOperation;
-class SendOperation;
 
 class HTTPServer {
     WTF_MAKE_FAST_ALLOCATED;
@@ -121,57 +79,6 @@ private:
     Ref<RequestData> m_requestData;
     RetainPtr<nw_listener_t> m_listener;
     Protocol m_protocol { Protocol::Http };
-};
-
-// FIXME: Move this to its own header and mm and probably rename to NetworkConnection.
-class Connection {
-public:
-    void send(String&&, CompletionHandler<void()>&& = nullptr) const;
-    void send(Vector<uint8_t>&&, CompletionHandler<void()>&& = nullptr) const;
-    void send(RetainPtr<dispatch_data_t>&&, CompletionHandler<void(bool)>&& = nullptr) const;
-    SendOperation awaitableSend(Vector<uint8_t>&&);
-    SendOperation awaitableSend(String&&);
-    SendOperation awaitableSend(RetainPtr<dispatch_data_t>&&);
-    void sendAndReportError(Vector<uint8_t>&&, CompletionHandler<void(bool)>&&) const;
-    void receiveBytes(CompletionHandler<void(Vector<uint8_t>&&)>&&, size_t minimumSize = 1) const;
-    void receiveHTTPRequest(CompletionHandler<void(Vector<char>&&)>&&, Vector<char>&& buffer = { }) const;
-    ReceiveOperation awaitableReceiveHTTPRequest() const;
-    void webSocketHandshake(CompletionHandler<void()>&& = { });
-    void terminate(CompletionHandler<void()>&& = { });
-    void cancel();
-
-private:
-    friend class HTTPServer;
-    friend class WebTransportServer;
-    Connection(nw_connection_t connection)
-        : m_connection(connection) { }
-
-    RetainPtr<nw_connection_t> m_connection;
-};
-
-class ReceiveOperation {
-public:
-    ReceiveOperation(const Connection& connection)
-        : m_connection(connection) { }
-    bool await_ready() { return false; }
-    void await_suspend(std::coroutine_handle<>);
-    Vector<char> await_resume() { return WTFMove(m_result); }
-private:
-    Connection m_connection;
-    Vector<char> m_result;
-};
-
-class SendOperation {
-public:
-    SendOperation(RetainPtr<dispatch_data_t>&& data, const Connection& connection)
-        : m_data(WTFMove(data))
-        , m_connection(connection) { }
-    bool await_ready() { return false; }
-    void await_suspend(std::coroutine_handle<>);
-    void await_resume() { }
-private:
-    RetainPtr<dispatch_data_t> m_data;
-    Connection m_connection;
 };
 
 struct HTTPResponse {
@@ -265,8 +172,6 @@ private:
 };
 
 } // namespace H2
-
-RetainPtr<dispatch_data_t> dataFromVector(Vector<uint8_t>&&);
 
 } // namespace TestWebKitAPI
 

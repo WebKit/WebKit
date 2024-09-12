@@ -106,6 +106,8 @@ void WebTransportSession::streamReceiveBytes(WebTransportStreamIdentifier identi
     ASSERT(RunLoop::isMain());
     if (auto source = m_readStreamSources.get(identifier))
         source->receiveBytes(bytes, withFin);
+    else
+        ASSERT_NOT_REACHED();
 }
 
 void WebTransportSession::sendDatagram(std::span<const uint8_t> datagram, CompletionHandler<void()>&& completionHandler)

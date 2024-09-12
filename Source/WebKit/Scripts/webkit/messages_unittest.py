@@ -55,6 +55,8 @@ _test_receiver_names = [
     'TestWithStreamServerConnectionHandle',
     'TestWithEnabledBy',
     'TestWithEnabledIf',
+    'TestWithEnabledByAndConjunction',
+    'TestWithEnabledByOrConjunction',
 ]
 
 

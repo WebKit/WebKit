@@ -81,6 +81,8 @@ public:
     ExceptionOr<Ref<XRGPUSubImage>> getViewSubImage(XRProjectionLayer&, WebXRView&);
     GPUTextureFormat getPreferredColorFormat();
 
+    GPUDevice& device();
+
     // The core specification doesn't require these, support will be added later.
     // XRQuadLayer createQuadLayer(optional XRGPUQuadLayerInit init);
     // XRCylinderLayer createCylinderLayer(optional XRGPUCylinderLayerInit init);
@@ -92,6 +94,7 @@ private:
     RefPtr<WebGPU::XRBinding> m_backing;
     RefPtr<const WebXRSession> m_session;
     std::optional<XRGPUProjectionLayerInit> m_init;
+    Ref<GPUDevice> m_device;
 };
 
 } // namespace WebCore

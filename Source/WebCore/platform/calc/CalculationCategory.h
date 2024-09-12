@@ -31,6 +31,7 @@ namespace WebCore {
 namespace Calculation {
 
 enum class Category : uint8_t {
+    Integer,
     Number,
     Percent,
     Length,

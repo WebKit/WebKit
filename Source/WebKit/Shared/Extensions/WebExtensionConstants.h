@@ -42,7 +42,7 @@ static constexpr size_t webExtensionDeclarativeNetRequestMaximumNumberOfEnabledR
 static constexpr size_t webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules = 30000;
 
 // MARK: Storage
-static constexpr double webExtensionUnlimitedStorageQuotaBytes = std::numeric_limits<double>::max();
+static constexpr size_t webExtensionUnlimitedStorageQuotaBytes = std::numeric_limits<size_t>::max();
 
 static constexpr size_t webExtensionStorageAreaLocalQuotaBytes = 5 * 1024 * 1024;
 static constexpr size_t webExtensionStorageAreaSessionQuotaBytes = 10 * 1024 * 1024;

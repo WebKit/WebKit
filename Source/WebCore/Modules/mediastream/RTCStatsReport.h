@@ -139,7 +139,7 @@ public:
 #if USE(LIBWEBRTC)
         InboundRtpStreamStats(const webrtc::RTCInboundRtpStreamStats&);
 #elif USE(GSTREAMER_WEBRTC)
-        InboundRtpStreamStats(const GstStructure*, const GstStructure* additionalStats);
+        InboundRtpStreamStats(const GstStructure*);
 #endif
 
         String trackIdentifier;
@@ -240,7 +240,7 @@ public:
 #if USE(LIBWEBRTC)
         OutboundRtpStreamStats(const webrtc::RTCOutboundRtpStreamStats&);
 #elif USE(GSTREAMER_WEBRTC)
-        OutboundRtpStreamStats(const GstStructure*, const GstStructure* additionalStats);
+        OutboundRtpStreamStats(const GstStructure*);
 #endif
 
         String mid;

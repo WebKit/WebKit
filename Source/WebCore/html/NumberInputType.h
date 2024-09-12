@@ -32,10 +32,12 @@
 #pragma once
 
 #include "TextFieldInputType.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class NumberInputType final : public TextFieldInputType {
+    WTF_MAKE_TZONE_ALLOCATED(NumberInputType);
 public:
     static Ref<NumberInputType> create(HTMLInputElement& element)
     {

@@ -103,6 +103,14 @@ struct TimeRaw {
 };
 void serializationForCSS(StringBuilder&, const TimeRaw&);
 
+struct LengthPercentageRaw {
+    CSSUnitType type;
+    double value;
+
+    bool operator==(const LengthPercentageRaw&) const = default;
+};
+void serializationForCSS(StringBuilder&, const LengthPercentageRaw&);
+
 struct SymbolRaw {
     CSSValueID value;
 
@@ -176,9 +184,6 @@ struct IntegerRaw {
 
     bool operator==(const IntegerRaw<IntType, Range>&) const = default;
 };
-
-using LengthOrPercentRaw = std::variant<LengthRaw, PercentRaw>;
-using PercentOrNumberRaw = std::variant<PercentRaw, NumberRaw>;
 
 template<typename... Ts>
 void serializationForCSS(StringBuilder& builder, const std::variant<Ts...>& variant)

@@ -39,6 +39,9 @@ TextStream& operator<<(TextStream& ts, StyleAppearance appearance)
     case StyleAppearance::Auto:
         ts << "auto";
         break;
+    case StyleAppearance::Base:
+        ts << "base";
+        break;
     case StyleAppearance::Checkbox:
         ts << "checkbox";
         break;

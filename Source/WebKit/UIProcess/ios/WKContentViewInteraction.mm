@@ -1431,6 +1431,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _setUpImageAnalysis];
 #endif
 
+    _sourceAnimationIDtoDestinationAnimationID = adoptNS([[NSMutableDictionary alloc] init]);
+
     _hasSetUpInteractions = YES;
 }
 
@@ -3564,7 +3566,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (WebKit::TapIdentifier)nextTapIdentifier
 {
     _latestTapID = WebKit::TapIdentifier::generate();
-    return _latestTapID;
+    return *_latestTapID;
 }
 
 - (void)_highlightLongPressRecognized:(UILongPressGestureRecognizer *)gestureRecognizer
@@ -10928,7 +10930,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
     if (_focusedElementInformation.nonAutofillCredentialType == WebCore::NonAutofillCredentialType::WebAuthn) {
         context.get()[@"_page_id"] = [NSNumber numberWithUnsignedLong:_page->webPageIDInMainFrameProcess().toUInt64()];
-        context.get()[@"_frame_id"] = [NSNumber numberWithUnsignedLong:_focusedElementInformation.frameID.object().toUInt64()];
+        context.get()[@"_frame_id"] = [NSNumber numberWithUnsignedLong:_focusedElementInformation.frameID ? _focusedElementInformation.frameID->object().toUInt64() : 0];
         context.get()[@"_credential_type"] = WebCore::nonAutofillCredentialTypeString(_focusedElementInformation.nonAutofillCredentialType);
     }
     return context.autorelease();
@@ -13317,7 +13319,11 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 
 - (void)updateUnderlyingTextVisibilityForTextAnimationID:(NSUUID *)uuid visible:(BOOL)visible completionHandler:(void (^)(void))completionHandler
 {
+    NSUUID *destinationUUID = _sourceAnimationIDtoDestinationAnimationID.get()[uuid];
     auto textUUID = WTF::UUID::fromNSUUID(uuid);
+    if (destinationUUID)
+        textUUID = WTF::UUID::fromNSUUID(destinationUUID);
+
     _page->updateUnderlyingTextVisibilityForTextAnimationID(*textUUID, visible, [completionHandler = makeBlockPtr(completionHandler)] () {
         completionHandler();
     });
@@ -13330,8 +13336,49 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 
 - (void)callCompletionHandlerForAnimationID:(NSUUID *)uuid
 {
-    auto animationUUID = WTF::UUID::fromNSUUID(uuid);
+    NSUUID *destinationUUID = _sourceAnimationIDtoDestinationAnimationID.get()[uuid];
+
+    if (!destinationUUID)
+        return;
+
+    auto animationUUID = WTF::UUID::fromNSUUID(destinationUUID);
     _page->callCompletionHandlerForAnimationID(*animationUUID, WebCore::TextAnimationRunMode::RunAnimation);
+}
+
+- (void)callCompletionHandlerForAnimationID:(NSUUID *)uuid completionHandler:(void (^)(UITargetedPreview * _Nullable))completionHandler
+{
+    auto animationUUID = WTF::UUID::fromNSUUID(uuid);
+
+    // Store this completion handler so that it can be called after the execution of the next
+    // call to replace the text and eventually use this completion handler to pass the
+    // text indicator to UIKit.
+    _page->storeDestinationCompletionHandlerForAnimationID(*animationUUID, [protectedSelf = retainPtr(self),  completionHandler = makeBlockPtr(completionHandler)] (std::optional<WebCore::TextIndicatorData> textIndicatorData) {
+        if (!textIndicatorData) {
+            completionHandler(nil);
+            return;
+        }
+
+        auto snapshot = textIndicatorData->contentImage;
+        if (!snapshot) {
+            completionHandler(nil);
+            return;
+        }
+
+        auto snapshotImage = snapshot->nativeImage();
+        if (!snapshotImage) {
+            completionHandler(nil);
+            return;
+        }
+
+        RetainPtr image = adoptNS([[UIImage alloc] initWithCGImage:snapshotImage->platformImage().get() scale:protectedSelf->_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
+
+        RetainPtr targetedPreview = createTargetedPreview(image.get(), protectedSelf.get(), [protectedSelf containerForContextMenuHintPreviews], textIndicatorData->textBoundingRectInRootViewCoordinates, textIndicatorData->textRectsInBoundingRectCoordinates, nil);
+
+        completionHandler(targetedPreview.get());
+    });
+
+    _page->callCompletionHandlerForAnimationID(*animationUUID, WebCore::TextAnimationRunMode::RunAnimation);
+
 }
 
 - (void)replacementEffectDidComplete
@@ -13410,15 +13457,30 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
     [_webView writingToolsSession:session didReceiveAction:action];
 }
 
-- (void)addTextAnimationForAnimationID:(NSUUID *)uuid withStyleType:(WKTextAnimationType)styleType
+static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationType style)
+{
+    switch (style) {
+    case WebCore::TextAnimationType::Initial:
+        return WKTextAnimationTypeInitial;
+    case WebCore::TextAnimationType::Source:
+        return WKTextAnimationTypeSource;
+    case WebCore::TextAnimationType::Final:
+        return WKTextAnimationTypeFinal;
+    }
+}
+
+- (void)addTextAnimationForAnimationID:(NSUUID *)uuid withData:(const WebCore::TextAnimationData&)data
 {
     if (!_page->preferences().textAnimationsEnabled())
         return;
 
+    if (data.style == WebCore::TextAnimationType::Final)
+        [_sourceAnimationIDtoDestinationAnimationID setObject:uuid forKey:data.sourceAnimationUUID];
+
     if (!_textAnimationManager)
         _textAnimationManager = adoptNS([WebKit::allocWKSTextAnimationManagerInstance() initWithDelegate:self]);
 
-    [_textAnimationManager addTextAnimationForAnimationID:uuid withStyleType:styleType];
+    [_textAnimationManager addTextAnimationForAnimationID:uuid withStyleType:toWKTextAnimationType(data.style)];
 }
 
 - (void)removeTextAnimationForAnimationID:(NSUUID *)uuid

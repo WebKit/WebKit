@@ -51,7 +51,7 @@ String CSSGridLineNamesValue::customCSSText() const
 }
 
 CSSGridLineNamesValue::CSSGridLineNamesValue(std::span<const String> names)
-    : CSSValue(GridLineNamesClass)
+    : CSSValue(ClassType::GridLineNames)
     , m_names(names.begin(), names.end())
 {
 }
@@ -61,4 +61,4 @@ Ref<CSSGridLineNamesValue> CSSGridLineNamesValue::create(std::span<const String>
     return adoptRef(*new CSSGridLineNamesValue(names));
 }
 
-}
+} // namespace WebCore

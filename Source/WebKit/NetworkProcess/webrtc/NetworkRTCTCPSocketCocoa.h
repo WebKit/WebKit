@@ -68,7 +68,7 @@ private:
     Vector<uint8_t> createMessageBuffer(std::span<const uint8_t>);
 
     WebCore::LibWebRTCSocketIdentifier m_identifier;
-    NetworkRTCProvider& m_rtcProvider;
+    CheckedRef<NetworkRTCProvider> m_rtcProvider;
     Ref<IPC::Connection> m_connection;
     RetainPtr<nw_connection_t> m_nwConnection;
     bool m_isSTUN { false };

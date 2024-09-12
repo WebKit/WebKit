@@ -733,7 +733,7 @@ void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node*)
     [rootWebArea->wrapper() accessibilityPostedNotification:@"AXFocusChanged" userInfo:nil];
 }
 
-void AXObjectCache::handleScrolledToAnchor(const Node*)
+void AXObjectCache::handleScrolledToAnchor(const Node&)
 {
 }
 

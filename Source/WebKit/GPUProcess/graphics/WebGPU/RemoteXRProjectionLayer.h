@@ -42,6 +42,10 @@
 #include <wtf/Vector.h>
 #endif
 
+namespace PlatformXR {
+struct FrameData;
+}
+
 namespace WebCore {
 class DestinationColorSpace;
 class ImageBuffer;
@@ -65,7 +69,7 @@ class ObjectHeap;
 }
 
 class RemoteXRProjectionLayer final : public IPC::StreamMessageReceiver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RemoteXRProjectionLayer);
 public:
     static Ref<RemoteXRProjectionLayer> create(WebCore::WebGPU::XRProjectionLayer& xrProjectionLayer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
@@ -89,12 +93,18 @@ private:
     RemoteXRProjectionLayer& operator=(const RemoteXRProjectionLayer&) = delete;
     RemoteXRProjectionLayer& operator=(RemoteXRProjectionLayer&&) = delete;
 
+    Ref<WebCore::WebGPU::XRProjectionLayer> protectedBacking();
+    Ref<IPC::StreamServerConnection> protectedStreamConnection();
+    Ref<RemoteGPU> protectedGPU() const;
+
     RefPtr<IPC::Connection> connection() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
     void destruct();
-    [[noreturn]] void startFrame();
-    [[noreturn]] void endFrame();
+#if PLATFORM(COCOA)
+    void startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex);
+#endif
+    void endFrame();
 
     Ref<WebCore::WebGPU::XRProjectionLayer> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;

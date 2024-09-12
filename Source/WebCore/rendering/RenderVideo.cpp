@@ -33,6 +33,7 @@
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "MediaPlayer.h"
@@ -111,6 +112,8 @@ bool RenderVideo::updateIntrinsicSize()
     setIntrinsicSize(size);
     setPreferredLogicalWidthsDirty(true);
     setNeedsLayout();
+    if (auto* inlineLayout = LayoutIntegration::LineLayout::containing(*this))
+        inlineLayout->boxContentWillChange(*this);
     return true;
 }
 

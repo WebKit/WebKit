@@ -36,6 +36,8 @@ class InlineStylePropertyMap final : public StylePropertyMap {
 public:
     static Ref<InlineStylePropertyMap> create(StyledElement&);
 
+    Type type() const final { return Type::Inline; }
+
     RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;
     String shorthandPropertySerialization(CSSPropertyID) const final;
     RefPtr<CSSValue> customPropertyValue(const AtomString& property) const final;
@@ -55,3 +57,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSSOM_STYLE_PROPERTY_MAP(InlineStylePropertyMap, WebCore::StylePropertyMapReadOnly::Type::Inline);

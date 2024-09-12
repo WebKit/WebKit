@@ -8,52 +8,17 @@
 </head>
 <body>
 <script>
-var activeWorker;
-var uuid = token();
-var url = "/WebKit/service-workers/resources/fetch-service-worker-preload-script.py?getResponseFromRequestWithCustomHeader=yes&customHeader=1&token=" + uuid;
-var frame;
-const channel = new MessageChannel();
-
-function waitUntilActivating()
-{
-    return new Promise(resolve => {
-        channel.port2.onmessage = (event) => {
-            if (event.data === "activating")
-                resolve();
-        };
-    });
-}
-
-function triggerActivation()
-{
-    activeWorker.postMessage("activate");
-}
+const url = "/WebKit/service-workers/resources/fetch-service-worker-preload-script.py?getResponseFromRequestWithCustomHeader=yes&customHeader=1&token=" + token();
 
 promise_test(async (test) => {
-    if (window.testRunner) {
-        testRunner.setUseSeparateServiceWorkerProcess(true);
-        await fetch("").then(() => { }, () => { });
-    }
-
-    let registration = await navigator.serviceWorker.register("/WebKit/service-workers/fetch-service-worker-preload-worker.js", { scope : url });
-    if (!registration.installing) {
-        registration.unregister();
-        registration = await navigator.serviceWorker.register("/WebKit/service-workers/fetch-service-worker-preload-worker.js", { scope : url });
-    }
-
-    activeWorker = registration.installing;
-    activeWorker.postMessage({ port: channel.port1 }, [channel.port1]);
-
-    return waitUntilActivating();
-}, "Setup activating worker");
+    return setupActivatedButNotRunningServiceWorker("/WebKit/service-workers/fetch-service-worker-preload-worker.js", url);
+}, "Setup activated but not running worker");
 
 promise_test(async (test) => {
-    fetch(url + "&value=use-preload", { method: 'POST' });
+    await fetch(url + "&value=use-preload", { method: 'POST' });
 
-    // Load iframe, with activating worker, so only preload will start.
+    // Load iframe, with not running worker, so only preload will start.
     const promise = withIframe(url);
-
-    triggerActivation();
 
     const frame = await promise;
     assert_equals(frame.contentWindow.value, "my-custom-header");

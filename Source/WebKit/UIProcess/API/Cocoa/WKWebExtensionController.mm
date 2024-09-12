@@ -65,14 +65,14 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionController, WebExtensionCont
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebExtensionController>(self, configuration._webExtensionControllerConfiguration.copy());
+    API::Object::constructInWrapper<WebKit::WebExtensionController>(self, configuration._protectedWebExtensionControllerConfiguration->copy());
 
     return self;
 }
 
 - (WKWebExtensionControllerConfiguration *)configuration
 {
-    return _webExtensionController->configuration().copy()->wrapper();
+    return _webExtensionController->protectedConfiguration()->copy()->wrapper();
 }
 
 - (BOOL)loadExtensionContext:(WKWebExtensionContext *)extensionContext error:(NSError **)outError
@@ -93,7 +93,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionController, WebExtensionCont
 {
     NSParameterAssert([extension isKindOfClass:WKWebExtension.class]);
 
-    if (auto extensionContext = _webExtensionController->extensionContext(extension._webExtension))
+    if (auto extensionContext = _webExtensionController->extensionContext(extension._protectedWebExtension))
         return extensionContext->wrapper();
     return nil;
 }

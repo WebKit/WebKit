@@ -32,6 +32,7 @@
 #include "CCallHelpers.h"
 #include "JSCJSValue.h"
 #include "JSInterfaceJIT.h"
+#include "JSWebAssemblyInstance.h"
 #include "LinkBuffer.h"
 #include "ProbeContext.h"
 #include "ScratchRegisterAllocator.h"

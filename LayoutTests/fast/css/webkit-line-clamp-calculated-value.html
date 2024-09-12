@@ -1,19 +1,45 @@
 <!DOCTYPE html>
 <body>
 <script src="../../resources/js-test-pre.js"></script>
+<style>
+  #container {
+    container-type: inline-size;
+    width: 100px;
+  }
+</style>
+<div id="container">
 <div id="testDiv"></div>
+</div>
 <script>
 description("Tests assigning a calculated value to -webkit-line-clamp CSS property.");
 
 var testDiv = document.getElementById("testDiv");
 
 shouldBeEmptyString("testDiv.style['-webkit-line-clamp']");
+
 evalAndLog("testDiv.style['-webkit-line-clamp'] = 'calc(10% * 2)'");
 shouldBeEqualToString("testDiv.style['-webkit-line-clamp']", "calc(20%)");
 shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-line-clamp')", "20%");
+
 evalAndLog("testDiv.style['-webkit-line-clamp'] = 'calc(2 * 3)'");
-shouldBeEqualToString("testDiv.style['-webkit-line-clamp']", "6");
+shouldBeEqualToString("testDiv.style['-webkit-line-clamp']", "calc(6)");
 shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-line-clamp')", "6");
+
+evalAndLog("testDiv.style['-webkit-line-clamp'] = 'calc(-2%)'");
+shouldBeEqualToString("testDiv.style['-webkit-line-clamp']", "calc(-2%)");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-line-clamp')", "0%");
+
+evalAndLog("testDiv.style['-webkit-line-clamp'] = 'calc(-2)'");
+shouldBeEqualToString("testDiv.style['-webkit-line-clamp']", "calc(-2)");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-line-clamp')", "1");
+
+evalAndLog("testDiv.style['-webkit-line-clamp'] = 'calc(10 + (sign(2cqw - 10px) * 5))'");
+shouldBeEqualToString("testDiv.style['-webkit-line-clamp']", "calc(10 + (5 * sign(2cqw - 10px)))");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-line-clamp')", "5");
+
+evalAndLog("testDiv.style['-webkit-line-clamp'] = 'calc(10% + (sign(2cqw - 10px) * 5%))'");
+shouldBeEqualToString("testDiv.style['-webkit-line-clamp']", "calc(10% + (5% * sign(2cqw - 10px)))");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-line-clamp')", "5%");
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

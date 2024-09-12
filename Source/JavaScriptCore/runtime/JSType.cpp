@@ -122,6 +122,8 @@ void printInternal(PrintStream& out, JSC::JSType type)
     CASE(DerivedStringObjectType)
     CASE(InternalFieldTupleType)
     CASE(MaxJSType)
+    CASE(JSWrapForValidIteratorType)
+    CASE(JSRegExpStringIteratorType)
     }
 }
 

@@ -29,7 +29,7 @@
 namespace WebCore {
 
 CSSQuadValue::CSSQuadValue(Quad quad)
-    : CSSValue(QuadClass)
+    : CSSValue(ClassType::Quad)
     , m_quad(WTFMove(quad))
 {
 }

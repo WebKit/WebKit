@@ -330,7 +330,7 @@ public:
         trackEnded(m_track);
     }
 
-    void pushSample(GRefPtr<GstSample>&& sample, const ASCIILiteral logMessage)
+    void pushSample(GRefPtr<GstSample>&& sample, [[maybe_unused]] const ASCIILiteral logMessage)
     {
         ASSERT(m_src);
         if (!m_src || !m_isObserving)
@@ -962,7 +962,7 @@ WEBKIT_DEFINE_ASYNC_DATA_STRUCT(ProbeData);
 static GstPadProbeReturn webkitMediaStreamSrcPadProbeCb(GstPad* pad, GstPadProbeInfo* info, ProbeData* data)
 {
     GstEvent* event = GST_PAD_PROBE_INFO_EVENT(info);
-    WebKitMediaStreamSrc* self = WEBKIT_MEDIA_STREAM_SRC_CAST(data->element.get());
+    [[maybe_unused]] WebKitMediaStreamSrc* self = WEBKIT_MEDIA_STREAM_SRC_CAST(data->element.get());
 
     GST_DEBUG_OBJECT(self, "Event %" GST_PTR_FORMAT, event);
     switch (GST_EVENT_TYPE(event)) {
@@ -1078,7 +1078,7 @@ void webkitMediaStreamSrcSignalEndOfStream(WebKitMediaStreamSrc* self)
     self->priv->sources.clear();
 }
 
-void webkitMediaStreamSrcCharacteristicsChanged(WebKitMediaStreamSrc* self)
+void webkitMediaStreamSrcCharacteristicsChanged([[maybe_unused]] WebKitMediaStreamSrc* self)
 {
     GST_DEBUG_OBJECT(self, "MediaStream characteristics changed");
 }

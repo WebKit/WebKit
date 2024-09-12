@@ -11,10 +11,10 @@
 
 #include "common/string_utils.h"
 #include "test_utils/ANGLETest.h"
-#include "test_utils/runner/TestSuite.h"
 
 #if defined(ANGLE_HAS_RAPIDJSON)
 #    include "common/serializer/JsonSerializer.h"
+#    include "test_utils/runner/TestSuite.h"
 #endif  // defined(ANGLE_HAS_RAPIDJSON)
 
 using namespace angle;

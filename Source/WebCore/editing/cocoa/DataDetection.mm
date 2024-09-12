@@ -293,25 +293,31 @@ static void removeResultLinksFromAnchor(Element& element)
 
 static bool searchForLinkRemovingExistingDDLinks(Node& startNode, Node& endNode)
 {
-    for (auto* node = &startNode; node; node = NodeTraversal::next(*node)) {
-        if (RefPtr anchor = dynamicDowncast<HTMLAnchorElement>(*node)) {
-            if (!equalLettersIgnoringASCIICase(anchor->attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
-                return true;
-            removeResultLinksFromAnchor(*anchor);
-        }
-        
-        if (node == &endNode) {
-            // If we found the end node and no link, return false unless an ancestor node is a link.
-            // The only ancestors not tested at this point are in the direct line from self's parent to the top.
-            for (auto& anchor : ancestorsOfType<HTMLAnchorElement>(startNode)) {
-                if (!equalLettersIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
+    Vector<Ref<HTMLAnchorElement>> elementsToProcess;
+    auto result = ([&] {
+        for (auto* node = &startNode; node; node = NodeTraversal::next(*node)) {
+            if (RefPtr anchor = dynamicDowncast<HTMLAnchorElement>(*node)) {
+                if (!equalLettersIgnoringASCIICase(anchor->attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
                     return true;
-                removeResultLinksFromAnchor(anchor);
+                removeResultLinksFromAnchor(*anchor);
             }
-            return false;
+
+            if (node == &endNode) {
+                // If we found the end node and no link, return false unless an ancestor node is a link.
+                // The only ancestors not tested at this point are in the direct line from self's parent to the top.
+                for (auto& anchor : ancestorsOfType<HTMLAnchorElement>(startNode)) {
+                    if (!equalLettersIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
+                        return true;
+                    elementsToProcess.append(anchor);
+                }
+                return false;
+            }
         }
-    }
-    return false;
+        return false;
+    })();
+    for (auto& element : elementsToProcess)
+        removeResultLinksFromAnchor(element);
+    return result;
 }
 
 static NSString *dataDetectorTypeForCategory(DDResultCategory category)

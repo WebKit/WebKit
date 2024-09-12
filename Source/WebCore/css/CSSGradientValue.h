@@ -31,10 +31,9 @@
 #include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include "ColorInterpolationMethod.h"
 #include "Gradient.h"
+#include "StyleImage.h"
 
 namespace WebCore {
-
-class StyleImage;
 
 namespace Style {
 class BuilderState;
@@ -150,7 +149,7 @@ public:
 
 private:
     CSSLinearGradientValue(Data&& data, CSSGradientRepeat repeating, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
-        : CSSValue(LinearGradientClass)
+        : CSSValue(ClassType::LinearGradient)
         , m_data(WTFMove(data))
         , m_stops(WTFMove(stops))
         , m_repeating(repeating)
@@ -159,7 +158,7 @@ private:
     }
 
     CSSLinearGradientValue(const CSSLinearGradientValue& other)
-        : CSSValue(LinearGradientClass)
+        : CSSValue(ClassType::LinearGradient)
         , m_data(other.m_data)
         , m_stops(other.m_stops)
         , m_repeating(other.m_repeating)
@@ -227,7 +226,7 @@ public:
 
 private:
     CSSPrefixedLinearGradientValue(Data&& data, CSSGradientRepeat repeating, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
-        : CSSValue(PrefixedLinearGradientClass)
+        : CSSValue(ClassType::PrefixedLinearGradient)
         , m_data(WTFMove(data))
         , m_stops(WTFMove(stops))
         , m_repeating(repeating)
@@ -236,7 +235,7 @@ private:
     }
 
     CSSPrefixedLinearGradientValue(const CSSPrefixedLinearGradientValue& other)
-        : CSSValue(PrefixedLinearGradientClass)
+        : CSSValue(ClassType::PrefixedLinearGradient)
         , m_data(other.m_data)
         , m_stops(other.m_stops)
         , m_repeating(other.m_repeating)
@@ -296,7 +295,7 @@ public:
 
 private:
     CSSDeprecatedLinearGradientValue(Data&& data, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
-        : CSSValue(DeprecatedLinearGradientClass)
+        : CSSValue(ClassType::DeprecatedLinearGradient)
         , m_data(WTFMove(data))
         , m_stops(WTFMove(stops))
         , m_colorInterpolationMethod(colorInterpolationMethod)
@@ -304,7 +303,7 @@ private:
     }
 
     CSSDeprecatedLinearGradientValue(const CSSDeprecatedLinearGradientValue& other)
-        : CSSValue(DeprecatedLinearGradientClass)
+        : CSSValue(ClassType::DeprecatedLinearGradient)
         , m_data(other.m_data)
         , m_stops(other.m_stops)
         , m_colorInterpolationMethod(other.m_colorInterpolationMethod)
@@ -498,7 +497,7 @@ public:
 
 private:
     CSSRadialGradientValue(Data&& data, CSSGradientRepeat repeating, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
-        : CSSValue(RadialGradientClass)
+        : CSSValue(ClassType::RadialGradient)
         , m_data(WTFMove(data))
         , m_stops(WTFMove(stops))
         , m_repeating(repeating)
@@ -507,7 +506,7 @@ private:
     }
 
     CSSRadialGradientValue(const CSSRadialGradientValue& other)
-        : CSSValue(RadialGradientClass)
+        : CSSValue(ClassType::RadialGradient)
         , m_data(other.m_data)
         , m_stops(other.m_stops)
         , m_repeating(other.m_repeating)
@@ -594,7 +593,7 @@ public:
 
 private:
     CSSPrefixedRadialGradientValue(Data&& data, CSSGradientRepeat repeating, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
-        : CSSValue(PrefixedRadialGradientClass)
+        : CSSValue(ClassType::PrefixedRadialGradient)
         , m_data(WTFMove(data))
         , m_stops(WTFMove(stops))
         , m_repeating(repeating)
@@ -603,7 +602,7 @@ private:
     }
 
     CSSPrefixedRadialGradientValue(const CSSPrefixedRadialGradientValue& other)
-        : CSSValue(PrefixedRadialGradientClass)
+        : CSSValue(ClassType::PrefixedRadialGradient)
         , m_data(other.m_data)
         , m_stops(other.m_stops)
         , m_repeating(other.m_repeating)
@@ -694,7 +693,7 @@ public:
 
 private:
     CSSDeprecatedRadialGradientValue(Data&& data, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
-        : CSSValue(DeprecatedRadialGradientClass)
+        : CSSValue(ClassType::DeprecatedRadialGradient)
         , m_data(WTFMove(data))
         , m_stops(WTFMove(stops))
         , m_colorInterpolationMethod(colorInterpolationMethod)
@@ -702,7 +701,7 @@ private:
     }
 
     CSSDeprecatedRadialGradientValue(const CSSDeprecatedRadialGradientValue& other)
-        : CSSValue(DeprecatedRadialGradientClass)
+        : CSSValue(ClassType::DeprecatedRadialGradient)
         , m_data(other.m_data)
         , m_stops(other.m_stops)
         , m_colorInterpolationMethod(other.m_colorInterpolationMethod)
@@ -775,7 +774,7 @@ public:
 
 private:
     explicit CSSConicGradientValue(Data&& data, CSSGradientRepeat repeating, CSSGradientColorInterpolationMethod colorInterpolationMethod, CSSGradientColorStopList stops)
-        : CSSValue(ConicGradientClass)
+        : CSSValue(ClassType::ConicGradient)
         , m_data(WTFMove(data))
         , m_stops(WTFMove(stops))
         , m_repeating(repeating)
@@ -784,7 +783,7 @@ private:
     }
 
     CSSConicGradientValue(const CSSConicGradientValue& other)
-        : CSSValue(ConicGradientClass)
+        : CSSValue(ClassType::ConicGradient)
         , m_data(other.m_data)
         , m_stops(other.m_stops)
         , m_repeating(other.m_repeating)

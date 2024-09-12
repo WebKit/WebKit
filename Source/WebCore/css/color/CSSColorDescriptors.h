@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSCalcValue.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+RawTypes.h"
 #include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
@@ -43,8 +44,7 @@ namespace WebCore {
 enum class CSSColorFunctionSyntax { Legacy, Modern };
 enum class CSSColorFunctionForm { Relative, Absolute };
 
-template<typename... Ts>
-struct CSSColorComponent {
+template<typename... Ts> struct CSSColorComponent {
     using ResultTypeList = brigand::list<Ts...>;
     using Result = VariantOrSingle<ResultTypeList>;
 
@@ -56,11 +56,11 @@ struct CSSColorComponent {
     double min = -std::numeric_limits<double>::infinity();
     double max = std::numeric_limits<double>::infinity();
 
-    // The value parsed <percentage> values are multiplied by for normalization.
-    double percentMultiplier = 1.0 / 100.0;
-
-    // The value parsed <number> values are multiplied by for normalization.
+    // The value parsed <number> values are multiplied by for normalization to typed-color value.
     double numberMultiplier = 1.0;
+
+    // The value parsed <percentage> values are multiplied by for normalization to <number>.
+    double percentMultiplier = 1.0 / 100.0;
 
     // Value the corresponding origin color component is multiplied by
     // for use as a symbol for relative color form.
@@ -96,6 +96,16 @@ using CSSColorParseType = std::tuple<
     std::optional<GetComponentResult<Descriptor, 3>>
 >;
 
+template<typename Descriptor> constexpr bool containsUnevaluatedCalc(const CSSColorParseType<Descriptor>&)
+{
+    return false;
+}
+
+template<typename Descriptor> constexpr bool requiresConversionData(const CSSColorParseType<Descriptor>&)
+{
+    return false;
+}
+
 // MARK: Parse type + Unevaluated Calc (absolute color parse result)
 
 template<typename Descriptor, unsigned Index>
@@ -114,6 +124,22 @@ using CSSColorParseTypeWithCalc = std::tuple<
     GetComponentResultWithCalcResult<Descriptor, 2>,
     std::optional<GetComponentResultWithCalcResult<Descriptor, 3>>
 >;
+
+template<typename Descriptor> bool containsUnevaluatedCalc(const CSSColorParseTypeWithCalc<Descriptor>& components)
+{
+    return isUnevaluatedCalc(std::get<0>(components))
+        || isUnevaluatedCalc(std::get<1>(components))
+        || isUnevaluatedCalc(std::get<2>(components))
+        || isUnevaluatedCalc(std::get<3>(components));
+}
+
+template<typename Descriptor> bool requiresConversionData(const CSSColorParseTypeWithCalc<Descriptor>& components)
+{
+    return requiresConversionData(std::get<0>(components))
+        || requiresConversionData(std::get<1>(components))
+        || requiresConversionData(std::get<2>(components))
+        || requiresConversionData(std::get<3>(components));
+}
 
 // MARK: Parse type + Unevaluated Calc + Symbols (relative color parse result).
 
@@ -134,6 +160,22 @@ using CSSColorParseTypeWithCalcAndSymbols = std::tuple<
     std::optional<GetComponentResultWithCalcAndSymbolsResult<Descriptor, 3>>
 >;
 
+template<typename Descriptor> bool containsUnevaluatedCalc(const CSSColorParseTypeWithCalcAndSymbols<Descriptor>& components)
+{
+    return isUnevaluatedCalc(std::get<0>(components))
+        || isUnevaluatedCalc(std::get<1>(components))
+        || isUnevaluatedCalc(std::get<2>(components))
+        || isUnevaluatedCalc(std::get<3>(components));
+}
+
+template<typename Descriptor> bool requiresConversionData(const CSSColorParseTypeWithCalcAndSymbols<Descriptor>& components)
+{
+    return requiresConversionData(std::get<0>(components))
+        || requiresConversionData(std::get<1>(components))
+        || requiresConversionData(std::get<2>(components))
+        || requiresConversionData(std::get<3>(components));
+}
+
 // MARK: - Shared Component Descriptors
 
 constexpr auto AlphaComponent = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw> { .symbol = CSSValueAlpha, .min = 0.0, .max = 1.0 };
@@ -141,11 +183,36 @@ constexpr auto AlphaLegacyComponent = CSSColorComponent<PercentRaw, NumberRaw> {
 
 // MARK: - Color Function Descriptors
 
+// <modern-rgb-syntax>  =  rgb( [<number> | <percentage> | none]{3} [ / [<alpha-value> | none] ]? )
+// <modern-rgba-syntax> = rgba( [<number> | <percentage> | none]{3} [ / [<alpha-value> | none] ]? )
+struct RGBFunctionModernAbsolute {
+    using ColorType = SRGBA<float>;
+    using Canonical = RGBFunctionModernAbsolute;
+    static constexpr bool allowEagerEvaluationOfResolvableCalc = true;
+    static constexpr bool allowConversionTo8BitSRGB = true;
+    static constexpr OptionSet<Color::Flags> flagsForAbsolute = { };
+    static constexpr auto syntax = CSSColorFunctionSyntax::Modern;
+    static constexpr bool usesColorFunctionForSerialization = false;
+    static constexpr ASCIILiteral serializationFunctionName = "rgb"_s;
+
+    using R = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
+    using G = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
+    using B = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
+
+    static constexpr auto components = std::make_tuple(
+        R { .symbol = CSSValueR, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
+        G { .symbol = CSSValueG, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
+        B { .symbol = CSSValueB, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
+        AlphaComponent
+    );
+};
+
 // <legacy-rgb-syntax>  =  rgb( <percentage>#{3} , <alpha-value>? ) |  rgb( <number>#{3} , <alpha-value>? )
 // <legacy-rgba-syntax> = rgba( <percentage>#{3} , <alpha-value>? ) | rgba( <number>#{3} , <alpha-value>? )
-template<typename Component>
-struct RGBFunctionLegacy {
+template<typename Component> struct RGBFunctionLegacy {
     using ColorType = SRGBA<float>;
+    using Canonical = RGBFunctionModernAbsolute;
+    static constexpr bool allowEagerEvaluationOfResolvableCalc = true;
     static constexpr bool allowConversionTo8BitSRGB = true;
     static constexpr OptionSet<Color::Flags> flagsForAbsolute = { };
     static constexpr auto syntax = CSSColorFunctionSyntax::Legacy;
@@ -157,32 +224,10 @@ struct RGBFunctionLegacy {
     using B = CSSColorComponent<Component>;
 
     static constexpr auto components = std::make_tuple(
-        R { .symbol = CSSValueR, .min = 0.0, .max = 1.0, .numberMultiplier = 1.0 / 255.0, .symbolMultiplier = 255.0 },
-        G { .symbol = CSSValueG, .min = 0.0, .max = 1.0, .numberMultiplier = 1.0 / 255.0, .symbolMultiplier = 255.0 },
-        B { .symbol = CSSValueB, .min = 0.0, .max = 1.0, .numberMultiplier = 1.0 / 255.0, .symbolMultiplier = 255.0 },
+        R { .symbol = CSSValueR, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0,  .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
+        G { .symbol = CSSValueG, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0,  .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
+        B { .symbol = CSSValueB, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0,  .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
         AlphaLegacyComponent
-    );
-};
-
-// <modern-rgb-syntax>  =  rgb( [<number> | <percentage> | none]{3} [ / [<alpha-value> | none] ]? )
-// <modern-rgba-syntax> = rgba( [<number> | <percentage> | none]{3} [ / [<alpha-value> | none] ]? )
-struct RGBFunctionModernAbsolute {
-    using ColorType = SRGBA<float>;
-    static constexpr bool allowConversionTo8BitSRGB = true;
-    static constexpr OptionSet<Color::Flags> flagsForAbsolute = { };
-    static constexpr auto syntax = CSSColorFunctionSyntax::Modern;
-    static constexpr bool usesColorFunctionForSerialization = false;
-    static constexpr ASCIILiteral serializationFunctionName = "rgb"_s;
-
-    using R = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using G = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using B = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-
-    static constexpr auto components = std::make_tuple(
-        R { .symbol = CSSValueR, .min = 0.0, .max = 1.0, .numberMultiplier = 1.0 / 255.0, .symbolMultiplier = 255.0 },
-        G { .symbol = CSSValueG, .min = 0.0, .max = 1.0, .numberMultiplier = 1.0 / 255.0, .symbolMultiplier = 255.0 },
-        B { .symbol = CSSValueB, .min = 0.0, .max = 1.0, .numberMultiplier = 1.0 / 255.0, .symbolMultiplier = 255.0 },
-        AlphaComponent
     );
 };
 
@@ -190,6 +235,8 @@ struct RGBFunctionModernAbsolute {
 // <modern-rgba-syntax> = rgba( [from <color>] [<number> | <percentage> | none]{3} [ / [<alpha-value> | none] ]? )
 struct RGBFunctionModernRelative {
     using ColorType = ExtendedSRGBA<float>;
+    using Canonical = RGBFunctionModernRelative;
+    static constexpr bool allowEagerEvaluationOfResolvableCalc = true;
     static constexpr bool allowConversionTo8BitSRGB = true;
     static constexpr OptionSet<Color::Flags> flagsForRelative = Color::Flags::UseColorFunctionSerialization;
     static constexpr auto syntax = CSSColorFunctionSyntax::Modern;
@@ -201,32 +248,10 @@ struct RGBFunctionModernRelative {
     using B = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
 
     static constexpr auto components = std::make_tuple(
-        R { .symbol = CSSValueR, .numberMultiplier = 1.0 / 255.0, .symbolMultiplier = 255.0 },
-        G { .symbol = CSSValueG, .numberMultiplier = 1.0 / 255.0, .symbolMultiplier = 255.0 },
-        B { .symbol = CSSValueB, .numberMultiplier = 1.0 / 255.0, .symbolMultiplier = 255.0 },
+        R { .symbol = CSSValueR, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
+        G { .symbol = CSSValueG, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
+        B { .symbol = CSSValueB, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
         AlphaComponent
-    );
-};
-
-// <legacy-hsl-syntax>  =  hsl( <hue>, <percentage>, <percentage>, <alpha-value>? )
-// <legacy-hsla-syntax> = hsla( <hue>, <percentage>, <percentage>, <alpha-value>? )
-struct HSLFunctionLegacy {
-    using ColorType = HSLA<float>;
-    static constexpr bool allowConversionTo8BitSRGB = true;
-    static constexpr OptionSet<Color::Flags> flagsForAbsolute = { };
-    static constexpr auto syntax = CSSColorFunctionSyntax::Legacy;
-    static constexpr bool usesColorFunctionForSerialization = false;
-    static constexpr ASCIILiteral serializationFunctionName = "hsl"_s;
-
-    using H = CSSColorComponent<AngleRaw, NumberRaw>;
-    using S = CSSColorComponent<PercentRaw>;
-    using L = CSSColorComponent<PercentRaw>;
-
-    static constexpr auto components = std::make_tuple(
-        H { .symbol = CSSValueH, .type = ColorComponentType::Angle    },
-        S { .symbol = CSSValueS, .min = 0.0, .percentMultiplier = 1.0 },
-        L { .symbol = CSSValueL,             .percentMultiplier = 1.0 },
-        AlphaLegacyComponent
     );
 };
 
@@ -234,6 +259,8 @@ struct HSLFunctionLegacy {
 // <modern-hsla-syntax> = hsla( [from <color>]? [<hue> | none] [<percentage> | <number> | none]{2} [ / [<alpha-value> | none] ]? )
 struct HSLFunctionModern {
     using ColorType = HSLA<float>;
+    using Canonical = HSLFunctionModern;
+    static constexpr bool allowEagerEvaluationOfResolvableCalc = true;
     static constexpr bool allowConversionTo8BitSRGB = true;
     static constexpr OptionSet<Color::Flags> flagsForRelative = Color::Flags::UseColorFunctionSerialization;
     static constexpr OptionSet<Color::Flags> flagsForAbsolute = { };
@@ -253,9 +280,35 @@ struct HSLFunctionModern {
     );
 };
 
+// <legacy-hsl-syntax>  =  hsl( <hue>, <percentage>, <percentage>, <alpha-value>? )
+// <legacy-hsla-syntax> = hsla( <hue>, <percentage>, <percentage>, <alpha-value>? )
+struct HSLFunctionLegacy {
+    using ColorType = HSLA<float>;
+    using Canonical = HSLFunctionModern;
+    static constexpr bool allowEagerEvaluationOfResolvableCalc = true;
+    static constexpr bool allowConversionTo8BitSRGB = true;
+    static constexpr OptionSet<Color::Flags> flagsForAbsolute = { };
+    static constexpr auto syntax = CSSColorFunctionSyntax::Legacy;
+    static constexpr bool usesColorFunctionForSerialization = false;
+    static constexpr ASCIILiteral serializationFunctionName = "hsl"_s;
+
+    using H = CSSColorComponent<AngleRaw, NumberRaw>;
+    using S = CSSColorComponent<PercentRaw>;
+    using L = CSSColorComponent<PercentRaw>;
+
+    static constexpr auto components = std::make_tuple(
+        H { .symbol = CSSValueH, .type = ColorComponentType::Angle    },
+        S { .symbol = CSSValueS, .min = 0.0, .percentMultiplier = 1.0 },
+        L { .symbol = CSSValueL,             .percentMultiplier = 1.0 },
+        AlphaLegacyComponent
+    );
+};
+
 // hwb() = hwb( [from <color>]? [<hue> | none] [<percentage> | <number> | none]{2} [ / [<alpha-value> | none] ]? )
 struct HWBFunction {
     using ColorType = HWBA<float>;
+    using Canonical = HWBFunction;
+    static constexpr bool allowEagerEvaluationOfResolvableCalc = true;
     static constexpr bool allowConversionTo8BitSRGB = true;
     static constexpr OptionSet<Color::Flags> flagsForRelative = Color::Flags::UseColorFunctionSerialization;
     static constexpr OptionSet<Color::Flags> flagsForAbsolute = { };
@@ -278,6 +331,8 @@ struct HWBFunction {
 // lab() = lab( [from <color>]? [<percentage> | <number> | none]{3} [ / [<alpha-value> | none] ]? )
 struct LabFunction {
     using ColorType = Lab<float>;
+    using Canonical = LabFunction;
+    static constexpr bool allowEagerEvaluationOfResolvableCalc = false;
     static constexpr bool allowConversionTo8BitSRGB = false;
     static constexpr OptionSet<Color::Flags> flagsForRelative = { };
     static constexpr OptionSet<Color::Flags> flagsForAbsolute = { };
@@ -300,6 +355,8 @@ struct LabFunction {
 // lch() = lch( [from <color>]? [<percentage> | <number> | none]{2} [<hue> | none] [ / [<alpha-value> | none] ]? )
 struct LCHFunction {
     using ColorType = LCHA<float>;
+    using Canonical = LCHFunction;
+    static constexpr bool allowEagerEvaluationOfResolvableCalc = false;
     static constexpr bool allowConversionTo8BitSRGB = false;
     static constexpr OptionSet<Color::Flags> flagsForRelative = { };
     static constexpr OptionSet<Color::Flags> flagsForAbsolute = { };
@@ -322,6 +379,8 @@ struct LCHFunction {
 // oklab() = oklab( [from <color>]? [<percentage> | <number> | none]{3} [ / [<alpha-value> | none] ]? )
 struct OKLabFunction {
     using ColorType = OKLab<float>;
+    using Canonical = OKLabFunction;
+    static constexpr bool allowEagerEvaluationOfResolvableCalc = false;
     static constexpr bool allowConversionTo8BitSRGB = false;
     static constexpr OptionSet<Color::Flags> flagsForRelative = { };
     static constexpr OptionSet<Color::Flags> flagsForAbsolute = { };
@@ -344,6 +403,8 @@ struct OKLabFunction {
 // oklch() = oklch( [from <color>]? [<percentage> | <number> | none]{2} [<hue> | none] [ / [<alpha-value> | none] ]? )
 struct OKLCHFunction {
     using ColorType = OKLCHA<float>;
+    using Canonical = OKLCHFunction;
+    static constexpr bool allowEagerEvaluationOfResolvableCalc = false;
     static constexpr bool allowConversionTo8BitSRGB = false;
     static constexpr OptionSet<Color::Flags> flagsForRelative = { };
     static constexpr OptionSet<Color::Flags> flagsForAbsolute = { };
@@ -366,9 +427,10 @@ struct OKLCHFunction {
 // color() = color( [from <color>]? <rgb-params> [ / [ <alpha-value> | none ] ]? )
 // <rgb-params> = <rgb-color-space> [ <number> | <percentage> | none ]{3}
 // <rgb-color-space> = srgb | srgb-linear | display-p3 | a98-rgb | prophoto-rgb | rec2020
-template<typename T>
-struct ColorRGBFunction {
+template<typename T> struct ColorRGBFunction {
     using ColorType = T;
+    using Canonical = ColorRGBFunction<T>;
+    static constexpr bool allowEagerEvaluationOfResolvableCalc = false;
     static constexpr bool allowConversionTo8BitSRGB = false;
     static constexpr OptionSet<Color::Flags> flagsForRelative = Color::Flags::UseColorFunctionSerialization;
     static constexpr OptionSet<Color::Flags> flagsForAbsolute = Color::Flags::UseColorFunctionSerialization;
@@ -391,9 +453,10 @@ struct ColorRGBFunction {
 // color() = color( [from <color>]? <xyz-params> [ / [ <alpha-value> | none ] ]? )
 // <xyz-params> = <xyz-color-space> [ <number> | <percentage> | none ]{3}
 // <xyz-color-space> = xyz | xyz-d50 | xyz-d65
-template<typename T>
-struct ColorXYZFunction {
+template<typename T> struct ColorXYZFunction {
     using ColorType = T;
+    using Canonical = ColorXYZFunction<T>;
+    static constexpr bool allowEagerEvaluationOfResolvableCalc = false;
     static constexpr bool allowConversionTo8BitSRGB = false;
     static constexpr OptionSet<Color::Flags> flagsForRelative = Color::Flags::UseColorFunctionSerialization;
     static constexpr OptionSet<Color::Flags> flagsForAbsolute = Color::Flags::UseColorFunctionSerialization;

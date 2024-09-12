@@ -133,8 +133,8 @@ public:
     virtual double scaleFactor() const = 0;
     virtual void setPageScaleFactor(double, std::optional<WebCore::IntPoint> origin) = 0;
 
-    virtual CGFloat minScaleFactor() const { return 0.25; }
-    virtual CGFloat maxScaleFactor() const { return 5; }
+    virtual double minScaleFactor() const { return 0.25; }
+    virtual double maxScaleFactor() const { return 5; }
 
     bool isLocked() const;
 
@@ -274,7 +274,7 @@ public:
 #endif
 
     uint64_t streamedBytes() const;
-    WebCore::FrameIdentifier rootFrameID() const final;
+    std::optional<WebCore::FrameIdentifier> rootFrameID() const final;
 
 protected:
     virtual double contentScaleFactor() const = 0;

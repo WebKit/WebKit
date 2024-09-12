@@ -322,6 +322,10 @@ void WebCoreAVFResourceLoader::startLoading()
         return;
     }
 
+#if PLATFORM(IOS_FAMILY)
+    m_isBlob = request.url().protocolIsBlob();
+#endif
+
     if (auto* loader = parent->player()->cachedResourceLoader()) {
         m_resourceMediaLoader = CachedResourceMediaLoader::create(*this, *loader, ResourceRequest(request));
         if (m_resourceMediaLoader)
@@ -379,7 +383,8 @@ bool WebCoreAVFResourceLoader::responseReceived(const String& mimeType, int stat
         // When the property is YES, AVAssetResourceLoader will request small data ranges over and over again
         // during the playback. For DataURLResourceMediaLoader, that means it needs to decode the URL repeatedly,
         // which is very inefficient for long URLs.
-        if (!m_dataURLMediaLoader && [contentInfo respondsToSelector:@selector(setEntireLengthAvailableOnDemand:)])
+        // FIXME: don't have blob exception once rdar://132719739 is fixed.
+        if (!m_dataURLMediaLoader && !m_isBlob && [contentInfo respondsToSelector:@selector(setEntireLengthAvailableOnDemand:)])
             [contentInfo setEntireLengthAvailableOnDemand:YES];
 
         if (![m_avRequest dataRequest]) {

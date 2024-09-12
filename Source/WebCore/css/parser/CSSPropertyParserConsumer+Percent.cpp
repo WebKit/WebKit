@@ -33,7 +33,6 @@
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
-#include "CSSPropertyParserConsumer+RawResolver.h"
 #include "CalculationCategory.h"
 
 namespace WebCore {
@@ -74,14 +73,6 @@ std::optional<PercentRaw> PercentKnownTokenTypePercentConsumer::consume(CSSParse
 }
 
 // MARK: - Consumer functions
-
-std::optional<PercentRaw> consumePercentRaw(CSSParserTokenRange& range, ValueRange valueRange)
-{
-    const auto options = CSSPropertyParserOptions {
-        .valueRange = valueRange
-    };
-    return RawResolver<PercentRaw>::consumeAndResolve(range, { }, { }, options);
-}
 
 RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange& range, ValueRange valueRange)
 {
@@ -130,14 +121,6 @@ RefPtr<CSSPrimitiveValue> consumePercentDividedBy100OrNumber(CSSParserTokenRange
     }
 
     return nullptr;
-}
-
-std::optional<PercentOrNumberRaw> consumePercentOrNumberRaw(CSSParserTokenRange& range, ValueRange valueRange)
-{
-    const auto options = CSSPropertyParserOptions {
-        .valueRange = valueRange
-    };
-    return RawResolver<PercentRaw, NumberRaw>::consumeAndResolve(range, { }, { }, options);
 }
 
 } // namespace CSSPropertyParserHelpers

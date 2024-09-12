@@ -28,12 +28,15 @@
 
 #include "EncodingTables.h"
 #include <mutex>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CodePointIterator.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace PAL {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCodecCJK);
 
 enum class TextCodecCJK::Encoding : uint8_t {
     EUC_JP,

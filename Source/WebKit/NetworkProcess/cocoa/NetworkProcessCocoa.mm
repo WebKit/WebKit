@@ -115,6 +115,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     if (auditToken && [NEFilterSource respondsToSelector:@selector(setDelegation:)])
         [NEFilterSource setDelegation:&auditToken.value()];
 #endif
+    m_enableModernDownloadProgress = parameters.enableModernDownloadProgress;
 }
 
 RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const

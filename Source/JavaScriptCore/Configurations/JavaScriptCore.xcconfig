@@ -1,4 +1,4 @@
-// Copyright (C) 2009-2023 Apple Inc. All rights reserved.
+// Copyright (C) 2009-2024 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -24,6 +24,11 @@
 #include "BaseTarget.xcconfig"
 
 DEFINES_MODULE = YES;
+ENABLE_MODULE_VERIFIER = $(USE_INTERNAL_SDK);
+OTHER_MODULE_VERIFIER_FLAGS = $(OTHER_MODULE_VERIFIER_FLAGS_$(WK_EMPTY_$(WK_OVERRIDE_FRAMEWORKS_DIR)));
+OTHER_MODULE_VERIFIER_FLAGS_ = -- -iframework $(WK_PRIVATE_SDK_DIR)$(WK_OVERRIDE_FRAMEWORKS_DIR) -isystem $(WK_PRIVATE_SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_HEADERS_FOLDER_PATH);
+MODULE_VERIFIER_VERBOSE = NO;
+MODULE_VERIFIER_SUPPORTED_LANGUAGES = objective-c objective-c++ c c++;
 MODULEMAP_FILE = $(SRCROOT)/JavaScriptCore.modulemap;
 
 WK_SUPPORTS_OTHER_TAPI_FLAGS_STATICLIBS = $(WK_SUPPORTS_OTHER_TAPI_FLAGS_STATICLIBS_$(WK_PLATFORM_NAME));

@@ -210,15 +210,19 @@ FloatRect ImageBuffer::clampedRect(const FloatRect& rect)
     return FloatRect(rect.location(), clampedSize(rect.size()));
 }
 
-static RefPtr<ImageBuffer> copyImageBuffer(Ref<ImageBuffer> source, PreserveResolution preserveResolution)
+static RefPtr<ImageBuffer> copyImageBuffer(Ref<ImageBuffer> source, PreserveResolution preserveResolution, std::optional<RenderingMode> renderingMode = std::nullopt)
 {
     if (source->resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes) {
-        if (source->hasOneRef())
+        if (source->hasOneRef()
+#if USE(SKIA)
+            && (!renderingMode || *renderingMode == source->renderingMode())
+#endif
+        )
             return source;
     }
     auto copySize = source->logicalSize();
     auto copyScale = preserveResolution == PreserveResolution::Yes ? source->resolutionScale() : 1.f;
-    auto copyBuffer = source->context().createImageBuffer(copySize, copyScale, source->colorSpace());
+    auto copyBuffer = source->context().createImageBuffer(copySize, copyScale, source->colorSpace(), renderingMode);
     if (!copyBuffer)
         return nullptr;
     if (source->hasOneRef())
@@ -325,6 +329,16 @@ RefPtr<ImageBuffer> ImageBuffer::sinkIntoBufferForDifferentThread(RefPtr<ImageBu
     ASSERT(buffer->hasOneRef());
     return buffer->sinkIntoBufferForDifferentThread();
 }
+
+#if USE(SKIA)
+RefPtr<ImageBuffer> ImageBuffer::sinkIntoImageBufferForCrossThreadTransfer(RefPtr<ImageBuffer> buffer)
+{
+    if (!buffer || buffer->renderingMode() != RenderingMode::Accelerated)
+        return buffer;
+    // FIXME: Try avoiding GPU-to-CPU data transfer by creating accelerated clone that would e.g. leverage underlying GL texture.
+    return copyImageBuffer(const_cast<ImageBuffer&>(*buffer), PreserveResolution::Yes, RenderingMode::Unaccelerated);
+}
+#endif
 
 RefPtr<ImageBuffer> ImageBuffer::sinkIntoBufferForDifferentThread()
 {

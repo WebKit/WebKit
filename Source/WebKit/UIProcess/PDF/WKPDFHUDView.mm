@@ -85,7 +85,7 @@ static NSArray<NSString *> *controlArray()
 @private
     WeakPtr<WebKit::WebPageProxy> _page;
     RetainPtr<NSString> _activeControl;
-    WebKit::PDFPluginIdentifier _pluginIdentifier;
+    Markable<WebKit::PDFPluginIdentifier> _pluginIdentifier;
     CGFloat _deviceScaleFactor;
     RetainPtr<CALayer> _layer;
     RetainPtr<CALayer> _activeLayer;
@@ -254,13 +254,13 @@ static NSArray<NSString *> *controlArray()
     if (!page)
         return;
     if ([control isEqualToString:PDFHUDZoomInControl])
-        page->pdfZoomIn(_pluginIdentifier);
+        page->pdfZoomIn(*_pluginIdentifier);
     else if ([control isEqualToString:PDFHUDZoomOutControl])
-        page->pdfZoomOut(_pluginIdentifier);
+        page->pdfZoomOut(*_pluginIdentifier);
     else if ([control isEqualToString:PDFHUDSavePDFControl])
-        page->pdfSaveToPDF(_pluginIdentifier);
+        page->pdfSaveToPDF(*_pluginIdentifier);
     else if ([control isEqualToString:PDFHUDLaunchPreviewControl])
-        page->pdfOpenWithPreview(_pluginIdentifier);
+        page->pdfOpenWithPreview(*_pluginIdentifier);
 }
 
 - (void)_loadIconImages

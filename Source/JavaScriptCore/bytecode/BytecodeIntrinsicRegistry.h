@@ -50,13 +50,16 @@ enum class LinkTimeConstant : int32_t;
     macro(getInternalField) \
     macro(getPromiseInternalField) \
     macro(getGeneratorInternalField) \
+    macro(getAsyncFromSyncIteratorInternalField) \
     macro(getAsyncGeneratorInternalField) \
     macro(getAbstractModuleRecordInternalField) \
     macro(getArrayIteratorInternalField) \
     macro(getStringIteratorInternalField) \
     macro(getMapIteratorInternalField) \
     macro(getSetIteratorInternalField) \
+    macro(getRegExpStringIteratorInternalField) \
     macro(getProxyInternalField) \
+    macro(getWrapForValidIteratorInternalField) \
     macro(idWithProfile) \
     macro(isObject) \
     macro(isCallable) \
@@ -76,6 +79,8 @@ enum class LinkTimeConstant : int32_t;
     macro(isMapIterator) \
     macro(isSetIterator) \
     macro(isUndefinedOrNull) \
+    macro(isWrapForValidIterator) \
+    macro(isRegExpStringIterator) \
     macro(tailCallForwardArguments) \
     macro(throwTypeError) \
     macro(throwRangeError) \
@@ -95,6 +100,7 @@ enum class LinkTimeConstant : int32_t;
     macro(putStringIteratorInternalField) \
     macro(putMapIteratorInternalField) \
     macro(putSetIteratorInternalField) \
+    macro(putRegExpStringIteratorInternalField) \
     macro(superSamplerBegin) \
     macro(superSamplerEnd) \
     macro(toNumber) \
@@ -174,7 +180,17 @@ enum class LinkTimeConstant : int32_t;
     macro(AsyncGeneratorSuspendReasonYield) \
     macro(AsyncGeneratorSuspendReasonAwait) \
     macro(AsyncGeneratorSuspendReasonNone) \
-    macro(abstractModuleRecordFieldState)
+    macro(asyncFromSyncIteratorFieldSyncIterator) \
+    macro(asyncFromSyncIteratorFieldNextMethod) \
+    macro(abstractModuleRecordFieldState) \
+    macro(wrapForValidIteratorFieldIteratedIterator) \
+    macro(wrapForValidIteratorFieldIteratedNextMethod) \
+    macro(regExpStringIteratorFieldRegExp) \
+    macro(regExpStringIteratorFieldString) \
+    macro(regExpStringIteratorFieldGlobal) \
+    macro(regExpStringIteratorFieldFullUnicode) \
+    macro(regExpStringIteratorFieldDone) \
+
 
 #define JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_CUSTOM_EACH_NAME(macro) \
     macro(orderedHashTableSentinel)

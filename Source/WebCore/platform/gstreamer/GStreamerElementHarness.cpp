@@ -115,7 +115,7 @@ GStreamerElementHarness::GStreamerElementHarness(GRefPtr<GstElement>&& element, 
 
     if (hasSometimesSrcPad) {
         GST_DEBUG_OBJECT(m_element.get(), "Expecting output buffers on sometimes src pad(s).");
-        g_signal_connect(m_element.get(), "pad-added", reinterpret_cast<GCallback>(+[](GstElement* element, GstPad* pad, gpointer userData) {
+        g_signal_connect(m_element.get(), "pad-added", reinterpret_cast<GCallback>(+[]([[maybe_unused]] GstElement* element, GstPad* pad, gpointer userData) {
             GST_DEBUG_OBJECT(element, "Pad added: %" GST_PTR_FORMAT, pad);
             auto& harness = *reinterpret_cast<GStreamerElementHarness*>(userData);
             RefPtr<GStreamerElementHarness> downstreamHarness;
@@ -132,7 +132,7 @@ GStreamerElementHarness::GStreamerElementHarness(GRefPtr<GstElement>&& element, 
             harness.dumpGraph("pad-added"_s);
         }), this);
 
-        g_signal_connect(m_element.get(), "pad-removed", reinterpret_cast<GCallback>(+[](GstElement* element, GstPad* pad, gpointer userData) {
+        g_signal_connect(m_element.get(), "pad-removed", reinterpret_cast<GCallback>(+[]([[maybe_unused]] GstElement* element, GstPad* pad, gpointer userData) {
             GST_DEBUG_OBJECT(element, "Pad removed: %" GST_PTR_FORMAT, pad);
             auto& harness = *reinterpret_cast<GStreamerElementHarness*>(userData);
             harness.m_outputStreams.removeAllMatching([pad = GRefPtr<GstPad>(pad)](auto& item) -> bool {

@@ -130,6 +130,8 @@ public:
     enum class ForceUTF8 : bool { No, Yes };
     virtual URL completeURL(const String& url, ForceUTF8 = ForceUTF8::No) const = 0;
 
+    virtual const URL& creationURL() const = 0;
+
     virtual String userAgent(const URL&) const = 0;
 
     virtual const Settings::Values& settingsValues() const = 0;

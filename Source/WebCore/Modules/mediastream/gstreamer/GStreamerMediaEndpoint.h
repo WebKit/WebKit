@@ -66,7 +66,7 @@ public:
     void doCreateOffer(const RTCOfferOptions&);
     void doCreateAnswer();
 
-    void getStats(GstPad*, const GstStructure*, Ref<DeferredPromise>&&);
+    void getStats(const GRefPtr<GstPad>&, Ref<DeferredPromise>&&);
     void getStats(RTCRtpReceiver&, Ref<DeferredPromise>&&);
 
     std::unique_ptr<RTCDataChannelHandler> createDataChannel(const String&, const RTCDataChannelInit&);
@@ -95,8 +95,8 @@ public:
         std::unique_ptr<GStreamerRtpReceiverBackend> receiverBackend;
         std::unique_ptr<GStreamerRtpTransceiverBackend> transceiverBackend;
     };
-    ExceptionOr<Backends> addTransceiver(const String& trackKind, const RTCRtpTransceiverInit&);
-    ExceptionOr<Backends> addTransceiver(MediaStreamTrack&, const RTCRtpTransceiverInit&);
+    ExceptionOr<Backends> addTransceiver(const String& trackKind, const RTCRtpTransceiverInit&, PeerConnectionBackend::IgnoreNegotiationNeededFlag);
+    ExceptionOr<Backends> addTransceiver(MediaStreamTrack&, const RTCRtpTransceiverInit&, PeerConnectionBackend::IgnoreNegotiationNeededFlag);
     std::unique_ptr<GStreamerRtpTransceiverBackend> transceiverBackendFromSender(GStreamerRtpSenderBackend&);
 
     GStreamerRtpSenderBackend::Source createLinkedSourceForTrack(MediaStreamTrack&);
@@ -110,15 +110,16 @@ public:
     GstElement* webrtcBin() const { return m_webrtcBin.get(); }
     bool handleMessage(GstMessage*);
 
+    GUniquePtr<GstStructure> preprocessStats(const GRefPtr<GstPad>&, const GstStructure*);
 #if !RELEASE_LOG_DISABLED
-    void processStats(const GValue*);
+    void processStatsItem(const GValue*);
 #endif
 
     void connectIncomingTrack(WebRTCTrackData&);
 
 protected:
 #if !RELEASE_LOG_DISABLED
-    void onStatsDelivered(const GstStructure*);
+    void onStatsDelivered(GUniquePtr<GstStructure>&&);
 #endif
 
 private:
@@ -153,7 +154,7 @@ private:
 
     int pickAvailablePayloadType();
 
-    ExceptionOr<Backends> createTransceiverBackends(const String& kind, const RTCRtpTransceiverInit&, GStreamerRtpSenderBackend::Source&&);
+    ExceptionOr<Backends> createTransceiverBackends(const String& kind, const RTCRtpTransceiverInit&, GStreamerRtpSenderBackend::Source&&, PeerConnectionBackend::IgnoreNegotiationNeededFlag);
     GStreamerRtpSenderBackend::Source createSourceForTrack(MediaStreamTrack&);
 
     void processSDPMessage(const GstSDPMessage*, Function<void(unsigned index, const char* mid, const GstSDPMedia*)>);
@@ -208,6 +209,8 @@ private:
     HashMap<GRefPtr<GstWebRTCRTPTransceiver>, RefPtr<GStreamerIncomingTrackProcessor>> m_trackProcessors;
 
     Vector<String> m_pendingIncomingMediaStreamIDs;
+
+    bool m_shouldIgnoreNegotiationNeededSignal { false };
 };
 
 } // namespace WebCore

@@ -1,8 +1,14 @@
 
-FAIL Trailing declarations assert_equals: expected 2 but got 1
-FAIL Mixed declarations assert_equals: expected 6 but got 3
-FAIL CSSNestedDeclarations.style assert_equals: expected 2 but got 1
-FAIL Nested group rule assert_equals: expected 2 but got 1
-FAIL Nested @scope rule assert_equals: expected 2 but got 1
-FAIL Inner rule starting with an ident assert_equals: expected 4 but got 2
+PASS Trailing declarations
+PASS Mixed declarations
+PASS CSSNestedDeclarations.style
+PASS Nested group rule
+PASS Nested @scope rule
+PASS Inner rule starting with an ident
+PASS Inserting a CSSNestedDeclaration rule into style rule
+PASS Inserting a CSSNestedDeclaration rule into nested group rule
+PASS Attempting to insert a CSSNestedDeclaration rule into top-level @media rule
+PASS Attempting to insert a CSSNestedDeclaration rule into a stylesheet
+PASS Attempting to insert a CSSNestedDeclaration rule, empty block
+PASS Attempting to insert a CSSNestedDeclaration rule, all invalid declarations
 

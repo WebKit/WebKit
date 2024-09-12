@@ -432,7 +432,7 @@ public:
     TransformationMatrix to2dTransform() const;
     
     using FloatMatrix4 = std::array<float, 16>;
-    FloatMatrix4 toColumnMajorFloatArray() const;
+    WEBCORE_EXPORT FloatMatrix4 toColumnMajorFloatArray() const;
 
     // A local-space layer is implicitly defined at the z = 0 plane, with its front side
     // facing the positive z-axis (i.e. a camera looking along the negative z-axis sees

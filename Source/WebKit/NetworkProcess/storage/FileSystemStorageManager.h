@@ -66,7 +66,7 @@ private:
     void close();
 
     String m_path;
-    FileSystemStorageHandleRegistry& m_registry;
+    CheckedRef<FileSystemStorageHandleRegistry> m_registry;
     QuotaCheckFunction m_quotaCheckFunction;
     HashMap<IPC::Connection::UniqueID, HashSet<WebCore::FileSystemHandleIdentifier>> m_handlesByConnection;
     HashMap<WebCore::FileSystemHandleIdentifier, std::unique_ptr<FileSystemStorageHandle>> m_handles;

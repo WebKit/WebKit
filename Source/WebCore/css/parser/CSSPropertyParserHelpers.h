@@ -47,46 +47,20 @@ namespace WebCore {
 
 class CSSGridLineNamesValue;
 
-
 // When these functions are successful, they will consume all the relevant
 // tokens from the range and also consume any whitespace which follows. When
 // the start of the range doesn't match the type we're looking for, the range
 // will not be modified.
 namespace CSSPropertyParserHelpers {
 
-RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange&);
-
-enum class AllowedFilterFunctions {
-    PixelFilters,
-    ColorFilters
-};
-
-RefPtr<CSSValue> consumeFilter(CSSParserTokenRange&, const CSSParserContext&, AllowedFilterFunctions);
 RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange&, const CSSParserContext&, bool allowInset, bool allowSpread, bool isWebkitBoxShadow = false);
 
-
-RefPtr<CSSPrimitiveValue> consumeCounterStyleName(CSSParserTokenRange&);
-AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange&, CSSParserMode = CSSParserMode::HTMLStandardMode);
 RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange&);
 
-
 RefPtr<CSSValue> consumeAspectRatio(CSSParserTokenRange&);
-
-using IsPositionKeyword = bool (*)(CSSValueID);
-bool isFlexBasisIdent(CSSValueID);
-bool isBaselineKeyword(CSSValueID);
-bool isContentPositionKeyword(CSSValueID);
-bool isContentPositionOrLeftOrRightKeyword(CSSValueID);
-bool isSelfPositionKeyword(CSSValueID);
-bool isSelfPositionOrLeftOrRightKeyword(CSSValueID);
-bool isGridBreadthIdent(CSSValueID);
-
 RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeCounterIncrement(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeCounterReset(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeCounterSet(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeSize(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeTextTransform(CSSParserTokenRange&);
@@ -99,7 +73,6 @@ RefPtr<CSSValue> consumeTouchAction(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeKeyframesName(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeSingleTransitionPropertyOrNone(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeSingleTransitionProperty(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeTimingFunction(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeTextShadow(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeBoxShadow(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeWebkitBoxShadow(CSSParserTokenRange&, const CSSParserContext&);
@@ -107,14 +80,8 @@ RefPtr<CSSValue> consumeTextDecorationLine(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeTextEmphasisStyle(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeBorderWidth(CSSParserTokenRange&, CSSPropertyID currentShorthand, const CSSParserContext&);
 RefPtr<CSSValue> consumeBorderColor(CSSParserTokenRange&, CSSPropertyID currentShorthand, const CSSParserContext&);
-RefPtr<CSSValue> consumeTransform(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeTransformFunction(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange&, CSSParserMode);
-RefPtr<CSSValue> consumeScale(CSSParserTokenRange&, CSSParserMode);
-RefPtr<CSSValue> consumeRotate(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeRepeatStyle(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumePaintStroke(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeListStyleType(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeStrokeDasharray(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeCursor(CSSParserTokenRange&, const CSSParserContext&, bool inQuirksMode);
@@ -125,16 +92,12 @@ RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeScrollbarColor(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeScrollbarGutter(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeTextEdge(CSSPropertyID, CSSParserTokenRange&);
-RefPtr<CSSValue> consumeViewTransitionClass(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeViewTransitionName(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange&, CSSParserMode);
 bool consumeRadii(std::array<RefPtr<CSSValue>, 4>& horizontalRadii, std::array<RefPtr<CSSValue>, 4>& verticalRadii, CSSParserTokenRange&, CSSParserMode, bool useLegacyParsing);
 enum PathParsingOption : uint8_t { RejectRay = 1 << 0, RejectFillRule = 1 << 1 };
 RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange&, const CSSParserContext&, OptionSet<PathParsingOption>);
 RefPtr<CSSValue> consumePath(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeContentDistributionOverflowPosition(CSSParserTokenRange&, IsPositionKeyword);
-RefPtr<CSSValue> consumeJustifyContent(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeBorderImageRepeat(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeBorderImageSlice(CSSPropertyID, CSSParserTokenRange&);
 RefPtr<CSSValue> consumeBorderImageOutset(CSSParserTokenRange&);
@@ -145,23 +108,9 @@ RefPtr<CSSValue> consumeReflect(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeSingleBackgroundClip(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeBackgroundClip(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeBackgroundSize(CSSPropertyID, CSSParserTokenRange&, CSSParserMode);
-RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange&);
-RefPtr<CSSValueList> consumeMasonryAutoFlow(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeSingleBackgroundSize(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeSingleMaskSize(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeSingleWebkitBackgroundSize(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeSelfPositionOverflowPosition(CSSParserTokenRange&, IsPositionKeyword);
-RefPtr<CSSValue> consumeAlignItems(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeJustifyItems(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeGridLine(CSSParserTokenRange&);
-bool parseGridTemplateAreasRow(StringView gridRowNames, NamedGridAreaMap&, const size_t rowCount, size_t& columnCount);
-RefPtr<CSSValue> consumeGridTrackSize(CSSParserTokenRange&, CSSParserMode);
-enum class AllowEmpty : bool { No, Yes };
-RefPtr<CSSGridLineNamesValue> consumeGridLineNames(CSSParserTokenRange&, AllowEmpty = AllowEmpty::No);
-enum TrackListType : uint8_t { GridTemplate, GridTemplateNoRepeat, GridAuto };
-RefPtr<CSSValue> consumeGridTrackList(CSSParserTokenRange&, const CSSParserContext&, TrackListType);
-RefPtr<CSSValue> consumeGridTemplatesRowsOrColumns(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeGridTemplateAreas(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeLineBoxContain(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeContainerName(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeWebkitInitialLetter(CSSParserTokenRange&);
@@ -177,27 +126,10 @@ RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeTextSpacingTrim(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeTextUnderlinePosition(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeAnimationTimeline(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeSingleAnimationTimeline(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeAnimationTimelineScroll(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeAnimationTimelineView(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeViewTimelineInsetListItem(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeViewTimelineInset(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSPrimitiveValue> consumeAnchor(CSSParserTokenRange&, CSSParserMode);
-RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange&);
 
 RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange&, const CSSParserContext&);
 
-// @counter-style descriptor consumers:
-
-RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeCounterStyleSymbol(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeCounterStyleNegative(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeCounterStyleRange(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeCounterStylePad(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeCounterStyleSymbols(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeCounterStyleAdditiveSymbols(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeCounterStyleSpeakAs(CSSParserTokenRange&);
 
 } // namespace CSSPropertyParserHelpers
 

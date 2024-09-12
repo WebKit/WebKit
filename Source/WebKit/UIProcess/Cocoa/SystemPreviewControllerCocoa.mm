@@ -604,7 +604,7 @@ void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uin
     else
         m_systemPreviewInfo.element.elementIdentifier = std::nullopt;
     m_systemPreviewInfo.element.documentIdentifier = { *uuid, m_webPageProxy.legacyMainFrameProcess().coreProcessIdentifier() };
-    m_systemPreviewInfo.element.webPageIdentifier = LegacyNullableObjectIdentifier<WebCore::PageIdentifierType>(pageID);
+    m_systemPreviewInfo.element.webPageIdentifier = ObjectIdentifier<WebCore::PageIdentifierType>(pageID);
     triggerSystemPreviewAction();
 }
 

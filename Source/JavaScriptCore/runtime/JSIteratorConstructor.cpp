@@ -44,17 +44,18 @@ Structure* JSIteratorConstructor::createStructure(VM& vm, JSGlobalObject* global
     return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
 }
 
-JSIteratorConstructor* JSIteratorConstructor::create(VM& vm, Structure* structure, JSIteratorPrototype* iteratorPrototype)
+JSIteratorConstructor* JSIteratorConstructor::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, JSIteratorPrototype* iteratorPrototype)
 {
     JSIteratorConstructor* constructor = new (NotNull, allocateCell<JSIteratorConstructor>(vm)) JSIteratorConstructor(vm, structure);
-    constructor->finishCreation(vm, iteratorPrototype);
+    constructor->finishCreation(vm, globalObject, iteratorPrototype);
     return constructor;
 }
 
-void JSIteratorConstructor::finishCreation(VM& vm, JSIteratorPrototype* iteratorPrototype)
+void JSIteratorConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, JSIteratorPrototype* iteratorPrototype)
 {
     Base::finishCreation(vm, 0, vm.propertyNames->Iterator.string(), PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, iteratorPrototype, static_cast<unsigned>(PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->from, jsIteratorConstructorFromCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 template<typename Visitor>

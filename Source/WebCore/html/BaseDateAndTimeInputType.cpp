@@ -62,9 +62,12 @@
 #include <limits>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BaseDateAndTimeInputType);
 
 using namespace HTMLNames;
 

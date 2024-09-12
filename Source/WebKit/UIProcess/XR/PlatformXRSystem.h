@@ -78,6 +78,8 @@ private:
 
     bool webXREnabled() const;
 
+    Ref<WebPageProxy> protectedPage() const;
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
@@ -86,7 +88,7 @@ private:
     void requestPermissionOnSessionFeatures(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, const PlatformXR::Device::FeatureList&, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&&);
     void initializeTrackingAndRendering();
     void shutDownTrackingAndRendering();
-    void requestFrame(CompletionHandler<void(PlatformXR::FrameData&&)>&&);
+    void requestFrame(std::optional<PlatformXR::RequestData>&&, CompletionHandler<void(PlatformXR::FrameData&&)>&&);
     void submitFrame();
     void didCompleteShutdownTriggeredBySystem();
 
@@ -109,7 +111,7 @@ private:
     void setImmersiveSessionState(ImmersiveSessionState, CompletionHandler<void(bool)>&&);
     void invalidateImmersiveSessionState(ImmersiveSessionState nextSessionState = ImmersiveSessionState::Idle);
 
-    WebPageProxy& m_page;
+    WeakRef<WebPageProxy> m_page;
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_immersiveSessionActivity;
 };
 

@@ -352,7 +352,7 @@ static bool hasNetworkChanged(const RTCNetwork& a, const RTCNetwork& b)
     return !isEqual(a.prefix, b.prefix) || a.prefixLength != b.prefixLength || a.type != b.type || a.scopeID != b.scopeID || !isEqual(a.ips, b.ips);
 }
 
-static int sortNetworks(const RTCNetwork& a, const RTCNetwork& b)
+static bool sortNetworks(const RTCNetwork& a, const RTCNetwork& b)
 {
     if (a.type != b.type)
         return a.type < b.type;
@@ -363,7 +363,7 @@ static int sortNetworks(const RTCNetwork& a, const RTCNetwork& b)
     if (precedenceA != precedenceB)
         return precedenceA < precedenceB;
 
-    return codePointCompare(StringView { std::span(a.description.data(), a.description.size()) }, StringView { std::span(b.description.data(), b.description.size()) });
+    return codePointCompare(StringView { std::span(a.description.data(), a.description.size()) }, StringView { std::span(b.description.data(), b.description.size()) }) < 0;
 }
 
 void NetworkManager::onGatheredNetworks(RTCNetwork::IPAddress&& ipv4, RTCNetwork::IPAddress&& ipv6, HashMap<String, RTCNetwork>&& networkMap)
@@ -415,8 +415,18 @@ void NetworkManager::onGatheredNetworks(RTCNetwork::IPAddress&& ipv4, RTCNetwork
     });
 }
 
+NetworkRTCMonitor::NetworkRTCMonitor(NetworkRTCProvider& rtcProvider)
+    : m_rtcProvider(rtcProvider)
+{
+}
+
 NetworkRTCMonitor::~NetworkRTCMonitor()
 {
+}
+
+NetworkRTCProvider& NetworkRTCMonitor::rtcProvider()
+{
+    return m_rtcProvider.get();
 }
 
 const RTCNetwork::IPAddress& NetworkRTCMonitor::ipv4() const
@@ -444,18 +454,18 @@ void NetworkRTCMonitor::stopUpdating()
 void NetworkRTCMonitor::onNetworksChanged(const Vector<RTCNetwork>& networkList, const RTCNetwork::IPAddress& ipv4, const RTCNetwork::IPAddress& ipv6)
 {
     RTC_RELEASE_LOG("onNetworksChanged sent");
-    m_rtcProvider.connection().send(Messages::WebRTCMonitor::NetworksChanged(networkList, ipv4, ipv6), 0);
+    m_rtcProvider->protectedConnection()->send(Messages::WebRTCMonitor::NetworksChanged(networkList, ipv4, ipv6), 0);
 }
 
 
 void NetworkRTCMonitor::ref()
 {
-    m_rtcProvider.ref();
+    m_rtcProvider->ref();
 }
 
 void NetworkRTCMonitor::deref()
 {
-    m_rtcProvider.deref();
+    m_rtcProvider->deref();
 }
 
 } // namespace WebKit

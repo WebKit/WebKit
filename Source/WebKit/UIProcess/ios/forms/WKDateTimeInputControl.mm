@@ -77,8 +77,7 @@ static NSString * const kDateFormatString = @"yyyy-MM-dd"; // "2011-01-27".
 static NSString * const kMonthFormatString = @"yyyy-MM"; // "2011-01".
 static NSString * const kTimeFormatString = @"HH:mm"; // "13:45".
 static NSString * const kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm"; // "2011-01-27T13:45"
-// Weekday is necessary for week inputs in order to append Monday to the initial value so that the NSDate reflects weeks beginning on Mondays in ISO-8601.
-static NSString * const kWeekFormatString = @"yyyy-'W'ww-EEEEE";
+static NSString * const kWeekFormatString = @"yyyy-'W'ww";
 static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>(4269);
 
 - (id)initWithView:(WKContentView *)view inputType:(WebKit::InputType)inputType
@@ -238,7 +237,7 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
 - (RetainPtr<NSISO8601DateFormatter>)iso8601DateFormatterForCalendarView
 {
     RetainPtr dateFormatter = adoptNS([[NSISO8601DateFormatter alloc] init]);
-    [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+    [dateFormatter setTimeZone:[NSTimeZone localTimeZone]];
     [dateFormatter setFormatOptions: NSISO8601DateFormatWithYear | NSISO8601DateFormatWithWeekOfYear | NSISO8601DateFormatWithDashSeparatorInDate];
     return dateFormatter;
 }
@@ -280,9 +279,12 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
         return;
     }
 
-    // FIXME: There may be a better way of ensuring the calculated NSDate from the initial value reflects ISO-8601 weeks starting on Monday.
-    RetainPtr parsedDate = [[self dateFormatterForPicker] dateFromString:[self _sanitizeInputValueForFormatter:[_initialValue.get() stringByAppendingString:@"-M"]]];
-    RetainPtr<NSDateComponents> dateComponents = [[NSCalendar calendarWithIdentifier:NSCalendarIdentifierISO8601] components:unitFlags fromDate:parsedDate.get() ? parsedDate.get() : [NSDate date]];
+    RetainPtr parsedDate = [[self iso8601DateFormatterForCalendarView] dateFromString:[self _sanitizeInputValueForFormatter:_initialValue.get()]];
+
+    if (!parsedDate || ![[_calendarView availableDateRange] containsDate:parsedDate.get()])
+        parsedDate = [NSDate date];
+
+    RetainPtr<NSDateComponents> dateComponents = [[NSCalendar calendarWithIdentifier:NSCalendarIdentifierISO8601] components:unitFlags fromDate:parsedDate.get()];
     [_selectionWeekOfYear setSelectedWeekOfYear:dateComponents.get() animated:YES];
 }
 

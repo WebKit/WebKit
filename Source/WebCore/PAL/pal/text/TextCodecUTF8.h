@@ -27,11 +27,13 @@
 
 #include "TextCodec.h"
 #include <unicode/utf8.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/LChar.h>
 
 namespace PAL {
 
 class TextCodecUTF8 final : public TextCodec {
+    WTF_MAKE_TZONE_ALLOCATED(TextCodecUTF8);
 public:
     static void registerEncodingNames(EncodingNameRegistrar);
     static void registerCodecs(TextCodecRegistrar);

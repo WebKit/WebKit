@@ -561,7 +561,7 @@ macro boxInt32(r, rTag)
     end
 end
 
-// This is the interpreted analogue to createJSToWasmJITInterpreterCrashForSIMDParameters
+// This is the interpreted analogue to createJSToWasmJITSharedCrashForSIMDParameters
 op(js_to_wasm_wrapper_entry_crash_for_simd_parameters, macro()
     if not WEBASSEMBLY or C_LOOP
         error
@@ -578,7 +578,7 @@ op(js_to_wasm_wrapper_entry_crash_for_simd_parameters, macro()
 end)
 
 // This is the interpreted analogue to createJSToWasmWrapper
-// If you change this, make sure to modify JSToWasm.cpp:createJSToWasmJITInterpreter
+// If you change this, make sure to modify JSToWasm.cpp:createJSToWasmJITShared
 op(js_to_wasm_wrapper_entry, macro ()
     if not WEBASSEMBLY or C_LOOP
         error
@@ -648,7 +648,7 @@ if ASSERT_ENABLED
     clobberVolatileRegisters()
 end
 
-    macro saveJSEntrypointInterpreterRegisters()
+    macro saveJSEntrypointRegisters()
         subp constexpr Wasm::JITLessJSEntrypointCallee::SpillStackSpaceAligned, sp
         if ARM64 or ARM64E
             storepairq memoryBase, boundsCheckingSize, -2 * SlotSize[cfr]
@@ -663,7 +663,7 @@ end
         end
     end
 
-    macro restoreJSEntrypointInterpreterRegisters()
+    macro restoreJSEntrypointRegisters()
         if ARM64 or ARM64E
             loadpairq -2 * SlotSize[cfr], memoryBase, boundsCheckingSize
             loadp -3 * SlotSize[cfr], wasmInstance
@@ -679,7 +679,7 @@ end
 
     tagReturnAddress sp
     preserveCallerPCAndCFR()
-    saveJSEntrypointInterpreterRegisters()
+    saveJSEntrypointRegisters()
 
     # Load data from the entry callee
     # This was written by doVMEntry
@@ -878,7 +878,7 @@ else
 end
 
     # Clean up and return
-    restoreJSEntrypointInterpreterRegisters()
+    restoreJSEntrypointRegisters()
     clobberVolatileRegisters()
     restoreCallerPCAndCFR()
     ret

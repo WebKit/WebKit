@@ -79,7 +79,7 @@ private:
     bool isHTMLFrameOwnerElement() const final { return true; }
 
     WeakPtr<Frame> m_contentFrame;
-    SandboxFlags m_sandboxFlags { SandboxNone };
+    SandboxFlags m_sandboxFlags;
 };
 
 class SubframeLoadingDisabler {

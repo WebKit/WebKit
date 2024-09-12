@@ -56,13 +56,8 @@ private:
 
 #if USE(COORDINATED_GRAPHICS)
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() const final;
-    bool swapBuffersIfNeeded();
 
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
-    struct {
-        RefPtr<BitmapTexture> back;
-        RefPtr<BitmapTexture> front;
-    } m_texture;
 #endif
 };
 

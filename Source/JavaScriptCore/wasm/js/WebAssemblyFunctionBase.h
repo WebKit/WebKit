@@ -47,10 +47,12 @@ public:
     JSWebAssemblyInstance* instance() const { return m_instance.get(); }
 
     Wasm::TypeIndex typeIndex() const { return m_importableFunction.typeIndex; }
+    Wasm::Type type() const { return { Wasm::TypeKind::Ref, typeIndex() }; }
     WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation() const { return m_importableFunction.entrypointLoadLocation; }
     const uintptr_t* boxedWasmCalleeLoadLocation() const { return m_importableFunction.boxedWasmCalleeLoadLocation; }
     WasmToWasmImportableFunction importableFunction() const { return m_importableFunction; }
     const Wasm::RTT* rtt() const { return m_importableFunction.rtt; }
+    const Wasm::FunctionSignature& signature() const;
 
     static constexpr ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_instance); }
 
@@ -66,12 +68,11 @@ protected:
     void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name);
     WebAssemblyFunctionBase(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSWebAssemblyInstance*, WasmToWasmImportableFunction);
 
-    WriteBarrier<JSWebAssemblyInstance> m_instance;
-
     // It's safe to just hold the raw WasmToWasmImportableFunction because we have a reference
     // to our Instance, which points to the CodeBlock, which points to the Module
     // that exported us, which ensures that the actual Signature/RTT/code doesn't get deallocated.
     WasmToWasmImportableFunction m_importableFunction;
+    WriteBarrier<JSWebAssemblyInstance> m_instance;
 };
 
 } // namespace JSC

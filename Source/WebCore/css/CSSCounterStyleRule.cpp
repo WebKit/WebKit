@@ -28,6 +28,7 @@
 
 #include "CSSCounterStyleDescriptors.h"
 #include "CSSPropertyParser.h"
+#include "CSSPropertyParserConsumer+CounterStyles.h"
 #include "CSSStyleSheet.h"
 #include "CSSTokenizer.h"
 #include "CSSValuePair.h"

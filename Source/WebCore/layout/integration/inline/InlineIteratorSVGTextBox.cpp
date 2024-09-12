@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InlineIteratorSVGTextBox.h"
 
+#include "LayoutIntegrationLineLayout.h"
 #include "SVGInlineTextBox.h"
 #include "SVGTextFragment.h"
 
@@ -87,6 +88,10 @@ SVGTextBoxIterator svgTextBoxFor(const SVGInlineTextBox* box)
     return { BoxLegacyPath { box } };
 }
 
+SVGTextBox::Key makeKey(const SVGTextBox& textBox)
+{
+    return { &textBox.renderer(), textBox.start() };
+}
 
 }
 }

@@ -49,7 +49,7 @@ public:
     void removeAnnotationRelativeToSelection(NSString *annotationName, int64_t selectionOffset, uint64_t length);
 
 private:
-    WebPageProxy& m_page;
+    WeakRef<WebPageProxy> m_page;
 };
 
 } // namespace WebKit

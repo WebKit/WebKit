@@ -155,26 +155,27 @@ static inline simd_float2 makeMeterSizeFromPointSize(CGSize pointSize, CGFloat p
     return simd_make_float2(pointSize.width / pointsPerMeter, pointSize.height / pointsPerMeter);
 }
 
-static simd_float3 computeExtents(simd_float2 boundsOfLayerInMeters, simd_float3 originalBoundingBoxExtents)
+static void computeScaledExtentsAndCenter(simd_float2 boundsOfLayerInMeters, simd_float3& boundingBoxExtents, simd_float3& boundingBoxCenter)
 {
-    if (simd_reduce_min(originalBoundingBoxExtents) - FLT_EPSILON > 0) {
+    if (simd_reduce_min(boundingBoxExtents) - FLT_EPSILON > 0) {
         auto boundsScaleRatios = simd_make_float2(
-            boundsOfLayerInMeters.x / originalBoundingBoxExtents.x,
-            boundsOfLayerInMeters.y / originalBoundingBoxExtents.y
+            boundsOfLayerInMeters.x / boundingBoxExtents.x,
+            boundsOfLayerInMeters.y / boundingBoxExtents.y
         );
-        return simd_reduce_min(boundsScaleRatios) * originalBoundingBoxExtents;
+        boundingBoxCenter = simd_reduce_min(boundsScaleRatios) * boundingBoxCenter;
+        boundingBoxExtents = simd_reduce_min(boundsScaleRatios) * boundingBoxExtents;
     }
-
-    return originalBoundingBoxExtents;
 }
 
-static RESRT computeSRT(CALayer *layer, simd_float3 originalBoundingBoxExtents, float pitch, float yaw, bool isPortal, CGFloat pointsPerMeter)
+static RESRT computeSRT(CALayer *layer, simd_float3 originalBoundingBoxExtents, simd_float3 originalBoundingBoxCenter, float pitch, float yaw, bool isPortal, CGFloat pointsPerMeter)
 {
     auto boundsOfLayerInMeters = makeMeterSizeFromPointSize(layer.bounds.size, pointsPerMeter);
-    auto extents = computeExtents(boundsOfLayerInMeters, originalBoundingBoxExtents);
+    simd_float3 boundingBoxExtents = originalBoundingBoxExtents;
+    simd_float3 boundingBoxCenter = originalBoundingBoxCenter;
+    computeScaledExtentsAndCenter(boundsOfLayerInMeters, boundingBoxExtents, boundingBoxCenter);
 
     RESRT srt;
-    srt.scale = simd_make_float3(extents.x / originalBoundingBoxExtents.x, extents.y / originalBoundingBoxExtents.y, extents.z / originalBoundingBoxExtents.z);
+    srt.scale = simd_make_float3(boundingBoxExtents.x / originalBoundingBoxExtents.x, boundingBoxExtents.y / originalBoundingBoxExtents.y, boundingBoxExtents.z / originalBoundingBoxExtents.z);
     float minScale = simd_reduce_min(srt.scale);
     srt.scale = simd_make_float3(minScale, minScale, minScale); // FIXME: assume object-fit:contain for now
 
@@ -188,9 +189,9 @@ static RESRT computeSRT(CALayer *layer, simd_float3 originalBoundingBoxExtents, 
     srt.rotation = simd_mul(pitchQuat, yawQuat);
 
     if (isPortal)
-        srt.translation = simd_make_float3(0, -boundsOfLayerInMeters.y / 2.0f, -extents.z / 2.0f);
+        srt.translation = simd_make_float3(-boundingBoxCenter.x, -boundingBoxCenter.y, -boundingBoxCenter.z - boundingBoxExtents.z / 2.0f);
     else
-        srt.translation = simd_make_float3(0, -boundsOfLayerInMeters.y / 2.0f, extents.z / 2.0f);
+        srt.translation = simd_make_float3(-boundingBoxCenter.x, -boundingBoxCenter.y, -boundingBoxCenter.z + boundingBoxExtents.z / 2.0f);
 
     return srt;
 }
@@ -226,7 +227,7 @@ void ModelProcessModelPlayerProxy::computeTransform()
         return;
 
     // FIXME: Use the value of the 'object-fit' property here to compute an appropriate SRT.
-    RESRT newSRT = computeSRT(m_layer.get(), m_originalBoundingBoxExtents, m_pitch, m_yaw, true, effectivePointsPerMeter(m_layer.get()));
+    RESRT newSRT = computeSRT(m_layer.get(), m_originalBoundingBoxExtents, m_originalBoundingBoxCenter, m_pitch, m_yaw, true, effectivePointsPerMeter(m_layer.get()));
     m_transformSRT = newSRT;
 
     simd_float4x4 matrix = RESRTMatrix(m_transformSRT);
@@ -355,8 +356,8 @@ void ModelProcessModelPlayerProxy::load(WebCore::Model& model, WebCore::LayoutSi
 
 void ModelProcessModelPlayerProxy::sizeDidChange(WebCore::LayoutSize layoutSize)
 {
-    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy::sizeDidChange w=%lf h=%lf id=%" PRIu64, this, layoutSize.width().toDouble(), layoutSize.width().toDouble(), m_id.toUInt64());
-    [m_layer setFrame:CGRectMake(0, 0, layoutSize.width().toDouble(), layoutSize.width().toDouble())];
+    RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy::sizeDidChange w=%lf h=%lf id=%" PRIu64, this, layoutSize.width().toDouble(), layoutSize.height().toDouble(), m_id.toUInt64());
+    [m_layer setFrame:CGRectMake(0, 0, layoutSize.width().toDouble(), layoutSize.height().toDouble())];
 }
 
 PlatformLayer* ModelProcessModelPlayerProxy::layer()

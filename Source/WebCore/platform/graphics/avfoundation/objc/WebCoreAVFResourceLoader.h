@@ -77,6 +77,7 @@ private:
     std::unique_ptr<DataURLResourceMediaLoader> m_dataURLMediaLoader;
     std::unique_ptr<CachedResourceMediaLoader> m_resourceMediaLoader;
     RefPtr<PlatformResourceMediaLoader> m_platformMediaLoader;
+    bool m_isBlob { false };
     size_t m_responseOffset { 0 };
     int64_t m_requestedLength { 0 };
     int64_t m_requestedOffset { 0 };

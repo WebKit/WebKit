@@ -26,6 +26,8 @@
 [EnabledBy=WebXRWebGPUBindingsEnabled]
 messages -> RemoteXRSubImage NotRefCounted Stream {
 void Destruct()
+void GetColorTexture(WebKit::WebGPUIdentifier identifier)
+void GetDepthTexture(WebKit::WebGPUIdentifier identifier)
 }
 
 #endif

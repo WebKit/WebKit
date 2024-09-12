@@ -26,10 +26,12 @@
 #pragma once
 
 #include "TextCodec.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace PAL {
 
 class TextCodecSingleByte final : public TextCodec {
+    WTF_MAKE_TZONE_ALLOCATED(TextCodecSingleByte);
 public:
     static void registerEncodingNames(EncodingNameRegistrar);
     static void registerCodecs(TextCodecRegistrar);

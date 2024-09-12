@@ -33,8 +33,11 @@
 #import <WebCore/BifurcatedGraphicsContext.h>
 #import <WebCore/DynamicContentScalingDisplayList.h>
 #import <wtf/MachSendRight.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DynamicContentScalingBifurcatedImageBuffer);
 
 DynamicContentScalingBifurcatedImageBuffer::DynamicContentScalingBifurcatedImageBuffer(Parameters parameters, const WebCore::ImageBufferBackend::Info& backendInfo, const WebCore::ImageBufferCreationContext& creationContext, std::unique_ptr<WebCore::ImageBufferBackend>&& backend, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
     : ImageBuffer(parameters, backendInfo, creationContext, WTFMove(backend), renderingResourceIdentifier)

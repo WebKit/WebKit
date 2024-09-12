@@ -110,7 +110,9 @@ private:
     static void processCallback(Node*);
     void clearSheet();
 
+    void potentiallyBlockRendering();
     void unblockRendering();
+    bool isImplicitlyPotentiallyRenderBlocking() const;
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode() final;

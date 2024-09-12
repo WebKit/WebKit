@@ -66,6 +66,7 @@ public:
     MessagePortChannelProvider& messagePortChannelProvider();
 
     const URL& url() const final { return m_url; }
+    const URL& creationURL() const final { return url(); }
 
     void evaluate();
 

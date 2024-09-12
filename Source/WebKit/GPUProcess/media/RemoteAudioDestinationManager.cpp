@@ -266,6 +266,14 @@ bool RemoteAudioDestinationManager::allowsExitUnderMemoryPressure() const
     return true;
 }
 
+const SharedPreferencesForWebProcess& RemoteAudioDestinationManager::sharedPreferencesForWebProcess() const
+{
+    RefPtr gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get();
+    RELEASE_ASSERT(gpuConnectionToWebProcess);
+
+    return gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

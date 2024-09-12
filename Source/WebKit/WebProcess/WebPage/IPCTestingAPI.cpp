@@ -2367,7 +2367,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
         if (!frameIdentifier || !processIdentifier)
             return false;
         encoder << WebCore::FrameIdentifier {
-            LegacyNullableObjectIdentifier<WebCore::FrameIdentifierType>(frameIdentifier),
+            ObjectIdentifier<WebCore::FrameIdentifierType>(frameIdentifier),
             LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(processIdentifier)
         };
         return true;

@@ -47,7 +47,7 @@ bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPa
         return extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"action", false);
 
     if (name == "commands"_s)
-        return objectForKey<NSDictionary>(extensionContext().manifest(), @"commands");
+        return objectForKey<NSDictionary>(extensionContext().manifest(), @"commands", false);
 
     if (name == "declarativeNetRequest"_s)
         return extensionContext().hasPermission(name) || extensionContext().hasPermission("declarativeNetRequestWithHostAccess"_s);

@@ -127,10 +127,11 @@ void SVGTextLayoutEngine::recordTextFragment(InlineIterator::SVGTextBoxIterator 
         }
     }
 
-    // FIXME: Separate input and output.
-    auto& mutableFragments = const_cast<Vector<SVGTextFragment>&>(textBox->textFragments());
+    auto& fragments = m_fragmentMap.ensure(makeKey(*textBox), [&] {
+        return Vector<SVGTextFragment> { };
+    }).iterator->value;
 
-    mutableFragments.append(m_currentTextFragment);
+    fragments.append(m_currentTextFragment);
     m_currentTextFragment = SVGTextFragment();
 }
 
@@ -176,7 +177,7 @@ void SVGTextLayoutEngine::beginTextPathLayout(RenderSVGTextPath& textPath, SVGTe
         }
     }
 
-    lineLayout.m_chunkLayoutBuilder.buildTextChunks(lineLayout.m_lineLayoutBoxes);
+    lineLayout.m_chunkLayoutBuilder.buildTextChunks(lineLayout.m_lineLayoutBoxes, lineLayout.m_lineLayoutChunkStarts, lineLayout.m_fragmentMap);
 
     // Handle text-anchor as additional start offset for text paths.
     m_textPathStartOffset += lineLayout.m_chunkLayoutBuilder.totalAnchorShift();
@@ -222,7 +223,6 @@ void SVGTextLayoutEngine::layoutInlineTextBox(InlineIterator::SVGTextBoxIterator
 
     const RenderStyle& style = text.style();
 
-    const_cast<SVGInlineTextBox*>(textBox->legacyInlineBox())->clearTextFragments();
     m_isVerticalText = style.isVerticalWritingMode();
     layoutTextOnLineOrPath(textBox, text, style);
 
@@ -270,21 +270,23 @@ void SVGTextLayoutEngine::finalizeTransformMatrices(Vector<InlineIterator::SVGTe
         if (textBoxTransformation.isIdentity())
             continue;
 
-        for (auto& fragment : textBox->textFragments()) {
-            ASSERT(fragment.lengthAdjustTransform.isIdentity());
-            auto& mutableFragment = const_cast<SVGTextFragment&>(fragment);
-            mutableFragment.lengthAdjustTransform = textBoxTransformation;
+        auto it = m_fragmentMap.find(makeKey(*textBox));
+        if (it != m_fragmentMap.end()) {
+            for (auto& fragment : it->value) {
+                ASSERT(fragment.lengthAdjustTransform.isIdentity());
+                fragment.lengthAdjustTransform = textBoxTransformation;
+            }
         }
     }
 
     textBoxes.clear();
 }
 
-void SVGTextLayoutEngine::finishLayout()
+SVGTextFragmentMap SVGTextLayoutEngine::finishLayout()
 {
     // After all text fragments are stored in their correpsonding SVGInlineTextBoxes, we can layout individual text chunks.
     // Chunk layouting is only performed for line layout boxes, not for path layout, where it has already been done.
-    m_chunkLayoutBuilder.layoutTextChunks(m_lineLayoutBoxes);
+    m_chunkLayoutBuilder.layoutTextChunks(m_lineLayoutBoxes, m_lineLayoutChunkStarts, m_fragmentMap);
 
     // Finalize transform matrices, after the chunk layout corrections have been applied, and all fragment x/y positions are finalized.
     if (!m_lineLayoutBoxes.isEmpty()) {
@@ -304,6 +306,8 @@ void SVGTextLayoutEngine::finishLayout()
 
         finalizeTransformMatrices(m_pathLayoutBoxes);
     }
+
+    return WTFMove(m_fragmentMap);
 }
 
 bool SVGTextLayoutEngine::currentLogicalCharacterAttributes(SVGTextLayoutAttributes*& logicalAttributes)
@@ -510,7 +514,8 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
         // whether this character starts a new text chunk before doing any further processing.
         if (m_visualCharacterOffset == textBox->start()) {
             moveToExpectedChunkStartPositionIfNeeded();
-            const_cast<SVGInlineTextBox*>(textBox->legacyInlineBox())->setStartsNewTextChunk(startsNewTextChunk);
+            if (startsNewTextChunk)
+                m_lineLayoutChunkStarts.add(makeKey(*textBox));
         }
 
         float angle = data.rotate == SVGTextLayoutAttributes::emptyValue() ? 0 : data.rotate;

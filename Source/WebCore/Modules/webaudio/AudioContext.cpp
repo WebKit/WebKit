@@ -558,7 +558,8 @@ std::optional<NowPlayingInfo> AudioContext::nowPlayingInfo() const
         false,
         m_currentIdentifier,
         isPlaying(),
-        !page->isVisibleAndActive()
+        !page->isVisibleAndActive(),
+        false
     };
 
     if (page->usesEphemeralSession() && !document->settings().allowPrivacySensitiveOperationsInNonPersistentDataStores())

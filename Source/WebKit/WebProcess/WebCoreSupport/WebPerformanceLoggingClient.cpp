@@ -30,9 +30,12 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebPerformanceLoggingClient);
 
 WebPerformanceLoggingClient::WebPerformanceLoggingClient(WebPage& page)
     : m_page(page)

@@ -40,7 +40,6 @@ namespace CSSPropertyParserHelpers {
 // MARK: - Consumer functions
 
 // MARK: - Angle
-std::optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk);
 RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
 
 // MARK: - Angle or Percent

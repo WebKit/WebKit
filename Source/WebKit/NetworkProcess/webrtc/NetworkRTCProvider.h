@@ -81,7 +81,9 @@ struct SocketComparator {
     }
 };
 
-class NetworkRTCProvider : private FunctionDispatcher, private IPC::MessageReceiver, public ThreadSafeRefCounted<NetworkRTCProvider, WTF::DestructionThread::MainRunLoop> {
+class NetworkRTCProvider : private FunctionDispatcher, private IPC::MessageReceiver, public ThreadSafeRefCounted<NetworkRTCProvider, WTF::DestructionThread::MainRunLoop>, public CanMakeThreadSafeCheckedPtr<NetworkRTCProvider> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkRTCProvider);
 public:
     static Ref<NetworkRTCProvider> create(NetworkConnectionToWebProcess& connection)
     {
@@ -91,7 +93,7 @@ public:
     }
     ~NetworkRTCProvider();
 
-    void didReceiveNetworkRTCMonitorMessage(IPC::Connection& connection, IPC::Decoder& decoder) { m_rtcMonitor.didReceiveMessage(connection, decoder); }
+    void didReceiveNetworkRTCMonitorMessage(IPC::Connection& connection, IPC::Decoder& decoder) { protectedRTCMonitor()->didReceiveMessage(connection, decoder); }
 
     class Socket {
     public:
@@ -114,6 +116,7 @@ public:
     void callOnRTCNetworkThread(Function<void()>&&);
 
     IPC::Connection& connection() { return m_ipcConnection.get(); }
+    Ref<IPC::Connection> protectedConnection() { return m_ipcConnection.get(); }
 
     void closeSocket(WebCore::LibWebRTCSocketIdentifier);
 
@@ -153,6 +156,8 @@ private:
     void signalSocketIsClosed(WebCore::LibWebRTCSocketIdentifier);
 
     void assertIsRTCNetworkThread();
+
+    Ref<NetworkRTCMonitor> protectedRTCMonitor();
 
     static constexpr size_t maxSockets { 256 };
 

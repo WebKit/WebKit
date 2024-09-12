@@ -121,12 +121,10 @@
     return result;
 }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-- (UITextWritingDirection)writingDirection
+- (NSWritingDirection)writingDirection
 {
-    return _selectionGeometry.direction() == WebCore::TextDirection::LTR ? UITextWritingDirectionLeftToRight : UITextWritingDirectionRightToLeft;
+    return _selectionGeometry.direction() == WebCore::TextDirection::LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
 }
-ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (UITextRange *)range
 {

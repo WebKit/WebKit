@@ -56,6 +56,9 @@ headers: "NetworkProcessCreationParameters.h" "AuxiliaryProcessCreationParameter
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     bool builtInNotificationsEnabled
 #endif
+#if PLATFORM(COCOA)
+    bool enableModernDownloadProgress
+#endif
 
     Vector<WebKit::WebsiteDataStoreParameters> websiteDataStoreParameters
     Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> allowedFirstPartiesForCookies;

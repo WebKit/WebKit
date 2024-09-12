@@ -91,9 +91,9 @@ void PlatformXRSystemProxy::didCompleteShutdownTriggeredBySystem()
     m_page.send(Messages::PlatformXRSystem::DidCompleteShutdownTriggeredBySystem());
 }
 
-void PlatformXRSystemProxy::requestFrame(PlatformXR::Device::RequestFrameCallback&& callback)
+void PlatformXRSystemProxy::requestFrame(std::optional<PlatformXR::RequestData>&& requestData, PlatformXR::Device::RequestFrameCallback&& callback)
 {
-    m_page.sendWithAsyncReply(Messages::PlatformXRSystem::RequestFrame(), WTFMove(callback));
+    m_page.sendWithAsyncReply(Messages::PlatformXRSystem::RequestFrame(WTFMove(requestData)), WTFMove(callback));
 }
 
 std::optional<PlatformXR::LayerHandle> PlatformXRSystemProxy::createLayerProjection(uint32_t, uint32_t, bool)

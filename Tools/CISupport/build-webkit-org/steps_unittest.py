@@ -1921,7 +1921,7 @@ class TestParseStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCase)
         return self.runStep()
 
 
-class TestCompareStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCase):
+class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         return self.setUpBuildStep()
 
@@ -1929,7 +1929,7 @@ class TestCompareStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCas
         return self.tearDownBuildStep()
 
     def configureStep(self):
-        self.setupStep(CompareStaticAnalyzerResults())
+        self.setupStep(FindUnexpectedStaticAnalyzerResults())
 
     def test_success_no_issues(self):
         self.configureStep()
@@ -1956,7 +1956,7 @@ class TestCompareStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCas
             + ExpectShell.log('stdio', stdout='Total unexpected failing files: 123\nTotal unexpected passing files: 456\nTotal unexpected issues: 789\n')
             + 0,
         )
-        self.expectOutcome(result=FAILURE, state_string='Unexpected failing files: 123 Unexpected passing files: 456 Unexpected issues: 789 (failure)')
+        self.expectOutcome(result=SUCCESS, state_string='Unexpected failing files: 123 Unexpected passing files: 456 Unexpected issues: 789')
         return self.runStep()
 
 

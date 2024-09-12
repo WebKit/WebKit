@@ -64,22 +64,22 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionDataRecord, WebExtensionData
 
 - (NSSet<WKWebExtensionDataType> *)containedDataTypes
 {
-    return toAPI(_webExtensionDataRecord->types());
+    return toAPI(self._protectedWebExtensionDataRecord->types());
 }
 
 - (NSUInteger)totalSizeInBytes
 {
-    return _webExtensionDataRecord->totalSize();
+    return self._protectedWebExtensionDataRecord->totalSize();
 }
 
 - (NSUInteger)sizeInBytesOfTypes:(NSSet<WKWebExtensionDataType> *)dataTypes
 {
-    return _webExtensionDataRecord->sizeOfTypes(WebKit::toWebExtensionDataTypes(dataTypes));
+    return self._protectedWebExtensionDataRecord->sizeOfTypes(WebKit::toWebExtensionDataTypes(dataTypes));
 }
 
 - (NSArray<NSError *> *)errors
 {
-    return _webExtensionDataRecord->errors();
+    return self._protectedWebExtensionDataRecord->errors();
 }
 
 #pragma mark WKObject protocol implementation
@@ -90,6 +90,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionDataRecord, WebExtensionData
 }
 
 - (WebKit::WebExtensionDataRecord&)_webExtensionDataRecord
+{
+    return *_webExtensionDataRecord;
+}
+
+- (Ref<WebKit::WebExtensionDataRecord>)_protectedWebExtensionDataRecord
 {
     return *_webExtensionDataRecord;
 }

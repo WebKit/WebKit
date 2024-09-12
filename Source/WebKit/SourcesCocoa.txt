@@ -31,6 +31,9 @@ NetworkProcess/cocoa/NetworkSessionCocoa.mm
 NetworkProcess/cocoa/NetworkTaskCocoa.mm
 NetworkProcess/cocoa/WKURLSessionTaskDelegate.mm
 
+NetworkProcess/webtransport/cocoa/NetworkTransportBidirectionalStreamCocoa.mm
+NetworkProcess/webtransport/cocoa/NetworkTransportReceiveStreamCocoa.mm
+NetworkProcess/webtransport/cocoa/NetworkTransportSendStreamCocoa.mm
 NetworkProcess/webtransport/cocoa/NetworkTransportSessionCocoa.mm
 
 NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
@@ -307,6 +310,9 @@ UIProcess/API/Cocoa/_WKUserStyleSheet.mm
 UIProcess/API/Cocoa/_WKVisitedLinkStore.mm
 UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.mm
 UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm
+UIProcess/API/Cocoa/_WKWebPushDaemonConnection.mm
+UIProcess/API/Cocoa/_WKWebPushMessage.mm
+UIProcess/API/Cocoa/_WKWebPushSubscriptionData.mm
 UIProcess/API/Cocoa/_WKWebExtension.mm
 UIProcess/API/Cocoa/_WKWebPushAction.mm
 UIProcess/API/Cocoa/_WKWebsiteDataSize.mm

@@ -76,7 +76,7 @@ class CustomFlagsMixin(object):
                     return
 
     def customBuildFlag(self, platform, fullPlatform):
-        if platform not in ('gtk', 'wincairo', 'ios', 'visionos', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos'):
+        if platform not in ('gtk', 'win', 'ios', 'visionos', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos'):
             return []
         if 'simulator' in fullPlatform:
             platform = platform + '-simulator'
@@ -85,7 +85,7 @@ class CustomFlagsMixin(object):
         return ['--' + platform]
 
     def appendCustomBuildFlags(self, platform, fullPlatform):
-        if platform not in ('gtk', 'wincairo', 'ios', 'visionos', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos',):
+        if platform not in ('gtk', 'win', 'ios', 'visionos', 'jsc-only', 'wpe', 'playstation', 'tvos', 'watchos',):
             return
         if 'simulator' in fullPlatform:
             platform = platform + '-simulator'
@@ -94,7 +94,7 @@ class CustomFlagsMixin(object):
         self.command += ['--' + platform]
 
     def appendCustomTestingFlags(self, platform, device_model):
-        if platform not in ('gtk', 'wincairo', 'ios', 'visionos', 'jsc-only', 'wpe'):
+        if platform not in ('gtk', 'win', 'ios', 'visionos', 'jsc-only', 'wpe'):
             return
         if device_model == 'iphone':
             device_model = 'iphone-simulator'
@@ -108,7 +108,7 @@ class CustomFlagsMixin(object):
 
 
 class ShellMixin(object):
-    WINDOWS_SHELL_PLATFORMS = ['wincairo']
+    WINDOWS_SHELL_PLATFORMS = ['win']
 
     def has_windows_shell(self):
         return self.getProperty('platform', '*') in self.WINDOWS_SHELL_PLATFORMS
@@ -263,7 +263,7 @@ class CleanUpGitIndexLock(shell.ShellCommandNewStyle):
     @defer.inlineCallbacks
     def run(self):
         platform = self.getProperty('platform', '*')
-        if platform == 'wincairo':
+        if platform == 'win':
             self.command = ['del', r'.git\index.lock']
 
         rc = yield super().run()
@@ -349,10 +349,10 @@ class DeleteStaleBuildFiles(shell.Compile):
         return shell.Compile.start(self)
 
 
-class InstallWinCairoDependencies(shell.ShellCommandNewStyle):
-    name = 'wincairo-requirements'
-    description = ['updating wincairo dependencies']
-    descriptionDone = ['updated wincairo dependencies']
+class InstallWindowsDependencies(shell.ShellCommandNewStyle):
+    name = 'windows-requirements'
+    description = ['updating windows dependencies']
+    descriptionDone = ['updated windows dependencies']
     command = ['python3', './Tools/Scripts/update-webkit-win-libs.py']
     haltOnFailure = True
 
@@ -764,8 +764,8 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
         # Check: https://bugs.webkit.org/show_bug.cgi?id=175140
         if platform in ('gtk', 'wpe', 'jsc-only'):
             self.command += ['--memory-limited', '--verbose']
-        # WinCairo uses the Windows command prompt, not Cygwin.
-        elif platform == 'wincairo':
+        # Windows port uses the Windows command prompt, not Cygwin.
+        elif platform == 'win':
             self.command += ['--test-writer=ruby']
 
         self.appendCustomBuildFlags(platform, self.getProperty('fullPlatform'))
@@ -1659,7 +1659,7 @@ class ScanBuildSmartPointer(steps.ShellSequence, ShellMixin):
         ]
 
         if rc == SUCCESS:
-            steps_to_add += [ParseStaticAnalyzerResults(), CompareStaticAnalyzerResults(), ArchiveStaticAnalyzerResults(), UploadStaticAnalyzerResults(), ExtractStaticAnalyzerTestResults()]
+            steps_to_add += [ParseStaticAnalyzerResults(), FindUnexpectedStaticAnalyzerResults(), ArchiveStaticAnalyzerResults(), UploadStaticAnalyzerResults(), ExtractStaticAnalyzerTestResults(), DisplaySmartPointerResults()]
         self.build.addStepsAfterCurrentStep(steps_to_add)
 
         defer.returnValue(rc)
@@ -1724,10 +1724,10 @@ class ParseStaticAnalyzerResults(shell.ShellCommandNewStyle):
         return {u'step': status}
 
 
-class CompareStaticAnalyzerResults(shell.ShellCommandNewStyle):
-    name = 'compare-static-analyzer-results'
-    description = ['comparing static analyzer results']
-    descriptionDone = ['compared static analyzer results']
+class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle):
+    name = 'find-unexpected-static-analyzer-results'
+    description = ['finding unexpected static analyzer results']
+    descriptionDone = ['found unexpected static analyzer results']
     resultMsg = ''
 
     @defer.inlineCallbacks
@@ -1746,8 +1746,6 @@ class CompareStaticAnalyzerResults(shell.ShellCommandNewStyle):
 
         self.createResultMessage()
 
-        if self.getProperty('unexpected_failing_files', 0) or self.getProperty('unexpected_passing_files', 0):
-            return defer.returnValue(FAILURE)
         return defer.returnValue(rc)
 
     def createResultMessage(self):
@@ -1776,38 +1774,58 @@ class CompareStaticAnalyzerResults(shell.ShellCommandNewStyle):
         return {u'step': status}
 
 
-class DisplayUnexpectedResults(buildstep.BuildStep, AddToLogMixin):
-    name = 'display-unexpected-results'
+class DisplaySmartPointerResults(buildstep.BuildStep, AddToLogMixin):
+    name = 'display-smart-pointer-results'
 
     @defer.inlineCallbacks
     def run(self):
-        result_directory = f"public_html/results/{self.getProperty('buildername')}/{self.getProperty('archive_revision')} ({self.getProperty('buildnumber')})"
-        unexpected_results_json = os.path.join(result_directory, SCAN_BUILD_OUTPUT_DIR, 'unexpected_results.json')
+        self.resultDirectory = f"public_html/results/{self.getProperty('buildername')}/{self.getProperty('archive_revision')} ({self.getProperty('buildnumber')})"
+        self.zipFile = self.resultDirectory + '.zip'
+
+        unexpected_results_json = os.path.join(self.resultDirectory, SCAN_BUILD_OUTPUT_DIR, 'unexpected_results.json')
         with open(unexpected_results_json) as f:
             unexpected_results_data = json.load(f)
-        yield self.getFilesPerProject(unexpected_results_data, 'passes')
-        yield self.getFilesPerProject(unexpected_results_data, 'failures')
+        is_log = yield self.getFilesPerProject(unexpected_results_data, 'passes')
+        is_log += yield self.getFilesPerProject(unexpected_results_data, 'failures')
+        if not is_log:
+            yield self.addToLog('stdio', 'No unexpected results.\n')
+
+        self.addURL("View full static analyzer results", self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/results.html")
+        self.addURL("Download full static analyzer results", self.resultDownloadURL())
         if self.getProperty('unexpected_failing_files', 0) or self.getProperty('unexpected_passing_files', 0):
+            self.addURL("View unexpected static analyzer results", self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/unexpected-results.html")
             return defer.returnValue(FAILURE)
         return defer.returnValue(SUCCESS)
 
     @defer.inlineCallbacks
     def getFilesPerProject(self, unexpected_results_data, type):
+        is_log = 0
         for project, data in unexpected_results_data[type].items():
             log_content = ''
             for checker, files in data.items():
                 if files:
-                    log_content += f'\n\n=> {checker}\n\n'
-                    log_content += '\n'.join(files)
+                    file_list = '\n'.join((sorted(files)))
+                    log_content += f'\n\n=> {checker}\n\n{file_list}\n\n'
             if log_content:
                 yield self._addToLog(f'{project}-unexpected-{type}', log_content)
+                is_log += 1
+        return defer.returnValue(is_log)
 
     def getResultSummary(self):
-        if self.results != SUCCESS:
-            return super().getResultSummary()
+        if self.results == SUCCESS:
+            return {'step': f'No unexpected results'}
+        elif self.results == WARNINGS:
+            return {'step': f'Results could not be displayed'}
         num_failures = self.getProperty('unexpected_failing_files', 0)
         num_passes = self.getProperty('unexpected_passing_files', 0)
         return {'step': f'Unexpected failing files: {num_failures} Unexpected passing files: {num_passes}'}
+
+    def resultDirectoryURL(self):
+        self.setProperty('result_directory', self.resultDirectory)
+        return self.resultDirectory.replace('public_html/', '/') + '/'
+
+    def resultDownloadURL(self):
+        return self.zipFile.replace('public_html/', '')
 
 
 class UpdateSmartPointerBaseline(steps.ShellSequence, ShellMixin):
@@ -1890,24 +1908,8 @@ class ExtractTestResults(master.MasterShellCommandNewStyle):
 class ExtractStaticAnalyzerTestResults(ExtractTestResults):
     name = 'extract-static-analyzer-test-results'
 
-    @defer.inlineCallbacks
-    def run(self):
-        rc = yield super().run()
-        if self.getProperty('unexpected_failing_files', 0) or self.getProperty('unexpected_passing_files', 0):
-            self.build.addStepsAfterCurrentStep([DisplayUnexpectedResults()])
-        defer.returnValue(rc)
-
-    def getLastBuildStepByName(self, name):
-        for step in reversed(self.build.executedSteps):
-            if name in step.name:
-                return step
-        return None
-
     def addCustomURLs(self):
-        step = self.getLastBuildStepByName(CompareStaticAnalyzerResults.name)
-        step.addURL("View full static analyzer results", self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/results.html")
-        step.addURL("View unexpected static analyzer results", self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/unexpected-results.html")
-        step.addURL("Download full static analyzer results", self.resultDownloadURL())
+        pass
 
 
 class PrintConfiguration(steps.ShellSequence):

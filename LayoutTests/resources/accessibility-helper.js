@@ -266,6 +266,31 @@ async function waitForFocus(id) {
     return focusedElement;
 }
 
+// Selects text within the element with the given ID, and returns the global selected `TextMarkerRange` after doing so.
+// Optionally takes the AccessibilityUIElement associated with the web area as an argument. If not passed, we'll
+// retrieve it in the function.
+async function selectElementTextById(id, axWebArea) {
+    const webArea = axWebArea ? axWebArea : accessibilityController.rootElement.childAtIndex(0);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+
+    await waitFor(() => {
+        const selectedRange = webArea.selectedTextMarkerRange();
+        return webArea.textMarkerRangeLength(selectedRange) == 0;
+    });
+
+    const range = document.createRange();
+    range.selectNodeContents(document.getElementById(id));
+    selection.addRange(range);
+
+    let selectedRange;
+    await waitFor(() => {
+        selectedRange = webArea.selectedTextMarkerRange();
+        return webArea.textMarkerRangeLength(selectedRange) > 0;
+    });
+    return selectedRange;
+}
+
 function evalAndReturn(expression) {
     if (typeof expression !== "string")
         debug("FAIL: evalAndReturn() expects a string argument");

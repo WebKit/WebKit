@@ -31,6 +31,7 @@
 #include "MessageSender.h"
 #include "NetworkDataTask.h"
 #include "SandboxExtension.h"
+#include "UseDownloadPlaceholder.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/ResourceRequest.h>
 #include <memory>
@@ -70,9 +71,10 @@ class NetworkDataTask;
 class NetworkSession;
 class WebPage;
 
-class Download : public IPC::MessageSender, public CanMakeWeakPtr<Download> {
+class Download : public IPC::MessageSender, public CanMakeWeakPtr<Download>, public CanMakeCheckedPtr<Download> {
     WTF_MAKE_TZONE_ALLOCATED(Download);
     WTF_MAKE_NONCOPYABLE(Download);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Download);
 public:
     Download(DownloadManager&, DownloadID, NetworkDataTask&, NetworkSession&, const String& suggestedFilename = { });
 #if PLATFORM(COCOA)
@@ -89,7 +91,9 @@ public:
 #endif
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    void publishProgress(const URL&, std::span<const uint8_t>);
+    void publishProgress(const URL&, std::span<const uint8_t>, WebKit::UseDownloadPlaceholder);
+    void setPlaceholderURL(NSURL *);
+    void setFinalURL(NSURL *);
 #endif
 
     DownloadID downloadID() const { return m_downloadID; }
@@ -104,7 +108,7 @@ public:
 
     void applicationDidEnterBackground() { m_monitor.applicationDidEnterBackground(); }
     void applicationWillEnterForeground() { m_monitor.applicationWillEnterForeground(); }
-    DownloadManager& manager() const { return m_downloadManager; }
+    DownloadManager& manager() const { return m_downloadManager.get(); }
 
     unsigned testSpeedMultiplier() const { return m_testSpeedMultiplier; }
 
@@ -115,8 +119,13 @@ private:
 
     void platformCancelNetworkLoad(CompletionHandler<void(std::span<const uint8_t>)>&&);
     void platformDestroyDownload();
+    void platformDidFinish(CompletionHandler<void()>&&);
 
-    DownloadManager& m_downloadManager;
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    void startUpdatingProgress() const;
+#endif
+
+    CheckedRef<DownloadManager> m_downloadManager;
     DownloadID m_downloadID;
     Ref<DownloadManager::Client> m_client;
 
@@ -127,10 +136,10 @@ private:
 #if PLATFORM(COCOA)
     RetainPtr<NSURLSessionDownloadTask> m_downloadTask;
     RetainPtr<NSProgress> m_progress;
-#endif
 #if HAVE(MODERN_DOWNLOADPROGRESS)
     RetainPtr<NSData> m_bookmarkData;
     RetainPtr<NSURL> m_bookmarkURL;
+#endif
 #endif
     PAL::SessionID m_sessionID;
     bool m_hasReceivedData { false };

@@ -424,7 +424,7 @@ Vector<SwapBuffersDisplayRequirement> RemoteRenderingBackendProxy::prepareImageB
 
         // Using the  will mark buffers as non-volatile and
         // we don't know exactly which. Assume they all are non-volatile.
-        perLayerData.bufferSet->clearVolatilityUntilAfter(m_currentVolatilityRequest);
+        perLayerData.bufferSet->clearVolatility();
         perLayerData.bufferSet->willPrepareForDisplay();
 
         return ImageBufferSetPrepareBufferForDisplayInputData {
@@ -474,7 +474,6 @@ void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<std::pair<Ref<Remo
 
 void RemoteRenderingBackendProxy::didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<std::pair<RemoteImageBufferSetIdentifier, OptionSet<BufferInSetType>>> markedBufferSets, bool didMarkAllLayersAsVolatile)
 {
-    ASSERT(requestIdentifier);
     auto completionHandler = m_markAsVolatileRequests.take(requestIdentifier);
     if (!completionHandler)
         return;
@@ -484,7 +483,7 @@ void RemoteRenderingBackendProxy::didMarkLayersAsVolatile(MarkSurfacesAsVolatile
         if (!bufferSet)
             continue;
 
-        bufferSet->setConfirmedVolatility(requestIdentifier, bufferSetIdentifierAndType.second);
+        bufferSet->setConfirmedVolatility(bufferSetIdentifierAndType.second);
     }
 
     completionHandler(didMarkAllLayersAsVolatile);

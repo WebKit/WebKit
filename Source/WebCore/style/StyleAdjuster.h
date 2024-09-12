@@ -27,6 +27,7 @@
 
 #include "RenderStyleConstants.h"
 #include "TextSizeAdjustment.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -77,7 +78,7 @@ private:
 
     static OptionSet<EventListenerRegionType> computeEventListenerRegionTypes(const Document&, const RenderStyle&, const EventTarget&, OptionSet<EventListenerRegionType>);
 
-    const Document& m_document;
+    CheckedRef<const Document> m_document;
     const RenderStyle& m_parentStyle;
     const RenderStyle& m_parentBoxStyle;
     Element* m_element;

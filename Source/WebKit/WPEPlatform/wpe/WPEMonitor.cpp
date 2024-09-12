@@ -237,7 +237,7 @@ static void wpe_monitor_class_init(WPEMonitorClass* monitorClass)
         g_param_spec_double(
             "scale",
             nullptr, nullptr,
-            1, G_MAXDOUBLE, 1,
+            0., G_MAXDOUBLE, 1.,
             WEBKIT_PARAM_READWRITE);
 
     /**
@@ -480,7 +480,7 @@ gdouble wpe_monitor_get_scale(WPEMonitor* monitor)
 void wpe_monitor_set_scale(WPEMonitor* monitor, double scale)
 {
     g_return_if_fail(WPE_IS_MONITOR(monitor));
-    g_return_if_fail(scale >= 1);
+    g_return_if_fail(scale > 0);
 
     if (monitor->priv->scale == scale)
         return;

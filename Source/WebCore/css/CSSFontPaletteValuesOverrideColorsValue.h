@@ -71,7 +71,7 @@ public:
 
 private:
     CSSFontPaletteValuesOverrideColorsValue(Ref<CSSPrimitiveValue>&& key, Ref<CSSPrimitiveValue>&& color)
-        : CSSValue(FontPaletteValuesOverrideColorsClass)
+        : CSSValue(ClassType::FontPaletteValuesOverrideColors)
         , m_key(WTFMove(key))
         , m_color(WTFMove(color))
     {

@@ -51,6 +51,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeDrawingAreaProxyMac);
+
 static NSString * const transientZoomAnimationKey = @"wkTransientZoomScale";
 static NSString * const transientZoomCommitAnimationKey = @"wkTransientZoomCommit";
 static NSString * const transientZoomScrollPositionOverrideAnimationKey = @"wkScrollPositionOverride";

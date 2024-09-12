@@ -471,12 +471,17 @@ bool RemoteLayerBackingStoreCollection::collectAllRemoteRenderingBufferIdentifie
 
 void RemoteLayerBackingStoreCollection::sendMarkBuffersVolatile(Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&& identifiers, CompletionHandler<void(bool)>&& completionHandler, bool forcePurge)
 {
-    auto& remoteRenderingBackend = m_layerTreeContext.ensureRemoteRenderingBackendProxy();
+    auto& remoteRenderingBackend = m_layerTreeContext->ensureRemoteRenderingBackendProxy();
 
     remoteRenderingBackend.markSurfacesVolatile(WTFMove(identifiers), [completionHandler = WTFMove(completionHandler)](bool markedAllVolatile) mutable {
         LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStoreCollection::sendMarkBuffersVolatile: marked all volatile " << markedAllVolatile);
         completionHandler(markedAllVolatile);
     }, forcePurge);
+}
+
+RemoteLayerTreeContext& RemoteLayerBackingStoreCollection::layerTreeContext() const
+{
+    return m_layerTreeContext.get();
 }
 
 } // namespace WebKit

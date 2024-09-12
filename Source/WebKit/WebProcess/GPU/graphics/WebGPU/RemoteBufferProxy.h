@@ -30,7 +30,6 @@
 #include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUBuffer.h>
-#include <wtf/Deque.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit::WebGPU {
@@ -87,8 +86,6 @@ private:
     void destroy() final;
 
     void setLabelInternal(const String&) final;
-
-    Deque<CompletionHandler<void()>> m_callbacks;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
