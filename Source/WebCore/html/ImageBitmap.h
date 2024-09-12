@@ -136,6 +136,10 @@ public:
     bool isDetached() const { return !m_bitmap; }
     void close() { takeImageBuffer(); }
 
+#if USE(SKIA)
+    void prepareForCrossThreadTransfer();
+#endif
+
     size_t memoryCost() const;
 private:
     friend class ImageBitmapImageObserver;
