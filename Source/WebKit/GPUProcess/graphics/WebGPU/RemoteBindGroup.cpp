@@ -58,7 +58,7 @@ void RemoteBindGroup::destruct()
 
 void RemoteBindGroup::updateExternalTextures(WebGPUIdentifier externalTextureIdentifier)
 {
-    if (auto externalTexture = m_objectHeap->convertExternalTextureFromBacking(externalTextureIdentifier); externalTexture.get())
+    if (auto externalTexture = protectedObjectHeap()->convertExternalTextureFromBacking(externalTextureIdentifier); externalTexture.get())
         m_backing->updateExternalTextures(*externalTexture.get());
 }
 

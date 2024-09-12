@@ -55,6 +55,7 @@ public:
 
     RemoteAdapterProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    Ref<RemoteGPUProxy> protectedRoot() { return m_parent->root(); }
     WebGPUIdentifier backing() const { return m_backing; }
 
 private:

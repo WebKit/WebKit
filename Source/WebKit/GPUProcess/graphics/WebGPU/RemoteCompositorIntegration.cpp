@@ -56,7 +56,7 @@ RemoteCompositorIntegration::~RemoteCompositorIntegration() = default;
 
 RefPtr<IPC::Connection> RemoteCompositorIntegration::connection() const
 {
-    RefPtr connection = m_gpu->gpuConnectionToWebProcess();
+    RefPtr connection = protectedGPU()->gpuConnectionToWebProcess();
     if (!connection)
         return nullptr;
     return &connection->connection();
@@ -85,7 +85,7 @@ void RemoteCompositorIntegration::stopListeningForIPC()
 #if PLATFORM(COCOA)
 void RemoteCompositorIntegration::recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode, WebCore::WebGPU::TextureFormat textureFormat, WebKit::WebGPUIdentifier deviceIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
 {
-    auto convertedDevice = m_objectHeap->convertDeviceFromBacking(deviceIdentifier);
+    auto convertedDevice = protectedObjectHeap()->convertDeviceFromBacking(deviceIdentifier);
     MESSAGE_CHECK_COMPLETION(convertedDevice, callback({ }));
 
     callback(m_backing->recreateRenderBuffers(width, height, WTFMove(destinationColorSpace), alphaMode, textureFormat, *convertedDevice));
