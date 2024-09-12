@@ -100,7 +100,7 @@ if (!(Test-Path -Path $ICU_STATIC_ROOT)) {
     if ($CMAKE_BUILD_TYPE -eq "Debug") {
         $ConfigureFile = $ConfigureFile -replace "debug=0", "debug=1"
         $ConfigureFile = $ConfigureFile -replace "release=1", "release=0"
-        $ConfigureFile = $ConfigureFile -replace "-MDd", "-MTd /DU_STATIC_IMPLEMENTATION"
+        $ConfigureFile = $ConfigureFile -replace "-MDd", "-MTd /DU_STATIC_IMPLEMENTATION /D_ITERATOR_DEBUG_LEVEL=0"
     } else {
         $ConfigureFile = $ConfigureFile -replace "-MD'", "-MT /DU_STATIC_IMPLEMENTATION'"
     }
