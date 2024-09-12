@@ -445,13 +445,10 @@ private:
     void updateOverlapMap(LayerOverlapMap&, const RenderLayer&, OverlapExtent&, bool didPushContainer, bool addLayerToOverlap, bool addDescendantsToOverlap = false) const;
     bool layerOverlaps(const LayerOverlapMap&, const RenderLayer&, OverlapExtent&) const;
 
-    struct BackingSharingSnapshot {
-        RenderLayer* backingSharingStackingContext;
-        size_t providerCount;
-    };
+    struct BackingSharingSnapshot;
 
-    BackingSharingSnapshot updateBackingSharingBeforeDescendantTraversal(BackingSharingState&, unsigned depth, const LayerOverlapMap&, RenderLayer&, OverlapExtent&, bool willBeComposited, RenderLayer* stackingContextAncestor);
-    void updateBackingSharingAfterDescendantTraversal(BackingSharingState&, unsigned depth, const LayerOverlapMap&, RenderLayer&, OverlapExtent&, const RenderLayer* preDescendantProviderStartLayer, RenderLayer* stackingContextAncestor, const BackingSharingSnapshot&);
+    std::optional<BackingSharingSnapshot> updateBackingSharingBeforeDescendantTraversal(BackingSharingState&, unsigned depth, const LayerOverlapMap&, RenderLayer&, OverlapExtent&, bool willBeComposited, RenderLayer* stackingContextAncestor);
+    void updateBackingSharingAfterDescendantTraversal(BackingSharingState&, unsigned depth, const LayerOverlapMap&, RenderLayer&, OverlapExtent&, RenderLayer* stackingContextAncestor, const std::optional<BackingSharingSnapshot>&);
 
     void clearBackingProviderSequencesInStackingContextOfLayer(RenderLayer&);
 
