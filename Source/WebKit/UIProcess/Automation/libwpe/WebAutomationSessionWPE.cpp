@@ -454,6 +454,16 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
     }
 #endif // ENABLE(WPE_PLATFORM)
 }
+
+static bool isShiftedChar(UChar keyVal)
+{
+    // https://w3c.github.io/webdriver/#dfn-shifted-character
+    return (keyVal == '~' || keyVal == '|' || keyVal == '{' || keyVal == '}' || keyVal == '<' || keyVal == '>'
+        || keyVal == '!' || keyVal == '@' || keyVal == '#' || keyVal == '$' || keyVal == '%' || keyVal == '^'
+        || keyVal == '&' || keyVal == '*' || keyVal == '(' || keyVal == ')' || keyVal == '_' || keyVal == '+'
+        || (keyVal >= 'A' && keyVal <= 'Z'));
+}
+
 void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const String& keySequence)
 {
     if (page.viewBackend()) {
@@ -461,8 +471,32 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
         return;
     }
 #if ENABLE(WPE_PLATFORM)
-    for (auto codePoint : StringView(keySequence).codePoints())
-        doKeyStrokeEvent(page, true, wpe_unicode_to_keyval(codePoint), m_currentModifiers, true);
+    // https://w3c.github.io/webdriver/#dfn-dispatch-the-events-for-a-typeable-string
+    // For each char of text:
+    for (auto codePoint : StringView(keySequence).codePoints()) {
+        // Let global key state be the result of get the global key state with input state.
+        // Note: Tracked by m_currentModifiers
+        // If char is a shifted character, and the shifted state of source is false:
+        if (isShiftedChar(codePoint) && !(platformWebModifiersFromRaw(page, m_currentModifiers).contains(WebEventModifier::ShiftKey))) {
+            // Let action be an action object constructed with input id, "key", and "keyDown", and set its value property to U+E008 ("left shift").
+            // Let actions be the list «action».
+            // Dispatch a list of actions with input state, actions, and browsing context.
+            platformSimulateKeyboardInteraction(page, KeyboardInteraction::KeyPress, VirtualKey::Shift);
+        // If char is not a shifted character and the shifted state of source is true:
+        } else if (!isShiftedChar(codePoint) && platformWebModifiersFromRaw(page, m_currentModifiers).contains(WebEventModifier::ShiftKey)) {
+            // Let action be an action object constructed with input id, "key", and "keyUp", and set its value property to U+E008 ("left shift").
+            // Let tick actions be the list «action».
+            // Dispatch a list of actions with input state, actions, browsing context, and actions options.
+            platformSimulateKeyboardInteraction(page, KeyboardInteraction::KeyRelease, VirtualKey::Shift);
+        }
+        // Let keydown action be an action object constructed with arguments input id, "key", and "keyDown".
+        // Set the value property of keydown action to char.
+        // Let keyup action be a copy of keydown action with the subtype property changed to "keyUp".
+        // Let actions be the list «keydown action, keyup action».
+        // Dispatch a list of actions with input state, actions, browsing context, and actions options.
+        platformSimulateKeyboardInteraction(page, KeyboardInteraction::KeyPress, CharKey(codePoint));
+        platformSimulateKeyboardInteraction(page, KeyboardInteraction::KeyRelease, CharKey(codePoint));
+    }
 #endif
 }
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
