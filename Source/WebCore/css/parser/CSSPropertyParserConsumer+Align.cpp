@@ -32,6 +32,7 @@
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePair.h"
+#include "CSSValuePool.h"
 #include <optional>
 
 namespace WebCore {

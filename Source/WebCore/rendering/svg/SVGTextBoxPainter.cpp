@@ -28,9 +28,16 @@
 
 #include "GraphicsContext.h"
 #include "GraphicsContextStateSaver.h"
+#include "LegacyRenderSVGResourceSolidColor.h"
+#include "RenderInline.h"
 #include "RenderSVGInlineText.h"
+#include "RenderSVGText.h"
+#include "SVGInlineTextBox.h"
+#include "SVGPaintServerHandling.h"
 #include "SVGRenderStyle.h"
+#include "SVGResourcesCache.h"
 #include "SVGTextFragment.h"
+#include "TextPainter.h"
 
 namespace WebCore {
 
@@ -664,7 +671,7 @@ TextRun SVGTextBoxPainter<TextBoxPath>::constructTextRun(const RenderStyle& styl
     return run;
 }
 
-template class TextBoxPainter<InlineIterator::BoxModernPath>;
-template class TextBoxPainter<InlineIterator::BoxLegacyPath>;
+template class SVGTextBoxPainter<InlineIterator::BoxModernPath>;
+template class SVGTextBoxPainter<InlineIterator::BoxLegacyPath>;
 
 }

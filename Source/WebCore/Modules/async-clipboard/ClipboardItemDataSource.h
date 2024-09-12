@@ -26,8 +26,8 @@
 #pragma once
 
 #include <wtf/CompletionHandler.h>
-#include <wtf/Ref.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RenderLayoutState.h"
+#include "RenderView.h"
 #include <wtf/CheckedPtr.h>
 
 namespace WebCore {

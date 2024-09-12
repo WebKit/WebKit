@@ -22,6 +22,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "MessageSenderInlines.h"
 #include "UserMediaPermissionRequestManager.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"

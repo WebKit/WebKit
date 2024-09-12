@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/Timer.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Deque.h>
 #include <wtf/TZoneMalloc.h>
 

@@ -31,6 +31,7 @@
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
+#include "CSSValuePool.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {

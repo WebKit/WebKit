@@ -40,6 +40,7 @@
 #include "CSSPropertyParserConsumer+Length.h"
 #include "CSSSubgridValue.h"
 #include "CSSValueList.h"
+#include "CSSValuePool.h"
 #include "GridArea.h"
 #include <wtf/Vector.h>
 #include <wtf/text/StringView.h>

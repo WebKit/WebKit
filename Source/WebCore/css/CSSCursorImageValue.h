@@ -21,6 +21,7 @@
 #pragma once
 
 #include "CSSValue.h"
+#include "CSSValuePair.h"
 #include "IntPoint.h"
 #include "ResourceLoaderOptions.h"
 #include <wtf/WeakHashSet.h>

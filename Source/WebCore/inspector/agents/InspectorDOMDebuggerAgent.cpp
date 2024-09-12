@@ -38,6 +38,7 @@
 #include "InstrumentingAgents.h"
 #include "JSDOMGlobalObject.h"
 #include "JSEvent.h"
+#include "JSEventListener.h"
 #include "RegisteredEventListener.h"
 #include "ResourceRequest.h"
 #include "ScriptDisallowedScope.h"

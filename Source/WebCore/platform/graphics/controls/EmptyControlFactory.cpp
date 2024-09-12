@@ -27,8 +27,8 @@
 #include "EmptyControlFactory.h"
 
 #include "NotImplemented.h"
+#include "PlatformControl.h"
 #include <wtf/TZoneMallocInlines.h>
-
 
 namespace WebCore {
 

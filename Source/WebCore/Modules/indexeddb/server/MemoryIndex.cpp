@@ -53,6 +53,16 @@ MemoryIndex::MemoryIndex(const IDBIndexInfo& info, MemoryObjectStore& objectStor
 
 MemoryIndex::~MemoryIndex() = default;
 
+WeakPtr<MemoryObjectStore> MemoryIndex::objectStore()
+{
+    return m_objectStore;
+}
+
+RefPtr<MemoryObjectStore> MemoryIndex::protectedObjectStore()
+{
+    return m_objectStore.get();
+}
+
 void MemoryIndex::cursorDidBecomeClean(MemoryIndexCursor& cursor)
 {
     m_cleanCursors.add(&cursor);

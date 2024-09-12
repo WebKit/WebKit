@@ -27,6 +27,7 @@
 
 #include "RenderStyleConstants.h"
 #include "TextSizeAdjustment.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {

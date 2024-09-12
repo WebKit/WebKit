@@ -27,6 +27,7 @@
 #include "MediaKeySystemPermissionRequestProxy.h"
 
 #include "MediaKeySystemPermissionRequestManagerProxy.h"
+#include "WebPageProxy.h"
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/text/StringHash.h>
