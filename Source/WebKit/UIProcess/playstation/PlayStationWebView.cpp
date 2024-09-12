@@ -77,7 +77,7 @@ PlayStationWebView::PlayStationWebView(const API::PageConfiguration& conf)
     m_page = pool.createWebPage(*m_pageClient, WTFMove(configuration));
 
     auto& openerInfo = m_page->configuration().openerInfo();
-    m_page->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()));
+    m_page->initializeWebPage(openerInfo ? openerInfo->site : WebCore::Site(aboutBlankURL()));
 }
 
 #endif // USE(WPE_BACKEND_PLAYSTATION)
