@@ -1476,7 +1476,9 @@ b/292285899 PIXEL4ORXL GLES : EGLSurfaceTest.DestroyAndRecreateWhileCurrent/* = 
 42266974 WGPU : Texture2DTest.*Multiple* = SKIP
 42266974 WGPU : Texture2DTest.*Copy* = SKIP
 42266974 WGPU : Texture2DTest.*Mutable* = SKIP
-42266974 WGPU : Texture2DTest.ZeroSizedUploads* = SKIP
+// 42267100 failures are due to the shader (which uses textures) failing to compile
+42267100 WGPU : Texture2DTest.NegativeAPISubImage* = SKIP
+42267100 WGPU : Texture2DTest.ZeroSizedUploads* = SKIP
 360083331 LINUX INTEL WGPU : ClearTest.ClearColorThenClearNonExistingDepthStencil/* = SKIP
 360083331 LINUX INTEL WGPU : ClearTest.DepthRangefIsClamped/* = SKIP
 360083331 LINUX INTEL WGPU : ClearTest.RGBA8Framebuffer/* = SKIP

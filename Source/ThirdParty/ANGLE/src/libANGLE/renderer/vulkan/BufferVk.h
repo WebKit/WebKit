@@ -41,6 +41,7 @@ class ConversionBuffer
     bool isEntireBufferDirty() const { return mEntireBufferDirty; }
     void setEntireBufferDirty() { mEntireBufferDirty = true; }
     void addDirtyBufferRange(const RangeDeviceSize &range) { mDirtyRanges.emplace_back(range); }
+    void consolidateDirtyRanges();
     const std::vector<RangeDeviceSize> &getDirtyBufferRanges() const { return mDirtyRanges; }
     void clearDirty()
     {

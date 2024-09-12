@@ -39,15 +39,7 @@ struct PackedAttributeLayout
 
     bool operator==(const PackedAttributeLayout &other) const;
 
-    enum Flags
-    {
-        FLAG_USES_INSTANCED_SPRITES     = 0x1,
-        FLAG_INSTANCED_SPRITES_ACTIVE   = 0x2,
-        FLAG_INSTANCED_RENDERING_ACTIVE = 0x4,
-    };
-
     uint32_t numAttributes;
-    uint32_t flags;
     gl::AttribArray<uint64_t> attributeData;
 };
 }  // namespace rx

@@ -325,6 +325,34 @@ ConversionBuffer::~ConversionBuffer()
 
 ConversionBuffer::ConversionBuffer(ConversionBuffer &&other) = default;
 
+// dirtyRanges may be overlap or continuous. In order to reduce the redunant conversion, we try to
+// consolidate the dirty ranges. First we sort it by the range's low. Then we walk the range again
+// and check it with previous range and merge them if possible. That merge will remove the
+// overlapped area as well as reduce the number of ranges.
+void ConversionBuffer::consolidateDirtyRanges()
+{
+    ASSERT(!mEntireBufferDirty);
+
+    auto comp = [](const RangeDeviceSize &a, const RangeDeviceSize &b) -> bool {
+        return a.low() < b.low();
+    };
+    std::sort(mDirtyRanges.begin(), mDirtyRanges.end(), comp);
+
+    size_t prev = 0;
+    for (size_t i = 1; i < mDirtyRanges.size(); i++)
+    {
+        if (mDirtyRanges[prev].intersectsOrContinuous(mDirtyRanges[i]))
+        {
+            mDirtyRanges[prev].merge(mDirtyRanges[i]);
+            mDirtyRanges[i].invalidate();
+        }
+        else
+        {
+            prev = i;
+        }
+    }
+}
+
 // VertexConversionBuffer implementation.
 VertexConversionBuffer::VertexConversionBuffer(vk::Renderer *renderer, const CacheKey &cacheKey)
     : ConversionBuffer(renderer,
@@ -863,7 +891,14 @@ angle::Result BufferVk::unmapImpl(ContextVk *contextVk)
 
     if (mIsMappedForWrite)
     {
-        dataRangeUpdated(mMappedRange);
+        if (mMappedRange == RangeDeviceSize(0, static_cast<VkDeviceSize>(getSize())))
+        {
+            dataUpdated();
+        }
+        else
+        {
+            dataRangeUpdated(mMappedRange);
+        }
     }
 
     // Reset the mapping parameters
@@ -1201,8 +1236,15 @@ angle::Result BufferVk::setDataImpl(ContextVk *contextVk,
         ANGLE_TRY(updateBuffer(contextVk, bufferSize, dataSource, updateSize, updateOffset));
     }
 
-    // Update conversions
-    dataRangeUpdated(RangeDeviceSize(updateOffset, updateOffset + updateSize));
+    // Update conversions.
+    if (updateOffset == 0 && updateSize == bufferSize)
+    {
+        dataUpdated();
+    }
+    else
+    {
+        dataRangeUpdated(RangeDeviceSize(updateOffset, updateOffset + updateSize));
+    }
 
     return angle::Result::Continue;
 }

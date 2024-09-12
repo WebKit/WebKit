@@ -8,6 +8,7 @@
 //
 
 #include <regex>
+
 #include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "gtest/gtest.h"
@@ -99,9 +100,22 @@ TEST_F(WGSLOutputTest, BasicTranslation)
             doFoo(returnFoo(foo), returnFloat(3.0));
             takeArgs(vec2(1.0, 2.0), foo.x);
             returnFloat(doFoo(foo, 7.0 + 9.0).x);
+            outColor = vec4(0.0, 0.0, 0.0, 0.0);
         })";
     const std::string &outputString =
-        R"(_uoutColor : vec4<f32>;
+        R"(struct ANGLE_Output_Global {
+  outColor : vec4<f32>,
+  gl_FragDepth_ : f32,
+};
+
+var<private> ANGLE_output_global : ANGLE_Output_Global;
+
+struct ANGLE_Output_Annotated {
+  @location(@@@@@@) outColor : vec4<f32>,
+  @builtin(frag_depth) gl_FragDepth_ : f32,
+};
+
+;
 
 struct _uFoo
 {
@@ -135,17 +149,27 @@ fn _utakeArgs(_ux : vec2<f32>, _uy : f32) -> f32
 
 fn _umain()
 {
-  _ufoo : _uFoo;
+  var _ufoo : _uFoo;
   ((_ufoo)._ux) = (2.0f);
   ((_ufoo)._uy) = (2.0f);
   ((_ufoo)._umultiArray) = (array<array<vec3<f32>, 3>, 2>(array<vec3<f32>, 3>(vec3<f32>(1.0f, 2.0f, 3.0f), vec3<f32>(1.0f, 2.0f, 3.0f), vec3<f32>(1.0f, 2.0f, 3.0f)), array<vec3<f32>, 3>(vec3<f32>(4.0f, 5.0f, 6.0f), vec3<f32>(4.0f, 5.0f, 6.0f), vec3<f32>(4.0f, 5.0f, 6.0f))));
-  _uarrIndex : i32 = (1i);
-  _uf : f32 = (((((_ufoo)._umultiArray)[0i])[1i]).x);
-  _uf2 : f32 = (((((_ufoo)._umultiArray)[0i])[clamp((_uarrIndex), 0, 2)]).x);
-  (gl_FragDepth) = ((_uf) + (_uf2));
+  var _uarrIndex : i32 = (1i);
+  var _uf : f32 = (((((_ufoo)._umultiArray)[0i])[1i]).x);
+  var _uf2 : f32 = (((((_ufoo)._umultiArray)[0i])[clamp((_uarrIndex), 0, 2)]).x);
+  (ANGLE_output_global.gl_FragDepth_) = ((_uf) + (_uf2));
   _udoFoo(_ureturnFoo(_ufoo), _ureturnFloat(3.0f));
   _utakeArgs(vec2<f32>(1.0f, 2.0f), (_ufoo)._ux);
   _ureturnFloat((_udoFoo(_ufoo, 16.0f)).x);
+  (ANGLE_output_global.outColor) = (vec4<f32>(0.0f, 0.0f, 0.0f, 0.0f));
+}
+@fragment
+fn wgslMain() -> ANGLE_Output_Annotated
+{
+  _umain();
+  var ANGLE_output_annotated : ANGLE_Output_Annotated;
+  ANGLE_output_annotated.outColor = ANGLE_output_global.outColor;
+  ANGLE_output_annotated.gl_FragDepth_ = ANGLE_output_global.gl_FragDepth_;
+  return ANGLE_output_annotated;
 }
 )";
     compile(shaderString);
@@ -218,10 +242,9 @@ TEST_F(WGSLOutputTest, ControlFlow)
           whileLoopDemo();
         })";
     const std::string &outputString =
-        R"(
-fn _uifElseDemo() -> i32
+        R"(fn _uifElseDemo() -> i32
 {
-  _ux : i32 = (5i);
+  var _ux : i32 = (5i);
   if ((_ux) == (5i))
   {
     return 6i;
@@ -241,7 +264,7 @@ fn _uifElseDemo() -> i32
 
 fn _uswitchDemo()
 {
-  _ux : i32 = (5i);
+  var _ux : i32 = (5i);
   switch _ux
   {
     case 5i, 6i:
@@ -270,7 +293,7 @@ fn _uswitchDemo()
 
 fn _uforLoopDemo()
 {
-  for (_ui : i32 = (0i); (_ui) < (5i); (_ui)++)
+  for (var _ui : i32 = (0i); (_ui) < (5i); (_ui)++)
   {
     if ((_ui) == (4i))
     {
@@ -288,7 +311,7 @@ fn _uforLoopDemo()
 
 fn _uwhileLoopDemo()
 {
-  _ui : i32 = (0i);
+  var _ui : i32 = (0i);
   while ((_ui) < (5i))
   {
     (_ui)++;
@@ -307,6 +330,50 @@ fn _umain()
   _uswitchDemo();
   _uforLoopDemo();
   _uwhileLoopDemo();
+}
+@fragment
+fn wgslMain()
+{
+  _umain();
+}
+)";
+    compile(shaderString);
+    EXPECT_TRUE(foundInCode(outputString.c_str()));
+}
+
+TEST_F(WGSLOutputTest, GLFragColorWithUniform)
+{
+    const std::string &shaderString =
+        R"(
+uniform mediump vec4 u_color;
+void main(void)
+{
+    gl_FragColor = u_color;
+})";
+    const std::string &outputString =
+        R"(struct ANGLE_Output_Global {
+  gl_FragColor_ : vec4<f32>,
+};
+
+var<private> ANGLE_output_global : ANGLE_Output_Global;
+
+struct ANGLE_Output_Annotated {
+  @location(0) gl_FragColor_ : vec4<f32>,
+};
+
+var<uniform> _uu_color : vec4<f32>;
+
+fn _umain()
+{
+  (ANGLE_output_global.gl_FragColor_) = (_uu_color);
+}
+@fragment
+fn wgslMain() -> ANGLE_Output_Annotated
+{
+  _umain();
+  var ANGLE_output_annotated : ANGLE_Output_Annotated;
+  ANGLE_output_annotated.gl_FragColor_ = ANGLE_output_global.gl_FragColor_;
+  return ANGLE_output_annotated;
 }
 )";
     compile(shaderString);

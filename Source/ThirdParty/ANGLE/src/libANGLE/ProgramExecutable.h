@@ -148,6 +148,7 @@ struct ProgramOutput
     ProgramOutput(const sh::ShaderVariable &var);
     bool isBuiltIn() const { return pod.isBuiltIn; }
     bool isArray() const { return pod.isArray; }
+    int getLocation() const { return pod.location; }
     unsigned int getOutermostArraySize() const { return pod.outermostArraySize; }
     void resetEffectiveLocation()
     {

@@ -13,6 +13,7 @@
 
 #include "libANGLE/Constants.h"
 #include "libANGLE/Error.h"
+#include "libANGLE/angletypes.h"
 
 #include "common/PackedEnums.h"
 
@@ -105,17 +106,21 @@ constexpr uint32_t kVertexFormatBitCount = 5;
 // next highest values to meet native drivers are 16 bits or 32 bits.
 constexpr uint32_t kAttributeOffsetMaxBits = 15;
 
+// In WebGPU, the maxVertexBufferArrayStride will be at least 2048.
+constexpr uint32_t kVertexAttributeStrideBits = 16;
+
 struct PackedVertexAttribute final
 {
     uint16_t offset : kAttributeOffsetMaxBits;
-    uint16_t pad0 : 1;
+    uint16_t enabled : 1;
     uint8_t format : kVertexFormatBitCount;
     uint8_t pad1 : 3;
     uint8_t shaderLocation;
+    uint16_t stride : kVertexAttributeStrideBits;
 };
 
 constexpr size_t kPackedVertexAttributeSize = sizeof(PackedVertexAttribute);
-static_assert(kPackedVertexAttributeSize == 4, "Size mismatch");
+static_assert(kPackedVertexAttributeSize == 6, "Size mismatch");
 
 class RenderPipelineDesc final
 {
@@ -133,6 +138,7 @@ class RenderPipelineDesc final
     void setCullMode(gl::CullFaceMode cullMode, bool cullFaceEnabled);
     void setColorWriteMask(size_t colorIndex, bool r, bool g, bool b, bool a);
 
+    bool setVertexAttributes(const gl::AttribArray<PackedVertexAttribute> &attribs);
     bool setColorAttachmentFormat(size_t colorIndex, wgpu::TextureFormat format);
     bool setDepthStencilAttachmentFormat(wgpu::TextureFormat format);
     bool setDepthFunc(wgpu::CompareFunction compareFunc);

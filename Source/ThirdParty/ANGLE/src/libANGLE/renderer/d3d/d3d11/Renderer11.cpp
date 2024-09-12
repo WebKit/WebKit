@@ -1874,40 +1874,6 @@ angle::Result Renderer11::drawArrays(const gl::Context *context,
         case gl::PrimitiveMode::TriangleFan:
             return drawTriangleFan(context, clampedVertexCount, gl::DrawElementsType::InvalidEnum,
                                    nullptr, 0, adjustedInstanceCount);
-        case gl::PrimitiveMode::Points:
-            if (getFeatures().useInstancedPointSpriteEmulation.enabled)
-            {
-                // This code should not be reachable by multi-view programs.
-                ASSERT(executableD3D->getExecutable()->usesMultiview() == false);
-
-                // If the shader is writing to gl_PointSize, then pointsprites are being rendered.
-                // Emulating instanced point sprites for FL9_3 requires the topology to be
-                // D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST and DrawIndexedInstanced is called instead.
-                if (adjustedInstanceCount == 0)
-                {
-                    mDeviceContext->DrawIndexedInstanced(6, clampedVertexCount, 0, 0, baseInstance);
-                    return angle::Result::Continue;
-                }
-
-                // If pointsprite emulation is used with glDrawArraysInstanced then we need to take
-                // a less efficent code path. Instanced rendering of emulated pointsprites requires
-                // a loop to draw each batch of points. An offset into the instanced data buffer is
-                // calculated and applied on each iteration to ensure all instances are rendered
-                // correctly. Each instance being rendered requires the inputlayout cache to reapply
-                // buffers and offsets.
-                for (GLsizei i = 0; i < instanceCount; i++)
-                {
-                    ANGLE_TRY(mStateManager.updateVertexOffsetsForPointSpritesEmulation(
-                        context, firstVertex, i));
-                    mDeviceContext->DrawIndexedInstanced(6, clampedVertexCount, 0, 0, baseInstance);
-                }
-
-                // This required by updateVertexOffsets... above but is outside of the loop for
-                // speed.
-                mStateManager.invalidateVertexBuffer();
-                return angle::Result::Continue;
-            }
-            break;
         default:
             break;
     }
@@ -1940,8 +1906,6 @@ angle::Result Renderer11::drawElements(const gl::Context *context,
         return angle::Result::Continue;
     }
 
-    Context11 *context11 = GetImplAs<Context11>(context);
-
     ANGLE_TRY(markRawBufferUsage(context));
 
     // Transform feedback is not allowed for DrawElements, this error should have been caught at the
@@ -1967,59 +1931,15 @@ angle::Result Renderer11::drawElements(const gl::Context *context,
                                adjustedInstanceCount);
     }
 
-    if (mode != gl::PrimitiveMode::Points ||
-        !executableD3D->usesInstancedPointSpriteEmulation(context11->getRenderer()))
+    if (!isInstancedDraw && adjustedInstanceCount == 0)
     {
-        if (!isInstancedDraw && adjustedInstanceCount == 0)
-        {
-            mDeviceContext->DrawIndexed(indexCount, 0, baseVertexAdjusted);
-        }
-        else
-        {
-            mDeviceContext->DrawIndexedInstanced(indexCount, adjustedInstanceCount, 0,
-                                                 baseVertexAdjusted, baseInstance);
-        }
-        return angle::Result::Continue;
+        mDeviceContext->DrawIndexed(indexCount, 0, baseVertexAdjusted);
     }
-
-    // This code should not be reachable by multi-view programs.
-    ASSERT(executableD3D->getExecutable()->usesMultiview() == false);
-
-    // If the shader is writing to gl_PointSize, then pointsprites are being rendered.
-    // Emulating instanced point sprites for FL9_3 requires the topology to be
-    // D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST and DrawIndexedInstanced is called instead.
-    //
-    // The count parameter passed to drawElements represents the total number of instances to be
-    // rendered. Each instance is referenced by the bound index buffer from the the caller.
-    //
-    // Indexed pointsprite emulation replicates data for duplicate entries found in the index
-    // buffer. This is not an efficent rendering mechanism and is only used on downlevel renderers
-    // that do not support geometry shaders.
-    if (instanceCount == 0)
+    else
     {
-        mDeviceContext->DrawIndexedInstanced(6, indexCount, 0, baseVertexAdjusted, baseInstance);
-        return angle::Result::Continue;
+        mDeviceContext->DrawIndexedInstanced(indexCount, adjustedInstanceCount, 0,
+                                             baseVertexAdjusted, baseInstance);
     }
-
-    // If pointsprite emulation is used with glDrawElementsInstanced then we need to take a less
-    // efficent code path. Instanced rendering of emulated pointsprites requires a loop to draw each
-    // batch of points. An offset into the instanced data buffer is calculated and applied on each
-    // iteration to ensure all instances are rendered correctly.
-    gl::IndexRange indexRange;
-    ANGLE_TRY(glState.getVertexArray()->getIndexRange(context, indexType, indexCount, indices,
-                                                      &indexRange));
-
-    UINT clampedVertexCount = gl::clampCast<UINT>(indexRange.vertexCount());
-
-    // Each instance being rendered requires the inputlayout cache to reapply buffers and offsets.
-    for (GLsizei i = 0; i < instanceCount; i++)
-    {
-        ANGLE_TRY(
-            mStateManager.updateVertexOffsetsForPointSpritesEmulation(context, startVertex, i));
-        mDeviceContext->DrawIndexedInstanced(6, clampedVertexCount, 0, baseVertexAdjusted,
-                                             baseInstance);
-    }
-    mStateManager.invalidateVertexBuffer();
     return angle::Result::Continue;
 }
 

@@ -9,6 +9,7 @@
 #include "libANGLE/renderer/renderer_utils.h"
 #include "libANGLE/renderer/wgpu/ContextWgpu.h"
 #include "libANGLE/renderer/wgpu/DisplayWgpu.h"
+#include "libANGLE/renderer/wgpu/wgpu_pipeline_state.h"
 
 namespace rx
 {
@@ -134,7 +135,9 @@ void GenerateCaps(const wgpu::Device &device,
     glCaps->maxVertexAttribRelativeOffset = (1u << kAttributeOffsetMaxBits) - 1;
     glCaps->maxVertexAttribBindings =
         rx::LimitToInt(std::min(limitsWgpu.maxVertexBuffers, limitsWgpu.maxVertexAttributes));
-    glCaps->maxVertexAttribStride = rx::LimitToInt(limitsWgpu.maxVertexBufferArrayStride);
+    glCaps->maxVertexAttribStride =
+        rx::LimitToInt(std::min(limitsWgpu.maxVertexBufferArrayStride,
+                                static_cast<uint32_t>(std::numeric_limits<uint16_t>::max())));
     glCaps->maxElementsIndices    = std::numeric_limits<GLint>::max();
     glCaps->maxElementsVertices   = std::numeric_limits<GLint>::max();
     glCaps->vertexHighpFloat.setIEEEFloat();

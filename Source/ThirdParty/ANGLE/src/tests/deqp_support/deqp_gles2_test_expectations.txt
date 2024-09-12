@@ -376,6 +376,20 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.value.assigned.
 42267264 : dEQP-GLES2.functional.fbo.render.stencil*bgra* = FAIL
 
 // WebGPU failures
+// These tests fail because the WGSL translator doesn't know what to do with matrix attributes yet.
+42267100 WGPU : dEQP-GLES2.functional.attribute_location.bind_relink_hole.mat* = FAIL
+42267100 WGPU : dEQP-GLES2.functional.attribute_location.bind_hole.mat* = FAIL
+42267100 WGPU : dEQP-GLES2.functional.attribute_location.bind.mat* = FAIL
+42267100 WGPU : dEQP-GLES2.functional.attribute_location.bind_max_attributes.mat* = FAIL
+// Tests that fail because uniforms aren't yet implemented in the WGSL translator
+42267100 WGPU : dEQP-GLES2.functional.negative_api.state.get_uniform* = FAIL
+42267100 WGPU : dEQP-GLES2.functional.negative_api.shader.uniform* = FAIL
+42267100 WGPU : dEQP-GLES2.functional.state_query.shader.program_active_uniform_* = FAIL
+42267100 WGPU : dEQP-GLES2.functional.attribute_location.bind_aliasing.* = FAIL
+42267100 WGPU : dEQP-GLES2.functional.light_amount.* = FAIL
+// These tests crash because redeclarations of gl_ variables as invariant are not yet supported in the WGSL translator.
+42267100 WGPU : dEQP-GLES2.functional.shaders.invariance.* = SKIP
+// Other WebGPU failures.
 356399840 WGPU : dEQP-GLES2.functional.buffer.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.clipping.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.color_clear.*complex* = FAIL
@@ -403,6 +417,5 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.value.assigned.
 356399840 WGPU : dEQP-GLES2.functional.shaders.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.state_query.shader.uniform_value_* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.texture.* = FAIL
-356399840 WGPU : dEQP-GLES2.functional.uniform_api.random.* = FAIL
-356399840 WGPU : dEQP-GLES2.functional.uniform_api.value.* = FAIL
+356399840 WGPU : dEQP-GLES2.functional.uniform_api.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.vertex_arrays.* = FAIL

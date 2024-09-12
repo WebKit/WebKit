@@ -3925,6 +3925,38 @@ TEST_P(ClearTextureEXTTest, Validation)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
+// Covers a driver bug that leaks color mask state into clear texture ops.
+TEST_P(ClearTextureEXTTest, ClearTextureAfterMaskedClearBug)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_clear_texture"));
+
+    // Perform a masked clear
+    {
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glColorMask(GL_FALSE, GL_TRUE, GL_FALSE, GL_TRUE);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    }
+
+    // Create a new texture with data, clear it, and sample
+    {
+        constexpr uint32_t kSize = 16;
+        std::vector<unsigned char> pixelData(kSize * kSize * 4, 255);
+
+        GLTexture tex;
+        glBindTexture(GL_TEXTURE_2D, tex);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     pixelData.data());
+        glClearTexImageEXT(tex, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);
+    }
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     ClearTest,
     ES3_VULKAN().enable(Feature::ForceFallbackFormat),

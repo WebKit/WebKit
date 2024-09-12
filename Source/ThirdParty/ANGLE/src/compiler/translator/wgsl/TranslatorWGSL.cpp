@@ -7,6 +7,7 @@
 #include "compiler/translator/wgsl/TranslatorWGSL.h"
 
 #include <iostream>
+#include <variant>
 
 #include "GLSLANG/ShaderLang.h"
 #include "common/log_utils.h"
@@ -17,9 +18,16 @@
 #include "compiler/translator/InfoSink.h"
 #include "compiler/translator/IntermNode.h"
 #include "compiler/translator/OutputTree.h"
+#include "compiler/translator/StaticType.h"
 #include "compiler/translator/SymbolUniqueId.h"
 #include "compiler/translator/Types.h"
+#include "compiler/translator/tree_util/BuiltIn_complete_autogen.h"
+#include "compiler/translator/tree_util/FindMain.h"
+#include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
+#include "compiler/translator/tree_util/RunAtTheEndOfShader.h"
+#include "compiler/translator/wgsl/RewritePipelineVariables.h"
+#include "compiler/translator/wgsl/WriteTypeName.h"
 
 namespace sh
 {
@@ -92,7 +100,7 @@ bool NewlinePad(TIntermNode &node)
 class OutputWGSLTraverser : public TIntermTraverser
 {
   public:
-    OutputWGSLTraverser(TCompiler *compiler);
+    OutputWGSLTraverser(TCompiler *compiler, RewritePipelineVarOutput *rewritePipelineVarOutput);
     ~OutputWGSLTraverser() override;
 
   protected:
@@ -121,13 +129,12 @@ class OutputWGSLTraverser : public TIntermTraverser
     {
         bool isParameter            = false;
         bool disableStructSpecifier = false;
+        bool needsVar               = false;
+        bool isGlobalScope          = false;
     };
 
     void groupedTraverse(TIntermNode &node);
     void emitNameOf(const VarDecl &decl);
-    template <typename T>
-    void emitNameOf(const T &namedObject);
-    void emitNameOf(SymbolType symbolType, const ImmutableString &name);
     void emitBareTypeName(const TType &type);
     void emitType(const TType &type);
     void emitSingleConstant(const TConstantUnion *const constUnion);
@@ -153,13 +160,17 @@ class OutputWGSLTraverser : public TIntermTraverser
     bool emulateDoWhileLoop(TIntermLoop *);
 
     TInfoSinkBase &mSink;
+    RewritePipelineVarOutput *mRewritePipelineVarOutput;
 
     int mIndentLevel        = -1;
     int mLastIndentationPos = -1;
 };
 
-OutputWGSLTraverser::OutputWGSLTraverser(TCompiler *compiler)
-    : TIntermTraverser(true, false, false), mSink(compiler->getInfoSink().obj)
+OutputWGSLTraverser::OutputWGSLTraverser(TCompiler *compiler,
+                                         RewritePipelineVarOutput *rewritePipelineVarOutput)
+    : TIntermTraverser(true, false, false),
+      mSink(compiler->getInfoSink().obj),
+      mRewritePipelineVarOutput(rewritePipelineVarOutput)
 {}
 
 OutputWGSLTraverser::~OutputWGSLTraverser() = default;
@@ -185,38 +196,7 @@ void OutputWGSLTraverser::groupedTraverse(TIntermNode &node)
 
 void OutputWGSLTraverser::emitNameOf(const VarDecl &decl)
 {
-    emitNameOf(decl.symbolType, decl.symbolName);
-}
-
-// Can be used with TSymbol or TField or TFunc.
-template <typename T>
-void OutputWGSLTraverser::emitNameOf(const T &namedObject)
-{
-    emitNameOf(namedObject.symbolType(), namedObject.name());
-}
-
-void OutputWGSLTraverser::emitNameOf(SymbolType symbolType, const ImmutableString &name)
-{
-    switch (symbolType)
-    {
-        case SymbolType::BuiltIn:
-        {
-            mSink << name;
-        }
-        break;
-        case SymbolType::UserDefined:
-        {
-            mSink << kUserDefinedNamePrefix << name;
-        }
-        break;
-        case SymbolType::AngleInternal:
-            // TODO(anglebug.com/42267100): support these if necessary
-            UNIMPLEMENTED();
-            break;
-        case SymbolType::Empty:
-            // TODO(anglebug.com/42267100): support these if necessary
-            UNREACHABLE();
-    }
+    WriteNameOf(mSink, decl.symbolType, decl.symbolName);
 }
 
 void OutputWGSLTraverser::emitIndentation()
@@ -267,7 +247,29 @@ void OutputWGSLTraverser::visitSymbol(TIntermSymbol *symbolNode)
     }
     else
     {
-        emitNameOf(var);
+        // Accesses of pipeline variables should be rewritten as struct accesses.
+        if (mRewritePipelineVarOutput->IsInputVar(var.uniqueId()))
+        {
+            mSink << kBuiltinInputStructName << "." << var.name();
+        }
+        else if (mRewritePipelineVarOutput->IsOutputVar(var.uniqueId()))
+        {
+            mSink << kBuiltinOutputStructName << "." << var.name();
+        }
+        else
+        {
+            WriteNameOf(mSink, var);
+        }
+
+        if (var.symbolType() == SymbolType::BuiltIn)
+        {
+            ASSERT(mRewritePipelineVarOutput->IsInputVar(var.uniqueId()) ||
+                   mRewritePipelineVarOutput->IsOutputVar(var.uniqueId()) ||
+                   var.uniqueId() == BuiltInId::gl_DepthRange);
+            // TODO(anglebug.com/42267100): support gl_DepthRange.
+            // Match the name of the struct field in `mRewritePipelineVarOutput`.
+            mSink << "_";
+        }
     }
 }
 
@@ -990,7 +992,7 @@ bool OutputWGSLTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
         case TOperator::EOpIndexDirectInterfaceBlock:
             groupedTraverse(leftNode);
             mSink << ".";
-            emitNameOf(getDirectField(leftNode, rightNode));
+            WriteNameOf(mSink, getDirectField(leftNode, rightNode));
             break;
 
         case TOperator::EOpIndexDirect:
@@ -1231,11 +1233,9 @@ void OutputWGSLTraverser::emitFunctionReturn(const TFunction &func)
 // (https://github.com/gpuweb/gpuweb/issues/876).
 void OutputWGSLTraverser::emitFunctionSignature(const TFunction &func)
 {
-    // TODO(anglebug.com/42267100): main functions should be renamed and labeled with @vertex or
-    // @fragment.
     mSink << "fn ";
 
-    emitNameOf(func);
+    WriteNameOf(mSink, func);
     mSink << "(";
 
     bool emitComma          = false;
@@ -1271,6 +1271,8 @@ void OutputWGSLTraverser::visitFunctionPrototype(TIntermFunctionPrototype *funcP
     const TFunction &func = *funcProtoNode->getFunction();
 
     emitIndentation();
+    // TODO(anglebug.com/42267100): output correct signature for main() if main() is declared as a
+    // function prototype, or perhaps just emit nothing.
     emitFunctionSignature(func);
 }
 
@@ -1278,10 +1280,12 @@ bool OutputWGSLTraverser::visitFunctionDefinition(Visit, TIntermFunctionDefiniti
 {
     const TFunction &func = *funcDefNode->getFunction();
     TIntermBlock &body    = *funcDefNode->getBody();
+
     emitIndentation();
     emitFunctionSignature(func);
     mSink << "\n";
     body.traverse(this);
+
     return false;
 }
 
@@ -1322,7 +1326,7 @@ bool OutputWGSLTraverser::visitAggregate(Visit, TIntermAggregate *aggregateNode)
         switch (op)
         {
             case TOperator::EOpCallFunctionInAST:
-                emitNameOf(*aggregateNode->getFunction());
+                WriteNameOf(mSink, *aggregateNode->getFunction());
                 emitArgList();
                 return false;
 
@@ -1514,6 +1518,29 @@ void OutputWGSLTraverser::emitVariableDeclaration(const VarDecl &decl,
     ASSERT(basicType == TBasicType::EbtStruct || decl.symbolType != SymbolType::Empty ||
            evdConfig.isParameter);
 
+    if (evdConfig.needsVar)
+    {
+        // "const" and "let" probably don't need to be ever emitted because they are more for
+        // readability, and the GLSL compiler constant folds most (all?) the consts anyway.
+        mSink << "var";
+        // TODO(anglebug.com/42267100): <workgroup> or <storage>?
+        if (decl.type.getQualifier() == EvqUniform)
+        {
+            // TODO(anglebug.com/42267100): uniform requires complex alignment of structs and
+            // arrays, as well as @group() and @binding() annotations.
+            mSink << "<uniform>";
+        }
+        else if (evdConfig.isGlobalScope)
+        {
+            mSink << "<private>";
+        }
+        mSink << " ";
+    }
+    else
+    {
+        ASSERT(!evdConfig.isGlobalScope);
+    }
+
     if (decl.symbolType != SymbolType::Empty)
     {
         emitNameOf(decl);
@@ -1528,12 +1555,19 @@ bool OutputWGSLTraverser::visitDeclaration(Visit, TIntermDeclaration *declNode)
     TIntermNode &node = *declNode->getChildNode(0);
 
     EmitVariableDeclarationConfig evdConfig;
+    evdConfig.needsVar      = true;
+    evdConfig.isGlobalScope = mIndentLevel == 0;
 
-    // TODO(anglebug.com/42267100): emit let or var for function-local variables. (GLSL const or
-    // default).
     if (TIntermSymbol *symbolNode = node.getAsSymbolNode())
     {
         const TVariable &var = symbolNode->variable();
+        if (mRewritePipelineVarOutput->IsInputVar(var.uniqueId()) ||
+            mRewritePipelineVarOutput->IsOutputVar(var.uniqueId()))
+        {
+            // Some variables, like shader inputs/outputs/builtins, are declared in the WGSL source
+            // outside of the traverser.
+            return false;
+        }
         emitVariableDeclaration({var.symbolType(), var.name(), var.getType()}, evdConfig);
     }
     else if (TIntermBinary *initNode = node.getAsBinaryNode())
@@ -1544,6 +1578,13 @@ bool OutputWGSLTraverser::visitDeclaration(Visit, TIntermDeclaration *declNode)
         ASSERT(leftSymbolNode && valueNode);
 
         const TVariable &var = leftSymbolNode->variable();
+        if (mRewritePipelineVarOutput->IsInputVar(var.uniqueId()) ||
+            mRewritePipelineVarOutput->IsOutputVar(var.uniqueId()))
+        {
+            // Some variables, like shader inputs/outputs/builtins, are declared in the WGSL source
+            // outside of the traverser.
+            return false;
+        }
 
         emitVariableDeclaration({var.symbolType(), var.name(), var.getType()}, evdConfig);
         mSink << " = ";
@@ -1717,134 +1758,12 @@ void OutputWGSLTraverser::visitPreprocessorDirective(TIntermPreprocessorDirectiv
 
 void OutputWGSLTraverser::emitBareTypeName(const TType &type)
 {
-    const TBasicType basicType = type.getBasicType();
-
-    switch (basicType)
-    {
-        case TBasicType::EbtVoid:
-        case TBasicType::EbtBool:
-            mSink << type.getBasicString();
-            break;
-        // TODO(anglebug.com/42267100): is there double precision (f64) in GLSL? It doesn't really
-        // exist in WGSL (i.e. f64 does not exist but AbstractFloat can handle 64 bits???) Metal
-        // does not have 64 bit double precision types. It's being implemented in WGPU:
-        // https://github.com/gpuweb/gpuweb/issues/2805
-        case TBasicType::EbtFloat:
-            mSink << "f32";
-            break;
-        case TBasicType::EbtInt:
-            mSink << "i32";
-            break;
-        case TBasicType::EbtUInt:
-            mSink << "u32";
-            break;
-
-        case TBasicType::EbtStruct:
-            emitNameOf(*type.getStruct());
-            break;
-
-        case TBasicType::EbtInterfaceBlock:
-            emitNameOf(*type.getInterfaceBlock());
-            break;
-
-        default:
-            if (IsSampler(basicType))
-            {
-                //  TODO(anglebug.com/42267100): possibly emit both a sampler and a texture2d. WGSL
-                //  has sampler variables for the sampler configuration, whereas GLSL has sampler2d
-                //  and other sampler* variables for an actual texture.
-                mSink << "texture2d<";
-                switch (type.getBasicType())
-                {
-                    case EbtSampler2D:
-                        mSink << "f32";
-                        break;
-                    case EbtISampler2D:
-                        mSink << "i32";
-                        break;
-                    case EbtUSampler2D:
-                        mSink << "u32";
-                        break;
-                    default:
-                        // TODO(anglebug.com/42267100): are any of the other sampler types necessary
-                        // to translate?
-                        UNIMPLEMENTED();
-                        break;
-                }
-                if (type.getMemoryQualifier().readonly || type.getMemoryQualifier().writeonly)
-                {
-                    // TODO(anglebug.com/42267100): implement memory qualifiers.
-                    UNIMPLEMENTED();
-                }
-                mSink << ">";
-            }
-            else if (IsImage(basicType))
-            {
-                // TODO(anglebug.com/42267100): does texture2d also correspond to GLSL's image type?
-                mSink << "texture2d<";
-                switch (type.getBasicType())
-                {
-                    case EbtImage2D:
-                        mSink << "f32";
-                        break;
-                    case EbtIImage2D:
-                        mSink << "i32";
-                        break;
-                    case EbtUImage2D:
-                        mSink << "u32";
-                        break;
-                    default:
-                        // TODO(anglebug.com/42267100): are any of the other image types necessary
-                        // to translate?
-                        UNIMPLEMENTED();
-                        break;
-                }
-                if (type.getMemoryQualifier().readonly || type.getMemoryQualifier().writeonly)
-                {
-                    // TODO(anglebug.com/42267100): implement memory qualifiers.
-                    UNREACHABLE();
-                }
-                mSink << ">";
-            }
-            else
-            {
-                UNREACHABLE();
-            }
-            break;
-    }
+    WriteWgslBareTypeName(mSink, type);
 }
 
 void OutputWGSLTraverser::emitType(const TType &type)
 {
-    if (type.isArray())
-    {
-        // Examples:
-        // array<f32, 5>
-        // array<array<u32, 5>, 10>
-        mSink << "array<";
-        TType innerType = type;
-        innerType.toArrayElementType();
-        emitType(innerType);
-        mSink << ", " << type.getOutermostArraySize() << ">";
-    }
-    else if (type.isVector())
-    {
-        mSink << "vec" << static_cast<uint32_t>(type.getNominalSize()) << "<";
-        emitBareTypeName(type);
-        mSink << ">";
-    }
-    else if (type.isMatrix())
-    {
-        mSink << "mat" << static_cast<uint32_t>(type.getCols()) << "x"
-              << static_cast<uint32_t>(type.getRows()) << "<";
-        emitBareTypeName(type);
-        mSink << ">";
-    }
-    else
-    {
-        // This type has no dimensions and is equivalent to its bare type.
-        emitBareTypeName(type);
-    }
+    WriteWgslType(mSink, type);
 }
 
 }  // namespace
@@ -1863,47 +1782,35 @@ bool TranslatorWGSL::translate(TIntermBlock *root,
         std::cout << getInfoSink().info.c_str();
     }
 
-    // TODO(anglebug.com/42267100): until the translator is ready to translate most basic shaders,
-    // emit the code commented out.
+    RewritePipelineVarOutput rewritePipelineVarOutput(getShaderType());
+
+    // WGSL's main() will need to take parameters or return values if any glsl (input/output)
+    // builtin variables are used.
+    if (!GenerateMainFunctionAndIOStructs(*this, *root, rewritePipelineVarOutput))
+    {
+        return false;
+    }
+
     TInfoSinkBase &sink = getInfoSink().obj;
-    sink << "/*\n";
-    OutputWGSLTraverser traverser(this);
+    // Start writing the output structs that will be referred to by the `traverser`'s output.'
+    if (!rewritePipelineVarOutput.OutputStructs(sink))
+    {
+        return false;
+    }
+
+    // Write the body of the WGSL including the GLSL main() function.
+    OutputWGSLTraverser traverser(this, &rewritePipelineVarOutput);
     root->traverse(&traverser);
-    sink << "*/\n";
+
+    // Write the actual WGSL main function, wgslMain(), which calls the GLSL main function.
+    if (!rewritePipelineVarOutput.OutputMainFunction(sink))
+    {
+        return false;
+    }
 
     if (kOutputTranslatedShader)
     {
-        std::cout << getInfoSink().obj.str();
-    }
-    // TODO(anglebug.com/42267100): delete this.
-    if (getShaderType() == GL_VERTEX_SHADER)
-    {
-        constexpr const char *kVertexShader = R"(@vertex
-fn main(@builtin(vertex_index) vertex_index : u32) -> @builtin(position) vec4f
-{
-    const pos = array(
-        vec2( 0.0,  0.5),
-        vec2(-0.5, -0.5),
-        vec2( 0.5, -0.5)
-    );
-
-    return vec4f(pos[vertex_index % 3], 0, 1);
-})";
-        sink << kVertexShader;
-    }
-    else if (getShaderType() == GL_FRAGMENT_SHADER)
-    {
-        constexpr const char *kFragmentShader = R"(@fragment
-fn main() -> @location(0) vec4f
-{
-    return vec4(1, 0, 0, 1);
-})";
-        sink << kFragmentShader;
-    }
-    else
-    {
-        UNREACHABLE();
-        return false;
+        std::cout << sink.str();
     }
 
     return true;
