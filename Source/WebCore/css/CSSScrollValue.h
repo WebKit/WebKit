@@ -69,7 +69,7 @@ public:
 
 private:
     CSSScrollValue(RefPtr<CSSValue>&& scroller, RefPtr<CSSValue>&& axis)
-        : CSSValue(ScrollClass)
+        : CSSValue(ClassType::Scroll)
         , m_scroller(WTFMove(scroller))
         , m_axis(WTFMove(axis))
     {

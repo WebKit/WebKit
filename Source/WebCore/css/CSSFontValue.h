@@ -51,7 +51,7 @@ public:
 
 private:
     CSSFontValue()
-        : CSSValue(FontClass)
+        : CSSValue(ClassType::Font)
     {
     }
 };

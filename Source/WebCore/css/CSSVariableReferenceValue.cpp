@@ -45,7 +45,7 @@
 namespace WebCore {
 
 CSSVariableReferenceValue::CSSVariableReferenceValue(Ref<CSSVariableData>&& data)
-    : CSSValue(VariableReferenceClass)
+    : CSSValue(ClassType::VariableReference)
     , m_data(WTFMove(data))
 {
     cacheSimpleReference();

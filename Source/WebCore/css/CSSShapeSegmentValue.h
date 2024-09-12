@@ -179,7 +179,7 @@ private:
     }
 
     CSSShapeSegmentValue(SegmentType type, std::unique_ptr<ShapeSegmentData>&& data)
-        : CSSValue(ShapeSegmentClass)
+        : CSSValue(ClassType::ShapeSegment)
         , m_type(type)
         , m_data(WTFMove(data))
     {

@@ -61,7 +61,7 @@ public:
 
 private:
     CSSOffsetRotateValue(RefPtr<CSSPrimitiveValue>&& modifier, RefPtr<CSSPrimitiveValue>&& angle)
-        : CSSValue(OffsetRotateClass)
+        : CSSValue(ClassType::OffsetRotate)
         , m_modifier(WTFMove(modifier))
         , m_angle(WTFMove(angle))
     {

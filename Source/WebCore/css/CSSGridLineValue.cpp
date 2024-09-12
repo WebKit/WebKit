@@ -49,7 +49,7 @@ String CSSGridLineValue::customCSSText() const
 }
 
 CSSGridLineValue::CSSGridLineValue(RefPtr<CSSPrimitiveValue>&& spanValue, RefPtr<CSSPrimitiveValue>&& numericValue, RefPtr<CSSPrimitiveValue>&& gridLineName)
-    : CSSValue(GridLineValueClass)
+    : CSSValue(ClassType::GridLineValue)
     , m_spanValue(WTFMove(spanValue))
     , m_numericValue(WTFMove(numericValue))
     , m_gridLineName(WTFMove(gridLineName))

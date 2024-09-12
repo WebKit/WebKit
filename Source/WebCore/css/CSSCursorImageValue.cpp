@@ -50,7 +50,7 @@ Ref<CSSCursorImageValue> CSSCursorImageValue::create(Ref<CSSValue>&& imageValue,
 }
 
 CSSCursorImageValue::CSSCursorImageValue(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, URL originalURL, LoadedFromOpaqueSource loadedFromOpaqueSource)
-    : CSSValue(CursorImageClass)
+    : CSSValue(ClassType::CursorImage)
     , m_originalURL(WTFMove(originalURL))
     , m_imageValue(WTFMove(imageValue))
     , m_hotSpot(WTFMove(hotSpot))

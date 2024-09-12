@@ -46,7 +46,7 @@ public:
 
 private:
     CSSUnicodeRangeValue(char32_t from, char32_t to)
-        : CSSValue(UnicodeRangeClass)
+        : CSSValue(ClassType::UnicodeRange)
         , m_from(from)
         , m_to(to)
     {

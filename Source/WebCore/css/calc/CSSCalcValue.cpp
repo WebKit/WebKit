@@ -110,7 +110,7 @@ Ref<CSSCalcValue> CSSCalcValue::copySimplified(const CSSToLengthConversionData& 
 }
 
 CSSCalcValue::CSSCalcValue(CSSCalc::Tree&& tree)
-    : CSSValue(CalculationClass)
+    : CSSValue(ClassType::Calculation)
     , m_tree(WTFMove(tree))
 {
 }

@@ -92,32 +92,32 @@ CSSValueContainingVector::CSSValueContainingVector(ClassType type, ValueSeparato
 }
 
 CSSValueList::CSSValueList(ValueSeparator separator)
-    : CSSValueContainingVector(ValueListClass, separator)
+    : CSSValueContainingVector(ClassType::ValueList, separator)
 {
 }
 
 CSSValueList::CSSValueList(ValueSeparator separator, CSSValueListBuilder values)
-    : CSSValueContainingVector(ValueListClass, separator, WTFMove(values))
+    : CSSValueContainingVector(ClassType::ValueList, separator, WTFMove(values))
 {
 }
 
 CSSValueList::CSSValueList(ValueSeparator separator, Ref<CSSValue> value)
-    : CSSValueContainingVector(ValueListClass, separator, WTFMove(value))
+    : CSSValueContainingVector(ClassType::ValueList, separator, WTFMove(value))
 {
 }
 
 CSSValueList::CSSValueList(ValueSeparator separator, Ref<CSSValue> value1, Ref<CSSValue> value2)
-    : CSSValueContainingVector(ValueListClass, separator, WTFMove(value1), WTFMove(value2))
+    : CSSValueContainingVector(ClassType::ValueList, separator, WTFMove(value1), WTFMove(value2))
 {
 }
 
 CSSValueList::CSSValueList(ValueSeparator separator, Ref<CSSValue> value1, Ref<CSSValue> value2, Ref<CSSValue> value3)
-    : CSSValueContainingVector(ValueListClass, separator, WTFMove(value1), WTFMove(value2), WTFMove(value3))
+    : CSSValueContainingVector(ClassType::ValueList, separator, WTFMove(value1), WTFMove(value2), WTFMove(value3))
 {
 }
 
 CSSValueList::CSSValueList(ValueSeparator separator, Ref<CSSValue> value1, Ref<CSSValue> value2, Ref<CSSValue> value3, Ref<CSSValue> value4)
-    : CSSValueContainingVector(ValueListClass, separator, WTFMove(value1), WTFMove(value2), WTFMove(value3), WTFMove(value4))
+    : CSSValueContainingVector(ClassType::ValueList, separator, WTFMove(value1), WTFMove(value2), WTFMove(value3), WTFMove(value4))
 {
 }
 

@@ -71,7 +71,7 @@ public:
 
 private:
     CSSRayValue(Ref<CSSPrimitiveValue>&& angle, CSSValueID size, bool isContaining, RefPtr<CSSValuePair>&& position)
-        : CSSValue(RayClass)
+        : CSSValue(ClassType::Ray)
         , m_angle(WTFMove(angle))
         , m_size(size)
         , m_isContaining(isContaining)
@@ -82,7 +82,7 @@ private:
     }
 
     CSSRayValue(Ref<CSSPrimitiveValue>&& angle, CSSValueID size, bool isContaining, RefPtr<CSSValuePair>&& position, CSSBoxType coordinateBox)
-        : CSSValue(RayClass)
+        : CSSValue(ClassType::Ray)
         , m_angle(WTFMove(angle))
         , m_size(size)
         , m_isContaining(isContaining)
