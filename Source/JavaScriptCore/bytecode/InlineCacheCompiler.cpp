@@ -7737,6 +7737,10 @@ void InlineCacheHandler::aboutToDie()
 {
     if (m_stubRoutine)
         m_stubRoutine->aboutToDie();
+    // A reference to InlineCacheHandler may keep it alive later than the CodeBlock that "owns" this
+    // watchpoint but the watchpoint must not fire after the CodeBlock has finished destruction,
+    // so clear the watchpoint eagerly.
+    m_watchpoint.reset();
 }
 
 CallLinkInfo* InlineCacheHandler::callLinkInfoAt(const ConcurrentJSLocker& locker, unsigned index)

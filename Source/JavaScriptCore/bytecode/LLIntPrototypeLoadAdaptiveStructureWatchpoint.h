@@ -38,6 +38,8 @@ public:
     LLIntPrototypeLoadAdaptiveStructureWatchpoint(CodeBlock*, const ObjectPropertyCondition&, BytecodeIndex);
     LLIntPrototypeLoadAdaptiveStructureWatchpoint();
 
+    ~LLIntPrototypeLoadAdaptiveStructureWatchpoint();
+
     void initialize(CodeBlock*, const ObjectPropertyCondition&, BytecodeIndex);
 
     void install(VM&);

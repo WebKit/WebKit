@@ -28,7 +28,7 @@
 
 #if ENABLE(JIT)
 
-#include "CodeBlock.h"
+#include "CodeBlockInlines.h"
 #include "JSCellInlines.h"
 #include "StructureStubInfo.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -39,8 +39,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(StructureStubInfoClearingWatchpoint);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AdaptiveValueStructureStubClearingWatchpoint);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(StructureTransitionStructureStubClearingWatchpoint);
 
+StructureStubInfoClearingWatchpoint::~StructureStubInfoClearingWatchpoint()
+{
+    ASSERT(!m_owner->wasDestructed());
+}
+
 void StructureStubInfoClearingWatchpoint::fireInternal(VM&, const FireDetail&)
 {
+    ASSERT(!m_owner->wasDestructed());
     if (!m_owner->isLive())
         return;
 

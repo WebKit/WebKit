@@ -269,13 +269,6 @@ public:
     const JITCodeMap& jitCodeMap();
 
     std::optional<CodeOrigin> findPC(void* pc);
-
-    // We call this when we want to reattempt compiling something with the baseline JIT. Ideally
-    // the baseline JIT would not add data to CodeBlock, but instead it would put its data into
-    // a newly created JITCode, which could be thrown away if we bail on JIT compilation. Then we
-    // would be able to get rid of this silly function.
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=159061
-    void resetBaselineJITData();
 #endif // ENABLE(JIT)
 
     void unlinkOrUpgradeIncomingCalls(VM&, CodeBlock*);
@@ -471,6 +464,7 @@ public:
 #endif
 #if ASSERT_ENABLED
     bool hasIdentifier(UniquedStringImpl*);
+    bool wasDestructed();
 #endif
 
     Vector<WriteBarrier<Unknown>>& constants() { return m_constantRegisters; }
@@ -990,6 +984,7 @@ private:
 #if ASSERT_ENABLED
     Lock m_cachedIdentifierUidsLock;
     HashSet<UniquedStringImpl*> m_cachedIdentifierUids;
+    uint32_t m_magic;
 #endif
 };
 /* This check is for normal Release builds; ASSERT_ENABLED changes the size. */
