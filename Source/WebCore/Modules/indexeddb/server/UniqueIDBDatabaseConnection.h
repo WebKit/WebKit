@@ -49,7 +49,7 @@ class UniqueIDBDatabaseConnection : public RefCounted<UniqueIDBDatabaseConnectio
 public:
     static Ref<UniqueIDBDatabaseConnection> create(UniqueIDBDatabase&, ServerOpenDBRequest&);
 
-    WEBCORE_EXPORT ~UniqueIDBDatabaseConnection();
+    ~UniqueIDBDatabaseConnection();
 
     const IDBResourceIdentifier& openRequestIdentifier() { return m_openRequestIdentifier; }
     UniqueIDBDatabase* database() { return m_database.get(); }

@@ -143,9 +143,6 @@ public:
 private:
     NetworkStorageManager(NetworkProcess&, PAL::SessionID, Markable<WTF::UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> standardVolumeCapacity, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel, bool storageSiteValidationEnabled);
     ~NetworkStorageManager();
-
-    RefPtr<NetworkProcess> protectedProcess() const;
-
     void writeOriginToFileIfNecessary(const WebCore::ClientOrigin&, StorageAreaBase* = nullptr);
     enum class ShouldWriteOriginFile : bool { No, Yes };
     OriginStorageManager& originStorageManager(const WebCore::ClientOrigin&, ShouldWriteOriginFile = ShouldWriteOriginFile::Yes);
@@ -258,7 +255,6 @@ private:
     };
     void performEviction(HashMap<WebCore::SecurityOriginData, AccessRecord>&&);
     const SuspendableWorkQueue& workQueue() const WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
-    Ref<SuspendableWorkQueue> protectedWorkQueue() const WTF_RETURNS_CAPABILITY(m_queue.get());
     OriginQuotaManager::Parameters originQuotaManagerParameters(const WebCore::ClientOrigin&);
     WebCore::IDBServer::UniqueIDBDatabaseTransaction* idbTransaction(const WebCore::IDBRequestData&);
     void setStorageSiteValidationEnabledInternal(bool);
