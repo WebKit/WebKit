@@ -320,7 +320,7 @@ void PDFIncrementalLoader::receivedNonLinearizedPDFSentinel()
 
     for (auto iterator = m_requestData->streamLoaderMap.begin(); iterator != m_requestData->streamLoaderMap.end(); iterator = m_requestData->streamLoaderMap.begin()) {
         removeOutstandingByteRangeRequest(iterator->value);
-        cancelAndForgetStreamLoader(*iterator->key);
+        cancelAndForgetStreamLoader(Ref { *iterator->key.get() });
     }
 }
 
@@ -397,8 +397,8 @@ void PDFIncrementalLoader::incrementalPDFStreamDidReceiveData(const SharedBuffer
 
     for (auto identifier : handledRequests) {
         auto request = m_requestData->outstandingByteRangeRequests.take(identifier);
-        if (request.streamLoader())
-            cancelAndForgetStreamLoader(*request.streamLoader());
+        if (RefPtr streamLoader = request.streamLoader())
+            cancelAndForgetStreamLoader(*streamLoader);
     }
 }
 
@@ -637,7 +637,7 @@ size_t PDFIncrementalLoader::dataProviderGetBytesAtPosition(std::span<uint8_t> b
 
     size_t bytesProvided = 0;
 
-    RunLoop::main().dispatch([protectedLoader = Ref { *this }, dataSemaphore, position, buffer, &bytesProvided] {
+    RunLoop::protectedMain()->dispatch([protectedLoader = Ref { *this }, dataSemaphore, position, buffer, &bytesProvided] {
         if (dataSemaphore->wasSignaled())
             return;
         protectedLoader->getResourceBytesAtPosition(buffer.size(), position, [buffer, dataSemaphore, &bytesProvided](std::span<const uint8_t> bytes) {
@@ -709,7 +709,7 @@ void PDFIncrementalLoader::dataProviderGetByteRanges(CFMutableArrayRef buffers, 
     Vector<RetainPtr<CFDataRef>> dataResults(count);
 
     // FIXME: Once we support multi-range requests, make a single request for all ranges instead of <count> individual requests.
-    RunLoop::main().dispatch([protectedLoader = Ref { *this }, &dataResults, ranges, count, dataSemaphore]() mutable {
+    RunLoop::protectedMain()->dispatch([protectedLoader = Ref { *this }, &dataResults, ranges, count, dataSemaphore]() mutable {
         if (dataSemaphore->wasSignaled())
             return;
         Ref callbackAggregator = CallbackAggregator::create([dataSemaphore] {

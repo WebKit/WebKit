@@ -148,7 +148,7 @@ void AsyncPDFRenderer::generatePreviewImageForPage(PDFDocumentLayout::PageIndex 
     auto pagePreviewRequest = PagePreviewRequest { pageIndex, pageBounds, scale };
     m_enqueuedPagePreviews.set(pageIndex, pagePreviewRequest);
 
-    m_paintingWorkQueue->dispatch([protectedThis = Ref { *this }, pdfDocument = WTFMove(pdfDocument), pagePreviewRequest]() mutable {
+    protectedPaintingWorkQueue()->dispatch([protectedThis = Ref { *this }, pdfDocument = WTFMove(pdfDocument), pagePreviewRequest]() mutable {
         protectedThis->paintPagePreviewOnWorkQueue(WTFMove(pdfDocument), pagePreviewRequest);
     });
 }
@@ -479,7 +479,7 @@ void AsyncPDFRenderer::serviceRequestQueue()
 
         ++m_numConcurrentTileRenders;
 
-        m_paintingWorkQueue->dispatch([protectedThis = Ref { *this }, pdfDocument = RetainPtr { presentationController->pluginPDFDocument() }, tileInfo, renderData] mutable {
+        protectedPaintingWorkQueue()->dispatch([protectedThis = Ref { *this }, pdfDocument = RetainPtr { presentationController->pluginPDFDocument() }, tileInfo, renderData] mutable {
             protectedThis->paintTileOnWorkQueue(WTFMove(pdfDocument), tileInfo, renderData.renderInfo, renderData.renderIdentifier);
         });
     }
@@ -707,7 +707,7 @@ bool AsyncPDFRenderer::paintTilesForPage(const GraphicsLayer* layer, GraphicsCon
             // FIXME: <https://webkit.org/b/276981> Respect clip rect!
             LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::paintTilesForPage " << pageBoundsInPaintingCoordinates  << " - painting tile for " << tileForGrid << " with clip " << renderedTile.tileInfo.tileRect << " tiling scale " << tilingScaleFactor);
 
-            context.drawImageBuffer(*renderedTile.buffer, renderedTile.tileInfo.tileRect.location());
+            context.drawImageBuffer(*renderedTile.protectedBuffer(), renderedTile.tileInfo.tileRect.location());
             paintedATile = true;
         }
     }
