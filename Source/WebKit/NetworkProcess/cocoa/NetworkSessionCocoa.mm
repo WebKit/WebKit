@@ -1496,12 +1496,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const N
     } else
         cookieStorage = storageSession->nsCookieStorage();
 
-#if HAVE(CFNETWORK_OVERRIDE_SESSION_COOKIE_ACCEPT_POLICY)
-    // We still need to check the selector since CFNetwork updates and WebKit updates are separate
-    // on older macOS.
-    if ([cookieStorage respondsToSelector:@selector(_overrideSessionCookieAcceptPolicy)])
-        cookieStorage.get()._overrideSessionCookieAcceptPolicy = YES;
-#endif
+    cookieStorage.get()._overrideSessionCookieAcceptPolicy = YES;
 
     initializeNSURLSessionsInSet(m_defaultSessionSet.get(), configuration);
 
@@ -1949,9 +1944,8 @@ void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pag
     auto addResult2 = m_perPageSessionSets.add(pageID, SessionSet::create());
     ASSERT(addResult2.isNewEntry);
     RetainPtr<NSURLSessionConfiguration> configuration = adoptNS([m_defaultSessionSet->sessionWithCredentialStorage.session.get().configuration copy]);
-#if HAVE(CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER) && USE(APPLE_INTERNAL_SDK)
-    if ([configuration respondsToSelector:@selector(_attributedBundleIdentifier)])
-        configuration.get()._attributedBundleIdentifier = parameters.attributedBundleIdentifier();
+#if USE(APPLE_INTERNAL_SDK)
+    configuration.get()._attributedBundleIdentifier = parameters.attributedBundleIdentifier();
 #endif
     initializeNSURLSessionsInSet(addResult2.iterator->value.get(), configuration.get());
     addResult1.iterator->value = addResult2.iterator->value.get();
