@@ -106,8 +106,8 @@ void WebFullScreenManagerProxy::didEnterFullScreen()
     webPageProxy->protectedLegacyMainFrameProcess()->send(Messages::WebFullScreenManager::DidEnterFullScreen(), webPageProxy->webPageIDInMainFrameProcess());
 
     if (webPageProxy->isControlledByAutomation()) {
-        if (auto* automationSession = webPageProxy->configuration().processPool().automationSession())
-            automationSession->didEnterFullScreenForPage(m_page);
+        if (RefPtr automationSession = webPageProxy->protectedConfiguration()->processPool().automationSession())
+            automationSession->didEnterFullScreenForPage(protectedPage());
     }
 }
 
@@ -139,11 +139,11 @@ void WebFullScreenManagerProxy::didExitFullScreen()
     m_fullscreenState = FullscreenState::NotInFullscreen;
     Ref webPageProxy = m_page.get();
     webPageProxy->fullscreenClient().didExitFullscreen(webPageProxy.ptr());
-    webPageProxy->legacyMainFrameProcess().send(Messages::WebFullScreenManager::DidExitFullScreen(), webPageProxy->webPageIDInMainFrameProcess());
+    webPageProxy->protectedLegacyMainFrameProcess()->send(Messages::WebFullScreenManager::DidExitFullScreen(), webPageProxy->webPageIDInMainFrameProcess());
     
     if (webPageProxy->isControlledByAutomation()) {
-        if (auto* automationSession = webPageProxy->protectedConfiguration()->processPool().automationSession())
-            automationSession->didExitFullScreenForPage(m_page);
+        if (RefPtr automationSession = webPageProxy->protectedConfiguration()->processPool().automationSession())
+            automationSession->didExitFullScreenForPage(protectedPage());
     }
     callCloseCompletionHandlers();
 }
@@ -180,25 +180,25 @@ void WebFullScreenManagerProxy::supportsFullScreen(bool withKeyboard, Completion
 void WebFullScreenManagerProxy::saveScrollPosition()
 {
     Ref webPageProxy = m_page.get();
-    webPageProxy->legacyMainFrameProcess().send(Messages::WebFullScreenManager::SaveScrollPosition(), webPageProxy->webPageIDInMainFrameProcess());
+    webPageProxy->protectedLegacyMainFrameProcess()->send(Messages::WebFullScreenManager::SaveScrollPosition(), webPageProxy->webPageIDInMainFrameProcess());
 }
 
 void WebFullScreenManagerProxy::restoreScrollPosition()
 {
     Ref webPageProxy = m_page.get();
-    webPageProxy->legacyMainFrameProcess().send(Messages::WebFullScreenManager::RestoreScrollPosition(), webPageProxy->webPageIDInMainFrameProcess());
+    webPageProxy->protectedLegacyMainFrameProcess()->send(Messages::WebFullScreenManager::RestoreScrollPosition(), webPageProxy->webPageIDInMainFrameProcess());
 }
 
 void WebFullScreenManagerProxy::setFullscreenInsets(const WebCore::FloatBoxExtent& insets)
 {
     Ref webPageProxy = m_page.get();
-    webPageProxy->legacyMainFrameProcess().send(Messages::WebFullScreenManager::SetFullscreenInsets(insets), webPageProxy->webPageIDInMainFrameProcess());
+    webPageProxy->protectedLegacyMainFrameProcess()->send(Messages::WebFullScreenManager::SetFullscreenInsets(insets), webPageProxy->webPageIDInMainFrameProcess());
 }
 
 void WebFullScreenManagerProxy::setFullscreenAutoHideDuration(Seconds duration)
 {
     Ref webPageProxy = m_page.get();
-    webPageProxy->legacyMainFrameProcess().send(Messages::WebFullScreenManager::SetFullscreenAutoHideDuration(duration), webPageProxy->webPageIDInMainFrameProcess());
+    webPageProxy->protectedLegacyMainFrameProcess()->send(Messages::WebFullScreenManager::SetFullscreenAutoHideDuration(duration), webPageProxy->webPageIDInMainFrameProcess());
 }
 
 void WebFullScreenManagerProxy::close()
