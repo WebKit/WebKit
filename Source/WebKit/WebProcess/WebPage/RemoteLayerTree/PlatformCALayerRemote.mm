@@ -782,6 +782,22 @@ void PlatformCALayerRemote::setWantsDeepColorBackingStore(bool wantsDeepColorBac
     updateBackingStore();
 }
 
+bool PlatformCALayerRemote::wantsExtendedDynamicRangeContent() const
+{
+    return m_properties.wantsExtendedDynamicRange;
+}
+
+void PlatformCALayerRemote::setWantsExtendedDynamicRangeContent(bool wantsExtendedDynamicRangeContent)
+{
+    if (wantsExtendedDynamicRangeContent == m_properties.wantsExtendedDynamicRange)
+        return;
+
+    m_properties.wantsExtendedDynamicRange = wantsExtendedDynamicRangeContent;
+    m_properties.notePropertiesChanged(LayerChange::WantsExtendedDynamicRangeChanged);
+
+    updateBackingStore();
+}
+
 bool PlatformCALayerRemote::hasContents() const
 {
     return !!m_properties.backingStoreOrProperties.store;

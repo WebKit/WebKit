@@ -62,6 +62,7 @@ static inline vImage_CGImageFormat makeVImageCGImageFormat(const PixelBufferForm
         case PixelFormat::BGRX8:
         case PixelFormat::RGB10:
         case PixelFormat::RGB10A8:
+        case PixelFormat::RGBA16F:
             break;
         }
 
@@ -154,6 +155,7 @@ static void convertImagePixelsSkia(const ConstPixelBufferConversionView& source,
         case PixelFormat::BGRX8:
         case PixelFormat::RGB10:
         case PixelFormat::RGB10A8:
+        case PixelFormat::RGBA16F:
             break;
         }
         ASSERT_NOT_REACHED();

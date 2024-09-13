@@ -156,6 +156,9 @@ public:
     bool wantsDeepColorBackingStore() const override;
     void setWantsDeepColorBackingStore(bool) override;
 
+    bool wantsExtendedDynamicRangeContent() const override;
+    void setWantsExtendedDynamicRangeContent(bool) override;
+
     bool hasContents() const override;
     CFTypeRef contents() const override;
     void setContents(CFTypeRef) override;

@@ -42,8 +42,10 @@ namespace WebCore {
 
 class GPUDisplayBufferDisplayDelegate final : public GraphicsLayerContentsDisplayDelegate {
 public:
-    static Ref<GPUDisplayBufferDisplayDelegate> create(bool isOpaque = true, float contentsScale = 1)
+    static Ref<GPUDisplayBufferDisplayDelegate> create()
     {
+        bool isOpaque = true;
+        float contentsScale = 1;
         return adoptRef(*new GPUDisplayBufferDisplayDelegate(isOpaque, contentsScale));
     }
     // GraphicsLayerContentsDisplayDelegate overrides.
@@ -51,12 +53,14 @@ public:
     {
         layer.setOpaque(m_isOpaque);
         layer.setContentsScale(m_contentsScale);
+        layer.setWantsExtendedDynamicRangeContent(m_wantsExtendedDynamicRangeContent);
     }
     void display(PlatformCALayer& layer) final
     {
-        if (m_displayBuffer)
+        if (m_displayBuffer) {
+            layer.setWantsExtendedDynamicRangeContent(m_wantsExtendedDynamicRangeContent);
             layer.setDelegatedContents({ MachSendRight { m_displayBuffer }, { }, std::nullopt });
-        else
+        } else
             layer.clearContents();
     }
     GraphicsLayer::CompositingCoordinatesOrientation orientation() const final
@@ -75,6 +79,10 @@ public:
 
         m_displayBuffer = MachSendRight { displayBuffer };
     }
+    void setWantsExtendedDynamicRangeContent(bool wantsExtendedDynamicRangeContent)
+    {
+        m_wantsExtendedDynamicRangeContent = wantsExtendedDynamicRangeContent;
+    }
 private:
     GPUDisplayBufferDisplayDelegate(bool isOpaque, float contentsScale)
         : m_contentsScale(contentsScale)
@@ -84,6 +92,7 @@ private:
     WTF::MachSendRight m_displayBuffer;
     const float m_contentsScale;
     const bool m_isOpaque;
+    bool m_wantsExtendedDynamicRangeContent { false };
 };
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(GPUCanvasContextCocoa);
@@ -180,6 +189,9 @@ void GPUCanvasContextCocoa::reshape()
 
 RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuffer)
 {
+    if (!m_compositorIntegration)
+        return { };
+
     // FIXME(https://bugs.webkit.org/show_bug.cgi?id=263957): WebGPU should support obtaining drawing buffer for Web Inspector.
     m_compositorIntegration->prepareForDisplay([this, weakThis = WeakPtr { *this }] {
         if (!weakThis)
@@ -239,6 +251,14 @@ static DestinationColorSpace toWebCoreColorSpace(const GPUPredefinedColorSpace& 
     return DestinationColorSpace::SRGB();
 }
 
+static WebGPU::TextureFormat computeTextureFormat(GPUTextureFormat format, GPUCanvasToneMappingMode toneMappingMode)
+{
+    if (format == GPUTextureFormat::Rgba16float && toneMappingMode == GPUCanvasToneMappingMode::Standard)
+        return WebGPU::TextureFormat::Bgra8unorm;
+
+    return WebCore::convertToBacking(format);
+}
+
 ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& configuration, bool dueToReshape)
 {
     if (isConfigured()) {
@@ -247,6 +267,8 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
 
         unconfigure();
     }
+
+    m_layerContentsDisplayDelegate->setWantsExtendedDynamicRangeContent(configuration.toneMapping.mode != GPUCanvasToneMappingMode::Standard);
 
     ASSERT(configuration.device);
     if (!configuration.device)
@@ -263,7 +285,7 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
     if (!m_compositorIntegration)
         return { };
 
-    auto renderBuffers = m_compositorIntegration->recreateRenderBuffers(m_width, m_height, toWebCoreColorSpace(configuration.colorSpace), configuration.alphaMode == GPUCanvasAlphaMode::Premultiplied ? WebCore::AlphaPremultiplication::Premultiplied : WebCore::AlphaPremultiplication::Unpremultiplied, WebCore::convertToBacking(configuration.format), configuration.device->backing());
+    auto renderBuffers = m_compositorIntegration->recreateRenderBuffers(m_width, m_height, toWebCoreColorSpace(configuration.colorSpace), configuration.alphaMode == GPUCanvasAlphaMode::Premultiplied ? WebCore::AlphaPremultiplication::Premultiplied : WebCore::AlphaPremultiplication::Unpremultiplied, computeTextureFormat(configuration.format, configuration.toneMapping.mode), configuration.device->backing());
     // FIXME: This ASSERT() is wrong. It's totally possible for the IPC to the GPU process to timeout if the GPUP is busy, and return nothing here.
     ASSERT(!renderBuffers.isEmpty());
 

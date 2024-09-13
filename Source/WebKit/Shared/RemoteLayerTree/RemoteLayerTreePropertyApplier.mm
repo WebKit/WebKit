@@ -276,6 +276,11 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & LayerChange::FiltersChanged)
         PlatformCAFilters::setFiltersOnLayer(layer, properties.filters ? *properties.filters : FilterOperations(), layerTreeNode && layerTreeNode->backdropRootIsOpaque());
 
+#if HAVE(CALAYER_WANTSEXTENDEDDYNAMICRANGECONTENT)
+    if (properties.changedProperties & LayerChange::WantsExtendedDynamicRangeChanged)
+        layer.wantsExtendedDynamicRangeContent = properties.wantsExtendedDynamicRange;
+#endif
+
     if (properties.changedProperties & LayerChange::AnimationsChanged) {
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
         if (layerTreeHost->threadedAnimationResolutionEnabled()) {

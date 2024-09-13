@@ -192,13 +192,15 @@ static NSDictionary *optionsForBiplanarSurface(IntSize size, unsigned pixelForma
     };
 }
 
-static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat, IOSurface::Name name)
+template <unsigned bitsPerPixel>
+static NSDictionary *optionsForSurface(IntSize size, unsigned pixelFormat, IOSurface::Name name)
 {
     int width = size.width();
     int height = size.height();
 
-    unsigned bytesPerElement = 4;
-    unsigned bytesPerPixel = 4;
+    static_assert(!(bitsPerPixel % 32), "bitsPerPixel must be a multiple of 32");
+    unsigned bytesPerElement = 4 * (bitsPerPixel / 32);
+    unsigned bytesPerPixel = bytesPerElement;
 
     size_t bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerPixel);
     ASSERT(bytesPerRow);
@@ -220,6 +222,16 @@ static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat, 
         (id)kIOSurfaceName: surfaceNameToNSString(name)
     };
 
+}
+
+static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat, IOSurface::Name name)
+{
+    return optionsForSurface<32>(size, pixelFormat, name);
+}
+
+static NSDictionary *optionsFor64BitSurface(IntSize size, unsigned pixelFormat, IOSurface::Name name)
+{
+    return optionsForSurface<64>(size, pixelFormat, name);
 }
 
 IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, IOSurface::Name name, Format format, bool& success)
@@ -252,6 +264,9 @@ IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, IOSu
     case Format::RGBX:
     case Format::RGBA:
         options = optionsFor32BitSurface(size, 'RGBA', name);
+        break;
+    case Format::RGBA16F:
+        options = optionsFor64BitSurface(size, 'RGhA', name);
         break;
     }
     m_surface = adoptCF(IOSurfaceCreate((CFDictionaryRef)options));
@@ -429,10 +444,11 @@ IOSurface::BitmapConfiguration IOSurface::bitmapConfiguration() const
     case Format::RGB10A8:
         // A half-float format will be used if CG needs to read back the IOSurface contents,
         // but for an IOSurface-to-IOSurface copy, there should be no conversion.
+#endif
+    case Format::RGBA16F:
         bitsPerComponent = 16;
         bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
         break;
-#endif
     case Format::YUV422:
         ASSERT_NOT_REACHED();
         break;
@@ -722,6 +738,9 @@ TextStream& operator<<(TextStream& ts, IOSurface::Format format)
         break;
     case IOSurface::Format::RGBA:
         ts << "RGBA";
+        break;
+    case IOSurface::Format::RGBA16F:
+        ts << "RGBA16F";
         break;
     }
     return ts;

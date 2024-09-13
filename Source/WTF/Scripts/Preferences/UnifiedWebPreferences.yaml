@@ -8264,10 +8264,10 @@ WebGPUHDREnabled:
       default: false
     WebKit:
       "ENABLE(WEBGPU_BY_DEFAULT) && ENABLE(WEBGPU_HDR_BY_DEFAULT)": true
-      default: false
+      default: true
     WebCore:
       "ENABLE(WEBGPU_BY_DEFAULT) && ENABLE(WEBGPU_HDR_BY_DEFAULT)": true
-      default: false
+      default: true
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
 

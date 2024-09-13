@@ -787,6 +787,26 @@ void PlatformCALayerCocoa::setWantsDeepColorBackingStore(bool wantsDeepColorBack
     updateContentsFormat();
 }
 
+bool PlatformCALayerCocoa::wantsExtendedDynamicRangeContent() const
+{
+#if HAVE(CALAYER_WANTSEXTENDEDDYNAMICRANGECONTENT)
+    return [m_layer wantsExtendedDynamicRangeContent];
+#else
+    return false;
+#endif
+}
+
+void PlatformCALayerCocoa::setWantsExtendedDynamicRangeContent(bool wantsExtendedDynamicRangeContent)
+{
+#if HAVE(CALAYER_WANTSEXTENDEDDYNAMICRANGECONTENT)
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [m_layer setWantsExtendedDynamicRangeContent:wantsExtendedDynamicRangeContent];
+    END_BLOCK_OBJC_EXCEPTIONS
+#else
+    UNUSED_PARAM(wantsExtendedDynamicRangeContent);
+#endif
+}
+
 bool PlatformCALayerCocoa::hasContents() const
 {
     return [m_layer contents];
@@ -1131,7 +1151,19 @@ void PlatformCALayerCocoa::setIsDescendentOfSeparatedPortal(bool)
 #endif
 #endif
 
-static NSString *layerContentsFormat(bool wantsDeepColor)
+static NSString *layerExtendedDynamicRangeContentFormat(bool wantsExtendedDynamicRange)
+{
+#if HAVE(CALAYER_WANTSEXTENDEDDYNAMICRANGECONTENT)
+    if (wantsExtendedDynamicRange)
+        return kCAContentsFormatRGBA16Float;
+#else
+    UNUSED_PARAM(wantsExtendedDynamicRange);
+#endif
+
+    return nil;
+}
+
+static NSString *layerDeepColorContentsFormat(bool wantsDeepColor)
 {
 #if HAVE(IOSURFACE_RGB10)
     if (wantsDeepColor)
@@ -1147,7 +1179,9 @@ void PlatformCALayerCocoa::updateContentsFormat()
 {
     if (m_layerType == PlatformCALayer::LayerType::LayerTypeWebLayer || m_layerType == PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
-        if (NSString *formatString = layerContentsFormat(wantsDeepColorBackingStore()))
+        if (NSString *formatString = layerExtendedDynamicRangeContentFormat(wantsExtendedDynamicRangeContent()))
+            [m_layer setContentsFormat:formatString];
+        else if (NSString *formatString = layerDeepColorContentsFormat(wantsDeepColorBackingStore()))
             [m_layer setContentsFormat:formatString];
         END_BLOCK_OBJC_EXCEPTIONS
     }

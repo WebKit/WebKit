@@ -74,9 +74,12 @@ Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width
     width = std::max(1, std::min(max2DTextureSize, width));
     height = std::max(1, std::min(max2DTextureSize, height));
     bool isRGBA = (textureFormat == TextureFormat::Rgba8unorm || textureFormat == TextureFormat::Rgba8unormSRGB);
+    bool isRGBA16F = textureFormat == TextureFormat::Rgba16float;
     IOSurface::Format colorFormat;
     if (isRGBA)
         colorFormat = alphaMode == AlphaPremultiplication::Unpremultiplied ? IOSurface::Format::RGBX : IOSurface::Format::RGBA;
+    else if (isRGBA16F)
+        colorFormat = IOSurface::Format::RGBA16F;
     else
         colorFormat = alphaMode == AlphaPremultiplication::Unpremultiplied ? IOSurface::Format::BGRX : IOSurface::Format::BGRA;
 

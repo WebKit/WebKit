@@ -80,8 +80,9 @@ public:
         RGB10,
         RGB10A8,
 #endif
-        RGBA, // NOLINT
-        RGBX, // NOLINT
+        RGBA,    // NOLINT
+        RGBX,    // NOLINT
+        RGBA16F, // NOLINT
     };
 
     enum class AccessMode : uint32_t {

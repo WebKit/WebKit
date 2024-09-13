@@ -35,6 +35,7 @@ enum class PixelFormat : uint8_t {
     BGRA8,
     RGB10,
     RGB10A8,
+    RGBA16F,
 };
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, PixelFormat);

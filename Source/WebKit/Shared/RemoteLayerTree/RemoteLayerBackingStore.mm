@@ -282,6 +282,7 @@ unsigned RemoteLayerBackingStore::bytesPerPixel() const
     case ImageBufferPixelFormat::BGRA8: return 4;
     case ImageBufferPixelFormat::RGB10: return 4;
     case ImageBufferPixelFormat::RGB10A8: return 5;
+    case ImageBufferPixelFormat::RGBA16F: return 8;
     }
     return 4;
 }

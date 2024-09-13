@@ -103,9 +103,9 @@ private:
     };
     std::optional<Configuration> m_configuration;
 
-    Ref<GPUDisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
-    RefPtr<GPUCompositorIntegration> m_compositorIntegration;
-    RefPtr<GPUPresentationContext> m_presentationContext;
+    const Ref<GPUDisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
+    const RefPtr<GPUCompositorIntegration> m_compositorIntegration;
+    const RefPtr<GPUPresentationContext> m_presentationContext;
     RefPtr<GPUTexture> m_currentTexture;
 
     GPUIntegerCoordinate m_width { 0 };

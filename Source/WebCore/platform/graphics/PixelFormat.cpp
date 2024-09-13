@@ -48,6 +48,9 @@ TextStream& operator<<(TextStream& ts, PixelFormat pixelFormat)
     case PixelFormat::RGB10A8:
         ts << "RGB10A8";
         break;
+    case PixelFormat::RGBA16F:
+        ts << "RGBA16F";
+        break;
     }
     return ts;
 }

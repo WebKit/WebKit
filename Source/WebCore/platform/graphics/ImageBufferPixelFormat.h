@@ -37,6 +37,7 @@ enum class ImageBufferPixelFormat : uint8_t {
     BGRA8,
     RGB10,
     RGB10A8,
+    RGBA16F,
 };
 
 constexpr PixelFormat convertToPixelFormat(ImageBufferPixelFormat format)
@@ -50,6 +51,8 @@ constexpr PixelFormat convertToPixelFormat(ImageBufferPixelFormat format)
         return PixelFormat::RGB10;
     case ImageBufferPixelFormat::RGB10A8:
         return PixelFormat::RGB10A8;
+    case ImageBufferPixelFormat::RGBA16F:
+        return PixelFormat::RGBA16F;
     }
 
     ASSERT_NOT_REACHED();
@@ -70,6 +73,8 @@ constexpr IOSurface::Format convertToIOSurfaceFormat(ImageBufferPixelFormat form
     case ImageBufferPixelFormat::RGB10A8:
         return IOSurface::Format::RGB10A8;
 #endif
+    case ImageBufferPixelFormat::RGBA16F:
+        return IOSurface::Format::RGBA16F;
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return IOSurface::Format::BGRA;

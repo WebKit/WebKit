@@ -213,6 +213,9 @@ public:
     virtual bool wantsDeepColorBackingStore() const = 0;
     virtual void setWantsDeepColorBackingStore(bool) = 0;
 
+    virtual bool wantsExtendedDynamicRangeContent() const = 0;
+    virtual void setWantsExtendedDynamicRangeContent(bool) = 0;
+
     virtual bool hasContents() const = 0;
     virtual CFTypeRef contents() const = 0;
     virtual void setContents(CFTypeRef) = 0;

@@ -41,6 +41,7 @@ bool PixelBuffer::supportedPixelFormat(PixelFormat pixelFormat)
     case PixelFormat::BGRX8:
     case PixelFormat::RGB10:
     case PixelFormat::RGB10A8:
+    case PixelFormat::RGBA16F:
         return false;
     }
 

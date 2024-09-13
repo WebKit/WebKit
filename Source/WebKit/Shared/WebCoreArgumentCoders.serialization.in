@@ -2552,6 +2552,7 @@ enum class WebCore::PixelFormat : uint8_t {
     BGRA8,
     RGB10,
     RGB10A8,
+    RGBA16F,
 };
 
 enum class WebCore::ImageBufferPixelFormat : uint8_t {
@@ -2559,6 +2560,7 @@ enum class WebCore::ImageBufferPixelFormat : uint8_t {
     BGRA8,
     RGB10,
     RGB10A8,
+    RGBA16F,
 };
 
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::PixelBufferFormat {
