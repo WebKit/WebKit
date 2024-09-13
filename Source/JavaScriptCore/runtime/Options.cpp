@@ -969,7 +969,7 @@ void Options::notifyOptionsChanged()
     if (!Options::useWasmFaultSignalHandler())
         Options::useWasmFastMemory() = false;
 
-#if CPU(ADDRESS32)
+#if CPU(ADDRESS32) || PLATFORM(PLAYSTATION)
     Options::useWasmFastMemory() = false;
 #endif
 
