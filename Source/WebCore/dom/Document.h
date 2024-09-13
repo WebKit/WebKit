@@ -839,7 +839,7 @@ public:
 
     URL adjustedURL() const;
 
-    const URL& creationURL() const final { return m_creationURL; }
+    const URL& creationURL() const { return m_creationURL; }
 
     // To understand how these concepts relate to one another, please see the
     // comments surrounding their declaration.
@@ -1157,7 +1157,7 @@ public:
     //    document inherits the security context of another document, it
     //    inherits its cookieURL but not its URL.
     //
-    const URL& cookieURL() const { return m_cookieURL; }
+    const URL& cookieURL() const final { return m_cookieURL; }
     void setCookieURL(const URL&);
 
     // The firstPartyForCookies is used to compute whether this document

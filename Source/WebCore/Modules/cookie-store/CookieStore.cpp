@@ -259,7 +259,7 @@ void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& pr
         return;
     }
 
-    auto url = context->creationURL();
+    auto url = context->cookieURL();
     if (!options.url.isNull()) {
         auto parsed = context->completeURL(options.url);
         if (context->isDocument() && parsed != url) {
@@ -322,7 +322,7 @@ void CookieStore::getAll(CookieStoreGetOptions&& options, Ref<DeferredPromise>&&
         return;
     }
 
-    auto url = context->creationURL();
+    auto url = context->cookieURL();
     if (!options.url.isNull()) {
         auto parsed = context->completeURL(options.url);
         if (context->isDocument() && parsed != url) {
@@ -385,7 +385,7 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
     // The maximum attribute value size is specified at https://wicg.github.io/cookie-store/#cookie-maximum-attribute-value-size.
     static constexpr auto maximumAttributeValueSize = 1024;
 
-    auto url = context->creationURL();
+    auto url = context->cookieURL();
     auto host = url.host();
     auto domain = origin->domain();
 
