@@ -447,16 +447,16 @@ bool Heap::isPagedOut()
 void Heap::dumpHeapStatisticsAtVMDestruction()
 {
     unsigned counter = 0;
+    HeapIterationScope iterationScope(*this);
     m_objectSpace.forEachBlock([&] (MarkedBlock::Handle* block) {
         unsigned live = 0;
-        block->forEachCell([&] (size_t, HeapCell* cell, HeapCell::Kind) {
-            if (cell->isLive())
-                live++;
+        block->forEachLiveCell([&] (size_t, HeapCell*, HeapCell::Kind) {
+            live++;
             return IterationStatus::Continue;
         });
         dataLogLn("[", counter++, "] ", block->cellSize(), ", ", live, " / ", block->cellsPerBlock(), " ", static_cast<double>(live) / block->cellsPerBlock() * 100, "% ", block->attributes(), " ", block->subspace()->name());
-        block->forEachCell([&] (size_t, HeapCell* heapCell, HeapCell::Kind kind) {
-            if (heapCell->isLive() && kind == HeapCell::Kind::JSCell) {
+        block->forEachLiveCell([&] (size_t, HeapCell* heapCell, HeapCell::Kind kind) {
+            if (kind == HeapCell::Kind::JSCell) {
                 auto* cell = static_cast<JSCell*>(heapCell);
                 if (cell->isObject())
                     dataLogLn("    ", JSValue((JSObject*)cell));

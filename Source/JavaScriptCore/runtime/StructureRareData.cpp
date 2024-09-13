@@ -100,7 +100,6 @@ public:
     CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition&, StructureRareData*);
 
 private:
-    bool isValid() const final;
     void handleFire(VM&, const FireDetail&) final;
 
     StructureRareData* m_structureRareData;
@@ -260,11 +259,6 @@ CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::CachedSpecialPrope
     : Base(key)
     , m_structureRareData(structureRareData)
 {
-}
-
-bool CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::isValid() const
-{
-    return m_structureRareData->isLive();
 }
 
 void CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::handleFire(VM& vm, const FireDetail&)
