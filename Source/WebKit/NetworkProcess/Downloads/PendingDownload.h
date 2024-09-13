@@ -67,7 +67,7 @@ public:
 
 #if PLATFORM(COCOA)
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    void publishProgress(const URL&, std::span<const uint8_t>, UseDownloadPlaceholder);
+    void publishProgress(const URL&, std::span<const uint8_t>, UseDownloadPlaceholder, std::span<const uint8_t>);
 #else
     void publishProgress(const URL&, SandboxExtension::Handle&&);
 #endif
@@ -98,6 +98,7 @@ private:
     URL m_progressURL;
 #if HAVE(MODERN_DOWNLOADPROGRESS)
     Vector<uint8_t> m_bookmarkData;
+    Vector<uint8_t> m_activityAccessToken;
     UseDownloadPlaceholder m_useDownloadPlaceholder { UseDownloadPlaceholder::No };
 #else
     SandboxExtension::Handle m_progressSandboxExtension;

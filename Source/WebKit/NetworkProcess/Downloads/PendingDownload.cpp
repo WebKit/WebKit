@@ -81,12 +81,13 @@ void PendingDownload::cancel(CompletionHandler<void(std::span<const uint8_t>)>&&
 
 #if PLATFORM(COCOA)
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-void PendingDownload::publishProgress(const URL& url, std::span<const uint8_t> bookmarkData, UseDownloadPlaceholder useDownloadPlaceholder)
+void PendingDownload::publishProgress(const URL& url, std::span<const uint8_t> bookmarkData, UseDownloadPlaceholder useDownloadPlaceholder, std::span<const uint8_t> activityAccessToken)
 {
     ASSERT(!m_progressURL.isValid());
     m_progressURL = url;
     m_bookmarkData = bookmarkData;
     m_useDownloadPlaceholder = useDownloadPlaceholder;
+    m_activityAccessToken = activityAccessToken;
 }
 #else
 void PendingDownload::publishProgress(const URL& url, SandboxExtension::Handle&& sandboxExtension)
@@ -102,7 +103,7 @@ void PendingDownload::didBecomeDownload(const std::unique_ptr<Download>& downloa
     if (!m_progressURL.isValid())
         return;
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    download->publishProgress(m_progressURL, m_bookmarkData, m_useDownloadPlaceholder);
+    download->publishProgress(m_progressURL, m_bookmarkData, m_useDownloadPlaceholder, m_activityAccessToken);
 #else
     download->publishProgress(m_progressURL, WTFMove(m_progressSandboxExtension));
 #endif

@@ -2110,9 +2110,9 @@ void NetworkProcess::cancelDownload(DownloadID downloadID, CompletionHandler<voi
 
 #if PLATFORM(COCOA)
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-void NetworkProcess::publishDownloadProgress(DownloadID downloadID, const URL& url, std::span<const uint8_t> bookmarkData, WebKit::UseDownloadPlaceholder useDownloadPlaceholder)
+void NetworkProcess::publishDownloadProgress(DownloadID downloadID, const URL& url, std::span<const uint8_t> bookmarkData, WebKit::UseDownloadPlaceholder useDownloadPlaceholder, std::span<const uint8_t> activityAccessToken)
 {
-    downloadManager().publishDownloadProgress(downloadID, url, bookmarkData, useDownloadPlaceholder);
+    downloadManager().publishDownloadProgress(downloadID, url, bookmarkData, useDownloadPlaceholder, activityAccessToken);
 }
 #else
 void NetworkProcess::publishDownloadProgress(DownloadID downloadID, const URL& url, SandboxExtension::Handle&& sandboxExtensionHandle)
@@ -2126,7 +2126,11 @@ void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTas
 {
     String suggestedFilename = networkDataTask.suggestedFilename();
 
-    downloadProxyConnection()->sendWithAsyncReply(Messages::DownloadProxy::DecideDestinationWithSuggestedFilename(response, suggestedFilename), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), networkDataTask = Ref { networkDataTask }] (String&& destination, SandboxExtension::Handle&& sandboxExtensionHandle, AllowOverwrite allowOverwrite, WebKit::UseDownloadPlaceholder usePlaceholder, URL&& alternatePlaceholderURL) mutable {
+    downloadProxyConnection()->sendWithAsyncReply(Messages::DownloadProxy::DecideDestinationWithSuggestedFilename(response, suggestedFilename), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), networkDataTask = Ref { networkDataTask }] (String&& destination, SandboxExtension::Handle&& sandboxExtensionHandle, AllowOverwrite allowOverwrite, WebKit::UseDownloadPlaceholder usePlaceholder, URL&& alternatePlaceholderURL, SandboxExtension::Handle&& placeholderSandboxExtensionHandle, std::span<const uint8_t> placeholderBookmarkData, std::span<const uint8_t> activityAccessToken) mutable {
+#if !HAVE(MODERN_DOWNLOADPROGRESS)
+        UNUSED_PARAM(placeholderBookmarkData);
+        UNUSED_PARAM(activityAccessToken);
+#endif
         auto downloadID = *networkDataTask->pendingDownloadID();
         if (destination.isEmpty())
             return completionHandler(PolicyAction::Ignore);
@@ -2136,17 +2140,14 @@ void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTas
             return;
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-        if (m_enableModernDownloadProgress) {
-            URL publishURL;
-            if (usePlaceholder == UseDownloadPlaceholder::No && !alternatePlaceholderURL.isEmpty())
-                publishURL = WTFMove(alternatePlaceholderURL);
-            else
-                publishURL = URL::fileURLWithFileSystemPath(destination);
-            publishDownloadProgress(downloadID, publishURL, { }, usePlaceholder);
-        }
-#else
-        UNUSED_PARAM(usePlaceholder);
-        UNUSED_PARAM(alternatePlaceholderURL);
+        URL publishURL;
+        if (usePlaceholder == UseDownloadPlaceholder::No && !alternatePlaceholderURL.isEmpty())
+            publishURL = WTFMove(alternatePlaceholderURL);
+        else
+            publishURL = URL::fileURLWithFileSystemPath(destination);
+        if (usePlaceholder == UseDownloadPlaceholder::Yes || !alternatePlaceholderURL.isEmpty())
+            publishDownloadProgress(downloadID, publishURL, placeholderBookmarkData, usePlaceholder, activityAccessToken);
+        UNUSED_PARAM(placeholderSandboxExtensionHandle);
 #endif
         if (downloadManager().download(downloadID)) {
             // The completion handler already called dataTaskBecameDownloadTask().

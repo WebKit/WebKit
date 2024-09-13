@@ -64,7 +64,7 @@ struct FrameInfoData;
 
 class DownloadProxy : public API::ObjectImpl<API::Object::Type::Download>, public IPC::MessageReceiver {
 public:
-    using DecideDestinationCallback = CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite, WebKit::UseDownloadPlaceholder, const URL&)>;
+    using DecideDestinationCallback = CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite, WebKit::UseDownloadPlaceholder, const URL&, SandboxExtension::Handle, std::span<const uint8_t>, std::span<const uint8_t>)>;
 
     template<typename... Args> static Ref<DownloadProxy> create(Args&&... args)
     {
@@ -119,8 +119,8 @@ public:
     void didFinish();
     void didFail(const WebCore::ResourceError&, std::span<const uint8_t> resumeData);
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    void didReceivePlaceholderURL(const URL&, std::span<const uint8_t> bookmarkData, CompletionHandler<void()>&&);
-    void didReceiveFinalURL(const URL&, std::span<const uint8_t> bookmarkData);
+    void didReceivePlaceholderURL(const URL&, std::span<const uint8_t> bookmarkData, WebKit::SandboxExtensionHandle&&, CompletionHandler<void()>&&);
+    void didReceiveFinalURL(const URL&, std::span<const uint8_t> bookmarkData, WebKit::SandboxExtensionHandle&&);
 #endif
     void willSendRequest(WebCore::ResourceRequest&& redirectRequest, const WebCore::ResourceResponse& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse&, String&& suggestedFilename, DecideDestinationCallback&&);
@@ -132,6 +132,11 @@ private:
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    static Vector<uint8_t> bookmarkDataForURL(const URL&);
+    static Vector<uint8_t> activityAccessToken();
+#endif
 
     CheckedRef<DownloadProxyMap> m_downloadProxyMap;
     RefPtr<WebsiteDataStore> m_dataStore;

@@ -54,7 +54,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     CancelDownload(WebKit::DownloadID downloadID) -> (std::span<const uint8_t> resumeData)
 #if PLATFORM(COCOA)
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    PublishDownloadProgress(WebKit::DownloadID downloadID, URL url, std::span<const uint8_t> bookmarkData, enum:bool WebKit::UseDownloadPlaceholder useDownloadPlaceholder)
+    PublishDownloadProgress(WebKit::DownloadID downloadID, URL url, std::span<const uint8_t> bookmarkData, enum:bool WebKit::UseDownloadPlaceholder useDownloadPlaceholder, std::span<const uint8_t> activityAccessToken)
 #endif
 #if !HAVE(MODERN_DOWNLOADPROGRESS)
     PublishDownloadProgress(WebKit::DownloadID downloadID, URL url, WebKit::SandboxExtensionHandle sandboxExtensionHandle)

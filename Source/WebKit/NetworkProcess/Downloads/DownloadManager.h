@@ -102,7 +102,7 @@ public:
     void cancelDownload(DownloadID, CompletionHandler<void(std::span<const uint8_t>)>&&);
 #if PLATFORM(COCOA)
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    void publishDownloadProgress(DownloadID, const URL&, std::span<const uint8_t> bookmarkData, WebKit::UseDownloadPlaceholder);
+    void publishDownloadProgress(DownloadID, const URL&, std::span<const uint8_t> bookmarkData, WebKit::UseDownloadPlaceholder, std::span<const uint8_t> activityAccessToken);
 #else
     void publishDownloadProgress(DownloadID, const URL&, SandboxExtension::Handle&&);
 #endif

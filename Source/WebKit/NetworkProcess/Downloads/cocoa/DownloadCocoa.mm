@@ -81,6 +81,7 @@ void Download::platformDestroyDownload()
 {
 #if HAVE(MODERN_DOWNLOADPROGRESS)
     m_bookmarkURL = nil;
+    [m_progress cancel];
     [m_progress unpublish];
 #else
     if (m_progress)
@@ -93,7 +94,7 @@ void Download::platformDestroyDownload()
 }
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmarkData, UseDownloadPlaceholder useDownloadPlaceholder)
+void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmarkData, UseDownloadPlaceholder useDownloadPlaceholder, std::span<const uint8_t> activityAccessToken)
 {
     if (m_progress) {
         RELEASE_LOG(Network, "Progress is already being published for download.");
@@ -103,6 +104,8 @@ void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmark
     RetainPtr bookmark = toNSData(bookmarkData);
     m_bookmarkData = bookmark;
 
+    RetainPtr accessToken = toNSData(activityAccessToken);
+
     BOOL bookmarkIsStale = NO;
     NSError* error = nil;
     m_bookmarkURL = [NSURL URLByResolvingBookmarkData:m_bookmarkData.get() options:NSURLBookmarkResolutionWithoutUI relativeToURL:nil bookmarkDataIsStale:&bookmarkIsStale error:&error];
@@ -110,13 +113,10 @@ void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmark
     if (!m_bookmarkURL)
         RELEASE_LOG(Network, "Unable to create bookmark URL, error = %@", error);
 
-    auto* networkSession = m_downloadManager->client().networkSession(m_sessionID);
-
-    if (networkSession && networkSession->networkProcess().enableModernDownloadProgress()) {
+    if (enableModernDownloadProgress()) {
         bool isUsingPlaceholder = useDownloadPlaceholder == WebKit::UseDownloadPlaceholder::Yes;
 
-        NSData *accessToken = [NSData data]; // FIXME: replace with actual access token
-        m_progress = adoptNS([[WKModernDownloadProgress alloc] initWithDownloadTask:m_downloadTask.get() download:*this URL:(NSURL *)url useDownloadPlaceholder:isUsingPlaceholder liveActivityAccessToken:accessToken]);
+        m_progress = adoptNS([[WKModernDownloadProgress alloc] initWithDownloadTask:m_downloadTask.get() download:*this URL:(NSURL *)url useDownloadPlaceholder:isUsingPlaceholder liveActivityAccessToken:accessToken.get()]);
 
         // If we are using a placeholder, we will delay updating progress until the client has received the placeholder URL.
         // This is to make sure the placeholder has not been moved to the final download URL before the client received the placeholder URL.
@@ -134,17 +134,16 @@ void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmark
     }
 }
 
-void Download::setPlaceholderURL(NSURL *placeholderURL)
+void Download::setPlaceholderURL(NSURL *placeholderURL, NSData *bookmarkData)
 {
     if (!placeholderURL)
         return;
 
     BOOL usingSecurityScopedURL = [placeholderURL startAccessingSecurityScopedResource];
 
-    NSError *error = nil;
-    NSData *data = [placeholderURL bookmarkDataWithOptions:0 includingResourceValuesForKeys:nil relativeToURL:nil error:&error];
-    if (error)
-        RELEASE_LOG_ERROR(Network, "Failed to create bookmark data: %{public}@", error);
+    SandboxExtension::Handle sandboxExtensionHandle;
+    if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(StringView::fromLatin1(placeholderURL.fileSystemRepresentation), SandboxExtension::Type::ReadOnly))
+        sandboxExtensionHandle = WTFMove(*handle);
 
     if (usingSecurityScopedURL)
         [placeholderURL stopAccessingSecurityScopedResource];
@@ -157,25 +156,24 @@ void Download::setPlaceholderURL(NSURL *placeholderURL)
         startUpdatingProgress();
     };
 
-    sendWithAsyncReply(Messages::DownloadProxy::DidReceivePlaceholderURL(placeholderURL, span(data)), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::DownloadProxy::DidReceivePlaceholderURL(placeholderURL, span(bookmarkData), WTFMove(sandboxExtensionHandle)), WTFMove(completionHandler));
 }
 
-void Download::setFinalURL(NSURL *finalURL)
+void Download::setFinalURL(NSURL *finalURL, NSData *bookmarkData)
 {
     if (!finalURL)
         return;
 
     BOOL usingSecurityScopedURL = [finalURL startAccessingSecurityScopedResource];
 
-    NSError *error = nil;
-    NSData *data = [finalURL bookmarkDataWithOptions:0 includingResourceValuesForKeys:nil relativeToURL:nil error:&error];
-    if (error)
-        RELEASE_LOG_ERROR(Network, "Failed to create bookmark data: %{public}@", error);
+    SandboxExtension::Handle sandboxExtensionHandle;
+    if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(StringView::fromLatin1(finalURL.fileSystemRepresentation), SandboxExtension::Type::ReadOnly))
+        sandboxExtensionHandle = WTFMove(*handle);
 
     if (usingSecurityScopedURL)
         [finalURL stopAccessingSecurityScopedResource];
 
-    send(Messages::DownloadProxy::DidReceiveFinalURL(finalURL, span(data)));
+    send(Messages::DownloadProxy::DidReceiveFinalURL(finalURL, span(bookmarkData), WTFMove(sandboxExtensionHandle)));
 }
 
 void Download::startUpdatingProgress() const

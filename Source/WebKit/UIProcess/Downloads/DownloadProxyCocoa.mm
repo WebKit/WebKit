@@ -33,6 +33,10 @@
 
 #import <wtf/cocoa/SpanCocoa.h>
 
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+#import <WebKitAdditions/DownloadProgressAdditions.h>
+#endif
+
 namespace WebKit {
 
 void DownloadProxy::publishProgress(const URL& url)
@@ -44,7 +48,7 @@ void DownloadProxy::publishProgress(const URL& url)
     RetainPtr localURL = adoptNS([[NSURL alloc] initFileURLWithPath:url.fileSystemPath() relativeToURL:nil]);
     NSError *error = nil;
     RetainPtr bookmark = [localURL bookmarkDataWithOptions:NSURLBookmarkCreationMinimalBookmark includingResourceValuesForKeys:nil relativeToURL:nil error:&error];
-    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, url, span(bookmark.get()), UseDownloadPlaceholder::No), 0);
+    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, url, span(bookmark.get()), UseDownloadPlaceholder::No, activityAccessToken().span()), 0);
 #else
     auto handle = SandboxExtension::createHandle(url.fileSystemPath(), SandboxExtension::Type::ReadWrite);
     ASSERT(handle);
@@ -56,15 +60,37 @@ void DownloadProxy::publishProgress(const URL& url)
 }
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-void DownloadProxy::didReceivePlaceholderURL(const URL& placeholderURL, std::span<const uint8_t> bookmarkData, CompletionHandler<void()>&& completionHandler)
+void DownloadProxy::didReceivePlaceholderURL(const URL& placeholderURL, std::span<const uint8_t> bookmarkData, WebKit::SandboxExtensionHandle&& handle, CompletionHandler<void()>&& completionHandler)
 {
+    if (auto placeholderFileExtension = SandboxExtension::create(WTFMove(handle))) {
+        bool ok = placeholderFileExtension->consume();
+        ASSERT_UNUSED(ok, ok);
+    }
     m_client->didReceivePlaceholderURL(*this, placeholderURL, bookmarkData, WTFMove(completionHandler));
 }
 
-void DownloadProxy::didReceiveFinalURL(const URL& finalURL, std::span<const uint8_t> bookmarkData)
+void DownloadProxy::didReceiveFinalURL(const URL& finalURL, std::span<const uint8_t> bookmarkData, WebKit::SandboxExtensionHandle&& handle)
 {
+    if (auto completedFileExtension = SandboxExtension::create(WTFMove(handle))) {
+        bool ok = completedFileExtension->consume();
+        ASSERT_UNUSED(ok, ok);
+    }
     m_client->didReceiveFinalURL(*this, finalURL, bookmarkData);
 }
+
+Vector<uint8_t> DownloadProxy::bookmarkDataForURL(const URL& url)
+{
+    RetainPtr localURL = adoptNS([[NSURL alloc] initFileURLWithPath:url.fileSystemPath() relativeToURL:nil]);
+    NSError *error = nil;
+    RetainPtr bookmark = [localURL bookmarkDataWithOptions:NSURLBookmarkCreationMinimalBookmark includingResourceValuesForKeys:nil relativeToURL:nil error:&error];
+    return span(bookmark.get());
+}
+
+Vector<uint8_t> DownloadProxy::activityAccessToken()
+{
+    return ::activityAccessToken();
+}
+
 #endif
 
 }

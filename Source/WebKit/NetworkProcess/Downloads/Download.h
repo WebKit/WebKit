@@ -91,9 +91,9 @@ public:
 #endif
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    void publishProgress(const URL&, std::span<const uint8_t>, WebKit::UseDownloadPlaceholder);
-    void setPlaceholderURL(NSURL *);
-    void setFinalURL(NSURL *);
+    void publishProgress(const URL&, std::span<const uint8_t>, WebKit::UseDownloadPlaceholder, std::span<const uint8_t>);
+    void setPlaceholderURL(NSURL *, NSData *);
+    void setFinalURL(NSURL *, NSData *);
 #endif
 
     DownloadID downloadID() const { return m_downloadID; }
