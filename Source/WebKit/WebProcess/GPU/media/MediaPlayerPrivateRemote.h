@@ -473,7 +473,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&);
+    void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&, CompletionHandler<void(bool)>&&);
 #endif
     RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy() const { return m_manager.gpuProcessConnection().videoFrameObjectHeapProxy(); }
 

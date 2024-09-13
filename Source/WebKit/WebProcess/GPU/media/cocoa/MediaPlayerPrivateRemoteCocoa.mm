@@ -49,13 +49,15 @@ PlatformLayerContainer MediaPlayerPrivateRemote::createVideoFullscreenLayer()
 }
 #endif
 
-void MediaPlayerPrivateRemote::pushVideoFrameMetadata(WebCore::VideoFrameMetadata&& videoFrameMetadata, RemoteVideoFrameProxy::Properties&& properties)
+void MediaPlayerPrivateRemote::pushVideoFrameMetadata(WebCore::VideoFrameMetadata&& videoFrameMetadata, RemoteVideoFrameProxy::Properties&& properties, CompletionHandler<void(bool)>&& completion)
 {
-    auto videoFrame = RemoteVideoFrameProxy::create(protectedConnection(), videoFrameObjectHeapProxy(), WTFMove(properties));
-    if (!m_isGatheringVideoFrameMetadata)
-        return;
-    m_videoFrameMetadata = WTFMove(videoFrameMetadata);
-    m_videoFrameGatheredWithVideoFrameMetadata = WTFMove(videoFrame);
+    bool offerConsumed = false;
+    if (m_isGatheringVideoFrameMetadata) {
+        m_videoFrameMetadata = WTFMove(videoFrameMetadata);
+        m_videoFrameGatheredWithVideoFrameMetadata = RemoteVideoFrameProxy::create(protectedConnection(), videoFrameObjectHeapProxy(), WTFMove(properties));
+        offerConsumed = true;
+    }
+    completion(offerConsumed);
 }
 
 RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()

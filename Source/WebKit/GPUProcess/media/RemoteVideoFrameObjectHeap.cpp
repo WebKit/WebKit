@@ -91,11 +91,32 @@ void RemoteVideoFrameObjectHeap::close()
     // TODO: add can happen after stopping.
 }
 
-RemoteVideoFrameProxy::Properties RemoteVideoFrameObjectHeap::add(Ref<WebCore::VideoFrame>&& frame)
+RemoteVideoFrameObjectHeap::AddWithCompletionResult RemoteVideoFrameObjectHeap::addWithCompletion(Ref<WebCore::VideoFrame>&& frame)
 {
     auto newFrameReference = RemoteVideoFrameReference::generateForAdd();
     auto properties = RemoteVideoFrameProxy::properties(newFrameReference, frame);
     auto success = m_heap.add(newFrameReference, WTFMove(frame));
+    if (!success)
+        ASSERT_IS_TESTING_IPC();
+    auto discardCompletion = [newFrameReference, weakVideoFrameObjectHeap = ThreadSafeWeakPtr<RemoteVideoFrameObjectHeap> { this }](bool offerConsumed) {
+        if (offerConsumed)
+            return;
+        RefPtr videoFrameObjectHeap = weakVideoFrameObjectHeap.get();
+        if (!videoFrameObjectHeap)
+            return;
+        RefPtr result = videoFrameObjectHeap->m_heap.take({ newFrameReference, 0 }, 0_s);
+        // Expect that discarded frame was not used, i.e. we find it.
+        if (!result)
+            ASSERT_IS_TESTING_IPC();
+    };
+    return AddWithCompletionResult { properties, { WTFMove(discardCompletion), CompletionHandlerCallThread::AnyThread } };
+}
+
+RemoteVideoFrameProxy::Properties RemoteVideoFrameObjectHeap::add(Ref<WebCore::VideoFrame>&& frame)
+{
+    auto newFrameReference = RemoteVideoFrameReference::generateForAdd();
+    auto properties = RemoteVideoFrameProxy::properties(newFrameReference, frame);
+    bool success = m_heap.add(newFrameReference, WTFMove(frame));
     ASSERT_UNUSED(success, success);
     return properties;
 }

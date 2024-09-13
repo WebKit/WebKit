@@ -136,8 +136,8 @@ void RemoteMediaPlayerProxy::setVideoLayerSizeFenced(const WebCore::FloatSize& s
 
 void RemoteMediaPlayerProxy::mediaPlayerOnNewVideoFrameMetadata(VideoFrameMetadata&& metadata, RetainPtr<CVPixelBufferRef>&& buffer)
 {
-    auto properties = m_videoFrameObjectHeap->add(WebCore::VideoFrameCV::create({ }, false, VideoFrame::Rotation::None, WTFMove(buffer)));
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::PushVideoFrameMetadata(metadata, properties), m_id);
+    auto [properties, completion] = m_videoFrameObjectHeap->addWithCompletion(WebCore::VideoFrameCV::create({ }, false, VideoFrame::Rotation::None, WTFMove(buffer)));
+    m_webProcessConnection->sendWithAsyncReply(Messages::MediaPlayerPrivateRemote::PushVideoFrameMetadata(metadata, WTFMove(properties)), WTFMove(completion), m_id);
 }
 
 void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&& completionHandler)

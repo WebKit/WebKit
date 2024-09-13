@@ -144,15 +144,15 @@ void RemoteCaptureSampleManager::audioStorageChanged(WebCore::RealtimeMediaSourc
     iterator->value->setStorage(WTFMove(handle), description, WTFMove(semaphore), mediaTime, frameChunkSize);
 }
 
-void RemoteCaptureSampleManager::videoFrameAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoFrameProxy::Properties&& properties, VideoFrameTimeMetadata metadata)
+void RemoteCaptureSampleManager::videoFrameAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoFrameProxy::Properties&& properties, VideoFrameTimeMetadata metadata, CompletionHandler<void(bool)>&& completion)
 {
     ASSERT(!WTF::isMainRunLoop());
-    // Create videoFrame before early outs so that the reference in `properties` is adopted.
     Ref<RemoteVideoFrameProxy> videoFrame = [&] {
         // FIXME: We need to either get GPUProcess or UIProcess object heap proxy. For now we always go to GPUProcess.
         Locker lock(m_videoFrameObjectHeapProxyLock);
         return RemoteVideoFrameProxy::create(Ref { *m_connection }, Ref { *m_videoFrameObjectHeapProxy }, WTFMove(properties));
     }();
+    completion(true);
     auto iterator = m_videoSources.find(identifier);
     if (iterator == m_videoSources.end()) {
         RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for videoFrameAvailable", identifier.toUInt64());

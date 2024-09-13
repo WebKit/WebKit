@@ -56,10 +56,6 @@ public:
 
     static Ref<RemoteVideoFrameProxy> create(IPC::Connection&, RemoteVideoFrameObjectHeapProxy&, Properties&&);
 
-    // Called by the end-points that capture creation messages that are sent from GPUP but
-    // whose destinations were released in WP before message was processed.
-    static void releaseUnused(IPC::Connection&, Properties&&);
-
     ~RemoteVideoFrameProxy() final;
 
     RemoteVideoFrameIdentifier identifier() const;

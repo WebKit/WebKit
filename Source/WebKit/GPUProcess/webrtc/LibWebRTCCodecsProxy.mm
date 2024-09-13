@@ -137,8 +137,8 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
         if (resourceOwner)
             videoFrame->setOwnershipIdentity(resourceOwner);
         if (videoFrameObjectHeap) {
-            auto properties = videoFrameObjectHeap->add(WTFMove(videoFrame));
-            connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, timeStampNs, WTFMove(properties) }, 0);
+            auto [properties, completion] = videoFrameObjectHeap->addWithCompletion(WTFMove(videoFrame));
+            connection->sendWithAsyncReply(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, timeStampNs, WTFMove(properties) }, WTFMove(completion), 0);
         } else
             connection->send(Messages::LibWebRTCCodecs::CompletedDecodingCV { identifier, timeStamp, timeStampNs, pixelBuffer }, 0);
 
