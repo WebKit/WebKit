@@ -1079,23 +1079,6 @@ bool Quirks::isMicrosoftTeamsRedirectURL(const URL& url)
     return url.host() == "teams.microsoft.com"_s && url.query().contains("Retried+3+times+without+success"_s);
 }
 
-static bool elementHasClassInClosestAncestors(const Element& element, const AtomString& className, unsigned distance)
-{
-    if (element.hasClassName(className))
-        return true;
-
-    unsigned currentDistance = 0;
-    RefPtr ancestor = dynamicDowncast<Element>(element.parentNode());
-    while (ancestor && currentDistance < distance) {
-        ++currentDistance;
-        if (ancestor->hasClassName(className))
-            return true;
-
-        ancestor = dynamicDowncast<Element>(ancestor->parentNode());
-    }
-    return false;
-}
-
 static bool isStorageAccessQuirkDomainAndElement(const URL& url, const Element& element)
 {
     // Microsoft Teams login case.
@@ -1114,10 +1097,6 @@ static bool isStorageAccessQuirkDomainAndElement(const URL& url, const Element& 
         || element.classNames().contains("web-toolbar__signin-button-label"_s)
         || element.classNames().contains("sb-signin-button"_s));
     }
-
-    // Gizmodo login case: rdar://106782128.
-    if (url.host() == "gizmodo.com"_s)
-        return elementHasClassInClosestAncestors(element, "js_user-button"_s, 6);
 
     return false;
 }
