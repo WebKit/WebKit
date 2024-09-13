@@ -35,7 +35,7 @@
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Length.h"
 #include "CSSPropertyParserConsumer+Number.h"
-#include "CSSPropertyParserConsumer+Percent.h"
+#include "CSSPropertyParserConsumer+Percentage.h"
 #include "CSSPropertyParserConsumer+URL.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSToLengthConversionData.h"
@@ -63,7 +63,7 @@ template<CSSValueID filterFunction> static constexpr bool isAllowed(AllowedFilte
 
 template<CSSValueID filterFunction> static RefPtr<CSSValue> consumeNumberOrPercentFilterParameter(CSSParserTokenRange& args, const CSSParserContext&)
 {
-    if (RefPtr percentage = consumePercent(args, ValueRange::NonNegative)) {
+    if (RefPtr percentage = consumePercentage(args, ValueRange::NonNegative)) {
         if (!filterFunctionAllowsValuesGreaterThanOne<filterFunction>() && percentage->resolveAsPercentageIfNotCalculated() > 100.0)
             percentage = CSSPrimitiveValue::create(100.0, CSSUnitType::CSS_PERCENTAGE);
         return percentage;

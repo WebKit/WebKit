@@ -40,9 +40,9 @@ Child makeNumeric(double value, CSSUnitType unit)
     case CSSUnitType::CSS_INTEGER:
         return makeChild(Number { .value = value });
 
-    // Percent
+    // Percentage
     case CSSUnitType::CSS_PERCENTAGE:
-        return makeChild(Percent { .value = value, .hint = { } });
+        return makeChild(Percentage { .value = value, .hint = { } });
 
     // Canonical Dimension
     case CSSUnitType::CSS_PX:
@@ -166,7 +166,7 @@ Type getType(const Number&)
     return Type { };
 }
 
-Type getType(const Percent& root)
+Type getType(const Percentage& root)
 {
     auto type = Type { .percent = 1 };
     if (root.hint)

@@ -33,14 +33,14 @@ namespace Calculation {
 enum class Category : uint8_t {
     Integer,
     Number,
-    Percent,
+    Percentage,
     Length,
     Angle,
     Time,
     Frequency,
     Resolution,
     Flex,
-    PercentLength
+    LengthPercentage
 };
 
 TextStream& operator<<(TextStream&, Category);

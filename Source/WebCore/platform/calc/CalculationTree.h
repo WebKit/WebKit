@@ -100,13 +100,13 @@ struct Number {
     bool operator==(const Number&) const = default;
 };
 
-struct Percent {
+struct Percentage {
     static constexpr bool isLeaf = true;
     static constexpr bool isNumeric = true;
 
     NumericValue value;
 
-    bool operator==(const Percent&) const = default;
+    bool operator==(const Percentage&) const = default;
 };
 
 struct Dimension {
@@ -135,7 +135,7 @@ template<typename Op> struct IndirectNode {
 
 using Child = std::variant<
     Number,
-    Percent,
+    Percentage,
     Dimension,
     IndirectNode<Sum>,
     IndirectNode<Product>,
@@ -499,9 +499,9 @@ template<> struct ChildConstruction<Number> {
     static Child make(Number&& op) { return Child { WTFMove(op) }; }
 };
 
-// Specialized implementation of ChildConstruction for Percent, needed to avoid `makeUniqueRef`.
-template<> struct ChildConstruction<Percent> {
-    static Child make(Percent&& op) { return Child { WTFMove(op) }; }
+// Specialized implementation of ChildConstruction for Percentage, needed to avoid `makeUniqueRef`.
+template<> struct ChildConstruction<Percentage> {
+    static Child make(Percentage&& op) { return Child { WTFMove(op) }; }
 };
 
 // Specialized implementation of ChildConstruction for Dimension, needed to avoid `makeUniqueRef`.
@@ -521,9 +521,9 @@ inline Child number(NumericValue value)
     return makeChild(Number { .value = value });
 }
 
-inline Child percent(NumericValue value)
+inline Child percentage(NumericValue value)
 {
-    return makeChild(Percent { .value = value });
+    return makeChild(Percentage { .value = value });
 }
 
 inline Child dimension(NumericValue value)

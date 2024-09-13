@@ -355,10 +355,10 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
         [&](CSSValueID ident) -> FontSelectionValue {
             return *fontStretchValue(ident);
         },
-        [&](PercentRaw percent) -> FontSelectionValue  {
+        [&](PercentageRaw percent) -> FontSelectionValue  {
             return FontSelectionValue::clampFloat(percent.value);
         },
-        [&](const UnevaluatedCalc<PercentRaw>& calc) -> FontSelectionValue  {
+        [&](const UnevaluatedCalc<PercentageRaw>& calc) -> FontSelectionValue  {
             // FIXME: Figure out correct behavior when conversion data is required.
             if (requiresConversionData(calc))
                 return normalStretchValue();

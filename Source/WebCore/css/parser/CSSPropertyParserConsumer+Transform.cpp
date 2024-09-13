@@ -35,7 +35,7 @@
 #include "CSSPropertyParserConsumer+Length.h"
 #include "CSSPropertyParserConsumer+LengthPercentage.h"
 #include "CSSPropertyParserConsumer+Number.h"
-#include "CSSPropertyParserConsumer+Percent.h"
+#include "CSSPropertyParserConsumer+Percentage.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParsing.h"
 #include "CSSToLengthConversionData.h"
@@ -64,7 +64,7 @@ static bool consumeNumbers(CSSParserTokenRange& args, CSSValueListBuilder& argum
 static bool consumeNumbersOrPercents(CSSParserTokenRange& args, CSSValueListBuilder& arguments, unsigned numberOfArguments)
 {
     auto parseNumberAndAppend = [&] {
-        auto parsedValue = consumePercentDividedBy100OrNumber(args);
+        auto parsedValue = consumePercentageDividedBy100OrNumber(args);
         if (!parsedValue)
             return false;
         arguments.append(parsedValue.releaseNonNull());
@@ -228,13 +228,13 @@ static std::optional<CSSValueListBuilder> consumeScaleFunctionArguments(CSSParse
 
     CSSValueListBuilder arguments;
 
-    auto value = consumePercentDividedBy100OrNumber(args);
+    auto value = consumePercentageDividedBy100OrNumber(args);
     if (!value)
         return { };
     arguments.append(value.releaseNonNull());
 
     if (consumeCommaIncludingWhitespace(args)) {
-        value = consumePercentDividedBy100OrNumber(args);
+        value = consumePercentageDividedBy100OrNumber(args);
         if (!value)
             return { };
         arguments.append(value.releaseNonNull());
@@ -260,7 +260,7 @@ static std::optional<CSSValueListBuilder> consumeScaleXFunctionArguments(CSSPars
     // https://drafts.csswg.org/css-transforms-2/#funcdef-scalex
     // scaleX() = scaleX( [ <number> | <percentage> ] )
 
-    auto value = consumePercentDividedBy100OrNumber(args);
+    auto value = consumePercentageDividedBy100OrNumber(args);
     if (!value)
         return { };
     return { { value.releaseNonNull() } };
@@ -271,7 +271,7 @@ static std::optional<CSSValueListBuilder> consumeScaleYFunctionArguments(CSSPars
     // https://drafts.csswg.org/css-transforms-2/#funcdef-scaley
     // scaleY() = scaleY( [ <number> | <percentage> ] )
 
-    auto value = consumePercentDividedBy100OrNumber(args);
+    auto value = consumePercentageDividedBy100OrNumber(args);
     if (!value)
         return { };
     return { { value.releaseNonNull() } };
@@ -282,7 +282,7 @@ static std::optional<CSSValueListBuilder> consumeScaleZFunctionArguments(CSSPars
     // https://drafts.csswg.org/css-transforms-2/#funcdef-scalez
     // scaleZ() = scaleZ( [ <number> | <percentage> ] )
 
-    auto value = consumePercentDividedBy100OrNumber(args);
+    auto value = consumePercentageDividedBy100OrNumber(args);
     if (!value)
         return { };
     return { { value.releaseNonNull() } };
@@ -688,7 +688,7 @@ RefPtr<CSSValue> consumeScale(CSSParserTokenRange& range, const CSSParserContext
     // If one or two values are given, this specifies a 2d scaling, equivalent to the scale() function.
     // If three values are given, this specifies a 3d scaling, equivalent to the scale3d() function.
 
-    auto x = consumePercentDividedBy100OrNumber(range);
+    auto x = consumePercentageDividedBy100OrNumber(range);
     if (!x)
         return nullptr;
 
@@ -697,7 +697,7 @@ RefPtr<CSSValue> consumeScale(CSSParserTokenRange& range, const CSSParserContext
     if (range.atEnd())
         return CSSValueList::createSpaceSeparated(x.releaseNonNull());
 
-    auto y = consumePercentDividedBy100OrNumber(range);
+    auto y = consumePercentageDividedBy100OrNumber(range);
     if (!y)
         return nullptr;
 
@@ -713,7 +713,7 @@ RefPtr<CSSValue> consumeScale(CSSParserTokenRange& range, const CSSParserContext
         return CSSValueList::createSpaceSeparated(x.releaseNonNull());
     }
 
-    auto z = consumePercentDividedBy100OrNumber(range);
+    auto z = consumePercentageDividedBy100OrNumber(range);
     if (!z)
         return nullptr;
 

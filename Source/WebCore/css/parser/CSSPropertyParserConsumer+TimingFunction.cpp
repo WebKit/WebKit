@@ -31,7 +31,7 @@
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Integer.h"
 #include "CSSPropertyParserConsumer+Number.h"
-#include "CSSPropertyParserConsumer+Percent.h"
+#include "CSSPropertyParserConsumer+Percentage.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueKeywords.h"
 #include "TimingFunction.h"
@@ -109,11 +109,11 @@ static std::optional<CSSLinearTimingFunctionValue::LinearStop::Length> consumeLi
 {
     // <linear-stop-length> = <percentage>{1,2}
 
-    auto input = consumePercent(args);
+    auto input = consumePercentage(args);
     if (!input)
         return std::nullopt;
 
-    auto extra = consumePercent(args);
+    auto extra = consumePercentage(args);
 
     return CSSLinearTimingFunctionValue::LinearStop::Length {
         .input = input.releaseNonNull(),

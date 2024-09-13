@@ -64,12 +64,12 @@ struct NumberRaw {
 };
 void serializationForCSS(StringBuilder&, const NumberRaw&);
 
-struct PercentRaw {
+struct PercentageRaw {
     double value;
 
-    bool operator==(const PercentRaw&) const = default;
+    bool operator==(const PercentageRaw&) const = default;
 };
-void serializationForCSS(StringBuilder&, const PercentRaw&);
+void serializationForCSS(StringBuilder&, const PercentageRaw&);
 
 struct AngleRaw {
     CSSUnitType type;

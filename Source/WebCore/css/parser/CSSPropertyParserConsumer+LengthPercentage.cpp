@@ -34,7 +34,7 @@
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+LengthDefinitions.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
-#include "CSSPropertyParserConsumer+PercentDefinitions.h"
+#include "CSSPropertyParserConsumer+PercentageDefinitions.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CalculationCategory.h"
 
@@ -55,7 +55,7 @@ std::optional<UnevaluatedCalc<LengthPercentageRaw>> LengthPercentageKnownTokenTy
     ASSERT(range.peek().type() == FunctionToken);
 
     auto rangeCopy = range;
-    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, Calculation::Category::PercentLength, WTFMove(symbolsAllowed), options)) {
+    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, Calculation::Category::LengthPercentage, WTFMove(symbolsAllowed), options)) {
         range = rangeCopy;
         return {{ value.releaseNonNull() }};
     }

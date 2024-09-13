@@ -51,8 +51,8 @@
 #include "CSSPropertyParserConsumer+MetaResolver.h"
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
-#include "CSSPropertyParserConsumer+Percent.h"
-#include "CSSPropertyParserConsumer+PercentDefinitions.h"
+#include "CSSPropertyParserConsumer+Percentage.h"
+#include "CSSPropertyParserConsumer+PercentageDefinitions.h"
 #include "CSSPropertyParserConsumer+Position.h"
 #include "CSSPropertyParserConsumer+RawTypes.h"
 #include "CSSPropertyParserConsumer+Resolution.h"
@@ -84,7 +84,7 @@ static RefPtr<CSSPrimitiveValue> consumeDeprecatedGradientPointValue(CSSParserTo
             return CSSPrimitiveValue::create(50, CSSUnitType::CSS_PERCENTAGE);
         return nullptr;
     }
-    RefPtr<CSSPrimitiveValue> result = consumePercent(range);
+    RefPtr<CSSPrimitiveValue> result = consumePercentage(range);
     if (!result)
         result = consumeNumber(range);
     return result;
@@ -134,7 +134,7 @@ static bool consumeDeprecatedGradientColorStop(CSSParserTokenRange& range, CSSGr
         position = CSSPrimitiveValue::create(1);
         break;
     case CSSValueColorStop:
-        position = consumePercentOrNumber(args);
+        position = consumePercentageOrNumber(args);
         if (!position)
             return false;
         if (!consumeCommaIncludingWhitespace(args))
@@ -896,7 +896,7 @@ static RefPtr<CSSValue> consumeCrossFade(CSSParserTokenRange& args, const CSSPar
     if (!toImageValueOrNone || !consumeCommaIncludingWhitespace(args))
         return nullptr;
 
-    auto value = consumePercentDividedBy100OrNumber(args);
+    auto value = consumePercentageDividedBy100OrNumber(args);
     if (!value)
         return nullptr;
 

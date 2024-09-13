@@ -42,7 +42,7 @@ template<typename Position> struct StyleGradientImageStop {
 };
 
 using StyleGradientImageLengthStop = StyleGradientImageStop<std::optional<Length>>;
-using StyleGradientImageAngularStop = StyleGradientImageStop<std::variant<std::monostate, AngleRaw, PercentRaw>>;
+using StyleGradientImageAngularStop = StyleGradientImageStop<std::variant<std::monostate, AngleRaw, PercentageRaw>>;
 
 
 // MARK: StyleGradientPosition
@@ -64,7 +64,7 @@ struct StyleGradientPosition {
 
 struct StyleGradientDeprecatedPoint {
     struct Coordinate {
-        std::variant<NumberRaw, PercentRaw> value;
+        std::variant<NumberRaw, PercentageRaw> value;
 
         bool operator==(const Coordinate&) const = default;
     };

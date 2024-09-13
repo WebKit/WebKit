@@ -42,7 +42,7 @@
 #include "CSSPropertyParserConsumer+NoneDefinitions.h"
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
-#include "CSSPropertyParserConsumer+PercentDefinitions.h"
+#include "CSSPropertyParserConsumer+PercentageDefinitions.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+SymbolDefinitions.h"
 #include "CSSPropertyParsing.h"
@@ -567,8 +567,8 @@ static std::optional<CSSUnresolvedColorMix::Component> consumeColorMixComponent(
 
     std::optional<CSSUnresolvedColorMix::Component::Percentage> percentage;
 
-    if (auto percent = MetaConsumer<PercentRaw>::consume(args, { }, { })) {
-        if (PercentRaw* rawValue = std::get_if<PercentRaw>(&(*percent))) {
+    if (auto percent = MetaConsumer<PercentageRaw>::consume(args, { }, { })) {
+        if (PercentageRaw* rawValue = std::get_if<PercentageRaw>(&(*percent))) {
             auto value = rawValue->value;
             if (value < 0.0 || value > 100.0)
                 return std::nullopt;
@@ -581,8 +581,8 @@ static std::optional<CSSUnresolvedColorMix::Component> consumeColorMixComponent(
         return std::nullopt;
 
     if (!percentage) {
-        if (auto percent = MetaConsumer<PercentRaw>::consume(args, { }, { })) {
-            if (PercentRaw* rawValue = std::get_if<PercentRaw>(&(*percent))) {
+        if (auto percent = MetaConsumer<PercentageRaw>::consume(args, { }, { })) {
+            if (PercentageRaw* rawValue = std::get_if<PercentageRaw>(&(*percent))) {
                 auto value = rawValue->value;
                 if (value < 0.0 || value > 100.0)
                     return std::nullopt;
@@ -600,7 +600,7 @@ static std::optional<CSSUnresolvedColorMix::Component> consumeColorMixComponent(
 static bool hasNonCalculatedZeroPercentage(const CSSUnresolvedColorMix::Component& mixComponent)
 {
     if (auto percentage = mixComponent.percentage) {
-        if (PercentRaw* rawValue = std::get_if<PercentRaw>(&(*percentage)))
+        if (PercentageRaw* rawValue = std::get_if<PercentageRaw>(&(*percentage)))
             return rawValue->value == 0.0;
     }
     return false;

@@ -87,8 +87,8 @@ public:
 
     NumberRaw numberValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
     NumberRaw numberValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-    PercentRaw percentValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    PercentRaw percentValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+    PercentageRaw percentageValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
+    PercentageRaw percentageValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
     AngleRaw angleValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
     AngleRaw angleValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
     LengthRaw lengthValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;

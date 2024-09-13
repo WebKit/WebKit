@@ -71,8 +71,8 @@ template<typename> struct TypePlusUnevaluatedCalc;
 template<> struct TypePlusUnevaluatedCalc<AngleRaw> {
     using type = brigand::list<AngleRaw, UnevaluatedCalc<AngleRaw>>;
 };
-template<> struct TypePlusUnevaluatedCalc<PercentRaw> {
-    using type = brigand::list<PercentRaw, UnevaluatedCalc<PercentRaw>>;
+template<> struct TypePlusUnevaluatedCalc<PercentageRaw> {
+    using type = brigand::list<PercentageRaw, UnevaluatedCalc<PercentageRaw>>;
 };
 template<> struct TypePlusUnevaluatedCalc<NumberRaw> {
     using type = brigand::list<NumberRaw, UnevaluatedCalc<NumberRaw>>;
@@ -162,8 +162,8 @@ AngleRaw evaluateCalc(const UnevaluatedCalc<AngleRaw>&, const CSSToLengthConvers
 AngleRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<AngleRaw>&, const CSSCalcSymbolTable&);
 NumberRaw evaluateCalc(const UnevaluatedCalc<NumberRaw>&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&);
 NumberRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<NumberRaw>&, const CSSCalcSymbolTable&);
-PercentRaw evaluateCalc(const UnevaluatedCalc<PercentRaw>&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&);
-PercentRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<PercentRaw>&, const CSSCalcSymbolTable&);
+PercentageRaw evaluateCalc(const UnevaluatedCalc<PercentageRaw>&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&);
+PercentageRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<PercentageRaw>&, const CSSCalcSymbolTable&);
 LengthRaw evaluateCalc(const UnevaluatedCalc<LengthRaw>&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&);
 LengthRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<LengthRaw>&, const CSSCalcSymbolTable&);
 ResolutionRaw evaluateCalc(const UnevaluatedCalc<ResolutionRaw>&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&);

@@ -456,16 +456,16 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(String&& cssText)
     case CSSParserTokenType::FunctionToken: {
         auto functionID = componentValueRange.peek().functionId();
         if (functionID == CSSValueCalc || functionID == CSSValueMin || functionID == CSSValueMax || functionID == CSSValueClamp) {
-            // FIXME: The spec is unclear on what context to use when parsing in CSSNumericValue so for the time-being, we use `Category::PercentLength`, as it is the most permissive.
+            // FIXME: The spec is unclear on what context to use when parsing in CSSNumericValue so for the time-being, we use `Category::LengthPercentage`, as it is the most permissive.
             // See https://github.com/w3c/csswg-drafts/issues/10753
 
             auto parserOptions = CSSCalc::ParserOptions {
-                .category = Calculation::Category::PercentLength,
+                .category = Calculation::Category::LengthPercentage,
                 .allowedSymbols = { },
                 .range = ValueRange::All
             };
             auto simplificationOptions = CSSCalc::SimplificationOptions {
-                .category = Calculation::Category::PercentLength,
+                .category = Calculation::Category::LengthPercentage,
                 .conversionData = std::nullopt,
                 .symbolTable = { },
                 .allowZeroValueLengthRemovalFromSum = false,

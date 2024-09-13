@@ -142,7 +142,7 @@ static void collectComputedStyleDependencies(const Child& root, ComputedStyleDep
         [&](const Number&) {
             // No potential dependencies.
         },
-        [&](const Percent&) {
+        [&](const Percentage&) {
             // No potential dependencies.
         },
         [&](const CanonicalDimension&) {

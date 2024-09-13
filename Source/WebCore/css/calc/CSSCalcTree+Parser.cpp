@@ -969,7 +969,7 @@ std::optional<TypedChild> parseCalcNumber(const CSSParserToken& token, ParserSta
 
 std::optional<TypedChild> parseCalcPercentage(const CSSParserToken& token, ParserState& state)
 {
-    auto child = Percent { .value = token.numericValue(), .hint = Type::determinePercentHint(state.parserOptions.category) };
+    auto child = Percentage { .value = token.numericValue(), .hint = Type::determinePercentHint(state.parserOptions.category) };
     auto type = getType(child);
 
     return TypedChild { makeChild(WTFMove(child)), type };

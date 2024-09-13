@@ -79,7 +79,7 @@ private:
         CSSUnresolvedColorMix,
         CSSUnresolvedLightDark,
         CSSUnresolvedAbsoluteColor<RGBFunctionLegacy<NumberRaw>>,
-        CSSUnresolvedAbsoluteColor<RGBFunctionLegacy<PercentRaw>>,
+        CSSUnresolvedAbsoluteColor<RGBFunctionLegacy<PercentageRaw>>,
         CSSUnresolvedAbsoluteColor<RGBFunctionModernAbsolute>,
         CSSUnresolvedAbsoluteColor<HSLFunctionLegacy>,
         CSSUnresolvedAbsoluteColor<HSLFunctionModern>,

@@ -54,7 +54,7 @@ NumberRaw normalizeAndClampNumericComponents(NumberRaw number)
 }
 
 template<typename Descriptor, unsigned Index>
-NumberRaw normalizeAndClampNumericComponents(PercentRaw percent)
+NumberRaw normalizeAndClampNumericComponents(PercentageRaw percent)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
 
@@ -125,7 +125,7 @@ NumberRaw normalizeNumericComponents(NumberRaw number)
 }
 
 template<typename Descriptor, unsigned Index>
-NumberRaw normalizeNumericComponents(PercentRaw percent)
+NumberRaw normalizeNumericComponents(PercentageRaw percent)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
 

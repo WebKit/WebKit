@@ -24,38 +24,28 @@
 
 #pragma once
 
-#include "CSSParserToken.h"
-#include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include <optional>
-#include <wtf/Brigand.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class CSSCalcSymbolsAllowed;
+class CSSCalcSymbolTable;
+class CSSPrimitiveValue;
 class CSSParserTokenRange;
 
 namespace CSSPropertyParserHelpers {
 
-std::optional<PercentRaw> validatedRange(PercentRaw, CSSPropertyParserOptions);
+// MARK: - Consumer functions
 
-struct PercentKnownTokenTypeFunctionConsumer {
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<PercentRaw>> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
-};
+// MARK: - Percent
+RefPtr<CSSPrimitiveValue> consumePercentage(CSSParserTokenRange&, ValueRange = ValueRange::All);
 
-struct PercentKnownTokenTypePercentConsumer {
-    static constexpr CSSParserTokenType tokenType = PercentageToken;
-    static std::optional<PercentRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
-};
+// MARK: - Percent or Number
+RefPtr<CSSPrimitiveValue> consumePercentageOrNumber(CSSParserTokenRange&, ValueRange = ValueRange::All);
 
-template<> struct ConsumerDefinition<PercentRaw> {
-    using type = brigand::list<PercentRaw, UnevaluatedCalc<PercentRaw>>;
-
-    using FunctionToken = PercentKnownTokenTypeFunctionConsumer;
-    using PercentageToken = PercentKnownTokenTypePercentConsumer;
-};
+// FIXME: Users of this function are likely getting incorrect results when used with calc() producing a percent, as it is not getting divided by 100.
+RefPtr<CSSPrimitiveValue> consumePercentageDividedBy100OrNumber(CSSParserTokenRange&, ValueRange = ValueRange::All);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

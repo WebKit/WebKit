@@ -57,7 +57,7 @@ static bool percentageResolveToDimension(const SimplificationOptions& options)
     case Calculation::Category::Integer:
     case Calculation::Category::Number:
     case Calculation::Category::Length:
-    case Calculation::Category::Percent:
+    case Calculation::Category::Percentage:
     case Calculation::Category::Angle:
     case Calculation::Category::Time:
     case Calculation::Category::Frequency:
@@ -65,7 +65,7 @@ static bool percentageResolveToDimension(const SimplificationOptions& options)
     case Calculation::Category::Flex:
         return false;
 
-    case Calculation::Category::PercentLength:
+    case Calculation::Category::LengthPercentage:
         return true;
     }
 
@@ -80,7 +80,7 @@ constexpr bool unitsMatch(const Number&, const Number&, const SimplificationOpti
     return true;
 }
 
-constexpr bool unitsMatch(const Percent&, const Percent&, const SimplificationOptions&)
+constexpr bool unitsMatch(const Percentage&, const Percentage&, const SimplificationOptions&)
 {
     return true;
 }
@@ -102,7 +102,7 @@ constexpr bool magnitudeComparable(const Number&, const SimplificationOptions&)
     return true;
 }
 
-static bool magnitudeComparable(const Percent&, const SimplificationOptions& options)
+static bool magnitudeComparable(const Percentage&, const SimplificationOptions& options)
 {
     return !percentageResolveToDimension(options);
 }
@@ -124,7 +124,7 @@ constexpr bool fullyResolved(const Number&, const SimplificationOptions&)
     return true;
 }
 
-static bool fullyResolved(const Percent&, const SimplificationOptions& options)
+static bool fullyResolved(const Percentage&, const SimplificationOptions& options)
 {
     return !percentageResolveToDimension(options);
 }
@@ -412,7 +412,7 @@ template<typename Op> static std::optional<Child> simplifyForMinMax(Op& root, co
         numberOfMergeOpportunities += WTF::switchOn(root.children[i],
             [&]<Numeric T>(const T& child) {
                 auto id = toNumericIdentity(child);
-                if (id == NumericIdentity::Percent && !canMergePercentages)
+                if (id == NumericIdentity::Percentage && !canMergePercentages)
                     return 0;
 
                 if (auto offset = offsetOfFirstInstance[static_cast<uint8_t>(id)]) {
@@ -481,7 +481,7 @@ std::optional<Child> simplify(Number&, const SimplificationOptions&)
     return std::nullopt;
 }
 
-std::optional<Child> simplify(Percent&, const SimplificationOptions&)
+std::optional<Child> simplify(Percentage&, const SimplificationOptions&)
 {
     // 1.1. If root is a percentage that will be resolved against another value, and there is enough information available to resolve it, do so, and express the resulting numeric value in the appropriate canonical unit. Return the value.
     // NOTE: Handled by the Calculation::Tree / CalculationValue types at use time.
@@ -790,12 +790,12 @@ std::optional<Child> simplify(Product& root, const SimplificationOptions& option
                 productResult.value *= number.value;
                 return true;
             },
-            [&](const Percent& percent) -> bool {
-                auto multipliedType = Type::multiply(productResult.type, getType(percent));
+            [&](const Percentage& percentage) -> bool {
+                auto multipliedType = Type::multiply(productResult.type, getType(percentage));
                 ASSERT(multipliedType);
 
                 productResult.type = *multipliedType;
-                productResult.value *= percent.value;
+                productResult.value *= percentage.value;
                 return true;
             },
             [&](const CanonicalDimension& canonicalDimension) -> bool {
@@ -813,13 +813,13 @@ std::optional<Child> simplify(Product& root, const SimplificationOptions& option
                         productResult.value /= number.value;
                         return true;
                     },
-                    [&](const Percent& percent) -> bool {
-                        auto invertedPercentChildType = Type::invert(getType(percent));
-                        auto multipliedType = Type::multiply(productResult.type, invertedPercentChildType);
+                    [&](const Percentage& percentage) -> bool {
+                        auto invertedPercentageChildType = Type::invert(getType(percentage));
+                        auto multipliedType = Type::multiply(productResult.type, invertedPercentageChildType);
                         ASSERT(multipliedType);
 
                         productResult.type = *multipliedType;
-                        productResult.value /= percent.value;
+                        productResult.value /= percentage.value;
                         return true;
                     },
                     [&](const CanonicalDimension& canonicalDimension) -> bool {
@@ -849,10 +849,10 @@ std::optional<Child> simplify(Product& root, const SimplificationOptions& option
             case Calculation::Category::Integer:
             case Calculation::Category::Number:
                 return makeChild(Number { .value = productResult.value });
-            case Calculation::Category::Percent:
-                return makeChild(Percent { .value = productResult.value, .hint = Type::determinePercentHint(options.category) });
-            case Calculation::Category::PercentLength:
-                return makeChild(Percent { .value = productResult.value, .hint = PercentHint::Length });
+            case Calculation::Category::Percentage:
+                return makeChild(Percentage { .value = productResult.value, .hint = Type::determinePercentHint(options.category) });
+            case Calculation::Category::LengthPercentage:
+                return makeChild(Percentage { .value = productResult.value, .hint = PercentHint::Length });
             case Calculation::Category::Length:
                 return makeChild(CanonicalDimension { .value = productResult.value, .dimension = CanonicalDimension::Dimension::Length });
             case Calculation::Category::Angle:
@@ -1131,10 +1131,10 @@ std::optional<Child> simplify(Hypot& root, const SimplificationOptions& options)
     // Hypot can be simplified if all its children are the same type, and it is both canonical (for lengths) and fully resolved (for percentages). We optimistically assume that the children fit this criteria, and execute the operation over the children, checking each one as it is requested. If we find out our assumption was incorrect (e.g. a child is non-canonical or non-resolved), we set a flag indicating the evaluation failed, but due to the evaluation API's interface, must evaluate all the remaining children. Once the evaluation is complete, if the fail bit is set, we failed to simplify, if it is not, we can return the new numeric result.
 
     struct NumberTag { };
-    struct PercentTag { };
+    struct PercentageTag { };
     struct DimensionTag { CanonicalDimension::Dimension dimension; };
     struct FailureTag { };
-    std::variant<std::monostate, NumberTag, PercentTag, DimensionTag, FailureTag> result;
+    std::variant<std::monostate, NumberTag, PercentageTag, DimensionTag, FailureTag> result;
 
     double value = executeMathOperation<Hypot>(root.children, [&](const auto& child) {
         return WTF::switchOn(result,
@@ -1145,13 +1145,13 @@ std::optional<Child> simplify(Hypot& root, const SimplificationOptions& options)
                         result = NumberTag { };
                         return number.value;
                     },
-                    [&](const Percent& percent) -> double {
+                    [&](const Percentage& percentage) -> double {
                         if (percentageResolveToDimension(options)) {
                             result = FailureTag { };
                             return std::numeric_limits<double>::quiet_NaN();
                         }
-                        result = PercentTag { };
-                        return percent.value;
+                        result = PercentageTag { };
+                        return percentage.value;
                     },
                     [&](const CanonicalDimension& dimension) -> double {
                         result = DimensionTag { dimension.dimension };
@@ -1169,9 +1169,9 @@ std::optional<Child> simplify(Hypot& root, const SimplificationOptions& options)
                 result = FailureTag { };
                 return std::numeric_limits<double>::quiet_NaN();
             },
-            [&](const PercentTag&) -> double {
-                if (auto* percentChild = std::get_if<Percent>(&child))
-                    return percentChild->value;
+            [&](const PercentageTag&) -> double {
+                if (auto* percentageChild = std::get_if<Percentage>(&child))
+                    return percentageChild->value;
                 result = FailureTag { };
                 return std::numeric_limits<double>::quiet_NaN();
             },
@@ -1191,8 +1191,8 @@ std::optional<Child> simplify(Hypot& root, const SimplificationOptions& options)
         [&](const NumberTag&) -> std::optional<Child> {
             return makeChild(Number { .value = value });
         },
-        [&](const PercentTag&) -> std::optional<Child> {
-            return makeChild(Percent { .value = value, .hint = Type::determinePercentHint(options.category) });
+        [&](const PercentageTag&) -> std::optional<Child> {
+            return makeChild(Percentage { .value = value, .hint = Type::determinePercentHint(options.category) });
         },
         [&](const DimensionTag& tag) -> std::optional<Child> {
             return makeChild(CanonicalDimension { .value = value, .dimension = tag.dimension });

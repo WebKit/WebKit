@@ -56,8 +56,8 @@
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
-#include "CSSPropertyParserConsumer+Percent.h"
-#include "CSSPropertyParserConsumer+PercentDefinitions.h"
+#include "CSSPropertyParserConsumer+Percentage.h"
+#include "CSSPropertyParserConsumer+PercentageDefinitions.h"
 #include "CSSPropertyParserConsumer+URL.h"
 #include "CSSPropertyParsing.h"
 #include "CSSUnicodeRangeValue.h"
@@ -958,7 +958,7 @@ RefPtr<CSSValue> parseFontFaceSizeAdjust(const String& string, ScriptExecutionCo
     if (range.atEnd())
         return nullptr;
 
-    RefPtr parsedValue = consumePercent(range, ValueRange::NonNegative);
+    RefPtr parsedValue = consumePercentage(range, ValueRange::NonNegative);
     if (!parsedValue || !range.atEnd())
         return nullptr;
 
@@ -1356,14 +1356,14 @@ RefPtr<CSSValue> consumeFontFaceFontStretch(CSSParserTokenRange& range)
     if (RefPtr result = CSSPropertyParsing::consumeFontStretchAbsolute(range))
         return result;
 
-    RefPtr firstPercent = consumePercent(range, ValueRange::NonNegative);
+    RefPtr firstPercent = consumePercentage(range, ValueRange::NonNegative);
     if (!firstPercent)
         return nullptr;
 
     if (range.atEnd())
         return firstPercent;
 
-    RefPtr secondPercent = consumePercent(range, ValueRange::NonNegative);
+    RefPtr secondPercent = consumePercentage(range, ValueRange::NonNegative);
     if (!secondPercent)
         return nullptr;
 
@@ -1382,7 +1382,7 @@ RefPtr<CSSValue> consumeFontFaceFontStretch(CSSParserTokenRange& range)
 
     if (RefPtr result = CSSPropertyParsing::consumeFontStretchAbsolute(range))
         return result;
-    if (RefPtr percent = consumePercent(range, ValueRange::NonNegative))
+    if (RefPtr percent = consumePercentage(range, ValueRange::NonNegative))
         return percent;
     return nullptr;
 }

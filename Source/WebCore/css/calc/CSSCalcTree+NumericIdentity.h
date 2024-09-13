@@ -34,7 +34,7 @@ namespace CSSCalc {
 
 enum class NumericIdentity : uint8_t {
     Number,
-    Percent,
+    Percentage,
 
     // Canonical dimension units
     PX,
@@ -110,9 +110,9 @@ constexpr NumericIdentity toNumericIdentity(const Number&)
     return NumericIdentity::Number;
 }
 
-constexpr NumericIdentity toNumericIdentity(const Percent&)
+constexpr NumericIdentity toNumericIdentity(const Percentage&)
 {
-    return NumericIdentity::Percent;
+    return NumericIdentity::Percentage;
 }
 
 constexpr NumericIdentity toNumericIdentity(const CanonicalDimension& dimension)
@@ -279,7 +279,7 @@ constexpr bool isLength(NumericIdentity id)
         return true;
 
     case NumericIdentity::Number:
-    case NumericIdentity::Percent:
+    case NumericIdentity::Percentage:
     case NumericIdentity::DEG:
     case NumericIdentity::S:
     case NumericIdentity::HZ:

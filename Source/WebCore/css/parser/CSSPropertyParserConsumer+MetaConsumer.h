@@ -49,8 +49,8 @@ template<typename... Ts>
 using MetaConsumerVariantWrapper = typename std::variant<Ts...>;
 
 /// The result of a meta consume.
-/// To be used with a list of `raw` types. e.g. `ConsumeResult<AngleRaw, PercentRaw, NoneRaw>`, which will yield a
-/// result type of `std::variant<AngleRaw, UnevaluatedCalc<AngleRaw>, PercentRaw, UnevaluatedCalc<PercentRaw>, NoneRaw>`.
+/// To be used with a list of `raw` types. e.g. `ConsumeResult<AngleRaw, PercentageRaw, NoneRaw>`, which will yield a
+/// result type of `std::variant<AngleRaw, UnevaluatedCalc<AngleRaw>, PercentageRaw, UnevaluatedCalc<PercentageRaw>, NoneRaw>`.
 template<typename... Ts>
 struct MetaConsumeResult {
     using TypeList = brigand::flatten<
@@ -152,7 +152,7 @@ struct MetaConsumerUnroller<tokenType, ResultType, T, Ts...> {
 // An example use that attempts to consumer either a <number> or <percentage>
 // looks like:
 //
-//    auto result = MetaConsumer<PercentRaw, NumberRaw>::consume(range, ...);
+//    auto result = MetaConsumer<PercentageRaw, NumberRaw>::consume(range, ...);
 //
 // (Argument list elided for brevity)
 template<typename... Ts>

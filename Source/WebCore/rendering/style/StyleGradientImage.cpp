@@ -94,7 +94,7 @@ static std::optional<float> resolveColorStopPosition(const StyleGradientImageAng
         [](AngleRaw angle) -> std::optional<float> {
             return CSSPrimitiveValue::computeDegrees(angle.type, angle.value) / 360.0;
         },
-        [](PercentRaw percent) -> std::optional<float> {
+        [](PercentageRaw percent) -> std::optional<float> {
             return percent.value / 100.0;
         }
     );
@@ -154,7 +154,7 @@ static inline RefPtr<CSSPrimitiveValue> computedStyleValueForColorStopPosition(c
         [](AngleRaw angle) -> RefPtr<CSSPrimitiveValue> {
             return CSSPrimitiveValue::create(angle.value, angle.type);
         },
-        [](PercentRaw percent) -> RefPtr<CSSPrimitiveValue> {
+        [](PercentageRaw percent) -> RefPtr<CSSPrimitiveValue> {
             return CSSPrimitiveValue::create(percent.value, CSSUnitType::CSS_PERCENTAGE);
         }
     );
@@ -186,7 +186,7 @@ static Ref<CSSPrimitiveValue> computedStyleValue(const StyleGradientDeprecatedPo
         [](NumberRaw number) -> Ref<CSSPrimitiveValue> {
             return CSSPrimitiveValue::create(number.value, CSSUnitType::CSS_NUMBER);
         },
-        [](PercentRaw percent) -> Ref<CSSPrimitiveValue> {
+        [](PercentageRaw percent) -> Ref<CSSPrimitiveValue> {
             return CSSPrimitiveValue::create(percent.value, CSSUnitType::CSS_PERCENTAGE);
         }
     );
@@ -986,7 +986,7 @@ static float positionFromValue(const StyleGradientDeprecatedPoint::Coordinate& c
         [&](NumberRaw number) -> float {
             return number.value;
         },
-        [&](PercentRaw percent) -> float {
+        [&](PercentageRaw percent) -> float {
             return percent.value / 100.0f * edgeDistance;
         }
     );

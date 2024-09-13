@@ -101,13 +101,13 @@ template<StopPositionResolution resolution> static inline std::optional<Length> 
         return Style::BuilderConverter::convertLength(state, *position);
 }
 
-static inline std::variant<std::monostate, AngleRaw, PercentRaw> computeAngularStopPosition(const RefPtr<CSSPrimitiveValue>& position, Style::BuilderState& state)
+static inline std::variant<std::monostate, AngleRaw, PercentageRaw> computeAngularStopPosition(const RefPtr<CSSPrimitiveValue>& position, Style::BuilderState& state)
 {
     if (!position)
         return std::monostate { };
 
     if (position->isPercentage())
-        return { PercentRaw { position->resolveAsPercentage(state.cssToLengthConversionData()) } };
+        return { PercentageRaw { position->resolveAsPercentage(state.cssToLengthConversionData()) } };
 
     if (position->isAngle())
         return { AngleRaw { CSSUnitType::CSS_DEG, position->resolveAsAngle<double, CSSPrimitiveValue::AngleUnit::Degrees>(state.cssToLengthConversionData()) } };
@@ -135,7 +135,7 @@ static decltype(auto) computeAngularStops(const CSSGradientColorStopList& stops,
 static StyleGradientDeprecatedPoint::Coordinate resolvePointCoordinate(const Ref<CSSPrimitiveValue>& coordinate, Style::BuilderState& state)
 {
     if (coordinate->isPercentage())
-        return { PercentRaw { coordinate->resolveAsPercentage(state.cssToLengthConversionData()) } };
+        return { PercentageRaw { coordinate->resolveAsPercentage(state.cssToLengthConversionData()) } };
     return { NumberRaw { coordinate->resolveAsNumber(state.cssToLengthConversionData()) } };
 }
 

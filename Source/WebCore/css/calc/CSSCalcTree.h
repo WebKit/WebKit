@@ -91,14 +91,14 @@ struct Number {
     bool operator==(const Number&) const = default;
 };
 
-struct Percent {
+struct Percentage {
     static constexpr bool isLeaf = true;
     static constexpr bool isNumeric = true;
 
     double value;
     Type::PercentHintValue hint;
 
-    bool operator==(const Percent&) const = default;
+    bool operator==(const Percentage&) const = default;
 };
 
 struct CanonicalDimension {
@@ -156,7 +156,7 @@ template<typename Op> struct IndirectNode {
 
 using Node = std::variant<
     Number,
-    Percent,
+    Percentage,
     CanonicalDimension,
     NonCanonicalDimension,
     Symbol,
@@ -756,10 +756,10 @@ template<> struct ChildConstruction<Number> {
     static Child make(Number&& op) { return Child { WTFMove(op) }; }
 };
 
-// Specialized implementation of ChildConstruction for Percent, needed to avoid `makeUniqueRef`.
-template<> struct ChildConstruction<Percent> {
-    static Child make(Percent&& op, Type) { return Child { WTFMove(op) }; }
-    static Child make(Percent&& op) { return Child { WTFMove(op) }; }
+// Specialized implementation of ChildConstruction for Percentage, needed to avoid `makeUniqueRef`.
+template<> struct ChildConstruction<Percentage> {
+    static Child make(Percentage&& op, Type) { return Child { WTFMove(op) }; }
+    static Child make(Percentage&& op) { return Child { WTFMove(op) }; }
 };
 
 // Specialized implementation of ChildConstruction for CanonicalDimension, needed to avoid `makeUniqueRef`.
@@ -803,7 +803,7 @@ Type getType(CanonicalDimension::Dimension);
 
 // Gets the Type of the leaf node.
 Type getType(const Number&);
-Type getType(const Percent&);
+Type getType(const Percentage&);
 Type getType(const NonCanonicalDimension&);
 Type getType(const CanonicalDimension&);
 Type getType(const Symbol&);
@@ -860,7 +860,7 @@ constexpr CSSUnitType toCSSUnit(const CanonicalDimension::Dimension& dimension)
 
 // Maps Numeric type to its CSSUnitType counterpart.
 constexpr CSSUnitType toCSSUnit(const Number&) { return CSSUnitType::CSS_NUMBER; }
-constexpr CSSUnitType toCSSUnit(const Percent&) { return CSSUnitType::CSS_PERCENTAGE; }
+constexpr CSSUnitType toCSSUnit(const Percentage&) { return CSSUnitType::CSS_PERCENTAGE; }
 constexpr CSSUnitType toCSSUnit(const CanonicalDimension& dimension) { return toCSSUnit(dimension.dimension); }
 constexpr CSSUnitType toCSSUnit(const NonCanonicalDimension& dimension) { return dimension.unit; }
 
@@ -876,7 +876,7 @@ inline bool isNumeric(const Child& root)
 
 // Convenience constructors
 
-// Makes the appropriate child type (number, percent, canonical-dimensions, non-canonical-dimension) based on the CSSUnitType.
+// Makes the appropriate child type (number, percentage, canonical-dimensions, non-canonical-dimension) based on the CSSUnitType.
 Child makeNumeric(double, CSSUnitType);
 
 inline Sum add(Child&& a, Child&& b)
@@ -905,9 +905,9 @@ inline Child makeChildWithValueBasedOn(double value, const Number&)
     return makeChild(Number { .value = value });
 }
 
-inline Child makeChildWithValueBasedOn(double value, const Percent& a)
+inline Child makeChildWithValueBasedOn(double value, const Percentage& a)
 {
-    return makeChild(Percent { .value = value, .hint = a.hint });
+    return makeChild(Percentage { .value = value, .hint = a.hint });
 }
 
 inline Child makeChildWithValueBasedOn(double value, const CanonicalDimension& a)

@@ -49,7 +49,7 @@ StaticCSSValuePool::StaticCSSValuePool()
 
     for (unsigned i = 0; i <= maximumCacheableIntegerValue; ++i) {
         m_pixelValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PX);
-        m_percentValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PERCENTAGE);
+        m_percentageValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PERCENTAGE);
         m_numberValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_NUMBER);
     }
 }

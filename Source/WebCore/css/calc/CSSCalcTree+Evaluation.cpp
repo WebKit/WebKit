@@ -38,7 +38,7 @@ static auto evaluate(const ChildOrNone&, const EvaluationOptions&) -> std::optio
 static auto evaluate(const std::optional<Child>&, const EvaluationOptions&) -> std::optional<std::optional<double>>;
 static auto evaluate(const Child&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const Number&, const EvaluationOptions&) -> std::optional<double>;
-static auto evaluate(const Percent&, const EvaluationOptions&) -> std::optional<double>;
+static auto evaluate(const Percentage&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const CanonicalDimension&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const NonCanonicalDimension&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const Symbol&, const EvaluationOptions&) -> std::optional<double>;
@@ -109,9 +109,9 @@ std::optional<double> evaluate(const Number& number, const EvaluationOptions&)
     return number.value;
 }
 
-std::optional<double> evaluate(const Percent& percent, const EvaluationOptions&)
+std::optional<double> evaluate(const Percentage& percentage, const EvaluationOptions&)
 {
-    return percent.value;
+    return percentage.value;
 }
 
 std::optional<double> evaluate(const CanonicalDimension& root, const EvaluationOptions&)

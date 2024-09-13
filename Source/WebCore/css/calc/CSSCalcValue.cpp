@@ -131,7 +131,7 @@ CSSUnitType CSSCalcValue::primitiveType() const
         return CSSUnitType::CSS_INTEGER;
     case Calculation::Category::Number:
         return CSSUnitType::CSS_NUMBER;
-    case Calculation::Category::Percent:
+    case Calculation::Category::Percentage:
         return CSSUnitType::CSS_PERCENTAGE;
     case Calculation::Category::Length:
         return CSSUnitType::CSS_PX;
@@ -145,10 +145,10 @@ CSSUnitType CSSCalcValue::primitiveType() const
         return CSSUnitType::CSS_DPPX;
     case Calculation::Category::Flex:
         return CSSUnitType::CSS_FR;
-    case Calculation::Category::PercentLength:
+    case Calculation::Category::LengthPercentage:
         if (!m_tree.type.percentHint)
             return CSSUnitType::CSS_PX;
-        if (std::holds_alternative<CSSCalc::Percent>(m_tree.root))
+        if (std::holds_alternative<CSSCalc::Percentage>(m_tree.root))
             return CSSUnitType::CSS_PERCENTAGE;
         return CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH;
     }
@@ -263,15 +263,15 @@ NumberRaw CSSCalcValue::numberValue(const CSSToLengthConversionData& conversionD
     return { doubleValue(conversionData, symbolTable) };
 }
 
-PercentRaw CSSCalcValue::percentValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
+PercentageRaw CSSCalcValue::percentageValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
 {
-    ASSERT(m_tree.category == Calculation::Category::Percent);
+    ASSERT(m_tree.category == Calculation::Category::Percentage);
     return { doubleValueNoConversionDataRequired(symbolTable) };
 }
 
-PercentRaw CSSCalcValue::percentValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
+PercentageRaw CSSCalcValue::percentageValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
 {
-    ASSERT(m_tree.category == Calculation::Category::Percent);
+    ASSERT(m_tree.category == Calculation::Category::Percentage);
     return { doubleValue(conversionData, symbolTable) };
 }
 
@@ -325,22 +325,22 @@ TimeRaw CSSCalcValue::timeValue(const CSSToLengthConversionData& conversionData,
 
 Length CSSCalcValue::lengthPercentageValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
 {
-    ASSERT(m_tree.category == Calculation::Category::PercentLength);
+    ASSERT(m_tree.category == Calculation::Category::LengthPercentage);
 
     if (!m_tree.type.percentHint)
         return Length { doubleValueNoConversionDataRequired(symbolTable), LengthType::Fixed };
-    if (std::holds_alternative<CSSCalc::Percent>(m_tree.root))
+    if (std::holds_alternative<CSSCalc::Percentage>(m_tree.root))
         return Length { doubleValueNoConversionDataRequired(symbolTable), LengthType::Percent };
     return Length { createCalculationValueNoConversionDataRequired(symbolTable) };
 }
 
 Length CSSCalcValue::lengthPercentageValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
 {
-    ASSERT(m_tree.category == Calculation::Category::PercentLength);
+    ASSERT(m_tree.category == Calculation::Category::LengthPercentage);
 
     if (!m_tree.type.percentHint)
         return Length { doubleValue(conversionData, symbolTable), LengthType::Fixed };
-    if (std::holds_alternative<CSSCalc::Percent>(m_tree.root))
+    if (std::holds_alternative<CSSCalc::Percentage>(m_tree.root))
         return Length { doubleValue(conversionData, symbolTable), LengthType::Percent };
     return Length { createCalculationValue(conversionData, symbolTable) };
 }

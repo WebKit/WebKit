@@ -59,7 +59,7 @@
 #include "CSSPropertyParserConsumer+LengthPercentage.h"
 #include "CSSPropertyParserConsumer+List.h"
 #include "CSSPropertyParserConsumer+Number.h"
-#include "CSSPropertyParserConsumer+Percent.h"
+#include "CSSPropertyParserConsumer+Percentage.h"
 #include "CSSPropertyParserConsumer+Position.h"
 #include "CSSPropertyParserConsumer+Resolution.h"
 #include "CSSPropertyParserConsumer+String.h"
@@ -393,7 +393,7 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> CSSPropertyParser::co
             }
             return nullptr;
         case CSSCustomPropertySyntax::Type::Percentage:
-            return consumePercent(range);
+            return consumePercentage(range);
         case CSSCustomPropertySyntax::Type::Integer:
             return consumeInteger(range);
         case CSSCustomPropertySyntax::Type::Number:

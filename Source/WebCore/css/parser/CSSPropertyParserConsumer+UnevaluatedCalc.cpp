@@ -71,14 +71,14 @@ NumberRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<NumberRaw>&
     return calc.calc->numberValueNoConversionDataRequired(symbolTable);
 }
 
-PercentRaw evaluateCalc(const UnevaluatedCalc<PercentRaw>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
+PercentageRaw evaluateCalc(const UnevaluatedCalc<PercentageRaw>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
 {
-    return calc.calc->percentValue(conversionData, symbolTable);
+    return calc.calc->percentageValue(conversionData, symbolTable);
 }
 
-PercentRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<PercentRaw>& calc, const CSSCalcSymbolTable& symbolTable)
+PercentageRaw evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<PercentageRaw>& calc, const CSSCalcSymbolTable& symbolTable)
 {
-    return calc.calc->percentValueNoConversionDataRequired(symbolTable);
+    return calc.calc->percentageValueNoConversionDataRequired(symbolTable);
 }
 
 LengthRaw evaluateCalc(const UnevaluatedCalc<LengthRaw>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)

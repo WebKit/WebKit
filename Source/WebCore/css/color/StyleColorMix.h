@@ -39,7 +39,7 @@ struct StyleColorMix {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     struct Component {
-        using Percentage = PercentRaw;
+        using Percentage = PercentageRaw;
 
         StyleColor color;
         std::optional<Percentage> percentage;

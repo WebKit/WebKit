@@ -71,8 +71,8 @@ using UnresolvedFontWeightNumber = std::variant<NumberRaw, UnevaluatedCalc<Numbe
 using UnresolvedFontWeight = std::variant<CSSValueID, NumberRaw, UnevaluatedCalc<NumberRaw>>;
 
 // normal | <percentage [0,∞]> | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded
-using UnresolvedFontStretchPercentage = std::variant<PercentRaw, UnevaluatedCalc<PercentRaw>>;
-using UnresolvedFontStretch = std::variant<CSSValueID, PercentRaw, UnevaluatedCalc<PercentRaw>>;
+using UnresolvedFontStretchPercentage = std::variant<PercentageRaw, UnevaluatedCalc<PercentageRaw>>;
+using UnresolvedFontStretch = std::variant<CSSValueID, PercentageRaw, UnevaluatedCalc<PercentageRaw>>;
 
 // <absolute-size> | <relative-size> | <length-percentage [0,∞]>
 using UnresolvedFontSize = std::variant<CSSValueID, LengthPercentageRaw, UnevaluatedCalc<LengthPercentageRaw>>;

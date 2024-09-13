@@ -35,7 +35,7 @@ namespace WebCore {
 struct CSSColorMixResolver {
     struct Component {
         Color color;
-        std::optional<PercentRaw> percentage;
+        std::optional<PercentageRaw> percentage;
     };
 
     ColorInterpolationMethod colorInterpolationMethod;

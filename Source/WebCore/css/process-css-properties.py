@@ -1515,7 +1515,7 @@ class ReferenceTerm:
         BuiltinSchema.Entry("number", "consumeNumber",
             # FIXME: "FontWeight" is not real. Add support for arbitrary ranges.
             BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "ValueRange::NonNegative", "[1,1000]": "ValueRange::FontWeight"}, default="ValueRange::All")),
-        BuiltinSchema.Entry("percentage", "consumePercent",
+        BuiltinSchema.Entry("percentage", "consumePercentage",
             BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "ValueRange::NonNegative"}, default="ValueRange::All")),
         BuiltinSchema.Entry("position", "consumePosition",
             BuiltinSchema.OptionalParameter("unitless", values={"unitless-allowed": "UnitlessQuirk::Allow"}, default="UnitlessQuirk::Forbid")),
@@ -3950,7 +3950,7 @@ class GenerateCSSPropertyParsing:
                     "CSSPropertyParserConsumer+List.h",
                     "CSSPropertyParserConsumer+Lists.h",
                     "CSSPropertyParserConsumer+Number.h",
-                    "CSSPropertyParserConsumer+Percent.h",
+                    "CSSPropertyParserConsumer+Percentage.h",
                     "CSSPropertyParserConsumer+Position.h",
                     "CSSPropertyParserConsumer+Primitives.h",
                     "CSSPropertyParserConsumer+Resolution.h",

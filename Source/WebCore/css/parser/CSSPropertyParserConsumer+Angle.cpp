@@ -31,7 +31,7 @@
 #include "CSSCalcValue.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
-#include "CSSPropertyParserConsumer+PercentDefinitions.h"
+#include "CSSPropertyParserConsumer+PercentageDefinitions.h"
 #include "CalculationCategory.h"
 
 namespace WebCore {
@@ -113,7 +113,7 @@ RefPtr<CSSPrimitiveValue> consumeAngleOrPercent(CSSParserTokenRange& range, CSSP
         .parserMode = parserMode,
         .unitlessZero = UnitlessZeroQuirk::Allow
     };
-    return CSSPrimitiveValueResolver<AngleRaw, PercentRaw>::consumeAndResolve(range, { }, { }, options);
+    return CSSPrimitiveValueResolver<AngleRaw, PercentageRaw>::consumeAndResolve(range, { }, { }, options);
 }
 
 } // namespace CSSPropertyParserHelpers

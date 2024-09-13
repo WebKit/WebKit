@@ -32,7 +32,7 @@
 #include "CSSPropertyParserConsumer+LengthDefinitions.h"
 #include "CSSPropertyParserConsumer+NoneDefinitions.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
-#include "CSSPropertyParserConsumer+PercentDefinitions.h"
+#include "CSSPropertyParserConsumer+PercentageDefinitions.h"
 #include "CSSPropertyParserConsumer+ResolutionDefinitions.h"
 #include "CSSPropertyParserConsumer+SymbolDefinitions.h"
 #include "CSSPropertyParserConsumer+TimeDefinitions.h"
@@ -55,7 +55,7 @@ RefPtr<CSSPrimitiveValue> CSSPrimitiveValueResolverBase::resolve(NumberRaw value
     return CSSPrimitiveValue::create(value.value, CSSUnitType::CSS_NUMBER);
 }
 
-RefPtr<CSSPrimitiveValue> CSSPrimitiveValueResolverBase::resolve(PercentRaw value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
+RefPtr<CSSPrimitiveValue> CSSPrimitiveValueResolverBase::resolve(PercentageRaw value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
 {
     return CSSPrimitiveValue::create(value.value, CSSUnitType::CSS_PERCENTAGE);
 }

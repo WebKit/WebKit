@@ -42,7 +42,7 @@ void serializationForCSS(StringBuilder& builder, const NumberRaw& value)
     formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(CSSUnitType::CSS_NUMBER));
 }
 
-void serializationForCSS(StringBuilder& builder, const PercentRaw& value)
+void serializationForCSS(StringBuilder& builder, const PercentageRaw& value)
 {
     formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(CSSUnitType::CSS_PERCENTAGE));
 }

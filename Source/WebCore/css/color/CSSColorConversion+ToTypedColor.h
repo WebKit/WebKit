@@ -31,7 +31,7 @@
 namespace WebCore {
 
 // This file implements support for converting "raw" parsed values
-// (e.g. tuple of `std::variant<NumberRaw, PercentRaw>`) into typed
+// (e.g. tuple of `std::variant<NumberRaw, PercentageRaw>`) into typed
 // colors (e.g. `SRGBA<float>`).
 
 template<typename Descriptor> GetColorType<Descriptor> normalizeRawComponents(CSSColorParseType<Descriptor>);
@@ -55,7 +55,7 @@ template<typename Descriptor, unsigned Index> float normalizeComponent(NumberRaw
         return std::clamp(number.value * multiplier, min, max);
 }
 
-template<typename Descriptor, unsigned Index> float normalizeComponent(PercentRaw percent)
+template<typename Descriptor, unsigned Index> float normalizeComponent(PercentageRaw percent)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
     constexpr auto multiplier = info.percentMultiplier * info.numberMultiplier;

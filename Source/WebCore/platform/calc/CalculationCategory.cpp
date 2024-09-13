@@ -36,14 +36,14 @@ TextStream& operator<<(TextStream& ts, Category category)
     switch (category) {
     case Category::Integer: ts << "integer"; break;
     case Category::Number: ts << "number"; break;
-    case Category::Percent: ts << "percent"; break;
+    case Category::Percentage: ts << "percentage"; break;
     case Category::Length: ts << "length"; break;
     case Category::Angle: ts << "angle"; break;
     case Category::Time: ts << "time"; break;
     case Category::Frequency: ts << "frequency"; break;
     case Category::Resolution: ts << "resolution"; break;
     case Category::Flex: ts << "flex"; break;
-    case Category::PercentLength: ts << "percent-length"; break;
+    case Category::LengthPercentage: ts << "length-percentage"; break;
     }
 
     return ts;

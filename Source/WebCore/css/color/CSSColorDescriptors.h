@@ -178,8 +178,8 @@ template<typename Descriptor> bool requiresConversionData(const CSSColorParseTyp
 
 // MARK: - Shared Component Descriptors
 
-constexpr auto AlphaComponent = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw> { .symbol = CSSValueAlpha, .min = 0.0, .max = 1.0 };
-constexpr auto AlphaLegacyComponent = CSSColorComponent<PercentRaw, NumberRaw> { .symbol = CSSValueAlpha, .min = 0.0, .max = 1.0 };
+constexpr auto AlphaComponent = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw> { .symbol = CSSValueAlpha, .min = 0.0, .max = 1.0 };
+constexpr auto AlphaLegacyComponent = CSSColorComponent<PercentageRaw, NumberRaw> { .symbol = CSSValueAlpha, .min = 0.0, .max = 1.0 };
 
 // MARK: - Color Function Descriptors
 
@@ -195,9 +195,9 @@ struct RGBFunctionModernAbsolute {
     static constexpr bool usesColorFunctionForSerialization = false;
     static constexpr ASCIILiteral serializationFunctionName = "rgb"_s;
 
-    using R = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using G = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using B = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
+    using R = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
+    using G = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
+    using B = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
 
     static constexpr auto components = std::make_tuple(
         R { .symbol = CSSValueR, .min = 0.0, .max = 255.0, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
@@ -243,9 +243,9 @@ struct RGBFunctionModernRelative {
     static constexpr bool usesColorFunctionForSerialization = false;
     static constexpr ASCIILiteral serializationFunctionName = "rgb"_s;
 
-    using R = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using G = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using B = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
+    using R = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
+    using G = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
+    using B = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
 
     static constexpr auto components = std::make_tuple(
         R { .symbol = CSSValueR, .numberMultiplier = 1.0 / 255.0, .percentMultiplier = 255.0 / 100.0, .symbolMultiplier = 255.0 },
@@ -269,8 +269,8 @@ struct HSLFunctionModern {
     static constexpr ASCIILiteral serializationFunctionName = "hsl"_s;
 
     using H = CSSColorComponent<AngleRaw, NumberRaw, NoneRaw>;
-    using S = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using L = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
+    using S = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
+    using L = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
 
     static constexpr auto components = std::make_tuple(
         H { .symbol = CSSValueH, .type = ColorComponentType::Angle    },
@@ -293,8 +293,8 @@ struct HSLFunctionLegacy {
     static constexpr ASCIILiteral serializationFunctionName = "hsl"_s;
 
     using H = CSSColorComponent<AngleRaw, NumberRaw>;
-    using S = CSSColorComponent<PercentRaw>;
-    using L = CSSColorComponent<PercentRaw>;
+    using S = CSSColorComponent<PercentageRaw>;
+    using L = CSSColorComponent<PercentageRaw>;
 
     static constexpr auto components = std::make_tuple(
         H { .symbol = CSSValueH, .type = ColorComponentType::Angle    },
@@ -317,8 +317,8 @@ struct HWBFunction {
     static constexpr ASCIILiteral serializationFunctionName = "hwb"_s;
 
     using H = CSSColorComponent<AngleRaw, NumberRaw, NoneRaw>;
-    using W = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using B = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
+    using W = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
+    using B = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
 
     static constexpr auto components = std::make_tuple(
         H { .symbol = CSSValueH, .type = ColorComponentType::Angle },
@@ -340,9 +340,9 @@ struct LabFunction {
     static constexpr bool usesColorFunctionForSerialization = false;
     static constexpr ASCIILiteral serializationFunctionName = "lab"_s;
 
-    using L = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using A = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using B = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
+    using L = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
+    using A = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
+    using B = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
 
     static constexpr auto components = std::make_tuple(
         L { .symbol = CSSValueL, .min = 0.0, .max = 100.0, .percentMultiplier = 1.0           },
@@ -364,8 +364,8 @@ struct LCHFunction {
     static constexpr bool usesColorFunctionForSerialization = false;
     static constexpr ASCIILiteral serializationFunctionName = "lch"_s;
 
-    using L = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using C = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
+    using L = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
+    using C = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
     using H = CSSColorComponent<AngleRaw, NumberRaw, NoneRaw>;
 
     static constexpr auto components = std::make_tuple(
@@ -388,9 +388,9 @@ struct OKLabFunction {
     static constexpr bool usesColorFunctionForSerialization = false;
     static constexpr ASCIILiteral serializationFunctionName = "oklab"_s;
 
-    using L = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using A = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using B = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
+    using L = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
+    using A = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
+    using B = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
 
     static constexpr auto components = std::make_tuple(
         L { .symbol = CSSValueL, .min = 0.0, .max = 1.0                                   },
@@ -412,8 +412,8 @@ struct OKLCHFunction {
     static constexpr bool usesColorFunctionForSerialization = false;
     static constexpr ASCIILiteral serializationFunctionName = "oklch"_s;
 
-    using L = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using C = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
+    using L = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
+    using C = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
     using H = CSSColorComponent<AngleRaw, NumberRaw, NoneRaw>;
 
     static constexpr auto components = std::make_tuple(
@@ -438,9 +438,9 @@ template<typename T> struct ColorRGBFunction {
     static constexpr bool usesColorFunctionForSerialization = true;
     static constexpr ASCIILiteral serializationFunctionName = "color"_s;
 
-    using R = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using G = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using B = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
+    using R = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
+    using G = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
+    using B = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
 
     static constexpr auto components = std::make_tuple(
         R { .symbol = CSSValueR },
@@ -464,9 +464,9 @@ template<typename T> struct ColorXYZFunction {
     static constexpr bool usesColorFunctionForSerialization = true;
     static constexpr ASCIILiteral serializationFunctionName = "color"_s;
 
-    using X = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using Y = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
-    using Z = CSSColorComponent<PercentRaw, NumberRaw, NoneRaw>;
+    using X = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
+    using Y = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
+    using Z = CSSColorComponent<PercentageRaw, NumberRaw, NoneRaw>;
 
     static constexpr auto components = std::make_tuple(
         X { .symbol = CSSValueX },

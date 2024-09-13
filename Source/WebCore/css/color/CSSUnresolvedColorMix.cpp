@@ -36,26 +36,26 @@
 
 namespace WebCore {
 
-PercentRaw resolveComponentPercentage(const CSSUnresolvedColorMix::Component::Percentage& percentage, const CSSToLengthConversionData& conversionData)
+PercentageRaw resolveComponentPercentage(const CSSUnresolvedColorMix::Component::Percentage& percentage, const CSSToLengthConversionData& conversionData)
 {
     return evaluateCalc(percentage, conversionData, CSSCalcSymbolTable { });
 }
 
-PercentRaw resolveComponentPercentageNoConversionDataRequired(const CSSUnresolvedColorMix::Component::Percentage& percentage)
+PercentageRaw resolveComponentPercentageNoConversionDataRequired(const CSSUnresolvedColorMix::Component::Percentage& percentage)
 {
     ASSERT(!requiresConversionData(percentage));
 
     return evaluateCalcNoConversionDataRequired(percentage, CSSCalcSymbolTable { });
 }
 
-static std::optional<PercentRaw> resolveComponentPercentage(const std::optional<CSSUnresolvedColorMix::Component::Percentage>& percentage, const CSSToLengthConversionData& conversionData)
+static std::optional<PercentageRaw> resolveComponentPercentage(const std::optional<CSSUnresolvedColorMix::Component::Percentage>& percentage, const CSSToLengthConversionData& conversionData)
 {
     if (!percentage)
         return std::nullopt;
     return resolveComponentPercentage(*percentage, conversionData);
 }
 
-static std::optional<PercentRaw> resolveComponentPercentageNoConversionDataRequired(const std::optional<CSSUnresolvedColorMix::Component::Percentage>& percentage)
+static std::optional<PercentageRaw> resolveComponentPercentageNoConversionDataRequired(const std::optional<CSSUnresolvedColorMix::Component::Percentage>& percentage)
 {
     if (!percentage)
         return std::nullopt;
@@ -131,8 +131,8 @@ Color createColor(const CSSUnresolvedColorMix& unresolved, CSSUnresolvedColorRes
     if (!component2Color.isValid())
         return { };
 
-    std::optional<PercentRaw> percentage1;
-    std::optional<PercentRaw> percentage2;
+    std::optional<PercentageRaw> percentage1;
+    std::optional<PercentageRaw> percentage2;
     if (requiresConversionData(unresolved.mixComponents1.percentage) || requiresConversionData(unresolved.mixComponents2.percentage)) {
         if (!state.conversionData)
             return { };

@@ -498,7 +498,7 @@ Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(double value, CSSUnitType type)
             return *result;
         break;
     case CSSUnitType::CSS_PERCENTAGE:
-        if (auto* result = valueFromPool(staticCSSValuePool->m_percentValues, value))
+        if (auto* result = valueFromPool(staticCSSValuePool->m_percentageValues, value))
             return *result;
         break;
     case CSSUnitType::CSS_PX:

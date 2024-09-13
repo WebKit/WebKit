@@ -45,8 +45,8 @@
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
-#include "CSSPropertyParserConsumer+Percent.h"
-#include "CSSPropertyParserConsumer+PercentDefinitions.h"
+#include "CSSPropertyParserConsumer+Percentage.h"
+#include "CSSPropertyParserConsumer+PercentageDefinitions.h"
 #include "CSSPropertyParserConsumer+Position.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+String.h"
@@ -1764,7 +1764,7 @@ RefPtr<CSSValue> consumeBorderImageSlice(CSSPropertyID property, CSSParserTokenR
     std::array<RefPtr<CSSPrimitiveValue>, 4> slices;
 
     for (auto& value : slices) {
-        value = consumePercent(range, ValueRange::NonNegative);
+        value = consumePercentage(range, ValueRange::NonNegative);
         if (!value)
             value = consumeNumber(range, ValueRange::NonNegative);
         if (!value)
