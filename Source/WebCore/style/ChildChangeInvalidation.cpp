@@ -62,7 +62,7 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
         }
     };
 
-    bool isFirst = isChild && m_childChange.previousSiblingElement == changedElement.previousElementSibling() && changedElementRelation == ChangedElementRelation::SelfOrDescendant;
+    bool isFirst = isChild && m_childChange.previousSiblingElement.get() == changedElement.previousElementSibling() && changedElementRelation == ChangedElementRelation::SelfOrDescendant;
 
     auto hasMatchingInvalidationSelector = [&](auto& invalidationRuleSet) {
         SelectorChecker selectorChecker(changedElement.document());
@@ -73,7 +73,7 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
             if (isFirst) {
                 // If this :has() matches ignoring this mutation, nothing actually changes and we don't need to invalidate.
                 // FIXME: We could cache this state across invalidations instead of just testing a single sibling.
-                auto* sibling = m_childChange.previousSiblingElement ? m_childChange.previousSiblingElement : m_childChange.nextSiblingElement;
+                auto* sibling = m_childChange.previousSiblingElement.get() ? m_childChange.previousSiblingElement.get() : m_childChange.nextSiblingElement.get();
                 if (sibling && selectorChecker.match(*selector, *sibling, checkingContext)) {
                     matchingHasSelectors.add(selector);
                     continue;
@@ -218,11 +218,11 @@ void ChildChangeInvalidation::invalidateForHasAfterMutation()
             invalidateForChangedElement(changedElement, matchingHasSelectors, ChangedElementRelation::Sibling);
         });
     } else {
-        if (firstChildStateWillStartMatching(m_childChange.nextSiblingElement))
-            invalidateForChangedElement(*m_childChange.nextSiblingElement, matchingHasSelectors, ChangedElementRelation::Sibling);
+        if (firstChildStateWillStartMatching(m_childChange.nextSiblingElement.get()))
+            invalidateForChangedElement(*m_childChange.nextSiblingElement.get(), matchingHasSelectors, ChangedElementRelation::Sibling);
 
-        if (lastChildStateWillStartMatching(m_childChange.previousSiblingElement))
-            invalidateForChangedElement(*m_childChange.previousSiblingElement, matchingHasSelectors, ChangedElementRelation::Sibling);
+        if (lastChildStateWillStartMatching(m_childChange.previousSiblingElement.get()))
+            invalidateForChangedElement(*m_childChange.previousSiblingElement.get(), matchingHasSelectors, ChangedElementRelation::Sibling);
     }
 }
 
@@ -243,7 +243,7 @@ void ChildChangeInvalidation::traverseRemovedElements(Function&& function)
     auto& features = parentElement().styleResolver().ruleSets().features();
     bool needsDescendantTraversal = Style::needsDescendantTraversal(features);
 
-    auto* firstToRemove = m_childChange.previousSiblingElement ? m_childChange.previousSiblingElement->nextElementSibling() : parentElement().firstElementChild();
+    auto* firstToRemove = m_childChange.previousSiblingElement.get() ? m_childChange.previousSiblingElement->nextElementSibling() : parentElement().firstElementChild();
 
     for (auto* toRemove = firstToRemove; toRemove != m_childChange.nextSiblingElement; toRemove = toRemove->nextElementSibling()) {
         function(*toRemove);
@@ -263,7 +263,7 @@ void ChildChangeInvalidation::traverseAddedElements(Function&& function)
         return;
 
     auto* newElement = [&] {
-        auto* previous = m_childChange.previousSiblingElement;
+        auto* previous = m_childChange.previousSiblingElement.get();
         auto* candidate = previous ? ElementTraversal::nextSibling(*previous) : ElementTraversal::firstChild(parentElement());
         if (candidate == m_childChange.nextSiblingElement)
             candidate = nullptr;
@@ -289,10 +289,10 @@ void ChildChangeInvalidation::traverseRemainingExistingSiblings(Function&& funct
     if (m_childChange.isInsertion() && m_childChange.type == ContainerNode::ChildChange::Type::AllChildrenReplaced)
         return;
 
-    for (auto* child = m_childChange.previousSiblingElement; child; child = child->previousElementSibling())
+    for (auto* child = m_childChange.previousSiblingElement.get(); child; child = child->previousElementSibling())
         function(*child);
 
-    for (auto* child = m_childChange.nextSiblingElement; child; child = child->nextElementSibling())
+    for (auto* child = m_childChange.nextSiblingElement.get(); child; child = child->nextElementSibling())
         function(*child);
 }
 
@@ -386,8 +386,8 @@ void ChildChangeInvalidation::invalidateAfterFinishedParsingChildren(Element& pa
 void ChildChangeInvalidation::checkForSiblingStyleChanges()
 {
     auto& parent = parentElement();
-    auto* elementBeforeChange = m_childChange.previousSiblingElement;
-    auto* elementAfterChange = m_childChange.nextSiblingElement;
+    auto* elementBeforeChange = m_childChange.previousSiblingElement.get();
+    auto* elementAfterChange = m_childChange.nextSiblingElement.get();
 
     // :first-child. In the parser callback case, we don't have to check anything, since we were right the first time.
     // In the DOM case, we only need to do something if |afterChange| is not 0.

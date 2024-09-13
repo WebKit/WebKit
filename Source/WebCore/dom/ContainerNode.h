@@ -85,9 +85,9 @@ public:
         enum class AffectsElements : uint8_t { Unknown, No, Yes };
 
         ChildChange::Type type;
-        Element* siblingChanged;
-        Element* previousSiblingElement;
-        Element* nextSiblingElement;
+        CheckedPtr<Element> siblingChanged;
+        CheckedPtr<Element> previousSiblingElement;
+        CheckedPtr<Element> nextSiblingElement;
         ChildChange::Source source;
         AffectsElements affectsElements;
 
