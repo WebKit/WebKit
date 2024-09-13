@@ -4190,6 +4190,8 @@ sub GenerateRuntimeEnableConditionalStringForExposeScope
       $wrapperType = "JSDedicatedWorkerGlobalScope";
     } elsif ($exposed eq "SharedWorker") {
       $wrapperType = "JSSharedWorkerGlobalScope";
+    } elsif ($exposed eq "ServiceWorker") {
+      $wrapperType = "JSServiceWorkerGlobalScope";
     } elsif ($exposed eq "ShadowRealm") {
       $wrapperType = "JSShadowRealmGlobalScopeBase";
     } elsif ($exposed eq "Worklet") {
