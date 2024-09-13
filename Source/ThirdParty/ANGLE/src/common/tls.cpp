@@ -20,7 +20,6 @@
 #    include <wrl/async.h>
 #    include <wrl/client.h>
 
-using namespace std;
 using namespace Windows::Foundation;
 using namespace ABI::Windows::System::Threading;
 

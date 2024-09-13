@@ -38,8 +38,6 @@
 #import <WebKit/WebNSURLExtras.h>
 #import <wtf/Assertions.h>
 
-using namespace std;
-
 @interface NSURL (DRTExtras)
 - (NSString *)_drt_descriptionSuitableForTestResult;
 @end
@@ -195,9 +193,9 @@ BOOL canAuthenticateServerTrustAgainstProtectionSpace(NSString *host)
         return nil;
 
     auto newRequest = adoptNS([request mutableCopy]);
-    const set<string>& clearHeaders = gTestRunner->willSendRequestClearHeaders();
-    for (set<string>::const_iterator header = clearHeaders.begin(); header != clearHeaders.end(); ++header) {
-        auto nsHeader = adoptNS([[NSString alloc] initWithUTF8String:header->c_str()]);
+    const auto& clearHeaders = gTestRunner->willSendRequestClearHeaders();
+    for (auto& header : clearHeaders) {
+        auto nsHeader = adoptNS([[NSString alloc] initWithUTF8String:header.c_str()]);
         [newRequest setValue:nil forHTTPHeaderField:nsHeader.get()];
     }
     if (auto* destination = gTestRunner->redirectionDestinationForURL([[url absoluteString] UTF8String]))

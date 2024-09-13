@@ -78,7 +78,6 @@ class StringEnumeration;
  *    #include "unicode/numfmt.h"
  *    #include "unicode/unistr.h"
  *    #include "unicode/ustream.h"
- *    using namespace std;
  *    
  *    int main() {
  *        double myNumber = 7.0;
@@ -86,7 +85,7 @@ class StringEnumeration;
  *        UErrorCode success = U_ZERO_ERROR;
  *        NumberFormat* nf = NumberFormat::createInstance(success);
  *        nf->format(myNumber, myString);
- *        cout << " Example 1: " << myString << endl;
+ *        std::cout << " Example 1: " << myString << std::endl;
  *    }
  * \endcode
  * Note that there are additional factory methods within subclasses of

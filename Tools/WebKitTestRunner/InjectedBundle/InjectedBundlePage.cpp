@@ -60,8 +60,6 @@
 #include <wtf/text/cf/StringConcatenateCF.h>
 #endif
 
-using namespace std;
-
 namespace WTF {
 
 template<> class StringTypeAdapter<WKStringRef> {

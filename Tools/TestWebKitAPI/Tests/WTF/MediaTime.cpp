@@ -33,8 +33,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/MediaTime.h>
 
-using namespace std;
-
 namespace WTF {
 
 std::ostream& operator<<(std::ostream& out, const MediaTime& val)
@@ -165,10 +163,10 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime(6, 1), MediaTime(3, 1) * 2);
     EXPECT_EQ(MediaTime(0, 1), MediaTime(0, 1) * 2);
     EXPECT_EQ(MediaTime(int64_t(1) << 60, 1), MediaTime(int64_t(1) << 60, 2) * 2);
-    EXPECT_EQ(MediaTime::positiveInfiniteTime(), MediaTime(numeric_limits<int64_t>::max(), 1) * 2);
-    EXPECT_EQ(MediaTime::positiveInfiniteTime(), MediaTime(numeric_limits<int64_t>::min(), 1) * -2);
-    EXPECT_EQ(MediaTime::negativeInfiniteTime(), MediaTime(numeric_limits<int64_t>::max(), 1) * -2);
-    EXPECT_EQ(MediaTime::negativeInfiniteTime(), MediaTime(numeric_limits<int64_t>::min(), 1) * 2);
+    EXPECT_EQ(MediaTime::positiveInfiniteTime(), MediaTime(std::numeric_limits<int64_t>::max(), 1) * 2);
+    EXPECT_EQ(MediaTime::positiveInfiniteTime(), MediaTime(std::numeric_limits<int64_t>::min(), 1) * -2);
+    EXPECT_EQ(MediaTime::negativeInfiniteTime(), MediaTime(std::numeric_limits<int64_t>::max(), 1) * -2);
+    EXPECT_EQ(MediaTime::negativeInfiniteTime(), MediaTime(std::numeric_limits<int64_t>::min(), 1) * 2);
 
     // Constants
     EXPECT_EQ(MediaTime::zeroTime(), MediaTime(0, 1));
@@ -238,18 +236,18 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime::createWithDouble(-pow(2.0f, 64.0f)).toDouble(), -pow(2.0f, 64.0f));
     EXPECT_EQ(MediaTime::createWithDouble(pow(2.0, 63.0), 2).timeScale(), 1U);
     EXPECT_EQ(MediaTime::createWithDouble(pow(2.0, 63.0), 3).timeScale(), 1U);
-    EXPECT_EQ((MediaTime(numeric_limits<int64_t>::max(), 2) + MediaTime(numeric_limits<int64_t>::max(), 2)).timeScale(), 1U);
-    EXPECT_EQ((MediaTime(numeric_limits<int64_t>::min(), 2) - MediaTime(numeric_limits<int64_t>::max(), 2)).timeScale(), 1U);
-    EXPECT_EQ(MediaTime(numeric_limits<int64_t>::max(), 1) + MediaTime(numeric_limits<int64_t>::max(), 1), MediaTime::positiveInfiniteTime());
-    EXPECT_EQ(MediaTime(numeric_limits<int64_t>::min(), 1) + MediaTime(numeric_limits<int64_t>::min(), 1), MediaTime::negativeInfiniteTime());
-    EXPECT_EQ(MediaTime(numeric_limits<int64_t>::min(), 1) - MediaTime(numeric_limits<int64_t>::max(), 1), MediaTime::negativeInfiniteTime());
-    EXPECT_EQ(MediaTime(numeric_limits<int64_t>::max(), 1) - MediaTime(numeric_limits<int64_t>::min(), 1), MediaTime::positiveInfiniteTime());
-    EXPECT_EQ(MediaTime::createWithDouble(numeric_limits<double>::max()) + MediaTime::createWithDouble(numeric_limits<double>::max()), MediaTime::positiveInfiniteTime());
-    EXPECT_EQ(MediaTime::createWithDouble(numeric_limits<double>::lowest()) + MediaTime::createWithDouble(numeric_limits<double>::lowest()), MediaTime::negativeInfiniteTime());
-    EXPECT_EQ(MediaTime::createWithDouble(numeric_limits<double>::lowest()) - MediaTime::createWithDouble(numeric_limits<double>::max()), MediaTime::negativeInfiniteTime());
-    EXPECT_EQ(MediaTime::createWithDouble(numeric_limits<double>::max()) - MediaTime::createWithDouble(numeric_limits<double>::lowest()), MediaTime::positiveInfiniteTime());
-    EXPECT_NE(MediaTime::createWithDouble(numeric_limits<double>::max()), MediaTime::positiveInfiniteTime());
-    EXPECT_EQ(MediaTime::createWithDouble(numeric_limits<double>::max()) * 2, MediaTime::positiveInfiniteTime());
+    EXPECT_EQ((MediaTime(std::numeric_limits<int64_t>::max(), 2) + MediaTime(std::numeric_limits<int64_t>::max(), 2)).timeScale(), 1U);
+    EXPECT_EQ((MediaTime(std::numeric_limits<int64_t>::min(), 2) - MediaTime(std::numeric_limits<int64_t>::max(), 2)).timeScale(), 1U);
+    EXPECT_EQ(MediaTime(std::numeric_limits<int64_t>::max(), 1) + MediaTime(std::numeric_limits<int64_t>::max(), 1), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime(std::numeric_limits<int64_t>::min(), 1) + MediaTime(std::numeric_limits<int64_t>::min(), 1), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime(std::numeric_limits<int64_t>::min(), 1) - MediaTime(std::numeric_limits<int64_t>::max(), 1), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime(std::numeric_limits<int64_t>::max(), 1) - MediaTime(std::numeric_limits<int64_t>::min(), 1), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(std::numeric_limits<double>::max()) + MediaTime::createWithDouble(std::numeric_limits<double>::max()), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(std::numeric_limits<double>::lowest()) + MediaTime::createWithDouble(std::numeric_limits<double>::lowest()), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(std::numeric_limits<double>::lowest()) - MediaTime::createWithDouble(std::numeric_limits<double>::max()), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(std::numeric_limits<double>::max()) - MediaTime::createWithDouble(std::numeric_limits<double>::lowest()), MediaTime::positiveInfiniteTime());
+    EXPECT_NE(MediaTime::createWithDouble(std::numeric_limits<double>::max()), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime::createWithDouble(std::numeric_limits<double>::max()) * 2, MediaTime::positiveInfiniteTime());
 
     // Rounding
     EXPECT_EQ(MediaTime(1, 1).toTimeScale(2).timeValue(), 2);
@@ -313,9 +311,9 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime(-3, 2).toTimeScale(1, MediaTime::RoundingFlags::TowardNegativeInfinity).timeValue(), -2);
     EXPECT_EQ(MediaTime(-151, 100).toTimeScale(1, MediaTime::RoundingFlags::TowardNegativeInfinity).timeValue(), -2);
     EXPECT_EQ(MediaTime(-149, 100).toTimeScale(1, MediaTime::RoundingFlags::TowardNegativeInfinity).timeValue(), -2);
-    EXPECT_EQ(MediaTime(numeric_limits<int64_t>::max(), 1).toTimeScale(2), MediaTime::positiveInfiniteTime());
-    EXPECT_EQ(MediaTime(numeric_limits<int64_t>::min(), 1).toTimeScale(2), MediaTime::negativeInfiniteTime());
-    int64_t maxInt32 = numeric_limits<int32_t>::max();
+    EXPECT_EQ(MediaTime(std::numeric_limits<int64_t>::max(), 1).toTimeScale(2), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime(std::numeric_limits<int64_t>::min(), 1).toTimeScale(2), MediaTime::negativeInfiniteTime());
+    int64_t maxInt32 = std::numeric_limits<int32_t>::max();
     EXPECT_EQ(MediaTime(maxInt32 * 2, 1).toTimeScale(2).timeValue(), maxInt32 * 4);
     int64_t bigInt = 1LL << 62;
     EXPECT_EQ(MediaTime(bigInt, 1U << 31).toTimeScale(1U << 29).timeValue(), bigInt / 4);

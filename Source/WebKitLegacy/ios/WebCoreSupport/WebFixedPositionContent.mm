@@ -47,7 +47,6 @@
 #import <algorithm>
 
 using namespace WebCore;
-using namespace std;
 
 static Lock webFixedPositionContentDataLock;
 

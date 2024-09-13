@@ -62,11 +62,9 @@
 #include <unistd.h>
 #endif
 
+namespace WTR {
 using namespace JSC;
 using namespace WebKit;
-using namespace std;
-
-namespace WTR {
 
 static void postPageMessage(const char* name, const WKRetainPtr<WKTypeRef>& body)
 {
