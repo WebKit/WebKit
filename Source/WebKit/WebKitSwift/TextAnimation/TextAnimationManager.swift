@@ -38,7 +38,6 @@ import WebKitSwift
         super.init()
         
         self.delegate = delegate
-        self.effectView.clipsToBounds = true
         delegate.containingViewForTextAnimationType().addSubview(self.effectView)
     }
     
