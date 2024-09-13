@@ -78,6 +78,8 @@ static auto surfaceNameToNSString(IOSurface::Name name)
         return @"WKWebView Snapshot (shareable)";
     case IOSurface::Name::ShareableLocalSnapshot:
         return @"WKWebView Snapshot (shareable local)";
+    case IOSurface::Name::WebGPU:
+        return @"WebKit WebGPU";
     }
 }
 
