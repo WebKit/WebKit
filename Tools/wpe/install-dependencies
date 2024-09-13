@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 # This script needs to be run with root rights.
 if [ $UID -ne 0 ]; then
     sudo $0
