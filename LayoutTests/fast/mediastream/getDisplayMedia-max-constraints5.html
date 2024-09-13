@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>getDisplayMedia track support of max constraints</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="resources/getDisplayMedia-utils.js"></script>
+    </head>
+    <body>
+        <video id=video autoplay playsinline></video>
+        <script>
+async function validateSize(test, stream, width, height, name)
+{
+    video.srcObject = stream;
+    await video.play();
+
+    const videoFrame = await new Promise((resolve, reject) => video.requestVideoFrameCallback(() => {
+        resolve(new VideoFrame(video));
+        setTimeout(() => reject("videoFrame timeout"), 5000);
+    }));
+    test.add_cleanup(() => videoFrame.close());
+
+    assert_equals(videoFrame.codedWidth, width, name + " width");
+    assert_equals(videoFrame.codedHeight, height, name + " height");
+}
+
+promise_test(async (test) => {
+    const stream = await callGetDisplayMedia({ video: { height: { max: 2000 }, width : { max : 3000 } } });
+    const streamClone = stream.clone();
+
+    await validateSize(test, stream, 1920, 1080, "video original")
+    await validateSize(test, streamClone, 1920, 1080, "video clone")
+
+    const promise = new Promise((resolve, reject) => {
+        streamClone.getVideoTracks()[0].onconfigurationchange = resolve
+        setTimeout(() => reject("onconfigurationchange timeout"), 5000);
+    });
+
+    if (window.testRunner)
+         testRunner.triggerMockCaptureConfigurationChange(false, true);
+     await promise;
+
+    await validateSize(test, stream, 3000, 1687, "new video original")
+    await validateSize(test, streamClone, 3000, 1687, "new video clone")
+
+    const settings = stream.getVideoTracks()[0].getSettings();
+    const cloneSettings = streamClone.getVideoTracks()[0].getSettings();
+    assert_equals(cloneSettings.width, settings.width, "width");
+    assert_equals(cloneSettings.height, settings.height, "height");
+}, "getDisplayMedia stream clone should copy its video constraints");
+        </script>
+    </body>
+</html>

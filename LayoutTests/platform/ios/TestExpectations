@@ -2872,6 +2872,9 @@ fast/mediastream/screencapture-user-gesture.html [ Skip ]
 fast/mediastream/getDisplayMedia-max-constraints1.html [ Skip ]
 fast/mediastream/getDisplayMedia-max-constraints2.html [ Skip ]
 fast/mediastream/getDisplayMedia-max-constraints3.html [ Skip ]
+fast/mediastream/getDisplayMedia-max-constraints5.html [ Skip ]
+webkit.org/b/263466 fast/mediastream/getDisplayMedia-max-constraints4.html [ Failure ]
+
 fast/mediastream/getDisplayMedia-size.html [ Skip ]
 
 webkit.org/b/177401 webrtc/captureCanvas-webrtc.html [ Pass Timeout Failure ]
@@ -4585,8 +4588,6 @@ imported/w3c/web-platform-tests/css/css-transforms/transform-table-011.html [ Im
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-011.html [ ImageOnlyFailure ]
 
 webkit.org/b/263136 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-011.html [ ImageOnlyFailure ]
-
-webkit.org/b/263466 fast/mediastream/getDisplayMedia-max-constraints4.html [ Failure ]
 
 webkit.org/b/263471 fast/forms/ios/keydown-in-hidden-contenteditable-with-inputmode-none.html [ Pass Failure ]
 
