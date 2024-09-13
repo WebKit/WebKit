@@ -375,6 +375,18 @@ void WTFCrash()
 }
 #endif // !defined(NDEBUG) || !(OS(DARWIN) || PLATFORM(PLAYSTATION))
 
+#if ENABLE(CONJECTURE_ASSERT)
+int wtfConjectureAssertIsEnabled = 0;
+
+void WTFCrashDueToConjectureAssert(const char* file, int line, const char* function, const char* assertion)
+{
+    printf_stderr_common("CONJECTURE ASSERTION FAILED: %s\n", assertion);
+    printCallSite(file, line, function);
+    WTFReportBacktrace();
+    CRASH();
+}
+#endif
+
 void WTFCrashWithSecurityImplication()
 {
     CRASH();

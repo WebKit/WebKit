@@ -332,6 +332,11 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrash(void);
 #define CRASH_WITH_SECURITY_IMPLICATION() WTFCrashWithSecurityImplication()
 #endif
 
+#if ENABLE(CONJECTURE_ASSERT)
+extern WTF_EXPORT_PRIVATE int wtfConjectureAssertIsEnabled;
+WTF_EXPORT_PRIVATE NEVER_INLINE NO_RETURN_DUE_TO_CRASH void WTFCrashDueToConjectureAssert(const char* file, int line, const char* function, const char* assertion);
+#endif
+
 WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(void);
 
 #ifdef __cplusplus
@@ -758,16 +763,26 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
    about the code. We want to be able to land these in the code base for some time to enable
    extended testing.
 
-   If the conjecture is proven false it, the CONJECTURE_ASSERT should either be removed or
+   If the conjecture is proven false, then the CONJECTURE_ASSERT should either be removed or
    updated to test a new conjecture. If the conjecture is proven true, the CONJECTURE_ASSERT
    should either be promoted to an ASSERT or RELEASE_ASSERT as appropriate, or removed if
    deemed of low value.
 
    The number of CONJECTURE_ASSERTs should not be growing unboundedly, and they should not
    stay in the codebase perpetually.
- */
+
+   There is no EWS coverage for CONJECTURE_ASSERTs. So, if you add one, you are responsible
+   for making sure it builds with ENABLE_CONJECTURE_ASSERT set to 1, and for running tests on
+   your build to make sure that the assertion is not immediately failing.
+
+   To run with CONJECTURE_ASSERTs enabled, you also need to define the environmental variable
+   ENABLE_WEBKIT_CONJECTURE_ASSERT. Otherwise, the assertion will not be tested.
+*/
 #if ENABLE(CONJECTURE_ASSERT)
-#define CONJECTURE_ASSERT(assertion, ...) RELEASE_ASSERT(assertion, __VA_ARGS__)
+#define CONJECTURE_ASSERT(assertion, ...) do { \
+        if (UNLIKELY(wtfConjectureAssertIsEnabled && !(assertion))) \
+            WTFCrashDueToConjectureAssert(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
+    } while (false)
 #else
 #define CONJECTURE_ASSERT(assertion, ...)
 #endif

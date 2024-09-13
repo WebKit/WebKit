@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -500,6 +500,9 @@ void initialize()
 {
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
+#if ENABLE(CONJECTURE_ASSERT)
+        wtfConjectureAssertIsEnabled = !!getenv("ENABLE_WEBKIT_CONJECTURE_ASSERT");
+#endif
         setPermissionsOfConfigPage();
         Config::initialize();
 #if USE(TZONE_MALLOC)
