@@ -7433,7 +7433,6 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form-requ
 imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/ [ Skip ]
 
 # These failures include UUIDs that change every run.
-imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-location-reload.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-location-replace-cross-origin.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-replace-same-document.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-replace.html [ Failure ]
@@ -7445,7 +7444,6 @@ imported/w3c/web-platform-tests/navigation-api/navigation-methods/back-forward-m
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-state-repeated-await.html [ Timeout Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-204-205-download.html [ Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-detach-in-onnavigate.html [ Crash Pass Failure ]
-imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-rejection-order-pagehide-unserializablestate.html [ Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/location-href-intercept-reentrant.html?currententrychange [ Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/location-href-intercept-reentrant.html?no-currententrychange [ Failure Pass ]
 imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/location-href-intercept-reject.html?currententrychange [ Failure Pass ]

@@ -787,7 +787,7 @@ static AtomString extractContentLanguageFromHeader(const String& header)
     return StringView(header).left(commaIndex).trim(isASCIIWhitespace<UChar>).toAtomString();
 }
 
-void FrameLoader::didBeginDocument(bool dispatch)
+void FrameLoader::didBeginDocument(bool dispatch, LocalDOMWindow* previousWindow)
 {
     m_needsClear = true;
     m_isComplete = false;
@@ -849,7 +849,8 @@ void FrameLoader::didBeginDocument(bool dispatch)
         navigationType = m_documentLoader->triggeringAction().navigationAPIType();
     }
 
-    updateNavigationAPIEntries(navigationType);
+    if (document->settings().navigationAPIEnabled() && document->domWindow() && !document->protectedSecurityOrigin()->isOpaque())
+        document->domWindow()->protectedNavigation()->initializeForNewWindow(navigationType, previousWindow);
 
     frame->checkedHistory()->restoreDocumentState();
 }
@@ -1440,10 +1441,30 @@ void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, Ref
         }
     };
 
-    if (request.resourceRequest().httpMethod() == "POST"_s)
-        loadPostRequest(WTFMove(request), referrer, loadType, event, WTFMove(formState), WTFMove(completionHandler));
-    else
-        loadURL(WTFMove(request), referrer, loadType, event, WTFMove(formState), WTFMove(privateClickMeasurement), WTFMove(completionHandler));
+    auto finishLoadFrameRequest = [referrer, event, loadType] (Ref<LocalFrame>&& frame, FrameLoadRequest&& request, RefPtr<FormState>&& formState, std::optional<PrivateClickMeasurement>&& privateClickMeasurement, CompletionHandler<void()>&& completionHandler) mutable {
+        if (request.resourceRequest().httpMethod() == "POST"_s)
+            frame->checkedLoader()->loadPostRequest(WTFMove(request), referrer, loadType, event, WTFMove(formState), WTFMove(completionHandler));
+        else
+            frame->checkedLoader()->loadURL(WTFMove(request), referrer, loadType, event, WTFMove(formState), WTFMove(privateClickMeasurement), WTFMove(completionHandler));
+    };
+
+    if (loadType == FrameLoadType::Reload) {
+        if (m_frame->document() && m_frame->document()->settings().navigationAPIEnabled()) {
+            if (RefPtr domWindow = frame->document()->domWindow()) {
+                RefPtr<SerializedScriptValue> stateObject;
+                if (RefPtr currentItem = frame->history().currentItem())
+                    stateObject = currentItem->navigationAPIStateObject();
+                if (!dispatchNavigateEvent(url, loadType, request.downloadAttribute(), request.navigationHistoryBehavior(), false, formState.get(), stateObject.get()))
+                    return;
+                if (!frame->page())
+                    return;
+                finishLoadFrameRequest(WTFMove(frame), WTFMove(request), WTFMove(formState), WTFMove(privateClickMeasurement), WTFMove(completionHandler));
+            }
+            return;
+        }
+    }
+
+    finishLoadFrameRequest(WTFMove(frame), WTFMove(request), WTFMove(formState), WTFMove(privateClickMeasurement), WTFMove(completionHandler));
 }
 
 static ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToApply(LocalFrame& currentFrame, InitiatedByMainFrame initiatedByMainFrame, ShouldOpenExternalURLsPolicy propagatedPolicy)
@@ -1580,13 +1601,13 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
 
     bool sameURL = shouldTreatURLAsSameAsCurrent(frameLoadRequest.protectedRequesterSecurityOrigin().ptr(), newURL);
     const String& httpMethod = request.httpMethod();
-    
+
     // Make sure to do scroll to fragment processing even if the URL is
     // exactly the same so pages with '#' links and DHTML side effects
     // work properly.
     if (shouldPerformFragmentNavigation(isFormSubmission, httpMethod, newLoadType, newURL)) {
 
-        if (!dispatchNavigateEvent(newURL, newLoadType, action, historyHandling, true))
+        if (!dispatchNavigateEvent(newURL, newLoadType, action.downloadAttribute(), historyHandling, true))
             return;
 
         oldDocumentLoader->setTriggeringAction(WTFMove(action));
@@ -1600,8 +1621,8 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
         return;
     }
 
-    if (isSameOrigin) {
-        if (!dispatchNavigateEvent(newURL, newLoadType, action, historyHandling, false))
+    if (isSameOrigin && newLoadType != FrameLoadType::Reload) {
+        if (!dispatchNavigateEvent(newURL, newLoadType, action.downloadAttribute(), historyHandling, false))
             return;
     }
 
@@ -3474,7 +3495,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
     }
 
     if (request.requesterSecurityOrigin().isSameOriginDomain(frame->document()->securityOrigin())) {
-        if (!dispatchNavigateEvent(url, loadType, action, request.navigationHistoryBehavior(), false, formState.get()))
+        if (!dispatchNavigateEvent(url, loadType, action.downloadAttribute(), request.navigationHistoryBehavior(), false, formState.get()))
             return completionHandler();
     }
 
@@ -4207,7 +4228,7 @@ RefPtr<Frame> FrameLoader::findFrameForNavigation(const AtomString& name, Docume
     return frame;
 }
 
-bool FrameLoader::dispatchNavigateEvent(const URL& newURL, FrameLoadType loadType, const NavigationAction& action, NavigationHistoryBehavior historyHandling, bool isSameDocument, FormState* formState)
+bool FrameLoader::dispatchNavigateEvent(const URL& newURL, FrameLoadType loadType, const AtomString& downloadAttribute, NavigationHistoryBehavior historyHandling, bool isSameDocument, FormState* formState, SerializedScriptValue* classicHistoryAPIState)
 {
     RefPtr document = m_frame->document();
     if (!document || !document->settings().navigationAPIEnabled())
@@ -4216,7 +4237,7 @@ bool FrameLoader::dispatchNavigateEvent(const URL& newURL, FrameLoadType loadTyp
     if (!window)
         return true;
     // Download events are handled later in PolicyChecker::checkNavigationPolicy().
-    if (!action.downloadAttribute().isNull())
+    if (!downloadAttribute.isNull())
         return true;
     if (!isSameDocument && !newURL.hasFetchScheme())
         return true;
@@ -4226,7 +4247,7 @@ bool FrameLoader::dispatchNavigateEvent(const URL& newURL, FrameLoadType loadTyp
     if (navigationType == NavigationNavigationType::Traverse)
         return true;
 
-    return window->protectedNavigation()->dispatchPushReplaceReloadNavigateEvent(newURL, navigationType, isSameDocument, formState);
+    return window->protectedNavigation()->dispatchPushReplaceReloadNavigateEvent(newURL, navigationType, isSameDocument, formState, classicHistoryAPIState);
 }
 
 void FrameLoader::loadSameDocumentItem(HistoryItem& item)
@@ -4812,50 +4833,6 @@ RefPtr<DocumentLoader> FrameLoader::loaderForWebsitePolicies(CanIncludeCurrentDo
     if (!loader && canIncludeCurrentDocumentLoader == CanIncludeCurrentDocumentLoader::Yes)
         loader = documentLoader();
     return loader;
-}
-
-void FrameLoader::updateNavigationAPIEntries(std::optional<NavigationNavigationType> navigationType)
-{
-    if (!m_frame->document() || !m_frame->document()->settings().navigationAPIEnabled())
-        return;
-    RefPtr domWindow = m_frame->document()->domWindow();
-    if (!domWindow)
-        return;
-    RefPtr page = m_frame->page();
-    if (!page)
-        return;
-    RefPtr currentItem = m_frame->history().currentItem();
-    if (!currentItem)
-        return;
-
-    // https://html.spec.whatwg.org/multipage/browsing-the-web.html#getting-session-history-entries-for-the-navigation-api
-    Vector<Ref<HistoryItem>> entriesForNavigationAPI;
-    entriesForNavigationAPI.append(*currentItem);
-
-    auto rawEntries = page->checkedBackForward()->allItems();
-    auto startingIndex = rawEntries.find(*currentItem);
-    if (startingIndex != notFound) {
-        Ref startingOrigin = SecurityOrigin::create(rawEntries[startingIndex]->url());
-
-        for (int64_t i = startingIndex - 1; i >= 0; i--) {
-            Ref item = rawEntries[i];
-
-            if (!SecurityOrigin::create(item->url())->isSameOriginAs(startingOrigin))
-                break;
-            entriesForNavigationAPI.insert(0, WTFMove(item));
-        }
-
-        for (size_t i = startingIndex + 1; i < rawEntries.size(); i++) {
-            Ref item = rawEntries[i];
-            if (!SecurityOrigin::create(item->url())->isSameOriginAs(startingOrigin))
-                break;
-            entriesForNavigationAPI.append(WTFMove(item));
-        }
-    }
-
-    RefPtr navigation = domWindow->protectedNavigation();
-    navigation->initializeEntries(*currentItem, entriesForNavigationAPI);
-    navigation->updateForActivation(m_frame->history().previousItem(), navigationType);
 }
 
 } // namespace WebCore

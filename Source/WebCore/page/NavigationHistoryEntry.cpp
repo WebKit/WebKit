@@ -40,12 +40,21 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NavigationHistoryEntry);
 
-NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, Ref<HistoryItem>&& historyItem)
+NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, Ref<HistoryItem>&& historyItem, String urlString, RefPtr<SerializedScriptValue>&& state, WTF::UUID key, WTF::UUID id)
     : ContextDestructionObserver(context)
-    , m_urlString(historyItem->urlString())
-    , m_id(WTF::UUID::createVersion4())
+    , m_urlString(urlString)
+    , m_key(key)
+    , m_id(id)
+    , m_state(state)
     , m_associatedHistoryItem(WTFMove(historyItem))
 {
+}
+
+Ref<NavigationHistoryEntry> NavigationHistoryEntry::create(ScriptExecutionContext* context, const NavigationHistoryEntry& other)
+{
+    Ref historyItem = other.m_associatedHistoryItem;
+    RefPtr state = historyItem->navigationAPIStateObject();
+    return adoptRef(*new NavigationHistoryEntry(context, WTFMove(historyItem), other.m_urlString, WTFMove(state), other.m_key, other.m_id));
 }
 
 ScriptExecutionContext* NavigationHistoryEntry::scriptExecutionContext() const
@@ -110,15 +119,15 @@ JSC::JSValue NavigationHistoryEntry::getState(JSDOMGlobalObject& globalObject) c
     if (!document || !document->isFullyActive())
         return JSC::jsUndefined();
 
-    auto stateObject = m_associatedHistoryItem->navigationAPIStateObject();
-    if (!stateObject)
+    if (!m_state)
         return JSC::jsUndefined();
 
-    return stateObject->deserialize(globalObject, &globalObject, SerializationErrorMode::Throwing);
+    return m_state->deserialize(globalObject, &globalObject, SerializationErrorMode::Throwing);
 }
 
 void NavigationHistoryEntry::setState(RefPtr<SerializedScriptValue>&& state)
 {
+    m_state = state;
     m_associatedHistoryItem->setNavigationAPIStateObject(WTFMove(state));
 }
 

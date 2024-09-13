@@ -73,6 +73,7 @@ class FormSubmission;
 class FrameLoadRequest;
 class FrameNetworkingContext;
 class HistoryItem;
+class LocalDOMWindow;
 class LocalFrameLoaderClient;
 class NavigationAction;
 class NetworkingContext;
@@ -93,7 +94,6 @@ enum class UsedLegacyTLS : bool;
 enum class WasPrivateRelayed : bool;
 enum class IsMainResource : bool { No, Yes };
 enum class ShouldUpdateAppInitiatedValue : bool { No, Yes };
-enum class NavigationNavigationType : uint8_t;
 
 struct WindowFeatures;
 
@@ -241,7 +241,7 @@ public:
     void didExplicitOpen();
 
     // Callbacks from DocumentWriter
-    void didBeginDocument(bool dispatchWindowObjectAvailable);
+    void didBeginDocument(bool dispatchWindowObjectAvailable, LocalDOMWindow* previousWindow);
 
     void receivedFirstData();
 
@@ -457,10 +457,9 @@ private:
     void clearProvisionalLoadForPolicyCheck();
     bool hasOpenedFrames() const;
 
-    void updateNavigationAPIEntries(std::optional<NavigationNavigationType>);
     void updateRequestAndAddExtraFields(Frame&, ResourceRequest&, IsMainResource, FrameLoadType, ShouldUpdateAppInitiatedValue, IsServiceWorkerNavigationLoad, WillOpenInNewWindow, Document*);
 
-    bool dispatchNavigateEvent(const URL& newURL, FrameLoadType, const NavigationAction&, NavigationHistoryBehavior, bool isSameDocument, FormState* = nullptr);
+    bool dispatchNavigateEvent(const URL& newURL, FrameLoadType, const AtomString&, NavigationHistoryBehavior, bool isSameDocument, FormState* = nullptr, SerializedScriptValue* classicHistoryAPIState = nullptr);
 
     WeakRef<LocalFrame> m_frame;
     UniqueRef<LocalFrameLoaderClient> m_client;

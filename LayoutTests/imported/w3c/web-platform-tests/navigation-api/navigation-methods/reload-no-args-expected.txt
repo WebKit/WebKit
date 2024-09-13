@@ -1,4 +1,4 @@
 
 
-FAIL reload() variant with no state or info assert_true: expected true got false
+PASS reload() variant with no state or info
 
