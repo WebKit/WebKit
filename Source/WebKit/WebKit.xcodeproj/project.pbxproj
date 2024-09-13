@@ -6546,6 +6546,7 @@
 		7B904169254AFEA7006EEB8C /* RemoteGraphicsContextGL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGL.cpp; sourceTree = "<group>"; };
 		7B90416A254AFEA7006EEB8C /* RemoteGraphicsContextGL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGL.h; sourceTree = "<group>"; };
 		7B90416D2550108C006EEB8C /* RemoteGraphicsContextGLFunctionsGenerated.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLFunctionsGenerated.h; sourceTree = "<group>"; };
+		7B98A6D82C9452F40054BC62 /* ObjectIdentifierDomains.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectIdentifierDomains.h; sourceTree = "<group>"; };
 		7B9FC59628A28D13007570E7 /* PlatformUnifiedSource1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformUnifiedSource1.cpp; sourceTree = "<group>"; };
 		7B9FC59D28A28F88007570E7 /* libWebKitPlatform.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libWebKitPlatform.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B9FC5A228A2A0B5007570E7 /* WebKitPlatform.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitPlatform.xcconfig; sourceTree = "<group>"; };
@@ -9210,6 +9211,7 @@
 				86D1970829AE4E930083B077 /* NetworkProcessConnectionParameters.h */,
 				86D1970729AE4E8A0083B077 /* NetworkProcessConnectionParameters.serialization.in */,
 				5CD748B523C8EB190092A9B5 /* NetworkResourceLoadIdentifier.h */,
+				7B98A6D82C9452F40054BC62 /* ObjectIdentifierDomains.h */,
 				8657EE3928EDB8C500FF9B40 /* Pasteboard.serialization.in */,
 				7AFBD36E21E546E3005DBACB /* PersistencyUtils.cpp */,
 				7AFBD36D21E546E3005DBACB /* PersistencyUtils.h */,
