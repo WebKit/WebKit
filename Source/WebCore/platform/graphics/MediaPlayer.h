@@ -618,7 +618,7 @@ public:
     String elementId() const;
 
     CachedResourceLoader* cachedResourceLoader();
-    Ref<PlatformMediaResourceLoader> createResourceLoader();
+    Ref<PlatformMediaResourceLoader> mediaResourceLoader();
 
     void addAudioTrack(AudioTrackPrivate&);
     void addTextTrack(InbandTextTrackPrivate&);
@@ -809,6 +809,7 @@ private:
     bool m_initializingMediaEngine { false };
     DynamicRangeMode m_preferredDynamicRangeMode;
     PitchCorrectionAlgorithm m_pitchCorrectionAlgorithm { PitchCorrectionAlgorithm::BestAllAround };
+    RefPtr<PlatformMediaResourceLoader> m_mediaResourceLoader;
 
 #if ENABLE(MEDIA_SOURCE)
     ThreadSafeWeakPtr<MediaSourcePrivateClient> m_mediaSource;

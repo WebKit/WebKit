@@ -185,7 +185,6 @@ MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPla
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
 #endif
     , m_player(*player)
-    , m_mediaResourceLoader(player->createResourceLoader())
 #if PLATFORM(COCOA)
     , m_videoLayerManager(makeUniqueRef<VideoLayerManagerObjC>(logger(), logIdentifier()))
 #endif
@@ -1645,7 +1644,9 @@ void MediaPlayerPrivateRemote::requestResource(RemoteMediaResourceIdentifier rem
     assertIsMainRunLoop();
 
     ASSERT(!m_mediaResources.contains(remoteMediaResourceIdentifier));
-    auto resource = m_mediaResourceLoader->requestResource(WTFMove(request), options);
+
+    RefPtr player = m_player.get();
+    RefPtr resource = player ? player->mediaResourceLoader()->requestResource(WTFMove(request), options) : nullptr;
 
     if (!resource) {
         // FIXME: Get the error from MediaResourceLoader::requestResource.
@@ -1659,7 +1660,12 @@ void MediaPlayerPrivateRemote::requestResource(RemoteMediaResourceIdentifier rem
 
 void MediaPlayerPrivateRemote::sendH2Ping(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
 {
-    m_mediaResourceLoader->sendH2Ping(url, WTFMove(completionHandler));
+    RefPtr player = m_player.get();
+    if (!player) {
+        completionHandler(makeUnexpected(internalError(url)));
+        return;
+    }
+    player->mediaResourceLoader()->sendH2Ping(url, WTFMove(completionHandler));
 }
 
 void MediaPlayerPrivateRemote::removeResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)
