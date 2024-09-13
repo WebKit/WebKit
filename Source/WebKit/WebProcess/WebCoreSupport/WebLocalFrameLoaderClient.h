@@ -109,7 +109,7 @@ private:
     void dispatchDidPushStateWithinPage() final;
     void dispatchDidReplaceStateWithinPage() final;
     void dispatchDidPopStateWithinPage() final;
-    void didSameDocumentNavigationForFrameViaJSHistoryAPI(SameDocumentNavigationType);
+    void didSameDocumentNavigationForFrameViaJS(SameDocumentNavigationType);
     void dispatchWillClose() final;
     void dispatchDidStartProvisionalLoad() final;
     void dispatchDidReceiveTitle(const WebCore::StringWithDirection&) final;
