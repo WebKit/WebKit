@@ -388,7 +388,7 @@ public:
     static constexpr GPRReg nonArgGPR0 = X86Registers::r10; // regT5
     static constexpr GPRReg nonArgGPR1 = X86Registers::eax; // regT0
     static constexpr GPRReg returnValueGPR = X86Registers::eax; // regT0
-    static constexpr GPRReg returnValueGPR2 = X86Registers::edx; // regT1 or regT2
+    static constexpr GPRReg returnValueGPR2 = X86Registers::edx; // regT2
     static constexpr GPRReg nonPreservedNonReturnGPR = X86Registers::r10; // regT5
     static constexpr GPRReg nonPreservedNonArgumentGPR0 = X86Registers::r10; // regT5
     static constexpr GPRReg nonPreservedNonArgumentGPR1 = X86Registers::eax;

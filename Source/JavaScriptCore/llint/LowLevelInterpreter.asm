@@ -74,7 +74,7 @@
 #  - lr is defined on non-X86 architectures (ARM64, ARM64E, ARMv7, and CLOOP)
 #  and holds the return PC
 #
-#  - t0, t1, t2, t3, t4, and optionally t5, t6, and t7 are temporary registers that can get trashed on
+#  - t0, t1, t2, t3, t4, t5, and optionally t6 and t7 are temporary registers that can get trashed on
 #  calls, and are pairwise distinct registers. t4 holds the JS program counter, so use
 #  with caution in opcodes (actually, don't use it in opcodes at all, except as PC).
 #
@@ -526,8 +526,6 @@ macro llintOpWithProfile(opcodeName, opcodeStruct, fn)
         end)
     end)
 end
-
-const extraTempReg = t5
 
 # Constants for reasoning about value representation.
 const TagOffset = constexpr TagOffset
