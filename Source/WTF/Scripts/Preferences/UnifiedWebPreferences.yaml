@@ -4617,6 +4617,7 @@ MediaRecorderEnabled:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 MediaSessionCaptureToggleAPIEnabled:
   type: bool
