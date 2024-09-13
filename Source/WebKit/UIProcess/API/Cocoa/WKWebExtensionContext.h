@@ -90,7 +90,7 @@ typedef NS_ENUM(NSInteger, WKWebExtensionContextPermissionStatus) {
     WKWebExtensionContextPermissionStatusRequestedExplicitly =  1,
     WKWebExtensionContextPermissionStatusGrantedImplicitly   =  2,
     WKWebExtensionContextPermissionStatusGrantedExplicitly   =  3,
-} NS_SWIFT_NAME(WKWebExtensionContext.PermissionState) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+} NS_SWIFT_NAME(WKWebExtensionContext.PermissionStatus) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*! @abstract This notification is sent whenever a ``WKWebExtensionContext`` has newly granted permissions. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
@@ -330,7 +330,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @seealso permissionStatusForPermission:
  @seealso permissionStatusForPermission:inTab:
 */
-- (BOOL)hasPermission:(WKWebExtensionPermission)permission NS_SWIFT_UNAVAILABLE("Use tab version with nil");
+- (BOOL)hasPermission:(WKWebExtensionPermission)permission NS_SWIFT_NAME(hasPermission(_:));
 
 /*!
  @abstract Checks the specified permission against the currently granted permissions in a specific tab.
@@ -354,7 +354,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @seealso permissionStatusForMatchPattern:
  @seealso permissionStatusForMatchPattern:inTab:
  */
-- (BOOL)hasAccessToURL:(NSURL *)url NS_SWIFT_UNAVAILABLE("Use tab version with nil");
+- (BOOL)hasAccessToURL:(NSURL *)url NS_SWIFT_NAME(hasAccess(to:));
 
 /*!
  @abstract Checks the specified URL against the currently granted permission match patterns in a specific tab.
@@ -413,7 +413,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @seealso permissionStatusForPermission:inTab:
  @seealso hasPermission:
 */
-- (WKWebExtensionContextPermissionStatus)permissionStatusForPermission:(WKWebExtensionPermission)permission NS_SWIFT_UNAVAILABLE("Use tab version with nil");
+- (WKWebExtensionContextPermissionStatus)permissionStatusForPermission:(WKWebExtensionPermission)permission NS_SWIFT_NAME(permissionStatus(for:));
 
 /*!
  @abstract Checks the specified permission against the currently denied, granted, and requested permissions.
@@ -435,7 +435,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @seealso setPermissionStatus:forPermission:expirationDate:
  @seealso setPermissionStatus:forPermission:inTab:
 */
-- (void)setPermissionStatus:(WKWebExtensionContextPermissionStatus)status forPermission:(WKWebExtensionPermission)permission NS_SWIFT_UNAVAILABLE("Use expirationDate version with nil");
+- (void)setPermissionStatus:(WKWebExtensionContextPermissionStatus)status forPermission:(WKWebExtensionPermission)permission NS_SWIFT_NAME(setPermissionStatus(_:for:));
 
 /*!
  @abstract Sets the status of a permission with a specific expiration date.
@@ -457,7 +457,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @seealso permissionStatusForURL:inTab:
  @seealso hasAccessToURL:
 */
-- (WKWebExtensionContextPermissionStatus)permissionStatusForURL:(NSURL *)url NS_SWIFT_UNAVAILABLE("Use tab version with nil");
+- (WKWebExtensionContextPermissionStatus)permissionStatusForURL:(NSURL *)url NS_SWIFT_NAME(permissionStatus(for:));
 
 /*!
  @abstract Checks the specified URL against the currently denied, granted, and requested permission match patterns.
@@ -479,7 +479,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @seealso setPermissionStatus:forURL:expirationDate:
  @seealso setPermissionStatus:forURL:inTab:
 */
-- (void)setPermissionStatus:(WKWebExtensionContextPermissionStatus)status forURL:(NSURL *)url NS_SWIFT_UNAVAILABLE("Use expirationDate version with nil");
+- (void)setPermissionStatus:(WKWebExtensionContextPermissionStatus)status forURL:(NSURL *)url NS_SWIFT_NAME(setPermissionStatus(_:for:));
 
 /*!
  @abstract Sets the permission status of a URL with a distant future expiration date.
@@ -501,7 +501,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @seealso permissionStatusForMatchPattern:inTab:
  @seealso hasAccessToURL:inTab:
 */
-- (WKWebExtensionContextPermissionStatus)permissionStatusForMatchPattern:(WKWebExtensionMatchPattern *)pattern NS_SWIFT_UNAVAILABLE("Use tab version with nil");
+- (WKWebExtensionContextPermissionStatus)permissionStatusForMatchPattern:(WKWebExtensionMatchPattern *)pattern NS_SWIFT_NAME(permissionStatus(for:));
 
 /*!
  @abstract Checks the specified match pattern against the currently denied, granted, and requested permission match patterns.
@@ -523,7 +523,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @seealso setPermissionStatus:forMatchPattern:expirationDate:
  @seealso setPermissionStatus:forMatchPattern:inTab:
 */
-- (void)setPermissionStatus:(WKWebExtensionContextPermissionStatus)status forMatchPattern:(WKWebExtensionMatchPattern *)pattern NS_SWIFT_UNAVAILABLE("Use expirationDate version with nil");
+- (void)setPermissionStatus:(WKWebExtensionContextPermissionStatus)status forMatchPattern:(WKWebExtensionMatchPattern *)pattern NS_SWIFT_NAME(setPermissionStatus(_:for:));
 
 /*!
  @abstract Sets the status of a match pattern with a specific expiration date.
@@ -729,7 +729,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @seealso didOpenTab:
  @seealso openTabs
  */
-- (void)didCloseTab:(id <WKWebExtensionTab>)closedTab windowIsClosing:(BOOL)windowIsClosing NS_SWIFT_NAME(didCloseTab(_:windowIsClosing:));
+- (void)didCloseTab:(id <WKWebExtensionTab>)closedTab windowIsClosing:(BOOL)windowIsClosing NS_REFINED_FOR_SWIFT;
 
 /*!
  @abstract Should be called by the app when a tab is activated to notify only this specific extension.
@@ -738,7 +738,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion This method informs only the specific extension of the tab activation. If the intention is to inform all loaded
  extensions consistently, you should use the respective method on the extension controller instead.
  */
-- (void)didActivateTab:(id<WKWebExtensionTab>)activatedTab previousActiveTab:(nullable id<WKWebExtensionTab>)previousTab NS_SWIFT_NAME(didActivateTab(_:previousActiveTab:));
+- (void)didActivateTab:(id<WKWebExtensionTab>)activatedTab previousActiveTab:(nullable id<WKWebExtensionTab>)previousTab NS_REFINED_FOR_SWIFT;
 
 /*!
  @abstract Should be called by the app when tabs are selected to fire appropriate events with only this extension.
@@ -746,7 +746,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion This method informs only the specific extension that tabs have been selected. If the intention is to inform all loaded
  extensions consistently, you should use the respective method on the extension controller instead.
  */
-- (void)didSelectTabs:(NSSet<id <WKWebExtensionTab>> *)selectedTabs NS_SWIFT_NAME(didSelectTabs(_:));
+- (void)didSelectTabs:(NSArray<id <WKWebExtensionTab>> *)selectedTabs NS_SWIFT_NAME(didSelectTabs(_:));
 
 /*!
  @abstract Should be called by the app when tabs are deselected to fire appropriate events with only this extension.
@@ -754,7 +754,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @discussion This method informs only the specific extension that tabs have been deselected. If the intention is to inform all loaded
  extensions consistently, you should use the respective method on the extension controller instead.
  */
-- (void)didDeselectTabs:(NSSet<id <WKWebExtensionTab>> *)deselectedTabs NS_SWIFT_NAME(didDeselectTabs(_:));
+- (void)didDeselectTabs:(NSArray<id <WKWebExtensionTab>> *)deselectedTabs NS_SWIFT_NAME(didDeselectTabs(_:));
 
 /*!
  @abstract Should be called by the app when a tab is moved to fire appropriate events with only this extension.
@@ -765,7 +765,7 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  that a tab has been moved. If the intention is to inform all loaded extensions consistently, you should use the respective method on
  the extension controller instead.
  */
-- (void)didMoveTab:(id <WKWebExtensionTab>)movedTab fromIndex:(NSUInteger)index inWindow:(nullable id <WKWebExtensionWindow>)oldWindow NS_SWIFT_NAME(didMoveTab(_:from:in:));
+- (void)didMoveTab:(id <WKWebExtensionTab>)movedTab fromIndex:(NSUInteger)index inWindow:(nullable id <WKWebExtensionWindow>)oldWindow NS_REFINED_FOR_SWIFT;
 
 /*!
  @abstract Should be called by the app when a tab is replaced by another tab to fire appropriate events with only this extension.

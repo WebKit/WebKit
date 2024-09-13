@@ -173,7 +173,7 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 
 - (void)didOpenWindow:(id<WKWebExtensionWindow>)newWindow
 {
-    NSParameterAssert([newWindow conformsToProtocol:@protocol(WKWebExtensionWindow)]);
+    NSParameterAssert(newWindow != nil);
 
     for (auto& context : _webExtensionController->extensionContexts())
         [context->wrapper() didOpenWindow:newWindow];
@@ -181,7 +181,7 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 
 - (void)didCloseWindow:(id<WKWebExtensionWindow>)closedWindow
 {
-    NSParameterAssert([closedWindow conformsToProtocol:@protocol(WKWebExtensionWindow)]);
+    NSParameterAssert(closedWindow != nil);
 
     for (auto& context : _webExtensionController->extensionContexts())
         [context->wrapper() didCloseWindow:closedWindow];
@@ -189,16 +189,13 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 
 - (void)didFocusWindow:(id<WKWebExtensionWindow>)focusedWindow
 {
-    if (focusedWindow)
-        NSParameterAssert([focusedWindow conformsToProtocol:@protocol(WKWebExtensionWindow)]);
-
     for (auto& context : _webExtensionController->extensionContexts())
         [context->wrapper() didFocusWindow:focusedWindow];
 }
 
 - (void)didOpenTab:(id<WKWebExtensionTab>)newTab
 {
-    NSParameterAssert([newTab conformsToProtocol:@protocol(WKWebExtensionTab)]);
+    NSParameterAssert(newTab != nil);
 
     for (auto& context : _webExtensionController->extensionContexts())
         [context->wrapper() didOpenTab:newTab];
@@ -206,7 +203,7 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 
 - (void)didCloseTab:(id<WKWebExtensionTab>)closedTab windowIsClosing:(BOOL)windowIsClosing
 {
-    NSParameterAssert([closedTab conformsToProtocol:@protocol(WKWebExtensionTab)]);
+    NSParameterAssert(closedTab != nil);
 
     for (auto& context : _webExtensionController->extensionContexts())
         [context->wrapper() didCloseTab:closedTab windowIsClosing:windowIsClosing];
@@ -214,25 +211,23 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 
 - (void)didActivateTab:(id<WKWebExtensionTab>)activatedTab previousActiveTab:(nullable id<WKWebExtensionTab>)previousTab
 {
-    NSParameterAssert([activatedTab conformsToProtocol:@protocol(WKWebExtensionTab)]);
-    if (previousTab)
-        NSParameterAssert([previousTab conformsToProtocol:@protocol(WKWebExtensionTab)]);
+    NSParameterAssert(activatedTab != nil);
 
     for (auto& context : _webExtensionController->extensionContexts())
         [context->wrapper() didActivateTab:activatedTab previousActiveTab:previousTab];
 }
 
-- (void)didSelectTabs:(NSSet<id<WKWebExtensionTab>> *)selectedTabs
+- (void)didSelectTabs:(NSArray<id<WKWebExtensionTab>> *)selectedTabs
 {
-    NSParameterAssert([selectedTabs isKindOfClass:NSSet.class]);
+    NSParameterAssert([selectedTabs isKindOfClass:NSArray.class]);
 
     for (auto& context : _webExtensionController->extensionContexts())
         [context->wrapper() didSelectTabs:selectedTabs];
 }
 
-- (void)didDeselectTabs:(NSSet<id<WKWebExtensionTab>> *)deselectedTabs
+- (void)didDeselectTabs:(NSArray<id<WKWebExtensionTab>> *)deselectedTabs
 {
-    NSParameterAssert([deselectedTabs isKindOfClass:NSSet.class]);
+    NSParameterAssert([deselectedTabs isKindOfClass:NSArray.class]);
 
     for (auto& context : _webExtensionController->extensionContexts())
         [context->wrapper() didDeselectTabs:deselectedTabs];
@@ -240,9 +235,7 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 
 - (void)didMoveTab:(id<WKWebExtensionTab>)movedTab fromIndex:(NSUInteger)index inWindow:(id<WKWebExtensionWindow>)oldWindow
 {
-    NSParameterAssert([movedTab conformsToProtocol:@protocol(WKWebExtensionTab)]);
-    if (oldWindow)
-        NSParameterAssert([oldWindow conformsToProtocol:@protocol(WKWebExtensionWindow)]);
+    NSParameterAssert(movedTab != nil);
 
     for (auto& context : _webExtensionController->extensionContexts())
         [context->wrapper() didMoveTab:movedTab fromIndex:index inWindow:oldWindow];
@@ -250,8 +243,8 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 
 - (void)didReplaceTab:(id<WKWebExtensionTab>)oldTab withTab:(id<WKWebExtensionTab>)newTab
 {
-    NSParameterAssert([oldTab conformsToProtocol:@protocol(WKWebExtensionTab)]);
-    NSParameterAssert([newTab conformsToProtocol:@protocol(WKWebExtensionTab)]);
+    NSParameterAssert(oldTab != nil);
+    NSParameterAssert(newTab != nil);
 
     for (auto& context : _webExtensionController->extensionContexts())
         [context->wrapper() didReplaceTab:oldTab withTab:newTab];
@@ -259,7 +252,7 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 
 - (void)didChangeTabProperties:(WKWebExtensionTabChangedProperties)properties forTab:(id<WKWebExtensionTab>)changedTab
 {
-    NSParameterAssert([changedTab conformsToProtocol:@protocol(WKWebExtensionTab)]);
+    NSParameterAssert(changedTab != nil);
 
     for (auto& context : _webExtensionController->extensionContexts())
         [context->wrapper() didChangeTabProperties:properties forTab:changedTab];
