@@ -1240,6 +1240,11 @@ fast/dom/HTMLInputElement/change-type-in-input-event-listener.html [ Skip ]
 webkit.org/b/227753 [ Debug ] fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Pass Failure ]
 webkit.org/b/224735 [ Release ] fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Skip ] # Crash
 
+fast/dom/HTMLLinkElement/link-stylesheet-load-once.html [ Failure ]
+fast/dom/Window/window-focus-self.html [ Failure ]
+fast/dom/Window/window-resize-and-move-arguments.html [ Failure ]
+fast/dom/Window/window-resize.html [ Failure ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Editing
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -1300,6 +1305,24 @@ webkit.org/b/173281 editing/style/inverse-color-filter.html [ Skip ]
 
 editing/input/press-tab-during-ime-composition.html [ Failure ]
 
+editing/selection/shift-click-live-range.html [ Failure ]
+
+editing/deleting/delete-ligature-003.html [ Failure ]
+editing/deleting/smart-delete-paragraph-001.html [ Failure ]
+editing/deleting/smart-delete-paragraph-002.html [ Failure ]
+editing/deleting/smart-delete-paragraph-004.html [ Failure ]
+editing/deleting/smart-delete-paragraph-005.html [ Failure ]
+editing/editability/user-modify-read-only-in-editable-view.html [ Failure ]
+editing/editability/user-select-all-in-editable-view.html [ Failure ]
+editing/selection/4895428-1.html [ Failure ]
+editing/selection/4895428-4.html [ Failure ]
+editing/selection/after-line-break.html [ Failure ]
+editing/selection/select-out-of-editable.html [ Failure ]
+editing/selection/shift-click-includes-existing-selection.html [ Failure ]
+editing/selection/shift-click.html [ Failure ]
+editing/selection/user-select-all-with-shift.html [ Failure ]
+editing/style/preserve-selection-direction.html [ Failure ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # forms
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -1328,10 +1351,12 @@ fast/forms/003.html [ Skip ] # Failure
 fast/forms/004.html [ Skip ] # Failure
 fast/forms/006.html [ Skip ] # Failure
 fast/forms/007.html [ Skip ] # Failure
+fast/forms/auto-fill-button/hide-auto-fill-strong-password-viewable-treatment-when-form-is-reset.html [ Skip ] # Missing
 fast/forms/auto-fill-button/input-auto-fill-button.html [ Skip ] # Failure
 fast/forms/auto-fill-button/input-contacts-auto-fill-button.html [ Skip ] # Failure
 fast/forms/auto-fill-button/input-credit-card-auto-fill-button.html [ Skip ] # Failure
 fast/forms/auto-fill-button/input-strong-password-auto-fill-button.html [ Skip ] # Failure
+fast/forms/auto-fill-button/input-strong-password-viewable.html [ Skip ] # Missing
 fast/forms/baseline-of-number-inputs.html [ Skip ] # ImageOnlyFailure
 fast/forms/basic-buttons.html [ Skip ] # Failure
 fast/forms/basic-inputs.html [ Skip ] # Failure
@@ -2061,7 +2086,6 @@ imported/w3c/web-platform-tests/hr-time [ Skip ]
 imported/w3c/web-platform-tests/html [ Skip ]
 imported/w3c/web-platform-tests/html-aam [ Skip ]
 imported/w3c/web-platform-tests/imagebitmap-renderingcontext [ Skip ]
-imported/w3c/web-platform-tests/images [ Skip ]
 imported/w3c/web-platform-tests/inert [ Skip ]
 imported/w3c/web-platform-tests/infrastructure [ Skip ]
 imported/w3c/web-platform-tests/interfaces [ Skip ]
@@ -4102,29 +4126,9 @@ editing/selection/user-select-all-with-shift-live-range.html [ Failure ]
 
 fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
 
-editing/selection/shift-click-live-range.html [ Failure ]
-
-editing/deleting/delete-ligature-003.html [ Failure ]
-editing/deleting/smart-delete-paragraph-001.html [ Failure ]
-editing/deleting/smart-delete-paragraph-002.html [ Failure ]
-editing/deleting/smart-delete-paragraph-004.html [ Failure ]
-editing/deleting/smart-delete-paragraph-005.html [ Failure ]
-editing/editability/user-modify-read-only-in-editable-view.html [ Failure ]
-editing/editability/user-select-all-in-editable-view.html [ Failure ]
-editing/selection/4895428-1.html [ Failure ]
-editing/selection/4895428-4.html [ Failure ]
-editing/selection/after-line-break.html [ Failure ]
-editing/selection/select-out-of-editable.html [ Failure ]
-editing/selection/shift-click-includes-existing-selection.html [ Failure ]
-editing/selection/shift-click.html [ Failure ]
-editing/selection/user-select-all-with-shift.html [ Failure ]
-editing/style/preserve-selection-direction.html [ Failure ]
 fast/canvas/canvas-pattern-from-modified-canvas.html [ Failure ]
 fast/constructors/event-source-caching.html [ Failure ]
-fast/dom/HTMLLinkElement/link-stylesheet-load-once.html [ Failure ]
-fast/dom/Window/window-focus-self.html [ Failure ]
-fast/dom/Window/window-resize-and-move-arguments.html [ Failure ]
-fast/dom/Window/window-resize.html [ Failure ]
+
 fast/events/5056619.html [ Failure ]
 fast/events/keydown-leftright-keys.html [ Failure ]
 fast/events/mouse-cursor-change.html [ Failure ]
