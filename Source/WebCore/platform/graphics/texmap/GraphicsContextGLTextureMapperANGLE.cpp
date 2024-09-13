@@ -180,7 +180,7 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLTextureMapperANGLE
 }
 
 #if ENABLE(VIDEO)
-bool GraphicsContextGLTextureMapperANGLE::copyTextureFromMedia(MediaPlayer&, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool)
+bool GraphicsContextGLTextureMapperANGLE::copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool)
 {
     // FIXME: Implement copy-free (or at least, software copy-free) texture transfer.
     return false;

@@ -137,9 +137,7 @@ public:
     RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
     void prepareForDisplay() final;
     void forceContextLost() final;
-#if ENABLE(VIDEO) && USE(AVFOUNDATION)
-    WebCore::GraphicsContextGLCV* asCV() final { return nullptr; }
-#endif
+
 private:
     RemoteGraphicsContextGLProxyCocoa(const WebCore::GraphicsContextGLAttributes& attributes, WTF::SerialFunctionDispatcher& dispatcher)
         : RemoteGraphicsContextGLProxy(attributes, dispatcher)

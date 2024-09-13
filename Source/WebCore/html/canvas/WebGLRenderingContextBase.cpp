@@ -165,7 +165,7 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(VIDEO)
 #include "VideoFrame.h"
 #endif
 
@@ -3349,8 +3349,10 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
         && type == GraphicsContextGL::UNSIGNED_BYTE
         && !level) {
         if (RefPtr player = source.player()) {
-            if (m_context->copyTextureFromMedia(*player, texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY))
+            if (RefPtr videoFrame = player->videoFrameForCurrentTime()) {
+                if (m_context->copyTextureFromVideoFrame(*videoFrame, texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY))
                 return { };
+            }
         }
     }
 
