@@ -31,6 +31,7 @@
 #include "IdentifierTypes.h"
 #include "SandboxExtension.h"
 #include "UseDownloadPlaceholder.h"
+#include "WebsiteDataStore.h"
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -56,7 +57,6 @@ namespace WebKit {
 
 class DownloadProxyMap;
 class WebPageProxy;
-class WebsiteDataStore;
 
 enum class AllowOverwrite : bool;
 
@@ -127,6 +127,8 @@ public:
 
 private:
     explicit DownloadProxy(DownloadProxyMap&, WebsiteDataStore&, API::DownloadClient&, const WebCore::ResourceRequest&, const FrameInfoData&, WebPageProxy*);
+
+    RefPtr<WebsiteDataStore> protectedDataStore() { return m_dataStore; }
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

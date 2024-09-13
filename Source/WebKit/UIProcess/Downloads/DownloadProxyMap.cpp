@@ -88,7 +88,7 @@ Ref<DownloadProxy> DownloadProxyMap::createDownloadProxy(WebsiteDataStore& dataS
         ASSERT(!m_downloadUIAssertion);
         ASSERT(!m_downloadNetworkingAssertion);
         m_downloadUIAssertion = ProcessAssertion::create(getCurrentProcessID(), "WebKit downloads"_s, ProcessAssertionType::UnboundedNetworking);
-        m_downloadNetworkingAssertion = ProcessAssertion::create(m_process, "WebKit downloads"_s, ProcessAssertionType::UnboundedNetworking);
+        m_downloadNetworkingAssertion = ProcessAssertion::create(protectedProcess().get(), "WebKit downloads"_s, ProcessAssertionType::UnboundedNetworking);
         RELEASE_LOG(ProcessSuspension, "UIProcess took 'WebKit downloads' assertions for UIProcess and NetworkProcess");
     }
 
