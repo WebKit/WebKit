@@ -2281,6 +2281,11 @@ std::optional<double> WebsiteDataStore::defaultTotalQuotaRatio()
 
 #endif // !PLATFORM(COCOA)
 
+Ref<WebCore::LocalWebLockRegistry> WebsiteDataStore::protectedWebLockRegistry()
+{
+    return m_webLockRegistry;
+}
+
 void WebsiteDataStore::renameOriginInWebsiteData(WebCore::SecurityOriginData&& oldOrigin, WebCore::SecurityOriginData&& newOrigin, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
 {
     protectedNetworkProcess()->renameOriginInWebsiteData(m_sessionID, oldOrigin, newOrigin, dataTypes, WTFMove(completionHandler));

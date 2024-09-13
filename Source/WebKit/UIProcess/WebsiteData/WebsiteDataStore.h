@@ -334,6 +334,7 @@ public:
 
     API::HTTPCookieStore& cookieStore();
     WebCore::LocalWebLockRegistry& webLockRegistry() { return m_webLockRegistry.get(); }
+    Ref<WebCore::LocalWebLockRegistry> protectedWebLockRegistry();
 
     void renameOriginInWebsiteData(WebCore::SecurityOriginData&&, WebCore::SecurityOriginData&&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);
     void originDirectoryForTesting(WebCore::ClientOrigin&&, OptionSet<WebsiteDataType>, CompletionHandler<void(const String&)>&&);
