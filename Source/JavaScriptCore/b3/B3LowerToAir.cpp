@@ -772,6 +772,26 @@ private:
         return Arg();
     }
 
+    Arg fpImm32(Value* value)
+    {
+        if (value->hasInt()) {
+            int64_t intValue = value->asInt();
+            if (Arg::isValidFPImm32Form(intValue))
+                return Arg::fpImm32(intValue);
+        }
+        return Arg();
+    }
+
+    Arg fpImm64(Value* value)
+    {
+        if (value->hasInt()) {
+            int64_t intValue = value->asInt();
+            if (Arg::isValidFPImm64Form(intValue))
+                return Arg::fpImm64(intValue);
+        }
+        return Arg();
+    }
+
     Arg zeroReg()
     {
         return Arg::zeroReg();
@@ -4512,13 +4532,21 @@ private:
             return;
         }
 
-        case ConstDouble:
+        case ConstDouble: {
+            if (isIdentical(m_value->asDouble(), 0.0)) {
+                append(MoveZeroToDouble, tmp(m_value));
+                return;
+            }
+            append(Move64ToDouble, Arg::fpImm64(bitwise_cast<uint64_t>(m_value->asDouble())), tmp(m_value));
+            return;
+        }
+
         case ConstFloat: {
-            // We expect that the moveConstants() phase has run, and any doubles referenced from
-            // stackmaps get fused.
-            RELEASE_ASSERT(m_value->opcode() == ConstFloat || isIdentical(m_value->asDouble(), 0.0));
-            RELEASE_ASSERT(m_value->opcode() == ConstDouble || isIdentical(m_value->asFloat(), 0.0f));
-            append(MoveZeroToDouble, tmp(m_value));
+            if (isIdentical(m_value->asFloat(), 0.0f)) {
+                append(MoveZeroToDouble, tmp(m_value));
+                return;
+            }
+            append(Move32ToFloat, Arg::fpImm32(bitwise_cast<uint32_t>(m_value->asFloat())), tmp(m_value));
             return;
         }
 

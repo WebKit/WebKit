@@ -1456,4 +1456,73 @@ void testNarrowLoadUpper()
     CHECK_EQ(compileAndRun<uint64_t>(proc, &value), 0x2000000030000000ULL);
 }
 
+void testConstDoubleMove()
+{
+    // FMOV
+    {
+        auto encode = [](uint64_t value) -> double {
+            constexpr unsigned E = 11;
+            constexpr unsigned F = 64 - E - 1;
+            uint64_t sign = (value & 0b10000000U) ? 1 : 0;
+            uint64_t upper = (value & 0b01000000U) ? 0b01111111100U : 0b10000000000U;
+            uint64_t exp = upper | ((value & 0b00110000U) >> 4);
+            uint64_t frac = (value & 0b1111U) << (F - 4);
+            return bitwise_cast<double>((sign << 63) | (exp << F) | frac);
+        };
+
+        for (uint8_t i = 0; i < UINT8_MAX; ++i) {
+            Procedure proc;
+            BasicBlock* root = proc.addBlock();
+            root->appendNewControlValue(proc, Return, Origin(), root->appendNew<ConstDoubleValue>(proc, Origin(), encode(i)));
+            CHECK_EQ(compileAndRun<double>(proc), encode(i));
+        }
+    }
+
+    // MOVI
+    {
+        auto encode = [](uint64_t value) -> uint64_t {
+            auto bits = [](bool flag) -> uint64_t {
+                return (flag) ? 0b11111111ULL : 0b00000000ULL;
+            };
+
+            return (bits(value & (1U << 7)) << 56)
+                | (bits(value & (1U << 6)) << 48)
+                | (bits(value & (1U << 5)) << 40)
+                | (bits(value & (1U << 4)) << 32)
+                | (bits(value & (1U << 3)) << 24)
+                | (bits(value & (1U << 2)) << 16)
+                | (bits(value & (1U << 1)) << 8)
+                | (bits(value & (1U << 0)) << 0);
+        };
+
+        for (uint8_t i = 0; i < UINT8_MAX; ++i) {
+            Procedure proc;
+            BasicBlock* root = proc.addBlock();
+            root->appendNewControlValue(proc, Return, Origin(), root->appendNew<ConstDoubleValue>(proc, Origin(), bitwise_cast<double>(encode(i))));
+            CHECK_EQ(bitwise_cast<uint64_t>(compileAndRun<double>(proc)), encode(i));
+        }
+    }
+}
+
+void testConstFloatMove()
+{
+    // FMOV
+    auto encode = [](uint64_t value) -> float {
+        constexpr unsigned E = 8;
+        constexpr unsigned F = 32 - E - 1;
+        uint32_t sign = (value & 0b10000000U) ? 1 : 0;
+        uint32_t upper = (value & 0b01000000U) ? 0b01111100U : 0b10000000U;
+        uint32_t exp = upper | ((value & 0b00110000U) >> 4);
+        uint32_t frac = (value & 0b1111U) << (F - 4);
+        return bitwise_cast<float>((sign << 31) | (exp << F) | frac);
+    };
+
+    for (uint8_t i = 0; i < UINT8_MAX; ++i) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        root->appendNewControlValue(proc, Return, Origin(), root->appendNew<ConstFloatValue>(proc, Origin(), encode(i)));
+        CHECK_EQ(compileAndRun<float>(proc), encode(i));
+    }
+}
+
 #endif // ENABLE(B3_JIT)

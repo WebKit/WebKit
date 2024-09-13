@@ -86,8 +86,7 @@ void AssemblyHelpers::decrementSuperSamplerCount()
 void AssemblyHelpers::purifyNaN(FPRReg fpr)
 {
     MacroAssembler::Jump notNaN = branchIfNotNaN(fpr);
-    static const double NaN = PNaN;
-    loadDouble(TrustedImmPtr(&NaN), fpr);
+    move64ToDouble(TrustedImm64(bitwise_cast<uint64_t>(PNaN)), fpr);
     notNaN.link(this);
 }
 

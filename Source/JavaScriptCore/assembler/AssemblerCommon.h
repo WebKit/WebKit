@@ -297,6 +297,42 @@ private:
     int m_value;
 };
 
+class ARM64FPImmediate {
+public:
+    static ARM64FPImmediate create64(uint64_t value)
+    {
+        uint8_t result = 0;
+        for (unsigned i = 0; i < sizeof(double); ++i) {
+            uint8_t slice = static_cast<uint8_t>(value >> (8 * i));
+            if (!slice)
+                continue;
+            if (slice == UINT8_MAX) {
+                result |= (1U << i);
+                continue;
+            }
+            return { };
+        }
+        return ARM64FPImmediate(result);
+    }
+
+    bool isValid() const { return m_value.has_value(); }
+    uint8_t value() const
+    {
+        ASSERT(isValid());
+        return m_value.value();
+    }
+
+private:
+    ARM64FPImmediate() = default;
+
+    ARM64FPImmediate(uint8_t value)
+        : m_value(value)
+    {
+    }
+
+    std::optional<uint8_t> m_value;
+};
+
 ALWAYS_INLINE bool isValidARMThumb2Immediate(int64_t value)
 {
     if (value < 0)

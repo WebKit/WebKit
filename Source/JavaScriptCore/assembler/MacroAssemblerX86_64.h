@@ -1213,8 +1213,7 @@ public:
     void absDouble(FPRegisterID src, FPRegisterID dst)
     {
         ASSERT(src != dst);
-        static constexpr double negativeZeroConstant = -0.0;
-        loadDouble(TrustedImmPtr(&negativeZeroConstant), dst);
+        move64ToDouble(TrustedImm64(bitwise_cast<int64_t>(-0.0)), dst);
         if (supportsAVX())
             m_assembler.vandnpd_rrr(src, dst, dst);
         else
@@ -5953,6 +5952,10 @@ public:
 
     void move32ToFloat(TrustedImm32 imm, FPRegisterID dest)
     {
+        if (!imm.m_value) {
+            moveZeroToFloat(dest);
+            return;
+        }
         move(imm, scratchRegister());
         if (supportsAVX())
             m_assembler.vmovd_rr(scratchRegister(), dest);
@@ -5970,6 +5973,10 @@ public:
 
     void move64ToDouble(TrustedImm64 imm, FPRegisterID dest)
     {
+        if (!imm.m_value) {
+            moveZeroToDouble(dest);
+            return;
+        }
         move(imm, scratchRegister());
         if (supportsAVX())
             m_assembler.vmovq_rr(scratchRegister(), dest);

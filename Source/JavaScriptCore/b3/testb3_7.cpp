@@ -1702,7 +1702,7 @@ static void testSimpleTuplePairUnused(unsigned first, int64_t second)
         jit.move(CCallHelpers::TrustedImm32(first), params[0].gpr());
 #if !CPU(ARM_THUMB2) // FIXME
         jit.move(CCallHelpers::TrustedImm64(second), params[1].gpr());
-        jit.moveDouble(CCallHelpers::Imm64(bitwise_cast<uint64_t>(0.0)), params[2].fpr());
+        jit.move64ToDouble(CCallHelpers::Imm64(bitwise_cast<uint64_t>(0.0)), params[2].fpr());
 #endif
     });
     Value* i32 = root->appendNew<Value>(proc, ZExt32, Origin(),

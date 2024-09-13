@@ -864,6 +864,9 @@ void run(const TestConfig* config)
     RUN(testFloatMaxMin());
     RUN(testDoubleMaxMin());
 
+    RUN(testConstDoubleMove());
+    RUN(testConstFloatMove());
+
     if (isX86()) {
         RUN(testBranchBitAndImmFusion(Identity, Int64, 1, Air::BranchTest32, Air::Arg::Tmp));
         RUN(testBranchBitAndImmFusion(Identity, Int64, 0xff, Air::BranchTest32, Air::Arg::Tmp));

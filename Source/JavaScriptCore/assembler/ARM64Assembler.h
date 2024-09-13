@@ -504,12 +504,36 @@ public:
     // immediate the remainder of the mantissa must be zero, and the high part
     // of the exponent must match the top bit retained, bar the highest bit
     // which must be its inverse.
-    static bool canEncodeFPImm(double d)
+    template<int datasize>
+    static bool canEncodeFPImm(uint64_t u64)
     {
-        // Discard the sign bit, the low two bits of the exponent & the highest
-        // four bits of the mantissa.
-        uint64_t masked = bitwise_cast<uint64_t>(d) & 0x7fc0ffffffffffffull;
-        return (masked == 0x3fc0000000000000ull) || (masked == 0x4000000000000000ull);
+        if constexpr (datasize == 64) {
+            // Discard the sign bit, the low two bits of the exponent & the highest
+            // four bits of the mantissa.
+            // sign 1 bit, exponent 11 bits, mantissa 52 bits
+            uint64_t masked = u64 & 0b0'11111111100'0000111111111111111111111111111111111111111111111111ULL;
+            if (masked == 0b0'01111111100'0000000000000000000000000000000000000000000000000000ULL)
+                return true;
+            if (masked == 0b0'10000000000'0000000000000000000000000000000000000000000000000000ULL)
+                return true;
+            return false;
+        } else if constexpr (datasize == 32) {
+            // sign 1 bit, exponent 8 bits, mantissa 23 bits
+            uint32_t masked = static_cast<uint32_t>(u64) & 0b0'11111100'00001111111111111111111U;
+            if (masked == 0b0'01111100'00000000000000000000000U)
+                return true;
+            if (masked == 0b0'10000000'00000000000000000000000U)
+                return true;
+            return false;
+        } else {
+            // sign 1 bit, exponent 5 bits, mantissa 10 bits
+            uint16_t masked = static_cast<uint16_t>(u64) & 0b0'11100'0000111111U;
+            if (masked == 0b0'01100'0000000000U)
+                return true;
+            if (masked == 0b0'10000'0000000000U)
+                return true;
+            return false;
+        }
     }
 
     template<int datasize>
@@ -524,11 +548,16 @@ public:
     }
 
 protected:
-    int encodeFPImm(double d)
+    template<int datasize>
+    int encodeFPImm(uint64_t u64)
     {
-        ASSERT(canEncodeFPImm(d));
-        uint64_t u64 = bitwise_cast<uint64_t>(d);
-        return (static_cast<int>(u64 >> 56) & 0x80) | (static_cast<int>(u64 >> 48) & 0x7f);
+        ASSERT(canEncodeFPImm<datasize>(u64));
+        if constexpr (datasize == 64)
+            return (static_cast<int>(u64 >> 56) & 0x80) | (static_cast<int>(u64 >> 48) & 0x7f);
+        else if constexpr (datasize == 32)
+            return (static_cast<int>(u64 >> 24) & 0x80) | (static_cast<int>(u64 >> 19) & 0x7f);
+        else
+            return (static_cast<int>(u64 >> 8) & 0x80) | (static_cast<int>(u64 >> 6) & 0x7f);
     }
 
     template<int datasize>
@@ -3043,7 +3072,7 @@ public:
     template<int datasize>
     ALWAYS_INLINE void fmov(FPRegisterID vd, FPRegisterID vn)
     {
-        CHECK_DATASIZE();
+        CHECK_DATASIZE_FP();
         insn(floatingPointDataProcessing1Source(DATASIZE, FPDataOp_FMOV, vn, vd));
     }
 
@@ -3062,10 +3091,10 @@ public:
     }
 
     template<int datasize>
-    ALWAYS_INLINE void fmov(FPRegisterID vd, double imm)
+    ALWAYS_INLINE void fmov(FPRegisterID vd, uint64_t imm)
     {
-        CHECK_DATASIZE();
-        insn(floatingPointImmediate(DATASIZE, encodeFPImm(imm), vd));
+        CHECK_DATASIZE_FP();
+        insn(floatingPointImmediate(DATASIZE, encodeFPImm<datasize>(imm), vd));
     }
 
     ALWAYS_INLINE void fmov_top(FPRegisterID vd, RegisterID rn)

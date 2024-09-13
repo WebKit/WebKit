@@ -1305,4 +1305,7 @@ void testVectorFmulByElementDouble();
 void testVectorExtractLane0Float();
 void testVectorExtractLane0Double();
 
+void testConstDoubleMove();
+void testConstFloatMove();
+
 #endif // ENABLE(B3_JIT)

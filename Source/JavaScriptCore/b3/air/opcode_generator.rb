@@ -229,7 +229,7 @@ def isGF(token)
 end
 
 def isKind(token)
-    token =~ /\A((Tmp)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(ZeroReg)|(SimpleAddr)|(Addr)|(ExtendedOffsetAddr)|(Index)|(PreIndex)|(PostIndex)|(RelCond)|(ResCond)|(DoubleCond)|(StatusCond)|(SIMDInfo))\Z/
+    token =~ /\A((Tmp)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(FPImm32)|(FPImm64)|(ZeroReg)|(SimpleAddr)|(Addr)|(ExtendedOffsetAddr)|(Index)|(PreIndex)|(PostIndex)|(RelCond)|(ResCond)|(DoubleCond)|(StatusCond)|(SIMDInfo))\Z/
 end
 
 def isArch(token)
@@ -303,7 +303,7 @@ class Parser
 
     def consumeKind
         result = token.string
-        parseError("Expected kind (Imm, BigImm, BitImm, BitImm64, ZeroReg, Tmp, SimpleAddr, Addr, ExtendedOffsetAddr, Index, PreIndex, PostIndex, RelCond, ResCond, DoubleCond, or StatusCond)") unless isKind(result)
+        parseError("Expected kind (Imm, BigImm, BitImm, BitImm64, FPImm32, FPImm64, ZeroReg, Tmp, SimpleAddr, Addr, ExtendedOffsetAddr, Index, PreIndex, PostIndex, RelCond, ResCond, DoubleCond, or StatusCond)") unless isKind(result)
         advance
         result
     end
@@ -471,7 +471,7 @@ class Parser
                         parseError("Form has wrong number of arguments for overload") unless kinds.length == signature.length
                         kinds.each_with_index {
                             | kind, index |
-                            if kind.name == "Imm" or kind.name == "BigImm" or kind.name == "BitImm" or kind.name == "BitImm64"
+                            if kind.name == "Imm" or kind.name == "BigImm" or kind.name == "BitImm" or kind.name == "BitImm64" or kind.name == "FPImm32" or kind.name == "FPImm64"
                                 if signature[index].role != "U"
                                     parseError("Form has an immediate for a non-use argument")
                                 end
@@ -1008,6 +1008,12 @@ writeH("OpcodeGenerated") {
                 when "BitImm64"
                     outp.puts "if (!Arg::isValidBitImm64Form(args[#{index}].value()))"
                     outp.puts "OPGEN_RETURN(false);"
+                when "FPImm32"
+                    outp.puts "if (!Arg::isValidFPImm32Form(args[#{index}].value()))"
+                    outp.puts "OPGEN_RETURN(false);"
+                when "FPImm64"
+                    outp.puts "if (!Arg::isValidFPImm64Form(args[#{index}].value()))"
+                    outp.puts "OPGEN_RETURN(false);"
                 when "SimpleAddr"
                     outp.puts "if (!args[#{index}].ptr().isGP())"
                     outp.puts "OPGEN_RETURN(false);"
@@ -1329,11 +1335,11 @@ writeH("OpcodeGenerated") {
                     else
                         outp.print "args[#{index}].fpr()"
                     end
-                when "Imm", "BitImm"
+                when "Imm", "BitImm", "FPImm32"
                     outp.print "args[#{index}].asTrustedImm32()"
                 when "BigImm"
                     outp.print "args[#{index}].asTrustedBigImm()"
-                when "BitImm64"
+                when "BitImm64", "FPImm64"
                     outp.print "args[#{index}].asTrustedImm64()"
                 when "ZeroReg"
                     outp.print "args[#{index}].asZeroReg()"
