@@ -72,7 +72,7 @@ RefPtr<WebCore::WebGPU::Texture> RemotePresentationContextProxy::getCurrentTextu
         if (sendResult != IPC::Error::NoError)
             return nullptr;
 
-        m_currentTexture = RemoteTextureProxy::create(root(), m_convertToBackingContext, identifier);
+        m_currentTexture = RemoteTextureProxy::create(protectedRoot(), m_convertToBackingContext, identifier);
     }
 
     return m_currentTexture;

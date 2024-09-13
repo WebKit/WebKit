@@ -47,20 +47,21 @@ class RemoteTextureProxy;
 class RemoteXRSubImageProxy final : public WebCore::WebGPU::XRSubImage {
     WTF_MAKE_TZONE_ALLOCATED(RemoteXRSubImageProxy);
 public:
-    static Ref<RemoteXRSubImageProxy> create(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteXRSubImageProxy> create(Ref<RemoteGPUProxy>&& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteXRSubImageProxy(parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteXRSubImageProxy(WTFMove(parent), convertToBackingContext, identifier));
     }
 
     virtual ~RemoteXRSubImageProxy();
 
     RemoteGPUProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent; }
+    Ref<RemoteGPUProxy> protectedRoot() { return m_parent; }
 
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteXRSubImageProxy(RemoteGPUProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteXRSubImageProxy(Ref<RemoteGPUProxy>&&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteXRSubImageProxy(const RemoteXRSubImageProxy&) = delete;
     RemoteXRSubImageProxy(RemoteXRSubImageProxy&&) = delete;
@@ -75,12 +76,12 @@ private:
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return root().streamClientConnection().sendSync(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->sendSync(WTFMove(message), backing());
     }
 
     WebGPUIdentifier m_backing;

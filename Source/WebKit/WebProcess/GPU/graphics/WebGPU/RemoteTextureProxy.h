@@ -43,9 +43,9 @@ class ConvertToBackingContext;
 class RemoteTextureProxy final : public WebCore::WebGPU::Texture {
     WTF_MAKE_TZONE_ALLOCATED(RemoteTextureProxy);
 public:
-    static Ref<RemoteTextureProxy> create(RemoteGPUProxy& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteTextureProxy> create(Ref<RemoteGPUProxy>&& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteTextureProxy(root, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteTextureProxy(WTFMove(root), convertToBackingContext, identifier));
     }
 
     virtual ~RemoteTextureProxy();
@@ -55,7 +55,7 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteTextureProxy(RemoteGPUProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteTextureProxy(Ref<RemoteGPUProxy>&&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteTextureProxy(const RemoteTextureProxy&) = delete;
     RemoteTextureProxy(RemoteTextureProxy&&) = delete;
@@ -67,7 +67,7 @@ private:
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
     }
 
     RefPtr<WebCore::WebGPU::TextureView> createView(const std::optional<WebCore::WebGPU::TextureViewDescriptor>&) final;
