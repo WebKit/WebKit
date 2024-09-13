@@ -1037,7 +1037,6 @@ css/parser/CSSPropertyParserConsumer+Number.cpp
 css/parser/CSSPropertyParserConsumer+Percent.cpp
 css/parser/CSSPropertyParserConsumer+Position.cpp
 css/parser/CSSPropertyParserConsumer+Primitives.cpp
-css/parser/CSSPropertyParserConsumer+RawResolver.cpp
 css/parser/CSSPropertyParserConsumer+RawTypes.cpp
 css/parser/CSSPropertyParserConsumer+Resolution.cpp
 css/parser/CSSPropertyParserConsumer+String.cpp
