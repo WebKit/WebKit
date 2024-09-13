@@ -57,7 +57,7 @@ class UniqueIDBDatabaseTransaction : public CanMakeWeakPtr<UniqueIDBDatabaseTran
 public:
     static Ref<UniqueIDBDatabaseTransaction> create(UniqueIDBDatabaseConnection&, const IDBTransactionInfo&);
 
-    ~UniqueIDBDatabaseTransaction();
+    WEBCORE_EXPORT ~UniqueIDBDatabaseTransaction();
 
     UniqueIDBDatabaseConnection* databaseConnection() const;
     UniqueIDBDatabase* database() const;
