@@ -144,11 +144,6 @@ webkit.org/b/275115 imported/w3c/web-platform-tests/webxr/getInputPose_pointer.h
 ###################################################################################################
 ### START OF Undiagnosed failures
 
-# FIXME: Needs bug.
-interaction-region/text-input-focused-edited-empty.html [ Pass Failure ]
-interaction-region/text-input-focused-edited.html [ Pass Failure ]
-interaction-region/textarea-focused-edited-empty.html [ Pass Failure ]
-interaction-region/textarea-focused-edited.html [ Pass Failure ]
 
 ### END OF Undiagnosed failures
 ###################################################################################################
