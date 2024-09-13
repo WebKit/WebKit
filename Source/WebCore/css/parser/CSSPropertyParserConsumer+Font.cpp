@@ -1453,7 +1453,7 @@ RefPtr<CSSValue> consumeFontFaceFontWeight(CSSParserTokenRange& range)
         return CSSPrimitiveValue::create(*keyword);
     if (auto fontWeightNumber = consumeFontWeightNumberUnresolved(range))
         return resolveVariantToCSSPrimitiveValue(WTFMove(*fontWeightNumber));
-    return std::nullopt;
+    return nullptr;
 }
 
 #endif
