@@ -1122,7 +1122,7 @@ void WebAuthenticatorCoordinatorProxy::performRequestLegacy(RetainPtr<ASCCredent
     [m_proxy performAuthorizationRequestsForContext:requestContext.get() withCompletionHandler:makeBlockPtr([weakThis = WeakPtr { *this }, handler = WTFMove(handler)](id<ASCCredentialProtocol> credential, NSError *error) mutable {
         callOnMainRunLoop([weakThis, handler = WTFMove(handler), credential = retainPtr(credential), error = retainPtr(error)] () mutable {
 #elif PLATFORM(MAC)
-    RetainPtr<NSWindow> window = m_webPageProxy->platformWindow();
+    RetainPtr<NSWindow> window = protectedWebPageProxy()->platformWindow();
     [m_proxy performAuthorizationRequestsForContext:requestContext.get() withClearanceHandler:makeBlockPtr([weakThis = WeakPtr { *this }, handler = WTFMove(handler), window = WTFMove(window)](NSXPCListenerEndpoint *daemonEndpoint, NSError *error) mutable {
         callOnMainRunLoop([weakThis, handler = WTFMove(handler), window = WTFMove(window), daemonEndpoint = retainPtr(daemonEndpoint), error = retainPtr(error)] () mutable {
             if (!weakThis || !daemonEndpoint) {
