@@ -6031,6 +6031,17 @@ ScreenWakeLockAPIEnabled:
     WebCore:
       default: false
 
+ScriptTelemetryEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Script Telemetry"
+  humanReadableDescription: "Script telemetry enabled"
+  exposed: [ WebKit ]
+  webcoreBinding: none
+  defaultValue:
+    WebKit:
+      default: false
+
 ScrollAnimatorEnabled:
   type: bool
   status: embedder

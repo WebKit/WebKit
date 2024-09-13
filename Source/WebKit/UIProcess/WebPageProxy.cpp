@@ -7391,8 +7391,10 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
             if (frame->isMainFrame()) {
                 if (!navigation->websitePolicies())
                     navigation->setWebsitePolicies(m_configuration->defaultWebsitePolicies().copy());
-                if (RefPtr policies = navigation->websitePolicies())
+                if (RefPtr policies = navigation->websitePolicies()) {
                     navigation->setEffectiveContentMode(effectiveContentModeAfterAdjustingPolicies(*policies, navigation->currentRequest()));
+                    adjustAdvancedPrivacyProtectionsIfNeeded(*policies);
+                }
             }
             receivedNavigationActionPolicyDecision(processInitiatingNavigation, policyAction, navigation.get(), WTFMove(navigationAction), processSwapRequestedByClient, frame, frameInfo, wasNavigationIntercepted, requestURL, WTFMove(message), WTFMove(completionHandler));
         };
@@ -7494,6 +7496,17 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 #if HAVE(APP_SSO)
     m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision = false;
 #endif
+}
+
+void WebPageProxy::adjustAdvancedPrivacyProtectionsIfNeeded(API::WebsitePolicies& policies)
+{
+    if (!protectedWebsiteDataStore()->trackingPreventionEnabled())
+        return;
+
+    if (!protectedPreferences()->scriptTelemetryEnabled())
+        return;
+
+    policies.setAdvancedPrivacyProtections(policies.advancedPrivacyProtections() | AdvancedPrivacyProtections::ScriptTelemetry);
 }
 
 RefPtr<WebPageProxy> WebPageProxy::nonEphemeralWebPageProxy()

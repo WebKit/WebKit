@@ -533,6 +533,8 @@ private:
     void clearAnimationsForActiveWritingToolsSession() final;
 #endif
 
+    bool requiresScriptTelemetryForURL(const URL&, const WebCore::SecurityOrigin& topOrigin) const final;
+
     void setIsInRedo(bool) final;
 
     void hasActiveNowPlayingSessionChanged(bool) final;

@@ -617,6 +617,8 @@ public:
     virtual void setMockWebAuthenticationConfiguration(const MockWebAuthenticationConfiguration&) { }
 #endif
 
+    virtual bool requiresScriptTelemetryForURL(const URL&, const SecurityOrigin& /* topOrigin */) const { return false; }
+
     virtual void animationDidFinishForElement(const Element&) { }
 
 #if PLATFORM(MAC)

@@ -5724,6 +5724,7 @@ enum class WebCore::AllowsContentJavaScript : bool
     FingerprintingProtections,
     EnhancedNetworkPrivacy,
     LinkDecorationFiltering,
+    ScriptTelemetry,
 };
 
 enum class WebCore::ViolationReportType : uint8_t {

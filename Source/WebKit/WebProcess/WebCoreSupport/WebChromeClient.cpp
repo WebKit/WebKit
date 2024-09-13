@@ -1931,4 +1931,9 @@ void WebChromeClient::getImageBufferResourceLimitsForTesting(CompletionHandler<v
 }
 #endif
 
+bool WebChromeClient::requiresScriptTelemetryForURL(const URL& url, const SecurityOrigin& topOrigin) const
+{
+    return WebProcess::singleton().requiresScriptTelemetryForURL(url, topOrigin);
+}
+
 } // namespace WebKit

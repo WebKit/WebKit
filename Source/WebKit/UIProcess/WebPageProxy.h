@@ -3126,6 +3126,8 @@ private:
     void resetRecentGamepadAccessState();
 #endif
 
+    void adjustAdvancedPrivacyProtectionsIfNeeded(API::WebsitePolicies&);
+
     void setAllowsLayoutViewportHeightExpansion(bool);
     void setBrowsingContextGroup(BrowsingContextGroup&);
 

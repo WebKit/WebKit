@@ -3166,6 +3166,11 @@ bool Page::fingerprintingProtectionsEnabled() const
     return protectedMainFrame()->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::FingerprintingProtections);
 }
 
+OptionSet<AdvancedPrivacyProtections> Page::advancedPrivacyProtections() const
+{
+    return protectedMainFrame()->advancedPrivacyProtections();
+}
+
 #if ENABLE(REMOTE_INSPECTOR)
 
 bool Page::inspectable() const
@@ -5052,5 +5057,13 @@ bool Page::isFullscreenManagerEnabled() const
     return settings->fullScreenEnabled() || settings->videoFullscreenRequiresElementFullscreen();
 }
 #endif
+
+bool Page::requiresScriptTelemetryForURL(const URL& scriptURL) const
+{
+    if (!advancedPrivacyProtections().contains(AdvancedPrivacyProtections::ScriptTelemetry))
+        return false;
+
+    return chrome().client().requiresScriptTelemetryForURL(scriptURL, mainFrameOrigin());
+}
 
 } // namespace WebCore
