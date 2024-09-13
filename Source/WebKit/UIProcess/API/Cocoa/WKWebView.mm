@@ -224,12 +224,12 @@ SOFT_LINK_LIBRARY_OPTIONAL(libAccessibility)
 SOFT_LINK_OPTIONAL(libAccessibility, _AXSReduceMotionAutoplayAnimatedImagesEnabled, Boolean, (), ());
 #endif
 
+#if ENABLE(GAMEPAD) && PLATFORM(VISION) && __has_include(<GameController/GCEventInteraction.h>)
+#import <WebCore/GameControllerSoftLink.h>
+#endif
+
 #define THROW_IF_SUSPENDED if (UNLIKELY(_page && _page->isSuspended())) \
     [NSException raise:NSInternalInconsistencyException format:@"The WKWebView is suspended"]
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewAdditionsBefore.mm>
-#endif
 
 RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails& details)
 {
@@ -2321,16 +2321,16 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewAdditionsAfter.mm>
-#endif
-
 #if ENABLE(GAMEPAD)
-#if !__has_include(<WebKitAdditions/WKWebViewAdditionsAfter+Gamepad.mm>)
+
 - (void)_setGamepadsRecentlyAccessed:(BOOL)gamepadsRecentlyAccessed
 {
-}
+#if PLATFORM(VISION)
+    id<WKUIDelegatePrivate> uiDelegate = (id<WKUIDelegatePrivate>)self.UIDelegate;
+    if ([uiDelegate respondsToSelector:@selector(_webView:setRecentlyAccessedGamepads:)])
+        [uiDelegate _webView:self setRecentlyAccessedGamepads:gamepadsRecentlyAccessed];
 #endif
+}
 
 #if PLATFORM(VISION)
 - (BOOL)_gamepadsConnected
@@ -2350,11 +2350,23 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     _page->allowGamepadAccess();
 }
 
-#if !__has_include(<WebKitAdditions/WKWebViewAdditionsAfter+Gamepad.mm>)
 - (void)_setAllowGamepadsInput:(BOOL)allowGamepadsInput
 {
+#if __has_include(<GameController/GCEventInteraction.h>)
+    if (allowGamepadsInput == !!_gamepadsRecentlyAccessedState)
+        return;
+
+    if (allowGamepadsInput) {
+        _gamepadsRecentlyAccessedState = adoptNS([[WebCore::getGCEventInteractionClass() alloc] init]);
+        ((GCEventInteraction *)_gamepadsRecentlyAccessedState.get()).handledEventTypes = GCUIEventTypeGamepad;
+        [self addInteraction:(id<UIInteraction>)_gamepadsRecentlyAccessedState.get()];
+    } else {
+        [self removeInteraction:(id<UIInteraction>)_gamepadsRecentlyAccessedState.get()];
+        _gamepadsRecentlyAccessedState = nil;
+    }
+#endif // __has_include(<GameController/GCEventInteraction.h>)
 }
-#endif
+
 #endif // PLATFORM(VISION)
 #endif // ENABLE(GAMEPAD)
 

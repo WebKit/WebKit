@@ -63,6 +63,10 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(WebCore, GameController, GCHa
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, GameController, ControllerClassForService, Class, (IOHIDServiceClientRef service), (service))
 #endif
 
+#if PLATFORM(VISION) && __has_include(<GameController/GCEventInteraction.h>)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(WebCore, GameController, GCEventInteraction, WEBCORE_EXPORT)
+#endif
+
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/GameControllerSoftLinkAdditions.mm>)
 #import <WebKitAdditions/GameControllerSoftLinkAdditions.mm>
 #endif
