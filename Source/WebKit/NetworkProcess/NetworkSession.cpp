@@ -92,6 +92,11 @@ std::unique_ptr<NetworkSession> NetworkSession::create(NetworkProcess& networkPr
 #endif
 }
 
+Ref<NetworkProcess> NetworkSession::protectedNetworkProcess()
+{
+    return networkProcess();
+}
+
 NetworkStorageSession* NetworkSession::networkStorageSession() const
 {
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=194926 NetworkSession should own NetworkStorageSession

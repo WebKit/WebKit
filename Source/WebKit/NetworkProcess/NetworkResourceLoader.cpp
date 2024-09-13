@@ -846,7 +846,7 @@ void NetworkResourceLoader::processClearSiteDataHeader(const WebCore::ResourceRe
         protectedConnectionToWebProcess()->protectedNetworkProcess()->deleteWebsiteDataForOrigin(sessionID(), typesToRemove, clientOrigin, [callbackAggregator] { });
 
     if (WebsiteDataStore::computeWebProcessAccessTypeForDataRemoval(typesToRemove, sessionID().isEphemeral()) != WebsiteDataStore::ProcessAccessType::None)
-        protectedConnectionToWebProcess()->protectedNetworkProcess()->parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::DeleteWebsiteDataInWebProcessesForOrigin(typesToRemove, clientOrigin, sessionID(), m_parameters.webPageProxyID), [callbackAggregator] { });
+        protectedConnectionToWebProcess()->protectedNetworkProcess()->protectedParentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::DeleteWebsiteDataInWebProcessesForOrigin(typesToRemove, clientOrigin, sessionID(), m_parameters.webPageProxyID), [callbackAggregator] { });
 
     if (shouldReloadExecutionContexts) {
         std::optional<WebCore::FrameIdentifier> triggeringFrame;
@@ -1575,7 +1575,7 @@ void NetworkResourceLoader::tryStoreAsCacheEntry()
     }
 
     if (isCrossOriginPrefetch()) {
-        if (auto* session = m_connection->networkProcess().networkSession(sessionID())) {
+        if (auto* session = protectedConnectionToWebProcess()->protectedNetworkProcess()->networkSession(sessionID())) {
             LOADER_RELEASE_LOG("tryStoreAsCacheEntry: Storing entry in prefetch cache");
             session->prefetchCache().store(m_networkLoad->currentRequest().url(), WTFMove(m_response), m_privateRelayed, m_bufferedDataForCache.take());
         }

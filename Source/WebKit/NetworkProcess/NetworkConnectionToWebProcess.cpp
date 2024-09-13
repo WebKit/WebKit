@@ -621,7 +621,7 @@ void NetworkConnectionToWebProcess::performSynchronousLoad(NetworkResourceLoadPa
 
 void NetworkConnectionToWebProcess::testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier pageID, CompletionHandler<void(bool)>&& reply)
 {
-    auto syncResult = protectedNetworkProcess()->parentProcessConnection()->sendSync(Messages::NetworkProcessProxy::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(pageID), 0);
+    auto syncResult = protectedNetworkProcess()->protectedParentProcessConnection()->sendSync(Messages::NetworkProcessProxy::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(pageID), 0);
     auto [handled] = syncResult.takeReplyOr(false);
     reply(handled);
 }
@@ -1426,7 +1426,7 @@ void NetworkConnectionToWebProcess::establishSWContextConnection(WebPageProxyIde
 {
     auto* session = networkSession();
     if (RefPtr swServer = session ? session->swServer() : nullptr) {
-        MESSAGE_CHECK_COMPLETION(session->networkProcess().allowsFirstPartyForCookies(webProcessIdentifier(), registrableDomain), completionHandler());
+        MESSAGE_CHECK_COMPLETION(session->protectedNetworkProcess()->allowsFirstPartyForCookies(webProcessIdentifier(), registrableDomain), completionHandler());
         m_swContextConnection = makeUnique<WebSWServerToContextConnection>(*this, webPageProxyID, WTFMove(registrableDomain), serviceWorkerPageIdentifier, *swServer);
     }
     completionHandler();

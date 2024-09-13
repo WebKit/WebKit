@@ -286,12 +286,17 @@ void NetworkRTCProvider::getInterfaceName(URL&& url, WebPageProxyIdentifier page
 
 void NetworkRTCProvider::callOnRTCNetworkThread(Function<void()>&& callback)
 {
-    m_rtcNetworkThreadQueue->dispatch(WTFMove(callback));
+    protectedRTCNetworkThreadQueue()->dispatch(WTFMove(callback));
 }
 
 void NetworkRTCProvider::assertIsRTCNetworkThread()
 {
-    ASSERT(m_rtcNetworkThreadQueue->isCurrent());
+    ASSERT(protectedRTCNetworkThreadQueue()->isCurrent());
+}
+
+Ref<WorkQueue> NetworkRTCProvider::protectedRTCNetworkThreadQueue()
+{
+    return m_rtcNetworkThreadQueue;
 }
 
 #else // PLATFORM(COCOA)

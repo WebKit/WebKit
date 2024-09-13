@@ -173,7 +173,7 @@ private:
     
     template<typename U> static void sendToContextProcess(WebCore::SWServerToContextConnection&, U&& message);
     NetworkProcess& networkProcess();
-    CheckedRef<NetworkProcess> checkedNetworkProcess();
+    Ref<NetworkProcess> protectedNetworkProcess();
 
     WeakPtr<NetworkConnectionToWebProcess> m_networkConnectionToWebProcess;
     Ref<IPC::Connection> m_contentConnection;

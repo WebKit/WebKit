@@ -87,7 +87,6 @@ NetworkProcess/Downloads/DownloadManager.cpp
 NetworkProcess/Downloads/cocoa/DownloadCocoa.mm
 NetworkProcess/NetworkCORSPreflightChecker.cpp
 NetworkProcess/NetworkConnectionToWebProcess.cpp
-NetworkProcess/NetworkContentRuleListManager.cpp
 NetworkProcess/NetworkDataTask.cpp
 NetworkProcess/NetworkDataTaskBlob.cpp
 NetworkProcess/NetworkLoad.cpp
@@ -101,8 +100,6 @@ NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClientImpl.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementPersistentStore.cpp
 NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementConnectionCocoa.mm
-NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.cpp
-NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp
 NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.cpp
 NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp
 NetworkProcess/ServiceWorker/WebSWServerConnection.cpp
@@ -125,7 +122,6 @@ NetworkProcess/storage/OriginStorageManager.cpp
 NetworkProcess/storage/SQLiteStorageArea.cpp
 NetworkProcess/webrtc/NetworkRTCProvider.cpp
 NetworkProcess/webrtc/NetworkRTCProvider.h
-NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.cpp
 Platform/IPC/ArgumentCoders.h
 Platform/IPC/Encoder.h
 Platform/IPC/SharedBufferReference.cpp

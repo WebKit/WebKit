@@ -122,6 +122,7 @@ public:
 
     PAL::SessionID sessionID() const { return m_sessionID; }
     NetworkProcess& networkProcess() { return m_networkProcess; }
+    Ref<NetworkProcess> protectedNetworkProcess();
     WebCore::NetworkStorageSession* networkStorageSession() const;
 
     void registerNetworkDataTask(NetworkDataTask&);

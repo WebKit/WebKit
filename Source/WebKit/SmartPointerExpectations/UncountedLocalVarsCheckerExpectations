@@ -7,7 +7,6 @@ GPUProcess/media/RemoteMediaPlayerProxy.cpp
 NetworkProcess/NetworkConnectionToWebProcess.cpp
 NetworkProcess/NetworkProcess.cpp
 NetworkProcess/NetworkResourceLoader.cpp
-NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp
 NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp
 NetworkProcess/cocoa/NetworkProcessCocoa.mm
 NetworkProcess/cocoa/NetworkSessionCocoa.mm

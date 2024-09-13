@@ -79,6 +79,8 @@ public:
     void postErrorToWorkerObject(WebCore::SharedWorkerObjectIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent);
 
 private:
+    Ref<NetworkProcess> protectedNetworkProcess();
+
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final { return 0; }

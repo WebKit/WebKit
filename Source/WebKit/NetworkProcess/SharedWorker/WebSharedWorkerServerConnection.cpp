@@ -62,6 +62,11 @@ WebSharedWorkerServerConnection::~WebSharedWorkerServerConnection()
     CONNECTION_RELEASE_LOG("~WebSharedWorkerServerConnection:");
 }
 
+Ref<NetworkProcess> WebSharedWorkerServerConnection::protectedNetworkProcess()
+{
+    return m_networkProcess;
+}
+
 WebSharedWorkerServer& WebSharedWorkerServerConnection::server()
 {
     return m_server.get();
@@ -84,7 +89,7 @@ PAL::SessionID WebSharedWorkerServerConnection::sessionID()
 
 NetworkSession* WebSharedWorkerServerConnection::session()
 {
-    return m_networkProcess->networkSession(sessionID());
+    return protectedNetworkProcess()->networkSession(sessionID());
 }
 
 void WebSharedWorkerServerConnection::requestSharedWorker(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&& port, WebCore::WorkerOptions&& workerOptions)
