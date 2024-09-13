@@ -1443,17 +1443,21 @@ def generate_message_handler(receiver):
         if receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE):
             result.append('    if (dispatchSyncMessage(connection, decoder, replyEncoder))\n')
             result.append('        return true;\n')
-        result.append('    UNUSED_PARAM(connection);\n')
-        result.append('    UNUSED_PARAM(decoder);\n')
-        result.append('    UNUSED_PARAM(replyEncoder);\n')
+        if (receiver.superclass):
+            result.append('    return %s::didReceiveSync%sMessage(connection, decoder, replyEncoder);\n' % (receiver.superclass, receive_variant))
+        else:
+            if not receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
+                result.append('    UNUSED_PARAM(connection);\n')
+            result.append('    UNUSED_PARAM(decoder);\n')
+            result.append('    UNUSED_PARAM(replyEncoder);\n')
 
-        if not receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
-            result.append('#if ENABLE(IPC_TESTING_API)\n')
-            result.append('    if (connection.ignoreInvalidMessageForTesting())\n')
-            result.append('        return false;\n')
-            result.append('#endif // ENABLE(IPC_TESTING_API)\n')
-        result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()).characters(), decoder.destinationID());\n')
-        result.append('    return false;\n')
+            if not receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
+                result.append('#if ENABLE(IPC_TESTING_API)\n')
+                result.append('    if (connection.ignoreInvalidMessageForTesting())\n')
+                result.append('        return false;\n')
+                result.append('#endif // ENABLE(IPC_TESTING_API)\n')
+            result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()).characters(), decoder.destinationID());\n')
+            result.append('    return false;\n')
         result.append('}\n')
 
     result.append('\n')

@@ -154,7 +154,16 @@
 #include <WebCore/TextManipulationToken.h>
 #include <WebCore/UserMediaRequestIdentifier.h>
 #include <WebCore/WebSocketIdentifier.h>
-#include "TestWithSuperclassMessages.h" // NOLINT
+#include "TestWithCVPixelBufferMessages.h" // NOLINT
+#include "TestWithWantsDispatchMessages.h" // NOLINT
+#include "TestWithWantsDispatchNoSyncMessagesMessages.h" // NOLINT
+#include "TestWithWantsAsyncDispatchMessages.h" // NOLINT
+#include "TestWithEnabledByMessages.h" // NOLINT
+#include "TestWithEnabledByAndConjunctionMessages.h" // NOLINT
+#include "TestWithEnabledByOrConjunctionMessages.h" // NOLINT
+#include "TestWithEnabledIfMessages.h" // NOLINT
+#include "TestWithIfMessageMessages.h" // NOLINT
+#include "TestWithImageDataMessages.h" // NOLINT
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
 #include "TestWithLegacyReceiverMessages.h" // NOLINT
 #endif
@@ -162,18 +171,14 @@
 #include "TestWithoutAttributesMessages.h" // NOLINT
 #endif
 #include "TestWithoutUsingIPCConnectionMessages.h" // NOLINT
-#include "TestWithIfMessageMessages.h" // NOLINT
 #include "TestWithSemaphoreMessages.h" // NOLINT
-#include "TestWithImageDataMessages.h" // NOLINT
 #include "TestWithStreamMessages.h" // NOLINT
 #include "TestWithStreamBatchedMessages.h" // NOLINT
 #include "TestWithStreamBufferMessages.h" // NOLINT
-#include "TestWithCVPixelBufferMessages.h" // NOLINT
 #include "TestWithStreamServerConnectionHandleMessages.h" // NOLINT
-#include "TestWithEnabledByMessages.h" // NOLINT
-#include "TestWithEnabledIfMessages.h" // NOLINT
-#include "TestWithEnabledByAndConjunctionMessages.h" // NOLINT
-#include "TestWithEnabledByOrConjunctionMessages.h" // NOLINT
+#include "TestWithSuperclassMessages.h" // NOLINT
+#include "TestWithSuperclassAndWantsAsyncDispatchMessages.h" // NOLINT
+#include "TestWithSuperclassAndWantsDispatchMessages.h" // NOLINT
 
 namespace IPC {
 
@@ -182,22 +187,50 @@ namespace IPC {
 std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObject, MessageName name, Decoder& decoder)
 {
     switch (name) {
-    case MessageName::TestWithSuperclass_LoadURL:
-        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_LoadURL>(globalObject, decoder);
-#if ENABLE(TEST_FEATURE)
-    case MessageName::TestWithSuperclass_TestAsyncMessage:
-        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessage>(globalObject, decoder);
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
-        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments>(globalObject, decoder);
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
-        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments>(globalObject, decoder);
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
-        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageWithConnection>(globalObject, decoder);
+#if USE(AVFOUNDATION)
+    case MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer:
+        return jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer>(globalObject, decoder);
+    case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
+        return jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer>(globalObject, decoder);
 #endif
-    case MessageName::TestWithSuperclass_TestSyncMessage:
-        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestSyncMessage>(globalObject, decoder);
-    case MessageName::TestWithSuperclass_TestSynchronousMessage:
-        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestSynchronousMessage>(globalObject, decoder);
+    case MessageName::TestWithWantsDispatch_TestMessage:
+        return jsValueForDecodedMessage<MessageName::TestWithWantsDispatch_TestMessage>(globalObject, decoder);
+    case MessageName::TestWithWantsDispatch_TestSyncMessage:
+        return jsValueForDecodedMessage<MessageName::TestWithWantsDispatch_TestSyncMessage>(globalObject, decoder);
+    case MessageName::TestWithWantsDispatchNoSyncMessages_TestMessage:
+        return jsValueForDecodedMessage<MessageName::TestWithWantsDispatchNoSyncMessages_TestMessage>(globalObject, decoder);
+    case MessageName::TestWithWantsAsyncDispatch_TestMessage:
+        return jsValueForDecodedMessage<MessageName::TestWithWantsAsyncDispatch_TestMessage>(globalObject, decoder);
+    case MessageName::TestWithWantsAsyncDispatch_TestSyncMessage:
+        return jsValueForDecodedMessage<MessageName::TestWithWantsAsyncDispatch_TestSyncMessage>(globalObject, decoder);
+    case MessageName::TestWithEnabledBy_AlwaysEnabled:
+        return jsValueForDecodedMessage<MessageName::TestWithEnabledBy_AlwaysEnabled>(globalObject, decoder);
+    case MessageName::TestWithEnabledBy_ConditionallyEnabled:
+        return jsValueForDecodedMessage<MessageName::TestWithEnabledBy_ConditionallyEnabled>(globalObject, decoder);
+    case MessageName::TestWithEnabledBy_ConditionallyEnabledAnd:
+        return jsValueForDecodedMessage<MessageName::TestWithEnabledBy_ConditionallyEnabledAnd>(globalObject, decoder);
+    case MessageName::TestWithEnabledBy_ConditionallyEnabledOr:
+        return jsValueForDecodedMessage<MessageName::TestWithEnabledBy_ConditionallyEnabledOr>(globalObject, decoder);
+    case MessageName::TestWithEnabledByAndConjunction_AlwaysEnabled:
+        return jsValueForDecodedMessage<MessageName::TestWithEnabledByAndConjunction_AlwaysEnabled>(globalObject, decoder);
+    case MessageName::TestWithEnabledByOrConjunction_AlwaysEnabled:
+        return jsValueForDecodedMessage<MessageName::TestWithEnabledByOrConjunction_AlwaysEnabled>(globalObject, decoder);
+    case MessageName::TestWithEnabledIf_AlwaysEnabled:
+        return jsValueForDecodedMessage<MessageName::TestWithEnabledIf_AlwaysEnabled>(globalObject, decoder);
+    case MessageName::TestWithEnabledIf_OnlyEnabledIfFeatureEnabled:
+        return jsValueForDecodedMessage<MessageName::TestWithEnabledIf_OnlyEnabledIfFeatureEnabled>(globalObject, decoder);
+#if PLATFORM(COCOA)
+    case MessageName::TestWithIfMessage_LoadURL:
+        return jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>(globalObject, decoder);
+#endif
+#if PLATFORM(GTK)
+    case MessageName::TestWithIfMessage_LoadURL:
+        return jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>(globalObject, decoder);
+#endif
+    case MessageName::TestWithImageData_SendImageData:
+        return jsValueForDecodedMessage<MessageName::TestWithImageData_SendImageData>(globalObject, decoder);
+    case MessageName::TestWithImageData_ReceiveImageData:
+        return jsValueForDecodedMessage<MessageName::TestWithImageData_ReceiveImageData>(globalObject, decoder);
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
     case MessageName::TestWithLegacyReceiver_LoadURL:
         return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_LoadURL>(globalObject, decoder);
@@ -330,22 +363,10 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
         return jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply>(globalObject, decoder);
     case MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument:
         return jsValueForDecodedMessage<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument>(globalObject, decoder);
-#if PLATFORM(COCOA)
-    case MessageName::TestWithIfMessage_LoadURL:
-        return jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>(globalObject, decoder);
-#endif
-#if PLATFORM(GTK)
-    case MessageName::TestWithIfMessage_LoadURL:
-        return jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>(globalObject, decoder);
-#endif
     case MessageName::TestWithSemaphore_SendSemaphore:
         return jsValueForDecodedMessage<MessageName::TestWithSemaphore_SendSemaphore>(globalObject, decoder);
     case MessageName::TestWithSemaphore_ReceiveSemaphore:
         return jsValueForDecodedMessage<MessageName::TestWithSemaphore_ReceiveSemaphore>(globalObject, decoder);
-    case MessageName::TestWithImageData_SendImageData:
-        return jsValueForDecodedMessage<MessageName::TestWithImageData_SendImageData>(globalObject, decoder);
-    case MessageName::TestWithImageData_ReceiveImageData:
-        return jsValueForDecodedMessage<MessageName::TestWithImageData_ReceiveImageData>(globalObject, decoder);
     case MessageName::TestWithStream_SendString:
         return jsValueForDecodedMessage<MessageName::TestWithStream_SendString>(globalObject, decoder);
     case MessageName::TestWithStream_SendStringAsync:
@@ -366,30 +387,32 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
         return jsValueForDecodedMessage<MessageName::TestWithStreamBatched_SendString>(globalObject, decoder);
     case MessageName::TestWithStreamBuffer_SendStreamBuffer:
         return jsValueForDecodedMessage<MessageName::TestWithStreamBuffer_SendStreamBuffer>(globalObject, decoder);
-#if USE(AVFOUNDATION)
-    case MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer:
-        return jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer>(globalObject, decoder);
-    case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
-        return jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer>(globalObject, decoder);
-#endif
     case MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection:
         return jsValueForDecodedMessage<MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection>(globalObject, decoder);
-    case MessageName::TestWithEnabledBy_AlwaysEnabled:
-        return jsValueForDecodedMessage<MessageName::TestWithEnabledBy_AlwaysEnabled>(globalObject, decoder);
-    case MessageName::TestWithEnabledBy_ConditionallyEnabled:
-        return jsValueForDecodedMessage<MessageName::TestWithEnabledBy_ConditionallyEnabled>(globalObject, decoder);
-    case MessageName::TestWithEnabledBy_ConditionallyEnabledAnd:
-        return jsValueForDecodedMessage<MessageName::TestWithEnabledBy_ConditionallyEnabledAnd>(globalObject, decoder);
-    case MessageName::TestWithEnabledBy_ConditionallyEnabledOr:
-        return jsValueForDecodedMessage<MessageName::TestWithEnabledBy_ConditionallyEnabledOr>(globalObject, decoder);
-    case MessageName::TestWithEnabledIf_AlwaysEnabled:
-        return jsValueForDecodedMessage<MessageName::TestWithEnabledIf_AlwaysEnabled>(globalObject, decoder);
-    case MessageName::TestWithEnabledIf_OnlyEnabledIfFeatureEnabled:
-        return jsValueForDecodedMessage<MessageName::TestWithEnabledIf_OnlyEnabledIfFeatureEnabled>(globalObject, decoder);
-    case MessageName::TestWithEnabledByAndConjunction_AlwaysEnabled:
-        return jsValueForDecodedMessage<MessageName::TestWithEnabledByAndConjunction_AlwaysEnabled>(globalObject, decoder);
-    case MessageName::TestWithEnabledByOrConjunction_AlwaysEnabled:
-        return jsValueForDecodedMessage<MessageName::TestWithEnabledByOrConjunction_AlwaysEnabled>(globalObject, decoder);
+    case MessageName::TestWithSuperclass_LoadURL:
+        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_LoadURL>(globalObject, decoder);
+#if ENABLE(TEST_FEATURE)
+    case MessageName::TestWithSuperclass_TestAsyncMessage:
+        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
+        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments>(globalObject, decoder);
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
+        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments>(globalObject, decoder);
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
+        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageWithConnection>(globalObject, decoder);
+#endif
+    case MessageName::TestWithSuperclass_TestSyncMessage:
+        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestSyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSuperclass_TestSynchronousMessage:
+        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestSynchronousMessage>(globalObject, decoder);
+    case MessageName::TestWithSuperclassAndWantsAsyncDispatch_LoadURL:
+        return jsValueForDecodedMessage<MessageName::TestWithSuperclassAndWantsAsyncDispatch_LoadURL>(globalObject, decoder);
+    case MessageName::TestWithSuperclassAndWantsAsyncDispatch_TestSyncMessage:
+        return jsValueForDecodedMessage<MessageName::TestWithSuperclassAndWantsAsyncDispatch_TestSyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSuperclassAndWantsDispatch_LoadURL:
+        return jsValueForDecodedMessage<MessageName::TestWithSuperclassAndWantsDispatch_LoadURL>(globalObject, decoder);
+    case MessageName::TestWithSuperclassAndWantsDispatch_TestSyncMessage:
+        return jsValueForDecodedMessage<MessageName::TestWithSuperclassAndWantsDispatch_TestSyncMessage>(globalObject, decoder);
     default:
         break;
     }
@@ -399,20 +422,16 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
 std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* globalObject, MessageName name, Decoder& decoder)
 {
     switch (name) {
-#if ENABLE(TEST_FEATURE)
-    case MessageName::TestWithSuperclass_TestAsyncMessage:
-        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessage>(globalObject, decoder);
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
-        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments>(globalObject, decoder);
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
-        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments>(globalObject, decoder);
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
-        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessageWithConnection>(globalObject, decoder);
+#if USE(AVFOUNDATION)
+    case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
+        return jsValueForDecodedMessageReply<MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer>(globalObject, decoder);
 #endif
-    case MessageName::TestWithSuperclass_TestSyncMessage:
-        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestSyncMessage>(globalObject, decoder);
-    case MessageName::TestWithSuperclass_TestSynchronousMessage:
-        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestSynchronousMessage>(globalObject, decoder);
+    case MessageName::TestWithWantsDispatch_TestSyncMessage:
+        return jsValueForDecodedMessageReply<MessageName::TestWithWantsDispatch_TestSyncMessage>(globalObject, decoder);
+    case MessageName::TestWithWantsAsyncDispatch_TestSyncMessage:
+        return jsValueForDecodedMessageReply<MessageName::TestWithWantsAsyncDispatch_TestSyncMessage>(globalObject, decoder);
+    case MessageName::TestWithImageData_ReceiveImageData:
+        return jsValueForDecodedMessageReply<MessageName::TestWithImageData_ReceiveImageData>(globalObject, decoder);
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
     case MessageName::TestWithLegacyReceiver_CreatePlugin:
         return jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_CreatePlugin>(globalObject, decoder);
@@ -455,8 +474,6 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
         return jsValueForDecodedMessageReply<MessageName::TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument>(globalObject, decoder);
     case MessageName::TestWithSemaphore_ReceiveSemaphore:
         return jsValueForDecodedMessageReply<MessageName::TestWithSemaphore_ReceiveSemaphore>(globalObject, decoder);
-    case MessageName::TestWithImageData_ReceiveImageData:
-        return jsValueForDecodedMessageReply<MessageName::TestWithImageData_ReceiveImageData>(globalObject, decoder);
     case MessageName::TestWithStream_SendStringAsync:
         return jsValueForDecodedMessageReply<MessageName::TestWithStream_SendStringAsync>(globalObject, decoder);
     case MessageName::TestWithStream_SendStringSync:
@@ -469,10 +486,24 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
     case MessageName::TestWithStream_SendAndReceiveMachSendRight:
         return jsValueForDecodedMessageReply<MessageName::TestWithStream_SendAndReceiveMachSendRight>(globalObject, decoder);
 #endif
-#if USE(AVFOUNDATION)
-    case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
-        return jsValueForDecodedMessageReply<MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer>(globalObject, decoder);
+#if ENABLE(TEST_FEATURE)
+    case MessageName::TestWithSuperclass_TestAsyncMessage:
+        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
+        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments>(globalObject, decoder);
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
+        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments>(globalObject, decoder);
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
+        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessageWithConnection>(globalObject, decoder);
 #endif
+    case MessageName::TestWithSuperclass_TestSyncMessage:
+        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestSyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSuperclass_TestSynchronousMessage:
+        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestSynchronousMessage>(globalObject, decoder);
+    case MessageName::TestWithSuperclassAndWantsAsyncDispatch_TestSyncMessage:
+        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclassAndWantsAsyncDispatch_TestSyncMessage>(globalObject, decoder);
+    case MessageName::TestWithSuperclassAndWantsDispatch_TestSyncMessage:
+        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclassAndWantsDispatch_TestSyncMessage>(globalObject, decoder);
     default:
         break;
     }
@@ -778,32 +809,81 @@ Vector<ASCIILiteral> serializedIdentifiers()
 std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageName name)
 {
     switch (name) {
-    case MessageName::TestWithSuperclass_LoadURL:
+#if USE(AVFOUNDATION)
+    case MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer:
+        return Vector<ArgumentDescription> {
+            { "s0"_s, "RetainPtr<CVPixelBufferRef>"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
+        return Vector<ArgumentDescription> { };
+#endif
+    case MessageName::TestWithWantsDispatch_TestMessage:
         return Vector<ArgumentDescription> {
             { "url"_s, "String"_s, ASCIILiteral(), false },
         };
-#if ENABLE(TEST_FEATURE)
-    case MessageName::TestWithSuperclass_TestAsyncMessage:
-        return Vector<ArgumentDescription> {
-            { "twoStateEnum"_s, "bool"_s, "WebKit::TestTwoStateEnum"_s, false },
-        };
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
-        return Vector<ArgumentDescription> { };
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
-        return Vector<ArgumentDescription> { };
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
-        return Vector<ArgumentDescription> {
-            { "value"_s, "int"_s, ASCIILiteral(), false },
-        };
-#endif
-    case MessageName::TestWithSuperclass_TestSyncMessage:
+    case MessageName::TestWithWantsDispatch_TestSyncMessage:
         return Vector<ArgumentDescription> {
             { "param"_s, "uint32_t"_s, ASCIILiteral(), false },
         };
-    case MessageName::TestWithSuperclass_TestSynchronousMessage:
+    case MessageName::TestWithWantsDispatchNoSyncMessages_TestMessage:
         return Vector<ArgumentDescription> {
-            { "value"_s, "bool"_s, ASCIILiteral(), false },
+            { "url"_s, "String"_s, ASCIILiteral(), false },
         };
+    case MessageName::TestWithWantsAsyncDispatch_TestMessage:
+        return Vector<ArgumentDescription> {
+            { "url"_s, "String"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithWantsAsyncDispatch_TestSyncMessage:
+        return Vector<ArgumentDescription> {
+            { "param"_s, "uint32_t"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithEnabledBy_AlwaysEnabled:
+        return Vector<ArgumentDescription> {
+            { "url"_s, "String"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithEnabledBy_ConditionallyEnabled:
+        return Vector<ArgumentDescription> {
+            { "url"_s, "String"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithEnabledBy_ConditionallyEnabledAnd:
+        return Vector<ArgumentDescription> { };
+    case MessageName::TestWithEnabledBy_ConditionallyEnabledOr:
+        return Vector<ArgumentDescription> { };
+    case MessageName::TestWithEnabledByAndConjunction_AlwaysEnabled:
+        return Vector<ArgumentDescription> {
+            { "url"_s, "String"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithEnabledByOrConjunction_AlwaysEnabled:
+        return Vector<ArgumentDescription> {
+            { "url"_s, "String"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithEnabledIf_AlwaysEnabled:
+        return Vector<ArgumentDescription> {
+            { "url"_s, "String"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithEnabledIf_OnlyEnabledIfFeatureEnabled:
+        return Vector<ArgumentDescription> {
+            { "url"_s, "String"_s, ASCIILiteral(), false },
+        };
+#if PLATFORM(COCOA)
+    case MessageName::TestWithIfMessage_LoadURL:
+        return Vector<ArgumentDescription> {
+            { "url"_s, "String"_s, ASCIILiteral(), false },
+        };
+#endif
+#if PLATFORM(GTK)
+    case MessageName::TestWithIfMessage_LoadURL:
+        return Vector<ArgumentDescription> {
+            { "url"_s, "String"_s, ASCIILiteral(), false },
+            { "value"_s, "int64_t"_s, ASCIILiteral(), false },
+        };
+#endif
+    case MessageName::TestWithImageData_SendImageData:
+        return Vector<ArgumentDescription> {
+            { "s0"_s, "RefPtr<WebCore::ImageData>"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithImageData_ReceiveImageData:
+        return Vector<ArgumentDescription> { };
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
     case MessageName::TestWithLegacyReceiver_LoadURL:
         return Vector<ArgumentDescription> {
@@ -1040,30 +1120,11 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         return Vector<ArgumentDescription> {
             { "argument"_s, "String"_s, ASCIILiteral(), false },
         };
-#if PLATFORM(COCOA)
-    case MessageName::TestWithIfMessage_LoadURL:
-        return Vector<ArgumentDescription> {
-            { "url"_s, "String"_s, ASCIILiteral(), false },
-        };
-#endif
-#if PLATFORM(GTK)
-    case MessageName::TestWithIfMessage_LoadURL:
-        return Vector<ArgumentDescription> {
-            { "url"_s, "String"_s, ASCIILiteral(), false },
-            { "value"_s, "int64_t"_s, ASCIILiteral(), false },
-        };
-#endif
     case MessageName::TestWithSemaphore_SendSemaphore:
         return Vector<ArgumentDescription> {
             { "s0"_s, "IPC::Semaphore"_s, ASCIILiteral(), false },
         };
     case MessageName::TestWithSemaphore_ReceiveSemaphore:
-        return Vector<ArgumentDescription> { };
-    case MessageName::TestWithImageData_SendImageData:
-        return Vector<ArgumentDescription> {
-            { "s0"_s, "RefPtr<WebCore::ImageData>"_s, ASCIILiteral(), false },
-        };
-    case MessageName::TestWithImageData_ReceiveImageData:
         return Vector<ArgumentDescription> { };
     case MessageName::TestWithStream_SendString:
         return Vector<ArgumentDescription> {
@@ -1099,45 +1160,51 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         return Vector<ArgumentDescription> {
             { "stream"_s, "IPC::StreamConnectionBuffer"_s, ASCIILiteral(), false },
         };
-#if USE(AVFOUNDATION)
-    case MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer:
-        return Vector<ArgumentDescription> {
-            { "s0"_s, "RetainPtr<CVPixelBufferRef>"_s, ASCIILiteral(), false },
-        };
-    case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
-        return Vector<ArgumentDescription> { };
-#endif
     case MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection:
         return Vector<ArgumentDescription> {
             { "handle"_s, "IPC::StreamServerConnectionHandle"_s, ASCIILiteral(), false },
         };
-    case MessageName::TestWithEnabledBy_AlwaysEnabled:
+    case MessageName::TestWithSuperclass_LoadURL:
         return Vector<ArgumentDescription> {
             { "url"_s, "String"_s, ASCIILiteral(), false },
         };
-    case MessageName::TestWithEnabledBy_ConditionallyEnabled:
+#if ENABLE(TEST_FEATURE)
+    case MessageName::TestWithSuperclass_TestAsyncMessage:
         return Vector<ArgumentDescription> {
-            { "url"_s, "String"_s, ASCIILiteral(), false },
+            { "twoStateEnum"_s, "bool"_s, "WebKit::TestTwoStateEnum"_s, false },
         };
-    case MessageName::TestWithEnabledBy_ConditionallyEnabledAnd:
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
         return Vector<ArgumentDescription> { };
-    case MessageName::TestWithEnabledBy_ConditionallyEnabledOr:
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
         return Vector<ArgumentDescription> { };
-    case MessageName::TestWithEnabledIf_AlwaysEnabled:
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
+        return Vector<ArgumentDescription> {
+            { "value"_s, "int"_s, ASCIILiteral(), false },
+        };
+#endif
+    case MessageName::TestWithSuperclass_TestSyncMessage:
+        return Vector<ArgumentDescription> {
+            { "param"_s, "uint32_t"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithSuperclass_TestSynchronousMessage:
+        return Vector<ArgumentDescription> {
+            { "value"_s, "bool"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithSuperclassAndWantsAsyncDispatch_LoadURL:
         return Vector<ArgumentDescription> {
             { "url"_s, "String"_s, ASCIILiteral(), false },
         };
-    case MessageName::TestWithEnabledIf_OnlyEnabledIfFeatureEnabled:
+    case MessageName::TestWithSuperclassAndWantsAsyncDispatch_TestSyncMessage:
+        return Vector<ArgumentDescription> {
+            { "param"_s, "uint32_t"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithSuperclassAndWantsDispatch_LoadURL:
         return Vector<ArgumentDescription> {
             { "url"_s, "String"_s, ASCIILiteral(), false },
         };
-    case MessageName::TestWithEnabledByAndConjunction_AlwaysEnabled:
+    case MessageName::TestWithSuperclassAndWantsDispatch_TestSyncMessage:
         return Vector<ArgumentDescription> {
-            { "url"_s, "String"_s, ASCIILiteral(), false },
-        };
-    case MessageName::TestWithEnabledByOrConjunction_AlwaysEnabled:
-        return Vector<ArgumentDescription> {
-            { "url"_s, "String"_s, ASCIILiteral(), false },
+            { "param"_s, "uint32_t"_s, ASCIILiteral(), false },
         };
     default:
         break;
@@ -1148,30 +1215,23 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
 std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(MessageName name)
 {
     switch (name) {
-#if ENABLE(TEST_FEATURE)
-    case MessageName::TestWithSuperclass_TestAsyncMessage:
+#if USE(AVFOUNDATION)
+    case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
         return Vector<ArgumentDescription> {
-            { "result"_s, "uint64_t"_s, ASCIILiteral(), false },
-        };
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
-        return Vector<ArgumentDescription> { };
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
-        return Vector<ArgumentDescription> {
-            { "flag"_s, "bool"_s, ASCIILiteral(), false },
-            { "value"_s, "uint64_t"_s, ASCIILiteral(), false },
-        };
-    case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
-        return Vector<ArgumentDescription> {
-            { "flag"_s, "bool"_s, ASCIILiteral(), false },
+            { "r0"_s, "RetainPtr<CVPixelBufferRef>"_s, ASCIILiteral(), false },
         };
 #endif
-    case MessageName::TestWithSuperclass_TestSyncMessage:
+    case MessageName::TestWithWantsDispatch_TestSyncMessage:
         return Vector<ArgumentDescription> {
             { "reply"_s, "uint8_t"_s, ASCIILiteral(), false },
         };
-    case MessageName::TestWithSuperclass_TestSynchronousMessage:
+    case MessageName::TestWithWantsAsyncDispatch_TestSyncMessage:
         return Vector<ArgumentDescription> {
-            { "optionalReply"_s, "WebKit::TestClassName"_s, ASCIILiteral(), true },
+            { "reply"_s, "uint8_t"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithImageData_ReceiveImageData:
+        return Vector<ArgumentDescription> {
+            { "r0"_s, "RefPtr<WebCore::ImageData>"_s, ASCIILiteral(), false },
         };
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
     case MessageName::TestWithLegacyReceiver_CreatePlugin:
@@ -1237,10 +1297,6 @@ std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(Mess
         return Vector<ArgumentDescription> {
             { "r0"_s, "IPC::Semaphore"_s, ASCIILiteral(), false },
         };
-    case MessageName::TestWithImageData_ReceiveImageData:
-        return Vector<ArgumentDescription> {
-            { "r0"_s, "RefPtr<WebCore::ImageData>"_s, ASCIILiteral(), false },
-        };
     case MessageName::TestWithStream_SendStringAsync:
         return Vector<ArgumentDescription> {
             { "returnValue"_s, "int64_t"_s, ASCIILiteral(), false },
@@ -1261,12 +1317,39 @@ std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(Mess
             { "r1"_s, "MachSendRight"_s, ASCIILiteral(), false },
         };
 #endif
-#if USE(AVFOUNDATION)
-    case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
+#if ENABLE(TEST_FEATURE)
+    case MessageName::TestWithSuperclass_TestAsyncMessage:
         return Vector<ArgumentDescription> {
-            { "r0"_s, "RetainPtr<CVPixelBufferRef>"_s, ASCIILiteral(), false },
+            { "result"_s, "uint64_t"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
+        return Vector<ArgumentDescription> { };
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
+        return Vector<ArgumentDescription> {
+            { "flag"_s, "bool"_s, ASCIILiteral(), false },
+            { "value"_s, "uint64_t"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
+        return Vector<ArgumentDescription> {
+            { "flag"_s, "bool"_s, ASCIILiteral(), false },
         };
 #endif
+    case MessageName::TestWithSuperclass_TestSyncMessage:
+        return Vector<ArgumentDescription> {
+            { "reply"_s, "uint8_t"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithSuperclass_TestSynchronousMessage:
+        return Vector<ArgumentDescription> {
+            { "optionalReply"_s, "WebKit::TestClassName"_s, ASCIILiteral(), true },
+        };
+    case MessageName::TestWithSuperclassAndWantsAsyncDispatch_TestSyncMessage:
+        return Vector<ArgumentDescription> {
+            { "reply"_s, "uint8_t"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithSuperclassAndWantsDispatch_TestSyncMessage:
+        return Vector<ArgumentDescription> {
+            { "reply"_s, "uint8_t"_s, ASCIILiteral(), false },
+        };
     default:
         break;
     }

@@ -462,6 +462,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
     void didClose(IPC::Connection&) override;
+    bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
 
     // DownloadManager::Client
     void didCreateDownload() override;

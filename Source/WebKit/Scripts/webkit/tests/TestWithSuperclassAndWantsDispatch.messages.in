@@ -1,4 +1,4 @@
-# Copyright (C) 2015 Apple Inc. All rights reserved.
+# Copyright (C) 2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,18 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> AuxiliaryProcess NotRefCounted WantsDispatchMessage {
-    ShutDown()
-    SetProcessSuppressionEnabled(bool flag)
-
-    MainThreadPing() -> ()
-
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    PreferenceDidUpdate(String domain, String key, std::optional<String> encodedValue)
-    PreferencesDidUpdate(HashMap<String, std::optional<String>> domainlessPreferences, HashMap<std::pair<String, String>, std::optional<String>> preferences)
-#endif
-
-#if OS(LINUX)
-    void DidReceiveMemoryPressureEvent(bool isCritical)
-#endif
+messages -> TestWithSuperclassAndWantsDispatch : WebPageBase WantsDispatchMessage {
+    LoadURL(String url)
+    TestSyncMessage(uint32_t param) -> (uint8_t reply) Synchronous
 }

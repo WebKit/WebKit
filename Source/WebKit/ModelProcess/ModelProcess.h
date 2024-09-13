@@ -44,7 +44,7 @@ class ModelConnectionToWebProcess;
 struct ModelProcessConnectionParameters;
 struct ModelProcessCreationParameters;
 
-class ModelProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<ModelProcess> {
+class ModelProcess final : public AuxiliaryProcess, public ThreadSafeRefCounted<ModelProcess> {
     WTF_MAKE_NONCOPYABLE(ModelProcess);
     WTF_MAKE_TZONE_ALLOCATED(ModelProcess);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ModelProcess);
@@ -83,7 +83,6 @@ private:
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    void didReceiveModelProcessMessage(IPC::Connection&, IPC::Decoder&);
 
     // Message Handlers
     void initializeModelProcess(ModelProcessCreationParameters&&, CompletionHandler<void()>&&);

@@ -130,6 +130,16 @@ void AuxiliaryProcess::initializeConnection(IPC::Connection*)
 {
 }
 
+bool AuxiliaryProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+{
+    return m_messageReceiverMap.dispatchMessage(connection, decoder);
+}
+
+bool AuxiliaryProcess::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+{
+    return m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder);
+}
+
 void AuxiliaryProcess::addMessageReceiver(IPC::ReceiverName messageReceiverName, IPC::MessageReceiver& messageReceiver)
 {
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, messageReceiver);
