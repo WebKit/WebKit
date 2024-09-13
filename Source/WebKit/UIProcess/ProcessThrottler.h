@@ -145,7 +145,7 @@ public:
     void setAllowsActivities(bool);
     void setShouldDropNearSuspendedAssertionAfterDelay(bool);
     void setShouldTakeNearSuspendedAssertion(bool);
-    bool isSuspended() const;
+    bool isSuspended() const { return m_isConnectedToProcess && !m_assertion; }
     ProcessThrottleState currentState() const { return m_state; }
     bool isHoldingNearSuspendedAssertion() const { return m_assertion && m_assertion->type() == ProcessAssertionType::NearSuspended; }
 

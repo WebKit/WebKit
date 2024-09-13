@@ -525,11 +525,6 @@ Ref<AuxiliaryProcessProxy> ProcessThrottler::protectedProcess() const
     return m_process.get();
 }
 
-bool ProcessThrottler::isSuspended() const
-{
-    return m_isConnectedToProcess && !m_assertion;
-}
-
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessThrottlerTimedActivity);
 
 ProcessThrottlerTimedActivity::ProcessThrottlerTimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)

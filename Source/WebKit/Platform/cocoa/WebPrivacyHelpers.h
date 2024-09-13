@@ -76,12 +76,12 @@ private:
 
 class ListDataControllerBase : public RefCounted<ListDataControllerBase>, public CanMakeWeakPtr<ListDataControllerBase> {
 public:
+    virtual ~ListDataControllerBase() = default;
+
     Ref<ListDataObserver> observeUpdates(Function<void()>&&);
     void initializeIfNeeded();
 
 protected:
-    virtual ~ListDataControllerBase() = default;
-
     virtual bool hasCachedListData() const = 0;
     virtual void updateList(CompletionHandler<void()>&&) = 0;
 #ifdef __OBJC__

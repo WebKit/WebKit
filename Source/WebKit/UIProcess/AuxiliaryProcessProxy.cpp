@@ -198,17 +198,6 @@ void AuxiliaryProcessProxy::terminate()
         processLauncher->terminateProcess();
 }
 
-AuxiliaryProcessProxy::State AuxiliaryProcessProxy::state() const
-{
-    if (m_processLauncher && m_processLauncher->isLaunching())
-        return AuxiliaryProcessProxy::State::Launching;
-
-    if (!m_connection)
-        return AuxiliaryProcessProxy::State::Terminated;
-
-    return AuxiliaryProcessProxy::State::Running;
-}
-
 String AuxiliaryProcessProxy::stateString() const
 {
     auto currentState = state();

@@ -181,6 +181,12 @@ public:
     }
 
     template <typename T>
+    RefPtr<T> protectedSupplement()
+    {
+        return supplement<T>();
+    }
+
+    template <typename T>
     void addSupplement()
     {
         m_supplements.add(T::supplementName(), T::create(this));
@@ -390,6 +396,7 @@ public:
     GPUProcessProxy& ensureGPUProcess();
     Ref<GPUProcessProxy> ensureProtectedGPUProcess();
     GPUProcessProxy* gpuProcess() const { return m_gpuProcess.get(); }
+    RefPtr<GPUProcessProxy> protectedGPUProcess() const { return gpuProcess(); }
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -942,12 +949,12 @@ void WebProcessPool::sendToAllProcessesForSession(const T& message, PAL::Session
 template<typename T>
 void WebProcessPool::sendToAllRemoteWorkerProcesses(const T& message, ShouldSkipSuspendedProcesses shouldSkipSuspendedProcesses)
 {
-    for (auto& process : remoteWorkerProcesses()) {
-        if (!process.canSendMessage())
+    for (Ref process : remoteWorkerProcesses()) {
+        if (!process->canSendMessage())
             continue;
-        if (shouldSkipSuspendedProcesses == ShouldSkipSuspendedProcesses::Yes && process.throttler().isSuspended())
+        if (shouldSkipSuspendedProcesses == ShouldSkipSuspendedProcesses::Yes && process->throttler().isSuspended())
             continue;
-        process.send(T(message), 0);
+        process->send(T(message), 0);
     }
 }
 

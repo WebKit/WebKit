@@ -67,6 +67,7 @@ public:
     WebPageProxy& page() const;
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
     WebProcessProxy& process() const { return m_process.get(); }
+    Ref<WebProcessProxy> protectedProcess() const { return process(); }
     WebFrameProxy& mainFrame() { return m_mainFrame.get(); }
     BrowsingContextGroup& browsingContextGroup() { return m_browsingContextGroup.get(); }
 

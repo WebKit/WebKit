@@ -168,7 +168,8 @@ public:
         Running,
         Terminated,
     };
-    State state() const;
+    inline State state() const;
+
     String stateString() const;
     bool isLaunching() const { return state() == State::Launching; }
     bool wasTerminated() const;
@@ -365,5 +366,16 @@ AuxiliaryProcessProxy::AsyncReplyID AuxiliaryProcessProxy::sendWithAsyncReply(T&
         return replyID;
     return { };
 }
-    
+
+inline AuxiliaryProcessProxy::State AuxiliaryProcessProxy::state() const
+{
+    if (m_processLauncher && m_processLauncher->isLaunching())
+        return AuxiliaryProcessProxy::State::Launching;
+
+    if (!m_connection)
+        return AuxiliaryProcessProxy::State::Terminated;
+
+    return AuxiliaryProcessProxy::State::Running;
+}
+
 } // namespace WebKit

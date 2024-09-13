@@ -401,7 +401,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         parameters.enableRemoteWebInspectorExtensionHandles = WTFMove(handles);
 
 #if ENABLE(GPU_PROCESS)
-        if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated()) {
+        if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated()) {
             if (!gpuProcess->hasSentGPUToolsSandboxExtensions()) {
                 auto gpuToolsHandle = GPUProcessProxy::createGPUToolsSandboxExtensionHandlesIfNeeded();
                 gpuProcess->send(Messages::GPUProcess::UpdateSandboxAccess(WTFMove(gpuToolsHandle)), 0);
@@ -670,7 +670,7 @@ void WebProcessPool::lockdownModeConfigurationUpdateCallback(CFNotificationCente
 #if HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
 void WebProcessPool::powerLogTaskModeStartedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
-    if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
+    if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
         gpuProcess->enablePowerLogging();
 }
 #endif
@@ -858,7 +858,7 @@ void WebProcessPool::registerNotificationObservers()
             auto handle = SandboxExtension::createHandleForMachLookup("com.apple.system.opendirectoryd.libinfo"_s, std::nullopt);
             if (!handle)
                 return;
-            if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
+            if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
                 gpuProcess->send(Messages::GPUProcess::OpenDirectoryCacheInvalidated(WTFMove(*handle)), 0);
 #endif
             for (auto& process : m_processes) {
@@ -1202,7 +1202,7 @@ void WebProcessPool::screenPropertiesChanged()
     sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
 
 #if PLATFORM(MAC) && ENABLE(GPU_PROCESS)
-    if (auto gpuProcess = this->gpuProcess())
+    if (RefPtr gpuProcess = this->gpuProcess())
         gpuProcess->setScreenProperties(screenProperties);
 #endif
 }
@@ -1223,7 +1223,7 @@ void WebProcessPool::displayPropertiesChanged(const WebCore::ScreenProperties& s
 
 static void displayReconfigurationCallBack(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags, void *userInfo)
 {
-    RunLoop::main().dispatch([displayID, flags]() {
+    RunLoop::protectedMain()->dispatch([displayID, flags]() {
         auto screenProperties = WebCore::collectScreenProperties();
         for (auto& processPool : WebProcessPool::allProcessPools())
             processPool->displayPropertiesChanged(screenProperties, displayID, flags);
@@ -1242,7 +1242,7 @@ void WebProcessPool::registerDisplayConfigurationCallback()
 
 static void webProcessPoolHighDynamicRangeDidChangeCallback(CFNotificationCenterRef, void*, CFNotificationName, const void*, CFDictionaryRef)
 {
-    RunLoop::main().dispatch([] {
+    RunLoop::protectedMain()->dispatch([] {
         auto properties = WebCore::collectScreenProperties();
         for (auto& pool : WebProcessPool::allProcessPools())
             pool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(properties));
