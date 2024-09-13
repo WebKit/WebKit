@@ -45,6 +45,7 @@ enum class AnchorPositionResolutionStage : uint8_t {
     FinishedCollectingAnchorNames,
     FoundAnchors,
     Resolved,
+    Positioned,
 };
 
 struct AnchorPositionedState {

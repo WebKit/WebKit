@@ -401,21 +401,30 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
         return Length(0, LengthType::Fixed);
 
     // Anchor value may now be resolved using layout information
-    anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
     CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
     ASSERT(anchorPositionedRenderer);
 
     // Attempt to find the element associated with the target anchor
     String anchorString = anchorValue.anchorElementString();
     if (anchorString.isNull())
-        anchorString = anchorPositionedRenderer->style().positionAnchor();
-    auto anchorElementIt = anchorPositionedState.anchorElements.find(anchorString);
-    if (anchorElementIt == anchorPositionedState.anchorElements.end()) {
+        anchorString = builderState.style().positionAnchor();
+    RefPtr anchorElement = anchorPositionedState.anchorElements.get(anchorString);
+    if (!anchorElement) {
         // FIXME: Should rely on fallback, and also should behave as unset if fallback doesn't exist.
         // See: https://drafts.csswg.org/css-anchor-position-1/#valid-anchor-function
+        anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
         return Length(0, LengthType::Fixed);
     }
-    CheckedPtr anchorRenderer = anchorElementIt->value->renderer();
+
+    if (auto* state = anchorPositionedStates.get(*anchorElement)) {
+        // Check if the anchor is itself anchor-positioned but hasn't been positioned yet.
+        if (state->stage != AnchorPositionResolutionStage::Positioned)
+            return Length(0, LengthType::Fixed);
+    }
+
+    anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
+
+    CheckedPtr anchorRenderer = anchorElement->renderer();
     ASSERT(anchorRenderer);
 
     // Confirm that the axis specified by the inset property matches the side provided in
