@@ -162,6 +162,7 @@ public:
 
     WeakHashSet<Element, WeakPtrImplWithEventTargetData>& anchorElements() { return m_anchorElements; }
     AnchorPositionedStates& anchorPositionedStates() { return m_anchorPositionedStates; }
+    const AnchorPositionedStates& anchorPositionedStates() const { return m_anchorPositionedStates; }
     AnchorsForAnchorName& anchorsForAnchorName() { return m_anchorsForAnchorName; }
     void clearAnchorPositioningState();
 
