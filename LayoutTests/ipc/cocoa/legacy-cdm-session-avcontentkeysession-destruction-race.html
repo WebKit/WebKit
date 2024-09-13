@@ -50,17 +50,17 @@ async function main() {
 
     for (let i = 0; i < 3; i++) {
         let sessA;
-        CoreIPC.GPU.RemoteLegacyCDMProxy.CreateSession(Number(cdmId), { logIdentifier: 1n },
+        CoreIPC.GPU.RemoteLegacyCDMProxy.CreateSession(cdmId, { logIdentifier: 1n },
             (r,_,t) => { sessA = t.identifier.parsedValue?.optionalValue?.parsedValue; });
         if (sessA === undefined)
             break;
 
-        CoreIPC.GPU.RemoteLegacyCDMSessionProxy.GenerateKeyRequest(Number(sessA),
+        CoreIPC.GPU.RemoteLegacyCDMSessionProxy.GenerateKeyRequest(sessA,
             { mimeType: "video/mp4", initData: initSB, mediaKeysHashSalt: "x" }, ()=>{});
 
         // Creates AVContentKeySession + bg delegate queue + fires didProvideContentKeyRequest
         // (bg thread takes RefPtr parent).
-        CoreIPC.GPU.RemoteLegacyCDMSessionProxy.Update(Number(sessA), { update: certSB }, ()=>{});
+        CoreIPC.GPU.RemoteLegacyCDMSessionProxy.Update(sessA, { update: certSB }, ()=>{});
 
         // Drop the only main-thread RefPtr; bg's `parent` may become last owner.
         CoreIPC.GPU.RemoteLegacyCDMFactoryProxy.RemoveSession(0, { identifier: sessA }, ()=>{});
@@ -69,7 +69,7 @@ async function main() {
         let burst = [];
         for (let k = 0; k < 32; k++) {
             let s;
-            CoreIPC.GPU.RemoteLegacyCDMProxy.CreateSession(Number(cdmId), { logIdentifier: BigInt(100 + k) },
+            CoreIPC.GPU.RemoteLegacyCDMProxy.CreateSession(cdmId, { logIdentifier: BigInt(100 + k) },
                 (r,_,t) => { s = t.identifier.parsedValue?.optionalValue?.parsedValue; });
             if (s !== undefined)
                 burst.push(s);
