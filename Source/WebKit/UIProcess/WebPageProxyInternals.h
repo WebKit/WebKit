@@ -269,7 +269,6 @@ public:
     std::optional<WebCore::FloatSize> viewportSizeForCSSViewportUnits;
     VisibleWebPageToken visiblePageToken;
     WebCore::IntRect visibleScrollerThumbRect;
-    WebCore::PageIdentifier webPageID;
     WindowKind windowKind { WindowKind::Unparented };
     std::unique_ptr<ProcessThrottlerActivity> pageAllowedToRunInTheBackgroundActivityDueToTitleChanges;
     std::unique_ptr<ProcessThrottlerActivity> pageAllowedToRunInTheBackgroundActivityDueToNotifications;
