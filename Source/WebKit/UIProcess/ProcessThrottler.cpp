@@ -296,13 +296,13 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
     protectedProcess()->didChangeThrottleState(newState);
 }
 
-void ProcessThrottler::ref()
+void ProcessThrottler::ref() const
 {
     // Forward ref-counting to our owner.
     m_process->ref();
 }
 
-void ProcessThrottler::deref()
+void ProcessThrottler::deref() const
 {
     // Forward ref-counting to our owner.
     m_process->deref();

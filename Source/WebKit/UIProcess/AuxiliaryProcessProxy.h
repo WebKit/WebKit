@@ -97,6 +97,8 @@ public:
 
     ProcessThrottler& throttler() { return m_throttler; }
     const ProcessThrottler& throttler() const { return m_throttler; }
+    Ref<ProcessThrottler> protectedThrottler() { return m_throttler; }
+    Ref<const ProcessThrottler> protectedThrottler() const { return m_throttler; }
 
     template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions = { });
 

@@ -124,8 +124,8 @@ public:
     using Activity = ProcessThrottlerActivity;
     using ActivityVariant = std::variant<std::nullptr_t, UniqueRef<Activity>>;
 
-    void ref();
-    void deref();
+    void ref() const;
+    void deref() const;
 
     using ForegroundActivity = Activity;
     UniqueRef<Activity> foregroundActivity(ASCIILiteral name);
