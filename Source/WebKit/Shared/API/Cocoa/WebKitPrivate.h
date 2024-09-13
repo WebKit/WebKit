@@ -28,6 +28,17 @@
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKWebExtensionActionPrivate.h>
+#import <WebKit/WKWebExtensionCommandPrivate.h>
+#import <WebKit/WKWebExtensionContextPrivate.h>
+#import <WebKit/WKWebExtensionControllerConfigurationPrivate.h>
+#import <WebKit/WKWebExtensionControllerDelegatePrivate.h>
+#import <WebKit/WKWebExtensionControllerPrivate.h>
+#import <WebKit/WKWebExtensionDataRecordPrivate.h>
+#import <WebKit/WKWebExtensionMatchPatternPrivate.h>
+#import <WebKit/WKWebExtensionMessagePortPrivate.h>
+#import <WebKit/WKWebExtensionPermissionPrivate.h>
+#import <WebKit/WKWebExtensionPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKActivatedElementInfo.h>
