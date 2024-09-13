@@ -295,15 +295,6 @@ headers: <WebCore/DisplayListItems.h>
     WebCore::FloatRect rect();
 };
 
-#if ENABLE(VIDEO)
-
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::PaintFrameForMedia {
-    WebCore::MediaPlayerIdentifier identifier();
-    WebCore::FloatRect destination();
-};
-
-#endif
-
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::StrokeRect {
     WebCore::FloatRect rect();
     float lineWidth();

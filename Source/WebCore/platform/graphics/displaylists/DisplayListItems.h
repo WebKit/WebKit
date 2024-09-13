@@ -36,7 +36,6 @@
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "Image.h"
-#include "MediaPlayerIdentifier.h"
 #include "PositionedGlyphs.h"
 #include "RenderingResourceIdentifier.h"
 #include "SharedBuffer.h"
@@ -1227,27 +1226,6 @@ public:
 private:
     FloatRect m_rect;
 };
-
-#if ENABLE(VIDEO)
-class PaintFrameForMedia {
-public:
-    static constexpr char name[] = "paint-frame-for-media";
-
-    WEBCORE_EXPORT PaintFrameForMedia(MediaPlayerIdentifier, const FloatRect& destination);
-
-    MediaPlayerIdentifier identifier() const { return m_identifier; }
-    const FloatRect& destination() const { return m_destination; }
-
-    bool isValid() const { return m_identifier.isValid(); }
-
-    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
-    void dump(TextStream&, OptionSet<AsTextFlag>) const;
-
-private:
-    MediaPlayerIdentifier m_identifier;
-    FloatRect m_destination;
-};
-#endif
 
 class StrokeRect {
 public:

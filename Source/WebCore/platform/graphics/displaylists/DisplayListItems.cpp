@@ -729,24 +729,6 @@ void FillEllipse::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("rect", rect());
 }
 
-#if ENABLE(VIDEO)
-PaintFrameForMedia::PaintFrameForMedia(MediaPlayerIdentifier identifier, const FloatRect& destination)
-    : m_identifier(identifier)
-    , m_destination(destination)
-{
-}
-
-NO_RETURN_DUE_TO_ASSERT void PaintFrameForMedia::apply(GraphicsContext&) const
-{
-    ASSERT_NOT_REACHED();
-}
-
-void PaintFrameForMedia::dump(TextStream& ts, OptionSet<AsTextFlag>) const
-{
-    ts.dumpProperty("destination", destination());
-}
-#endif
-
 void StrokeRect::apply(GraphicsContext& context) const
 {
     context.strokeRect(m_rect, m_lineWidth);
