@@ -1284,9 +1284,9 @@ private:
     bool m_hasNotIsolatedBlendingDescendantsStatusDirty : 1;
     bool m_repaintRectsValid : 1;
 
-    bool m_intrinsicallyComposited : 1;
-    bool m_hasIntrinsicallyCompositedDescendants : 1;
-    bool m_hasIntrinsicallyCompositedDescendantsStatusDirty : 1;
+    bool m_intrinsicallyComposited : 1 { false };
+    bool m_hasIntrinsicallyCompositedDescendants : 1 { false };
+    bool m_hasIntrinsicallyCompositedDescendantsStatusDirty : 1 { true };
 
     bool m_wasOmittedFromZOrderTree : 1 { false };
 
