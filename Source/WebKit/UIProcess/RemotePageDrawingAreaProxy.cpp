@@ -54,6 +54,11 @@ RemotePageDrawingAreaProxy::~RemotePageDrawingAreaProxy()
         m_drawingArea->removeRemotePageDrawingAreaProxy(*this);
 }
 
+Ref<WebProcessProxy> RemotePageDrawingAreaProxy::protectedProcess()
+{
+    return m_process;
+}
+
 void RemotePageDrawingAreaProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (m_drawingArea)

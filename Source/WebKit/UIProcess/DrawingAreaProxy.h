@@ -160,6 +160,7 @@ protected:
     DrawingAreaProxy(DrawingAreaType, WebPageProxy&, WebProcessProxy&);
 
     Ref<WebPageProxy> protectedWebPageProxy() const;
+    Ref<WebProcessProxy> protectedWebProcessProxy() const;
 
     DrawingAreaType m_type;
     WeakRef<WebPageProxy> m_webPageProxy;

@@ -65,9 +65,9 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& p
 {
     // We don't want to pool surfaces in the UI process.
     // FIXME: We should do this somewhere else.
-    IOSurfacePool::sharedPool().setPoolSize(0);
+    IOSurfacePool::sharedPoolSingleton().setPoolSize(0);
 
-    if (pageProxy.preferences().tiledScrollingIndicatorVisible())
+    if (pageProxy.protectedPreferences()->tiledScrollingIndicatorVisible())
         initializeDebugIndicator();
 }
 
@@ -98,7 +98,7 @@ std::unique_ptr<RemoteLayerTreeHost> RemoteLayerTreeDrawingAreaProxy::detachRemo
 
 void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
 {
-    if (!m_webPageProxy->hasRunningProcess())
+    if (!protectedWebPageProxy()->hasRunningProcess())
         return;
     if (auto scrollingCoordinator = m_webPageProxy->scrollingCoordinatorProxy())
         scrollingCoordinator->viewSizeDidChange();
@@ -134,7 +134,7 @@ void RemoteLayerTreeDrawingAreaProxy::viewWillEndLiveResize()
 
 void RemoteLayerTreeDrawingAreaProxy::deviceScaleFactorDidChange()
 {
-    send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy->deviceScaleFactor()));
+    send(Messages::DrawingArea::SetDeviceScaleFactor(protectedWebPageProxy()->deviceScaleFactor()));
 }
 
 void RemoteLayerTreeDrawingAreaProxy::didUpdateGeometry()
@@ -381,18 +381,19 @@ static const float indicatorInset = 10;
 FloatPoint RemoteLayerTreeDrawingAreaProxy::indicatorLocation() const
 {
     FloatPoint tiledMapLocation;
+    Ref webPageProxy = m_webPageProxy.get();
 #if PLATFORM(IOS_FAMILY)
-    tiledMapLocation = m_webPageProxy->unobscuredContentRect().location().expandedTo(FloatPoint());
-    tiledMapLocation = tiledMapLocation.expandedTo(m_webPageProxy->exposedContentRect().location());
+    tiledMapLocation = webPageProxy->unobscuredContentRect().location().expandedTo(FloatPoint());
+    tiledMapLocation = tiledMapLocation.expandedTo(webPageProxy->exposedContentRect().location());
 
-    float absoluteInset = indicatorInset / m_webPageProxy->displayedContentScale();
+    float absoluteInset = indicatorInset / webPageProxy->displayedContentScale();
     tiledMapLocation += FloatSize(absoluteInset, absoluteInset);
 #else
-    if (auto viewExposedRect = m_webPageProxy->viewExposedRect())
+    if (auto viewExposedRect = webPageProxy->viewExposedRect())
         tiledMapLocation = viewExposedRect->location();
 
     tiledMapLocation += FloatSize(indicatorInset, indicatorInset);
-    float scale = 1 / m_webPageProxy->pageScaleFactor();
+    float scale = 1 / webPageProxy->pageScaleFactor();
     tiledMapLocation.scale(scale);
 #endif
     return tiledMapLocation;
@@ -409,7 +410,7 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicatorPosition()
 float RemoteLayerTreeDrawingAreaProxy::indicatorScale(IntSize contentsSize) const
 {
     // Pick a good scale.
-    IntSize viewSize = m_webPageProxy->viewSize();
+    IntSize viewSize = protectedWebPageProxy()->viewSize();
 
     float scale = 1;
     if (!contentsSize.isEmpty()) {
@@ -449,12 +450,13 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize,
     [m_exposedRectIndicatorLayer setBorderWidth:counterScaledBorder];
 
     FloatRect scaledExposedRect;
+    Ref webPageProxy = m_webPageProxy.get();
 #if PLATFORM(IOS_FAMILY)
-    scaledExposedRect = m_webPageProxy->exposedContentRect();
+    scaledExposedRect = webPageProxy->exposedContentRect();
 #else
-    if (auto viewExposedRect = m_webPageProxy->viewExposedRect())
+    if (auto viewExposedRect = webPageProxy->viewExposedRect())
         scaledExposedRect = *viewExposedRect;
-    float counterScale = 1 / m_webPageProxy->pageScaleFactor();
+    float counterScale = 1 / webPageProxy->pageScaleFactor();
     scaledExposedRect.scale(counterScale);
 #endif
     [m_exposedRectIndicatorLayer setPosition:scaledExposedRect.location()];
@@ -548,10 +550,10 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(IPC::Connection* connect
         didRefreshDisplay(state, *connection);
     } else {
         if (m_webProcessProxy->hasConnection())
-            didRefreshDisplay(m_webPageProxyProcessState, m_webProcessProxy->protectedConnection());
-        for (auto pair : m_remotePageProcessState) {
-            if (pair.key.process().hasConnection())
-                didRefreshDisplay(pair.value, pair.key.process().protectedConnection());
+            didRefreshDisplay(m_webPageProxyProcessState, protectedWebProcessProxy()->protectedConnection());
+        for (auto [key, value] : m_remotePageProcessState) {
+            if (key.process().hasConnection())
+                didRefreshDisplay(value, key.protectedProcess()->protectedConnection());
         }
     }
 
@@ -595,7 +597,7 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
 
 void RemoteLayerTreeDrawingAreaProxy::hideContentUntilPendingUpdate()
 {
-    m_replyForUnhidingContent = m_webProcessProxy->sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [] () { }, messageSenderDestinationID(), { }, WebProcessProxy::ShouldStartProcessThrottlerActivity::No);
+    m_replyForUnhidingContent = protectedWebProcessProxy()->sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [] () { }, messageSenderDestinationID(), { }, WebProcessProxy::ShouldStartProcessThrottlerActivity::No);
     m_remoteLayerTreeHost->detachRootLayer();
 }
 
@@ -621,7 +623,7 @@ CALayer *RemoteLayerTreeDrawingAreaProxy::layerWithIDForTesting(WebCore::Platfor
 
 void RemoteLayerTreeDrawingAreaProxy::windowKindDidChange()
 {
-    if (m_webPageProxy->windowKind() == WindowKind::InProcessSnapshotting)
+    if (protectedWebPageProxy()->windowKind() == WindowKind::InProcessSnapshotting)
         m_remoteLayerTreeHost->mapAllIOSurfaceBackingStore();
 }
 

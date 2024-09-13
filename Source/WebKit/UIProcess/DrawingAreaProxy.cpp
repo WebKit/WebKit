@@ -61,6 +61,11 @@ Ref<WebPageProxy> DrawingAreaProxy::protectedWebPageProxy() const
     return m_webPageProxy.get();
 }
 
+Ref<WebProcessProxy> DrawingAreaProxy::protectedWebProcessProxy() const
+{
+    return m_webProcessProxy.get();
+}
+
 void DrawingAreaProxy::startReceivingMessages(WebProcessProxy& process)
 {
     for (auto& name : messageReceiverNames())

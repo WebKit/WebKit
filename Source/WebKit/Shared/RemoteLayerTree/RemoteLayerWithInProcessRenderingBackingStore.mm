@@ -268,7 +268,7 @@ RefPtr<WebCore::ImageBuffer> RemoteLayerWithInProcessRenderingBackingStore::allo
 {
     auto purpose = m_layer->containsBitmapOnly() ? WebCore::RenderingPurpose::BitmapOnlyLayerBacking : WebCore::RenderingPurpose::LayerBacking;
     ImageBufferCreationContext creationContext;
-    creationContext.surfacePool = &WebCore::IOSurfacePool::sharedPool();
+    creationContext.surfacePool = &WebCore::IOSurfacePool::sharedPoolSingleton();
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     if (m_parameters.includeDisplayList == IncludeDisplayList::Yes) {

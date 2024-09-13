@@ -50,7 +50,7 @@ class IOSurfacePool : public ThreadSafeRefCounted<IOSurfacePool> {
     friend class LazyNeverDestroyed<IOSurfacePool>;
 
 public:
-    WEBCORE_EXPORT static IOSurfacePool& sharedPool();
+    WEBCORE_EXPORT static IOSurfacePool& sharedPoolSingleton();
     WEBCORE_EXPORT static Ref<IOSurfacePool> create();
 
     WEBCORE_EXPORT ~IOSurfacePool();

@@ -78,7 +78,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeDisplayLinkClient);
 // This is called off the main thread.
 void RemoteLayerTreeDisplayLinkClient::displayLinkFired(WebCore::PlatformDisplayID /* displayID */, WebCore::DisplayUpdate /* displayUpdate */, bool /* wantsFullSpeedUpdates */, bool /* anyObserverWantsCallback */)
 {
-    RunLoop::main().dispatch([pageIdentifier = m_pageIdentifier]() {
+    RunLoop::protectedMain()->dispatch([pageIdentifier = m_pageIdentifier]() {
         auto page = WebProcessProxy::webPage(pageIdentifier);
         if (!page)
             return;
@@ -118,15 +118,15 @@ DisplayLink* RemoteLayerTreeDrawingAreaProxyMac::existingDisplayLink()
 {
     if (!m_displayID)
         return nullptr;
-    
-    return m_webPageProxy->configuration().processPool().displayLinks().existingDisplayLinkForDisplay(*m_displayID);
+
+    return protectedWebPageProxy()->protectedConfiguration()->processPool().displayLinks().existingDisplayLinkForDisplay(*m_displayID);
 }
 
 DisplayLink& RemoteLayerTreeDrawingAreaProxyMac::displayLink()
 {
     ASSERT(m_displayID);
 
-    auto& displayLinks = m_webPageProxy->configuration().processPool().displayLinks();
+    auto& displayLinks = protectedWebPageProxy()->protectedConfiguration()->processPool().displayLinks();
     return displayLinks.displayLinkForDisplay(*m_displayID);
 }
 
@@ -143,8 +143,9 @@ void RemoteLayerTreeDrawingAreaProxyMac::removeObserver(std::optional<DisplayLin
 
 void RemoteLayerTreeDrawingAreaProxyMac::layoutBannerLayers(const RemoteLayerTreeTransaction& transaction)
 {
-    auto* headerBannerLayer = m_webPageProxy->headerBannerLayer();
-    auto* footerBannerLayer = m_webPageProxy->footerBannerLayer();
+    Ref webPageProxy = m_webPageProxy.get();
+    auto* headerBannerLayer = webPageProxy->headerBannerLayer();
+    auto* footerBannerLayer = webPageProxy->footerBannerLayer();
     if (!headerBannerLayer && !footerBannerLayer)
         return;
 
@@ -160,8 +161,8 @@ void RemoteLayerTreeDrawingAreaProxyMac::layoutBannerLayers(const RemoteLayerTre
         [CATransaction commit];
     };
 
-    float topContentInset = m_webPageProxy->scrollingCoordinatorProxy()->topContentInset();
-    auto scrollPosition = m_webPageProxy->scrollingCoordinatorProxy()->currentMainFrameScrollPosition();
+    float topContentInset = webPageProxy->scrollingCoordinatorProxy()->topContentInset();
+    auto scrollPosition = webPageProxy->scrollingCoordinatorProxy()->currentMainFrameScrollPosition();
     
     if (headerBannerLayer) {
         auto headerHeight = headerBannerLayer.frame.size.height;
@@ -385,8 +386,9 @@ void RemoteLayerTreeDrawingAreaProxyMac::scheduleDisplayRefreshCallbacks()
     m_displayRefreshObserverID = DisplayLinkObserverID::generate();
     displayLink.addObserver(*m_displayLinkClient, *m_displayRefreshObserverID, m_clientPreferredFramesPerSecond);
     if (m_shouldLogNextObserverChange) {
+        Ref webPageProxy = m_webPageProxy.get();
         RELEASE_LOG(ViewState, "%p [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", PID=%i, DisplayID=%u] RemoteLayerTreeDrawingAreaProxyMac::scheduleDisplayRefreshCallbacks",
-            this, m_webPageProxy->identifier().toUInt64(), m_webPageProxy->webPageIDInMainFrameProcess().toUInt64(), m_webPageProxy->legacyMainFrameProcessID(), m_displayID ? *m_displayID : 0);
+            this, webPageProxy->identifier().toUInt64(), webPageProxy->webPageIDInMainFrameProcess().toUInt64(), webPageProxy->legacyMainFrameProcessID(), m_displayID ? *m_displayID : 0);
         m_shouldLogNextObserverChange = false;
     }
 }
@@ -478,8 +480,9 @@ std::optional<WebCore::FramesPerSecond> RemoteLayerTreeDrawingAreaProxyMac::disp
 void RemoteLayerTreeDrawingAreaProxyMac::didRefreshDisplay()
 {
     if (m_shouldLogNextDisplayRefresh) {
+        Ref webPageProxy = m_webPageProxy.get();
         RELEASE_LOG(ViewState, "%p [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", PID=%i, DisplayID=%u] RemoteLayerTreeDrawingAreaProxyMac::didRefreshDisplay",
-            this, m_webPageProxy->identifier().toUInt64(), m_webPageProxy->webPageIDInMainFrameProcess().toUInt64(), m_webPageProxy->legacyMainFrameProcessID(), m_displayID ? *m_displayID : 0);
+            this, webPageProxy->identifier().toUInt64(), webPageProxy->webPageIDInMainFrameProcess().toUInt64(), webPageProxy->legacyMainFrameProcessID(), m_displayID ? *m_displayID : 0);
         m_shouldLogNextDisplayRefresh = false;
     }
     // FIXME: Need to pass WebCore::DisplayUpdate here and filter out non-relevant displays.
@@ -495,12 +498,12 @@ void RemoteLayerTreeDrawingAreaProxyMac::didChangeViewExposedRect()
 
 void RemoteLayerTreeDrawingAreaProxyMac::colorSpaceDidChange()
 {
-    send(Messages::DrawingArea::SetColorSpace(m_webPageProxy->colorSpace()));
+    send(Messages::DrawingArea::SetColorSpace(protectedWebPageProxy()->colorSpace()));
 }
 
 MachSendRight RemoteLayerTreeDrawingAreaProxyMac::createFence()
 {
-    RetainPtr<CAContext> rootLayerContext = [m_webPageProxy->acceleratedCompositingRootLayer() context];
+    RetainPtr<CAContext> rootLayerContext = [protectedWebPageProxy()->acceleratedCompositingRootLayer() context];
     if (!rootLayerContext)
         return MachSendRight();
 

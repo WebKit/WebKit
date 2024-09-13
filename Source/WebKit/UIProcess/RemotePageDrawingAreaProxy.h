@@ -51,6 +51,7 @@ public:
     ~RemotePageDrawingAreaProxy();
 
     WebProcessProxy& process() { return m_process; }
+    Ref<WebProcessProxy> protectedProcess();
 
 private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
