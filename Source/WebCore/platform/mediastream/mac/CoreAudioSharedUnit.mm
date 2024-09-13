@@ -41,10 +41,11 @@
 namespace WebCore {
 
 #if PLATFORM(MAC) && HAVE(VOICEACTIVITYDETECTION)
-static void speechActivityListenerCallback(AudioObjectID deviceID, UInt32, const AudioObjectPropertyAddress*, void*)
+static int speechActivityListenerCallback(AudioObjectID deviceID, UInt32, const AudioObjectPropertyAddress*, void*)
 {
     ASSERT(isMainRunLoop());
     CoreAudioSharedUnit::processVoiceActivityEvent(deviceID);
+    return 0;
 }
 
 static void manageSpeechActivityListener(uint32_t deviceID, bool enable)
