@@ -230,6 +230,14 @@ CookieStore::~CookieStore()
     m_mainThreadBridge->detach();
 }
 
+static bool containsInvalidCharacters(const String& string)
+{
+    // The invalid characters are specified at https://wicg.github.io/cookie-store/#set-a-cookie.
+    return string.contains([](UChar character) {
+        return character == 0x003B || character == 0x007F || (character <= 0x001F && character != 0x0009);
+    });
+}
+
 void CookieStore::get(String&& name, Ref<DeferredPromise>&& promise)
 {
     get(CookieStoreGetOptions { WTFMove(name), { } }, WTFMove(promise));
@@ -392,6 +400,29 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
     Cookie cookie;
     cookie.name = WTFMove(options.name);
     cookie.value = WTFMove(options.value);
+
+    if (containsInvalidCharacters(cookie.name)) {
+        promise->reject(Exception { ExceptionCode::TypeError, "The cookie name must not contain '\u003B', '\u007F', or any C0 control character except '\u0009'."_s });
+        return;
+    }
+
+    if (containsInvalidCharacters(cookie.value)) {
+        promise->reject(Exception { ExceptionCode::TypeError, "The cookie value must not contain '\u003B', '\u007F', or any C0 control character except '\u0009'."_s });
+        return;
+    }
+
+    if (cookie.name.isEmpty()) {
+        if (cookie.value.contains('=')) {
+            promise->reject(Exception { ExceptionCode::TypeError, "The cookie name and value must not both be set from the 'value' field."_s });
+            return;
+        }
+
+        if (cookie.value.isEmpty()) {
+            promise->reject(Exception { ExceptionCode::TypeError, "The cookie name and value must not both be empty."_s });
+            return;
+        }
+    }
+
     cookie.created = WallTime::now().secondsSinceEpoch().milliseconds();
 
     cookie.domain = options.domain.isNull() ? domain : WTFMove(options.domain);
