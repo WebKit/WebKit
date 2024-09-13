@@ -940,6 +940,7 @@ TextStream& operator<<(TextStream& ts, RubyPosition position)
     case RubyPosition::Over: ts << "over"; break;
     case RubyPosition::Under: ts << "under"; break;
     case RubyPosition::InterCharacter: ts << "inter-character"; break;
+    case RubyPosition::LegacyInterCharacter: ts << "legacy inter-character"; break;
     }
     return ts;
 }

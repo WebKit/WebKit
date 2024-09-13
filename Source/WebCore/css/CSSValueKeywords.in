@@ -1160,6 +1160,7 @@ horizontal-bt
 after
 before
 inter-character
+legacy-inter-character
 
 // -webkit-text-combine
 // horizontal

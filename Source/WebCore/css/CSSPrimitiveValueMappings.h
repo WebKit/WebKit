@@ -1531,6 +1531,8 @@ constexpr CSSValueID toCSSValueID(RubyPosition e)
         return CSSValueUnder;
     case RubyPosition::InterCharacter:
         return CSSValueInterCharacter;
+    case RubyPosition::LegacyInterCharacter:
+        return CSSValueLegacyInterCharacter;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
     return CSSValueInvalid;
@@ -1547,6 +1549,8 @@ template<> constexpr RubyPosition fromCSSValueID(CSSValueID valueID)
         return RubyPosition::Under;
     case CSSValueInterCharacter:
         return RubyPosition::InterCharacter;
+    case CSSValueLegacyInterCharacter:
+        return RubyPosition::LegacyInterCharacter;
     default:
         break;
     }

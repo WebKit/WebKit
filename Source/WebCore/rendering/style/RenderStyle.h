@@ -906,6 +906,7 @@ public:
     const AtomString& textEmphasisMarkString() const;
 
     inline RubyPosition rubyPosition() const;
+    inline bool isInterCharacterRubyPosition() const;
     inline RubyAlign rubyAlign() const;
     inline RubyOverhang rubyOverhang() const;
 

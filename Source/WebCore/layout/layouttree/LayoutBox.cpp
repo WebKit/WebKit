@@ -316,7 +316,7 @@ bool Box::isRubyAnnotationBox() const
 
 bool Box::isInterlinearRubyAnnotationBox() const
 {
-    return isRubyAnnotationBox() && m_style.rubyPosition() != RubyPosition::InterCharacter;
+    return isRubyAnnotationBox() && !m_style.isInterCharacterRubyPosition();
 }
 
 bool Box::isInternalRubyBox() const

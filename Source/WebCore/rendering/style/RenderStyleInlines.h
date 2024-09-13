@@ -1036,6 +1036,12 @@ constexpr BorderStyle collapsedBorderStyle(BorderStyle style)
     return style;
 }
 
+inline bool RenderStyle::isInterCharacterRubyPosition() const
+{
+    auto rubyPosition = this->rubyPosition();
+    return rubyPosition == RubyPosition::InterCharacter || rubyPosition == RubyPosition::LegacyInterCharacter;
+}
+
 inline bool generatesBox(const RenderStyle& style)
 {
     return style.display() != DisplayType::None && style.display() != DisplayType::Contents;

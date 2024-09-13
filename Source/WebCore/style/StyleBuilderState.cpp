@@ -158,7 +158,7 @@ void BuilderState::registerContentAttribute(const AtomString& attributeLocalName
 
 void BuilderState::adjustStyleForInterCharacterRuby()
 {
-    if (m_style.rubyPosition() != RubyPosition::InterCharacter || !element() || !element()->hasTagName(HTMLNames::rtTag))
+    if (!m_style.isInterCharacterRubyPosition() || !element() || !element()->hasTagName(HTMLNames::rtTag))
         return;
 
     m_style.setTextAlign(TextAlignMode::Center);
