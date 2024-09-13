@@ -221,9 +221,11 @@ bool StreamServerConnection::dispatchStreamMessage(Decoder&& decoder, StreamMess
         return false;
     }
     WakeUpClient result = WakeUpClient::No;
-    if (decoder.isSyncMessage())
+    if (decoder.isSyncMessage()) {
         result = m_buffer.releaseAll();
-    else
+        if (m_syncReplyToDispatch)
+            m_connection->sendSyncReply(makeUniqueRefFromNonNullUniquePtr(WTFMove(m_syncReplyToDispatch)));
+    } else
         result = m_buffer.release(decoder.currentBufferOffset());
     if (result == WakeUpClient::Yes)
         m_clientWaitSemaphore.signal();
