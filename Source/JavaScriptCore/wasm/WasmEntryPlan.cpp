@@ -218,23 +218,19 @@ void EntryPlan::compileFunctions(CompilationEffort effort)
             compileFunction(index);
 
         if (!areWasmToWasmStubsCompiled) {
-#if ENABLE(JIT)
             if (UNLIKELY(!generateWasmToWasmStubs())) {
                 Locker locker { m_lock };
                 fail(makeString("Out of executable memory at stub generation"_s));
                 return;
             }
-#endif
         }
 
         if (!areWasmToJSStubsCompiled) {
-#if ENABLE(JIT)
             if (UNLIKELY(!generateWasmToJSStubs())) {
                 Locker locker { m_lock };
                 fail(makeString("Out of executable memory at stub generation"_s));
                 return;
             }
-#endif
         }
     }
 }
@@ -272,21 +268,17 @@ bool EntryPlan::completeSyncIfPossible()
 void EntryPlan::generateStubsIfNecessary()
 {
     if (!std::exchange(m_areWasmToWasmStubsCompiled, true)) {
-#if ENABLE(JIT)
         if (UNLIKELY(!generateWasmToWasmStubs())) {
             fail(makeString("Out of executable memory at stub generation"_s));
             return;
         }
-#endif
     }
 
     if (!std::exchange(m_areWasmToJSStubsCompiled, true)) {
-#if ENABLE(JIT)
         if (UNLIKELY(!generateWasmToJSStubs())) {
             fail(makeString("Out of executable memory at stub generation"_s));
             return;
         }
-#endif
     }
 }
 
