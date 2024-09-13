@@ -40,6 +40,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RobinHoodHashMap.h>
 #import <wtf/RunLoop.h>
+#import <wtf/Scope.h>
 #import <wtf/WeakRandom.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/MakeString.h>
@@ -112,9 +113,12 @@ Ref<ListDataObserver> ListDataControllerBase::observeUpdates(Function<void()>&& 
     return observer;
 }
 
-void ListDataControllerBase::initialize()
+void ListDataControllerBase::initializeIfNeeded()
 {
-    if (m_wasInitialized)
+    if (hasCachedListData())
+        return;
+
+    if (std::exchange(m_wasInitialized, true))
         return;
 
     updateList([this] {
@@ -122,7 +126,6 @@ void ListDataControllerBase::initialize()
             observer.invokeCallback();
         });
     });
-    m_wasInitialized = true;
 }
 
 WPResourceType LinkDecorationFilteringController::resourceType() const
@@ -688,6 +691,28 @@ void configureForAdvancedPrivacyProtections(NSURLSession *session)
 void configureForAdvancedPrivacyProtections(NSURLSession *) { }
 
 #endif
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPrivacyHelpersAdditions.mm>)
+#import <WebKitAdditions/WebPrivacyHelpersAdditions.mm>
+#else
+void ScriptTelemetryController::updateList(CompletionHandler<void()>&& completion)
+{
+    RunLoop::main().dispatch(WTFMove(completion));
+}
+
+WPResourceType ScriptTelemetryController::resourceType() const
+{
+    return static_cast<WPResourceType>(9);
+}
+#endif
+
+void ScriptTelemetryController::didUpdateCachedListData()
+{
+    m_cachedListData.firstPartyTopDomains.shrinkToFit();
+    m_cachedListData.firstPartyHosts.shrinkToFit();
+    m_cachedListData.thirdPartyTopDomains.shrinkToFit();
+    m_cachedListData.thirdPartyHosts.shrinkToFit();
+}
 
 } // namespace WebKit
 

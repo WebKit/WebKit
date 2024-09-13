@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import "ScriptTelemetry.h"
 #import <wtf/CompletionHandler.h>
 #import <wtf/Function.h>
 #import <wtf/Ref.h>
@@ -76,11 +77,12 @@ private:
 class ListDataControllerBase : public RefCounted<ListDataControllerBase>, public CanMakeWeakPtr<ListDataControllerBase> {
 public:
     Ref<ListDataObserver> observeUpdates(Function<void()>&&);
-    void initialize();
+    void initializeIfNeeded();
 
 protected:
     virtual ~ListDataControllerBase() = default;
 
+    virtual bool hasCachedListData() const = 0;
     virtual void updateList(CompletionHandler<void()>&&) = 0;
 #ifdef __OBJC__
     virtual WPResourceType resourceType() const = 0;
@@ -121,6 +123,7 @@ protected:
     }
 
     virtual void didUpdateCachedListData() { }
+    bool hasCachedListData() const final { return !m_cachedListData.isEmpty(); }
 
     BackingDataType m_cachedListData;
 };
@@ -137,10 +140,8 @@ private:
 };
 
 class StorageAccessPromptQuirkController : public ListDataController<StorageAccessPromptQuirkController, Vector<WebCore::OrganizationStorageAccessPromptQuirk>> {
-public:
-    void updateList(CompletionHandler<void()>&&) final;
-
 private:
+    void updateList(CompletionHandler<void()>&&) final;
     void didUpdateCachedListData() final;
 #ifdef __OBJC__
     WPResourceType resourceType() const final;
@@ -148,10 +149,17 @@ private:
 };
 
 class StorageAccessUserAgentStringQuirkController : public ListDataController<StorageAccessUserAgentStringQuirkController, HashMap<WebCore::RegistrableDomain, String>> {
-public:
-    void updateList(CompletionHandler<void()>&&) final;
-
 private:
+    void updateList(CompletionHandler<void()>&&) final;
+#ifdef __OBJC__
+    WPResourceType resourceType() const final;
+#endif
+};
+
+class ScriptTelemetryController : public ListDataController<ScriptTelemetryController, ScriptTelemetryRules> {
+private:
+    void updateList(CompletionHandler<void()>&&) final;
+    void didUpdateCachedListData() final;
 #ifdef __OBJC__
     WPResourceType resourceType() const final;
 #endif

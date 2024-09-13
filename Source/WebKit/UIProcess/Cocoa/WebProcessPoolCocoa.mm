@@ -533,7 +533,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         for (auto&& domain : entry.quirkDomains.keys())
             parameters.storageAccessPromptQuirksDomains.add(domain);
     }
-#endif
+
+    parameters.scriptTelemetryRules = ScriptTelemetryController::shared().cachedListData();
+#endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)

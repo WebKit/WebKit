@@ -642,6 +642,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
 
     updateStorageAccessUserAgentStringQuirks(WTFMove(parameters.storageAccessUserAgentStringQuirksData));
     updateDomainsWithStorageAccessQuirks(WTFMove(parameters.storageAccessPromptQuirksDomains));
+    updateScriptTelemetryFilter(WTFMove(parameters.scriptTelemetryRules));
 
 #if ENABLE(GAMEPAD)
     // Web processes need to periodically notify the UI process of gamepad access at least as frequently
@@ -2220,6 +2221,14 @@ void WebProcess::updateDomainsWithStorageAccessQuirks(HashSet<WebCore::Registrab
         m_domainsWithStorageAccessQuirks.add(domain);
 }
 
+void WebProcess::updateScriptTelemetryFilter(ScriptTelemetryRules&& rules)
+{
+    if (rules.isEmpty())
+        return;
+
+    m_scriptTelemetryFilter = WTF::makeUnique<ScriptTelemetryFilter>(WTFMove(rules));
+}
+
 void WebProcess::setChildProcessDebuggabilityEnabled(bool childProcessDebuggabilityEnabled)
 {
     m_childProcessDebuggabilityEnabled = childProcessDebuggabilityEnabled;
@@ -2410,6 +2419,11 @@ void WebProcess::updateCachedCookiesEnabled()
 {
     for (auto& document : Document::allDocuments())
         document->updateCachedCookiesEnabled();
+}
+
+bool WebProcess::requiresScriptTelemetryForURL(const URL& url, const WebCore::SecurityOrigin& topOrigin) const
+{
+    return m_scriptTelemetryFilter && m_scriptTelemetryFilter->matches(url, topOrigin);
 }
 
 } // namespace WebKit

@@ -337,12 +337,19 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
             protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateDomainsWithStorageAccessQuirks(domainSet));
         }
     });
-    if (StorageAccessPromptQuirkController::shared().cachedListData().isEmpty())
-        StorageAccessPromptQuirkController::shared().initialize();
-    if (StorageAccessUserAgentStringQuirkController::shared().cachedListData().isEmpty())
-        StorageAccessUserAgentStringQuirkController::shared().initialize();
-#endif
+    StorageAccessPromptQuirkController::shared().initializeIfNeeded();
+    StorageAccessUserAgentStringQuirkController::shared().initializeIfNeeded();
 
+    m_scriptTelemetryDataUpdateObserver = ScriptTelemetryController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        if (auto data = ScriptTelemetryController::shared().cachedListData(); !data.isEmpty())
+            protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateScriptTelemetryFilter(WTFMove(data)));
+    });
+    ScriptTelemetryController::shared().initializeIfNeeded();
+#endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 }
 
 WebProcessPool::~WebProcessPool()
