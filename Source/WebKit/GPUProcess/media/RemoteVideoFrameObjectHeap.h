@@ -50,6 +50,19 @@ public:
     ~RemoteVideoFrameObjectHeap();
 
     void close();
+
+    struct AddWithCompletionResult {
+        RemoteVideoFrameProxy::Properties properties;
+        CompletionHandler<void(bool frameAdopted)> completion;
+    };
+
+    // Adds the frame to the heap with an identifier from the object holder namespace.
+    // Returns completion that can be passed to asynchronous offer message sends as reply
+    // completion handler.
+    // Upon true reply of the message, the frame is retained in the heap.
+    // Upon false reply or cancellation, the frame will be discarded from the heap.
+    AddWithCompletionResult addWithCompletion(Ref<WebCore::VideoFrame>&&);
+
     RemoteVideoFrameProxy::Properties add(Ref<WebCore::VideoFrame>&&);
     RefPtr<WebCore::VideoFrame> get(RemoteVideoFrameReadReference&&);
 

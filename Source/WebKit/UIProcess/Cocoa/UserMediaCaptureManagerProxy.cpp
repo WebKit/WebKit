@@ -376,7 +376,8 @@ private:
             m_connection->send(Messages::RemoteCaptureSampleManager::VideoFrameAvailableCV(m_id, videoFrame->pixelBuffer(), videoFrame->rotation(), videoFrame->isMirrored(), videoFrame->presentationTime(), metadata), 0);
             return;
         }
-        auto properties = m_videoFrameObjectHeap->add(*videoFrame);
+        auto [properties, completion] = m_videoFrameObjectHeap->addWithCompletion(videoFrame.releaseNonNull());
+        m_connection->sendWithAsyncReply(Messages::RemoteCaptureSampleManager::VideoFrameAvailable(m_id, WTFMove(properties), metadata), WTFMove(completion), 0);
         m_connection->send(Messages::RemoteCaptureSampleManager::VideoFrameAvailable(m_id, properties, metadata), 0);
     }
 

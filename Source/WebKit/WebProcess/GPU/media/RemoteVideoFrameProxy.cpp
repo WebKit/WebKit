@@ -63,16 +63,6 @@ Ref<RemoteVideoFrameProxy> RemoteVideoFrameProxy::create(IPC::Connection& connec
     return adoptRef(*new RemoteVideoFrameProxy(connection, videoFrameObjectHeapProxy, WTFMove(properties)));
 }
 
-static void releaseRemoteVideoFrameProxy(IPC::Connection& connection, const RemoteVideoFrameWriteReference& reference)
-{
-    connection.send(Messages::RemoteVideoFrameObjectHeap::ReleaseVideoFrame(reference), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-}
-
-void RemoteVideoFrameProxy::releaseUnused(IPC::Connection& connection, Properties&& properties)
-{
-    releaseRemoteVideoFrameProxy(connection, { { properties.reference.identifier(), properties.reference.version() }, 0 });
-}
-
 RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy, Properties&& properties)
     : VideoFrame(properties.presentationTime, properties.isMirrored, properties.rotation, WTFMove(properties.colorSpace))
     , m_connection(&connection)
@@ -94,7 +84,7 @@ RemoteVideoFrameProxy::RemoteVideoFrameProxy(CloneConstructor, RemoteVideoFrameP
 RemoteVideoFrameProxy::~RemoteVideoFrameProxy()
 {
     if (m_connection)
-        releaseRemoteVideoFrameProxy(*m_connection, m_referenceTracker->write());
+        m_connection->send(Messages::RemoteVideoFrameObjectHeap::ReleaseVideoFrame(m_referenceTracker->write()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 RemoteVideoFrameIdentifier RemoteVideoFrameProxy::identifier() const
