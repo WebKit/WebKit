@@ -43,7 +43,7 @@ AudioSessionRoutingArbitratorProxy::AudioSessionRoutingArbitratorProxy(WebProces
     , m_token(SharedRoutingArbitratorToken::create())
 {
     m_logIdentifier = m_token->logIdentifier();
-    SharedRoutingArbitrator::sharedInstance().setLogger(logger());
+    SharedRoutingArbitrator::sharedInstance().setLogger(Ref { logger() });
     proxy.addMessageReceiver(Messages::AudioSessionRoutingArbitratorProxy::messageReceiverName(), destinationId(), *this);
 }
 
