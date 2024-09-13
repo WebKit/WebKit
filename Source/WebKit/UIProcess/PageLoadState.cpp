@@ -461,6 +461,17 @@ void PageLoadState::setNetworkRequestsInProgress(const Transaction::Token& token
     m_uncommittedState.networkRequestsInProgress = networkRequestsInProgress;
 }
 
+void PageLoadState::setHTTPFallbackInProgress(const Transaction::Token& token, bool isHTTPFallbackInProgress)
+{
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    m_uncommittedState.isHTTPFallbackInProgress = isHTTPFallbackInProgress;
+}
+
+bool PageLoadState::httpFallbackInProgress()
+{
+    return m_uncommittedState.isHTTPFallbackInProgress;
+}
+
 bool PageLoadState::isLoading(const Data& data)
 {
     if (!data.pendingAPIRequest.url.isNull())

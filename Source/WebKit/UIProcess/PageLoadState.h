@@ -200,6 +200,8 @@ public:
     void didChangeProgress(const Transaction::Token&, double);
     void didFinishProgress(const Transaction::Token&);
     void setNetworkRequestsInProgress(const Transaction::Token&, bool);
+    void setHTTPFallbackInProgress(const Transaction::Token&, bool);
+    bool httpFallbackInProgress();
 
     void didSwapWebProcesses();
 
@@ -239,6 +241,7 @@ private:
 
         bool canGoBack { false };
         bool canGoForward { false };
+        bool isHTTPFallbackInProgress { false };
 
         double estimatedProgress { 0 };
         bool networkRequestsInProgress { false };
