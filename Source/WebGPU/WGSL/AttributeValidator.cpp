@@ -395,7 +395,8 @@ void AttributeValidator::visit(AST::StructureMember& member)
             else if (!isPowerOf2)
                 error(attribute.span(), "@align value must be a power of two"_s);
             // FIXME: validate that alignment is a multiple of RequiredAlignOf(T,C)
-            update(attribute.span(), member.m_alignment, static_cast<unsigned>(alignmentValue));
+            auto* type = member.type().inferredType();
+            update(attribute.span(), member.m_alignment, std::max<unsigned>(alignmentValue, type ? type->alignment() : 1u));
             continue;
         }
 
