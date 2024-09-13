@@ -153,6 +153,7 @@ void IPIntPlan::compileFunction(uint32_t functionIndex)
 
 }
 
+// FIXME: Get IPInt working again now that we don't always JIT wrappers.
 bool IPIntPlan::ensureEntrypoint(IPIntCallee& ipintCallee, unsigned functionIndex)
 {
     if (m_entrypoints[functionIndex])
@@ -161,31 +162,9 @@ bool IPIntPlan::ensureEntrypoint(IPIntCallee& ipintCallee, unsigned functionInde
     if (!LIKELY(Options::useJIT()))
         return false;
 
-#if ENABLE(JIT)
-    TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
-    const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
-    CCallHelpers jit;
-    // The LLInt always bounds checks
-    MemoryMode mode = MemoryMode::BoundsChecking;
-    auto callee = JSEntrypointJITCallee::create();
-    std::unique_ptr<InternalFunction> function = createJSToWasmWrapper(jit, callee.get(), &ipintCallee, signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), mode, functionIndex);
-
-    LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
-    if (UNLIKELY(linkBuffer.didFailToAllocate()))
-        return false;
-
-    function->entrypoint.compilation = makeUnique<Compilation>(
-        FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "JS->WebAssembly entrypoint[%i] %s", functionIndex, signature.toString().ascii().data()),
-        nullptr);
-
-    callee->setEntrypoint(WTFMove(function->entrypoint));
-    m_entrypoints[functionIndex] = WTFMove(callee);
-    return true;
-#else
     UNUSED_PARAM(ipintCallee);
     UNUSED_PARAM(functionIndex);
     return false;
-#endif
 }
 
 void IPIntPlan::didCompleteCompilation()

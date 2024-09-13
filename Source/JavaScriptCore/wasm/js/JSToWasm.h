@@ -47,7 +47,6 @@ class JSEntrypointCallee;
 void marshallJSResult(CCallHelpers& jit, const FunctionSignature&, const CallInformation& wasmFrameConvention, const RegisterAtOffsetList& savedResultRegisters, CCallHelpers::JumpList& exceptionChecks);
 std::shared_ptr<InternalFunction> createJSToWasmJITSharedCrashForSIMDParameters();
 std::shared_ptr<InternalFunction> createJSToWasmJITShared();
-std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers&, JSEntrypointCallee&, Callee*, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>*, const ModuleInformation&, MemoryMode, uint32_t functionIndex);
 
 } } // namespace JSC::Wasm
 

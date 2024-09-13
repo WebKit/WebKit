@@ -91,7 +91,7 @@ public:
         return *callee;
     }
 
-    Callee& wasmEntrypointCalleeFromFunctionIndexSpace(const AbstractLocker&, unsigned functionIndexSpace)
+    Callee& wasmEntrypointCalleeFromFunctionIndexSpace(const AbstractLocker&, unsigned functionIndexSpace) WTF_REQUIRES_LOCK(m_lock)
     {
         ASSERT(runnable());
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());

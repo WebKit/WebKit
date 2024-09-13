@@ -44,8 +44,6 @@ namespace JSC::Wasm {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Callee);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JITCallee);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JSEntrypointCallee);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(JITLessJSEntrypointCallee);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(JSEntrypointJITCallee);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WasmToJSCallee);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JSToWasmICCallee);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(OptimizingJITCallee);
@@ -80,8 +78,8 @@ inline void Callee::runWithDowncast(const Func& func)
     case CompilationMode::LLIntMode:
         func(static_cast<LLIntCallee*>(this));
         break;
-    case CompilationMode::JITLessJSEntrypointMode:
-        func(static_cast<JITLessJSEntrypointCallee*>(this));
+    case CompilationMode::JSToWasmEntrypointMode:
+        func(static_cast<JSEntrypointCallee*>(this));
         break;
 #if ENABLE(WEBASSEMBLY_BBQJIT)
     case CompilationMode::BBQMode:
@@ -107,9 +105,6 @@ inline void Callee::runWithDowncast(const Func& func)
     case CompilationMode::OMGForOSREntryMode:
         break;
 #endif
-    case CompilationMode::JSEntrypointJITMode:
-        func(static_cast<JSEntrypointJITCallee*>(this));
-        break;
     case CompilationMode::JSToWasmICMode:
 #if ENABLE(JIT)
         func(static_cast<JSToWasmICCallee*>(this));
@@ -185,12 +180,6 @@ JITCallee::JITCallee(Wasm::CompilationMode compilationMode, size_t index, std::p
 
 #if ENABLE(JIT)
 void JITCallee::setEntrypoint(Wasm::Entrypoint&& entrypoint)
-{
-    m_entrypoint = WTFMove(entrypoint);
-    NativeCalleeRegistry::singleton().registerCallee(this);
-}
-
-void JSEntrypointJITCallee::setEntrypoint(Wasm::Entrypoint&& entrypoint)
 {
     m_entrypoint = WTFMove(entrypoint);
     NativeCalleeRegistry::singleton().registerCallee(this);
@@ -423,8 +412,8 @@ const StackMap& OptimizingJITCallee::stackmap(CallSiteIndex callSiteIndex) const
 }
 #endif
 
-JITLessJSEntrypointCallee::JITLessJSEntrypointCallee(unsigned frameSize, TypeIndex typeIndex, bool usesSIMD)
-    : JSEntrypointCallee(Wasm::CompilationMode::JITLessJSEntrypointMode)
+JSEntrypointCallee::JSEntrypointCallee(unsigned frameSize, TypeIndex typeIndex, bool usesSIMD)
+    : Callee(Wasm::CompilationMode::JSToWasmEntrypointMode)
     , frameSize(frameSize)
     , typeIndex(typeIndex)
 {
@@ -445,11 +434,9 @@ JITLessJSEntrypointCallee::JITLessJSEntrypointCallee(unsigned frameSize, TypeInd
     }
 }
 
-CodePtr<WasmEntryPtrTag> JITLessJSEntrypointCallee::entrypointImpl() const
+CodePtr<WasmEntryPtrTag> JSEntrypointCallee::entrypointImpl() const
 {
     const TypeDefinition& typeDefinition = TypeInformation::get(typeIndex).expand();
-    if (m_replacementCallee)
-        return m_replacementCallee->entrypoint();
     if (Options::useWasmSIMD() && (wasmCallingConvention().callInformationFor(typeDefinition).argumentsOrResultsIncludeV128)) {
 #if ENABLE(JIT)
         if (Options::useJIT())
@@ -465,7 +452,7 @@ CodePtr<WasmEntryPtrTag> JITLessJSEntrypointCallee::entrypointImpl() const
     return LLInt::getCodeFunctionPtr<CFunctionPtrTag>(js_to_wasm_wrapper_entry);
 }
 
-RegisterAtOffsetList* JITLessJSEntrypointCallee::calleeSaveRegistersImpl()
+RegisterAtOffsetList* JSEntrypointCallee::calleeSaveRegistersImpl()
 {
     // This must be the same to JSToWasm's callee save registers.
     // The reason is that we may use m_replacementCallee which can be set at any time.
