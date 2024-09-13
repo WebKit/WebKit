@@ -547,7 +547,7 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
         } else if (inlineItem.isAtomicInlineBox()) {
             inlineItemOffsetList.append({ paragraphContentBuilder.length() });
             paragraphContentBuilder.append(objectReplacementCharacter);
-        } else if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
+        } else if (inlineItem.isInlineBoxStartOrEnd()) {
             // https://drafts.csswg.org/css-writing-modes/#unicode-bidi
             auto& style = inlineItem.style();
             auto initiatesControlCharacter = style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal;

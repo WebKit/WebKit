@@ -41,7 +41,7 @@ static inline bool hasLeadingTextContent(const InlineContentBreaker::ContinuousC
 {
     for (auto& run : continuousContent.runs()) {
         auto& inlineItem = run.inlineItem;
-        if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque())
+        if (inlineItem.isInlineBoxStartOrEnd() || inlineItem.isOpaque())
             continue;
         return inlineItem.isText();
     }
@@ -65,7 +65,7 @@ static inline bool isWhitespaceOnlyContent(const InlineContentBreaker::Continuou
     auto hasWhitespace = false;
     for (auto& run : continuousContent.runs()) {
         auto& inlineItem = run.inlineItem;
-        if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque())
+        if (inlineItem.isInlineBoxStartOrEnd() || inlineItem.isOpaque())
             continue;
         auto isWhitespace = [&] {
             auto* textItem = dynamicDowncast<InlineTextItem>(inlineItem);
@@ -83,7 +83,7 @@ static inline bool isNonContentRunsOnly(const InlineContentBreaker::ContinuousCo
     // <span></span> <- non content runs.
     for (auto& run : continuousContent.runs()) {
         auto& inlineItem = run.inlineItem;
-        if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque())
+        if (inlineItem.isInlineBoxStartOrEnd() || inlineItem.isOpaque())
             continue;
         if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem); inlineTextItem && inlineTextItem->isEmpty())
             continue;
@@ -658,7 +658,7 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
                         auto& trailingInlineItem = runs[candidateIndex].inlineItem;
                         if (trailingInlineItem.isInlineBoxEnd())
                             trailingInlineBoxEndIndex = candidateIndex;
-                        if (!trailingInlineItem.isInlineBoxStart() && !trailingInlineItem.isInlineBoxEnd())
+                        if (!trailingInlineItem.isInlineBoxStartOrEnd())
                             break;
                     }
                     ASSERT(!trailingInlineBoxEndIndex || *trailingInlineBoxEndIndex <= overflowingRunIndex);
@@ -901,7 +901,7 @@ void InlineContentBreaker::ContinuousContent::resetTrailingTrimmableContent()
 
 void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
-    ASSERT(inlineItem.isAtomicInlineBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque());
+    ASSERT(inlineItem.isAtomicInlineBox() || inlineItem.isInlineBoxStartOrEnd() || inlineItem.isOpaque());
     m_isTextOnlyContent = false;
     m_hasTrailingWordSeparator = m_hasTrailingWordSeparator && !inlineItem.isAtomicInlineBox();
     appendToRunList(inlineItem, style, { }, logicalWidth);

@@ -219,9 +219,9 @@ struct LineCandidate {
 
 inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
-    ASSERT(inlineItem.isText() || inlineItem.isAtomicInlineBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque());
+    ASSERT(inlineItem.isText() || inlineItem.isAtomicInlineBox() || inlineItem.isInlineBoxStartOrEnd() || inlineItem.isOpaque());
 
-    if (inlineItem.isAtomicInlineBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque())
+    if (inlineItem.isAtomicInlineBox() || inlineItem.isInlineBoxStartOrEnd() || inlineItem.isOpaque())
         return m_continuousContent.append(inlineItem, style, logicalWidth);
 
     if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem))
@@ -680,7 +680,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
             lastInlineTextItemIndex = index;
             continue;
         }
-        if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
+        if (inlineItem.isInlineBoxStartOrEnd()) {
             auto& layoutBox = inlineItem.layoutBox();
             auto logicalWidth = formattingContext().formattingUtils().inlineItemWidth(inlineItem, currentLogicalRight, isFirstFormattedLine());
             if (layoutBox.isRubyBase()) {
@@ -1055,7 +1055,7 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(const LineCandidate& 
             auto& parentStyle = isFirstFormattedLine() ? layoutBoxParent.firstLineStyle() : layoutBoxParent.style();
 
             auto isWrapOpportunity = TextUtil::isWrappingAllowed(parentStyle);
-            if (!isWrapOpportunity && (trailingInlineItem.isInlineBoxStart() || trailingInlineItem.isInlineBoxEnd()))
+            if (!isWrapOpportunity && trailingInlineItem.isInlineBoxStartOrEnd())
                 isWrapOpportunity = TextUtil::isWrappingAllowed(trailingRun.style);
             if (isWrapOpportunity)
                 m_wrapOpportunityList.append(&trailingInlineItem);

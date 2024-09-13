@@ -65,6 +65,7 @@ public:
     bool isHardLineBreak() const { return type() == Type::HardLineBreak; }
     bool isInlineBoxStart() const { return type() == Type::InlineBoxStart; }
     bool isInlineBoxEnd() const { return type() == Type::InlineBoxEnd; }
+    bool isInlineBoxStartOrEnd() const { return isInlineBoxStart() || isInlineBoxEnd(); }
     bool isOpaque() const { return type() == Type::Opaque; }
 
 private:
