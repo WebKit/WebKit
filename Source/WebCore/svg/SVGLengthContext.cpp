@@ -88,6 +88,20 @@ float SVGLengthContext::resolveLength(const SVGElement* context, SVGUnitTypes::S
     return x.valueAsPercentage();
 }
 
+static inline float dimensionForLengthMode(SVGLengthMode mode, FloatSize viewportSize)
+{
+    switch (mode) {
+    case SVGLengthMode::Width:
+        return viewportSize.width();
+    case SVGLengthMode::Height:
+        return viewportSize.height();
+    case SVGLengthMode::Other:
+        return viewportSize.diagonalLength() / sqrtOfTwoFloat;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 float SVGLengthContext::valueForLength(const Length& length, SVGLengthMode lengthMode)
 {
     switch (length.type()) {
@@ -103,16 +117,8 @@ float SVGLengthContext::valueForLength(const Length& length, SVGLengthMode lengt
 
     case LengthType::Calculated: {
         auto viewportSize = this->viewportSize().value_or(FloatSize { });
-        switch (lengthMode) {
-        case SVGLengthMode::Width:
-            return length.nonNanCalculatedValue(viewportSize.width());
-        case SVGLengthMode::Height:
-            return length.nonNanCalculatedValue(viewportSize.height());
-        case SVGLengthMode::Other:
-            return length.nonNanCalculatedValue(viewportSize.diagonalLength() / sqrtOfTwoFloat);
-        }
-        ASSERT_NOT_REACHED();
-        return 0;
+
+        return length.nonNanCalculatedValue(dimensionForLengthMode(lengthMode, viewportSize));
     }
 
     default:
@@ -196,17 +202,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToPercentage(float
     if (!viewportSize)
         return Exception { ExceptionCode::NotSupportedError };
 
-    switch (lengthMode) {
-    case SVGLengthMode::Width:
-        return value / viewportSize->width() * 100;
-    case SVGLengthMode::Height:
-        return value / viewportSize->height() * 100;
-    case SVGLengthMode::Other:
-        return value / (viewportSize->diagonalLength() / sqrtOfTwoFloat) * 100;
-    };
-
-    ASSERT_NOT_REACHED();
-    return 0;
+    return value / dimensionForLengthMode(lengthMode, *viewportSize) * 100;
 }
 
 ExceptionOr<float> SVGLengthContext::convertValueFromPercentageToUserUnits(float value, SVGLengthMode lengthMode) const
@@ -215,17 +211,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromPercentageToUserUnits(float
     if (!viewportSize)
         return Exception { ExceptionCode::NotSupportedError };
 
-    switch (lengthMode) {
-    case SVGLengthMode::Width:
-        return value * viewportSize->width();
-    case SVGLengthMode::Height:
-        return value * viewportSize->height();
-    case SVGLengthMode::Other:
-        return value * viewportSize->diagonalLength() / sqrtOfTwoFloat;
-    };
-
-    ASSERT_NOT_REACHED();
-    return 0;
+    return value * dimensionForLengthMode(lengthMode, *viewportSize);
 }
 
 static inline const RenderStyle* renderStyleForLengthResolving(const SVGElement* context)
