@@ -66,7 +66,7 @@ void AdaptiveStructureWatchpoint::install(VM&)
 void AdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail& detail)
 {
     ASSERT(!m_codeBlock->wasDestructed());
-    if (!m_codeBlock->isLive())
+    if (m_codeBlock->isPendingDestruction())
         return;
 
     if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {

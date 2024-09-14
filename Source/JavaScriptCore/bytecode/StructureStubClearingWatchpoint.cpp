@@ -47,7 +47,7 @@ StructureStubInfoClearingWatchpoint::~StructureStubInfoClearingWatchpoint()
 void StructureStubInfoClearingWatchpoint::fireInternal(VM&, const FireDetail&)
 {
     ASSERT(!m_owner->wasDestructed());
-    if (!m_owner->isLive())
+    if (m_owner->isPendingDestruction())
         return;
 
     // This will implicitly cause my own demise: stub reset removes all watchpoints.

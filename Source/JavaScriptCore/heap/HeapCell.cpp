@@ -32,14 +32,19 @@
 
 namespace JSC {
 
-bool HeapCell::isLive()
+// isPendingDestruction must not be called on an already destructed HeapCell.
+bool HeapCell::isPendingDestruction()
 {
     if (isPreciseAllocation())
-        return preciseAllocation().isLive();
+        return !preciseAllocation().isLive();
     auto& markedBlockHandle = markedBlock().handle();
-    if (markedBlockHandle.isFreeListed())
-        return !markedBlockHandle.isFreeListedCell(this);
-    return markedBlockHandle.isLive(this);
+    // If the block is freelisted then the block has been swept and any dead cells
+    // have also been destructed.
+    if (markedBlockHandle.isFreeListed()) {
+        RELEASE_ASSERT(!markedBlockHandle.isFreeListedCell(this)); // XXX remove isFreeListedCell after testing
+        return false;
+    }
+    return !markedBlockHandle.isLive(this);
 }
 
 } // namespace JSC

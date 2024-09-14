@@ -70,7 +70,7 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::install(VM&)
 void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail&)
 {
     ASSERT(!m_owner->wasDestructed());
-    if (!m_owner->isLive())
+    if (m_owner->isPendingDestruction())
         return;
 
     if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {

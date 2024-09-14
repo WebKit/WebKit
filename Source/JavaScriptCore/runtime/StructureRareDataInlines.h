@@ -179,9 +179,8 @@ inline void StructureChainInvalidationWatchpoint::install(StructureRareData* str
 
 inline void StructureChainInvalidationWatchpoint::fireInternal(VM&, const FireDetail&)
 {
-    if (!m_structureRareData->isLive())
-        return;
-    m_structureRareData->clearCachedPropertyNameEnumerator();
+    if (!m_structureRareData->isPendingDestruction())
+        m_structureRareData->clearCachedPropertyNameEnumerator();
 }
 
 inline bool StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint(VM&, Structure* baseStructure, StructureChain* chain)

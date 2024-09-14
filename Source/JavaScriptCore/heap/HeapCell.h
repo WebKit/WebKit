@@ -60,7 +60,7 @@ public:
     }
     bool isZapped() const { return !*bitwise_cast<const uint32_t*>(this); }
 
-    bool isLive();
+    bool isPendingDestruction();
 
     bool isPreciseAllocation() const;
     CellContainer cellContainer() const;
