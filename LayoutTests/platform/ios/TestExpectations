@@ -7463,3 +7463,10 @@ webkit.org/b/279295 fast/inline/list-marker-inside-container-with-margin.html [ 
 
 # webkit.org/b/279477 REGRESSION (283102@main?): [macOS iOS wk2 Debug EWS ] ASSERTION FAILED: WebKit::WebPageProxy::startNetworkRequestsForPageLoadTiming(WebCore::FrameIdentifier) result of http/tests/site-isolation/window-open-with-name-cross-site.html to crash
 [ Debug ] http/tests/site-isolation/window-open-with-name-cross-site.html [ Skip ]
+
+# webkit.org/b/279704 [ iOS wk2 EWS ] 5x fast/events/iOS/* are false positive on EWS.
+fast/events/ios/keyboard-scrolling-distance.html [ Failure Timeout ]
+[ Release ] fast/events/ios/keydown-keyup-arrow-keys-in-non-editable-element.html [ Pass Timeout ]
+[ Release ] fast/events/ios/keydown-keyup-in-non-editable-content.html [ Pass Timeout ]
+[ Release ] fast/events/ios/keydown-keyup-special-keys-in-non-editable-element.html [ Pass Timeout ]
+[ Release ] fast/events/ios/tab-cycle.html [ Pass Timeout ]
