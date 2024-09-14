@@ -28,6 +28,8 @@
 #include "config.h"
 #include "JSIteratorPrototype.h"
 
+#include "CachedCall.h"
+#include "InterpreterInlines.h"
 #include "IteratorOperations.h"
 #include "JSCBuiltins.h"
 #include "JSCInlines.h"
@@ -35,6 +37,7 @@
 #include "JSIterator.h"
 #include "JSIteratorConstructor.h"
 #include "JSObject.h"
+#include "VMEntryScopeInlines.h"
 #include <wtf/PlatformCallingConventions.h>
 
 namespace JSC {
@@ -47,6 +50,7 @@ static JSC_DECLARE_CUSTOM_SETTER(iteratorProtoConstructorSetter);
 static JSC_DECLARE_CUSTOM_GETTER(iteratorProtoToStringTagGetter);
 static JSC_DECLARE_CUSTOM_SETTER(iteratorProtoToStringTagSetter);
 static JSC_DECLARE_HOST_FUNCTION(iteratorProtoFuncToArray);
+static JSC_DECLARE_HOST_FUNCTION(iteratorProtoFuncForEach);
 
 void JSIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
@@ -63,6 +67,8 @@ void JSIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
         // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.toarray
         JSFunction* toArray = JSFunction::create(vm, globalObject, 0, "toArray"_s, iteratorProtoFuncToArray, ImplementationVisibility::Public);
         putDirectWithoutTransition(vm, vm.propertyNames->toArray, toArray, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.foreach
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("forEach"_s, iteratorProtoFuncForEach, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Private);
     }
 }
 
@@ -157,6 +163,33 @@ JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncToArray, (JSGlobalObject* globalObject
     RETURN_IF_EXCEPTION(scope, { });
 
     return JSValue::encode(array);
+}
+
+// https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.foreach
+JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncForEach, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    if (!thisValue.isObject())
+        return throwVMTypeError(globalObject, scope, "Iterator.prototype.forEach requires that |this| be an Object."_s);
+
+    JSValue callbackArg = callFrame->argument(0);
+    if (!callbackArg.isCallable())
+        return throwVMTypeError(globalObject, scope, "Iterator.prototype.forEach requires the callback argument to be callable."_s);
+
+    CachedCall cachedCall(globalObject, jsCast<JSFunction*>(asObject(callbackArg)), 2);
+    RETURN_IF_EXCEPTION(scope, { });
+    uint32_t count = 0;
+    forEachInIteratorProtocol(globalObject, thisValue, [&cachedCall, &count](VM& vm, JSGlobalObject* globalObject, JSValue nextItem) {
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        cachedCall.callWithArguments(globalObject, jsUndefined(), nextItem, jsNumber(count++));
+        RETURN_IF_EXCEPTION(scope, void());
+    });
+    RETURN_IF_EXCEPTION(scope, { });
+
+    return JSValue::encode(jsUndefined());
 }
 
 } // namespace JSC
