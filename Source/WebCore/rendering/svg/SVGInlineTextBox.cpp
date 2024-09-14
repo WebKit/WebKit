@@ -3,7 +3,7 @@
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
- * Copyright (C) 2014 Google Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Google Inc. All rights reserved.
  * Copyright (C) 2023, 2024 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
@@ -239,9 +239,8 @@ bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult&
     if (isVisibleToHitTesting(renderer().style(), request) || !hitRules.requireVisible) {
         if ((hitRules.canHitStroke && (renderer().style().svgStyle().hasStroke() || !hitRules.requireStroke))
             || (hitRules.canHitFill && (renderer().style().svgStyle().hasFill() || !hitRules.requireFill))) {
-            FloatPoint boxOrigin(x(), y());
-            boxOrigin.moveBy(accumulatedOffset);
-            FloatRect rect(boxOrigin, size());
+            FloatRect rect(topLeft(), FloatSize(logicalWidth(), logicalHeight()));
+            rect.moveBy(accumulatedOffset);
             if (locationInContainer.intersects(rect)) {
 
                 float scalingFactor = renderer().scalingFactor();
