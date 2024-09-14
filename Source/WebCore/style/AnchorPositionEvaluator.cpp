@@ -408,7 +408,8 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
     String anchorString = anchorValue.anchorElementString();
     if (anchorString.isNull())
         anchorString = builderState.style().positionAnchor();
-    RefPtr anchorElement = anchorPositionedState.anchorElements.get(anchorString);
+
+    RefPtr anchorElement = anchorString.isNull() ? nullptr : anchorPositionedState.anchorElements.get(anchorString);
     if (!anchorElement) {
         // FIXME: Should rely on fallback, and also should behave as unset if fallback doesn't exist.
         // See: https://drafts.csswg.org/css-anchor-position-1/#valid-anchor-function
