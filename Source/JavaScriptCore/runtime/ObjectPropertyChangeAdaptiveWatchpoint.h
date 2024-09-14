@@ -44,6 +44,11 @@ public:
     }
 
 private:
+    bool isValid() const final
+    {
+        return m_owner->isLive();
+    }
+
     void handleFire(VM& vm, const FireDetail&) final
     {
         m_watchpointSet.fireAll(vm, StringFireDetail("Object Property is changed."));

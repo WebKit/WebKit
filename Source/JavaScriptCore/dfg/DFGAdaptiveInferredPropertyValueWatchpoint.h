@@ -42,6 +42,8 @@ public:
     void initialize(const ObjectPropertyCondition&, CodeBlock*);
 
 private:
+    bool isValid() const final;
+
     void handleFire(VM&, const FireDetail&) final;
 
     CodeBlock* m_codeBlock { nullptr };
