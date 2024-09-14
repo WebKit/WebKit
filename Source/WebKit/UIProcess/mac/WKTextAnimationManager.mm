@@ -82,6 +82,7 @@
     _effectView = adoptNS([PAL::alloc_WTTextEffectViewInstance() initWithAsyncSource:self]);
     [_effectView setClipsToBounds:YES];
     [_effectView setFrame:webView.view().bounds];
+
     return self;
 }
 
@@ -129,7 +130,10 @@
                 strongWebView->page().updateUnderlyingTextVisibilityForTextAnimationID(remainingID, false);
         }).get();
 
-        effect.get().completion = makeBlockPtr([weakSelf = WeakObjCPtr<WKTextAnimationManager>(self), weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), remainingID = data.unanimatedRangeUUID, uuid = RetainPtr(uuid), runMode = data.runMode] {
+        effect.get().completion = makeBlockPtr([weakSelf = WeakObjCPtr<WKTextAnimationManager>(self), weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), remainingID = data.unanimatedRangeUUID, uuid = RetainPtr(uuid), runMode = data.runMode, effect = WeakObjCPtr<id<_WTTextEffect>>(effect.get())] {
+            if (auto strongEffect = effect.get())
+                [strongEffect setCompletion:nil];
+
             auto strongWebView = weakWebView.get();
             auto animationID = WTF::UUID::fromNSUUID(uuid.get());
 
