@@ -33,7 +33,12 @@
 
 #if WK_HAVE_C_SPI
 
+// FIXME: Remove after rdar://134545195 is resolved
+#if PLATFORM(IOS)
+TEST(WebKit, DISABLED_SleepDisabler)
+#else
 TEST(WebKit, SleepDisabler)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
