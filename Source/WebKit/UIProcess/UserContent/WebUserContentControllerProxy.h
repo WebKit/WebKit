@@ -70,10 +70,15 @@ enum class InjectUserScriptImmediately : bool;
 
 class WebUserContentControllerProxy : public API::ObjectImpl<API::Object::Type::UserContentController>, public IPC::MessageReceiver, public Identified<UserContentControllerIdentifier> {
 public:
+#if ENABLE(WK_WEB_EXTENSIONS)
+    enum class RemoveWebExtensions : bool { No, Yes };
+#endif
+
     static Ref<WebUserContentControllerProxy> create()
-    { 
+    {
         return adoptRef(*new WebUserContentControllerProxy);
     }
+
     WebUserContentControllerProxy();
     ~WebUserContentControllerProxy();
 
@@ -88,13 +93,21 @@ public:
     void addUserScript(API::UserScript&, InjectUserScriptImmediately);
     void removeUserScript(API::UserScript&);
     void removeAllUserScripts(API::ContentWorld&);
+#if ENABLE(WK_WEB_EXTENSIONS)
+    void removeAllUserScripts(RemoveWebExtensions = RemoveWebExtensions::No);
+#else
     void removeAllUserScripts();
+#endif
 
     API::Array& userStyleSheets() { return m_userStyleSheets.get(); }
     void addUserStyleSheet(API::UserStyleSheet&);
     void removeUserStyleSheet(API::UserStyleSheet&);
     void removeAllUserStyleSheets(API::ContentWorld&);
+#if ENABLE(WK_WEB_EXTENSIONS)
+    void removeAllUserStyleSheets(RemoveWebExtensions = RemoveWebExtensions::No);
+#else
     void removeAllUserStyleSheets();
+#endif
 
     // Returns false if there was a name conflict.
     bool addUserScriptMessageHandler(WebScriptMessageHandler&);
@@ -108,7 +121,12 @@ public:
 
     void addContentRuleList(API::ContentRuleList&, const WTF::URL& extensionBaseURL = { });
     void removeContentRuleList(const String&);
+#if ENABLE(WK_WEB_EXTENSIONS)
+    void removeAllContentRuleLists(RemoveWebExtensions = RemoveWebExtensions::No);
+#else
     void removeAllContentRuleLists();
+#endif
+
     const HashMap<String, std::pair<Ref<API::ContentRuleList>, URL>>& contentExtensionRules() { return m_contentRuleLists; }
     Vector<std::pair<WebCompiledContentRuleListData, URL>> contentRuleListData() const;
 #endif

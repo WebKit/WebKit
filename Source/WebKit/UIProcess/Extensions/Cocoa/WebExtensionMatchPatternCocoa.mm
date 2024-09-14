@@ -108,6 +108,13 @@ void WebExtensionMatchPattern::registerCustomURLScheme(String urlScheme)
         pool->sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsWebExtension(urlScheme));
 }
 
+bool WebExtensionMatchPattern::isWebExtensionURL(const URL& url)
+{
+    if (!url.isValid())
+        return false;
+    return extensionSchemes().contains(url.protocol().toString());
+}
+
 RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const String& pattern)
 {
     ASSERT(!pattern.isEmpty());

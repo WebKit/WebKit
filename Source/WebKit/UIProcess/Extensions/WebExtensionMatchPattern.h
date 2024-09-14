@@ -89,6 +89,7 @@ public:
     static URLSchemeSet& supportedSchemes();
 
     static void registerCustomURLScheme(String);
+    static bool isWebExtensionURL(const URL&);
 
     bool operator==(const WebExtensionMatchPattern&) const;
 

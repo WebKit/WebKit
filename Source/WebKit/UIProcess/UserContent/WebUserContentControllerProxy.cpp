@@ -49,6 +49,10 @@
 #include "WebCompiledContentRuleList.h"
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+#include "WebExtensionMatchPattern.h"
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -215,19 +219,45 @@ void WebUserContentControllerProxy::removeAllUserScripts(API::ContentWorld& worl
     });
 }
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+void WebUserContentControllerProxy::removeAllUserScripts(RemoveWebExtensions removeWebExtensions)
+#else
 void WebUserContentControllerProxy::removeAllUserScripts()
+#endif
 {
-    HashCountedSet<RefPtr<API::ContentWorld>> worlds;
-    for (auto userScript : m_userScripts->elementsOfType<API::UserScript>())
-        worlds.add(const_cast<API::ContentWorld*>(&userScript->contentWorld()));
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (removeWebExtensions == RemoveWebExtensions::Yes)
+#endif
+    {
+        HashCountedSet<RefPtr<API::ContentWorld>> worlds;
+        for (auto userScript : m_userScripts->elementsOfType<API::UserScript>())
+            worlds.add(const_cast<API::ContentWorld*>(&userScript->contentWorld()));
 
-    auto worldIdentifiers = WTF::map(worlds, [](auto& entry) {
-        return entry.key->identifier();
-    });
-    for (auto& process : m_processes)
-        process.send(Messages::WebUserContentController::RemoveAllUserScripts(worldIdentifiers), identifier());
+        auto worldIdentifiers = WTF::map(worlds, [](auto& entry) {
+            return entry.key->identifier();
+        });
 
-    m_userScripts->elements().clear();
+        for (auto& process : m_processes)
+            process.send(Messages::WebUserContentController::RemoveAllUserScripts(worldIdentifiers), identifier());
+
+        m_userScripts->elements().clear();
+
+        return;
+    }
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    ASSERT(removeWebExtensions == RemoveWebExtensions::No);
+
+    Vector<Ref<API::UserScript>> scriptsToRemove;
+    for (auto userScript : m_userScripts->elementsOfType<API::UserScript>()) {
+        if (WebExtensionMatchPattern::isWebExtensionURL(userScript->userScript().url()))
+            continue;
+        scriptsToRemove.append(const_cast<API::UserScript&>(*userScript));
+    }
+
+    for (auto& userScript : scriptsToRemove)
+        removeUserScript(userScript.get());
+#endif
 }
 
 void WebUserContentControllerProxy::addUserStyleSheet(API::UserStyleSheet& userStyleSheet)
@@ -262,19 +292,45 @@ void WebUserContentControllerProxy::removeAllUserStyleSheets(API::ContentWorld& 
     });
 }
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+void WebUserContentControllerProxy::removeAllUserStyleSheets(RemoveWebExtensions removeWebExtensions)
+#else
 void WebUserContentControllerProxy::removeAllUserStyleSheets()
+#endif
 {
-    HashCountedSet<RefPtr<API::ContentWorld>> worlds;
-    for (auto userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>())
-        worlds.add(const_cast<API::ContentWorld*>(&userStyleSheet->contentWorld()));
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (removeWebExtensions == RemoveWebExtensions::Yes)
+#endif
+    {
+        HashCountedSet<RefPtr<API::ContentWorld>> worlds;
+        for (auto userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>())
+            worlds.add(const_cast<API::ContentWorld*>(&userStyleSheet->contentWorld()));
 
-    auto worldIdentifiers = WTF::map(worlds, [](auto& entry) {
-        return entry.key->identifier();
-    });
-    for (auto& process : m_processes)
-        process.send(Messages::WebUserContentController::RemoveAllUserStyleSheets(worldIdentifiers), identifier());
+        auto worldIdentifiers = WTF::map(worlds, [](auto& entry) {
+            return entry.key->identifier();
+        });
 
-    m_userStyleSheets->elements().clear();
+        for (auto& process : m_processes)
+            process.send(Messages::WebUserContentController::RemoveAllUserStyleSheets(worldIdentifiers), identifier());
+
+        m_userStyleSheets->elements().clear();
+
+        return;
+    }
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    ASSERT(removeWebExtensions == RemoveWebExtensions::No);
+
+    Vector<Ref<API::UserStyleSheet>> styleSheetsToRemove;
+    for (auto userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>()) {
+        if (WebExtensionMatchPattern::isWebExtensionURL(userStyleSheet->userStyleSheet().url()))
+            continue;
+        styleSheetsToRemove.append(const_cast<API::UserStyleSheet&>(*userStyleSheet));
+    }
+
+    for (auto& userStyleSheet : styleSheetsToRemove)
+        removeUserStyleSheet(userStyleSheet.get());
+#endif
 }
 
 bool WebUserContentControllerProxy::addUserScriptMessageHandler(WebScriptMessageHandler& handler)
@@ -389,15 +445,42 @@ void WebUserContentControllerProxy::removeContentRuleList(const String& name)
         process.send(Messages::NetworkContentRuleListManager::RemoveContentRuleList { identifier(), name }, 0);
 }
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+void WebUserContentControllerProxy::removeAllContentRuleLists(RemoveWebExtensions removeWebExtensions)
+#else
 void WebUserContentControllerProxy::removeAllContentRuleLists()
+#endif
 {
-    m_contentRuleLists.clear();
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (removeWebExtensions == RemoveWebExtensions::Yes)
+#endif
+    {
+        m_contentRuleLists.clear();
 
-    for (auto& process : m_processes)
-        process.send(Messages::WebUserContentController::RemoveAllContentRuleLists(), identifier());
+        for (auto& process : m_processes)
+            process.send(Messages::WebUserContentController::RemoveAllContentRuleLists(), identifier());
 
-    for (auto& process : m_networkProcesses)
-        process.send(Messages::NetworkContentRuleListManager::RemoveAllContentRuleLists { identifier() }, 0);
+        for (auto& process : m_networkProcesses)
+            process.send(Messages::NetworkContentRuleListManager::RemoveAllContentRuleLists { identifier() }, 0);
+
+        return;
+    }
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    ASSERT(removeWebExtensions == RemoveWebExtensions::No);
+
+    Vector<String> ruleListsToRemove;
+    for (auto& entry : m_contentRuleLists) {
+        const auto& contentRuleListName = entry.key;
+        const auto& extensionBaseURL = std::get<URL>(entry.value);
+
+        if (!WebExtensionMatchPattern::isWebExtensionURL(extensionBaseURL))
+            ruleListsToRemove.append(contentRuleListName);
+    }
+
+    for (auto& name : ruleListsToRemove)
+        removeContentRuleList(name);
+#endif
 }
 #endif
 
