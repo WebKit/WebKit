@@ -1557,47 +1557,6 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncLastIndexOf, (JSGlobalObject* globalObjec
     return JSValue::encode(jsNumber(-1));
 }
 
-enum class FillMode {
-    Undefined,
-    Empty,
-};
-
-template<FillMode fillMode>
-static bool moveElements(JSGlobalObject* globalObject, VM& vm, JSArray* target, unsigned targetOffset, JSArray* source, unsigned sourceLength)
-{
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (LIKELY(!hasAnyArrayStorage(source->indexingType()) && !source->holesMustForwardToPrototype())) {
-        for (unsigned i = 0; i < sourceLength; ++i) {
-            JSValue value = source->tryGetIndexQuickly(i);
-            if constexpr (fillMode == FillMode::Empty) {
-                if (!value)
-                    continue;
-            } else {
-                if (!value)
-                    value = jsUndefined();
-            }
-            target->putDirectIndex(globalObject, targetOffset + i, value, 0, PutDirectIndexShouldThrow);
-            RETURN_IF_EXCEPTION(scope, false);
-        }
-    } else {
-        for (unsigned i = 0; i < sourceLength; ++i) {
-            JSValue value = getProperty(globalObject, source, i);
-            RETURN_IF_EXCEPTION(scope, false);
-            if constexpr (fillMode == FillMode::Empty) {
-                if (!value)
-                    continue;
-            } else {
-                if (!value)
-                    value = jsUndefined();
-            }
-            target->putDirectIndex(globalObject, targetOffset + i, value, 0, PutDirectIndexShouldThrow);
-            RETURN_IF_EXCEPTION(scope, false);
-        }
-    }
-    return true;
-}
-
 static JSValue concatAppendOne(JSGlobalObject* globalObject, VM& vm, JSArray* first, JSValue second)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1641,7 +1600,7 @@ static JSValue concatAppendOne(JSGlobalObject* globalObject, VM& vm, JSArray* fi
     if (!success) {
         RETURN_IF_EXCEPTION(scope, { });
 
-        bool success = moveElements<FillMode::Empty>(globalObject, vm, result, 0, first, firstArraySize);
+        bool success = moveArrayElements<ArrayFillMode::Empty>(globalObject, vm, result, 0, first, firstArraySize);
         EXCEPTION_ASSERT(!scope.exception() == success);
         if (UNLIKELY(!success))
             return { };
@@ -1651,73 +1610,6 @@ static JSValue concatAppendOne(JSGlobalObject* globalObject, VM& vm, JSArray* fi
     result->putDirectIndex(globalObject, firstArraySize, second);
     return result;
 }
-
-template<typename T>
-void clearElement(T& element)
-{
-    element.clear();
-}
-
-template<>
-void clearElement(double& element)
-{
-    element = PNaN;
-}
-
-template<FillMode fillMode, typename T, typename U>
-ALWAYS_INLINE void copyElements(T* buffer, unsigned offset, U* source, unsigned sourceSize, IndexingType sourceType)
-{
-    if (sourceType == ArrayWithUndecided) {
-        if constexpr (fillMode == FillMode::Empty) {
-            for (unsigned i = 0; i < sourceSize; ++i)
-                clearElement<T>(buffer[i + offset]);
-        } else {
-            for (unsigned i = 0; i < sourceSize; ++i)
-                buffer[i + offset].setWithoutWriteBarrier(jsUndefined());
-        }
-        return;
-    }
-
-    if constexpr (std::is_same_v<T, U>) {
-        if constexpr (fillMode == FillMode::Empty) {
-            if constexpr (std::is_same_v<T, double>)
-                memcpy(buffer + offset, source, sizeof(double) * sourceSize);
-            else
-                gcSafeMemcpy(buffer + offset, source, sizeof(JSValue) * sourceSize);
-            return;
-        } else {
-            for (unsigned i = 0; i < sourceSize; ++i) {
-                JSValue value = source[i].get();
-                if (!value)
-                    value = jsUndefined();
-                buffer[i + offset].setWithoutWriteBarrier(value);
-            }
-        }
-    } else if constexpr (std::is_same_v<T, double>) {
-        ASSERT(sourceType == ArrayWithInt32);
-        static_assert(fillMode == FillMode::Empty);
-        for (unsigned i = 0; i < sourceSize; ++i) {
-            JSValue value = source[i].get();
-            if (value)
-                buffer[i + offset] = value.asInt32();
-            else
-                buffer[i + offset] = PNaN;
-        }
-    } else {
-        static_assert(std::is_same_v<U, double>);
-        for (unsigned i = 0; i < sourceSize; ++i) {
-            double value = source[i];
-            if (value == value)
-                buffer[i + offset].setWithoutWriteBarrier(JSValue(JSValue::EncodeAsDouble, value));
-            else {
-                if constexpr (fillMode == FillMode::Undefined)
-                    buffer[i + offset].setWithoutWriteBarrier(jsUndefined());
-                else
-                    buffer[i + offset].clear();
-            }
-        }
-    }
-};
 
 JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
@@ -1768,11 +1660,11 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* glo
         JSArray* result = constructEmptyArray(globalObject, nullptr, resultSize);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-        bool success = moveElements<FillMode::Empty>(globalObject, vm, result, 0, firstArray, firstArraySize);
+        bool success = moveArrayElements<ArrayFillMode::Empty>(globalObject, vm, result, 0, firstArray, firstArraySize);
         EXCEPTION_ASSERT(!scope.exception() == success);
         if (UNLIKELY(!success))
             return encodedJSValue();
-        success = moveElements<FillMode::Empty>(globalObject, vm, result, firstArraySize, secondArray, secondArraySize);
+        success = moveArrayElements<ArrayFillMode::Empty>(globalObject, vm, result, firstArraySize, secondArray, secondArraySize);
         EXCEPTION_ASSERT(!scope.exception() == success);
         if (UNLIKELY(!success))
             return encodedJSValue();
@@ -1795,17 +1687,17 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* glo
     if (type == ArrayWithDouble) {
         double* buffer = result->butterfly()->contiguousDouble().data();
         if (firstType == ArrayWithDouble)
-            copyElements<FillMode::Empty>(buffer, 0, firstButterfly->contiguousDouble().data(), firstArraySize, firstType);
+            copyArrayElements<ArrayFillMode::Empty>(buffer, 0, firstButterfly->contiguousDouble().data(), firstArraySize, firstType);
         else
-            copyElements<FillMode::Empty>(buffer, 0, firstButterfly->contiguous().data(), firstArraySize, firstType);
+            copyArrayElements<ArrayFillMode::Empty>(buffer, 0, firstButterfly->contiguous().data(), firstArraySize, firstType);
         if (secondType == ArrayWithDouble)
-            copyElements<FillMode::Empty>(buffer, firstArraySize, secondButterfly->contiguousDouble().data(), secondArraySize, secondType);
+            copyArrayElements<ArrayFillMode::Empty>(buffer, firstArraySize, secondButterfly->contiguousDouble().data(), secondArraySize, secondType);
         else
-            copyElements<FillMode::Empty>(buffer, firstArraySize, secondButterfly->contiguous().data(), secondArraySize, secondType);
+            copyArrayElements<ArrayFillMode::Empty>(buffer, firstArraySize, secondButterfly->contiguous().data(), secondArraySize, secondType);
     } else if (type != ArrayWithUndecided) {
         WriteBarrier<Unknown>* buffer = result->butterfly()->contiguous().data();
-        copyElements<FillMode::Empty>(buffer, 0, firstButterfly->contiguous().data(), firstArraySize, firstType);
-        copyElements<FillMode::Empty>(buffer, firstArraySize, secondButterfly->contiguous().data(), secondArraySize, secondType);
+        copyArrayElements<ArrayFillMode::Empty>(buffer, 0, firstButterfly->contiguous().data(), firstArraySize, firstType);
+        copyArrayElements<ArrayFillMode::Empty>(buffer, firstArraySize, secondButterfly->contiguous().data(), secondArraySize, secondType);
     }
 
     ASSERT(result->butterfly()->publicLength() == resultSize);
@@ -1829,7 +1721,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncAppendMemcpy, (JSGlobalObject* glo
         return JSValue::encode(jsUndefined());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
-    moveElements<FillMode::Empty>(globalObject, vm, resultArray, startIndex, otherArray, otherArray->length());
+    moveArrayElements<ArrayFillMode::Empty>(globalObject, vm, resultArray, startIndex, otherArray, otherArray->length());
     return JSValue::encode(jsUndefined());
 }
 
@@ -1846,82 +1738,12 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncFromFast, (JSGlobalObject* globalO
     if (UNLIKELY(!isJSArray(arrayValue)))
         return JSValue::encode(jsUndefined());
 
-    auto* array = jsCast<JSArray*>(arrayValue);
-    if (UNLIKELY(!array->isIteratorProtocolFastAndNonObservable()))
-        return JSValue::encode(jsUndefined());
+    JSArray* array = tryCloneArrayFromFast(globalObject, arrayValue);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (array)
+        return JSValue::encode(array);
 
-    IndexingType sourceType = array->indexingType();
-    if (UNLIKELY(shouldUseSlowPut(sourceType) || sourceType == ArrayClass))
-        return JSValue::encode(jsUndefined());
-
-    Butterfly* butterfly= array->butterfly();
-    unsigned resultSize = butterfly->publicLength();
-    if (hasAnyArrayStorage(sourceType) || resultSize >= MIN_SPARSE_ARRAY_INDEX) {
-        JSArray* result = constructEmptyArray(globalObject, nullptr, resultSize);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        scope.release();
-        moveElements<FillMode::Undefined>(globalObject, vm, result, 0, array, resultSize);
-        return JSValue::encode(result);
-    }
-
-    ASSERT(sourceType == ArrayWithDouble || sourceType == ArrayWithInt32 || sourceType == ArrayWithContiguous || sourceType == ArrayWithUndecided);
-    IndexingType resultType = sourceType;
-    if (sourceType == ArrayWithDouble) {
-        double* buffer = butterfly->contiguousDouble().data();
-        for (unsigned i = 0; i < resultSize; ++i) {
-            double value = buffer[i];
-            if (std::isnan(value)) {
-                resultType = ArrayWithContiguous;
-                break;
-            }
-        }
-    } else if (sourceType == ArrayWithInt32) {
-        auto* buffer = butterfly->contiguous().data();
-        if (UNLIKELY(WTF::find64(bitwise_cast<const uint64_t*>(buffer), JSValue::encode(JSValue()), resultSize)))
-            resultType = ArrayWithContiguous;
-    } else if (sourceType == ArrayWithUndecided && resultSize)
-        resultType = ArrayWithContiguous;
-
-    Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(resultType);
-    if (UNLIKELY(hasAnyArrayStorage(resultStructure->indexingType())))
-        return JSValue::encode(jsUndefined());
-
-    ASSERT(!globalObject->isHavingABadTime());
-    ObjectInitializationScope initializationScope(vm);
-    JSArray* result = JSArray::tryCreateUninitializedRestricted(initializationScope, resultStructure, resultSize);
-    if (UNLIKELY(!result)) {
-        throwOutOfMemoryError(globalObject, scope);
-        return { };
-    }
-    ASSERT(result->butterfly()->publicLength() == resultSize);
-
-    if (resultType == ArrayWithUndecided) {
-        ASSERT(!resultSize);
-        return JSValue::encode(result);
-    }
-
-    if (resultType == ArrayWithDouble) {
-        ASSERT(sourceType == ArrayWithDouble);
-        double* buffer = result->butterfly()->contiguousDouble().data();
-        copyElements<FillMode::Empty>(buffer, 0, butterfly->contiguousDouble().data(), resultSize, ArrayWithDouble);
-        return JSValue::encode(result);
-    }
-
-    if (resultType == ArrayWithInt32) {
-        ASSERT(sourceType == ArrayWithInt32);
-        auto* buffer = result->butterfly()->contiguous().data();
-        copyElements<FillMode::Empty>(buffer, 0, butterfly->contiguous().data(), resultSize, ArrayWithInt32);
-        return JSValue::encode(result);
-    }
-
-    ASSERT(resultType == ArrayWithContiguous);
-    auto* buffer = result->butterfly()->contiguous().data();
-    if (sourceType == ArrayWithDouble)
-        copyElements<FillMode::Undefined>(buffer, 0, butterfly->contiguousDouble().data(), resultSize, ArrayWithDouble);
-    else
-        copyElements<FillMode::Undefined>(buffer, 0, butterfly->contiguous().data(), resultSize, sourceType);
-    return JSValue::encode(result);
+    return JSValue::encode(jsUndefined());
 }
 
 } // namespace JSC

@@ -324,4 +324,13 @@ ALWAYS_INLINE void JSArray::pushInline(JSGlobalObject* globalObject, JSValue val
     }
 }
 
+ALWAYS_INLINE JSValue getProperty(JSGlobalObject* globalObject, JSObject* object, uint64_t index)
+{
+    if (JSValue result = object->tryGetIndexQuickly(index))
+        return result;
+
+    // Don't return undefined if the property is not found.
+    return object->getIfPropertyExists(globalObject, index);
+}
+
 } // namespace JSC

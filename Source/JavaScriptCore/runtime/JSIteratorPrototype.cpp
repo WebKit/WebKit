@@ -138,7 +138,13 @@ JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncToArray, (JSGlobalObject* globalObject
     if (!thisValue.isObject())
         return throwVMTypeError(globalObject, scope, "Iterator.prototype.toArray requires that |this| be an Object."_s);
 
-    // FIXME: Add a fast path when thisValue is a fast array
+    if (getIterationMode(vm, globalObject, thisValue) == IterationMode::FastArray) {
+        JSArray* array = tryCloneArrayFromFast(globalObject, thisValue);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (array)
+            return JSValue::encode(array);
+    }
+
     MarkedArgumentBuffer value;
     forEachInIteratorProtocol(globalObject, thisValue, [&value, &scope](VM&, JSGlobalObject* globalObject, JSValue nextItem) {
         value.append(nextItem);

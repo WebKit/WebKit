@@ -1502,4 +1502,96 @@ JSArray* constructArrayNegativeIndexed(JSGlobalObject* globalObject, Structure* 
     return array;
 }
 
+template<>
+void clearElement(double& element)
+{
+    element = PNaN;
+}
+
+JSArray* tryCloneArrayFromFast(JSGlobalObject* globalObject, JSValue arrayValue)
+{
+    ASSERT(isJSArray(arrayValue));
+
+    VM& vm = globalObject->vm();
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* array = jsCast<JSArray*>(arrayValue);
+    if (UNLIKELY(!array->isIteratorProtocolFastAndNonObservable()))
+        return nullptr;
+
+    IndexingType sourceType = array->indexingType();
+    if (UNLIKELY(shouldUseSlowPut(sourceType) || sourceType == ArrayClass))
+        return nullptr;
+
+    Butterfly* butterfly= array->butterfly();
+    unsigned resultSize = butterfly->publicLength();
+    if (hasAnyArrayStorage(sourceType) || resultSize >= MIN_SPARSE_ARRAY_INDEX) {
+        JSArray* result = constructEmptyArray(globalObject, nullptr, resultSize);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        scope.release();
+        moveArrayElements<ArrayFillMode::Undefined>(globalObject, vm, result, 0, array, resultSize);
+        return result;
+    }
+
+    ASSERT(sourceType == ArrayWithDouble || sourceType == ArrayWithInt32 || sourceType == ArrayWithContiguous || sourceType == ArrayWithUndecided);
+    IndexingType resultType = sourceType;
+    if (sourceType == ArrayWithDouble) {
+        double* buffer = butterfly->contiguousDouble().data();
+        for (unsigned i = 0; i < resultSize; ++i) {
+            double value = buffer[i];
+            if (std::isnan(value)) {
+                resultType = ArrayWithContiguous;
+                break;
+            }
+        }
+    } else if (sourceType == ArrayWithInt32) {
+        auto* buffer = butterfly->contiguous().data();
+        if (UNLIKELY(WTF::find64(bitwise_cast<const uint64_t*>(buffer), JSValue::encode(JSValue()), resultSize)))
+            resultType = ArrayWithContiguous;
+    } else if (sourceType == ArrayWithUndecided && resultSize)
+        resultType = ArrayWithContiguous;
+
+    Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(resultType);
+    if (UNLIKELY(hasAnyArrayStorage(resultStructure->indexingType())))
+        return nullptr;
+
+    ASSERT(!globalObject->isHavingABadTime());
+    ObjectInitializationScope initializationScope(vm);
+    JSArray* result = JSArray::tryCreateUninitializedRestricted(initializationScope, resultStructure, resultSize);
+    if (UNLIKELY(!result)) {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+    ASSERT(result->butterfly()->publicLength() == resultSize);
+
+    if (resultType == ArrayWithUndecided) {
+        ASSERT(!resultSize);
+        return result;
+    }
+
+    if (resultType == ArrayWithDouble) {
+        ASSERT(sourceType == ArrayWithDouble);
+        double* buffer = result->butterfly()->contiguousDouble().data();
+        copyArrayElements<ArrayFillMode::Empty>(buffer, 0, butterfly->contiguousDouble().data(), resultSize, ArrayWithDouble);
+        return result;
+    }
+
+    if (resultType == ArrayWithInt32) {
+        ASSERT(sourceType == ArrayWithInt32);
+        auto* buffer = result->butterfly()->contiguous().data();
+        copyArrayElements<ArrayFillMode::Empty>(buffer, 0, butterfly->contiguous().data(), resultSize, ArrayWithInt32);
+        return result;
+    }
+
+    ASSERT(resultType == ArrayWithContiguous);
+    auto* buffer = result->butterfly()->contiguous().data();
+    if (sourceType == ArrayWithDouble)
+        copyArrayElements<ArrayFillMode::Undefined>(buffer, 0, butterfly->contiguousDouble().data(), resultSize, ArrayWithDouble);
+    else
+        copyArrayElements<ArrayFillMode::Undefined>(buffer, 0, butterfly->contiguous().data(), resultSize, sourceType);
+    return result;
+}
+
 } // namespace JSC

@@ -108,15 +108,6 @@ ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstructArray
     return std::pair { SpeciesConstructResult::CreatedObject, newObject };
 }
 
-ALWAYS_INLINE JSValue getProperty(JSGlobalObject* globalObject, JSObject* object, uint64_t index)
-{
-    if (JSValue result = object->tryGetIndexQuickly(index))
-        return result;
-
-    // Don't return undefined if the property is not found.
-    return object->getIfPropertyExists(globalObject, index);
-}
-
 ALWAYS_INLINE void setLength(JSGlobalObject* globalObject, VM& vm, JSObject* obj, uint64_t value)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
