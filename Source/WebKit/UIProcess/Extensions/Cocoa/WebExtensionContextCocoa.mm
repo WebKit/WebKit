@@ -3270,7 +3270,7 @@ WKWebView *WebExtensionContext::relatedWebView()
 NSString *WebExtensionContext::processDisplayName()
 {
 ALLOW_NONLITERAL_FORMAT_BEGIN
-    return [NSString localizedStringWithFormat:WEB_UI_STRING("%@ Web Extension", "Extension's process name that appears in Activity Monitor where the parameter is the name of the extension"), extension().displayShortName()];
+    return [NSString localizedStringWithFormat:WEB_UI_STRING("%@ Web Extension", "Extension's process name that appears in Activity Monitor where the parameter is the name of the extension"), static_cast<NSString *>(extension().displayShortName())];
 ALLOW_NONLITERAL_FORMAT_END
 }
 
@@ -3477,9 +3477,9 @@ NSString *WebExtensionContext::backgroundWebViewInspectionName()
         return m_backgroundWebViewInspectionName;
 
     if (extension().backgroundContentIsServiceWorker())
-        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Service Worker", "Label for an inspectable Web Extension service worker", (__bridge CFStringRef)extension().displayShortName());
+        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Service Worker", "Label for an inspectable Web Extension service worker", extension().displayShortName().createCFString().get());
     else
-        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Background Page", "Label for an inspectable Web Extension background page", (__bridge CFStringRef)extension().displayShortName());
+        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Background Page", "Label for an inspectable Web Extension background page", extension().displayShortName().createCFString().get());
 
     return m_backgroundWebViewInspectionName;
 }

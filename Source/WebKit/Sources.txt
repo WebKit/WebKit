@@ -556,6 +556,7 @@ UIProcess/Downloads/DownloadProxyMap.cpp
 
 UIProcess/DigitalCredentials/DigitalCredentialsCoordinatorProxy.cpp
 
+UIProcess/Extensions/WebExtension.cpp
 UIProcess/Extensions/WebExtensionAlarm.cpp
 UIProcess/Extensions/WebExtensionContext.cpp
 UIProcess/Extensions/WebExtensionController.cpp

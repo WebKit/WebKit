@@ -57,6 +57,7 @@ public:
     static constexpr int maxDepth = 1000;
 
     void operator delete(Value*, std::destroying_delete_t);
+    bool operator!() const;
 
     ~Value()
     {
@@ -467,6 +468,11 @@ public:
     using ArrayBase::end;
 };
 
+
+inline bool Value::operator!() const
+{
+    return isNull();
+}
 
 inline RefPtr<Value> Value::asValue()
 {

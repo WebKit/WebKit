@@ -68,14 +68,6 @@ SOFT_LINK(CoreSVG, CGSVGDocumentRelease, void, (CGSVGDocumentRef document), (doc
 
 namespace WebKit {
 
-static NSString * const manifestVersionManifestKey = @"manifest_version";
-
-static NSString * const nameManifestKey = @"name";
-static NSString * const shortNameManifestKey = @"short_name";
-static NSString * const versionManifestKey = @"version";
-static NSString * const versionNameManifestKey = @"version_name";
-static NSString * const descriptionManifestKey = @"description";
-
 static NSString * const iconsManifestKey = @"icons";
 
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
@@ -176,6 +168,7 @@ static const size_t maximumNumberOfShortcutCommands = 4;
 WebExtension::WebExtension(NSBundle *appExtensionBundle, NSError **outError)
     : m_bundle(appExtensionBundle)
     , m_resourceBaseURL(appExtensionBundle.resourceURL.URLByStandardizingPath.absoluteURL)
+    , m_manifestJSON(JSON::Value::null())
 {
     ASSERT(appExtensionBundle);
 
@@ -190,6 +183,7 @@ WebExtension::WebExtension(NSBundle *appExtensionBundle, NSError **outError)
 
 WebExtension::WebExtension(NSURL *resourceBaseURL, NSError **outError)
     : m_resourceBaseURL(resourceBaseURL.URLByStandardizingPath.absoluteURL)
+    , m_manifestJSON(JSON::Value::null())
 {
     ASSERT(resourceBaseURL);
     ASSERT([resourceBaseURL isFileURL]);
@@ -205,7 +199,8 @@ WebExtension::WebExtension(NSURL *resourceBaseURL, NSError **outError)
 }
 
 WebExtension::WebExtension(NSDictionary *manifest, NSDictionary *resources)
-    : m_resources([resources mutableCopy] ?: [NSMutableDictionary dictionary])
+    : m_manifestJSON(JSON::Value::null())
+    , m_resources([resources mutableCopy] ?: [NSMutableDictionary dictionary])
 {
     ASSERT(manifest);
 
@@ -216,16 +211,9 @@ WebExtension::WebExtension(NSDictionary *manifest, NSDictionary *resources)
 }
 
 WebExtension::WebExtension(NSDictionary *resources)
-    : m_resources([resources mutableCopy] ?: [NSMutableDictionary dictionary])
+    : m_manifestJSON(JSON::Value::null())
+    , m_resources([resources mutableCopy] ?: [NSMutableDictionary dictionary])
 {
-}
-
-bool WebExtension::manifestParsedSuccessfully()
-{
-    if (m_parsedManifest)
-        return !!m_manifest;
-    // If we haven't parsed yet, trigger a parse by calling the getter.
-    return !!manifest();
 }
 
 bool WebExtension::parseManifest(NSData *manifestData)
@@ -237,6 +225,14 @@ bool WebExtension::parseManifest(NSData *manifestData)
         return false;
     }
 
+    auto manifestJSONString = String([[NSString alloc] initWithData:manifestData encoding:NSUTF8StringEncoding]);
+    auto manifestJSON = JSON::Value::parseJSON(manifestJSONString);
+    if (!manifestJSON || !manifestJSON->asObject()) {
+        recordError(createError(Error::InvalidManifest, nil, nil));
+        return false;
+    }
+
+    m_manifestJSON = *manifestJSON;
     return true;
 }
 
@@ -275,13 +271,6 @@ NSDictionary *WebExtension::manifest()
 Ref<API::Data> WebExtension::serializeManifest()
 {
     return API::Data::createWithoutCopying(encodeJSONData(manifest()));
-}
-
-double WebExtension::manifestVersion()
-{
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/manifest_version
-
-    return objectForKey<NSNumber>(manifest(), manifestVersionManifestKey).doubleValue;
 }
 
 Ref<API::Data> WebExtension::serializeLocalization()
@@ -863,36 +852,6 @@ NSLocale *WebExtension::defaultLocale()
     return m_defaultLocale.get();
 }
 
-NSString *WebExtension::displayName()
-{
-    populateDisplayStringsIfNeeded();
-    return m_displayName.get();
-}
-
-NSString *WebExtension::displayShortName()
-{
-    populateDisplayStringsIfNeeded();
-    return m_displayShortName.get();
-}
-
-NSString *WebExtension::displayVersion()
-{
-    populateDisplayStringsIfNeeded();
-    return m_displayVersion.get();
-}
-
-NSString *WebExtension::displayDescription()
-{
-    populateDisplayStringsIfNeeded();
-    return m_displayDescription.get();
-}
-
-NSString *WebExtension::version()
-{
-    populateDisplayStringsIfNeeded();
-    return m_version.get();
-}
-
 void WebExtension::populateExternallyConnectableIfNeeded()
 {
     if (!manifestParsedSuccessfully())
@@ -948,49 +907,6 @@ void WebExtension::populateExternallyConnectableIfNeeded()
 
     if (shouldReportError || (matchPatterns.isEmpty() && !extensionIDs.count))
         recordError(createError(Error::InvalidExternallyConnectable));
-}
-
-void WebExtension::populateDisplayStringsIfNeeded()
-{
-    if (!manifestParsedSuccessfully())
-        return;
-
-    if (m_parsedManifestDisplayStrings)
-        return;
-
-    m_parsedManifestDisplayStrings = true;
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/name
-
-    m_displayName = objectForKey<NSString>(m_manifest, nameManifestKey);
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/short_name
-
-    m_displayShortName = objectForKey<NSString>(m_manifest, shortNameManifestKey);
-    if (!m_displayShortName)
-        m_displayShortName = m_displayName;
-
-    if (!m_displayName)
-        recordError(createError(Error::InvalidName));
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/version
-
-    m_version = objectForKey<NSString>(m_manifest, versionManifestKey);
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/version_name
-
-    m_displayVersion = objectForKey<NSString>(m_manifest, versionNameManifestKey);
-    if (!m_displayVersion)
-        m_displayVersion = m_version;
-
-    if (!m_version)
-        recordError(createError(Error::InvalidVersion));
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/description
-
-    m_displayDescription = objectForKey<NSString>(m_manifest, descriptionManifestKey);
-    if (!m_displayDescription)
-        recordError(createError(Error::InvalidDescription));
 }
 
 NSString *WebExtension::contentSecurityPolicy()

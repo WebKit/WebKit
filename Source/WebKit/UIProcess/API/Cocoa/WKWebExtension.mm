@@ -196,22 +196,22 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 
 - (NSString *)displayName
 {
-    return self._protectedWebExtension->displayName();
+    return nsStringNilIfEmpty(self._protectedWebExtension->displayName());
 }
 
 - (NSString *)displayShortName
 {
-    return self._protectedWebExtension->displayShortName();
+    return nsStringNilIfEmpty(self._protectedWebExtension->displayShortName());
 }
 
 - (NSString *)displayVersion
 {
-    return self._protectedWebExtension->displayVersion();
+    return nsStringNilIfEmpty(self._protectedWebExtension->displayVersion());
 }
 
 - (NSString *)displayDescription
 {
-    return self._protectedWebExtension->displayDescription();
+    return nsStringNilIfEmpty(self._protectedWebExtension->displayDescription());
 }
 
 - (NSString *)displayActionLabel
@@ -221,7 +221,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 
 - (NSString *)version
 {
-    return self._protectedWebExtension->version();
+    return nsStringNilIfEmpty(self._protectedWebExtension->version());
 }
 
 - (CocoaImage *)iconForSize:(CGSize)size
