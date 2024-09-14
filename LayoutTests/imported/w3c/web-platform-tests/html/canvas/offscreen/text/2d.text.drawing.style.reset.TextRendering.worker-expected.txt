@@ -1,0 +1,3 @@
+
+PASS TextRendering stays the same after font change.
+

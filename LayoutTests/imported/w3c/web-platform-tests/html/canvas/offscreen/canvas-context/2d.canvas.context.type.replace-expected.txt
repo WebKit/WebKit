@@ -1,0 +1,9 @@
+2d.canvas.context.type.replace
+
+Interface methods can be overridden
+
+Defined in "Web IDL" (draft)
+
+
+PASS Interface methods can be overridden
+

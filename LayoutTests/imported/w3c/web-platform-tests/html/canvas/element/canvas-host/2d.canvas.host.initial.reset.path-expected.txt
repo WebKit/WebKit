@@ -1,0 +1,6 @@
+2d.canvas.host.initial.reset.path
+Resetting the canvas state resets the current path
+Actual output:
+
+PASS Resetting the canvas state resets the current path
+

@@ -1,0 +1,7 @@
+2d.canvas.host.type.name
+
+OffscreenCanvas type and toString
+
+
+PASS OffscreenCanvas type and toString
+

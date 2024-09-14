@@ -1,0 +1,6 @@
+2d.text.measure.getActualBoundingBox-exceptions.tentative
+Check that TextMetrics::getActualBoundingBox() throws when using invalid indexes.
+Actual output:
+
+FAIL Check that TextMetrics::getActualBoundingBox() throws when using invalid indexes. assert_throws_dom: function "() => tm.getActualBoundingBox(text.length, 0)" threw object "TypeError: tm.getActualBoundingBox is not a function. (In 'tm.getActualBoundingBox(text.length, 0)', 'tm.getActualBoundingBox' is undefined)" that is not a DOMException IndexSizeError: property "code" is equal to undefined, expected 1
+

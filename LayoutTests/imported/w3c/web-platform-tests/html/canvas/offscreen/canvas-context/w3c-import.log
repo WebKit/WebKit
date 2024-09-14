@@ -1,0 +1,45 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.arguments.missing.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.arguments.missing.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.casesensitive.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.casesensitive.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.emptystring.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.emptystring.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.exists.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.exists.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.extraargs.cache.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.extraargs.cache.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.extraargs.create.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.extraargs.create.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.invalid.args.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.invalid.args.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.prototype.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.prototype.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.shared.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.shared.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.type.exists.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.type.exists.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.type.extend.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.type.extend.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.type.prototype.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.type.prototype.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.type.replace.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.type.replace.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.unique.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.canvas.context.unique.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/canvas-context/2d.getContext.options.any.js

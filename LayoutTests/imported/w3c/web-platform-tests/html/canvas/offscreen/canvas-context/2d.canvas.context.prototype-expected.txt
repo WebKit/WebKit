@@ -1,0 +1,7 @@
+2d.canvas.context.prototype
+
+checks OffscreenCanvasRenderingContext2D prototype
+
+
+PASS checks OffscreenCanvasRenderingContext2D prototype
+

@@ -112,13 +112,13 @@ t.step(function() {
   ]
 
   for (testCase of errorTestCases) {
-    const filterOptions = {...{filter: 'turbulence'}, ...testCase};
-    assert_throws_js(TypeError, function() { new CanvasFilter(filterOptions); });
+    const filterOptions = {...{name: 'turbulence'}, ...testCase};
+    assert_throws_js(TypeError, function() { ctx.filter = new CanvasFilter(filterOptions); });
   }
 
   for (testCase of workingTestCases) {
-    const filterOptions = {...{filter: 'turbulence'}, ...testCase};
-    _assert(new CanvasFilter(filterOptions) != null, "new CanvasFilter(filterOptions) != null");
+    const filterOptions = {...{name: 'turbulence'}, ...testCase};
+    ctx.filter = new CanvasFilter(filterOptions);
   }
   t.done();
 });

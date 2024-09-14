@@ -14,6 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.after-rasterization-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.after-rasterization-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.after-rasterization.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.after-rasterization.w-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.after-rasterization.w.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.basic.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.render.drop_shadow-expected.html
@@ -107,3 +112,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.state.transformation_matrix.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.state.word_spacing.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/reset/2d.reset.state.word_spacing.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/reset/WEB_FEATURES.yml
