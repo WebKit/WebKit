@@ -95,12 +95,19 @@ class ValidationMessageClient;
 class VisitedLinkStore;
 class WebRTCProvider;
 
+enum class SandboxFlag : uint16_t;
+using SandboxFlags = OptionSet<SandboxFlag>;
+
 class PageConfiguration {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(PageConfiguration, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(PageConfiguration);
 public:
 
-    using ClientCreatorForMainFrame = std::variant<CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&)>, CompletionHandler<UniqueRef<RemoteFrameClient>(RemoteFrame&)>>;
+    struct LocalMainFrameCreationParameters {
+        CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&)> clientCreator;
+        SandboxFlags effectiveSandboxFlags;
+    };
+    using MainFrameCreationParameters = std::variant<LocalMainFrameCreationParameters, CompletionHandler<UniqueRef<RemoteFrameClient>(RemoteFrame&)>>;
 
     WEBCORE_EXPORT PageConfiguration(
         std::optional<PageIdentifier>,
@@ -113,7 +120,7 @@ public:
         Ref<BackForwardClient>&&,
         Ref<CookieJar>&&,
         UniqueRef<ProgressTrackerClient>&&,
-        ClientCreatorForMainFrame&&,
+        MainFrameCreationParameters&&,
         FrameIdentifier mainFrameIdentifier,
         RefPtr<Frame>&& mainFrameOpener,
         UniqueRef<SpeechRecognitionProvider>&&,
@@ -166,7 +173,7 @@ public:
     Ref<CookieJar> cookieJar;
     std::unique_ptr<ValidationMessageClient> validationMessageClient;
 
-    ClientCreatorForMainFrame clientCreatorForMainFrame;
+    MainFrameCreationParameters mainFrameCreationParameters;
 
     FrameIdentifier mainFrameIdentifier;
     RefPtr<Frame> mainFrameOpener;

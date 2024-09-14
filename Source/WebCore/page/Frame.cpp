@@ -302,4 +302,10 @@ std::optional<OwnerPermissionsPolicyData> Frame::ownerPermissionsPolicy() const
     return OwnerPermissionsPolicyData { WTFMove(documentOrigin), WTFMove(documentPolicy), WTFMove(containerPolicy) };
 }
 
+void Frame::updateSandboxFlags(SandboxFlags flags, NotifyUIProcess notifyUIProcess)
+{
+    if (notifyUIProcess == NotifyUIProcess::Yes)
+        loaderClient().updateSandboxFlags(flags);
+}
+
 } // namespace WebCore

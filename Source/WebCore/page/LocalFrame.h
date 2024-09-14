@@ -98,7 +98,10 @@ class SecurityOrigin;
 class VisiblePosition;
 class Widget;
 
+enum class SandboxFlag : uint16_t;
 enum class WindowProxyProperty : uint8_t;
+
+using SandboxFlags = OptionSet<SandboxFlag>;
 
 struct SimpleRange;
 
@@ -118,9 +121,9 @@ using NodeQualifier = Function<Node* (const HitTestResult&, Node* terminationNod
 class LocalFrame final : public Frame {
 public:
     using ClientCreator = CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&)>;
-    WEBCORE_EXPORT static Ref<LocalFrame> createMainFrame(Page&, ClientCreator&&, FrameIdentifier, Frame* opener);
-    WEBCORE_EXPORT static Ref<LocalFrame> createSubframe(Page&, ClientCreator&&, FrameIdentifier, HTMLFrameOwnerElement&);
-    WEBCORE_EXPORT static Ref<LocalFrame> createProvisionalSubframe(Page&, ClientCreator&&, FrameIdentifier, Frame& parent);
+    WEBCORE_EXPORT static Ref<LocalFrame> createMainFrame(Page&, ClientCreator&&, FrameIdentifier, SandboxFlags, Frame* opener);
+    WEBCORE_EXPORT static Ref<LocalFrame> createSubframe(Page&, ClientCreator&&, FrameIdentifier, SandboxFlags, HTMLFrameOwnerElement&);
+    WEBCORE_EXPORT static Ref<LocalFrame> createProvisionalSubframe(Page&, ClientCreator&&, FrameIdentifier, SandboxFlags, Frame& parent);
 
     WEBCORE_EXPORT void init();
 #if PLATFORM(IOS_FAMILY)
@@ -319,13 +322,17 @@ public:
     String customNavigatorPlatform() const final;
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final;
 
+    WEBCORE_EXPORT SandboxFlags effectiveSandboxFlags() const;
+    SandboxFlags sandboxFlagsFromSandboxAttributeNotCSP() { return m_sandboxFlags; }
+    WEBCORE_EXPORT void updateSandboxFlags(SandboxFlags, NotifyUIProcess) final;
+
 protected:
     void frameWasDisconnectedFromOwner() const final;
 
 private:
     friend class NavigationDisabler;
 
-    LocalFrame(Page&, ClientCreator&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent, Frame* opener);
+    LocalFrame(Page&, ClientCreator&&, FrameIdentifier, SandboxFlags, HTMLFrameOwnerElement*, Frame* parent, Frame* opener);
 
     void dropChildren();
 
@@ -387,6 +394,7 @@ private:
     FloatSize m_overrideScreenSize;
 
     const WeakRef<const LocalFrame> m_rootFrame;
+    SandboxFlags m_sandboxFlags;
     UniqueRef<EventHandler> m_eventHandler;
     HashSet<RegistrableDomain> m_storageAccessExceptionDomains;
 };

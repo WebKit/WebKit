@@ -233,13 +233,14 @@ WebView::WebView(RECT rect, const API::PageConfiguration& configuration, HWND pa
     // status into account. <http://webkit.org/b/54104>
     ASSERT(m_isVisible == static_cast<bool>(::GetWindowLong(m_window, GWL_STYLE) & WS_VISIBLE));
 
-    auto pageConfiguration = configuration.copy();
+    Ref pageConfiguration = configuration.copy();
     pageConfiguration->preferences().setAllowTestOnlyIPC(pageConfiguration->allowTestOnlyIPC());
     WebProcessPool& processPool = pageConfiguration->processPool();
     m_page = processPool.createWebPage(*m_pageClient, WTFMove(pageConfiguration));
 
-    auto& openerInfo = m_page->configuration().openerInfo();
-    m_page->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()));
+    auto& configurationFromPage = m_page->configuration();
+    auto& openerInfo = configurationFromPage.openerInfo();
+    m_page->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()), configurationFromPage.initialSandboxFlags());
 
     m_page->setIntrinsicDeviceScaleFactor(deviceScaleFactorForWindow(m_window));
 

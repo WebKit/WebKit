@@ -52,6 +52,9 @@ class WeakPtrImplWithEventTargetData;
 class WindowProxy;
 
 enum class AdvancedPrivacyProtections : uint16_t;
+enum class SandboxFlag : uint16_t;
+
+using SandboxFlags = OptionSet<SandboxFlag>;
 
 class Frame : public ThreadSafeRefCounted<Frame, WTF::DestructionThread::Main>, public CanMakeWeakPtr<Frame> {
 public:
@@ -114,6 +117,9 @@ public:
     virtual String customUserAgentAsSiteSpecificQuirks() const = 0;
     virtual String customNavigatorPlatform() const = 0;
     virtual OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const = 0;
+
+    enum class NotifyUIProcess : bool { No, Yes };
+    virtual void updateSandboxFlags(SandboxFlags, NotifyUIProcess);
 
     WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.
 

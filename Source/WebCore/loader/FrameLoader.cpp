@@ -4048,9 +4048,6 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
         return;
 
     CheckedRef mainFrameLoader = mainFrame->loader();
-    SandboxFlags sandboxFlags = frame->loader().effectiveSandboxFlags();
-    if (sandboxFlags.contains(SandboxFlag::PropagatesToAuxiliaryBrowsingContexts))
-        mainFrameLoader->forceSandboxFlags(sandboxFlags);
 
     if (!isBlankTargetFrameName(frameName))
         mainFrame->tree().setSpecifiedName(frameName);
@@ -4526,16 +4523,6 @@ void FrameLoader::dispatchGlobalObjectAvailableInAllWorlds()
         m_client->dispatchGlobalObjectAvailable(world);
 }
 
-SandboxFlags FrameLoader::effectiveSandboxFlags() const
-{
-    SandboxFlags flags = m_forcedSandboxFlags;
-    if (RefPtr parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent()))
-        flags.add(parentFrame->document()->sandboxFlags());
-    if (RefPtr ownerElement = m_frame->ownerElement())
-        flags.add(ownerElement->sandboxFlags());
-    return flags;
-}
-
 void FrameLoader::didChangeTitle(DocumentLoader* loader)
 {
     m_client->didChangeTitle(loader);
@@ -4693,11 +4680,6 @@ RefPtr<Frame> createWindow(LocalFrame& openerFrame, FrameLoadRequest&& request, 
         return nullptr;
 
     Ref frame = page->mainFrame();
-
-    if (isDocumentSandboxed(openerFrame, SandboxFlag::PropagatesToAuxiliaryBrowsingContexts)) {
-        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
-            localFrame->checkedLoader()->forceSandboxFlags(openerFrame.document()->sandboxFlags());
-    }
 
     if (!isBlankTargetFrameName(request.frameName()))
         frame->tree().setSpecifiedName(request.frameName());

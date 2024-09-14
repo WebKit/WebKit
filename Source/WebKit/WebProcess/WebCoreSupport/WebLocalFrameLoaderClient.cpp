@@ -490,7 +490,7 @@ void WebLocalFrameLoaderClient::didSameDocumentNavigationForFrameViaJS(SameDocum
         WebCore::LockHistory::No,
         WebCore::LockBackForwardList::No,
         { }, /* clientRedirectSourceForHistory */
-        { }, /* effectiveSandboxFlags */
+        m_localFrame->effectiveSandboxFlags(),
         std::nullopt, /* ownerPermissionsPolicy */
         std::nullopt, /* privateClickMeasurement */
         { }, /* advancedPrivacyProtections */
@@ -968,7 +968,7 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
         WebCore::LockHistory::No,
         WebCore::LockBackForwardList::No,
         { }, /* clientRedirectSourceForHistory */
-        { }, /* effectiveSandboxFlags */
+        m_localFrame->effectiveSandboxFlags(),
         std::nullopt, /* ownerPermissionsPolicy */
         navigationAction.privateClickMeasurement(),
         { }, /* advancedPrivacyProtections */
@@ -1008,6 +1008,11 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Na
     FormState* formState, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier> navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, IsPerformingHTTPFallback isPerformingHTTPFallback, WebCore::SandboxFlags sandboxFlags, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
 {
     WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(navigationAction, request, redirectResponse, formState, clientRedirectSourceForHistory, navigationID, WTFMove(hitTestResult), hasOpener, isPerformingHTTPFallback, sandboxFlags, policyDecisionMode, WTFMove(function));
+}
+
+void WebLocalFrameLoaderClient::updateSandboxFlags(WebCore::SandboxFlags sandboxFlags)
+{
+    WebFrameLoaderClient::updateSandboxFlags(sandboxFlags);
 }
 
 void WebLocalFrameLoaderClient::cancelPolicyCheck()

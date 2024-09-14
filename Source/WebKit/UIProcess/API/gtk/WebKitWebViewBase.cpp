@@ -2547,8 +2547,9 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
     priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
     priv->acceleratedBackingStore = AcceleratedBackingStore::create(*priv->pageProxy);
 
-    auto& openerInfo = priv->pageProxy->configuration().openerInfo();
-    priv->pageProxy->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()));
+    auto& pageConfiguration = priv->pageProxy->configuration();
+    auto& openerInfo = pageConfiguration.openerInfo();
+    priv->pageProxy->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()), pageConfiguration.initialSandboxFlags());
 
     if (priv->displayID)
         priv->pageProxy->windowScreenDidChange(priv->displayID);

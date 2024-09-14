@@ -512,14 +512,17 @@ static Vector<UserContentURLPattern> parseAndAllowAccessToCORSDisablingPatterns(
     });
 }
 
-static PageConfiguration::ClientCreatorForMainFrame clientCreatorForMainFrame(Ref<WebFrame>&& mainFrame, auto frameType)
+static PageConfiguration::MainFrameCreationParameters mainFrameCreationParameters(Ref<WebFrame>&& mainFrame, auto frameType, auto initialSandboxFlags)
 {
     auto invalidator = mainFrame->makeInvalidator();
     switch (frameType) {
     case Frame::FrameType::Local:
-        return CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&)> { [mainFrame = WTFMove(mainFrame), invalidator = WTFMove(invalidator)] (auto& localFrame) mutable {
-            return makeUniqueRef<WebLocalFrameLoaderClient>(localFrame, WTFMove(mainFrame), WTFMove(invalidator));
-        } };
+        return PageConfiguration::LocalMainFrameCreationParameters {
+            { [mainFrame = WTFMove(mainFrame), invalidator = WTFMove(invalidator)] (auto& localFrame) mutable {
+                return makeUniqueRef<WebLocalFrameLoaderClient>(localFrame, WTFMove(mainFrame), WTFMove(invalidator));
+            } },
+            initialSandboxFlags
+        };
     case Frame::FrameType::Remote:
         return CompletionHandler<UniqueRef<RemoteFrameClient>(RemoteFrame&)> { [mainFrame = WTFMove(mainFrame), invalidator = WTFMove(invalidator)] (auto&) mutable {
             return makeUniqueRef<WebRemoteFrameClient>(WTFMove(mainFrame), WTFMove(invalidator));
@@ -694,7 +697,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebBackForwardListProxy::create(*this),
         WebProcess::singleton().cookieJar(),
         makeUniqueRef<WebProgressTrackerClient>(*this),
-        clientCreatorForMainFrame(m_mainFrame.copyRef(), frameType),
+        mainFrameCreationParameters(m_mainFrame.copyRef(), frameType, parameters.initialSandboxFlags),
         m_mainFrame->frameID(),
         frameFromIdentifier(parameters.openerFrameIdentifier),
         makeUniqueRef<WebSpeechRecognitionProvider>(pageID),
@@ -2085,10 +2088,8 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
         frameLoadRequest.setIsRequestFromClientOrUserInput();
     frameLoadRequest.setAdvancedPrivacyProtections(loadParameters.advancedPrivacyProtections);
 
-    if (loadParameters.effectiveSandboxFlags) {
-        if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(corePage()->mainFrame()))
-            localMainFrame->loader().forceSandboxFlags(loadParameters.effectiveSandboxFlags);
-    }
+    if (loadParameters.effectiveSandboxFlags)
+        localFrame->updateSandboxFlags(loadParameters.effectiveSandboxFlags, Frame::NotifyUIProcess::No);
 
     if (auto onwerPermissionsPolicy = std::exchange(loadParameters.ownerPermissionsPolicy, { }))
         localFrame->setOwnerPermissionsPolicy(WTFMove(*onwerPermissionsPolicy));

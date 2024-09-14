@@ -402,6 +402,7 @@ TEST(SiteIsolation, BasicPostMessageWindowOpen)
 
 struct WebViewAndDelegates {
     RetainPtr<TestWKWebView> webView;
+    RetainPtr<TestMessageHandler> messageHandler;
     RetainPtr<TestNavigationDelegate> navigationDelegate;
     RetainPtr<TestUIDelegate> uiDelegate;
 };
@@ -3169,39 +3170,33 @@ TEST(SiteIsolation, ThemeColor)
     Util::runFor(0.1_s);
 }
 
+static WebViewAndDelegates makeWebViewAndDelegates(HTTPServer& server)
+{
+    RetainPtr messageHandler = adoptNS([TestMessageHandler new]);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration.get());
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    [webView setUIDelegate:uiDelegate.get()];
+    return {
+        WTFMove(webView),
+        WTFMove(messageHandler),
+        WTFMove(navigationDelegate),
+        WTFMove(uiDelegate)
+    };
+};
+
 TEST(SiteIsolation, SandboxFlags)
 {
     NSString *checkAlertJS = @"alert('alerted');window.open('https://example.com/opened');window.webkit.messageHandlers.testHandler.postMessage('testHandler')";
 
     HTTPServer server({
-        { "/example"_s, { "<iframe sandbox='allow-scripts' id='testiframe' src='https://webkit.org/iframe'></iframe><div id='testdiv'></div>"_s } },
+        { "/example"_s, { "<iframe sandbox='allow-scripts' id='testiframe' src='https://webkit.org/iframe'></iframe>"_s } },
         { "/iframe"_s, { "hi"_s } },
         { "/check-when-loaded"_s, { [NSString stringWithFormat:@"<script>onload = ()=>{ %@ }</script>", checkAlertJS] } },
         { "/csp-forbids-alert"_s, { { { "Content-Security-Policy"_s, "sandbox allow-scripts"_s } }, "<script>alert('alerted');window.webkit.messageHandlers.testHandler.postMessage('testHandler')</script>"_s } },
         { "/opened"_s, { "hi"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
-
-    struct WebViewAndDelegates {
-        RetainPtr<TestWKWebView> webView;
-        RetainPtr<TestMessageHandler> messageHandler;
-        RetainPtr<TestNavigationDelegate> navigationDelegate;
-        RetainPtr<TestUIDelegate> uiDelegate;
-    };
-
-    auto makeWebViewAndDelegates = [&] {
-        RetainPtr messageHandler = adoptNS([TestMessageHandler new]);
-        RetainPtr configuration = server.httpsProxyConfiguration();
-        [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
-        auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration.get(), CGRectZero, false); // FIXME: Make all these tests pass with site isolation on.
-        RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
-        [webView setUIDelegate:uiDelegate.get()];
-        return WebViewAndDelegates {
-            WTFMove(webView),
-            WTFMove(messageHandler),
-            WTFMove(navigationDelegate),
-            WTFMove(uiDelegate)
-        };
-    };
 
     bool receivedMessage { false };
     bool receivedAlert { false };
@@ -3212,7 +3207,8 @@ TEST(SiteIsolation, SandboxFlags)
         receivedOpen = false;
     };
 
-    auto webViewAndDelegates = makeWebViewAndDelegates();
+    WebViewAndDelegates openedWebViewAndDelegates;
+    auto webViewAndDelegates = makeWebViewAndDelegates(server);
     RetainPtr webView = webViewAndDelegates.webView;
     webView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
     [webViewAndDelegates.messageHandler addMessage:@"testHandler" withHandler:[&] {
@@ -3226,6 +3222,20 @@ TEST(SiteIsolation, SandboxFlags)
     auto returnNilOpenedView = [&] (WKWebViewConfiguration *, WKNavigationAction *, WKWindowFeatures *) -> WKWebView * {
         receivedOpen = true;
         return nil;
+    };
+    auto returnNonNilOpenedView = [&] (WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) -> WKWebView * {
+        EXPECT_FALSE(openedWebViewAndDelegates.webView);
+        openedWebViewAndDelegates = WebViewAndDelegates {
+            adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]),
+            nil,
+            adoptNS([TestNavigationDelegate new]),
+            uiDelegate
+        };
+        openedWebViewAndDelegates.webView.get().UIDelegate = uiDelegate.get();
+        openedWebViewAndDelegates.webView.get().navigationDelegate = openedWebViewAndDelegates.navigationDelegate.get();
+        [openedWebViewAndDelegates.navigationDelegate allowAnyTLSCertificate];
+        receivedOpen = true;
+        return openedWebViewAndDelegates.webView.get();
     };
     uiDelegate.get().createWebViewWithConfiguration = returnNilOpenedView;
 
@@ -3271,20 +3281,7 @@ TEST(SiteIsolation, SandboxFlags)
     EXPECT_TRUE(receivedOpen);
 
     reset();
-    WebViewAndDelegates openedWebViewAndDelegates;
-    uiDelegate.get().createWebViewWithConfiguration = [&] (WKWebViewConfiguration *configuration, WKNavigationAction *, WKWindowFeatures *) -> WKWebView * {
-        openedWebViewAndDelegates = WebViewAndDelegates {
-            adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]),
-            nil,
-            adoptNS([TestNavigationDelegate new]),
-            uiDelegate
-        };
-        openedWebViewAndDelegates.webView.get().UIDelegate = uiDelegate.get();
-        openedWebViewAndDelegates.webView.get().navigationDelegate = openedWebViewAndDelegates.navigationDelegate.get();
-        [openedWebViewAndDelegates.navigationDelegate allowAnyTLSCertificate];
-        receivedOpen = true;
-        return openedWebViewAndDelegates.webView.get();
-    };
+    uiDelegate.get().createWebViewWithConfiguration = returnNonNilOpenedView;
     [webView evaluateJavaScript:@"i.sandbox = 'allow-scripts allow-popups'; i.src = 'https://apple.com/check-when-loaded'" completionHandler:nil];
     while (!openedWebViewAndDelegates.webView)
         Util::spinRunLoop();
@@ -3299,6 +3296,80 @@ TEST(SiteIsolation, SandboxFlags)
     Util::run(&receivedMessage);
     EXPECT_FALSE(receivedAlert);
     EXPECT_TRUE(receivedOpen);
+
+    reset();
+    uiDelegate.get().createWebViewWithConfiguration = returnNonNilOpenedView;
+    openedWebViewAndDelegates.webView = nil;
+    [webView evaluateJavaScript:@"i.sandbox = 'allow-scripts allow-popups allow-popups-to-escape-sandbox'; i.src = 'https://apple.com/check-when-loaded'" completionHandler:nil];
+    while (!openedWebViewAndDelegates.webView)
+        Util::spinRunLoop();
+    [openedWebViewAndDelegates.navigationDelegate waitForDidFinishNavigation];
+    Util::run(&receivedMessage);
+    EXPECT_FALSE(receivedAlert);
+    EXPECT_TRUE(receivedOpen);
+
+    reset();
+    uiDelegate.get().createWebViewWithConfiguration = returnNilOpenedView;
+    [openedWebViewAndDelegates.webView evaluateJavaScript:checkAlertJS completionHandler:nil];
+    Util::run(&receivedMessage);
+    EXPECT_TRUE(receivedAlert);
+    EXPECT_TRUE(receivedOpen);
+}
+
+TEST(SiteIsolation, SandboxFlagsDuringNavigation)
+{
+    bool receivedIframe2Request { false };
+    HTTPServer server { HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> Task {
+        while (true) {
+            auto path = HTTPServer::parsePath(co_await connection.awaitableReceiveHTTPRequest());
+            if (path == "/example"_s) {
+                co_await connection.awaitableSend(HTTPResponse("<iframe sandbox='allow-scripts' id='testiframe' src='https://webkit.org/iframe1'></iframe>"_s).serialize());
+                continue;
+            }
+            if (path == "/iframe1"_s) {
+                co_await connection.awaitableSend(HTTPResponse("hi"_s).serialize());
+                continue;
+            }
+            if (path == "/iframe2"_s) {
+                receivedIframe2Request = true;
+                // Never respond.
+                continue;
+            }
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy };
+
+    NSString *checkAlertJS = @"alert('alerted');window.webkit.messageHandlers.testHandler.postMessage('testHandler')";
+
+    bool receivedMessage { false };
+    bool receivedAlert { false };
+    auto reset = [&] {
+        receivedMessage = false;
+        receivedAlert = false;
+        receivedIframe2Request = false;
+    };
+
+    auto webViewAndDelegates = makeWebViewAndDelegates(server);
+    RetainPtr webView = webViewAndDelegates.webView;
+    webViewAndDelegates.uiDelegate.get().runJavaScriptAlertPanelWithMessage = [&](WKWebView *, NSString *alert, WKFrameInfo *, void (^completionHandler)()) {
+        receivedAlert = true;
+        completionHandler();
+    };
+    [webViewAndDelegates.messageHandler addMessage:@"testHandler" withHandler:[&] {
+        receivedMessage = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [webViewAndDelegates.navigationDelegate waitForDidFinishNavigation];
+    [webView evaluateJavaScript:checkAlertJS inFrame:[webView firstChildFrame] completionHandler:nil];
+    Util::run(&receivedMessage);
+    EXPECT_FALSE(receivedAlert);
+
+    reset();
+    [webView evaluateJavaScript:@"let i = document.getElementById('testiframe'); i.sandbox = 'allow-scripts allow-modals'; i.src='https://webkit.org/iframe2'" completionHandler:nil];
+    Util::run(&receivedIframe2Request);
+    [webView evaluateJavaScript:checkAlertJS inFrame:[webView firstChildFrame] completionHandler:nil];
+    Util::run(&receivedMessage);
+    EXPECT_FALSE(receivedAlert);
 }
 
 }

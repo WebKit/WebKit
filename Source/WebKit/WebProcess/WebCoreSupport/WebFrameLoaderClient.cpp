@@ -207,4 +207,10 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     });
 }
 
+void WebFrameLoaderClient::updateSandboxFlags(SandboxFlags sandboxFlags)
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::UpdateSandboxFlags(m_frame->frameID(), sandboxFlags));
+}
+
 }

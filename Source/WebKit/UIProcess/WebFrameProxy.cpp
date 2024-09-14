@@ -87,12 +87,13 @@ bool WebFrameProxy::canCreateFrame(FrameIdentifier frameID)
         && !allFrames().contains(frameID);
 }
 
-WebFrameProxy::WebFrameProxy(WebPageProxy& page, FrameProcess& process, FrameIdentifier frameID, IsMainFrame isMainFrame)
+WebFrameProxy::WebFrameProxy(WebPageProxy& page, FrameProcess& process, FrameIdentifier frameID, SandboxFlags effectiveSandboxFlags, IsMainFrame isMainFrame)
     : m_page(page)
     , m_frameProcess(process)
     , m_frameID(frameID)
     , m_layerHostingContextIdentifier(LayerHostingContextIdentifier::generate())
     , m_isMainFrame(isMainFrame)
+    , m_effectiveSandboxFlags(effectiveSandboxFlags)
 {
     ASSERT(!allFrames().contains(frameID));
     allFrames().set(frameID, *this);
@@ -401,7 +402,7 @@ void WebFrameProxy::disconnect()
         parentFrame->m_childFrames.remove(*this);
 }
 
-void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, const String& frameName)
+void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, const String& frameName, SandboxFlags effectiveSandboxFlags)
 {
     // The DecidePolicyForNavigationActionSync IPC is synchronous and may therefore get processed before the DidCreateSubframe one.
     // When this happens, decidePolicyForNavigationActionSync() calls didCreateSubframe() and we need to ignore the DidCreateSubframe
@@ -414,7 +415,7 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, const St
     MESSAGE_CHECK(WebFrameProxy::canCreateFrame(frameID));
     MESSAGE_CHECK(frameID.processIdentifier() == process().coreProcessIdentifier());
 
-    Ref child = WebFrameProxy::create(*page, m_frameProcess, frameID, WebFrameProxy::IsMainFrame::No);
+    Ref child = WebFrameProxy::create(*page, m_frameProcess, frameID, effectiveSandboxFlags, WebFrameProxy::IsMainFrame::No);
     child->m_parentFrame = *this;
     child->m_frameName = frameName;
     page->createRemoteSubframesInOtherProcesses(child, frameName);

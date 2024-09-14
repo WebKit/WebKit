@@ -249,6 +249,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     std::optional<WebKit::RemotePageParameters> remotePageParameters;
     std::optional<WebCore::FrameIdentifier> openerFrameIdentifier;
     WebCore::FrameIdentifier mainFrameIdentifier;
+    WebCore::SandboxFlags initialSandboxFlags;
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     Vector<WebCore::LinkDecorationFilteringData> linkDecorationFilteringData;

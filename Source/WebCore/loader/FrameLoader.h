@@ -252,11 +252,6 @@ public:
     void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&);
     void dispatchDidClearWindowObjectsInAllWorlds();
 
-    // The following sandbox flags will be forced, regardless of changes to
-    // the sandbox attribute of any parent frames.
-    void forceSandboxFlags(SandboxFlags flags) { m_forcedSandboxFlags.add(flags); }
-    WEBCORE_EXPORT SandboxFlags effectiveSandboxFlags() const;
-
     bool checkIfFormActionAllowedByCSP(const URL&, bool didReceiveRedirectResponse, const URL& preRedirectURL) const;
 
     void resetMultipleFormSubmissionProtection();
@@ -515,8 +510,6 @@ private:
     bool m_currentNavigationHasShownBeforeUnloadConfirmPanel { false };
 
     bool m_loadsSynchronously { false };
-
-    SandboxFlags m_forcedSandboxFlags;
 
     RefPtr<FrameNetworkingContext> m_networkingContext;
 

@@ -7548,7 +7548,10 @@ void Document::initSecurityContext()
     // In the common case, create the security context from the currently
     // loading URL with a fresh content security policy.
     setCookieURL(m_url);
-    enforceSandboxFlags(m_frame->loader().effectiveSandboxFlags());
+
+    // Flags from CSP will be added when the response is received, but should not be carried over to the frame's next document.
+    enforceSandboxFlags(m_frame->sandboxFlagsFromSandboxAttributeNotCSP());
+
     setReferrerPolicy(m_frame->loader().effectiveReferrerPolicy());
 
     if (shouldEnforceContentDispositionAttachmentSandbox())

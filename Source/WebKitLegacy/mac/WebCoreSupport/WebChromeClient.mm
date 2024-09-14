@@ -304,9 +304,16 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& fea
         newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:), nil);
 
     auto* newPage = core(newWebView);
-    if (newPage && !features.wantsNoOpener()) {
-        m_webView.page->protectedStorageNamespaceProvider()->cloneSessionStorageNamespaceForPage(*m_webView.page, *newPage);
-        newPage->mainFrame().setOpenerForWebKitLegacy(&frame);
+    if (newPage) {
+        if (!features.wantsNoOpener()) {
+            m_webView.page->protectedStorageNamespaceProvider()->cloneSessionStorageNamespaceForPage(*m_webView.page, *newPage);
+            newPage->mainFrame().setOpenerForWebKitLegacy(&frame);
+        }
+
+        auto effectiveSandboxFlags = frame.effectiveSandboxFlags();
+        if (!effectiveSandboxFlags.contains(WebCore::SandboxFlag::PropagatesToAuxiliaryBrowsingContexts))
+            effectiveSandboxFlags = { };
+        newPage->mainFrame().updateSandboxFlags(effectiveSandboxFlags, WebCore::Frame::NotifyUIProcess::No);
     }
 
     return newPage;

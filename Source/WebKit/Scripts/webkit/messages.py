@@ -475,6 +475,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::PointerID',
         'WebCore::RenderingMode',
         'WebCore::RenderingPurpose',
+        'WebCore::SandboxFlags',
         'WebCore::ScriptExecutionContextIdentifier',
         'WebCore::ScrollingNodeID',
         'WebCore::ServiceWorkerOrClientData',

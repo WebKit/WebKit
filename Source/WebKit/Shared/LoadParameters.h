@@ -37,7 +37,6 @@
 #include <WebCore/OwnerPermissionsPolicyData.h>
 #include <WebCore/PublicSuffixStore.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/SandboxFlags.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
 #include <WebCore/SubstituteData.h>
 
@@ -45,6 +44,8 @@ OBJC_CLASS NSDictionary;
 
 namespace WebCore {
 class SharedBuffer;
+enum class SandboxFlag : uint16_t;
+using SandboxFlags = OptionSet<SandboxFlag>;
 }
 
 namespace WebKit {

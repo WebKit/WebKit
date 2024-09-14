@@ -52,6 +52,11 @@ OBJC_PROTOCOL(_UIClickInteractionDriving);
 #include <WebCore/ShouldRequireExplicitConsentForGamepadAccess.h>
 #endif
 
+namespace WebCore {
+enum class SandboxFlag : uint16_t;
+using SandboxFlags = OptionSet<SandboxFlag>;
+}
+
 namespace WebKit {
 class BrowsingContextGroup;
 class VisitedLinkStore;
@@ -111,6 +116,9 @@ public:
     };
     const std::optional<OpenerInfo>& openerInfo() const;
     void setOpenerInfo(std::optional<OpenerInfo>&&);
+
+    WebCore::SandboxFlags initialSandboxFlags() const;
+    void setInitialSandboxFlags(WebCore::SandboxFlags);
 
     WebKit::WebProcessPool& processPool() const;
     void setProcessPool(RefPtr<WebKit::WebProcessPool>&&);
@@ -488,6 +496,7 @@ private:
         RefPtr<WebKit::WebPageGroup> pageGroup;
         WeakPtr<WebKit::WebPageProxy> relatedPage;
         std::optional<OpenerInfo> openerInfo;
+        WebCore::SandboxFlags initialSandboxFlags;
         WeakPtr<WebKit::WebPageProxy> pageToCloneSessionStorageFrom;
         WeakPtr<WebKit::WebPageProxy> alternateWebViewForNavigationGestures;
 

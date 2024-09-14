@@ -1436,7 +1436,7 @@ void WebPageProxy::finishAttachingToWebProcess(const Site& site, ProcessLaunchRe
 
     // In the process-swap case, the ProvisionalPageProxy already took care of initializing the WebPage in the WebProcess.
     if (reason != ProcessLaunchReason::ProcessSwap)
-        initializeWebPage(site);
+        initializeWebPage(site, m_mainFrame ? m_mainFrame->effectiveSandboxFlags() : SandboxFlags { });
 
     protectedInspector()->updateForNewPageProcess(*this);
 
@@ -1571,7 +1571,7 @@ void WebPageProxy::setDrawingArea(std::unique_ptr<DrawingAreaProxy>&& drawingAre
 #endif
 }
 
-void WebPageProxy::initializeWebPage(const Site& site)
+void WebPageProxy::initializeWebPage(const Site& site, WebCore::SandboxFlags effectiveSandboxFlags)
 {
     if (!hasRunningProcess())
         return;
@@ -1596,7 +1596,7 @@ void WebPageProxy::initializeWebPage(const Site& site)
     m_pageToCloneSessionStorageFrom = nullptr;
 
     Ref process = m_legacyMainFrameProcess;
-    m_mainFrame = WebFrameProxy::create(*this, m_browsingContextGroup->ensureProcessForSite(site, process, preferences()), FrameIdentifier::generate(), WebFrameProxy::IsMainFrame::Yes);
+    m_mainFrame = WebFrameProxy::create(*this, m_browsingContextGroup->ensureProcessForSite(site, process, preferences()), FrameIdentifier::generate(), effectiveSandboxFlags, WebFrameProxy::IsMainFrame::Yes);
     if (m_preferences->siteIsolationEnabled())
         m_browsingContextGroup->addPage(*this);
     legacyMainFrameProcess().send(Messages::WebProcess::CreateWebPage(m_webPageID, creationParameters(process, *m_drawingArea, m_mainFrame->frameID(), std::nullopt)), 0);
@@ -1944,7 +1944,6 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     loadParameters.lockHistory = navigation.lockHistory();
     loadParameters.lockBackForwardList = navigation.lockBackForwardList();
     loadParameters.clientRedirectSourceForHistory = navigation.clientRedirectSourceForHistory();
-    loadParameters.effectiveSandboxFlags = navigation.effectiveSandboxFlags();
     loadParameters.ownerPermissionsPolicy = navigation.ownerPermissionsPolicy();
     loadParameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     loadParameters.existingNetworkResourceLoadIdentifierToResume = existingNetworkResourceLoadIdentifierToResume;
@@ -2163,7 +2162,6 @@ RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequ
     loadParameters.lockHistory = navigation->lockHistory();
     loadParameters.lockBackForwardList = navigation->lockBackForwardList();
     loadParameters.clientRedirectSourceForHistory = navigation->clientRedirectSourceForHistory();
-    loadParameters.effectiveSandboxFlags = navigation->effectiveSandboxFlags();
     loadParameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain();
 
     simulatedResponse.setExpectedContentLength(loadParameters.data->size());
@@ -4658,6 +4656,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         if (loadContinuingInNonInitiatingProcess) {
             // FIXME: Add more parameters as appropriate. <rdar://116200985>
             LoadParameters loadParameters;
+            loadParameters.effectiveSandboxFlags = frame->effectiveSandboxFlags();
             loadParameters.request = navigation->currentRequest();
             loadParameters.shouldTreatAsContinuingLoad = navigation->currentRequestIsRedirect() ? ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted : ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
             loadParameters.frameIdentifier = frame->frameID();
@@ -4847,6 +4846,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         loadParameters.frameIdentifier = frame.frameID();
         loadParameters.isRequestFromClientOrUserInput = navigation.isRequestFromClientOrUserInput();
         loadParameters.navigationID = navigation.navigationID();
+        loadParameters.effectiveSandboxFlags = frame.effectiveSandboxFlags();
         loadParameters.lockBackForwardList = frame.hasPendingBackForwardItem() ? LockBackForwardList::Yes : LockBackForwardList::No;
         loadParameters.ownerPermissionsPolicy = navigation.lastNavigationAction().ownerPermissionsPolicy;
         loadParameters.isPerformingHTTPFallback = isPerformingHTTPFallback == IsPerformingHTTPFallback::Yes;
@@ -6049,11 +6049,11 @@ void WebPageProxy::preferencesDidChange()
     });
 }
 
-void WebPageProxy::didCreateSubframe(IPC::Connection& connection, FrameIdentifier parentID, FrameIdentifier newFrameID, const String& frameName)
+void WebPageProxy::didCreateSubframe(IPC::Connection& connection, FrameIdentifier parentID, FrameIdentifier newFrameID, const String& frameName, SandboxFlags sandboxFlags)
 {
     RefPtr parent = WebFrameProxy::webFrame(parentID);
     MESSAGE_CHECK_BASE(parent, connection);
-    parent->didCreateSubframe(newFrameID, frameName);
+    parent->didCreateSubframe(newFrameID, frameName, sandboxFlags);
 }
 
 void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier frameID)
@@ -6174,6 +6174,16 @@ void WebPageProxy::updateRemoteFrameSize(WebCore::FrameIdentifier frameID, WebCo
         frame->setRemoteFrameSize(size);
 
     sendToProcessContainingFrame(frameID, Messages::WebPage::UpdateFrameSize(frameID, size));
+}
+
+void WebPageProxy::updateSandboxFlags(IPC::Connection& connection, WebCore::FrameIdentifier frameID, WebCore::SandboxFlags sandboxFlags)
+{
+    if (RefPtr frame = WebFrameProxy::webFrame(frameID)) {
+        RefPtr process = dynamicDowncast<WebProcessProxy>(AuxiliaryProcessProxy::fromConnection(connection));
+        RefPtr parentFrame = frame->parentFrame();
+        MESSAGE_CHECK(process, parentFrame && &parentFrame->process() == process.get());
+        frame->updateSandboxFlags(sandboxFlags);
+    }
 }
 
 void WebPageProxy::preconnectTo(ResourceRequest&& request)
@@ -7562,7 +7572,7 @@ void WebPageProxy::decidePolicyForNavigationActionSync(IPC::Connection& connecti
         // This synchronous IPC message was processed before the asynchronous DidCreateSubframe one so we do not know about this frameID yet.
         RefPtr parentFrame = WebFrameProxy::webFrame(frameInfo.parentFrameID);
         MESSAGE_CHECK_BASE(parentFrame, connection);
-        parentFrame->didCreateSubframe(*frameInfo.frameID, frameInfo.frameName);
+        parentFrame->didCreateSubframe(*frameInfo.frameID, frameInfo.frameName, data.effectiveSandboxFlags);
     }
 
     decidePolicyForNavigationActionSyncShared(frame->protectedProcess(), WTFMove(data), WTFMove(reply));
@@ -7863,6 +7873,10 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
     auto originatingFrameInfo = API::FrameInfo::create(WTFMove(originatingFrameInfoData), WTFMove(originatingPage));
     auto mainFrameURL = m_mainFrame ? m_mainFrame->url() : URL();
 
+    auto effectiveSandboxFlags = navigationActionData.effectiveSandboxFlags;
+    if (!effectiveSandboxFlags.contains(SandboxFlag::PropagatesToAuxiliaryBrowsingContexts))
+        effectiveSandboxFlags = { };
+
     std::optional<bool> openerAppInitiatedState;
     if (RefPtr page = originatingFrameInfo->page())
         openerAppInitiatedState = page->lastNavigationWasAppInitiated();
@@ -7920,6 +7934,7 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
 
     Ref configuration = this->configuration().copy();
     configuration->setRelatedPage(*this);
+    configuration->setInitialSandboxFlags(effectiveSandboxFlags);
 
     if (RefPtr openerFrame = WebFrameProxy::webFrame(originatingFrameInfoData.frameID); navigationActionData.hasOpener && openerFrame) {
         configuration->setOpenerInfo({ {
@@ -7933,7 +7948,6 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
     }
 
     trySOAuthorization(configuration.copyRef(), WTFMove(navigationAction), *this, WTFMove(completionHandler), [this, protectedThis = Ref { *this }, windowFeatures = WTFMove(windowFeatures), configuration] (Ref<API::NavigationAction>&& navigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) mutable {
-
         m_uiClient->createNewPage(*this, WTFMove(configuration), WTFMove(windowFeatures), WTFMove(navigationAction), WTFMove(completionHandler));
     });
 }
@@ -10617,7 +10631,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     WebPageCreationParameters parameters {
         .pageGroupData = m_pageGroup->data(),
         .userContentControllerParameters = userContentController->parameters(),
-        .mainFrameIdentifier = mainFrameIdentifier
+        .mainFrameIdentifier = mainFrameIdentifier,
+        .initialSandboxFlags = m_mainFrame ? m_mainFrame->effectiveSandboxFlags() : SandboxFlags { }
     };
 
     parameters.processDisplayName = configuration().processDisplayName();

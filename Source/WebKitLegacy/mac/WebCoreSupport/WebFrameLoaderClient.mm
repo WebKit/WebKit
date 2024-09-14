@@ -820,8 +820,19 @@ WebCore::LocalFrame* WebFrameLoaderClient::dispatchCreatePage(const WebCore::Nav
     WebView *newWebView = [[currentWebView _UIDelegateForwarder] webView:currentWebView 
                                                 createWebViewWithRequest:nil
                                                           windowFeatures:features.get()];
-    if (newWebView && policy == WebCore::NewFrameOpenerPolicy::Allow)
-        core([newWebView mainFrame])->setOpenerForWebKitLegacy(core(m_webFrame.get()));
+
+    if (newWebView) {
+        if (policy == WebCore::NewFrameOpenerPolicy::Allow)
+            core([newWebView mainFrame])->setOpenerForWebKitLegacy(core(m_webFrame.get()));
+
+        if (RefPtr opener = core(m_webFrame.get())) {
+            auto effectiveSandboxFlags = opener->effectiveSandboxFlags();
+            if (!effectiveSandboxFlags.contains(WebCore::SandboxFlag::PropagatesToAuxiliaryBrowsingContexts))
+                effectiveSandboxFlags = { };
+            core(newWebView)->mainFrame().updateSandboxFlags(effectiveSandboxFlags, WebCore::Frame::NotifyUIProcess::No);
+        }
+    }
+
     return core([newWebView mainFrame]);
 }
 

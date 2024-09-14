@@ -128,8 +128,9 @@ ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& co
     m_pageProxy->windowScreenDidChange(m_displayID);
     m_backingStore = AcceleratedBackingStoreDMABuf::create(*m_pageProxy, m_wpeView.get());
 
-    auto& openerInfo = m_pageProxy->configuration().openerInfo();
-    m_pageProxy->initializeWebPage(openerInfo ? openerInfo->site : WebCore::Site(aboutBlankURL()));
+    auto& pageConfiguration = m_pageProxy->configuration();
+    auto& openerInfo = pageConfiguration.openerInfo();
+    m_pageProxy->initializeWebPage(openerInfo ? openerInfo->site : WebCore::Site(aboutBlankURL()), pageConfiguration.initialSandboxFlags());
 }
 
 ViewPlatform::~ViewPlatform()

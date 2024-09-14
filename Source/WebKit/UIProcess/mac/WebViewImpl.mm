@@ -1308,8 +1308,9 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
 
     m_page->setAddsVisitedLinks(processPool.historyClient().addsVisitedLinks());
 
-    auto& openerInfo = m_page->configuration().openerInfo();
-    m_page->initializeWebPage(openerInfo ? openerInfo->site : WebCore::Site(aboutBlankURL()));
+    auto& pageConfiguration = m_page->configuration();
+    auto& openerInfo = pageConfiguration.openerInfo();
+    m_page->initializeWebPage(openerInfo ? openerInfo->site : WebCore::Site(aboutBlankURL()), pageConfiguration.initialSandboxFlags());
 
     registerDraggedTypes();
 

@@ -600,6 +600,10 @@ void EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navig
 {
 }
 
+void EmptyFrameLoaderClient::updateSandboxFlags(SandboxFlags)
+{
+}
+
 void EmptyFrameLoaderClient::broadcastMainFrameURLChangeToOtherProcesses(const URL&)
 {
 }
@@ -1213,9 +1217,12 @@ PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier
         adoptRef(*new EmptyBackForwardClient),
         CookieJar::create(adoptRef(*new EmptyStorageSessionProvider)),
         makeUniqueRef<EmptyProgressTrackerClient>(),
-        CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&)> { [] (auto&) {
-            return makeUniqueRef<EmptyFrameLoaderClient>();
-        } },
+        PageConfiguration::LocalMainFrameCreationParameters {
+            CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&)> { [] (auto&) {
+                return makeUniqueRef<EmptyFrameLoaderClient>();
+            } },
+            SandboxFlags::all(),
+        },
         FrameIdentifier::generate(),
         nullptr,
         makeUniqueRef<DummySpeechRecognitionProvider>(),
