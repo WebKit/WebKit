@@ -636,7 +636,14 @@ async function requestImportModule(moduleName, referrer, parameters, fetcher)
         await importMap;
         key = this.resolve(moduleName, referrer, fetcher);
     }
-    var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
+    var entry = this.ensureRegistered(key);
+    if (entry.evaluated) {
+        return this.getModuleNamespaceObject(entry.module);
+    }  
+    entry = await this.requestSatisfy(entry, parameters, fetcher, new @Set);
+    if (entry.evaluated) {
+        return this.getModuleNamespaceObject(entry.module);
+    }
     await this.linkAndEvaluateModule(entry.key, fetcher);
     return this.getModuleNamespaceObject(entry.module);
 }
