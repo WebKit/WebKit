@@ -131,7 +131,7 @@ static Ref<NetworkStorageManager> createNetworkStorageManager(NetworkProcess& ne
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
 static WebPushD::WebPushDaemonConnectionConfiguration configurationWithHostAuditToken(NetworkProcess& networkProcess, WebPushD::WebPushDaemonConnectionConfiguration configuration)
 {
-#if PLATFORM(COCOA)
+#if !USE(EXTENSIONKIT)
     auto token = networkProcess.parentProcessConnection()->getAuditToken();
     if (token) {
         Vector<uint8_t> auditTokenData(sizeof(*token));

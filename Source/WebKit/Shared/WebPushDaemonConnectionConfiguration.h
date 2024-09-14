@@ -32,7 +32,7 @@
 namespace WebKit::WebPushD {
 
 struct WebPushDaemonConnectionConfiguration {
-    std::optional<Vector<uint8_t>> hostAppAuditTokenData;
+    Vector<uint8_t> hostAppAuditTokenData;
     String bundleIdentifierOverride;
     String pushPartitionString;
     std::optional<WTF::UUID> dataStoreIdentifier;

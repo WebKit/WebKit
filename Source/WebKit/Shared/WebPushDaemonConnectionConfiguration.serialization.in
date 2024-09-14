@@ -23,7 +23,7 @@
 webkit_platform_headers: "ArgumentCoders.h" "WebPushDaemonConnectionConfiguration.h"
 
 [CustomHeader, WebKitPlatform] struct WebKit::WebPushD::WebPushDaemonConnectionConfiguration {
-    std::optional<Vector<uint8_t>> hostAppAuditTokenData;
+    Vector<uint8_t> hostAppAuditTokenData;
     String bundleIdentifierOverride;
     String pushPartitionString;
     std::optional<WTF::UUID> dataStoreIdentifier;

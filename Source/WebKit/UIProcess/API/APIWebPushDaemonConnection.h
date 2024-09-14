@@ -38,6 +38,7 @@ struct PushSubscriptionData;
 namespace WebKit {
 namespace WebPushD {
 class Connection;
+struct WebPushDaemonConnectionConfiguration;
 }
 struct WebPushMessage;
 }
@@ -46,7 +47,7 @@ namespace API {
 
 class WebPushDaemonConnection final : public ObjectImpl<Object::Type::WebPushDaemonConnection> {
 public:
-    WebPushDaemonConnection(const WTF::String& machServiceName, const WTF::String& partition, const WTF::String& bundleIdentifier);
+    WebPushDaemonConnection(const WTF::String& machServiceName, WebKit::WebPushD::WebPushDaemonConnectionConfiguration&&);
 
     void getPushPermissionState(const WTF::URL&, CompletionHandler<void(WebCore::PushPermissionState)>&&);
     void requestPushPermission(const WTF::URL&, CompletionHandler<void(bool)>&&);
