@@ -65,7 +65,7 @@ InlineRect LineBox::logicalRectForTextRun(const Line::Run& run) const
     while (ancestorInlineBox != &m_rootInlineBox && !ancestorInlineBox->hasLineBoxRelativeAlignment()) {
         ancestorInlineBox = &parentInlineBox(*ancestorInlineBox);
         ASSERT(ancestorInlineBox->isInlineBox());
-        runlogicalTop += (ancestorInlineBox->logicalTop() - ancestorInlineBox->inlineBoxContentOffsetForTextBoxTrim());
+        runlogicalTop += ancestorInlineBox->logicalTop();
     }
     return { runlogicalTop, m_rootInlineBox.logicalLeft() + run.logicalLeft(), run.logicalWidth(), logicalHeight };
 }
