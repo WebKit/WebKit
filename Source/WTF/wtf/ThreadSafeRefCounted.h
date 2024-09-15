@@ -29,6 +29,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/MainThread.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WTF {
 
@@ -50,25 +51,19 @@ public:
 
     void ref() const
     {
-#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-        ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
-#endif
         refAllowingPartiallyDestroyed();
     }
 
+    // Deprecated, and will be removed. Use ref() instead.
     void refAllowingPartiallyDestroyed() const
     {
-#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-        ASSERT(!deletionHasEnded());
-#endif
+        applyRefDuringDestructionCheck();
+
         ++m_refCount;
     }
 
     bool hasOneRef() const
     {
-#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-        ASSERT(!m_deletionHasBegun);
-#endif
         return refCount() == 1;
     }
 
@@ -82,13 +77,14 @@ protected:
     bool derefBaseWithoutDeletionCheck() const
     {
         ASSERT(m_refCount);
-#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-        ASSERT(!deletionHasEnded());
-#endif
+
         if (UNLIKELY(!--m_refCount)) {
             // Setting m_refCount to 1 here prevents double delete within the destructor but not from another thread
             // since such a thread could have ref'ed this object long after it had been deleted. See webkit.org/b/201576.
             m_refCount = 1;
+#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
+            m_deletionHasBegun = true;
+#endif
             return true;
         }
 
@@ -98,10 +94,16 @@ protected:
     // Returns whether the pointer should be freed or not.
     bool derefBase() const
     {
-#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-        ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
-#endif
         return derefBaseWithoutDeletionCheck();
+    }
+
+    void applyRefDuringDestructionCheck() const
+    {
+#if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
+        if (!m_deletionHasBegun)
+            return;
+        RefCountedBase::logRefDuringDestruction(this);
+#endif
     }
 
 private:
@@ -114,14 +116,7 @@ private:
 #endif
 
 #if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
-    bool deletionHasEnded() const;
-
     mutable std::atomic<bool> m_deletionHasBegun { false };
-    enum class IsAllocatedMemory : unsigned {
-        Scribble = 0, // Do not check for this value, it is not guaranteed to exist.
-        Yes = 0xFEEDB0BA
-    };
-    mutable std::atomic<IsAllocatedMemory> m_isAllocatedMemory { IsAllocatedMemory::Yes };
     // Match the layout of RefCounted.
     UNUSED_MEMBER_VARIABLE bool m_unused3;
 #endif
@@ -132,12 +127,10 @@ inline ThreadSafeRefCountedBase::~ThreadSafeRefCountedBase()
 {
     // When this ThreadSafeRefCounted object is a part of another object, derefBase() is never called on this object.
     m_deletionHasBegun = true;
-    m_isAllocatedMemory = IsAllocatedMemory::Scribble;
-}
 
-inline bool ThreadSafeRefCountedBase::deletionHasEnded() const
-{
-    return m_isAllocatedMemory != IsAllocatedMemory::Yes;
+    // FIXME: Test performance, then add a RELEASE_ASSERT for this too.
+    if (m_refCount != 1)
+        RefCountedBase::printRefDuringDestructionLogAndCrash(this);
 }
 #endif
 
