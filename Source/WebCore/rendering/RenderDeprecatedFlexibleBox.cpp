@@ -185,8 +185,15 @@ static LayoutUnit contentHeightForChild(RenderBox* child)
 
 void RenderDeprecatedFlexibleBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
-    auto* oldStyle = hasInitializedStyle() ? &style() : nullptr;
-    if (oldStyle && !oldStyle->lineClamp().isNone() && newStyle.lineClamp().isNone())
+    auto shouldClearLineClamp = [&] {
+        auto* oldStyle = hasInitializedStyle() ? &style() : nullptr;
+        if (!oldStyle || oldStyle->lineClamp().isNone())
+            return false;
+        if (newStyle.lineClamp().isNone())
+            return true;
+        return newStyle.boxOrient() == BoxOrient::Horizontal;
+    };
+    if (shouldClearLineClamp())
         clearLineClamp();
     RenderBlock::styleWillChange(diff, newStyle);
 }
