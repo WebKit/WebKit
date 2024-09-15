@@ -128,9 +128,9 @@ static InlineLevelBox::AscentAndDescent ascentAndDescentWithTextBoxEdgeForInline
         case TextEdgeType::Text:
             return fontMetrics.intAscent(fontBaseline);
         case TextEdgeType::CapHeight:
-            return fontMetrics.capHeight().value_or(0);
+            return fontMetrics.intCapHeight();
         case TextEdgeType::ExHeight:
-            return fontMetrics.xHeight().value_or(0);
+            return roundf(fontMetrics.xHeight().value_or(0.f));
         case TextEdgeType::CJKIdeographic:
             return fontMetrics.intAscent(IdeographicBaseline);
         case TextEdgeType::CJKIdeographicInk:
@@ -674,14 +674,14 @@ InlineLayoutUnit LineBoxBuilder::applyTextBoxTrimIfNeeded(InlineLayoutUnit lineB
         lineBoxLogicalHeight -= needToTrimThisMuch;
     }
     if (shouldTrimBlockStartOfLineBox) {
-        auto textBoxEdgeOverForRootInlineBox = [&] {
+        auto textBoxEdgeOverForRootInlineBox = [&]() -> InlineLayoutUnit {
             switch (textBoxEdge.over) {
             case TextEdgeType::Text:
                 return 0.f;
             case TextEdgeType::CapHeight:
-                return primaryFontMetrics.intAscent() - primaryFontMetrics.capHeight().value_or(0);
+                return primaryFontMetrics.intAscent() - primaryFontMetrics.intCapHeight();
             case TextEdgeType::ExHeight:
-                return primaryFontMetrics.intAscent() - primaryFontMetrics.xHeight().value_or(0);
+                return primaryFontMetrics.intAscent() - roundf(primaryFontMetrics.xHeight().value_or(0.f));
             case TextEdgeType::CJKIdeographic:
             case TextEdgeType::CJKIdeographicInk:
                 ASSERT_NOT_IMPLEMENTED_YET();
