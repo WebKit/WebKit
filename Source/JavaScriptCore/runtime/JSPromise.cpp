@@ -260,6 +260,20 @@ JSPromise* JSPromise::rejectWithCaughtException(JSGlobalObject* globalObject, Th
     return this;
 }
 
+JSPromise* JSPromise::rejectedPromiseWithCaughtException(JSGlobalObject* globalObject, ThrowScope& scope)
+{
+    VM& vm = globalObject->vm();
+    Exception* exception = scope.exception();
+    ASSERT(exception);
+    if (UNLIKELY(vm.isTerminationException(exception))) {
+        scope.release();
+        return nullptr;
+    }
+    scope.clearException();
+    scope.release();
+    return rejectedPromise(globalObject, exception->value());
+}
+
 void JSPromise::performPromiseThen(JSGlobalObject* globalObject, JSFunction* onFulFilled, JSFunction* onRejected, JSValue resultCapability)
 {
     JSFunction* performPromiseThenFunction = globalObject->performPromiseThenFunction();

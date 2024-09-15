@@ -78,6 +78,7 @@ public:
 
     JS_EXPORT_PRIVATE static JSPromise* resolvedPromise(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE static JSPromise* rejectedPromise(JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE static JSPromise* rejectedPromiseWithCaughtException(JSGlobalObject*, ThrowScope&);
 
     JS_EXPORT_PRIVATE void resolve(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE void reject(JSGlobalObject*, JSValue);

@@ -79,4 +79,9 @@ JSInternalPromise* JSInternalPromise::rejectWithCaughtException(JSGlobalObject* 
     return jsCast<JSInternalPromise*>(JSPromise::rejectWithCaughtException(globalObject, scope));
 }
 
+JSInternalPromise* JSInternalPromise::rejectedPromiseWithCaughtException(JSGlobalObject* globalObject, ThrowScope& scope)
+{
+    return jsCast<JSInternalPromise*>(JSPromise::rejectedPromiseWithCaughtException(globalObject, scope));
+}
+
 } // namespace JSC
