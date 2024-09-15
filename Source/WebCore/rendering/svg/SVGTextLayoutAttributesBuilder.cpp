@@ -1,5 +1,7 @@
 /*
  * Copyright (C) Research In Motion Limited 2010-2011. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -148,9 +150,9 @@ void SVGTextLayoutAttributesBuilder::buildCharacterDataMap(RenderSVGText& textRo
         m_characterDataMap.set(1, data);
     } else {
         SVGCharacterData& data = it->value;
-        if (data.x == SVGTextLayoutAttributes::emptyValue())
+        if (SVGTextLayoutAttributes::isEmptyValue(data.x))
             data.x = 0;
-        if (data.y == SVGTextLayoutAttributes::emptyValue())
+        if (SVGTextLayoutAttributes::isEmptyValue(data.y))
             data.y = 0;
     }
 
@@ -216,7 +218,7 @@ void SVGTextLayoutAttributesBuilder::fillCharacterDataMap(const TextPosition& po
     }
 
     // The last rotation value always spans the whole scope.
-    if (lastRotation == SVGTextLayoutAttributes::emptyValue())
+    if (SVGTextLayoutAttributes::isEmptyValue(lastRotation))
         return;
 
     for (unsigned i = rotateList.items().size(); i < position.length; ++i) {
