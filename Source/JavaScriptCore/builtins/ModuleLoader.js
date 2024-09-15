@@ -637,12 +637,13 @@ async function requestImportModule(moduleName, referrer, parameters, fetcher)
         key = this.resolve(moduleName, referrer, fetcher);
     }
     var entry = this.ensureRegistered(key);
-    if (entry.evaluated) {
-        return this.getModuleNamespaceObject(entry.module);
+    var mod;
+    if (entry.evaluated && (mod = entry.module)) {
+        return this.getModuleNamespaceObject(mod);
     }  
     entry = await this.requestSatisfy(entry, parameters, fetcher, new @Set);
-    if (entry.evaluated) {
-        return this.getModuleNamespaceObject(entry.module);
+    if (entry.evaluated && (mod = entry.module)) {
+        return this.getModuleNamespaceObject(mod);
     }
     await this.linkAndEvaluateModule(entry.key, fetcher);
     return this.getModuleNamespaceObject(entry.module);
