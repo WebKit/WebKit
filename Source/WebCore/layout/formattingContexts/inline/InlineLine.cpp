@@ -476,7 +476,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
     updateHangingStatus();
 
     if (inlineTextItem.hasTrailingSoftHyphen())
-        m_trailingSoftHyphenWidth = style.fontCascade().width(TextRun { StringView { style.hyphenString() } });
+        m_trailingSoftHyphenWidth = TextUtil::hyphenWidth(style);
 }
 
 void Line::appendTextFast(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
@@ -551,7 +551,7 @@ void Line::appendTextFast(const InlineTextItem& inlineTextItem, const RenderStyl
     updateHangingStatus();
 
     if (inlineTextItem.hasTrailingSoftHyphen())
-        m_trailingSoftHyphenWidth = style.fontCascade().width(TextRun { StringView { style.hyphenString() } });
+        m_trailingSoftHyphenWidth = TextUtil::hyphenWidth(style);
 }
 
 void Line::appendAtomicInlineBox(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit marginBoxLogicalWidth)

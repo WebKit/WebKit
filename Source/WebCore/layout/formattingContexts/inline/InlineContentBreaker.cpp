@@ -549,7 +549,7 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
     if (breakRules.contains(WordBreakRule::AtHyphenationOpportunities)) {
         auto tryBreakingAtHyphenationOpportunity = [&]() -> std::optional<PartialRun> {
             auto content = inlineTextItem.inlineTextBox().content().substring(inlineTextItem.start(), inlineTextItem.length());
-            auto hyphenWidth = InlineLayoutUnit { fontCascade.width(TextRun { StringView { style.hyphenString() } }) };
+            auto hyphenWidth = TextUtil::hyphenWidth(style);
             auto hyphenLocation = [&] {
                 if (!candidateTextRun.isOverflowingRun)
                     return lastHyphenPosition(content, style);
@@ -737,7 +737,7 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
     }
     // Only non-whitespace text runs with same style.
     auto& fontCascade = style.fontCascade();
-    auto hyphenWidth = std::max(fontCascade.width(TextRun { StringView { style.hyphenString() } }), 0.f);
+    auto hyphenWidth = TextUtil::hyphenWidth(style);
     auto availableWidthExcludingHyphen = lineStatus.availableWidth - hyphenWidth;
     if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen, fontCascade.size()))
         return { };
@@ -804,8 +804,8 @@ InlineContentBreaker::OverflowingTextContent InlineContentBreaker::processOverfl
         nonOverflowingContentWidth += runLogicalWidth;
     }
     if (overflowingRunIndex == runs.size()) {
-        // We have to have an overflowing run.
-        ASSERT_NOT_REACHED();
+        // We have to have either an overflowing run or a soft hyphen.
+        ASSERT(continuousContent.hasTrailingSoftHyphen() && runs.size());
         return { runs.size() ? runs.size() - 1 : 0 };
     }
 
@@ -883,6 +883,12 @@ OptionSet<InlineContentBreaker::WordBreakRule> InlineContentBreaker::wordBreakBe
     if (style.wordBreak() == WordBreak::KeepAll)
         return { };
     return includeHyphenationIfAllowed({ });
+}
+
+void InlineContentBreaker::ContinuousContent::setTrailingSoftHyphenWidth(InlineLayoutUnit hyphenWidth)
+{
+    m_logicalWidth += hyphenWidth;
+    m_hasTrailingSoftHyphen = true;
 }
 
 void InlineContentBreaker::ContinuousContent::appendToRunList(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit offset, InlineLayoutUnit contentWidth)
@@ -964,6 +970,7 @@ void InlineContentBreaker::ContinuousContent::reset()
     m_isTextOnlyContent = true;
     m_isFullyTrimmable = false;
     m_hasTrailingWordSeparator = false;
+    m_hasTrailingSoftHyphen = false;
 }
 
 }

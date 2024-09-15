@@ -87,6 +87,7 @@ public:
         InlineLayoutUnit hangingContentWidth() const { return m_hangingContentWidth.value_or(0.f); }
         bool hasTrimmableSpace() const { return trailingTrimmableWidth() || leadingTrimmableWidth(); }
         bool hasHangingSpace() const { return hangingContentWidth(); }
+        bool hasTrailingSoftHyphen() const { return m_hasTrailingSoftHyphen; }
         bool hasTextContent() const { return m_hasTextContent; }
         bool isTextOnlyContent() const { return m_isTextOnlyContent; }
         bool isFullyTrimmable() const { return m_isFullyTrimmable; }
@@ -95,6 +96,7 @@ public:
         void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
         void appendTextContent(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
         void setHangingContentWidth(InlineLayoutUnit logicalWidth) { m_hangingContentWidth = logicalWidth; }
+        void setTrailingSoftHyphenWidth(InlineLayoutUnit);
         void setMinimumRequiredWidth(InlineLayoutUnit minimumRequiredWidth) { m_minimumRequiredWidth = minimumRequiredWidth; }
         void reset();
 
@@ -130,6 +132,7 @@ public:
         bool m_isTextOnlyContent { true };
         bool m_isFullyTrimmable { false };
         bool m_hasTrailingWordSeparator { false };
+        bool m_hasTrailingSoftHyphen { false };
     };
 
     struct LineStatus {
