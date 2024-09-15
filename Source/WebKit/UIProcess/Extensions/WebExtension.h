@@ -230,7 +230,7 @@ public:
     const String& displayDescription();
     const String& version();
 
-    NSString *contentSecurityPolicy();
+    const String& contentSecurityPolicy();
 
     CocoaImage *icon(CGSize idealSize);
 
@@ -277,8 +277,8 @@ public:
     bool hasOptionsPage();
     bool hasOverrideNewTabPage();
 
-    NSString *optionsPagePath();
-    NSString *overrideNewTabPagePath();
+    const String& optionsPagePath();
+    const String& overrideNewTabPagePath();
 
     const CommandsVector& commands();
     bool hasCommands();
@@ -310,7 +310,7 @@ public:
     // Combined pattern set that includes permission patterns and injected content patterns from the manifest.
     MatchPatternSet allRequestedMatchPatterns();
 
-    NSError *createError(Error, NSString *customLocalizedDescription = nil, NSError *underlyingError = nil);
+    NSError *createError(Error, String customLocalizedDescription = { }, NSError *underlyingError = nil);
     void recordErrorIfNeeded(NSError *error) { if (error) recordError(error); }
     void recordError(NSError *);
 
@@ -390,7 +390,7 @@ private:
     RetainPtr<NSString> m_sidebarTitle;
 #endif
 
-    RetainPtr<NSString> m_contentSecurityPolicy;
+    String m_contentSecurityPolicy;
 
     RetainPtr<NSArray> m_backgroundScriptPaths;
     RetainPtr<NSString> m_backgroundPagePath;
@@ -400,8 +400,8 @@ private:
 
     RetainPtr<NSString> m_inspectorBackgroundPagePath;
 
-    RetainPtr<NSString> m_optionsPagePath;
-    RetainPtr<NSString> m_overrideNewTabPagePath;
+    String m_optionsPagePath;
+    String m_overrideNewTabPagePath;
 
     bool m_backgroundContentIsPersistent : 1 { false };
     bool m_backgroundContentUsesModules : 1 { false };

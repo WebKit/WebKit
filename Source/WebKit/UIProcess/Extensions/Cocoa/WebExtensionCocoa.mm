@@ -97,6 +97,9 @@ static NSString * const backgroundPageTypeModuleValue = @"module";
 static NSString * const backgroundPreferredEnvironmentManifestKey = @"preferred_environment";
 static NSString * const backgroundDocumentManifestKey = @"document";
 
+static NSString * const optionsUIManifestKey = @"options_ui";
+static NSString * const browserURLOverridesManifestKey = @"browser_url_overrides";
+
 static NSString * const generatedBackgroundPageFilename = @"_generated_background_page.html";
 static NSString * const generatedBackgroundServiceWorkerFilename = @"_generated_service_worker.js";
 
@@ -126,16 +129,6 @@ static NSString * const permissionsManifestKey = @"permissions";
 static NSString * const optionalPermissionsManifestKey = @"optional_permissions";
 static NSString * const hostPermissionsManifestKey = @"host_permissions";
 static NSString * const optionalHostPermissionsManifestKey = @"optional_host_permissions";
-
-static NSString * const optionsUIManifestKey = @"options_ui";
-static NSString * const optionsUIPageManifestKey = @"page";
-static NSString * const optionsPageManifestKey = @"options_page";
-static NSString * const chromeURLOverridesManifestKey = @"chrome_url_overrides";
-static NSString * const browserURLOverridesManifestKey = @"browser_url_overrides";
-static NSString * const newTabManifestKey = @"newtab";
-
-static NSString * const contentSecurityPolicyManifestKey = @"content_security_policy";
-static NSString * const contentSecurityPolicyExtensionPagesManifestKey = @"extension_pages";
 
 static NSString * const commandsManifestKey = @"commands";
 static NSString * const commandsSuggestedKeyManifestKey = @"suggested_key";
@@ -221,14 +214,14 @@ bool WebExtension::parseManifest(NSData *manifestData)
     NSError *parseError;
     m_manifest = parseJSON(manifestData, { }, &parseError);
     if (!m_manifest) {
-        recordError(createError(Error::InvalidManifest, nil, parseError));
+        recordError(createError(Error::InvalidManifest, { }, parseError));
         return false;
     }
 
     auto manifestJSONString = String([[NSString alloc] initWithData:manifestData encoding:NSUTF8StringEncoding]);
     auto manifestJSON = JSON::Value::parseJSON(manifestJSONString);
     if (!manifestJSON || !manifestJSON->asObject()) {
-        recordError(createError(Error::InvalidManifest, nil, nil));
+        recordError(createError(Error::InvalidManifest, { }, nil));
         return false;
     }
 
@@ -662,10 +655,10 @@ static WKWebExtensionError toAPI(WebExtension::Error error)
     }
 }
 
-NSError *WebExtension::createError(Error error, NSString *customLocalizedDescription, NSError *underlyingError)
+NSError *WebExtension::createError(Error error, String customLocalizedDescription, NSError *underlyingError)
 {
     auto errorCode = toAPI(error);
-    NSString *localizedDescription;
+    String localizedDescription;
 
     switch (error) {
     case Error::Unknown:
@@ -788,7 +781,7 @@ ALLOW_NONLITERAL_FORMAT_END
         break;
     }
 
-    if (customLocalizedDescription.length)
+    if (!customLocalizedDescription.isEmpty())
         localizedDescription = customLocalizedDescription;
 
     NSDictionary *userInfo;
@@ -907,40 +900,6 @@ void WebExtension::populateExternallyConnectableIfNeeded()
 
     if (shouldReportError || (matchPatterns.isEmpty() && !extensionIDs.count))
         recordError(createError(Error::InvalidExternallyConnectable));
-}
-
-NSString *WebExtension::contentSecurityPolicy()
-{
-    populateContentSecurityPolicyStringsIfNeeded();
-    return m_contentSecurityPolicy.get();
-}
-
-void WebExtension::populateContentSecurityPolicyStringsIfNeeded()
-{
-    if (!manifestParsedSuccessfully())
-        return;
-
-    if (m_parsedManifestContentSecurityPolicyStrings)
-        return;
-
-    m_parsedManifestContentSecurityPolicyStrings = true;
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/content_security_policy
-
-    if (supportsManifestVersion(3)) {
-        if (auto *policyDictionary = objectForKey<NSDictionary>(m_manifest, contentSecurityPolicyManifestKey, false)) {
-            m_contentSecurityPolicy = objectForKey<NSString>(policyDictionary, contentSecurityPolicyExtensionPagesManifestKey);
-            if (!m_contentSecurityPolicy && (!policyDictionary.count || policyDictionary[contentSecurityPolicyExtensionPagesManifestKey]))
-                recordError(createError(Error::InvalidContentSecurityPolicy));
-        }
-    } else {
-        m_contentSecurityPolicy = objectForKey<NSString>(m_manifest, contentSecurityPolicyManifestKey);
-        if (!m_contentSecurityPolicy && [m_manifest objectForKey:contentSecurityPolicyManifestKey])
-            recordError(createError(Error::InvalidContentSecurityPolicy));
-    }
-
-    if (!m_contentSecurityPolicy)
-        m_contentSecurityPolicy = @"script-src 'self'";
 }
 
 CocoaImage *WebExtension::icon(CGSize size)
@@ -1739,66 +1698,6 @@ void WebExtension::populateInspectorPropertiesIfNeeded()
     m_inspectorBackgroundPagePath = objectForKey<NSString>(m_manifest, devtoolsPageManifestKey);
 }
 
-bool WebExtension::hasOptionsPage()
-{
-    populatePagePropertiesIfNeeded();
-    return !!m_optionsPagePath;
-}
-
-bool WebExtension::hasOverrideNewTabPage()
-{
-    populatePagePropertiesIfNeeded();
-    return !!m_overrideNewTabPagePath;
-}
-
-NSString *WebExtension::optionsPagePath()
-{
-    populatePagePropertiesIfNeeded();
-    return m_optionsPagePath.get();
-}
-
-NSString *WebExtension::overrideNewTabPagePath()
-{
-    populatePagePropertiesIfNeeded();
-    return m_overrideNewTabPagePath.get();
-}
-
-void WebExtension::populatePagePropertiesIfNeeded()
-{
-    if (!manifestParsedSuccessfully())
-        return;
-
-    if (m_parsedManifestPageProperties)
-        return;
-
-    m_parsedManifestPageProperties = true;
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/options_ui
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/options_page
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/chrome_url_overrides
-
-    if (auto *optionsDictionary = objectForKey<NSDictionary>(m_manifest, optionsUIManifestKey, false)) {
-        m_optionsPagePath = objectForKey<NSString>(optionsDictionary, optionsUIPageManifestKey);
-        if (!m_optionsPagePath)
-            recordError(createError(Error::InvalidOptionsPage));
-    } else {
-        m_optionsPagePath = objectForKey<NSString>(m_manifest, optionsPageManifestKey);
-        if (!m_optionsPagePath && [m_manifest objectForKey:optionsPageManifestKey])
-            recordError(createError(Error::InvalidOptionsPage));
-    }
-
-    auto *overridesDictionary = objectForKey<NSDictionary>(m_manifest, browserURLOverridesManifestKey, false);
-    if (!overridesDictionary)
-        overridesDictionary = objectForKey<NSDictionary>(m_manifest, chromeURLOverridesManifestKey, false);
-
-    if (overridesDictionary && !overridesDictionary.count)
-        recordError(createError(Error::InvalidURLOverrides));
-
-    m_overrideNewTabPagePath = objectForKey<NSString>(overridesDictionary, newTabManifestKey);
-    if (!m_overrideNewTabPagePath && overridesDictionary[newTabManifestKey])
-        recordError(createError(Error::InvalidURLOverrides, WEB_UI_STRING("Empty or invalid `newtab` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for invalid new tab entry")));
-}
-
 const WebExtension::CommandsVector& WebExtension::commands()
 {
     populateCommandsIfNeeded();
@@ -2146,7 +2045,7 @@ void WebExtension::populateDeclarativeNetRequestPropertiesIfNeeded()
         NSError *error;
         auto optionalRuleset = parseDeclarativeNetRequestRulesetDictionary(rulesetDictionary, &error);
         if (!optionalRuleset) {
-            recordError(createError(Error::InvalidDeclarativeNetRequest, nil, error));
+            recordError(createError(Error::InvalidDeclarativeNetRequest, { }, error));
             continue;
         }
 
