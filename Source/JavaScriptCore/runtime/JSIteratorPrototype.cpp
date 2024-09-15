@@ -69,6 +69,12 @@ void JSIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
         putDirectWithoutTransition(vm, vm.propertyNames->toArray, toArray, static_cast<unsigned>(PropertyAttribute::DontEnum));
         // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.foreach
         JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("forEach"_s, iteratorProtoFuncForEach, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Private);
+        // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.some
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().somePublicName(), jsIteratorPrototypeSomeCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.every
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().everyPublicName(), jsIteratorPrototypeEveryCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.find
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().findPublicName(), jsIteratorPrototypeFindCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
 }
 
