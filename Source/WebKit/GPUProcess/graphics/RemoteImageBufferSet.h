@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "IPCEvent.h"
+#include "ImageBufferSet.h"
 #include "PrepareBackingStoreBuffersData.h"
 #include "RemoteImageBufferSetIdentifier.h"
 #include "RenderingUpdateID.h"
@@ -43,7 +44,7 @@ namespace WebKit {
 
 class RemoteRenderingBackend;
 
-class RemoteImageBufferSet : public IPC::StreamMessageReceiver {
+class RemoteImageBufferSet : public IPC::StreamMessageReceiver, public ImageBufferSet {
 public:
     static Ref<RemoteImageBufferSet> create(RemoteImageBufferSetIdentifier, WebCore::RenderingResourceIdentifier displayListIdentifier, RemoteRenderingBackend&);
     ~RemoteImageBufferSet();
@@ -51,7 +52,7 @@ public:
 
     // Ensures frontBuffer is valid, either by swapping an existing back
     // buffer, or allocating a new one.
-    void ensureBufferForDisplay(ImageBufferSetPrepareBufferForDisplayInputData&, SwapBuffersDisplayRequirement&);
+    void ensureBufferForDisplay(ImageBufferSetPrepareBufferForDisplayInputData&, SwapBuffersDisplayRequirement&, bool isSync);
 
     // Initializes the contents of the new front buffer using the previous
     // frames (if applicable), clips to the dirty region, and clears the pixels
@@ -86,19 +87,11 @@ private:
     const WebCore::RenderingResourceIdentifier m_displayListIdentifier;
     RefPtr<RemoteRenderingBackend> m_backend;
 
-    RefPtr<WebCore::ImageBuffer> m_frontBuffer;
-    RefPtr<WebCore::ImageBuffer> m_backBuffer;
-    RefPtr<WebCore::ImageBuffer> m_secondaryBackBuffer;
-
-    RefPtr<WebCore::ImageBuffer> m_previousFrontBuffer;
-
     WebCore::FloatSize m_logicalSize;
     WebCore::RenderingMode m_renderingMode;
-    WebCore::RenderingPurpose m_purpose;
     float m_resolutionScale { 1.0f };
     WebCore::DestinationColorSpace m_colorSpace { WebCore::DestinationColorSpace::SRGB() };
     WebCore::ImageBufferPixelFormat m_pixelFormat;
-    bool m_frontBufferIsCleared { false };
     bool m_displayListCreated { false };
 
     std::optional<WebCore::IntRect> m_previouslyPaintedRect;

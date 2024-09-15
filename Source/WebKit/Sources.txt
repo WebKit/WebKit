@@ -307,6 +307,8 @@ Shared/Databases/IndexedDB/IDBUtilities.cpp
 
 Shared/Gamepad/GamepadData.cpp
 
+Shared/graphics/ImageBufferSet.cpp
+
 Shared/WebGPU/WebGPUBindGroupDescriptor.cpp
 Shared/WebGPU/WebGPUBindGroupEntry.cpp
 Shared/WebGPU/WebGPUBindGroupLayoutDescriptor.cpp

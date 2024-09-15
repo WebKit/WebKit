@@ -56,22 +56,19 @@ void RemoteLayerWithInProcessRenderingBackingStore::Buffer::discard()
 
 bool RemoteLayerWithInProcessRenderingBackingStore::hasFrontBuffer() const
 {
-    return m_contentsBufferHandle || !!m_frontBuffer.imageBuffer;
+    return m_contentsBufferHandle || !!m_bufferSet.m_frontBuffer;
 }
 
 bool RemoteLayerWithInProcessRenderingBackingStore::frontBufferMayBeVolatile() const
 {
-    if (!m_frontBuffer)
+    if (!m_bufferSet.m_frontBuffer)
         return false;
-    return m_frontBuffer.imageBuffer->volatilityState() == WebCore::VolatilityState::Volatile;
+    return m_bufferSet.m_frontBuffer->volatilityState() == WebCore::VolatilityState::Volatile;
 }
-
 
 void RemoteLayerWithInProcessRenderingBackingStore::clearBackingStore()
 {
-    m_frontBuffer.discard();
-    m_backBuffer.discard();
-    m_secondaryBackBuffer.discard();
+    m_bufferSet.clearBuffers();
     m_contentsBufferHandle = std::nullopt;
 }
 
@@ -83,7 +80,7 @@ static std::optional<ImageBufferBackendHandle> handleFromBuffer(ImageBuffer& buf
 
 std::optional<ImageBufferBackendHandle> RemoteLayerWithInProcessRenderingBackingStore::frontBufferHandle() const
 {
-    if (RefPtr protectedBuffer = m_frontBuffer.imageBuffer)
+    if (RefPtr protectedBuffer = m_bufferSet.m_frontBuffer)
         return handleFromBuffer(*protectedBuffer);
     return std::nullopt;
 }
@@ -106,43 +103,17 @@ DynamicContentScalingResourceCache RemoteLayerWithInProcessRenderingBackingStore
 
 void RemoteLayerWithInProcessRenderingBackingStore::createContextAndPaintContents()
 {
-    if (!m_frontBuffer.imageBuffer) {
+    if (!m_bufferSet.m_frontBuffer) {
         ASSERT(m_layer->owner()->platformCALayerDelegatesDisplay(m_layer.ptr()));
         return;
     }
 
-    GraphicsContext& context = m_frontBuffer.imageBuffer->context();
+    GraphicsContext& context = m_bufferSet.m_frontBuffer->context();
     GraphicsContextStateSaver outerSaver(context);
+    WebCore::FloatRect layerBounds { { }, m_parameters.size };
 
-    // We never need to copy forward when using display list drawing, since we don't do partial repaint.
-    // FIXME: Copy forward logic is duplicated in RemoteImageBufferSet, find a good place to share.
-    if (RefPtr imageBuffer = m_backBuffer.imageBuffer; !m_dirtyRegion.contains(layerBounds()) && imageBuffer) {
-        if (!m_previouslyPaintedRect)
-            context.drawImageBuffer(*imageBuffer, { 0, 0 }, { CompositeOperator::Copy });
-        else {
-            Region copyRegion(*m_previouslyPaintedRect);
-            copyRegion.subtract(m_dirtyRegion);
-            IntRect copyRect = copyRegion.bounds();
-            if (!copyRect.isEmpty())
-                context.drawImageBuffer(*imageBuffer, copyRect, copyRect, { CompositeOperator::Copy });
-        }
-    }
-
-    if (m_paintingRects.size() == 1)
-        context.clip(m_paintingRects[0]);
-    else {
-        Path clipPath;
-        for (auto rect : m_paintingRects)
-            clipPath.addRect(rect);
-        context.clipPath(clipPath);
-    }
-
-    if (drawingRequiresClearedPixels() && !m_frontBuffer.isCleared)
-        context.clearRect(layerBounds());
-
-    drawInContext(context);
-
-    m_frontBuffer.isCleared = false;
+    m_bufferSet.prepareBufferForDisplay(layerBounds, m_dirtyRegion, m_paintingRects, drawingRequiresClearedPixels());
+    drawInContext(m_bufferSet.m_frontBuffer->context());
 }
 
 class ImageBufferBackingStoreFlusher final : public ThreadSafeImageBufferSetFlusher {
@@ -172,47 +143,21 @@ std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteLayerWithInProcessRenderi
 {
     if (flushType == ThreadSafeImageBufferSetFlusher::FlushType::BackendHandlesOnly)
         return nullptr;
-    m_frontBuffer.imageBuffer->flushDrawingContextAsync();
-    return ImageBufferBackingStoreFlusher::create(m_frontBuffer.imageBuffer->createFlusher());
+    m_bufferSet.m_frontBuffer->flushDrawingContextAsync();
+    return ImageBufferBackingStoreFlusher::create(m_bufferSet.m_frontBuffer->createFlusher());
 }
 
-SwapBuffersDisplayRequirement RemoteLayerWithInProcessRenderingBackingStore::prepareBuffers()
+bool RemoteLayerWithInProcessRenderingBackingStore::setBufferVolatile(RefPtr<WebCore::ImageBuffer>& buffer, bool forcePurge)
 {
-    m_contentsBufferHandle = std::nullopt;
-
-    auto displayRequirement = SwapBuffersDisplayRequirement::NeedsNoDisplay;
-
-    // Make the previous front buffer non-volatile early, so that we can dirty the whole layer if it comes back empty.
-    if (!hasFrontBuffer() || setFrontBufferNonVolatile() == SetNonVolatileResult::Empty)
-        displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;
-    else if (!hasEmptyDirtyRegion())
-        displayRequirement = SwapBuffersDisplayRequirement::NeedsNormalDisplay;
-
-    if (displayRequirement == SwapBuffersDisplayRequirement::NeedsNoDisplay)
-        return displayRequirement;
-
-    if (!supportsPartialRepaint())
-        displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;
-
-    auto result = swapToValidFrontBuffer();
-    if (!hasFrontBuffer() || result == SetNonVolatileResult::Empty)
-        displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;
-
-    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " prepareBuffers() - " << displayRequirement);
-    return displayRequirement;
-}
-
-bool RemoteLayerWithInProcessRenderingBackingStore::setBufferVolatile(Buffer& buffer, bool forcePurge)
-{
-    if (!buffer.imageBuffer || (buffer.imageBuffer->volatilityState() == VolatilityState::Volatile && !forcePurge))
+    if (!buffer || buffer->volatilityState() == VolatilityState::Volatile)
         return true;
 
     if (forcePurge) {
-        buffer.imageBuffer->setVolatileAndPurgeForTesting();
+        buffer->setVolatileAndPurgeForTesting();
         return true;
     }
-    buffer.imageBuffer->releaseGraphicsContext();
-    return buffer.imageBuffer->setVolatile();
+    buffer->releaseGraphicsContext();
+    return buffer->setVolatile();
 }
 
 SetNonVolatileResult RemoteLayerWithInProcessRenderingBackingStore::setBufferNonVolatile(Buffer& buffer)
@@ -233,24 +178,14 @@ bool RemoteLayerWithInProcessRenderingBackingStore::setBufferVolatile(BufferType
 
     switch (bufferType) {
     case BufferType::Front:
-        return setBufferVolatile(m_frontBuffer, forcePurge);
-
+        return setBufferVolatile(m_bufferSet.m_frontBuffer, forcePurge);
     case BufferType::Back:
-        return setBufferVolatile(m_backBuffer, forcePurge);
-
+        return setBufferVolatile(m_bufferSet.m_backBuffer, forcePurge);
     case BufferType::SecondaryBack:
-        return setBufferVolatile(m_secondaryBackBuffer, forcePurge);
+        return setBufferVolatile(m_bufferSet.m_secondaryBackBuffer, forcePurge);
     }
 
     return true;
-}
-
-SetNonVolatileResult RemoteLayerWithInProcessRenderingBackingStore::setFrontBufferNonVolatile()
-{
-    if (m_parameters.type != Type::IOSurface)
-        return SetNonVolatileResult::Valid;
-
-    return setBufferNonVolatile(m_frontBuffer);
 }
 
 template<typename ImageBufferType>
@@ -282,11 +217,11 @@ RefPtr<WebCore::ImageBuffer> RemoteLayerWithInProcessRenderingBackingStore::allo
 
 void RemoteLayerWithInProcessRenderingBackingStore::ensureFrontBuffer()
 {
-    if (m_frontBuffer.imageBuffer)
+    if (m_bufferSet.m_frontBuffer)
         return;
 
-    m_frontBuffer.imageBuffer = allocateBuffer();
-    m_frontBuffer.isCleared = true;
+    m_bufferSet.m_frontBuffer = allocateBuffer();
+    m_bufferSet.m_frontBufferIsCleared = true;
 }
 
 void RemoteLayerWithInProcessRenderingBackingStore::prepareToDisplay()
@@ -304,7 +239,8 @@ void RemoteLayerWithInProcessRenderingBackingStore::prepareToDisplay()
     if (performDelegatedLayerDisplay())
         return;
 
-    auto displayRequirement = prepareBuffers();
+    m_contentsBufferHandle = std::nullopt;
+    auto displayRequirement = m_bufferSet.swapBuffersForDisplay(hasEmptyDirtyRegion(), supportsPartialRepaint());
     if (displayRequirement == SwapBuffersDisplayRequirement::NeedsNoDisplay)
         return;
 
@@ -315,49 +251,27 @@ void RemoteLayerWithInProcessRenderingBackingStore::prepareToDisplay()
     ensureFrontBuffer();
 }
 
-SetNonVolatileResult RemoteLayerWithInProcessRenderingBackingStore::swapToValidFrontBuffer()
-{
-    // Sometimes, we can get two swaps ahead of the render server.
-    // If we're using shared IOSurfaces, we must wait to modify
-    // a surface until it no longer has outstanding clients.
-    if (m_parameters.type == Type::IOSurface) {
-        if (!m_backBuffer.imageBuffer || m_backBuffer.imageBuffer->isInUse()) {
-            std::swap(m_backBuffer, m_secondaryBackBuffer);
-
-            // When pulling the secondary back buffer out of hibernation (to become
-            // the new front buffer), if it is somehow still in use (e.g. we got
-            // three swaps ahead of the render server), just give up and discard it.
-            if (m_backBuffer.imageBuffer && m_backBuffer.imageBuffer->isInUse())
-                m_backBuffer.discard();
-        }
-    }
-
-    m_contentsBufferHandle = std::nullopt;
-    std::swap(m_frontBuffer, m_backBuffer);
-    return setBufferNonVolatile(m_frontBuffer);
-}
-
 void RemoteLayerWithInProcessRenderingBackingStore::encodeBufferAndBackendInfos(IPC::Encoder& encoder) const
 {
-    auto encodeBuffer = [&](const Buffer& buffer) {
-        if (buffer.imageBuffer) {
-            encoder << std::optional { BufferAndBackendInfo::fromImageBuffer(*buffer.imageBuffer) };
+    auto encodeBuffer = [&](const RefPtr<WebCore::ImageBuffer>& buffer) {
+        if (buffer) {
+            encoder << std::optional { BufferAndBackendInfo::fromImageBuffer(*buffer) };
             return;
         }
 
         encoder << std::optional<BufferAndBackendInfo>();
     };
 
-    encodeBuffer(m_frontBuffer);
-    encodeBuffer(m_backBuffer);
-    encodeBuffer(m_secondaryBackBuffer);
+    encodeBuffer(m_bufferSet.m_frontBuffer);
+    encodeBuffer(m_bufferSet.m_backBuffer);
+    encodeBuffer(m_bufferSet.m_secondaryBackBuffer);
 }
 
 void RemoteLayerWithInProcessRenderingBackingStore::dump(WTF::TextStream& ts) const
 {
-    ts.dumpProperty("front buffer", m_frontBuffer.imageBuffer);
-    ts.dumpProperty("back buffer", m_backBuffer.imageBuffer);
-    ts.dumpProperty("secondaryBack buffer", m_secondaryBackBuffer.imageBuffer);
+    ts.dumpProperty("front buffer", m_bufferSet.m_frontBuffer);
+    ts.dumpProperty("back buffer", m_bufferSet.m_backBuffer);
+    ts.dumpProperty("secondaryBack buffer", m_bufferSet.m_secondaryBackBuffer);
     ts.dumpProperty("is opaque", isOpaque());
 }
 
