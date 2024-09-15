@@ -31,6 +31,7 @@
 #include "Decoder.h"
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
+#include "Logging.h"
 #include "RemoteMediaRecorder.h"
 #include <WebCore/ExceptionData.h>
 
@@ -48,6 +49,7 @@ RemoteMediaRecorderManager::~RemoteMediaRecorderManager()
 
 void RemoteMediaRecorderManager::didReceiveRemoteMediaRecorderMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
+    MESSAGE_CHECK_BASE(decoder.destinationID(), &connection);
     if (auto* recorder = m_recorders.get(ObjectIdentifier<MediaRecorderIdentifierType>(decoder.destinationID())))
         recorder->didReceiveMessage(connection, decoder);
 }
