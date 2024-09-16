@@ -652,6 +652,19 @@ void setSsrcAudioLevelVadOn(GstStructure* structure)
     }
 }
 
+StatsTimestampConverter& StatsTimestampConverter::singleton()
+{
+    static NeverDestroyed<StatsTimestampConverter> sharedInstance;
+    return sharedInstance;
+}
+
+Seconds StatsTimestampConverter::convertFromMonotonicTime(Seconds value) const
+{
+    auto monotonicOffset = value - m_initialMonotonicTime;
+    auto newTimestamp = m_epoch.secondsSinceEpoch() + monotonicOffset;
+    return Performance::reduceTimeResolution(newTimestamp.secondsSinceEpoch());
+}
+
 #undef GST_CAT_DEFAULT
 
 } // namespace WebCore

@@ -25,6 +25,7 @@
 #include "GUniquePtrGStreamer.h"
 #include "MediaEndpointConfiguration.h"
 #include "PeerConnectionBackend.h"
+#include "Performance.h"
 #include "RTCBundlePolicy.h"
 #include "RTCCertificate.h"
 #include "RTCDtlsTransport.h"
@@ -303,6 +304,23 @@ inline void unmapRtpBuffer(GstBuffer*, GstRTPBuffer* rtpBuffer)
 }
 
 using GstMappedRtpBuffer = GstBufferMapper<GstRTPBuffer, mapRtpBuffer, unmapRtpBuffer>;
+
+class StatsTimestampConverter {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(StatsTimestampConverter);
+    friend NeverDestroyed<StatsTimestampConverter>;
+
+public:
+    static StatsTimestampConverter& singleton();
+
+    Seconds convertFromMonotonicTime(Seconds value) const;
+
+private:
+    explicit StatsTimestampConverter() = default;
+
+    WallTime m_epoch { WallTime::now() };
+    MonotonicTime m_initialMonotonicTime { MonotonicTime::now() };
+};
 
 } // namespace WebCore
 

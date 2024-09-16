@@ -44,7 +44,7 @@ RTCStatsReport::Stats::Stats(Type type, const GstStructure* structure)
     , id(gstStructureGetString(structure, "id"_s).toString())
 {
     if (auto value = gstStructureGet<double>(structure, "timestamp"_s))
-        timestamp = *value;
+        timestamp = Seconds::fromMicroseconds(*value).milliseconds();
 }
 
 RTCStatsReport::RtpStreamStats::RtpStreamStats(Type type, const GstStructure* structure)
