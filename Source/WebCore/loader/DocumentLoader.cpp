@@ -2611,7 +2611,7 @@ ResourceError DocumentLoader::handleContentFilterDidBlock(ContentFilterUnblockHa
     if (!unblockRequestDeniedScript.isEmpty() && frame()) {
         unblockHandler.wrapWithDecisionHandler([scriptController = WeakPtr { frame()->script() }, script = WTFMove(unblockRequestDeniedScript).isolatedCopy()](bool unblocked) {
             if (!unblocked && scriptController) {
-                // FIXME: This probably needs to figure out if the origin is considered tanited.
+                // FIXME: This probably needs to figure out if the origin is considered tainted.
                 scriptController->executeScriptIgnoringException(script, JSC::SourceTaintedOrigin::Untainted);
             }
         });

@@ -90,6 +90,7 @@ class WebCoreOpaqueRoot;
 enum class AdvancedPrivacyProtections : uint16_t;
 enum class LoadedFromOpaqueSource : bool;
 enum class NoiseInjectionPolicy : uint8_t;
+enum class ScriptTelemetryCategory : uint8_t;
 enum class TaskSource : uint8_t;
 
 #if ENABLE(NOTIFICATIONS)
@@ -214,6 +215,8 @@ public:
     WEBCORE_EXPORT void deref();
     WEBCORE_EXPORT void refAllowingPartiallyDestroyed();
     WEBCORE_EXPORT void derefAllowingPartiallyDestroyed();
+
+    WEBCORE_EXPORT bool requiresScriptExecutionTelemetry(ScriptTelemetryCategory);
 
     class Task {
         WTF_MAKE_TZONE_ALLOCATED_INLINE(Task);

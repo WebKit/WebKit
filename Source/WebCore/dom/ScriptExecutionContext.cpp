@@ -58,6 +58,7 @@
 #include "SWContextManager.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
+#include "ScriptTelemetryCategory.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerProvider.h"
@@ -78,6 +79,7 @@
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSPromise.h>
 #include <JavaScriptCore/ScriptCallStack.h>
+#include <JavaScriptCore/SourceTaintedOrigin.h>
 #include <JavaScriptCore/StackVisitor.h>
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/VM.h>
@@ -955,6 +957,30 @@ RefCountedSerialFunctionDispatcher& ScriptExecutionContext::nativePromiseDispatc
     if (!m_nativePromiseDispatcher)
         m_nativePromiseDispatcher = ScriptExecutionContextDispatcher::create(*this);
     return *m_nativePromiseDispatcher;
+}
+
+bool ScriptExecutionContext::requiresScriptExecutionTelemetry(ScriptTelemetryCategory category)
+{
+    Ref vm = this->vm();
+    if (!vm->topCallFrame)
+        return false;
+
+    auto [taintedness, taintedURL] = JSC::sourceTaintedOriginFromStack(vm, vm->topCallFrame);
+
+    // FIXME: Use this information to emit a console log message.
+    UNUSED_PARAM(taintedURL);
+    UNUSED_PARAM(category);
+
+    switch (taintedness) {
+    case JSC::SourceTaintedOrigin::Untainted:
+    case JSC::SourceTaintedOrigin::IndirectlyTaintedByHistory:
+        return false;
+    case JSC::SourceTaintedOrigin::IndirectlyTainted:
+    case JSC::SourceTaintedOrigin::KnownTainted:
+        return true;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 WebCoreOpaqueRoot root(ScriptExecutionContext* context)

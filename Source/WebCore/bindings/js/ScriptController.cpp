@@ -872,7 +872,7 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
 
     const int javascriptSchemeLength = sizeof("javascript:") - 1;
     String decodedURL = PAL::decodeURLEscapeSequences(preNavigationCheckURLString);
-    // FIXME: This probably needs to figure out if the origin is considered tanited.
+    // FIXME: This probably needs to figure out if the origin is considered tainted.
     auto result = executeScriptIgnoringException(decodedURL.substring(javascriptSchemeLength), JSC::SourceTaintedOrigin::Untainted);
     RELEASE_ASSERT(&vm == &jsWindowProxy(mainThreadNormalWorld()).window()->vm());
 

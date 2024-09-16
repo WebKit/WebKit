@@ -2103,6 +2103,7 @@ page/ResourceUsageOverlay.cpp
 page/ResourceUsageThread.cpp
 page/Screen.cpp
 page/ScreenOrientation.cpp
+page/ScriptTelemetryCategory.cpp
 page/ScrollBehavior.cpp
 page/SecurityOrigin.cpp
 page/SecurityOriginData.cpp

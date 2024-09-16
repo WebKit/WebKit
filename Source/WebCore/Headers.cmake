@@ -1612,6 +1612,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/RenderingUpdateScheduler.h
     page/ScreenOrientationLockType.h
     page/ScreenOrientationType.h
+    page/ScriptTelemetryCategory.h
     page/ScrollBehavior.h
     page/ScrollIntoViewOptions.h
     page/ScrollLogicalPosition.h
