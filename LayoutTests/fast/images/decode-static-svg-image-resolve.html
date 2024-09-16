@@ -12,26 +12,25 @@
     </svg>
     <canvas></canvas>
     <script>
-        function loadImage(href) {
-            return new Promise((resolve) => {
-                let image = document.querySelector('image');
-                image.setAttribute("href", href);
-                image.decode().then(() => {
-                    resolve();
-                });
-            });
+        function drawImageToCanvas(image, canvas) {
+            let context = canvas.getContext("2d");
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
         }
 
-        if (window.testRunner)
+        if (window.internals && window.testRunner) {
             testRunner.waitUntilDone();
+            internals.clearMemoryCache();
+        }
 
-        loadImage("resources/green-400x400.png").then(() => {
-            let canvas = document.querySelector("canvas");
-            let context = canvas.getContext("2d");
+        (async () => {
             let image = document.querySelector('image');
-            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+            image.setAttribute("href", "resources/green-400x400.png");
+
+            await image.decode();
+            drawImageToCanvas(image, document.querySelector("canvas"));
+
             if (window.testRunner)
                 testRunner.notifyDone();
-        });
+        })();
     </script>
 </body>

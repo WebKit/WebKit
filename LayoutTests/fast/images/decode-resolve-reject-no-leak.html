@@ -1,74 +1,53 @@
 <!DOCTYPE html>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <body>
     <script>
-        var image = new Image;
-
-        description('Test HTMLImageElement::decode() does not leak the pending promises after resolving or rejecting them.');
-        jsTestIsAsync = true;
-
-        function decodeMultiple(image, multipleCount) {
+        function decodeParallel(image, count) {
             var promises = [];
-            for (index = 0; index < multipleCount; ++index)
+            for (index = 0; index < count; ++index)
                 promises.push(image.decode());
             return promises;
         }
 
-        function resolveSingle(image, singleCount) {
-            if (!singleCount)
-                return Promise.resolve();
-            return image.decode().then(() => {
-                return resolveSingle(image, singleCount - 1);
-            });
+        async function decodeImage(image, count) {
+            await Promise.all(decodeParallel(image, count));
+
+            for (let index = 0; index < count; ++index)
+                await image.decode();
         }
 
-        function rejectSingle(image, singleCount) {
-            if (!singleCount)
-                return Promise.reject();
-            return image.decode().catch(() => {
-                return rejectSingle(image, singleCount - 1);
-            });
-        }
+        description('Test HTMLImageElement::decode() does not leak the pending promises after resolving or rejecting them.');
+        jsTestIsAsync = true;
 
-        function decodeBitmapImage(image, multipleCount, singleCount) {
-            debug("Decoding a bitmap image - promises will be resolved:");
+        if (window.internals)
+            internals.clearMemoryCache();
+
+        (async () => {
+            image = new Image;
+
+            debug("Decoding a bitmap image - promises will be resolved:");            
             image.src = "resources/red-400x400.png";
-            return Promise.all(decodeMultiple(image, multipleCount)).then(() => {
-                return resolveSingle(image, singleCount);
-            });
-        }
 
-        function decodeSVGImage(image, multipleCount, singleCount) {
+            await decodeImage(image, 10);
+            if (window.internals)
+                shouldBeZero("internals.imagePendingDecodePromisesCountForTesting(image)");
+
             debug("Decoding a SVG image - promises will be resolved:");
             image.src = "resources/green-100x100.svg";
-            return Promise.all(decodeMultiple(image, multipleCount)).then(() => {
-                return resolveSingle(image, singleCount);
-            });
-        }
 
-        function decodeBrokenImage(image, multipleCount, singleCount) {
+            await decodeImage(image, 10);
+            if (window.internals)
+                shouldBeZero("internals.imagePendingDecodePromisesCountForTesting(image)");
+
             debug("Decoding a broken image - promises will be rejected:");
             image.src = "";
-            return Promise.all(decodeMultiple(image, multipleCount)).catch(() => {
-                return rejectSingle(image, singleCount);
-            });
-        }
 
-        (function() {
-            decodeBitmapImage(image, 10, 10).then(() => {
+            await decodeImage(image, 10).catch(reason => {
                 if (window.internals)
                     shouldBeZero("internals.imagePendingDecodePromisesCountForTesting(image)");
-                return decodeSVGImage(image, 10, 10);
-            }).then(() => {
-                if (window.internals)
-                    shouldBeZero("internals.imagePendingDecodePromisesCountForTesting(image)");
-                return decodeBrokenImage(image, 10, 10);
-            }).catch(() => {
-                if (window.internals)
-                    shouldBeZero("internals.imagePendingDecodePromisesCountForTesting(image)");
-                finishJSTest();
             });
+
+            finishJSTest();
         })();
     </script>
-    <script src="../../resources/js-test-post.js"></script>
 </body>

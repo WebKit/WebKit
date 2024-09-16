@@ -1,5 +1,5 @@
 <head>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
 </head>
 <body>
     <div></div>
@@ -7,21 +7,24 @@
         description("This tests resolving the decode() promise when decoding non bitmap images.");
         jsTestIsAsync = true;
 
-        var image = new Image;
-        image.src = "resources/green-100x100.svg";
-        image.decode()
-        .then(() => {
+        if (window.internals)
+            internals.clearMemoryCache();
+
+        (async () => {
+            let image = new Image;
+
+            image.src = "resources/green-100x100.svg";
+            await image.decode();
             debug("Promise for decoding an SVG image was resolved.");
+
             image.src = "data:image/svg+xml;utf8, \
                     <svg version='1.1' xmlns='http://www.w3.org/2000/svg' width='100' height='100'> \
                         <rect width='100%' height='100%' fill='green'/> \
                     </svg>";
-            return image.decode();
-        })
-        .then(() => {
+            await image.decode();
             debug("Promise for decoding an SVG data url image was resolved.");
+
             finishJSTest();
-        });
+        })();
     </script>
-    <script src="../../resources/js-test-post.js"></script>
 </body>
