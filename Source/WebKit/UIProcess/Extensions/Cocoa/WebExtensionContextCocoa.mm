@@ -3280,14 +3280,14 @@ NSArray *WebExtensionContext::corsDisablingPatterns()
 
     auto requestedMatchPatterns = m_extension->allRequestedMatchPatterns();
     for (auto& requestedMatchPattern : requestedMatchPatterns)
-        [patterns addObjectsFromArray:requestedMatchPattern->expandedStrings()];
+        [patterns addObjectsFromArray:createNSArray(requestedMatchPattern->expandedStrings()).get()];
 
     // Include manifest optional permission origins here, these should be dynamically added when the are granted
     // but we need SPI to update corsDisablingPatterns outside of the WKWebViewConfiguration to do that.
     // FIXME: rdar://102912898 (CORS for Web Extension pages should respect granted per-site permissions)
     auto optionalPermissionMatchPatterns = m_extension->optionalPermissionMatchPatterns();
     for (auto& optionalMatchPattern : optionalPermissionMatchPatterns)
-        [patterns addObjectsFromArray:optionalMatchPattern->expandedStrings()];
+        [patterns addObjectsFromArray:createNSArray(optionalMatchPattern->expandedStrings()).get()];
 
     return [patterns allObjects];
 }
@@ -4254,7 +4254,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         if (!pattern.matchesPattern(deniedEntry.key, { WebExtensionMatchPattern::Options::IgnorePaths, WebExtensionMatchPattern::Options::MatchBidirectionally }))
             continue;
 
-        [baseExcludeMatchPatternsSet addObjectsFromArray:deniedEntry.key->expandedStrings()];
+        [baseExcludeMatchPatternsSet addObjectsFromArray:createNSArray(deniedEntry.key->expandedStrings()).get()];
     }
 
     auto& userContentControllers = this->userContentControllers();
@@ -4273,7 +4273,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
                 if (!restrictedPattern)
                     continue;
 
-                [includeMatchPatternsSet addObjectsFromArray:restrictedPattern->expandedStrings()];
+                [includeMatchPatternsSet addObjectsFromArray:createNSArray(restrictedPattern->expandedStrings()).get()];
                 continue;
             }
 
@@ -4292,7 +4292,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
             if (!restrictedPattern)
                 continue;
 
-            [includeMatchPatternsSet addObjectsFromArray:restrictedPattern->expandedStrings()];
+            [includeMatchPatternsSet addObjectsFromArray:createNSArray(restrictedPattern->expandedStrings()).get()];
         }
 
         if (!includeMatchPatternsSet.count)

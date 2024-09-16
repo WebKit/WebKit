@@ -727,6 +727,9 @@
 /* Codec Strings */
 "High Tier (HEVC Codec Tier" = "High Tier";
 
+/* WKWebExtensionMatchPatternErrorInvalidHost description for invalid or missing host */
+"Host \"%s\" is invalid." = "Host \"%s\" is invalid.";
+
 /* Phishing warning description */
 "If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%." = "If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%.";
 
@@ -1168,6 +1171,9 @@
 /* Undo action name */
 "Paste Ruler (Undo action name)" = "Paste Ruler";
 
+/* WKWebExtensionMatchPatternErrorInvalidPath description for missing path */
+"Path \"%s\" is invalid." = "Path \"%s\" is invalid.";
+
 /* Media Pause context menu item */
 "Pause" = "Pause";
 
@@ -1278,6 +1284,9 @@
 
 /* Title for Save to Photos action button */
 "Save to Photos" = "Save to Photos";
+
+/* WKWebExtensionMatchPatternErrorInvalidScheme description for invalid scheme */
+"Scheme \"%s\" is invalid." = "Scheme \"%s\" is invalid.";
 
 /* Title of the Search button for zoomed form controls. */
 "Search" = "Search";
@@ -1746,6 +1755,21 @@
 
 /* Zoom Out context menu item */
 "Zoom Out" = "Zoom Out";
+
+/* WKWebExtensionMatchPatternErrorInvalidHost description for missing host in the pattern */
+"\"%s\" cannot be parsed because it doesn't have a host." = "\"%s\" cannot be parsed because it doesn't have a host.";
+
+/* WKWebExtensionMatchPatternErrorInvalidPath description for missing path in the pattern */
+"\"%s\" cannot be parsed because it doesn't have a path." = "\"%s\" cannot be parsed because it doesn't have a path.";
+
+/* WKWebExtensionMatchPatternErrorInvalidScheme description for missing scheme in the pattern */
+"\"%s\" cannot be parsed because it doesn't have a scheme." = "\"%s\" cannot be parsed because it doesn't have a scheme.";
+
+/* WKWebExtensionMatchPatternErrorInvalidHost description for invalid host in the pattern */
+"\"%s\" cannot be parsed because the host \"%s\" is invalid." = "\"%s\" cannot be parsed because the host \"%s\" is invalid.";
+
+/* WKWebExtensionMatchPatternErrorInvalidScheme description for invalid scheme in the pattern */
+"\"%s\" cannot be parsed because the scheme \"%s\" is invalid." = "\"%s\" cannot be parsed because the scheme \"%s\" is invalid.";
 
 /* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for duplicate ruleset id */
 "`declarative_net_request` ruleset with id \"%@\" is invalid. Ruleset id must be unique." = "`declarative_net_request` ruleset with id \"%@\" is invalid. Ruleset id must be unique.";

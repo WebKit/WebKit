@@ -332,7 +332,7 @@ NSString *toErrorString(NSString *callingAPIName, NSString *sourceKey, NSString 
     va_start(arguments, underlyingErrorString);
 
     ALLOW_NONLITERAL_FORMAT_BEGIN
-    NSString *formattedUnderlyingErrorString = [[NSString alloc] initWithFormat:trimTrailingPeriod(underlyingErrorString) arguments:arguments];
+    NSString *formattedUnderlyingErrorString = trimTrailingPeriod([[NSString alloc] initWithFormat:underlyingErrorString arguments:arguments]);
     ALLOW_NONLITERAL_FORMAT_END
 
     va_end(arguments);

@@ -242,4 +242,4 @@ void WebExtension::populatePagePropertiesIfNeeded()
 
 } // namespace WebKit
 
-#endif // WK_WEB_EXTENSIONS
+#endif // ENABLE(WK_WEB_EXTENSIONS)

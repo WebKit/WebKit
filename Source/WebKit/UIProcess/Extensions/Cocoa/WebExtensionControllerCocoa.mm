@@ -664,7 +664,7 @@ void WebExtensionController::updateWebsitePoliciesForNavigation(API::WebsitePoli
 
         Vector<String> patterns;
         for (Ref pattern : context->currentPermissionMatchPatterns())
-            patterns.appendVector(makeVector<String>(pattern->expandedStrings()));
+            patterns.appendVector(pattern->expandedStrings());
 
         actionPatterns.set(context->uniqueIdentifier(), WTFMove(patterns));
     }

@@ -132,9 +132,10 @@ static NSArray<WKWebExtensionMatchPattern *> *toMatchPatterns(NSArray<NSString *
         WKWebExtensionMatchPattern *pattern = [[WKWebExtensionMatchPattern alloc] initWithString:rawPattern error:&error];
         if (!pattern) {
             if (outErrorMessage)
-                *outErrorMessage = toErrorString(nil, urlsKey, @"'%@' is an invalid match pattern. %@", rawPattern, error.userInfo[NSDebugDescriptionErrorKey]);
+                *outErrorMessage = toErrorString(nil, urlsKey, @"'%@' is an invalid match pattern. %@", rawPattern, error.localizedDescription);
             return nil;
         }
+
         [patterns addObject:pattern];
     }
 

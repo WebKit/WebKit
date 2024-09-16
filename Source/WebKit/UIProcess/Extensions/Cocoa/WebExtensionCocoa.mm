@@ -2089,7 +2089,7 @@ NSArray *WebExtension::InjectedContentData::expandedIncludeMatchPatternStrings()
     NSMutableArray<NSString *> *result = [NSMutableArray array];
 
     for (auto& includeMatchPattern : includeMatchPatterns)
-        [result addObjectsFromArray:includeMatchPattern->expandedStrings()];
+        [result addObjectsFromArray:createNSArray(includeMatchPattern->expandedStrings()).get()];
 
     return [result copy];
 }
@@ -2099,7 +2099,7 @@ NSArray *WebExtension::InjectedContentData::expandedExcludeMatchPatternStrings()
     NSMutableArray<NSString *> *result = [NSMutableArray array];
 
     for (auto& excludeMatchPattern : excludeMatchPatterns)
-        [result addObjectsFromArray:excludeMatchPattern->expandedStrings()];
+        [result addObjectsFromArray:createNSArray(excludeMatchPattern->expandedStrings()).get()];
 
     return [result copy];
 }

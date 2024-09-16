@@ -4337,6 +4337,8 @@
 		1CC5CA8D2C5ACCC600DF3B94 /* _WKWebExtensionMessagePortPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionMessagePortPrivate.h; sourceTree = "<group>"; };
 		1CC5CA8F2C5ACD0100DF3B94 /* _WKWebExtensionControllerConfigurationPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionControllerConfigurationPrivate.h; sourceTree = "<group>"; };
 		1CC5CA912C5ACD5700DF3B94 /* _WKWebExtensionCommandPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionCommandPrivate.h; sourceTree = "<group>"; };
+		1CC78CD92C95F159003E3CDD /* WebExtension.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebExtension.cpp; sourceTree = "<group>"; };
+		1CC78CDA2C95F219003E3CDD /* WebExtensionMatchPattern.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebExtensionMatchPattern.cpp; sourceTree = "<group>"; };
 		1CC94E502AC92E9F0045F269 /* WebExtensionAPIAction.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIAction.idl; sourceTree = "<group>"; };
 		1CC94E512AC92F190045F269 /* JSWebExtensionAPIAction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIAction.mm; sourceTree = "<group>"; };
 		1CC94E522AC92F190045F269 /* JSWebExtensionAPIAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIAction.h; sourceTree = "<group>"; };
@@ -10396,6 +10398,7 @@
 			isa = PBXGroup;
 			children = (
 				1C627476288A1DDE00CED3A2 /* Cocoa */,
+				1CC78CD92C95F159003E3CDD /* WebExtension.cpp */,
 				1C3BEB5E2888710500E66E38 /* WebExtension.h */,
 				1CF0C94D2AC380C400EC82F2 /* WebExtensionAction.h */,
 				1C2B4D3C2A8091FF00C528A1 /* WebExtensionAlarm.cpp */,
@@ -10413,6 +10416,7 @@
 				B6058CF42B6D98E8006D4C77 /* WebExtensionDataRecord.cpp */,
 				B6058CF32B6D98E7006D4C77 /* WebExtensionDataRecord.h */,
 				B6D031032AC1F240006C8E0B /* WebExtensionDynamicScripts.h */,
+				1CC78CDA2C95F219003E3CDD /* WebExtensionMatchPattern.cpp */,
 				1C1CE96A288DF31E0098D3A1 /* WebExtensionMatchPattern.h */,
 				1C6B84C92B0D6CDF00E885DD /* WebExtensionMenuItem.cpp */,
 				1C6B84CB2B0D6CF500E885DD /* WebExtensionMenuItem.h */,

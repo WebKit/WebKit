@@ -220,7 +220,7 @@ bool WebExtensionTab::matches(const WebExtensionTabQueryParameters& parameters, 
     if (parameters.urlPatterns) {
         bool matchesAnyPattern = false;
         for (auto& patternString : parameters.urlPatterns.value()) {
-            auto matchPattern = WebExtensionMatchPattern::create(patternString);
+            RefPtr matchPattern = WebExtensionMatchPattern::getOrCreate(patternString);
             if (!matchPattern)
                 continue;
 
