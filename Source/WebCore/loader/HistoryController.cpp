@@ -781,7 +781,7 @@ Ref<HistoryItem> HistoryController::createItemTree(HistoryItemClient& client, Lo
             item->setDocumentSequenceNumber(previousItem->documentSequenceNumber());
         }
 
-        for (RefPtr child = m_frame->tree().firstChild(); child; child = child->tree().nextSibling())
+        for (RefPtr child = m_frame->tree().firstLocalDescendant(); child; child = child->tree().nextLocalSibling())
             item->addChildItem(child->checkedHistory()->createItemTree(client, targetFrame, clipAtTarget));
     }
     // FIXME: Eliminate the isTargetItem flag in favor of itemSequenceNumber.
@@ -811,7 +811,7 @@ void HistoryController::recursiveSetProvisionalItem(HistoryItem& item, HistoryIt
         if (!fromChildItem)
             continue;
 
-        if (RefPtr childFrame = m_frame->tree().childByFrameID(*frameID))
+        if (RefPtr childFrame = m_frame->tree().descendantByFrameID(*frameID))
             childFrame->checkedHistory()->recursiveSetProvisionalItem(childItem, fromChildItem.get());
     }
 }
@@ -836,7 +836,7 @@ void HistoryController::recursiveGoToItem(HistoryItem& item, HistoryItem* fromIt
         if (!fromChildItem)
             continue;
 
-        if (RefPtr childFrame = m_frame->tree().childByFrameID(*frameID))
+        if (RefPtr childFrame = m_frame->tree().descendantByFrameID(*frameID))
             childFrame->checkedHistory()->recursiveGoToItem(childItem, fromChildItem.get(), type, shouldTreatAsContinuingLoad);
     }
 }

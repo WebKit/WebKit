@@ -56,6 +56,9 @@ public:
     Frame* firstRenderedChild() const;
     Frame* nextRenderedSibling() const;
 
+    LocalFrame* firstLocalDescendant() const;
+    LocalFrame* nextLocalSibling() const;
+
     WEBCORE_EXPORT bool isDescendantOf(const Frame* ancestor) const;
     
     WEBCORE_EXPORT Frame* traverseNext(const Frame* stayWithin = nullptr) const;
@@ -73,7 +76,7 @@ public:
 
     Frame* child(unsigned index) const;
     Frame* childBySpecifiedName(const AtomString& name) const;
-    Frame* childByFrameID(FrameIdentifier) const;
+    Frame* descendantByFrameID(FrameIdentifier) const;
     WEBCORE_EXPORT Frame* findByUniqueName(const AtomString&, Frame& activeFrame) const;
     WEBCORE_EXPORT Frame* findBySpecifiedName(const AtomString&, Frame& activeFrame) const;
     WEBCORE_EXPORT unsigned childCount() const;

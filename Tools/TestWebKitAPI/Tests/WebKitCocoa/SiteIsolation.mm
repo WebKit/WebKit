@@ -3373,4 +3373,25 @@ TEST(SiteIsolation, SandboxFlagsDuringNavigation)
     EXPECT_FALSE(receivedAlert);
 }
 
+TEST(SiteIsolation, NavigateNestedRootFramesBackForward)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://nested.com/nest'></iframe>"_s } },
+        { "/nest"_s, { "<iframe src='https://a.com/a'></iframe>"_s } },
+        { "/a"_s, { "<script> alert('a'); </script>"_s } },
+        { "/b"_s, { "<script> alert('b'); </script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "a");
+
+    RetainPtr<_WKFrameTreeNode> nestedChildFrame = [webView mainFrame].childFrames.firstObject.childFrames.firstObject;
+    [webView evaluateJavaScript:@"location.href = 'https://a.com/b'" inFrame:[nestedChildFrame info] completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "b");
+    [webView goBack];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "a");
+    [webView goForward];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "b");
+}
+
 }
