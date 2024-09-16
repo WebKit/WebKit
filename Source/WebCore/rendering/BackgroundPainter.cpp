@@ -801,12 +801,7 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const Render
     if (context.paintingDisabled() || !style.boxShadow())
         return;
 
-    auto borderShape = BorderShape::shapeForBorderRect(style, paintRect, includeLogicalLeftEdge, includeLogicalRightEdge);
-    // BorderShape needs to do shadow painting to handle non-round corner shapes.
-    RoundedRect borderRect = (shadowStyle == ShadowStyle::Inset) ? borderShape.deprecatedInnerRoundedRect() : borderShape.deprecatedRoundedRect();
-
-    if (!borderRect.isRenderable())
-        borderRect.adjustRadii();
+    const auto borderShape = BorderShape::shapeForBorderRect(style, paintRect, includeLogicalLeftEdge, includeLogicalRightEdge);
 
     bool hasBorderRadius = style.hasBorderRadius();
     float deviceScaleFactor = document().deviceScaleFactor();
@@ -824,15 +819,35 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const Render
         if (shadowOffset.isZero() && !shadowRadius && !shadowSpread)
             continue;
 
-        Color shadowColor = style.colorWithColorFilter(shadow->color());
+        auto shadowColor = style.colorWithColorFilter(shadow->color());
+
+        auto shouldInflateBorderRect = [&]() {
+            if (!hasOpaqueBackground)
+                return false;
+
+            // FIXME: The function to decide on the policy based on the transform should be a named function.
+            // FIXME: It's not clear if this check is right. What about integral scale factors?
+            auto transform = context.getCTM();
+            if (transform.a() != 1 || (transform.d() != 1 && transform.d() != -1) || transform.b() || transform.c())
+                return true;
+
+            return false;
+        };
 
         if (shadow->style() == ShadowStyle::Normal) {
-            auto fillRect = borderRect;
-            fillRect.inflate(shadowSpread);
-            if (fillRect.isEmpty())
+            auto shadowShape = borderShape;
+            shadowShape.inflate(shadowSpread);
+            if (shadowShape.isEmpty())
                 continue;
 
-            auto shadowRect = borderRect.rect();
+            // If the box is opaque, it is unnecessary to clip it out. However, doing so saves time
+            // when painting the shadow. On the other hand, it introduces subpixel gaps along the
+            // corners. Those are avoided by insetting the clipping path by one pixel.
+            auto adjustedBorderShape = borderShape;
+            if (shouldInflateBorderRect())
+                adjustedBorderShape.inflate(-1_lu);
+
+            auto shadowRect = paintRect;
             shadowRect.inflate(shadowPaintingExtent + shadowSpread);
             shadowRect.move(shadowOffset);
             auto pixelSnappedShadowRect = snapRectToDevicePixels(shadowRect, deviceScaleFactor);
@@ -845,58 +860,33 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const Render
             LayoutUnit xOffset = paintRect.width() + std::max<LayoutUnit>(0, shadowOffset.width()) + shadowPaintingExtent + 2 * shadowSpread + LayoutUnit(1);
             LayoutSize extraOffset(xOffset.ceil(), 0);
             shadowOffset -= extraOffset;
-            fillRect.move(extraOffset);
+            shadowShape.move(extraOffset);
 
-            auto pixelSnappedRectToClipOut = borderRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
-            auto pixelSnappedFillRect = fillRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+            auto pixelSnappedFillRect = shadowShape.snappedOuterRect(deviceScaleFactor);
 
-            LayoutPoint shadowRectOrigin = fillRect.rect().location() + shadowOffset;
+            LayoutPoint shadowRectOrigin = shadowShape.borderRect().location() + shadowOffset;
             FloatPoint snappedShadowOrigin = FloatPoint(roundToDevicePixel(shadowRectOrigin.x(), deviceScaleFactor), roundToDevicePixel(shadowRectOrigin.y(), deviceScaleFactor));
-            FloatSize snappedShadowOffset = snappedShadowOrigin - pixelSnappedFillRect.rect().location();
+            FloatSize snappedShadowOffset = snappedShadowOrigin - pixelSnappedFillRect.location();
 
             context.setDropShadow({ snappedShadowOffset, shadowRadius, shadowColor, shadow->isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default });
 
+            adjustedBorderShape.clipOutOuterShape(context, deviceScaleFactor);
+
             if (hasBorderRadius) {
-                // If the box is opaque, it is unnecessary to clip it out. However, doing so saves time
-                // when painting the shadow. On the other hand, it introduces subpixel gaps along the
-                // corners. Those are avoided by insetting the clipping path by one pixel.
-                if (hasOpaqueBackground)
-                    pixelSnappedRectToClipOut.inflateWithRadii(-1.0f);
+                auto influenceShape = BorderShape::shapeForBorderRect(style, shadowRect);
+                auto influenceRadii = influenceShape.radii();
+                influenceRadii.expand(2 * shadowPaintingExtent + shadowSpread);
+                influenceShape.setRadii(influenceRadii);
 
-                if (!pixelSnappedRectToClipOut.isEmpty())
-                    context.clipOutRoundedRect(pixelSnappedRectToClipOut);
-
-                RoundedRect influenceRect(LayoutRect(pixelSnappedShadowRect), borderRect.radii());
-                influenceRect.expandRadii(2 * shadowPaintingExtent + shadowSpread);
-
-                if (BorderPainter::allCornersClippedOut(influenceRect, m_paintInfo.rect))
-                    context.fillRect(pixelSnappedFillRect.rect(), Color::black);
-                else {
-                    pixelSnappedFillRect.expandRadii(shadowSpread);
-                    if (!pixelSnappedFillRect.isRenderable())
-                        pixelSnappedFillRect.adjustRadii();
-                    context.fillRoundedRect(pixelSnappedFillRect, Color::black);
-                }
-            } else {
-                // If the box is opaque, it is unnecessary to clip it out. However, doing so saves time
-                // when painting the shadow. On the other hand, it introduces subpixel gaps along the
-                // edges if they are not pixel-aligned. Those are avoided by insetting the clipping path
-                // by one pixel.
-                if (hasOpaqueBackground) {
-                    // FIXME: The function to decide on the policy based on the transform should be a named function.
-                    // FIXME: It's not clear if this check is right. What about integral scale factors?
-                    AffineTransform transform = context.getCTM();
-                    if (transform.a() != 1 || (transform.d() != 1 && transform.d() != -1) || transform.b() || transform.c())
-                        pixelSnappedRectToClipOut.inflate(-1.0f);
-                }
-
-                if (!pixelSnappedRectToClipOut.isEmpty())
-                    context.clipOut(pixelSnappedRectToClipOut.rect());
-
-                context.fillRect(pixelSnappedFillRect.rect(), Color::black);
-            }
+                if (influenceShape.outerShapeContains(m_paintInfo.rect))
+                    context.fillRect(shadowShape.snappedOuterRect(deviceScaleFactor), Color::black);
+                else
+                    shadowShape.fillOuterShape(context, Color::black, deviceScaleFactor);
+            } else
+                context.fillRect(pixelSnappedFillRect, Color::black);
         } else {
             // Inset shadow.
+            auto borderRect = borderShape.deprecatedInnerRoundedRect();
             auto holeRect = borderRect.rect();
             holeRect.inflate(-shadowSpread);
 

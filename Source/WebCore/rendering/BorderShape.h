@@ -54,6 +54,14 @@ public:
     BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths);
     BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths, const RoundedRectRadii&);
 
+    BorderShape(const BorderShape& other)
+        : m_borderRect(other.m_borderRect)
+        , m_borderWidths(other.m_borderWidths)
+    {
+    }
+
+    LayoutRect borderRect() const { return m_borderRect.rect(); }
+
     RoundedRect deprecatedRoundedRect() const;
     RoundedRect deprecatedInnerRoundedRect() const;
     FloatRoundedRect deprecatedPixelSnappedRoundedRect(float deviceScaleFactor) const;
@@ -61,6 +69,7 @@ public:
 
     // Returns true if the given rect is entirely inside the shape, without impinging on any of the corners.
     bool innerShapeContains(const LayoutRect&) const;
+    bool outerShapeContains(const LayoutRect&) const;
 
     const RoundedRectRadii& radii() const { return m_borderRect.radii(); }
     void setRadii(const RoundedRectRadii& radii) { m_borderRect.setRadii(radii); }
@@ -69,6 +78,12 @@ public:
     FloatRect snappedInnerRect(float deviceScaleFactor) const;
 
     bool isRounded() const { return m_borderRect.isRounded(); }
+    bool isEmpty() const { return m_borderRect.rect().isEmpty(); }
+
+    void move(LayoutSize);
+
+    // This will inflate the m_borderRect, and scale the radii up accordingly. Note that this changes the meaning of "inner shape" which will no longer correspond to the padding box.
+    void inflate(LayoutUnit);
 
     Path pathForOuterShape(float deviceScaleFactor) const;
     Path pathForInnerShape(float deviceScaleFactor) const;
@@ -77,6 +92,8 @@ public:
 
     void clipToOuterShape(GraphicsContext&, float deviceScaleFactor);
     void clipToInnerShape(GraphicsContext&, float deviceScaleFactor);
+
+    void clipOutOuterShape(GraphicsContext&, float deviceScaleFactor);
     void clipOutInnerShape(GraphicsContext&, float deviceScaleFactor);
 
     void fillOuterShape(GraphicsContext&, const Color&, float deviceScaleFactor);
