@@ -77,6 +77,7 @@ struct TileForGridHash {
 template<> struct HashTraits<WebKit::TileForGrid> : GenericHashTraits<WebKit::TileForGrid> {
     static constexpr bool emptyValueIsZero = true;
     static WebKit::TileForGrid emptyValue() { return { HashTraits<WebCore::TileGridIdentifier>::emptyValue(), { 0, 0 } }; }
+    static bool isEmptyValue(const WebKit::TileForGrid& value) { return value.gridIdentifier.isHashTableEmptyValue(); }
     static void constructDeletedValue(WebKit::TileForGrid& tileForGrid) { HashTraits<WebCore::TileGridIdentifier>::constructDeletedValue(tileForGrid.gridIdentifier); }
     static bool isDeletedValue(const WebKit::TileForGrid& tileForGrid) { return tileForGrid.gridIdentifier.isHashTableDeletedValue(); }
 };

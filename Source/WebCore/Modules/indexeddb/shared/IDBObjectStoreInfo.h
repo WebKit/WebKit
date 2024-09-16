@@ -84,6 +84,7 @@ template<> struct HashTraits<WebCore::IDBObjectStoreInfo> : GenericHashTraits<We
     {
         return WebCore::IDBObjectStoreInfo { HashTraits<WebCore::IDBObjectStoreIdentifier>::emptyValue(), { }, { }, false };
     }
+    static bool isEmptyValue(const WebCore::IDBObjectStoreInfo& value) { return value.identifier().isHashTableEmptyValue(); }
 };
 
 } // namespace WTF

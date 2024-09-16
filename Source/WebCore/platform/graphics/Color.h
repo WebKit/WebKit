@@ -95,6 +95,7 @@ public:
     explicit Color(WTF::HashTableEmptyValueType);
     explicit Color(WTF::HashTableDeletedValueType);
     bool isHashTableDeletedValue() const;
+    bool isHashTableEmptyValue() const;
 
     WEBCORE_EXPORT Color(const Color&);
     WEBCORE_EXPORT Color(Color&&);
@@ -391,6 +392,11 @@ inline Color::Color(WTF::HashTableDeletedValueType)
 inline bool Color::isHashTableDeletedValue() const
 {
     return flags().contains(FlagsIncludingPrivate::HashTableDeletedValue);
+}
+
+inline bool Color::isHashTableEmptyValue() const
+{
+    return flags().contains(FlagsIncludingPrivate::HashTableEmptyValue);
 }
 
 inline Color::~Color()

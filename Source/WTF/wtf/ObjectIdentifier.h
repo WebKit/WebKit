@@ -156,6 +156,8 @@ public:
     bool isValid() const requires(supportsNullState == SupportsObjectIdentifierNullState::Yes) { return ObjectIdentifierGenericBase<RawValue>::isValidIdentifier(ObjectIdentifierGenericBase<RawValue>::toRawValue()); }
     explicit operator bool() const requires(supportsNullState == SupportsObjectIdentifierNullState::Yes) { return ObjectIdentifierGenericBase<RawValue>::toRawValue(); }
 
+    bool isHashTableEmptyValue() const { return !ObjectIdentifierGenericBase<RawValue>::toRawValue(); }
+
     ObjectIdentifierGeneric() requires (supportsNullState == SupportsObjectIdentifierNullState::Yes) = default;
 
     ObjectIdentifierGeneric(HashTableDeletedValueType) : ObjectIdentifierGenericBase<RawValue>(HashTableDeletedValue) { }
@@ -219,6 +221,7 @@ struct ObjectIdentifierGenericBaseHash<UUID> {
 
 template<typename T, typename U, typename V, SupportsObjectIdentifierNullState supportsNullState> struct HashTraits<ObjectIdentifierGeneric<T, U, V, supportsNullState>> : SimpleClassHashTraits<ObjectIdentifierGeneric<T, U, V, supportsNullState>> {
     static ObjectIdentifierGeneric<T, U, V, supportsNullState> emptyValue() { return ObjectIdentifierGeneric<T, U, V, supportsNullState>(ObjectIdentifierGeneric<T, U, V, supportsNullState>::InvalidIdValue); }
+    static bool isEmptyValue(const ObjectIdentifierGeneric<T, U, V, supportsNullState>& value) { return value.isHashTableEmptyValue(); }
 };
 
 template<typename T, typename U, typename V, SupportsObjectIdentifierNullState supportsNullState> struct DefaultHash<ObjectIdentifierGeneric<T, U, V, supportsNullState>> : ObjectIdentifierGenericBaseHash<V> { };

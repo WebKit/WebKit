@@ -85,6 +85,7 @@ private:
 
 template<typename K, typename H> struct HashTraits<GenericHashKey<K, H>> : GenericHashTraits<GenericHashKey<K, H>> {
     static GenericHashKey<K, H> emptyValue() { return GenericHashKey<K, H> { HashTableEmptyValue }; }
+    static bool isEmptyValue(const GenericHashKey<K, H>& value) { return value.isHashTableEmptyValue(); }
     static void constructDeletedValue(GenericHashKey<K, H>& slot) { slot = GenericHashKey<K, H> { HashTableDeletedValue }; }
     static bool isDeletedValue(const GenericHashKey<K, H>& value) { return value.isHashTableDeletedValue(); }
 };

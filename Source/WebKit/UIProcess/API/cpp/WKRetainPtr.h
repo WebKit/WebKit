@@ -259,6 +259,7 @@ template<typename P> struct DefaultHash<WKRetainPtr<P>> : PtrHash<WKRetainPtr<P>
 
 template<typename P> struct HashTraits<WKRetainPtr<P>> : SimpleClassHashTraits<WKRetainPtr<P>> {
     static P emptyValue() { return nullptr; }
+    static bool isEmptyValue(const WKRetainPtr<P>& value) { return !value; }
 
     typedef P PeekType;
     static PeekType peek(const WKRetainPtr<P>& value) { return value.get(); }

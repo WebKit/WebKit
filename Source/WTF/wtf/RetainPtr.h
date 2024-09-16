@@ -358,6 +358,8 @@ template<typename P> struct RetainPtrObjectHashTraits : SimpleClassHashTraits<Re
         static NeverDestroyed<RetainPtr<P>> null;
         return null;
     }
+
+    static bool isEmptyValue(const RetainPtr<P>& value) { return !value; }
 };
 
 template<typename P> struct RetainPtrObjectHash {
