@@ -1309,8 +1309,12 @@ RefPtr<StyleRuleProperty> CSSParserImpl::consumePropertyRule(CSSParserTokenRange
     auto initialValueIsValid = [&] {
         auto tokenRange = descriptor.initialValue->tokenRange();
         auto dependencies = CSSPropertyParser::collectParsedCustomPropertyValueDependencies(*syntax, tokenRange, strictCSSParserContext());
-        return dependencies.isComputationallyIndependent();
-        // FIXME: We should also check values like "var(--foo)"
+        if (!dependencies.isComputationallyIndependent())
+            return false;
+        auto containsVariable = CSSVariableParser::containsValidVariableReferences(descriptor.initialValue->tokenRange(), m_context);
+        if (containsVariable)
+            return false;
+        return true;
     };
     if (descriptor.initialValue && !initialValueIsValid())
         return nullptr;
