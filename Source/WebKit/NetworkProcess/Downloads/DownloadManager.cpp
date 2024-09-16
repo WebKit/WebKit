@@ -91,7 +91,7 @@ void DownloadManager::downloadDestinationDecided(DownloadID downloadID, Ref<Netw
     m_downloadsAfterDestinationDecided.set(downloadID, WTFMove(networkDataTask));
 }
 
-void DownloadManager::resumeDownload(PAL::SessionID sessionID, DownloadID downloadID, std::span<const uint8_t> resumeData, const String& path, SandboxExtension::Handle&& sandboxExtensionHandle, CallDownloadDidStart callDownloadDidStart)
+void DownloadManager::resumeDownload(PAL::SessionID sessionID, DownloadID downloadID, std::span<const uint8_t> resumeData, const String& path, SandboxExtension::Handle&& sandboxExtensionHandle, CallDownloadDidStart callDownloadDidStart, std::span<const uint8_t> activityAccessToken)
 {
 #if !PLATFORM(COCOA)
     notImplemented();
@@ -101,7 +101,7 @@ void DownloadManager::resumeDownload(PAL::SessionID sessionID, DownloadID downlo
         return;
     auto download = makeUnique<Download>(*this, downloadID, nullptr, *networkSession);
 
-    download->resume(resumeData, path, WTFMove(sandboxExtensionHandle));
+    download->resume(resumeData, path, WTFMove(sandboxExtensionHandle), activityAccessToken);
 
     // For compatibility with the legacy download API, only send DidStart if we're using the new API.
     if (callDownloadDidStart == CallDownloadDidStart::Yes)
