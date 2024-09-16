@@ -107,9 +107,6 @@ PASS webkitanimationiteration is unaffected on a windowless body
 PASS webkitanimationstart is unaffected on a windowless body
 PASS webkittransitionend is unaffected on a windowless body
 PASS wheel is unaffected on a windowless body
-PASS copy is unaffected on a windowless body
-PASS cut is unaffected on a windowless body
-PASS paste is unaffected on a windowless body
 PASS Return null when getting the blur event handler of a windowless frameset
 PASS Ignore setting of blur window event handlers on windowless frameset
 PASS Return null when getting the error event handler of a windowless frameset
@@ -218,7 +215,4 @@ PASS webkitanimationiteration is unaffected on a windowless frameset
 PASS webkitanimationstart is unaffected on a windowless frameset
 PASS webkittransitionend is unaffected on a windowless frameset
 PASS wheel is unaffected on a windowless frameset
-PASS copy is unaffected on a windowless frameset
-PASS cut is unaffected on a windowless frameset
-PASS paste is unaffected on a windowless frameset
 

@@ -9,16 +9,12 @@ const handlersListPromise = fetch("/interfaces/html.idl").then(res => res.text()
   const parsedHTMLIDL = WebIDL2.parse(htmlIDL);
   const windowEventHandlers = handlersInInterface(parsedHTMLIDL, "WindowEventHandlers");
   const globalEventHandlers = handlersInInterface(parsedHTMLIDL, "GlobalEventHandlers");
-  const documentAndElementEventHandlers = handlersInInterface(parsedHTMLIDL, "DocumentAndElementEventHandlers");
 
   const shadowedHandlers = [
     ...windowReflectingBodyElementEventHandlerSet,
     ...windowEventHandlers
   ];
-  const notShadowedHandlers = [
-    ...globalEventHandlers.filter(name => !windowReflectingBodyElementEventHandlerSet.has(name)),
-    ...documentAndElementEventHandlers
-  ];
+  const notShadowedHandlers = globalEventHandlers.filter(name => !windowReflectingBodyElementEventHandlerSet.has(name));
   return {
     shadowedHandlers,
     notShadowedHandlers
@@ -60,6 +56,22 @@ function eventHandlerTest(shadowedHandlers, notShadowedHandlers, element) {
         assert_equals(obj2['on' + handler], null, `${des2} should reflect`);
         assert_equals(obj3['on' + handler], null, `${des3} should reflect`);
       }, `shadowed ${handler} removal (${des})`);
+    });
+
+    shadowedHandlers.forEach(handler => {
+      // Cannot test the error and unhandledrejection events as the test harness listens for those.
+      if (des != "document.body" || handler == "error" || handler == "unhandledrejection") {
+        return;
+      }
+      test(t => {
+        t.add_cleanup(() => {
+          obj1.removeAttribute('on' + handler);
+          window[`on${handler}Happened`] = undefined;
+        });
+        obj1.setAttribute('on' + handler, `window.on${handler}Happened = true`);
+        obj3.dispatchEvent(new Event(handler));
+        assert_true(window[`on${handler}Happened`]);
+      }, `shadowed ${handler} on body fires when event dispatched on window`);
     });
   }
 }
