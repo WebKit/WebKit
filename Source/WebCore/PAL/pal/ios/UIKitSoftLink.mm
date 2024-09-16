@@ -32,7 +32,7 @@
 
 @class CUICatalog;
 
-SOFT_LINK_FRAMEWORK_FOR_SOURCE(PAL, UIKit)
+SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_FLAGS(PAL, UIKit, RTLD_FIRST | RTLD_NOW)
 
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UIAccessibilityAnnouncementNotification, UIAccessibilityNotifications)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, UIKit, UIApplicationWillResignActiveNotification, NSNotificationName)
