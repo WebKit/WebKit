@@ -4,13 +4,10 @@ GPUProcess/graphics/WebGPU/RemoteGPU.cpp
 GPUProcess/media/RemoteImageDecoderAVFProxy.cpp
 GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp
 GPUProcess/media/RemoteMediaPlayerProxy.cpp
-NetworkProcess/NetworkConnectionToWebProcess.cpp
 NetworkProcess/NetworkProcess.cpp
-NetworkProcess/NetworkResourceLoader.cpp
 NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp
 NetworkProcess/cocoa/NetworkProcessCocoa.mm
 NetworkProcess/cocoa/NetworkSessionCocoa.mm
-NetworkProcess/storage/NetworkStorageManager.cpp
 Platform/IPC/MessageSenderInlines.h
 Shared/API/APIArray.cpp
 Shared/API/APIObject.h
@@ -53,7 +50,6 @@ UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIPortCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionContextCocoa.mm
 UIProcess/Extensions/WebExtensionController.cpp
 UIProcess/Extensions/WebExtensionController.h
-UIProcess/GPU/GPUProcessProxy.cpp
 UIProcess/Gamepad/UIGamepadProvider.cpp
 UIProcess/Inspector/WebInspectorUIProxy.cpp
 UIProcess/Inspector/mac/WebInspectorUIProxyMac.mm
@@ -74,15 +70,10 @@ UIProcess/WebAuthentication/AuthenticatorManager.cpp
 UIProcess/WebBackForwardCache.cpp
 UIProcess/WebBackForwardCacheEntry.cpp
 UIProcess/WebBackForwardList.cpp
-UIProcess/WebFullScreenManagerProxy.cpp
 UIProcess/WebGeolocationManagerProxy.cpp
 UIProcess/WebPageProxy.cpp
-UIProcess/WebPasteboardProxy.cpp
 UIProcess/WebPreferences.cpp
 UIProcess/WebProcessCache.cpp
-UIProcess/WebProcessPool.cpp
-UIProcess/WebProcessPool.h
-UIProcess/WebProcessProxy.cpp
 UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
 UIProcess/WebsiteData/WebsiteDataStore.cpp
 UIProcess/mac/DisplayCaptureSessionManager.mm
