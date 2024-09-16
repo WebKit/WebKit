@@ -100,7 +100,7 @@ public:
 
     void webProcessWillShutDown();
 
-    bool isMainFrame() const;
+    bool isMainFrame() const { return m_isMainFrame == IsMainFrame::Yes; }
 
     FrameLoadState& frameLoadState() { return m_frameLoadState; }
 

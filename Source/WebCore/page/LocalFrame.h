@@ -139,6 +139,7 @@ public:
     WEBCORE_EXPORT ~LocalFrame();
 
     WEBCORE_EXPORT LocalDOMWindow* window() const;
+    WEBCORE_EXPORT RefPtr<LocalDOMWindow> protectedWindow() const;
 
     void addDestructionObserver(FrameDestructionObserver&);
     void removeDestructionObserver(FrameDestructionObserver&);

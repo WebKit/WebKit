@@ -363,7 +363,7 @@ void WebAutomationSessionProxy::ensureObserverForFrame(WebFrame& frame)
         return;
 
     auto frameID = frame.frameID();
-    m_frameObservers.set(frameID, WebAutomationDOMWindowObserver::create(*frame.coreLocalFrame()->window(), [this, frameID] (WebAutomationDOMWindowObserver&) {
+    m_frameObservers.set(frameID, WebAutomationDOMWindowObserver::create(*frame.protectedCoreLocalFrame()->protectedWindow(), [this, frameID] (WebAutomationDOMWindowObserver&) {
         willDestroyGlobalObjectForFrame(frameID);
     }));
 }
@@ -384,18 +384,18 @@ void WebAutomationSessionProxy::willDestroyGlobalObjectForFrame(WebCore::FrameId
 
     auto pendingFrameCallbacks = m_webFramePendingEvaluateJavaScriptCallbacksMap.take(frameID);
     for (uint64_t callbackID : pendingFrameCallbacks)
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, errorMessage, errorType), 0);
+        WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, errorMessage, errorType), 0);
 }
 
 void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, bool forceUserGesture, std::optional<double> callbackTimeout, uint64_t callbackID)
 {
     WebPage* page = WebProcess::singleton().webPage(pageID);
     if (!page) {
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, { },
+        WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, { },
             Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound)), 0);
         return;
     }
-    auto* frame = optionalFrameID ? WebProcess::singleton().webFrame(*optionalFrameID) : &page->mainWebFrame();
+    RefPtr frame = optionalFrameID ? WebProcess::singleton().webFrame(*optionalFrameID) : &page->mainWebFrame();
     if (!frame || !frame->coreLocalFrame()->window() || !frame->coreLocalFrame()->window()->frame()) {
         WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, { },
             Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound)), 0);
@@ -459,7 +459,7 @@ void WebAutomationSessionProxy::didEvaluateJavaScriptFunction(WebCore::FrameIden
             m_webFramePendingEvaluateJavaScriptCallbacksMap.remove(findResult);
     }
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, result, errorType), 0);
+    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, result, errorType), 0);
 }
 
 void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, uint32_t ordinal, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FrameIdentifier>)>&& completionHandler)
@@ -473,19 +473,19 @@ void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(WebCore::PageIdenti
 
     String frameNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
 
-    auto* frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &page->mainWebFrame();
+    RefPtr frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &page->mainWebFrame();
     if (!frame) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
     }
 
-    auto* coreFrame = frame->coreLocalFrame();
+    RefPtr coreFrame = frame->coreLocalFrame();
     if (!coreFrame) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
     }
 
-    auto* coreChildFrame = coreFrame->tree().scopedChild(ordinal);
+    RefPtr coreChildFrame = coreFrame->tree().scopedChild(ordinal);
     if (!coreChildFrame) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
@@ -511,7 +511,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithNodeHandle(WebCore::PageIde
 
     String frameNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
 
-    auto* frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &page->mainWebFrame();
+    RefPtr frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &page->mainWebFrame();
     if (!frame) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
@@ -523,20 +523,20 @@ void WebAutomationSessionProxy::resolveChildFrameWithNodeHandle(WebCore::PageIde
         return;
     }
 
-    WebCore::Element* coreElement = elementForNodeHandle(*frame, nodeHandle);
+    RefPtr coreElement = elementForNodeHandle(*frame, nodeHandle);
     if (!coreElement) {
         String nodeNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
         completionHandler(nodeNotFoundErrorType, std::nullopt);
         return;
     }
 
-    auto* frameElementBase = dynamicDowncast<WebCore::HTMLFrameElementBase>(*coreElement);
+    RefPtr frameElementBase = dynamicDowncast<WebCore::HTMLFrameElementBase>(*coreElement);
     if (!frameElementBase) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
     }
 
-    auto* coreFrameFromElement = frameElementBase->contentFrame();
+    RefPtr coreFrameFromElement = frameElementBase->contentFrame();
     if (!coreFrameFromElement) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
@@ -574,7 +574,7 @@ void WebAutomationSessionProxy::resolveChildFrameWithName(WebCore::PageIdentifie
         return;
     }
 
-    auto* coreChildFrame = coreFrame->tree().scopedChildByUniqueName(AtomString { name });
+    RefPtr coreChildFrame = coreFrame->tree().scopedChildByUniqueName(AtomString { name });
     if (!coreChildFrame) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
@@ -621,18 +621,18 @@ static WebCore::Element* containerElementForElement(WebCore::Element& element)
     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-container.
     if (is<WebCore::HTMLOptionElement>(element)) {
 #if ENABLE(DATALIST_ELEMENT)
-        if (auto* parentElement = WebCore::ancestorsOfType<WebCore::HTMLDataListElement>(element).first())
-            return parentElement;
+        if (RefPtr parentElement = WebCore::ancestorsOfType<WebCore::HTMLDataListElement>(element).first())
+            return parentElement.get();
 #endif
-        if (auto* parentElement = downcast<WebCore::HTMLOptionElement>(element).ownerSelectElement())
-            return parentElement;
+        if (RefPtr parentElement = downcast<WebCore::HTMLOptionElement>(element).ownerSelectElement())
+            return parentElement.get();
 
         return nullptr;
     }
 
     if (RefPtr optgroup = dynamicDowncast<WebCore::HTMLOptGroupElement>(element)) {
-        if (auto* parentElement = optgroup->ownerSelectElement())
-            return parentElement;
+        if (RefPtr parentElement = optgroup->ownerSelectElement())
+            return parentElement.get();
 
         return nullptr;
     }
@@ -686,14 +686,14 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
         return;
     }
 
-    WebCore::Element* coreElement = elementForNodeHandle(*frame, nodeHandle);
+    RefPtr coreElement = elementForNodeHandle(*frame, nodeHandle);
     if (!coreElement) {
         String nodeNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
         completionHandler(nodeNotFoundErrorType, { }, std::nullopt, false);
         return;
     }
 
-    auto* containerElement = containerElementForElement(*coreElement);
+    RefPtr containerElement = containerElementForElement(*coreElement);
     if (scrollIntoViewIfNeeded && containerElement) {
         // §14.1 Element Click. Step 4. Scroll into view the element’s container.
         // https://w3c.github.io/webdriver/webdriver-spec.html#element-click
@@ -703,7 +703,7 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
 
     auto* frameView = frame->coreLocalFrame()->view();
 
-    auto* localFrame = dynamicDowncast<LocalFrame>(frame->coreFrame()->mainFrame());
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame->coreFrame()->mainFrame());
     if (!localFrame)
         return;
     auto* mainView = localFrame->view();
@@ -732,7 +732,7 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
 
     // §12.1 Element Interactability.
     // https://www.w3.org/TR/webdriver/#dfn-in-view-center-point
-    auto* firstElementRect = containerElement->getClientRects()->item(0);
+    RefPtr firstElementRect = containerElement->getClientRects()->item(0);
     if (!firstElementRect) {
         String elementNotInteractableErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::ElementNotInteractable);
         completionHandler(elementNotInteractableErrorType, resultElementBounds, resultInViewCenterPoint, isObscured);
@@ -754,7 +754,9 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
 
     auto elementInViewCenterPoint = visiblePortionOfElementRect.center();
     auto elementList = containerElement->treeScope().elementsFromPoint(elementInViewCenterPoint.x(), elementInViewCenterPoint.y(), WebCore::HitTestSource::User);
-    auto index = elementList.findIf([containerElement] (auto& item) { return item.get() == containerElement; });
+    auto index = elementList.findIf([containerElement] (auto& item) {
+        return item.get() == containerElement.get();
+    });
     if (elementList.isEmpty() || index == notFound) {
         // We hit this case if the element is visibility:hidden or opacity:0, in which case it will not hit test
         // at the calculated IVCP. An element is technically not "in view" if it is not within its own paint/hit test tree,
@@ -768,7 +770,7 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
     // Check the case where a non-descendant element hit tests before the target element. For example, a child <option>
     // of a <select> does not obscure the <select>, but two sibling <div> that overlap at the IVCP will obscure each other.
     // Node::isDescendantOf() is not self-inclusive, so that is explicitly checked here.
-    isObscured = elementList[0] != containerElement && !elementList[0]->isDescendantOrShadowDescendantOf(containerElement);
+    isObscured = elementList[0] != containerElement && !RefPtr { elementList[0] }->isDescendantOrShadowDescendantOf(containerElement.get());
 
     switch (coordinateSystem) {
     case CoordinateSystem::Page:
@@ -845,17 +847,17 @@ void WebAutomationSessionProxy::selectOptionElement(WebCore::PageIdentifier page
         return;
     }
 
-    auto& optionElement = downcast<WebCore::HTMLOptionElement>(*coreElement);
-    auto* selectElement = optionElement.ownerSelectElement();
+    Ref optionElement = downcast<WebCore::HTMLOptionElement>(*coreElement);
+    RefPtr selectElement = optionElement->ownerSelectElement();
     if (!selectElement) {
         completionHandler(elementNotInteractableErrorType);
         return;
     }
 
-    if (!selectElement->isDisabledFormControl() && !optionElement.isDisabledFormControl()) {
+    if (!selectElement->isDisabledFormControl() && !optionElement->isDisabledFormControl()) {
         // FIXME: According to the spec we should fire mouse over, move and down events, then input and change, and finally mouse up and click.
         // optionSelectedByUser() will fire input and change events if needed, but all other events should be fired manually here.
-        selectElement->optionSelectedByUser(optionElement.index(), true, selectElement->multiple());
+        selectElement->optionSelectedByUser(optionElement->index(), true, selectElement->multiple());
     }
     completionHandler(std::nullopt);
 }
@@ -885,7 +887,7 @@ void WebAutomationSessionProxy::setFilesForInputFileUpload(WebCore::PageIdentifi
 
     Vector<Ref<WebCore::File>> fileObjects;
     if (inputElement->multiple()) {
-        if (auto* files = inputElement->files())
+        if (RefPtr files = inputElement->files())
             fileObjects.appendVector(files->files());
     }
     fileObjects.appendContainerWithMapping(filenames, [&](auto& path) {
@@ -925,27 +927,27 @@ void WebAutomationSessionProxy::takeScreenshot(WebCore::PageIdentifier pageID, s
     snapshotRectForScreenshot(pageID, frameID, nodeHandle, scrollIntoViewIfNeeded, clipToViewport, [pageID, frameID, callbackID] (std::optional<String> errorString, WebCore::IntRect&& rect) {
         std::optional<ShareableBitmap::Handle> handle;
         if (errorString) {
-            WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, WTFMove(handle), *errorString), 0);
+            WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, WTFMove(handle), *errorString), 0);
             return;
         }
 
-        WebPage* page = WebProcess::singleton().webPage(pageID);
+        RefPtr page = WebProcess::singleton().webPage(pageID);
         ASSERT(page);
-        auto* frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &page->mainWebFrame();
+        RefPtr frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &page->mainWebFrame();
         ASSERT(frame && frame->coreLocalFrame());
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(frame->coreFrame()->mainFrame());
+        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(frame->coreFrame()->mainFrame());
         if (!localMainFrame)
             return;
         auto snapshotRect = WebCore::IntRect(localMainFrame->view()->clientToDocumentRect(rect));
         RefPtr<WebImage> image = page->scaledSnapshotWithOptions(snapshotRect, 1, SnapshotOption::Shareable);
         if (!image) {
             String screenshotErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError);
-            WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, WTFMove(handle), screenshotErrorType), 0);
+            WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, WTFMove(handle), screenshotErrorType), 0);
             return;
         }
 
         handle = image->createHandle(SharedMemory::Protection::ReadOnly);
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, WTFMove(handle), { }), 0);
+        WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, WTFMove(handle), { }), 0);
     });
 }
 
@@ -965,7 +967,7 @@ void WebAutomationSessionProxy::snapshotRectForScreenshot(WebCore::PageIdentifie
         return;
     }
 
-    WebCore::Element* coreElement = nullptr;
+    RefPtr<WebCore::Element> coreElement;
     if (!nodeHandle.isEmpty()) {
         if (!isValidNodeHandle(nodeHandle)) {
             String invalidNodeIdentifierrrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidNodeIdentifier);
@@ -985,13 +987,13 @@ void WebAutomationSessionProxy::snapshotRectForScreenshot(WebCore::PageIdentifie
         coreElement->scrollIntoViewIfNotVisible(false);
 
     String screenshotErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError);
-    WebCore::IntRect snapshotRect = snapshotElementRectForScreenshot(*page, coreElement, clipToViewport);
+    WebCore::IntRect snapshotRect = snapshotElementRectForScreenshot(*page, coreElement.get(), clipToViewport);
     if (snapshotRect.isEmpty()) {
         completionHandler(screenshotErrorType, { });
         return;
     }
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(frame->coreFrame()->mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(frame->coreFrame()->mainFrame());
     if (!localMainFrame) {
         String internalErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError);
         completionHandler(internalErrorType, { });
@@ -1018,10 +1020,10 @@ void WebAutomationSessionProxy::getCookiesForFrame(WebCore::PageIdentifier pageI
     }
 
     // This returns the same list of cookies as when evaluating `document.cookies` in JavaScript.
-    auto& document = *frame->coreLocalFrame()->document();
+    Ref document = *frame->coreLocalFrame()->document();
     Vector<WebCore::Cookie> foundCookies;
-    if (!document.cookieURL().isEmpty())
-        page->corePage()->cookieJar().getRawCookies(document, document.cookieURL(), foundCookies);
+    if (!document->cookieURL().isEmpty())
+        page->corePage()->protectedCookieJar()->getRawCookies(document, document->cookieURL(), foundCookies);
 
     completionHandler(std::nullopt, foundCookies);
 }
@@ -1043,7 +1045,7 @@ void WebAutomationSessionProxy::deleteCookie(WebCore::PageIdentifier pageID, std
     }
 
     auto& document = *frame->coreLocalFrame()->document();
-    page->corePage()->cookieJar().deleteCookie(document, document.cookieURL(), cookieName, [completionHandler = WTFMove(completionHandler)] () mutable {
+    page->corePage()->protectedCookieJar()->deleteCookie(document, document.cookieURL(), cookieName, [completionHandler = WTFMove(completionHandler)] () mutable {
         completionHandler(std::nullopt);
     });
 }

@@ -553,7 +553,7 @@ void WebAutomationSession::respondToPendingPageNavigationCallbacksWithTimeout(Ha
 
 static WebPageProxy* findPageForFrameID(const WebProcessPool& processPool, FrameIdentifier frameID)
 {
-    if (auto* frame = WebFrameProxy::webFrame(frameID))
+    if (RefPtr frame = WebFrameProxy::webFrame(frameID))
         return frame->page();
     return nullptr;
 }
@@ -655,7 +655,7 @@ void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page)
     // the load in case of normal strategy, so we want to dispatch all pending navigation callbacks.
     // If the dialog was shown during a script execution, we want to finish the evaluateJavaScriptFunction
     // operation with an unexpected alert open error.
-    RunLoop::main().dispatch([this, protectedThis = Ref { *this }, page = Ref { page }] {
+    RunLoop::protectedMain()->dispatch([this, protectedThis = Ref { *this }, page = Ref { page }] {
         if (!page->hasRunningProcess() || !m_client || !m_client->isShowingJavaScriptDialogOnPage(*this, page))
             return;
 
@@ -785,7 +785,7 @@ void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame
             m_loadTimer.stop();
             callback->sendSuccess(JSON::Object::create());
         }
-        m_domainNotifier->browsingContextCleared(handleForWebPageProxy(*frame.page()));
+        m_domainNotifier->browsingContextCleared(handleForWebPageProxy(*frame.protectedPage()));
     } else {
         if (auto callback = m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame.take(frame.frameID())) {
             m_loadTimer.stop();
@@ -932,12 +932,12 @@ void WebAutomationSession::handleRunOpenPanel(const WebPageProxy& page, const We
 
     HashSet<String> allowedMIMETypes;
     auto acceptMIMETypes = parameters.acceptMIMETypes();
-    for (auto type : acceptMIMETypes->elementsOfType<API::String>())
+    for (RefPtr type : acceptMIMETypes->elementsOfType<API::String>())
         allowedMIMETypes.add(type->string());
 
     HashSet<String> allowedFileExtensions;
     auto acceptFileExtensions = parameters.acceptFileExtensions();
-    for (auto type : acceptFileExtensions->elementsOfType<API::String>()) {
+    for (RefPtr type : acceptFileExtensions->elementsOfType<API::String>()) {
         // WebCore vends extensions with leading periods. Strip these to simplify matching later.
         String extension = type->string();
         ASSERT(extension.characterAt(0) == '.');
@@ -1432,7 +1432,7 @@ void WebAutomationSession::getAllCookies(const Inspector::Protocol::Automation::
         callback->sendSuccess(buildArrayForCookies(cookies));
     };
 
-    page->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebAutomationSessionProxy::GetCookiesForFrame(page->webPageIDInMainFrameProcess(), std::nullopt), WTFMove(completionHandler));
+    page->protectedLegacyMainFrameProcess()->sendWithAsyncReply(Messages::WebAutomationSessionProxy::GetCookiesForFrame(page->webPageIDInMainFrameProcess(), std::nullopt), WTFMove(completionHandler));
 }
 
 void WebAutomationSession::deleteSingleCookie(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const String& cookieName, Ref<DeleteSingleCookieCallback>&& callback)
@@ -1450,7 +1450,7 @@ void WebAutomationSession::deleteSingleCookie(const Inspector::Protocol::Automat
         callback->sendSuccess();
     };
 
-    page->legacyMainFrameProcess().sendWithAsyncReply(Messages::WebAutomationSessionProxy::DeleteCookie(page->webPageIDInMainFrameProcess(), std::nullopt, cookieName), WTFMove(completionHandler));
+    page->protectedLegacyMainFrameProcess()->sendWithAsyncReply(Messages::WebAutomationSessionProxy::DeleteCookie(page->webPageIDInMainFrameProcess(), std::nullopt, cookieName), WTFMove(completionHandler));
 }
 
 static String domainByAddingDotPrefixIfNeeded(String domain)
@@ -1532,8 +1532,8 @@ void WebAutomationSession::addSingleCookie(const Inspector::Protocol::Automation
 
     cookie.sameSite = toWebCoreSameSitePolicy(*parsedSameSite);
 
-    auto& cookieStore = page->websiteDataStore().cookieStore();
-    cookieStore.setCookies({ cookie }, [callback]() {
+    Ref cookieStore = page->protectedWebsiteDataStore()->cookieStore();
+    cookieStore->setCookies({ cookie }, [callback]() {
         callback->sendSuccess();
     });
 }
@@ -1643,7 +1643,7 @@ Inspector::Protocol::ErrorStringOr<String /* authenticatorId */> WebAutomationSe
     auto page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
         SYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
-    return page->websiteDataStore().virtualAuthenticatorManager().createAuthenticator({
+    return page->protectedWebsiteDataStore()->virtualAuthenticatorManager().createAuthenticator({
         .protocol = protocol,
         .transport = toAuthenticatorTransport(parsedTransport.value()),
         .hasResidentKey = *hasResidentKey,
@@ -1662,7 +1662,7 @@ Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::removeVirtualAuth
     auto page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
         SYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
-    if (!page->websiteDataStore().virtualAuthenticatorManager().removeAuthenticator(authenticatorId))
+    if (!page->protectedWebsiteDataStore()->virtualAuthenticatorManager().removeAuthenticator(authenticatorId))
         SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "No such authenticator exists."_s);
     return { };
 #else

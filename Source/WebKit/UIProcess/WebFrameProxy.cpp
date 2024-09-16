@@ -156,11 +156,6 @@ void WebFrameProxy::webProcessWillShutDown()
         m_navigateCallback({ }, { });
 }
 
-bool WebFrameProxy::isMainFrame() const
-{
-    return m_isMainFrame == IsMainFrame::Yes;
-}
-
 WebProcessProxy& WebFrameProxy::process() const
 {
     return m_frameProcess->process();

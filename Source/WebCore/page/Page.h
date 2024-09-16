@@ -900,7 +900,7 @@ public:
     SocketProvider& socketProvider() { return m_socketProvider; }
     MediaRecorderProvider& mediaRecorderProvider() { return m_mediaRecorderProvider; }
     CookieJar& cookieJar() { return m_cookieJar.get(); }
-    Ref<CookieJar> protectedCookieJar() const;
+    WEBCORE_EXPORT Ref<CookieJar> protectedCookieJar() const;
 
     StorageNamespaceProvider& storageNamespaceProvider() { return m_storageNamespaceProvider.get(); }
     WEBCORE_EXPORT Ref<StorageNamespaceProvider> protectedStorageNamespaceProvider() const;
