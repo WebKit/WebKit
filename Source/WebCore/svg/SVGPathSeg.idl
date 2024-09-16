@@ -25,6 +25,7 @@
  */
 
 [
+    LegacyNoInterfaceObject,
     CustomToJSObject,
     Exposed=Window
 ] interface SVGPathSeg {
