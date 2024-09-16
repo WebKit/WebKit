@@ -77,7 +77,6 @@ public:
     bool shouldHideSearchFieldResultsButton() const;
     bool shouldExposeShowModalDialog() const;
     bool shouldNavigatorPluginsBeEmpty() const;
-    bool shouldDisableNavigatorStandaloneQuirk() const;
 
     bool shouldPreventOrientationMediaQueryFromEvaluatingToLandscape() const;
     bool shouldFlipScreenDimensions() const;
