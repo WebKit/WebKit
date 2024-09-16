@@ -1104,9 +1104,6 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 
 # rdar://65642935 ([AS] 20A2323e: 15 canvas layout tests consistently failing)
 [ arm64 ] fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
-[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.miter.obtuse.html [ Failure ]
-[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.selfintersect.1.html [ Failure ]
-[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.shape.3.html [ Failure ]
 [ arm64 ] inspector/canvas/memory.html [ Failure ]
 
 webkit.org/b/230691 [ Release ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-unsafe-none.https.html [ Pass Failure ]
@@ -1851,3 +1848,10 @@ fast/scrolling/mac/scrollbars/scrollbar-state.html [ Failure ]
 
 # webkit.org/b/279477 REGRESSION (283102@main?): [macOS iOS wk2 Debug EWS ] ASSERTION FAILED: WebKit::WebPageProxy::startNetworkRequestsForPageLoadTiming(WebCore::FrameIdentifier) result of http/tests/site-isolation/window-open-with-name-cross-site.html to crash
 [ Debug ] http/tests/site-isolation/window-open-with-name-cross-site.html [ Skip ]
+
+# webkit.org/b/274304 re-import html/canvas WPT
+webkit.org/b/274304 imported/w3c/web-platform-tests/html/canvas/element/filters/2d.filter.canvasFilterObject.colorMatrix.tentative.html [ Pass Failure Timeout ]
+webkit.org/b/274304 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-video-resize.html [ Pass Failure Timeout ]
+webkit.org/b/274304 imported/w3c/web-platform-tests/html/canvas/element/shadows/2d.shadow.attributes.shadowColor.current.basic.html [ Pass Failure Timeout ]
+webkit.org/b/274304 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/layers/unclosed-nested-layers.html [ Pass ImageOnlyFailure ]
+webkit.org/b/274304 imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.arc.twopie.5.html [ Pass Failure Timeout ]

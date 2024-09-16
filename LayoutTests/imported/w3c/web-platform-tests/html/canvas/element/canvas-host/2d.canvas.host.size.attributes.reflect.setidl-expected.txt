@@ -1,0 +1,6 @@
+2d.canvas.host.size.attributes.reflect.setidl
+Setting IDL attributes updates IDL and content attributes
+Actual output:
+
+PASS Setting IDL attributes updates IDL and content attributes
+

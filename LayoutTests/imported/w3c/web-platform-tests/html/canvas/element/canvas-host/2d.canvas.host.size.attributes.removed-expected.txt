@@ -1,0 +1,6 @@
+2d.canvas.host.size.attributes.removed
+Removing content attributes reverts to default size
+Actual output:
+
+PASS Removing content attributes reverts to default size
+

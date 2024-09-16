@@ -1,0 +1,7 @@
+2d.canvas.host.size.large
+Not sure how reasonable this is, but the spec doesn't say there's an upper limit on the size.
+
+Actual output:
+
+PASS Canvas test: 2d.canvas.host.size.large
+

@@ -1,0 +1,6 @@
+2d.canvas.host.initial.reset.transform
+Resetting the canvas state resets the current transformation matrix
+Actual output:
+
+PASS Resetting the canvas state resets the current transformation matrix
+

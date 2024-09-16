@@ -2204,9 +2204,6 @@ webkit.org/b/68278 http/tests/history/back-with-fragment-change.py [ Failure ]
 
 # rdar://65642935 15 canvas layout tests consistently failing
 [ arm64 ] fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
-[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.miter.obtuse.html [ Failure ]
-[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.selfintersect.1.html [ Failure ]
-[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.shape.3.html [ Failure ]
 
 webkit.org/b/215593 webaudio/oscillator-square.html [ Pass Failure ]
 
@@ -2904,3 +2901,8 @@ imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-
 
 # webkit.org/b/279563 [macOS wk1 EWS] imported/w3c/web-platform-tests/css/css-color/system-color-consistency.html is a constant failure
 imported/w3c/web-platform-tests/css/css-color/system-color-consistency.html [ Failure ]
+# webkit.org/b/274304 re-import html/canvas WPT
+webkit.org/b/274304 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-blob.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/274304 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/layers/unclosed-nested-layers.html [ ImageOnlyFailure ]
+webkit.org/b/274304 imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.initial.reset.different.html [ Timeout Pass ]
+webkit.org/b/274304 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/layers/unclosed-nested-layers.w.html [ Pass ImageOnlyFailure ]

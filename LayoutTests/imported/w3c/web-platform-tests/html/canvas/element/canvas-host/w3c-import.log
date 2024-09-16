@@ -1,0 +1,95 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.initial.color.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.initial.reset.2dstate.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.initial.reset.clip.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.initial.reset.different.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.initial.reset.gradient.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.initial.reset.path.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.initial.reset.pattern.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.initial.reset.same.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.initial.reset.transform.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.readonly.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.reference.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.scaled.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.default.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.idl.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.idl.set.zero.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.decimal.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.decimal.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.em.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.em.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.empty.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.empty.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.exp.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.exp.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.hex.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.junk.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.junk.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.minus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.minus.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.octal.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.octal.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.onlyspace.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.onlyspace.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.percent.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.percent.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.plus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.plus.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.space.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.space.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.trailingjunk.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.trailingjunk.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.whitespace.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.whitespace.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.parse.zero.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.reflect.setcontent.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.reflect.setidl.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.reflect.setidlzero.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.removed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.decimal.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.decimal.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.em.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.em.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.empty.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.empty.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.exp.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.exp.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.hex.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.junk.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.junk.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.minus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.minus.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.octal.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.octal.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.onlyspace.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.onlyspace.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.percent.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.percent.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.plus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.plus.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.space.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.space.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.trailingjunk.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.trailingjunk.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.whitespace.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.whitespace.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.attributes.setAttribute.zero.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.invalid.attributes.idl.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.size.large.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.type.delete.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/canvas-host/2d.canvas.host.type.name.html

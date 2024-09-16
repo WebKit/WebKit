@@ -1,0 +1,4 @@
+
+FAIL Test the functionality of ColorMatrix filters assert_throws_js: function "function() { ctx.beginLayer({filter:
+    {name: 'colorMatrix', values: undefined}}); }" did not throw
+

@@ -1,0 +1,8 @@
+2d.filter.layers.dropShadow.exceptions
+
+Test exceptions on CanvasFilter() dropShadow object
+
+
+FAIL Test exceptions on CanvasFilter() dropShadow object assert_throws_js: function "function() { ctx.beginLayer({filter:
+    {name: 'dropShadow', dx: NaN}}); ctx.endLayer(); }" did not throw
+
