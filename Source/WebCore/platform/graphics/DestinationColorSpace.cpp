@@ -91,14 +91,6 @@ const DestinationColorSpace& DestinationColorSpace::DisplayP3()
 }
 #endif
 
-DestinationColorSpace::DestinationColorSpace(PlatformColorSpace platformColorSpace)
-    : m_platformColorSpace { WTFMove(platformColorSpace) }
-{
-#if USE(CG) || USE(SKIA)
-    ASSERT(m_platformColorSpace);
-#endif
-}
-
 bool operator==(const DestinationColorSpace& a, const DestinationColorSpace& b)
 {
 #if USE(CG)

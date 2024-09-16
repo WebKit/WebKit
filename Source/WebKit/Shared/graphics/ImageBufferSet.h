@@ -61,6 +61,10 @@ public:
 
     void clearBuffers();
 
+    RefPtr<WebCore::ImageBuffer> protectedFrontBuffer() { return m_frontBuffer; }
+    RefPtr<WebCore::ImageBuffer> protectedBackBuffer() { return m_backBuffer; }
+    RefPtr<WebCore::ImageBuffer> protectedSecondaryBackBuffer() { return m_secondaryBackBuffer; }
+
     RefPtr<WebCore::ImageBuffer> m_frontBuffer;
     RefPtr<WebCore::ImageBuffer> m_backBuffer;
     RefPtr<WebCore::ImageBuffer> m_secondaryBackBuffer;

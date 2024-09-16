@@ -131,7 +131,7 @@ public:
     class TimerBase {
         friend class RunLoop;
     public:
-        WTF_EXPORT_PRIVATE explicit TimerBase(RunLoop&);
+        WTF_EXPORT_PRIVATE explicit TimerBase(Ref<RunLoop>&&);
         WTF_EXPORT_PRIVATE virtual ~TimerBase();
 
         void startRepeating(Seconds interval) { start(std::max(interval, 0_s), true); }
@@ -180,13 +180,13 @@ public:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         template <typename TimerFiredClass>
-        Timer(RunLoop& runLoop, TimerFiredClass* o, void (TimerFiredClass::*f)())
-            : Timer(runLoop, std::bind(f, o))
+        Timer(Ref<RunLoop>&& runLoop, TimerFiredClass* o, void (TimerFiredClass::*f)())
+            : Timer(WTFMove(runLoop), std::bind(f, o))
         {
         }
 
-        Timer(RunLoop& runLoop, Function<void ()>&& function)
-            : TimerBase(runLoop)
+        Timer(Ref<RunLoop>&& runLoop, Function<void ()>&& function)
+            : TimerBase(WTFMove(runLoop))
             , m_function(WTFMove(function))
         {
         }

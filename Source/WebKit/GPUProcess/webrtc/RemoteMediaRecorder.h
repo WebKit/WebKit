@@ -59,9 +59,9 @@ public:
     static std::unique_ptr<RemoteMediaRecorder> create(GPUConnectionToWebProcess&, MediaRecorderIdentifier, bool recordAudio, bool recordVideo, const WebCore::MediaRecorderPrivateOptions&);
     ~RemoteMediaRecorder();
 
-    String mimeType() const { return m_writer->mimeType(); }
-    unsigned audioBitRate() const { return m_writer->audioBitRate(); }
-    unsigned videoBitRate() const { return m_writer->videoBitRate(); }
+    String mimeType() const { return protectedWriter()->mimeType(); }
+    unsigned audioBitRate() const { return protectedWriter()->audioBitRate(); }
+    unsigned videoBitRate() const { return protectedWriter()->videoBitRate(); }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
@@ -70,6 +70,8 @@ private:
     RemoteMediaRecorder(GPUConnectionToWebProcess&, MediaRecorderIdentifier, Ref<WebCore::MediaRecorderPrivateWriter>&&, bool recordAudio);
 
     RefPtr<IPC::Connection> connection() const;
+
+    Ref<WebCore::MediaRecorderPrivateWriter> protectedWriter() const { return m_writer; }
 
     // IPC::MessageReceiver
     void audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&&, const WebCore::CAAudioStreamDescription&);

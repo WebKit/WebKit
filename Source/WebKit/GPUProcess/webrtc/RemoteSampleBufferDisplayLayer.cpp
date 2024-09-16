@@ -59,6 +59,11 @@ RemoteSampleBufferDisplayLayer::RemoteSampleBufferDisplayLayer(GPUConnectionToWe
     ASSERT(m_sampleBufferDisplayLayer);
 }
 
+RefPtr<WebCore::LocalSampleBufferDisplayLayer> RemoteSampleBufferDisplayLayer::protectedSampleBufferDisplayLayer() const
+{
+    return m_sampleBufferDisplayLayer;
+}
+
 void RemoteSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, bool shouldMaintainAspectRatio, bool canShowWhileLocked, LayerInitializationCallback&& callback)
 {
     LayerHostingContextOptions contextOptions;
@@ -90,7 +95,7 @@ RemoteSampleBufferDisplayLayer::~RemoteSampleBufferDisplayLayer()
 
 CGRect RemoteSampleBufferDisplayLayer::bounds() const
 {
-    return m_sampleBufferDisplayLayer->bounds();
+    return protectedSampleBufferDisplayLayer()->bounds();
 }
 
 void RemoteSampleBufferDisplayLayer::updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer)
@@ -144,7 +149,7 @@ IPC::Connection* RemoteSampleBufferDisplayLayer::messageSenderConnection() const
 
 void RemoteSampleBufferDisplayLayer::sampleBufferDisplayLayerStatusDidFail()
 {
-    send(Messages::SampleBufferDisplayLayer::SetDidFail { m_sampleBufferDisplayLayer->didFail() });
+    send(Messages::SampleBufferDisplayLayer::SetDidFail { protectedSampleBufferDisplayLayer()->didFail() });
 }
 
 void RemoteSampleBufferDisplayLayer::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)

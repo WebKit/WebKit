@@ -56,14 +56,15 @@ RemoteImageBufferSet::RemoteImageBufferSet(RemoteImageBufferSetIdentifier identi
 
 RemoteImageBufferSet::~RemoteImageBufferSet()
 {
+    RefPtr frontBuffer = m_frontBuffer;
     // Volatile image buffers do not have contexts.
-    if (!m_frontBuffer || m_frontBuffer->volatilityState() == WebCore::VolatilityState::Volatile)
+    if (!frontBuffer || frontBuffer->volatilityState() == WebCore::VolatilityState::Volatile)
         return;
-    if (!m_frontBuffer->hasBackend())
+    if (!frontBuffer->hasBackend())
         return;
     // Unwind the context's state stack before destruction, since calls to restore may not have
     // been flushed yet, or the web process may have terminated.
-    auto& context = m_frontBuffer->context();
+    auto& context = frontBuffer->context();
     while (context.stackSize())
         context.restore();
 }
@@ -126,9 +127,9 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
 {
     assertIsCurrent(workQueue());
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "GPU Process: ::ensureFrontBufferForDisplay " << " - front "
-        << m_frontBuffer << " (in-use " << (m_frontBuffer && m_frontBuffer->isInUse()) << ") "
-        << m_backBuffer << " (in-use " << (m_backBuffer && m_backBuffer->isInUse()) << ") "
-        << m_secondaryBackBuffer << " (in-use " << (m_secondaryBackBuffer && m_secondaryBackBuffer->isInUse()) << ") ");
+        << m_frontBuffer << " (in-use " << (m_frontBuffer && protectedFrontBuffer()->isInUse()) << ") "
+        << m_backBuffer << " (in-use " << (m_backBuffer && protectedBackBuffer()->isInUse()) << ") "
+        << m_secondaryBackBuffer << " (in-use " << (m_secondaryBackBuffer && protectedSecondaryBackBuffer()->isInUse()) << ") ");
 
     displayRequirement = swapBuffersForDisplay(inputData.hasEmptyDirtyRegion, inputData.supportsPartialRepaint && !isSmallLayerBacking({ m_logicalSize, m_resolutionScale, m_colorSpace, m_pixelFormat, WebCore::RenderingPurpose::LayerBacking }));
     if (displayRequirement == SwapBuffersDisplayRequirement::NeedsFullDisplay) {

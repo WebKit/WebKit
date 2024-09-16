@@ -53,8 +53,9 @@ void RemoteSampleBufferDisplayLayerManager::startListeningForIPC()
     auto connection = m_connectionToWebProcess.get();
     if (!connection)
         return;
-    connection->connection().addWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName(), m_queue, *this);
-    connection->connection().addWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName(), m_queue, *this);
+    Ref ipcConnection = connection->protectedConnection();
+    ipcConnection->addWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName(), m_queue, *this);
+    ipcConnection->addWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName(), m_queue, *this);
 }
 
 RemoteSampleBufferDisplayLayerManager::~RemoteSampleBufferDisplayLayerManager() = default;
@@ -64,8 +65,9 @@ void RemoteSampleBufferDisplayLayerManager::close()
     auto connection = m_connectionToWebProcess.get();
     if (!connection)
         return;
-    connection->connection().removeWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName());
-    connection->connection().removeWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName());
+    Ref ipcConnection = connection->protectedConnection();
+    ipcConnection->removeWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName());
+    ipcConnection->removeWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName());
     m_queue->dispatch([this, protectedThis = Ref { *this }] {
         Locker lock(m_layersLock);
         callOnMainRunLoop([layers = WTFMove(m_layers)] { });

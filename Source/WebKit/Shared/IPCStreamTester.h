@@ -56,6 +56,7 @@ private:
     ~IPCStreamTester();
     void initialize();
     IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
+    Ref<IPC::StreamConnectionWorkQueue> protectedWorkQueue() const { return m_workQueue; }
 
     // Messages.
     void syncMessage(uint32_t value, CompletionHandler<void(uint32_t)>&&);

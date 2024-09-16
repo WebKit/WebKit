@@ -73,6 +73,8 @@ public:
 private:
     RemoteSampleBufferDisplayLayer(GPUConnectionToWebProcess&, SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);
 
+    RefPtr<WebCore::LocalSampleBufferDisplayLayer> protectedSampleBufferDisplayLayer() const;
+
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(String&&);
 #endif

@@ -333,6 +333,7 @@ public:
     void setClient(UniqueRef<WebsiteDataStoreClient>&& client) { m_client = WTFMove(client); }
 
     API::HTTPCookieStore& cookieStore();
+    Ref<API::HTTPCookieStore> protectedCookieStore();
     WebCore::LocalWebLockRegistry& webLockRegistry() { return m_webLockRegistry.get(); }
     Ref<WebCore::LocalWebLockRegistry> protectedWebLockRegistry();
 

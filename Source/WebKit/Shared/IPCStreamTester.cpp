@@ -60,8 +60,8 @@ IPCStreamTester::~IPCStreamTester() = default;
 
 void IPCStreamTester::initialize()
 {
-    workQueue().dispatch([this] {
-        m_streamConnection->open(workQueue());
+    protectedWorkQueue()->dispatch([this] {
+        m_streamConnection->open(protectedWorkQueue());
         m_streamConnection->startReceivingMessages(*this, Messages::IPCStreamTester::messageReceiverName(), m_identifier.toUInt64());
         m_streamConnection->send(Messages::IPCStreamTesterProxy::WasCreated(workQueue().wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore()), m_identifier);
     });
@@ -69,11 +69,12 @@ void IPCStreamTester::initialize()
 
 void IPCStreamTester::stopListeningForIPC(Ref<IPCStreamTester>&& refFromConnection)
 {
-    workQueue().dispatch([this] {
+    Ref workQueue = m_workQueue;
+    workQueue->dispatch([this] {
         m_streamConnection->stopReceivingMessages(Messages::IPCStreamTester::messageReceiverName(), m_identifier.toUInt64());
         m_streamConnection->invalidate();
     });
-    workQueue().stopAndWaitForCompletion();
+    workQueue->stopAndWaitForCompletion();
 }
 
 void IPCStreamTester::syncMessageReturningSharedMemory1(uint32_t byteCount, CompletionHandler<void(std::optional<WebCore::SharedMemory::Handle>&&)>&& completionHandler)

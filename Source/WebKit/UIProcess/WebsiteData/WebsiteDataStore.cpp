@@ -2103,6 +2103,11 @@ API::HTTPCookieStore& WebsiteDataStore::cookieStore()
     return *m_cookieStore;
 }
 
+Ref<API::HTTPCookieStore> WebsiteDataStore::protectedCookieStore()
+{
+    return cookieStore();
+}
+
 void WebsiteDataStore::resetQuota(CompletionHandler<void()>&& completionHandler)
 {
     protectedNetworkProcess()->resetQuota(m_sessionID, WTFMove(completionHandler));

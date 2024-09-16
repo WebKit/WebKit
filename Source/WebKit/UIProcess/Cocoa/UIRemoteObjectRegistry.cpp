@@ -36,7 +36,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(UIRemoteObjectRegistry);
 
 std::unique_ptr<ProcessThrottler::BackgroundActivity> UIRemoteObjectRegistry::backgroundActivity(ASCIILiteral name)
 {
-    return protectedPage()->legacyMainFrameProcess().throttler().backgroundActivity(name).moveToUniquePtr();
+    return protectedPage()->legacyMainFrameProcess().protectedThrottler()->backgroundActivity(name).moveToUniquePtr();
 }
 
 UIRemoteObjectRegistry::UIRemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry, WebPageProxy& page)

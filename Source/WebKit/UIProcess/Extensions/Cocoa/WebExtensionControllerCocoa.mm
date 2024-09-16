@@ -371,7 +371,7 @@ void WebExtensionController::addPage(WebPageProxy& page)
     for (auto& entry : m_registeredSchemeHandlers)
         page.setURLSchemeHandlerForScheme(entry.value.copyRef(), entry.key);
 
-    Ref pool = page.configuration().processPool();
+    Ref pool = page.protectedConfiguration()->processPool();
     addProcessPool(pool);
 
     Ref dataStore = page.websiteDataStore();
@@ -420,7 +420,7 @@ void WebExtensionController::removeProcessPool(WebProcessPool& processPool)
 {
     // Only remove the message receiver and process pool if no other pages use the same process pool.
     for (Ref knownPage : m_pages) {
-        if (knownPage->configuration().processPool() == processPool)
+        if (knownPage->protectedConfiguration()->processPool() == processPool)
             return;
     }
 
@@ -468,8 +468,9 @@ void WebExtensionController::removeUserContentController(WebUserContentControlle
 
 WebsiteDataStore* WebExtensionController::websiteDataStore(std::optional<PAL::SessionID> sessionID) const
 {
-    if (!sessionID || configuration().defaultWebsiteDataStore().sessionID() == sessionID.value())
-        return &configuration().defaultWebsiteDataStore();
+    Ref configuration = m_configuration;
+    if (!sessionID || configuration->defaultWebsiteDataStore().sessionID() == sessionID.value())
+        return &configuration->defaultWebsiteDataStore();
 
     for (Ref dataStore : allWebsiteDataStores()) {
         if (dataStore->sessionID() == sessionID.value())
@@ -485,7 +486,7 @@ void WebExtensionController::addWebsiteDataStore(WebsiteDataStore& dataStore)
         m_cookieStoreObserver = makeUnique<HTTPCookieStoreObserver>(*this);
 
     m_websiteDataStores.add(dataStore);
-    dataStore.cookieStore().registerObserver(*m_cookieStoreObserver);
+    dataStore.protectedCookieStore()->registerObserver(*m_cookieStoreObserver);
 }
 
 void WebExtensionController::removeWebsiteDataStore(WebsiteDataStore& dataStore)
@@ -497,7 +498,7 @@ void WebExtensionController::removeWebsiteDataStore(WebsiteDataStore& dataStore)
     }
 
     m_websiteDataStores.remove(dataStore);
-    dataStore.cookieStore().unregisterObserver(*m_cookieStoreObserver);
+    dataStore.protectedCookieStore()->unregisterObserver(*m_cookieStoreObserver);
 
     if (m_websiteDataStores.isEmptyIgnoringNullReferences())
         m_cookieStoreObserver = nullptr;
@@ -513,7 +514,7 @@ void WebExtensionController::cookiesDidChange(API::HTTPCookieStore& cookieStore)
 
 bool WebExtensionController::isFeatureEnabled(const String& featureName) const
 {
-    WKPreferences *preferences = configuration().webViewConfiguration().preferences;
+    WKPreferences *preferences = protectedConfiguration()->webViewConfiguration().preferences;
 
     NSString *cocoaFeatureName = static_cast<NSString *>(featureName);
     for (_WKFeature *feature in WKPreferences._features) {
@@ -638,7 +639,7 @@ void WebExtensionController::handleContentRuleListNotification(WebPageProxyIdent
     if (!savedMatchedRule || m_purgeOldMatchedRulesTimer)
         return;
 
-    m_purgeOldMatchedRulesTimer = makeUnique<RunLoop::Timer>(RunLoop::current(), this, &WebExtensionController::purgeOldMatchedRules);
+    m_purgeOldMatchedRulesTimer = makeUnique<RunLoop::Timer>(RunLoop::protectedMain(), this, &WebExtensionController::purgeOldMatchedRules);
     m_purgeOldMatchedRulesTimer->startRepeating(purgeMatchedRulesInterval);
 }
 

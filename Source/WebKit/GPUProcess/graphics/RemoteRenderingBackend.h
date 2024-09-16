@@ -37,6 +37,7 @@
 #include "RemoteImageBufferSetIdentifier.h"
 #include "RemoteResourceCache.h"
 #include "RemoteSerializedImageBufferIdentifier.h"
+#include "RemoteSharedResourceCache.h"
 #include "RenderingBackendIdentifier.h"
 #include "RenderingUpdateID.h"
 #include "ScopedActiveMessageReceiveQueue.h"
@@ -77,7 +78,6 @@ class GPUConnectionToWebProcess;
 class RemoteDisplayListRecorder;
 class RemoteImageBuffer;
 class RemoteImageBufferSet;
-class RemoteSharedResourceCache;
 struct BufferIdentifierSet;
 struct ImageBufferSetPrepareBufferForDisplayInputData;
 struct ImageBufferSetPrepareBufferForDisplayOutputData;
@@ -98,6 +98,7 @@ public:
 
     RemoteResourceCache& remoteResourceCache() { return m_remoteResourceCache; }
     RemoteSharedResourceCache& sharedResourceCache() { return m_sharedResourceCache; }
+    Ref<RemoteSharedResourceCache> protectedSharedResourceCache() { return m_sharedResourceCache; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

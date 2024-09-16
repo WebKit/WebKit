@@ -52,7 +52,7 @@ typedef void (*WKMessageTestDriverFunc)(WKMessageTestSendMessageFunc sendMessage
 
 namespace {
 struct SendMessageContext {
-    IPC::Connection& connection;
+    Ref<IPC::Connection> connection;
     std::atomic<bool>& shouldStop;
 };
 
@@ -230,9 +230,9 @@ void IPCTester::asyncOptionalExceptionData(IPC::Connection&, bool sendEngaged, C
 
 void IPCTester::stopIfNeeded()
 {
-    if (m_testQueue) {
+    if (RefPtr testQueue = m_testQueue) {
         m_shouldStop = true;
-        m_testQueue->dispatchSync([] { });
+        testQueue->dispatchSync([] { });
         m_testQueue = nullptr;
     }
 }

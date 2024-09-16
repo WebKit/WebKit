@@ -270,9 +270,9 @@ private:
 template<typename T, typename RawValue>
 void WebExtensionController::sendToAllProcesses(const T& message, const ObjectIdentifierGenericBase<RawValue>& destinationID)
 {
-    for (auto& process : allProcesses()) {
-        if (process.canSendMessage())
-            process.send(T(message), destinationID);
+    for (Ref process : allProcesses()) {
+        if (process->canSendMessage())
+            process->send(T(message), destinationID);
     }
 }
 

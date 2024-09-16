@@ -73,6 +73,7 @@ private:
     RemoteFaceDetector& operator=(RemoteFaceDetector&&) = delete;
 
     WebCore::ShapeDetection::FaceDetector& backing() { return m_backing; }
+    Ref<RemoteRenderingBackend> protectedBackend() const { return m_backend.get(); }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

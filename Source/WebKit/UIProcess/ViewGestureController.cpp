@@ -179,10 +179,10 @@ bool ViewGestureController::canSwipeInDirection(SwipeDirection direction) const
 #endif
 
     RefPtr<WebPageProxy> alternateBackForwardListSourcePage = m_alternateBackForwardListSourcePage.get();
-    auto& backForwardList = alternateBackForwardListSourcePage ? alternateBackForwardListSourcePage->backForwardList() : webPageProxy->backForwardList();
+    Ref<WebBackForwardList> backForwardList = alternateBackForwardListSourcePage ? alternateBackForwardListSourcePage->backForwardList() : webPageProxy->backForwardList();
     if (direction == SwipeDirection::Back)
-        return !!backForwardList.backItem();
-    return !!backForwardList.forwardItem();
+        return !!backForwardList->backItem();
+    return !!backForwardList->forwardItem();
 }
 
 void ViewGestureController::didStartProvisionalOrSameDocumentLoadForMainFrame()
@@ -564,7 +564,9 @@ void ViewGestureController::startSwipeGesture(PlatformScrollEvent event, SwipeDi
     Ref webPageProxy = m_webPageProxy.get();
     webPageProxy->recordAutomaticNavigationSnapshot();
 
-    RefPtr<WebBackForwardListItem> targetItem = (direction == SwipeDirection::Back) ? webPageProxy->backForwardList().goBackItemSkippingItemsWithoutUserGesture() : webPageProxy->backForwardList().goForwardItemSkippingItemsWithoutUserGesture();
+    RefPtr targetItem = (direction == SwipeDirection::Back)
+        ? webPageProxy->protectedBackForwardList()->goBackItemSkippingItemsWithoutUserGesture()
+        : webPageProxy->protectedBackForwardList()->goForwardItemSkippingItemsWithoutUserGesture();
     if (!targetItem)
         return;
 
@@ -627,7 +629,7 @@ void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetIt
     m_didStartProvisionalLoad = false;
     m_pendingNavigation = webPageProxy->goToBackForwardItem(targetItem);
 
-    auto* currentItem = webPageProxy->backForwardList().currentItem();
+    RefPtr currentItem = webPageProxy->protectedBackForwardList()->currentItem();
     // The main frame will not be navigated so hide the snapshot right away.
     if (currentItem && currentItem->itemIsClone(targetItem)) {
         removeSwipeSnapshot();
@@ -650,7 +652,7 @@ void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetIt
     // FIXME: Like on iOS, we should ensure that even if one of the timeouts fires,
     // we never show the old page content, instead showing the snapshot background color.
 
-    if (ViewSnapshot* snapshot = targetItem.snapshot())
+    if (RefPtr snapshot = targetItem.snapshot())
         m_backgroundColorForCurrentSnapshot = snapshot->backgroundColor();
 }
 
