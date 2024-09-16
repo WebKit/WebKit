@@ -88,3 +88,48 @@ function find(predicate)
 
     return @undefined;
 }
+
+// https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.reduce
+function reduce(reducer /*, initialValue */)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.reduce requires that |this| be an Object.");
+
+    if (!@isCallable(reducer))
+        @throwTypeError("Iterator.prototype.reduce reducer argument must be a function.");
+
+    var initialValue = @argument(1);
+
+    var iteratedIterator = this;
+    var iteratedNextMethod = this.next;
+
+    var accumulator;
+    var counter = 0;
+    if (initialValue === @undefined) {
+        var result = iteratedNextMethod.@call(iteratedIterator);
+        if (!@isObject(result))
+            @throwTypeError("Iterator result interface is not an object.");
+        if (result.done)
+            @throwTypeError("Iterator.prototype.reduce requires an initial value or an iterator that is not done.");
+        accumulator = result.value;
+        counter = 1;
+    } else
+        accumulator = initialValue;
+
+    var wrapper = {
+        @@iterator: function()
+            {
+                return {
+                    next: function() { return iteratedNextMethod.@call(iteratedIterator); },
+                    get return() { return iteratedIterator.return; },
+                };
+            },
+    };
+    for (var item of wrapper) {
+        accumulator = reducer(accumulator, item, counter++);
+    }
+
+    return accumulator;
+}
