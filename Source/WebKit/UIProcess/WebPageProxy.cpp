@@ -246,6 +246,7 @@
 #include <stdio.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/EnumTraits.h>
+#include <wtf/FileSystem.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/NumberOfCores.h>
@@ -401,7 +402,7 @@
 #include "WebExtensionController.h"
 #endif
 
-#if ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
+#if PLATFORM(COCOA)
 #include <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
@@ -1732,8 +1733,13 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
 #endif
 
     if (!resourceDirectoryURL.isEmpty()) {
-        if (checkAssumedReadAccessToResourceURL && process.hasAssumedReadAccessToURL(resourceDirectoryURL))
+        if (checkAssumedReadAccessToResourceURL && process.hasAssumedReadAccessToURL(resourceDirectoryURL)) {
+#if PLATFORM(COCOA)
+            // Check the actual access to this directory in the WebContent process, since a sandbox extension created earlier could have been revoked in the WebContent process by now.
+            if (!sandbox_check(process.processID(), "file-read-data", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_PATH | SANDBOX_CHECK_NO_REPORT), FileSystem::fileSystemRepresentation(resourceDirectoryURL.fileSystemPath()).data()))
+#endif
             return;
+        }
 
         bool createdExtension = false;
 #if HAVE(AUDIT_TOKEN)
