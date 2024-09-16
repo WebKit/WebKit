@@ -424,7 +424,8 @@ void lowerMacros(Code& code)
 
             switch (inst.kind.opcode) {
             case ColdCCall:
-                if (code.optLevel() < 2)
+                // FIXME: ARM can't currently handle ColdCCalls.
+                if (code.optLevel() < 2 || isARM_THUMB2())
                     handleCall();
                 break;
             case CCall:
