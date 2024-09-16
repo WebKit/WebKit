@@ -140,6 +140,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
     return self._protectedWebExtensionCommand->userVisibleShortcut();
 }
 
+- (BOOL)_isActionCommand
+{
+    return self._protectedWebExtensionCommand->isActionCommand();
+}
+
 #if USE(APPKIT)
 - (BOOL)_matchesEvent:(NSEvent *)event
 {
@@ -221,6 +226,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 - (NSString *)_userVisibleShortcut
 {
     return nil;
+}
+
+- (BOOL)_isActionCommand
+{
+    return NO;
 }
 
 #if USE(APPKIT)
