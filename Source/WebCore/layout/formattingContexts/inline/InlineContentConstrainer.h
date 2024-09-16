@@ -35,10 +35,10 @@
 namespace WebCore {
 namespace Layout {
 
-class InlineContentBalancer {
+class InlineContentConstrainer {
 public:
-    InlineContentBalancer(InlineFormattingContext&, const InlineItemList&, const HorizontalConstraints&);
-    std::optional<Vector<LayoutUnit>> computeBalanceConstraints();
+    InlineContentConstrainer(InlineFormattingContext&, const InlineItemList&, const HorizontalConstraints&);
+    std::optional<Vector<LayoutUnit>> computeParagraphLevelConstraints();
 
 private:
     void initialize();
@@ -63,11 +63,11 @@ private:
     size_t m_numberOfLinesInOriginalLayout { 0 };
     size_t m_numberOfInlineItems { 0 };
     double m_maximumLineWidth { 0 };
-    bool m_cannotBalanceContent { false };
+    bool m_cannotConstrainContent { false };
     bool m_hasSingleLineVisibleContent { false };
 
     struct SlidingWidth {
-        SlidingWidth(const InlineContentBalancer&, const InlineItemList&, size_t start, size_t end, bool useFirstLineStyle, bool isFirstLineInChunk);
+        SlidingWidth(const InlineContentConstrainer&, const InlineItemList&, size_t start, size_t end, bool useFirstLineStyle, bool isFirstLineInChunk);
         InlineLayoutUnit width();
         void advanceStart();
         void advanceStartTo(size_t newStart);
@@ -75,7 +75,7 @@ private:
         void advanceEndTo(size_t newEnd);
 
     private:
-        const InlineContentBalancer& m_inlineContentBalancer;
+        const InlineContentConstrainer& m_inlineContentConstrainer;
         const InlineItemList& m_inlineItemList;
         size_t m_start { 0 };
         size_t m_end { 0 };

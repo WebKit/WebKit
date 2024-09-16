@@ -29,8 +29,8 @@
 #include "AvailableLineWidthOverride.h"
 #include "FloatingContext.h"
 #include "FontCascade.h"
-#include "InlineContentBalancer.h"
 #include "InlineContentCache.h"
+#include "InlineContentConstrainer.h"
 #include "InlineDamage.h"
 #include "InlineDisplayBox.h"
 #include "InlineDisplayContentBuilder.h"
@@ -149,8 +149,8 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
     };
 
     if (root().style().textWrapMode() == TextWrapMode::Wrap && root().style().textWrapStyle() == TextWrapStyle::Balance) {
-        auto balancer = InlineContentBalancer { *this, inlineItemList, constraints.horizontal() };
-        auto balancedLineWidths = balancer.computeBalanceConstraints();
+        auto balancer = InlineContentConstrainer { *this, inlineItemList, constraints.horizontal() };
+        auto balancedLineWidths = balancer.computeParagraphLevelConstraints();
         if (balancedLineWidths)
             layoutState().setAvailableLineWidthOverride({ *balancedLineWidths });
     }
