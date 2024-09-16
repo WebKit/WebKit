@@ -5005,7 +5005,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyDominantBaseline:
     case CSSPropertyGlyphOrientationHorizontal:
     case CSSPropertyGlyphOrientationVertical:
-    case CSSPropertyKerning:
     case CSSPropertyTextAnchor:
     case CSSPropertyVectorEffect:
         return svgPropertyValue(propertyID);

@@ -118,7 +118,6 @@ private:
             Pair { SVGNames::strokeAttr->impl(),         { SVGValueProperty<Color>::create, SVGPropertyAnimatorFactory::createColorAnimator } },
 
             Pair { SVGNames::font_sizeAttr->impl(),         { []() { return SVGLength::create(); }, SVGPropertyAnimatorFactory::createLengthAnimator } },
-            Pair { SVGNames::kerningAttr->impl(),           { []() { return SVGLength::create(); }, SVGPropertyAnimatorFactory::createLengthAnimator } },
             Pair { SVGNames::letter_spacingAttr->impl(),    { []() { return SVGLength::create(); }, SVGPropertyAnimatorFactory::createLengthAnimator } },
             Pair { SVGNames::stroke_dashoffsetAttr->impl(), { []() { return SVGLength::create(); }, SVGPropertyAnimatorFactory::createLengthAnimator } },
             Pair { SVGNames::stroke_widthAttr->impl(),      { []() { return SVGLength::create(); }, SVGPropertyAnimatorFactory::createLengthAnimator } },

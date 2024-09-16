@@ -3920,7 +3920,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapperStyleColor(CSSPropertyStrokeColor, &RenderStyle::strokeColor, &RenderStyle::setStrokeColor),
 
         new PropertyWrapperBaselineShift,
-        new PropertyWrapper<SVGLengthValue>(CSSPropertyKerning, &RenderStyle::kerning, &RenderStyle::setKerning),
 #if ENABLE(VARIATION_FONTS)
         new DiscretePropertyWrapper<FontOpticalSizing>(CSSPropertyFontOpticalSizing, &RenderStyle::fontOpticalSizing, &RenderStyle::setFontOpticalSizing),
         new PropertyWrapperFontVariationSettings,

@@ -3855,18 +3855,6 @@
                 "url": "https://www.w3.org/TR/css-logical/#inset-properties"
             }
         },
-        "kerning": {
-            "inherited": true,
-            "codegen-properties": {
-                "converter": "SVGLengthValue",
-                "svg": true,
-                "parser-grammar": "auto | normal | <length unitless-allowed>"
-            },
-            "specification": {
-                "category": "svg",
-                "url": "https://www.w3.org/TR/SVG11/text.html#KerningProperty"
-            }
-        },
         "left": {
             "values": [
                 "auto"

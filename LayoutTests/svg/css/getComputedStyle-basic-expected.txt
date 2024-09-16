@@ -108,7 +108,6 @@ rect: style.getPropertyValue(image-rendering) : auto
 rect: style.getPropertyValue(justify-content) : normal
 rect: style.getPropertyValue(justify-items) : normal
 rect: style.getPropertyValue(justify-self) : auto
-rect: style.getPropertyValue(kerning) : 0
 rect: style.getPropertyValue(left) : auto
 rect: style.getPropertyValue(letter-spacing) : normal
 rect: style.getPropertyValue(lighting-color) : rgb(255, 255, 255)
@@ -350,7 +349,6 @@ g: style.getPropertyValue(image-rendering) : auto
 g: style.getPropertyValue(justify-content) : normal
 g: style.getPropertyValue(justify-items) : normal
 g: style.getPropertyValue(justify-self) : auto
-g: style.getPropertyValue(kerning) : 0
 g: style.getPropertyValue(left) : auto
 g: style.getPropertyValue(letter-spacing) : normal
 g: style.getPropertyValue(lighting-color) : rgb(255, 255, 255)

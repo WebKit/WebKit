@@ -25,7 +25,6 @@
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
 #include "SVGLengthContext.h"
-#include "SVGRenderStyle.h"
 
 namespace WebCore {
 
@@ -35,24 +34,15 @@ SVGTextLayoutEngineSpacing::SVGTextLayoutEngineSpacing(const FontCascade& font)
 {
 }
 
-float SVGTextLayoutEngineSpacing::calculateCSSKerningAndSpacing(const SVGRenderStyle* style, SVGElement* contextElement, const UChar* currentCharacter)
+float SVGTextLayoutEngineSpacing::calculateCSSSpacing(const UChar* currentCharacter)
 {
-    float kerning = 0;
-    auto kerningLength = style->kerning();
-    if (kerningLength.lengthType() == SVGLengthType::Percentage)
-        kerning = kerningLength.valueAsPercentage() * m_font.size();
-    else {
-        SVGLengthContext lengthContext(contextElement);
-        kerning = kerningLength.value(lengthContext);
-    }
-
     const UChar* lastCharacter = m_lastCharacter;
     m_lastCharacter = currentCharacter;
 
-    if (!kerning && !m_font.letterSpacing() && !m_font.wordSpacing())
+    if (!m_font.letterSpacing() && !m_font.wordSpacing())
         return 0;
 
-    float spacing = m_font.letterSpacing() + kerning;
+    float spacing = m_font.letterSpacing();
     if (currentCharacter && lastCharacter && m_font.wordSpacing()) {
         if (FontCascade::treatAsSpace(*currentCharacter) && !FontCascade::treatAsSpace(*lastCharacter))
             spacing += m_font.wordSpacing();

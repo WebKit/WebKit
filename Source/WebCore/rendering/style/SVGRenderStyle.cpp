@@ -53,7 +53,6 @@ Ref<SVGRenderStyle> SVGRenderStyle::createDefaultStyle()
 SVGRenderStyle::SVGRenderStyle()
     : m_fillData(defaultSVGStyle().m_fillData)
     , m_strokeData(defaultSVGStyle().m_strokeData)
-    , m_textData(defaultSVGStyle().m_textData)
     , m_inheritedResourceData(defaultSVGStyle().m_inheritedResourceData)
     , m_stopData(defaultSVGStyle().m_stopData)
     , m_miscData(defaultSVGStyle().m_miscData)
@@ -65,7 +64,6 @@ SVGRenderStyle::SVGRenderStyle()
 SVGRenderStyle::SVGRenderStyle(CreateDefaultType)
     : m_fillData(StyleFillData::create())
     , m_strokeData(StyleStrokeData::create())
-    , m_textData(StyleTextData::create())
     , m_inheritedResourceData(StyleInheritedResourceData::create())
     , m_stopData(StyleStopData::create())
     , m_miscData(StyleMiscData::create())
@@ -80,7 +78,6 @@ inline SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle& other)
     , m_nonInheritedFlags(other.m_nonInheritedFlags)
     , m_fillData(other.m_fillData)
     , m_strokeData(other.m_strokeData)
-    , m_textData(other.m_textData)
     , m_inheritedResourceData(other.m_inheritedResourceData)
     , m_stopData(other.m_stopData)
     , m_miscData(other.m_miscData)
@@ -100,7 +97,6 @@ bool SVGRenderStyle::operator==(const SVGRenderStyle& other) const
 {
     return m_fillData == other.m_fillData
         && m_strokeData == other.m_strokeData
-        && m_textData == other.m_textData
         && m_stopData == other.m_stopData
         && m_miscData == other.m_miscData
         && m_layoutData == other.m_layoutData
@@ -113,7 +109,6 @@ bool SVGRenderStyle::inheritedEqual(const SVGRenderStyle& other) const
 {
     return m_fillData == other.m_fillData
         && m_strokeData == other.m_strokeData
-        && m_textData == other.m_textData
         && m_inheritedResourceData == other.m_inheritedResourceData
         && m_inheritedFlags == other.m_inheritedFlags;
 }
@@ -122,7 +117,6 @@ void SVGRenderStyle::inheritFrom(const SVGRenderStyle& other)
 {
     m_fillData = other.m_fillData;
     m_strokeData = other.m_strokeData;
-    m_textData = other.m_textData;
     m_inheritedResourceData = other.m_inheritedResourceData;
 
     m_inheritedFlags = other.m_inheritedFlags;
@@ -151,10 +145,6 @@ static bool colorChangeRequiresRepaint(const StyleColor& a, const StyleColor& b,
 
 bool SVGRenderStyle::changeRequiresLayout(const SVGRenderStyle& other) const
 {
-    // If kerning changes, we need a relayout, to force SVGCharacterData to be recalculated in the SVGRootInlineBox.
-    if (m_textData != other.m_textData)
-        return true;
-
     // If markers change, we need a relayout, as marker boundaries are cached in RenderSVGPath.
     if (m_inheritedResourceData != other.m_inheritedResourceData)
         return true;
@@ -265,11 +255,6 @@ void SVGRenderStyle::conservativelyCollectChangedAnimatableProperties(const SVGR
             changingProperties.m_properties.set(CSSPropertyStroke);
     };
 
-    auto conservativelyCollectChangedAnimatablePropertiesViaTextData = [&](auto& first, auto& second) {
-        if (first.kerning != second.kerning)
-            changingProperties.m_properties.set(CSSPropertyKerning);
-    };
-
     auto conservativelyCollectChangedAnimatablePropertiesViaStopData = [&](auto& first, auto& second) {
         if (first.opacity != second.opacity)
             changingProperties.m_properties.set(CSSPropertyStopOpacity);
@@ -354,8 +339,6 @@ void SVGRenderStyle::conservativelyCollectChangedAnimatableProperties(const SVGR
         conservativelyCollectChangedAnimatablePropertiesViaFillData(*m_fillData, *other.m_fillData);
     if (m_strokeData != other.m_strokeData)
         conservativelyCollectChangedAnimatablePropertiesViaStrokeData(*m_strokeData, *other.m_strokeData);
-    if (m_textData != other.m_textData)
-        conservativelyCollectChangedAnimatablePropertiesViaTextData(*m_textData, *other.m_textData);
     if (m_stopData != other.m_stopData)
         conservativelyCollectChangedAnimatablePropertiesViaStopData(*m_stopData, *other.m_stopData);
     if (m_miscData != other.m_miscData)
