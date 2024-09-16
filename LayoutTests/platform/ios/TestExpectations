@@ -1288,6 +1288,9 @@ fast/scrolling/vertical-scrollbar-position.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-root-both-edges.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-root.html [ ImageOnlyFailure ]
 
+# Subpixel line positioning
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-027.html [ ImageOnlyFailure ]
+
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-004.html [ ImageOnlyFailure ]

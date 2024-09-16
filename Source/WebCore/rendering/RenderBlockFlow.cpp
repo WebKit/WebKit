@@ -446,7 +446,7 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
         relayoutChildren = true;
 
     if (auto* layoutState = view().frameView().layoutContext().layoutState(); layoutState && layoutState->legacyLineClamp())
-        relayoutChildren = true;
+        relayoutChildren = relayoutChildren || !isFieldset();
 
     rebuildFloatingObjectSetFromIntrudingFloats();
 
