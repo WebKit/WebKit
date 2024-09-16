@@ -54,7 +54,7 @@ struct TextAnimationRange {
     WebCore::CharacterRange range;
 };
 
-struct TextAnimationUnstyledRangeData {
+struct TextAnimationUnanimatedRangeData {
     WTF::UUID animationUUID;
     WebCore::SimpleRange range;
 };
@@ -100,7 +100,7 @@ private:
     WeakPtr<WebPage> m_webPage;
 
     std::optional<WTF::UUID> m_initialAnimationID;
-    std::optional<TextAnimationUnstyledRangeData> m_unstyledRange;
+    std::optional<TextAnimationUnanimatedRangeData> m_unanimatedRangeData;
     std::optional<ReplacedRangeAndString> m_alreadyReplacedRange;
     RefPtr<WebCore::Range> m_manuallyEnabledAnimationRange;
     Vector<TextAnimationRange> m_textAnimationRanges;
