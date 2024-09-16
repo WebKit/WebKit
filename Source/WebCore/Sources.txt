@@ -590,6 +590,7 @@ animation/AnimationTimeline.cpp
 animation/BlendingKeyframes.cpp
 animation/CSSAnimation.cpp
 animation/CSSAnimationEvent.cpp
+animation/CSSNumberishTime.cpp
 animation/CSSPropertyAnimation.cpp
 animation/CSSTransition.cpp
 animation/CSSTransitionEvent.cpp

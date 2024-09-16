@@ -33,6 +33,7 @@
 #include "CSSUnits.h"
 #include "CSSValuePool.h"
 #include "CSSViewValue.h"
+#include "Document.h"
 #include "Element.h"
 #include "StyleBuilderConverter.h"
 

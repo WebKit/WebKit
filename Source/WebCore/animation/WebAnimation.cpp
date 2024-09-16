@@ -314,16 +314,8 @@ ExceptionOr<std::optional<Seconds>> WebAnimation::validateCSSNumberishValue(cons
     if (!optionalCSSNumberish)
         return { std::nullopt };
 
-    if (std::holds_alternative<double>(*optionalCSSNumberish))
-        return { Seconds::fromMilliseconds(std::get<double>(*optionalCSSNumberish)) };
-
-    auto numericValue = std::get<RefPtr<CSSNumericValue>>(*optionalCSSNumberish);
-    if (auto* unitValue = dynamicDowncast<CSSUnitValue>(numericValue.get())) {
-        if (unitValue->unitEnum() == CSSUnitType::CSS_NUMBER)
-            return { Seconds::fromMilliseconds(unitValue->value()) };
-        if (auto milliseconds = unitValue->convertTo(CSSUnitType::CSS_MS))
-            return { Seconds::fromMilliseconds(milliseconds->value()) };
-    }
+    if (auto seconds = CSSNumberishTime { *optionalCSSNumberish }.time())
+        return { *seconds };
 
     return Exception { ExceptionCode::TypeError };
 }

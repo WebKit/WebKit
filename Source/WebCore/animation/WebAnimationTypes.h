@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSNumberishTime.h"
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
 #include "EventTarget.h"

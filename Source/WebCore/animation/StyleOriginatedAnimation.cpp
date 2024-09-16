@@ -295,8 +295,9 @@ void StyleOriginatedAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEv
         if (auto computedIteration = timing.currentIteration)
             iteration = *computedIteration;
         currentPhase = timing.phase;
-        intervalStart = std::max(0_s, Seconds::fromMilliseconds(std::min(-timing.delay, timing.activeDuration)));
-        intervalEnd = std::max(0_s, Seconds::fromMilliseconds(std::min(timing.endTime - timing.delay, timing.activeDuration)));
+        auto activeDuration = timing.activeDuration.time()->milliseconds();
+        intervalStart = std::max(0_s, Seconds::fromMilliseconds(std::min(-timing.delay, activeDuration)));
+        intervalEnd = std::max(0_s, Seconds::fromMilliseconds(std::min(timing.endTime.time()->milliseconds() - timing.delay, activeDuration)));
     } else {
         iteration = 0;
         currentPhase = phaseWithoutEffect();
