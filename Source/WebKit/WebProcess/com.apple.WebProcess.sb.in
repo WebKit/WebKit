@@ -1318,64 +1318,6 @@
         ,@rules
         (set! deny orig-deny)
         (set! allow orig-allow))))
-
-;; Media capture, camera access
-(with-filter (extension "com.apple.webkit.camera")
-    (shared-preferences-read "com.apple.cmio")
-    (shared-preferences-read "com.apple.coremedia")
-    (allow file-read* (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
-    (allow mach-lookup
-        (global-name "com.apple.cmio.AppleCameraAssistant")
-        (global-name "com.apple.cmio.registerassistantservice")
-        (global-name "com.apple.cmio.registerassistantservice.system-extensions")
-        ;; Apple DAL assistants
-        (global-name "com.apple.cmio.VDCAssistant")
-        (global-name "com.apple.cmio.AVCAssistant")
-        (global-name "com.apple.cmio.IIDCVideoAssistant")
-        ;; QuickTimeIIDCDigitizer assistant
-        (global-name "com.apple.IIDCAssistant")
-        ;; applecamerad
-        (require-all
-            (extension "com.apple.webkit.extension.mach")
-            (global-name "com.apple.applecamerad")
-        ))
-    (when (not (webcontent_gpu_sandbox_extensions_blocking))
-    ;; QuickTimeUSBVDCDigitizer
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (iokit-usb-interface-class kUSBVideoInterfaceClass)
-                (iokit-user-client-class "IOUSBDeviceUserClientV2"))
-            (apply-message-filter
-                (allow
-                    iokit-external-method)
-                (deny
-                    iokit-async-external-method
-                    iokit-external-trap)))
-        ; else
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (iokit-usb-interface-class kUSBVideoInterfaceClass)
-                (iokit-user-client-class "IOUSBDeviceUserClientV2"))))
-
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (iokit-usb-interface-class kUSBVideoInterfaceClass)
-                (iokit-user-client-class "IOUSBInterfaceUserClientV2"))
-            (apply-message-filter
-                (allow
-                    iokit-external-method)
-                (deny
-                    iokit-async-external-method
-                    iokit-external-trap)))
-        ; else
-        (allow IOKIT_OPEN_USER_CLIENT
-            (require-all
-                (iokit-usb-interface-class kUSBVideoInterfaceClass)
-                (iokit-user-client-class "IOUSBInterfaceUserClientV2")))))
-
-    (allow device-camera))
 #endif // PLATFORM(MAC)
 
 ;; <rdar://problem/60983812>
@@ -1698,16 +1640,6 @@
     (deny syscall-unix (with telemetry) (syscalls-rarely-used-blocked-in-lockdown-mode))
     (when (equal? (param "CPU") "arm64")
         (deny syscall-unix (with telemetry) (syscall-unix-apple-silicon))))
-#endif
-
-#if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
-(if (equal? (param "CPU") "arm64")
-    (with-filter (extension "com.apple.webkit.camera")
-        (allow mach-lookup
-            (require-all
-                (extension "com.apple.webkit.extension.mach")
-                (global-name "com.apple.appleh13camerad")
-            ))))
 #endif
 
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
