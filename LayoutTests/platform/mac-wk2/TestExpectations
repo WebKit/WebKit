@@ -1627,10 +1627,7 @@ http/tests/webgpu/webgpu/api/validation/buffer/create.html [ Pass ]
 http/tests/webgpu/webgpu/api/validation/buffer/destroy.html [ Pass ]
 http/tests/webgpu/webgpu/api/validation/buffer/mapping.html [ Pass ]
 
-http/tests/webgpu/webgpu/api/validation/queue/submit.html [ Pass ]
 http/tests/webgpu/webgpu/api/validation/queue/destroyed [ Pass ]
-
-http/tests/webgpu/webgpu/shader/execution/flow_control/switch.html [ Pass ]
 
 webkit.org/b/264266 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-002.html [ ImageOnlyFailure ]
 
@@ -1851,3 +1848,9 @@ fast/scrolling/mac/scrollbars/scrollbar-state.html [ Failure ]
 
 # webkit.org/b/279477 REGRESSION (283102@main?): [macOS iOS wk2 Debug EWS ] ASSERTION FAILED: WebKit::WebPageProxy::startNetworkRequestsForPageLoadTiming(WebCore::FrameIdentifier) result of http/tests/site-isolation/window-open-with-name-cross-site.html to crash
 [ Debug ] http/tests/site-isolation/window-open-with-name-cross-site.html [ Skip ]
+
+# webkit.org/b/279769 REGRESSION (283478@main): [ Sonoma arm64 wk2 Release ] 4x http/tests/webgpu/webgpu/* tests are flaky failing. 
+[ Sonoma Release arm64 ] http/tests/webgpu/webgpu/api/validation/queue/destroyed/buffer.html [ Pass Failure ]
+[ Sonoma Release arm64 ] http/tests/webgpu/webgpu/api/validation/queue/destroyed/query_set.html [ Pass Failure ]
+[ Sonoma Release arm64 ] http/tests/webgpu/webgpu/api/validation/queue/submit.html [ Pass Failure ]
+[ Sonoma Release arm64 ] http/tests/webgpu/webgpu/shader/execution/flow_control/switch.html [ Pass Failure ]
