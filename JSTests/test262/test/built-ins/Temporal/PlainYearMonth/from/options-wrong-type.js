@@ -19,4 +19,8 @@ const badOptions = [
 for (const value of badOptions) {
   assert.throws(TypeError, () => Temporal.PlainYearMonth.from({ year: 2021, monthCode: "M01" }, value),
     `TypeError on wrong options type ${typeof value}`);
+  assert.throws(TypeError, () => Temporal.PlainYearMonth.from(new Temporal.PlainYearMonth(2021, 1), value),
+    "TypeError thrown before cloning PlainYearMonth instance");
+  assert.throws(RangeError, () => Temporal.PlainYearMonth.from("1976-11-18Z", value),
+    "Invalid string string processed before throwing TypeError");
 };

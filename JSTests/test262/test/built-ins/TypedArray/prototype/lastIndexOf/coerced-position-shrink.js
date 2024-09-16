@@ -10,13 +10,6 @@ includes: [resizableArrayBufferUtils.js]
 features: [resizable-arraybuffer]
 ---*/
 
-function MayNeedBigInt(ta, n) {
-  if (typeof n == 'number' && (ta instanceof BigInt64Array || ta instanceof BigUint64Array)) {
-    return BigInt(n);
-  }
-  return n;
-}
-
 // Shrinking + fixed-length TA.
 for (let ctor of ctors) {
   const rab = CreateResizableArrayBuffer(4 * ctor.BYTES_PER_ELEMENT, 8 * ctor.BYTES_PER_ELEMENT);
@@ -52,7 +45,7 @@ for (let ctor of ctors) {
   const rab = CreateResizableArrayBuffer(4 * ctor.BYTES_PER_ELEMENT, 8 * ctor.BYTES_PER_ELEMENT);
   const lengthTracking = new ctor(rab);
   for (let i = 0; i < 4; ++i) {
-    WriteToTypedArray(lengthTracking, i, i);
+    lengthTracking[i] = MayNeedBigInt(lengthTracking, i);
   }
   let evil = {
     valueOf: () => {

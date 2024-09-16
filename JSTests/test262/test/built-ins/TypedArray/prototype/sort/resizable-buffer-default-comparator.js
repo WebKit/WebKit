@@ -22,7 +22,7 @@ for (let ctor of ctors) {
   function WriteUnsortedData() {
     // Write some data into the array.
     for (let i = 0; i < taFull.length; ++i) {
-      WriteToTypedArray(taFull, i, 10 - 2 * i);
+      taFull[i] = MayNeedBigInt(taFull, 10 - 2 * i);
     }
   }
   // Orig. array: [10, 8, 6, 4]

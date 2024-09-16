@@ -67,3 +67,7 @@ new AggregateError(case1);
 
 assert.sameValue(count, 3);
 assert.compareArray(values, [1, 2]);
+
+assert.throws(TypeError, () => {
+  new AggregateError();
+}, 'GetMethod(obj, @@iterator) returns undefined');

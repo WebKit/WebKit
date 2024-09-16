@@ -3,7 +3,7 @@
 /*---
 description: |
     A collection of assertion and wrapper functions for testing asynchronous built-ins.
-defines: [asyncTest]
+defines: [asyncTest, assert.throwsAsync]
 ---*/
 
 /**
@@ -50,18 +50,21 @@ function asyncTest(testFunc) {
  */
 assert.throwsAsync = function (expectedErrorConstructor, func, message) {
   return new Promise(function (resolve) {
-    var expectedName = expectedErrorConstructor.name;
-    var expectation = "Expected a " + expectedName + " to be thrown asynchronously";
     var fail = function (detail) {
       if (message === undefined) {
         throw new Test262Error(detail);
       }
       throw new Test262Error(message + " " + detail);
     };
-    var res;
+    if (typeof expectedErrorConstructor !== "function") {
+      fail("assert.throwsAsync called with an argument that is not an error constructor");
+    }
     if (typeof func !== "function") {
       fail("assert.throwsAsync called with an argument that is not a function");
     }
+    var expectedName = expectedErrorConstructor.name;
+    var expectation = "Expected a " + expectedName + " to be thrown asynchronously";
+    var res;
     try {
       res = func();
     } catch (thrown) {
@@ -70,28 +73,33 @@ assert.throwsAsync = function (expectedErrorConstructor, func, message) {
     if (res === null || typeof res !== "object" || typeof res.then !== "function") {
       fail(expectation + " but result was not a thenable");
     }
-
+    var onResFulfilled, onResRejected;
+    var resSettlementP = new Promise(function (onFulfilled, onRejected) {
+      onResFulfilled = onFulfilled;
+      onResRejected = onRejected;
+    });
     try {
-      resolve(Promise.resolve(res).then(
-        function () {
-          fail(expectation + " but no exception was thrown at all");
-        },
-        function (thrown) {
-          var actualName;
-          if (thrown === null || typeof thrown !== "object") {
-            fail(expectation + " but thrown value was not an object");
-          } else if (thrown.constructor !== expectedErrorConstructor) {
-            actualName = thrown.constructor.name;
-            if (expectedName === actualName) {
-              fail(expectation +
-                " but got a different error constructor with the same name");
-            }
-            fail(expectation + " but got a " + actualName);
-          }
-        }
-      ));
+      res.then(onResFulfilled, onResRejected)
     } catch (thrown) {
       fail(expectation + " but .then threw synchronously");
     }
+    resolve(resSettlementP.then(
+      function () {
+        fail(expectation + " but no exception was thrown at all");
+      },
+      function (thrown) {
+        var actualName;
+        if (thrown === null || typeof thrown !== "object") {
+          fail(expectation + " but thrown value was not an object");
+        } else if (thrown.constructor !== expectedErrorConstructor) {
+          actualName = thrown.constructor.name;
+          if (expectedName === actualName) {
+            fail(expectation +
+              " but got a different error constructor with the same name");
+          }
+          fail(expectation + " but got a " + actualName);
+        }
+      }
+    ));
   });
 };
