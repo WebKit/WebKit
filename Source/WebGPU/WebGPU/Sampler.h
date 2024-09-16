@@ -83,13 +83,8 @@ private:
     const Ref<Device> m_device;
     // static is intentional here as the limit is per process
     static Lock samplerStateLock;
-    static NSMutableDictionary<SamplerIdentifier*, id<MTLSamplerState>> *cachedSamplerStates WTF_GUARDED_BY_LOCK(samplerStateLock);
-    static NSMutableOrderedSet<SamplerIdentifier*> *lastAccessedKeys WTF_GUARDED_BY_LOCK(samplerStateLock);
-
-    static Lock aliveCountLock;
-    static NSMutableSet<NSNumber*>* aliveResourceIDs WTF_GUARDED_BY_LOCK(aliveCountLock);
-    static void deallocSamplerState(id aSelf, SEL);
-    static NSUInteger aliveResourcesCount();
+    static NSMutableDictionary<SamplerIdentifier*, id<MTLSamplerState>> *cachedSamplerStates;
+    static NSMutableOrderedSet<SamplerIdentifier*> *lastAccessedKeys;
 
     mutable __weak id<MTLSamplerState> m_cachedSamplerState { nil };
 };

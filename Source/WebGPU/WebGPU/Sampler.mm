@@ -29,13 +29,7 @@
 #import "APIConversions.h"
 #import "Device.h"
 #import <cmath>
-#import <objc/runtime.h>
 #import <wtf/TZoneMallocInlines.h>
-#import <wtf/spi/cocoa/objcSPI.h>
-
-@interface _MTLSampler
-- (void)_objc_initiateDealloc;
-@end
 
 @implementation SamplerIdentifier
 - (instancetype)initWithFirst:(uint64_t)first second:(uint64_t)second
@@ -58,8 +52,6 @@ namespace WebGPU {
 NSMutableDictionary<SamplerIdentifier*, id<MTLSamplerState>> *Sampler::cachedSamplerStates = nil;
 NSMutableOrderedSet<SamplerIdentifier*> *Sampler::lastAccessedKeys = nil;
 Lock Sampler::samplerStateLock;
-Lock Sampler::aliveCountLock;
-NSMutableSet<NSNumber*>* Sampler::aliveResourceIDs = nil;
 
 static bool validateCreateSampler(Device& device, const WGPUSamplerDescriptor& descriptor)
 {
@@ -248,32 +240,12 @@ Ref<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Sampler);
 
-void Sampler::deallocSamplerState(id aSelf, SEL)
-{
-    {
-        Locker locker { aliveCountLock };
-        id<MTLSamplerState> samplerState = aSelf;
-        [aliveResourceIDs removeObject:@(samplerState.gpuResourceID._impl)];
-    }
-    if (isMainRunLoop())
-        _objc_deallocOnMainThreadHelper((__bridge void *)aSelf);
-    else
-        dispatch_async_f(dispatch_get_main_queue(), (__bridge void *)aSelf, _objc_deallocOnMainThreadHelper);
-}
-
 Sampler::Sampler(SamplerIdentifier* samplerIdentifier, const WGPUSamplerDescriptor& descriptor, Device& device)
     : m_samplerIdentifier(samplerIdentifier)
     , m_descriptor(descriptor)
     , m_device(device)
 {
     m_cachedSamplerState = samplerState();
-
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        Class samplerClass = objc_getClass("_MTLSamplerState");
-        class_addMethod(samplerClass, @selector(_objc_initiateDealloc), (IMP)deallocSamplerState, "v@:");
-        _class_setCustomDeallocInitiation(samplerClass);
-    });
 }
 
 Sampler::Sampler(Device& device)
@@ -300,66 +272,41 @@ bool Sampler::isValid() const
     return !!m_samplerIdentifier;
 }
 
-NSUInteger Sampler::aliveResourcesCount()
-{
-    Locker locker { aliveCountLock };
-    return aliveResourceIDs.count;
-}
-
 id<MTLSamplerState> Sampler::samplerState() const
 {
     if (!m_samplerIdentifier)
         return nil;
 
-    {
-        Locker locker { samplerStateLock };
-        if (!cachedSamplerStates) {
-            cachedSamplerStates = [NSMutableDictionary dictionary];
-            lastAccessedKeys = [NSMutableOrderedSet orderedSet];
-        }
-
-        id<MTLSamplerState> samplerState = [cachedSamplerStates objectForKey:m_samplerIdentifier];
-        if (samplerState)
-            return samplerState;
+    Locker locker { samplerStateLock };
+    if (!cachedSamplerStates) {
+        cachedSamplerStates = [NSMutableDictionary dictionary];
+        lastAccessedKeys = [NSMutableOrderedSet orderedSet];
     }
+
+    id<MTLSamplerState> samplerState = [cachedSamplerStates objectForKey:m_samplerIdentifier];
+    if (samplerState)
+        return samplerState;
 
     id<MTLDevice> device = m_device->device();
     if (!device)
         return nil;
-
-    {
-        Locker countLocker { aliveCountLock };
-        if (!aliveResourceIDs)
-            aliveResourceIDs = [NSMutableSet set];
-    }
-
-    const auto maxSamplerCount = device.maxArgumentBufferSamplerCount;
-    while (aliveResourcesCount() >= maxSamplerCount) {
-        Locker locker { samplerStateLock };
-        if (!lastAccessedKeys.count || !cachedSamplerStates.count)
+    if (cachedSamplerStates.count >= device.maxArgumentBufferSamplerCount) {
+        if (!lastAccessedKeys.count)
             return nil;
 
         SamplerIdentifier* key = [lastAccessedKeys objectAtIndex:0];
         if (key)
             [cachedSamplerStates removeObjectForKey:key];
         [lastAccessedKeys removeObjectAtIndex:0];
+        ASSERT(cachedSamplerStates.count < device.maxArgumentBufferSamplerCount);
     }
 
-    id<MTLSamplerState> samplerState = [device newSamplerStateWithDescriptor:createMetalDescriptorFromDescriptor(m_descriptor)];
+    samplerState = [device newSamplerStateWithDescriptor:createMetalDescriptorFromDescriptor(m_descriptor)];
     if (!samplerState)
         return nil;
 
-    {
-        Locker countLocker { aliveCountLock };
-        [aliveResourceIDs addObject:@(samplerState.gpuResourceID._impl)];
-    }
-
-    {
-        Locker locker { samplerStateLock };
-        [cachedSamplerStates setObject:samplerState forKey:m_samplerIdentifier];
-        [lastAccessedKeys addObject:m_samplerIdentifier];
-    }
-
+    [cachedSamplerStates setObject:samplerState forKey:m_samplerIdentifier];
+    [lastAccessedKeys addObject:m_samplerIdentifier];
     m_cachedSamplerState = samplerState;
 
     return samplerState;
