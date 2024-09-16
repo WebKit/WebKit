@@ -232,8 +232,8 @@ void TextAnimationController::addSourceTextAnimationForActiveWritingToolsSession
 
     if (runMode == WebCore::TextAnimationRunMode::OnlyReplaceText) {
         if (m_activeAnimation) {
-            if (m_finalReplaceHandler)
-                (*m_finalReplaceHandler)(WebCore::TextAnimationRunMode::OnlyReplaceText);
+            if (auto finalReplaceHander = std::exchange(m_finalReplaceHandler, std::nullopt))
+                (*finalReplaceHander)(WebCore::TextAnimationRunMode::OnlyReplaceText);
             m_finalReplaceHandler = WTFMove(completionHandler);
         } else
             completionHandler(WebCore::TextAnimationRunMode::OnlyReplaceText);
@@ -306,8 +306,8 @@ void TextAnimationController::addDestinationTextAnimationForActiveWritingToolsSe
 
     if (m_activeAnimation == sourceAnimationUUID) {
         m_activeAnimation = std::nullopt;
-        if (m_finalReplaceHandler)
-            (*m_finalReplaceHandler)(WebCore::TextAnimationRunMode::OnlyReplaceText);
+        if (auto finalReplaceHander = std::exchange(m_finalReplaceHandler, std::nullopt))
+            (*finalReplaceHander)(WebCore::TextAnimationRunMode::OnlyReplaceText);
     }
 
     m_textAnimationRanges.append({ destinationAnimationUUID, replacedCharacterRange });
@@ -401,8 +401,12 @@ void TextAnimationController::clearAnimationsForActiveWritingToolsSession()
     for (auto textAnimationRange : textAnimationRanges)
         m_webPage->removeTextAnimationForAnimationID(textAnimationRange.animationUUID);
 
+    if (auto finalReplaceHander = std::exchange(m_finalReplaceHandler, std::nullopt))
+        (*finalReplaceHander)(WebCore::TextAnimationRunMode::DoNotRun);
+
     m_alreadyReplacedRange = std::nullopt;
     m_unanimatedRangeData = std::nullopt;
+    m_activeAnimation = std::nullopt;
 }
 
 // FIXME: This shouldn't be called anymore, make sure that that is true, and remove.
