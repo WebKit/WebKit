@@ -139,7 +139,7 @@ struct WebPageCreationParameters {
     bool itemStatesWereRestoredByAPIRequest { false };
     Vector<BackForwardListItemState> itemStates { };
 
-    VisitedLinkTableIdentifier visitedLinkTableID { };
+    VisitedLinkTableIdentifier visitedLinkTableID;
     bool canRunBeforeUnloadConfirmPanel { false };
     bool canRunModal { false };
 

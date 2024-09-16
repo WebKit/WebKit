@@ -10630,9 +10630,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
     WebPageCreationParameters parameters {
         .pageGroupData = m_pageGroup->data(),
+        .visitedLinkTableID = m_visitedLinkStore->identifier(),
         .userContentControllerParameters = userContentController->parameters(),
         .mainFrameIdentifier = mainFrameIdentifier,
-        .initialSandboxFlags = m_mainFrame ? m_mainFrame->effectiveSandboxFlags() : SandboxFlags { }
+        .initialSandboxFlags = m_mainFrame ? m_mainFrame->effectiveSandboxFlags() : SandboxFlags { },
     };
 
     parameters.processDisplayName = configuration().processDisplayName();
@@ -10667,7 +10668,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.userAgent = userAgent();
     parameters.itemStatesWereRestoredByAPIRequest = m_sessionStateWasRestoredByAPIRequest;
     parameters.itemStates = m_backForwardList->itemStates();
-    parameters.visitedLinkTableID = m_visitedLinkStore->identifier();
     parameters.canRunBeforeUnloadConfirmPanel = m_uiClient->canRunBeforeUnloadConfirmPanel();
     parameters.canRunModal = m_canRunModal;
     parameters.deviceScaleFactor = deviceScaleFactor();

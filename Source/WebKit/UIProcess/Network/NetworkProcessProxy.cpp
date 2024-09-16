@@ -365,11 +365,11 @@ Ref<DownloadProxy> NetworkProcessProxy::createDownloadProxy(WebsiteDataStore& da
 void NetworkProcessProxy::dataTaskWithRequest(WebPageProxy& page, PAL::SessionID sessionID, WebCore::ResourceRequest&& request, const std::optional<SecurityOriginData>& topOrigin, bool shouldRunAtForegroundPriority, CompletionHandler<void(API::DataTask&)>&& completionHandler)
 {
     auto activity = shouldRunAtForegroundPriority ? throttler().foregroundActivity("WKDataTask initialization"_s) : throttler().backgroundActivity("WKDataTask initialization"_s);
-    sendWithAsyncReply(Messages::NetworkProcess::DataTaskWithRequest(page.identifier(), sessionID, request, topOrigin, IPC::FormDataReference(request.httpBody())), [this, protectedThis = Ref { *this }, weakPage = WeakPtr { page }, activity = WTFMove(activity), shouldRunAtForegroundPriority, completionHandler = WTFMove(completionHandler), originalURL = request.url()] (DataTaskIdentifier identifier) mutable {
+    sendWithAsyncReply(Messages::NetworkProcess::DataTaskWithRequest(page.identifier(), sessionID, request, topOrigin, IPC::FormDataReference(request.httpBody())), [this, protectedThis = Ref { *this }, weakPage = WeakPtr { page }, activity = WTFMove(activity), shouldRunAtForegroundPriority, completionHandler = WTFMove(completionHandler), originalURL = request.url()] (std::optional<DataTaskIdentifier> identifier) mutable {
         auto dataTask = API::DataTask::create(identifier, WTFMove(weakPage), WTFMove(originalURL), shouldRunAtForegroundPriority);
         completionHandler(dataTask);
-        if (decltype(m_dataTasks)::isValidKey(identifier))
-            m_dataTasks.add(identifier, WTFMove(dataTask));
+        if (identifier)
+            m_dataTasks.add(*identifier, WTFMove(dataTask));
         else
             dataTask->networkProcessCrashed();
     }, 0, { }, ShouldStartProcessThrottlerActivity::No);

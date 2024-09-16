@@ -42,8 +42,8 @@ void DataTask::setClient(Ref<DataTaskClient>&& client)
 
 void DataTask::cancel()
 {
-    if (m_networkProcess && m_sessionID)
-        m_networkProcess->cancelDataTask(m_identifier, *m_sessionID);
+    if (m_networkProcess && m_sessionID && m_identifier)
+        m_networkProcess->cancelDataTask(*m_identifier, *m_sessionID);
     m_activity = nullptr;
 }
 
@@ -53,7 +53,7 @@ void DataTask::networkProcessCrashed()
     m_client->didCompleteWithError(*this, WebCore::internalError(m_originalURL));
 }
 
-DataTask::DataTask(WebKit::DataTaskIdentifier identifier, WeakPtr<WebKit::WebPageProxy>&& page, WTF::URL&& originalURL, bool shouldRunAtForegroundPriority)
+DataTask::DataTask(std::optional<WebKit::DataTaskIdentifier> identifier, WeakPtr<WebKit::WebPageProxy>&& page, WTF::URL&& originalURL, bool shouldRunAtForegroundPriority)
     : m_identifier(identifier)
     , m_page(WTFMove(page))
     , m_originalURL(WTFMove(originalURL))

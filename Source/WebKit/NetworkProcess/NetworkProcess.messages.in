@@ -60,7 +60,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     PublishDownloadProgress(WebKit::DownloadID downloadID, URL url, WebKit::SandboxExtensionHandle sandboxExtensionHandle)
 #endif
 #endif
-    DataTaskWithRequest(WebKit::WebPageProxyIdentifier pageID, PAL::SessionID sessionID, WebCore::ResourceRequest request, std::optional<WebCore::SecurityOriginData> topOrigin, IPC::FormDataReference requestBody) -> (WebKit::DataTaskIdentifier taskIdentifier)
+    DataTaskWithRequest(WebKit::WebPageProxyIdentifier pageID, PAL::SessionID sessionID, WebCore::ResourceRequest request, std::optional<WebCore::SecurityOriginData> topOrigin, IPC::FormDataReference requestBody) -> (std::optional<WebKit::DataTaskIdentifier> taskIdentifier)
     CancelDataTask(WebKit::DataTaskIdentifier taskIdentifier, PAL::SessionID sessionID) -> ()
     ApplicationDidEnterBackground()
     ApplicationWillEnterForeground()

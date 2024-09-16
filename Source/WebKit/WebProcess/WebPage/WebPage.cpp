@@ -640,6 +640,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if PLATFORM(IOS_FAMILY)
     , m_updateLayoutViewportHeightExpansionTimer(*this, &WebPage::updateLayoutViewportHeightExpansionTimerFired, updateLayoutViewportHeightExpansionTimerInterval)
 #endif
+#if ENABLE(IPC_TESTING_API)
+    , m_visitedLinkTableID(parameters.visitedLinkTableID)
+#endif
 #if ENABLE(APP_HIGHLIGHTS)
     , m_appHighlightsVisible(parameters.appHighlightsVisible)
 #endif
@@ -1048,10 +1051,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     WEBPAGE_RELEASE_LOG(Process, "WebPage: Created context with ID %u for visibility propagation from UIProcess", m_contextForVisibilityPropagation->contextID());
     send(Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation(m_contextForVisibilityPropagation->cachedContextID()));
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW) && !HAVE(NON_HOSTING_VISIBILITY_PROPAGATION_VIEW)
-
-#if ENABLE(IPC_TESTING_API)
-    m_visitedLinkTableID = parameters.visitedLinkTableID;
-#endif
 
 #if ENABLE(VP9)
     PlatformMediaSessionManager::setShouldEnableVP8Decoder(parameters.shouldEnableVP8Decoder);

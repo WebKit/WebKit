@@ -2158,10 +2158,12 @@ void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTas
     }, *networkDataTask.pendingDownloadID());
 }
 
-void NetworkProcess::dataTaskWithRequest(WebPageProxyIdentifier pageID, PAL::SessionID sessionID, WebCore::ResourceRequest&& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, IPC::FormDataReference&& httpBody, CompletionHandler<void(DataTaskIdentifier)>&& completionHandler)
+void NetworkProcess::dataTaskWithRequest(WebPageProxyIdentifier pageID, PAL::SessionID sessionID, WebCore::ResourceRequest&& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, IPC::FormDataReference&& httpBody, CompletionHandler<void(std::optional<DataTaskIdentifier>)>&& completionHandler)
 {
     request.setHTTPBody(httpBody.takeData());
-    networkSession(sessionID)->dataTaskWithRequest(pageID, WTFMove(request), topOrigin, WTFMove(completionHandler));
+    networkSession(sessionID)->dataTaskWithRequest(pageID, WTFMove(request), topOrigin, [completionHandler = WTFMove(completionHandler)](auto dataTaskIdentifier) mutable {
+        completionHandler(dataTaskIdentifier);
+    });
 }
 
 void NetworkProcess::cancelDataTask(DataTaskIdentifier identifier, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)

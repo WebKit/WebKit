@@ -493,7 +493,7 @@ private:
     void publishDownloadProgress(DownloadID, const URL&, SandboxExtensionHandle&&);
 #endif
 #endif
-    void dataTaskWithRequest(WebPageProxyIdentifier, PAL::SessionID, WebCore::ResourceRequest&&, const std::optional<WebCore::SecurityOriginData>& topOrigin, IPC::FormDataReference&&, CompletionHandler<void(DataTaskIdentifier)>&&);
+    void dataTaskWithRequest(WebPageProxyIdentifier, PAL::SessionID, WebCore::ResourceRequest&&, const std::optional<WebCore::SecurityOriginData>& topOrigin, IPC::FormDataReference&&, CompletionHandler<void(std::optional<DataTaskIdentifier>)>&&);
     void cancelDataTask(DataTaskIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
     void applicationDidEnterBackground();
     void applicationWillEnterForeground();

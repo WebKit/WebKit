@@ -64,9 +64,9 @@ public:
     void didCompleteWithError(WebCore::ResourceError&&);
 
 private:
-    DataTask(WebKit::DataTaskIdentifier, WeakPtr<WebKit::WebPageProxy>&&, WTF::URL&&, bool shouldRunAtForegroundPriority);
+    DataTask(std::optional<WebKit::DataTaskIdentifier>, WeakPtr<WebKit::WebPageProxy>&&, WTF::URL&&, bool shouldRunAtForegroundPriority);
 
-    WebKit::DataTaskIdentifier m_identifier;
+    Markable<WebKit::DataTaskIdentifier> m_identifier;
     WeakPtr<WebKit::WebPageProxy> m_page;
     WTF::URL m_originalURL;
     WeakPtr<WebKit::NetworkProcessProxy> m_networkProcess;
