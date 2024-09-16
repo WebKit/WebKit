@@ -902,48 +902,48 @@ static const GB18030EncodeIndex& gb18030EncodeIndex()
 static std::optional<uint32_t> gb180302022Encode(char32_t codePoint)
 {
     switch (codePoint) {
-    case 0xE81E: return 0x82359037;
-    case 0xE826: return 0x82359038;
-    case 0xE82B: return 0x82359039;
-    case 0xE82C: return 0x82359130;
-    case 0xE832: return 0x82359131;
-    case 0xE843: return 0x82359132;
-    case 0xE854: return 0x82359133;
-    case 0xE864: return 0x82359134;
-    case 0xE78D: return 0x84318236;
-    case 0xE78F: return 0x84318237;
-    case 0xE78E: return 0x84318238;
-    case 0xE790: return 0x84318239;
-    case 0xE791: return 0x84318330;
-    case 0xE792: return 0x84318331;
-    case 0xE793: return 0x84318332;
-    case 0xE794: return 0x84318333;
-    case 0xE795: return 0x84318334;
-    case 0xE796: return 0x84318335;
+    case 0xE81E: return 0xFE59;
+    case 0xE826: return 0xFE61;
+    case 0xE82B: return 0xFE66;
+    case 0xE82C: return 0xFE67;
+    case 0xE832: return 0xFE6D;
+    case 0xE843: return 0xFE7E;
+    case 0xE854: return 0xFE90;
+    case 0xE864: return 0xFEA0;
+    case 0xE78D: return 0xA6D9;
+    case 0xE78F: return 0xA6DB;
+    case 0xE78E: return 0xA6DA;
+    case 0xE790: return 0xA6DC;
+    case 0xE791: return 0xA6DD;
+    case 0xE792: return 0xA6DE;
+    case 0xE793: return 0xA6DF;
+    case 0xE794: return 0xA6EC;
+    case 0xE795: return 0xA6ED;
+    case 0xE796: return 0xA6F3;
     }
     return std::nullopt;
 }
 static std::optional<char32_t> gb180302022Decode(uint8_t first, uint8_t second, uint8_t third, uint8_t fourth)
 {
     switch (static_cast<uint32_t>(first) << 24 | static_cast<uint32_t>(second) << 16 | static_cast<uint32_t>(third) << 8 | fourth) {
-    case 0x82359037: return 0xE81E;
-    case 0x82359038: return 0xE826;
-    case 0x82359039: return 0xE82B;
-    case 0x82359130: return 0xE82C;
-    case 0x82359131: return 0xE832;
-    case 0x82359132: return 0xE843;
-    case 0x82359133: return 0xE854;
-    case 0x82359134: return 0xE864;
-    case 0x84318236: return 0xE78D;
-    case 0x84318237: return 0xE78F;
-    case 0x84318238: return 0xE78E;
-    case 0x84318239: return 0xE790;
-    case 0x84318330: return 0xE791;
-    case 0x84318331: return 0xE792;
-    case 0x84318332: return 0xE793;
-    case 0x84318333: return 0xE794;
-    case 0x84318334: return 0xE795;
-    case 0x84318335: return 0xE796;
+    case 0x82359037: return 0x9FB4;
+    case 0x82359038: return 0x9FB5;
+    case 0x82359039: return 0x9FB6;
+    case 0x82359130: return 0x9FB7;
+    case 0x82359131: return 0x9FB8;
+    case 0x82359132: return 0x9FB9;
+    case 0x82359133: return 0x9FBA;
+    case 0x82359134: return 0x9FBB;
+    case 0x84318236: return 0xFE10;
+    case 0x84318237: return 0xFE11;
+    case 0x84318238: return 0xFE12;
+    case 0x84318239: return 0xFE13;
+    case 0x84318330: return 0xFE14;
+    case 0x84318331: return 0xFE15;
+    case 0x84318332: return 0xFE16;
+    case 0x84318333: return 0xFE17;
+    case 0x84318334: return 0xFE18;
+    case 0x84318335: return 0xFE19;
     }
     return std::nullopt;
 }
