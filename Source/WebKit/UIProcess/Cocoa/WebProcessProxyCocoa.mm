@@ -195,7 +195,7 @@ void WebProcessProxy::sendAudioComponentRegistrations()
         if (!registrations)
             return;
         
-        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), registrations = WTFMove(registrations)] () mutable {
+        RunLoop::protectedMain()->dispatch([weakThis = WTFMove(weakThis), registrations = WTFMove(registrations)] () mutable {
             if (!weakThis)
                 return;
 
@@ -240,7 +240,7 @@ std::optional<audit_token_t> WebProcessProxy::auditToken() const
     if (!hasConnection())
         return std::nullopt;
     
-    return connection().getAuditToken();
+    return protectedConnection()->getAuditToken();
 }
 
 std::optional<Vector<SandboxExtension::Handle>> WebProcessProxy::fontdMachExtensionHandles()

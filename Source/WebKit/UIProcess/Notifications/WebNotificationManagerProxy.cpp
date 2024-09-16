@@ -60,6 +60,11 @@ WebNotificationManagerProxy& WebNotificationManagerProxy::sharedServiceWorkerMan
     return sharedManager->get();
 }
 
+Ref<WebNotificationManagerProxy> WebNotificationManagerProxy::protectedSharedServiceWorkerManager()
+{
+    return sharedServiceWorkerManager();
+}
+
 WebNotificationManagerProxy::WebNotificationManagerProxy(WebProcessPool* processPool)
     : WebContextSupplement(processPool)
     , m_provider(makeUnique<API::NotificationProvider>())
