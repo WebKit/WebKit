@@ -519,6 +519,14 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
     auto commandState = finished ? WritingToolsCompositionCommand::State::Complete : WritingToolsCompositionCommand::State::InProgress;
     replaceContentsOfRangeInSession(*state, resolvedRange, attributedText, commandState);
 
+    bool shouldCommitAfterReplacement = false;
+
+    state->replacedRange = range;
+    if (state->pendingReplacedRange == state->replacedRange) {
+        shouldCommitAfterReplacement = std::exchange(state->shouldCommitAfterReplacement, false);
+        state->pendingReplacedRange = std::nullopt;
+    }
+
     if (runMode == TextAnimationRunMode::OnlyReplaceText) {
         compositionSessionDidFinishReplacement();
         return;
@@ -535,11 +543,20 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 
     compositionSessionDidFinishReplacement(sourceAnimationUUID, destinationAnimationUUID, rangeAfterReplace, attributedText.string);
     document->selection().clear();
+
+    if (shouldCommitAfterReplacement)
+        commitComposition(*state, *document);
 }
 
 void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange(const WritingTools::Session& session, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished)
 {
     RELEASE_LOG(WritingTools, "WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange [range: %llu, %llu; finished: %d]", range.location, range.length, finished);
+
+    RefPtr document = this->document();
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     CheckedPtr state = currentState<WritingTools::Session::Type::Composition>();
     if (!state) {
@@ -548,6 +565,20 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
     }
 
     m_page->chrome().client().removeInitialTextAnimationForActiveWritingToolsSession();
+
+    if (finished) {
+        if (state->replacedRange == range) {
+            commitComposition(*state, *document);
+            return;
+        }
+
+        if (state->pendingReplacedRange == range) {
+            state->shouldCommitAfterReplacement = true;
+            return;
+        }
+    }
+
+    state->pendingReplacedRange = range;
 
     // Must generate these UUID now to pass into the source animation for iOS to work.
     auto sourceAnimationUUID = WTF::UUID::createVersion4();
@@ -901,6 +932,10 @@ void WritingToolsController::restartCompositionForSession()
         return;
     }
 
+    state->shouldCommitAfterReplacement = false;
+    state->pendingReplacedRange = std::nullopt;
+    state->replacedRange = std::nullopt;
+
     state->clearStateDeferralReasons.add({ CompositionState::ClearStateDeferralReason::AnimationInProgress, CompositionState::ClearStateDeferralReason::SessionInProgress });
 
     m_page->chrome().client().clearAnimationsForActiveWritingToolsSession();
@@ -1016,6 +1051,15 @@ void WritingToolsController::replaceContentsOfRangeInSession(CompositionState& s
 
     EditingScope editingScope { *document() };
     state.reappliedCommands.last()->replaceContentsOfRangeWithFragment(WTFMove(fragment), range, matchStyle, commandState);
+}
+
+void WritingToolsController::commitComposition(CompositionState& state, Document& document)
+{
+    {
+        EditingScope editingScope { document };
+        state.reappliedCommands.last()->commit();
+    }
+    compositionSessionDidFinishReplacement();
 }
 
 } // namespace WebKit
