@@ -12,11 +12,12 @@ PASS Slotted content affects multiple dir=auto slots
 PASS Removing slotted content resets direction on dir=auto slot
 FAIL Removing child of slotted content changes direction on dir=auto slot assert_equals: slot is reset to ltr expected "ltr" but got "rtl"
 PASS Child directionality gets updated when dir=auto is set on parent
-FAIL dir=auto slot is updated by text in value of input element children assert_equals: expected "ltr" but got "rtl"
-FAIL dir=auto slot is updated if input stops being auto-directionality form-associated assert_equals: expected "ltr" but got "rtl"
+FAIL dir=auto slot is not affected by text in value of input element children assert_equals: expected "ltr" but got "rtl"
+PASS input direction changes if it stops being auto-directionality form-associated
 PASS slot provides updated directionality from host to a dir=auto container
+PASS text input and textarea value changes should only be reflected in :dir() when dir=auto (value changes)
 א
 א א
 א
 
- abc
+
