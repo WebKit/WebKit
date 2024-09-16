@@ -11,6 +11,12 @@ if (USE_CAPSTONE)
     add_subdirectory(ThirdParty/capstone)
 endif ()
 
+if (USE_SYSTEM_UNIFDEF)
+  find_package(Unifdef REQUIRED)
+else ()
+  add_subdirectory(ThirdParty/unifdef)
+endif ()
+
 add_subdirectory(JavaScriptCore)
 
 if (ENABLE_WEBGL OR USE_ANGLE_EGL)

@@ -18,7 +18,6 @@ find_package(LibXml2 2.8.0 REQUIRED)
 find_package(PNG REQUIRED)
 find_package(SQLite3 REQUIRED)
 find_package(Threads REQUIRED)
-find_package(Unifdef REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(WebP REQUIRED COMPONENTS demux)
 find_package(ATSPI 2.5.3)
@@ -68,6 +67,7 @@ WEBKIT_OPTION_CONFLICT(USE_GTK4 USE_SOUP2)
 # completely unsupported. They are intended for use only by WebKit developers.
 WEBKIT_OPTION_DEFINE(USE_SYSPROF_CAPTURE "Whether to use libsysprof-capture for tracing." PRIVATE ON)
 WEBKIT_OPTION_DEFINE(USE_SYSTEM_SYSPROF_CAPTURE "Whether to use a system-provided libsysprof-capture" PRIVATE ${USE_SYSTEM_SYSPROF_CAPTURE_DEFAULT})
+WEBKIT_OPTION_DEFINE(USE_SYSTEM_UNIFDEF "Whether to use a system-provided unifdef" PRIVATE ON)
 
 WEBKIT_OPTION_DEPEND(USE_SYSTEM_SYSPROF_CAPTURE USE_SYSPROF_CAPTURE)
 

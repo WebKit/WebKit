@@ -68,6 +68,7 @@ file Source/ThirdParty/skia/LICENSE
 directory Source/ThirdParty/skia/include
 directory Source/ThirdParty/skia/modules/skcms
 directory Source/ThirdParty/skia/src
+directory Source/ThirdParty/unifdef
 directory Source/ThirdParty/xdgmime
 directory Source/ThirdParty/libsysprof-capture
 
