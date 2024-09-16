@@ -88,7 +88,7 @@ std::optional<ImageBufferBackendHandle> RemoteLayerWithInProcessRenderingBacking
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 std::optional<ImageBufferBackendHandle> RemoteLayerWithInProcessRenderingBackingStore::displayListHandle() const
 {
-    if (RefPtr frontBuffer = m_frontBuffer.imageBuffer)
+    if (RefPtr frontBuffer = m_bufferSet.m_frontBuffer)
         return frontBuffer->dynamicContentScalingDisplayList();
     return std::nullopt;
 }
