@@ -42,6 +42,10 @@ else ()
     set(USE_SYSTEM_SYSPROF_CAPTURE_DEFAULT ON)
 endif ()
 
+if (COMPILER_IS_CLANG AND DEFINED ENV{USE_LIBCXX})
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-stdlib=libc++)
+endif ()
+
 # Public options specific to the GTK port. Do not add any options here unless
 # there is a strong reason we should support changing the value of the option,
 # and the option is not relevant to other WebKit ports.

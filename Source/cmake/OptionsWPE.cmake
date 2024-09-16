@@ -35,6 +35,10 @@ SET_AND_EXPOSE_TO_BUILD(ENABLE_DEVELOPER_MODE ${DEVELOPER_MODE})
 include(GStreamerDefinitions)
 include(FindGLibCompileResources)
 
+if (COMPILER_IS_CLANG AND DEFINED ENV{USE_LIBCXX})
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-stdlib=libc++)
+endif ()
+
 # Public options shared with other WebKit ports. Do not add any options here
 # without approval from a WPE reviewer. There must be strong reason to support
 # changing the value of the option.
