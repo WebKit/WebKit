@@ -122,11 +122,20 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
             });
         });
     }
-    return [weakThis = ThreadSafeWeakPtr { *this }, identifier, connection = m_connection, resourceOwner = m_resourceOwner, videoFrameObjectHeap = WTFMove(videoFrameObjectHeap), frameRateMonitor = WTFMove(frameRateMonitor)] (CVPixelBufferRef pixelBuffer, int64_t timeStamp, int64_t timeStampNs) mutable {
+    return [weakThis = ThreadSafeWeakPtr { *this }, identifier, connection = m_connection, resourceOwner = m_resourceOwner, videoFrameObjectHeap = WTFMove(videoFrameObjectHeap), frameRateMonitor = WTFMove(frameRateMonitor)] (CVPixelBufferRef pixelBuffer, int64_t timeStamp, int64_t timeStampNs, bool isReordered) mutable {
+        RefPtr protectedThis = weakThis.get();
+        auto scope = makeScopeExit([&] {
+            if (!protectedThis)
+                return;
+
+            bool isGettingReorderedFrame = pixelBuffer && isReordered;
+            if (!isGettingReorderedFrame)
+                protectedThis->notifyDecoderResult(identifier, pixelBuffer || isReordered);
+        });
+
         if (!pixelBuffer) {
-            connection->send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
-            if (RefPtr protectedThis = weakThis.get())
-                protectedThis->notifyDecoderResult(identifier, false);
+            if (!isReordered)
+                connection->send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
             return;
         }
 
@@ -136,14 +145,13 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
         auto videoFrame = WebCore::VideoFrameCV::create(MediaTime(timeStampNs, 1), false, WebCore::VideoFrame::Rotation::None, pixelBuffer);
         if (resourceOwner)
             videoFrame->setOwnershipIdentity(resourceOwner);
-        if (videoFrameObjectHeap) {
-            auto properties = videoFrameObjectHeap->add(WTFMove(videoFrame));
-            connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, timeStampNs, WTFMove(properties) }, 0);
-        } else
+        if (!videoFrameObjectHeap) {
             connection->send(Messages::LibWebRTCCodecs::CompletedDecodingCV { identifier, timeStamp, timeStampNs, pixelBuffer }, 0);
+            return;
+        }
 
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->notifyDecoderResult(identifier, true);
+        auto properties = videoFrameObjectHeap->add(WTFMove(videoFrame));
+        connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, timeStampNs, WTFMove(properties) }, 0);
     };
 }
 

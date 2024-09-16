@@ -181,6 +181,10 @@ class HTMLModelElement;
 class PlatformSpeechSynthesizerMock;
 #endif
 
+#if ENABLE(WEB_CODECS)
+class WebCodecsVideoDecoder;
+#endif
+
 template<typename IDLType> class DOMPromiseDeferred;
 
 struct MockWebAuthenticationConfiguration;
@@ -261,6 +265,10 @@ public:
     unsigned remoteImagesCountForTesting() const;
     void setAsyncDecodingEnabledForTesting(HTMLImageElement&, bool enabled);
     void setForceUpdateImageDataEnabledForTesting(HTMLImageElement&, bool enabled);
+
+#if ENABLE(WEB_CODECS)
+    bool hasPendingActivity(const WebCodecsVideoDecoder&) const;
+#endif
 
     void setGridMaxTracksLimit(unsigned);
 

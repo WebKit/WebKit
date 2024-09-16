@@ -715,6 +715,8 @@ enum RenderingMode {
     undefined setAsyncDecodingEnabledForTesting(HTMLImageElement element, boolean enabled);
     undefined setForceUpdateImageDataEnabledForTesting(HTMLImageElement element, boolean enabled);
 
+    [Conditional=WEB_CODECS] boolean hasPendingActivity(WebCodecsVideoDecoder decoder);
+
     undefined setGridMaxTracksLimit(unsigned long maxTracksLimit);
 
     readonly attribute InternalSettings settings;

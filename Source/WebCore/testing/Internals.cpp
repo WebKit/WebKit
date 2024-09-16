@@ -241,6 +241,7 @@
 #include "VoidCallback.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
+#include "WebCodecsVideoDecoder.h"
 #include "WebCoreJSClientData.h"
 #include "WebRTCProvider.h"
 #include "WindowProxy.h"
@@ -1241,12 +1242,19 @@ void Internals::setAsyncDecodingEnabledForTesting(HTMLImageElement& element, boo
     if (auto* bitmapImage = bitmapImageFromImageElement(element))
         bitmapImage->setAsyncDecodingEnabledForTesting(enabled);
 }
-    
+
 void Internals::setForceUpdateImageDataEnabledForTesting(HTMLImageElement& element, bool enabled)
 {
     if (auto* cachedImage = element.cachedImage())
         cachedImage->setForceUpdateImageDataEnabledForTesting(enabled);
 }
+
+#if ENABLE(WEB_CODECS)
+bool Internals::hasPendingActivity(const WebCodecsVideoDecoder& decoder) const
+{
+    return decoder.hasPendingActivity();
+}
+#endif
 
 void Internals::setGridMaxTracksLimit(unsigned maxTrackLimit)
 {
