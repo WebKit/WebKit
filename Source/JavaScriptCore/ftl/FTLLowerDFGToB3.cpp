@@ -10438,7 +10438,7 @@ IGNORE_CLANG_WARNINGS_END
 
         LValue value = nullptr;
         if (m_node->child2().useKind() == DoubleRepUse) {
-            LValue value = lowDouble(m_node->child2());
+            value = lowDouble(m_node->child2());
             if (abstractValue(m_node->child2()).couldBeType(SpecDoubleImpureNaN))
                 value = purifyNaN(value);
             value = boxDoubleAsDouble(value);
