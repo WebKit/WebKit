@@ -66,6 +66,7 @@ MotionMark1_1 = "MotionMark-1.1"
 MotionMark1_1_1 = "MotionMark-1.1.1"
 MotionMark1_2 = "MotionMark-1.2"
 MotionMark1_3 = "MotionMark-1.3"
+RAMification = "RAMification"
 
 unitMarker = "__unit__"
 
@@ -260,6 +261,23 @@ def plum3Breakdown(jsonObject):
     result[unitMarker] = "B"
     for test in breakdown._results["PLUM3-PhysFootprint"]["tests"].keys():
         result[test] = breakdown._results["PLUM3-PhysFootprint"]["tests"][test]["metrics"]["Allocations"]["Geometric"]["current"]
+    return result
+
+def ramificationBreakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "B"
+    for test in breakdown._results["RAMification"]["tests"].keys():
+        result[test] = breakdown._results["RAMification"]["tests"][test]["metrics"]["Allocations"]["Geometric"]["current"]
+    return result
+
+def detailedRAMificationBreakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "B"
+    for test in breakdown._results["RAMification"]["tests"].keys():
+        for subtest in breakdown._results["RAMification"]["tests"][test]["tests"]:
+            result[test + "-" + subtest] = breakdown._results["RAMification"]["tests"][test]["tests"][subtest]["metrics"]["Allocations"]["Geometric"]["current"]
     return result
 
 def displayStr(value):
@@ -542,7 +560,6 @@ def detectMotionMark1_2(payload):
 def detectMotionMark1_3(payload):
     return "MotionMark-1.3" in payload
 
-
 def motionMarkResults(payload):
     assert any(validMotionMarkDetector(payload) for validMotionMarkDetector in [detectMotionMark, detectMotionMark1_1, detectMotionMark1_1_1, detectMotionMark1_2, detectMotionMark1_3])
     if detectMotionMark(payload):
@@ -565,6 +582,14 @@ def motionMarkResults(payload):
         results.append(stats.gmean(scores))
 
     return results
+
+def detectRAMification(payload):
+    return "RAMification" in payload
+
+def RAMificationResults(payload):
+    assert detectRAMification(payload)
+    breakdown = BenchmarkResults(payload)
+    return breakdown._results["RAMification"]["metrics"]["Allocations"][None]["current"]
 
 def detectBenchmark(payload):
     if detectJetStream3(payload):
@@ -591,12 +616,14 @@ def detectBenchmark(payload):
         return MotionMark1_2
     if detectMotionMark1_3(payload):
         return MotionMark1_3
+    if detectRAMification(payload):
+        return RAMification
     return None
 
 def biggerIsBetter(benchmarkType):
     if benchmarkType in [JetStream2, JetStream3, Speedometer2, Speedometer3, MotionMark, MotionMark1_1, MotionMark1_1_1, MotionMark1_2, MotionMark1_3]:
         return True
-    elif benchmarkType in [PLT5, CompetitivePLT, PLUM3]:
+    elif benchmarkType in [PLT5, CompetitivePLT, PLUM3, RAMification]:
         return False
     else:
         raise Exception('An unknown benchmark type was passed into biggerIsBetter: {}. It should not be possible to hit this.'.format(benchmarkType))
@@ -761,6 +788,16 @@ def main():
 
         if args.csv:
             writeCSV(plum3Breakdown(a), plum3Breakdown(b), args.csv)
+    elif typeA == RAMification:
+        if args.detailed_breakdown:
+            dumpBreakdowns(detailedRAMificationBreakdown(a), detailedRAMificationBreakdown(b))
+        if args.breakdown:
+            dumpBreakdowns(ramificationBreakdown(a), ramificationBreakdown(b))
+
+        ttest(typeA, RAMificationResults(a), RAMificationResults(b))
+
+        if args.csv:
+            writeCSV(ramificationBreakdown(a), ramificationBreakdown(b), args.csv)
     else:
         print("Unknown benchmark type")
         sys.exit(1)
