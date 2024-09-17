@@ -3401,26 +3401,65 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addFusedIfCompare(OpType op, Expression
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addBranchNull(ControlData& data, ExpressionType reference, Stack& returnValues, bool shouldNegate, ExpressionType& result)
 {
-    Value condition;
-    if (reference.isConst())
-        condition = Value::fromI32(reference.asRef() == JSValue::encode(jsNull()));
-    else {
-        // Don't consume the reference since we either need to branch with it or keep it on stack.
-        Location referenceLocation = loadIfNecessary(reference);
-        ASSERT(referenceLocation.isGPR());
-        // The branch will try to move to the scratch anyway so this is fine.
-        condition = Value::pinned(TypeKind::I32, Location::fromGPR(wasmScratchGPR));
-        Location conditionLocation = locationOf(condition);
-        ASSERT(JSValue::encode(jsNull()) >= 0 && JSValue::encode(jsNull()) <= INT32_MAX);
-        m_jit.compare64(shouldNegate ? RelationalCondition::NotEqual : RelationalCondition::Equal, referenceLocation.asGPR(), TrustedImm32(static_cast<int32_t>(JSValue::encode(jsNull()))), conditionLocation.asGPR());
+    if (reference.isConst() && (reference.asRef() == JSValue::encode(jsNull())) == shouldNegate) {
+        // If branch is known to be not-taken, exit early.
+        if (!shouldNegate)
+            result = reference;
+        return { };
     }
 
-    WASM_FAIL_IF_HELPER_FAILS(addBranch(data, condition, returnValues));
+    // The way we use referenceLocation is a little tricky, here's the breakdown:
+    //
+    //  - For a br_on_null, we discard the reference when the branch is taken. In
+    //    this case, we consume the reference as if it was popped (since it was),
+    //    but use its referenceLocation after the branch. This is safe, because
+    //    in the case we don't take the branch, the only operations between
+    //    materializing the ref and writing the result are (1) flushing at the
+    //    block boundary, which can't overwrite non-scratch registers, and (2)
+    //    emitting the branch, which uses the ref but doesn't clobber it. So the
+    //    ref will be live in the same register if we didn't take the branch.
+    //
+    //  - For a br_on_non_null, we discard the reference when we don't take the
+    //    branch. Because the ref is on the expression stack in this case when we
+    //    emit the branch, we don't want to eagerly consume() it - it's not used
+    //    until it's passed as a parameter to the branch target. So, we don't
+    //    consume the value, and rely on block parameter passing logic to ensure
+    //    it's left in the right place.
+    //
+    // Between these cases, we ensure that the reference value is live in
+    // referenceLocation by the time we reach its use.
+
+    Location referenceLocation;
+    if (!reference.isConst())
+        referenceLocation = loadIfNecessary(reference);
+    if (!shouldNegate)
+        consume(reference);
 
     LOG_INSTRUCTION("BrOnNull/NonNull", reference);
 
-    if (!shouldNegate)
-        result = reference;
+    if (reference.isConst()) {
+        // If we didn't exit early, the branch must be always-taken.
+        currentControlData().flushAndSingleExit(*this, data, returnValues, false, false);
+        data.addBranch(m_jit.jump());
+    } else {
+        ASSERT(referenceLocation.isGPR());
+        ASSERT(JSValue::encode(jsNull()) >= 0 && JSValue::encode(jsNull()) <= INT32_MAX);
+        currentControlData().flushAtBlockBoundary(*this, 0, returnValues, false);
+        Jump ifNotTaken = m_jit.branch64(shouldNegate ? CCallHelpers::Equal : CCallHelpers::NotEqual, referenceLocation.asGPR(), TrustedImm32(static_cast<int32_t>(JSValue::encode(jsNull()))));
+        currentControlData().addExit(*this, data.targetLocations(), returnValues);
+        data.addBranch(m_jit.jump());
+        ifNotTaken.link(&m_jit);
+        currentControlData().finalizeBlock(*this, data.targetLocations().size(), returnValues, true);
+    }
+
+    if (!shouldNegate) {
+        result = topValue(reference.type());
+        Location resultLocation = allocate(result);
+        if (reference.isConst())
+            emitMoveConst(reference, resultLocation);
+        else
+            emitMove(reference.type(), referenceLocation, resultLocation);
+    }
 
     return { };
 }
