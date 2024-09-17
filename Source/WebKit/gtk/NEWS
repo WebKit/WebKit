@@ -1,3 +1,16 @@
+================
+WebKitGTK 2.46.0
+================
+
+What's new in WebKitGTK 2.46.0?
+
+  - Fix rendering of images in PDF documents.
+  - Make process launching fast again.
+  - Fix webkit_web_resource_get_data() regression that caused we were always retuning empty data.
+  - Fix the build with GLib < 2.68.
+  - Fix several crashes and rendering issues.
+  - Translatation updates: Polish.
+
 =================
 WebKitGTK 2.45.92
 =================
