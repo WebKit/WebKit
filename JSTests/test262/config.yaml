@@ -18,7 +18,6 @@ skip:
     - regexp-modifiers
     - source-phase-imports
     - Atomics.pause
-    - Math.sumPrecise
   paths:
     - test/built-ins/Temporal/Calendar
     - test/built-ins/Temporal/Instant/prototype/toZonedDateTime
