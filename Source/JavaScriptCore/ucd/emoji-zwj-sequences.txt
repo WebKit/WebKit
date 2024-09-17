@@ -1,11 +1,11 @@
 # emoji-zwj-sequences.txt
-# Date: 2023-06-05, 20:04:50 GMT
-# © 2023 Unicode®, Inc.
+# Date: 2024-08-14, 23:51:54 GMT
+# © 2024 Unicode®, Inc.
 # Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
-# For terms of use, see https://www.unicode.org/terms_of_use.html
+# For terms of use and license, see https://www.unicode.org/terms_of_use.html
 #
 # Emoji ZWJ Sequences for UTS #51
-# Version: 15.1
+# Version: 16.0
 #
 # For documentation and usage, see https://www.unicode.org/reports/tr51
 #
@@ -665,7 +665,7 @@
 1F9D1 200D 1F33E                            ; RGI_Emoji_ZWJ_Sequence  ; farmer                                                         # E12.1  [1] (🧑‍🌾)
 1F9D1 200D 1F373                            ; RGI_Emoji_ZWJ_Sequence  ; cook                                                           # E12.1  [1] (🧑‍🍳)
 1F9D1 200D 1F37C                            ; RGI_Emoji_ZWJ_Sequence  ; person feeding baby                                            # E13.0  [1] (🧑‍🍼)
-1F9D1 200D 1F384                            ; RGI_Emoji_ZWJ_Sequence  ; mx claus                                                       # E13.0  [1] (🧑‍🎄)
+1F9D1 200D 1F384                            ; RGI_Emoji_ZWJ_Sequence  ; Mx Claus                                                       # E13.0  [1] (🧑‍🎄)
 1F9D1 200D 1F393                            ; RGI_Emoji_ZWJ_Sequence  ; student                                                        # E12.1  [1] (🧑‍🎓)
 1F9D1 200D 1F3A4                            ; RGI_Emoji_ZWJ_Sequence  ; singer                                                         # E12.1  [1] (🧑‍🎤)
 1F9D1 200D 1F3A8                            ; RGI_Emoji_ZWJ_Sequence  ; artist                                                         # E12.1  [1] (🧑‍🎨)
@@ -689,7 +689,7 @@
 1F9D1 1F3FB 200D 1F33E                      ; RGI_Emoji_ZWJ_Sequence  ; farmer: light skin tone                                        # E12.1  [1] (🧑🏻‍🌾)
 1F9D1 1F3FB 200D 1F373                      ; RGI_Emoji_ZWJ_Sequence  ; cook: light skin tone                                          # E12.1  [1] (🧑🏻‍🍳)
 1F9D1 1F3FB 200D 1F37C                      ; RGI_Emoji_ZWJ_Sequence  ; person feeding baby: light skin tone                           # E13.0  [1] (🧑🏻‍🍼)
-1F9D1 1F3FB 200D 1F384                      ; RGI_Emoji_ZWJ_Sequence  ; mx claus: light skin tone                                      # E13.0  [1] (🧑🏻‍🎄)
+1F9D1 1F3FB 200D 1F384                      ; RGI_Emoji_ZWJ_Sequence  ; Mx Claus: light skin tone                                      # E13.0  [1] (🧑🏻‍🎄)
 1F9D1 1F3FB 200D 1F393                      ; RGI_Emoji_ZWJ_Sequence  ; student: light skin tone                                       # E12.1  [1] (🧑🏻‍🎓)
 1F9D1 1F3FB 200D 1F3A4                      ; RGI_Emoji_ZWJ_Sequence  ; singer: light skin tone                                        # E12.1  [1] (🧑🏻‍🎤)
 1F9D1 1F3FB 200D 1F3A8                      ; RGI_Emoji_ZWJ_Sequence  ; artist: light skin tone                                        # E12.1  [1] (🧑🏻‍🎨)
@@ -713,7 +713,7 @@
 1F9D1 1F3FC 200D 1F33E                      ; RGI_Emoji_ZWJ_Sequence  ; farmer: medium-light skin tone                                 # E12.1  [1] (🧑🏼‍🌾)
 1F9D1 1F3FC 200D 1F373                      ; RGI_Emoji_ZWJ_Sequence  ; cook: medium-light skin tone                                   # E12.1  [1] (🧑🏼‍🍳)
 1F9D1 1F3FC 200D 1F37C                      ; RGI_Emoji_ZWJ_Sequence  ; person feeding baby: medium-light skin tone                    # E13.0  [1] (🧑🏼‍🍼)
-1F9D1 1F3FC 200D 1F384                      ; RGI_Emoji_ZWJ_Sequence  ; mx claus: medium-light skin tone                               # E13.0  [1] (🧑🏼‍🎄)
+1F9D1 1F3FC 200D 1F384                      ; RGI_Emoji_ZWJ_Sequence  ; Mx Claus: medium-light skin tone                               # E13.0  [1] (🧑🏼‍🎄)
 1F9D1 1F3FC 200D 1F393                      ; RGI_Emoji_ZWJ_Sequence  ; student: medium-light skin tone                                # E12.1  [1] (🧑🏼‍🎓)
 1F9D1 1F3FC 200D 1F3A4                      ; RGI_Emoji_ZWJ_Sequence  ; singer: medium-light skin tone                                 # E12.1  [1] (🧑🏼‍🎤)
 1F9D1 1F3FC 200D 1F3A8                      ; RGI_Emoji_ZWJ_Sequence  ; artist: medium-light skin tone                                 # E12.1  [1] (🧑🏼‍🎨)
@@ -737,7 +737,7 @@
 1F9D1 1F3FD 200D 1F33E                      ; RGI_Emoji_ZWJ_Sequence  ; farmer: medium skin tone                                       # E12.1  [1] (🧑🏽‍🌾)
 1F9D1 1F3FD 200D 1F373                      ; RGI_Emoji_ZWJ_Sequence  ; cook: medium skin tone                                         # E12.1  [1] (🧑🏽‍🍳)
 1F9D1 1F3FD 200D 1F37C                      ; RGI_Emoji_ZWJ_Sequence  ; person feeding baby: medium skin tone                          # E13.0  [1] (🧑🏽‍🍼)
-1F9D1 1F3FD 200D 1F384                      ; RGI_Emoji_ZWJ_Sequence  ; mx claus: medium skin tone                                     # E13.0  [1] (🧑🏽‍🎄)
+1F9D1 1F3FD 200D 1F384                      ; RGI_Emoji_ZWJ_Sequence  ; Mx Claus: medium skin tone                                     # E13.0  [1] (🧑🏽‍🎄)
 1F9D1 1F3FD 200D 1F393                      ; RGI_Emoji_ZWJ_Sequence  ; student: medium skin tone                                      # E12.1  [1] (🧑🏽‍🎓)
 1F9D1 1F3FD 200D 1F3A4                      ; RGI_Emoji_ZWJ_Sequence  ; singer: medium skin tone                                       # E12.1  [1] (🧑🏽‍🎤)
 1F9D1 1F3FD 200D 1F3A8                      ; RGI_Emoji_ZWJ_Sequence  ; artist: medium skin tone                                       # E12.1  [1] (🧑🏽‍🎨)
@@ -761,7 +761,7 @@
 1F9D1 1F3FE 200D 1F33E                      ; RGI_Emoji_ZWJ_Sequence  ; farmer: medium-dark skin tone                                  # E12.1  [1] (🧑🏾‍🌾)
 1F9D1 1F3FE 200D 1F373                      ; RGI_Emoji_ZWJ_Sequence  ; cook: medium-dark skin tone                                    # E12.1  [1] (🧑🏾‍🍳)
 1F9D1 1F3FE 200D 1F37C                      ; RGI_Emoji_ZWJ_Sequence  ; person feeding baby: medium-dark skin tone                     # E13.0  [1] (🧑🏾‍🍼)
-1F9D1 1F3FE 200D 1F384                      ; RGI_Emoji_ZWJ_Sequence  ; mx claus: medium-dark skin tone                                # E13.0  [1] (🧑🏾‍🎄)
+1F9D1 1F3FE 200D 1F384                      ; RGI_Emoji_ZWJ_Sequence  ; Mx Claus: medium-dark skin tone                                # E13.0  [1] (🧑🏾‍🎄)
 1F9D1 1F3FE 200D 1F393                      ; RGI_Emoji_ZWJ_Sequence  ; student: medium-dark skin tone                                 # E12.1  [1] (🧑🏾‍🎓)
 1F9D1 1F3FE 200D 1F3A4                      ; RGI_Emoji_ZWJ_Sequence  ; singer: medium-dark skin tone                                  # E12.1  [1] (🧑🏾‍🎤)
 1F9D1 1F3FE 200D 1F3A8                      ; RGI_Emoji_ZWJ_Sequence  ; artist: medium-dark skin tone                                  # E12.1  [1] (🧑🏾‍🎨)
@@ -785,7 +785,7 @@
 1F9D1 1F3FF 200D 1F33E                      ; RGI_Emoji_ZWJ_Sequence  ; farmer: dark skin tone                                         # E12.1  [1] (🧑🏿‍🌾)
 1F9D1 1F3FF 200D 1F373                      ; RGI_Emoji_ZWJ_Sequence  ; cook: dark skin tone                                           # E12.1  [1] (🧑🏿‍🍳)
 1F9D1 1F3FF 200D 1F37C                      ; RGI_Emoji_ZWJ_Sequence  ; person feeding baby: dark skin tone                            # E13.0  [1] (🧑🏿‍🍼)
-1F9D1 1F3FF 200D 1F384                      ; RGI_Emoji_ZWJ_Sequence  ; mx claus: dark skin tone                                       # E13.0  [1] (🧑🏿‍🎄)
+1F9D1 1F3FF 200D 1F384                      ; RGI_Emoji_ZWJ_Sequence  ; Mx Claus: dark skin tone                                       # E13.0  [1] (🧑🏿‍🎄)
 1F9D1 1F3FF 200D 1F393                      ; RGI_Emoji_ZWJ_Sequence  ; student: dark skin tone                                        # E12.1  [1] (🧑🏿‍🎓)
 1F9D1 1F3FF 200D 1F3A4                      ; RGI_Emoji_ZWJ_Sequence  ; singer: dark skin tone                                         # E12.1  [1] (🧑🏿‍🎤)
 1F9D1 1F3FF 200D 1F3A8                      ; RGI_Emoji_ZWJ_Sequence  ; artist: dark skin tone                                         # E12.1  [1] (🧑🏿‍🎨)
