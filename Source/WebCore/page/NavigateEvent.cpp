@@ -28,14 +28,17 @@
 
 #include "AbortController.h"
 #include "ExceptionCode.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "HistoryController.h"
+#include "LocalFrameView.h"
+#include "NavigationNavigationType.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NavigateEvent);
 
-NavigateEvent::NavigateEvent(const AtomString& type, const NavigateEvent::Init& init, AbortController* abortController)
-    : Event(EventInterfaceType::NavigateEvent, type, init, Event::IsTrusted::Yes)
+NavigateEvent::NavigateEvent(const AtomString& type, const NavigateEvent::Init& init, EventIsTrusted isTrusted, AbortController* abortController)
+    : Event(EventInterfaceType::NavigateEvent, type, init, isTrusted)
     , m_navigationType(init.navigationType)
     , m_destination(init.destination)
     , m_signal(init.signal)
@@ -52,13 +55,13 @@ NavigateEvent::NavigateEvent(const AtomString& type, const NavigateEvent::Init& 
 
 Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, const NavigateEvent::Init& init, AbortController* abortController)
 {
-    return adoptRef(*new NavigateEvent(type, init, abortController));
+    return adoptRef(*new NavigateEvent(type, init, EventIsTrusted::Yes, abortController));
 }
 
 Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, const NavigateEvent::Init& init)
 {
     // FIXME: AbortController is required but JS bindings need to create it with one.
-    return adoptRef(*new NavigateEvent(type, init, nullptr));
+    return adoptRef(*new NavigateEvent(type, init, EventIsTrusted::No, nullptr));
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigateevent-perform-shared-checks
@@ -108,6 +111,18 @@ ExceptionOr<void> NavigateEvent::intercept(Document& document, NavigationInterce
     return { };
 }
 
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#process-scroll-behavior
+void NavigateEvent::processScrollBehavior(Document& document)
+{
+    ASSERT(m_interceptionState == InterceptionState::Committed);
+    m_interceptionState = InterceptionState::Scrolled;
+
+    if (m_navigationType == NavigationNavigationType::Traverse || m_navigationType == NavigationNavigationType::Reload)
+        document.frame()->checkedHistory()->restoreScrollPositionAndViewState();
+    else if (!document.frame()->view()->scrollToFragment(document.url()))
+        document.frame()->view()->scrollTo({ 0, 0 });
+}
+
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigateevent-scroll
 ExceptionOr<void> NavigateEvent::scroll(Document& document)
 {
@@ -118,20 +133,31 @@ ExceptionOr<void> NavigateEvent::scroll(Document& document)
     if (m_interceptionState != InterceptionState::Committed)
         return Exception { ExceptionCode::InvalidStateError, "Interception has not been committed"_s };
 
-    // FIXME: Scroll document: https://html.spec.whatwg.org/multipage/nav-history-apis.html#process-scroll-behavior
+    processScrollBehavior(document);
 
     return { };
 }
 
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#potentially-process-scroll-behavior
+void NavigateEvent::potentiallyProcessScrollBehavior(Document& document)
+{
+    ASSERT(m_interceptionState == InterceptionState::Committed || m_interceptionState == InterceptionState::Scrolled);
+    if (m_interceptionState == InterceptionState::Scrolled || m_scrollBehavior == NavigationScrollBehavior::Manual)
+        return;
+
+    processScrollBehavior(document);
+}
+
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigateevent-finish
-void NavigateEvent::finish()
+void NavigateEvent::finish(Document& document, InterceptionHandlersDidFulfill didFulfill)
 {
     ASSERT(m_interceptionState != InterceptionState::Intercepted && m_interceptionState != InterceptionState::Finished);
     if (!m_interceptionState)
         return;
 
     // FIXME: 3. Potentially reset the focus
-    // FIXME: 4. If didFulfill is true, then potentially process scroll behavior given event.
+    if (didFulfill == InterceptionHandlersDidFulfill::Yes)
+        potentiallyProcessScrollBehavior(document);
 
     m_interceptionState = InterceptionState::Finished;
 }

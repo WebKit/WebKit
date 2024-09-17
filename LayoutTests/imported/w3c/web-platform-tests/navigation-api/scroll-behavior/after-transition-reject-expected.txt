@@ -1,3 +1,3 @@
 
-FAIL scroll: after-transition should not scroll when the intercept() handler rejects assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS scroll: after-transition should not scroll when the intercept() handler rejects
 

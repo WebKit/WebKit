@@ -3006,6 +3006,15 @@ void FrameLoader::restoreScrollPositionAndViewStateSoon()
         document->scheduleRenderingUpdate(RenderingUpdateStep::RestoreScrollPositionAndViewState);
 }
 
+static bool scrollingSuppressedByNavigationAPI(Document* document)
+{
+    if (!document || !document->settings().navigationAPIEnabled())
+        return false;
+
+    RefPtr window = document->protectedWindow();
+    return window && window->navigation().suppressNormalScrollRestoration();
+}
+
 void FrameLoader::restoreScrollPositionAndViewStateNowIfNeeded()
 {
     if (!m_shouldRestoreScrollPositionAndViewState)
@@ -4267,7 +4276,8 @@ void FrameLoader::loadSameDocumentItem(HistoryItem& item)
     loadInSameDocument(item.url(), item.stateObject(), nullptr, false);
 
     // Restore user view state from the current history item here since we don't do a normal load.
-    history->restoreScrollPositionAndViewState();
+    if (!scrollingSuppressedByNavigationAPI(frame->document()))
+        history->restoreScrollPositionAndViewState();
 }
 
 // FIXME: This function should really be split into a couple pieces, some of

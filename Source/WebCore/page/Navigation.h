@@ -151,6 +151,7 @@ public:
     void abortOngoingNavigationIfNeeded();
 
     std::optional<Ref<NavigationHistoryEntry>> findEntryByKey(const String& key);
+    bool suppressNormalScrollRestoration() const { return m_suppressNormalScrollRestorationDuringOngoingNavigation; }
 
 private:
     explicit Navigation(LocalDOMWindow&);

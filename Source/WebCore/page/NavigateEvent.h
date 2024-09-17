@@ -44,6 +44,11 @@ enum class InterceptionState : uint8_t {
     Finished,
 };
 
+enum class InterceptionHandlersDidFulfill : bool {
+    No,
+    Yes
+};
+
 class NavigateEvent final : public Event {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(NavigateEvent);
 public:
@@ -97,14 +102,16 @@ public:
     void setCanIntercept(bool canIntercept) { m_canIntercept = canIntercept; };
     void setInterceptionState(InterceptionState interceptionState) { m_interceptionState = interceptionState; };
 
-    void finish();
+    void finish(Document&, InterceptionHandlersDidFulfill);
 
     Vector<Ref<NavigationInterceptHandler>>& handlers() { return m_handlers; };
 
 private:
-    NavigateEvent(const AtomString& type, const Init&, AbortController*);
+    NavigateEvent(const AtomString& type, const Init&, EventIsTrusted, AbortController*);
 
     ExceptionOr<void> sharedChecks(Document&);
+    void potentiallyProcessScrollBehavior(Document&);
+    void processScrollBehavior(Document&);
 
     NavigationNavigationType m_navigationType;
     RefPtr<NavigationDestination> m_destination;

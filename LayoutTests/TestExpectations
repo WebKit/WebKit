@@ -7415,14 +7415,13 @@ imported/w3c/web-platform-tests/navigation-api/ [ Timeout Pass ]
 
 # This is not part of the spec yet and hasn't been implemented.
 imported/w3c/web-platform-tests/navigation-api/commit-behavior/ [ Skip ]
+imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-before-after-transition-commit.html [ Skip ]
 
 # Not yet implemented so just full of timeouts and flakes.
-imported/w3c/web-platform-tests/navigation-api/scroll-behavior/ [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/focus-reset/ [ Skip ]
 
 # Tests for sourceElement is not yet part of the HTML spec.
 imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form-requestSubmit.html [ Skip ]
-
 
 # These cross-window tests won't work on ports that don't run on the web-platform.test domains (not glib).
 imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/ [ Skip ]
