@@ -237,6 +237,7 @@ set(WTF_PUBLIC_HEADERS
     RedBlackTree.h
     Ref.h
     RefCounted.h
+    RefCountedAndCanMakeWeakPtr.h
     RefCountedFixedVector.h
     RefCountedLeakCounter.h
     RefCounter.h

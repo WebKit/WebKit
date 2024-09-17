@@ -126,7 +126,7 @@ public:
 
 private:
     CheckedRef<Client> m_client;
-    HashMap<DownloadID, std::unique_ptr<PendingDownload>> m_pendingDownloads;
+    HashMap<DownloadID, Ref<PendingDownload>> m_pendingDownloads;
     HashMap<DownloadID, RefPtr<NetworkDataTask>> m_downloadsAfterDestinationDecided;
     DownloadMap m_downloads;
 };
