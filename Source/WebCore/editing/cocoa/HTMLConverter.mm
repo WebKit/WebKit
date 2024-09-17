@@ -2433,8 +2433,11 @@ static RetainPtr<NSAttributedString> attributedStringWithAttachmentForElement(co
     return attributedStringWithAttachmentForFileWrapper(fileWrapper.get());
 }
 
+template<typename Data>
+using ElementCache = WeakHashMap<Element, Data, WeakPtrImplWithEventTargetData>;
+
 #if ENABLE(WRITING_TOOLS)
-static bool hasAncestorQualifyingForWritingToolsPreservation(Element* ancestor, WeakHashMap<Element, bool, WeakPtrImplWithEventTargetData>& cache)
+static bool hasAncestorQualifyingForWritingToolsPreservation(Element* ancestor, ElementCache<bool>& cache)
 {
     if (!ancestor)
         return false;
@@ -2458,6 +2461,91 @@ static bool hasAncestorQualifyingForWritingToolsPreservation(Element* ancestor, 
 }
 #endif
 
+static void updateAttributesForStyle(const Node* node, const RenderStyle& style, OptionSet<IncludedElement> includedElements, ElementCache<bool>& elementQualifiesForWritingToolsPreservationCache, NSMutableDictionary<NSAttributedStringKey, id> *attributes)
+{
+#if ENABLE(WRITING_TOOLS)
+    if (includedElements.contains(IncludedElement::PreservedContent)) {
+        if (hasAncestorQualifyingForWritingToolsPreservation(node->parentElement(), elementQualifiesForWritingToolsPreservationCache))
+            [attributes setObject:@(1) forKey:WTWritingToolsPreservedAttributeName];
+        else
+            [attributes removeObjectForKey:WTWritingToolsPreservedAttributeName];
+    }
+#else
+    UNUSED_PARAM(node);
+    UNUSED_PARAM(includedElements);
+    UNUSED_PARAM(elementQualifiesForWritingToolsPreservationCache);
+#endif
+
+    if (style.textDecorationsInEffect() & TextDecorationLine::Underline)
+        [attributes setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
+    else
+        [attributes removeObjectForKey:NSUnderlineStyleAttributeName];
+
+    if (style.textDecorationsInEffect() & TextDecorationLine::LineThrough)
+        [attributes setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
+    else
+        [attributes removeObjectForKey:NSStrikethroughStyleAttributeName];
+
+    if (auto ctFont = style.fontCascade().primaryFont().getCTFont())
+        [attributes setObject:(__bridge PlatformFont *)ctFont forKey:NSFontAttributeName];
+    else {
+        auto size = style.fontCascade().primaryFont().platformData().size();
+#if PLATFORM(IOS_FAMILY)
+        PlatformFont *platformFont = [PlatformFontClass systemFontOfSize:size];
+#else
+        PlatformFont *platformFont = [[NSFontManager sharedFontManager] convertFont:WebDefaultFont() toSize:size];
+#endif
+        [attributes setObject:platformFont forKey:NSFontAttributeName];
+    }
+
+    auto textAlignment = NSTextAlignmentNatural;
+    switch (style.textAlign()) {
+    case TextAlignMode::Right:
+    case TextAlignMode::WebKitRight:
+        textAlignment = NSTextAlignmentRight;
+        break;
+    case TextAlignMode::Left:
+    case TextAlignMode::WebKitLeft:
+        textAlignment = NSTextAlignmentLeft;
+        break;
+    case TextAlignMode::Center:
+    case TextAlignMode::WebKitCenter:
+        textAlignment = NSTextAlignmentCenter;
+        break;
+    case TextAlignMode::Justify:
+        textAlignment = NSTextAlignmentJustified;
+        break;
+    case TextAlignMode::Start:
+        if (style.hasExplicitlySetDirection())
+            textAlignment = style.isLeftToRightDirection() ? NSTextAlignmentLeft : NSTextAlignmentRight;
+        break;
+    case TextAlignMode::End:
+        textAlignment = style.isLeftToRightDirection() ? NSTextAlignmentRight : NSTextAlignmentLeft;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    if (textAlignment != NSTextAlignmentNatural) {
+        auto paragraphStyle = adoptNS([PlatformNSParagraphStyle defaultParagraphStyle].mutableCopy);
+        [paragraphStyle setAlignment:textAlignment];
+        [attributes setObject:paragraphStyle.get() forKey:NSParagraphStyleAttributeName];
+    }
+
+    Color foregroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyColor);
+    if (foregroundColor.isVisible())
+        [attributes setObject:cocoaColor(foregroundColor).get() forKey:NSForegroundColorAttributeName];
+    else
+        [attributes removeObjectForKey:NSForegroundColorAttributeName];
+
+    Color backgroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+    if (backgroundColor.isVisible())
+        [attributes setObject:cocoaColor(backgroundColor).get() forKey:NSBackgroundColorAttributeName];
+    else
+        [attributes removeObjectForKey:NSBackgroundColorAttributeName];
+}
+
 namespace WebCore {
 
 // This function supports more HTML features than the editing variant below, such as tables.
@@ -2469,11 +2557,7 @@ AttributedString attributedString(const SimpleRange& range)
 // This function uses TextIterator, which makes offsets in its result compatible with HTML editing.
 AttributedString editingAttributedString(const SimpleRange& range, OptionSet<IncludedElement> includedElements)
 {
-#if PLATFORM(MAC)
-    auto fontManager = [NSFontManager sharedFontManager];
-#endif
-
-    WeakHashMap<Element, bool, WeakPtrImplWithEventTargetData> elementQualifiesForWritingToolsPreservationCache;
+    ElementCache<bool> elementQualifiesForWritingToolsPreservationCache;
 
     auto string = adoptNS([[NSMutableAttributedString alloc] init]);
     auto attrs = adoptNS([[NSMutableDictionary alloc] init]);
@@ -2502,91 +2586,14 @@ AttributedString editingAttributedString(const SimpleRange& range, OptionSet<Inc
         if (!node)
             node = it.range().start.container.ptr();
         auto renderer = node->renderer();
-        ASSERT(renderer);
-        if (!renderer)
+
+        if (renderer)
+            updateAttributesForStyle(node, renderer->style(), includedElements, elementQualifiesForWritingToolsPreservationCache, attrs.get());
+        else if (!includedElements.contains(IncludedElement::NonRenderedContent))
             continue;
-        auto& style = renderer->style();
-
-#if ENABLE(WRITING_TOOLS)
-        if (includedElements.contains(IncludedElement::PreservedContent)) {
-            if (hasAncestorQualifyingForWritingToolsPreservation(node->parentElement(), elementQualifiesForWritingToolsPreservationCache))
-                [attrs setObject:@(1) forKey:WTWritingToolsPreservedAttributeName];
-            else
-                [attrs removeObjectForKey:WTWritingToolsPreservedAttributeName];
-        }
-#endif
-
-        if (style.textDecorationsInEffect() & TextDecorationLine::Underline)
-            [attrs setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
-        else
-            [attrs removeObjectForKey:NSUnderlineStyleAttributeName];
-
-        if (style.textDecorationsInEffect() & TextDecorationLine::LineThrough)
-            [attrs setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
-        else
-            [attrs removeObjectForKey:NSStrikethroughStyleAttributeName];
-
-        if (auto ctFont = style.fontCascade().primaryFont().getCTFont())
-            [attrs setObject:(__bridge PlatformFont *)ctFont forKey:NSFontAttributeName];
-        else {
-            auto size = style.fontCascade().primaryFont().platformData().size();
-#if PLATFORM(IOS_FAMILY)
-            PlatformFont *platformFont = [PlatformFontClass systemFontOfSize:size];
-#else
-            PlatformFont *platformFont = [fontManager convertFont:WebDefaultFont() toSize:size];
-#endif
-            [attrs setObject:platformFont forKey:NSFontAttributeName];
-        }
-
-        auto textAlignment = NSTextAlignmentNatural;
-        switch (style.textAlign()) {
-        case TextAlignMode::Right:
-        case TextAlignMode::WebKitRight:
-            textAlignment = NSTextAlignmentRight;
-            break;
-        case TextAlignMode::Left:
-        case TextAlignMode::WebKitLeft:
-            textAlignment = NSTextAlignmentLeft;
-            break;
-        case TextAlignMode::Center:
-        case TextAlignMode::WebKitCenter:
-            textAlignment = NSTextAlignmentCenter;
-            break;
-        case TextAlignMode::Justify:
-            textAlignment = NSTextAlignmentJustified;
-            break;
-        case TextAlignMode::Start:
-            if (style.hasExplicitlySetDirection())
-                textAlignment = style.isLeftToRightDirection() ? NSTextAlignmentLeft : NSTextAlignmentRight;
-            break;
-        case TextAlignMode::End:
-            textAlignment = style.isLeftToRightDirection() ? NSTextAlignmentRight : NSTextAlignmentLeft;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-
-        if (textAlignment != NSTextAlignmentNatural) {
-            auto paragraphStyle = adoptNS([PlatformNSParagraphStyle defaultParagraphStyle].mutableCopy);
-            [paragraphStyle setAlignment:textAlignment];
-            [attrs setObject:paragraphStyle.get() forKey:NSParagraphStyleAttributeName];
-        }
-
-        Color foregroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyColor);
-        if (foregroundColor.isVisible())
-            [attrs setObject:cocoaColor(foregroundColor).get() forKey:NSForegroundColorAttributeName];
-        else
-            [attrs removeObjectForKey:NSForegroundColorAttributeName];
-
-        Color backgroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
-        if (backgroundColor.isVisible())
-            [attrs setObject:cocoaColor(backgroundColor).get() forKey:NSBackgroundColorAttributeName];
-        else
-            [attrs removeObjectForKey:NSBackgroundColorAttributeName];
 
         RetainPtr<NSString> text;
-        if (style.nbspMode() == NBSPMode::Normal)
+        if (!renderer || renderer->style().nbspMode() == NBSPMode::Normal)
             text = it.text().createNSStringWithoutCopying();
         else
             text = makeStringByReplacingAll(it.text(), noBreakSpace, ' ');

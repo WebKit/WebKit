@@ -127,6 +127,12 @@
 @end
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+using PlatformTextPlaceholder = UITextPlaceholder;
+#else
+using PlatformTextPlaceholder = NSTextPlaceholder;
+#endif
+
 @interface WritingToolsWKWebView : TestWKWebView
 
 @end
@@ -2973,39 +2979,17 @@ TEST(WritingTools, SuggestedTextIsSelectedAfterSmartReply)
         [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
 
 #if PLATFORM(MAC)
-        [(id<NSTextInputClient_Async>)webView.get() insertTextPlaceholderWithSize:CGSizeMake(50, 100) completionHandler:^(NSTextPlaceholder *placeholder) {
-
-            TestWebKitAPI::Util::runFor(0.1_s);
-            EXPECT_WK_STREQ(@"", contexts.firstObject.attributedText.string);
-            RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@"Z"]);
-
-            [(id<NSTextInputClient_Async>)webView.get() removeTextPlaceholder:placeholder willInsertText:YES completionHandler:^{
-
-                [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 0) inContext:contexts.firstObject finished:YES];
-
-                [webView waitForSelectionValue:@"Z"];
-
-                [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
-
-                auto selectionAfterEnd = [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"];
-                EXPECT_WK_STREQ(@"Z", selectionAfterEnd);
-
-                EXPECT_WK_STREQ(@"ZAAAA\n\nBBBB", [webView contentsAsString]);
-
-                finished = true;
-
-            }];
-        }];
+        id<NSTextInputClient_Async> contentView = (id<NSTextInputClient_Async>)webView.get();
+#else
+        id<BETextInput> contentView = [webView asyncTextInput];
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-        [(id<UIWKInteractionViewProtocol>)[webView textInputContentView] insertTextPlaceholderWithSize:CGSizeMake(50, 100) completionHandler:^(UITextPlaceholder *placeholder) {
+        [contentView insertTextPlaceholderWithSize:CGSizeMake(50, 100) completionHandler:^(PlatformTextPlaceholder *placeholder) {
             TestWebKitAPI::Util::runFor(0.1_s);
             EXPECT_WK_STREQ(@"", contexts.firstObject.attributedText.string);
             RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@"Z"]);
 
-            [(id<UIWKInteractionViewProtocol>)[webView textInputContentView] removeTextPlaceholder:placeholder willInsertText:YES completionHandler:^{
-
+            [contentView removeTextPlaceholder:placeholder willInsertText:YES completionHandler:^{
                 [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 0) inContext:contexts.firstObject finished:YES];
 
                 [webView waitForSelectionValue:@"Z"];
@@ -3020,7 +3004,6 @@ TEST(WritingTools, SuggestedTextIsSelectedAfterSmartReply)
                 finished = true;
             }];
         }];
-#endif
     }];
 
     TestWebKitAPI::Util::run(&finished);
@@ -3100,6 +3083,38 @@ TEST(WritingTools, CompositionWithComposeCompositionType)
         [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
 
         EXPECT_WK_STREQ(@"This is the first sentence.\n\nThis is another sentence.\n\nThis is the final sentence!", contexts.firstObject.attributedText.string);
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
+TEST(WritingTools, CompositionWithOmittedTrailingWhitespaceContent)
+{
+    NSString *htmlString = @""
+    "<style>\n"
+    ".container {\n"
+    "   display:flex;\n"
+    "}\n"
+    "\n"
+    "img {\n"
+    "   display:block;\n"
+    "   width: 50px;\n"
+    "   height: 5px;\n"
+    "}\n"
+    "</style>\n"
+    "some<span class=container><span><img> </span>\n"
+    "</span>text\n"
+    "";
+
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:htmlString]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    __block bool finished = false;
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
 
         finished = true;
     }];
