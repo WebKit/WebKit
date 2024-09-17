@@ -66,7 +66,6 @@ void compile(State& state, Safepoint::Result& safepointResult)
         graph.freeDFGIRAfterLowering();
 
     {
-        SetForScope disallowFreeze { state.graph.m_frozenValuesAreFinalized, true };
         GraphSafepoint safepoint(state.graph, safepointResult);
         B3::prepareForGeneration(*state.proc);
     }
@@ -128,7 +127,6 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
     CCallHelpers jit(codeBlock);
     {
-        SetForScope disallowFreeze { state.graph.m_frozenValuesAreFinalized, true };
         GraphSafepoint safepoint(state.graph, safepointResult, true);
         B3::generate(*state.proc, jit);
     }
