@@ -61,7 +61,7 @@ static void runTest()
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     
     // Open a database which does not have a database file on disk yet.
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBFileName-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IndexedDBFileName-1" withExtension:@"html"]];
     [webView loadRequest:request];
     
     receivedScriptMessage = false;
@@ -70,7 +70,7 @@ static void runTest()
     EXPECT_WK_STREQ(@"Success", string.get());
 
     // Open a database which already has a database file on disk.
-    request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBFileName-2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IndexedDBFileName-2" withExtension:@"html"]];
     [webView loadRequest:request];
 
     receivedScriptMessage = false;
@@ -119,7 +119,7 @@ static void createDirectories(StringView testName)
     NSURL *directOriginDirectoryURL = [idbRootURL URLByAppendingPathComponent:@"file__0"];
     NSURL *directExistingDatabaseDirectoryURL = [directOriginDirectoryURL URLByAppendingPathComponent:existingDatabaseName];
     NSURL *directUnusedDatabaseDirectoryURL = [directOriginDirectoryURL URLByAppendingPathComponent:unusedDatabaseName];
-    NSURL *resourceDatabaseFileURL = [[NSBundle mainBundle] URLForResource:@"IndexedDB" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *resourceDatabaseFileURL = [NSBundle.test_resourcesBundle URLForResource:@"IndexedDB" withExtension:@"sqlite3"];
     [defaultFileManager createDirectoryAtURL:directExistingDatabaseDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
     [defaultFileManager createDirectoryAtURL:directUnusedDatabaseDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
     [defaultFileManager copyItemAtURL:resourceDatabaseFileURL toURL:[directExistingDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
@@ -219,7 +219,7 @@ TEST(IndexedDB, IndexedDBFileHashCollision)
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBFileName-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IndexedDBFileName-1" withExtension:@"html"]];
     [webView loadRequest:request];
 
     receivedScriptMessage = false;

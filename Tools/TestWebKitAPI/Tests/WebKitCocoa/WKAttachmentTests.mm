@@ -150,7 +150,7 @@ using CocoaPasteboard = UIPasteboard;
 
 static NSURL *testiWorkAttachmentFileURL()
 {
-    return [[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pages" subdirectory:@"TestWebKitAPI.resources"];
+    return [NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pages"];
 }
 
 static NSData *testiWorkAttachmentData()
@@ -273,7 +273,7 @@ static RetainPtr<TestWKWebView> webViewForTestingAttachments()
 
 static NSData *testZIPData()
 {
-    NSURL *zipFileURL = [[NSBundle mainBundle] URLForResource:@"compressed-files" withExtension:@"zip" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *zipFileURL = [NSBundle.test_resourcesBundle URLForResource:@"compressed-files" withExtension:@"zip"];
     return [NSData dataWithContentsOfURL:zipFileURL];
 }
 
@@ -284,7 +284,7 @@ static NSData *testHTMLData()
 
 static NSURL *testImageFileURL()
 {
-    return [[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"];
+    return [NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"];
 }
 
 static NSData *testImageData()
@@ -294,7 +294,7 @@ static NSData *testImageData()
 
 static NSURL *testGIFFileURL()
 {
-    return [[NSBundle mainBundle] URLForResource:@"apple" withExtension:@"gif" subdirectory:@"TestWebKitAPI.resources"];
+    return [NSBundle.test_resourcesBundle URLForResource:@"apple" withExtension:@"gif"];
 }
 
 static NSData *testGIFData()
@@ -304,7 +304,7 @@ static NSData *testGIFData()
 
 static NSURL *testPDFFileURL()
 {
-    return [[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"];
+    return [NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"];
 }
 
 static NSData *testPDFData()
@@ -314,7 +314,7 @@ static NSData *testPDFData()
 
 static NSURL *testJPEGFileURL()
 {
-    return [[NSBundle mainBundle] URLForResource:@"sunset-in-cupertino-600px" withExtension:@"jpg" subdirectory:@"TestWebKitAPI.resources"];
+    return [NSBundle.test_resourcesBundle URLForResource:@"sunset-in-cupertino-600px" withExtension:@"jpg"];
 }
 
 static NSData *testJPEGData()
@@ -2299,7 +2299,7 @@ TEST(WKAttachmentTestsIOS, TargetedPreviewIsClippedWhenDroppingTallImage)
     [webView stringByEvaluatingJavaScript:@"document.body.style.margin = '0'"];
     [webView _setEditable:YES];
 
-    auto imageData = retainPtr([NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]]);
+    auto imageData = retainPtr([NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]]);
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
 
     auto preview = targetedImageDragPreview(webView.get(), imageData.get(), CGSizeMake(100, 100));
@@ -2561,7 +2561,7 @@ static RetainPtr<NSItemProvider> mapItemForTesting()
 
 static RetainPtr<NSItemProvider> calendarInviteForTesting()
 {
-    RetainPtr url = [[NSBundle mainBundle] URLForResource:@"event" withExtension:@"ics" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr url = [NSBundle.test_resourcesBundle URLForResource:@"event" withExtension:@"ics"];
     RetainPtr data = [NSData dataWithContentsOfURL:url.get()];
     RetainPtr text = adoptNS([[NSString alloc] initWithData:data.get() encoding:NSUTF8StringEncoding]);
     RetainPtr itemProvider = adoptNS([[NSItemProvider alloc] init]);

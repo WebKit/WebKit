@@ -87,7 +87,7 @@ TEST(IndexedDB, CheckpointsWALAutomatically)
     [configuration.get().websiteDataStore _terminateNetworkProcess];
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    RetainPtr request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IDBCheckpointWAL" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IDBCheckpointWAL" withExtension:@"html"]];
     [webView loadRequest:request.get()];
     TestWebKitAPI::Util::run([handler receivedScriptMessagePointer]);
     EXPECT_STREQ([[[handler lastScriptMessage] body] UTF8String], "Success");

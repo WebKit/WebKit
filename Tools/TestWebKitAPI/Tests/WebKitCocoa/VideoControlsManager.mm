@@ -427,7 +427,7 @@ TEST(VideoControlsManager, VideoControlsManagerTearsDownMediaControlsOnDealloc)
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
-    NSURL *urlOfVideo = [[NSBundle mainBundle] URLForResource:@"video-with-audio" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *urlOfVideo = [NSBundle.test_resourcesBundle URLForResource:@"video-with-audio" withExtension:@"mp4"];
     [webView loadFileURL:urlOfVideo allowingReadAccessToURL:[urlOfVideo URLByDeletingLastPathComponent]];
 
     __block bool finishedTest = false;
@@ -479,7 +479,7 @@ TEST(VideoControlsManager, VideoControlsManagerSmallVideoInMediaDocument)
         finishedLoad = true;
     }];
     
-    NSURL *urlOfVideo = [[NSBundle mainBundle] URLForResource:@"video-with-audio" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *urlOfVideo = [NSBundle.test_resourcesBundle URLForResource:@"video-with-audio" withExtension:@"mp4"];
     [webView loadFileURL:urlOfVideo allowingReadAccessToURL:[urlOfVideo URLByDeletingLastPathComponent]];
     
     TestWebKitAPI::Util::run(&finishedLoad);

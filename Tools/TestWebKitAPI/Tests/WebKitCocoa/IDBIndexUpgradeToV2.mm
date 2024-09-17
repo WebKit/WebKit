@@ -60,8 +60,8 @@ TEST(IndexedDB, IndexUpgradeToV2)
     [configuration.get().websiteDataStore _terminateNetworkProcess];
 
     // Copy the inconsistent database files to the database directory
-    NSURL *url1 = [[NSBundle mainBundle] URLForResource:@"IndexUpgrade" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
-    NSURL *url2 = [[NSBundle mainBundle] URLForResource:@"IndexUpgrade" withExtension:@"blob" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url1 = [NSBundle.test_resourcesBundle URLForResource:@"IndexUpgrade" withExtension:@"sqlite3"];
+    NSURL *url2 = [NSBundle.test_resourcesBundle URLForResource:@"IndexUpgrade" withExtension:@"blob"];
 
     NSString *hash = WebCore::SQLiteFileSystem::computeHashForFileName("index-upgrade-test"_s);
     NSString *originDirectory = @"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/IndexedDB/v1/file__0/";
@@ -75,7 +75,7 @@ TEST(IndexedDB, IndexUpgradeToV2)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IDBIndexUpgradeToV2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IDBIndexUpgradeToV2" withExtension:@"html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&receivedScriptMessage);
@@ -90,7 +90,7 @@ static void runMultipleIndicesTestWithDatabase(NSString* databaseName)
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     [configuration.get().websiteDataStore _terminateNetworkProcess];
 
-    RetainPtr url = [[NSBundle mainBundle] URLForResource:databaseName withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr url = [NSBundle.test_resourcesBundle URLForResource:databaseName withExtension:@"sqlite3"];
     String hash = WebCore::SQLiteFileSystem::computeHashForFileName("index-upgrade-test"_s);
     RetainPtr originURL = [NSURL URLWithString:@"file://"];
     __block RetainPtr<NSString> originDirectoryString;
@@ -105,7 +105,7 @@ static void runMultipleIndicesTestWithDatabase(NSString* databaseName)
     [[NSFileManager defaultManager] copyItemAtURL:url.get() toURL:[databaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
 
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    RetainPtr request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IDBIndexUpgradeToV2WithMultipleIndices" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IDBIndexUpgradeToV2WithMultipleIndices" withExtension:@"html"]];
     [webView loadRequest:request.get()];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
 

@@ -65,7 +65,7 @@ TEST(TopContentInset, Fullscreen)
     [[window contentView] addSubview:webView.get()];
     [window makeKeyAndOrderFront:nil];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"FullscreenTopContentInset" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"FullscreenTopContentInset" withExtension:@"html"]];
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&receivedLoadedMessage);
 

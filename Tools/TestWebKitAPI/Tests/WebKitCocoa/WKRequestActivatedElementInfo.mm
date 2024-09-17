@@ -77,7 +77,7 @@ TEST(_WKActivatedElementInfo, InfoForLink)
 TEST(_WKActivatedElementInfo, InfoForImage)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 215, 174)]);
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"image" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"image" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -97,7 +97,7 @@ TEST(_WKActivatedElementInfo, InfoForImage)
 TEST(_WKActivatedElementInfo, InfoForMediaDocument)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 215, 174)]);
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -121,7 +121,7 @@ TEST(_WKActivatedElementInfo, InfoForMediaDocument)
 TEST(_WKActivatedElementInfo, InfoForLinkAroundImage)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"link-with-image" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"link-with-image" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 

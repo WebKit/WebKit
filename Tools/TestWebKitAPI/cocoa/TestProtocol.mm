@@ -130,7 +130,7 @@ static NSString *contentTypeForFileExtension(NSString *fileExtension)
         NSString *fileName = requestURL.lastPathComponent;
         NSString *fileExtension = fileName.pathExtension;
         contentType = contentTypeForFileExtension(fileExtension);
-        data = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:fileName.stringByDeletingPathExtension withExtension:fileExtension subdirectory:@"TestWebKitAPI.resources"]];
+        data = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:fileName.stringByDeletingPathExtension withExtension:fileExtension]];
     } else {
         contentType = @"text/html";
         data = [@"PASS" dataUsingEncoding:NSASCIIStringEncoding];

@@ -43,13 +43,13 @@ TEST(WebKit, LoadAndDecodeImage)
         return result;
     };
     auto pngData = [&] {
-        return contentsToVector([[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]);
+        return contentsToVector([NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]);
     };
     auto untaggedPNGData = [&] {
-        return contentsToVector([[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]);
+        return contentsToVector([NSBundle.test_resourcesBundle URLForResource:@"400x400-green" withExtension:@"png"]);
     };
     auto gifData = [&] {
-        return contentsToVector([[NSBundle mainBundle] URLForResource:@"apple" withExtension:@"gif" subdirectory:@"TestWebKitAPI.resources"]);
+        return contentsToVector([NSBundle.test_resourcesBundle URLForResource:@"apple" withExtension:@"gif"]);
     };
 
     HTTPServer server {

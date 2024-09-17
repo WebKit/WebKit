@@ -68,7 +68,7 @@
 
 static unsigned redirectCount = 0;
 static bool hasReceivedResponse;
-static NSURL *sourceURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+static NSURL *sourceURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
 static WKWebView* expectedOriginatingWebView;
 static bool expectedUserInitiatedState = false;
 
@@ -343,13 +343,13 @@ TEST(_WKDownload, OriginatingWebView)
 
 TEST(_WKDownload, DownloadRequestOriginalURL)
 {
-    NSURL *originalURL = [[NSBundle mainBundle] URLForResource:@"DownloadRequestOriginalURL" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *originalURL = [NSBundle.test_resourcesBundle URLForResource:@"DownloadRequestOriginalURL" withExtension:@"html"];
     runTest(adoptNS([[DownloadRequestOriginalURLNavigationDelegate alloc] init]).get(), adoptNS([[DownloadRequestOriginalURLDelegate alloc] initWithExpectedOriginalURL:originalURL]).get(), originalURL);
 }
 
 TEST(_WKDownload, DownloadRequestOriginalURLFrame)
 {
-    NSURL *originalURL = [[NSBundle mainBundle] URLForResource:@"DownloadRequestOriginalURL2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *originalURL = [NSBundle.test_resourcesBundle URLForResource:@"DownloadRequestOriginalURL2" withExtension:@"html"];
     runTest(adoptNS([[DownloadRequestOriginalURLNavigationDelegate alloc] init]).get(), adoptNS([[DownloadRequestOriginalURLDelegate alloc] initWithExpectedOriginalURL:originalURL]).get(), originalURL);
 }
 
@@ -367,7 +367,7 @@ TEST(_WKDownload, DownloadRequestOriginalURLDirectDownloadWithLoadedContent)
     [[[webView configuration] processPool] _setDownloadDelegate:downloadDelegate.get()];
 
     expectedUserInitiatedState = false;
-    NSURL *contentURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *contentURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
     // Here is to test if the original URL can be set correctly when the current document
     // is completely unrelated to the download.
     [webView loadRequest:[NSURLRequest requestWithURL:contentURL]];
@@ -454,7 +454,7 @@ IGNORE_WARNINGS_END
 
 TEST(_WKDownload, DownloadRequestBlobURL)
 {
-    NSURL *originalURL = [[NSBundle mainBundle] URLForResource:@"DownloadRequestBlobURL" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *originalURL = [NSBundle.test_resourcesBundle URLForResource:@"DownloadRequestBlobURL" withExtension:@"html"];
     runTest(adoptNS([[DownloadBlobURLNavigationDelegate alloc] init]).get(), adoptNS([[BlobDownloadDelegate alloc] init]).get(), originalURL);
 }
 
@@ -665,7 +665,7 @@ TEST(_WKDownload, DownloadCanceledWhileDecidingDestination)
 
 TEST(_WKDownload, SystemPreviewUSDZBlobNaming)
 {
-    NSURL *originalURL = [[NSBundle mainBundle] URLForResource:@"SystemPreviewBlobNaming" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *originalURL = [NSBundle.test_resourcesBundle URLForResource:@"SystemPreviewBlobNaming" withExtension:@"html"];
     runTest(adoptNS([[DownloadBlobURLNavigationDelegate alloc] init]).get(), adoptNS([[BlobWithUSDZExtensionDownloadDelegate alloc] init]).get(), originalURL);
 }
 

@@ -1161,7 +1161,7 @@ TEST(WebKit, InvalidDeviceIdHashSalts)
     // Prepare invalid data.
     if ([fileManager fileExistsAtPath:filePath.path])
         [fileManager removeItemAtPath:filePath.path error:nil];
-    auto *fileData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"invalidDeviceIDHashSalts" withExtension:@"" subdirectory:@"TestWebKitAPI.resources"]];
+    auto *fileData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"invalidDeviceIDHashSalts" withExtension:@""]];
     EXPECT_TRUE([fileManager createFileAtPath:filePath.path contents:fileData attributes: nil]);
     while (![fileManager fileExistsAtPath:filePath.path])
         Util::spinRunLoop();

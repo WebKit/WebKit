@@ -39,7 +39,7 @@ TEST(WebKitLegacy, WebViewCanPasteZeroPng)
     
     //pasting a 0x0 image as pdf board type. Referring to <rdar://problem/11141920>
     [[NSPasteboard generalPasteboard] declareTypes:@[NSPDFPboardType] owner:nil];
-    [[[NSBundle mainBundle] URLForResource:@"0" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"] writeToPasteboard:[NSPasteboard generalPasteboard]];
+    [[NSBundle.test_resourcesBundle URLForResource:@"0" withExtension:@"png"] writeToPasteboard:[NSPasteboard generalPasteboard]];
     [webView paste:nil];
 }
 

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "TestInspectorURLSchemeHandler.h"
 
+#import "PlatformUtilities.h"
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebKit/WKURLSchemeTask.h>
 #import <wtf/Assertions.h>
@@ -43,7 +44,7 @@
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
 {
     if (!_cachedBundle)
-        _cachedBundle = [NSBundle mainBundle];
+        _cachedBundle = NSBundle.test_resourcesBundle;
 
     if (!_fileLoadOperations)
         _fileLoadOperations = adoptNS([[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:5]);
@@ -64,7 +65,7 @@
         });
 
         NSURL *requestURL = urlSchemeTask.request.URL;
-        NSURL *fileURLForRequest = [_cachedBundle URLForResource:requestURL.relativePath withExtension:@"" subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *fileURLForRequest = [_cachedBundle URLForResource:requestURL.relativePath withExtension:@""];
         if (!fileURLForRequest) {
             [urlSchemeTask didFailWithError:[NSError errorWithDomain:NSCocoaErrorDomain code:NSURLErrorFileDoesNotExist userInfo:nil]];
             return;

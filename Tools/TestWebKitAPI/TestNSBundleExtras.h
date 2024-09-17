@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import <Foundation/Foundation.h>
 
-#import "PlatformUtilities.h"
-#import "TestWKWebView.h"
-#import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/WKWebViewPrivateForTesting.h>
-#import <wtf/RetainPtr.h>
+NS_ASSUME_NONNULL_BEGIN
 
-namespace TestWebKitAPI {
+@interface NSBundle (TestExtras)
 
-#if ENABLE(VIDEO_PRESENTATION_MODE)
++ (instancetype _Nullable)test_resourcesBundle;
 
-TEST(MediaDocument, WirelessPlaybackEnabled)
-{
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+@end
 
-    NSURL *videoURL = [NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"mp4"];
-    [webView loadFileURL:videoURL allowingReadAccessToURL:videoURL];
-
-    while (![webView _wirelessVideoPlaybackDisabled])
-        Util::runFor(0.1_s);
-}
-
-#endif // ENABLE(VIDEO_PRESENTATION_MODE)
-
-}
+NS_ASSUME_NONNULL_END

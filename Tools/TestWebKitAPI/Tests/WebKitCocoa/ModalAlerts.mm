@@ -137,7 +137,7 @@ TEST(WebKit, ModalAlerts)
 
     [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"modal-alerts-in-new-about-blank-window" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"modal-alerts-in-new-about-blank-window" withExtension:@"html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&isDone);

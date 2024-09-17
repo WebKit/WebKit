@@ -905,8 +905,8 @@ TEST(AdvancedPrivacyProtections, ClampScreenSizeToFixedValues)
 
 TEST(AdvancedPrivacyProtections, AddNoiseToWebAudioAPIs)
 {
-    auto testURL = [NSBundle.mainBundle URLForResource:@"audio-fingerprinting" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-    auto resourcesURL = [NSBundle.mainBundle.bundleURL URLByAppendingPathComponent:@"TestWebKitAPI.resources"];
+    auto testURL = [NSBundle.test_resourcesBundle URLForResource:@"audio-fingerprinting" withExtension:@"html"];
+    auto resourcesURL = NSBundle.test_resourcesBundle.resourceURL;
 
     auto webView = createWebViewWithAdvancedPrivacyProtections();
     [webView loadFileRequest:[NSURLRequest requestWithURL:testURL] allowingReadAccessToURL:resourcesURL];
@@ -1013,8 +1013,8 @@ TEST(AdvancedPrivacyProtections, DISABLED_VerifyHashFromNoisyCanvas2DAPI)
 TEST(AdvancedPrivacyProtections, VerifyHashFromNoisyCanvas2DAPI)
 #endif
 {
-    auto testURL = [NSBundle.mainBundle URLForResource:@"canvas-fingerprinting" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-    auto resourcesURL = [NSBundle.mainBundle.bundleURL URLByAppendingPathComponent:@"TestWebKitAPI.resources"];
+    auto testURL = [NSBundle.test_resourcesBundle URLForResource:@"canvas-fingerprinting" withExtension:@"html"];
+    auto resourcesURL = NSBundle.test_resourcesBundle.resourceURL;
 
     auto webView1 = createWebViewWithAdvancedPrivacyProtections(NO);
     auto webView2 = createWebViewWithAdvancedPrivacyProtections(NO);
@@ -1055,8 +1055,8 @@ TEST(AdvancedPrivacyProtections, VerifyPixelsFromNoisyCanvas2DAPI)
     constexpr auto zeroPrefix = 380;
     constexpr auto channelsPerPixel = 4;
 
-    auto testURL = [NSBundle.mainBundle URLForResource:@"canvas-fingerprinting" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-    auto resourcesURL = [NSBundle.mainBundle.bundleURL URLByAppendingPathComponent:@"TestWebKitAPI.resources"];
+    auto testURL = [NSBundle.test_resourcesBundle URLForResource:@"canvas-fingerprinting" withExtension:@"html"];
+    auto resourcesURL = NSBundle.test_resourcesBundle.resourceURL;
 
     auto webView1 = createWebViewWithAdvancedPrivacyProtections(NO);
     auto webView2 = createWebViewWithAdvancedPrivacyProtections(NO);
@@ -1161,8 +1161,8 @@ TEST(AdvancedPrivacyProtections, VerifyPixelsFromNoisyCanvas2DAPI)
 
 TEST(AdvancedPrivacyProtections, VerifyDataURLFromNoisyWebGLAPI)
 {
-    auto testURL = [NSBundle.mainBundle URLForResource:@"canvas-fingerprinting" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-    auto resourcesURL = [NSBundle.mainBundle.bundleURL URLByAppendingPathComponent:@"TestWebKitAPI.resources"];
+    auto testURL = [NSBundle.test_resourcesBundle URLForResource:@"canvas-fingerprinting" withExtension:@"html"];
+    auto resourcesURL = NSBundle.test_resourcesBundle.resourceURL;
 
     auto webView1 = createWebViewWithAdvancedPrivacyProtections(NO);
     auto webView2 = createWebViewWithAdvancedPrivacyProtections(NO);

@@ -65,7 +65,7 @@ TEST(WebKitLegacy, WillSendSubmitEvent)
         RetainPtr<FormDelegate> formDelegate = adoptNS([[FormDelegate alloc] init]);
         [webView _setFormDelegate:formDelegate.get()];
 
-        [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"auto-submitting-form" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+        [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"auto-submitting-form" withExtension:@"html"]]];
 
         Util::run(&didFinishLoad);
     }

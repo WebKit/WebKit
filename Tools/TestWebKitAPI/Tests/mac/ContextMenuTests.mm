@@ -210,7 +210,7 @@ TEST(ContextMenuTests, NavigationTypeWhenOpeningLink)
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
     [webView setNavigationDelegate:navigationDelegate.get()];
-    [webView loadHTMLString:@"<a href='simple.html' style='font-size: 100px;'>Hello world</a>" baseURL:[NSBundle.mainBundle.bundleURL URLByAppendingPathComponent:@"TestWebKitAPI.resources"]];
+    [webView loadHTMLString:@"<a href='simple.html' style='font-size: 100px;'>Hello world</a>" baseURL:NSBundle.test_resourcesBundle.resourceURL];
     [navigationDelegate waitForDidFinishNavigation];
 
     __block bool didDecideNavigationPolicy = false;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,34 +24,17 @@
  */
 
 #import "config.h"
-#import <WebKit/WKFoundation.h>
+#import "TestNSBundleExtras.h"
 
-#import "PlatformUtilities.h"
-#import "Test.h"
-#import "TestNavigationDelegate.h"
-#import "UserContentWorldProtocol.h"
-#import "WKWebViewConfigurationExtras.h"
-#import <WebKit/WKProcessPoolPrivate.h>
-#import <WebKit/WKUserContentControllerPrivate.h>
-#import <WebKit/WKUserScriptPrivate.h>
-#import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/WebKit.h>
-#import <WebKit/_WKProcessPoolConfiguration.h>
-#import <WebKit/_WKRemoteObjectInterface.h>
-#import <WebKit/_WKRemoteObjectRegistry.h>
-#import <WebKit/_WKUserContentWorld.h>
-#import <WebKit/_WKUserStyleSheet.h>
-#import <wtf/RetainPtr.h>
+NS_ASSUME_NONNULL_BEGIN
 
-TEST(CancelLoading, CancelFontSubresource)
+@implementation NSBundle (TestExtras)
+
++ (instancetype _Nullable)test_resourcesBundle
 {
-    NSString * const testPlugInClassName = @"CancelFontSubresourcePlugIn";
-
-    RetainPtr<WKWebViewConfiguration> configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:testPlugInClassName]);
-
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"webfont" withExtension:@"html"]];
-    [webView loadRequest:request];
-    [webView _test_waitForDidFinishNavigation];
+    return [NSBundle bundleWithURL:[NSBundle.mainBundle URLForResource:@"TestWebKitAPIResources" withExtension:@"bundle"]];
 }
+
+@end
+
+NS_ASSUME_NONNULL_END

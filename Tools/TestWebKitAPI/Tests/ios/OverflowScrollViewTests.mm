@@ -49,7 +49,7 @@ TEST(OverflowScrollViewTests, ContentChangeMaintainsScrollbars)
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
 
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"overflow-scroll" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"overflow-scroll" withExtension:@"html"];
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [webView _test_waitForDidFinishNavigation];
     [webView waitForNextPresentationUpdate];
@@ -80,7 +80,7 @@ TEST(OverflowScrollViewTests, CompositingChangeMaintainsCustomView)
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
 
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"composited" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"composited" withExtension:@"html"];
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [webView _test_waitForDidFinishNavigation];
     [webView waitForNextPresentationUpdate];

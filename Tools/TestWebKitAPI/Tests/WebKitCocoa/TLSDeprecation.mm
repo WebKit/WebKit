@@ -266,7 +266,7 @@ TEST(TLSVersion, NegotiatedLegacyTLS)
     [observer waitUntilNegotiatedLegacyTLSChanged];
     EXPECT_TRUE([webView _negotiatedLegacyTLS]);
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
     [observer waitUntilNegotiatedLegacyTLSChanged];
     EXPECT_FALSE([webView _negotiatedLegacyTLS]);
 

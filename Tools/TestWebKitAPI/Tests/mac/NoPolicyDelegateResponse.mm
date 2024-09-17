@@ -80,7 +80,7 @@ TEST(WebKitLegacy, NoDecidePolicyForMIMETypeDecision)
 
     webView.get().frameLoadDelegate = delegate.get();
     webView.get().policyDelegate = delegate.get();
-    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"verboseMarkup" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"verboseMarkup" withExtension:@"html"]]];
 
     Util::run(&didFinishLoad);
 
@@ -94,7 +94,7 @@ TEST(WebKitLegacy, NoDecidePolicyForNavigationActionDecision)
 
     webView.get().frameLoadDelegate = delegate.get();
     webView.get().policyDelegate = delegate.get();
-    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"verboseMarkup" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"verboseMarkup" withExtension:@"html"]]];
 
     Util::run(&didNavigationActionCheck);
 

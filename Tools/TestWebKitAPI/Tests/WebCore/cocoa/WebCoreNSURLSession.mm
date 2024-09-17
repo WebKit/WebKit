@@ -27,7 +27,7 @@
 
 #if !PLATFORM(IOS_FAMILY)
 
-#import "Utilities.h"
+#import "PlatformUtilities.h"
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/LocalFrame.h>
@@ -51,8 +51,8 @@ static bool didRecieveData;
 static bool didComplete;
 static bool didInvalidate;
 
-static NSURL *documentURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-static NSURL *resourceURL = [[NSBundle mainBundle] URLForResource:@"test" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"];
+static NSURL *documentURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+static NSURL *resourceURL = [NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"mp4"];
 
 @interface TestNSURLSessionLoaderDelegate : NSObject<WebFrameLoadDelegate>
 @end

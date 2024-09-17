@@ -79,7 +79,7 @@ TEST(Printing, PrintWithDelayedCompletion)
     auto delegate = adoptNS([PrintWithSimulatedPageComputationUIDelegate new]);
     [webView setUIDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
@@ -138,7 +138,7 @@ TEST(Printing, PrintPageBorders)
     auto delegate = adoptNS([PrintShowingPrintPanelUIDelegate new]);
     [webView setUIDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 

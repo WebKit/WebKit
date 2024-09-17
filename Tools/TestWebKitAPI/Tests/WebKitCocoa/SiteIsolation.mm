@@ -1544,7 +1544,7 @@ TEST(SiteIsolation, PasteGIF)
     [webView mouseUpAtPoint:eventLocationInWindow];
     [webView waitForPendingMouseEvents];
 
-    auto *data = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"sunset-in-cupertino-400px" ofType:@"gif" inDirectory:@"TestWebKitAPI.resources"]];
+    auto *data = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"sunset-in-cupertino-400px" ofType:@"gif"]];
     writeImageDataToPasteboard((__bridge NSString *)kUTTypeGIF, data);
     [webView paste:nil];
 
@@ -3038,7 +3038,7 @@ TEST(SiteIsolation, NavigateNestedIframeSameOriginBackForward)
 
 TEST(SiteIsolation, AdvancedPrivacyProtectionsHideScreenMetricsFromBindings)
 {
-    auto frameHTML = [NSString stringWithContentsOfFile:[NSBundle.mainBundle pathForResource:@"audio-fingerprinting" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"] encoding:NSUTF8StringEncoding error:NULL];
+    auto frameHTML = [NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"audio-fingerprinting" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];
     HTTPServer server({
         { "/example"_s, { "<iframe src='https://frame.com/frame'></iframe>"_s } },
         { "/frame"_s, { frameHTML } }

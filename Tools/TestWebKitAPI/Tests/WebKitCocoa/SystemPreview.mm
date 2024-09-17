@@ -157,7 +157,7 @@ TEST(WebKit, SystemPreviewBlobRevokedImmediately)
     [webView setUIDelegate:uiDelegate.get()];
     [viewController setView:webView.get()];
 
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"UnitBox" withExtension:@"usdz" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *modelURL = [NSBundle.test_resourcesBundle URLForResource:@"UnitBox" withExtension:@"usdz"];
     NSData *modelData = [NSData dataWithContentsOfURL:modelURL];
     NSString *modelBase64 = [modelData base64EncodedStringWithOptions:0];
     NSString *html = [NSString stringWithFormat:@"<script>let base64URL = 'data:model/vnd.usdz+zip;base64,%@';"
@@ -221,7 +221,7 @@ TEST(WebKit, SystemPreviewUnknownMIMEType)
     [webView setUIDelegate:uiDelegate.get()];
     [viewController setView:webView.get()];
 
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"UnitBox" withExtension:@"usdz" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *modelURL = [NSBundle.test_resourcesBundle URLForResource:@"UnitBox" withExtension:@"usdz"];
     NSData *modelData = [NSData dataWithContentsOfURL:modelURL];
     NSString *modelBase64 = [modelData base64EncodedStringWithOptions:0];
     NSString *html = [NSString stringWithFormat:@"<script>let base64URL = 'data:application/octet-stream;base64,%@';"

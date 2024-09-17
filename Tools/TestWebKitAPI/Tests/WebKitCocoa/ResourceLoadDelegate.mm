@@ -56,7 +56,7 @@ TEST(ResourceLoadDelegate, Basic)
         requestFromDelegate = request;
     }];
 
-    RetainPtr<NSURLRequest> requestLoaded = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr<NSURLRequest> requestLoaded = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
     [webView loadRequest:requestLoaded.get()];
     TestWebKitAPI::Util::run(&done);
     

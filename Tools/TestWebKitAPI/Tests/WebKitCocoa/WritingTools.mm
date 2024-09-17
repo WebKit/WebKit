@@ -1441,7 +1441,7 @@ TEST(WritingTools, CompositionWithTextAttachment)
     [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
         [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
 
-        RetainPtr pngData = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"sunset-in-cupertino-200px" ofType:@"png" inDirectory:@"TestWebKitAPI.resources"]];
+        RetainPtr pngData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"sunset-in-cupertino-200px" ofType:@"png"]];
         RetainPtr attachment = adoptNS([[NSTextAttachment alloc] initWithData:pngData.get() ofType:UTTypePNG.identifier]);
 
         RetainPtr attributedText = [NSAttributedString attributedStringWithAttachment:attachment.get()];
@@ -1519,7 +1519,7 @@ TEST(WritingTools, CompositionWithImageAttachmentRoundTrip)
     RetainPtr attachmentIdentifier = [webView ensureAttachmentForImageElement];
     RetainPtr attachment = [webView _attachmentForIdentifier:attachmentIdentifier.get()];
 
-    RetainPtr pngData = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"sunset-in-cupertino-200px" ofType:@"png" inDirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr pngData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"sunset-in-cupertino-200px" ofType:@"png"]];
     RetainPtr fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:pngData.get()]);
     [fileWrapper setPreferredFilename:@"sunset-in-cupertino-200px.png"];
 
@@ -1572,7 +1572,7 @@ TEST(WritingTools, CompositionWithNonImageAttachmentRoundTrip)
 
     modifySelection(5, 9);
 
-    RetainPtr zipData = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"compressed-files" ofType:@"zip" inDirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr zipData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"compressed-files" ofType:@"zip"]];
     RetainPtr attachment = synchronouslyInsertAttachmentWithFilename(webView.get(), @"compressed-files.zip", @"application/zip", zipData.get());
 
     [webView selectAll:nil];

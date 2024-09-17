@@ -77,7 +77,7 @@ public:
 
     void testVideoWithAudio()
     {
-        NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"video-with-audio" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *fileURL = [NSBundle.test_resourcesBundle URLForResource:@"video-with-audio" withExtension:@"html"];
         [webView loadFileURL:fileURL allowingReadAccessToURL:fileURL];
         [webView _test_waitForDidFinishNavigation];
 
@@ -87,7 +87,7 @@ public:
 
     void testVideoWithoutAudio()
     {
-        NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"video-without-audio" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *fileURL = [NSBundle.test_resourcesBundle URLForResource:@"video-without-audio" withExtension:@"html"];
         [webView loadFileURL:fileURL allowingReadAccessToURL:fileURL];
         [webView _test_waitForDidFinishNavigation];
 
@@ -97,7 +97,7 @@ public:
 
     void testAudioOnly()
     {
-        NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"audio-only" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *fileURL = [NSBundle.test_resourcesBundle URLForResource:@"audio-only" withExtension:@"html"];
         [webView loadFileURL:fileURL allowingReadAccessToURL:fileURL];
         [webView _test_waitForDidFinishNavigation];
 

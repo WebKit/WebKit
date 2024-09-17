@@ -83,7 +83,7 @@ namespace TestWebKitAPI {
 TEST(LoadWebArchive, FailNavigation1)
 {
     // Using `document.location.href = 'helloworld.webarchive';`.
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"load-web-archive-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"load-web-archive-1" withExtension:@"html"];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     for (_WKFeature *feature in WKPreferences._features) {
@@ -106,7 +106,7 @@ TEST(LoadWebArchive, FailNavigation1)
 TEST(LoadWebArchive, FailNavigation2)
 {
     // Using `window.open('helloworld.webarchive');`.
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"load-web-archive-2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"load-web-archive-2" withExtension:@"html"];
 
     auto delegate = adoptNS([[TestLoadWebArchiveNavigationDelegate alloc] init]);
     gDelegate = delegate.get();
@@ -131,7 +131,7 @@ TEST(LoadWebArchive, FailNavigation2)
 
 TEST(LoadWebArchive, ClientNavigationSucceed)
 {
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"helloworld" withExtension:@"webarchive" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"helloworld" withExtension:@"webarchive"];
 
     auto webView = adoptNS([[WKWebView alloc] init]);
     auto delegate = adoptNS([[TestLoadWebArchiveNavigationDelegate alloc] init]);
@@ -146,7 +146,7 @@ TEST(LoadWebArchive, ClientNavigationSucceed)
 
 TEST(LoadWebArchive, ClientNavigationReload)
 {
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"helloworld" withExtension:@"webarchive" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"helloworld" withExtension:@"webarchive"];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     for (_WKFeature *feature in WKPreferences._features) {
@@ -173,7 +173,7 @@ TEST(LoadWebArchive, ClientNavigationReload)
 
 TEST(LoadWebArchive, ClientNavigationWithStorageReload)
 {
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"helloworld" withExtension:@"webarchive" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"helloworld" withExtension:@"webarchive"];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     for (_WKFeature *feature in WKPreferences._features) {
@@ -222,8 +222,8 @@ TEST(LoadWebArchive, ClientNavigationWithStorageReload)
 
 TEST(LoadWebArchive, DragNavigationSucceed)
 {
-    RetainPtr<NSURL> webArchiveURL = [[NSBundle mainBundle] URLForResource:@"helloworld" withExtension:@"webarchive" subdirectory:@"TestWebKitAPI.resources"];
-    RetainPtr<NSURL> simpleURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> webArchiveURL = [NSBundle.test_resourcesBundle URLForResource:@"helloworld" withExtension:@"webarchive"];
+    RetainPtr<NSURL> simpleURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
 
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
     [pasteboard clearContents];
@@ -258,8 +258,8 @@ TEST(LoadWebArchive, DragNavigationSucceed)
 
 TEST(LoadWebArchive, DragNavigationReload)
 {
-    RetainPtr<NSURL> webArchiveURL = [[NSBundle mainBundle] URLForResource:@"helloworld" withExtension:@"webarchive" subdirectory:@"TestWebKitAPI.resources"];
-    RetainPtr<NSURL> simpleURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> webArchiveURL = [NSBundle.test_resourcesBundle URLForResource:@"helloworld" withExtension:@"webarchive"];
+    RetainPtr<NSURL> simpleURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
 
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
     [pasteboard clearContents];
@@ -387,7 +387,7 @@ TEST(LoadWebArchive, SiteToWebArchiveAndBack)
 
     navigationComplete = false;
 
-    RetainPtr<NSURL> webArchiveURL = [[NSBundle mainBundle] URLForResource:@"download.example" withExtension:@"webarchive" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> webArchiveURL = [NSBundle.test_resourcesBundle URLForResource:@"download.example" withExtension:@"webarchive"];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://download.example/page1.html"]]];
     Util::run(&navigationComplete);
     EXPECT_WK_STREQ([webView URL].absoluteString, @"http://download.example/page1.html");
@@ -480,7 +480,7 @@ TEST(LoadWebArchive, WebArchiveToSiteAndBack)
 
     navigationComplete = false;
 
-    RetainPtr<NSURL> webArchiveURL = [[NSBundle mainBundle] URLForResource:@"download.example" withExtension:@"webarchive" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> webArchiveURL = [NSBundle.test_resourcesBundle URLForResource:@"download.example" withExtension:@"webarchive"];
     [webView loadFileURL:webArchiveURL.get() allowingReadAccessToURL:webArchiveURL.get()];
     Util::run(&navigationComplete);
     EXPECT_WK_STREQ(finalURL, @"download.example.webarchive");
@@ -577,7 +577,7 @@ TEST(LoadWebArchive, FileWebArchiveToDataWebArchiveAndBack)
 
     navigationComplete = false;
 
-    RetainPtr<NSURL> webArchiveURL = [[NSBundle mainBundle] URLForResource:@"download.example" withExtension:@"webarchive" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> webArchiveURL = [NSBundle.test_resourcesBundle URLForResource:@"download.example" withExtension:@"webarchive"];
     [webView loadFileURL:webArchiveURL.get() allowingReadAccessToURL:webArchiveURL.get()];
     Util::run(&navigationComplete);
     EXPECT_WK_STREQ(finalURL, @"download.example.webarchive");

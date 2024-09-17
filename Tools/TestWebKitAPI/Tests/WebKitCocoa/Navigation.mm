@@ -129,7 +129,7 @@ TEST(WKNavigation, LoadRequest)
     RetainPtr<NavigationDelegate> delegate = adoptNS([[NavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
 
     currentNavigation = [webView loadRequest:request];
     ASSERT_NOT_NULL(currentNavigation);
@@ -703,7 +703,7 @@ static bool navigationComplete;
 @implementation BackForwardDelegate
 - (void)_webView:(WKWebView *)webView willGoToBackForwardListItem:(WKBackForwardListItem *)item inPageCache:(BOOL)inPageCache
 {
-    const char* expectedURL = [[[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"] absoluteString] UTF8String];
+    const char* expectedURL = [[[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"] absoluteString] UTF8String];
     EXPECT_STREQ(item.URL.absoluteString.UTF8String, expectedURL);
     EXPECT_TRUE(item.title == nil);
     EXPECT_STREQ(item.initialURL.absoluteString.UTF8String, expectedURL);
@@ -721,10 +721,10 @@ TEST(WKNavigation, WillGoToBackForwardListItem)
     auto webView = adoptNS([[WKWebView alloc] init]);
     auto delegate = adoptNS([[BackForwardDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&navigationComplete);
     navigationComplete = false;
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&navigationComplete);
     [webView goBack];
     TestWebKitAPI::Util::run(&isDone);
@@ -740,8 +740,8 @@ RetainPtr<WKBackForwardListItem> secondItem;
 @implementation ListItemDelegate
 - (void)_webView:(WKWebView *)webView backForwardListItemAdded:(WKBackForwardListItem *)itemAdded removed:(NSArray<WKBackForwardListItem *> *)itemsRemoved
 {
-    NSString *firstURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"].absoluteString;
-    NSString *secondURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"].absoluteString;
+    NSString *firstURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"].absoluteString;
+    NSString *secondURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"].absoluteString;
 
     if (!firstItem) {
         EXPECT_NULL(firstItem);
@@ -779,10 +779,10 @@ TEST(WKNavigation, ListItemAddedRemoved)
     auto webView = adoptNS([[WKWebView alloc] init]);
     auto delegate = adoptNS([[ListItemDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&navigationComplete);
     navigationComplete = false;
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&navigationComplete);
     [[webView backForwardList] _removeAllItems];
     TestWebKitAPI::Util::run(&isDone);
@@ -870,7 +870,7 @@ TEST(WKNavigation, SimultaneousNavigationWithFontsFinishes)
     "</body>"
     "</html>"_s;
 
-    NSString *svg = [NSString stringWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"AllAhem" withExtension:@"svg" subdirectory:@"TestWebKitAPI.resources"] encoding:NSUTF8StringEncoding error:nil];
+    NSString *svg = [NSString stringWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"AllAhem" withExtension:@"svg"] encoding:NSUTF8StringEncoding error:nil];
 
     using namespace TestWebKitAPI;
     HTTPServer server({
@@ -2665,7 +2665,7 @@ TEST(WKNavigation, GeneratePageLoadTiming)
         done = true;
     };
 
-    auto request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"multiple-images" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    auto request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"multiple-images" withExtension:@"html"]];
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&done);
 }

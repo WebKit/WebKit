@@ -62,8 +62,8 @@ TEST(WebKitLegacy, LimitTitleSize)
     RetainPtr<LimitTitleSizeTest> testController = adoptNS([LimitTitleSizeTest new]);
 
     webView.get().frameLoadDelegate = testController.get();
-    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle]
-        URLForResource:@"set-long-title" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle
+        URLForResource:@"set-long-title" withExtension:@"html"]]];
 
     TestWebKitAPI::Util::run(&didFinishLoad);
 }
@@ -86,7 +86,7 @@ TEST(WebKitLegacy, LimitTitleSize)
 TEST(WebKit, LimitTitleSize)
 {
     auto webView = adoptNS([[WKWebView alloc] init]);
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"set-long-title" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"set-long-title" withExtension:@"html"]]];
     
     auto observer = adoptNS([LimitTitleSizeTestObserver new]);
     [webView addObserver:observer.get() forKeyPath:@"title" options:NSKeyValueObservingOptionNew context:nil];

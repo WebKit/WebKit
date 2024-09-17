@@ -44,7 +44,7 @@ WKStringRef createInjectedBundlePath()
 
 WKURLRef createURLForResource(const char* resource, const char* extension)
 {
-    NSURL *nsURL = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:resource] withExtension:[NSString stringWithUTF8String:extension] subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *nsURL = [NSBundle.test_resourcesBundle URLForResource:[NSString stringWithUTF8String:resource] withExtension:[NSString stringWithUTF8String:extension]];
     return WKURLCreateWithCFURL((__bridge CFURLRef)nsURL);
 }
 

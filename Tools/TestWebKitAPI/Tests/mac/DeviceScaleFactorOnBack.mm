@@ -41,7 +41,7 @@ public:
     template <typename View> void runTest(View);
 
     // WebKitAgnosticTest
-    virtual NSURL *url() const { return [[NSBundle mainBundle] URLForResource:@"devicePixelRatio" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]; }
+    virtual NSURL *url() const { return [NSBundle.test_resourcesBundle URLForResource:@"devicePixelRatio" withExtension:@"html"]; }
     virtual void didLoadURL(WebView *webView) { runTest(webView); }
     virtual void didLoadURL(WKWebView *wkView) { runTest(wkView); }
     virtual void initializeView(WebView *);

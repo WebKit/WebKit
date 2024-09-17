@@ -83,7 +83,7 @@ TEST(WebKitLegacy, SetTimeoutFunction)
     RetainPtr<SetTimeoutFunctionWebViewDelegate> uiDelegate = adoptNS([[SetTimeoutFunctionWebViewDelegate alloc] init]);
     uiWebView.get().delegate = uiDelegate.get();
 
-    RetainPtr<NSURL> url = [[NSBundle mainBundle] URLForResource:@"set-timeout-function" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> url = [NSBundle.test_resourcesBundle URLForResource:@"set-timeout-function" withExtension:@"html"];
     [uiWebView loadRequest:[NSURLRequest requestWithURL:url.get()]];
     Util::run(&loadComplete);
     EXPECT_TRUE(loadComplete);

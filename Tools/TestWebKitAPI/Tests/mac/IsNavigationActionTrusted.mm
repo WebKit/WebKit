@@ -83,7 +83,7 @@ TEST(WebKit, IsNavigationActionTrusted)
         RetainPtr<NavigationActionDelegate> delegate = adoptNS([[NavigationActionDelegate alloc] init]);
         [webView setNavigationDelegate:delegate.get()];
 
-        NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IsNavigationActionTrusted" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IsNavigationActionTrusted" withExtension:@"html"]];
         [webView loadRequest:request];
 
         didFinishTest = false;
@@ -98,7 +98,7 @@ TEST(WebKitLegacy, IsNavigationActionTrusted)
 
         RetainPtr<WebPolicyActionDelegate> delegate = adoptNS([[WebPolicyActionDelegate alloc] init]);
         [webView setPolicyDelegate:delegate.get()];
-        [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IsNavigationActionTrusted" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+        [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IsNavigationActionTrusted" withExtension:@"html"]]];
 
         didFinishTest = false;
         Util::run(&didFinishTest);

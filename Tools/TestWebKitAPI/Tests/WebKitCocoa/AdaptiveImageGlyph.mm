@@ -278,7 +278,7 @@ TEST(AdaptiveImageGlyph, InsertAdaptiveImageGlyphAsPictureElement)
     [webView synchronouslyLoadHTMLString:@"<body></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
-    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic"]];
 
     RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
 
@@ -321,7 +321,7 @@ TEST(AdaptiveImageGlyph, InsertAdaptiveImageGlyphAtLargerFontSize)
     [webView synchronouslyLoadHTMLString:@"<body style='font-size: 64px;'></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
-    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic"]];
 
     RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
 
@@ -352,7 +352,7 @@ TEST(AdaptiveImageGlyph, InsertAdaptiveImageGlyphMatchStyle)
         "})();";
     [webView stringByEvaluatingJavaScript:setSelectionJavaScript];
 
-    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic"]];
 
     RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
 
@@ -373,7 +373,7 @@ TEST(AdaptiveImageGlyph, InsertAndRemoveWKAttachments)
     [webView synchronouslyLoadHTMLString:@"<body></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
-    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic"]];
 
     RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
 
@@ -427,7 +427,7 @@ TEST(AdaptiveImageGlyph, InsertAndRemoveWKAttachments)
 
 TEST(AdaptiveImageGlyph, InsertWKAttachmentsOnPaste)
 {
-    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic"]];
 
     RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
 
@@ -497,7 +497,7 @@ TEST(AdaptiveImageGlyph, InsertWKAttachmentsCopyFromWebViewPasteToWebView)
     [copyWebView synchronouslyLoadHTMLString:@"<body></body>"];
     [copyWebView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
-    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic"]];
 
     RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
 
@@ -564,7 +564,7 @@ TEST(AdaptiveImageGlyph, InsertWKAttachmentsMovingParagraphs)
     "})();";
     [webView stringByEvaluatingJavaScript:setSelectionJavaScript];
 
-    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic"]];
 
     RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
 
@@ -618,7 +618,7 @@ TEST(AdaptiveImageGlyph, InsertMultiple)
     "})();";
     [webView stringByEvaluatingJavaScript:setSelectionJavaScript];
 
-    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic"]];
 
     RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
 
@@ -680,7 +680,7 @@ TEST(AdaptiveImageGlyph, InsertTextAfterAdaptiveImageGlyph)
     [webView synchronouslyLoadHTMLString:@"<body></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
-    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic"]];
 
     RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
 
@@ -707,7 +707,7 @@ TEST(AdaptiveImageGlyph, CopyRTF)
     [webView synchronouslyLoadHTMLString:@"<body></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
-    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic"]];
 
     RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
 
@@ -744,7 +744,7 @@ TEST(AdaptiveImageGlyph, ContentsAsAttributedString)
     [webView synchronouslyLoadHTMLString:@"<body></body>"];
     [webView focusElementAndEnsureEditorStateUpdate:@"document.body"];
 
-    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic"]];
 
     RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
 
@@ -800,7 +800,7 @@ TEST(AdaptiveImageGlyph, DragAdaptiveImageGlyphFromContentEditable)
 
     [webView focusElementAndEnsureEditorStateUpdate:@"source"];
 
-    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic"]];
 
     RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
 
@@ -821,7 +821,7 @@ TEST(AdaptiveImageGlyph, DropAdaptiveImageGlyphAsText)
     RetainPtr webView = [simulator webView];
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width'><body style='width: 100%; height: 100%;' contenteditable>"];
 
-    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic"]];
     RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
 
     RetainPtr font = [WebCore::CocoaFont systemFontOfSize:36];
@@ -853,7 +853,7 @@ TEST(AdaptiveImageGlyph, DropAdaptiveImageGlyphAsSticker)
     RetainPtr webView = [simulator webView];
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width'><body style='width: 100%; height: 100%;' contenteditable>"];
 
-    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr adaptiveImageGlyphData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"adaptive-image-glyph" withExtension:@"heic"]];
     RetainPtr adaptiveImageGlyph = adoptNS([[NSAdaptiveImageGlyph alloc] initWithImageContent:adaptiveImageGlyphData.get()]);
 
     RetainPtr font = [WebCore::CocoaFont systemFontOfSize:36];

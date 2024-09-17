@@ -154,7 +154,7 @@ TEST(DragAndDropTests, DragAndDropOnEmptyView)
     simulator.get().dragDestinationAction = WKDragDestinationActionAny;
     auto webView = [simulator webView];
 
-    NSURL *url = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
 
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
     [pasteboard writeObjects:@[ url ]];

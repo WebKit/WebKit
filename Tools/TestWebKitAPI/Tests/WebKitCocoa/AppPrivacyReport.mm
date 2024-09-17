@@ -210,7 +210,7 @@ TEST(AppPrivacyReport, AppInitiatedRequestWithSubFrame)
 
     __block bool isDone = false;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    NSMutableURLRequest *appInitiatedRequest = [NSMutableURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"page-with-csp" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSMutableURLRequest *appInitiatedRequest = [NSMutableURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"page-with-csp" withExtension:@"html"]];
     appInitiatedRequest.attribution = NSURLRequestAttributionDeveloper;
 
     [webView loadRequest:appInitiatedRequest];
@@ -234,7 +234,7 @@ TEST(AppPrivacyReport, NonAppInitiatedRequestWithSubFrame)
 
     __block bool isDone = false;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    NSMutableURLRequest *nonAppInitiatedRequest = [NSMutableURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"page-with-csp" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSMutableURLRequest *nonAppInitiatedRequest = [NSMutableURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"page-with-csp" withExtension:@"html"]];
     nonAppInitiatedRequest.attribution = NSURLRequestAttributionUser;
 
     [webView loadRequest:nonAppInitiatedRequest];
@@ -840,7 +840,7 @@ static void loadFileTest(IsAppInitiated isAppInitiated)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
 
-    NSURL *file = [[NSBundle mainBundle] URLForResource:@"file-with-iframe" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *file = [NSBundle.test_resourcesBundle URLForResource:@"file-with-iframe" withExtension:@"html"];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:file];
     request.attribution = isAppInitiated == IsAppInitiated::Yes ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
 

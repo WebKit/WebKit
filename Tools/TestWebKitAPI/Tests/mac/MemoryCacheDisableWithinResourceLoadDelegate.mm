@@ -78,7 +78,7 @@ TEST(WebKitLegacy, MemoryCacheDisableWithinResourceLoadDelegate)
         RetainPtr<MemoryCacheDisableTestResourceLoadDelegate> resourceLoadDelegate = adoptNS([[MemoryCacheDisableTestResourceLoadDelegate alloc] init]);
         webView.get().resourceLoadDelegate = resourceLoadDelegate.get();
 
-        [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"MemoryCacheDisableWithinResourceLoadDelegate" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+        [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"MemoryCacheDisableWithinResourceLoadDelegate" withExtension:@"html"]]];
 
         Util::run(&didFinishLoad);
     }

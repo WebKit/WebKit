@@ -54,7 +54,7 @@ TEST(WebKitLegacy, CloseWhileCommittingLoad)
     [webView setFrameLoadDelegate:delegate.get()];
 
     didCloseWhileCommittingLoad = false;
-    [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
 
     Util::run(&didCloseWhileCommittingLoad);
 }

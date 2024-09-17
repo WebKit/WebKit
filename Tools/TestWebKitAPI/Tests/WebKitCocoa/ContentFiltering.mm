@@ -436,7 +436,7 @@ TEST(ContentFiltering, LazilyLoadPlatformFrameworks)
         [controller expectParentalControlsLoaded:NO];
 
         isDone = false;
-        NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"ContentFiltering" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *fileURL = [NSBundle.test_resourcesBundle URLForResource:@"ContentFiltering" withExtension:@"html"];
         [[controller webView] loadFileURL:fileURL allowingReadAccessToURL:fileURL];
         TestWebKitAPI::Util::run(&isDone);
         [controller expectParentalControlsLoaded:NO];

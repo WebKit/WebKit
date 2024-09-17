@@ -78,7 +78,7 @@ static NSString *overrideBundleIdentifier(id, SEL)
 
 - (void)loadTestPageNamed:(NSString *)pageName
 {
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:pageName withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:pageName withExtension:@"html"]];
     [self loadRequest:request];
 }
 
@@ -120,12 +120,12 @@ static NSString *overrideBundleIdentifier(id, SEL)
 
 - (void)synchronouslyLoadHTMLString:(NSString *)html
 {
-    [self synchronouslyLoadHTMLString:html baseURL:[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"TestWebKitAPI.resources"]];
+    [self synchronouslyLoadHTMLString:html baseURL:NSBundle.test_resourcesBundle.resourceURL];
 }
 
 - (void)synchronouslyLoadHTMLString:(NSString *)html preferences:(WKWebpagePreferences *)preferences
 {
-    [self loadHTMLString:html baseURL:[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"TestWebKitAPI.resources"]];
+    [self loadHTMLString:html baseURL:NSBundle.test_resourcesBundle.resourceURL];
     [self _test_waitForDidFinishNavigationWithPreferences:preferences];
 }
 
@@ -137,7 +137,7 @@ static NSString *overrideBundleIdentifier(id, SEL)
 
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName asStringWithBaseURL:(NSURL *)url
 {
-    [self synchronouslyLoadHTMLString:[NSString stringWithContentsOfURL:[[NSBundle mainBundle] URLForResource:pageName withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"] encoding:NSUTF8StringEncoding error:nil] baseURL:url];
+    [self synchronouslyLoadHTMLString:[NSString stringWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:pageName withExtension:@"html"] encoding:NSUTF8StringEncoding error:nil] baseURL:url];
 }
 
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName preferences:(WKWebpagePreferences *)preferences
@@ -947,7 +947,7 @@ static InputSessionChangeCount nextInputSessionChangeCount()
 {
     bool didFireDOMLoadEvent = false;
     [self performAfterLoading:[&] { didFireDOMLoadEvent = true; }];
-    [self loadHTMLString:html baseURL:[NSBundle.mainBundle.bundleURL URLByAppendingPathComponent:@"TestWebKitAPI.resources"]];
+    [self loadHTMLString:html baseURL:NSBundle.test_resourcesBundle.resourceURL];
     TestWebKitAPI::Util::run(&didFireDOMLoadEvent);
     [self waitForNextPresentationUpdate];
 }

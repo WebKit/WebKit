@@ -98,7 +98,7 @@ static RetainPtr<TestNavigationDelegate> createFirstVisuallyNonEmptyWatchingNavi
 TEST(AnimatedResize, DISABLED_ResizeWithHiddenContentDoesNotHang)
 {
     auto webView = createAnimatedResizeWebView();
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"blinking-div" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"blinking-div" withExtension:@"html"]]];
 
     auto navigationDelegate = createFirstVisuallyNonEmptyWatchingNavigationDelegate();
     [webView setNavigationDelegate:navigationDelegate.get()];
@@ -122,7 +122,7 @@ TEST(AnimatedResize, DISABLED_ResizeWithHiddenContentDoesNotHang)
 TEST(AnimatedResize, AnimatedResizeDoesNotHang)
 {
     auto webView = createAnimatedResizeWebView();
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"blinking-div" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"blinking-div" withExtension:@"html"]]];
 
     auto navigationDelegate = createFirstVisuallyNonEmptyWatchingNavigationDelegate();
     [webView setNavigationDelegate:navigationDelegate.get()];

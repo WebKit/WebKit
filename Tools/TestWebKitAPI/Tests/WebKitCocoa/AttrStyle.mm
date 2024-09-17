@@ -42,7 +42,7 @@ TEST(WebKit, AttrStyle)
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:navigationDelegate.get()];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"AttrStyle" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"AttrStyle" withExtension:@"html"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
     __block bool isDone = false;

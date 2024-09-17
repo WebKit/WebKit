@@ -73,7 +73,7 @@ TEST(WebKit, FirstVisuallyNonEmptyMilestoneWithDeferredScript)
     receivedMessage = false;
     didFirstVisuallyNonEmptyLayout = false;
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"deferred-script-load" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"deferred-script-load" withExtension:@"html"]]];
 
     TestWebKitAPI::Util::run(&receivedMessage);
     EXPECT_TRUE(didFirstVisuallyNonEmptyLayout);
@@ -102,7 +102,7 @@ static NSString *contentTypeForFileExtension(NSString *fileExtension)
     NSURL *requestURL = task.request.URL;
     NSString *fileName = requestURL.lastPathComponent;
     NSString *fileExtension = fileName.pathExtension;
-    NSURL *bundleURL = [NSBundle.mainBundle URLForResource:fileName.stringByDeletingPathExtension withExtension:fileExtension subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *bundleURL = [NSBundle.test_resourcesBundle URLForResource:fileName.stringByDeletingPathExtension withExtension:fileExtension];
 
     NSData *responseData = [NSData dataWithContentsOfURL:bundleURL];
     NSUInteger responseLength = responseData.length;

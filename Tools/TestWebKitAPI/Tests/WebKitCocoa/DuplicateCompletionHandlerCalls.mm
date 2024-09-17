@@ -132,7 +132,7 @@ TEST(WebKit, DuplicateCompletionHandlerCalls)
     [webView setNavigationDelegate:delegate.get()];
     [webView setUIDelegate:delegate.get()];
     [webView _setInputDelegate:delegate.get()];
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"duplicate-completion-handler-calls" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"duplicate-completion-handler-calls" withExtension:@"html"]]];
 
     Util::run(&testFinished);
 }

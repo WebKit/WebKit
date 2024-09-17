@@ -226,7 +226,7 @@ TEST(ResourceLoadStatistics, IPCAfterStoreDestruction)
     auto navigationDelegate = adoptNS([[DisableITPDuringNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:navigationDelegate.get()];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"notify-resourceLoadObserver" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"notify-resourceLoadObserver" withExtension:@"html"]]];
 
     TestWebKitAPI::Util::run(&finishedNavigation);
 }
@@ -905,7 +905,7 @@ TEST(ResourceLoadStatistics, MigrateDataFromIncorrectCreateTableSchema)
     // Load an incorrect database schema with pre-seeded ITP data.
     // This data should be migrated into the new database.
     [defaultFileManager createDirectoryAtURL:itpRootURL withIntermediateDirectories:YES attributes:nil error:nil];
-    NSURL *newFileURL = [[NSBundle mainBundle] URLForResource:@"incorrectCreateTableSchema" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *newFileURL = [NSBundle.test_resourcesBundle URLForResource:@"incorrectCreateTableSchema" withExtension:@"db"];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:newFileURL.path]);
     [defaultFileManager copyItemAtPath:newFileURL.path toPath:fileURL.path error:nil];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:fileURL.path]);
@@ -987,7 +987,7 @@ TEST(ResourceLoadStatistics, MigrateDataFromMissingTopFrameUniqueRedirectSameSit
 
     // Load an incorrect database schema with pre-seeded ITP data.
     [defaultFileManager createDirectoryAtURL:itpRootURL withIntermediateDirectories:YES attributes:nil error:nil];
-    NSURL *newFileURL = [[NSBundle mainBundle] URLForResource:@"missingTopFrameUniqueRedirectSameSiteStrictTableSchema" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *newFileURL = [NSBundle.test_resourcesBundle URLForResource:@"missingTopFrameUniqueRedirectSameSiteStrictTableSchema" withExtension:@"db"];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:newFileURL.path]);
     [defaultFileManager copyItemAtPath:newFileURL.path toPath:fileURL.path error:nil];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:fileURL.path]);
@@ -1031,7 +1031,7 @@ TEST(ResourceLoadStatistics, CanAccessDataSummaryWithNoProcessPool)
 
     // Load a a pre-seeded ITP database.
     [defaultFileManager createDirectoryAtURL:itpRootURL withIntermediateDirectories:YES attributes:nil error:nil];
-    NSURL *newFileURL = [[NSBundle mainBundle] URLForResource:@"basicITPDatabase" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *newFileURL = [NSBundle.test_resourcesBundle URLForResource:@"basicITPDatabase" withExtension:@"db"];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:newFileURL.path]);
     [defaultFileManager copyItemAtPath:newFileURL.path toPath:fileURL.path error:nil];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:fileURL.path]);
@@ -1274,7 +1274,7 @@ TEST(ResourceLoadStatistics, MigrateDistinctDataFromTableWithMissingIndexes)
     // repeatedly stored as subframes, subresources, and unique redirects. It also has them as repeated source and destination sites for PCM.
     // Once we add unique indexes, each entry should be migrated exactly once. Debug asserts when running the test will indicate failure.
     [defaultFileManager createDirectoryAtURL:itpRootURL withIntermediateDirectories:YES attributes:nil error:nil];
-    NSURL *newFileURL = [[NSBundle mainBundle] URLForResource:@"resourceLoadStatisticsMissingUniqueIndex" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *newFileURL = [NSBundle.test_resourcesBundle URLForResource:@"resourceLoadStatisticsMissingUniqueIndex" withExtension:@"db"];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:newFileURL.path]);
     [defaultFileManager copyItemAtPath:newFileURL.path toPath:fileURL.path error:nil];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:fileURL.path]);

@@ -73,7 +73,7 @@ public:
     template <typename View> void runTest(View);
 
     // WebKitAgnosticTest
-    NSURL *url() const override { return [[NSBundle mainBundle] URLForResource:@"FullscreenZoomInitialFrame" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]; }
+    NSURL *url() const override { return [NSBundle.test_resourcesBundle URLForResource:@"FullscreenZoomInitialFrame" withExtension:@"html"]; }
     void didLoadURL(WebView *webView) override { runTest(webView); }
     void didLoadURL(WKWebView *wkView) override { runTest(wkView); }
 

@@ -61,7 +61,7 @@ TEST(WebKitLegacy, StopLoadingFromDidReceiveResponse)
         RetainPtr<StopLoadingFromDidReceiveResponse> resourceLoadDelegate = adoptNS([[StopLoadingFromDidReceiveResponse alloc] init]);
         webView.get().resourceLoadDelegate = resourceLoadDelegate.get();
 
-        [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"StopLoadingFromDidReceiveResponse" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+        [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"StopLoadingFromDidReceiveResponse" withExtension:@"html"]]];
 
         Util::run(&didFinishLoad);
     }

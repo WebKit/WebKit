@@ -79,7 +79,7 @@ TEST(WebKitLegacy, WebGLPrepareDisplayOnWebThread)
     RetainPtr<WebGLPrepareDisplayOnWebThreadDelegate> uiDelegate = adoptNS([[WebGLPrepareDisplayOnWebThreadDelegate alloc] init]);
     uiWebView.get().delegate = uiDelegate.get();
 
-    NSURL *url = [[NSBundle mainBundle] URLForResource:@"webgl" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"webgl" withExtension:@"html"];
     NSLog(@"Loading %@", url);
     [uiWebView loadRequest:[NSURLRequest requestWithURL:url]];
 

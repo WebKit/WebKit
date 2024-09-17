@@ -65,8 +65,8 @@ TEST(WebKitLegacy, WebScriptObjectDescription)
     auto object = adoptNS([[NSObject alloc] init]);
 
     webView.get().frameLoadDelegate = testController.get();
-    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle]
-        URLForResource:@"WebScriptObjectDescription" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle
+        URLForResource:@"WebScriptObjectDescription" withExtension:@"html"]]];
 
     Util::run(&didFinishLoad);
     didFinishLoad = false;

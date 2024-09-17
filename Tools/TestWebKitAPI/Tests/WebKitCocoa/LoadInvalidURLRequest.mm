@@ -139,7 +139,7 @@ TEST(WebKit, LoadNSURLRequestSubclass)
 
 TEST(WebKit, LoadNSURLRequestWithMutablePropertiesAndKeys)
 {
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
     [NSURLProtocol setProperty:[NSMutableData data] forKey:[NSMutableString stringWithString:@"mutablestring"] inRequest:request];
     [NSURLProtocol setProperty:[NSMutableArray array] forKey:@"key1" inRequest:request];
     [NSURLProtocol setProperty:[NSMutableDictionary dictionary] forKey:@"key2" inRequest:request];
