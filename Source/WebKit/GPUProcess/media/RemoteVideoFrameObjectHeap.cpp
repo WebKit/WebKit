@@ -47,7 +47,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static WorkQueue& remoteVideoFrameObjectHeapQueue()
+static WorkQueue& remoteVideoFrameObjectHeapQueueSingleton()
 {
     static NeverDestroyed queue = WorkQueue::create("org.webkit.RemoteVideoFrameObjectHeap"_s, WorkQueue::QOS::UserInteractive);
     return queue.get();
@@ -56,7 +56,7 @@ static WorkQueue& remoteVideoFrameObjectHeapQueue()
 Ref<RemoteVideoFrameObjectHeap> RemoteVideoFrameObjectHeap::create(Ref<IPC::Connection>&& connection)
 {
     auto heap = adoptRef(*new RemoteVideoFrameObjectHeap(WTFMove(connection)));
-    heap->m_connection->addWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeap::messageReceiverName(), remoteVideoFrameObjectHeapQueue(), heap);
+    heap->m_connection->addWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeap::messageReceiverName(), remoteVideoFrameObjectHeapQueueSingleton(), heap);
     return heap;
 }
 
@@ -102,14 +102,14 @@ RemoteVideoFrameProxy::Properties RemoteVideoFrameObjectHeap::add(Ref<WebCore::V
 
 void RemoteVideoFrameObjectHeap::releaseVideoFrame(RemoteVideoFrameWriteReference&& write)
 {
-    assertIsCurrent(remoteVideoFrameObjectHeapQueue());
+    assertIsCurrent(remoteVideoFrameObjectHeapQueueSingleton());
     m_heap.remove(WTFMove(write));
 }
 
 #if PLATFORM(COCOA)
 void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReference&& read, bool canSendIOSurface)
 {
-    assertIsCurrent(remoteVideoFrameObjectHeapQueue());
+    assertIsCurrent(remoteVideoFrameObjectHeapQueueSingleton());
 
     auto identifier = read.identifier();
     auto videoFrame = get(WTFMove(read));
@@ -127,7 +127,7 @@ void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReferen
 
 void RemoteVideoFrameObjectHeap::pixelBuffer(RemoteVideoFrameReadReference&& read, CompletionHandler<void(RetainPtr<CVPixelBufferRef>)>&& completionHandler)
 {
-    assertIsCurrent(remoteVideoFrameObjectHeapQueue());
+    assertIsCurrent(remoteVideoFrameObjectHeapQueueSingleton());
 
     auto videoFrame = get(WTFMove(read));
     if (!videoFrame) {

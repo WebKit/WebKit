@@ -78,7 +78,7 @@ void RemoteVideoFrameObjectHeapProxyProcessor::gpuProcessConnectionDidClose(GPUP
         Locker lock(m_connectionLock);
         m_connection = nullptr;
     }
-    connection.connection().removeWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeapProxyProcessor::messageReceiverName());
+    connection.protectedConnection()->removeWorkQueueMessageReceiver(Messages::RemoteVideoFrameObjectHeapProxyProcessor::messageReceiverName());
     clearCallbacks();
 }
 
@@ -150,18 +150,18 @@ void RemoteVideoFrameObjectHeapProxyProcessor::newConvertedVideoFrameBuffer(std:
 
 RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(const WebCore::VideoFrame& videoFrame)
 {
-    auto& connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
+    Ref connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
 
     if (m_sharedVideoFrameWriter.isDisabled())
         m_sharedVideoFrameWriter = { };
 
     auto frame = m_sharedVideoFrameWriter.write(videoFrame,
-        [&](auto& semaphore) { connection.send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameSemaphore { semaphore }, 0); },
-        [&](auto&& handle) { connection.send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameMemory { WTFMove(handle) }, 0); });
+        [&](auto& semaphore) { connection->send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameSemaphore { semaphore }, 0); },
+        [&](auto&& handle) { connection->send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameMemory { WTFMove(handle) }, 0); });
     if (!frame)
         return nullptr;
 
-    auto sendResult = connection.sendSync(Messages::RemoteVideoFrameObjectHeap::ConvertFrameBuffer { WTFMove(*frame) }, 0, GPUProcessConnection::defaultTimeout);
+    auto sendResult = connection->sendSync(Messages::RemoteVideoFrameObjectHeap::ConvertFrameBuffer { WTFMove(*frame) }, 0, GPUProcessConnection::defaultTimeout);
     if (!sendResult.succeeded()) {
         m_sharedVideoFrameWriter.disable();
         return nullptr;
