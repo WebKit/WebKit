@@ -560,3 +560,11 @@
 #if !defined(TLS_MODEL_INITIAL_EXEC)
 #define TLS_MODEL_INITIAL_EXEC
 #endif
+
+/* UNREACHABLE */
+
+#if COMPILER(MSVC)
+#define WTF_UNREACHABLE(...) __assume(0)
+#else
+#define WTF_UNREACHABLE(...) __builtin_unreachable();
+#endif

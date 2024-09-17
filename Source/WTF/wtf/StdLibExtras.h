@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <cstring>
 #include <functional>
 #include <memory>
@@ -426,8 +427,7 @@ bool findBitInWord(T word, size_t& startOrResultIndex, size_t endIndex, bool val
 
 // Visitor adapted from http://stackoverflow.com/questions/25338795/is-there-a-name-for-this-tuple-creation-idiom
 
-template <class A, class... B>
-struct Visitor : Visitor<A>, Visitor<B...> {
+template<class A, class... B> struct Visitor : Visitor<A>, Visitor<B...> {
     Visitor(A a, B... b)
         : Visitor<A>(a)
         , Visitor<B...>(b...)
@@ -438,8 +438,7 @@ struct Visitor : Visitor<A>, Visitor<B...> {
     using Visitor<B...>::operator ();
 };
   
-template <class A>
-struct Visitor<A> : A {
+template<class A> struct Visitor<A> : A {
     Visitor(A a)
         : A(a)
     {
@@ -448,17 +447,113 @@ struct Visitor<A> : A {
     using A::operator();
 };
  
-template <class... F>
-Visitor<F...> makeVisitor(F... f)
+template<class... F> ALWAYS_INLINE Visitor<F...> makeVisitor(F... f)
 {
     return Visitor<F...>(f...);
 }
 
-template<class V, class... F>
-auto switchOn(V&& v, F&&... f) -> decltype(std::visit(makeVisitor(std::forward<F>(f)...), std::forward<V>(v)))
+// `asVariant` is used to allow subclasses of std::variant to work with `switchOn`.
+
+template<class... Ts> ALWAYS_INLINE constexpr std::variant<Ts...>& asVariant(std::variant<Ts...>& v)
 {
-    return std::visit(makeVisitor(std::forward<F>(f)...), std::forward<V>(v));
+    return v;
 }
+
+template<class... Ts> ALWAYS_INLINE constexpr const std::variant<Ts...>& asVariant(const std::variant<Ts...>& v)
+{
+    return v;
+}
+
+template<class... Ts> ALWAYS_INLINE constexpr std::variant<Ts...>&& asVariant(std::variant<Ts...>&& v)
+{
+    return std::move(v);
+}
+
+template<class... Ts> ALWAYS_INLINE constexpr const std::variant<Ts...>&& asVariant(const std::variant<Ts...>&& v)
+{
+    return std::move(v);
+}
+
+#ifdef _LIBCPP_VERSION
+
+// Single-variant switch-based visit function adapted from https://www.reddit.com/r/cpp/comments/kst2pu/comment/giilcxv/.
+// Works around bad code generation for std::visit with one std::variant by some standard library / compilers that
+// lead to excessive binary size growth. Currently only needed by libc++. See https://webkit.org/b/279498.
+
+template<size_t I = 0, class F, class V> ALWAYS_INLINE decltype(auto) visitOneVariant(F&& f, V&& v)
+{
+    constexpr auto size = std::variant_size_v<std::remove_cvref_t<V>>;
+
+#define WTF_VISIT_CASE_COUNT 32
+#define WTF_VISIT_CASE(N, D) \
+        case I + N:                                                                                 \
+        {                                                                                           \
+            if constexpr (I + N < size) {                                                           \
+                return std::invoke(std::forward<F>(f), std::get<I + N>(std::forward<V>(v)));        \
+            } else {                                                                                \
+                WTF_UNREACHABLE()                                                                   \
+            }                                                                                       \
+        }                                                                                           \
+
+    switch (v.index()) {
+        WTF_VISIT_CASE(0, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(1, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(2, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(3, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(4, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(5, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(6, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(7, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(8, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(9, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(10, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(11, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(12, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(13, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(14, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(15, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(16, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(17, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(18, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(19, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(20, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(21, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(22, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(23, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(24, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(25, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(26, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(27, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(28, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(29, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(30, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(31, WTF_VISIT_CASE_COUNT)
+    }
+
+    constexpr auto nextI = std::min(I + WTF_VISIT_CASE_COUNT, size);
+
+    if constexpr (nextI < size)
+        return visitOneVariant<nextI>(std::forward<F>(f), std::forward<V>(v));
+
+    WTF_UNREACHABLE();
+
+#undef WTF_VISIT_CASE_COUNT
+#undef WTF_VISIT_CASE
+}
+
+template<class V, class... F> ALWAYS_INLINE auto switchOn(V&& v, F&&... f) -> decltype(visitOneVariant(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v))))
+{
+    return visitOneVariant(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v)));
+}
+
+#else
+
+template<class V, class... F> ALWAYS_INLINE auto switchOn(V&& v, F&&... f) -> decltype(std::visit(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v))))
+{
+    return std::visit(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v)));
+}
+
+#endif
 
 namespace detail {
 
