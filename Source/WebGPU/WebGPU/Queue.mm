@@ -259,14 +259,24 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
                 callback();
         });
     }];
-    [commandBuffer addCompletedHandler:[protectedThis = Ref { *this }](id<MTLCommandBuffer>) {
+    [commandBuffer addCompletedHandler:[protectedThis = Ref { *this }](id<MTLCommandBuffer> mtlCommandBuffer) {
         auto device = protectedThis->m_device.get();
         if (!device || !device->device())
             return;
-        protectedThis->scheduleWork([protectedThis = protectedThis.copyRef()]() {
+        MTLCommandBufferStatus status = mtlCommandBuffer.status;
+        bool loseTheDevice = false;
+        if (NSError *error = mtlCommandBuffer.error; status != MTLCommandBufferStatusCompleted)
+            loseTheDevice = !error || error.code != MTLCommandBufferErrorNotPermitted;
+
+        protectedThis->scheduleWork([loseTheDevice, protectedThis = protectedThis.copyRef()]() {
             ++(protectedThis->m_completedCommandBufferCount);
             for (auto& callback : protectedThis->m_onSubmittedWorkDoneCallbacks.take(protectedThis->m_completedCommandBufferCount))
                 callback(WGPUQueueWorkDoneStatus_Success);
+            if (loseTheDevice) {
+                auto device = protectedThis->m_device.get();
+                if (device)
+                    device->loseTheDevice(WGPUDeviceLostReason_Undefined);
+            }
         });
     }];
 
