@@ -36,6 +36,7 @@
 #include <WebCore/ContentType.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SourceBufferPrivate.h>
+#include <wtf/RefPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -76,20 +77,18 @@ void RemoteMediaSourceProxy::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSo
 
 Ref<MediaTimePromise> RemoteMediaSourceProxy::waitForTarget(const SeekTarget& target)
 {
-    auto connection = m_connectionToWebProcess.get();
-    if (!connection)
-        return MediaTimePromise::createAndReject(PlatformMediaError::IPCError);
+    if (RefPtr connection = m_connectionToWebProcess.get())
+        return connection->protectedConnection()->sendWithPromisedReply<MediaPromiseConverter>(Messages::MediaSourcePrivateRemoteMessageReceiver::ProxyWaitForTarget(target), m_identifier);
 
-    return connection->connection().sendWithPromisedReply<MediaPromiseConverter>(Messages::MediaSourcePrivateRemoteMessageReceiver::ProxyWaitForTarget(target), m_identifier);
+    return MediaTimePromise::createAndReject(PlatformMediaError::IPCError);
 }
 
 Ref<MediaPromise> RemoteMediaSourceProxy::seekToTime(const MediaTime& time)
 {
-    auto connection = m_connectionToWebProcess.get();
-    if (!connection)
-        return MediaPromise::createAndReject(PlatformMediaError::IPCError);
+    if (RefPtr connection = m_connectionToWebProcess.get())
+        return connection->protectedConnection()->sendWithPromisedReply<MediaPromiseConverter>(Messages::MediaSourcePrivateRemoteMessageReceiver::ProxySeekToTime(time), m_identifier);
 
-    return connection->connection().sendWithPromisedReply<MediaPromiseConverter>(Messages::MediaSourcePrivateRemoteMessageReceiver::ProxySeekToTime(time), m_identifier);
+    return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 }
 
 #if !RELEASE_LOG_DISABLED
@@ -106,7 +105,7 @@ void RemoteMediaSourceProxy::failedToCreateRenderer(RendererType)
 
 void RemoteMediaSourceProxy::addSourceBuffer(const WebCore::ContentType& contentType, AddSourceBufferCallback&& callback)
 {
-    auto connection = m_connectionToWebProcess.get();
+    RefPtr connection = m_connectionToWebProcess.get();
     if (!m_remoteMediaPlayerProxy || !connection)
         return;
 
@@ -116,7 +115,8 @@ void RemoteMediaSourceProxy::addSourceBuffer(const WebCore::ContentType& content
     std::optional<RemoteSourceBufferIdentifier> remoteSourceIdentifier;
     if (status == MediaSourcePrivate::AddStatus::Ok) {
         auto identifier = RemoteSourceBufferIdentifier::generate();
-        auto remoteSourceBufferProxy = RemoteSourceBufferProxy::create(*connection, identifier, sourceBufferPrivate.releaseNonNull(), *m_remoteMediaPlayerProxy);
+        Ref remoteMediaPlayerProxy { *m_remoteMediaPlayerProxy };
+        auto remoteSourceBufferProxy = RemoteSourceBufferProxy::create(*connection, identifier, sourceBufferPrivate.releaseNonNull(), remoteMediaPlayerProxy);
         m_sourceBuffers.append(WTFMove(remoteSourceBufferProxy));
         remoteSourceIdentifier = identifier;
     }
@@ -163,14 +163,14 @@ void RemoteMediaSourceProxy::setTimeFudgeFactor(const MediaTime& fudgeFactor)
 
 void RemoteMediaSourceProxy::shutdown()
 {
-    auto connection = m_connectionToWebProcess.get();
+    RefPtr connection = m_connectionToWebProcess.get();
     if (!connection)
         return;
 
     for (auto sourceBuffer : m_sourceBuffers)
         sourceBuffer->shutdown();
 
-    connection->connection().sendWithAsyncReply(Messages::MediaSourcePrivateRemoteMessageReceiver::MediaSourcePrivateShuttingDown(), [this, protectedThis = Ref { *this }, protectedConnection = Ref { *connection }] {
+    connection->protectedConnection()->sendWithAsyncReply(Messages::MediaSourcePrivateRemoteMessageReceiver::MediaSourcePrivateShuttingDown(), [this, protectedThis = Ref { *this }, protectedConnection = Ref { *connection }] {
         disconnect();
     }, m_identifier);
 }
