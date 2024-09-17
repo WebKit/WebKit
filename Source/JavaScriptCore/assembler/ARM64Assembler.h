@@ -817,6 +817,11 @@ public:
             insn(addSubtractShiftedRegister(DATASIZE, AddOp_ADD, setFlags, shift, rm, amount, rn, rd));
     }
 
+    ALWAYS_INLINE void add(FPRegisterID rd, FPRegisterID rn, FPRegisterID rm)
+    {
+        insn(0b01'0'11110'11'1'00000'10000'1'00000'00000 | (rm << 16) | (rn << 5) | rd);
+    }
+
     ALWAYS_INLINE void adr(RegisterID rd, int offset)
     {
         insn(pcRelative(false, offset, rd));
@@ -2752,6 +2757,11 @@ public:
         CHECK_DATASIZE();
         ASSERT(!isSp(rd) && !isSp(rn) && !isSp(rm));
         insn(addSubtractShiftedRegister(DATASIZE, AddOp_SUB, setFlags, shift, rm, amount, rn, rd));
+    }
+
+    ALWAYS_INLINE void sub(FPRegisterID rd, FPRegisterID rn, FPRegisterID rm)
+    {
+        insn(0b01'1'11110'11'1'00000'10000'1'00000'00000 | (rm << 16) | (rn << 5) | rd);
     }
 
     template<int datasize>

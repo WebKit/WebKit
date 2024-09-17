@@ -129,7 +129,8 @@ private:
             };
 
             // Escape rules are as follows:
-            // - Any non-well-known use is an escape. Currently, we allow DoubleRep, Hints, Upsilons (described below).
+            // - Any non-well-known use is an escape. Currently, we allow DoubleRep, Hints,
+            //   Upsilons, PutByOffset, MultiPutByOffset, PutClosureVar, PutGlobalVariable (described below).
             // - Any Upsilon that forwards the candidate into an escaped phi escapes the candidate.
             // - A Phi remains a candidate as long as all values flowing into it can be made a double.
             //   Currently, this means these are valid things we support to forward into the Phi:
@@ -191,6 +192,15 @@ private:
                     case PutHint:
                     case MovHint:
                         break;
+
+#if CPU(ARM64)
+                    // We can handle these nodes only when we have FPRReg addition in integer form.
+                    case PutByOffset:
+                    case MultiPutByOffset:
+                    case PutClosureVar:
+                    case PutGlobalVariable:
+                        break;
+#endif
 
                     case Upsilon: {
                         Node* phi = user->phi();
@@ -277,6 +287,24 @@ private:
                 case MovHint:
                     user->child1() = Edge(resultNode, DoubleRepUse);
                     break;
+
+#if CPU(ARM64)
+                case PutByOffset:
+                    user->child3() = Edge(resultNode, DoubleRepUse);
+                    break;
+
+                case MultiPutByOffset:
+                    user->child2() = Edge(resultNode, DoubleRepUse);
+                    break;
+
+                case PutClosureVar:
+                    user->child2() = Edge(resultNode, DoubleRepUse);
+                    break;
+
+                case PutGlobalVariable:
+                    user->child2() = Edge(resultNode, DoubleRepUse);
+                    break;
+#endif
 
                 case Upsilon: {
                     Node* phi = user->phi();

@@ -71,7 +71,8 @@ namespace JSC {
 // the docs appear to imply that quiet_NaN could even return a double with the
 // signaling bit set on hardware that doesn't do signaling. That would probably
 // never happen, but it's healthy to be paranoid.
-static constexpr double PNaN { std::bit_cast<double>(0x7ff8000000000000ll) };
+static constexpr uint64_t PNaNAsBits { 0x7ff8000000000000ll };
+static constexpr double PNaN { std::bit_cast<double>(PNaNAsBits) };
 
 inline constexpr bool isImpureNaN(double value)
 {

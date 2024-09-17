@@ -2858,7 +2858,7 @@ public:
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
-        m_assembler.add<128>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
+        m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.ldr<128>(dest, address.base, memoryTempRegister);
     }
     
@@ -5675,6 +5675,16 @@ public:
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
+    }
+
+    void add64(FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        m_assembler.add(dest, left, right);
+    }
+
+    void sub64(FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        m_assembler.sub(dest, left, right);
     }
 
     void vectorAdd(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)

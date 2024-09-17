@@ -2115,6 +2115,34 @@ private:
         return m_out.select(m_out.doubleEqual(value, value), value, m_out.constDouble(PNaN));
     }
 
+    LValue boxDoubleAsDouble(LValue value)
+    {
+        ASSERT(isARM64());
+        PatchpointValue* result = m_out.patchpoint(Double);
+        result->append(value, ValueRep::SomeRegister);
+        result->append(m_out.doubleEncodeOffsetAsDouble, ValueRep::SomeRegister);
+        result->setGenerator(
+            [](CCallHelpers& jit, const StackmapGenerationParams& params) {
+                jit.add64(params[1].fpr(), params[2].fpr(), params[0].fpr());
+            });
+        result->effects = Effects::none();
+        return result;
+    }
+
+    LValue unboxDoubleAsDouble(LValue value)
+    {
+        ASSERT(isARM64());
+        PatchpointValue* result = m_out.patchpoint(Double);
+        result->append(value, ValueRep::SomeRegister);
+        result->append(m_out.doubleEncodeOffsetAsDouble, ValueRep::SomeRegister);
+        result->setGenerator(
+            [](CCallHelpers& jit, const StackmapGenerationParams& params) {
+                jit.sub64(params[1].fpr(), params[2].fpr(), params[0].fpr());
+            });
+        result->effects = Effects::none();
+        return result;
+    }
+
     void compileValueRep()
     {
         switch (m_node->child1().useKind()) {
@@ -10392,16 +10420,30 @@ IGNORE_CLANG_WARNINGS_END
     void compilePutByOffset()
     {
         StorageAccessData& data = m_node->storageAccessData();
+        LValue storage = lowStorage(m_node->child1());
+        if (m_node->child3().useKind() == DoubleRepUse) {
+            LValue value = lowDouble(m_node->child3());
+            if (abstractValue(m_node->child3()).couldBeType(SpecDoubleImpureNaN))
+                value = purifyNaN(value);
+            storeDoubleProperty(boxDoubleAsDouble(value), storage, data.identifierNumber, data.offset);
+            return;
+        }
 
-        storeProperty(
-            lowJSValue(m_node->child3()),
-            lowStorage(m_node->child1()), data.identifierNumber, data.offset);
+        storeProperty(lowJSValue(m_node->child3()), storage, data.identifierNumber, data.offset);
     }
 
     void compileMultiPutByOffset()
     {
         LValue base = lowCell(m_node->child1());
-        LValue value = lowJSValue(m_node->child2());
+
+        LValue value = nullptr;
+        if (m_node->child2().useKind() == DoubleRepUse) {
+            LValue value = lowDouble(m_node->child2());
+            if (abstractValue(m_node->child2()).couldBeType(SpecDoubleImpureNaN))
+                value = purifyNaN(value);
+            value = boxDoubleAsDouble(value);
+        } else
+            value = lowJSValue(m_node->child2());
 
         MultiPutByOffsetData& data = m_node->multiPutByOffsetData();
 
@@ -10448,7 +10490,10 @@ IGNORE_CLANG_WARNINGS_END
                     variant.oldStructureForTransition(), variant.newStructure());
             }
 
-            storeProperty(value, storage, data.identifierNumber, variant.offset());
+            if (m_node->child2().useKind() == DoubleRepUse)
+                storeDoubleProperty(value, storage, data.identifierNumber, variant.offset());
+            else
+                storeProperty(value, storage, data.identifierNumber, variant.offset());
 
             if (variant.kind() == PutByVariant::Transition) {
                 ASSERT(variant.oldStructureForTransition()->indexingType() == variant.newStructure()->indexingType());
@@ -10621,8 +10666,15 @@ IGNORE_CLANG_WARNINGS_END
 
     void compilePutGlobalVariable()
     {
-        m_out.store64(
-            lowJSValue(m_node->child2()), m_out.absolute(m_node->variablePointer()));
+        if (m_node->child2().useKind() == DoubleRepUse) {
+            LValue value = lowDouble(m_node->child2());
+            if (abstractValue(m_node->child2()).couldBeType(SpecDoubleImpureNaN))
+                value = purifyNaN(value);
+            m_out.storeDouble(boxDoubleAsDouble(value), m_out.absolute(m_node->variablePointer()));
+            return;
+        }
+
+        m_out.store64(lowJSValue(m_node->child2()), m_out.absolute(m_node->variablePointer()));
     }
 
     void compileNotifyWrite()
@@ -10714,6 +10766,14 @@ IGNORE_CLANG_WARNINGS_END
 
     void compilePutClosureVar()
     {
+        if (m_node->child2().useKind() == DoubleRepUse) {
+            LValue value = lowDouble(m_node->child2());
+            if (abstractValue(m_node->child2()).couldBeType(SpecDoubleImpureNaN))
+                value = purifyNaN(value);
+            m_out.storeDouble(boxDoubleAsDouble(value), lowCell(m_node->child1()), m_heaps.JSLexicalEnvironment_variables[m_node->scopeOffset().offset()]);
+            return;
+        }
+
         m_out.store64(
             lowJSValue(m_node->child2()),
             lowCell(m_node->child1()),
@@ -17059,10 +17119,19 @@ IGNORE_CLANG_WARNINGS_END
         return m_out.load64(addressOfProperty(storage, identifierNumber, offset));
     }
 
-    void storeProperty(
-        LValue value, LValue storage, unsigned identifierNumber, PropertyOffset offset)
+    LValue loadDoubleProperty(LValue storage, unsigned identifierNumber, PropertyOffset offset)
+    {
+        return m_out.loadDouble(addressOfProperty(storage, identifierNumber, offset));
+    }
+
+    void storeProperty(LValue value, LValue storage, unsigned identifierNumber, PropertyOffset offset)
     {
         m_out.store64(value, addressOfProperty(storage, identifierNumber, offset));
+    }
+
+    void storeDoubleProperty(LValue value, LValue storage, unsigned identifierNumber, PropertyOffset offset)
+    {
+        m_out.storeDouble(value, addressOfProperty(storage, identifierNumber, offset));
     }
 
     TypedPointer addressOfProperty(

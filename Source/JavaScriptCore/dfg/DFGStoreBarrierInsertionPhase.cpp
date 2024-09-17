@@ -343,6 +343,7 @@ private:
                 
             case MultiPutByOffset:
             case MultiDeleteByOffset: {
+                // These nodes may cause transition too.
                 considerBarrier(m_node->child1());
                 break;
             }

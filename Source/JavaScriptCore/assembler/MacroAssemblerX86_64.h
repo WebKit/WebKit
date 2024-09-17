@@ -7549,6 +7549,20 @@ public:
         vectorSplatInt8(scratch, dest);
     }
 
+    void add64(FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(right);
+        UNUSED_PARAM(dest);
+    }
+
+    void sub64(FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(right);
+        UNUSED_PARAM(dest);
+    }
+
     void vectorAdd(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         RELEASE_ASSERT(supportsAVX());
