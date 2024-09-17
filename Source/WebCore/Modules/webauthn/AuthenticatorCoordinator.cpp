@@ -355,7 +355,7 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
 
         if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
             if (RefPtr page = weakPage.get())
-                page->setLastAuthentication(LoginStatus::AuthenticationType::WebAuthn);
+                page->setLastAuthentication(LoginStatusAuthenticationType::WebAuthn, emptyString());
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;
         }

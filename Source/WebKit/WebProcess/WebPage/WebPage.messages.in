@@ -882,4 +882,6 @@ messages -> WebPage WantsAsyncDispatchMessage {
     WillBeginContextMenuInteraction()
     DidEndContextMenuInteraction()
 #endif
+
+    DidFillPasswordForUsername(String username)
 }
