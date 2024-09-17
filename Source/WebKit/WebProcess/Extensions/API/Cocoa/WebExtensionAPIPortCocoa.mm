@@ -170,7 +170,7 @@ void WebExtensionAPIPort::fireDisconnectEventIfNeeded()
     if (isDisconnected())
         return;
 
-    RELEASE_LOG_DEBUG(Extensions, "Port channel %{public}llu disconnected in %{public}@ world", channelIdentifier().toUInt64(), (NSString *)toDebugString(contentWorldType()));
+    RELEASE_LOG_DEBUG(Extensions, "Port channel %{public}llu disconnected in %{public}@ world", m_channelIdentifier ? m_channelIdentifier->toUInt64() : 0, (NSString *)toDebugString(contentWorldType()));
 
     m_disconnected = true;
 
@@ -182,7 +182,7 @@ void WebExtensionAPIPort::fireDisconnectEventIfNeeded()
     if (!m_onDisconnect || m_onDisconnect->listeners().isEmpty())
         return;
 
-    RELEASE_LOG_DEBUG(Extensions, "Fired port disconnect event for channel %{public}llu in %{public}@ world", channelIdentifier().toUInt64(), (NSString *)toDebugString(contentWorldType()));
+    RELEASE_LOG_DEBUG(Extensions, "Fired port disconnect event for channel %{public}llu in %{public}@ world", m_channelIdentifier ? m_channelIdentifier->toUInt64() : 0, (NSString *)toDebugString(contentWorldType()));
 
     for (auto& listener : m_onDisconnect->listeners()) {
         auto globalContext = listener->globalContext();

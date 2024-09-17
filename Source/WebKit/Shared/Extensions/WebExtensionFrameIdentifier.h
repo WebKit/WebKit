@@ -40,7 +40,7 @@
 namespace WebKit {
 
 struct WebExtensionFrameIdentifierType;
-using WebExtensionFrameIdentifier = LegacyNullableObjectIdentifier<WebExtensionFrameIdentifierType>;
+using WebExtensionFrameIdentifier = ObjectIdentifier<WebExtensionFrameIdentifierType>;
 
 namespace WebExtensionFrameConstants {
 
@@ -102,13 +102,13 @@ inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(std::optional<W
         ASSERT_NOT_REACHED();
         return WebExtensionFrameConstants::NoneIdentifier;
     }
-    WebExtensionFrameIdentifier result { frameIdentifier->object().toUInt64() };
-    if (!result.isValid()) {
+    auto identifierAsUInt64 = frameIdentifier->object().toUInt64();
+    if (!WebExtensionFrameIdentifier::isValidIdentifier(identifierAsUInt64)) {
         ASSERT_NOT_REACHED();
         return WebExtensionFrameConstants::NoneIdentifier;
     }
 
-    return result;
+    return WebExtensionFrameIdentifier { identifierAsUInt64 };
 }
 
 inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const WebFrame& frame)
@@ -140,14 +140,14 @@ inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(WKFrameInfo *fr
     // which needs to be just one number and probably should only be generated in the UI process
     // to prevent collisions with numbers generated in different web content processes, especially with site isolation.
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    WebExtensionFrameIdentifier result { frameInfo._handle.frameID };
+    auto identifier = frameInfo._handle.frameID;
 ALLOW_DEPRECATED_DECLARATIONS_END
-    if (!result.isValid()) {
+    if (!WebExtensionFrameIdentifier::isValidIdentifier(identifier)) {
         ASSERT_NOT_REACHED();
         return WebExtensionFrameConstants::NoneIdentifier;
     }
 
-    return result;
+    return WebExtensionFrameIdentifier { identifier };
 }
 #endif // __OBJC__
 
@@ -168,15 +168,17 @@ inline std::optional<WebExtensionFrameIdentifier> toWebExtensionFrameIdentifier(
         return std::nullopt;
     }
 
-    WebExtensionFrameIdentifier result { static_cast<uint64_t>(identifier) };
-    ASSERT(result.isValid());
-    return result;
+    auto identifierAsUInt64 = static_cast<uint64_t>(identifier);
+    if (!WebExtensionFrameIdentifier::isValidIdentifier(identifierAsUInt64)) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    return WebExtensionFrameIdentifier { identifierAsUInt64 };
 }
 
 inline double toWebAPI(const WebExtensionFrameIdentifier& identifier)
 {
-    ASSERT(identifier.isValid());
-
     if (isMainFrame(identifier))
         return WebExtensionFrameConstants::MainFrame;
 
