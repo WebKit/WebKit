@@ -181,6 +181,9 @@ void HTMLFrameElementBase::setLocation(const String& str)
     if (document().settings().needsAcrobatFrameReloadingQuirk() && m_frameURL == str)
         return;
 
+    if (!SubframeLoadingDisabler::canLoadFrame(*this))
+        return;
+
     m_frameURL = AtomString(str);
 
     if (isConnected())
