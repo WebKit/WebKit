@@ -82,6 +82,7 @@
 #include "JSSet.h"
 #include "JSSourceCodeInlines.h"
 #include "JSTemplateObjectDescriptorInlines.h"
+#include "JSToWasm.h"
 #include "LLIntData.h"
 #include "LLIntExceptions.h"
 #include "MarkedBlockInlines.h"
@@ -697,6 +698,8 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
         return toIntegerOrInfinityThunkGenerator;
     case ToLengthIntrinsic:
         return toLengthThunkGenerator;
+    case WasmFunctionIntrinsic:
+        return Wasm::wasmFunctionThunkGenerator;
     default:
         return nullptr;
     }
@@ -719,14 +722,28 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, ImplementationVis
     return getHostFunction(function, implementationVisibility, NoIntrinsic, constructor, nullptr, name);
 }
 
-static Ref<NativeJITCode> jitCodeForCallTrampoline()
+static Ref<NativeJITCode> jitCodeForCallTrampoline(Intrinsic intrinsic)
 {
-    static NativeJITCode* result;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        result = new NativeJITCode(LLInt::getCodeRef<JSEntryPtrTag>(llint_native_call_trampoline), JITType::HostCallThunk, NoIntrinsic);
-    });
-    return *result;
+    switch (intrinsic) {
+#if ENABLE(WEBASSEMBLY)
+    case WasmFunctionIntrinsic: {
+        static NativeJITCode* result;
+        static std::once_flag onceKey;
+        std::call_once(onceKey, [&] {
+            result = new NativeJITCode(LLInt::getCodeRef<JSEntryPtrTag>(js_to_wasm_wrapper_entry), JITType::HostCallThunk, intrinsic);
+        });
+        return *result;
+    }
+#endif
+    default: {
+        static NativeJITCode* result;
+        static std::once_flag onceKey;
+        std::call_once(onceKey, [&] {
+            result = new NativeJITCode(LLInt::getCodeRef<JSEntryPtrTag>(llint_native_call_trampoline), JITType::HostCallThunk, NoIntrinsic);
+        });
+        return *result;
+    }
+    }
 }
 
 static Ref<NativeJITCode> jitCodeForConstructTrampoline()
@@ -751,7 +768,7 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, ImplementationVis
 #endif // ENABLE(JIT)
     UNUSED_PARAM(intrinsic);
     UNUSED_PARAM(signature);
-    return NativeExecutable::create(*this, jitCodeForCallTrampoline(), toTagged(function), jitCodeForConstructTrampoline(), toTagged(constructor), implementationVisibility, name);
+    return NativeExecutable::create(*this, jitCodeForCallTrampoline(intrinsic), toTagged(function), jitCodeForConstructTrampoline(), toTagged(constructor), implementationVisibility, name);
 }
 
 NativeExecutable* VM::getBoundFunction(bool isJSFunction)

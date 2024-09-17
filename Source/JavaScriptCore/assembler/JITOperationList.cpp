@@ -120,7 +120,6 @@ LLINT_DECLARE_ROUTINE_VALIDATE(checkpoint_osr_exit_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(checkpoint_osr_exit_from_inlined_call_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(normal_osr_exit_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(fuzzer_return_early_from_loop_hint);
-LLINT_DECLARE_ROUTINE_VALIDATE(js_to_wasm_wrapper_entry_crash_for_simd_parameters);
 LLINT_DECLARE_ROUTINE_VALIDATE(js_to_wasm_wrapper_entry);
 LLINT_DECLARE_ROUTINE_VALIDATE(wasm_to_wasm_wrapper_entry);
 LLINT_DECLARE_ROUTINE_VALIDATE(wasm_to_js_wrapper_entry);
@@ -180,7 +179,6 @@ static LLIntOperations llintOperations()
             LLINT_ROUTINE(normal_osr_exit_trampoline)
             LLINT_ROUTINE(fuzzer_return_early_from_loop_hint)
             LLINT_ROUTINE(js_to_wasm_wrapper_entry)
-            LLINT_ROUTINE(js_to_wasm_wrapper_entry_crash_for_simd_parameters)
             LLINT_ROUTINE(wasm_to_wasm_wrapper_entry)
             LLINT_ROUTINE(wasm_to_js_wrapper_entry)
 

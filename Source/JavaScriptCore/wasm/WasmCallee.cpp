@@ -419,35 +419,25 @@ JSEntrypointCallee::JSEntrypointCallee(unsigned frameSize, TypeIndex typeIndex, 
 {
 #if ENABLE(JIT)
     if (Options::useJIT()) {
-#else
-    if (false) {
-#endif
         if (usesSIMD)
             wasmFunctionPrologue = LLInt::wasmFunctionEntryThunkSIMD().code().retagged<WasmEntryPtrTag>();
         else
             wasmFunctionPrologue = LLInt::wasmFunctionEntryThunk().code().retagged<WasmEntryPtrTag>();
-    } else {
-        if (usesSIMD)
-            wasmFunctionPrologue = CodePtr<CFunctionPtrTag>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_simd_trampoline)).retagged<WasmEntryPtrTag>();
-        else
-            wasmFunctionPrologue = CodePtr<CFunctionPtrTag>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline)).retagged<WasmEntryPtrTag>();
+        return;
     }
+#endif
+
+    if (usesSIMD)
+        wasmFunctionPrologue = CodePtr<CFunctionPtrTag>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_simd_trampoline)).retagged<WasmEntryPtrTag>();
+    else
+        wasmFunctionPrologue = CodePtr<CFunctionPtrTag>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline)).retagged<WasmEntryPtrTag>();
 }
 
 CodePtr<WasmEntryPtrTag> JSEntrypointCallee::entrypointImpl() const
 {
-    const TypeDefinition& typeDefinition = TypeInformation::get(typeIndex).expand();
-    if (Options::useWasmSIMD() && (wasmCallingConvention().callInformationFor(typeDefinition).argumentsOrResultsIncludeV128)) {
-#if ENABLE(JIT)
-        if (Options::useJIT())
-            return createJSToWasmJITSharedCrashForSIMDParameters()->entrypoint.compilation->code().retagged<WasmEntryPtrTag>();
-#endif
-        return LLInt::getCodeFunctionPtr<CFunctionPtrTag>(js_to_wasm_wrapper_entry_crash_for_simd_parameters);
-    }
-
 #if ENABLE(JIT)
     if (Options::useJIT())
-        return createJSToWasmJITShared()->entrypoint.compilation->code().retagged<WasmEntryPtrTag>();
+        return createJSToWasmJITShared().retaggedCode<WasmEntryPtrTag>();
 #endif
     return LLInt::getCodeFunctionPtr<CFunctionPtrTag>(js_to_wasm_wrapper_entry);
 }

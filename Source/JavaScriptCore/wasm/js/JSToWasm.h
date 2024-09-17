@@ -44,9 +44,8 @@ namespace Wasm {
 struct CallInformation;
 class JSEntrypointCallee;
 
-void marshallJSResult(CCallHelpers& jit, const FunctionSignature&, const CallInformation& wasmFrameConvention, const RegisterAtOffsetList& savedResultRegisters, CCallHelpers::JumpList& exceptionChecks);
-std::shared_ptr<InternalFunction> createJSToWasmJITSharedCrashForSIMDParameters();
-std::shared_ptr<InternalFunction> createJSToWasmJITShared();
+MacroAssemblerCodeRef<JITThunkPtrTag> createJSToWasmJITShared();
+MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionThunkGenerator(VM&);
 
 } } // namespace JSC::Wasm
 

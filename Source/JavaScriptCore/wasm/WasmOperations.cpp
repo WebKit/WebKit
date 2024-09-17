@@ -91,47 +91,56 @@ static constexpr unsigned fprToIndex(FPRReg r)
     return 0;
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, void, (void* sp, CallFrame* cfr))
+JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, JSEntrypointCallee*, (void* sp, CallFrame* callFrame, WebAssemblyFunction* function))
 {
     ASSERT(Options::useWasmJITLessJSEntrypoint());
-    dataLogLnIf(WasmOperationsInternal::verbose, "operationJSToWasmEntryWrapperBuildFrame sp: ", RawPointer(sp), " fp: ", RawPointer(cfr));
+    dataLogLnIf(WasmOperationsInternal::verbose, "operationJSToWasmEntryWrapperBuildFrame sp: ", RawPointer(sp), " fp: ", RawPointer(callFrame));
 
-    uint64_t* registerSpace = reinterpret_cast<uint64_t*>(sp);
-
-    auto* function = jsCast<WebAssemblyFunction*>(cfr->callee().asCell());
+    auto* globalObject = function->globalObject();
+    VM& vm = globalObject->vm();
+    NativeCallFrameTracer tracer(vm, callFrame);
+    auto* callee = function->m_jsToWasmCallee.ptr();
     ASSERT(function);
-    ASSERT(function->m_jsToWasmCallee->ident == 0xBF);
-    ASSERT(function->m_jsToWasmCallee->typeIndex == function->typeIndex());
-    ASSERT(function->m_jsToWasmCallee->frameSize + JSEntrypointCallee::SpillStackSpaceAligned == (reinterpret_cast<uintptr_t>(cfr) - reinterpret_cast<uintptr_t>(sp)));
-    dataLogLnIf(WasmOperationsInternal::verbose, "operationJSToWasmEntryWrapperBuildFrame setting callee: ", RawHex(CalleeBits::encodeNativeCallee(function->m_jsToWasmCallee.ptr())));
-    dataLogLnIf(WasmOperationsInternal::verbose, "operationJSToWasmEntryWrapperBuildFrame wasm callee: ", RawHex(function->m_jsToWasmCallee->wasmCallee));
-    cfr->setCallee(function->m_jsToWasmCallee.ptr());
+    ASSERT(callee->ident == 0xBF);
+    ASSERT(callee->typeIndex == function->typeIndex());
+    ASSERT(callee->frameSize + JSEntrypointCallee::SpillStackSpaceAligned == (reinterpret_cast<uintptr_t>(callFrame) - reinterpret_cast<uintptr_t>(sp)));
+    dataLogLnIf(WasmOperationsInternal::verbose, "operationJSToWasmEntryWrapperBuildFrame setting callee: ", RawHex(CalleeBits::encodeNativeCallee(callee)));
+    dataLogLnIf(WasmOperationsInternal::verbose, "operationJSToWasmEntryWrapperBuildFrame wasm callee: ", RawHex(callee->wasmCallee));
 
-    auto calleeSPOffsetFromFP = -(static_cast<intptr_t>(function->m_jsToWasmCallee->frameSize) + JSEntrypointCallee::SpillStackSpaceAligned - JSEntrypointCallee::RegisterStackSpaceAligned);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto calleeSPOffsetFromFP = -(static_cast<intptr_t>(callee->frameSize) + JSEntrypointCallee::SpillStackSpaceAligned - JSEntrypointCallee::RegisterStackSpaceAligned);
 
     const TypeDefinition& signature = TypeInformation::get(function->typeIndex()).expand();
     const FunctionSignature& functionSignature = *signature.as<FunctionSignature>();
     CallInformation wasmFrameConvention = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
-    CallInformation jsFrameConvention = jsCallingConvention().callInformationFor(signature, CallRole::Callee);
 
-    auto access = [sp, cfr]<typename V>(auto* arr, int i) -> V* {
-        dataLogLnIf(WasmOperationsInternal::verbose, "fp[", (&reinterpret_cast<uint8_t*>(arr)[i / sizeof(uint8_t)] - reinterpret_cast<uint8_t*>(cfr)), "] sp[", (&reinterpret_cast<uint8_t*>(arr)[i / sizeof(uint8_t)] - reinterpret_cast<uint8_t*>(sp)), "](", RawHex(reinterpret_cast<V*>(arr)[i / sizeof(V)]), ")");
+    if (UNLIKELY(functionSignature.argumentsOrResultsIncludeV128())) {
+        throwVMTypeError(globalObject, scope, Wasm::errorMessageForExceptionType(Wasm::ExceptionType::TypeErrorInvalidV128Use));
+        OPERATION_RETURN(scope, callee);
+    }
+
+    auto access = [sp, callFrame]<typename V>(auto* arr, int i) -> V* {
+        dataLogLnIf(WasmOperationsInternal::verbose, "fp[", (&reinterpret_cast<uint8_t*>(arr)[i / sizeof(uint8_t)] - reinterpret_cast<uint8_t*>(callFrame)), "] sp[", (&reinterpret_cast<uint8_t*>(arr)[i / sizeof(uint8_t)] - reinterpret_cast<uint8_t*>(sp)), "](", RawHex(reinterpret_cast<V*>(arr)[i / sizeof(V)]), ")");
         return &reinterpret_cast<V*>(arr)[i / sizeof(V)];
     };
 
+    uint64_t* registerSpace = reinterpret_cast<uint64_t*>(sp);
     for (unsigned i = 0; i < functionSignature.argumentCount(); ++i) {
-        ASSERT(jsFrameConvention.params[i].location.isStack());
-        auto src = jsFrameConvention.params[i].location.offsetFromFP();
+        JSValue jsArg = callFrame->argument(i);
         Type type = functionSignature.argumentType(i);
 
-        dataLogLnIf(WasmOperationsInternal::verbose, "Arg ", i, " ", jsFrameConvention.params[i].location, " ", src, " -> ", wasmFrameConvention.params[i].location);
+        dataLogLnIf(WasmOperationsInternal::verbose, "Arg ", i, " ", wasmFrameConvention.params[i].location);
+
+        uint64_t value = toWebAssemblyValue(globalObject, type, jsArg);
+        OPERATION_RETURN_IF_EXCEPTION(scope, callee);
 
         if (wasmFrameConvention.params[i].location.isStackArgument()) {
             auto dst = wasmFrameConvention.params[i].location.offsetFromSP() + calleeSPOffsetFromFP;
             if (type.isI32() || type.isF32())
-                *access.operator()<uint32_t>(cfr, dst) = *access.operator()<uint32_t>(cfr, src);
+                *access.operator()<uint32_t>(callFrame, dst) = static_cast<uint32_t>(value);
             else
-                *access.operator()<uint64_t>(cfr, dst) = *access.operator()<uint64_t>(cfr, src);
+                *access.operator()<uint64_t>(callFrame, dst) = value;
         } else {
             int dst = 0;
             if (wasmFrameConvention.params[i].location.isFPR())
@@ -140,145 +149,146 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, void,
                 dst = gprToIndex(wasmFrameConvention.params[i].location.jsr().payloadGPR()) * sizeof(UCPURegister);
             ASSERT(dst >= 0);
 
-            dataLogLnIf(WasmOperationsInternal::verbose, "* Register Arg ", i, " ", src, " -> ", dst);
+            dataLogLnIf(WasmOperationsInternal::verbose, "* Register Arg ", i, " ", dst);
 
-            if (type.isI32())
-                *access.operator()<uintptr_t>(registerSpace, dst) = *access.operator()<uint32_t>(cfr, src);
-            else if (type.isF32())
-                *access.operator()<uint64_t>(registerSpace, dst) = *access.operator()<uint32_t>(cfr, src);
-            else if (type.isI64() || type.isF64())
-                *access.operator()<uint64_t>(registerSpace, dst) = *access.operator()<uint64_t>(cfr, src);
+            if (type.isI32() || type.isF32())
+                *access.operator()<uint32_t>(registerSpace, dst) = static_cast<uint32_t>(value);
             else
-                *access.operator()<uint64_t>(registerSpace, dst) = *access.operator()<uint64_t>(cfr, src);
+                *access.operator()<uint64_t>(registerSpace, dst) = value;
         }
     }
+
+    OPERATION_RETURN(scope, callee);
 }
 
 // We don't actually return anything, but we can't compile with a ExceptionOperationResult<void> as the return type.
-JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJSValue, (void* sp, CallFrame* cfr))
+JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJSValue, (void* sp, CallFrame* callFrame))
 {
     ASSERT(Options::useWasmJITLessJSEntrypoint());
-    dataLogLnIf(WasmOperationsInternal::verbose, "operationJSToWasmEntryWrapperBuildReturnFrame sp: ", RawPointer(sp), " fp: ", RawPointer(cfr));
+    dataLogLnIf(WasmOperationsInternal::verbose, "operationJSToWasmEntryWrapperBuildReturnFrame sp: ", RawPointer(sp), " fp: ", RawPointer(callFrame));
 
-    uint64_t* registerSpace = reinterpret_cast<uint64_t*>(sp);
-
-    auto* callee = static_cast<JSEntrypointCallee*>(cfr->callee().asNativeCallee());
-    ASSERT(callee->ident == 0xBF);
-    auto* instance = cfr->wasmInstance();
+    auto* instance = callFrame->wasmInstance();
     ASSERT(instance);
     ASSERT(instance->globalObject());
     VM& vm = instance->vm();
+    NativeCallFrameTracer tracer(vm, callFrame);
+
+    uint64_t* registerSpace = reinterpret_cast<uint64_t*>(sp);
+    auto* callee = static_cast<JSEntrypointCallee*>(callFrame->callee().asNativeCallee());
+    ASSERT(callee->ident == 0xBF);
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     const TypeDefinition& signature = TypeInformation::get(callee->typeIndex).expand();
     const FunctionSignature& functionSignature = *signature.as<FunctionSignature>();
-    CallInformation wasmFrameConvention = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
-    CallInformation jsFrameConvention = jsCallingConvention().callInformationFor(signature, CallRole::Callee);
 
-    auto access = [sp, cfr]<typename V>(auto* arr, int i) -> V* {
-        dataLogLnIf(WasmOperationsInternal::verbose, "fp[", (&reinterpret_cast<uint8_t*>(arr)[i / sizeof(uint8_t)] - reinterpret_cast<uint8_t*>(cfr)), "] sp[", (&reinterpret_cast<uint8_t*>(arr)[i / sizeof(uint8_t)] - reinterpret_cast<uint8_t*>(sp)), "](", reinterpret_cast<V*>(arr)[i / sizeof(V)], ")");
+    auto access = [sp, callFrame]<typename V>(auto* arr, int i) -> V* {
+        dataLogLnIf(WasmOperationsInternal::verbose, "fp[", (&reinterpret_cast<uint8_t*>(arr)[i / sizeof(uint8_t)] - reinterpret_cast<uint8_t*>(callFrame)), "] sp[", (&reinterpret_cast<uint8_t*>(arr)[i / sizeof(uint8_t)] - reinterpret_cast<uint8_t*>(sp)), "](", reinterpret_cast<V*>(arr)[i / sizeof(V)], ")");
         return &reinterpret_cast<V*>(arr)[i / sizeof(V)];
     };
 
-    RegisterAtOffsetList savedResultRegisters = wasmFrameConvention.computeResultsOffsetList();
-
-    if (functionSignature.returnsVoid()) {
+    if (functionSignature.returnsVoid())
         OPERATION_RETURN(scope, JSValue::encode(jsUndefined()));
-    } else if (functionSignature.returnCount() == 1) {
-        ASSERT(jsFrameConvention.results[0].location.isGPR());
-        dataLogLnIf(WasmOperationsInternal::verbose, "* Register Return ", wasmFrameConvention.results[0].location, " -> ", jsFrameConvention.results[0].location);
-        EncodedJSValue result;
+
+    if (functionSignature.returnCount() == 1) {
+        if constexpr (WasmOperationsInternal::verbose) {
+            CallInformation wasmFrameConvention = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
+            dataLogLn("* Register Return ", wasmFrameConvention.results[0].location);
+        }
+
+        JSValue result;
         if (functionSignature.returnType(0).isI32())
-            result = JSValue::encode(jsNumber(*access.operator()<int32_t>(registerSpace, 0)));
+            result = jsNumber(*access.operator()<int32_t>(registerSpace, 0));
         else if (functionSignature.returnType(0).isI64()) {
-            result = JSValue::encode(JSBigInt::makeHeapBigIntOrBigInt32(instance->globalObject(), *access.operator()<int64_t>(registerSpace, 0)));
+            result = JSBigInt::makeHeapBigIntOrBigInt32(instance->globalObject(), *access.operator()<int64_t>(registerSpace, 0));
             OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
         } else if (functionSignature.returnType(0).isF32())
-            result = JSValue::encode(jsNumber(purifyNaN(*access.operator()<float>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + 0))));
+            result = jsNumber(purifyNaN(*access.operator()<float>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + 0)));
         else if (functionSignature.returnType(0).isF64())
-            result = JSValue::encode(jsNumber(purifyNaN(*access.operator()<double>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + 0))));
+            result = jsNumber(purifyNaN(*access.operator()<double>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + 0)));
         else if (isRefType(functionSignature.returnType(0)))
-            result = *access.operator()<uint64_t>(registerSpace, 0);
+            result = *access.operator()<JSValue>(registerSpace, 0);
         else
             // the JIT thunk emits a breakpoint here, so we can just fail our assertion as well
             RELEASE_ASSERT_NOT_REACHED();
 
-        OPERATION_RETURN(scope, result);
-    } else {
-        IndexingType indexingType = ArrayWithUndecided;
-        for (unsigned i = 0; i < functionSignature.returnCount(); ++i) {
-            Type type = functionSignature.returnType(i);
+        OPERATION_RETURN(scope, JSValue::encode(result));
+    }
+
+    CallInformation wasmFrameConvention = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
+    IndexingType indexingType = ArrayWithUndecided;
+    for (unsigned i = 0; i < functionSignature.returnCount(); ++i) {
+        Type type = functionSignature.returnType(i);
+        switch (type.kind) {
+        case TypeKind::I32:
+            indexingType = leastUpperBoundOfIndexingTypes(indexingType, ArrayWithInt32);
+            break;
+        case TypeKind::F32:
+        case TypeKind::F64:
+            indexingType = leastUpperBoundOfIndexingTypes(indexingType, ArrayWithDouble);
+            break;
+        default:
+            indexingType = leastUpperBoundOfIndexingTypes(indexingType, ArrayWithContiguous);
+            break;
+        }
+    }
+    ObjectInitializationScope initializationScope(vm);
+    DeferGCForAWhile deferGCForAWhile(vm);
+
+    JSArray* resultArray = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, instance->globalObject()->arrayStructureForIndexingTypeDuringAllocation(indexingType), functionSignature.returnCount());
+    OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    auto calleeSPOffsetFromFP = -(static_cast<intptr_t>(callee->frameSize) + JSEntrypointCallee::SpillStackSpaceAligned - JSEntrypointCallee::RegisterStackSpaceAligned);
+
+    for (unsigned i = 0; i < functionSignature.returnCount(); ++i) {
+        ValueLocation loc = wasmFrameConvention.results[i].location;
+        Type type = functionSignature.returnType(i);
+        if (loc.isGPR() || loc.isFPR()) {
+            JSValue result;
             switch (type.kind) {
             case TypeKind::I32:
-                indexingType = leastUpperBoundOfIndexingTypes(indexingType, ArrayWithInt32);
+                result = jsNumber(*access.operator()<int32_t>(registerSpace, gprToIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister)));
+                break;
+            case TypeKind::I64:
+                result = JSBigInt::makeHeapBigIntOrBigInt32(instance->globalObject(), *access.operator()<int64_t>(registerSpace, gprToIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister)));
+                OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
                 break;
             case TypeKind::F32:
+                result = jsNumber(purifyNaN(*access.operator()<float>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + fprToIndex(loc.fpr()) * bytesForWidth(Width::Width64))));
+                break;
             case TypeKind::F64:
-                indexingType = leastUpperBoundOfIndexingTypes(indexingType, ArrayWithDouble);
+                result = jsNumber(purifyNaN(*access.operator()<double>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + fprToIndex(loc.fpr()) * bytesForWidth(Width::Width64))));
                 break;
             default:
-                indexingType = leastUpperBoundOfIndexingTypes(indexingType, ArrayWithContiguous);
+                result = *access.operator()<JSValue>(registerSpace, gprToIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister));
                 break;
             }
-        }
-        ObjectInitializationScope initializationScope(vm);
-        DeferGCForAWhile deferGCForAWhile(vm);
-
-        JSArray* resultArray = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, instance->globalObject()->arrayStructureForIndexingTypeDuringAllocation(indexingType), functionSignature.returnCount());
-        OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-        auto calleeSPOffsetFromFP = -(static_cast<intptr_t>(callee->frameSize) + JSEntrypointCallee::SpillStackSpaceAligned - JSEntrypointCallee::RegisterStackSpaceAligned);
-
-        for (unsigned i = 0; i < functionSignature.returnCount(); ++i) {
-            ValueLocation loc = wasmFrameConvention.results[i].location;
-            Type type = functionSignature.returnType(i);
-            if (loc.isGPR() || loc.isFPR()) {
-                JSValue result;
-                switch (type.kind) {
-                case TypeKind::I32:
-                    result = jsNumber(*access.operator()<int32_t>(registerSpace, gprToIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister)));
-                    break;
-                case TypeKind::I64:
-                    result = JSBigInt::makeHeapBigIntOrBigInt32(instance->globalObject(), *access.operator()<int64_t>(registerSpace, gprToIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister)));
-                    OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
-                    break;
-                case TypeKind::F32:
-                    result = jsNumber(purifyNaN(*access.operator()<float>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + fprToIndex(loc.fpr()) * bytesForWidth(Width::Width64))));
-                    break;
-                case TypeKind::F64:
-                    result = jsNumber(purifyNaN(*access.operator()<double>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + fprToIndex(loc.fpr()) * bytesForWidth(Width::Width64))));
-                    break;
-                default:
-                    result = *access.operator()<JSValue>(registerSpace, gprToIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister));
-                    break;
-                }
-                resultArray->initializeIndex(initializationScope, i, result);
-            } else {
-                JSValue result;
-                switch (type.kind) {
-                case TypeKind::I32:
-                    result = jsNumber(*access.operator()<int32_t>(cfr, calleeSPOffsetFromFP + loc.offsetFromSP()));
-                    break;
-                case TypeKind::I64:
-                    result = JSBigInt::makeHeapBigIntOrBigInt32(instance->globalObject(), *access.operator()<int64_t>(cfr, calleeSPOffsetFromFP + loc.offsetFromSP()));
-                    OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
-                    break;
-                case TypeKind::F32:
-                    result = jsNumber(purifyNaN(*access.operator()<float>(cfr, calleeSPOffsetFromFP + loc.offsetFromSP())));
-                    break;
-                case TypeKind::F64:
-                    result = jsNumber(purifyNaN(*access.operator()<double>(cfr, calleeSPOffsetFromFP + loc.offsetFromSP())));
-                    break;
-                default:
-                    result = *access.operator()<JSValue>(cfr, calleeSPOffsetFromFP + loc.offsetFromSP());
-                    break;
-                }
-                resultArray->initializeIndex(initializationScope, i, result);
+            resultArray->initializeIndex(initializationScope, i, result);
+        } else {
+            JSValue result;
+            switch (type.kind) {
+            case TypeKind::I32:
+                result = jsNumber(*access.operator()<int32_t>(callFrame, calleeSPOffsetFromFP + loc.offsetFromSP()));
+                break;
+            case TypeKind::I64:
+                result = JSBigInt::makeHeapBigIntOrBigInt32(instance->globalObject(), *access.operator()<int64_t>(callFrame, calleeSPOffsetFromFP + loc.offsetFromSP()));
+                OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
+                break;
+            case TypeKind::F32:
+                result = jsNumber(purifyNaN(*access.operator()<float>(callFrame, calleeSPOffsetFromFP + loc.offsetFromSP())));
+                break;
+            case TypeKind::F64:
+                result = jsNumber(purifyNaN(*access.operator()<double>(callFrame, calleeSPOffsetFromFP + loc.offsetFromSP())));
+                break;
+            default:
+                result = *access.operator()<JSValue>(callFrame, calleeSPOffsetFromFP + loc.offsetFromSP());
+                break;
             }
+            resultArray->initializeIndex(initializationScope, i, result);
         }
-        OPERATION_RETURN(scope, JSValue::encode(resultArray));
     }
+
+    OPERATION_RETURN(scope, JSValue::encode(resultArray));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetWasmCalleeStackSize, EncodedJSValue, (JSWebAssemblyInstance* instance, Wasm::Callee* callee))

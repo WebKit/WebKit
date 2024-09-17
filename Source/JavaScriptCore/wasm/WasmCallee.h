@@ -129,8 +129,8 @@ protected:
 #endif
 };
 
-class JSEntrypointCallee : public Callee {
-    WTF_MAKE_TZONE_ALLOCATED(JSEntrypointCallee);public:
+class JSEntrypointCallee final : public Callee {
+    WTF_MAKE_TZONE_ALLOCATED(JSEntrypointCallee);
 public:
     friend class Callee;
     friend class JSC::LLIntOffsetsExtractor;

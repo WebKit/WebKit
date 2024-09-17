@@ -405,6 +405,7 @@ public:
         constructData.type = CallData::Type::Native;
         constructData.native.function = callHostFunctionAsConstructor;
         constructData.native.isBoundFunction = false;
+        constructData.native.isWasm = false;
         return constructData;
     }
 

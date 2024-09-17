@@ -39,6 +39,7 @@ namespace JSC {
 
 class JSArray;
 class JSWebAssemblyInstance;
+class WebAssemblyFunction;
 
 namespace Probe {
 class Context;
@@ -46,10 +47,11 @@ class Context;
 namespace Wasm {
 
 class TypeDefinition;
+class JSEntrypointCallee;
 
 typedef int64_t EncodedWasmValue;
 
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, void, (void*, CallFrame*));
+JSC_DECLARE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, JSEntrypointCallee*, (void*, CallFrame*, WebAssemblyFunction*));
 JSC_DECLARE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJSValue, (void*, CallFrame*));
 JSC_DECLARE_JIT_OPERATION(operationGetWasmCalleeStackSize, EncodedJSValue, (JSWebAssemblyInstance*, Wasm::Callee*));
 JSC_DECLARE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, EncodedJSValue, (void*, CallFrame*, void*, JSWebAssemblyInstance*));

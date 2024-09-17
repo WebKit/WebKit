@@ -459,6 +459,7 @@ CallData JSCallbackObject<Parent>::getConstructData(JSCell* cell)
             constructData.type = CallData::Type::Native;
             constructData.native.function = getConstructFunction();
             constructData.native.isBoundFunction = false;
+            constructData.native.isWasm = false;
             break;
         }
     }
@@ -536,6 +537,7 @@ CallData JSCallbackObject<Parent>::getCallData(JSCell* cell)
             callData.type = CallData::Type::Native;
             callData.native.function = getCallFunction();
             callData.native.isBoundFunction = false;
+            callData.native.isWasm = false;
             break;
         }
     }

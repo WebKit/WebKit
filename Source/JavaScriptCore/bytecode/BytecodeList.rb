@@ -1487,7 +1487,6 @@ op :wasm_function_prologue_trampoline
 op :wasm_function_prologue
 op :wasm_function_prologue_simd_trampoline
 op :wasm_function_prologue_simd
-op :js_to_wasm_wrapper_entry_crash_for_simd_parameters
 op :js_to_wasm_wrapper_entry
 op :wasm_to_wasm_wrapper_entry
 op :wasm_to_js_wrapper_entry
