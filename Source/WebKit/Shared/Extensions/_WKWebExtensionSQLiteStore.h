@@ -25,7 +25,7 @@
 
 #pragma once
 
-OBJC_CLASS _WKWebExtensionSQLiteDatabase;
+#import "_WKWebExtensionSQLiteDatabase.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -48,6 +48,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)close;
 
 - (void)deleteDatabaseWithCompletionHandler:(void (^)(NSString * _Nullable errorMessage))completionHandler;
+
+- (SchemaVersion)_migrateToCurrentSchemaVersionIfNeeded;
+
+- (SchemaVersion)_databaseSchemaVersion;
+- (DatabaseResult)_setDatabaseSchemaVersion:(SchemaVersion)newVersion;
 
 - (BOOL)_openDatabaseIfNecessaryReturningErrorMessage:(NSString * _Nullable * _Nonnull)outErrorMessage;
 - (BOOL)_openDatabaseIfNecessaryReturningErrorMessage:(NSString * _Nullable * _Nonnull)outErrorMessage createIfNecessary:(BOOL)createIfNecessary;
