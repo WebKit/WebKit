@@ -254,6 +254,7 @@ public:
         m_widthConstraint = proxy.m_widthConstraint;
         m_heightConstraint = proxy.m_heightConstraint;
         m_frameRateConstraint = proxy.m_frameRateConstraint;
+        m_videoConstraints = proxy.m_videoConstraints;
     }
 
     Ref<RealtimeMediaSource::TakePhotoNativePromise> takePhoto(PhotoSettings&& photoSettings)
