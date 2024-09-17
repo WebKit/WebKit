@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <PDFKit/PDFKit.h>
+#pragma once
 
-@interface PDFAnnotationTextWidget (Details)
-- (BOOL)isMultiline;
-- (BOOL)isReadOnly;
-@end
+#if ENABLE(PDF_PLUGIN)
+
+#include <initializer_list>
+
+OBJC_CLASS PDFAnnotation;
+
+namespace WebKit::PDFAnnotationTypeHelpers {
+
+enum class WidgetType : uint8_t {
+    Button,
+    Choice,
+    Signature,
+    Text,
+};
+
+bool annotationIsWidget(PDFAnnotation *);
+bool annotationIsWidgetOfType(PDFAnnotation *, WidgetType);
+bool annotationIsWidgetOfType(PDFAnnotation *, std::initializer_list<WidgetType>&&);
+
+} // namespace WebKit::PDFAnnotationTypeHelpers
+
+#endif // ENABLE(PDF_PLUGIN)

@@ -28,7 +28,8 @@
 
 #if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
 
-#import "PDFAnnotationTextWidgetDetails.h"
+#import "PDFAnnotationTypeHelpers.h"
+#import "PDFKitSPI.h"
 #import "PDFLayerControllerSPI.h"
 #import "PDFPlugin.h"
 #import <Quartz/Quartz.h>
@@ -70,6 +71,7 @@ static const String cssAlignmentValueForNSTextAlignment(NSTextAlignment alignmen
 
 Ref<PDFPluginTextAnnotation> PDFPluginTextAnnotation::create(PDFAnnotation *annotation, PDFPluginBase* plugin)
 {
+    ASSERT(PDFAnnotationTypeHelpers::annotationIsWidgetOfType(annotation, WidgetType::Text));
     return adoptRef(*new PDFPluginTextAnnotation(annotation, plugin));
 }
 
@@ -81,10 +83,8 @@ PDFPluginTextAnnotation::~PDFPluginTextAnnotation()
 Ref<Element> PDFPluginTextAnnotation::createAnnotationElement()
 {
     Document& document = parent()->document();
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    PDFAnnotationTextWidget *textAnnotation = this->textAnnotation();
-ALLOW_DEPRECATED_DECLARATIONS_END
-    bool isMultiline = textAnnotation.isMultiline;
+    RetainPtr textAnnotation = annotation();
+    bool isMultiline = [textAnnotation isMultiline];
 
     auto element = document.createElement(isMultiline ? textareaTag : inputTag, false);
     element->addEventListener(eventNames().keydownEvent, *eventListener(), false);
@@ -95,11 +95,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return element;
 
     // FIXME: Match font weight and style as well?
-    styledElement.setInlineStyleProperty(CSSPropertyColor, serializationForHTML(colorFromCocoaColor(textAnnotation.fontColor)));
-    styledElement.setInlineStyleProperty(CSSPropertyFontFamily, textAnnotation.font.familyName);
-    styledElement.setInlineStyleProperty(CSSPropertyTextAlign, cssAlignmentValueForNSTextAlignment(textAnnotation.alignment));
+    styledElement.setInlineStyleProperty(CSSPropertyColor, serializationForHTML(colorFromCocoaColor([textAnnotation fontColor])));
+    styledElement.setInlineStyleProperty(CSSPropertyFontFamily, [[textAnnotation font] familyName]);
+    styledElement.setInlineStyleProperty(CSSPropertyTextAlign, cssAlignmentValueForNSTextAlignment([textAnnotation alignment]));
 
-    downcast<HTMLTextFormControlElement>(styledElement).setValue(textAnnotation.stringValue);
+    downcast<HTMLTextFormControlElement>(styledElement).setValue([textAnnotation widgetStringValue]);
 
     return element;
 }
@@ -109,12 +109,12 @@ void PDFPluginTextAnnotation::updateGeometry()
     PDFPluginAnnotation::updateGeometry();
 
     StyledElement* styledElement = static_cast<StyledElement*>(element());
-    styledElement->setInlineStyleProperty(CSSPropertyFontSize, textAnnotation().font.pointSize * plugin()->contentScaleFactor(), CSSUnitType::CSS_PX);
+    styledElement->setInlineStyleProperty(CSSPropertyFontSize, annotation().font.pointSize * plugin()->contentScaleFactor(), CSSUnitType::CSS_PX);
 }
 
 void PDFPluginTextAnnotation::commit()
 {
-    textAnnotation().stringValue = value();
+    annotation().widgetStringValue = value();
     PDFPluginAnnotation::commit();
 }
 

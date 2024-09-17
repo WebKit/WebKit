@@ -28,6 +28,7 @@
 
 #if ENABLE(UNIFIED_PDF)
 
+#include "AsyncPDFRenderer.h"
 #include "Logging.h"
 #include "UnifiedPDFPlugin.h"
 #include "WebKeyboardEvent.h"

@@ -31,6 +31,7 @@
 #include "WebPage.h"
 #include <WebCore/Chrome.h>
 #include <WebCore/ChromeClient.h>
+#include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/Editing.h>
 #include <WebCore/FocusController.h>

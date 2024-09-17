@@ -28,6 +28,7 @@
 
 #if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
 
+#import "PDFAnnotationTypeHelpers.h"
 #import "PDFLayerControllerSPI.h"
 #import "PDFPlugin.h"
 #import "PDFPluginBase.h"
@@ -54,12 +55,13 @@
 namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
+using namespace WebKit::PDFAnnotationTypeHelpers;
 
 RefPtr<PDFPluginAnnotation> PDFPluginAnnotation::create(PDFAnnotation *annotation, PDFPluginBase* plugin)
 {
-    if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()])
+    if (annotationIsWidgetOfType(annotation, WidgetType::Text))
         return PDFPluginTextAnnotation::create(annotation, plugin);
-    if ([annotation isKindOfClass:getPDFAnnotationChoiceWidgetClass()])
+    if (annotationIsWidgetOfType(annotation, WidgetType::Choice))
         return PDFPluginChoiceAnnotation::create(annotation, plugin);
 
     return nullptr;
