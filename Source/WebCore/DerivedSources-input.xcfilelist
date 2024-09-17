@@ -67,6 +67,8 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUBufferMapState.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBufferUsage.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCanvasAlphaMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCanvasConfiguration.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUCanvasToneMapping.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUCanvasToneMappingMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorDict.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorTargetState.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorWrite.idl
@@ -216,6 +218,8 @@ $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUBufferMapState.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUBufferUsage.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUCanvasAlphaMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUCanvasConfiguration.idl
+$(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUCanvasToneMapping.idl
+$(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUCanvasToneMappingMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUColorDict.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUColorTargetState.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUColorWrite.idl

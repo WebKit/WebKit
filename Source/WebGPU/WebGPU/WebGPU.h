@@ -299,6 +299,11 @@ typedef enum WGPUCompilationMessageType {
     WGPUCompilationMessageType_Force32 = 0x7FFFFFFF
 } WGPUCompilationMessageType WGPU_ENUM_ATTRIBUTE;
 
+typedef enum WGPUToneMappingMode {
+    WGPUToneMappingMode_Standard = 0x00000000,
+    WGPUToneMappingMode_Extended = 0x00000001,
+} WGPUToneMappingMode WGPU_ENUM_ATTRIBUTE;
+
 typedef enum WGPUCompositeAlphaMode {
     WGPUCompositeAlphaMode_Auto = 0x00000000,
     WGPUCompositeAlphaMode_Opaque = 0x00000001,
@@ -1109,6 +1114,7 @@ typedef struct WGPUSwapChainDescriptor {
     Vector<WGPUTextureFormat> viewFormats;
 #endif
     WGPUColorSpace colorSpace;
+    WGPUToneMappingMode toneMappingMode;
     WGPUCompositeAlphaMode compositeAlphaMode;
     WGPUBool reportValidationErrors;
 } WGPUSwapChainDescriptor WGPU_STRUCTURE_ATTRIBUTE;

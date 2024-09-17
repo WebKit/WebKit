@@ -171,6 +171,7 @@ void GPUCanvasContextCocoa::reshape()
             configuration->usage,
             configuration->viewFormats,
             configuration->colorSpace,
+            configuration->toneMapping,
             configuration->compositingAlphaMode,
         };
         configure(WTFMove(canvasConfiguration), true);
@@ -276,6 +277,7 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
         configuration.usage,
         configuration.viewFormats,
         configuration.colorSpace,
+        configuration.toneMapping,
         configuration.alphaMode,
         WTFMove(renderBuffers),
         0,

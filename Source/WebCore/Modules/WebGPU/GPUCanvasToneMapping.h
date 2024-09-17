@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,12 @@
 
 #pragma once
 
-#include "WebGPUCanvasAlphaMode.h"
-#include "WebGPUCanvasToneMappingMode.h"
-#include "WebGPUDevice.h"
-#include "WebGPUPredefinedColorSpace.h"
-#include "WebGPUTextureFormat.h"
-#include "WebGPUTextureUsage.h"
-#include <wtf/Vector.h>
-#include <wtf/WeakRef.h>
+#include "GPUCanvasToneMappingMode.h"
 
-namespace WebCore::WebGPU {
+namespace WebCore {
 
-struct CanvasConfiguration {
-    WeakRef<Device> device;
-    TextureFormat format { TextureFormat::R8unorm };
-    TextureUsageFlags usage { TextureUsage::RenderAttachment };
-    Vector<TextureFormat> viewFormats;
-    PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
-    CanvasToneMappingMode toneMappingMode { CanvasToneMappingMode::Standard };
-    CanvasAlphaMode compositingAlphaMode { CanvasAlphaMode::Opaque };
-    bool reportValidationErrors { true };
+struct GPUCanvasToneMapping {
+    GPUCanvasToneMappingMode mode { GPUCanvasToneMappingMode::Standard };
 };
 
-} // namespace WebCore::WebGPU
+}

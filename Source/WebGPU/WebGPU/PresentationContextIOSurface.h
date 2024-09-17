@@ -75,6 +75,7 @@ private:
     std::optional<const MachSendRight> m_webProcessID;
 #endif
     WGPUColorSpace m_colorSpace { WGPUColorSpace::SRGB };
+    WGPUToneMappingMode m_toneMappingMode { WGPUToneMappingMode_Standard };
     WGPUCompositeAlphaMode m_alphaMode { WGPUCompositeAlphaMode_Premultiplied };
 };
 

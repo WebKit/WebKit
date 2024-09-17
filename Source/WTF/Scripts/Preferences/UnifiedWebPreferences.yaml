@@ -8069,6 +8069,25 @@ WebGPUEnabled:
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
 
+WebGPUHDREnabled:
+  type: bool
+  status: internal
+  category: dom
+  humanReadableName: "WebGPU support for HDR"
+  humanReadableDescription: "WebGPU High Dynamic Range through canvas configuration tone mapping mode"
+  defaultValue:
+    WebKitLegacy:
+      "ENABLE(WEBGPU_BY_DEFAULT) && ENABLE(WEBGPU_HDR_BY_DEFAULT)": true
+      default: false
+    WebKit:
+      "ENABLE(WEBGPU_BY_DEFAULT) && ENABLE(WEBGPU_HDR_BY_DEFAULT)": true
+      default: false
+    WebCore:
+      "ENABLE(WEBGPU_BY_DEFAULT) && ENABLE(WEBGPU_HDR_BY_DEFAULT)": true
+      default: false
+  disableInLockdownMode: true
+  sharedPreferenceForWebProcess: true
+
 WebInspectorEngineeringSettingsAllowed:
   type: bool
   status: internal

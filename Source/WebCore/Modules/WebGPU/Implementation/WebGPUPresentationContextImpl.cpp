@@ -58,6 +58,19 @@ void PresentationContextImpl::setSize(uint32_t width, uint32_t height)
     m_height = height;
 }
 
+static WGPUToneMappingMode convertToToneMappingMode(WebCore::WebGPU::CanvasToneMappingMode toneMappingMode)
+{
+    switch (toneMappingMode) {
+    case WebCore::WebGPU::CanvasToneMappingMode::Standard:
+        return WGPUToneMappingMode_Standard;
+    case WebCore::WebGPU::CanvasToneMappingMode::Extended:
+        return WGPUToneMappingMode_Extended;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WGPUToneMappingMode_Extended;
+}
+
 static WGPUCompositeAlphaMode convertToAlphaMode(WebCore::WebGPU::CanvasAlphaMode compositingAlphaMode)
 {
     switch (compositingAlphaMode) {
@@ -89,6 +102,7 @@ bool PresentationContextImpl::configure(const CanvasConfiguration& canvasConfigu
             return convertToBackingContext.convertToBacking(colorFormat);
         }),
         .colorSpace = canvasConfiguration.colorSpace == WebCore::WebGPU::PredefinedColorSpace::SRGB ? WGPUColorSpace::SRGB : WGPUColorSpace::DisplayP3,
+        .toneMappingMode = convertToToneMappingMode(canvasConfiguration.toneMappingMode),
         .compositeAlphaMode = convertToAlphaMode(canvasConfiguration.compositingAlphaMode),
         .reportValidationErrors = canvasConfiguration.reportValidationErrors
     };

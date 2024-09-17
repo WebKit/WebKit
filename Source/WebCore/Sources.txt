@@ -3717,6 +3717,8 @@ JSGPUBufferUsage.cpp
 JSGPUCanvasAlphaMode.cpp
 JSGPUCanvasConfiguration.cpp
 JSGPUCanvasContext.cpp
+JSGPUCanvasToneMapping.cpp
+JSGPUCanvasToneMappingMode.cpp
 JSGPUColorDict.cpp
 JSGPUColorTargetState.cpp
 JSGPUColorWrite.cpp
