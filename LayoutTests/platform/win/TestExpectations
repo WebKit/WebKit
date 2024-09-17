@@ -1329,9 +1329,6 @@ editing/style/preserve-selection-direction.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.detachedcanvas.html [ Skip ] # Failure
 imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.self.2.html [ Skip ] # Failure
 
-webkit.org/b/279649 imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.negativedest.html [ Skip ] # Crash
-webkit.org/b/279649 imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.negativedir.html [ Skip ] # Crash
-
 #//////////////////////////////////////////////////////////////////////////////////////////
 # forms
 #//////////////////////////////////////////////////////////////////////////////////////////
