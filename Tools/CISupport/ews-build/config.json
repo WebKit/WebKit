@@ -175,6 +175,9 @@
     { "name": "ews238", "platform": "*" },
     { "name": "ews239", "platform": "*" },
     { "name": "ews240", "platform": "*" },
+    { "name": "ews243", "platform": "*" },
+    { "name": "ews244", "platform": "*" },
+    { "name": "ews245", "platform": "*" },
     { "name": "webkit-cq-01", "platform": "mac-ventura" },
     { "name": "webkit-cq-02", "platform": "mac-ventura" },
     { "name": "webkit-cq-03", "platform": "mac-ventura" },
@@ -300,13 +303,13 @@
       "name": "tvOS-17-Build-EWS", "shortname": "tv", "icon": "buildOnly",
       "factory": "tvOSBuildFactory", "platform": "tvos-17",
       "configuration": "release", "architectures": ["arm64"],
-      "workernames": ["ews167", "ews168"]
+      "workernames": ["ews167", "ews168", "ews243", "ews244"]
     },
     {
       "name": "tvOS-17-Simulator-Build-EWS", "shortname": "tv-sim", "icon": "buildOnly",
       "factory": "tvOSBuildFactory", "platform": "tvos-simulator-17",
       "configuration": "release", "architectures": ["arm64"],
-      "workernames": ["ews168", "ews170"]
+      "workernames": ["ews168", "ews170", "ews245"]
     },
     {
       "name": "visionOS-1-Build-EWS", "shortname": "vision", "icon": "buildOnly",
