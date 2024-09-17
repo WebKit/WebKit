@@ -322,7 +322,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 + (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentials
 {
 #if ENABLE(WEB_AUTHN)
-    return getAllLocalAuthenticatorCredentialsImpl(@(WebCore::LocalAuthenticatorAccessGroup), nil, nil).autorelease();
+    return getAllLocalAuthenticatorCredentialsImpl(WebCore::LocalAuthenticatorAccessGroup, nil, nil).autorelease();
 #else
     return nullptr;
 #endif
@@ -340,7 +340,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 + (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentialsWithRPID:(NSString *)rpID
 {
 #if ENABLE(WEB_AUTHN)
-    return getAllLocalAuthenticatorCredentialsImpl(@(WebCore::LocalAuthenticatorAccessGroup), rpID, nil).autorelease();
+    return getAllLocalAuthenticatorCredentialsImpl(WebCore::LocalAuthenticatorAccessGroup, rpID, nil).autorelease();
 #else
     return nullptr;
 #endif
@@ -349,7 +349,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 + (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentialsWithCredentialID:(NSData *)credentialID
 {
 #if ENABLE(WEB_AUTHN)
-    return getAllLocalAuthenticatorCredentialsImpl(@(WebCore::LocalAuthenticatorAccessGroup), nil, credentialID).autorelease();
+    return getAllLocalAuthenticatorCredentialsImpl(WebCore::LocalAuthenticatorAccessGroup, nil, credentialID).autorelease();
 #else
     return nullptr;
 #endif
@@ -538,7 +538,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
 
 + (NSData *)importLocalAuthenticatorCredential:(NSData *)credentialBlob error:(NSError **)error
 {
-    return [self importLocalAuthenticatorWithAccessGroup:@(WebCore::LocalAuthenticatorAccessGroup) credential:credentialBlob error:error];
+    return [self importLocalAuthenticatorWithAccessGroup:WebCore::LocalAuthenticatorAccessGroup credential:credentialBlob error:error];
 }
 
 + (NSData *)importLocalAuthenticatorWithAccessGroup:(NSString *)accessGroup credential:(NSData *)credentialBlob error:(NSError **)error
