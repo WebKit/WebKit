@@ -107,7 +107,7 @@ void WebPageDebuggable::disconnect(FrontendChannel& channel)
 
 void WebPageDebuggable::dispatchMessageFromRemote(String&& message)
 {
-    callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, message = WTFMove(message).isolatedCopy()] {
+    callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, message = WTFMove(message).isolatedCopy()]() mutable {
         m_page->inspectorController().dispatchMessageFromFrontend(WTFMove(message));
     });
 }
