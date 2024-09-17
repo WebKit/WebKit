@@ -35,39 +35,38 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AnimationPlaybackEvent);
 
 AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, const AnimationPlaybackEventInit& initializer, IsTrusted isTrusted)
     : AnimationEventBase(EventInterfaceType::AnimationPlaybackEvent, type, initializer, isTrusted)
+    , m_timelineTime(initializer.timelineTime)
+    , m_currentTime(initializer.currentTime)
 {
-    if (initializer.currentTime)
-        m_currentTime = Seconds::fromMilliseconds(*initializer.currentTime);
-    else
-        m_currentTime = std::nullopt;
-
-    if (initializer.timelineTime)
-        m_timelineTime = Seconds::fromMilliseconds(*initializer.timelineTime);
-    else
-        m_timelineTime = std::nullopt;
 }
 
 AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, std::optional<Seconds> timelineTime, std::optional<Seconds> currentTime)
     : AnimationEventBase(EventInterfaceType::AnimationPlaybackEvent, type, animation, scheduledTime)
-    , m_timelineTime(timelineTime)
-    , m_currentTime(currentTime)
 {
+    if (timelineTime)
+        m_timelineTime = timelineTime->milliseconds();
+    if (currentTime)
+        m_currentTime = currentTime->milliseconds();
 }
 
 AnimationPlaybackEvent::~AnimationPlaybackEvent() = default;
 
-std::optional<double> AnimationPlaybackEvent::bindingsCurrentTime() const
+std::optional<CSSNumberishTime> AnimationPlaybackEvent::bindingsCurrentTime() const
 {
-    if (!m_currentTime)
-        return std::nullopt;
-    return secondsToWebAnimationsAPITime(m_currentTime.value());
+    if (m_currentTime) {
+        ASSERT(m_currentTime->time());
+        return secondsToWebAnimationsAPITime(*m_currentTime->time());
+    }
+    return std::nullopt;
 }
 
-std::optional<double> AnimationPlaybackEvent::bindingsTimelineTime() const
+std::optional<CSSNumberishTime> AnimationPlaybackEvent::bindingsTimelineTime() const
 {
-    if (!m_timelineTime)
-        return std::nullopt;
-    return secondsToWebAnimationsAPITime(m_timelineTime.value());
+    if (m_timelineTime) {
+        ASSERT(m_timelineTime->time());
+        return secondsToWebAnimationsAPITime(*m_timelineTime->time());
+    }
+    return std::nullopt;
 }
 
 } // namespace WebCore

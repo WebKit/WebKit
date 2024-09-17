@@ -27,6 +27,7 @@
 
 #include "AnimationEventBase.h"
 #include "AnimationPlaybackEventInit.h"
+#include "WebAnimationTypes.h"
 #include <wtf/Markable.h>
 
 namespace WebCore {
@@ -48,18 +49,18 @@ public:
 
     bool isAnimationPlaybackEvent() const final { return true; }
 
-    std::optional<Seconds> timelineTime() const { return m_timelineTime; }
-    std::optional<double> bindingsTimelineTime() const;
+    std::optional<CSSNumberishTime> timelineTime() const { return m_timelineTime; }
+    std::optional<CSSNumberishTime> bindingsTimelineTime() const;
 
-    std::optional<double> bindingsCurrentTime() const;
-    std::optional<Seconds> currentTime() const { return m_currentTime; }
+    std::optional<CSSNumberishTime> bindingsCurrentTime() const;
+    std::optional<CSSNumberishTime> currentTime() const { return m_currentTime; }
 
 private:
     AnimationPlaybackEvent(const AtomString&, WebAnimation*, std::optional<Seconds> scheduledTime, std::optional<Seconds> timelineTime, std::optional<Seconds> currentTime);
     AnimationPlaybackEvent(const AtomString&, const AnimationPlaybackEventInit&, IsTrusted);
 
-    Markable<Seconds, Seconds::MarkableTraits> m_timelineTime;
-    Markable<Seconds, Seconds::MarkableTraits> m_currentTime;
+    std::optional<CSSNumberishTime> m_timelineTime;
+    std::optional<CSSNumberishTime> m_currentTime;
 };
 
 }
