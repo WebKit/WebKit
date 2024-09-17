@@ -541,21 +541,33 @@ void GPUProcess::addSession(PAL::SessionID sessionID, GPUProcessSessionParameter
 
 void GPUProcess::removeSession(PAL::SessionID sessionID)
 {
-    ASSERT(m_sessions.contains(sessionID));
-    m_sessions.remove(sessionID);
+    auto findResult = m_sessions.find(sessionID);
+    if (findResult == m_sessions.end()) {
+        ASSERT_NOT_REACHED("Invalid SessionID");
+        return;
+    }
+    m_sessions.remove(findResult);
 }
 
 const String& GPUProcess::mediaCacheDirectory(PAL::SessionID sessionID) const
 {
-    ASSERT(m_sessions.contains(sessionID));
-    return m_sessions.find(sessionID)->value.mediaCacheDirectory;
+    auto findResult = m_sessions.find(sessionID);
+    if (findResult == m_sessions.end()) {
+        ASSERT_NOT_REACHED("Invalid SessionID");
+        return nullString();
+    }
+    return findResult->value.mediaCacheDirectory;
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
 const String& GPUProcess::mediaKeysStorageDirectory(PAL::SessionID sessionID) const
 {
-    ASSERT(m_sessions.contains(sessionID));
-    return m_sessions.find(sessionID)->value.mediaKeysStorageDirectory;
+    auto findResult = m_sessions.find(sessionID);
+    if (findResult == m_sessions.end()) {
+        ASSERT_NOT_REACHED("Invalid SessionID");
+        return nullString();
+    }
+    return findResult->value.mediaKeysStorageDirectory;
 }
 #endif
 
