@@ -1918,9 +1918,6 @@ test/intl402/DurationFormat/prototype/resolvedOptions/return-keys-order-default.
 test/intl402/Locale/extensions-grandfathered.js:
   default: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
   strict mode: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
-test/intl402/NumberFormat/prototype/format/useGrouping-extended-en-IN.js:
-  default: 'Test262Error: notation: "compact" Expected SameValue(«1T», «1K») to be true'
-  strict mode: 'Test262Error: notation: "compact" Expected SameValue(«1T», «1K») to be true'
 test/intl402/Temporal/Duration/compare/relativeto-sub-minute-offset.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
