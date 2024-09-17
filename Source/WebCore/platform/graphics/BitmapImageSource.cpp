@@ -271,11 +271,6 @@ bool BitmapImageSource::startAnimation(SubsamplingLevel subsamplingLevel, const 
     if (!frameAnimator)
         return false;
 
-    // Handle the case where the current frame has to be decoded synchronously
-    // but the next frame can be decoded asynchronously.
-    if (options.decodingMode() == DecodingMode::Synchronous && isLargeForDecoding())
-        return frameAnimator->startAnimation(subsamplingLevel, { DecodingMode::Asynchronous, options.sizeForDrawing() });
-
     return frameAnimator->startAnimation(subsamplingLevel, options);
 }
 
@@ -435,6 +430,10 @@ void BitmapImageSource::imageFrameDecodeAtIndexHasFinished(unsigned index, Subsa
         LOG(Images, "BitmapImageSource::%s - %p - url: %s. Frame at index = %d has been decoded.", __FUNCTION__, this, sourceUTF8(), index);
 
         cacheNativeImageAtIndex(index, subsamplingLevel, options, nativeImage.releaseNonNull());
+
+        if (frameAtIndex(index).isComplete())
+            ++m_decodeCountForTesting;
+
         imageFrameDecodeAtIndexHasFinished(index, animatingState, frameDecodingStatusAtIndex(index));
     }
 
@@ -482,9 +481,6 @@ void BitmapImageSource::cacheNativeImageAtIndex(unsigned index, SubsamplingLevel
 
     cacheMetadataAtIndex(index, subsamplingLevel, options);
     decodedSizeIncreased(frame.frameBytes());
-
-    if (frameAtIndex(index).isComplete())
-        ++m_decodeCountForTesting;
 }
 
 const ImageFrame& BitmapImageSource::frameAtIndex(unsigned index) const
@@ -611,7 +607,15 @@ Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::nativeImageAtIndex
 Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::currentNativeImageForDrawing(SubsamplingLevel subsamplingLevel, const DecodingOptions& options)
 {
     startAnimation(subsamplingLevel, options);
-    return nativeImageAtIndexForDrawing(currentFrameIndex(), subsamplingLevel, options);
+
+    auto effectiveOptions = options;
+
+    // If frame0 is displayed for the first time, startAnimation() has to request decoding frame1
+    // asynchronously. A flicker will occur if we request decoding frame0 also asynchronously.
+    if (options.decodingMode() == DecodingMode::Asynchronous && isAnimated() && !hasEverAnimated())
+        effectiveOptions = { DecodingMode::Synchronous, options.sizeForDrawing() };
+
+    return nativeImageAtIndexForDrawing(currentFrameIndex(), subsamplingLevel, effectiveOptions);
 }
 
 RefPtr<NativeImage> BitmapImageSource::nativeImageAtIndex(unsigned index)
