@@ -43,19 +43,17 @@ function getDOMCookies()
    return result;
 }
 
-async function setCookie(name, value, additionalProperties={}, origin="")
+async function setCookie(name, value, additionalProperties={})
 {
     invalidateCachedCookies();
 
     let cookie = createCookie(name, value, additionalProperties);
     let promise = new Promise((resolved, rejected) => {
         let xhr = new XMLHttpRequest;
-        xhr.open("GET", `${origin}/cookies/resources/setCookies.cgi`);
+        xhr.open("GET", "/cookies/resources/setCookies.cgi");
         xhr.setRequestHeader("X-SET-COOKIE", cookie);
         xhr.onload = () => resolved(xhr.responseText);
         xhr.onerror = rejected;
-        if (origin)
-            xhr.withCredentials = true;
         xhr.send(null);
     });
     return promise;
@@ -159,8 +157,6 @@ async function getCookies()
         let xhr = new XMLHttpRequest;
         xhr.open("GET", `${g_baseURLWhenFetchingCookies}/cookies/resources/echo-json.py`);
         xhr.onload = () => resolved(xhr.responseText ? JSON.parse(xhr.responseText) : {});
-        if (g_baseURLWhenFetchingCookies)
-            xhr.withCredentials = true;
         xhr.onerror = () => rejected({});
         xhr.send(null);
     });
