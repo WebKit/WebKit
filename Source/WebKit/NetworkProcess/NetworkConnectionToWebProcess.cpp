@@ -1195,16 +1195,22 @@ void NetworkConnectionToWebProcess::requestStorageAccess(RegistrableDomain&& sub
 
 void NetworkConnectionToWebProcess::setLoginStatus(RegistrableDomain&& domain, IsLoggedIn loggedInStatus, std::optional<WebCore::LoginStatus>&& lastAuthentication, CompletionHandler<void()>&& completionHandler)
 {
-    if (isLoginStatusAPIRequiresWebAuthnEnabled() && !lastAuthentication) {
-        auto umanagedAuthentication = LoginStatus::create(domain, emptyString(), WebCore::LoginStatus::CredentialTokenType::HTTPStateToken, WebCore::LoginStatus::AuthenticationType::Unmanaged, WebCore::LoginStatus::TimeToLiveAuthentication);
-        if (umanagedAuthentication.hasException())
-            return completionHandler();
-        lastAuthentication = umanagedAuthentication.releaseReturnValue();
+    std::optional<WebCore::LoginStatus> trustworthySignal;
+
+    if (isLoginStatusAPIRequiresWebAuthnEnabled()) {
+        if (lastAuthentication)
+            trustworthySignal = WTFMove(lastAuthentication);
+        else {
+            auto unmanagedAuthentication = LoginStatus::create(domain, emptyString(), WebCore::LoginStatus::CredentialTokenType::HTTPStateToken, WebCore::LoginStatus::AuthenticationType::Unmanaged, WebCore::LoginStatus::TimeToLiveAuthentication);
+            if (unmanagedAuthentication.hasException())
+                return completionHandler();
+            trustworthySignal = unmanagedAuthentication.releaseReturnValue();
+        }
     }
 
     if (auto* networkSession = this->networkSession()) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
-            resourceLoadStatistics->setLoginStatus(WTFMove(domain), loggedInStatus, WTFMove(lastAuthentication), WTFMove(completionHandler));
+            resourceLoadStatistics->setLoginStatus(WTFMove(domain), loggedInStatus, WTFMove(trustworthySignal), WTFMove(completionHandler));
             return;
         }
     }

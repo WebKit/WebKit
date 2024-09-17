@@ -8393,12 +8393,20 @@ void WebPage::setLoginStatus(RegistrableDomain&& domain, IsLoggedIn loggedInStat
     if (!page)
         return completionHandler();
     auto lastAuthentication = page->lastAuthentication();
-    WebProcess::singleton().ensureNetworkProcessConnection().protectedConnection()->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::SetLoginStatus(WTFMove(domain), loggedInStatus, lastAuthentication), WTFMove(completionHandler));
+    WebProcess::singleton().ensureNetworkProcessConnection().protectedConnection()->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::SetLoginStatus(WTFMove(domain), loggedInStatus, WTFMove(lastAuthentication)), WTFMove(completionHandler));
 }
 
 void WebPage::isLoggedIn(RegistrableDomain&& domain, CompletionHandler<void(bool)>&& completionHandler)
 {
     WebProcess::singleton().ensureNetworkProcessConnection().protectedConnection()->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::IsLoggedIn(WTFMove(domain)), WTFMove(completionHandler));
+}
+
+void WebPage::didFillPasswordForUsername(const String& username)
+{
+    RefPtr page = corePage();
+    if (!page)
+        return;
+    page->setLastAuthentication(LoginStatus::AuthenticationType::PasswordManager, username);
 }
 
 void WebPage::addDomainWithPageLevelStorageAccess(const RegistrableDomain& topLevelDomain, const RegistrableDomain& resourceDomain)

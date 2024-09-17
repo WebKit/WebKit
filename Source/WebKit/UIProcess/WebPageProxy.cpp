@@ -885,6 +885,11 @@ Ref<WebPageProxy> WebPageProxy::Internals::protectedPage() const
     return page.get();
 }
 
+void WebPageProxy::didFillPasswordForUsername(const String& username)
+{
+    send(Messages::WebPage::DidFillPasswordForUsername(username));
+}
+
 void WebPageProxy::addAllMessageReceivers()
 {
     Ref process = m_legacyMainFrameProcess;
