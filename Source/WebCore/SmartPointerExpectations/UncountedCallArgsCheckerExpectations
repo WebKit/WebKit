@@ -393,7 +393,6 @@ Modules/WebGPU/GPUQueue.cpp
 Modules/WebGPU/GPURenderBundleEncoder.cpp
 Modules/WebGPU/Implementation/WebGPUCommandEncoderImpl.cpp
 Modules/WebGPU/Implementation/WebGPUDeviceImpl.cpp
-Modules/WebGPU/Implementation/WebGPUImpl.cpp
 Modules/WebGPU/Implementation/WebGPUPresentationContextImpl.cpp
 Modules/WebGPU/Implementation/WebGPUQueueImpl.cpp
 Modules/airplay/WebMediaSessionManager.cpp
@@ -492,7 +491,6 @@ Modules/mediastream/RTCEncodedAudioFrame.cpp
 Modules/mediastream/RTCEncodedFrame.cpp
 Modules/mediastream/RTCEncodedVideoFrame.cpp
 Modules/mediastream/RTCPeerConnection.cpp
-Modules/mediastream/RTCRtpReceiver.cpp
 Modules/mediastream/RTCRtpSFrameTransform.cpp
 Modules/mediastream/RTCRtpScriptTransformer.cpp
 Modules/mediastream/RTCRtpSender.cpp
@@ -573,7 +571,6 @@ Modules/webaudio/OscillatorNode.cpp
 Modules/webaudio/PannerNode.cpp
 Modules/webaudio/ScriptProcessorNode.cpp
 Modules/webaudio/StereoPannerNode.cpp
-Modules/webaudio/WaveShaperNode.cpp
 Modules/webauthn/AuthenticatorCoordinator.cpp
 Modules/webauthn/PublicKeyCredential.cpp
 Modules/webauthn/fido/Pin.cpp
@@ -1232,10 +1229,8 @@ html/shadow/SpinButtonElement.cpp
 html/shadow/TextControlInnerElements.cpp
 html/track/AudioTrack.cpp
 html/track/DataCue.cpp
-html/track/InbandDataTextTrack.cpp
 html/track/InbandGenericTextTrack.cpp
 html/track/InbandTextTrack.cpp
-html/track/InbandWebVTTTextTrack.cpp
 html/track/LoadableTextTrack.cpp
 html/track/TextTrack.cpp
 html/track/TextTrackCue.cpp
@@ -1404,7 +1399,6 @@ page/UndoItem.cpp
 page/VisualViewport.cpp
 page/WheelEventTestMonitor.cpp
 page/cocoa/EventHandlerCocoa.mm
-page/cocoa/MemoryReleaseCocoa.mm
 page/cocoa/ResourceUsageOverlayCocoa.mm
 page/cocoa/ResourceUsageThreadCocoa.mm
 page/cocoa/WebTextIndicatorLayer.mm
@@ -1450,16 +1444,12 @@ platform/SharedBuffer.h
 platform/animation/AcceleratedEffectValues.cpp
 platform/animation/Animation.cpp
 platform/animation/AnimationList.cpp
-platform/audio/AudioSession.cpp
-platform/audio/PlatformMediaSession.cpp
 platform/audio/PlatformMediaSessionManager.cpp
 platform/audio/Reverb.cpp
 platform/audio/cocoa/AudioFileReaderCocoa.cpp
 platform/audio/cocoa/AudioSampleDataSource.mm
 platform/audio/cocoa/AudioSessionCocoa.mm
 platform/audio/cocoa/MediaSessionManagerCocoa.mm
-platform/audio/mac/AudioSessionMac.mm
-platform/audio/mac/SharedRoutingArbitrator.mm
 platform/cocoa/DragImageCocoa.mm
 platform/cocoa/PlatformSpeechSynthesizerCocoa.mm
 platform/cocoa/PlaybackSessionModelMediaElement.mm
@@ -1482,7 +1472,6 @@ platform/graphics/FontCascadeFonts.cpp
 platform/graphics/FontCreationContext.h
 platform/graphics/FontRanges.cpp
 platform/graphics/GradientImage.cpp
-platform/graphics/GraphicsContext.cpp
 platform/graphics/GraphicsLayer.cpp
 platform/graphics/GraphicsLayer.h
 platform/graphics/ImageAdapter.cpp
@@ -1500,16 +1489,12 @@ platform/graphics/TransparencyLayerContextSwitcher.cpp
 platform/graphics/WidthIterator.cpp
 platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm
 platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm
-platform/graphics/avfoundation/CDMFairPlayStreaming.cpp
 platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp
-platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
 platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp
 platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm
 platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm
 platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm
-platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm
 platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm
-platform/graphics/avfoundation/objc/InbandChapterTrackPrivateAVFObjC.mm
 platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm
 platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm
 platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm
@@ -1517,7 +1502,6 @@ platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm
 platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm
 platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm
 platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm
-platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm
 platform/graphics/avfoundation/objc/WebAVContentKeyGroup.mm
 platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm
 platform/graphics/ca/GraphicsLayerCA.cpp
@@ -1563,7 +1547,6 @@ platform/graphics/controls/ToggleButtonPart.h
 platform/graphics/coreimage/FEComponentTransferCoreImageApplier.mm
 platform/graphics/coretext/ComplexTextControllerCoreText.mm
 platform/graphics/coretext/FontCascadeCoreText.cpp
-platform/graphics/coretext/FontCoreText.cpp
 platform/graphics/coretext/FontCustomPlatformDataCoreText.cpp
 platform/graphics/coretext/FontPlatformDataCoreText.cpp
 platform/graphics/cv/GraphicsContextGLCVCocoa.cpp
@@ -1591,9 +1574,7 @@ platform/mediarecorder/cocoa/AudioSampleBufferCompressor.mm
 platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm
 platform/mediarecorder/cocoa/VideoSampleBufferCompressor.mm
 platform/mediastream/AudioTrackPrivateMediaStream.cpp
-platform/mediastream/MediaStreamPrivate.cpp
 platform/mediastream/MediaStreamTrackPrivate.cpp
-platform/mediastream/RealtimeMediaSource.cpp
 platform/mediastream/RealtimeOutgoingAudioSource.cpp
 platform/mediastream/RealtimeOutgoingVideoSource.cpp
 platform/mediastream/RealtimeVideoCaptureSource.cpp
@@ -1608,10 +1589,6 @@ platform/mediastream/mac/CoreAudioSharedUnit.cpp
 platform/mediastream/mac/CoreAudioSharedUnit.mm
 platform/mediastream/mac/MediaStreamTrackAudioSourceProviderCocoa.cpp
 platform/mediastream/mac/MockAudioSharedUnit.mm
-platform/mediastream/mac/RealtimeIncomingAudioSourceCocoa.cpp
-platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm
-platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp
-platform/mediastream/mac/ScreenCaptureKitCaptureSource.mm
 platform/mediastream/mac/ScreenCaptureKitSharingSessionManager.mm
 platform/mock/MockRealtimeMediaSourceCenter.cpp
 platform/mock/MockRealtimeVideoSource.cpp
@@ -1922,7 +1899,6 @@ svg/properties/SVGValuePropertyListAnimatorImpl.h
 testing/InternalSettings.cpp
 testing/Internals.cpp
 testing/MockContentFilter.cpp
-testing/MockMediaSessionCoordinator.cpp
 testing/MockPageOverlayClient.cpp
 testing/MockPaymentCoordinator.cpp
 testing/ServiceWorkerInternals.cpp

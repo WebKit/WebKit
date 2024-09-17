@@ -1004,7 +1004,6 @@ page/LocalFrameViewLayoutContext.cpp
 page/Location.cpp
 page/MemoryRelease.cpp
 page/Navigation.cpp
-page/NavigationHistoryEntry.cpp
 page/Navigator.cpp
 page/OpportunisticTaskScheduler.cpp
 page/Page.cpp

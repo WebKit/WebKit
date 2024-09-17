@@ -1,7 +1,5 @@
 CommandLineAPIModuleSourceBuiltins.h
 Modules/WebGPU/GPUPresentationContextDescriptor.h
-Modules/WebGPU/InternalAPI/WebGPUPresentationContextDescriptor.h
-Modules/WebGPU/InternalAPI/WebGPUShaderModuleCompilationHint.h
 Modules/encryptedmedia/MediaKeyStatusMap.h
 Modules/encryptedmedia/legacy/WebKitMediaKeySession.h
 Modules/fetch/FetchBodyOwner.h

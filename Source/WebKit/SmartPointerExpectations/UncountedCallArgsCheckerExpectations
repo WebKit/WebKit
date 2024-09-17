@@ -1,13 +1,11 @@
 AutomationFrontendDispatchers.cpp
 AutomationProtocolObjects.h
-GPUProcess/ShapeDetection/RemoteFaceDetector.cpp
 GPUProcess/graphics/ImageBufferShareableAllocator.cpp
 GPUProcess/graphics/RemoteDisplayListRecorder.cpp
 GPUProcess/graphics/RemoteDisplayListRecorder.h
 GPUProcess/graphics/RemoteGraphicsContextGL.cpp
 GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h
 GPUProcess/graphics/RemoteImageBuffer.cpp
-GPUProcess/graphics/RemoteImageBufferSet.cpp
 GPUProcess/graphics/RemoteRenderingBackend.cpp
 GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp
 GPUProcess/graphics/WebGPU/RemoteBindGroup.cpp
@@ -38,9 +36,6 @@ GPUProcess/media/RemoteVideoFrameObjectHeap.cpp
 GPUProcess/media/RemoteVideoTrackProxy.cpp
 GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm
 GPUProcess/webrtc/LibWebRTCCodecsProxy.mm
-GPUProcess/webrtc/RemoteMediaRecorder.h
-GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp
-GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp
 JSWebExtensionAPIAction.mm
 JSWebExtensionAPIAlarms.mm
 JSWebExtensionAPICommands.mm
@@ -114,7 +109,6 @@ Platform/cocoa/WKPaymentAuthorizationDelegate.mm
 Platform/cocoa/WebPrivacyHelpers.mm
 Shared/API/APIArray.h
 Shared/API/Cocoa/WKRemoteObjectCoder.mm
-Shared/API/Cocoa/_WKRemoteObjectRegistry.mm
 Shared/API/c/WKArray.cpp
 Shared/API/c/WKContextMenuItem.cpp
 Shared/API/c/WKData.cpp
@@ -152,8 +146,6 @@ Shared/Cocoa/WebKit2InitializeCocoa.mm
 Shared/ContextMenuContextData.cpp
 Shared/EditingRange.cpp
 Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm
-Shared/IPCStreamTester.cpp
-Shared/IPCTester.cpp
 Shared/RemoteLayerTree/RemoteLayerBackingStore.mm
 Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm
 Shared/RemoteLayerTree/RemoteLayerWithInProcessRenderingBackingStore.mm
@@ -333,7 +325,6 @@ UIProcess/Extensions/Cocoa/WebExtensionActionCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionCommandCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionContextCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionControllerCocoa.mm
-UIProcess/Extensions/Cocoa/WebExtensionMenuItemCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionTabCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionURLSchemeHandlerCocoa.mm
 UIProcess/Extensions/WebExtensionAlarm.cpp
@@ -346,7 +337,6 @@ UIProcess/GeolocationPermissionRequestManagerProxy.cpp
 UIProcess/Inspector/Agents/InspectorBrowserAgent.cpp
 UIProcess/Inspector/Cocoa/InspectorExtensionDelegate.mm
 UIProcess/Inspector/InspectorTargetProxy.cpp
-UIProcess/Inspector/RemoteWebInspectorUIProxy.cpp
 UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp
 UIProcess/Inspector/WebInspectorUIProxy.cpp
 UIProcess/Inspector/WebPageInspectorController.cpp
@@ -373,13 +363,11 @@ UIProcess/RemoteLayerTree/mac/RemoteScrollingCoordinatorProxyMac.mm
 UIProcess/RemoteLayerTree/mac/RemoteScrollingTreeMac.mm
 UIProcess/RemotePageDrawingAreaProxy.cpp
 UIProcess/RemotePageProxy.cpp
-UIProcess/RemotePageVisitedLinkStoreRegistration.h
 UIProcess/SpeechRecognitionPermissionManager.cpp
 UIProcess/SuspendedPageProxy.cpp
 UIProcess/UserContent/WebUserContentControllerProxy.cpp
 UIProcess/UserMediaPermissionRequestManagerProxy.cpp
 UIProcess/UserMediaPermissionRequestProxy.cpp
-UIProcess/ViewGestureController.cpp
 UIProcess/ViewSnapshotStore.cpp
 UIProcess/WebAuthentication/Authenticator.cpp
 UIProcess/WebAuthentication/AuthenticatorManager.cpp
@@ -423,7 +411,6 @@ UIProcess/mac/PageClientImplMac.mm
 UIProcess/mac/ServicesController.mm
 UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm
 UIProcess/mac/UserMediaPermissionRequestProxyMac.mm
-UIProcess/mac/ViewGestureControllerMac.mm
 UIProcess/mac/WKFullScreenWindowController.mm
 UIProcess/mac/WKImmediateActionController.mm
 UIProcess/mac/WKPrintingView.mm

@@ -1,5 +1,4 @@
 AutomationFrontendDispatchers.h
-Shared/IPCTester.cpp
 UIProcess/Inspector/WebPageInspectorAgentBase.h
 WebProcess/ApplePay/WebPaymentCoordinator.h
 WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.h
