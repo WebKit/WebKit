@@ -150,7 +150,11 @@ void IPCStreamTester::checkAutoreleasePool(CompletionHandler<void(int32_t)>&& co
 
 #if USE(FOUNDATION)
     static const CFArrayCallBacks arrayCallbacks {
+        .version = 0,
+        .retain = nullptr,
         .release = releaseUseCountHolder,
+        .copyDescription = nullptr,
+        .equal = nullptr,
     };
     const void* values[] = { new UseCountHolder { m_autoreleasePoolCheckValue } };
     CFArrayRef releaseDetector = CFArrayCreate(kCFAllocatorDefault, values, 1, &arrayCallbacks);
