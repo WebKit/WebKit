@@ -1765,6 +1765,7 @@ struct WebCore::Cookie {
     String value;
     String domain;
     String path;
+    String partitionKey;
     double created;
     std::optional<double> expires;
     bool httpOnly;
