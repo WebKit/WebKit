@@ -5341,7 +5341,6 @@ http/tests/navigation/target-blank-opener-post.html [ Skip ]
 
 # Unskip otherwise globally-skipped test
 css2.1/20110323/replaced-intrinsic-002.htm [ Pass ]
-fast/replaced/pdf-as-object-and-embed.html [ Pass ]
 
 # These tests test the Shadow DOM based HTML form validation UI but iOS WK2 is using native dialogs instead.
 fast/forms/validation-message-on-listbox.html [ Skip ]
