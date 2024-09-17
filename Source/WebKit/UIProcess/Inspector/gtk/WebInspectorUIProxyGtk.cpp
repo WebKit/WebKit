@@ -178,7 +178,7 @@ static Ref<WebsiteDataStore> inspectorWebsiteDataStore()
 
 WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
 {
-    ASSERT(inspectedPage());
+    ASSERT(m_inspectedPage);
     ASSERT(!m_inspectorView);
     Ref preferences = WebPreferences::create(String(), "WebKit2."_s, "WebKit2."_s);
 #if ENABLE(DEVELOPER_MODE)
