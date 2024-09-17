@@ -91,6 +91,9 @@ WebAutomationSession::WebAutomationSession()
     , m_domainNotifier(makeUnique<AutomationFrontendDispatcher>(m_frontendRouter))
     , m_loadTimer(RunLoop::main(), this, &WebAutomationSession::loadTimerFired)
 {
+#if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+    m_mouseButtonsCurrentlyDown.reserveInitialCapacity(3);
+#endif
 }
 
 WebAutomationSession::~WebAutomationSession()
@@ -2294,6 +2297,10 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
                 auto protocolButton = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::MouseButton>(pressedButtonString);
                 sourceState.pressedMouseButton = protocolButton.value_or(MouseButton::None);
             }
+
+            auto mouseInteractionString = stateObject->getString("mouseInteraction"_s);
+            if (!!mouseInteractionString)
+                sourceState.mouseInteraction = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::MouseInteraction>(mouseInteractionString);
 
             auto originString = stateObject->getString("origin"_s);
             if (!!originString)

@@ -87,6 +87,7 @@ struct SimulatedInputSourceState {
     CharKeySet pressedCharKeys;
     VirtualKeyMap pressedVirtualKeys;
     std::optional<MouseButton> pressedMouseButton;
+    std::optional<MouseInteraction> mouseInteraction;
     std::optional<MouseMoveOrigin> origin;
     std::optional<String> nodeHandle;
     std::optional<WebCore::IntPoint> location;

@@ -298,22 +298,20 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
 
             b.location = location;
             // The "dispatch a pointer{Down,Up,Move} action" algorithms (§17.4 Dispatching Actions).
-            if (!a.pressedMouseButton && b.pressedMouseButton) {
+            if (b.mouseInteraction) {
+                const auto stateTransitionIsNoop = [&a, &b] {
+                    return std::tie(a.location, a.mouseInteraction, a.pressedMouseButton) == std::tie(b.location, b.mouseInteraction, b.pressedMouseButton);
+                }();
+
+                if (!stateTransitionIsNoop) {
 #if !LOG_DISABLED
-                String mouseButtonName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(b.pressedMouseButton.value());
-                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MouseDown[button=%s] @ (%d, %d) for transition to %d.%d", this, mouseButtonName.utf8().data(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
+                    String interactionName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(b.mouseInteraction.value());
+                    String mouseButtonName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(b.pressedMouseButton.value_or(MouseButton::None));
+                    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating %s[button=%s] @ (%d, %d) for transition to %d.%d", this, interactionName.utf8().data(), mouseButtonName.utf8().data(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
 #endif
-                m_client.simulateMouseInteraction(protectedPage(), MouseInteraction::Down, b.pressedMouseButton.value(), b.location.value(), pointerType, WTFMove(eventDispatchFinished));
-            } else if (a.pressedMouseButton && !b.pressedMouseButton) {
-#if !LOG_DISABLED
-                String mouseButtonName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(a.pressedMouseButton.value());
-                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MouseUp[button=%s] @ (%d, %d) for transition to %d.%d", this, mouseButtonName.utf8().data(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
-#endif
-                m_client.simulateMouseInteraction(protectedPage(), MouseInteraction::Up, a.pressedMouseButton.value(), b.location.value(), pointerType, WTFMove(eventDispatchFinished));
-            } else if (a.location != b.location) {
-                LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MouseMove from (%d, %d) to (%d, %d) for transition to %d.%d", this, a.location.value().x(), a.location.value().y(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
-                // FIXME: This does not interpolate mousemoves per the "perform a pointer move" algorithm (§17.4 Dispatching Actions).
-                m_client.simulateMouseInteraction(protectedPage(), MouseInteraction::Move, b.pressedMouseButton.value_or(MouseButton::None), b.location.value(), pointerType, WTFMove(eventDispatchFinished));
+                    m_client.simulateMouseInteraction(protectedPage(), b.mouseInteraction.value(), b.pressedMouseButton.value_or(MouseButton::None), b.location.value(), pointerType, WTFMove(eventDispatchFinished));
+                } else
+                    eventDispatchFinished({ });
             } else
                 eventDispatchFinished(std::nullopt);
         });
