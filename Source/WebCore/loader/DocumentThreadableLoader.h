@@ -109,6 +109,7 @@ class CachedRawResource;
         bool isAllowedByContentSecurityPolicy(const URL&, ContentSecurityPolicy::RedirectResponseReceived, const URL& preRedirectURL = URL());
         bool isResponseAllowedByContentSecurityPolicy(const ResourceResponse&);
 
+        Ref<SecurityOrigin> topOrigin() const;
         SecurityOrigin& securityOrigin() const;
         Ref<SecurityOrigin> protectedSecurityOrigin() const;
         const ContentSecurityPolicy& contentSecurityPolicy() const;
