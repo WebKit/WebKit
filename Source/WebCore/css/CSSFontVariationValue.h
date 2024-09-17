@@ -54,6 +54,8 @@ public:
 private:
     CSSFontVariationValue(FontTag, Ref<CSSPrimitiveValue>&&);
 
+    Ref<CSSPrimitiveValue> protectedValue() const;
+
     FontTag m_tag;
     Ref<CSSPrimitiveValue> m_value;
 };

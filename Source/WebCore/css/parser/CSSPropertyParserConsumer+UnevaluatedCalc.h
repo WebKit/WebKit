@@ -50,6 +50,8 @@ template<typename T> struct UnevaluatedCalc {
     using RawType = T;
     Ref<CSSCalcValue> calc;
 
+    Ref<CSSCalcValue> protectedCalc() const { return calc; }
+
     bool operator==(const UnevaluatedCalc<T>& other) const
     {
         return unevaluatedCalcEqual(calc, other.calc);

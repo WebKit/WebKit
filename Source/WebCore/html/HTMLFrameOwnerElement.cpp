@@ -109,8 +109,8 @@ WindowProxy* HTMLFrameOwnerElement::contentWindow() const
 void HTMLFrameOwnerElement::setSandboxFlags(SandboxFlags flags)
 {
     m_sandboxFlags = flags;
-    if (m_contentFrame)
-        m_contentFrame->updateSandboxFlags(flags, Frame::NotifyUIProcess::Yes);
+    if (RefPtr contentFrame = m_contentFrame.get())
+        contentFrame->updateSandboxFlags(flags, Frame::NotifyUIProcess::Yes);
 }
 
 bool HTMLFrameOwnerElement::isKeyboardFocusable(KeyboardEvent* event) const

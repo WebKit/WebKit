@@ -250,7 +250,7 @@ std::optional<FontCascade> resolveForUnresolvedFont(const CSSPropertyParserHelpe
             if (requiresConversionData(calc))
                 return 0.0f;
 
-            auto length = calc.calc->lengthPercentageValueNoConversionDataRequired({ });
+            auto length = calc.protectedCalc()->lengthPercentageValueNoConversionDataRequired({ });
             return floatValueForLength(length, parentSize);
         }
     );

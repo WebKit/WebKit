@@ -32,10 +32,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceGraphicSoftwareApplier);
 
 bool SourceGraphicSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {
-    auto& input = inputs[0].get();
+    Ref input = inputs[0];
 
     RefPtr resultImage = result.imageBuffer();
-    RefPtr sourceImage = input.imageBuffer();
+    RefPtr sourceImage = input->imageBuffer();
     if (!resultImage || !sourceImage)
         return false;
 

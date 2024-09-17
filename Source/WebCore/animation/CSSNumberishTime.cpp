@@ -57,7 +57,7 @@ CSSNumberishTime::CSSNumberishTime(CSSNumberish value)
 
     ASSERT(std::holds_alternative<RefPtr<CSSNumericValue>>(value));
     auto numericValue = std::get<RefPtr<CSSNumericValue>>(value);
-    if (auto* unitValue = dynamicDowncast<CSSUnitValue>(numericValue.get())) {
+    if (RefPtr unitValue = dynamicDowncast<CSSUnitValue>(numericValue.get())) {
         if (unitValue->unitEnum() == CSSUnitType::CSS_NUMBER) {
             m_type = Type::Time;
             m_source = Source::Number;
