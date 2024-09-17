@@ -39,7 +39,6 @@ class RenderFragmentContainer;
 class RoundedRectRadii;
 struct PaintInfo;
 
-enum SizeType { MainOrPreferredSize, MinSize, MaxSize };
 enum AvailableLogicalHeightType { ExcludeMarginBorderPadding, IncludeMarginBorderPadding };
 enum OverlayScrollbarSizeRelevancy { IgnoreOverlayScrollbarSize, IncludeOverlayScrollbarSize };
 
@@ -396,6 +395,11 @@ public:
 
     // Whether or not the element shrinks to its intrinsic width (rather than filling the width
     // of a containing block).  HTML4 buttons, <select>s, <input>s, legends, and floating/compact elements do this.
+    enum class SizeType : uint8_t {
+        MainOrPreferredSize,
+        MinSize,
+        MaxSize
+    };
     bool sizesLogicalWidthToFitContent(SizeType) const;
 
     bool hasStretchedLogicalHeight() const;

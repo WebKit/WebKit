@@ -551,7 +551,7 @@ bool RenderFlexibleBox::isMultiline() const
 // https://drafts.csswg.org/css-flexbox/#min-size-auto
 bool RenderFlexibleBox::shouldApplyMinSizeAutoForFlexItem(const RenderBox& flexItem) const
 {
-    auto minSize = mainSizeLengthForFlexItem(MinSize, flexItem);
+    auto minSize = mainSizeLengthForFlexItem(RenderBox::SizeType::MinSize, flexItem);
     // min, max and fit-content are equivalent to the automatic size for block sizes https://drafts.csswg.org/css-sizing-3/#valdef-width-min-content.
     bool flexItemBlockSizeIsEquivalentToAutomaticSize  = !mainAxisIsFlexItemInlineAxis(flexItem) && (minSize.isMinContent() || minSize.isMaxContent() || minSize.isFitContent());
 
@@ -567,7 +567,7 @@ Length RenderFlexibleBox::flexBasisForFlexItem(const RenderBox& flexItem) const
 {
     Length flexLength = flexItem.style().flexBasis();
     if (flexLength.isAuto())
-        flexLength = mainSizeLengthForFlexItem(MainOrPreferredSize, flexItem);
+        flexLength = mainSizeLengthForFlexItem(RenderBox::SizeType::MainOrPreferredSize, flexItem);
     return flexLength;
 }
 
@@ -688,7 +688,7 @@ static bool flexItemHasAspectRatio(const RenderBox& flexItem)
     return flexItem.hasIntrinsicAspectRatio() || flexItem.style().hasAspectRatio() || isSVGRootWithIntrinsicAspectRatio(flexItem);
 }
 
-std::optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForFlexItem(RenderBox& flexItem, SizeType sizeType, const Length& size)
+std::optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForFlexItem(RenderBox& flexItem, RenderBox::SizeType sizeType, const Length& size)
 {
     // If we have a horizontal flow, that means the main size is the width.
     // That's the logical width for horizontal writing modes, and the logical
@@ -1009,28 +1009,28 @@ LayoutPoint RenderFlexibleBox::flowAwareLocationForFlexItem(const RenderBox& fle
     return isHorizontalFlow() ? flexItem.location() : flexItem.location().transposedPoint();
 }
 
-Length RenderFlexibleBox::crossSizeLengthForFlexItem(SizeType sizeType, const RenderBox& flexItem) const
+Length RenderFlexibleBox::crossSizeLengthForFlexItem(RenderBox::SizeType sizeType, const RenderBox& flexItem) const
 {
     switch (sizeType) {
-    case MinSize:
+    case RenderBox::SizeType::MinSize:
         return isHorizontalFlow() ? flexItem.style().minHeight() : flexItem.style().minWidth();
-    case MainOrPreferredSize:
+    case RenderBox::SizeType::MainOrPreferredSize:
         return isHorizontalFlow() ? flexItem.style().height() : flexItem.style().width();
-    case MaxSize:
+    case RenderBox::SizeType::MaxSize:
         return isHorizontalFlow() ? flexItem.style().maxHeight() : flexItem.style().maxWidth();
     }
     ASSERT_NOT_REACHED();
     return { };
 }
 
-Length RenderFlexibleBox::mainSizeLengthForFlexItem(SizeType sizeType, const RenderBox& flexItem) const
+Length RenderFlexibleBox::mainSizeLengthForFlexItem(RenderBox::SizeType sizeType, const RenderBox& flexItem) const
 {
     switch (sizeType) {
-    case MinSize:
+    case RenderBox::SizeType::MinSize:
         return isHorizontalFlow() ? flexItem.style().minWidth() : flexItem.style().minHeight();
-    case MainOrPreferredSize:
+    case RenderBox::SizeType::MainOrPreferredSize:
         return isHorizontalFlow() ? flexItem.style().width() : flexItem.style().height();
-    case MaxSize:
+    case RenderBox::SizeType::MaxSize:
         return isHorizontalFlow() ? flexItem.style().maxWidth() : flexItem.style().maxHeight();
     }
     ASSERT_NOT_REACHED();
@@ -1138,7 +1138,7 @@ bool RenderFlexibleBox::flexItemHasComputableAspectRatio(const RenderBox& flexIt
 bool RenderFlexibleBox::flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const RenderBox& flexItem)
 {
     return flexItemHasComputableAspectRatio(flexItem)
-        && (flexItemCrossSizeIsDefinite(flexItem, crossSizeLengthForFlexItem(MainOrPreferredSize, flexItem)) || flexItemCrossSizeShouldUseContainerCrossSize(flexItem));
+        && (flexItemCrossSizeIsDefinite(flexItem, crossSizeLengthForFlexItem(RenderBox::SizeType::MainOrPreferredSize, flexItem)) || flexItemCrossSizeShouldUseContainerCrossSize(flexItem));
 }
 
 bool RenderFlexibleBox::crossAxisIsPhysicalWidth() const
@@ -1152,7 +1152,7 @@ bool RenderFlexibleBox::flexItemCrossSizeShouldUseContainerCrossSize(const Rende
     // 1. If a single-line flex container has a definite cross size, the automatic preferred outer cross size of any
     // stretched flex items is the flex container's inner cross size (clamped to the flex item's min and max cross size)
     // and is considered definite.
-    if (!isMultiline() && alignmentForFlexItem(flexItem) == ItemPosition::Stretch && !hasAutoMarginsInCrossAxis(flexItem) && crossSizeLengthForFlexItem(MainOrPreferredSize, flexItem).isAuto()) {
+    if (!isMultiline() && alignmentForFlexItem(flexItem) == ItemPosition::Stretch && !hasAutoMarginsInCrossAxis(flexItem) && crossSizeLengthForFlexItem(RenderBox::SizeType::MainOrPreferredSize, flexItem).isAuto()) {
         if (crossAxisIsPhysicalWidth())
             return true;
         // This must be kept in sync with computeMainSizeFromAspectRatioUsing().
@@ -1241,11 +1241,11 @@ LayoutUnit RenderFlexibleBox::computeFlexBaseSizeForFlexItem(RenderBox& flexItem
 
     // 9.2.3 A.
     if (flexItemMainSizeIsDefinite(flexItem, flexBasis))
-        return std::max(0_lu, computeMainAxisExtentForFlexItem(flexItem, MainOrPreferredSize, flexBasis).value());
+        return std::max(0_lu, computeMainAxisExtentForFlexItem(flexItem, RenderBox::SizeType::MainOrPreferredSize, flexBasis).value());
 
     // 9.2.3 B.
     if (flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(flexItem)) {
-        const Length& crossSizeLength = crossSizeLengthForFlexItem(MainOrPreferredSize, flexItem);
+        const Length& crossSizeLength = crossSizeLengthForFlexItem(RenderBox::SizeType::MainOrPreferredSize, flexItem);
         return adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(flexItem, computeMainSizeFromAspectRatioUsing(flexItem, crossSizeLength));
     }
 
@@ -1547,15 +1547,15 @@ void RenderFlexibleBox::prepareOrderIteratorAndMargins()
 
 std::pair<LayoutUnit, LayoutUnit> RenderFlexibleBox::computeFlexItemMinMaxSizes(RenderBox& flexItem)
 {
-    Length max = mainSizeLengthForFlexItem(MaxSize, flexItem);
+    Length max = mainSizeLengthForFlexItem(RenderBox::SizeType::MaxSize, flexItem);
     std::optional<LayoutUnit> maxExtent = std::nullopt;
     if (max.isSpecifiedOrIntrinsic())
-        maxExtent = computeMainAxisExtentForFlexItem(flexItem, MaxSize, max);
+        maxExtent = computeMainAxisExtentForFlexItem(flexItem, RenderBox::SizeType::MaxSize, max);
 
-    Length min = mainSizeLengthForFlexItem(MinSize, flexItem);
+    Length min = mainSizeLengthForFlexItem(RenderBox::SizeType::MinSize, flexItem);
     // Intrinsic sizes in child's block axis are handled by the min-size:auto code path.
     if (min.isSpecified() || (min.isIntrinsic() && mainAxisIsFlexItemInlineAxis(flexItem))) {
-        auto minExtent = computeMainAxisExtentForFlexItem(flexItem, MinSize, min).value_or(0_lu);
+        auto minExtent = computeMainAxisExtentForFlexItem(flexItem, RenderBox::SizeType::MinSize, min).value_or(0_lu);
         // We must never return a min size smaller than the min preferred size for tables.
         if (flexItem.isRenderTable() && mainAxisIsFlexItemInlineAxis(flexItem))
             minExtent = std::max(minExtent, flexItem.minPreferredLogicalWidth());
@@ -1566,23 +1566,23 @@ std::pair<LayoutUnit, LayoutUnit> RenderFlexibleBox::computeFlexItemMinMaxSizes(
         // FIXME: If the min value is expected to be valid here, we need to come up with a non optional version of computeMainAxisExtentForFlexItem and
         // ensure it's valid through the virtual calls of computeIntrinsicLogicalContentHeightUsing.
         LayoutUnit contentSize;
-        Length flexItemCrossSizeLength = crossSizeLengthForFlexItem(MainOrPreferredSize, flexItem);
+        Length flexItemCrossSizeLength = crossSizeLengthForFlexItem(RenderBox::SizeType::MainOrPreferredSize, flexItem);
 
         bool canComputeSizeThroughAspectRatio = flexItem.isRenderReplaced() && flexItemHasComputableAspectRatio(flexItem) && flexItemCrossSizeIsDefinite(flexItem, flexItemCrossSizeLength);
 
         if (canComputeSizeThroughAspectRatio)
             contentSize = computeMainSizeFromAspectRatioUsing(flexItem, flexItemCrossSizeLength);
         else
-            contentSize = computeMainAxisExtentForFlexItem(flexItem, MinSize, Length(LengthType::MinContent)).value_or(0_lu);
+            contentSize = computeMainAxisExtentForFlexItem(flexItem, RenderBox::SizeType::MinSize, Length(LengthType::MinContent)).value_or(0_lu);
 
-        if (flexItemHasAspectRatio(flexItem) && (!crossSizeLengthForFlexItem(MinSize, flexItem).isAuto() || !crossSizeLengthForFlexItem(MaxSize, flexItem).isAuto()))
+        if (flexItemHasAspectRatio(flexItem) && (!crossSizeLengthForFlexItem(RenderBox::SizeType::MinSize, flexItem).isAuto() || !crossSizeLengthForFlexItem(RenderBox::SizeType::MaxSize, flexItem).isAuto()))
             contentSize = adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(flexItem, contentSize);
         ASSERT(contentSize >= 0);
         contentSize = std::min(contentSize, maxExtent.value_or(contentSize));
         
-        Length mainSize = mainSizeLengthForFlexItem(MainOrPreferredSize, flexItem);
+        Length mainSize = mainSizeLengthForFlexItem(RenderBox::SizeType::MainOrPreferredSize, flexItem);
         if (flexItemMainSizeIsDefinite(flexItem, mainSize)) {
-            LayoutUnit resolvedMainSize = computeMainAxisExtentForFlexItem(flexItem, MainOrPreferredSize, mainSize).value_or(0);
+            LayoutUnit resolvedMainSize = computeMainAxisExtentForFlexItem(flexItem, RenderBox::SizeType::MainOrPreferredSize, mainSize).value_or(0);
             ASSERT(resolvedMainSize >= 0);
             LayoutUnit specifiedSize = std::min(resolvedMainSize, maxExtent.value_or(resolvedMainSize));
             return { std::min(specifiedSize, contentSize), maxExtent.value_or(LayoutUnit::max()) };
@@ -1640,8 +1640,8 @@ std::optional<LayoutUnit> RenderFlexibleBox::usedFlexItemOverridingLogicalHeight
 
 LayoutUnit RenderFlexibleBox::adjustFlexItemSizeForAspectRatioCrossAxisMinAndMax(const RenderBox& flexItem, LayoutUnit flexItemSize)
 {
-    Length crossMin = crossSizeLengthForFlexItem(MinSize, flexItem);
-    Length crossMax = crossSizeLengthForFlexItem(MaxSize, flexItem);
+    Length crossMin = crossSizeLengthForFlexItem(RenderBox::SizeType::MinSize, flexItem);
+    Length crossMax = crossSizeLengthForFlexItem(RenderBox::SizeType::MaxSize, flexItem);
 
     if (flexItemCrossSizeIsDefinite(flexItem, crossMax)) {
         LayoutUnit maxValue = computeMainSizeFromAspectRatioUsing(flexItem, crossMax);
@@ -2098,8 +2098,8 @@ bool RenderFlexibleBox::flexItemHasIntrinsicMainAxisSize(const RenderBox& flexIt
         return false;
 
     Length flexBasis = flexBasisForFlexItem(flexItem);
-    Length minSize = mainSizeLengthForFlexItem(MinSize, flexItem);
-    Length maxSize = mainSizeLengthForFlexItem(MaxSize, flexItem);
+    Length minSize = mainSizeLengthForFlexItem(RenderBox::SizeType::MinSize, flexItem);
+    Length maxSize = mainSizeLengthForFlexItem(RenderBox::SizeType::MaxSize, flexItem);
     // FIXME: we must run flexItemMainSizeIsDefinite() because it might end up calling computePercentageLogicalHeight()
     // which has some side effects like calling addPercentHeightDescendant() for example so it is not possible to skip
     // the call for example by moving it to the end of the conditional expression. This is error-prone and we should

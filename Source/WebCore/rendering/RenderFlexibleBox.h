@@ -154,8 +154,8 @@ private:
     bool isLeftToRightFlow() const;
     bool isMultiline() const;
     Length flexBasisForFlexItem(const RenderBox& flexItem) const;
-    Length mainSizeLengthForFlexItem(SizeType, const RenderBox&) const;
-    Length crossSizeLengthForFlexItem(SizeType, const RenderBox&) const;
+    Length mainSizeLengthForFlexItem(RenderBox::SizeType, const RenderBox&) const;
+    Length crossSizeLengthForFlexItem(RenderBox::SizeType, const RenderBox&) const;
     bool shouldApplyMinSizeAutoForFlexItem(const RenderBox&) const;
     LayoutUnit crossAxisExtentForFlexItem(const RenderBox& flexItem) const;
     LayoutUnit crossAxisIntrinsicExtentForFlexItem(RenderBox& flexItem);
@@ -167,7 +167,7 @@ private:
     LayoutUnit mainAxisExtent() const;
     LayoutUnit crossAxisContentExtent() const;
     LayoutUnit mainAxisContentExtent(LayoutUnit contentLogicalHeight);
-    std::optional<LayoutUnit> computeMainAxisExtentForFlexItem(RenderBox& flexItem, SizeType, const Length& size);
+    std::optional<LayoutUnit> computeMainAxisExtentForFlexItem(RenderBox& flexItem, RenderBox::SizeType, const Length& size);
     FlowDirection transformedBlockFlowDirection() const;
     LayoutUnit flowAwareBorderStart() const;
     LayoutUnit flowAwareBorderEnd() const;
