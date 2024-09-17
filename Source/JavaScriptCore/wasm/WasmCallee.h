@@ -135,21 +135,18 @@ public:
     friend class Callee;
     friend class JSC::LLIntOffsetsExtractor;
 
-    static inline Ref<JSEntrypointCallee> create(unsigned frameSize, TypeIndex typeIndex, bool usesSIMD)
+    static inline Ref<JSEntrypointCallee> create(TypeIndex typeIndex, bool usesSIMD)
     {
-        return adoptRef(*new JSEntrypointCallee(frameSize, typeIndex, usesSIMD));
+        return adoptRef(*new JSEntrypointCallee(typeIndex, usesSIMD));
     }
 
     CodePtr<WasmEntryPtrTag> entrypointImpl() const;
     static JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegistersImpl();
     std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; }
-
-    void setReplacementTarget(CodePtr<WasmEntryPtrTag> replacement) { wasmFunctionPrologue = replacement; }
-
-    static constexpr ptrdiff_t offsetOfIdent() { return OBJECT_OFFSETOF(JSEntrypointCallee, ident); }
-    static constexpr ptrdiff_t offsetOfWasmCallee() { return OBJECT_OFFSETOF(JSEntrypointCallee, wasmCallee); }
-    static constexpr ptrdiff_t offsetOfWasmFunctionPrologue() { return OBJECT_OFFSETOF(JSEntrypointCallee, wasmFunctionPrologue); }
-    static constexpr ptrdiff_t offsetOfFrameSize() { return OBJECT_OFFSETOF(JSEntrypointCallee, frameSize); }
+    static constexpr ptrdiff_t offsetOfIdent() { return OBJECT_OFFSETOF(JSEntrypointCallee, m_ident); }
+    static constexpr ptrdiff_t offsetOfWasmCallee() { return OBJECT_OFFSETOF(JSEntrypointCallee, m_wasmCallee); }
+    static constexpr ptrdiff_t offsetOfWasmFunctionPrologue() { return OBJECT_OFFSETOF(JSEntrypointCallee, m_wasmFunctionPrologue); }
+    static constexpr ptrdiff_t offsetOfFrameSize() { return OBJECT_OFFSETOF(JSEntrypointCallee, m_frameSize); }
 
     // Space for callee-saves; Not included in frameSize
     static constexpr unsigned SpillStackSpaceAligned = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(3 * sizeof(UCPURegister));
@@ -157,19 +154,32 @@ public:
     static constexpr unsigned RegisterStackSpaceAligned = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(
         FPRInfo::numberOfArgumentRegisters * bytesForWidth(Width::Width64) + GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister));
 
-private:
-    JSEntrypointCallee(unsigned frameSize, TypeIndex, bool);
+    unsigned ident() const { return m_ident; }
+    unsigned frameSize() const { return m_frameSize; }
+    EncodedJSValue wasmCallee() const { return m_wasmCallee; }
+    TypeIndex typeIndex() const { return m_typeIndex; }
 
-    // FIXME: These should have accessors per WebKit style.
-public:
-    const unsigned ident { 0xBF };
-    const unsigned frameSize;
+    void setWasmCallee(EncodedJSValue wasmCallee)
+    {
+        m_wasmCallee = wasmCallee;
+    }
+
+    void setReplacementTarget(CodePtr<WasmEntryPtrTag> replacement)
+    {
+        m_wasmFunctionPrologue = replacement;
+    }
+
+private:
+    JSEntrypointCallee(TypeIndex, bool);
+
+    const unsigned m_ident { 0xBF };
+    unsigned m_frameSize { };
     // This must be initialized after the callee is created unfortunately.
-    EncodedJSValue wasmCallee;
-    const TypeIndex typeIndex;
+    EncodedJSValue m_wasmCallee;
+    const TypeIndex m_typeIndex;
     // In the JIT case, we want to always call the llint prologue from a jit function.
     // In the no-jit case, we dont' care.
-    CodePtr<WasmEntryPtrTag> wasmFunctionPrologue;
+    CodePtr<WasmEntryPtrTag> m_wasmFunctionPrologue;
 };
 
 class WasmToJSCallee final : public Callee {

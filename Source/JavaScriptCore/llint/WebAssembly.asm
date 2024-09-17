@@ -660,7 +660,7 @@ end
 
 if ASSERT_ENABLED
     # Check to confirm we have the right kind of callee
-    loadi Wasm::JSEntrypointCallee::ident[ws1], wa0
+    loadi Wasm::JSEntrypointCallee::m_ident[ws1], wa0
     move 0xBF, wa1
     bpeq wa0, wa1, .ident_ok
     break
@@ -691,7 +691,7 @@ end
     end
 
     # Allocate stack space
-    loadi Wasm::JSEntrypointCallee::frameSize[ws1], wa0
+    loadi Wasm::JSEntrypointCallee::m_frameSize[ws1], wa0
     subp sp, wa0, wa0
 
     bpa wa0, cfr, .stackOverflow
@@ -756,16 +756,16 @@ end
 
     # Store Callee's wasm callee
 if JSVALUE64
-    loadp Wasm::JSEntrypointCallee::wasmCallee[ws0], ws1
+    loadp Wasm::JSEntrypointCallee::m_wasmCallee[ws0], ws1
     storep ws1, constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8[sp]
 else
-    loadp Wasm::JSEntrypointCallee::wasmCallee + PayloadOffset[ws0], ws1
+    loadp Wasm::JSEntrypointCallee::m_wasmCallee + PayloadOffset[ws0], ws1
     storep ws1, constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8 + PayloadOffset[sp]
-    loadp Wasm::JSEntrypointCallee::wasmCallee + TagOffset[ws0], ws1
+    loadp Wasm::JSEntrypointCallee::m_wasmCallee + TagOffset[ws0], ws1
     storep ws1, constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8 + TagOffset[sp]
 end
 
-    call Wasm::JSEntrypointCallee::wasmFunctionPrologue[ws0], WasmEntryPtrTag
+    call Wasm::JSEntrypointCallee::m_wasmFunctionPrologue[ws0], WasmEntryPtrTag
 
 if ASSERT_ENABLED
     clobberVolatileRegisters()
@@ -779,7 +779,7 @@ end
     leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
     loadp [ws1], ws1
     addp ws1, ws0
-    loadi Wasm::JSEntrypointCallee::frameSize[ws0], ws1
+    loadi Wasm::JSEntrypointCallee::m_frameSize[ws0], ws1
     subp cfr, ws1, ws1
     move ws1, sp
     subp constexpr Wasm::JSEntrypointCallee::SpillStackSpaceAligned, sp

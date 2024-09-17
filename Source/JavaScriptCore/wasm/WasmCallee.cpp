@@ -412,25 +412,34 @@ const StackMap& OptimizingJITCallee::stackmap(CallSiteIndex callSiteIndex) const
 }
 #endif
 
-JSEntrypointCallee::JSEntrypointCallee(unsigned frameSize, TypeIndex typeIndex, bool usesSIMD)
+JSEntrypointCallee::JSEntrypointCallee(TypeIndex typeIndex, bool usesSIMD)
     : Callee(Wasm::CompilationMode::JSToWasmEntrypointMode)
-    , frameSize(frameSize)
-    , typeIndex(typeIndex)
+    , m_typeIndex(typeIndex)
 {
+    const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
+    CallInformation wasmFrameConvention = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
+
+    RegisterAtOffsetList savedResultRegisters = wasmFrameConvention.computeResultsOffsetList();
+    size_t totalFrameSize = wasmFrameConvention.headerAndArgumentStackSizeInBytes;
+    totalFrameSize += savedResultRegisters.sizeOfAreaInBytes();
+    totalFrameSize += JSEntrypointCallee::RegisterStackSpaceAligned;
+    totalFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(totalFrameSize);
+    m_frameSize = totalFrameSize;
+
 #if ENABLE(JIT)
     if (Options::useJIT()) {
         if (usesSIMD)
-            wasmFunctionPrologue = LLInt::wasmFunctionEntryThunkSIMD().code().retagged<WasmEntryPtrTag>();
+            m_wasmFunctionPrologue = LLInt::wasmFunctionEntryThunkSIMD().code().retagged<WasmEntryPtrTag>();
         else
-            wasmFunctionPrologue = LLInt::wasmFunctionEntryThunk().code().retagged<WasmEntryPtrTag>();
+            m_wasmFunctionPrologue = LLInt::wasmFunctionEntryThunk().code().retagged<WasmEntryPtrTag>();
         return;
     }
 #endif
 
     if (usesSIMD)
-        wasmFunctionPrologue = CodePtr<CFunctionPtrTag>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_simd_trampoline)).retagged<WasmEntryPtrTag>();
+        m_wasmFunctionPrologue = CodePtr<CFunctionPtrTag>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_simd_trampoline)).retagged<WasmEntryPtrTag>();
     else
-        wasmFunctionPrologue = CodePtr<CFunctionPtrTag>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline)).retagged<WasmEntryPtrTag>();
+        m_wasmFunctionPrologue = CodePtr<CFunctionPtrTag>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline)).retagged<WasmEntryPtrTag>();
 }
 
 CodePtr<WasmEntryPtrTag> JSEntrypointCallee::entrypointImpl() const
