@@ -43,9 +43,9 @@ struct RTCRtpEncodingParameters : RTCRtpCodingParameters {
     bool active { false};
     RTCPriorityType priority { RTCPriorityType::Low };
     std::optional<RTCPriorityType> networkPriority;
-    unsigned long maxBitrate { 0 };
-    unsigned long maxFramerate { 0 };
-    double scaleResolutionDownBy { 1 };
+    std::optional<unsigned long> maxBitrate;
+    std::optional<unsigned long> maxFramerate;
+    std::optional<double> scaleResolutionDownBy;
 };
 
 } // namespace WebCore
