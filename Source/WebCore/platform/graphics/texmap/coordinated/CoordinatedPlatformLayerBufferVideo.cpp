@@ -180,7 +180,7 @@ void CoordinatedPlatformLayerBufferVideo::paintToTextureMapper(TextureMapper& te
         if (!m_buffer) {
             int stride = GST_VIDEO_FRAME_PLANE_STRIDE(&m_videoFrame, 0);
             const void* srcData = GST_VIDEO_FRAME_PLANE_DATA(&m_videoFrame, 0);
-            texture->updateContents(srcData, IntRect(0, 0, m_size.width(), m_size.height()), IntPoint(0, 0), stride);
+            texture->updateContents(srcData, IntRect(0, 0, m_size.width(), m_size.height()), IntPoint(0, 0), stride, PixelFormat::BGRA8);
             m_buffer = CoordinatedPlatformLayerBufferRGB::create(WTFMove(texture), m_flags, nullptr);
             gst_video_frame_unmap(&m_videoFrame);
             m_isMapped = false;

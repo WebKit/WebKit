@@ -69,7 +69,7 @@ void CoordinatedBackingStoreTile::swapBuffers(TextureMapper& textureMapper)
 
         ASSERT(!update.buffer->isBackedByOpenGL());
         auto& buffer = static_cast<Nicosia::UnacceleratedBuffer&>(*update.buffer);
-        m_texture->updateContents(buffer.data(), update.sourceRect, update.bufferOffset, buffer.stride());
+        m_texture->updateContents(buffer.data(), update.sourceRect, update.bufferOffset, buffer.stride(), buffer.pixelFormat());
         update.buffer = nullptr;
     }
 }

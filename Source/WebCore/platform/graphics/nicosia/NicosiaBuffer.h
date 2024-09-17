@@ -43,6 +43,7 @@ IGNORE_CLANG_WARNINGS_END
 
 namespace WebCore {
 class GLFence;
+enum class PixelFormat : uint8_t;
 }
 
 namespace Nicosia {
@@ -96,6 +97,8 @@ public:
 
     int stride() const { return m_size.width() * 4; }
     unsigned char* data() const { return m_data.get(); }
+
+    WebCore::PixelFormat pixelFormat() const;
 
 private:
     UnacceleratedBuffer(const WebCore::IntSize&, Flags);

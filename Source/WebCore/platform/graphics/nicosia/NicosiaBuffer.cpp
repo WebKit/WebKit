@@ -51,6 +51,8 @@
 #endif
 #endif
 
+#include "PixelFormat.h"
+
 namespace Nicosia {
 using namespace WebCore;
 
@@ -78,7 +80,7 @@ Ref<Buffer> UnacceleratedBuffer::create(const WebCore::IntSize& size, Flags flag
     return adoptRef(*new UnacceleratedBuffer(size, flags));
 }
 
-UnacceleratedBuffer::UnacceleratedBuffer(const WebCore::IntSize& size, Flags flags)
+UnacceleratedBuffer::UnacceleratedBuffer(const IntSize& size, Flags flags)
     : Buffer(flags)
     , m_size(size)
 {
@@ -92,10 +94,19 @@ UnacceleratedBuffer::UnacceleratedBuffer(const WebCore::IntSize& size, Flags fla
     }
 
 #if USE(SKIA)
-    auto imageInfo = SkImageInfo::MakeN32Premul(size.width(), size.height(), SkColorSpace::MakeSRGB());
+    auto imageInfo = SkImageInfo::Make(size.width(), size.height(), kRGBA_8888_SkColorType, kPremul_SkAlphaType, SkColorSpace::MakeSRGB());
     // FIXME: ref buffer and unref on release proc?
-    SkSurfaceProps properties = { 0, WebCore::FontRenderOptions::singleton().subpixelOrder() };
+    SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
     m_surface = SkSurfaces::WrapPixels(imageInfo, m_data.get(), imageInfo.minRowBytes64(), &properties);
+#endif
+}
+
+PixelFormat UnacceleratedBuffer::pixelFormat() const
+{
+#if USE(SKIA)
+    return PixelFormat::RGBA8;
+#elif USE(CAIRO)
+    return PixelFormat::BGRA8;
 #endif
 }
 

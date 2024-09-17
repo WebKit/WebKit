@@ -106,12 +106,12 @@ bool CoordinatedPlatformLayerBufferNativeImage::tryEnsureBuffer(TextureMapper& t
 #if USE(CAIRO)
     auto* surface = m_image->platformImage().get();
     auto* imageData = cairo_image_surface_get_data(surface);
-    texture->updateContents(imageData, IntRect(IntPoint(), m_size), IntPoint(), cairo_image_surface_get_stride(surface));
+    texture->updateContents(imageData, IntRect(IntPoint(), m_size), IntPoint(), cairo_image_surface_get_stride(surface), PixelFormat::BGRA8);
 #elif USE(SKIA)
     const auto& image = m_image->platformImage();
     SkPixmap pixmap;
     if (image->peekPixels(&pixmap))
-        texture->updateContents(pixmap.addr(), IntRect(IntPoint(), m_size), IntPoint(), image->imageInfo().minRowBytes());
+        texture->updateContents(pixmap.addr(), IntRect(IntPoint(), m_size), IntPoint(), image->imageInfo().minRowBytes(), PixelFormat::BGRA8);
 #endif
 
     m_buffer = CoordinatedPlatformLayerBufferRGB::create(WTFMove(texture), m_flags, nullptr);
