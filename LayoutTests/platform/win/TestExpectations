@@ -1323,6 +1323,16 @@ editing/selection/user-select-all-with-shift.html [ Failure ]
 editing/style/preserve-selection-direction.html [ Failure ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
+# html
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.detachedcanvas.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.self.2.html [ Skip ] # Failure
+
+webkit.org/b/279649 imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.negativedest.html [ Skip ] # Crash
+webkit.org/b/279649 imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.negativedir.html [ Skip ] # Crash
+
+#//////////////////////////////////////////////////////////////////////////////////////////
 # forms
 #//////////////////////////////////////////////////////////////////////////////////////////
 
@@ -2082,7 +2092,46 @@ imported/w3c/web-platform-tests/fonts [ Skip ]
 imported/w3c/web-platform-tests/fullscreen [ Skip ]
 imported/w3c/web-platform-tests/geolocation [ Skip ]
 imported/w3c/web-platform-tests/hr-time [ Skip ]
-imported/w3c/web-platform-tests/html [ Skip ]
+imported/w3c/web-platform-tests/html/anonymous-iframe [ Skip ]
+imported/w3c/web-platform-tests/html/browsers [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/compositing [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/conformance-requirements [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/drawing-rectangles-to-the-canvas [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/filters [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/layers [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/line-styles [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/manual [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/path-objects [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/pixel-manipulation [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/reset [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/scroll [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/shadows [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/text [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/text-styles [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/the-canvas-state [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/transformations [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/video [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/offscreen [ Skip ]
+imported/w3c/web-platform-tests/html/capability-delegation [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy [ Skip ]
+imported/w3c/web-platform-tests/html/dom [ Skip ]
+imported/w3c/web-platform-tests/html/editing [ Skip ]
+imported/w3c/web-platform-tests/html/iana [ Skip ]
+imported/w3c/web-platform-tests/html/infrastructure [ Skip ]
+imported/w3c/web-platform-tests/html/interaction [ Skip ]
+imported/w3c/web-platform-tests/html/links [ Skip ]
+imported/w3c/web-platform-tests/html/obsolete [ Skip ]
+imported/w3c/web-platform-tests/html/rendering [ Skip ]
+imported/w3c/web-platform-tests/html/select [ Skip ]
+imported/w3c/web-platform-tests/html/semantics [ Skip ]
+imported/w3c/web-platform-tests/html/syntax [ Skip ]
+imported/w3c/web-platform-tests/html/the-xhtml-syntax [ Skip ]
+imported/w3c/web-platform-tests/html/user-activation [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis [ Skip ]
 imported/w3c/web-platform-tests/html-aam [ Skip ]
 imported/w3c/web-platform-tests/imagebitmap-renderingcontext [ Skip ]
 imported/w3c/web-platform-tests/inert [ Skip ]
