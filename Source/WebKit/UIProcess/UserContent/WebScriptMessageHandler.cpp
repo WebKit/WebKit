@@ -46,4 +46,9 @@ WebScriptMessageHandler::~WebScriptMessageHandler()
 {
 }
 
+Ref<API::ContentWorld> WebScriptMessageHandler::protectedWorld()
+{
+    return m_world;
+}
+
 } // namespace WebKit

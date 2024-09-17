@@ -65,6 +65,7 @@ public:
     String name() const { return m_name; }
 
     API::ContentWorld& world() { return m_world.get(); }
+    Ref<API::ContentWorld> protectedWorld();
 
     Client& client() const { return *m_client; }
 

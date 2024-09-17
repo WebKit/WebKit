@@ -136,6 +136,8 @@ public:
     bool operator==(const WebUserContentControllerProxy& other) const { return (this == &other); }
 
 private:
+    Ref<API::Array> protectedUserScripts() const;
+
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 

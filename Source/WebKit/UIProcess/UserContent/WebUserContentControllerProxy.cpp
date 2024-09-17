@@ -78,20 +78,25 @@ WebUserContentControllerProxy::WebUserContentControllerProxy()
 WebUserContentControllerProxy::~WebUserContentControllerProxy()
 {
     for (const auto& identifier : m_associatedContentWorlds) {
-        auto* world = API::ContentWorld::worldForIdentifier(identifier);
+        RefPtr world = API::ContentWorld::worldForIdentifier(identifier);
         RELEASE_ASSERT(world);
         world->userContentControllerProxyDestroyed(*this);
     }
     
     webUserContentControllerProxies().remove(identifier());
-    for (auto& process : m_processes) {
-        process.removeMessageReceiver(Messages::WebUserContentControllerProxy::messageReceiverName(), identifier());
-        process.didDestroyWebUserContentControllerProxy(*this);
+    for (Ref process : m_processes) {
+        process->removeMessageReceiver(Messages::WebUserContentControllerProxy::messageReceiverName(), identifier());
+        process->didDestroyWebUserContentControllerProxy(*this);
     }
 #if ENABLE(CONTENT_EXTENSIONS)
-    for (auto& process : m_networkProcesses)
-        process.didDestroyWebUserContentControllerProxy(*this);
+    for (Ref process : m_networkProcesses)
+        process->didDestroyWebUserContentControllerProxy(*this);
 #endif
+}
+
+Ref<API::Array> WebUserContentControllerProxy::protectedUserScripts() const
+{
+    return m_userScripts;
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -123,11 +128,11 @@ UserContentControllerParameters WebUserContentControllerProxy::parameters() cons
     });
 
     Vector<WebUserScriptData> userScripts;
-    for (auto userScript : m_userScripts->elementsOfType<API::UserScript>())
+    for (auto userScript : protectedUserScripts()->elementsOfType<API::UserScript>())
         userScripts.append({ userScript->identifier(), userScript->contentWorld().identifier(), userScript->userScript() });
 
     Vector<WebUserStyleSheetData> userStyleSheets;
-    for (auto userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>())
+    for (auto userStyleSheet : protectedUserScripts()->elementsOfType<API::UserStyleSheet>())
         userStyleSheets.append({ userStyleSheet->identifier(), userStyleSheet->contentWorld().identifier(), userStyleSheet->userStyleSheet() });
 
     auto messageHandlers = WTF::map(m_scriptMessageHandlers, [](auto entry) {
@@ -174,8 +179,8 @@ void WebUserContentControllerProxy::addContentWorld(API::ContentWorld& world)
         return;
 
     world.addAssociatedUserContentControllerProxy(*this);
-    for (auto& process : m_processes)
-        process.send(Messages::WebUserContentController::AddContentWorlds({ world.worldData() }), identifier());
+    for (Ref process : m_processes)
+        process->send(Messages::WebUserContentController::AddContentWorlds({ world.worldData() }), identifier());
 }
 
 void WebUserContentControllerProxy::contentWorldDestroyed(API::ContentWorld& world)
@@ -335,10 +340,10 @@ void WebUserContentControllerProxy::removeAllUserStyleSheets()
 
 bool WebUserContentControllerProxy::addUserScriptMessageHandler(WebScriptMessageHandler& handler)
 {
-    auto& world = handler.world();
+    Ref world = handler.world();
 
     for (auto& existingHandler : m_scriptMessageHandlers.values()) {
-        if (existingHandler->name() == handler.name() && existingHandler->world().identifier() == world.identifier())
+        if (existingHandler->name() == handler.name() && existingHandler->world().identifier() == world->identifier())
             return false;
     }
 
@@ -347,7 +352,7 @@ bool WebUserContentControllerProxy::addUserScriptMessageHandler(WebScriptMessage
     m_scriptMessageHandlers.add(handler.identifier(), &handler);
 
     for (auto& process : m_processes)
-        process.send(Messages::WebUserContentController::AddUserScriptMessageHandlers({ { handler.identifier(), world.identifier(), handler.name() } }), identifier());
+        process.send(Messages::WebUserContentController::AddUserScriptMessageHandlers({ { handler.identifier(), world->identifier(), handler.name() } }), identifier());
     
     return true;
 }
@@ -356,8 +361,8 @@ void WebUserContentControllerProxy::removeUserMessageHandlerForName(const String
 {
     for (auto it = m_scriptMessageHandlers.begin(), end = m_scriptMessageHandlers.end(); it != end; ++it) {
         if (it->value->name() == name && it->value->world().identifier() == world.identifier()) {
-            for (auto& process : m_processes)
-                process.send(Messages::WebUserContentController::RemoveUserScriptMessageHandler(world.identifier(), it->value->identifier()), identifier());
+            for (Ref process : m_processes)
+                process->send(Messages::WebUserContentController::RemoveUserScriptMessageHandler(world.identifier(), it->value->identifier()), identifier());
 
             m_scriptMessageHandlers.remove(it);
 
@@ -404,12 +409,12 @@ void WebUserContentControllerProxy::didPostMessage(WebPageProxyIdentifier pagePr
     }
 
     if (!handler->client().supportsAsyncReply()) {
-        handler->client().didPostMessage(*page, WTFMove(frameInfoData), handler->world(),  WebCore::SerializedScriptValue::createFromWireBytes({ dataReference }));
+        handler->client().didPostMessage(*page, WTFMove(frameInfoData), handler->protectedWorld(),  WebCore::SerializedScriptValue::createFromWireBytes({ dataReference }));
         reply({ }, { });
         return;
     }
 
-    handler->client().didPostMessageWithAsyncReply(*page, WTFMove(frameInfoData), handler->world(),  WebCore::SerializedScriptValue::createFromWireBytes({ dataReference }), [reply = WTFMove(reply)](API::SerializedScriptValue* value, const String& errorMessage) mutable {
+    handler->client().didPostMessageWithAsyncReply(*page, WTFMove(frameInfoData), handler->protectedWorld(),  WebCore::SerializedScriptValue::createFromWireBytes({ dataReference }), [reply = WTFMove(reply)](API::SerializedScriptValue* value, const String& errorMessage) mutable {
         if (errorMessage.isNull()) {
             ASSERT(value);
             reply({ value->internalRepresentation().wireBytes() }, { });
