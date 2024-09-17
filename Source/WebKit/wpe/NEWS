@@ -1,3 +1,16 @@
+=================
+WPE WebKit 2.46.0
+=================
+
+What's new in WPE WebKit 2.46.0?
+
+  - Fix rendering of images in PDF documents.
+  - Make process launching fast again.
+  - Fix webkit_web_resource_get_data() regression that caused we were always retuning empty data.
+  - Fix the build with touch events disabled.
+  - Fix the build with GLib < 2.68.
+  - Fix several crashes and rendering issues.
+
 ==================
 WPE WebKit 2.45.90
 ==================
