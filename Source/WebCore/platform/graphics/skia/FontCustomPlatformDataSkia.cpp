@@ -64,7 +64,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
             weight = std::max(std::min(weight, static_cast<float>(weightValue->maximum)), static_cast<float>(weightValue->minimum));
         applyVariation({ { 'w', 'g', 'h', 't' } }, weight);
 
-        float width = description.stretch();
+        float width = description.width();
         if (auto widthValue = fontCreationContext.fontFaceCapabilities().width)
             width = std::max(std::min(width, static_cast<float>(widthValue->maximum)), static_cast<float>(widthValue->minimum));
         applyVariation({ { 'w', 'd', 't', 'h' } }, width);

@@ -180,7 +180,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     RefPtr familyList = dynamicDowncast<CSSValueList>(style.getPropertyCSSValue(CSSPropertyFontFamily));
     RefPtr fontStyle = style.getPropertyCSSValue(CSSPropertyFontStyle);
     RefPtr fontWeight = style.getPropertyCSSValue(CSSPropertyFontWeight);
-    RefPtr fontStretch = style.getPropertyCSSValue(CSSPropertyFontStretch);
+    RefPtr fontWidth = style.getPropertyCSSValue(CSSPropertyFontWidth);
     RefPtr srcList = dynamicDowncast<CSSValueList>(style.getPropertyCSSValue(CSSPropertySrc));
     RefPtr unicodeRange = style.getPropertyCSSValue(CSSPropertyUnicodeRange);
     CSSValueList* rangeList = downcast<CSSValueList>(unicodeRange.get());
@@ -204,8 +204,8 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
         fontFace->setStyle(*fontStyle);
     if (fontWeight)
         fontFace->setWeight(*fontWeight);
-    if (fontStretch)
-        fontFace->setStretch(*fontStretch);
+    if (fontWidth)
+        fontFace->setWidth(*fontWidth);
     if (rangeList)
         fontFace->setUnicodeRange(*rangeList);
     if (featureSettings)

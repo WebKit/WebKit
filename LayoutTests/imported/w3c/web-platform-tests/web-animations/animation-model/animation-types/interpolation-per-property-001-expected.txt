@@ -315,8 +315,6 @@ PASS flood-color supports animating as color of rgba()
 PASS flood-color supports animating as color of hsla()
 PASS flood-opacity (type: opacity) has testInterpolation function
 PASS flood-opacity supports animating as a [0, 1] number
-PASS font-stretch (type: percentage) has testInterpolation function
-PASS font-stretch supports animating as a percentage
 PASS font-style (type: discrete) has testInterpolation function
 PASS font-style uses discrete animation when animating between "italic" and "oblique" with linear easing
 PASS font-style uses discrete animation when animating between "italic" and "oblique" with effect easing

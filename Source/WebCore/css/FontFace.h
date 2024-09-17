@@ -51,7 +51,7 @@ public:
     struct Descriptors {
         String style;
         String weight;
-        String stretch;
+        String width;
         String unicodeRange;
         String featureSettings;
         String display;
@@ -69,7 +69,7 @@ public:
     ExceptionOr<void> setFamily(ScriptExecutionContext&, const String&);
     ExceptionOr<void> setStyle(ScriptExecutionContext&, const String&);
     ExceptionOr<void> setWeight(ScriptExecutionContext&, const String&);
-    ExceptionOr<void> setStretch(ScriptExecutionContext&, const String&);
+    ExceptionOr<void> setWidth(ScriptExecutionContext&, const String&);
     ExceptionOr<void> setUnicodeRange(ScriptExecutionContext&, const String&);
     ExceptionOr<void> setFeatureSettings(ScriptExecutionContext&, const String&);
     ExceptionOr<void> setDisplay(ScriptExecutionContext&, const String&);
@@ -78,7 +78,7 @@ public:
     String family() const;
     String style() const;
     String weight() const;
-    String stretch() const;
+    String width() const;
     String unicodeRange() const;
     String featureSettings() const;
     String display() const;

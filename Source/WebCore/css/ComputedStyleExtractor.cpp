@@ -2523,14 +2523,14 @@ static Ref<CSSPrimitiveValue> fontWeight(const RenderStyle& style)
     return fontWeight(style.fontDescription().weight());
 }
 
-static Ref<CSSPrimitiveValue> fontStretch(FontSelectionValue stretch)
+static Ref<CSSPrimitiveValue> fontWidth(FontSelectionValue width)
 {
-    return CSSPrimitiveValue::create(static_cast<float>(stretch), CSSUnitType::CSS_PERCENTAGE);
+    return CSSPrimitiveValue::create(static_cast<float>(width), CSSUnitType::CSS_PERCENTAGE);
 }
 
-static Ref<CSSPrimitiveValue> fontStretch(const RenderStyle& style)
+static Ref<CSSPrimitiveValue> fontWidth(const RenderStyle& style)
 {
-    return fontStretch(style.fontDescription().stretch());
+    return fontWidth(style.fontDescription().width());
 }
 
 static Ref<CSSValue> fontStyle(std::optional<FontSelectionValue> italic, FontStyleAxis axis)
@@ -3362,7 +3362,7 @@ String ComputedStyleExtractor::customPropertyText(const AtomString& propertyName
 static Ref<CSSFontValue> fontShorthandValue(const RenderStyle& style, ComputedStyleExtractor::PropertyValueType valueType)
 {
     auto& description = style.fontDescription();
-    auto fontStretch = fontStretchKeyword(description.stretch());
+    auto fontWidth = fontWidthKeyword(description.width());
     auto fontStyle = fontStyleKeyword(description.italic(), description.fontStyleAxis());
 
     auto propertiesResetByShorthandAreExpressible = [&] {
@@ -3373,7 +3373,7 @@ static Ref<CSSFontValue> fontShorthandValue(const RenderStyle& style, ComputedSt
 
         // When we add font-language-override, also add code to check for non-expressible values for it here.
         return variantSettingsOmittingExpressible.isAllNormal()
-            && fontStretch
+            && fontWidth
             && fontStyle
             && description.fontSizeAdjust().isNone()
             && description.kerning() == Kerning::Auto
@@ -3391,8 +3391,8 @@ static Ref<CSSFontValue> fontShorthandValue(const RenderStyle& style, ComputedSt
         computedFont->variant = CSSPrimitiveValue::create(CSSValueSmallCaps);
     if (float weight = description.weight(); weight != 400)
         computedFont->weight = CSSPrimitiveValue::create(weight);
-    if (*fontStretch != CSSValueNormal)
-        computedFont->stretch = CSSPrimitiveValue::create(*fontStretch);
+    if (*fontWidth != CSSValueNormal)
+        computedFont->width = CSSPrimitiveValue::create(*fontWidth);
     if (*fontStyle != CSSValueNormal)
         computedFont->style = CSSPrimitiveValue::create(*fontStyle);
     computedFont->size = fontSize(style);
@@ -3837,8 +3837,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return fontSizeAdjustFromStyle(style);
     case CSSPropertyFontStyle:
         return fontStyle(style);
-    case CSSPropertyFontStretch:
-        return fontStretch(style);
+    case CSSPropertyFontWidth:
+        return fontWidth(style);
     case CSSPropertyFontVariant:
         return fontVariantShorthandValue();
     case CSSPropertyFontWeight:

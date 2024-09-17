@@ -911,7 +911,7 @@ String ShorthandSerializer::serializeColumnBreak() const
     }
 }
 
-static std::optional<CSSValueID> fontStretchKeyword(double value)
+static std::optional<CSSValueID> fontWidthKeyword(double value)
 {
     // If the numeric value does not fit in the fixed point FontSelectionValue, don't convert it to a keyword even if it rounds to a keyword value.
     float valueAsFloat = value;
@@ -919,7 +919,7 @@ static std::optional<CSSValueID> fontStretchKeyword(double value)
     float valueAsFloatAfterRoundTrip = valueAsFontSelectionValue;
     if (value != valueAsFloatAfterRoundTrip)
         return std::nullopt;
-    return fontStretchKeyword(valueAsFontSelectionValue);
+    return fontWidthKeyword(valueAsFontSelectionValue);
 }
 
 String ShorthandSerializer::serializeFont() const
@@ -944,7 +944,7 @@ String ShorthandSerializer::serializeFont() const
     auto styleIndex = longhandIndex(0, CSSPropertyFontStyle);
     auto capsIndex = longhandIndex(1, CSSPropertyFontVariantCaps);
     auto weightIndex = longhandIndex(2, CSSPropertyFontWeight);
-    auto stretchIndex = longhandIndex(3, CSSPropertyFontStretch);
+    auto widthIndex = longhandIndex(3, CSSPropertyFontWidth);
     auto sizeIndex = longhandIndex(4, CSSPropertyFontSize);
     auto lineHeightIndex = longhandIndex(5, CSSPropertyLineHeight);
     auto familyIndex = longhandIndex(6, CSSPropertyFontFamily);
@@ -960,23 +960,23 @@ String ShorthandSerializer::serializeFont() const
     if (capsKeyword != CSSValueNormal && capsKeyword != CSSValueSmallCaps)
         return String();
 
-    // Font stretch values can only be serialized in the font shorthand as keywords, since percentages are also valid font sizes.
-    // If a font stretch percentage can be expressed as a keyword, then do that.
-    auto stretchKeyword = longhandValueID(stretchIndex);
-    if (stretchKeyword == CSSValueInvalid) {
-        auto& stretchValue = downcast<CSSPrimitiveValue>(longhandValue(stretchIndex));
-        if (stretchValue.isCalculated() || !stretchValue.isPercentage())
+    // Font width values can only be serialized in the font shorthand as keywords, since percentages are also valid font sizes.
+    // If a font width percentage can be expressed as a keyword, then do that.
+    auto widthKeyword = longhandValueID(widthIndex);
+    if (widthKeyword == CSSValueInvalid) {
+        auto& widthValue = downcast<CSSPrimitiveValue>(longhandValue(widthIndex));
+        if (widthValue.isCalculated() || !widthValue.isPercentage())
             return String();
-        auto keyword = fontStretchKeyword(stretchValue.resolveAsPercentageNoConversionDataRequired());
+        auto keyword = fontWidthKeyword(widthValue.resolveAsPercentageNoConversionDataRequired());
         if (!keyword)
             return String();
-        stretchKeyword = *keyword;
+        widthKeyword = *keyword;
     }
 
     bool includeStyle = !isLonghandInitialValue(styleIndex);
     bool includeCaps = capsKeyword != CSSValueNormal;
     bool includeWeight = !isLonghandInitialValue(weightIndex);
-    bool includeStretch = stretchKeyword != CSSValueNormal;
+    bool includeWidth = widthKeyword != CSSValueNormal;
     bool includeLineHeight = !isLonghandInitialValue(lineHeightIndex);
 
     auto style = includeStyle ? serializeLonghandValue(styleIndex) : String();
@@ -984,16 +984,16 @@ String ShorthandSerializer::serializeFont() const
     auto caps = includeCaps ? nameLiteral(capsKeyword) : ""_s;
     auto weightSeparator = includeWeight && (includeStyle || includeCaps) ? " "_s : ""_s;
     auto weight = includeWeight ? serializeLonghandValue(weightIndex) : String();
-    auto stretchSeparator = includeStretch && (includeStyle || includeCaps || includeWeight) ? " "_s : ""_s;
-    auto stretch = includeStretch ? nameLiteral(stretchKeyword) : ""_s;
-    auto sizeSeparator = includeStyle || includeCaps || includeWeight || includeStretch ? " "_s : ""_s;
+    auto widthSeparator = includeWidth && (includeStyle || includeCaps || includeWeight) ? " "_s : ""_s;
+    auto width = includeWidth ? nameLiteral(widthKeyword) : ""_s;
+    auto sizeSeparator = includeStyle || includeCaps || includeWeight || includeWidth ? " "_s : ""_s;
     auto lineHeightSeparator = includeLineHeight ? " / "_s : ""_s;
     auto lineHeight = includeLineHeight ? serializeLonghandValue(lineHeightIndex) : String();
 
     return makeString(style,
         capsSeparator, caps,
         weightSeparator, weight,
-        stretchSeparator, stretch,
+        widthSeparator, width,
         sizeSeparator, serializeLonghandValue(sizeIndex),
         lineHeightSeparator, lineHeight,
         ' ', serializeLonghandValue(familyIndex));

@@ -218,47 +218,47 @@ constexpr FontSelectionValue upperWeightSearchThreshold()
     return FontSelectionValue { 500 };
 }
 
-constexpr FontSelectionValue ultraCondensedStretchValue()
+constexpr FontSelectionValue ultraCondensedWidthValue()
 {
     return FontSelectionValue { 50 };
 }
 
-constexpr FontSelectionValue extraCondensedStretchValue()
+constexpr FontSelectionValue extraCondensedWidthValue()
 {
     return FontSelectionValue { 62.5f };
 }
 
-constexpr FontSelectionValue condensedStretchValue()
+constexpr FontSelectionValue condensedWidthValue()
 {
     return FontSelectionValue { 75 };
 }
 
-constexpr FontSelectionValue semiCondensedStretchValue()
+constexpr FontSelectionValue semiCondensedWidthValue()
 {
     return FontSelectionValue { 87.5f };
 }
 
-constexpr FontSelectionValue normalStretchValue()
+constexpr FontSelectionValue normalWidthValue()
 {
     return FontSelectionValue { 100 };
 }
 
-constexpr FontSelectionValue semiExpandedStretchValue()
+constexpr FontSelectionValue semiExpandedWidthValue()
 {
     return FontSelectionValue { 112.5f };
 }
 
-constexpr FontSelectionValue expandedStretchValue()
+constexpr FontSelectionValue expandedWidthValue()
 {
     return FontSelectionValue { 125 };
 }
 
-constexpr FontSelectionValue extraExpandedStretchValue()
+constexpr FontSelectionValue extraExpandedWidthValue()
 {
     return FontSelectionValue { 150 };
 }
 
-constexpr FontSelectionValue ultraExpandedStretchValue()
+constexpr FontSelectionValue ultraExpandedWidthValue()
 {
     return FontSelectionValue { 200 };
 }
@@ -364,7 +364,7 @@ struct FontSelectionCapabilities {
     }
 
     Range weight { normalWeightValue() };
-    Range width { normalStretchValue() };
+    Range width { normalWidthValue() };
     Range slope { normalItalicValue() };
 };
 
@@ -395,7 +395,7 @@ struct FontSelectionSpecifiedCapabilities {
 
     constexpr Range computeWidth() const
     {
-        return width.value_or(Range { normalStretchValue() });
+        return width.value_or(Range { normalWidthValue() });
     }
 
     constexpr Range computeSlope() const
@@ -424,7 +424,7 @@ public:
         FontSelectionValue distance;
         FontSelectionValue value;
     };
-    DistanceResult stretchDistance(Capabilities) const;
+    DistanceResult widthDistance(Capabilities) const;
     DistanceResult styleDistance(Capabilities) const;
     DistanceResult weightDistance(Capabilities) const;
 

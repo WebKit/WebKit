@@ -77,7 +77,7 @@ public:
     void setFamilies(CSSValueList&);
     void setStyle(CSSValue&);
     void setWeight(CSSValue&);
-    void setStretch(CSSValue&);
+    void setWidth(CSSValue&);
     void setSizeAdjust(CSSValue&);
     void setUnicodeRange(CSSValueList&);
     void setFeatureSettings(CSSValue&);
@@ -86,7 +86,7 @@ public:
     String family() const;
     String style() const;
     String weight() const;
-    String stretch() const;
+    String width() const;
     String unicodeRange() const;
     String featureSettings() const;
     String display() const;

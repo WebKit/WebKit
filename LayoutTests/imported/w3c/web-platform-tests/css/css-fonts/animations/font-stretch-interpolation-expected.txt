@@ -185,4 +185,3 @@ PASS Web Animations: property <font-stretch> from [normal] to [extra-expanded] a
 PASS Web Animations: property <font-stretch> from [normal] to [extra-expanded] at (0.5) should be [125%]
 PASS Web Animations: property <font-stretch> from [normal] to [extra-expanded] at (1) should be [150%]
 PASS An interpolation to inherit updates correctly on a parent style change.
-

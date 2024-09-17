@@ -198,12 +198,12 @@ void CSSFontFace::setWeight(CSSValue& weight)
     });
 }
 
-static FontSelectionRange calculateStretchRange(CSSValue& value)
+static FontSelectionRange calculateWidthRange(CSSValue& value)
 {
     if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {
         ASSERT(valueList->length() == 2);
         if (valueList->length() != 2)
-            return { normalStretchValue(), normalStretchValue() };
+            return { normalWidthValue(), normalWidthValue() };
         ASSERT(valueList->item(0)->isPrimitiveValue());
         ASSERT(valueList->item(1)->isPrimitiveValue());
         auto& value0 = downcast<CSSPrimitiveValue>(*valueList->item(0));
@@ -218,11 +218,11 @@ static FontSelectionRange calculateStretchRange(CSSValue& value)
     return { result, result };
 }
 
-void CSSFontFace::setStretch(CSSValue& style)
+void CSSFontFace::setWidth(CSSValue& style)
 {
-    mutableProperties().setProperty(CSSPropertyFontStretch, &style);
+    mutableProperties().setProperty(CSSPropertyFontWidth, &style);
 
-    auto range = calculateStretchRange(style);
+    auto range = calculateWidthRange(style);
     if (m_fontSelectionCapabilities.width == range)
         return;
 
@@ -374,9 +374,9 @@ String CSSFontFace::weight() const
     return properties().getPropertyValue(CSSPropertyFontWeight);
 }
 
-String CSSFontFace::stretch() const
+String CSSFontFace::width() const
 {
-    return properties().getPropertyValue(CSSPropertyFontStretch);
+    return properties().getPropertyValue(CSSPropertyFontWidth);
 }
 
 String CSSFontFace::unicodeRange() const

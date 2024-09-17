@@ -119,8 +119,8 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const String& fa
         result->setErrorState();
         return result;
     }
-    auto setStretchResult = result->setStretch(context, descriptors.stretch.isEmpty() ? "normal"_s : descriptors.stretch);
-    if (setStretchResult.hasException()) {
+    auto setWidthResult = result->setWidth(context, descriptors.width.isEmpty() ? "normal"_s : descriptors.width);
+    if (setWidthResult.hasException()) {
         result->setErrorState();
         return result;
     }
@@ -209,10 +209,10 @@ ExceptionOr<void> FontFace::setWeight(ScriptExecutionContext& context, const Str
     return Exception { ExceptionCode::SyntaxError };
 }
 
-ExceptionOr<void> FontFace::setStretch(ScriptExecutionContext& context, const String& stretch)
+ExceptionOr<void> FontFace::setWidth(ScriptExecutionContext& context, const String& width)
 {
-    if (auto value = CSSPropertyParserHelpers::parseFontFaceFontStretch(stretch, context)) {
-        m_backing->setStretch(*value);
+    if (auto value = CSSPropertyParserHelpers::parseFontFaceFontWidth(width, context)) {
+        m_backing->setWidth(*value);
         return { };
     }
     return Exception { ExceptionCode::SyntaxError };
@@ -275,9 +275,9 @@ String FontFace::weight() const
     return "normal"_s;
 }
 
-String FontFace::stretch() const
+String FontFace::width() const
 {
-    if (auto value = m_backing->stretch(); !value.isNull())
+    if (auto value = m_backing->width(); !value.isNull())
         return value;
     return "normal"_s;
 }

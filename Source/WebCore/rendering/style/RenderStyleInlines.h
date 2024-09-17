@@ -223,7 +223,7 @@ inline FlexWrap RenderStyle::flexWrap() const { return static_cast<FlexWrap>(m_n
 inline std::optional<FontSelectionValue> RenderStyle::fontItalic() const { return fontDescription().italic(); }
 inline const FontPalette& RenderStyle::fontPalette() const { return fontDescription().fontPalette(); }
 inline FontSizeAdjust RenderStyle::fontSizeAdjust() const { return fontDescription().fontSizeAdjust(); }
-inline FontSelectionValue RenderStyle::fontStretch() const { return fontDescription().stretch(); }
+inline FontSelectionValue RenderStyle::fontWidth() const { return fontDescription().width(); }
 inline FontOpticalSizing RenderStyle::fontOpticalSizing() const { return fontDescription().opticalSizing(); }
 inline FontVariationSettings RenderStyle::fontVariationSettings() const { return fontDescription().variationSettings(); }
 inline FontSelectionValue RenderStyle::fontWeight() const { return fontDescription().weight(); }

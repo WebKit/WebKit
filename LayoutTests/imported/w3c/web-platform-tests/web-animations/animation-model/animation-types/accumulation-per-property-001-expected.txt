@@ -260,8 +260,6 @@ PASS flood-color supports animating as color of hsla()
 PASS flood-opacity (type: opacity) has testAccumulation function
 PASS flood-opacity: [0, 1] number
 PASS flood-opacity: [0, 1] number (clamped)
-PASS font-stretch (type: percentage) has testAccumulation function
-PASS font-stretch: percentage
 PASS font-style (type: discrete) has testAccumulation function
 PASS font-style: "oblique" onto "italic"
 PASS font-style: "italic" onto "oblique"

@@ -3926,7 +3926,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 #endif
         new PropertyWrapperFontSizeAdjust,
         new PropertyWrapperFontWeight,
-        new PropertyWrapper<FontSelectionValue>(CSSPropertyFontStretch, &RenderStyle::fontStretch, &RenderStyle::setFontStretch),
+        new PropertyWrapper<FontSelectionValue>(CSSPropertyFontWidth, &RenderStyle::fontWidth, &RenderStyle::setFontWidth),
         new PropertyWrapperFontStyle,
         new PropertyWrapperTextDecorationThickness,
         new PropertyWrapperTextUnderlineOffset,

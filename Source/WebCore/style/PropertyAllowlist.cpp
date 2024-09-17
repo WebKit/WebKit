@@ -52,7 +52,7 @@ bool isValidMarkerStyleProperty(CSSPropertyID id)
     case CSSPropertyFontKerning:
     case CSSPropertyFontSize:
     case CSSPropertyFontSizeAdjust:
-    case CSSPropertyFontStretch:
+    case CSSPropertyFontWidth:
     case CSSPropertyFontStyle:
     case CSSPropertyFontSynthesis:
     case CSSPropertyFontSynthesisWeight:

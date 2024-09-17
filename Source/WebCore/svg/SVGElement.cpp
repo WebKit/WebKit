@@ -900,7 +900,8 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
     case AttributeNames::font_size_adjustAttr:
         return CSSPropertyFontSizeAdjust;
     case AttributeNames::font_stretchAttr:
-        return CSSPropertyFontStretch;
+    case AttributeNames::font_widthAttr:
+        return CSSPropertyFontWidth;
     case AttributeNames::font_styleAttr:
         return CSSPropertyFontStyle;
     case AttributeNames::font_variantAttr:

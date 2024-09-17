@@ -348,14 +348,14 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
         }
     );
 
-    auto stretchSelectionValue = WTF::switchOn(font.stretch,
+    auto widthSelectionValue = WTF::switchOn(font.stretch,
         [&](CSSValueID ident) -> FontSelectionValue {
-            return *fontStretchValue(ident);
+            return *fontWidthValue(ident);
         },
         [&](const CSSPropertyParserHelpers::UnresolvedFontStretchPercentage& percent) -> FontSelectionValue  {
             // FIXME: Figure out correct behavior when conversion data is required.
             if (requiresConversionData(percent))
-                return normalStretchValue();
+                return normalWidthValue();
             return FontSelectionValue::clampFloat(Style::toStyleNoConversionDataRequired(percent).value);
         }
     );
@@ -382,7 +382,7 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
         }
     );
 
-    return { weightSelectionValue, stretchSelectionValue, styleSelectionValue };
+    return { weightSelectionValue, widthSelectionValue, styleSelectionValue };
 }
 
 using CodePointsMap = HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
@@ -515,11 +515,11 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, con
             auto firstCapabilities = first.fontSelectionCapabilities();
             auto secondCapabilities = second.fontSelectionCapabilities();
             
-            auto stretchDistanceFirst = fontSelectionAlgorithm.stretchDistance(firstCapabilities).distance;
-            auto stretchDistanceSecond = fontSelectionAlgorithm.stretchDistance(secondCapabilities).distance;
-            if (stretchDistanceFirst < stretchDistanceSecond)
+            auto widthDistanceFirst = fontSelectionAlgorithm.widthDistance(firstCapabilities).distance;
+            auto widthDistanceSecond = fontSelectionAlgorithm.widthDistance(secondCapabilities).distance;
+            if (widthDistanceFirst < widthDistanceSecond)
                 return true;
-            if (stretchDistanceFirst > stretchDistanceSecond)
+            if (widthDistanceFirst > widthDistanceSecond)
                 return false;
 
             auto styleDistanceFirst = fontSelectionAlgorithm.styleDistance(firstCapabilities).distance;

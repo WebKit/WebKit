@@ -185,8 +185,8 @@ RefPtr<CSSValue> consumeVariationTagValue(CSSParserTokenRange&, const CSSParserC
 
 // MARK: @font-face 'font-stretch'
 // https://drafts.csswg.org/css-fonts-4/#font-stretch-desc
-RefPtr<CSSValue> parseFontFaceFontStretch(const String&, ScriptExecutionContext&);
-RefPtr<CSSValue> consumeFontFaceFontStretch(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> parseFontFaceFontWidth(const String&, ScriptExecutionContext&);
+RefPtr<CSSValue> consumeFontFaceFontWidth(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: @font-face 'font-weight'
 // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-weight

@@ -151,11 +151,11 @@ FontSelectionValue fontStretchFromCSSValueDeprecated(const CSSValue& value)
         return FontSelectionValue::clampFloat(primitiveValue.resolveAsPercentageDeprecated<float>());
 
     ASSERT(primitiveValue.isValueID());
-    if (auto value = fontStretchValue(primitiveValue.valueID()))
+    if (auto value = fontWidthValue(primitiveValue.valueID()))
         return value.value();
 
     ASSERT(CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue.valueID()));
-    return normalStretchValue();
+    return normalWidthValue();
 }
 
 FontSelectionValue fontStretchFromCSSValue(const CSSValue& value, const CSSToLengthConversionData& conversionData)
@@ -166,11 +166,11 @@ FontSelectionValue fontStretchFromCSSValue(const CSSValue& value, const CSSToLen
         return FontSelectionValue::clampFloat(primitiveValue.resolveAsPercentage<float>(conversionData));
 
     ASSERT(primitiveValue.isValueID());
-    if (auto value = fontStretchValue(primitiveValue.valueID()))
+    if (auto value = fontWidthValue(primitiveValue.valueID()))
         return value.value();
 
     ASSERT(CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue.valueID()));
-    return normalStretchValue();
+    return normalWidthValue();
 }
 
 // MARK: - 'font-style'
