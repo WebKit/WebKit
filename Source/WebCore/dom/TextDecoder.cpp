@@ -66,6 +66,10 @@ ExceptionOr<String> TextDecoder::decode(std::optional<BufferSource::VariantType>
             m_codec->stripByteOrderMark();
     }
 
+    m_decodedBytes += data.size();
+    if (m_decodedBytes > String::MaxLength)
+        return Exception { ExceptionCode::RangeError };
+
     bool sawError = false;
     String result = m_codec->decode(data, !options.stream, m_options.fatal, sawError);
 
