@@ -81,7 +81,9 @@ void HTMLFrameOwnerElement::disconnectContentFrame()
         if (frame->settings().siteIsolationEnabled())
             frame->broadcastFrameRemovalToOtherProcesses();
         frame->frameDetached();
-        frame->disconnectOwnerElement();
+        if (frame == m_contentFrame.get())
+            frame->disconnectOwnerElement();
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(frame != m_contentFrame.get());
     }
 }
 
