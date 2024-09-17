@@ -137,6 +137,7 @@ public:
 
 private:
     Ref<API::Array> protectedUserScripts() const;
+    Ref<API::Array> protectedUserStyleSheets() const;
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

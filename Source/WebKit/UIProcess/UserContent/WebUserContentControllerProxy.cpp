@@ -99,6 +99,11 @@ Ref<API::Array> WebUserContentControllerProxy::protectedUserScripts() const
     return m_userScripts;
 }
 
+Ref<API::Array> WebUserContentControllerProxy::protectedUserStyleSheets() const
+{
+    return m_userStyleSheets;
+}
+
 #if ENABLE(CONTENT_EXTENSIONS)
 void WebUserContentControllerProxy::addNetworkProcess(NetworkProcessProxy& proxy)
 {
@@ -132,7 +137,7 @@ UserContentControllerParameters WebUserContentControllerProxy::parameters() cons
         userScripts.append({ userScript->identifier(), userScript->contentWorld().identifier(), userScript->userScript() });
 
     Vector<WebUserStyleSheetData> userStyleSheets;
-    for (auto userStyleSheet : protectedUserScripts()->elementsOfType<API::UserStyleSheet>())
+    for (auto userStyleSheet : protectedUserStyleSheets()->elementsOfType<API::UserStyleSheet>())
         userStyleSheets.append({ userStyleSheet->identifier(), userStyleSheet->contentWorld().identifier(), userStyleSheet->userStyleSheet() });
 
     auto messageHandlers = WTF::map(m_scriptMessageHandlers, [](auto entry) {
