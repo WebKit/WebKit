@@ -483,16 +483,6 @@ MarkedSpace& BlockDirectory::markedSpace() const
     return m_subspace->space();
 }
 
-bool BlockDirectory::isFreeListedCell(const void* target)
-{
-    bool result = false;
-    m_localAllocators.forEach(
-        [&] (LocalAllocator* allocator) {
-            result |= allocator->isFreeListedCell(target);
-        });
-    return result;
-}
-
 #if ASSERT_ENABLED
 void BlockDirectory::assertIsMutatorOrMutatorIsStopped() const
 {

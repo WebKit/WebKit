@@ -79,8 +79,6 @@ public:
     DestructionMode destruction() const { return m_attributes.destruction; }
     HeapCell::Kind cellKind() const { return m_attributes.cellKind; }
 
-    bool isFreeListedCell(const void* target);
-
     inline void forEachBlock(const std::invocable<MarkedBlock::Handle*> auto&);
     inline void forEachNotEmptyBlock(const std::invocable<MarkedBlock::Handle*> auto&);
     

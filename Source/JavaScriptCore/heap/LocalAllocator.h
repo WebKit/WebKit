@@ -54,8 +54,6 @@ public:
     
     static constexpr ptrdiff_t offsetOfFreeList();
     static constexpr ptrdiff_t offsetOfCellSize();
-    
-    bool isFreeListedCell(const void*) const;
 
     BlockDirectory& directory() const { return *m_directory; }
 

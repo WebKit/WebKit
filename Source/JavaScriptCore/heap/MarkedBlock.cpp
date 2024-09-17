@@ -502,12 +502,6 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
     specializedSweep<false, IsEmpty, SweepOnly, BlockHasNoDestructors, DontScribble, HasNewlyAllocated, MarksStale>(freeList, emptyMode, sweepMode, BlockHasNoDestructors, scribbleMode, newlyAllocatedMode, marksMode, [] (VM&, JSCell*) { });
 }
 
-bool MarkedBlock::Handle::isFreeListedCell(const void* target) const
-{
-    ASSERT(isFreeListed());
-    return m_directory->isFreeListedCell(target);
-}
-
 } // namespace JSC
 
 namespace WTF {

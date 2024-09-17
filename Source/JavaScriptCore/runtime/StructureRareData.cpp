@@ -264,7 +264,7 @@ CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::CachedSpecialPrope
 
 bool CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::isValid() const
 {
-    return m_structureRareData->isLive();
+    return !m_structureRareData->isPendingDestruction();
 }
 
 void CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::handleFire(VM& vm, const FireDetail&)

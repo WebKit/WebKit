@@ -91,8 +91,6 @@ public:
     template<typename Func>
     HeapCell* allocateWithCellSize(const Func& slowPath, size_t cellSize);
     
-    bool contains(HeapCell*) const;
-    
     template<typename Func>
     void forEach(const Func&) const;
     

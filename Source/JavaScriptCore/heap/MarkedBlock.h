@@ -184,8 +184,6 @@ public:
         bool isLive(const HeapCell*);
         bool isLiveCell(const void*);
 
-        bool isFreeListedCell(const void* target) const;
-
         template <typename Functor> IterationStatus forEachCell(const Functor&);
         template <typename Functor> inline IterationStatus forEachLiveCell(const Functor&);
         template <typename Functor> inline IterationStatus forEachDeadCell(const Functor&);
