@@ -78,7 +78,7 @@ WebInspectorUIProxy::WebInspectorUIProxy(WebPageProxy& inspectedPage)
     , m_closeFrontendAfterInactivityTimer(RunLoop::main(), this, &WebInspectorUIProxy::closeFrontendAfterInactivityTimerFired)
 #endif
 {
-    m_inspectedPage->legacyMainFrameProcess().addMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess(), *this);
+    m_inspectedPage->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess(), *this);
 }
 
 WebInspectorUIProxy::~WebInspectorUIProxy()
@@ -97,13 +97,18 @@ void WebInspectorUIProxy::setInspectorClient(std::unique_ptr<API::InspectorClien
 
 unsigned WebInspectorUIProxy::inspectionLevel() const
 {
-    return inspectorLevelForPage(inspectedPage().get());
+    return inspectorLevelForPage(protectedInspectedPage().get());
 }
 
 WebPreferences& WebInspectorUIProxy::inspectorPagePreferences() const
 {
     ASSERT(m_inspectorPage);
-    return m_inspectorPage->pageGroup().preferences();
+    return protectedInspectorPage()->protectedPageGroup()->preferences();
+}
+
+Ref<WebPreferences> WebInspectorUIProxy::protectedInspectorPagePreferences() const
+{
+    return inspectorPagePreferences();
 }
 
 void WebInspectorUIProxy::invalidate()
@@ -116,10 +121,11 @@ void WebInspectorUIProxy::invalidate()
 
 void WebInspectorUIProxy::sendMessageToFrontend(const String& message)
 {
-    if (!m_inspectorPage)
+    RefPtr inspectorPage = m_inspectorPage.get();
+    if (!inspectorPage)
         return;
 
-    m_inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::SendMessageToFrontend(message), m_inspectorPage->webPageIDInMainFrameProcess());
+    inspectorPage->protectedLegacyMainFrameProcess()->send(Messages::WebInspectorUI::SendMessageToFrontend(message), m_inspectorPage->webPageIDInMainFrameProcess());
 }
 
 // Public APIs
@@ -133,10 +139,11 @@ bool WebInspectorUIProxy::isFront()
 
 void WebInspectorUIProxy::connect()
 {
-    if (!m_inspectedPage)
+    RefPtr inspectedPage = m_inspectedPage.get();
+    if (!inspectedPage)
         return;
 
-    if (!m_inspectedPage->preferences().developerExtrasEnabled())
+    if (!inspectedPage->preferences().developerExtrasEnabled())
         return;
 
     if (m_showMessageSent)
@@ -147,8 +154,9 @@ void WebInspectorUIProxy::connect()
 
     createFrontendPage();
 
-    m_inspectedPage->legacyMainFrameProcess().send(Messages::WebInspectorInterruptDispatcher::NotifyNeedDebuggerBreak(), 0);
-    m_inspectedPage->legacyMainFrameProcess().send(Messages::WebInspector::Show(), m_inspectedPage->webPageIDInMainFrameProcess());
+    Ref legacyMainFrameProcess = inspectedPage->legacyMainFrameProcess();
+    legacyMainFrameProcess->send(Messages::WebInspectorInterruptDispatcher::NotifyNeedDebuggerBreak(), 0);
+    legacyMainFrameProcess->send(Messages::WebInspector::Show(), m_inspectedPage->webPageIDInMainFrameProcess());
 }
 
 void WebInspectorUIProxy::show()
@@ -179,10 +187,11 @@ void WebInspectorUIProxy::hide()
 
 void WebInspectorUIProxy::close()
 {
-    if (!m_inspectedPage)
+    RefPtr inspectedPage = m_inspectedPage.get();
+    if (!inspectedPage)
         return;
 
-    m_inspectedPage->legacyMainFrameProcess().send(Messages::WebInspector::Close(), m_inspectedPage->webPageIDInMainFrameProcess());
+    inspectedPage->protectedLegacyMainFrameProcess()->send(Messages::WebInspector::Close(), m_inspectedPage->webPageIDInMainFrameProcess());
 
     closeFrontendPageAndWindow();
 }
@@ -210,11 +219,12 @@ void WebInspectorUIProxy::resetState()
     if (!m_inspectedPage || !m_inspectorPage)
         return;
 
-    inspectorPagePreferences().deleteInspectorAttachedHeight();
-    inspectorPagePreferences().deleteInspectorAttachedWidth();
-    inspectorPagePreferences().deleteInspectorAttachmentSide();
-    inspectorPagePreferences().deleteInspectorStartsAttached();
-    inspectorPagePreferences().deleteInspectorWindowFrame();
+    Ref preferences = inspectorPagePreferences();
+    preferences->deleteInspectorAttachedHeight();
+    preferences->deleteInspectorAttachedWidth();
+    preferences->deleteInspectorAttachmentSide();
+    preferences->deleteInspectorStartsAttached();
+    preferences->deleteInspectorWindowFrame();
 
     platformResetState();
 }
@@ -222,7 +232,7 @@ void WebInspectorUIProxy::resetState()
 void WebInspectorUIProxy::reset()
 {
     if (m_inspectedPage) {
-        m_inspectedPage->legacyMainFrameProcess().removeMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess());
+        m_inspectedPage->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess());
         m_inspectedPage = nullptr;
     }
 }
@@ -232,12 +242,12 @@ void WebInspectorUIProxy::updateForNewPageProcess(WebPageProxy& inspectedPage)
     ASSERT(!m_inspectedPage);
 
     m_inspectedPage = &inspectedPage;
-    m_inspectedPageIdentifier = m_inspectedPage->identifier();
+    m_inspectedPageIdentifier = inspectedPage.identifier();
 
-    m_inspectedPage->legacyMainFrameProcess().addMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess(), *this);
+    protectedInspectedPage()->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess(), *this);
 
-    if (m_inspectorPage)
-        m_inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::UpdateConnection(), m_inspectorPage->webPageIDInMainFrameProcess());
+    if (RefPtr inspectorPage = m_inspectorPage.get())
+        inspectorPage->protectedLegacyMainFrameProcess()->send(Messages::WebInspectorUI::UpdateConnection(), m_inspectorPage->webPageIDInMainFrameProcess());
 }
 
 void WebInspectorUIProxy::setFrontendConnection(IPC::Connection::Handle&& connectionIdentifier)
@@ -245,7 +255,7 @@ void WebInspectorUIProxy::setFrontendConnection(IPC::Connection::Handle&& connec
     if (!m_inspectedPage)
         return;
 
-    m_inspectedPage->legacyMainFrameProcess().send(Messages::WebInspector::SetFrontendConnection(WTFMove(connectionIdentifier)), m_inspectedPage->webPageIDInMainFrameProcess());
+    protectedInspectedPage()->protectedLegacyMainFrameProcess()->send(Messages::WebInspector::SetFrontendConnection(WTFMove(connectionIdentifier)), m_inspectedPage->webPageIDInMainFrameProcess());
 }
 
 void WebInspectorUIProxy::showConsole()
@@ -255,7 +265,7 @@ void WebInspectorUIProxy::showConsole()
 
     createFrontendPage();
 
-    m_inspectedPage->legacyMainFrameProcess().send(Messages::WebInspector::ShowConsole(), m_inspectedPage->webPageIDInMainFrameProcess());
+    protectedInspectedPage()->protectedLegacyMainFrameProcess()->send(Messages::WebInspector::ShowConsole(), m_inspectedPage->webPageIDInMainFrameProcess());
 }
 
 void WebInspectorUIProxy::showResources()
@@ -265,7 +275,7 @@ void WebInspectorUIProxy::showResources()
 
     createFrontendPage();
 
-    m_inspectedPage->legacyMainFrameProcess().send(Messages::WebInspector::ShowResources(), m_inspectedPage->webPageIDInMainFrameProcess());
+    protectedInspectedPage()->protectedLegacyMainFrameProcess()->send(Messages::WebInspector::ShowResources(), m_inspectedPage->webPageIDInMainFrameProcess());
 }
 
 void WebInspectorUIProxy::showMainResourceForFrame(WebCore::FrameIdentifier frameID)
@@ -275,7 +285,7 @@ void WebInspectorUIProxy::showMainResourceForFrame(WebCore::FrameIdentifier fram
 
     createFrontendPage();
 
-    m_inspectedPage->sendToProcessContainingFrame(frameID, Messages::WebInspector::ShowMainResourceForFrame(frameID));
+    protectedInspectedPage()->sendToProcessContainingFrame(frameID, Messages::WebInspector::ShowMainResourceForFrame(frameID));
 }
 
 void WebInspectorUIProxy::attachBottom()
@@ -302,24 +312,25 @@ void WebInspectorUIProxy::attach(AttachmentSide side)
     m_isAttached = true;
     m_attachmentSide = side;
 
-    inspectorPagePreferences().setInspectorAttachmentSide(static_cast<uint32_t>(side));
+    Ref preferences = inspectorPagePreferences();
+    preferences->setInspectorAttachmentSide(static_cast<uint32_t>(side));
 
     if (m_isVisible)
-        inspectorPagePreferences().setInspectorStartsAttached(true);
+        preferences->setInspectorStartsAttached(true);
 
-    m_inspectedPage->legacyMainFrameProcess().send(Messages::WebInspector::SetAttached(true), m_inspectedPage->webPageIDInMainFrameProcess());
+    protectedInspectedPage()->protectedLegacyMainFrameProcess()->send(Messages::WebInspector::SetAttached(true), m_inspectedPage->webPageIDInMainFrameProcess());
 
     switch (m_attachmentSide) {
     case AttachmentSide::Bottom:
-        m_inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::AttachedBottom(), m_inspectorPage->webPageIDInMainFrameProcess());
+        protectedInspectorPage()->protectedLegacyMainFrameProcess()->send(Messages::WebInspectorUI::AttachedBottom(), m_inspectorPage->webPageIDInMainFrameProcess());
         break;
 
     case AttachmentSide::Right:
-        m_inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::AttachedRight(), m_inspectorPage->webPageIDInMainFrameProcess());
+        protectedInspectorPage()->protectedLegacyMainFrameProcess()->send(Messages::WebInspectorUI::AttachedRight(), m_inspectorPage->webPageIDInMainFrameProcess());
         break;
 
     case AttachmentSide::Left:
-        m_inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::AttachedLeft(), m_inspectorPage->webPageIDInMainFrameProcess());
+        protectedInspectorPage()->protectedLegacyMainFrameProcess()->send(Messages::WebInspectorUI::AttachedLeft(), m_inspectorPage->webPageIDInMainFrameProcess());
         break;
     }
 
@@ -334,10 +345,10 @@ void WebInspectorUIProxy::detach()
     m_isAttached = false;
 
     if (m_isVisible)
-        inspectorPagePreferences().setInspectorStartsAttached(false);
+        protectedInspectorPagePreferences()->setInspectorStartsAttached(false);
 
-    m_inspectedPage->legacyMainFrameProcess().send(Messages::WebInspector::SetAttached(false), m_inspectedPage->webPageIDInMainFrameProcess());
-    m_inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::Detached(), m_inspectorPage->webPageIDInMainFrameProcess());
+    protectedInspectedPage()->legacyMainFrameProcess().send(Messages::WebInspector::SetAttached(false), m_inspectedPage->webPageIDInMainFrameProcess());
+    protectedInspectorPage()->legacyMainFrameProcess().send(Messages::WebInspectorUI::Detached(), m_inspectorPage->webPageIDInMainFrameProcess());
 
     platformDetach();
 }
@@ -348,7 +359,7 @@ void WebInspectorUIProxy::setAttachedWindowHeight(unsigned height)
     if (!m_inspectorPage)
         return;
 
-    inspectorPagePreferences().setInspectorAttachedHeight(height);
+    protectedInspectorPagePreferences()->setInspectorAttachedHeight(height);
     platformSetAttachedWindowHeight(height);
 }
 
@@ -358,7 +369,7 @@ void WebInspectorUIProxy::setAttachedWindowWidth(unsigned width)
     if (!m_inspectorPage)
         return;
 
-    inspectorPagePreferences().setInspectorAttachedWidth(width);
+    protectedInspectorPagePreferences()->setInspectorAttachedWidth(width);
     platformSetAttachedWindowWidth(width);
 }
 
@@ -377,10 +388,11 @@ void WebInspectorUIProxy::togglePageProfiling()
     if (!m_inspectedPage)
         return;
 
+    RefPtr inspectedPage = m_inspectedPage.get();
     if (m_isProfilingPage)
-        m_inspectedPage->legacyMainFrameProcess().send(Messages::WebInspector::StopPageProfiling(), m_inspectedPage->webPageIDInMainFrameProcess());
+        inspectedPage->protectedLegacyMainFrameProcess()->send(Messages::WebInspector::StopPageProfiling(), inspectedPage->webPageIDInMainFrameProcess());
     else
-        m_inspectedPage->legacyMainFrameProcess().send(Messages::WebInspector::StartPageProfiling(), m_inspectedPage->webPageIDInMainFrameProcess());
+        inspectedPage->protectedLegacyMainFrameProcess()->send(Messages::WebInspector::StartPageProfiling(), inspectedPage->webPageIDInMainFrameProcess());
 }
 
 void WebInspectorUIProxy::toggleElementSelection()
@@ -388,12 +400,13 @@ void WebInspectorUIProxy::toggleElementSelection()
     if (!m_inspectedPage)
         return;
 
+    RefPtr inspectedPage = m_inspectedPage.get();
     if (m_elementSelectionActive) {
         m_ignoreElementSelectionChange = true;
-        m_inspectedPage->legacyMainFrameProcess().send(Messages::WebInspector::StopElementSelection(), m_inspectedPage->webPageIDInMainFrameProcess());
+        inspectedPage->protectedLegacyMainFrameProcess()->send(Messages::WebInspector::StopElementSelection(), inspectedPage->webPageIDInMainFrameProcess());
     } else {
         connect();
-        m_inspectedPage->legacyMainFrameProcess().send(Messages::WebInspector::StartElementSelection(), m_inspectedPage->webPageIDInMainFrameProcess());
+        inspectedPage->protectedLegacyMainFrameProcess()->send(Messages::WebInspector::StartElementSelection(), inspectedPage->webPageIDInMainFrameProcess());
     }
 }
 
@@ -423,25 +436,26 @@ void WebInspectorUIProxy::createFrontendPage()
     if (!m_inspectorPage)
         return;
 
-    trackInspectorPage(inspectorPage().get(), inspectedPage().get());
+    trackInspectorPage(protectedInspectorPage().get(), protectedInspectedPage().get());
 
     // Make sure the inspected page has a running WebProcess so we can inspect it.
-    m_inspectedPage->launchInitialProcessIfNecessary();
+    protectedInspectedPage()->launchInitialProcessIfNecessary();
 
-    m_inspectorPage->legacyMainFrameProcess().addMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPageIdentifier, *this);
+    RefPtr inspectorPage = m_inspectorPage.get();
+    inspectorPage->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPageIdentifier, *this);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    m_extensionController = WebInspectorUIExtensionControllerProxy::create(*m_inspectorPage);
+    m_extensionController = WebInspectorUIExtensionControllerProxy::create(*inspectorPage);
 #endif
 }
 
 void WebInspectorUIProxy::openLocalInspectorFrontend(bool canAttach, bool underTest)
 {
-    RefPtr inspectedPage = this->inspectedPage();
+    RefPtr inspectedPage = m_inspectedPage.get();
     if (!inspectedPage)
         return;
 
-    if (!inspectedPage->preferences().developerExtrasEnabled())
+    if (!inspectedPage->protectedPreferences()->developerExtrasEnabled())
         return;
 
     if (inspectedPage->inspectorController().hasLocalFrontend()) {
@@ -452,12 +466,12 @@ void WebInspectorUIProxy::openLocalInspectorFrontend(bool canAttach, bool underT
     m_underTest = underTest;
     createFrontendPage();
 
-    RefPtr inspectorPage = this->inspectorPage();
+    RefPtr inspectorPage = m_inspectorPage.get();
     ASSERT(inspectorPage);
     if (!inspectorPage)
         return;
 
-    inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::EstablishConnection(m_inspectedPageIdentifier, infoForLocalDebuggable(), m_underTest, inspectionLevel()), m_inspectorPage->webPageIDInMainFrameProcess());
+    inspectorPage->protectedLegacyMainFrameProcess()->send(Messages::WebInspectorUI::EstablishConnection(m_inspectedPageIdentifier, infoForLocalDebuggable(), m_underTest, inspectionLevel()), m_inspectorPage->webPageIDInMainFrameProcess());
 
     ASSERT(!m_isActiveFrontend);
     m_isActiveFrontend = true;
@@ -466,28 +480,29 @@ void WebInspectorUIProxy::openLocalInspectorFrontend(bool canAttach, bool underT
     if (!m_underTest) {
         m_canAttach = platformCanAttach(canAttach);
         m_isAttached = shouldOpenAttached();
-        m_attachmentSide = static_cast<AttachmentSide>(inspectorPagePreferences().inspectorAttachmentSide());
+        m_attachmentSide = static_cast<AttachmentSide>(protectedInspectorPagePreferences()->inspectorAttachmentSide());
 
-        inspectedPage->legacyMainFrameProcess().send(Messages::WebInspector::SetAttached(m_isAttached), inspectedPage->webPageIDInMainFrameProcess());
+        inspectedPage->protectedLegacyMainFrameProcess()->send(Messages::WebInspector::SetAttached(m_isAttached), inspectedPage->webPageIDInMainFrameProcess());
 
+        Ref inspectorPageProcess = inspectorPage->legacyMainFrameProcess();
         if (m_isAttached) {
             switch (m_attachmentSide) {
             case AttachmentSide::Bottom:
-                inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::AttachedBottom(), inspectorPage->webPageIDInMainFrameProcess());
+                inspectorPageProcess->send(Messages::WebInspectorUI::AttachedBottom(), inspectorPage->webPageIDInMainFrameProcess());
                 break;
 
             case AttachmentSide::Right:
-                inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::AttachedRight(), inspectorPage->webPageIDInMainFrameProcess());
+                inspectorPageProcess->send(Messages::WebInspectorUI::AttachedRight(), inspectorPage->webPageIDInMainFrameProcess());
                 break;
 
             case AttachmentSide::Left:
-                inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::AttachedLeft(), inspectorPage->webPageIDInMainFrameProcess());
+                inspectorPageProcess->send(Messages::WebInspectorUI::AttachedLeft(), inspectorPage->webPageIDInMainFrameProcess());
                 break;
             }
         } else
-            inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::Detached(), inspectorPage->webPageIDInMainFrameProcess());
+            inspectorPageProcess->send(Messages::WebInspectorUI::Detached(), inspectorPage->webPageIDInMainFrameProcess());
 
-        inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::SetDockingUnavailable(!m_canAttach), inspectorPage->webPageIDInMainFrameProcess());
+        inspectorPageProcess->send(Messages::WebInspectorUI::SetDockingUnavailable(!m_canAttach), inspectorPage->webPageIDInMainFrameProcess());
     }
 
     // Notify clients when a local inspector attaches so that it may install delegates prior to the _WKInspector loading its frontend.
@@ -518,7 +533,7 @@ void WebInspectorUIProxy::open()
     SetForScope isOpening(m_isOpening, true);
 
     m_isVisible = true;
-    m_inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::SetIsVisible(m_isVisible), m_inspectorPage->webPageIDInMainFrameProcess());
+    protectedInspectorPage()->protectedLegacyMainFrameProcess()->send(Messages::WebInspectorUI::SetIsVisible(m_isVisible), m_inspectorPage->webPageIDInMainFrameProcess());
 
     if (m_isAttached && platformCanAttach(m_canAttach))
         platformAttach();
@@ -547,7 +562,7 @@ void WebInspectorUIProxy::closeFrontendPageAndWindow()
     SetForScope reentrancyProtector(m_closing, true);
     
     // Notify clients when a local inspector closes so it can clear _WKInspectorDelegate and perform other cleanup.
-    if (RefPtr inspectedPage = this->inspectedPage()) {
+    if (RefPtr inspectedPage = m_inspectedPage.get()) {
 #if ENABLE(INSPECTOR_EXTENSIONS)
         if (RefPtr webExtensionController = inspectedPage->webExtensionController())
             webExtensionController->inspectorWillClose(*this, *inspectedPage);
@@ -561,13 +576,14 @@ void WebInspectorUIProxy::closeFrontendPageAndWindow()
     m_showMessageSent = false;
     m_ignoreFirstBringToFront = false;
 
-    auto inspectorPage = this->inspectorPage();
+    RefPtr inspectorPage = m_inspectorPage.get();
     untrackInspectorPage(inspectorPage.get());
 
-    inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::SetIsVisible(m_isVisible), inspectorPage->webPageIDInMainFrameProcess());
-    inspectorPage->legacyMainFrameProcess().removeMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPageIdentifier);
+    Ref inspectorPageProcess = inspectorPage->legacyMainFrameProcess();
+    inspectorPageProcess->send(Messages::WebInspectorUI::SetIsVisible(m_isVisible), inspectorPage->webPageIDInMainFrameProcess());
+    inspectorPageProcess->removeMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPageIdentifier);
 
-    if (auto inspectedPage = this->inspectedPage(); inspectedPage && m_isActiveFrontend)
+    if (RefPtr inspectedPage = m_inspectedPage.get(); inspectedPage && m_isActiveFrontend)
         inspectedPage->inspectorController().disconnectFrontend(*this);
 
     m_isActiveFrontend = false;
@@ -594,7 +610,7 @@ void WebInspectorUIProxy::closeFrontendPageAndWindow()
 
 void WebInspectorUIProxy::sendMessageToBackend(const String& message)
 {
-    auto inspectedPage = this->inspectedPage();
+    RefPtr inspectedPage = m_inspectedPage.get();
     if (!inspectedPage)
         return;
 
@@ -603,13 +619,13 @@ void WebInspectorUIProxy::sendMessageToBackend(const String& message)
 
 void WebInspectorUIProxy::frontendLoaded()
 {
-    auto inspectedPage = this->inspectedPage();
+    RefPtr inspectedPage = m_inspectedPage.get();
     if (!inspectedPage)
         return;
 
-    if (auto* automationSession = inspectedPage->configuration().processPool().automationSession())
+    if (RefPtr automationSession = inspectedPage->protectedConfiguration()->processPool().automationSession())
         automationSession->inspectorFrontendLoaded(*inspectedPage);
-    
+
 #if ENABLE(INSPECTOR_EXTENSIONS)
     if (m_extensionController)
         m_extensionController->inspectorFrontendLoaded();
@@ -644,7 +660,7 @@ void WebInspectorUIProxy::attachAvailabilityChanged(bool available)
     if (previousCanAttach == m_canAttach)
         return;
 
-    if (auto inspectorPage = this->inspectorPage(); inspectorPage && !m_underTest)
+    if (RefPtr inspectorPage = m_inspectorPage.get(); inspectorPage && !m_underTest)
         inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::SetDockingUnavailable(!m_canAttach), inspectorPage->webPageIDInMainFrameProcess());
 
     platformAttachAvailabilityChanged(m_canAttach);
@@ -691,10 +707,11 @@ void WebInspectorUIProxy::showCertificate(const CertificateInfo& certificateInfo
 
 void WebInspectorUIProxy::setInspectorPageDeveloperExtrasEnabled(bool enabled)
 {
-    if (!m_inspectorPage)
+    RefPtr inspectorPage = m_inspectorPage.get();
+    if (!inspectorPage)
         return;
 
-    m_inspectorPage->preferences().setDeveloperExtrasEnabled(enabled);
+    inspectorPage->protectedPreferences()->setDeveloperExtrasEnabled(enabled);
 }
 
 void WebInspectorUIProxy::elementSelectionChanged(bool active)
@@ -723,18 +740,18 @@ void WebInspectorUIProxy::setDeveloperPreferenceOverride(WebCore::InspectorClien
 {
     switch (developerPreference) {
     case InspectorClient::DeveloperPreference::PrivateClickMeasurementDebugModeEnabled:
-        if (auto inspectedPage = this->inspectedPage())
-            inspectedPage->websiteDataStore().setPrivateClickMeasurementDebugMode(overrideValue && overrideValue.value());
+        if (RefPtr inspectedPage = m_inspectedPage.get())
+            inspectedPage->protectedWebsiteDataStore()->setPrivateClickMeasurementDebugMode(overrideValue && overrideValue.value());
         return;
 
     case InspectorClient::DeveloperPreference::ITPDebugModeEnabled:
-        if (auto inspectedPage = this->inspectedPage())
-            inspectedPage->websiteDataStore().setResourceLoadStatisticsDebugMode(overrideValue && overrideValue.value());
+        if (RefPtr inspectedPage = m_inspectedPage.get())
+            inspectedPage->protectedWebsiteDataStore()->setResourceLoadStatisticsDebugMode(overrideValue && overrideValue.value());
         return;
 
     case InspectorClient::DeveloperPreference::MockCaptureDevicesEnabled:
 #if ENABLE(MEDIA_STREAM)
-        if (auto inspectedPage = this->inspectedPage())
+        if (RefPtr inspectedPage = m_inspectedPage.get())
             inspectedPage->setMockCaptureDevicesEnabledOverride(overrideValue);
 #endif // ENABLE(MEDIA_STREAM)
         return;
@@ -756,7 +773,7 @@ void WebInspectorUIProxy::setEmulatedConditions(std::optional<int64_t>&& bytesPe
 void WebInspectorUIProxy::setDiagnosticLoggingAvailable(bool available)
 {
 #if ENABLE(INSPECTOR_TELEMETRY)
-    m_inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::SetDiagnosticLoggingAvailable(available), m_inspectorPage->webPageIDInMainFrameProcess());
+    protectedInspectorPage()->protectedLegacyMainFrameProcess()->send(Messages::WebInspectorUI::SetDiagnosticLoggingAvailable(available), m_inspectorPage->webPageIDInMainFrameProcess());
 #else
     UNUSED_PARAM(available);
 #endif
@@ -780,7 +797,7 @@ void WebInspectorUIProxy::save(Vector<InspectorFrontendClient::SaveData>&& saveD
 
 void WebInspectorUIProxy::load(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
 {
-    if (!m_inspectedPage->preferences().developerExtrasEnabled())
+    if (!protectedInspectedPage()->protectedPreferences()->developerExtrasEnabled())
         return;
 
     ASSERT(!path.isEmpty());
@@ -792,7 +809,7 @@ void WebInspectorUIProxy::load(const String& path, CompletionHandler<void(const 
 
 void WebInspectorUIProxy::pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color> &)>&& completionHandler)
 {
-    if (!m_inspectedPage->preferences().developerExtrasEnabled()) {
+    if (!protectedInspectedPage()->protectedPreferences()->developerExtrasEnabled()) {
         completionHandler({ });
         return;
     }
@@ -807,11 +824,11 @@ bool WebInspectorUIProxy::shouldOpenAttached()
 
 void WebInspectorUIProxy::evaluateInFrontendForTesting(const String& expression)
 {
-    auto inspectorPage = this->inspectorPage();
+    RefPtr inspectorPage = m_inspectorPage.get();
     if (!inspectorPage)
         return;
 
-    inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::EvaluateInFrontendForTesting(expression), inspectorPage->webPageIDInMainFrameProcess());
+    inspectorPage->protectedLegacyMainFrameProcess()->send(Messages::WebInspectorUI::EvaluateInFrontendForTesting(expression), inspectorPage->webPageIDInMainFrameProcess());
 }
 
 // Unsupported configurations can use the stubs provided here.

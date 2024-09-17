@@ -82,7 +82,7 @@ public:
         listener->ignore();
 
         // Try to load the request in the inspected page.
-        if (RefPtr page = m_proxy.inspectedPage()) {
+        if (RefPtr page = m_proxy.protectedInspectedPage()) {
             auto request = navigationAction->request();
             page->loadRequest(WTFMove(request));
         }
@@ -104,7 +104,7 @@ static Ref<WebsiteDataStore> inspectorWebsiteDataStore()
 
 WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
 {
-    auto* inspectedWPEView = inspectedPage()->wpeView();
+    auto* inspectedWPEView = m_inspectedPage->wpeView();
     if (!inspectedWPEView)
         return nullptr;
 

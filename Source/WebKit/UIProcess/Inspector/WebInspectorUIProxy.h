@@ -113,8 +113,8 @@ public:
     void setInspectorClient(std::unique_ptr<API::InspectorClient>&&);
 
     // Public APIs
-    RefPtr<WebPageProxy> inspectedPage() const { return m_inspectedPage.get(); }
-    RefPtr<WebPageProxy> inspectorPage() const { return m_inspectorPage.get(); }
+    RefPtr<WebPageProxy> protectedInspectedPage() const { return m_inspectedPage.get(); }
+    RefPtr<WebPageProxy> protectedInspectorPage() const { return m_inspectorPage.get(); }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     WebInspectorUIExtensionControllerProxy* extensionController() const { return m_extensionController.get(); }
@@ -294,6 +294,7 @@ private:
     unsigned inspectionLevel() const;
 
     WebPreferences& inspectorPagePreferences() const;
+    Ref<WebPreferences> protectedInspectorPagePreferences() const;
 
 #if PLATFORM(MAC)
     void applyForcedAppearance();

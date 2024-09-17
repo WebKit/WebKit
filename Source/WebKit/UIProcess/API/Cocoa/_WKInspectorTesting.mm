@@ -47,7 +47,7 @@ static NSString *JavaScriptSnippetToFetchURL(NSURL *url)
 
 - (WKWebView *)inspectorWebView
 {
-    auto page = _inspector->inspectorPage();
+    RefPtr page = _inspector->protectedInspectorPage();
     return page ? page->cocoaView().autorelease() : nil;
 }
 

@@ -2037,7 +2037,7 @@ RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifie
 
     // Search open inspectors.
     for (auto [inspector, tab] : openInspectors()) {
-        if (inspector->inspectorPage()->identifier() == webPageProxyIdentifier) {
+        if (Ref { inspector }->protectedInspectorPage()->identifier() == webPageProxyIdentifier) {
             if (includeExtensionViews == IncludeExtensionViews::No)
                 return nullptr;
 
@@ -3162,7 +3162,7 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::inspectorP
         auto tabIdentifier = tab ? std::optional(tab->identifier()) : std::nullopt;
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-        result.append({ inspector->inspectorPage()->webPageIDInMainFrameProcess(), tabIdentifier, windowIdentifier });
+        result.append({ inspector->protectedInspectorPage()->webPageIDInMainFrameProcess(), tabIdentifier, windowIdentifier });
     }
 
     return result;
@@ -3869,7 +3869,7 @@ RefPtr<API::InspectorExtension> WebExtensionContext::inspectorExtension(WebPageP
 
     if (!foundInspector) {
         for (auto [inspector, tab] : openInspectors()) {
-            if (inspector->inspectorPage()->identifier() == webPageProxyIdentifier)
+            if (Ref { inspector }->protectedInspectorPage()->identifier() == webPageProxyIdentifier)
                 foundInspector = inspector.ptr();
         }
     }
@@ -3942,7 +3942,7 @@ void WebExtensionContext::loadInspectorBackgroundPagesDuringLoad()
         return;
 
     for (auto [inspector, tab] : openInspectors())
-        loadInspectorBackgroundPage(inspector, *tab);
+        loadInspectorBackgroundPage(Ref { inspector }, *tab);
 }
 
 void WebExtensionContext::unloadInspectorBackgroundPages()
@@ -4037,7 +4037,7 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
             return;
         }
 
-        auto *inspectorWebView = inspector->inspectorPage()->cocoaView().get();
+        auto *inspectorWebView = inspector->protectedInspectorPage()->cocoaView().get();
         auto *inspectorWebViewConfiguration = inspectorWebView.configuration;
 
         auto *configuration = webViewConfiguration(WebViewPurpose::Inspector);
@@ -4069,7 +4069,7 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
         RefPtr window = tab->window();
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-        auto appearance = inspector->inspectorPage()->useDarkAppearance() ? Inspector::ExtensionAppearance::Dark : Inspector::ExtensionAppearance::Light;
+        auto appearance = inspector->protectedInspectorPage()->useDarkAppearance() ? Inspector::ExtensionAppearance::Dark : Inspector::ExtensionAppearance::Light;
 
         Ref process = webView._page->legacyMainFrameProcess();
         ASSERT(inspectorWebView._page->legacyMainFrameProcess() == process);
