@@ -299,9 +299,9 @@ void PageClientImplCocoa::writingToolsActiveDidChange()
     [m_webView didChangeValueForKey:writingToolsActiveKey];
 }
 
-void PageClientImplCocoa::didEndPartialIntelligenceTextPonderingAnimation()
+void PageClientImplCocoa::didEndPartialIntelligenceTextAnimation()
 {
-    [m_webView _didEndPartialIntelligenceTextPonderingAnimation];
+    [m_webView _didEndPartialIntelligenceTextAnimation];
 }
 
 bool PageClientImplCocoa::writingToolsTextReplacementsFinished()

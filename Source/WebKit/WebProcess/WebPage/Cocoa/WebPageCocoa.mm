@@ -1035,9 +1035,9 @@ void WebPage::intelligenceTextAnimationsDidComplete()
     corePage()->intelligenceTextAnimationsDidComplete();
 }
 
-void WebPage::didEndPartialIntelligenceTextPonderingAnimation()
+void WebPage::didEndPartialIntelligenceTextAnimation()
 {
-    send(Messages::WebPageProxy::DidEndPartialIntelligenceTextPonderingAnimation());
+    send(Messages::WebPageProxy::DidEndPartialIntelligenceTextAnimation());
 }
 
 #endif

@@ -139,7 +139,7 @@
             if (!strongWebView || !animationID)
                 return;
 
-            strongWebView->page().didEndPartialIntelligenceTextPonderingAnimationImpl();
+            strongWebView->page().didEndPartialIntelligenceTextAnimationImpl();
 
             strongWebView->page().updateUnderlyingTextVisibilityForTextAnimationID(remainingID, true);
             strongWebView->page().callCompletionHandlerForAnimationID(*animationID, runMode);
