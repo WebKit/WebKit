@@ -82,9 +82,7 @@ void NetworkSendQueue::enqueue(WebCore::Blob& blob)
 
 void NetworkSendQueue::clear()
 {
-    // Do not call m_queue.clear() here since destroying a BlobLoader will cause its completion
-    // handler to get called, which will call processMessages() to iterate over m_queue.
-    std::exchange(m_queue, { });
+    m_queue.clear();
 }
 
 void NetworkSendQueue::processMessages()

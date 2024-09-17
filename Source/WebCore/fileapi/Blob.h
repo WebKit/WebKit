@@ -151,7 +151,7 @@ protected:
     Blob(ScriptExecutionContext*, const URL& srcURL, long long start, long long end, unsigned long long memoryCost, const String& contentType);
 
 private:
-    void loadBlob(FileReaderLoader::ReadType, CompletionHandler<void(BlobLoader&)>&&);
+    void loadBlob(FileReaderLoader::ReadType, Function<void(BlobLoader&)>&&);
 
     String m_type;
     mutable std::optional<unsigned long long> m_size;
