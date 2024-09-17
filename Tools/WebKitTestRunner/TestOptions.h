@@ -84,6 +84,7 @@ public:
     bool longPressActionsEnabled() const { return boolTestRunnerFeatureValue("longPressActionsEnabled"); }
     bool enhancedWindowingEnabled() const { return boolTestRunnerFeatureValue("enhancedWindowingEnabled"); }
     bool textExtractionEnabled() const { return boolTestRunnerFeatureValue("textExtractionEnabled"); }
+    bool useHardwareKeyboardMode() const { return boolTestRunnerFeatureValue("useHardwareKeyboardMode"); }
     double contentInsetTop() const { return doubleTestRunnerFeatureValue("contentInset.top"); }
     double obscuredInsetTop() const { return doubleTestRunnerFeatureValue("obscuredInset.top"); }
     double horizontalSystemMinimumLayoutMargin() const { return doubleTestRunnerFeatureValue("horizontalSystemMinimumLayoutMargin"); }

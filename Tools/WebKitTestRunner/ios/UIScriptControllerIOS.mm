@@ -75,16 +75,6 @@ static bool isHiddenOrHasHiddenAncestor(UIView *view)
 
 #endif // HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
 
-static BOOL returnYes()
-{
-    return YES;
-}
-
-static BOOL returnNo()
-{
-    return NO;
-}
-
 static NSDictionary *toNSDictionary(CGRect rect)
 {
     return @{
@@ -1463,7 +1453,7 @@ JSObjectRef UIScriptControllerIOS::calendarType() const
 void UIScriptControllerIOS::setHardwareKeyboardAttached(bool attached)
 {
     GSEventSetHardwareKeyboardAttached(attached, 0);
-    method_setImplementation(class_getClassMethod([UIKeyboard class], @selector(isInHardwareKeyboardMode)), reinterpret_cast<IMP>(attached ? returnYes : returnNo));
+    TestController::singleton().setIsInHardwareKeyboardMode(attached);
 }
 
 void UIScriptControllerIOS::setAllowsViewportShrinkToFit(bool allows)

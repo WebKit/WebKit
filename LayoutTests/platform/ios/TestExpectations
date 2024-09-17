@@ -78,6 +78,8 @@ ipc/webpageproxy-correctionpanel-no-crash.html [ Skip ]
 # Individually failing tests should be marked in separate expectations.
 imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase [ Pass ]
 
+# Caps lock indicator is disabled on iOS, as it is provided by the OS (through caret decoration UI).
+fast/forms/caps-lock-indicator-width.html [ Skip ]
 
 # --- imported from ios-wk2 ---
 
