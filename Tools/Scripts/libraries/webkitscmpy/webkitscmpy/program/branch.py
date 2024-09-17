@@ -171,9 +171,17 @@ class Branch(Command):
                             input = '<rdar://problem/{}>'.format(input)
                         rdar_to_cc = Tracker.from_string(input) or False
 
+                default_proj = list(Tracker.instance().projects.keys())[0] if rdar_to_cc and rdar_to_cc.redacted else None
+                if default_proj and Terminal.choose(
+                    f"Automatically classifying bug as {default_proj}.",
+                    default='Continue', options=('Continue', 'Modify')
+                ) == 'Modify':
+                    default_proj = None
+
                 issue = Tracker.instance().create(
                     title=args.issue,
                     description=description,
+                    project=default_proj,
                     keywords=['InRadar'] if rdar_to_cc else None
                 )
                 if not issue:
