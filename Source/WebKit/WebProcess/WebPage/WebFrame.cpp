@@ -1234,7 +1234,7 @@ OptionSet<WebCore::AdvancedPrivacyProtections> WebFrame::advancedPrivacyProtecti
     return loader->advancedPrivacyProtections();
 }
 
-OptionSet<WebCore::AdvancedPrivacyProtections> WebFrame::originatorAdvancedPrivacyProtections() const
+std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> WebFrame::originatorAdvancedPrivacyProtections() const
 {
     RefPtr loader = policySourceDocumentLoader();
     if (!loader)
