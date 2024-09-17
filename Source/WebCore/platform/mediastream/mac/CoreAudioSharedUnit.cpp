@@ -580,6 +580,12 @@ OSStatus CoreAudioSharedUnit::reconfigureAudioUnit()
     if (!hasAudioUnit())
         return 0;
 
+    if (!hasClients()) {
+        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::reconfigureAudioUnit(%p) stopping since there are no clients", this);
+        stopRunning();
+        return 0;
+    }
+
     m_isReconfiguring = true;
     auto scope = makeScopeExit([this] { m_isReconfiguring = false; });
 
