@@ -1765,12 +1765,12 @@ struct WebCore::Cookie {
     String value;
     String domain;
     String path;
+    String partitionKey;
     double created;
     std::optional<double> expires;
     bool httpOnly;
     bool secure;
     bool session;
-    bool partitioned;
     String comment;
     URL commentURL;
     Vector<uint16_t> ports;
