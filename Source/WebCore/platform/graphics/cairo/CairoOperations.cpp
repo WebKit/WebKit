@@ -872,13 +872,21 @@ static IntRect calculateSubsurfaceRect(FloatRect& dest, FloatRect& src, const In
     // When the source rectangle is outside the source image, the source rectangle must be clipped
     // to the source image and the destination rectangle must be clipped in the same proportion.
     auto calc1d = [](float& dest1, float& destSize, float& src1, float& srcSize, float surfaceWidth, float& padding) -> std::tuple<int, int> {
-        ASSERT(destSize > 0);
-        ASSERT(srcSize > 0);
+        ASSERT(destSize);
+        ASSERT(srcSize);
         ASSERT(surfaceWidth > 0);
         // Cairo subsurfaces don't support floating point boundaries well, so we expand the rectangle.
         int expanded1, expanded2;
         float dest2 = dest1 + destSize;
+        if (destSize < 0) {
+            destSize = -destSize;
+            std::swap(dest1, dest2);
+        }
         float src2 = src1 + srcSize;
+        if (srcSize < 0) {
+            srcSize = -srcSize;
+            std::swap(src1, src2);
+        }
         if (src2 <= 0 || src1 >= surfaceWidth)
             return { };
         if (src1 < 0) {
