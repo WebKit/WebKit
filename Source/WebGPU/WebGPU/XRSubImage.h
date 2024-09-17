@@ -70,7 +70,7 @@ private:
     HashMap<uint64_t, RefPtr<Texture>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_depthTextures;
     uint64_t m_currentTextureIndex { 0 };
 
-    Ref<Device> m_device;
+    ThreadSafeWeakPtr<Device> m_device;
 };
 
 } // namespace WebGPU

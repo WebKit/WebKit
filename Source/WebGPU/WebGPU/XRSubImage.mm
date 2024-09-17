@@ -66,6 +66,10 @@ bool XRSubImage::isValid() const
 
 void XRSubImage::update(id<MTLTexture> colorTexture, id<MTLTexture> depthTexture, size_t currentTextureIndex, const std::pair<id<MTLSharedEvent>, uint64_t>& sharedEvent)
 {
+    RefPtr device = m_device.get();
+    if (!device)
+        return;
+
     m_currentTextureIndex = currentTextureIndex;
     auto* texture = this->colorTexture();
     if (!texture || texture->texture() != colorTexture) {
@@ -86,7 +90,7 @@ void XRSubImage::update(id<MTLTexture> colorTexture, id<MTLTexture> depthTexture
             .viewFormatCount = 1,
             .viewFormats = &colorFormat,
         };
-        auto newTexture = Texture::create(colorTexture, colorTextureDescriptor, { colorFormat }, m_device.get());
+        auto newTexture = Texture::create(colorTexture, colorTextureDescriptor, { colorFormat }, *device);
         newTexture->updateCompletionEvent(sharedEvent);
         m_colorTextures.set(currentTextureIndex, newTexture.ptr());
     } else
@@ -110,7 +114,7 @@ void XRSubImage::update(id<MTLTexture> colorTexture, id<MTLTexture> depthTexture
             .viewFormatCount = 1,
             .viewFormats = &depthFormat,
         };
-        m_depthTextures.set(currentTextureIndex, Texture::create(depthTexture, depthTextureDescriptor, { depthFormat }, m_device.get()));
+        m_depthTextures.set(currentTextureIndex, Texture::create(depthTexture, depthTextureDescriptor, { depthFormat }, *device));
     }
 }
 
