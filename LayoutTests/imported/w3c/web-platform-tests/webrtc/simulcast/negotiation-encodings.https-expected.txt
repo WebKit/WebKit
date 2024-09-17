@@ -1,8 +1,8 @@
 
 FAIL addTrack, then sRD(simulcast recv offer) results in simulcast assert_equals: expected 1 but got 2
 FAIL simulcast is not supported for audio assert_equals: expected 1 but got 2
-FAIL sRD(recv simulcast answer) can narrow the simulcast envelope specified by addTransceiver assert_array_equals: expected property 0 to be 2 but got 1 (expected array [2] got [1])
-FAIL sRD(recv simulcast answer) can narrow the simulcast envelope from a previous negotiation assert_array_equals: expected property 0 to be 2 but got 1 (expected array [2] got [1])
+PASS sRD(recv simulcast answer) can narrow the simulcast envelope specified by addTransceiver
+PASS sRD(recv simulcast answer) can narrow the simulcast envelope from a previous negotiation
 FAIL sRD(simulcast offer) can narrow the simulcast envelope from a previous negotiation assert_array_equals: [[SendEncodings]] is not updated in have-remote-offer for reoffers lengths differ, expected array ["foo", "bar"] length 2, got ["foo"] length 1
 FAIL Duplicate rids in sRD(offer) are ignored assert_equals: expected 1 but got 2
 FAIL Choices in rids in sRD(offer) are ignored assert_equals: expected 1 but got 2
