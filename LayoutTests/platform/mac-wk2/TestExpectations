@@ -1857,3 +1857,6 @@ fast/scrolling/mac/scrollbars/scrollbar-state.html [ Failure ]
 
 # webkit.org/b/279477 REGRESSION (283102@main?): [macOS iOS wk2 Debug EWS ] ASSERTION FAILED: WebKit::WebPageProxy::startNetworkRequestsForPageLoadTiming(WebCore::FrameIdentifier) result of http/tests/site-isolation/window-open-with-name-cross-site.html to crash
 [ Debug ] http/tests/site-isolation/window-open-with-name-cross-site.html [ Skip ]
+
+# webkit.org/b/279747 [ macOS wk2 ] editing/input/scroll-viewport-page-up-down.html is a flaky text failure
+editing/input/scroll-viewport-page-up-down.html [ Pass Failure ]
