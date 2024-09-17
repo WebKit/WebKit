@@ -218,14 +218,32 @@ bool WebExtension::parseManifest(NSData *manifestData)
         return false;
     }
 
-    auto manifestJSONString = String([[NSString alloc] initWithData:manifestData encoding:NSUTF8StringEncoding]);
-    auto manifestJSON = JSON::Value::parseJSON(manifestJSONString);
+    // Set to an empty object for now so calls to manifestParsedSuccessfully() during this will be true.
+    // This is needed for localization to properly get the defaultLocale() while we are mid-parse.
+    m_manifestJSON = JSON::Object::create();
+
+    auto *defaultLocale = objectForKey<NSString>(m_manifest, defaultLocaleManifestKey);
+    m_defaultLocale = [NSLocale localeWithLocaleIdentifier:defaultLocale];
+
+    m_localization = [[_WKWebExtensionLocalization alloc] initWithWebExtension:*this];
+
+    m_manifest = [m_localization.get() localizedDictionaryForDictionary:m_manifest.get()];
+    if (!m_manifest) {
+        m_manifestJSON = JSON::Value::null();
+        recordError(createError(Error::InvalidManifest));
+        return false;
+    }
+
+    // Parse m_manifestJSON after localization so it gets the localized version.
+    RefPtr manifestJSON = JSON::Value::parseJSON(String(encodeJSONString(m_manifest.get())));
     if (!manifestJSON || !manifestJSON->asObject()) {
-        recordError(createError(Error::InvalidManifest, { }, nil));
+        m_manifestJSON = JSON::Value::null();
+        recordError(createError(Error::InvalidManifest));
         return false;
     }
 
     m_manifestJSON = *manifestJSON;
+
     return true;
 }
 
@@ -245,18 +263,6 @@ NSDictionary *WebExtension::manifest()
 
     if (!parseManifest(manifestData))
         return nil;
-
-    NSString *defaultLocale = [m_manifest objectForKey:defaultLocaleManifestKey];
-    m_defaultLocale = [NSLocale localeWithLocaleIdentifier:defaultLocale];
-
-    m_localization = [[_WKWebExtensionLocalization alloc] initWithWebExtension:*this];
-
-    m_manifest = [m_localization.get() localizedDictionaryForDictionary:m_manifest.get()];
-    ASSERT(m_manifest);
-
-    // FIXME: Handle Safari version compatibility check.
-    // Likely do this version checking when the extension is added to the WKWebExtensionController,
-    // since that will need delegated to the app.
 
     return m_manifest.get();
 }
