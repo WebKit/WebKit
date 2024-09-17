@@ -392,6 +392,11 @@ static id parameterizedAttributeValueForTesting(const RefPtr<AXCoreObject>&, NSS
 #define NSAccessibilityTextOperationReplace @"TextOperationReplace"
 #endif
 
+#ifndef NSAccessibilityTextOperationReplacePreserveCase
+// Value for TextOperationType.
+#define NSAccessibilityTextOperationReplacePreserveCase @"TextOperationReplacePreserveCase"
+#endif
+
 #ifndef NSAccessibilityTextOperationCapitalize
 // Value for TextOperationType.
 #define NSAccessibilityTextOperationCapitalize @"Capitalize"
@@ -410,6 +415,11 @@ static id parameterizedAttributeValueForTesting(const RefPtr<AXCoreObject>&, NSS
 #ifndef NSAccessibilityTextOperationReplacementString
 // Replacement text for operation replace.
 #define NSAccessibilityTextOperationReplacementString @"AXTextOperationReplacementString"
+#endif
+
+#ifndef NSAccessibilityTextOperationSmartReplace
+// Boolean specifying whether a smart replacement should be performed.
+#define NSAccessibilityTextOperationSmartReplace @"AXTextOperationSmartReplace"
 #endif
 
 // Math attributes
@@ -708,6 +718,7 @@ static AccessibilityTextOperation accessibilityTextOperationForParameterizedAttr
     NSArray *markerRanges = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationMarkerRanges];
     NSString *operationType = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationType];
     NSString *replacementString = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationReplacementString];
+    NSNumber *smartReplace = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationSmartReplace];
 
     if ([markerRanges isKindOfClass:[NSArray class]]) {
         operation.textRanges = makeVector(markerRanges, [&axObjectCache] (id markerRange) {
@@ -719,6 +730,8 @@ static AccessibilityTextOperation accessibilityTextOperationForParameterizedAttr
     if ([operationType isKindOfClass:[NSString class]]) {
         if ([operationType isEqualToString:NSAccessibilityTextOperationReplace])
             operation.type = AccessibilityTextOperationType::Replace;
+        else if ([operationType isEqualToString:NSAccessibilityTextOperationReplacePreserveCase])
+            operation.type = AccessibilityTextOperationType::ReplacePreserveCase;
         else if ([operationType isEqualToString:NSAccessibilityTextOperationCapitalize])
             operation.type = AccessibilityTextOperationType::Capitalize;
         else if ([operationType isEqualToString:NSAccessibilityTextOperationLowercase])
@@ -729,6 +742,9 @@ static AccessibilityTextOperation accessibilityTextOperationForParameterizedAttr
 
     if ([replacementString isKindOfClass:[NSString class]])
         operation.replacementText = replacementString;
+
+    if ([smartReplace isKindOfClass:[NSNumber class]])
+        operation.smartReplace = [smartReplace boolValue] ? AccessibilityTextOperationSmartReplace::Yes : AccessibilityTextOperationSmartReplace::No;
 
     return operation;
 }

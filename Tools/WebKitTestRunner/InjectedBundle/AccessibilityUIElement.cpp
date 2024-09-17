@@ -128,6 +128,7 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textInputMarkedText
 void AccessibilityUIElement::setBoolAttributeValue(JSStringRef, bool) { }
 void AccessibilityUIElement::setValue(JSStringRef) { }
 JSValueRef AccessibilityUIElement::searchTextWithCriteria(JSContextRef, JSValueRef, JSStringRef, JSStringRef) { return nullptr; }
+JSValueRef AccessibilityUIElement::performTextOperation(JSContextRef, JSStringRef, JSValueRef, JSStringRef, bool) { return nullptr; }
 bool AccessibilityUIElement::isOnScreen() const { return true; }
 JSValueRef AccessibilityUIElement::mathRootRadicand(JSContextRef) { return { }; }
 unsigned AccessibilityUIElement::numberOfCharacters() const { return 0; }

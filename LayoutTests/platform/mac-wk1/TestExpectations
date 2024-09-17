@@ -1124,6 +1124,15 @@ imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.
 # View Transitions API is disabled in WK1.
 imported/w3c/web-platform-tests/css/css-view-transitions [ Skip ]
 
+# AXTextOperation layout tests are not available for WK1.
+accessibility/mac/text-operation/text-operation-capitalize.html [ Skip ]
+accessibility/mac/text-operation/text-operation-lowercase.html [ Skip ]
+accessibility/mac/text-operation/text-operation-replace-preserve-case.html [ Skip ]
+accessibility/mac/text-operation/text-operation-replace.html [ Skip ]
+accessibility/mac/text-operation/text-operation-select.html [ Skip ]
+accessibility/mac/text-operation/text-operation-smart-replace.html [ Skip ]
+accessibility/mac/text-operation/text-operation-uppercase.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End features not supported in WebKit1
 #//////////////////////////////////////////////////////////////////////////////////////////

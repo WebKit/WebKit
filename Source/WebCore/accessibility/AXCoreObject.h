@@ -640,17 +640,17 @@ enum class AccessibilityTextOperationType {
     Replace,
     Capitalize,
     Lowercase,
-    Uppercase
+    Uppercase,
+    ReplacePreserveCase
 };
+
+enum class AccessibilityTextOperationSmartReplace : bool { No, Yes };
 
 struct AccessibilityTextOperation {
     Vector<SimpleRange> textRanges; // text on which perform the operation.
-    AccessibilityTextOperationType type;
-    String replacementText; // For type = replace.
-
-    AccessibilityTextOperation()
-        : type(AccessibilityTextOperationType::Select)
-    { }
+    AccessibilityTextOperationType type { AccessibilityTextOperationType::Select };
+    String replacementText; // For type = Replace, ReplacePreserveCase.
+    AccessibilityTextOperationSmartReplace smartReplace { AccessibilityTextOperationSmartReplace::Yes };
 };
 
 enum class AccessibilityOrientation {

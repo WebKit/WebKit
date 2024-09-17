@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="test-content">
+    <p contenteditable="true" id="text">The quick <span id="target1">brown fo</span>x jumps over the lazy dog.</p>
+    <p contenteditable="true" id="text2">TEXT2: The quick <span id="target2">brown fo</span>x jumps over the lazy dog.</p>
+    <p contenteditable="true" id="text3">TEXT3: The quick brown fox jumps over the lazy dog.</p>
+    <p contenteditable="true" id="text4">TEXT4: The quick brown fox jumps over the lazy dog.</p>
+</div>
+
+<script>
+var output = "Tests that a text operation replacement produces the expected result with and without smart-replacement.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var text, operationResult;
+    setTimeout(async function() {
+        // Validate that non-smart replacements do not add a spaces around the replaced text.
+        text = accessibilityController.accessibleElementById("text");
+        var markers = [await selectElementTextById("target1")];
+        await waitForNotification(text, "AXValueChanged", () => {
+            operationResult = text.performTextOperation("TextOperationReplace", markers, "lyn", /* smart replace */ false);
+        });
+        output += expect("operationResult.length", "1");
+        output += expect("operationResult[0]", "'lyn'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: The quick lynx jumps over the lazy dog.'");
+
+        // Validate that smart replacements add a spaces around the replaced text.
+        text = accessibilityController.accessibleElementById("text2");
+        markers = [await selectElementTextById("target2")];
+        await waitForNotification(text, "AXValueChanged", () => {
+            operationResult = text.performTextOperation("TextOperationReplace", markers, "lyn", /* smart replace */ true);
+        });
+        output += expect("operationResult.length", "1");
+        output += expect("operationResult[0]", "'lyn'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: TEXT2: The quick lyn x jumps over the lazy dog.'");
+
+        // Validate that multiple non-smart replacements are performed as expected i.e. no additional
+        // spaced added around the replaced string.
+        // NOTE: The replacement string is lowercased due to TextOperationReplace. Use
+        // TextOperationReplacePreserveCase to preserve the case.
+        text = accessibilityController.accessibleElementById("text3");
+        markers = [await selectPartialElementTextById("text3", 42, 46), await selectPartialElementTextById("text3", 30, 37), await selectPartialElementTextById("text3", 9, 20)];
+        await waitForNotification(text, "AXValueChanged", () => {
+            operationResult = text.performTextOperation("TextOperationReplace", markers, "[Replaced string]", /* smart replace */ false);
+        });
+        output += expect("operationResult.length", "3");
+        output += expect("operationResult[0]", "'[replaced string]'");
+        output += expect("operationResult[1]", "'[replaced string]'");
+        output += expect("operationResult[2]", "'[replaced string]'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: TEXT3: Th[replaced string]wn fox jum[replaced string] the [replaced string] dog.'");
+
+        // Validate that multiple smart replacements are performed as expected i.e. spaces are added
+        // around the replaced string when replacing in the middle of a word, and no spaces are added
+        // when replacing at word boundaries.
+        //
+        // NOTE: The replacement string is lowercased due to TextOperationReplace. Use
+        // TextOperationReplacePreserveCase to preserve the case.
+        //
+        // The following test is EXPECTED TO FAIL. See https://bugs.webkit.org/show_bug.cgi?id=278928
+        text = accessibilityController.accessibleElementById("text4");
+        markers = [await selectPartialElementTextById("text4", 42, 46), await selectPartialElementTextById("text4", 30, 37), await selectPartialElementTextById("text4", 9, 20)];
+        await waitForNotification(text, "AXValueChanged", () => {
+            operationResult = text.performTextOperation("TextOperationReplace", markers, "[Replaced string]", /* smart replace */ true);
+        });
+        output += expect("operationResult.length", "3");
+        output += expect("operationResult[0]", "'[replaced string]'");
+        output += expect("operationResult[1]", "'[replaced string]'");
+        output += expect("operationResult[2]", "'[replaced string]'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: TEXT4: Th [replaced string] wn fox jum [replaced string] the [replaced string] dog.'");
+
+        document.getElementById("test-content").remove();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

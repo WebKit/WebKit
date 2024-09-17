@@ -342,6 +342,33 @@ static NSDictionary *searchTextParameterizedAttributeForCriteria(JSContextRef co
     return parameterizedAttribute;
 }
 
+static NSDictionary *textOperationParameterizedAttribute(JSContextRef context, JSStringRef operationType, JSValueRef markerRanges, JSStringRef replacement, bool shouldSmartReplace)
+{
+    NSMutableDictionary *attributeParameters = [NSMutableDictionary dictionary];
+
+    if (operationType)
+        [attributeParameters setObject:[NSString stringWithJSStringRef:operationType] forKey:@"AXTextOperationType"];
+
+    if (markerRanges) {
+        JSObjectRef markerRangesArray = JSValueToObject(context, markerRanges, nullptr);
+        unsigned markerRangesArrayLength = arrayLength(context, markerRangesArray);
+        NSMutableArray *platformRanges = [NSMutableArray array];
+        for (unsigned i = 0; i < markerRangesArrayLength; ++i) {
+            auto propertyAtIndex = JSObjectGetPropertyAtIndex(context, markerRangesArray, i, nullptr);
+            auto markerRangeRef = toTextMarkerRange(JSValueToObject(context, propertyAtIndex, nullptr));
+            [platformRanges addObject:markerRangeRef->platformTextMarkerRange()];
+        }
+        [attributeParameters setObject:platformRanges forKey:@"AXTextOperationMarkerRanges"];
+    }
+
+    if (replacement)
+        [attributeParameters setObject:[NSString stringWithJSStringRef:replacement] forKey:@"AXTextOperationReplacementString"];
+
+    [attributeParameters setObject:[NSNumber numberWithBool:shouldSmartReplace] forKey:@"AXTextOperationSmartReplace"];
+
+    return attributeParameters;
+}
+
 static NSDictionary *misspellingSearchParameterizedAttributeForCriteria(AccessibilityTextMarkerRange* start, bool forward)
 {
     if (!start || !start->platformTextMarkerRange())
@@ -1460,6 +1487,18 @@ JSValueRef AccessibilityUIElement::searchTextWithCriteria(JSContextRef context, 
     auto result = attributeValueForParameter(@"AXSearchTextWithCriteria", parameterizedAttribute);
     if ([result isKindOfClass:[NSArray class]])
         return makeJSArray(context, makeVector<RefPtr<AccessibilityTextMarkerRange>>(result.get()));
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
+
+JSValueRef AccessibilityUIElement::performTextOperation(JSContextRef context, JSStringRef operationType, JSValueRef markerRanges, JSStringRef replacement, bool shouldSmartReplace)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSDictionary *parameterizedAttribute = textOperationParameterizedAttribute(context, operationType, markerRanges, replacement, shouldSmartReplace);
+    auto result = attributeValueForParameter(@"AXTextOperation", parameterizedAttribute);
+    if ([result isKindOfClass:[NSArray class]])
+        return makeValueRefForValue(context, result.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;

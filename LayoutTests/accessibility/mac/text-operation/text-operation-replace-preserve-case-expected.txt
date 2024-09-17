@@ -1,0 +1,18 @@
+Tests that a ReplacePreserveCase text operation replaces text and preserves the case of the replacement string.
+
+PASS: operationResult.length === 1
+PASS: operationResult[0] === 'fox named Finn'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: The quick brown fox named Finn jumps over the lazy dog.'
+PASS: operationResult.length === 1
+PASS: operationResult[0] === 'lower case prefix: The'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT2: lower case prefix: The quick brown fox jumps over the lazy dog.'
+PASS: operationResult.length === 3
+PASS: operationResult[0] === '[Replaced string]'
+PASS: operationResult[1] === '[Replaced string]'
+PASS: operationResult[2] === '[Replaced string]'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT3: [Replaced string] quick brown [Replaced string] jumps over the [Replaced string] dog.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

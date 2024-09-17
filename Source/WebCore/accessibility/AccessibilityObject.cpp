@@ -1063,6 +1063,9 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
             }
             break;
         }
+        case AccessibilityTextOperationType::ReplacePreserveCase:
+            replaceSelection = true;
+            break;
         case AccessibilityTextOperationType::Select:
             break;
         }
@@ -1070,7 +1073,7 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
         // A bit obvious, but worth noting the API contract for this method is that we should
         // return the replacement string when replacing, but the selected string if not.
         if (replaceSelection) {
-            frame->editor().replaceSelectionWithText(replacementString, Editor::SelectReplacement::Yes, Editor::SmartReplace::Yes);
+            frame->editor().replaceSelectionWithText(replacementString, Editor::SelectReplacement::Yes, operation.smartReplace == AccessibilityTextOperationSmartReplace::No ? Editor::SmartReplace::No : Editor::SmartReplace::Yes);
             result.append(replacementString);
         } else
             result.append(text);
