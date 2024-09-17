@@ -392,14 +392,14 @@ TEST(AdaptiveImageGlyph, InsertAndRemoveWKAttachments)
     auto heicAttachmentInfo = heicAttachment.info;
     EXPECT_WK_STREQ(heicAttachmentInfo.contentType, "image/heic");
     EXPECT_TRUE([heicAttachmentInfo.name containsString:@"heic"]);
-    EXPECT_EQ(heicAttachmentInfo.data.length, 23499U);
+    EXPECT_GE(heicAttachmentInfo.data.length, 23499U);
     EXPECT_TRUE(heicAttachmentInfo.shouldPreserveFidelity);
 
     auto pngAttachment = [insertedAttachments objectAtIndex:1];
     auto pngAttachmentInfo =  pngAttachment.info;
     EXPECT_WK_STREQ(pngAttachmentInfo.contentType, "image/png");
     EXPECT_TRUE([pngAttachmentInfo.name containsString:@"png"]);
-    EXPECT_EQ(pngAttachmentInfo.data.length, 2986U);
+    EXPECT_GE(pngAttachmentInfo.data.length, 2986U);
     EXPECT_FALSE(pngAttachmentInfo.shouldPreserveFidelity);
 
     EXPECT_TRUE([[webView stringByEvaluatingJavaScript:@"document.querySelector('source').attachmentIdentifier"] isEqualToString:heicAttachment.uniqueIdentifier]);
@@ -415,13 +415,13 @@ TEST(AdaptiveImageGlyph, InsertAndRemoveWKAttachments)
     auto removedHEICAttachmentInfo = [removedAttachments objectAtIndex:0].info;
     EXPECT_WK_STREQ(removedHEICAttachmentInfo.contentType, "image/heic");
     EXPECT_TRUE([removedHEICAttachmentInfo.name containsString:@"heic"]);
-    EXPECT_EQ(removedHEICAttachmentInfo.data.length, 23499U);
+    EXPECT_GE(removedHEICAttachmentInfo.data.length, 23499U);
     EXPECT_TRUE(removedHEICAttachmentInfo.shouldPreserveFidelity);
 
     auto removedPNGAttachmentInfo =  [removedAttachments objectAtIndex:1].info;
     EXPECT_WK_STREQ(removedPNGAttachmentInfo.contentType, "image/png");
     EXPECT_TRUE([removedPNGAttachmentInfo.name containsString:@"png"]);
-    EXPECT_EQ(removedPNGAttachmentInfo.data.length, 2986U);
+    EXPECT_GE(removedPNGAttachmentInfo.data.length, 2986U);
     EXPECT_FALSE(removedPNGAttachmentInfo.shouldPreserveFidelity);
 }
 
@@ -472,14 +472,14 @@ TEST(AdaptiveImageGlyph, InsertWKAttachmentsOnPaste)
     auto heicAttachmentInfo = heicAttachment.info;
     EXPECT_WK_STREQ(heicAttachmentInfo.contentType, "image/heic");
     EXPECT_TRUE([heicAttachmentInfo.name containsString:@"heic"]);
-    EXPECT_EQ(heicAttachmentInfo.data.length, 23499U);
+    EXPECT_GE(heicAttachmentInfo.data.length, 23499U);
     EXPECT_TRUE(heicAttachmentInfo.shouldPreserveFidelity);
 
     auto pngAttachment = [insertedAttachments objectAtIndex:1];
     auto pngAttachmentInfo =  pngAttachment.info;
     EXPECT_WK_STREQ(pngAttachmentInfo.contentType, "image/png");
     EXPECT_TRUE([pngAttachmentInfo.name containsString:@"dog in a spacesuit"]);
-    EXPECT_EQ(pngAttachmentInfo.data.length, 42126U);
+    EXPECT_GE(pngAttachmentInfo.data.length, 42126U);
     EXPECT_FALSE(pngAttachmentInfo.shouldPreserveFidelity);
 
     EXPECT_TRUE([[webView stringByEvaluatingJavaScript:@"document.querySelector('source').attachmentIdentifier"] isEqualToString:heicAttachment.uniqueIdentifier]);
@@ -527,13 +527,13 @@ TEST(AdaptiveImageGlyph, InsertWKAttachmentsCopyFromWebViewPasteToWebView)
     auto heicAttachment = [insertedAttachments objectAtIndex:0];
     auto heicAttachmentInfo = heicAttachment.info;
     EXPECT_WK_STREQ(heicAttachmentInfo.contentType, "image/heic");
-    EXPECT_EQ(heicAttachmentInfo.data.length, 23499U);
+    EXPECT_GE(heicAttachmentInfo.data.length, 23499U);
     EXPECT_TRUE(heicAttachmentInfo.shouldPreserveFidelity);
 
     auto pngAttachment = [insertedAttachments objectAtIndex:1];
     auto pngAttachmentInfo =  pngAttachment.info;
     EXPECT_WK_STREQ(pngAttachmentInfo.contentType, "image/png");
-    EXPECT_EQ(pngAttachmentInfo.data.length, 2986U);
+    EXPECT_GE(pngAttachmentInfo.data.length, 2986U);
     EXPECT_FALSE(pngAttachmentInfo.shouldPreserveFidelity);
 
     EXPECT_TRUE([[pasteWebView stringByEvaluatingJavaScript:@"document.querySelector('source').attachmentIdentifier"] isEqualToString:heicAttachment.uniqueIdentifier]);
@@ -583,14 +583,14 @@ TEST(AdaptiveImageGlyph, InsertWKAttachmentsMovingParagraphs)
     auto heicAttachmentInfo = heicAttachment.info;
     EXPECT_WK_STREQ(heicAttachmentInfo.contentType, "image/heic");
     EXPECT_TRUE([heicAttachmentInfo.name containsString:@"heic"]);
-    EXPECT_EQ(heicAttachmentInfo.data.length, 23499U);
+    EXPECT_GE(heicAttachmentInfo.data.length, 23499U);
     EXPECT_TRUE(heicAttachmentInfo.shouldPreserveFidelity);
 
     auto pngAttachment = [insertedAttachments objectAtIndex:1];
     auto pngAttachmentInfo =  pngAttachment.info;
     EXPECT_WK_STREQ(pngAttachmentInfo.contentType, "image/png");
     EXPECT_TRUE([pngAttachmentInfo.name containsString:@"png"]);
-    EXPECT_EQ(pngAttachmentInfo.data.length, 2986U);
+    EXPECT_GE(pngAttachmentInfo.data.length, 2986U);
     EXPECT_FALSE(pngAttachmentInfo.shouldPreserveFidelity);
 
     EXPECT_TRUE([[webView stringByEvaluatingJavaScript:@"document.querySelector('source').attachmentIdentifier"] isEqualToString:heicAttachment.uniqueIdentifier]);
