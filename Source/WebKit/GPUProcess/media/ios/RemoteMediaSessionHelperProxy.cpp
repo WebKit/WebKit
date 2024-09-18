@@ -136,6 +136,12 @@ void RemoteMediaSessionHelperProxy::activeAudioRouteSupportsSpatialPlaybackDidCh
         connection->connection().send(Messages::RemoteMediaSessionHelper::ActiveAudioRouteSupportsSpatialPlaybackDidChange(supportsSpatialPlayback), { });
 }
 
+const SharedPreferencesForWebProcess& RemoteMediaSessionHelperProxy::sharedPreferencesForWebProcess() const
+{
+    RefPtr gpuConnectionToWebProcess = m_gpuConnection.get();
+    return gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
+}
+
 }
 
 #endif

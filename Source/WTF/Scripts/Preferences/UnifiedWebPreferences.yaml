@@ -4664,6 +4664,7 @@ MediaSessionEnabled:
       default: true
     WebCore:
       default: true
+  sharedPreferenceForWebProcess: true
 
 MediaSessionPlaylistEnabled:
   type: bool

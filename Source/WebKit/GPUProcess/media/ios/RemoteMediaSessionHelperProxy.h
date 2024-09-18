@@ -48,6 +48,7 @@ public:
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
 
     void overridePresentingApplicationPIDIfNeeded();
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
 private:
     // IPC::MessageReceiver
