@@ -21,13 +21,6 @@ find_package(WebP REQUIRED COMPONENTS demux)
 find_package(WPE REQUIRED)
 find_package(ZLIB REQUIRED)
 
-# TODO(277627): Remove once the SDKs include the package.
-if (DEVELOPER_MODE)
-    set(USE_SYSTEM_SYSPROF_CAPTURE_DEFAULT OFF)
-else ()
-    set(USE_SYSTEM_SYSPROF_CAPTURE_DEFAULT ON)
-endif ()
-
 WEBKIT_OPTION_BEGIN()
 
 SET_AND_EXPOSE_TO_BUILD(ENABLE_DEVELOPER_MODE ${DEVELOPER_MODE})
@@ -111,7 +104,7 @@ WEBKIT_OPTION_DEFINE(USE_QT6 "Whether to use Qt6 instead of Qt5" PUBLIC OFF)
 # Private options specific to the WPE port.
 WEBKIT_OPTION_DEFINE(USE_EXTERNAL_HOLEPUNCH "Whether to enable external holepunch" PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_SYSPROF_CAPTURE "Whether to use libsysprof-capture for tracing." PRIVATE ON)
-WEBKIT_OPTION_DEFINE(USE_SYSTEM_SYSPROF_CAPTURE "Whether to use a system-provided libsysprof-capture" PRIVATE ${USE_SYSTEM_SYSPROF_CAPTURE_DEFAULT})
+WEBKIT_OPTION_DEFINE(USE_SYSTEM_SYSPROF_CAPTURE "Whether to use a system-provided libsysprof-capture" PRIVATE ON)
 WEBKIT_OPTION_DEFINE(USE_SYSTEM_UNIFDEF "Whether to use a system-provided unifdef" PRIVATE ON)
 
 WEBKIT_OPTION_CONFLICT(ENABLE_WPE_PLATFORM ENABLE_WPE_1_1_API)

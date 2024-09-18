@@ -34,13 +34,6 @@ if (WTF_CPU_ARM OR WTF_CPU_MIPS)
     SET_AND_EXPOSE_TO_BUILD(USE_CAPSTONE ${DEVELOPER_MODE})
 endif ()
 
-# TODO(277627): Remove once the SDKs include the package.
-if (DEVELOPER_MODE)
-    set(USE_SYSTEM_SYSPROF_CAPTURE_DEFAULT OFF)
-else ()
-    set(USE_SYSTEM_SYSPROF_CAPTURE_DEFAULT ON)
-endif ()
-
 # Public options specific to the GTK port. Do not add any options here unless
 # there is a strong reason we should support changing the value of the option,
 # and the option is not relevant to other WebKit ports.
@@ -66,7 +59,7 @@ WEBKIT_OPTION_CONFLICT(USE_GTK4 USE_SOUP2)
 # Private options specific to the GTK port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
 WEBKIT_OPTION_DEFINE(USE_SYSPROF_CAPTURE "Whether to use libsysprof-capture for tracing." PRIVATE ON)
-WEBKIT_OPTION_DEFINE(USE_SYSTEM_SYSPROF_CAPTURE "Whether to use a system-provided libsysprof-capture" PRIVATE ${USE_SYSTEM_SYSPROF_CAPTURE_DEFAULT})
+WEBKIT_OPTION_DEFINE(USE_SYSTEM_SYSPROF_CAPTURE "Whether to use a system-provided libsysprof-capture" PRIVATE ON)
 WEBKIT_OPTION_DEFINE(USE_SYSTEM_UNIFDEF "Whether to use a system-provided unifdef" PRIVATE ON)
 
 WEBKIT_OPTION_DEPEND(USE_SYSTEM_SYSPROF_CAPTURE USE_SYSPROF_CAPTURE)
