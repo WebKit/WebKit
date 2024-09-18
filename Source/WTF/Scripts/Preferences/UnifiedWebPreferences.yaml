@@ -1502,17 +1502,17 @@ CSSTextUnderlinePositionLeftRightEnabled:
 
 CSSTextWrapPrettyEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS text-wrap: pretty"
   humanReadableDescription: "Enable the pretty value for text-wrap-style"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSTextWrapStyleEnabled:
   type: bool
