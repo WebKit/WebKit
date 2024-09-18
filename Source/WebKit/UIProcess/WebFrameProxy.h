@@ -71,6 +71,7 @@ class WebsiteDataStore;
 
 enum class CanWrap : bool { No, Yes };
 enum class DidWrap : bool { No, Yes };
+enum class IsMainFrame : bool { No, Yes };
 enum class ShouldExpectSafeBrowsingResult : bool;
 enum class ProcessSwapRequestedByClient : bool;
 
@@ -81,7 +82,6 @@ struct WebsitePoliciesData;
 
 class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame>, public CanMakeWeakPtr<WebFrameProxy> {
 public:
-    enum class IsMainFrame : bool { No, Yes };
     static Ref<WebFrameProxy> create(WebPageProxy& page, FrameProcess& process, WebCore::FrameIdentifier frameID, WebCore::SandboxFlags sandboxFlags, IsMainFrame isMainFrame)
     {
         return adoptRef(*new WebFrameProxy(page, process, frameID, sandboxFlags, isMainFrame));
@@ -100,7 +100,7 @@ public:
 
     void webProcessWillShutDown();
 
-    bool isMainFrame() const { return m_isMainFrame == IsMainFrame::Yes; }
+    bool isMainFrame() const;
 
     FrameLoadState& frameLoadState() { return m_frameLoadState; }
 
@@ -236,7 +236,6 @@ private:
     CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)> m_navigateCallback;
     const WebCore::LayerHostingContextIdentifier m_layerHostingContextIdentifier;
     bool m_hasPendingBackForwardItem { false };
-    const IsMainFrame m_isMainFrame;
     std::optional<WebCore::IntSize> m_remoteFrameSize;
     WebCore::SandboxFlags m_effectiveSandboxFlags;
 };

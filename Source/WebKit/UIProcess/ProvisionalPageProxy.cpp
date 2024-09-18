@@ -117,7 +117,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<FrameProcess>
     } else if (m_page->preferences().siteIsolationEnabled())
         m_mainFrame = m_page->mainFrame();
     else {
-        m_mainFrame = WebFrameProxy::create(protectedPage(), m_frameProcess, FrameIdentifier::generate(), previousMainFrame->effectiveSandboxFlags(), WebFrameProxy::IsMainFrame::Yes);
+        m_mainFrame = WebFrameProxy::create(protectedPage(), m_frameProcess, FrameIdentifier::generate(), previousMainFrame->effectiveSandboxFlags(), IsMainFrame::Yes);
 
         // Restore the main frame's committed URL as some clients may rely on it until the next load is committed.
         m_mainFrame->frameLoadState().setURL(previousMainFrame->url());

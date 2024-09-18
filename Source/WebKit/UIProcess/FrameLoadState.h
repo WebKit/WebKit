@@ -39,17 +39,25 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::FrameLoadStat
 
 namespace WebKit {
 
+enum class IsMainFrame : bool;
+
 class FrameLoadStateObserver : public CanMakeWeakPtr<FrameLoadStateObserver> {
 public:
     virtual ~FrameLoadStateObserver() = default;
     virtual void didReceiveProvisionalURL(const URL&) { }
+    virtual void didStartProvisionalLoad(const URL&) { }
+    virtual void didFailProvisionalLoad() { }
     virtual void didCancelProvisionalLoad() { }
     virtual void didCommitProvisionalLoad() { }
-    virtual void didFinishLoad() { }
+    virtual void didCommitProvisionalLoad(IsMainFrame) { }
+    virtual void didFinishLoad(const URL&) { }
 };
 
 class FrameLoadState {
 public:
+    FrameLoadState(IsMainFrame isMainFrame)
+        : m_isMainFrame(isMainFrame) { }
+
     ~FrameLoadState();
 
     enum class State {
@@ -81,7 +89,9 @@ public:
     void setUnreachableURL(const URL&);
     const URL& unreachableURL() const { return m_unreachableURL; }
 
+    IsMainFrame isMainFrame() const { return m_isMainFrame; }
 private:
+    const IsMainFrame m_isMainFrame;
     State m_state { State::Finished };
     URL m_url;
     URL m_provisionalURL;

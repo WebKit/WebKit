@@ -53,6 +53,7 @@ void FrameLoadState::didStartProvisionalLoad(const URL& url)
 
     m_observers.forEach([&url](FrameLoadStateObserver& observer) {
         observer.didReceiveProvisionalURL(url);
+        observer.didStartProvisionalLoad(url);
     });
 }
 
@@ -94,6 +95,7 @@ void FrameLoadState::didFailProvisionalLoad()
 
     m_observers.forEach([](FrameLoadStateObserver& observer) {
         observer.didCancelProvisionalLoad();
+        observer.didFailProvisionalLoad();
     });
 }
 
@@ -106,8 +108,9 @@ void FrameLoadState::didCommitLoad()
     m_url = m_provisionalURL.isNull() ? aboutBlankURL() : m_provisionalURL;
     m_provisionalURL = { };
 
-    m_observers.forEach([](FrameLoadStateObserver& observer) {
+    m_observers.forEach([&](FrameLoadStateObserver& observer) {
         observer.didCommitProvisionalLoad();
+        observer.didCommitProvisionalLoad(m_isMainFrame);
     });
 }
 
@@ -118,8 +121,8 @@ void FrameLoadState::didFinishLoad()
 
     m_state = State::Finished;
 
-    m_observers.forEach([](FrameLoadStateObserver& observer) {
-        observer.didFinishLoad();
+    m_observers.forEach([&](FrameLoadStateObserver& observer) {
+        observer.didFinishLoad(m_url);
     });
 }
 

@@ -150,20 +150,26 @@ public:
     bool hasLoadingFrame() const { return !!m_loadingFrameCount; }
 
 private:
-    void didReceiveProvisionalURL(const URL&) final
+    void didCommitProvisionalLoad(IsMainFrame isMainFrame)
+    {
+        if (isMainFrame == IsMainFrame::Yes) {
+            // Teardown doesn't reliably inform the UI process of each iframe's provisional load failure.
+            m_loadingFrameCount = 1;
+        }
+    }
+
+    void didStartProvisionalLoad(const URL&) final
     {
         m_loadingFrameCount++;
     }
 
-    void didCancelProvisionalLoad() final
+    void didFailProvisionalLoad() final
     {
-        // FIXME: We ought to be able to assert m_loadingFrameCount is nonzero here, but something isn't
-        // quite right with the frame load state with site isolation after doing a fragment navigation.
-        // The API test TestWebKitAPI.SiteIsolation.MainFrameURLAfterFragmentNavigation hits this.
+        ASSERT(!m_loadingFrameCount);
         m_loadingFrameCount--;
     }
 
-    void didFinishLoad() final
+    void didFinishLoad(const URL&) final
     {
         ASSERT(m_loadingFrameCount);
         m_loadingFrameCount--;

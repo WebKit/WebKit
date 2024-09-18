@@ -105,7 +105,7 @@ void SubFrameSOAuthorizationSession::beforeStart()
     appendRequestToLoad(URL(navigationAction()->request().url()), Vector<uint8_t>(span8(soAuthorizationPostDidStartMessageToParent)));
 }
 
-void SubFrameSOAuthorizationSession::didFinishLoad()
+void SubFrameSOAuthorizationSession::didFinishLoad(const URL&)
 {
     AUTHORIZATIONSESSION_RELEASE_LOG("didFinishLoad");
     RefPtr frame = WebFrameProxy::webFrame(m_frameID);

@@ -1596,7 +1596,7 @@ void WebPageProxy::initializeWebPage(const Site& site, WebCore::SandboxFlags eff
     m_pageToCloneSessionStorageFrom = nullptr;
 
     Ref process = m_legacyMainFrameProcess;
-    m_mainFrame = WebFrameProxy::create(*this, m_browsingContextGroup->ensureProcessForSite(site, process, preferences()), FrameIdentifier::generate(), effectiveSandboxFlags, WebFrameProxy::IsMainFrame::Yes);
+    m_mainFrame = WebFrameProxy::create(*this, m_browsingContextGroup->ensureProcessForSite(site, process, preferences()), FrameIdentifier::generate(), effectiveSandboxFlags, IsMainFrame::Yes);
     if (m_preferences->siteIsolationEnabled())
         m_browsingContextGroup->addPage(*this);
     legacyMainFrameProcess().send(Messages::WebProcess::CreateWebPage(m_webPageID, creationParameters(process, *m_drawingArea, m_mainFrame->frameID(), std::nullopt)), 0);
@@ -6648,6 +6648,7 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     if (frame->isMainFrame()) {
         internals().pageLoadState.didCommitLoad(transaction, certificateInfo, markPageInsecure, usedLegacyTLS, wasPrivateRelayed, frameInfo.securityOrigin);
         m_shouldSuppressNextAutomaticNavigationSnapshot = false;
+        m_framesWithSubresourceLoadingForPageLoadTiming.clear();
     } else if (markPageInsecure)
         internals().pageLoadState.didDisplayOrRunInsecureContent(transaction);
 
