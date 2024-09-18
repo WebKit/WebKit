@@ -41,6 +41,26 @@ static constexpr auto descriptionManifestKey = "description"_s;
 static constexpr auto contentSecurityPolicyManifestKey = "content_security_policy"_s;
 static constexpr auto contentSecurityPolicyExtensionPagesManifestKey = "extension_pages"_s;
 
+static constexpr auto contentScriptsManifestKey = "content_scripts"_s;
+static constexpr auto contentScriptsMatchesManifestKey = "matches"_s;
+static constexpr auto contentScriptsExcludeMatchesManifestKey = "exclude_matches"_s;
+static constexpr auto contentScriptsIncludeGlobsManifestKey = "include_globs"_s;
+static constexpr auto contentScriptsExcludeGlobsManifestKey = "exclude_globs"_s;
+static constexpr auto contentScriptsMatchesAboutBlankManifestKey = "match_about_blank"_s;
+static constexpr auto contentScriptsRunAtManifestKey = "run_at"_s;
+static constexpr auto contentScriptsDocumentIdleManifestKey = "document_idle"_s;
+static constexpr auto contentScriptsDocumentStartManifestKey = "document_start"_s;
+static constexpr auto contentScriptsDocumentEndManifestKey = "document_end"_s;
+static constexpr auto contentScriptsAllFramesManifestKey = "all_frames"_s;
+static constexpr auto contentScriptsJSManifestKey = "js"_s;
+static constexpr auto contentScriptsCSSManifestKey = "css"_s;
+static constexpr auto contentScriptsWorldManifestKey = "world"_s;
+static constexpr auto contentScriptsIsolatedManifestKey = "ISOLATED"_s;
+static constexpr auto contentScriptsMainManifestKey = "MAIN"_s;
+static constexpr auto contentScriptsCSSOriginManifestKey = "css_origin"_s;
+static constexpr auto contentScriptsAuthorManifestKey = "author"_s;
+static constexpr auto contentScriptsUserManifestKey = "user"_s;
+
 static constexpr auto optionsUIManifestKey = "options_ui"_s;
 static constexpr auto optionsUIPageManifestKey = "page"_s;
 static constexpr auto optionsPageManifestKey = "options_page"_s;
@@ -238,6 +258,231 @@ void WebExtension::populatePagePropertiesIfNeeded()
             recordError(createError(Error::InvalidURLOverrides, WEB_UI_STRING("Empty or invalid `newtab` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for invalid new tab entry")));
     } else if (overridesObject)
         recordError(createError(Error::InvalidURLOverrides));
+}
+
+const Vector<WebExtension::InjectedContentData>& WebExtension::staticInjectedContents()
+{
+    populateContentScriptPropertiesIfNeeded();
+    return m_staticInjectedContents;
+}
+
+bool WebExtension::hasStaticInjectedContentForURL(const URL& url)
+{
+    populateContentScriptPropertiesIfNeeded();
+
+    for (auto& injectedContent : m_staticInjectedContents) {
+        // FIXME: <https://webkit.org/b/246492> Add support for exclude globs.
+        bool isExcluded = false;
+        for (auto& excludeMatchPattern : injectedContent.excludeMatchPatterns) {
+            if (excludeMatchPattern->matchesURL(url)) {
+                isExcluded = true;
+                break;
+            }
+        }
+
+        if (isExcluded)
+            continue;
+
+        // FIXME: <https://webkit.org/b/246492> Add support for include globs.
+        for (auto& includeMatchPattern : injectedContent.includeMatchPatterns) {
+            if (includeMatchPattern->matchesURL(url))
+                return true;
+        }
+    }
+
+    return false;
+}
+
+bool WebExtension::hasStaticInjectedContent()
+{
+    populateContentScriptPropertiesIfNeeded();
+    return !m_staticInjectedContents.isEmpty();
+}
+
+Vector<String> WebExtension::InjectedContentData::expandedIncludeMatchPatternStrings() const
+{
+    Vector<String> result;
+
+    for (auto& includeMatchPattern : includeMatchPatterns)
+        result.appendVector(includeMatchPattern->expandedStrings());
+
+    return result;
+}
+
+Vector<String> WebExtension::InjectedContentData::expandedExcludeMatchPatternStrings() const
+{
+    Vector<String> result;
+
+    for (auto& excludeMatchPattern : excludeMatchPatterns)
+        result.appendVector(excludeMatchPattern->expandedStrings());
+
+    return result;
+}
+
+void WebExtension::populateContentScriptPropertiesIfNeeded()
+{
+    if (m_parsedManifestContentScriptProperties)
+        return;
+
+    m_parsedManifestContentScriptProperties = true;
+
+    RefPtr manifestObject = this->manifestObject();
+    if (!manifestObject)
+        return;
+
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/content_scripts
+
+    RefPtr contentScriptsManifestArray = manifestObject->getArray(contentScriptsManifestKey);
+    if (!contentScriptsManifestArray || !contentScriptsManifestArray->length()) {
+        if (manifestObject->getValue(contentScriptsManifestKey))
+            recordError(createError(Error::InvalidContentScripts));
+        return;
+    }
+
+    auto addInjectedContentData = [this](auto& injectedContentObject) {
+        HashSet<Ref<WebExtensionMatchPattern>> includeMatchPatterns;
+
+        // Required. Specifies which pages the specified scripts and stylesheets will be injected into.
+        RefPtr matchesArray = injectedContentObject->getArray(contentScriptsMatchesManifestKey);
+        if (!matchesArray) {
+            recordError(createError(Error::InvalidContentScripts));
+            return;
+        }
+
+        for (Ref matchPatternStringValue : *matchesArray) {
+            auto matchPatternString = matchPatternStringValue->asString();
+
+            if (!matchPatternString)
+                continue;
+
+            if (RefPtr matchPattern = WebExtensionMatchPattern::getOrCreate(matchPatternString)) {
+                if (matchPattern->isSupported())
+                    includeMatchPatterns.add(matchPattern.releaseNonNull());
+            }
+        }
+
+        if (includeMatchPatterns.isEmpty()) {
+            recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has no specified `matches` entry.", "WKWebExtensionErrorInvalidContentScripts description for missing matches entry")));
+            return;
+        }
+
+        // Optional. The list of JavaScript files to be injected into matching pages. These are injected in the order they appear in this array.
+        RefPtr scriptPaths = injectedContentObject->getArray(contentScriptsJSManifestKey);
+        if (!scriptPaths)
+            scriptPaths = JSON::Array::create();
+
+        scriptPaths = filterObjects(*scriptPaths, [](auto& value) {
+            return !value.asString().isEmpty();
+        });
+
+        // Optional. The list of CSS files to be injected into matching pages. These are injected in the order they appear in this array, before any DOM is constructed or displayed for the page.
+        RefPtr styleSheetPaths = injectedContentObject->getArray(contentScriptsCSSManifestKey);
+        if (!styleSheetPaths)
+            styleSheetPaths = JSON::Array::create();
+
+        styleSheetPaths = filterObjects(*styleSheetPaths, [](auto& value) {
+            return !value.asString().isEmpty();
+        });
+
+        if (!scriptPaths->length() && !styleSheetPaths->length()) {
+            recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has missing or empty 'js' and 'css' arrays.", "WKWebExtensionErrorInvalidContentScripts description for missing or empty 'js' and 'css' arrays")));
+            return;
+        }
+
+        // Optional. Whether the script should inject into an about:blank frame where the parent or opener frame matches one of the patterns declared in matches. Defaults to false.
+        auto matchesAboutBlank = injectedContentObject->getBoolean(contentScriptsMatchesAboutBlankManifestKey).value_or(false);
+
+        HashSet<Ref<WebExtensionMatchPattern>> excludeMatchPatterns;
+
+        // Optional. Excludes pages that this content script would otherwise be injected into.
+        RefPtr excludeMatchesArray = injectedContentObject->getArray(contentScriptsExcludeMatchesManifestKey);
+        if (!excludeMatchesArray)
+            excludeMatchesArray = JSON::Array::create();
+
+        for (Ref matchPatternStringValue : *excludeMatchesArray) {
+            auto matchPatternString = matchPatternStringValue->asString();
+
+            if (matchPatternString.isEmpty())
+                continue;
+
+            if (RefPtr matchPattern = WebExtensionMatchPattern::getOrCreate(matchPatternString)) {
+                if (matchPattern->isSupported())
+                    excludeMatchPatterns.add(matchPattern.releaseNonNull());
+            }
+        }
+
+        // Optional. Applied after matches to include only those URLs that also match this glob.
+        RefPtr includeGlobPatternStrings = injectedContentObject->getArray(contentScriptsIncludeGlobsManifestKey);
+        if (!includeGlobPatternStrings)
+            includeGlobPatternStrings = JSON::Array::create();
+
+        includeGlobPatternStrings = filterObjects(*includeGlobPatternStrings, [](auto& value) {
+            return !!value.asString().isEmpty();
+        });
+
+        // Optional. Applied after matches to exclude URLs that match this glob.
+        RefPtr excludeGlobPatternStrings = injectedContentObject->getArray(contentScriptsExcludeGlobsManifestKey);
+        if (!excludeGlobPatternStrings)
+            excludeGlobPatternStrings = JSON::Array::create();
+
+        excludeGlobPatternStrings = filterObjects(*excludeGlobPatternStrings, [](auto& value) -> bool {
+            return !!value.asString().isEmpty();
+        });
+
+        // Optional. The "all_frames" field allows the extension to specify if JavaScript and CSS files should be injected into all frames matching the specified URL requirements or only into the
+        // topmost frame in a tab. Defaults to false, meaning that only the top frame is matched. If specified true, it will inject into all frames, even if the frame is not the topmost frame in
+        // the tab. Each frame is checked independently for URL requirements, it will not inject into child frames if the URL requirements are not met.
+        auto injectsIntoAllFrames = injectedContentObject->getBoolean(contentScriptsAllFramesManifestKey).value_or(false);
+
+        auto injectionTime = InjectionTime::DocumentIdle;
+        auto runsAtString = injectedContentObject->getString(contentScriptsRunAtManifestKey);
+        if (!runsAtString || runsAtString == contentScriptsDocumentIdleManifestKey)
+            injectionTime = InjectionTime::DocumentIdle;
+        else if (runsAtString == contentScriptsDocumentStartManifestKey)
+            injectionTime = InjectionTime::DocumentStart;
+        else if (runsAtString == contentScriptsDocumentEndManifestKey)
+            injectionTime = InjectionTime::DocumentEnd;
+        else
+            recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has unknown `run_at` value.", "WKWebExtensionErrorInvalidContentScripts description for unknown 'run_at' value")));
+
+        auto contentWorldType = WebExtensionContentWorldType::ContentScript;
+        auto worldString = injectedContentObject->getString(contentScriptsWorldManifestKey);
+        if (!worldString || worldString == contentScriptsIsolatedManifestKey)
+            contentWorldType = WebExtensionContentWorldType::ContentScript;
+        else if (worldString == contentScriptsMainManifestKey)
+            contentWorldType = WebExtensionContentWorldType::Main;
+        else
+            recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has unknown `world` value.", "WKWebExtensionErrorInvalidContentScripts description for unknown 'world' value")));
+
+        auto styleLevel = WebCore::UserStyleLevel::Author;
+        auto cssOriginString = injectedContentObject->getString(contentScriptsCSSOriginManifestKey);
+        if (!cssOriginString || cssOriginString == contentScriptsAuthorManifestKey)
+            styleLevel = WebCore::UserStyleLevel::Author;
+        else if (cssOriginString == contentScriptsUserManifestKey)
+            styleLevel = WebCore::UserStyleLevel::User;
+        else
+            recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has unknown `css_origin` value.", "WKWebExtensionErrorInvalidContentScripts description for unknown 'css_origin' value")));
+
+        InjectedContentData injectedContentData;
+        injectedContentData.includeMatchPatterns = WTFMove(includeMatchPatterns);
+        injectedContentData.excludeMatchPatterns = WTFMove(excludeMatchPatterns);
+        injectedContentData.injectionTime = injectionTime;
+        injectedContentData.matchesAboutBlank = matchesAboutBlank;
+        injectedContentData.injectsIntoAllFrames = injectsIntoAllFrames;
+        injectedContentData.contentWorldType = contentWorldType;
+        injectedContentData.styleLevel = styleLevel;
+        injectedContentData.scriptPaths = makeStringVector(*scriptPaths);
+        injectedContentData.styleSheetPaths = makeStringVector(*styleSheetPaths);
+        injectedContentData.includeGlobPatternStrings = makeStringVector(*includeGlobPatternStrings);
+        injectedContentData.excludeGlobPatternStrings = makeStringVector(*excludeGlobPatternStrings);
+
+        m_staticInjectedContents.append(WTFMove(injectedContentData));
+    };
+
+    for (Ref injectedContentValue : *contentScriptsManifestArray) {
+        if (RefPtr injectedContentObject = injectedContentValue->asObject())
+            addInjectedContentData(injectedContentObject);
+    }
 }
 
 } // namespace WebKit

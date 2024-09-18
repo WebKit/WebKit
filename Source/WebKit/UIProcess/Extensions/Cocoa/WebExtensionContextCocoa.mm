@@ -42,6 +42,7 @@
 #import "Logging.h"
 #import "PageLoadStateObserver.h"
 #import "ResourceLoadInfo.h"
+#import "WKNSArray.h"
 #import "WKNavigationActionPrivate.h"
 #import "WKNavigationDelegatePrivate.h"
 #import "WKOpenPanelParametersPrivate.h"
@@ -4301,7 +4302,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         // FIXME: <rdar://problem/57613243> Support injecting into about:blank, honoring self.contentMatchesAboutBlank. Appending @"about:blank" to the includeMatchPatterns does not work currently.
         NSArray<NSString *> *includeMatchPatterns = includeMatchPatternsSet.allObjects;
 
-        NSMutableSet<NSString *> *excludeMatchPatternsSet = [NSMutableSet setWithArray:injectedContentData.expandedExcludeMatchPatternStrings()];
+        auto *excludeMatchPatternsSet = [NSMutableSet setWithArray:createNSArray(injectedContentData.expandedExcludeMatchPatternStrings()).get()];
         [excludeMatchPatternsSet unionSet:baseExcludeMatchPatternsSet];
 
         NSArray<NSString *> *excludeMatchPatterns = excludeMatchPatternsSet.allObjects;
@@ -4315,7 +4316,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         auto scriptID = injectedContentData.identifier;
         bool isRegisteredScript = !scriptID.isEmpty();
 
-        for (NSString *scriptPath in injectedContentData.scriptPaths.get()) {
+        for (NSString *scriptPath : injectedContentData.scriptPaths) {
             NSError *error;
             auto *scriptString = m_extension->resourceStringForPath(scriptPath, &error, WebExtension::CacheResult::Yes);
             if (!scriptString) {
@@ -4339,7 +4340,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
             }
         }
 
-        for (NSString *styleSheetPath in injectedContentData.styleSheetPaths.get()) {
+        for (NSString *styleSheetPath : injectedContentData.styleSheetPaths) {
             NSError *error;
             auto *styleSheetString = m_extension->resourceStringForPath(styleSheetPath, &error, WebExtension::CacheResult::Yes);
             if (!styleSheetString) {

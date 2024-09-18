@@ -423,8 +423,8 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         injectedContentData.injectsIntoAllFrames = parameters.allFrames.value_or(false);
         injectedContentData.contentWorldType = parameters.world.value_or(WebExtensionContentWorldType::ContentScript);
         injectedContentData.styleLevel = parameters.styleLevel.value_or(WebCore::UserStyleLevel::Author);
-        injectedContentData.scriptPaths = scriptPaths;
-        injectedContentData.styleSheetPaths = styleSheetPaths;
+        injectedContentData.scriptPaths = makeVector<String>(scriptPaths);
+        injectedContentData.styleSheetPaths = makeVector<String>(styleSheetPaths);
 
         injectedContentsMap.add(scriptID, WTFMove(injectedContentData));
     }
