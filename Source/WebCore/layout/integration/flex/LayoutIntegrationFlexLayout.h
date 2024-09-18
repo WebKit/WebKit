@@ -51,7 +51,7 @@ public:
     ~FlexLayout();
 
     void updateFormattingRootGeometryAndInvalidate();
-    void updateFlexItemDimensions(const RenderBlock& flexItem, LayoutUnit minimumContentSize, LayoutUnit maximumContentSize);
+    void updateFlexItemDimensions(const RenderBlock& flexItem);
     void updateStyle(const RenderBlock&, const RenderStyle& oldStyle);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
@@ -61,7 +61,7 @@ public:
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     void collectOverflow();
-    LayoutUnit contentLogicalHeight() const;
+    LayoutUnit contentBoxLogicalHeight() const;
 
 private:
     void updateRenderers();

@@ -85,6 +85,7 @@ void FlexLayout::updateFormattingRootGeometryAndInvalidate()
         auto isLeftToRightInlineDirection = flexBoxRenderer.style().isLeftToRightDirection();
         auto blockFlowDirection = writingModeToBlockFlowDirection(flexBoxRenderer.style().writingMode());
 
+        root.setTopLeft({ });
         root.setContentBoxWidth(blockFlowDirection == FlowDirection::TopToBottom ? flexBoxRenderer.contentWidth() : flexBoxRenderer.contentHeight());
         root.setPadding(flexBoxLogicalPadding(flexBoxRenderer, isLeftToRightInlineDirection, blockFlowDirection));
         root.setBorder(flexBoxLogicalBorder(flexBoxRenderer, isLeftToRightInlineDirection, blockFlowDirection));
@@ -94,7 +95,7 @@ void FlexLayout::updateFormattingRootGeometryAndInvalidate()
     updateGeometry(layoutState().ensureGeometryForBox(flexBox()));
 }
 
-void FlexLayout::updateFlexItemDimensions(const RenderBlock& flexItem, LayoutUnit, LayoutUnit)
+void FlexLayout::updateFlexItemDimensions(const RenderBlock& flexItem)
 {
     auto& rootGeometry = layoutState().geometryForBox(flexBox());
     auto& layoutBox = *flexItem.layoutBox();
@@ -213,9 +214,12 @@ void FlexLayout::collectOverflow()
 {
 }
 
-LayoutUnit FlexLayout::contentLogicalHeight() const
+LayoutUnit FlexLayout::contentBoxLogicalHeight() const
 {
-    return { };
+    auto contentLogicalBottom = LayoutUnit { };
+    for (auto& layoutBox : formattingContextBoxes(flexBox()))
+        contentLogicalBottom = std::max(contentLogicalBottom, Layout::BoxGeometry::marginBoxRect(layoutState().geometryForBox(layoutBox)).bottom());
+    return contentLogicalBottom - layoutState().geometryForBox(flexBox()).contentBoxTop();
 }
 
 }
