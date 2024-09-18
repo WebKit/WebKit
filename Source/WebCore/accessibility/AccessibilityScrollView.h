@@ -44,6 +44,7 @@ public:
     virtual ~AccessibilityScrollView();
 
     AccessibilityObject* webAreaObject() const override;
+    void setNeedsToUpdateChildren() override { m_childrenDirty = true; }
 
 private:
     explicit AccessibilityScrollView(ScrollView*);
@@ -66,7 +67,6 @@ private:
     void clearChildren() override;
     AccessibilityObject* accessibilityHitTest(const IntPoint&) const override;
     void updateChildrenIfNecessary() override;
-    void setNeedsToUpdateChildren() override { m_childrenDirty = true; }
     void updateScrollbars();
     void setFocused(bool) override;
     bool canSetFocusAttribute() const override;

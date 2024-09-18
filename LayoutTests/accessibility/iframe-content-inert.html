@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body id="body" role="group">
+
+<iframe id="iframe1" onload="runTest()" srcdoc="<body>
+    <button id='frame-button-1'>Click me</button>
+    <iframe id='iframe2' src='resources/iframe-button.html'></iframe>
+</body>"></iframe>
+
+<script>
+window.jsTestIsAsync = true;
+
+var output = "This test ensures that iframe content is ignored when the iframe has an inert tag.\n\n";
+var iframeWebArea, iframeButton1, iframeButton2, body;
+
+function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    body = accessibilityController.accessibleElementById("body")
+    iframeWebArea = body.childAtIndex(0);
+    iframeButton1 = accessibilityController.accessibleElementById("frame-button-1");
+
+    setTimeout(async function() {
+        // Wait for the second iframe to load.
+        await waitFor(() => {
+            iframeButton2 = accessibilityController.accessibleElementById("frame-button-2");
+            return !!iframeButton2;
+        });
+
+        output += expect("iframeWebArea.isIgnored", "false");
+        output += expect("iframeButton1.isIgnored", "false");
+        output += expect("iframeButton2.isIgnored", "false");
+
+        output += `\n${evalAndReturn("document.getElementById('iframe1').setAttribute('inert', '');")}`;
+
+        // We expect the iframe's web area to be removed from the accessibility tree when it has an inert tag
+        output += await expectAsync("!body.childAtIndex(0)", "true");
+        output += await expectAsync("!accessibilityController.accessibleElementById('frame-button-1')", "true");
+        output += await expectAsync("!accessibilityController.accessibleElementById('frame-button-2')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+
