@@ -105,11 +105,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case PutClosureVar:
     case PutInternalField:
     case PutGlobalVariable:
-    case GetByOffset:
-    case GetClosureVar:
     case GetInternalField:
-    case GetGlobalLexicalVariable:
-    case GetGlobalVar:
     case RecordRegExpCachedResult:
     case NukeStructureAndSetButterfly:
     case GetButterfly:
@@ -126,6 +122,15 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case CompareBelowEq:
     case CompareEqPtr:
         break;
+
+    case GetByOffset:
+    case GetClosureVar:
+    case GetGlobalLexicalVariable:
+    case GetGlobalVar: {
+        if (node->hasDoubleResult())
+            return Exits;
+        break;
+    }
 
     case EnumeratorNextUpdatePropertyName:
     case StrCat:

@@ -2143,6 +2143,28 @@ private:
         return result;
     }
 
+    LValue unboxRealNumberDouble(LValue boxed, Node* node = nullptr)
+    {
+        LBasicBlock intCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(intCase);
+
+        LValue doubleValue = unboxDoubleAsDouble(boxed);
+        ValueFromBlock fastResult = m_out.anchor(doubleValue);
+        m_out.branch(m_out.doubleEqual(doubleValue, doubleValue), usually(continuation), rarely(intCase));
+
+        m_out.appendTo(intCase, continuation);
+        LValue boxedJSValue = m_out.bitCast(boxed, Int64);
+        speculate(BadType, noValue(), node, isNotInt32(boxedJSValue));
+        ValueFromBlock slowResult = m_out.anchor(m_out.intToDouble(unboxInt32(boxedJSValue)));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+
+        return m_out.phi(Double, fastResult, slowResult);
+    }
+
     void compileValueRep()
     {
         switch (m_node->child1().useKind()) {
@@ -10325,9 +10347,17 @@ IGNORE_CLANG_WARNINGS_END
     void compileGetByOffset()
     {
         StorageAccessData& data = m_node->storageAccessData();
-
         LValue base = lowCell(m_node->child2());
-        LValue value = loadProperty(lowStorage(m_node->child1()), data.identifierNumber, data.offset);
+        LValue storage = lowStorage(m_node->child1());
+        if (m_node->hasDoubleResult()) {
+            LValue boxed = loadDoubleProperty(storage, data.identifierNumber, data.offset);
+            LValue value = unboxRealNumberDouble(boxed, m_node);
+            ensureStillAliveHere(base);
+            setDouble(value);
+            return;
+        }
+
+        LValue value = loadProperty(storage, data.identifierNumber, data.offset);
         // We have to keep base alive since that keeps content of storage alive.
         ensureStillAliveHere(base);
         setJSValue(value);
@@ -10385,7 +10415,10 @@ IGNORE_CLANG_WARNINGS_END
                 break;
 
             case GetByOffsetMethod::Constant:
-                result = m_out.constInt64(JSValue::encode(method.constant()->value()));
+                if (m_node->hasDoubleResult())
+                    result = m_out.constDouble(bitwise_cast<double>(JSValue::encode(method.constant()->value())));
+                else
+                    result = m_out.constInt64(JSValue::encode(method.constant()->value()));
                 break;
 
             case GetByOffsetMethod::Load:
@@ -10397,8 +10430,11 @@ IGNORE_CLANG_WARNINGS_END
                     propertyBase = weakPointer(method.prototype()->value().asCell());
                 if (!isInlineOffset(method.offset()))
                     propertyBase = m_out.loadPtr(propertyBase, m_heaps.JSObject_butterfly);
-                result = loadProperty(
-                    propertyBase, data.identifierNumber, method.offset());
+
+                if (m_node->hasDoubleResult())
+                    result = loadDoubleProperty(propertyBase, data.identifierNumber, method.offset());
+                else
+                    result = loadProperty(propertyBase, data.identifierNumber, method.offset());
                 break;
             } }
 
@@ -10414,7 +10450,11 @@ IGNORE_CLANG_WARNINGS_END
         m_out.appendTo(continuation, lastNext);
         // We have to keep base alive since that keeps storage alive.
         ensureStillAliveHere(base);
-        setJSValue(m_out.phi(Int64, results));
+
+        if (m_node->hasDoubleResult())
+            setDouble(unboxRealNumberDouble(m_out.phi(Double, results), m_node));
+        else
+            setJSValue(m_out.phi(Int64, results));
     }
 
     void compilePutByOffset()
@@ -10661,6 +10701,12 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileGetGlobalVariable()
     {
+        if (m_node->hasDoubleResult()) {
+            LValue boxed = m_out.loadDouble(m_out.absolute(m_node->variablePointer()));
+            setDouble(unboxRealNumberDouble(boxed, m_node));
+            return;
+        }
+
         setJSValue(m_out.load64(m_out.absolute(m_node->variablePointer())));
     }
 
@@ -10758,10 +10804,14 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileGetClosureVar()
     {
-        setJSValue(
-            m_out.load64(
-                lowCell(m_node->child1()),
-                m_heaps.JSLexicalEnvironment_variables[m_node->scopeOffset().offset()]));
+        LValue base = lowCell(m_node->child1());
+        if (m_node->hasDoubleResult()) {
+            LValue boxed = m_out.loadDouble(base, m_heaps.JSLexicalEnvironment_variables[m_node->scopeOffset().offset()]);
+            setDouble(unboxRealNumberDouble(boxed, m_node));
+            return;
+        }
+
+        setJSValue(m_out.load64(base, m_heaps.JSLexicalEnvironment_variables[m_node->scopeOffset().offset()]));
     }
 
     void compilePutClosureVar()
