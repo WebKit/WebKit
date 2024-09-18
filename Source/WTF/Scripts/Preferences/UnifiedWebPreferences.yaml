@@ -1634,6 +1634,7 @@ CanvasUsesAcceleratedDrawing:
   type: bool
   status: embedder
   humanReadableName: "Canvas uses accelerated drawing"
+  condition: USE(CA) || USE(SKIA)
   defaultValue:
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)": true

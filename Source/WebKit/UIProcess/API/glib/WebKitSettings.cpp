@@ -1307,7 +1307,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-accelerated-2d-canvas",
             _("Enable accelerated 2D canvas"),
             _("Whether to enable accelerated 2D canvas"),
-            FEATURE_DEFAULT(CanvasUsesAcceleratedDrawing),
+            FALSE,
             static_cast<GParamFlags>(readWriteConstructParamFlags | G_PARAM_DEPRECATED));
 #endif
 
@@ -1326,7 +1326,11 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-2d-canvas-acceleration",
             _("Enable 2D canvas acceleration"),
             _("Whether to enable 2D canvas acceleration"),
+#if USE(SKIA)
             FEATURE_DEFAULT(CanvasUsesAcceleratedDrawing),
+#else
+            FALSE,
+#endif
             readWriteConstructParamFlags);
 
     /**
