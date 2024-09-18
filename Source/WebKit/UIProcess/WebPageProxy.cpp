@@ -3519,12 +3519,14 @@ void WebPageProxy::performDragOperation(DragData& dragData, const String& dragSt
 #elif PLATFORM(COCOA)
     grantAccessToCurrentPasteboardData(dragStorageName, [this, protectedThis = Ref { *this }, dragStorageName, dragData = WTFMove(dragData), sandboxExtensionHandle = WTFMove(sandboxExtensionHandle), sandboxExtensionsForUpload = WTFMove(sandboxExtensionsForUpload)] () mutable {
         sendWithAsyncReply(Messages::WebPage::PerformDragOperation(dragData, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionsForUpload)), [this, protectedThis = Ref { *this }] (bool handled) {
-            protectedPageClient()->didPerformDragOperation(handled);
+            if (RefPtr pageClient = optionalProtectedPageClient())
+                pageClient->didPerformDragOperation(handled);
         });
     });
 #else
     sendWithAsyncReply(Messages::WebPage::PerformDragOperation(dragData, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionsForUpload)), [this, protectedThis = Ref { *this }] (bool handled) {
-        protectedPageClient()->didPerformDragOperation(handled);
+        if (RefPtr pageClient = optionalProtectedPageClient())
+            pageClient->didPerformDragOperation(handled);
     });
 #endif
 }
