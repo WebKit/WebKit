@@ -11,30 +11,24 @@ GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp
 GPUProcess/graphics/WebGPU/RemoteBindGroup.cpp
 GPUProcess/graphics/WebGPU/RemoteCompositorIntegration.cpp
 GPUProcess/graphics/WebGPU/RemoteGPU.cpp
-GPUProcess/graphics/WebGPU/RemotePresentationContext.cpp
 GPUProcess/graphics/WebGPU/RemoteQuerySet.cpp
 GPUProcess/graphics/WebGPU/RemoteQueue.cpp
 GPUProcess/graphics/WebGPU/RemoteRenderBundleEncoder.cpp
 GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.cpp
-GPUProcess/graphics/WebGPU/RemoteShaderModule.cpp
 GPUProcess/graphics/WebGPU/RemoteTexture.cpp
 GPUProcess/mac/LocalAudioSessionRoutingArbitrator.cpp
 GPUProcess/media/RemoteAudioHardwareListenerProxy.cpp
 GPUProcess/media/RemoteAudioSessionProxy.cpp
 GPUProcess/media/RemoteAudioSessionProxyManager.cpp
 GPUProcess/media/RemoteAudioTrackProxy.cpp
-GPUProcess/media/RemoteCDMInstanceProxy.cpp
 GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp
 GPUProcess/media/RemoteImageDecoderAVFProxy.cpp
 GPUProcess/media/RemoteLegacyCDMSessionProxy.cpp
 GPUProcess/media/RemoteMediaPlayerProxy.cpp
 GPUProcess/media/RemoteMediaResourceLoader.cpp
-GPUProcess/media/RemoteMediaSourceProxy.cpp
 GPUProcess/media/RemoteSourceBufferProxy.cpp
 GPUProcess/media/RemoteTextTrackProxy.cpp
-GPUProcess/media/RemoteVideoFrameObjectHeap.cpp
 GPUProcess/media/RemoteVideoTrackProxy.cpp
-GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm
 GPUProcess/webrtc/LibWebRTCCodecsProxy.mm
 JSWebExtensionAPIAction.mm
 JSWebExtensionAPIAlarms.mm
@@ -130,7 +124,6 @@ Shared/API/c/cf/WKErrorCF.cpp
 Shared/API/c/cf/WKStringCF.mm
 Shared/API/c/cf/WKURLCF.mm
 Shared/API/c/cg/WKImageCG.cpp
-Shared/API/c/mac/WKObjCTypeWrapperRef.mm
 Shared/API/c/mac/WKURLRequestNS.mm
 Shared/API/c/mac/WKURLResponseNS.mm
 Shared/API/c/mac/WKWebArchiveRef.cpp
@@ -144,7 +137,6 @@ Shared/Cocoa/WKNSString.mm
 Shared/Cocoa/WKNSURL.mm
 Shared/Cocoa/WebKit2InitializeCocoa.mm
 Shared/ContextMenuContextData.cpp
-Shared/EditingRange.cpp
 Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm
 Shared/RemoteLayerTree/RemoteLayerBackingStore.mm
 Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm
@@ -220,7 +212,6 @@ UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.cpp
 UIProcess/API/C/WKWebsiteDataStoreRef.cpp
 UIProcess/API/C/WKWebsitePolicies.cpp
 UIProcess/API/C/mac/WKPagePrivateMac.mm
-UIProcess/API/C/mac/WKWebsiteDataStoreRefPrivateMac.mm
 UIProcess/API/Cocoa/APIAttachmentCocoa.mm
 UIProcess/API/Cocoa/NSAttributedString.mm
 UIProcess/API/Cocoa/WKBackForwardList.mm
@@ -236,7 +227,6 @@ UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm
 UIProcess/API/Cocoa/WKNavigation.mm
 UIProcess/API/Cocoa/WKNavigationAction.mm
 UIProcess/API/Cocoa/WKNavigationData.mm
-UIProcess/API/Cocoa/WKNavigationResponse.mm
 UIProcess/API/Cocoa/WKOpenPanelParameters.mm
 UIProcess/API/Cocoa/WKPreferences.mm
 UIProcess/API/Cocoa/WKProcessGroup.mm
@@ -309,7 +299,6 @@ UIProcess/Cocoa/VideoPresentationManagerProxy.mm
 UIProcess/Cocoa/WKEditCommand.mm
 UIProcess/Cocoa/WKShareSheet.mm
 UIProcess/Cocoa/WebInspectorPreferenceObserver.mm
-UIProcess/Cocoa/WebPagePreferencesLockdownModeObserver.mm
 UIProcess/Cocoa/WebPageProxyCocoa.mm
 UIProcess/DeviceIdHashSaltStorage.cpp
 UIProcess/DrawingAreaProxy.cpp
@@ -365,7 +354,6 @@ UIProcess/RemotePageDrawingAreaProxy.cpp
 UIProcess/RemotePageProxy.cpp
 UIProcess/SpeechRecognitionPermissionManager.cpp
 UIProcess/SuspendedPageProxy.cpp
-UIProcess/UserContent/WebUserContentControllerProxy.cpp
 UIProcess/UserMediaPermissionRequestManagerProxy.cpp
 UIProcess/UserMediaPermissionRequestProxy.cpp
 UIProcess/ViewSnapshotStore.cpp
@@ -391,7 +379,6 @@ UIProcess/WebContextMenuProxy.cpp
 UIProcess/WebEditCommandProxy.cpp
 UIProcess/WebFrameProxy.cpp
 UIProcess/WebGeolocationManagerProxy.cpp
-UIProcess/WebLockRegistryProxy.cpp
 UIProcess/WebPageProxy.cpp
 UIProcess/WebPageProxy.h
 UIProcess/WebPageProxyMessageReceiverRegistration.cpp
@@ -446,9 +433,6 @@ WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp
 WebProcess/GPU/graphics/RemoteNativeImageBackendProxy.cpp
 WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp
 WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp
-WebProcess/GPU/graphics/WebGPU/RemoteAdapterProxy.h
-WebProcess/GPU/graphics/WebGPU/RemoteDeviceProxy.h
-WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.h
 WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp
 WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBitmapBackend.cpp
 WebProcess/GPU/media/AudioTrackPrivateRemote.cpp
@@ -483,7 +467,6 @@ WebProcess/GPU/media/WebMediaStrategy.cpp
 WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm
 WebProcess/GPU/webrtc/AudioMediaStreamTrackRendererInternalUnitManager.cpp
 WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp
-WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.cpp
 WebProcess/Geolocation/WebGeolocationManager.cpp
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInCSSStyleDeclarationHandle.mm
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm
@@ -580,7 +563,6 @@ WebProcess/WebPage/Cocoa/WebPageCocoa.mm
 WebProcess/WebPage/DrawingArea.cpp
 WebProcess/WebPage/EventDispatcher.cpp
 WebProcess/WebPage/FindController.cpp
-WebProcess/WebPage/IPCTestingAPI.cpp
 WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.mm
 WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm
 WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.mm

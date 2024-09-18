@@ -133,14 +133,13 @@ JSGCObservation.cpp
 JSGCObservation.h
 JSGPUAdapter.h
 JSGPUCanvasContext.cpp
+JSGPUCompilationInfo.cpp
 JSGPUCompilationInfo.h
-JSGPUComputePassDescriptor.cpp
 JSGPUComputePassEncoder.cpp
-JSGPUComputePassEncoder.h
 JSGPUComputePipeline.h
 JSGPUDevice.cpp
 JSGPUInternalError.cpp
-JSGPURenderPassColorAttachment.cpp
+JSGPURenderBundleEncoderDescriptor.cpp
 JSGPURenderPassEncoder.cpp
 JSGPUTextureView.h
 JSGPUUncapturedErrorEvent.cpp
@@ -148,7 +147,7 @@ JSGamepadHapticActuator.cpp
 JSGeolocation.cpp
 JSHTMLAllCollection.cpp
 JSHTMLAudioElement.cpp
-JSHTMLBodyElement.cpp
+JSHTMLBRElement.cpp
 JSHTMLButtonElement.cpp
 JSHTMLCanvasElement.cpp
 JSHTMLCollection.cpp
@@ -159,6 +158,7 @@ JSHTMLMarqueeElement.cpp
 JSHTMLMediaElement.cpp
 JSHTMLOptionsCollection.cpp
 JSHTMLSourceElement.cpp
+JSHTMLTableCellElement.cpp
 JSHTMLTableElement.cpp
 JSHTMLTrackElement.cpp
 JSHTMLVideoElement.cpp
@@ -189,6 +189,7 @@ JSInternalsMapLike.h
 JSInternalsSetLike.cpp
 JSInternalsSetLike.h
 JSKHRParallelShaderCompile.cpp
+JSKeyboardEvent.cpp
 JSKeyframeEffect.cpp
 JSLocation.cpp
 JSMallocStatistics.cpp
@@ -211,8 +212,8 @@ JSMediaSession.cpp
 JSMediaSessionCoordinator.cpp
 JSMediaSource.cpp
 JSMediaStream.cpp
+JSMediaStreamAudioDestinationNode.cpp
 JSMediaStreamTrack.cpp
-JSMediaStreamTrackEvent.cpp
 JSMediaStreamTrackProcessor.cpp
 JSMemoryInfo.cpp
 JSMemoryInfo.h
@@ -251,7 +252,6 @@ JSOESTextureHalfFloatLinear.cpp
 JSOESVertexArrayObject.cpp
 JSOfflineAudioContext.cpp
 JSOffscreenCanvas.cpp
-JSOpenID4VPRequest.cpp
 JSOscillatorNode.cpp
 JSPaymentRequest.cpp
 JSPaymentResponse.cpp
@@ -259,10 +259,10 @@ JSPerformance.cpp
 JSPerformanceObserver.cpp
 JSPerformanceObserverCallback.cpp
 JSPermissionStatus.cpp
-JSPhotoSettings.cpp
+JSPermissions.cpp
+JSPermissions.h
 JSPictureInPictureEvent.cpp
 JSPictureInPictureWindow.cpp
-JSPointerEvent.cpp
 JSPositionCallback.cpp
 JSPublicKeyCredential.cpp
 JSPushSubscription.h
@@ -272,7 +272,6 @@ JSRTCDataChannel.cpp
 JSRTCDtlsTransport.cpp
 JSRTCEncodedAudioFrame.h
 JSRTCIceTransport.cpp
-JSRTCLocalSessionDescriptionInit.cpp
 JSRTCLogsCallback.cpp
 JSRTCPeerConnection.cpp
 JSRTCRtpReceiver.cpp
@@ -287,14 +286,14 @@ JSReadableStream.h
 JSReadableStreamDefaultController.h
 JSRemotePlayback.cpp
 JSReportingObserver.cpp
-JSResizeObserverOptions.cpp
-JSResizeObserverSize.cpp
-JSResizeObserverSize.h
+JSResizeObserver.h
+JSResizeObserverCallback.cpp
+JSResizeObserverEntry.cpp
 JSSQLResultSetRowList.cpp
-JSSQLStatementCallback.cpp
-JSSVGFESpotLightElement.cpp
+JSSVGFEPointLightElement.cpp
 JSSVGGeometryElement.cpp
 JSSVGLengthList.cpp
+JSSVGTSpanElement.cpp
 JSSVGTextContentElement.cpp
 JSSVGTransformList.cpp
 JSScreen.cpp
@@ -315,6 +314,7 @@ JSSpeechRecognition.cpp
 JSSpeechSynthesis.cpp
 JSSpeechSynthesisUtterance.cpp
 JSStorage.cpp
+JSStorageEvent.cpp
 JSStringCallback.cpp
 JSStyleMedia.cpp
 JSStylePropertyMap.cpp
@@ -322,7 +322,6 @@ JSStylePropertyMapReadOnly.h
 JSStyleSheet.cpp
 JSStyleSheet.h
 JSStyleSheetList.cpp
-JSSubmitEvent.cpp
 JSSubscriber.cpp
 JSSubtleCrypto.cpp
 JSText.cpp
@@ -335,13 +334,12 @@ JSTypeConversions.cpp
 JSTypeConversions.h
 JSUndoManager.cpp
 JSValidityState.cpp
+JSVideoFrameRequestCallback.cpp
 JSVideoPlaybackQuality.cpp
-JSVideoPlaybackQuality.h
 JSVideoTrack.cpp
 JSVideoTrackGenerator.cpp
 JSVideoTrackList.cpp
 JSViewTransition.cpp
-JSViewTransitionUpdateCallback.cpp
 JSVisualViewport.cpp
 JSWakeLockSentinel.cpp
 JSWebAnimation.cpp
@@ -361,6 +359,7 @@ JSWebGLCompressedTextureETC1.cpp
 JSWebGLCompressedTexturePVRTC.cpp
 JSWebGLCompressedTextureS3TC.cpp
 JSWebGLCompressedTextureS3TCsRGB.cpp
+JSWebGLCompressedTextureS3TCsRGB.h
 JSWebGLContextEvent.cpp
 JSWebGLDebugRendererInfo.cpp
 JSWebGLDebugShaders.cpp
@@ -493,6 +492,7 @@ Modules/webaudio/PannerNode.cpp
 Modules/webaudio/ScriptProcessorNode.cpp
 Modules/webaudio/StereoPannerNode.cpp
 Modules/webaudio/WaveShaperDSPKernel.cpp
+Modules/webaudio/WaveShaperNode.cpp
 Modules/webauthn/AuthenticatorCoordinator.cpp
 Modules/webauthn/PublicKeyCredential.cpp
 Modules/webcodecs/WebCodecsAudioData.cpp
@@ -679,7 +679,6 @@ css/CSSKeyframeRule.cpp
 css/CSSLayerBlockRule.cpp
 css/CSSPageRule.cpp
 css/CSSPrimitiveValue.cpp
-css/CSSPrimitiveValueMappings.h
 css/CSSRule.cpp
 css/CSSStyleRule.cpp
 css/CSSStyleSheet.cpp
@@ -861,7 +860,6 @@ html/HTMLStyleElement.cpp
 html/HTMLSummaryElement.cpp
 html/HTMLTableElement.cpp
 html/HTMLTableRowElement.cpp
-html/HTMLTableRowsCollection.cpp
 html/HTMLTextFormControlElement.cpp
 html/ImageBitmap.cpp
 html/ImageInputType.cpp
@@ -911,9 +909,11 @@ html/track/InbandGenericTextTrack.cpp
 html/track/TextTrack.cpp
 html/track/TextTrackCue.cpp
 html/track/TextTrackCueGeneric.cpp
+html/track/TextTrackList.cpp
 html/track/TrackBase.cpp
 html/track/VTTCue.cpp
 html/track/VTTRegion.cpp
+html/track/VideoTrackList.cpp
 inspector/CommandLineAPIHost.cpp
 inspector/DOMPatchSupport.cpp
 inspector/InspectorAuditAccessibilityObject.cpp
@@ -1072,7 +1072,6 @@ platform/ScrollableArea.cpp
 platform/ScrollbarsController.cpp
 platform/SharedBuffer.cpp
 platform/ThreadGlobalData.h
-platform/Timer.cpp
 platform/animation/AcceleratedEffect.cpp
 platform/animation/AcceleratedEffectValues.cpp
 platform/audio/AudioBus.cpp
@@ -1087,6 +1086,7 @@ platform/graphics/FontCache.cpp
 platform/graphics/FontCascade.h
 platform/graphics/FontCascadeFonts.cpp
 platform/graphics/FontRanges.cpp
+platform/graphics/GlyphBuffer.h
 platform/graphics/GraphicsLayer.cpp
 platform/graphics/Image.cpp
 platform/graphics/Path.cpp
@@ -1105,6 +1105,7 @@ platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/TileGrid.cpp
 platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm
+platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm
 platform/graphics/cg/GraphicsContextCG.cpp
 platform/graphics/cocoa/controls/ApplePayButtonCocoa.mm
 platform/graphics/coreimage/FEColorMatrixCoreImageApplier.mm
@@ -1151,7 +1152,6 @@ plugins/PluginInfoProvider.cpp
 rendering/AccessibilityRegionContext.cpp
 rendering/BackgroundPainter.cpp
 rendering/BorderPainter.cpp
-rendering/CounterNode.cpp
 rendering/GlyphDisplayListCache.cpp
 rendering/HitTestResult.cpp
 rendering/ImageQualityController.cpp
@@ -1338,7 +1338,6 @@ xml/XPathFunctions.cpp
 xml/XPathNodeSet.cpp
 xml/XPathPath.cpp
 xml/XPathStep.cpp
-xml/XSLImportRule.cpp
 xml/XSLStyleSheetLibxslt.cpp
 xml/XSLTProcessor.cpp
 xml/XSLTProcessorLibxslt.cpp

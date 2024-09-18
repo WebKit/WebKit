@@ -55,13 +55,11 @@ css/parser/SizesCalcParser.h
 dom/ActiveDOMObject.cpp
 dom/CollectionIndexCache.h
 dom/ContainerNode.h
-dom/ContainerNodeAlgorithms.h
 dom/ElementAncestorIterator.h
 dom/Node.cpp
 dom/Node.h
 dom/QualifiedName.h
 dom/TreeScope.h
-dom/ViewTransitionTypeSet.h
 dom/WindowOrWorkerGlobalScopeTrustedTypes.cpp
 editing/cocoa/HTMLConverter.mm
 html/FormListedElement.cpp

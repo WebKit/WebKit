@@ -1,9 +1,7 @@
 GPUProcess/graphics/RemoteDisplayListRecorder.cpp
-GPUProcess/graphics/WebGPU/RemoteAdapter.cpp
 GPUProcess/graphics/WebGPU/RemoteGPU.cpp
 GPUProcess/media/RemoteImageDecoderAVFProxy.cpp
 GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp
-GPUProcess/media/RemoteMediaPlayerProxy.cpp
 NetworkProcess/NetworkProcess.cpp
 NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp
 NetworkProcess/cocoa/NetworkProcessCocoa.mm
@@ -49,7 +47,6 @@ UIProcess/Cocoa/WebProcessPoolCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIPortCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionContextCocoa.mm
 UIProcess/Gamepad/UIGamepadProvider.cpp
-UIProcess/Inspector/WebInspectorUIProxy.cpp
 UIProcess/Inspector/mac/WebInspectorUIProxyMac.mm
 UIProcess/Network/NetworkProcessProxy.cpp
 UIProcess/Network/NetworkProcessProxyCocoa.mm
@@ -87,7 +84,6 @@ WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp
 WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp
 WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp
 WebProcess/GPU/webrtc/MediaRecorderProvider.cpp
-WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.cpp
 WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.cpp
 WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp
 WebProcess/Geolocation/WebGeolocationManager.cpp
@@ -145,7 +141,6 @@ WebProcess/WebCoreSupport/mac/WebDragClientMac.mm
 WebProcess/WebPage/Cocoa/WebPageCocoa.mm
 WebProcess/WebPage/EventDispatcher.cpp
 WebProcess/WebPage/FindController.cpp
-WebProcess/WebPage/IPCTestingAPI.cpp
 WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm
 WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.mm
 WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm
