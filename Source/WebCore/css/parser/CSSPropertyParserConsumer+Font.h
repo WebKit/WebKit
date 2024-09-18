@@ -84,7 +84,6 @@ using UnresolvedFontLineHeight = std::variant<CSSValueID, NumberRaw, Unevaluated
 using UnresolvedFontFamilyName = std::variant<CSSValueID, AtomString>;
 using UnresolvedFontFamily = Vector<UnresolvedFontFamilyName>;
 
-
 struct UnresolvedFont {
     UnresolvedFontStyle style;
     UnresolvedFontVariantCaps variantCaps;

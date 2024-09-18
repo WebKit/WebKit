@@ -41,7 +41,7 @@
 #include "InspectorInstrumentation.h"
 #include "RenderStyle.h"
 #include "ScriptExecutionContext.h"
-#include "StyleResolveForFontRaw.h"
+#include "StyleResolveForFont.h"
 #include "TextMetrics.h"
 #include <wtf/TZoneMallocInlines.h>
 

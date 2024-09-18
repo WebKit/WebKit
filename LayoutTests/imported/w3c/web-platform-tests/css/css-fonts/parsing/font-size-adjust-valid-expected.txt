@@ -12,4 +12,10 @@ PASS e.style['font-size-adjust'] = "cap-height from-font" should set the propert
 PASS e.style['font-size-adjust'] = "ch-width from-font" should set the property value
 PASS e.style['font-size-adjust'] = "ic-width from-font" should set the property value
 PASS e.style['font-size-adjust'] = "ic-height from-font" should set the property value
+PASS e.style['font-size-adjust'] = "calc(0.5)" should set the property value
+PASS e.style['font-size-adjust'] = "ex-height calc(0.5)" should set the property value
+PASS e.style['font-size-adjust'] = "cap-height calc(0.5)" should set the property value
+PASS e.style['font-size-adjust'] = "cap-height calc(0.5 + 1)" should set the property value
+PASS e.style['font-size-adjust'] = "cap-height calc(-0.5)" should set the property value
+PASS e.style['font-size-adjust'] = "cap-height calc(10 + (sign(20cqw - 10px) * 5))" should set the property value
 

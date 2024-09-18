@@ -1586,7 +1586,7 @@ inline void BuilderCustom::applyValueFontStyle(BuilderState& state, CSSValue& va
 
     std::optional<FontSelectionValue> slope;
     if (!CSSPropertyParserHelpers::isSystemFontShorthand(keyword))
-        slope = BuilderConverter::convertFontStyleFromValue(value);
+        slope = BuilderConverter::convertFontStyleFromValue(state, value);
 
     applyFontStyle(state, slope, keyword == CSSValueItalic ? FontStyleAxis::ital : FontStyleAxis::slnt);
 }

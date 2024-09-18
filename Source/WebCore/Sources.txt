@@ -3032,7 +3032,7 @@ style/StyleInvalidator.cpp
 style/StylePendingResources.cpp
 style/StyleRelations.cpp
 style/StyleResolveForDocument.cpp
-style/StyleResolveForFontRaw.cpp
+style/StyleResolveForFont.cpp
 style/StyleResolver.cpp
 style/StyleScope.cpp
 style/StyleScopeRuleSets.cpp
