@@ -39,7 +39,9 @@
 #include <WebCore/ContentType.h>
 #include <WebCore/MediaDescription.h>
 #include <WebCore/PlatformTimeRanges.h>
+#include <WebCore/SourceBufferPrivateClient.h>
 #include <WebCore/VideoTrackPrivate.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -93,7 +95,8 @@ Ref<MediaPromise> RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitiali
 {
     ASSERT(isMainRunLoop());
 
-    if (!m_remoteMediaPlayerProxy)
+    RefPtr remoteMediaPlayerProxy { m_remoteMediaPlayerProxy.get() };
+    if (!remoteMediaPlayerProxy)
         return MediaPromise::createAndReject(PlatformMediaError::ClientDisconnected);
 
     InitializationSegmentInfo segmentInfo;
@@ -101,84 +104,76 @@ Ref<MediaPromise> RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitiali
 
     segmentInfo.audioTracks = segment.audioTracks.map([&](auto& audioTrackInfo) {
         auto id = audioTrackInfo.track->id();
-        m_remoteMediaPlayerProxy->addRemoteAudioTrackProxy(*audioTrackInfo.track);
+        remoteMediaPlayerProxy->addRemoteAudioTrackProxy(*audioTrackInfo.protectedTrack());
         m_mediaDescriptions.try_emplace(id, *audioTrackInfo.description);
         return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*audioTrackInfo.description), id };
     });
 
     segmentInfo.videoTracks = segment.videoTracks.map([&](auto& videoTrackInfo) {
         auto id = videoTrackInfo.track->id();
-        m_remoteMediaPlayerProxy->addRemoteVideoTrackProxy(*videoTrackInfo.track);
+        remoteMediaPlayerProxy->addRemoteVideoTrackProxy(*videoTrackInfo.protectedTrack());
         m_mediaDescriptions.try_emplace(id, *videoTrackInfo.description);
         return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*videoTrackInfo.description), id };
     });
 
     segmentInfo.textTracks = segment.textTracks.map([&](auto& textTrackInfo) {
         auto id = textTrackInfo.track->id();
-        m_remoteMediaPlayerProxy->addRemoteTextTrackProxy(*textTrackInfo.track);
+        remoteMediaPlayerProxy->addRemoteTextTrackProxy(*textTrackInfo.protectedTrack());
         m_mediaDescriptions.try_emplace(id, *textTrackInfo.description);
         return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*textTrackInfo.description), id };
     });
 
     // We need to wait for the CP's MediaPlayerRemote to have created all the tracks
-    return m_remoteMediaPlayerProxy->commitAllTransactions()->whenSettled(RunLoop::current(), [weakThis = ThreadSafeWeakPtr { *this }, this, segmentInfo = WTFMove(segmentInfo)](auto&& result) mutable -> Ref<MediaPromise> {
+    return remoteMediaPlayerProxy->commitAllTransactions()->whenSettled(RunLoop::current(), [weakThis = ThreadSafeWeakPtr { *this }, this, segmentInfo = WTFMove(segmentInfo)](auto&& result) mutable -> Ref<MediaPromise> {
         RefPtr protectedThis = weakThis.get();
-        auto connection = m_connectionToWebProcess.get();
+        RefPtr connection = m_connectionToWebProcess.get();
         if (!protectedThis  || !result || !connection)
             return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 
-        return connection->connection().sendWithPromisedReply<MediaPromiseConverter>(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segmentInfo)), m_identifier);
+        return connection->protectedConnection()->sendWithPromisedReply<MediaPromiseConverter>(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segmentInfo)), m_identifier);
     });
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)
 {
-    auto connection = m_connectionToWebProcess.get();
-    if (!connection)
-        return;
-    connection->connection().send(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateHighestPresentationTimestampChanged(timestamp), m_identifier);
+    if (RefPtr connection = m_connectionToWebProcess.get())
+        connection->protectedConnection()->send(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateHighestPresentationTimestampChanged(timestamp), m_identifier);
 }
 
 Ref<MediaPromise> RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(const MediaTime& duration)
 {
-    auto connection = m_connectionToWebProcess.get();
+    RefPtr connection = m_connectionToWebProcess.get();
     if (!connection)
         return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 
-    return connection->connection().sendWithPromisedReply<MediaPromiseConverter>(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDurationChanged(duration), m_identifier);
+    return connection->protectedConnection()->sendWithPromisedReply<MediaPromiseConverter>(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDurationChanged(duration), m_identifier);
 }
 
 Ref<MediaPromise> RemoteSourceBufferProxy::sourceBufferPrivateBufferedChanged(const Vector<WebCore::PlatformTimeRanges>& trackRanges)
 {
-    auto connection = m_connectionToWebProcess.get();
+    RefPtr connection = m_connectionToWebProcess.get();
     if (!connection)
         return MediaPromise::createAndResolve();
 
-    return connection->connection().sendWithPromisedReply<MediaPromiseConverter>(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateBufferedChanged(trackRanges), m_identifier);
+    return connection->protectedConnection()->sendWithPromisedReply<MediaPromiseConverter>(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateBufferedChanged(trackRanges), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidDropSample()
 {
-    auto connection = m_connectionToWebProcess.get();
-    if (!connection)
-        return;
-    connection->connection().send(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDidDropSample(), m_identifier);
+    if (RefPtr connection = m_connectionToWebProcess.get())
+        connection->protectedConnection()->send(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDidDropSample(), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
 {
-    auto connection = m_connectionToWebProcess.get();
-    if (!connection)
-        return;
-    connection->connection().send(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDidReceiveRenderingError(errorCode), m_identifier);
+    if (RefPtr connection = m_connectionToWebProcess.get())
+        connection->protectedConnection()->send(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDidReceiveRenderingError(errorCode), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateEvictionDataChanged(const WebCore::SourceBufferEvictionData& evictionData)
 {
-    auto connection = m_connectionToWebProcess.get();
-    if (!connection)
-        return;
-    connection->connection().send(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateEvictionDataChanged(evictionData), m_identifier);
+    if (RefPtr connection = m_connectionToWebProcess.get())
+        connection->protectedConnection()->send(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateEvictionDataChanged(evictionData), m_identifier);
 }
 
 void RemoteSourceBufferProxy::append(IPC::SharedBufferReference&& buffer, CompletionHandler<void(MediaPromise::Result, const MediaTime&)>&& completionHandler)
@@ -188,9 +183,9 @@ void RemoteSourceBufferProxy::append(IPC::SharedBufferReference&& buffer, Comple
         return completionHandler(makeUnexpected(PlatformMediaError::MemoryError), m_sourceBufferPrivate->timestampOffset());
 
     auto handle = sharedMemory->createHandle(SharedMemory::Protection::ReadOnly);
-    auto connection = m_connectionToWebProcess.get();
+    RefPtr connection = m_connectionToWebProcess.get();
     if (handle && connection)
-        connection->connection().send(Messages::SourceBufferPrivateRemoteMessageReceiver::TakeOwnershipOfMemory(WTFMove(*handle)), m_identifier);
+        connection->protectedConnection()->send(Messages::SourceBufferPrivateRemoteMessageReceiver::TakeOwnershipOfMemory(WTFMove(*handle)), m_identifier);
 
     m_sourceBufferPrivate->append(sharedMemory->createSharedBuffer(buffer.size()))->whenSettled(RunLoop::current(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
         completionHandler(WTFMove(result), m_sourceBufferPrivate->timestampOffset());
@@ -244,8 +239,9 @@ void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const Me
 
 void RemoteSourceBufferProxy::evictCodedFrames(uint64_t newDataSize, const MediaTime& currentTime, CompletionHandler<void(Vector<WebCore::PlatformTimeRanges>&&, WebCore::SourceBufferEvictionData&&)>&& completionHandler)
 {
-    m_sourceBufferPrivate->evictCodedFrames(newDataSize, currentTime);
-    completionHandler(m_sourceBufferPrivate->trackBuffersRanges(), m_sourceBufferPrivate->evictionData());
+    Ref sourceBufferPrivate { m_sourceBufferPrivate };
+    sourceBufferPrivate->evictCodedFrames(newDataSize, currentTime);
+    completionHandler(sourceBufferPrivate->trackBuffersRanges(), sourceBufferPrivate->evictionData());
 }
 
 void RemoteSourceBufferProxy::asyncEvictCodedFrames(uint64_t newDataSize, const MediaTime& currentTime)
@@ -362,10 +358,10 @@ void RemoteSourceBufferProxy::setMaximumQueueDepthForTrackID(TrackID trackID, ui
 
 void RemoteSourceBufferProxy::shutdown()
 {
-    auto connection = m_connectionToWebProcess.get();
+    RefPtr connection = m_connectionToWebProcess.get();
     if (!connection)
         return;
-    connection->connection().sendWithAsyncReply(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateShuttingDown(), [this, protectedThis = Ref { *this }, protectedConnection = Ref { *connection }] {
+    connection->protectedConnection()->sendWithAsyncReply(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateShuttingDown(), [this, protectedThis = Ref { *this }, protectedConnection = Ref { *connection }] {
         disconnect();
     }, m_identifier);
 }

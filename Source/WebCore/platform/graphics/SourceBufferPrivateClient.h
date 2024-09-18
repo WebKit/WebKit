@@ -27,8 +27,11 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "AudioTrackPrivate.h"
+#include "InbandTextTrackPrivate.h"
 #include "MediaDescription.h"
 #include "PlatformMediaError.h"
+#include "VideoTrackPrivate.h"
 #include <wtf/MediaTime.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
@@ -37,12 +40,9 @@
 
 namespace WebCore {
 
-class AudioTrackPrivate;
-class InbandTextTrackPrivate;
 class MediaSample;
 class MediaDescription;
 class PlatformTimeRanges;
-class VideoTrackPrivate;
 
 struct SourceBufferEvictionData {
     uint64_t contentSize { 0 };
@@ -73,18 +73,24 @@ public:
         struct AudioTrackInformation {
             RefPtr<MediaDescription> description;
             RefPtr<AudioTrackPrivate> track;
+
+            RefPtr<AudioTrackPrivate> protectedTrack() const { return track; }
         };
         Vector<AudioTrackInformation> audioTracks;
 
         struct VideoTrackInformation {
             RefPtr<MediaDescription> description;
             RefPtr<VideoTrackPrivate> track;
+
+            RefPtr<VideoTrackPrivate> protectedTrack() const { return track; }
         };
         Vector<VideoTrackInformation> videoTracks;
 
         struct TextTrackInformation {
             RefPtr<MediaDescription> description;
             RefPtr<InbandTextTrackPrivate> track;
+
+            RefPtr<InbandTextTrackPrivate> protectedTrack() const { return track; }
         };
         Vector<TextTrackInformation> textTracks;
     };
