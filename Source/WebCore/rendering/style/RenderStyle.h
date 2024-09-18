@@ -469,10 +469,15 @@ public:
     inline const BorderValue& borderTop() const;
     inline const BorderValue& borderBottom() const;
 
-    const BorderValue& borderBefore() const;
-    const BorderValue& borderAfter() const;
-    const BorderValue& borderStart() const;
-    const BorderValue& borderEnd() const;
+
+    inline const BorderValue& borderBefore() const;
+    inline const BorderValue& borderAfter() const;
+    inline const BorderValue& borderStart() const;
+    inline const BorderValue& borderEnd() const;
+    const BorderValue& borderBefore(const RenderStyle& styleForFlow) const;
+    const BorderValue& borderAfter(const RenderStyle& styleForFlow) const;
+    const BorderValue& borderStart(const RenderStyle& styleForFlow) const;
+    const BorderValue& borderEnd(const RenderStyle& styleForFlow) const;
 
     inline const NinePieceImage& borderImage() const;
     inline StyleImage* borderImageSource() const;

@@ -117,11 +117,9 @@ public:
     RenderPtr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox&) const override;
 
     // This function is used to unify which table part's style we use for computing direction and
-    // writing mode. Writing modes are not allowed on row group and row but direction is.
+    // writing mode. Writing modes are not allowed on internal table boxes.
     // This means we can safely use the same style in all cases to simplify our code.
-    // FIXME: Eventually this function should replaced by style() once we support direction
-    // on all table parts and writing-mode on cells.
-    const RenderStyle& styleForCellFlow() const { return row()->style(); }
+    const RenderStyle& styleForCellFlow() const { return table()->style(); }
 
     inline const BorderValue& borderAdjoiningTableStart() const;
     inline const BorderValue& borderAdjoiningTableEnd() const;

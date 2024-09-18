@@ -25,10 +25,10 @@
     <p>This test checks that a ltr table and a rtl row group properly compute its collapsing borders when the right-most cell's right border is 'hidden'.</p>
     <p>For this test to pass, there should be only green borders on the cells and no right border on the table.</p>
     <table>
-        <tbody dir="rtl">
+        <tbody dir="rtl"><!-- direction on sections is ignored -->
         <tr>
-            <td class="rightBorderHidden"></td>
             <td></td>
+            <td class="rightBorderHidden"></td>
         </tr>
         </tbody>
     </table>

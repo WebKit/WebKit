@@ -101,6 +101,8 @@ inline const BlockEllipsis& RenderStyle::blockEllipsis() const { return m_rareIn
 inline BlockStepInsert RenderStyle::blockStepInsert() const { return static_cast<BlockStepInsert>(m_nonInheritedData->rareData->blockStepInsert); }
 inline std::optional<Length> RenderStyle::blockStepSize() const { return m_nonInheritedData->rareData->blockStepSize; }
 inline const BorderData& RenderStyle::border() const { return m_nonInheritedData->surroundData->border; }
+inline const BorderValue& RenderStyle::borderAfter() const { return borderAfter(*this); }
+inline const BorderValue& RenderStyle::borderBefore() const { return borderBefore(*this); }
 inline const BorderValue& RenderStyle::borderBottom() const { return border().bottom(); }
 inline const StyleColor& RenderStyle::borderBottomColor() const { return border().bottom().color(); }
 inline bool RenderStyle::borderBottomIsTransparent() const { return border().bottom().isTransparent(); }
@@ -108,6 +110,7 @@ inline const LengthSize& RenderStyle::borderBottomLeftRadius() const { return bo
 inline const LengthSize& RenderStyle::borderBottomRightRadius() const { return border().bottomRightRadius(); }
 inline BorderStyle RenderStyle::borderBottomStyle() const { return border().bottom().style(); }
 inline float RenderStyle::borderBottomWidth() const { return border().borderBottomWidth(); }
+inline const BorderValue& RenderStyle::borderEnd() const { return borderEnd(*this); }
 inline const NinePieceImage& RenderStyle::borderImage() const { return border().image(); }
 inline NinePieceImageRule RenderStyle::borderImageHorizontalRule() const { return border().image().horizontalRule(); }
 inline const LengthBox& RenderStyle::borderImageOutset() const { return border().image().outset(); }
@@ -128,6 +131,7 @@ inline const StyleColor& RenderStyle::borderRightColor() const { return border()
 inline bool RenderStyle::borderRightIsTransparent() const { return border().right().isTransparent(); }
 inline BorderStyle RenderStyle::borderRightStyle() const { return border().right().style(); }
 inline float RenderStyle::borderRightWidth() const { return border().borderRightWidth(); }
+inline const BorderValue& RenderStyle::borderStart() const { return borderStart(*this); }
 inline const BorderValue& RenderStyle::borderTop() const { return border().top(); }
 inline const StyleColor& RenderStyle::borderTopColor() const { return border().top().color(); }
 inline bool RenderStyle::borderTopIsTransparent() const { return border().top().isTransparent(); }
