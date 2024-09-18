@@ -86,6 +86,10 @@ OBJC_CLASS WKWebInspectorPreferenceObserver;
 #include "ExtensionCapabilityGranter.h"
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include "HardwareKeyboardState.h"
+#endif
+
 namespace API {
 class AutomationClient;
 class DownloadClient;
@@ -569,6 +573,10 @@ public:
 
     bool operator==(const WebProcessPool& other) const { return (this == &other); }
 
+#if PLATFORM(IOS_FAMILY)
+    HardwareKeyboardState cachedHardwareKeyboardState() const;
+#endif
+
 private:
     enum class NeedsGlobalStaticInitialization : bool { No, Yes };
     void platformInitialize(NeedsGlobalStaticInitialization);
@@ -670,6 +678,13 @@ private:
     void setMediaAccessibilityPreferences(WebProcessProxy&);
 #endif
     void clearAudibleActivity();
+
+#if PLATFORM(IOS_FAMILY)
+    static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef);
+    void initializeHardwareKeyboardAvailability();
+    void hardwareKeyboardAvailabilityChanged();
+    void setCachedHardwareKeyboardState(HardwareKeyboardState);
+#endif
 
     Ref<API::ProcessPoolConfiguration> m_configuration;
 
@@ -878,7 +893,9 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     bool m_processesShouldSuspend { false };
+    HardwareKeyboardState m_hardwareKeyboardState;
 #endif
+
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     RefPtr<StorageAccessUserAgentStringQuirkObserver> m_storageAccessUserAgentStringQuirksDataUpdateObserver;
     RefPtr<StorageAccessPromptQuirkObserver> m_storageAccessPromptQuirksDataUpdateObserver;

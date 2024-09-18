@@ -102,7 +102,6 @@ using namespace WebCore;
 
 void WebPageProxy::platformInitialize()
 {
-    internals().hardwareKeyboardState = currentHardwareKeyboardState();
 }
 
 PlatformDisplayID WebPageProxy::generateDisplayIDFromPageID() const
@@ -626,7 +625,7 @@ void WebPageProxy::applicationWillEnterForeground()
 
     m_legacyMainFrameProcess->send(Messages::WebPage::ApplicationWillEnterForeground(isSuspendedUnderLock), webPageIDInMainFrameProcess());
 
-    hardwareKeyboardAvailabilityChanged();
+    hardwareKeyboardAvailabilityChanged(m_legacyMainFrameProcess->processPool().cachedHardwareKeyboardState());
 }
 
 void WebPageProxy::applicationWillResignActive()
@@ -1148,14 +1147,8 @@ void WebPageProxy::setIsScrollingOrZooming(bool isScrollingOrZooming)
         m_validationBubble->show();
 }
 
-void WebPageProxy::hardwareKeyboardAvailabilityChanged()
+void WebPageProxy::hardwareKeyboardAvailabilityChanged(HardwareKeyboardState hardwareKeyboardState)
 {
-    auto hardwareKeyboardState = currentHardwareKeyboardState();
-    if (hardwareKeyboardState == internals().hardwareKeyboardState)
-        return;
-
-    internals().hardwareKeyboardState = hardwareKeyboardState;
-
     protectedPageClient()->hardwareKeyboardAvailabilityChanged();
 
     updateCurrentModifierState();
