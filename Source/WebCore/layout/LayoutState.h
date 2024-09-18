@@ -46,6 +46,10 @@ namespace WebCore {
 
 class Document;
 
+namespace LayoutIntegration {
+enum class LogicalWidthType : uint8_t;
+}
+
 namespace Layout {
 
 class BlockFormattingState;
@@ -63,9 +67,9 @@ public:
     enum class Type { Primary, Secondary };
 
     using FormattingContextLayoutFunction = Function<void(const ElementBox&, std::optional<LayoutUnit>, LayoutState&)>;
-    using FormattingContextPreferredWidthsFunction = Function<std::pair<LayoutUnit, LayoutUnit>(const ElementBox&)>;
+    using FormattingContextLogicalWidthFunction = Function<LayoutUnit(const ElementBox&, LayoutIntegration::LogicalWidthType)>;
 
-    LayoutState(const Document&, const ElementBox& rootContainer, Type, FormattingContextLayoutFunction&&, FormattingContextPreferredWidthsFunction&&);
+    LayoutState(const Document&, const ElementBox& rootContainer, Type, FormattingContextLayoutFunction&&, FormattingContextLogicalWidthFunction&&);
     ~LayoutState();
 
     Type type() const { return m_type; }
@@ -107,7 +111,7 @@ public:
     const ElementBox& root() const { return m_rootContainer; }
 
     void layoutWithFormattingContextForBox(const ElementBox&, std::optional<LayoutUnit> widthConstraint) const;
-    std::pair<LayoutUnit, LayoutUnit> preferredWidthWithFormattingContextForBox(const ElementBox&) const;
+    LayoutUnit logicalWidthWithFormattingContextForBox(const ElementBox&, LayoutIntegration::LogicalWidthType) const;
 
 private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }
@@ -130,7 +134,7 @@ private:
     Ref<SecurityOrigin> m_securityOrigin;
 
     FormattingContextLayoutFunction m_formattingContextLayoutFunction;
-    FormattingContextPreferredWidthsFunction m_formattingContextPreferredWidthsFunction;
+    FormattingContextLogicalWidthFunction m_formattingContextLogicalWidthFunction;
 };
 
 inline bool LayoutState::hasBoxGeometry(const Box& layoutBox) const

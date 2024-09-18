@@ -170,7 +170,7 @@ LayoutUnit FlexLayout::maxContentForFlexItem(const LogicalFlexItem& flexItem)
         return { };
     }
 
-    return formattingContext().integrationUtils().preferredWidthWithFormattingContextForBox(downcast<ElementBox>(flexItemBox)).second;
+    return formattingContext().integrationUtils().maxContentLogicalWidth(downcast<ElementBox>(flexItemBox));
 }
 
 FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheticalMainSizeForFlexItems(const LogicalConstraints::AxisGeometry& mainAxis, const LogicalFlexItems& flexItems)
