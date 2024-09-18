@@ -43,7 +43,7 @@ using namespace WebKit;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-static const SchemaVersion currentDatabaseSchemaVersion = 1;
+static const SchemaVersion currentDatabaseSchemaVersion = 2;
 
 static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
 {
@@ -349,6 +349,23 @@ static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
         RELEASE_LOG_ERROR(Extensions, "Failed to create the extension_storage table for extension %{private}@: %{public}@ (%d)", _uniqueIdentifier, _database.lastErrorMessage, result);
 
     return result;
+}
+
+- (SchemaVersion)_migrateToCurrentSchemaVersionIfNeeded
+{
+    dispatch_assert_queue(_databaseQueue);
+
+    auto databaseSchemaVersion = self._databaseSchemaVersion;
+    if (databaseSchemaVersion == 1 && currentDatabaseSchemaVersion == 2) {
+        // Safari shipped with a database schema version of 2, but when migrating to WebKit, the version was
+        // incorrectly marked as 1. This mismatch would normally trigger a database schema reset, erasing
+        // all storage data. However, since the schema for version 2 (Safari) and version 1 (WebKit) are
+        // identical, we simply set the version and return the current version to avoid unnecessary data loss.
+
+        [self _setDatabaseSchemaVersion:currentDatabaseSchemaVersion];
+    }
+
+    return [super _migrateToCurrentSchemaVersionIfNeeded];
 }
 
 - (DatabaseResult)_resetDatabaseSchema
