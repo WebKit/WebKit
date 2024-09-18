@@ -284,9 +284,13 @@ void ThreadedCompositor::renderLayerTree()
         glViewport(0, 0, viewportSize.width(), viewportSize.height());
 
     m_client.clearIfNeeded();
-
+    WTFBeginSignpost(this, ApplyStateChanges);
     m_scene->applyStateChanges(states);
+    WTFEndSignpost(this, ApplyStateChanges);
+
+    WTFBeginSignpost(this, PaintToGLContext);
     m_scene->paintToCurrentGLContext(viewportTransform, FloatRect { FloatPoint { }, viewportSize }, m_flipY);
+    WTFEndSignpost(this, PaintToGLContext);
 
     WebCore::Damage boundsDamage;
     const auto& frameDamage = ([this, &boundsDamage]() -> const WebCore::Damage& {
