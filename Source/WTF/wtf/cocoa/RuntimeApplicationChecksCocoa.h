@@ -36,6 +36,7 @@ enum class SDKAlignedBehavior {
     ApplicationStateTrackerDoesNotObserveWindow,
     AuthorizationHeaderOnSameOriginRedirects,
     BlanksViewOnJSPrompt,
+    BlocksConnectionsToAddressWithOnlyZeros,
     BrowsingContextControllerSPIAccessRemoved,
     ContextMenuTriggersLinkActivationNavigationType,
     ConvertsInvalidURLsToBlank,
