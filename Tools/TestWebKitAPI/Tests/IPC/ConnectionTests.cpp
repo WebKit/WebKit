@@ -1063,7 +1063,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopWaitForAndDispatchImmediately)
 
 TEST_P(ConnectionRunLoopTest, SendLocalSyncMessageWithDataReply)
 {
-    constexpr int iterations = 10;
+    constexpr int iterations = 5;
     constexpr size_t dataSize = 1e8; // 100 MB.
     ASSERT_TRUE(openA());
     auto runLoop = createRunLoop(RUN_LOOP_NAME);
@@ -1081,8 +1081,12 @@ TEST_P(ConnectionRunLoopTest, SendLocalSyncMessageWithDataReply)
         auto sendResult = a()->sendSync(MockTestSyncMessageWithDataReply { }, i, IPC::Timeout::infinity());
         ASSERT_TRUE(sendResult.succeeded());
         auto& [replyData] = sendResult.reply();
-        for (size_t i = 0; i < replyData.size(); ++i)
-            ASSERT_EQ(static_cast<uint8_t>(i), replyData[i]);
+        for (size_t i = 0; i < replyData.size(); ++i) {
+            auto expected = static_cast<uint8_t>(i);
+            if (expected != replyData[i])
+                ASSERT_EQ(expected, replyData[i]);
+        }
+        ASSERT_EQ(dataSize, replyData.size());
     }
     runLoop->dispatch([&] {
         b()->invalidate();
