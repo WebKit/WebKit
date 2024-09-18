@@ -58,7 +58,9 @@ namespace WebKit {
 class WebPageProxy;
 struct SharedPreferencesForWebProcess;
 
-class WebFullScreenManagerProxyClient {
+class WebFullScreenManagerProxyClient : public CanMakeCheckedPtr<WebFullScreenManagerProxyClient> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebFullScreenManagerProxyClient);
 public:
     virtual ~WebFullScreenManagerProxyClient() { }
 
@@ -140,7 +142,7 @@ private:
 #endif
 
     WeakRef<WebPageProxy> m_page;
-    WebFullScreenManagerProxyClient& m_client;
+    CheckedRef<WebFullScreenManagerProxyClient> m_client;
     FullscreenState m_fullscreenState { FullscreenState::NotInFullscreen };
     bool m_blocksReturnToFullscreenFromPictureInPicture { false };
 #if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)

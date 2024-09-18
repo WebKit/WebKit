@@ -475,8 +475,8 @@ private:
         float m_endProgress { 0 };
         bool m_cancelled { false };
 
-        ViewGestureController& m_viewGestureController;
-        WebPageProxy& m_webPageProxy;
+        CheckedRef<ViewGestureController> m_viewGestureController;
+        WeakRef<WebPageProxy> m_webPageProxy;
     };
 
     SwipeProgressTracker m_swipeProgressTracker;

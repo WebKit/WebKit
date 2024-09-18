@@ -57,6 +57,11 @@ WebBackForwardCacheEntry::~WebBackForwardCacheEntry()
     }
 }
 
+WebBackForwardCache& WebBackForwardCacheEntry::backForwardCache() const
+{
+    return m_backForwardCache.get();
+}
+
 std::unique_ptr<SuspendedPageProxy> WebBackForwardCacheEntry::takeSuspendedPage()
 {
     ASSERT(m_suspendedPage);
@@ -79,7 +84,7 @@ void WebBackForwardCacheEntry::expirationTimerFired()
     ASSERT(m_backForwardItemID);
     auto* item = WebBackForwardListItem::itemForID(m_backForwardItemID);
     ASSERT(item);
-    m_backForwardCache.removeEntry(*item); // Will destroy |this|.
+    m_backForwardCache->removeEntry(*item); // Will destroy |this|.
 }
 
 } // namespace WebKit

@@ -73,7 +73,7 @@ WebFullScreenManagerProxy::~WebFullScreenManagerProxy()
 {
     Ref webPageProxy = m_page.get();
     webPageProxy->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), webPageProxy->webPageIDInMainFrameProcess());
-    m_client.closeFullScreenManager();
+    m_client->closeFullScreenManager();
     callCloseCompletionHandlers();
 }
 
@@ -203,12 +203,12 @@ void WebFullScreenManagerProxy::setFullscreenAutoHideDuration(Seconds duration)
 
 void WebFullScreenManagerProxy::close()
 {
-    m_client.closeFullScreenManager();
+    m_client->closeFullScreenManager();
 }
 
 bool WebFullScreenManagerProxy::isFullScreen()
 {
-    return m_client.isFullScreen();
+    return m_client->isFullScreen();
 }
 
 bool WebFullScreenManagerProxy::blocksReturnToFullscreenFromPictureInPicture() const
@@ -234,10 +234,10 @@ void WebFullScreenManagerProxy::enterFullScreen(bool blocksReturnToFullscreenFro
 #endif // QUICKLOOK_FULLSCREEN
 
     auto mediaDimensions = mediaDetails.mediaDimensions;
-    m_client.enterFullScreen(mediaDimensions);
+    m_client->enterFullScreen(mediaDimensions);
 #else
     UNUSED_PARAM(mediaDetails);
-    m_client.enterFullScreen();
+    m_client->enterFullScreen();
 #endif
 }
 
@@ -246,7 +246,7 @@ void WebFullScreenManagerProxy::exitFullScreen()
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     m_imageBuffer = nullptr;
 #endif
-    m_client.exitFullScreen();
+    m_client->exitFullScreen();
 }
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
@@ -275,23 +275,23 @@ void WebFullScreenManagerProxy::beganEnterFullScreen(const IntRect& initialFrame
 {
     protectedPage()->callAfterNextPresentationUpdate([weakThis = WeakPtr { *this }, initialFrame = initialFrame, finalFrame = finalFrame] {
         if (weakThis)
-            weakThis->m_client.beganEnterFullScreen(initialFrame, finalFrame);
+            weakThis->m_client->beganEnterFullScreen(initialFrame, finalFrame);
     });
 }
 
 void WebFullScreenManagerProxy::beganExitFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {
-    m_client.beganExitFullScreen(initialFrame, finalFrame);
+    m_client->beganExitFullScreen(initialFrame, finalFrame);
 }
 
 bool WebFullScreenManagerProxy::lockFullscreenOrientation(WebCore::ScreenOrientationType orientation)
 {
-    return m_client.lockFullscreenOrientation(orientation);
+    return m_client->lockFullscreenOrientation(orientation);
 }
 
 void WebFullScreenManagerProxy::unlockFullscreenOrientation()
 {
-    m_client.unlockFullscreenOrientation();
+    m_client->unlockFullscreenOrientation();
 }
 
 #if !RELEASE_LOG_DISABLED
