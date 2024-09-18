@@ -1831,7 +1831,7 @@ exit 1''')
 
 class TestScanBuildSmartPointer(BuildStepMixinAdditions, unittest.TestCase):
     WORK_DIR = 'wkdir'
-    EXPECTED_BUILD_COMMAND = ['/bin/sh', '-c', f'Tools/Scripts/build-and-analyze --output-dir wkdir/build/{SCAN_BUILD_OUTPUT_DIR} --only-smart-pointers --analyzer-path=wkdir/llvm-project/build/bin/clang --scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot=macosx --preprocessor-additions=CLANG_WEBKIT_BRANCH=1 2>&1 | python3 Tools/Scripts/filter-test-logs scan-build --output build-log.txt']
+    EXPECTED_BUILD_COMMAND = ['/bin/sh', '-c', f'Tools/Scripts/build-and-analyze --output-dir wkdir/build/{SCAN_BUILD_OUTPUT_DIR} --configuration release --only-smart-pointers --analyzer-path=wkdir/llvm-project/build/bin/clang --scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot=macosx --preprocessor-additions=CLANG_WEBKIT_BRANCH=1 2>&1 | python3 Tools/Scripts/filter-test-logs scan-build --output build-log.txt']
 
     def setUp(self):
         return self.setUpBuildStep()
@@ -1845,6 +1845,7 @@ class TestScanBuildSmartPointer(BuildStepMixinAdditions, unittest.TestCase):
     def test_failure(self):
         self.configureStep()
         self.setProperty('builddir', self.WORK_DIR)
+        self.setProperty('configuration', 'release')
 
         self.expectRemoteCommands(
             ExpectShell(workdir=self.WORK_DIR,
@@ -1862,6 +1863,7 @@ class TestScanBuildSmartPointer(BuildStepMixinAdditions, unittest.TestCase):
     def test_success(self):
         self.configureStep()
         self.setProperty('builddir', self.WORK_DIR)
+        self.setProperty('configuration', 'release')
 
         self.expectRemoteCommands(
             ExpectShell(workdir=self.WORK_DIR,
@@ -1880,6 +1882,7 @@ class TestScanBuildSmartPointer(BuildStepMixinAdditions, unittest.TestCase):
     def test_success_with_issues(self):
         self.configureStep()
         self.setProperty('builddir', self.WORK_DIR)
+        self.setProperty('configuration', 'release')
 
         self.expectRemoteCommands(
             ExpectShell(workdir=self.WORK_DIR,

@@ -1617,7 +1617,7 @@ class ScanBuildSmartPointer(steps.ShellSequence, ShellMixin):
     @defer.inlineCallbacks
     def run(self):
         self.commands = []
-        build_command = f"Tools/Scripts/build-and-analyze --output-dir {os.path.join(self.getProperty('builddir'), f'build/{SCAN_BUILD_OUTPUT_DIR}')} "
+        build_command = f"Tools/Scripts/build-and-analyze --output-dir {os.path.join(self.getProperty('builddir'), f'build/{SCAN_BUILD_OUTPUT_DIR}')} --configuration {self.build.getProperty('configuration')} "
         build_command += f"--only-smart-pointers --analyzer-path={os.path.join(self.getProperty('builddir'), 'llvm-project/build/bin/clang')} "
         build_command += '--scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot=macosx --preprocessor-additions=CLANG_WEBKIT_BRANCH=1 '
         build_command += '2>&1 | python3 Tools/Scripts/filter-test-logs scan-build --output build-log.txt'

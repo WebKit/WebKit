@@ -232,7 +232,7 @@
                   },
                   {
                   "name": "Apple-Sonoma-Smart-Pointer-Static-Analyzer-Build", "factory": "SmartPointerStaticAnalyzerFactory",
-                  "platform": "mac-sonoma", "configuration": "debug", "architectures": ["arm64"],
+                  "platform": "mac-sonoma", "configuration": "release", "architectures": ["arm64"],
                   "workernames": ["bot600"]
                   },
                   { "name": "Apple-Ventura-Release-Build", "factory": "BuildFactory",
