@@ -295,7 +295,7 @@ guint createShowOptionMenuSignal(WebKitWebViewClass* webViewClass)
         WEBKIT_TYPE_RECTANGLE | G_SIGNAL_TYPE_STATIC_SCOPE);
 }
 
-#if ENABLE(2022_GLIB_API)
+#if ENABLE(WPE_PLATFORM)
 /**
  * webkit_web_view_toggle_inspector:
  * @web_view: a #WebKitWebView
