@@ -8087,3 +8087,14 @@ imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/global-mutable-prototy
 # Below tests give `Error fetching /interfaces/webidl.idl` in test output
 imported/w3c/web-platform-tests/WebIDL/idlharness.any.html [ Skip ]
 imported/w3c/web-platform-tests/WebIDL/idlharness.any.worker.html [ Skip ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=279917 ([EWS] pre-existing failures in macOS - ASSERTION FAILED: didRemove in Source/WebKit/UIProcess/WebPageProxy (279917))
+fast/loader/stop-provisional-loads.html [ Skip ]
+http/tests/contentextensions/block-cookies-in-image-load-in-onunload.html [ Skip ]
+http/tests/navigation/image-load-in-pagehide-handler.html [ Skip ]
+http/tests/navigation/image-load-in-unload-handler.html [ Skip ]
+http/wpt/beacon/sendBeacon-in-pagehide.html [ Skip ]
+http/wpt/fetch/fetch-in-pagehide.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-from-unsafe-none.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-same-origin-report-to.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-same-origin.https.html [ Skip ]
