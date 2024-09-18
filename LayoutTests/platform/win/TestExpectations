@@ -1329,6 +1329,10 @@ editing/style/preserve-selection-direction.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.detachedcanvas.html [ Skip ] # Failure
 imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.self.2.html [ Skip ] # Failure
 
+imported/w3c/web-platform-tests/html/semantics/rellist-feature-detection.html [ Skip ] # Failure
+
+webkit.org/b/279647 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-redirect-to-javascript.html [ Skip ] # Crash
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # forms
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -2124,7 +2128,27 @@ imported/w3c/web-platform-tests/html/links [ Skip ]
 imported/w3c/web-platform-tests/html/obsolete [ Skip ]
 imported/w3c/web-platform-tests/html/rendering [ Skip ]
 imported/w3c/web-platform-tests/html/select [ Skip ]
-imported/w3c/web-platform-tests/html/semantics [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/disabled-elements [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/document-metadata [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/edits [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/grouping-content [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/interactive-elements [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/invokers [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/links [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/popovers [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1 [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/sections [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/selectors [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/tabular-data [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-bdi-element [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-bdo-element [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-b-element [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-br-element [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-ruby-element [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-time-element [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-wbr-element [ Skip ]
 imported/w3c/web-platform-tests/html/syntax [ Skip ]
 imported/w3c/web-platform-tests/html/the-xhtml-syntax [ Skip ]
 imported/w3c/web-platform-tests/html/user-activation [ Skip ]
