@@ -3105,6 +3105,12 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
 
     g_object_set(m_pipeline.get(), "mute", static_cast<gboolean>(player->muted()), nullptr);
 
+    // From GStreamer 1.22.0, uridecodebin3 is created in playbin3's _init(), so "element-setup" isn't called with it.
+    if (!m_isLegacyPlaybin && webkitGstCheckVersion(1, 22, 0)) {
+        if (auto uriDecodeBin3 = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_pipeline.get()), "uridecodebin3")))
+            configureElement(uriDecodeBin3.get());
+    }
+
     g_signal_connect(GST_BIN_CAST(m_pipeline.get()), "element-setup", G_CALLBACK(+[](GstBin*, GstElement* element, MediaPlayerPrivateGStreamer* player) {
         player->configureElement(element);
     }), this);
