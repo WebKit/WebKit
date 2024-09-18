@@ -201,36 +201,46 @@ protected:
     
     void appendSIMDLaneIndexAndType(unsigned imm6)
     {
-        unsigned lane = 0;
-        if ((imm6 & 0b100001) == 0b000001) {
-            bufferPrintf(".8B");
-            lane = ((imm6 & 0b011110) >> 1);
-        } else if ((imm6 & 0b100001) == 0b000001) {
-            bufferPrintf(".16B");
-            lane = ((imm6 & 0b011110) >> 1);
-        } else if ((imm6 & 0b100011) == 0b000010) {
-            bufferPrintf(".H");
-            lane = ((imm6 & 0b011100) >> 2);
-        } else if ((imm6 & 0b100111) == 0b000100) {
-            bufferPrintf(".S");
-            lane = ((imm6 & 0b011000) >> 3);
-            // This is overly permissive; for some instructions (like umov), bit 6 must be 1.
-        } else if ((imm6 & 0b001111) == 0b001000) {
-            bufferPrintf(".D");
-            lane = ((imm6 & 0b010000) >> 4);
-        } else {
-            dataLogLn("Dissassembler saw invalid simd lane type ", imm6);
-            bufferPrintf(".INVALID_LANE_TYPE");
-        }
+        unsigned q = imm6 >> 5;
+        unsigned imm5 = imm6 & 0x1F;
+
+        appendSIMDLaneType(q, size());
+
+        unsigned lane = (imm5 & 0xF) >> 1;
         bufferPrintf("[#%u]", lane);
     }
-    
-    void appendSIMDLaneType(unsigned q)
+
+    void appendSIMDLaneType(unsigned q, unsigned size)
     {
-        if (q)
-            bufferPrintf(".16B");
-        else
-            bufferPrintf(".8B");
+        switch (size) {
+        case 0:
+            if (q)
+                bufferPrintf(".16B");
+            else
+                bufferPrintf(".8B");
+            break;
+        case 1:
+            if (q)
+                bufferPrintf(".8H");
+            else
+                bufferPrintf(".4H");
+            break;
+        case 2:
+            if (q)
+                bufferPrintf(".4S");
+            else
+                bufferPrintf(".2S");
+            break;
+        case 3:
+            if (q)
+                bufferPrintf(".2D");
+            else
+                bufferPrintf(".1D");
+            break;
+        default:
+            bufferPrintf(".UNKNOWN");
+            break;
+        }
     }
 
     static constexpr int bufferSize = 101;

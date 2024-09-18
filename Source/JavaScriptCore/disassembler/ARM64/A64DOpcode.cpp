@@ -1874,12 +1874,30 @@ const char* A64DOpcodeVectorDataProcessingLogical1Source::format()
 const char* A64DOpcodeVectorDataProcessingLogical1Source::opName()
 {
     switch (op10_15()) {
-    case 0b000111:
+    case 0b00111:
         return "ins";
-    case 0b001111:
+    case 0b01111:
         return "umov";
+    case 0b00110:
+        return "uzp1";
+    case 0b01010:
+        return "trn1";
+    case 0b01110:
+        return "zip1";
+    case 0b10110:
+        return "uzip2";
+    case 0b11010:
+        return "trn2";
+    case 0b11110:
+        return "zip2";
+    case 0b00011:
+        return "dup";
+    case 0b01011:
+        return "smov";
+    case 0b01000:
+        return "tbl";
     default:
-        dataLogLn("Dissassembler saw unknown simd one source instruction opcode ", op10_15());
+        dataLogLn("Dissassembler saw unknown simd 1 source instruction opcode ", op10_15());
         return "SIMDUK";
     }
 }
@@ -1887,7 +1905,7 @@ const char* A64DOpcodeVectorDataProcessingLogical1Source::opName()
 const char* A64DOpcodeVectorDataProcessingLogical2Source::format()
 {
     appendInstructionName(opName());
-    appendSIMDLaneType(q());
+    appendSIMDLaneType(q(), size());
     appendSeparator();
     appendCharacter('v');
     appendCharacter('/');
@@ -1909,6 +1927,10 @@ const char* A64DOpcodeVectorDataProcessingLogical2Source::opName()
     switch (op10_15()) {
     case 0b00111:
         return "orr";
+    case 0b11001:
+        return "smax";
+    case 0b10010:
+        return "bsl";
     default:
         dataLogLn("Dissassembler saw unknown simd 2 source instruction opcode ", op10_15());
         return "SIMDUK";
