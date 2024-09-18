@@ -27,6 +27,7 @@
 
 #include "DatabaseUtilities.h"
 #include "ResourceLoadStatisticsClassifier.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FrameIdentifier.h>
@@ -353,6 +354,7 @@ private:
     bool createUniqueIndices() final;
     bool createSchema() final;
     void addMissingTablesIfNecessary();
+    void addLoginStatusTableIfNecessary();
     bool missingUniqueIndices();
     bool needsUpdatedSchema() final;
     bool missingReferenceToObservedDomains();
