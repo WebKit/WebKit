@@ -64,6 +64,7 @@ class StyleRulePage;
 class StyleRuleSupports;
 class StyleRuleViewport;
 class StyleRuleViewTransition;
+class StyleRuleInternalBaseAppearance;
 class StyleSheetContents;
 class ImmutableStyleProperties;
 class Element;
@@ -165,6 +166,7 @@ private:
     RefPtr<StyleRuleScope> consumeScopeRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleStartingStyle> consumeStartingStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleViewTransition> consumeViewTransitionRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
+    RefPtr<StyleRuleInternalBaseAppearance> consumeInternalBaseAppearanceRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
 
     RefPtr<StyleRuleKeyframe> consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleBase> consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);

@@ -377,6 +377,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(Element& element, const 
         collector.matchUserRules();
     }
     collector.addAuthorKeyframeRules(keyframe);
+
     Builder builder(*state.style(), builderContext(state), collector.matchResult(), CascadeLevel::Author);
     builder.state().setIsBuildingKeyframeStyle();
     builder.applyAllProperties();

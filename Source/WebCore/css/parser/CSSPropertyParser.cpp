@@ -242,6 +242,9 @@ bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, con
     case StyleRuleType::ViewTransition:
         parseSuccess = parser.parseViewTransitionDescriptor(propertyID);
         break;
+    case StyleRuleType::InternalBaseAppearance:
+        parseSuccess = parser.parseInternalBaseAppearanceDescriptor(propertyID, important);
+        break;
     default:
         parseSuccess = parser.parseValueStart(propertyID, important);
         break;
@@ -669,6 +672,16 @@ bool CSSPropertyParser::parsePageDescriptor(CSSPropertyID property, bool importa
 
     addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), false);
     return true;
+}
+
+bool CSSPropertyParser::parseInternalBaseAppearanceDescriptor(CSSPropertyID property, bool important)
+{
+    ASSERT(m_context.mode == UASheetMode);
+
+    if (property == CSSPropertyAppearance)
+        return false;
+
+    return parseValueStart(property, important);
 }
 
 bool CSSPropertyParser::consumeFont(bool important)

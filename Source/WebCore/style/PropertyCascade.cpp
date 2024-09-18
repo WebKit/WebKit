@@ -196,7 +196,10 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
     if (m_maximumCascadeLayerPriorityForRollback && !includePropertiesForRollback())
         return false;
 
-    if (matchedProperties.isStartingStyle == IsStartingStyle::Yes && !m_includedProperties.contains(PropertyType::StartingStyle))
+    if ((matchedProperties.atRuleTypes & AtRuleType::StartingStyle) && !m_includedProperties.contains(PropertyType::StartingStyle))
+        return false;
+
+    if ((matchedProperties.atRuleTypes & AtRuleType::BaseAppearance) && !m_includedProperties.contains(PropertyType::BaseAppearanceStyle))
         return false;
 
     auto propertyAllowlist = matchedProperties.allowlistType;
@@ -400,6 +403,12 @@ const HashSet<AnimatableCSSProperty> PropertyCascade::overriddenAnimatedProperti
     if (m_animationLayer)
         return m_animationLayer->overriddenProperties;
     return { };
+}
+
+void PropertyCascade::addBaseAppearanceStyles()
+{
+    const_cast<OptionSet<PropertyType>&>(m_includedProperties).add(PropertyCascade::PropertyType::BaseAppearanceStyle);
+    buildCascade();
 }
 
 }

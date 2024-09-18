@@ -49,7 +49,8 @@ public:
         AfterAnimation = 1 << 3,
         AfterTransition = 1 << 4,
         StartingStyle = 1 << 5,
-        NonCacheable = 1 << 6,
+        BaseAppearanceStyle = 1 << 6,
+        NonCacheable = 1 << 7,
     };
     static constexpr OptionSet<PropertyType> normalProperties() { return { PropertyType::NonInherited,  PropertyType::Inherited }; }
     static constexpr OptionSet<PropertyType> startingStyleProperties() { return normalProperties() | PropertyType::StartingStyle; }
@@ -87,6 +88,8 @@ public:
 
     PropertyBitSet& propertyIsPresent() { return m_propertyIsPresent; }
     const PropertyBitSet& propertyIsPresent() const { return m_propertyIsPresent; }
+
+    void addBaseAppearanceStyles();
 
 private:
     void buildCascade();

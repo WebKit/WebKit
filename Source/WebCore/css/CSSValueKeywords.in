@@ -903,7 +903,7 @@ anywhere
 
 // -webkit-appearance
 // The order here must match the order in the StyleAppearance enum in StyleAppearance.h.
-// All appearance values that should be accepted by the parser should be listed between 'base' and 'textarea':
+// All appearance values that should be accepted by the parser should be listed between 'base' and 'textfield':
 base
 checkbox
 radio

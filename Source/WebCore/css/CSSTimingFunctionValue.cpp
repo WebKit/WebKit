@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSTimingFunctionValue.h"
 
+#include "CSSPrimitiveValue.h"
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 

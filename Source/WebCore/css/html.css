@@ -1492,3 +1492,51 @@ ins, del {
 :root:lang(zh), [lang|=zh] {
     text-underline-position: left;
 }
+
+/* Form control base appearance (TBD) */
+
+@-internal-base-appearance {
+    input,
+    textarea {
+      appearance: none;
+      border: 1px solid currentColor;
+      background-color: transparent;
+      color: inherit;
+      font: inherit;
+      padding: 0.25em;
+    }
+  
+    ::placeholder {
+      color: color-mix(in lab, currentColor 50%, transparent);
+    }
+  
+    input[type=button],
+    input[type=submit],
+    input[type=reset],
+    button {
+      border: 1px solid currentColor;
+      background-color: color-mix(in lab, currentColor 10%, transparent);
+      color: inherit;
+      font: inherit;
+      padding: 0.25em .5em;
+      text-box: trim-both;
+    }
+  
+    :is(
+      input[type=button],
+      input[type=submit],
+      input[type=reset],
+      button
+    ):enabled:hover  {
+      background-color: color-mix(in lab, currentColor 20%, transparent);
+    }
+  
+    :is(
+      input[type=button],
+      input[type=submit],
+      input[type=reset],
+      button
+    ):enabled:hover:active  {
+      background-color: color-mix(in lab, currentColor 30%, transparent);
+    }
+}

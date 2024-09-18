@@ -56,6 +56,7 @@ struct SameSizeAsRuleData {
     unsigned b;
     unsigned c;
     unsigned d[4];
+    bool e;
 };
 
 static_assert(sizeof(RuleData) == sizeof(SameSizeAsRuleData), "RuleData should stay small");
@@ -166,7 +167,7 @@ static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector* se
     return PropertyAllowlist::None;
 }
 
-RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned selectorListIndex, unsigned position, IsStartingStyle isStartingStyle)
+RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned selectorListIndex, unsigned position, OptionSet<AtRuleType> atRuleTypes)
     : m_styleRule(&styleRule)
     , m_selectorIndex(selectorIndex)
     , m_selectorListIndex(selectorListIndex)
@@ -176,7 +177,7 @@ RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned 
     , m_containsUncommonAttributeSelector(computeContainsUncommonAttributeSelector(*selector()))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector()))
     , m_propertyAllowlist(enumToUnderlyingType(determinePropertyAllowlist(selector())))
-    , m_isStartingStyle(enumToUnderlyingType(isStartingStyle))
+    , m_atRuleTypes(atRuleTypes.toRaw())
     , m_isEnabled(true)
     , m_descendantSelectorIdentifierHashes(SelectorFilter::collectHashes(*selector()))
 {
