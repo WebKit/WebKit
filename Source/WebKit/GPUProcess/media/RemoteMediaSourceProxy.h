@@ -74,6 +74,7 @@ public:
     void failedToCreateRenderer(RendererType) final;
 
     void shutdown();
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
 private:
     // IPC::MessageReceiver

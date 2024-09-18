@@ -175,6 +175,12 @@ void RemoteMediaSourceProxy::shutdown()
     }, m_identifier);
 }
 
+const SharedPreferencesForWebProcess& RemoteMediaSourceProxy::sharedPreferencesForWebProcess() const
+{
+    auto connectionToWebProcess = m_connectionToWebProcess.get();
+    return connectionToWebProcess->sharedPreferencesForWebProcess();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)

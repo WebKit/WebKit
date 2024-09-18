@@ -366,6 +366,12 @@ void RemoteSourceBufferProxy::shutdown()
     }, m_identifier);
 }
 
+const SharedPreferencesForWebProcess& RemoteSourceBufferProxy::sharedPreferencesForWebProcess() const
+{
+    auto connectionToWebProcess = m_connectionToWebProcess.get();
+    return connectionToWebProcess->sharedPreferencesForWebProcess();
+}
+
 #undef MESSAGE_CHECK
 
 } // namespace WebKit

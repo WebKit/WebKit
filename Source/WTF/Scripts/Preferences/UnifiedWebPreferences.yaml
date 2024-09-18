@@ -4329,6 +4329,7 @@ ManagedMediaSourceEnabled:
       default: WebKit::defaultManagedMediaSourceEnabled()
     WebCore:
       default: true
+  sharedPreferenceForWebProcess: true
 
 ManagedMediaSourceHighThreshold:
   type: double
@@ -4700,6 +4701,7 @@ MediaSourceEnabled:
     WebCore:
       "ENABLE(MEDIA_SOURCE)": true
       default: false
+  sharedPreferenceForWebProcess: true
 
 MediaSourceInWorkerEnabled:
   type: bool

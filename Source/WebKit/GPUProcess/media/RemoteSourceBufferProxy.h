@@ -64,6 +64,7 @@ public:
     virtual ~RemoteSourceBufferProxy();
 
     void shutdown();
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
 private:
     RemoteSourceBufferProxy(GPUConnectionToWebProcess&, RemoteSourceBufferIdentifier, Ref<WebCore::SourceBufferPrivate>&&, RemoteMediaPlayerProxy&);
