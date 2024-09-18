@@ -126,6 +126,11 @@ void RemoteCDMInstanceProxy::createSession(uint64_t logIdentifier, CompletionHan
     completion(identifier);
 }
 
+Ref<WebCore::CDMInstance> RemoteCDMInstanceProxy::protectedInstance() const
+{
+    return m_instance;
+}
+
 }
 
 #endif
