@@ -549,10 +549,11 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
     auto rangeAfterReplace = characterRange(sessionRange, *selectionRange);
 
     compositionSessionDidFinishReplacement(sourceAnimationUUID, destinationAnimationUUID, rangeAfterReplace, attributedText.string);
-    document->selection().clear();
 
     if (shouldCommitAfterReplacement)
         commitComposition(*state, *document);
+
+    document->selection().clear();
 }
 
 void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange(const WritingTools::Session& session, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished)
