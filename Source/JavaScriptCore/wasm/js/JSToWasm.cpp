@@ -253,6 +253,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> createJSToWasmJITShared()
         // Update |callee|
         jit.boxNativeCallee(GPRInfo::regWS1, GPRInfo::regWA0);
         jit.storePtr(GPRInfo::regWA0, CCallHelpers::addressFor(CallFrameSlot::callee));
+        if constexpr (is32Bit())
+            jit.store32(CCallHelpers::TrustedImm32(JSValue::NativeCalleeTag), CCallHelpers::tagFor(CallFrameSlot::callee));
 
         jit.loadPtr(CCallHelpers::Address(GPRInfo::regWS0, WebAssemblyFunction::offsetOfInstance()), GPRInfo::wasmContextInstancePointer);
         // Memory
@@ -355,7 +357,12 @@ MacroAssemblerCodeRef<JITThunkPtrTag> createJSToWasmJITShared()
 
         jit.load32(CCallHelpers::Address(GPRInfo::regWS0, JSEntrypointCallee::offsetOfFrameSize()), GPRInfo::regWS1);
         jit.addPtr(CCallHelpers::TrustedImmPtr(JSEntrypointCallee::SpillStackSpaceAligned), GPRInfo::regWS1);
+#if CPU(ARM_THUMB2)
+        jit.subPtr(GPRInfo::callFrameRegister, GPRInfo::regWS1, GPRInfo::regWS1);
+        jit.move(GPRInfo::regWS1, CCallHelpers::stackPointerRegister);
+#else
         jit.subPtr(GPRInfo::callFrameRegister, GPRInfo::regWS1, CCallHelpers::stackPointerRegister);
+#endif
 
         // Save return registers
 #if CPU(ARM64)
