@@ -59,7 +59,7 @@ async function testRTCLogs()
     });
 
     gatherRTCLogs(logs => {
-        if (logs.type === "logs")
+        if (logs.type === "backend-logs")
             resolveCallback(logs);
     });
 
