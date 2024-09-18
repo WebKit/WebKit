@@ -537,22 +537,6 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
     return false;
 }
 
-// maps.google.com https://bugs.webkit.org/show_bug.cgi?id=199904
-std::optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(EventTarget* target) const
-{
-    if (!shouldDispatchSimulatedMouseEvents(target))
-        return { };
-
-    // On Google Maps, we want to limit simulated mouse events to dragging the little man that allows entering into Street View.
-    if (isGoogleMaps()) {
-        if (RefPtr element = dynamicDowncast<Element>(target); element && element->getAttribute(HTMLNames::classAttr) == "widget-expand-button-pegman-icon"_s)
-            return Event::IsCancelable::Yes;
-        return { };
-    }
-
-    return Event::IsCancelable::Yes;
-}
-
 // sites.google.com rdar://58653069
 bool Quirks::shouldPreventDispatchOfTouchEvent(const AtomString& touchEventType, EventTarget* target) const
 {

@@ -69,7 +69,6 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     bool shouldDispatchSimulatedMouseEvents(const EventTarget*) const;
     bool shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTarget*) const;
-    std::optional<Event::IsCancelable> simulatedMouseEventTypeForTarget(EventTarget*) const;
     bool shouldPreventDispatchOfTouchEvent(const AtomString&, EventTarget*) const;
 #endif
     bool shouldDisablePointerEventsQuirk() const;
