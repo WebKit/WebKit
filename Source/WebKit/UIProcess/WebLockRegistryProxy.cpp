@@ -82,8 +82,9 @@ void WebLockRegistryProxy::releaseLock(WebCore::ClientOrigin&& clientOrigin, Web
 {
     MESSAGE_CHECK(lockIdentifier.processIdentifier() == m_process->coreProcessIdentifier());
     MESSAGE_CHECK(clientID.processIdentifier() == m_process->coreProcessIdentifier());
-    if (RefPtr dataStore = protectedProcess()->websiteDataStore())
-        dataStore->protectedWebLockRegistry()->releaseLock(m_process->sessionID(), WTFMove(clientOrigin), lockIdentifier, clientID, WTFMove(name));
+    Ref process = m_process.get();
+    if (RefPtr dataStore = process->websiteDataStore())
+        dataStore->protectedWebLockRegistry()->releaseLock(process->sessionID(), WTFMove(clientOrigin), lockIdentifier, clientID, WTFMove(name));
 }
 
 void WebLockRegistryProxy::abortLockRequest(WebCore::ClientOrigin&& clientOrigin, WebCore::WebLockIdentifier lockIdentifier, WebCore::ScriptExecutionContextIdentifier clientID, String&& name, CompletionHandler<void(bool)>&& completionHandler)
@@ -123,8 +124,9 @@ void WebLockRegistryProxy::processDidExit()
     if (!m_hasEverRequestedLocks)
         return;
 
-    if (RefPtr dataStore = WebsiteDataStore::existingDataStoreForSessionID(m_process->sessionID()))
-        dataStore->protectedWebLockRegistry()->clientsAreGoingAway(m_process->coreProcessIdentifier());
+    Ref process = m_process.get();
+    if (RefPtr dataStore = WebsiteDataStore::existingDataStoreForSessionID(process->sessionID()))
+        dataStore->protectedWebLockRegistry()->clientsAreGoingAway(process->coreProcessIdentifier());
 }
 
 #undef MESSAGE_CHECK
