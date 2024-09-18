@@ -165,7 +165,7 @@ private:
 
     void didFailProvisionalLoad() final
     {
-        ASSERT(!m_loadingFrameCount);
+        ASSERT(m_loadingFrameCount);
         m_loadingFrameCount--;
     }
 
