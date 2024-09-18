@@ -50,6 +50,7 @@ WEBKIT_OPTION_DEFINE(USE_LIBDRM "Whether to enable usage of libdrm." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBHYPHEN "Whether to enable the default automatic hyphenation implementation." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBSECRET "Whether to enable the persistent credential storage using libsecret." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_SOUP2 "Whether to enable usage of Soup 2 instead of Soup 3." PUBLIC OFF)
+WEBKIT_OPTION_DEFINE(USE_SYSTEM_SYSPROF_CAPTURE "Whether to use a system-provided libsysprof-capture" PUBLIC ON)
 
 WEBKIT_OPTION_DEPEND(ENABLE_DOCUMENTATION ENABLE_INTROSPECTION)
 WEBKIT_OPTION_DEPEND(USE_GBM USE_LIBDRM)
@@ -59,7 +60,6 @@ WEBKIT_OPTION_CONFLICT(USE_GTK4 USE_SOUP2)
 # Private options specific to the GTK port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
 WEBKIT_OPTION_DEFINE(USE_SYSPROF_CAPTURE "Whether to use libsysprof-capture for tracing." PRIVATE ON)
-WEBKIT_OPTION_DEFINE(USE_SYSTEM_SYSPROF_CAPTURE "Whether to use a system-provided libsysprof-capture" PRIVATE ON)
 WEBKIT_OPTION_DEFINE(USE_SYSTEM_UNIFDEF "Whether to use a system-provided unifdef" PRIVATE ON)
 
 WEBKIT_OPTION_DEPEND(USE_SYSTEM_SYSPROF_CAPTURE USE_SYSPROF_CAPTURE)
