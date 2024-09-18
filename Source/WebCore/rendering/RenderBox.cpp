@@ -5824,7 +5824,7 @@ void RenderBox::updateFloatPainterAfterSelfPaintingLayerChange()
     // Find the ancestor renderer that is supposed to paint this float now that it is not self painting anymore.
     auto floatingObjectForFloatPainting = [&]() -> FloatingObject* {
         auto& layoutContext = view().frameView().layoutContext();
-        if (!layoutContext.isInLayout() || layoutContext.subtreeLayoutRoot() != this)
+        if (!layoutContext.isInLayout() || !layoutContext.hasSubtreeLayoutRoot(*this))
             return nullptr;
 
         FloatingObject* floatPainter = nullptr;
