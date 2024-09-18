@@ -1933,7 +1933,8 @@
       ],
       "expertise" : "JavaScriptCore",
       "github" : "dhecht",
-      "name" : "Dan Hecht"
+      "name" : "Dan Hecht",
+      "status" : "committer"
    },
    {
       "emails" : [
