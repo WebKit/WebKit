@@ -405,12 +405,7 @@ void RemoteDisplayListRecorderProxy::recordFillEllipse(const FloatRect& rect)
 }
 
 #if ENABLE(VIDEO)
-void RemoteDisplayListRecorderProxy::recordPaintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
-{
-    send(Messages::RemoteDisplayListRecorder::PaintFrameForMedia(player.identifier(), destination));
-}
-
-void RemoteDisplayListRecorderProxy::recordPaintVideoFrame(VideoFrame& frame, const FloatRect& destination, bool shouldDiscardAlpha)
+void RemoteDisplayListRecorderProxy::recordDrawVideoFrame(VideoFrame& frame, const FloatRect& destination, ImageOrientation orientation, bool shouldDiscardAlpha)
 {
 #if PLATFORM(COCOA)
     Locker locker { m_sharedVideoFrameWriterLock };
@@ -424,7 +419,7 @@ void RemoteDisplayListRecorderProxy::recordPaintVideoFrame(VideoFrame& frame, co
     });
     if (!sharedVideoFrame)
         return;
-    send(Messages::RemoteDisplayListRecorder::PaintVideoFrame(WTFMove(*sharedVideoFrame), destination, shouldDiscardAlpha));
+    send(Messages::RemoteDisplayListRecorder::DrawVideoFrame(WTFMove(*sharedVideoFrame), destination, orientation, shouldDiscardAlpha));
 #endif
 }
 #endif

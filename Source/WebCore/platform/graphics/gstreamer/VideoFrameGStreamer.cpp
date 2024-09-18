@@ -546,7 +546,7 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
     callback({ });
 }
 
-void VideoFrame::paintInContext(GraphicsContext& context, const FloatRect& destination, const ImageOrientation& destinationImageOrientation, bool shouldDiscardAlpha)
+void VideoFrame::draw(GraphicsContext& context, const FloatRect& destination, ImageOrientation destinationImageOrientation, bool shouldDiscardAlpha)
 {
     auto image = convertSampleToImage(downcast<VideoFrameGStreamer>(*this).sample());
     if (!image)

@@ -36,8 +36,6 @@
 #include "ImageBuffer.h"
 #include "ImageOrientation.h"
 #include "IntRect.h"
-#include "MediaPlayer.h"
-#include "MediaPlayerPrivate.h"
 #include "RoundedRect.h"
 #include "SystemImage.h"
 #include "TextBoxIterator.h"
@@ -433,6 +431,13 @@ void GraphicsContext::drawControlPart(ControlPart& part, const FloatRoundedRect&
     part.draw(*this, borderRect, deviceScaleFactor, style);
 }
 
+#if ENABLE(VIDEO)
+void GraphicsContext::drawVideoFrame(VideoFrame& frame, const FloatRect& destination, ImageOrientation orientation, bool shouldDiscardAlpha)
+{
+    frame.draw(*this, destination, orientation, shouldDiscardAlpha);
+}
+#endif
+
 void GraphicsContext::clipRoundedRect(const FloatRoundedRect& rect)
 {
     Path path;
@@ -653,17 +658,5 @@ Vector<FloatPoint> GraphicsContext::centerLineAndCutOffCorners(bool isVerticalLi
 
     return { point1, point2 };
 }
-
-#if ENABLE(VIDEO)
-void GraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
-{
-    player.playerPrivate()->paintCurrentFrameInContext(*this, destination);
-}
-
-void GraphicsContext::paintVideoFrame(VideoFrame& frame, const FloatRect& destination, bool shouldDiscardAlpha)
-{
-    frame.paintInContext(*this, destination, ImageOrientation::Orientation::None, shouldDiscardAlpha);
-}
-#endif
 
 } // namespace WebCore

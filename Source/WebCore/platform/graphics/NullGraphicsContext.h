@@ -137,7 +137,7 @@ private:
     void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect&, const Color&) final { }
 
 #if ENABLE(VIDEO)
-    void paintFrameForMedia(MediaPlayer&, const FloatRect&) final { }
+    void drawVideoFrame(VideoFrame&, const FloatRect&, ImageOrientation, bool) final { }
 #endif
 
 private:

@@ -129,8 +129,7 @@ protected:
     virtual void recordFillPath(const Path&) = 0;
     virtual void recordFillEllipse(const FloatRect&) = 0;
 #if ENABLE(VIDEO)
-    virtual void recordPaintFrameForMedia(MediaPlayer&, const FloatRect& destination) = 0;
-    virtual void recordPaintVideoFrame(VideoFrame&, const FloatRect& destination, bool shouldDiscardAlpha) = 0;
+    virtual void recordDrawVideoFrame(VideoFrame&, const FloatRect& destination, ImageOrientation, bool shouldDiscardAlpha) = 0;
 #endif
     virtual void recordStrokeRect(const FloatRect&, float) = 0;
 #if ENABLE(INLINE_PATH_DATA)
@@ -287,8 +286,7 @@ private:
     WEBCORE_EXPORT void clipToImageBuffer(ImageBuffer&, const FloatRect&) final;
 
 #if ENABLE(VIDEO)
-    WEBCORE_EXPORT void paintFrameForMedia(MediaPlayer&, const FloatRect& destination) final;
-    WEBCORE_EXPORT void paintVideoFrame(VideoFrame&, const FloatRect&, bool shouldDiscardAlpha) final;
+    WEBCORE_EXPORT void drawVideoFrame(VideoFrame&, const FloatRect&, ImageOrientation, bool shouldDiscardAlpha) final;
 #endif
 
     WEBCORE_EXPORT void applyDeviceScaleFactor(float) final;

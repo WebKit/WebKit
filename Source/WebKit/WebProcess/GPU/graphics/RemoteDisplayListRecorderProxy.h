@@ -122,8 +122,7 @@ private:
     void recordFillPath(const WebCore::Path&) final;
     void recordFillEllipse(const WebCore::FloatRect&) final;
 #if ENABLE(VIDEO)
-    void recordPaintFrameForMedia(WebCore::MediaPlayer&, const WebCore::FloatRect& destination) final;
-    void recordPaintVideoFrame(WebCore::VideoFrame&, const WebCore::FloatRect&, bool shouldDiscardAlpha) final;
+    void recordDrawVideoFrame(WebCore::VideoFrame&, const WebCore::FloatRect& distination, WebCore::ImageOrientation, bool shouldDiscardAlpha) final;
 #endif
     void recordStrokeRect(const WebCore::FloatRect&, float) final;
 #if ENABLE(INLINE_PATH_DATA)

@@ -632,7 +632,7 @@ RefPtr<Image> GraphicsContextGL::videoFrameToImage(VideoFrame& frame)
     auto imageBuffer = ImageBuffer::create(size, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
     if (!imageBuffer)
         return { };
-    imageBuffer->context().paintVideoFrame(frame, { { }, size }, true);
+    imageBuffer->context().drawVideoFrame(frame, { { }, size }, ImageOrientation::Orientation::None, true);
     return BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTFMove(imageBuffer)));
 }
 #endif

@@ -522,16 +522,6 @@ void RemoteDisplayListRecorder::fillEllipse(const FloatRect& rect)
     handleItem(DisplayList::FillEllipse(rect));
 }
 
-#if ENABLE(VIDEO)
-void RemoteDisplayListRecorder::paintFrameForMedia(MediaPlayerIdentifier identifier, const FloatRect& destination)
-{
-    m_renderingBackend->gpuConnectionToWebProcess().performWithMediaPlayerOnMainThread(identifier, [imageBuffer = m_imageBuffer, destination](MediaPlayer& player) {
-        // It is currently not safe to call paintFrameForMedia() off the main thread.
-        imageBuffer->context().paintFrameForMedia(player, destination);
-    });
-}
-#endif
-
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
 SharedVideoFrameReader& RemoteDisplayListRecorder::sharedVideoFrameReader()
 {
@@ -541,12 +531,11 @@ SharedVideoFrameReader& RemoteDisplayListRecorder::sharedVideoFrameReader()
     return *m_sharedVideoFrameReader;
 }
 
-void RemoteDisplayListRecorder::paintVideoFrame(SharedVideoFrame&& frame, const WebCore::FloatRect& destination, bool shouldDiscardAlpha)
+void RemoteDisplayListRecorder::drawVideoFrame(SharedVideoFrame&& frame, const FloatRect& destination, ImageOrientation orientation, bool shouldDiscardAlpha)
 {
     if (auto videoFrame = sharedVideoFrameReader().read(WTFMove(frame)))
-        drawingContext().paintVideoFrame(*videoFrame, destination, shouldDiscardAlpha);
+        drawingContext().drawVideoFrame(*videoFrame, destination, orientation, shouldDiscardAlpha);
 }
-
 
 void RemoteDisplayListRecorder::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
 {

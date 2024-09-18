@@ -100,8 +100,7 @@ private:
     void recordFillPath(const Path&) final;
     void recordFillEllipse(const FloatRect&) final;
 #if ENABLE(VIDEO)
-    void recordPaintFrameForMedia(MediaPlayer&, const FloatRect& destination) final;
-    void recordPaintVideoFrame(VideoFrame&, const FloatRect& destination, bool shouldDiscardAlpha) final;
+    void recordDrawVideoFrame(VideoFrame&, const FloatRect& destination, ImageOrientation, bool shouldDiscardAlpha) final;
 #endif
     void recordStrokeRect(const FloatRect&, float) final;
 #if ENABLE(INLINE_PATH_DATA)

@@ -3987,7 +3987,7 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext& context, const FloatRec
         return;
 
     auto frame = VideoFrameGStreamer::createWrappedSample(m_sample);
-    frame->paintInContext(context, rect, m_videoSourceOrientation, false);
+    frame->draw(context, rect, m_videoSourceOrientation, false);
 }
 
 DestinationColorSpace MediaPlayerPrivateGStreamer::colorSpace()

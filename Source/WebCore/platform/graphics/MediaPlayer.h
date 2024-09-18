@@ -503,7 +503,8 @@ public:
     bool hasClosedCaptions() const;
     void setClosedCaptionsVisible(bool closedCaptionsVisible);
 
-    void paint(GraphicsContext&, const FloatRect&);
+    void paint(GraphicsContext&, const FloatRect& destination);
+    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect& destination);
 
     // copyVideoTextureToPlatformTexture() is used to do the GPU-GPU textures copy without a readback to system memory.
     // The first five parameters denote the corresponding GraphicsContext, destination texture, requested level, requested type and the required internalFormat for destination texture.

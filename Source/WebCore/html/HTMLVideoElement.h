@@ -76,6 +76,9 @@ public:
 
     RefPtr<ImageBuffer> createBufferForPainting(const FloatSize&, RenderingMode, const DestinationColorSpace&, ImageBufferPixelFormat) const;
 
+    // Used by render painting. Best effort, only paint if we already have an image generator or video output available.
+    void paint(GraphicsContext&, const FloatRect&);
+
     // Used by canvas to gain raw pixel access
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 

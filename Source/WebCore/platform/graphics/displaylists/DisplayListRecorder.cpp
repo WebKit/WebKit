@@ -693,21 +693,10 @@ void Recorder::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& dest
 }
 
 #if ENABLE(VIDEO)
-void Recorder::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
-{
-    if (!player.identifier()) {
-        GraphicsContext::paintFrameForMedia(player, destination);
-        return;
-    }
-    ASSERT(player.identifier());
-    appendStateChangeItemIfNecessary();
-    recordPaintFrameForMedia(player, destination);
-}
-
-void Recorder::paintVideoFrame(VideoFrame& frame, const FloatRect& destination, bool shouldDiscardAlpha)
+void Recorder::drawVideoFrame(VideoFrame& frame, const FloatRect& destination, ImageOrientation orientation, bool shouldDiscardAlpha)
 {
     appendStateChangeItemIfNecessary();
-    recordPaintVideoFrame(frame, destination, shouldDiscardAlpha);
+    recordDrawVideoFrame(frame, destination, orientation, shouldDiscardAlpha);
 }
 #endif
 

@@ -52,10 +52,7 @@ class Filter;
 class FilterResults;
 class FloatRoundedRect;
 class Gradient;
-class GraphicsContextPlatformPrivate;
 class ImageBuffer;
-class MediaPlayer;
-class GraphicsContextGL;
 class Path;
 class SystemImage;
 class TextRun;
@@ -284,8 +281,7 @@ public:
     WEBCORE_EXPORT virtual void drawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&);
 
 #if ENABLE(VIDEO)
-    WEBCORE_EXPORT virtual void paintFrameForMedia(MediaPlayer&, const FloatRect& destination);
-    WEBCORE_EXPORT virtual void paintVideoFrame(VideoFrame&, const FloatRect& destination, bool shouldDiscardAlpha);
+    WEBCORE_EXPORT virtual void drawVideoFrame(VideoFrame&, const FloatRect& destination, ImageOrientation, bool shouldDiscardAlpha);
 #endif
 
     // Clipping
