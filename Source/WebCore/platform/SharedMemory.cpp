@@ -31,6 +31,17 @@
 
 namespace WebCore {
 
+bool isMemoryAttributionDisabled()
+{
+    static bool result = []() {
+        const char* value = getenv("WEBKIT_DISABLE_MEMORY_ATTRIBUTION");
+        if (!value)
+            return false;
+        return !strcmp(value, "1");
+    }();
+    return result;
+}
+
 SharedMemoryHandle::SharedMemoryHandle(SharedMemoryHandle::Type&& handle, size_t size)
     : m_handle(WTFMove(handle))
     , m_size(size)

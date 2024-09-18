@@ -34,6 +34,7 @@
 #import "PlatformScreen.h"
 #import "ProcessCapabilities.h"
 #import "ProcessIdentity.h"
+#import "SharedMemory.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/EnumTraits.h>
@@ -616,8 +617,14 @@ void IOSurface::setOwnershipIdentity(const ProcessIdentity& resourceOwner)
 void IOSurface::setOwnershipIdentity(IOSurfaceRef surface, const ProcessIdentity& resourceOwner)
 {
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
-    ASSERT(resourceOwner);
+#if ASSERT_ENABLED
     ASSERT(surface);
+    if (!isMemoryAttributionDisabled())
+        ASSERT(resourceOwner);
+#endif
+
+    if (!resourceOwner)
+        return;
     task_id_token_t ownerTaskIdToken = resourceOwner.taskIdToken();
     auto result = IOSurfaceSetOwnershipIdentity(surface, ownerTaskIdToken, kIOSurfaceMemoryLedgerTagGraphics, 0);
     if (result != kIOReturnSuccess)

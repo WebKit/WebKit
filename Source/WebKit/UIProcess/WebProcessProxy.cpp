@@ -92,6 +92,7 @@
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
+#include <WebCore/SharedMemory.h>
 #include <WebCore/SuddenTermination.h>
 #include <WebCore/WrappedCryptoKey.h>
 #include <optional>
@@ -1110,8 +1111,9 @@ void WebProcessProxy::getNetworkProcessConnection(CompletionHandler<void(Network
 void WebProcessProxy::createGPUProcessConnection(GPUProcessConnectionIdentifier identifier, IPC::Connection::Handle&& connectionHandle)
 {
     WebKit::GPUProcessConnectionParameters parameters;
-#if HAVE(TASK_IDENTITY_TOKEN)
-    ASSERT(m_processIdentity);
+#if ASSERT_ENABLED && HAVE(TASK_IDENTITY_TOKEN)
+    if (!WebCore::isMemoryAttributionDisabled())
+        ASSERT(m_processIdentity);
 #endif
     parameters.webProcessIdentity = m_processIdentity;
     parameters.sharedPreferencesForWebProcess = m_sharedPreferencesForWebProcess;
