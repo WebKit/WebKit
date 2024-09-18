@@ -38,16 +38,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/texmap/TextureMapperTiledBackingStore.h
 )
 
-if (USE_TEXTURE_MAPPER_DMABUF)
-    list(APPEND WebCore_SOURCES
-        platform/graphics/texmap/TextureMapperPlatformLayerProxyDMABuf.cpp
-    )
-
-    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-        platform/graphics/texmap/TextureMapperPlatformLayerProxyDMABuf.h
-    )
-endif ()
-
 if (USE_COORDINATED_GRAPHICS)
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
@@ -182,14 +172,8 @@ endif ()
 if (USE_GBM)
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
         platform/graphics/gbm/DMABufBuffer.h
-        platform/graphics/gbm/DMABufColorSpace.h
-        platform/graphics/gbm/DMABufEGLUtilities.h
-        platform/graphics/gbm/DMABufFormat.h
-        platform/graphics/gbm/DMABufObject.h
-        platform/graphics/gbm/DMABufReleaseFlag.h
         platform/graphics/gbm/DRMDeviceManager.h
         platform/graphics/gbm/DRMDeviceNode.h
-        platform/graphics/gbm/GBMBufferSwapchain.h
         platform/graphics/gbm/GraphicsContextGLTextureMapperGBM.h
         platform/graphics/gbm/GraphicsLayerContentsDisplayDelegateGBM.h
     )

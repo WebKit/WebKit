@@ -34,7 +34,7 @@ namespace WebCore {
 class CoordinatedPlatformLayerBufferVideo final : public CoordinatedPlatformLayerBuffer {
 public:
     static std::unique_ptr<CoordinatedPlatformLayerBufferVideo> create(GstSample*, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
-    CoordinatedPlatformLayerBufferVideo(GstBuffer*, GstVideoInfo*, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
+    CoordinatedPlatformLayerBufferVideo(GstBuffer*, GstVideoInfo*, std::optional<std::pair<uint32_t, uint64_t>>, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>);
     virtual ~CoordinatedPlatformLayerBufferVideo();
 
     std::unique_ptr<CoordinatedPlatformLayerBuffer> copyBuffer() const;
@@ -42,7 +42,10 @@ public:
 private:
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
 
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferIfNeeded(GstBuffer*, GstVideoInfo*, bool gstGLEnabled);
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferIfNeeded(GstBuffer*, GstVideoInfo*, std::optional<std::pair<uint32_t, uint64_t>>, bool gstGLEnabled);
+#if USE(GBM)
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromDMABufMemory(GstBuffer*, GstVideoInfo*, std::optional<std::pair<uint32_t, uint64_t>>);
+#endif
     std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromGLMemory(GstBuffer*, GstVideoInfo*);
 
     GstVideoFrame m_videoFrame;

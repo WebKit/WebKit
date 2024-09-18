@@ -145,6 +145,43 @@ bool GLDisplay::destroyImage(EGLImage image) const
 }
 
 #if USE(GBM)
+static Vector<GLDisplay::DMABufFormat> queryDMABufFormats(EGLDisplay eglDisplay, const Vector<EGLint>& supportedFormats, bool supportModifiers)
+{
+    static PFNEGLQUERYDMABUFFORMATSEXTPROC s_eglQueryDmaBufFormatsEXT = reinterpret_cast<PFNEGLQUERYDMABUFFORMATSEXTPROC>(eglGetProcAddress("eglQueryDmaBufFormatsEXT"));
+    if (!s_eglQueryDmaBufFormatsEXT)
+        return { };
+
+    EGLint formatsCount;
+    if (!s_eglQueryDmaBufFormatsEXT(eglDisplay, 0, nullptr, &formatsCount) || !formatsCount)
+        return { };
+
+    Vector<EGLint> formats(formatsCount);
+    if (!s_eglQueryDmaBufFormatsEXT(eglDisplay, formatsCount, reinterpret_cast<EGLint*>(formats.data()), &formatsCount))
+        return { };
+
+    static PFNEGLQUERYDMABUFMODIFIERSEXTPROC s_eglQueryDmaBufModifiersEXT = supportModifiers ?
+        reinterpret_cast<PFNEGLQUERYDMABUFMODIFIERSEXTPROC>(eglGetProcAddress("eglQueryDmaBufModifiersEXT")) : nullptr;
+
+    return WTF::compactMap(supportedFormats, [&](auto format) -> std::optional<GLDisplay::DMABufFormat> {
+        if (!formats.contains(format))
+            return std::nullopt;
+
+        Vector<uint64_t, 1> dmabufModifiers = { DRM_FORMAT_MOD_INVALID };
+        if (s_eglQueryDmaBufModifiersEXT) {
+            EGLint modifiersCount;
+            if (s_eglQueryDmaBufModifiersEXT(eglDisplay, format, 0, nullptr, nullptr, &modifiersCount) && modifiersCount) {
+                Vector<EGLuint64KHR> modifiers(modifiersCount);
+                if (s_eglQueryDmaBufModifiersEXT(eglDisplay, format, modifiersCount, reinterpret_cast<EGLuint64KHR*>(modifiers.data()), nullptr, &modifiersCount)) {
+                    dmabufModifiers.grow(modifiersCount);
+                    for (int i = 0; i < modifiersCount; ++i)
+                        dmabufModifiers[i] = modifiers[i];
+                }
+            }
+        }
+        return GLDisplay::DMABufFormat { static_cast<uint32_t>(format), WTFMove(dmabufModifiers) };
+    });
+}
+
 const Vector<GLDisplay::DMABufFormat>& GLDisplay::dmabufFormats()
 {
     static std::once_flag onceFlag;
@@ -155,21 +192,6 @@ const Vector<GLDisplay::DMABufFormat>& GLDisplay::dmabufFormats()
         if (!m_extensions.EXT_image_dma_buf_import)
             return;
 
-        static PFNEGLQUERYDMABUFFORMATSEXTPROC s_eglQueryDmaBufFormatsEXT = reinterpret_cast<PFNEGLQUERYDMABUFFORMATSEXTPROC>(eglGetProcAddress("eglQueryDmaBufFormatsEXT"));
-        if (!s_eglQueryDmaBufFormatsEXT)
-            return;
-
-        EGLint formatsCount;
-        if (!s_eglQueryDmaBufFormatsEXT(m_display, 0, nullptr, &formatsCount) || !formatsCount)
-            return;
-
-        Vector<EGLint> formats(formatsCount);
-        if (!s_eglQueryDmaBufFormatsEXT(m_display, formatsCount, reinterpret_cast<EGLint*>(formats.data()), &formatsCount))
-            return;
-
-        static PFNEGLQUERYDMABUFMODIFIERSEXTPROC s_eglQueryDmaBufModifiersEXT = m_extensions.EXT_image_dma_buf_import_modifiers ?
-            reinterpret_cast<PFNEGLQUERYDMABUFMODIFIERSEXTPROC>(eglGetProcAddress("eglQueryDmaBufModifiersEXT")) : nullptr;
-
         // For now we only support formats that can be created with a single GBM buffer for all planes.
         static const Vector<EGLint> s_supportedFormats = {
             DRM_FORMAT_XRGB8888, DRM_FORMAT_RGBX8888, DRM_FORMAT_XBGR8888, DRM_FORMAT_BGRX8888,
@@ -178,28 +200,35 @@ const Vector<GLDisplay::DMABufFormat>& GLDisplay::dmabufFormats()
             DRM_FORMAT_XRGB2101010, DRM_FORMAT_XBGR2101010, DRM_FORMAT_ARGB2101010, DRM_FORMAT_ABGR2101010,
             DRM_FORMAT_XRGB16161616F, DRM_FORMAT_XBGR16161616F, DRM_FORMAT_ARGB16161616F, DRM_FORMAT_ABGR16161616F
         };
-
-        m_dmabufFormats = WTF::compactMap(s_supportedFormats, [&](auto format) -> std::optional<DMABufFormat> {
-            if (!formats.contains(format))
-                return std::nullopt;
-
-            Vector<uint64_t, 1> dmabufModifiers = { DRM_FORMAT_MOD_INVALID };
-            if (s_eglQueryDmaBufModifiersEXT) {
-                EGLint modifiersCount;
-                if (s_eglQueryDmaBufModifiersEXT(m_display, format, 0, nullptr, nullptr, &modifiersCount) && modifiersCount) {
-                    Vector<EGLuint64KHR> modifiers(modifiersCount);
-                    if (s_eglQueryDmaBufModifiersEXT(m_display, format, modifiersCount, reinterpret_cast<EGLuint64KHR*>(modifiers.data()), nullptr, &modifiersCount)) {
-                        dmabufModifiers.grow(modifiersCount);
-                        for (int i = 0; i < modifiersCount; ++i)
-                            dmabufModifiers[i] = modifiers[i];
-                    }
-                }
-            }
-            return DMABufFormat { static_cast<uint32_t>(format), WTFMove(dmabufModifiers) };
-        });
+        m_dmabufFormats = queryDMABufFormats(m_display, s_supportedFormats, m_extensions.EXT_image_dma_buf_import_modifiers);
     });
     return m_dmabufFormats;
 }
+
+#if USE(GSTREAMER)
+const Vector<GLDisplay::DMABufFormat>& GLDisplay::dmabufFormatsForVideo()
+{
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [this] {
+        if (m_display == EGL_NO_DISPLAY)
+            return;
+
+        if (!m_extensions.EXT_image_dma_buf_import)
+            return;
+
+        // Formats supported by the texture mapper.
+        // FIXME: add support for YUY2, YVYU, UYVY, VYUY, AYUV.
+        static const Vector<EGLint> s_supportedFormats = {
+            DRM_FORMAT_XRGB8888, DRM_FORMAT_XBGR8888, DRM_FORMAT_ARGB8888, DRM_FORMAT_ABGR8888,
+            DRM_FORMAT_YUV420, DRM_FORMAT_YVU420, DRM_FORMAT_NV12, DRM_FORMAT_NV21,
+            DRM_FORMAT_YUV444, DRM_FORMAT_YUV411, DRM_FORMAT_YUV422, DRM_FORMAT_P010
+        };
+
+        m_dmabufFormatsForVideo = queryDMABufFormats(m_display, s_supportedFormats, m_extensions.EXT_image_dma_buf_import_modifiers);
+    });
+    return m_dmabufFormatsForVideo;
+}
+#endif
 #endif // USE(GBM)
 
 } // namespace WebCore

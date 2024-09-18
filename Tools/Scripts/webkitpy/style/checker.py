@@ -271,8 +271,6 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GStreamerSinksWorkarounds.h'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GLVideoSinkGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GLVideoSinkGStreamer.h'),
-      os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'DMABufVideoSinkGStreamer.cpp'),
-      os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'DMABufVideoSinkGStreamer.h'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'TextCombinerGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'TextCombinerGStreamer.h'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'TextCombinerPadGStreamer.cpp'),
