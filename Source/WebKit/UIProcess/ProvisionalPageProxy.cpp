@@ -518,11 +518,6 @@ void ProvisionalPageProxy::didDestroyNavigation(WebCore::NavigationIdentifier na
     m_page->didDestroyNavigationShared(protectedProcess(), navigationID);
 }
 
-void ProvisionalPageProxy::startNetworkRequestsForPageLoadTiming(WebCore::FrameIdentifier frameID)
-{
-    m_page->startNetworkRequestsForPageLoadTiming(frameID);
-}
-
 #if USE(QUICK_LOOK)
 void ProvisionalPageProxy::requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&& completionHandler)
 {
@@ -698,11 +693,6 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
 
     if (decoder.messageName() == Messages::WebPageProxy::DidPerformServerRedirect::name()) {
         IPC::handleMessage<Messages::WebPageProxy::DidPerformServerRedirect>(connection, decoder, this, &ProvisionalPageProxy::didPerformServerRedirect);
-        return;
-    }
-
-    if (decoder.messageName() == Messages::WebPageProxy::StartNetworkRequestsForPageLoadTiming::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::StartNetworkRequestsForPageLoadTiming>(connection, decoder, this, &ProvisionalPageProxy::startNetworkRequestsForPageLoadTiming);
         return;
     }
 

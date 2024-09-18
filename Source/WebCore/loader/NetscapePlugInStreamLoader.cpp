@@ -68,6 +68,9 @@ NetscapePlugInStreamLoader::~NetscapePlugInStreamLoader() = default;
 
 void NetscapePlugInStreamLoader::create(LocalFrame& frame, NetscapePlugInStreamLoaderClient& client, ResourceRequest&& request, CompletionHandler<void(RefPtr<NetscapePlugInStreamLoader>&&)>&& completionHandler)
 {
+    if (request.isNull())
+        return completionHandler(nullptr);
+
     Ref loader = adoptRef(*new NetscapePlugInStreamLoader(frame, client));
     loader->init(WTFMove(request), [loader, completionHandler = WTFMove(completionHandler)] (bool initialized) mutable {
         if (!initialized)

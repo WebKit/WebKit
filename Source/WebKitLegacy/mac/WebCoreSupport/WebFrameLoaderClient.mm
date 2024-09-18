@@ -316,7 +316,7 @@ bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(WebCore::Docum
     return true;
 }
 
-void WebFrameLoaderClient::assignIdentifierToInitialRequest(WebCore::ResourceLoaderIdentifier identifier, WebCore::DocumentLoader* loader, const WebCore::ResourceRequest& request)
+void WebFrameLoaderClient::assignIdentifierToInitialRequest(WebCore::ResourceLoaderIdentifier identifier, WebCore::IsMainResourceLoad, WebCore::DocumentLoader* loader, const WebCore::ResourceRequest& request)
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
@@ -508,7 +508,7 @@ void WebFrameLoaderClient::dispatchDidFinishDataDetection(NSArray *)
 }
 #endif
 
-void WebFrameLoaderClient::dispatchDidFinishLoading(WebCore::DocumentLoader* loader, WebCore::ResourceLoaderIdentifier identifier)
+void WebFrameLoaderClient::dispatchDidFinishLoading(WebCore::DocumentLoader* loader, WebCore::IsMainResourceLoad, WebCore::ResourceLoaderIdentifier identifier)
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
@@ -530,7 +530,7 @@ void WebFrameLoaderClient::dispatchDidFinishLoading(WebCore::DocumentLoader* loa
     static_cast<WebDocumentLoaderMac*>(loader)->decreaseLoadCount(identifier);
 }
 
-void WebFrameLoaderClient::dispatchDidFailLoading(WebCore::DocumentLoader* loader, WebCore::ResourceLoaderIdentifier identifier, const WebCore::ResourceError& error)
+void WebFrameLoaderClient::dispatchDidFailLoading(WebCore::DocumentLoader* loader, WebCore::IsMainResourceLoad, WebCore::ResourceLoaderIdentifier identifier, const WebCore::ResourceError& error)
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);

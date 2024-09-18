@@ -50,7 +50,7 @@ private:
 
     void convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest&, const ResourceResponse&) final;
 
-    void assignIdentifierToInitialRequest(ResourceLoaderIdentifier, DocumentLoader*, const ResourceRequest&) final;
+    void assignIdentifierToInitialRequest(ResourceLoaderIdentifier, IsMainResourceLoad, DocumentLoader*, const ResourceRequest&) final;
     bool shouldUseCredentialStorage(DocumentLoader*, ResourceLoaderIdentifier) override;
     void dispatchWillSendRequest(DocumentLoader*, ResourceLoaderIdentifier, ResourceRequest&, const ResourceResponse&) final;
     void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, ResourceLoaderIdentifier, const AuthenticationChallenge&) final;
@@ -64,11 +64,11 @@ private:
 
     void dispatchDidReceiveResponse(DocumentLoader*, ResourceLoaderIdentifier, const ResourceResponse&) final;
     void dispatchDidReceiveContentLength(DocumentLoader*, ResourceLoaderIdentifier, int) final;
-    void dispatchDidFinishLoading(DocumentLoader*, ResourceLoaderIdentifier) final;
+    void dispatchDidFinishLoading(DocumentLoader*, IsMainResourceLoad, ResourceLoaderIdentifier) final;
 #if ENABLE(DATA_DETECTION)
     void dispatchDidFinishDataDetection(NSArray *) final;
 #endif
-    void dispatchDidFailLoading(DocumentLoader*, ResourceLoaderIdentifier, const ResourceError&) final;
+    void dispatchDidFailLoading(DocumentLoader*, IsMainResourceLoad, ResourceLoaderIdentifier, const ResourceError&) final;
     bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int) final;
 
     void dispatchDidDispatchOnloadEvents() final;

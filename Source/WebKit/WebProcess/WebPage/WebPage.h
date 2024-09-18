@@ -1223,8 +1223,8 @@ public:
     void drawPagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<WebCore::SharedMemoryHandle>&&, WebCore::ResourceError&&)>&& completionHandler) { drawPagesForPrinting(frameID, printInfo, WTFMove(completionHandler)); }
 #endif
 
-    void addResourceRequest(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceRequest&, WebCore::LocalFrame*);
-    void removeResourceRequest(WebCore::ResourceLoaderIdentifier, WebCore::LocalFrame*);
+    void addResourceRequest(WebCore::ResourceLoaderIdentifier, bool isMainResourceLoad, const WebCore::ResourceRequest&, const WebCore::DocumentLoader*, WebCore::LocalFrame*);
+    void removeResourceRequest(WebCore::ResourceLoaderIdentifier, bool isMainResourceLoad, WebCore::LocalFrame*);
 
     void setMediaVolume(float);
     void setMuted(WebCore::MediaProducerMutedStateFlags, CompletionHandler<void()>&&);

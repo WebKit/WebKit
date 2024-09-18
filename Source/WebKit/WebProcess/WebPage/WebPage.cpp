@@ -6638,9 +6638,9 @@ void WebPage::drawPagesForPrinting(FrameIdentifier frameID, const PrintInfo& pri
 }
 #endif
 
-void WebPage::addResourceRequest(WebCore::ResourceLoaderIdentifier identifier, const WebCore::ResourceRequest& request, LocalFrame* frame)
+void WebPage::addResourceRequest(WebCore::ResourceLoaderIdentifier identifier, bool isMainResourceLoad, const WebCore::ResourceRequest& request, const DocumentLoader* loader, LocalFrame* frame)
 {
-    if (frame) {
+    if (frame && !isMainResourceLoad) {
         auto frameID = frame->frameID();
         auto addResult = m_networkResourceRequestCountForPageLoadTiming.add(frameID, 0);
         if (!addResult.iterator->value)
@@ -6661,9 +6661,9 @@ void WebPage::addResourceRequest(WebCore::ResourceLoaderIdentifier identifier, c
         send(Messages::WebPageProxy::SetNetworkRequestsInProgress(true));
 }
 
-void WebPage::removeResourceRequest(WebCore::ResourceLoaderIdentifier identifier, LocalFrame* frame)
+void WebPage::removeResourceRequest(WebCore::ResourceLoaderIdentifier identifier, bool isMainResourceLoad, LocalFrame* frame)
 {
-    if (frame) {
+    if (frame && !isMainResourceLoad) {
         auto frameID = frame->frameID();
         auto it = m_networkResourceRequestCountForPageLoadTiming.find(frameID);
         ASSERT(it != m_networkResourceRequestCountForPageLoadTiming.end());

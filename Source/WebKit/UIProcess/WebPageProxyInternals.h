@@ -145,6 +145,33 @@ private:
 };
 #endif
 
+class PageLoadTimingFrameLoadStateObserver final : public FrameLoadStateObserver {
+public:
+    bool hasLoadingFrame() const { return !!m_loadingFrameCount; }
+
+private:
+    void didReceiveProvisionalURL(const URL&) final
+    {
+        m_loadingFrameCount++;
+    }
+
+    void didCancelProvisionalLoad() final
+    {
+        // FIXME: We ought to be able to assert m_loadingFrameCount is nonzero here, but something isn't
+        // quite right with the frame load state with site isolation after doing a fragment navigation.
+        // The API test TestWebKitAPI.SiteIsolation.MainFrameURLAfterFragmentNavigation hits this.
+        m_loadingFrameCount--;
+    }
+
+    void didFinishLoad() final
+    {
+        ASSERT(m_loadingFrameCount);
+        m_loadingFrameCount--;
+    }
+
+    size_t m_loadingFrameCount { 0 };
+};
+
 struct PrivateClickMeasurementAndMetadata {
     WebCore::PrivateClickMeasurement pcm;
     String sourceDescription;
@@ -373,6 +400,7 @@ public:
     std::unique_ptr<WebPageProxyFrameLoadStateObserver> frameLoadStateObserver;
     HashMap<WebCore::RegistrableDomain, OptionSet<WebCore::WindowProxyProperty>> windowOpenerAccessedProperties;
 #endif
+    PageLoadTimingFrameLoadStateObserver pageLoadTimingFrameLoadStateObserver;
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     RunLoop::Timer activityStateChangeTimer;

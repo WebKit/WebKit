@@ -2307,7 +2307,7 @@ public:
 
     WebProcessProxy* processForSite(const WebCore::Site&);
 
-    void createRemoteSubframesInOtherProcesses(WebFrameProxy&, const String& frameName);
+    void observeAndCreateRemoteSubframesInOtherProcesses(WebFrameProxy&, const String& frameName);
     void broadcastMainFrameURLChangeToOtherProcesses(IPC::Connection&, const URL&);
 
     void addOpenedPage(WebPageProxy&);

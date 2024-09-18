@@ -1605,6 +1605,7 @@ void WebPageProxy::initializeWebPage(const Site& site, WebCore::SandboxFlags eff
     internals().frameLoadStateObserver = WTF::makeUnique<WebPageProxyFrameLoadStateObserver>();
     m_mainFrame->frameLoadState().addObserver(*internals().frameLoadStateObserver);
 #endif
+    m_mainFrame->frameLoadState().addObserver(internals().pageLoadTimingFrameLoadStateObserver);
 
     process->addVisitedLinkStoreUser(visitedLinkStore(), internals().identifier);
 
@@ -6149,6 +6150,8 @@ void WebPageProxy::generatePageLoadingTimingSoon()
     m_generatePageLoadTimingTimer.stop();
     if (!m_pageLoadTiming)
         return;
+    if (internals().pageLoadTimingFrameLoadStateObserver.hasLoadingFrame())
+        return;
     if (m_framesWithSubresourceLoadingForPageLoadTiming.size())
         return;
     if (!m_pageLoadTiming->firstVisualLayout())
@@ -6785,8 +6788,10 @@ void WebPageProxy::forEachWebContentProcess(Function<void(WebProcessProxy&, Page
     function(protectedLegacyMainFrameProcess(), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::createRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame, const String& frameName)
+void WebPageProxy::observeAndCreateRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame, const String& frameName)
 {
+    newFrame.frameLoadState().addObserver(internals().pageLoadTimingFrameLoadStateObserver);
+
     if (!m_preferences->siteIsolationEnabled())
         return;
 
@@ -6845,6 +6850,7 @@ void WebPageProxy::didFinishLoadForFrame(IPC::Connection& connection, FrameIdent
         }
 
         frame->didFinishLoad();
+        generatePageLoadingTimingSoon();
 
         frame->notifyParentOfLoadCompletion(frame->process());
 
@@ -6907,6 +6913,7 @@ void WebPageProxy::didFailLoadForFrame(IPC::Connection& connection, FrameIdentif
     }
 
     frame->didFailLoad();
+    generatePageLoadingTimingSoon();
 
     internals().pageLoadState.commitChanges();
     if (m_loaderClient)

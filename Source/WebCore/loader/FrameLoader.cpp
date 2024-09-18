@@ -1919,8 +1919,8 @@ bool FrameLoader::willLoadMediaElementURL(URL& url, Node& initiatorNode)
 
     ResourceLoaderIdentifier identifier;
     ResourceError error;
-    requestFromDelegate(request, identifier, error);
-    notifier().sendRemainingDelegateMessages(protectedDocumentLoader().get(), identifier, request, ResourceResponse(url, String(), -1, String()), nullptr, -1, -1, error);
+    requestFromDelegate(request, IsMainResourceLoad::No, identifier, error);
+    notifier().sendRemainingDelegateMessages(protectedDocumentLoader().get(), IsMainResourceLoad::No, identifier, request, ResourceResponse(url, String(), -1, String()), nullptr, -1, -1, error);
 
     url = request.url();
 
@@ -2346,7 +2346,7 @@ void FrameLoader::commitProvisionalLoad()
         ResourceError mainResouceError;
         ResourceLoaderIdentifier mainResourceIdentifier;
         ResourceRequest mainResourceRequest(cachedPage->documentLoader()->request());
-        requestFromDelegate(mainResourceRequest, mainResourceIdentifier, mainResouceError);
+        requestFromDelegate(mainResourceRequest, IsMainResourceLoad::Yes, mainResourceIdentifier, mainResouceError);
         notifier().dispatchDidReceiveResponse(cachedPage->protectedDocumentLoader().get(), mainResourceIdentifier, cachedPage->documentLoader()->response());
 
         auto hasInsecureContent = cachedPage->cachedMainFrame()->hasInsecureContent();
@@ -2370,7 +2370,7 @@ void FrameLoader::commitProvisionalLoad()
             m_client->dispatchDidReceiveTitle(title);
 
         // Send remaining notifications for the main resource.
-        notifier().sendRemainingDelegateMessages(protectedDocumentLoader().get(), mainResourceIdentifier, mainResourceRequest, ResourceResponse(), nullptr, static_cast<int>(m_documentLoader->response().expectedContentLength()), 0, mainResouceError);
+        notifier().sendRemainingDelegateMessages(protectedDocumentLoader().get(), IsMainResourceLoad::Yes, mainResourceIdentifier, mainResourceRequest, ResourceResponse(), nullptr, static_cast<int>(m_documentLoader->response().expectedContentLength()), 0, mainResouceError);
 
         Vector<Ref<LocalFrame>> targetFrames;
         targetFrames.append(frame);
@@ -2416,11 +2416,11 @@ void FrameLoader::commitProvisionalLoad()
             ResourceLoaderIdentifier identifier;
             ResourceRequest request(response.url());
             request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
-            requestFromDelegate(request, identifier, error);
+            requestFromDelegate(request, IsMainResourceLoad::Yes, identifier, error);
             // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
             // However, with today's computers and networking speeds, this won't happen in practice.
             // Could be an issue with a giant local file.
-            notifier().sendRemainingDelegateMessages(documentLoader.get(), identifier, request, response, nullptr, static_cast<int>(response.expectedContentLength()), 0, error);
+            notifier().sendRemainingDelegateMessages(documentLoader.get(), IsMainResourceLoad::Yes, identifier, request, response, nullptr, static_cast<int>(response.expectedContentLength()), 0, error);
         }
 
         // FIXME: Why only this frame and not parent frames?
@@ -3544,7 +3544,7 @@ ResourceLoaderIdentifier FrameLoader::loadResourceSynchronously(const ResourceRe
 
     ResourceLoaderIdentifier identifier;    
     ResourceRequest newRequest(initialRequest);
-    requestFromDelegate(newRequest, identifier, error);
+    requestFromDelegate(newRequest, IsMainResourceLoad::No, identifier, error);
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (error.isNull()) {
@@ -3580,7 +3580,7 @@ ResourceLoaderIdentifier FrameLoader::loadResourceSynchronously(const ResourceRe
         }
     }
 
-    notifier().sendRemainingDelegateMessages(protectedDocumentLoader().get(), identifier, request, response, data.get(), data ? data->size() : 0, -1, error);
+    notifier().sendRemainingDelegateMessages(protectedDocumentLoader().get(), IsMainResourceLoad::No, identifier, request, response, data.get(), data ? data->size() : 0, -1, error);
     return identifier;
 }
 
@@ -4075,13 +4075,13 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     mainFrameLoader->loadWithNavigationAction(request, WTFMove(newAction), FrameLoadType::Standard, formState, allowNavigationToInvalidURL, ShouldTreatAsContinuingLoad::No);
 }
 
-void FrameLoader::requestFromDelegate(ResourceRequest& request, ResourceLoaderIdentifier& identifier, ResourceError& error)
+void FrameLoader::requestFromDelegate(ResourceRequest& request, IsMainResourceLoad isMainResourceLoad, ResourceLoaderIdentifier& identifier, ResourceError& error)
 {
     ASSERT(!request.isNull());
 
     identifier = ResourceLoaderIdentifier::generate();
     RefPtr documentLoader = m_documentLoader;
-    notifier().assignIdentifierToInitialRequest(identifier, documentLoader.get(), request);
+    notifier().assignIdentifierToInitialRequest(identifier, isMainResourceLoad, documentLoader.get(), request);
 
     ResourceRequest newRequest(request);
     notifier().dispatchWillSendRequest(documentLoader.get(), identifier, newRequest, ResourceResponse(), nullptr);
@@ -4123,11 +4123,11 @@ void FrameLoader::loadedResourceFromMemoryCache(CachedResource& resource, Resour
     }
 
     ResourceLoaderIdentifier identifier;
-    requestFromDelegate(newRequest, identifier, error);
+    requestFromDelegate(newRequest, IsMainResourceLoad::No, identifier, error);
 
     ResourceResponse response = resource.response();
     response.setSource(ResourceResponse::Source::MemoryCache);
-    notifier().sendRemainingDelegateMessages(documentloader.get(), identifier, newRequest, response, nullptr, resource.encodedSize(), 0, error);
+    notifier().sendRemainingDelegateMessages(documentloader.get(), IsMainResourceLoad::No, identifier, newRequest, response, nullptr, resource.encodedSize(), 0, error);
 }
 
 void FrameLoader::applyUserAgentIfNeeded(ResourceRequest& request)

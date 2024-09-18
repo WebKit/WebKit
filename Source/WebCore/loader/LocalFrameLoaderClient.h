@@ -127,7 +127,7 @@ public:
     virtual void detachedFromParent2() = 0;
     virtual void detachedFromParent3() = 0;
 
-    virtual void assignIdentifierToInitialRequest(ResourceLoaderIdentifier, DocumentLoader*, const ResourceRequest&) = 0;
+    virtual void assignIdentifierToInitialRequest(ResourceLoaderIdentifier, IsMainResourceLoad, DocumentLoader*, const ResourceRequest&) = 0;
 
     virtual void dispatchWillSendRequest(DocumentLoader*, ResourceLoaderIdentifier, ResourceRequest&, const ResourceResponse& redirectResponse) = 0;
     virtual bool shouldUseCredentialStorage(DocumentLoader*, ResourceLoaderIdentifier) = 0;
@@ -142,8 +142,8 @@ public:
 
     virtual void dispatchDidReceiveResponse(DocumentLoader*, ResourceLoaderIdentifier, const ResourceResponse&) = 0;
     virtual void dispatchDidReceiveContentLength(DocumentLoader*, ResourceLoaderIdentifier, int dataLength) = 0;
-    virtual void dispatchDidFinishLoading(DocumentLoader*, ResourceLoaderIdentifier) = 0;
-    virtual void dispatchDidFailLoading(DocumentLoader*, ResourceLoaderIdentifier, const ResourceError&) = 0;
+    virtual void dispatchDidFinishLoading(DocumentLoader*, IsMainResourceLoad, ResourceLoaderIdentifier) = 0;
+    virtual void dispatchDidFailLoading(DocumentLoader*, IsMainResourceLoad, ResourceLoaderIdentifier, const ResourceError&) = 0;
     virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length) = 0;
 
     virtual void dispatchDidDispatchOnloadEvents() = 0;
