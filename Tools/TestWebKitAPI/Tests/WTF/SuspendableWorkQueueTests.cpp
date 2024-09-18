@@ -69,7 +69,7 @@ TEST(WTF_SuspendableWorkQueue, Suspend)
             ++completedTaskCount;
 
             if (completedTaskCount == taskCount) {
-                RunLoop::mainSingleton().dispatch([&]() {
+                RunLoop::main().dispatch([&]() {
                     allTasksAreCompleted = true;
                 });
             }

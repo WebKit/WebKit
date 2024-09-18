@@ -348,7 +348,7 @@ void WorkerMessagingProxy::reportErrorToWorkerObject(const String& errorMessage)
 
 void WorkerMessagingProxy::postMessageToDebugger(const String& message)
 {
-    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, message = message.isolatedCopy()]() mutable {
+    RunLoop::main().dispatch([this, protectedThis = Ref { *this }, message = message.isolatedCopy()]() mutable {
         if (!m_mayBeDestroyed)
             m_inspectorProxy->sendMessageFromWorkerToFrontend(WTFMove(message));
     });

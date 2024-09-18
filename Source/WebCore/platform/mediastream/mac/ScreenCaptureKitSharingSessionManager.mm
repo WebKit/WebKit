@@ -119,7 +119,7 @@
     if (index == notFound)
         return;
 
-    RunLoop::mainSingleton().dispatch([self, protectedSelf = RetainPtr { self }, session = RetainPtr { session }]() mutable {
+    RunLoop::main().dispatch([self, protectedSelf = RetainPtr { self }, session = RetainPtr { session }]() mutable {
         if (_callback)
             _callback->sharingSessionDidEnd(session.get());
     });
@@ -127,7 +127,7 @@
 
 - (void)sessionDidChangeContent:(SCContentSharingSession *)session
 {
-    RunLoop::mainSingleton().dispatch([self, protectedSelf = RetainPtr { self }, session = RetainPtr { session }]() mutable {
+    RunLoop::main().dispatch([self, protectedSelf = RetainPtr { self }, session = RetainPtr { session }]() mutable {
         if (_callback)
             _callback->sharingSessionDidChangeContent(session.get());
     });
@@ -135,7 +135,7 @@
 
 - (void)pickerCanceledForSession:(SCContentSharingSession *)session
 {
-    RunLoop::mainSingleton().dispatch([self, protectedSelf = RetainPtr { self }, session = RetainPtr { session }]() mutable {
+    RunLoop::main().dispatch([self, protectedSelf = RetainPtr { self }, session = RetainPtr { session }]() mutable {
         if (_callback)
             _callback->cancelPicking();
     });
@@ -145,7 +145,7 @@
 - (void)contentSharingPicker:(SCContentSharingPicker *)picker didCancelForStream:(SCStream *)stream
 {
     UNUSED_PARAM(picker);
-    RunLoop::mainSingleton().dispatch([self, protectedSelf = RetainPtr { self }]() mutable {
+    RunLoop::main().dispatch([self, protectedSelf = RetainPtr { self }]() mutable {
         if (_callback)
             _callback->cancelPicking();
     });
@@ -153,7 +153,7 @@
 
 - (void)contentSharingPickerStartDidFailWithError:(NSError *)error
 {
-    RunLoop::mainSingleton().dispatch([self, protectedSelf = RetainPtr { self }, error = RetainPtr { error }]() mutable {
+    RunLoop::main().dispatch([self, protectedSelf = RetainPtr { self }, error = RetainPtr { error }]() mutable {
         if (_callback)
             _callback->contentSharingPickerFailedWithError(error.get());
     });
@@ -161,7 +161,7 @@
 
 - (void)contentSharingPicker:(SCContentSharingPicker *)picker didUpdateWithFilter:(SCContentFilter *)filter forStream:(SCStream *)stream {
     UNUSED_PARAM(picker);
-    RunLoop::mainSingleton().dispatch([self, protectedSelf = RetainPtr { self }, filter = RetainPtr { filter }, stream = RetainPtr { stream }]() mutable {
+    RunLoop::main().dispatch([self, protectedSelf = RetainPtr { self }, filter = RetainPtr { filter }, stream = RetainPtr { stream }]() mutable {
         if (_callback)
             _callback->contentSharingPickerUpdatedFilterForStream(filter.get(), stream.get());
     });
@@ -415,7 +415,7 @@ void ScreenCaptureKitSharingSessionManager::promptForGetDisplayMedia(DisplayCapt
     }
 
     constexpr Seconds userPromptWatchdogInterval = 60_s;
-    m_promptWatchdogTimer = makeUnique<RunLoop::Timer>(RunLoop::mainSingleton(), [this, weakThis = WeakPtr { *this }, interval = userPromptWatchdogInterval]() mutable {
+    m_promptWatchdogTimer = makeUnique<RunLoop::Timer>(RunLoop::main(), [this, weakThis = WeakPtr { *this }, interval = userPromptWatchdogInterval]() mutable {
         if (!weakThis)
             return;
 

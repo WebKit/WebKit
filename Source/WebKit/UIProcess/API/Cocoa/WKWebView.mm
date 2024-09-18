@@ -1177,7 +1177,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         [userInfo setObject:errorMessage forKey:_WKJavaScriptExceptionMessageErrorKey];
 
         auto error = adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorJavaScriptExceptionOccurred userInfo:userInfo.get()]);
-        RunLoop::mainSingleton().dispatch([handler, error] {
+        RunLoop::main().dispatch([handler, error] {
             auto rawHandler = (void (^)(id, NSError *))handler.get();
             rawHandler(nil, error.get());
         });
@@ -1226,7 +1226,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     auto handler = makeBlockPtr(completionHandler);
 
     if (CGRectIsEmpty(rectInViewCoordinates) || !snapshotWidth) {
-        RunLoop::mainSingleton().dispatch([handler = WTFMove(handler)] {
+        RunLoop::main().dispatch([handler = WTFMove(handler)] {
 #if USE(APPKIT)
             auto image = adoptNS([[NSImage alloc] initWithSize:NSMakeSize(0, 0)]);
 #else
@@ -1655,7 +1655,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 {
 #if PLATFORM(IOS_FAMILY)
     if (![self usesStandardContentView]) {
-        RunLoop::mainSingleton().dispatch([updateBlock = makeBlockPtr(updateBlock)] {
+        RunLoop::main().dispatch([updateBlock = makeBlockPtr(updateBlock)] {
             updateBlock();
         });
         return;
@@ -4569,7 +4569,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     _visibleContentRectUpdateCallbacks.append(makeBlockPtr(updateBlock));
     [self _scheduleVisibleContentRectUpdate];
 #else
-    RunLoop::mainSingleton().dispatch([updateBlock = makeBlockPtr(updateBlock)] {
+    RunLoop::main().dispatch([updateBlock = makeBlockPtr(updateBlock)] {
         updateBlock();
     });
 #endif

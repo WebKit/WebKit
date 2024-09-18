@@ -48,7 +48,7 @@ namespace WTR {
 
 void TestController::notifyDone()
 {
-    RunLoop::mainSingleton().stop();
+    RunLoop::main().stop();
 }
 
 void TestController::setHidden(bool)
@@ -71,13 +71,13 @@ void TestController::platformRunUntil(bool& done, WTF::Seconds timeout)
 {
     struct TimeoutTimer {
         TimeoutTimer()
-            : timer(RunLoop::mainSingleton(), this, &TimeoutTimer::fired)
+            : timer(RunLoop::main(), this, &TimeoutTimer::fired)
         { }
 
         void fired()
         {
             timedOut = true;
-            RunLoop::mainSingleton().stop();
+            RunLoop::main().stop();
         }
 
         RunLoop::Timer timer;
@@ -89,7 +89,7 @@ void TestController::platformRunUntil(bool& done, WTF::Seconds timeout)
         timeoutTimer.timer.startOneShot(timeout);
 
     while (!done && !timeoutTimer.timedOut)
-        RunLoop::mainSingleton().run();
+        RunLoop::main().run();
 
     timeoutTimer.timer.stop();
 }

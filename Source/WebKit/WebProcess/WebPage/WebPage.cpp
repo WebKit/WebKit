@@ -568,7 +568,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || USE(GRAPHICS_LAYER_WC)
     , m_nativeWindowHandle(parameters.nativeWindowHandle)
 #endif
-    , m_setCanStartMediaTimer(RunLoop::mainSingleton(), this, &WebPage::setCanStartMediaTimerFired)
+    , m_setCanStartMediaTimer(RunLoop::main(), this, &WebPage::setCanStartMediaTimerFired)
 #if ENABLE(CONTEXT_MENUS)
     , m_contextMenuClient(makeUnique<API::InjectedBundle::PageContextMenuClient>())
 #endif
@@ -1305,7 +1305,7 @@ void WebPage::updateThrottleState()
         m_userActivity.start();
 
     if (m_page && m_page->settings().serviceWorkersEnabled()) {
-        RunLoop::mainSingleton().dispatch([isThrottleable] {
+        RunLoop::main().dispatch([isThrottleable] {
             WebServiceWorkerProvider::singleton().updateThrottleState(isThrottleable);
         });
     }
@@ -1933,7 +1933,7 @@ void WebPage::close()
     WebProcess::singleton().updateActivePages(m_processDisplayName);
 
     if (isRunningModal)
-        RunLoop::mainSingleton().stop();
+        RunLoop::main().stop();
 }
 
 void WebPage::tryClose(CompletionHandler<void(bool)>&& completionHandler)

@@ -1880,7 +1880,7 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
 {
     WebThreadRun(^{
         [WebView _releaseMemoryNow];
-        RunLoop::mainSingleton().dispatch([handler = makeBlockPtr(handler)] {
+        RunLoop::main().dispatch([handler = makeBlockPtr(handler)] {
             handler();
         });
     });
@@ -4991,7 +4991,7 @@ IGNORE_WARNINGS_END
 {
     if (WebThreadIsCurrent()) {
         [invocation retainArguments];
-        RunLoop::mainSingleton().dispatch([forwarder = retainPtr(_forwarder), invocation = retainPtr(invocation)] {
+        RunLoop::main().dispatch([forwarder = retainPtr(_forwarder), invocation = retainPtr(invocation)] {
             [forwarder forwardInvocation:invocation.get()];
         });
     } else
@@ -6403,7 +6403,7 @@ static bool needsWebViewInitThreadWorkaround()
                 if (errorOrNil)
                     return;
 
-                RunLoop::mainSingleton().dispatch([self, path = RetainPtr<NSString>(fileURL.path), fileNames, fileCount, dragData] {
+                RunLoop::main().dispatch([self, path = RetainPtr<NSString>(fileURL.path), fileNames, fileCount, dragData] {
                     fileNames->append(path.get());
                     if (fileNames->size() == fileCount) {
                         dragData->setFileNames(*fileNames);
@@ -7928,7 +7928,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
             _private->page->setTabKeyCyclesThroughElements(!flag);
 #if PLATFORM(MAC)
         if (flag) {
-            RunLoop::mainSingleton().dispatch([] {
+            RunLoop::main().dispatch([] {
                 [[NSSpellChecker sharedSpellChecker] _preflightChosenSpellServer];
             });
         }

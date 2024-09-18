@@ -705,7 +705,7 @@ bool CoreAudioSharedUnit::migrateToNewDefaultDevice(const CaptureDevice& capture
 void CoreAudioSharedUnit::prewarmAudioUnitCreation(CompletionHandler<void()>&& callback)
 {
     if (m_audioUnitCreationWarmupPromise) {
-        m_audioUnitCreationWarmupPromise->whenSettled(RunLoop::mainSingleton(), WTFMove(callback));
+        m_audioUnitCreationWarmupPromise->whenSettled(RunLoop::main(), WTFMove(callback));
         return;
     }
 
@@ -716,7 +716,7 @@ void CoreAudioSharedUnit::prewarmAudioUnitCreation(CompletionHandler<void()>&& c
 
     m_audioUnitCreationWarmupPromise = invokeAsync(WorkQueue::create("CoreAudioSharedUnit AudioUnit creation"_s, WorkQueue::QOS::UserInitiated).get(), [] {
         return createAudioUnit(true);
-    })->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)] (auto&& vpioUnitOrError) mutable {
+    })->whenSettled(RunLoop::main(), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)] (auto&& vpioUnitOrError) mutable {
         if (weakThis && vpioUnitOrError.has_value())
             weakThis->setStoredVPIOUnit(WTFMove(vpioUnitOrError.value()));
         callback();

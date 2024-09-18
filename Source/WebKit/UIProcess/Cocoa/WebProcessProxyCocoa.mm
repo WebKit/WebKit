@@ -195,7 +195,7 @@ void WebProcessProxy::sendAudioComponentRegistrations()
         if (!registrations)
             return;
         
-        RunLoop::mainSingleton().dispatch([weakThis = WTFMove(weakThis), registrations = WTFMove(registrations)] () mutable {
+        RunLoop::protectedMain()->dispatch([weakThis = WTFMove(weakThis), registrations = WTFMove(registrations)] () mutable {
             if (!weakThis)
                 return;
 

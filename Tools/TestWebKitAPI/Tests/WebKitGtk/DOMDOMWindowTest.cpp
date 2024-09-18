@@ -222,7 +222,7 @@ static gboolean loadedCallback(WebKitDOMDOMWindow* view, WebKitDOMEvent* event, 
     test->notify("loaded", "");
 
     // Stop the loop and let testSignals() or testDispatchEvent() continue its course
-    RunLoop::currentSingleton().stop();
+    RunLoop::current().stop();
 
     return FALSE;
 }
@@ -233,7 +233,7 @@ static gboolean clickedCallback(WebKitDOMDOMWindow* view, WebKitDOMEvent* event,
     test->notify("finish", "");
 
     // Stop the loop and let testSignals() or testDispatchEvent() continue its course
-    RunLoop::currentSingleton().stop();
+    RunLoop::current().stop();
 
     return FALSE;
 }

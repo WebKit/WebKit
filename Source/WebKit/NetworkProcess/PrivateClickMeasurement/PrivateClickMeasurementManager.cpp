@@ -59,7 +59,7 @@ constexpr Seconds debugModeSecondsUntilSend { 10_s };
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PrivateClickMeasurementManager);
 
 PrivateClickMeasurementManager::PrivateClickMeasurementManager(UniqueRef<PCM::Client>&& client, const String& storageDirectory)
-    : m_firePendingAttributionRequestsTimer(RunLoop::mainSingleton(), this, &PrivateClickMeasurementManager::firePendingAttributionRequests)
+    : m_firePendingAttributionRequestsTimer(RunLoop::main(), this, &PrivateClickMeasurementManager::firePendingAttributionRequests)
     , m_storageDirectory(storageDirectory)
     , m_client(WTFMove(client))
 {

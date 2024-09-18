@@ -63,9 +63,9 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
     : m_webPage(webPage)
     , m_surface(AcceleratedSurface::create(webPage, *this))
     , m_viewportController(webPage.size())
-    , m_layerFlushTimer(RunLoop::mainSingleton(), this, &LayerTreeHost::layerFlushTimerFired)
+    , m_layerFlushTimer(RunLoop::main(), this, &LayerTreeHost::layerFlushTimerFired)
 #if HAVE(DISPLAY_LINK)
-    , m_didRenderFrameTimer(RunLoop::mainSingleton(), this, &LayerTreeHost::didRenderFrameTimerFired)
+    , m_didRenderFrameTimer(RunLoop::main(), this, &LayerTreeHost::didRenderFrameTimerFired)
 #endif
     , m_coordinator(webPage, *this)
 #if !HAVE(DISPLAY_LINK)
@@ -411,7 +411,7 @@ void LayerTreeHost::resize(const IntSize& size)
 
 void LayerTreeHost::willRenderFrame()
 {
-    RunLoop::mainSingleton().dispatch([webPage = Ref { m_webPage }] {
+    RunLoop::main().dispatch([webPage = Ref { m_webPage }] {
         if (auto* drawingArea = webPage->drawingArea())
             drawingArea->willStartRenderingUpdateDisplay();
     });
@@ -448,7 +448,7 @@ void LayerTreeHost::didRenderFrame(uint32_t compositionResponseID, const WebCore
     if (!m_didRenderFrameTimer.isActive())
         m_didRenderFrameTimer.startOneShot(0_s);
 #endif
-    RunLoop::mainSingleton().dispatch([webPage = Ref { m_webPage }] {
+    RunLoop::main().dispatch([webPage = Ref { m_webPage }] {
         if (auto* drawingArea = webPage->drawingArea())
             drawingArea->didCompleteRenderingUpdateDisplay();
     });

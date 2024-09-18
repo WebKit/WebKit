@@ -168,7 +168,7 @@ static auto doFailAndReject(Logger::LogSiteIdentifier location = Logger::LogSite
 static void runInCurrentRunLoop(Function<void(RunLoop&)>&& function)
 {
     WTF::initializeMainThread();
-    auto& runLoop = RunLoop::currentSingleton();
+    auto& runLoop = RunLoop::current();
 
     function(runLoop);
 
@@ -183,7 +183,7 @@ static void runInCurrentRunLoop(Function<void(RunLoop&)>&& function)
 static void runInCurrentRunLoopUntilDone(Function<void(RunLoop&, bool&)>&& function)
 {
     WTF::initializeMainThread();
-    auto& runLoop = RunLoop::currentSingleton();
+    auto& runLoop = RunLoop::current();
 
     bool done = false;
 
@@ -606,7 +606,7 @@ TEST(NativePromise, UsingMethods)
 
 static Ref<GenericPromise> myMethod()
 {
-    assertIsCurrent(RunLoop::mainSingleton());
+    assertIsCurrent(RunLoop::main());
     // You would normally do some work here.
     return GenericPromise::createAndResolve();
 }
@@ -617,7 +617,7 @@ TEST(NativePromise, InvokeAsync)
     AutoWorkQueue awq;
     auto queue = awq.queue();
     queue->dispatch([queue, &done] {
-        invokeAsync(RunLoop::mainSingleton(), &myMethod)->whenSettled(queue,
+        invokeAsync(RunLoop::main(), &myMethod)->whenSettled(queue,
             [queue, &done](GenericPromise::Result result) {
                 EXPECT_TRUE(result.has_value());
                 queue->beginShutdown();
@@ -631,9 +631,9 @@ TEST(NativePromise, InvokeAsync)
 // A chained promise (that is promise->whenSettled([] { return GenericPromise }) is itself a promise
 static Ref<GenericPromise> myMethodReturningThenCommandWithPromise()
 {
-    assertIsCurrent(RunLoop::mainSingleton());
+    assertIsCurrent(RunLoop::main());
     // You would normally do some work here.
-    return GenericPromise::createAndResolve()->whenSettled(RunLoop::mainSingleton(),
+    return GenericPromise::createAndResolve()->whenSettled(RunLoop::main(),
         [](GenericPromise::Result result) {
             return GenericPromise::createAndSettle(WTFMove(result));
         });
@@ -641,9 +641,9 @@ static Ref<GenericPromise> myMethodReturningThenCommandWithPromise()
 
 static Ref<GenericPromise> myMethodReturningThenCommandWithVoid()
 {
-    assertIsCurrent(RunLoop::mainSingleton());
+    assertIsCurrent(RunLoop::main());
     // You would normally do some work here.
-    return GenericPromise::createAndReject()->whenSettled(RunLoop::mainSingleton(),
+    return GenericPromise::createAndReject()->whenSettled(RunLoop::main(),
         [](GenericPromise::Result result) {
             EXPECT_FALSE(result.has_value());
         });
@@ -656,13 +656,13 @@ TEST(NativePromise, InvokeAsyncAutoConversion)
     AutoWorkQueue awq;
     auto queue = awq.queue();
     queue->dispatch([queue] {
-        invokeAsync(RunLoop::mainSingleton(), &myMethodReturningThenCommandWithPromise)->whenSettled(queue,
+        invokeAsync(RunLoop::main(), &myMethodReturningThenCommandWithPromise)->whenSettled(queue,
             [](GenericPromise::Result result) {
                 EXPECT_TRUE(result.has_value());
             });
     });
     queue->dispatch([queue, &done] {
-        invokeAsync(RunLoop::mainSingleton(), &myMethodReturningThenCommandWithVoid)->whenSettled(queue,
+        invokeAsync(RunLoop::main(), &myMethodReturningThenCommandWithVoid)->whenSettled(queue,
             [queue, &done](GenericPromise::Result result) {
                 EXPECT_TRUE(result.has_value());
                 queue->beginShutdown();
@@ -704,9 +704,9 @@ TEST(NativePromise, InvokeAsyncWithVoid)
 
 static Ref<GenericPromise> myMethodReturningProducer()
 {
-    assertIsCurrent(RunLoop::mainSingleton());
+    assertIsCurrent(RunLoop::main());
     // You would normally do some work here.
-    return GenericPromise::createAndResolve()->whenSettled(RunLoop::mainSingleton(),
+    return GenericPromise::createAndResolve()->whenSettled(RunLoop::main(),
         [](GenericPromise::Result result) {
             GenericPromise::Producer producer;
             producer.settle(WTFMove(result));
@@ -721,7 +721,7 @@ TEST(NativePromise, InvokeAsyncAutoConversionWithProducer)
     AutoWorkQueue awq;
     auto queue = awq.queue();
     queue->dispatch([queue, &done] {
-        invokeAsync(RunLoop::mainSingleton(), &myMethodReturningProducer)->whenSettled(queue,
+        invokeAsync(RunLoop::main(), &myMethodReturningProducer)->whenSettled(queue,
             [queue, &done](GenericPromise::Result result) {
                 EXPECT_TRUE(result.has_value());
                 queue->beginShutdown();
@@ -1683,7 +1683,7 @@ TEST(NativePromise, DisconnectNotOwnedInstance)
     GenericPromise::Producer producer;
     auto request = makeUnique<NativePromiseRequest>();
     WeakPtr weakRequest { *request };
-    producer->whenSettled(RunLoop::mainSingleton(), [request = WTFMove(request)] (auto&& result) mutable {
+    producer->whenSettled(RunLoop::main(), [request = WTFMove(request)] (auto&& result) mutable {
         request->complete();
         EXPECT_TRUE(false);
     })->track(*weakRequest);

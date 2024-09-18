@@ -957,7 +957,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         auto error = m_networkLoadChecker->validateResponse(m_networkLoad ? m_networkLoad->currentRequest() : originalRequest(), m_response);
         if (!error.isNull()) {
             LOADER_RELEASE_LOG_ERROR("didReceiveResponse: NetworkLoadChecker::validateResponse returned an error (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", error.domain().utf8().data(), error.errorCode());
-            RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, error = WTFMove(error)] {
+            RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, error = WTFMove(error)] {
                 if (protectedThis->m_networkLoad)
                     protectedThis->didFailLoading(error);
             });
@@ -979,7 +979,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     // https://html.spec.whatwg.org/multipage/origin.html#check-a-global-object's-embedder-policy
     if (shouldInterruptWorkerLoadForCrossOriginEmbedderPolicy(m_response)) {
         LOADER_RELEASE_LOG_ERROR("didReceiveResponse: Interrupting worker load due to Cross-Origin-Opener-Policy");
-        RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, url = m_response.url()] {
+        RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, url = m_response.url()] {
             if (protectedThis->m_networkLoad)
                 protectedThis->didFailLoading(ResourceError { errorDomainWebKitInternal, 0, url, "Worker load was blocked by Cross-Origin-Embedder-Policy"_s, ResourceError::Type::AccessControl });
         });
@@ -988,7 +988,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 
     if (auto error = doCrossOriginOpenerHandlingOfResponse(m_response)) {
         LOADER_RELEASE_LOG_ERROR("didReceiveResponse: Interrupting load due to Cross-Origin-Opener-Policy");
-        RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, error = WTFMove(*error)] {
+        RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, error = WTFMove(*error)] {
             if (protectedThis->m_networkLoad)
                 protectedThis->didFailLoading(error);
         });

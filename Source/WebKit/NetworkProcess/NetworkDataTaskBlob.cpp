@@ -112,7 +112,7 @@ void NetworkDataTaskBlob::resume()
 
     m_state = State::Running;
 
-    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }] {
+    RunLoop::main().dispatch([this, protectedThis = Ref { *this }] {
         if (m_state == State::Canceling || m_state == State::Completed || !m_client) {
             clearStream();
             return;

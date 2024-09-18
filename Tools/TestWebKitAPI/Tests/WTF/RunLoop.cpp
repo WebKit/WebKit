@@ -42,7 +42,7 @@ TEST(WTF_RunLoop, Deadlock)
 
     struct DispatchFromDestructorTester {
         ~DispatchFromDestructorTester() {
-            RunLoop::mainSingleton().dispatch([] {
+            RunLoop::main().dispatch([] {
                 if (!(--count))
                     testFinished = true;
             });
@@ -51,7 +51,7 @@ TEST(WTF_RunLoop, Deadlock)
 
     for (int i = 0; i < count; ++i) {
         auto capture = std::make_shared<DispatchFromDestructorTester>();
-        RunLoop::mainSingleton().dispatch([capture] { });
+        RunLoop::main().dispatch([capture] { });
     }
 
     Util::run(&testFinished);
@@ -64,15 +64,15 @@ TEST(WTF_RunLoop, NestedInOrder)
     bool done = false;
     bool didExecuteOuter = false;
 
-    RunLoop::mainSingleton().dispatch([&done, &didExecuteOuter] {
-        RunLoop::mainSingleton().dispatch([&done, &didExecuteOuter] {
+    RunLoop::main().dispatch([&done, &didExecuteOuter] {
+        RunLoop::main().dispatch([&done, &didExecuteOuter] {
             EXPECT_TRUE(didExecuteOuter);
             done = true;
         });
 
         Util::run(&done);
     });
-    RunLoop::mainSingleton().dispatch([&didExecuteOuter] {
+    RunLoop::main().dispatch([&didExecuteOuter] {
         didExecuteOuter = true;
     });
 
@@ -85,16 +85,16 @@ TEST(WTF_RunLoop, DispatchCrossThreadWhileNested)
 
     bool done = false;
 
-    RunLoop::mainSingleton().dispatch([&done] {
+    RunLoop::main().dispatch([&done] {
         Thread::create("DispatchCrossThread"_s, [&done] {
-            RunLoop::mainSingleton().dispatch([&done] {
+            RunLoop::main().dispatch([&done] {
                 done = true;
             });
         });
 
         Util::run(&done);
     });
-    RunLoop::mainSingleton().dispatch([] { });
+    RunLoop::main().dispatch([] { });
 
     Util::run(&done);
 }
@@ -122,7 +122,7 @@ TEST(WTF_RunLoop, CallOnMainCrossThreadWhileNested)
 class DerivedOneShotTimer : public RunLoop::Timer {
 public:
     DerivedOneShotTimer(bool& testFinished)
-        : RunLoop::Timer(RunLoop::currentSingleton(), this, &DerivedOneShotTimer::fired)
+        : RunLoop::Timer(RunLoop::current(), this, &DerivedOneShotTimer::fired)
         , m_testFinished(testFinished)
     {
     }
@@ -154,7 +154,7 @@ TEST(WTF_RunLoop, OneShotTimer)
 class DerivedRepeatingTimer : public RunLoop::Timer {
 public:
     DerivedRepeatingTimer(bool& testFinished)
-        : RunLoop::Timer(RunLoop::currentSingleton(), this, &DerivedRepeatingTimer::fired)
+        : RunLoop::Timer(RunLoop::current(), this, &DerivedRepeatingTimer::fired)
         , m_testFinished(testFinished)
     {
     }
@@ -196,10 +196,10 @@ TEST(WTF_RunLoop, ManyTimes)
         void run()
         {
             if (++m_count == 100000) {
-                RunLoop::currentSingleton().stop();
+                RunLoop::current().stop();
                 return;
             }
-            RunLoop::currentSingleton().dispatch([this] {
+            RunLoop::current().dispatch([this] {
                 run();
             });
         }
@@ -210,7 +210,7 @@ TEST(WTF_RunLoop, ManyTimes)
 
     Thread::create("RunLoopManyTimes"_s, [] {
         Counter counter;
-        RunLoop::currentSingleton().dispatch([&counter] {
+        RunLoop::current().dispatch([&counter] {
             counter.run();
         });
         RunLoop::run();
@@ -222,7 +222,7 @@ TEST(WTF_RunLoop, ThreadTerminationSelfReferenceCleanup)
     RefPtr<RunLoop> runLoop;
 
     Thread::create("RunLoopThreadTerminationSelfReferenceCleanup"_s, [&] {
-        runLoop = &RunLoop::currentSingleton();
+        runLoop = &RunLoop::current();
 
         // This stores a RunLoop reference in the dispatch queue that will not be released
         // via the usual dispatch, but should still be released upon thread termination.
@@ -238,9 +238,9 @@ TEST(WTF_RunLoop, CapabilityIsCurrentIsSupported)
 {
     WTF::initializeMainThread();
     struct {
-        int i WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton()) { 77 };
+        int i WTF_GUARDED_BY_CAPABILITY(RunLoop::main()) { 77 };
     } z;
-    assertIsCurrent(RunLoop::mainSingleton());
+    assertIsCurrent(RunLoop::main());
     bool result = z.i == 77;
     EXPECT_TRUE(result);
 }
@@ -251,7 +251,7 @@ TEST(WTF_RunLoopDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(CapabilityIsCurrentFa
     ASSERT_DEATH_IF_SUPPORTED({
         WTF::initializeMainThread();
         Thread::create("CapabilityIsCurrentNegative thread"_s, [&] {
-            assertIsCurrent(RunLoop::mainSingleton()); // This should assert.
+            assertIsCurrent(RunLoop::main()); // This should assert.
         })->waitForCompletion();
     }, "ASSERTION FAILED: runLoop.isCurrent\\(\\)");
 }
@@ -274,7 +274,7 @@ TEST(WTF_RunLoop, Create)
     }
 
     runLoop->dispatch([] {
-        RunLoop::currentSingleton().stop();
+        RunLoop::current().stop();
     });
     runLoop = nullptr;
     Util::runFor(.2_s);
@@ -302,7 +302,7 @@ TEST(WTF_RunLoop, Create)
 TEST(WTF_RunLoop, MAYBE_DispatchInRunLoopIterationDispatchesOnNextIteration1)
 {
     WTF::initializeMainThread();
-    auto& runLoop = RunLoop::currentSingleton();
+    auto& runLoop = RunLoop::current();
     bool outer = false;
     bool inner = false;
     int i = 0;
@@ -339,7 +339,7 @@ TEST(WTF_RunLoop, MAYBE_DispatchInRunLoopIterationDispatchesOnNextIteration1)
 TEST(WTF_RunLoop, MAYBE_DispatchInRunLoopIterationDispatchesOnNextIteration2)
 {
     WTF::initializeMainThread();
-    auto& runLoop = RunLoop::currentSingleton();
+    auto& runLoop = RunLoop::current();
     int outer = 0;
     int inner = 0;
     int i = 0;

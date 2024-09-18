@@ -79,7 +79,7 @@ void ImageCapture::takePhoto(PhotoSettings&& settings, DOMPromiseDeferred<IDLInt
         return;
     }
 
-    m_track->takePhoto(WTFMove(settings))->whenSettled(RunLoop::mainSingleton(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
+    m_track->takePhoto(WTFMove(settings))->whenSettled(RunLoop::main(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::ImageCapture, [this, promise = WTFMove(promise), result = WTFMove(result), identifier = WTFMove(identifier)] () mutable {
             if (!result) {
                 ERROR_LOG(identifier, "rejecting promise: ", result.error().message());
@@ -108,7 +108,7 @@ void ImageCapture::getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<PhotoCa
         return;
     }
 
-    m_track->getPhotoCapabilities()->whenSettled(RunLoop::mainSingleton(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
+    m_track->getPhotoCapabilities()->whenSettled(RunLoop::main(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::ImageCapture, [this, promise = WTFMove(promise), result = WTFMove(result), identifier = WTFMove(identifier)] () mutable {
             if (!result) {
                 ERROR_LOG(identifier, "rejecting promise: ", result.error().message());
@@ -137,7 +137,7 @@ void ImageCapture::getPhotoSettings(DOMPromiseDeferred<IDLDictionary<PhotoSettin
         return;
     }
 
-    m_track->getPhotoSettings()->whenSettled(RunLoop::mainSingleton(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
+    m_track->getPhotoSettings()->whenSettled(RunLoop::main(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::ImageCapture, [this, promise = WTFMove(promise), result = WTFMove(result), identifier = WTFMove(identifier)] () mutable {
             if (!result) {
                 ERROR_LOG(identifier, "rejecting promise: ", result.error().message());

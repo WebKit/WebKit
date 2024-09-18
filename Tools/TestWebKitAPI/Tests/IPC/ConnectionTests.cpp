@@ -270,7 +270,7 @@ TEST_P(ConnectionTestABBA, IncomingMessageThrottlingWorks)
     std::array<size_t, 18> messageCounts { 600, 300, 200, 150, 120, 100, 85, 75, 66, 60, 60, 66, 75, 85, 100, 120, 37, 1 };
     for (size_t i = 0; i < messageCounts.size(); ++i) {
         SCOPED_TRACE(i);
-        RunLoop::currentSingleton().dispatch([&otherRunLoopTasksRun] {
+        RunLoop::current().dispatch([&otherRunLoopTasksRun] {
             otherRunLoopTasksRun++;
         });
         Util::spinRunLoop();
@@ -327,7 +327,7 @@ TEST_P(ConnectionTestABBA, IncomingMessageThrottlingNestedRunLoopDispatches)
     std::array<size_t, 16> messageCounts { 600, 498, 150, 218, 85, 75, 66, 60, 60, 66, 75, 85, 100, 120, 37, 1 };
     for (size_t i = 0; i < messageCounts.size(); ++i) {
         SCOPED_TRACE(i);
-        RunLoop::currentSingleton().dispatch([&otherRunLoopTasksRun] {
+        RunLoop::current().dispatch([&otherRunLoopTasksRun] {
             otherRunLoopTasksRun++;
         });
         Util::spinRunLoop();
@@ -381,7 +381,7 @@ TEST_P(ConnectionTestABBA, ReceiveAlreadyInvalidatedClientNoAssert)
         serverConnection->invalidate();
     }
     while (done.size() < iterations - 1)
-        RunLoop::currentSingleton().cycle();
+        RunLoop::current().cycle();
 
     for (uint64_t i = 1; i < iterations; ++i) {
         auto& connection = connections[i];
@@ -434,7 +434,7 @@ static void dispatchAndWait(RunLoop& runLoop, C&& function)
         done = true;
     });
     while (!done)
-        RunLoop::currentSingleton().cycle();
+        RunLoop::current().cycle();
 }
 
 class ConnectionRunLoopTest : public ConnectionTestABBA {
@@ -464,7 +464,7 @@ public:
         for (auto& runLoop : std::exchange(m_runLoops, { })) {
             dispatchSync(runLoop, [&] {
                 threadsToWait.append(Thread::current());
-                RunLoop::currentSingleton().stop();
+                RunLoop::current().stop();
             });
         }
         while (true) {
@@ -567,7 +567,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendAsync)
             }, i);
         }
         while (replies.size() < 60u)
-            RunLoop::currentSingleton().cycle();
+            RunLoop::current().cycle();
         b()->invalidate();
     });
 
@@ -647,7 +647,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendAsyncOnTarget)
                 }, i);
             }
             while (replies.size() < 60u)
-                RunLoop::currentSingleton().cycle();
+                RunLoop::current().cycle();
             b()->invalidate();
         });
         awq.queue()->beginShutdown();
@@ -686,7 +686,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReply)
                 });
         }
         while (replies.size() < 60u)
-            RunLoop::currentSingleton().cycle();
+            RunLoop::current().cycle();
         b()->invalidate();
     });
 
@@ -725,7 +725,7 @@ TEST_P(ConnectionRunLoopTest, SendWithConvertedPromisedReply)
             isFinished = true;
         });
         while (!isFinished)
-            RunLoop::currentSingleton().cycle();
+            RunLoop::current().cycle();
         b()->invalidate();
     });
 
@@ -761,7 +761,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReplyOnMixAndMatchDispatche
                 });
             }
             while (replies.size() < 60u)
-                RunLoop::currentSingleton().cycle();
+                RunLoop::current().cycle();
             b()->invalidate();
         });
         awq.queue()->beginShutdown();
@@ -797,7 +797,7 @@ TEST_P(ConnectionRunLoopTest, SendAsyncAndInvalidateOnDispatcher)
             });
             ASSERT_TRUE(openB());
             while (messages.size() < messageCount - 1)
-                RunLoop::currentSingleton().cycle();
+                RunLoop::current().cycle();
             semaphore.signal();
         });
         for (uint64_t i = 1u; i < messageCount; ++i) {
@@ -876,7 +876,7 @@ TEST_P(ConnectionRunLoopTest, SendAsyncAndInvalidate)
         });
         ASSERT_TRUE(openB());
         while (messages.size() < messageCount - 1)
-            RunLoop::currentSingleton().cycle();
+            RunLoop::current().cycle();
         semaphore.signal();
     });
     for (uint64_t i = 1u; i < messageCount; ++i) {
@@ -934,7 +934,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReplyOrder)
             }
         }
         while (replies.size() < counter)
-            RunLoop::currentSingleton().cycle();
+            RunLoop::current().cycle();
         b()->invalidate();
     });
 
@@ -980,7 +980,7 @@ TEST_P(ConnectionRunLoopTest, DISABLED_RunLoopSendAsyncOnAnotherRunLoopDispatche
     });
     dispatchAndWait(runLoop, [&] {
         while (replies.size() < 60u)
-            RunLoop::currentSingleton().cycle();
+            RunLoop::current().cycle();
     });
 
     for (uint64_t i = 100u; i < 160u; ++i)
@@ -1018,7 +1018,7 @@ TEST_P(ConnectionRunLoopTest, InvalidSendWithAsyncReplyDispatchesCancelHandlerOn
     });
     EXPECT_EQ(reply, 1u);
     while (reply == 1u)
-        RunLoop::currentSingleton().cycle();
+        RunLoop::current().cycle();
     EXPECT_EQ(reply, 0u);
     semaphore.signal();
     localReferenceBarrier();

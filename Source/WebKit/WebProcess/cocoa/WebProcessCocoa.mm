@@ -1020,11 +1020,11 @@ void WebProcess::updateActivePages(const String& overrideDisplayName)
     ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(overrideDisplayName, activePagesOrigins(m_pageMap), *auditToken), 0);
 #else
     if (!overrideDisplayName) {
-        RunLoop::mainSingleton().dispatch([activeOrigins = activePagesOrigins(m_pageMap)] {
+        RunLoop::main().dispatch([activeOrigins = activePagesOrigins(m_pageMap)] {
             _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), CFSTR("LSActivePageUserVisibleOriginsKey"), (__bridge CFArrayRef)createNSArray(activeOrigins).get(), nullptr);
         });
     } else {
-        RunLoop::mainSingleton().dispatch([name = overrideDisplayName.createCFString()] {
+        RunLoop::main().dispatch([name = overrideDisplayName.createCFString()] {
             _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, name.get(), nullptr);
         });
     }

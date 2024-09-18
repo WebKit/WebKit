@@ -1469,7 +1469,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     if (superview)
         return;
 
-    RunLoop::mainSingleton().dispatch([self, strongSelf = retainPtr(self)] {
+    RunLoop::main().dispatch([self, strongSelf = retainPtr(self)] {
         if ([_webViewPlaceholder superview] == nil && [_webViewPlaceholder parent] == self)
             [self close];
     });

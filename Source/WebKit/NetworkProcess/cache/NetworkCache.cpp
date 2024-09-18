@@ -595,7 +595,7 @@ void Cache::traverse(Function<void(const TraversalEntry*)>&& traverseHandler)
     if (m_traverseCount >= maximumTraverseCount) {
         WTFLogAlways("Maximum parallel cache traverse count exceeded. Ignoring traversal request.");
 
-        RunLoop::mainSingleton().dispatch([traverseHandler = WTFMove(traverseHandler)] () mutable {
+        RunLoop::main().dispatch([traverseHandler = WTFMove(traverseHandler)] () mutable {
             traverseHandler(nullptr);
         });
         return;

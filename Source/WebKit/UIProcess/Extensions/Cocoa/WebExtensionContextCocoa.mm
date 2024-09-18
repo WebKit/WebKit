@@ -3511,7 +3511,7 @@ void WebExtensionContext::scheduleBackgroundContentToUnload()
     RELEASE_LOG_DEBUG(Extensions, "Scheduling background content to unload in %{public}.0f seconds", delayBeforeUnloading.seconds());
 
     if (!m_unloadBackgroundWebViewTimer)
-        m_unloadBackgroundWebViewTimer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), this, &WebExtensionContext::unloadBackgroundContentIfPossible);
+        m_unloadBackgroundWebViewTimer = makeUnique<RunLoop::Timer>(RunLoop::current(), this, &WebExtensionContext::unloadBackgroundContentIfPossible);
     m_unloadBackgroundWebViewTimer->startOneShot(delayBeforeUnloading);
 }
 

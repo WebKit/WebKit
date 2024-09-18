@@ -51,7 +51,7 @@ static WTF::RunLoop* s_expectedRunLoop;
 - (void)dealloc
 {
     if (s_isRunningRunLoop) {
-        EXPECT_EQ(&RunLoop::currentSingleton(), s_expectedRunLoop);
+        EXPECT_EQ(&RunLoop::current(), s_expectedRunLoop);
         s_done = true;
     }
 
@@ -74,7 +74,7 @@ static void cycleRunLoop()
 {
     @autoreleasepool {
         s_isRunningRunLoop = true;
-        RunLoop::currentSingleton().cycle();
+        RunLoop::current().cycle();
         s_isRunningRunLoop = false;
     }
 }
@@ -82,7 +82,7 @@ static void cycleRunLoop()
 TEST(JavaScriptCore, IncrementalSweeperMainThread)
 {
     auto context = adoptNS([JSContext new]);
-    s_expectedRunLoop = &RunLoop::currentSingleton();
+    s_expectedRunLoop = &RunLoop::current();
 
     while (!s_done) {
         triggerGC(context.get());
@@ -93,7 +93,7 @@ TEST(JavaScriptCore, IncrementalSweeperMainThread)
 TEST(JavaScriptCore, IncrementalSweeperSecondaryThread)
 {
     auto context = adoptNS([JSContext new]);
-    s_expectedRunLoop = &RunLoop::currentSingleton();
+    s_expectedRunLoop = &RunLoop::current();
 
     while (!s_done) {
         dispatch_sync(dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0), ^{

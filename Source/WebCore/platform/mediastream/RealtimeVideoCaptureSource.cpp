@@ -521,7 +521,7 @@ auto RealtimeVideoCaptureSource::takePhoto(PhotoSettings&& photoSettings) -> Ref
         setSizeFrameRateAndZoomForPhoto(WTFMove(*newPresetForPhoto));
     }
 
-    return takePhotoInternal(WTFMove(photoSettings))->whenSettled(RunLoop::mainSingleton(), [this, protectedThis = Ref { *this }, configurationToRestore = WTFMove(configurationToRestore)] (auto&& result) mutable {
+    return takePhotoInternal(WTFMove(photoSettings))->whenSettled(RunLoop::main(), [this, protectedThis = Ref { *this }, configurationToRestore = WTFMove(configurationToRestore)] (auto&& result) mutable {
 
         ASSERT(isMainThread());
 

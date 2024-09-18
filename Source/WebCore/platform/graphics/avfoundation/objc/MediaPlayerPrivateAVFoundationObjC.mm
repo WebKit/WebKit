@@ -1043,7 +1043,7 @@ void MediaPlayerPrivateAVFoundationObjC::setAVPlayerItem(AVPlayerItem *item)
 
     RetainPtr<AVPlayer> strongPlayer = m_avPlayer.get();
     RetainPtr<AVPlayerItem> strongItem = item;
-    RunLoop::mainSingleton().dispatch([strongPlayer, strongItem] {
+    RunLoop::main().dispatch([strongPlayer, strongItem] {
         [strongPlayer replaceCurrentItemWithPlayerItem:strongItem.get()];
     });
 }
@@ -2853,12 +2853,12 @@ auto MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
     if (!m_runLoopNestingLevel) {
         m_waitForVideoOutputMediaDataWillChangeObserver = WTF::makeUnique<Observer<void()>>([weakThis = ThreadSafeWeakPtr { *this }] {
             if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_runLoopNestingLevel)
-                RunLoop::mainSingleton().stop();
+                RunLoop::main().stop();
         });
         m_videoOutput->addCurrentImageChangedObserver(*m_waitForVideoOutputMediaDataWillChangeObserver);
 
-        timeoutTimer.emplace(RunLoop::mainSingleton(), [&] {
-            RunLoop::mainSingleton().stop();
+        timeoutTimer.emplace(RunLoop::main(), [&] {
+            RunLoop::main().stop();
         });
         timeoutTimer->startOneShot(1_s);
     }
@@ -2872,7 +2872,7 @@ auto MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
     --m_runLoopNestingLevel;
 
     if (m_runLoopNestingLevel) {
-        RunLoop::mainSingleton().stop();
+        RunLoop::main().stop();
         return UpdateResult::Failed;
     }
 

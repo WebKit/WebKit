@@ -114,7 +114,7 @@ bool ProcessAssertion::isValid() const
 void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandler)
 {
     if (completionHandler)
-        RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
+        RunLoop::main().dispatch(WTFMove(completionHandler));
 }
 
 void ProcessAssertion::acquireSync()

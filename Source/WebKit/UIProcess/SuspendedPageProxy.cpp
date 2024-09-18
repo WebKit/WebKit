@@ -114,7 +114,7 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
     , m_mainFrame(WTFMove(mainFrame))
     , m_browsingContextGroup(WTFMove(browsingContextGroup))
     , m_shouldDelayClosingUntilFirstLayerFlush(shouldDelayClosingUntilFirstLayerFlush)
-    , m_suspensionTimeoutTimer(RunLoop::mainSingleton(), this, &SuspendedPageProxy::suspensionTimedOut)
+    , m_suspensionTimeoutTimer(RunLoop::main(), this, &SuspendedPageProxy::suspensionTimedOut)
 #if USE(RUNNINGBOARD)
     , m_suspensionActivity(m_process->throttler().backgroundActivity("Page suspension for back/forward cache"_s).moveToUniquePtr())
 #endif
@@ -144,7 +144,7 @@ SuspendedPageProxy::~SuspendedPageProxy()
     allSuspendedPages().remove(*this);
 
     if (m_readyToUnsuspendHandler) {
-        RunLoop::mainSingleton().dispatch([readyToUnsuspendHandler = WTFMove(m_readyToUnsuspendHandler)]() mutable {
+        RunLoop::main().dispatch([readyToUnsuspendHandler = WTFMove(m_readyToUnsuspendHandler)]() mutable {
             readyToUnsuspendHandler(nullptr);
         });
     }

@@ -59,7 +59,7 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitor::create(PlatformDispl
 
 DisplayVBlankMonitor::DisplayVBlankMonitor(unsigned refreshRate)
     : m_refreshRate(refreshRate)
-    , m_destroyThreadTimer(RunLoop::mainSingleton(), this, &DisplayVBlankMonitor::destroyThreadTimerFired)
+    , m_destroyThreadTimer(RunLoop::main(), this, &DisplayVBlankMonitor::destroyThreadTimerFired)
 {
     m_destroyThreadTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
 }

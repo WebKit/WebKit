@@ -100,7 +100,7 @@ ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMon
 
     m_compositingRunLoop->performTaskSync([this, protectedThis = Ref { *this }] {
 #if !HAVE(DISPLAY_LINK)
-        m_display.updateTimer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), this, &ThreadedCompositor::displayUpdateFired);
+        m_display.updateTimer = makeUnique<RunLoop::Timer>(RunLoop::current(), this, &ThreadedCompositor::displayUpdateFired);
 #if USE(GLIB_EVENT_LOOP)
         m_display.updateTimer->setPriority(RunLoopSourcePriority::CompositingThreadUpdateTimer);
         m_display.updateTimer->setName("[WebKit] ThreadedCompositor::DisplayUpdate");

@@ -72,7 +72,7 @@ void JSRunLoopTimer::Manager::timerDidFire()
     {
         Locker locker { m_lock };
         if (!m_mapping.isEmpty()) {
-            RunLoop* currentRunLoop = &RunLoop::currentSingleton();
+            RunLoop* currentRunLoop = &RunLoop::current();
             MonotonicTime now = MonotonicTime::now();
             for (auto& entry : m_mapping) {
                 PerVMData& data = *entry.value;

@@ -128,7 +128,7 @@ NavigationState::NavigationState(WKWebView *webView)
     , m_navigationDelegateMethods()
     , m_historyDelegateMethods()
 #if USE(RUNNINGBOARD)
-    , m_releaseNetworkActivityTimer(RunLoop::currentSingleton(), this, &NavigationState::releaseNetworkActivityAfterLoadCompletion)
+    , m_releaseNetworkActivityTimer(RunLoop::current(), this, &NavigationState::releaseNetworkActivityAfterLoadCompletion)
 #endif
 {
     RefPtr page = webView->_page;
@@ -506,7 +506,7 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
         configuration.get().referrerURL = referrerURL;
 
         [LSAppLink openWithURL:url configuration:configuration.get() completionHandler:[localCompletionHandler](BOOL success, NSError *) {
-            RunLoop::mainSingleton().dispatch([localCompletionHandler, success] {
+            RunLoop::main().dispatch([localCompletionHandler, success] {
                 (*localCompletionHandler)(success);
                 delete localCompletionHandler;
             });

@@ -63,7 +63,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::Resou
     , m_request(request)
     , m_handshakeMessage(msg)
     , m_cancellable(adoptGRef(g_cancellable_new()))
-    , m_delayFailTimer(RunLoop::mainSingleton(), this, &WebSocketTask::delayFailTimerFired)
+    , m_delayFailTimer(RunLoop::main(), this, &WebSocketTask::delayFailTimerFired)
 {
     auto protocolList = protocol.split(',');
     GUniquePtr<char*> protocols;

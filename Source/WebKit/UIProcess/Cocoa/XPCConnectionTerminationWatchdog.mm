@@ -38,7 +38,7 @@ void XPCConnectionTerminationWatchdog::startConnectionTerminationWatchdog(Auxili
 }
     
 XPCConnectionTerminationWatchdog::XPCConnectionTerminationWatchdog(AuxiliaryProcessProxy& process, Seconds interval)
-    : m_watchdogTimer(RunLoop::mainSingleton(), this, &XPCConnectionTerminationWatchdog::watchdogTimerFired)
+    : m_watchdogTimer(RunLoop::main(), this, &XPCConnectionTerminationWatchdog::watchdogTimerFired)
     , m_assertion(ProcessAndUIAssertion::create(process, "XPCConnectionTerminationWatchdog"_s, ProcessAssertionType::Background))
 #if USE(EXTENSIONKIT_PROCESS_TERMINATION)
     , m_process(process.extensionProcess())

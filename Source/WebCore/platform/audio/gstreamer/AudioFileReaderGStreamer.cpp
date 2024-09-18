@@ -140,7 +140,7 @@ void AudioFileReader::decodebinPadAddedCallback(AudioFileReader* reader, GstPad*
 }
 
 AudioFileReader::AudioFileReader(std::span<const uint8_t> data)
-    : m_runLoop(RunLoop::currentSingleton())
+    : m_runLoop(RunLoop::current())
     , m_data(data)
 {
 }

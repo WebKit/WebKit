@@ -49,7 +49,7 @@ DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy& webPagePr
     , m_webProcessProxy(webProcessProxy)
     , m_size(webPageProxy.viewSize())
 #if PLATFORM(MAC)
-    , m_viewExposedRectChangedTimer(RunLoop::mainSingleton(), this, &DrawingAreaProxy::viewExposedRectChangedTimerFired)
+    , m_viewExposedRectChangedTimer(RunLoop::main(), this, &DrawingAreaProxy::viewExposedRectChangedTimerFired)
 #endif
 {
 }

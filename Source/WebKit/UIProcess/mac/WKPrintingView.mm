@@ -421,7 +421,7 @@ static void prepareDataForPrintingOnSecondaryThread(WKPrintingView *view)
         ASSERT(![self _isPrintingPreview]);
         Locker lock { _printingCallbackMutex };
 
-        RunLoop::mainSingleton().dispatch([self] {
+        RunLoop::main().dispatch([self] {
             prepareDataForPrintingOnSecondaryThread(self);
         });
 

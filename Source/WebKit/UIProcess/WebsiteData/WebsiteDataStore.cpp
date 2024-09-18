@@ -199,7 +199,7 @@ WebsiteDataStore::~WebsiteDataStore()
     if (RefPtr networkProcess = m_networkProcess)
         networkProcess->removeSession(*this, std::exchange(m_completionHandlerForRemovalFromNetworkProcess, { }));
     if (m_completionHandlerForRemovalFromNetworkProcess) {
-        RunLoop::mainSingleton().dispatch([completionHandler = std::exchange(m_completionHandlerForRemovalFromNetworkProcess, { })]() mutable {
+        RunLoop::main().dispatch([completionHandler = std::exchange(m_completionHandlerForRemovalFromNetworkProcess, { })]() mutable {
             completionHandler({ });
         });
     }
@@ -508,7 +508,7 @@ void WebsiteDataStore::resolveDirectoriesAsynchronously()
             m_mediaKeysStorageSalt = WTFMove(mediaKeysStorageSalt);
             m_resolveDirectoriesCondition.notifyOne();
         }
-        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis)] { });
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
 }
 
@@ -605,7 +605,7 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
         void addWebsiteData(WebsiteData&& websiteData)
         {
             if (!RunLoop::isMain()) {
-                RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, websiteData = crossThreadCopy(websiteData)]() mutable {
+                RunLoop::main().dispatch([protectedThis = Ref { *this }, websiteData = crossThreadCopy(websiteData)]() mutable {
                     protectedThis->addWebsiteData(WTFMove(websiteData));
                 });
                 return;
@@ -774,7 +774,7 @@ void WebsiteDataStore::fetchDataForRegistrableDomains(OptionSet<WebsiteDataType>
                 }
             }
         }
-        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), matchingDataRecords = WTFMove(matchingDataRecords), domainsWithMatchingDataRecords = WTFMove(domainsWithMatchingDataRecords)] () mutable {
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), matchingDataRecords = WTFMove(matchingDataRecords), domainsWithMatchingDataRecords = WTFMove(domainsWithMatchingDataRecords)] () mutable {
             completionHandler(WTFMove(matchingDataRecords), WTFMove(domainsWithMatchingDataRecords));
         });
     });
@@ -1681,7 +1681,7 @@ void WebsiteDataStore::getNetworkProcessConnection(WebProcessProxy& webProcessPr
             }
 
             // Retry on the next RunLoop iteration because we may be inside the WebsiteDataStore destructor.
-            RunLoop::mainSingleton().dispatch([weakThis = WTFMove(weakThis), networkProcessProxy = WTFMove(networkProcessProxy), weakWebProcessProxy = WTFMove(webProcessProxy), reply = WTFMove(reply)] () mutable {
+            RunLoop::main().dispatch([weakThis = WTFMove(weakThis), networkProcessProxy = WTFMove(networkProcessProxy), weakWebProcessProxy = WTFMove(webProcessProxy), reply = WTFMove(reply)] () mutable {
                 RefPtr protectedThis = weakThis.get();
                 RefPtr webProcessProxy = weakWebProcessProxy.get();
                 if (protectedThis && webProcessProxy) {

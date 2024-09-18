@@ -71,7 +71,7 @@ bool MediaSourcePrivate::hasFutureTime(const MediaTime& currentTime, const Media
 }
 
 MediaSourcePrivate::MediaSourcePrivate(MediaSourcePrivateClient& client)
-    : MediaSourcePrivate(client, RunLoop::currentSingleton())
+    : MediaSourcePrivate(client, RunLoop::current())
 {
 }
 

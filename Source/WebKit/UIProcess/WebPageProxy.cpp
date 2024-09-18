@@ -665,22 +665,22 @@ bool WebPageProxy::hasValidOpeningAppLinkActivity() const
 
 WebPageProxy::Internals::Internals(WebPageProxy& page)
     : page(page)
-    , audibleActivityTimer(RunLoop::mainSingleton(), &page, &WebPageProxy::clearAudibleActivity)
+    , audibleActivityTimer(RunLoop::main(), &page, &WebPageProxy::clearAudibleActivity)
     , geolocationPermissionRequestManager(page)
     , identifier(Identifier::generate())
     , notificationManagerMessageHandler(page)
     , pageLoadState(page)
-    , resetRecentCrashCountTimer(RunLoop::mainSingleton(), &page, &WebPageProxy::resetRecentCrashCount)
-    , tryCloseTimeoutTimer(RunLoop::mainSingleton(), &page, &WebPageProxy::tryCloseTimedOut)
-    , updateReportedMediaCaptureStateTimer(RunLoop::mainSingleton(), &page, &WebPageProxy::updateReportedMediaCaptureState)
+    , resetRecentCrashCountTimer(RunLoop::main(), &page, &WebPageProxy::resetRecentCrashCount)
+    , tryCloseTimeoutTimer(RunLoop::main(), &page, &WebPageProxy::tryCloseTimedOut)
+    , updateReportedMediaCaptureStateTimer(RunLoop::main(), &page, &WebPageProxy::updateReportedMediaCaptureState)
 #if HAVE(DISPLAY_LINK)
     , wheelEventActivityHysteresis([&page](PAL::HysteresisState state) { page.wheelEventHysteresisUpdated(state); })
 #endif
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    , fullscreenVideoTextRecognitionTimer(RunLoop::mainSingleton(), &page, &WebPageProxy::fullscreenVideoTextRecognitionTimerFired)
+    , fullscreenVideoTextRecognitionTimer(RunLoop::main(), &page, &WebPageProxy::fullscreenVideoTextRecognitionTimerFired)
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    , activityStateChangeTimer(RunLoop::mainSingleton(), &page, &WebPageProxy::dispatchActivityStateChange)
+    , activityStateChangeTimer(RunLoop::main(), &page, &WebPageProxy::dispatchActivityStateChange)
 #endif
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -718,7 +718,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_contextMenuClient(makeUnique<API::ContextMenuClient>())
 #endif
     , m_navigationState(makeUnique<WebNavigationState>())
-    , m_generatePageLoadTimingTimer(RunLoop::mainSingleton(), this, &WebPageProxy::didEndNetworkRequestsForPageLoadTimingTimerFired)
+    , m_generatePageLoadTimingTimer(RunLoop::main(), this, &WebPageProxy::didEndNetworkRequestsForPageLoadTimingTimerFired)
     , m_legacyMainFrameProcess(process)
     , m_pageGroup(*m_configuration->pageGroup())
     , m_preferences(m_configuration->preferences())
@@ -1688,7 +1688,7 @@ void WebPageProxy::close()
     Ref processPool = process->processPool();
     processPool->backForwardCache().removeEntriesForPage(*this);
 
-    RunLoop::currentSingleton().dispatch([destinationID = webPageIDInMainFrameProcess(), process, preventProcessShutdownScope = process->shutdownPreventingScope()] {
+    RunLoop::current().dispatch([destinationID = webPageIDInMainFrameProcess(), process, preventProcessShutdownScope = process->shutdownPreventingScope()] {
         process->send(Messages::WebPage::Close(), destinationID);
     });
     process->removeWebPage(*this, WebProcessProxy::EndsUsingDataStore::Yes);
@@ -2654,7 +2654,7 @@ void WebPageProxy::setUnderPageBackgroundColorOverride(Color&& newUnderPageBackg
 
     m_hasPendingUnderPageBackgroundColorOverrideToDispatch = true;
 
-    RunLoop::mainSingleton().dispatch([this, weakThis = WeakPtr { *this }] {
+    RunLoop::main().dispatch([this, weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
 
@@ -2797,7 +2797,7 @@ void WebPageProxy::activityStateDidChange(OptionSet<ActivityState> mayHaveChange
     // We need to do this here instead of inside dispatchActivityStateChange() or viewIsBecomingVisible() because these don't run when the view doesn't
     // have a running WebProcess. For the same reason, we need to rely on PageClient::isViewVisible() instead of WebPageProxy::isViewVisible().
     if (internals().potentiallyChangedActivityStateFlags & ActivityState::IsVisible && m_shouldReloadDueToCrashWhenVisible && pageClient->isViewVisible()) {
-        RunLoop::mainSingleton().dispatch([this, weakThis = WeakPtr { *this }] {
+        RunLoop::main().dispatch([this, weakThis = WeakPtr { *this }] {
             RefPtr protectedThis = weakThis.get();
             if (protectedThis && std::exchange(m_shouldReloadDueToCrashWhenVisible, false)) {
                 WEBPAGEPROXY_RELEASE_LOG(ViewState, "activityStateDidChange: view is becoming visible after a crash, attempt a reload");
@@ -5956,7 +5956,7 @@ void WebPageProxy::saveResources(WebFrameProxy* frame, const Vector<WebCore::Mar
             std::optional<WebCore::ArchiveError> error;
             if (!result)
                 error = result.error();
-            RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), error]() mutable {
+            RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), error]() mutable {
                 if (error)
                     return completionHandler(makeUnexpected(*error));
 
@@ -9511,7 +9511,7 @@ bool WebPageProxy::didChooseFilesForOpenPanelWithImageTranscoding(const Vector<S
         auto transcodedURLs = transcodeImages(transcodingURLs, transcodingUTI, transcodingExtension);
         ASSERT(transcodingURLs.size() == transcodedURLs.size());
 
-        RunLoop::mainSingleton().dispatch([this, protectedThis = WTFMove(protectedThis), fileURLs = crossThreadCopy(WTFMove(fileURLs)), transcodedURLs = crossThreadCopy(WTFMove(transcodedURLs))]() {
+        RunLoop::main().dispatch([this, protectedThis = WTFMove(protectedThis), fileURLs = crossThreadCopy(WTFMove(fileURLs)), transcodedURLs = crossThreadCopy(WTFMove(transcodedURLs))]() {
 #if ENABLE(SANDBOX_EXTENSIONS)
             Vector<String> sandboxExtensionFiles;
             for (size_t i = 0, size = fileURLs.size(); i < size; ++i)

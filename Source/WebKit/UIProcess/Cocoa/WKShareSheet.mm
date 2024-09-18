@@ -224,7 +224,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
             } else
                 [shareDataArray addObject:fileURL];
         }
-        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), shareDataArray = WTFMove(shareDataArray)]() mutable {
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), shareDataArray = WTFMove(shareDataArray)]() mutable {
             completionHandler(WTFMove(shareDataArray));
         });
     });

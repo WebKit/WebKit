@@ -41,7 +41,7 @@ namespace WebKit {
 
 NfcService::NfcService(AuthenticatorTransportServiceObserver& observer)
     : FidoService(observer)
-    , m_restartTimer(RunLoop::mainSingleton(), this, &NfcService::platformStartDiscovery)
+    , m_restartTimer(RunLoop::main(), this, &NfcService::platformStartDiscovery)
 {
 }
 
@@ -108,7 +108,7 @@ void NfcService::platformStartDiscovery()
             return;
         }
 
-        RunLoop::mainSingleton().dispatch([weakThis = WTFMove(weakThis), this, session = retainPtr(session)] () mutable {
+        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), this, session = retainPtr(session)] () mutable {
             if (!weakThis) {
                 [session endSession];
                 return;

@@ -57,10 +57,10 @@ CompositingRunLoop::~CompositingRunLoop()
 {
     ASSERT(RunLoop::isMain());
     // Make sure the RunLoop is stopped after the CompositingRunLoop, because m_updateTimer has a reference.
-    RunLoop::mainSingleton().dispatch([runLoop = m_runLoop] {
+    RunLoop::main().dispatch([runLoop = m_runLoop] {
         runLoop->stop();
         runLoop->dispatch([] {
-            RunLoop::currentSingleton().stop();
+            RunLoop::current().stop();
         });
     });
 }

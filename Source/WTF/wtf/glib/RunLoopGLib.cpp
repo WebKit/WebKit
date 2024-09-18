@@ -96,7 +96,7 @@ RunLoop::~RunLoop()
 
 void RunLoop::run()
 {
-    Ref runLoop = RunLoop::currentSingleton();
+    Ref runLoop = RunLoop::current();
     GMainContext* mainContext = runLoop->m_mainContext.get();
 
     // The innermost main loop should always be there.

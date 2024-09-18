@@ -2021,7 +2021,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
         _isHandlingActivePressesEvent = NO;
 
         if (!_keyWebEventHandlers.isEmpty()) {
-            RunLoop::mainSingleton().dispatch([weakSelf = WeakObjCPtr<WKContentView>(self)] {
+            RunLoop::main().dispatch([weakSelf = WeakObjCPtr<WKContentView>(self)] {
                 RetainPtr strongSelf = weakSelf.get();
                 if (!strongSelf || [strongSelf isFirstResponder])
                     return;
@@ -2754,7 +2754,7 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
     // Mail, we won't take the keyboard height into account when scrolling.
     // Mitigate this by deferring the call to -_zoomToRevealFocusedElement in this case until after the
     // keyboard has finished animating. We can revert this once rdar://87733414 is fixed.
-    RunLoop::mainSingleton().dispatch([weakSelf = WeakObjCPtr<WKContentView>(self)] {
+    RunLoop::main().dispatch([weakSelf = WeakObjCPtr<WKContentView>(self)] {
         auto strongSelf = weakSelf.get();
         if (!strongSelf || !strongSelf->_revealFocusedElementDeferrer)
             return;

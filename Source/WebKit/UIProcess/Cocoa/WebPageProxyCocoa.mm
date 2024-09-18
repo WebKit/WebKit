@@ -232,7 +232,7 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, bool forMainFrameNavig
     if (!context)
         return listener.didReceiveSafeBrowsingResults({ });
     [context lookUpURL:url completionHandler:makeBlockPtr([listener = Ref { listener }, forMainFrameNavigation, url = url] (SSBLookupResult *result, NSError *error) mutable {
-        RunLoop::mainSingleton().dispatch([listener = WTFMove(listener), result = retainPtr(result), error = retainPtr(error), forMainFrameNavigation, url = WTFMove(url)] {
+        RunLoop::main().dispatch([listener = WTFMove(listener), result = retainPtr(result), error = retainPtr(error), forMainFrameNavigation, url = WTFMove(url)] {
             if (error) {
                 listener->didReceiveSafeBrowsingResults({ });
                 return;
@@ -667,7 +667,7 @@ void WebPageProxy::fullscreenVideoTextRecognitionTimerFired()
 void WebPageProxy::requestThumbnail(WKQLThumbnailLoadOperation *operation)
 {
     [operation setCompletionBlock:^{
-        RunLoop::mainSingleton().dispatch([this, operation = retainPtr(operation)] {
+        RunLoop::main().dispatch([this, operation = retainPtr(operation)] {
             auto identifier = [operation identifier];
             auto convertedImage = convertPlatformImageToBitmap([operation thumbnail], iconSize);
             if (!convertedImage)

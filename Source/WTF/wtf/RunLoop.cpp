@@ -61,7 +61,7 @@ private:
 void RunLoop::initializeMain()
 {
     RELEASE_ASSERT(!s_mainRunLoop);
-    s_mainRunLoop = &RunLoop::currentSingleton();
+    s_mainRunLoop = &RunLoop::current();
 }
 
 auto RunLoop::runLoopHolder() -> ThreadSpecific<Holder>&
@@ -74,7 +74,7 @@ auto RunLoop::runLoopHolder() -> ThreadSpecific<Holder>&
     return runLoopHolder;
 }
 
-RunLoop& RunLoop::currentSingleton()
+RunLoop& RunLoop::current()
 {
     return runLoopHolder()->runLoop();
 }
@@ -85,17 +85,11 @@ RunLoop& RunLoop::main()
     return *s_mainRunLoop;
 }
 
-RunLoop& RunLoop::mainSingleton()
-{
-    ASSERT(s_mainRunLoop);
-    return *s_mainRunLoop;
-}
-
 #if USE(WEB_THREAD)
 void RunLoop::initializeWeb()
 {
     RELEASE_ASSERT(!s_webRunLoop);
-    s_webRunLoop = &RunLoop::currentSingleton();
+    s_webRunLoop = &RunLoop::current();
 }
 
 RunLoop& RunLoop::web()
@@ -115,7 +109,7 @@ Ref<RunLoop> RunLoop::create(ASCIILiteral threadName, ThreadType threadType, Thr
     RunLoop* runLoop = nullptr;
     BinarySemaphore semaphore;
     Thread::create(threadName, [&] {
-        runLoop = &RunLoop::currentSingleton();
+        runLoop = &RunLoop::current();
         semaphore.signal();
         runLoop->run();
     }, threadType, qos)->detach();
@@ -126,7 +120,7 @@ Ref<RunLoop> RunLoop::create(ASCIILiteral threadName, ThreadType threadType, Thr
 bool RunLoop::isCurrent() const
 {
     // Avoid constructing the RunLoop for the current thread if it has not been created yet.
-    return runLoopHolder().isSet() && this == &RunLoop::currentSingleton();
+    return runLoopHolder().isSet() && this == &RunLoop::current();
 }
 
 void RunLoop::performWork()

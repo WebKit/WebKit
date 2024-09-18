@@ -465,7 +465,7 @@ TEST_P(StreamMessageTest, SendAsyncReply)
         EXPECT_TRUE(result.isValid());
     }
     while (replies.size() < 55u)
-        RunLoop::currentSingleton().cycle();
+        RunLoop::current().cycle();
     for (uint64_t i = 100u; i < 155u; ++i)
         EXPECT_TRUE(replies.contains(i));
 }
@@ -486,7 +486,7 @@ TEST_P(StreamMessageTest, SendAsyncReplyCancel)
         workQueueWait.wait();
     });
     while (!waiting)
-        RunLoop::currentSingleton().cycle();
+        RunLoop::current().cycle();
 
     HashSet<uint64_t> replies;
     for (uint64_t i = 100u; i < 155u; ++i) {
@@ -504,7 +504,7 @@ TEST_P(StreamMessageTest, SendAsyncReplyCancel)
     // EXPECT_EQ(0u, replies.size());
 
     while (replies.size() < 55u)
-        RunLoop::currentSingleton().cycle();
+        RunLoop::current().cycle();
     for (uint64_t i = 100u; i < 155u; ++i)
         EXPECT_TRUE(replies.contains(i));
 }

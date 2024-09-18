@@ -613,7 +613,7 @@ void WebCoreDecompressionSession::enqueueDecodedSample(CMSampleBufferRef sample)
     if (!shouldNotify)
         return;
 
-    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }] {
+    RunLoop::main().dispatch([protectedThis = Ref { *this }] {
         assertIsMainThread();
         if (auto callback = std::exchange(protectedThis->m_hasAvailableFrameCallback, { }))
             callback();
@@ -634,7 +634,7 @@ void WebCoreDecompressionSession::requestMediaDataWhenReady(Function<void()>&& n
 
     if (m_notificationCallback && isReadyForMoreMediaData()) {
         RefPtr<WebCoreDecompressionSession> protectedThis { this };
-        RunLoop::mainSingleton().dispatch([protectedThis] {
+        RunLoop::main().dispatch([protectedThis] {
             assertIsMainThread();
             if (protectedThis->m_notificationCallback)
                 protectedThis->m_notificationCallback();
@@ -662,7 +662,7 @@ void WebCoreDecompressionSession::notifyWhenHasAvailableVideoFrame(Function<void
 {
     assertIsMainThread();
     if (m_producerQueue && !PAL::CMBufferQueueIsEmpty(m_producerQueue.get())) {
-        RunLoop::mainSingleton().dispatch(WTFMove(callback));
+        RunLoop::main().dispatch(WTFMove(callback));
         return;
     }
     m_hasAvailableFrameCallback = WTFMove(callback);

@@ -318,7 +318,7 @@ auto MediaStreamTrack::takePhoto(PhotoSettings&& settings) -> Ref<TakePhotoPromi
 {
     ASSERT(!m_ended);
 
-    return m_private->takePhoto(WTFMove(settings))->whenSettled(RunLoop::mainSingleton(), [protectedThis = Ref { *this }] (auto&& result) mutable {
+    return m_private->takePhoto(WTFMove(settings))->whenSettled(RunLoop::main(), [protectedThis = Ref { *this }] (auto&& result) mutable {
 
         // https://w3c.github.io/mediacapture-image/#dom-imagecapture-takephoto
         // If the operation cannot be completed for any reason (for example, upon
@@ -340,7 +340,7 @@ auto MediaStreamTrack::getPhotoCapabilities() -> Ref<PhotoCapabilitiesPromise>
 {
     ASSERT(!m_ended);
 
-    return m_private->getPhotoCapabilities()->whenSettled(RunLoop::mainSingleton(), [protectedThis = Ref { *this }] (auto&& result) mutable {
+    return m_private->getPhotoCapabilities()->whenSettled(RunLoop::main(), [protectedThis = Ref { *this }] (auto&& result) mutable {
 
         // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotocapabilities②
         // If the data cannot be gathered for any reason (for example, the MediaStreamTrack being ended
@@ -361,7 +361,7 @@ auto MediaStreamTrack::getPhotoSettings() -> Ref<PhotoSettingsPromise>
 {
     ASSERT(!m_ended);
 
-    return m_private->getPhotoSettings()->whenSettled(RunLoop::mainSingleton(), [protectedThis = Ref { *this }] (auto&& result) mutable {
+    return m_private->getPhotoSettings()->whenSettled(RunLoop::main(), [protectedThis = Ref { *this }] (auto&& result) mutable {
 
         // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotosettings②
         // If the data cannot be gathered for any reason (for example, the MediaStreamTrack being ended

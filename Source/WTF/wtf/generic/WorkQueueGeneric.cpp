@@ -57,7 +57,7 @@ void WorkQueueBase::platformInvalidate()
         Ref<RunLoop> protector(*m_runLoop);
         protector->stop();
         protector->dispatch([] {
-            RunLoop::currentSingleton().stop();
+            RunLoop::current().stop();
         });
     }
 }
@@ -77,7 +77,7 @@ void WorkQueueBase::dispatchAfter(Seconds delay, Function<void()>&& function)
 }
 
 WorkQueue::WorkQueue(MainTag)
-    : WorkQueueBase(RunLoop::mainSingleton())
+    : WorkQueueBase(RunLoop::main())
 {
 }
 

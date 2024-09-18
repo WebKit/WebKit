@@ -64,7 +64,7 @@ class ScratchBuffer {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(ScratchBuffer);
 public:
     ScratchBuffer()
-        : m_purgeTimer(RunLoop::mainSingleton(), this, &ScratchBuffer::purgeTimerFired)
+        : m_purgeTimer(RunLoop::main(), this, &ScratchBuffer::purgeTimerFired)
     {
     }
 

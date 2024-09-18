@@ -253,9 +253,9 @@ struct _WebKitWebViewBasePrivate {
     _WebKitWebViewBasePrivate()
         : pageScaleFactor(1.0)
 #if GTK_CHECK_VERSION(3, 24, 0)
-        , releaseEmojiChooserTimer(RunLoop::mainSingleton(), this, &_WebKitWebViewBasePrivate::releaseEmojiChooserTimerFired)
+        , releaseEmojiChooserTimer(RunLoop::main(), this, &_WebKitWebViewBasePrivate::releaseEmojiChooserTimerFired)
 #endif
-        , nextPresentationUpdateTimer(RunLoop::mainSingleton(), this, &_WebKitWebViewBasePrivate::nextPresentationUpdateTimerFired)
+        , nextPresentationUpdateTimer(RunLoop::main(), this, &_WebKitWebViewBasePrivate::nextPresentationUpdateTimerFired)
     {
 #if GTK_CHECK_VERSION(3, 24, 0)
         releaseEmojiChooserTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
@@ -3063,7 +3063,7 @@ static void emojiChooserClosed(WebKitWebViewBase* webkitWebViewBase)
 {
     // The emoji chooser first closes the popover and then emits emoji-picked signal, so complete
     // the request if the emoji isn't picked before the next run loop iteration.
-    RunLoop::mainSingleton().dispatch([webViewBase = GRefPtr<WebKitWebViewBase>(webkitWebViewBase)] {
+    RunLoop::main().dispatch([webViewBase = GRefPtr<WebKitWebViewBase>(webkitWebViewBase)] {
         webkitWebViewBaseCompleteEmojiChooserRequest(webViewBase.get(), emptyString());
     });
     webkitWebViewBase->priv->releaseEmojiChooserTimer.startOneShot(2_min);

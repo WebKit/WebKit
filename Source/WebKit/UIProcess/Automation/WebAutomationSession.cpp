@@ -89,7 +89,7 @@ WebAutomationSession::WebAutomationSession()
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_domainDispatcher(AutomationBackendDispatcher::create(m_backendDispatcher, this))
     , m_domainNotifier(makeUnique<AutomationFrontendDispatcher>(m_frontendRouter))
-    , m_loadTimer(RunLoop::mainSingleton(), this, &WebAutomationSession::loadTimerFired)
+    , m_loadTimer(RunLoop::main(), this, &WebAutomationSession::loadTimerFired)
 {
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
     m_mouseButtonsCurrentlyDown.reserveInitialCapacity(3);
@@ -658,7 +658,7 @@ void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page)
     // the load in case of normal strategy, so we want to dispatch all pending navigation callbacks.
     // If the dialog was shown during a script execution, we want to finish the evaluateJavaScriptFunction
     // operation with an unexpected alert open error.
-    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, page = Ref { page }] {
+    RunLoop::protectedMain()->dispatch([this, protectedThis = Ref { *this }, page = Ref { page }] {
         if (!page->hasRunningProcess() || !m_client || !m_client->isShowingJavaScriptDialogOnPage(*this, page))
             return;
 

@@ -30,7 +30,7 @@ namespace WebKit {
 
 ResponsivenessTimer::ResponsivenessTimer(ResponsivenessTimer::Client& client, Seconds responsivenessTimeout)
     : m_client(client)
-    , m_timer(RunLoop::mainSingleton(), this, &ResponsivenessTimer::timerFired)
+    , m_timer(RunLoop::main(), this, &ResponsivenessTimer::timerFired)
     , m_responsivenessTimeout(responsivenessTimeout)
 {
 }

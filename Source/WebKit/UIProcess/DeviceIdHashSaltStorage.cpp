@@ -63,7 +63,7 @@ void DeviceIdHashSaltStorage::completePendingHandler(CompletionHandler<void(Hash
         origins.add(hashSaltForOrigin.value->parentOrigin);
     }
 
-    RunLoop::mainSingleton().dispatch([origins = WTFMove(origins), completionHandler = WTFMove(completionHandler)]() mutable {
+    RunLoop::main().dispatch([origins = WTFMove(origins), completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler(WTFMove(origins));
     });
 }
@@ -151,7 +151,7 @@ void DeviceIdHashSaltStorage::loadStorageFromDisk(CompletionHandler<void(HashMap
                 RELEASE_LOG_ERROR(DiskPersistency, "DeviceIdHashSaltStorage: There are two files with different hash salts for the same origin: '%s'", originPath.utf8().data());
         }
 
-        RunLoop::mainSingleton().dispatch([deviceIdHashSaltForOrigins = WTFMove(deviceIdHashSaltForOrigins), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::main().dispatch([deviceIdHashSaltForOrigins = WTFMove(deviceIdHashSaltForOrigins), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(WTFMove(deviceIdHashSaltForOrigins));
         });
     });
@@ -291,7 +291,7 @@ void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltForOrigins(const Vector<Secu
         return needsRemoval;
     });
 
-    RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
+    RunLoop::main().dispatch(WTFMove(completionHandler));
 }
 
 void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltOriginsModifiedSince(WallTime time, CompletionHandler<void()>&& completionHandler)
@@ -317,7 +317,7 @@ void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltOriginsModifiedSince(WallTim
         return needsRemoval;
     });
 
-    RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
+    RunLoop::main().dispatch(WTFMove(completionHandler));
 }
 
 } // namespace WebKit

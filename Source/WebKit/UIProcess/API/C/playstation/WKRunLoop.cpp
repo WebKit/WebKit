@@ -32,12 +32,12 @@
 
 void WKRunLoopRunMain()
 {
-    RunLoop::mainSingleton().run();
+    RunLoop::main().run();
 }
 
 void WKRunLoopStopMain()
 {
-    RunLoop::mainSingleton().stop();
+    RunLoop::main().stop();
 }
 
 void WKRunLoopCallOnMainThread(WKRunLoopCallback callback, void* userData)

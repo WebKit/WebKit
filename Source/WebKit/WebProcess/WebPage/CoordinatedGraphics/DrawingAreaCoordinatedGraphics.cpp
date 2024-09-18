@@ -58,8 +58,8 @@ using namespace WebCore;
 DrawingAreaCoordinatedGraphics::DrawingAreaCoordinatedGraphics(WebPage& webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaType::CoordinatedGraphics, parameters.drawingAreaIdentifier, webPage)
     , m_isPaintingSuspended(!(parameters.activityState & ActivityState::IsVisible))
-    , m_exitCompositingTimer(RunLoop::mainSingleton(), this, &DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingMode)
-    , m_displayTimer(RunLoop::mainSingleton(), this, &DrawingAreaCoordinatedGraphics::displayTimerFired)
+    , m_exitCompositingTimer(RunLoop::main(), this, &DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingMode)
+    , m_displayTimer(RunLoop::main(), this, &DrawingAreaCoordinatedGraphics::displayTimerFired)
 {
 #if USE(GLIB_EVENT_LOOP) && !PLATFORM(WPE)
     m_displayTimer.setPriority(RunLoopSourcePriority::NonAcceleratedDrawingTimer);

@@ -674,7 +674,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 - (void)pdfHostViewControllerExtensionProcessDidCrash:(PDFHostViewController *)controller
 {
     // FIXME 40916725: PDFKit should dispatch this message to the main thread like it does for other delegate messages.
-    RunLoop::mainSingleton().dispatch([webView = _webView] {
+    RunLoop::main().dispatch([webView = _webView] {
         if (auto page = [webView _page])
             page->dispatchProcessDidTerminate(WebKit::ProcessTerminationReason::Crash);
     });

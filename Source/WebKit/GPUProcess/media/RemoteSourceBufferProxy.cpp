@@ -124,7 +124,7 @@ Ref<MediaPromise> RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitiali
     });
 
     // We need to wait for the CP's MediaPlayerRemote to have created all the tracks
-    return remoteMediaPlayerProxy->commitAllTransactions()->whenSettled(RunLoop::currentSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, this, segmentInfo = WTFMove(segmentInfo)](auto&& result) mutable -> Ref<MediaPromise> {
+    return remoteMediaPlayerProxy->commitAllTransactions()->whenSettled(RunLoop::current(), [weakThis = ThreadSafeWeakPtr { *this }, this, segmentInfo = WTFMove(segmentInfo)](auto&& result) mutable -> Ref<MediaPromise> {
         RefPtr protectedThis = weakThis.get();
         RefPtr connection = m_connectionToWebProcess.get();
         if (!protectedThis  || !result || !connection)
@@ -187,7 +187,7 @@ void RemoteSourceBufferProxy::append(IPC::SharedBufferReference&& buffer, Comple
     if (handle && connection)
         connection->protectedConnection()->send(Messages::SourceBufferPrivateRemoteMessageReceiver::TakeOwnershipOfMemory(WTFMove(*handle)), m_identifier);
 
-    m_sourceBufferPrivate->append(sharedMemory->createSharedBuffer(buffer.size()))->whenSettled(RunLoop::currentSingleton(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
+    m_sourceBufferPrivate->append(sharedMemory->createSharedBuffer(buffer.size()))->whenSettled(RunLoop::current(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
         completionHandler(WTFMove(result), m_sourceBufferPrivate->timestampOffset());
     });
 }
@@ -234,7 +234,7 @@ void RemoteSourceBufferProxy::startChangingType()
 
 void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, CompletionHandler<void()>&& completionHandler)
 {
-    m_sourceBufferPrivate->removeCodedFrames(start, end, currentTime)->whenSettled(RunLoop::currentSingleton(), WTFMove(completionHandler));
+    m_sourceBufferPrivate->removeCodedFrames(start, end, currentTime)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
 void RemoteSourceBufferProxy::evictCodedFrames(uint64_t newDataSize, const MediaTime& currentTime, CompletionHandler<void(Vector<WebCore::PlatformTimeRanges>&&, WebCore::SourceBufferEvictionData&&)>&& completionHandler)
@@ -312,12 +312,12 @@ void RemoteSourceBufferProxy::setAppendWindowEnd(const MediaTime& appendWindowEn
 
 void RemoteSourceBufferProxy::setMaximumBufferSize(size_t size, CompletionHandler<void()>&& completionHandler)
 {
-    m_sourceBufferPrivate->setMaximumBufferSize(size)->whenSettled(RunLoop::currentSingleton(), WTFMove(completionHandler));
+    m_sourceBufferPrivate->setMaximumBufferSize(size)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
 void RemoteSourceBufferProxy::computeSeekTime(const SeekTarget& target, CompletionHandler<void(SourceBufferPrivate::ComputeSeekPromise::Result&&)>&& completionHandler)
 {
-    m_sourceBufferPrivate->computeSeekTime(target)->whenSettled(RunLoop::currentSingleton(), WTFMove(completionHandler));
+    m_sourceBufferPrivate->computeSeekTime(target)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
 void RemoteSourceBufferProxy::seekToTime(const MediaTime& time)
@@ -333,12 +333,12 @@ void RemoteSourceBufferProxy::updateTrackIds(Vector<std::pair<TrackID, TrackID>>
 
 void RemoteSourceBufferProxy::bufferedSamplesForTrackId(TrackID trackId, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&& completionHandler)
 {
-    m_sourceBufferPrivate->bufferedSamplesForTrackId(trackId)->whenSettled(RunLoop::currentSingleton(), WTFMove(completionHandler));
+    m_sourceBufferPrivate->bufferedSamplesForTrackId(trackId)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
 void RemoteSourceBufferProxy::enqueuedSamplesForTrackID(TrackID trackId, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&& completionHandler)
 {
-    m_sourceBufferPrivate->enqueuedSamplesForTrackID(trackId)->whenSettled(RunLoop::currentSingleton(), WTFMove(completionHandler));
+    m_sourceBufferPrivate->enqueuedSamplesForTrackID(trackId)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
 void RemoteSourceBufferProxy::memoryPressure(const MediaTime& currentTime)

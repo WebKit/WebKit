@@ -62,7 +62,7 @@ private:
 
 SendGarbageCollectionEventsTask::SendGarbageCollectionEventsTask(WebHeapAgent& agent)
     : m_agent(agent)
-    , m_timer(RunLoop::mainSingleton(), this, &SendGarbageCollectionEventsTask::timerFired)
+    , m_timer(RunLoop::main(), this, &SendGarbageCollectionEventsTask::timerFired)
 {
 }
 

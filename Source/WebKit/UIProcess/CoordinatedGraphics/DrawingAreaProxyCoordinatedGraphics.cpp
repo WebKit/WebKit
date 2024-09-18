@@ -57,7 +57,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DrawingAreaProxyCoordinatedGraphics);
 DrawingAreaProxyCoordinatedGraphics::DrawingAreaProxyCoordinatedGraphics(WebPageProxy& webPageProxy, WebProcessProxy& webProcessProxy)
     : DrawingAreaProxy(DrawingAreaType::CoordinatedGraphics, webPageProxy, webProcessProxy)
 #if !PLATFORM(WPE)
-    , m_discardBackingStoreTimer(RunLoop::currentSingleton(), this, &DrawingAreaProxyCoordinatedGraphics::discardBackingStore)
+    , m_discardBackingStoreTimer(RunLoop::current(), this, &DrawingAreaProxyCoordinatedGraphics::discardBackingStore)
 #endif
 {
 #if USE(GLIB_EVENT_LOOP) && !PLATFORM(WPE)
@@ -306,7 +306,7 @@ void DrawingAreaProxyCoordinatedGraphics::discardBackingStore()
 WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(DrawingAreaProxyCoordinatedGraphicsDrawingMonitor, DrawingAreaProxyCoordinatedGraphics::DrawingMonitor);
 
 DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::DrawingMonitor(WebPageProxy& webPage)
-    : m_timer(RunLoop::mainSingleton(), this, &DrawingMonitor::stop)
+    : m_timer(RunLoop::main(), this, &DrawingMonitor::stop)
 {
 #if USE(GLIB_EVENT_LOOP)
     m_timer.setPriority(RunLoopSourcePriority::RunLoopDispatcher);

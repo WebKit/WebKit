@@ -195,7 +195,7 @@ void SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples(TrackID t
     ASSERT(m_tracks.contains(trackId));
     auto track = m_tracks[trackId];
     track->notifyWhenReadyForMoreSamples([weakPtr = WeakPtr { *this }, this, trackId]() mutable {
-        RunLoop::mainSingleton().dispatch([weakPtr = WTFMove(weakPtr), this, trackId]() {
+        RunLoop::main().dispatch([weakPtr = WTFMove(weakPtr), this, trackId]() {
             if (!weakPtr)
                 return;
             if (!m_hasBeenRemovedFromMediaSource)

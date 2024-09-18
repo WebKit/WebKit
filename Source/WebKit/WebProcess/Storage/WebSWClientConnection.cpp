@@ -105,7 +105,7 @@ void WebSWClientConnection::addServiceWorkerRegistrationInServer(ServiceWorkerRe
 void WebSWClientConnection::removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
 {
     if (WebProcess::singleton().removeServiceWorkerRegistration(identifier)) {
-        RunLoop::mainSingleton().dispatch([identifier, connection = Ref { *this }]() {
+        RunLoop::main().dispatch([identifier, connection = Ref { *this }]() {
             connection->send(Messages::WebSWServerConnection::RemoveServiceWorkerRegistrationInServer { identifier });
         });
     }

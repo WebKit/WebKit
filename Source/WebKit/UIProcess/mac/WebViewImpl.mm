@@ -671,7 +671,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 - (void)menuDidClose:(NSMenu *)menu
 {
-    RunLoop::mainSingleton().dispatch([impl = _impl] {
+    RunLoop::main().dispatch([impl = _impl] {
         if (impl)
             impl->hideDOMPasteMenuWithResult(WebCore::DOMPasteAccessResponse::DeniedForGesture);
     });
@@ -1731,7 +1731,7 @@ void WebViewImpl::updateWindowAndViewFrames()
 
     m_didScheduleWindowAndViewFrameUpdate = true;
 
-    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }] {
+    RunLoop::main().dispatch([weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
 
@@ -1859,7 +1859,7 @@ void WebViewImpl::scheduleSetTopContentInsetDispatch()
 
     m_didScheduleSetTopContentInsetDispatch = true;
 
-    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }] {
+    RunLoop::main().dispatch([weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         weakThis->dispatchSetTopContentInset();
@@ -2839,7 +2839,7 @@ void WebViewImpl::didBecomeEditable()
 {
     [m_windowVisibilityObserver enableObservingFontPanel];
 
-    RunLoop::mainSingleton().dispatch([] {
+    RunLoop::main().dispatch([] {
         [[NSSpellChecker sharedSpellChecker] _preflightChosenSpellServer];
     });
 }
@@ -3279,7 +3279,7 @@ void WebViewImpl::requestCandidatesForSelectionIfNeeded()
 
     WeakPtr weakThis { *this };
     m_lastCandidateRequestSequenceNumber = [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:selectedRange inString:postLayoutData->paragraphContextForCandidateRequest types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakThis](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
-        RunLoop::mainSingleton().dispatch([weakThis, sequenceNumber, candidates = retainPtr(candidates)] {
+        RunLoop::main().dispatch([weakThis, sequenceNumber, candidates = retainPtr(candidates)] {
             if (!weakThis)
                 return;
             weakThis->handleRequestedCandidates(sequenceNumber, candidates.get());
@@ -4126,7 +4126,7 @@ static bool handleLegacyFilesPasteboard(id<NSDraggingInfo> draggingInfo, Box<Web
             if (errorOrNil)
                 return;
 
-            RunLoop::mainSingleton().dispatch([page = WTFMove(page), path = RetainPtr { fileURL.path }, fileNames, fileCount, dragData, pasteboardName] () mutable {
+            RunLoop::main().dispatch([page = WTFMove(page), path = RetainPtr { fileURL.path }, fileNames, fileCount, dragData, pasteboardName] () mutable {
                 fileNames->append(path.get());
                 if (fileNames->size() != fileCount)
                     return;

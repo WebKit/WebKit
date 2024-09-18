@@ -195,7 +195,7 @@ static bool processHasActiveRunTimeLimitation()
     } else if (_assertionsNeedingBackgroundTask.isEmptyIgnoringNullReferences()) {
         // Release the background task asynchronously because releasing the background task may destroy the ProcessThrottler and we don't
         // want it to get destroyed while in the middle of updating its assertion.
-        RunLoop::mainSingleton().dispatch([self, strongSelf = retainPtr(self)] {
+        RunLoop::main().dispatch([self, strongSelf = retainPtr(self)] {
             if (_assertionsNeedingBackgroundTask.isEmptyIgnoringNullReferences())
                 [self _releaseBackgroundTask];
         });
@@ -237,7 +237,7 @@ static bool processHasActiveRunTimeLimitation()
     // upon resuming, or the user reactivated the app shortly after expiration).
     if (remainingTime == RBSProcessTimeLimitationNone) {
         [self _releaseBackgroundTask];
-        RunLoop::mainSingleton().dispatch([self, strongSelf = retainPtr(self)] {
+        RunLoop::main().dispatch([self, strongSelf = retainPtr(self)] {
             [self _updateBackgroundTask];
         });
         return;
@@ -303,7 +303,7 @@ typedef void(^RBSAssertionInvalidationCallbackType)();
 {
     RELEASE_LOG(ProcessSuspension, "%p - WKRBSAssertionDelegate: assertionWillInvalidate", self);
 
-    RunLoop::mainSingleton().dispatch([weakSelf = WeakObjCPtr<WKRBSAssertionDelegate>(self)] {
+    RunLoop::main().dispatch([weakSelf = WeakObjCPtr<WKRBSAssertionDelegate>(self)] {
         auto strongSelf = weakSelf.get();
         if (strongSelf && strongSelf.get().prepareForInvalidationCallback)
             strongSelf.get().prepareForInvalidationCallback();
@@ -314,7 +314,7 @@ typedef void(^RBSAssertionInvalidationCallbackType)();
 {
     RELEASE_LOG(ProcessSuspension, "%p - WKRBSAssertionDelegate: assertion was invalidated, error: %{public}@", self, error);
 
-    RunLoop::mainSingleton().dispatch([weakSelf = WeakObjCPtr<WKRBSAssertionDelegate>(self)] {
+    RunLoop::main().dispatch([weakSelf = WeakObjCPtr<WKRBSAssertionDelegate>(self)] {
         auto strongSelf = weakSelf.get();
         if (strongSelf && strongSelf.get().invalidationCallback)
             strongSelf.get().invalidationCallback();
@@ -389,7 +389,7 @@ ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String&
         ASCIILiteral runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
         ASCIILiteral runningBoardDomain = runningBoardDomainForAssertionType(m_assertionType);
         auto didInvalidateBlock = [weakThis = ThreadSafeWeakPtr { *this }, runningBoardAssertionName] () {
-            RunLoop::mainSingleton().dispatch([weakThis = WTFMove(weakThis), runningBoardAssertionName = WTFMove(runningBoardAssertionName)] {
+            RunLoop::main().dispatch([weakThis = WTFMove(weakThis), runningBoardAssertionName = WTFMove(runningBoardAssertionName)] {
                 auto strongThis = weakThis.get();
                 RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: RBS %{public}s assertion for process with PID=%d was invalidated", strongThis.get(), runningBoardAssertionName.characters(), strongThis ? strongThis->m_pid : 0);
                 if (strongThis)
@@ -397,7 +397,7 @@ ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String&
             });
         };
         auto willInvalidateBlock = [weakThis = ThreadSafeWeakPtr { *this }, runningBoardAssertionName] () {
-            RunLoop::mainSingleton().dispatch([weakThis = WTFMove(weakThis), runningBoardAssertionName = WTFMove(runningBoardAssertionName)] {
+            RunLoop::main().dispatch([weakThis = WTFMove(weakThis), runningBoardAssertionName = WTFMove(runningBoardAssertionName)] {
                 auto strongThis = weakThis.get();
                 RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}s assertion for process with PID=%d will be invalidated", strongThis.get(), runningBoardAssertionName.characters(), strongThis ? strongThis->m_pid : 0);
                 if (strongThis)
@@ -467,7 +467,7 @@ void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandle
     ASSERT(isMainRunLoop());
     assertionsWorkQueue().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         protectedThis->acquireSync();
-        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
             if (completionHandler)
                 completionHandler();
         });
@@ -493,7 +493,7 @@ void ProcessAssertion::acquireSync()
     NSError *acquisitionError = nil;
     if (![m_rbsAssertion acquireWithError:&acquisitionError]) {
         RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion::acquireSync Failed to acquire RBS assertion '%{public}s' for process with PID=%d, error: %{public}@", this, m_reason.utf8().data(), m_pid, acquisitionError);
-        RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }] {
+        RunLoop::main().dispatch([weakThis = ThreadSafeWeakPtr { *this }] {
             if (auto protectedThis = weakThis.get())
                 protectedThis->processAssertionWasInvalidated();
         });

@@ -64,7 +64,7 @@ void AutomationSessionClient::didDisconnectFromRemote(WebKit::WebAutomationSessi
 {
     session.setClient(nullptr);
 
-    RunLoop::mainSingleton().dispatch([&session] {
+    RunLoop::main().dispatch([&session] {
         auto processPool = session.protectedProcessPool();
         if (processPool) {
             processPool->setAutomationSession(nullptr);
@@ -105,7 +105,7 @@ void AutomationClient::requestAutomationSession(const String& sessionIdentifier,
 
 void AutomationClient::closeAutomationSession()
 {
-    RunLoop::mainSingleton().dispatch([this] {
+    RunLoop::main().dispatch([this] {
         auto processPool = protectedProcessPool();
         if (!processPool || !processPool->automationSession())
             return;

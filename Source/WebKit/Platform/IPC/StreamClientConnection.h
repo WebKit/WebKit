@@ -74,7 +74,7 @@ public:
     bool hasSemaphores() const;
     void setMaxBatchSize(unsigned);
 
-    void open(Connection::Client&, SerialFunctionDispatcher& = RunLoop::currentSingleton());
+    void open(Connection::Client&, SerialFunctionDispatcher& = RunLoop::current());
     Error flushSentMessages();
     void invalidate();
 
@@ -215,7 +215,7 @@ StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(
         // FIXME(https://bugs.webkit.org/show_bug.cgi?id=248947): Current contract is that completionHandler
         // is called on the connection run loop.
         // This does not make sense. However, this needs a change that is done later.
-        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(replyHandlerToCancel)]() mutable {
+        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(replyHandlerToCancel)]() mutable {
             completionHandler(nullptr);
         });
     }

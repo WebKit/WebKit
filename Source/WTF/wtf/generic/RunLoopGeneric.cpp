@@ -174,7 +174,7 @@ inline bool RunLoop::populateTasks(RunMode runMode, Status& statusOfThisLoop, De
 
 void RunLoop::runImpl(RunMode runMode)
 {
-    ASSERT(this == &RunLoop::currentSingleton());
+    ASSERT(this == &RunLoop::current());
 
     if constexpr (report) {
         static LazyNeverDestroyed<Timer> reporter;
@@ -233,12 +233,12 @@ void RunLoop::runImpl(RunMode runMode)
 
 void RunLoop::run()
 {
-    RunLoop::currentSingleton().runImpl(RunMode::Drain);
+    RunLoop::current().runImpl(RunMode::Drain);
 }
 
 void RunLoop::setWakeUpCallback(WTF::Function<void()>&& function)
 {
-    RunLoop::currentSingleton().m_wakeUpCallback = WTFMove(function);
+    RunLoop::current().m_wakeUpCallback = WTFMove(function);
 }
 
 // RunLoop operations are thread-safe. These operations can be called from outside of the RunLoop's thread.
@@ -275,7 +275,7 @@ void RunLoop::wakeUp()
 
 RunLoop::CycleResult RunLoop::cycle(RunLoopMode)
 {
-    RunLoop::currentSingleton().runImpl(RunMode::Iterate);
+    RunLoop::current().runImpl(RunMode::Iterate);
     return CycleResult::Continue;
 }
 

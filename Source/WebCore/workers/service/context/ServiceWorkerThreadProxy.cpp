@@ -135,7 +135,7 @@ void ServiceWorkerThreadProxy::postTaskToLoader(ScriptExecutionContext::Task&& t
 
 void ServiceWorkerThreadProxy::postMessageToDebugger(const String& message)
 {
-    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, message = message.isolatedCopy()]() mutable {
+    RunLoop::main().dispatch([this, protectedThis = Ref { *this }, message = message.isolatedCopy()]() mutable {
         // FIXME: Handle terminated case.
         m_inspectorProxy.sendMessageFromWorkerToFrontend(WTFMove(message));
     });

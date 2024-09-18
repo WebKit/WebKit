@@ -120,7 +120,7 @@ Ref<Thread> WorkerThread::createThread()
 {
     if (is<WorkerMainRunLoop>(runLoop())) {
         // This worker should run on the main thread.
-        RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }] {
+        RunLoop::main().dispatch([protectedThis = Ref { *this }] {
             protectedThis->workerOrWorkletThread();
         });
         ASSERT(isMainThread());

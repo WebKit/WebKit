@@ -260,7 +260,7 @@ void StorageAccessPromptQuirkController::updateList(CompletionHandler<void()>&& 
 {
     ASSERT(RunLoop::isMain());
     if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestStorageAccessPromptQuirksData:completionHandler:)]) {
-        RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
+        RunLoop::main().dispatch(WTFMove(completionHandler));
         return;
     }
 
@@ -302,7 +302,7 @@ void StorageAccessUserAgentStringQuirkController::updateList(CompletionHandler<v
 {
     ASSERT(RunLoop::isMain());
     if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestStorageAccessUserAgentStringQuirksData:completionHandler:)]) {
-        RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
+        RunLoop::main().dispatch(WTFMove(completionHandler));
         return;
     }
 
@@ -697,7 +697,7 @@ void configureForAdvancedPrivacyProtections(NSURLSession *) { }
 #else
 void ScriptTelemetryController::updateList(CompletionHandler<void()>&& completion)
 {
-    RunLoop::mainSingleton().dispatch(WTFMove(completion));
+    RunLoop::main().dispatch(WTFMove(completion));
 }
 
 WPResourceType ScriptTelemetryController::resourceType() const

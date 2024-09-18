@@ -79,8 +79,8 @@ static void postPageMessage(const char* name)
 TestInvocation::TestInvocation(WKURLRef url, const TestOptions& options)
     : m_options(options)
     , m_url(url)
-    , m_waitToDumpWatchdogTimer(RunLoop::mainSingleton(), this, &TestInvocation::waitToDumpWatchdogTimerFired)
-    , m_waitForPostDumpWatchdogTimer(RunLoop::mainSingleton(), this, &TestInvocation::waitForPostDumpWatchdogTimerFired)
+    , m_waitToDumpWatchdogTimer(RunLoop::main(), this, &TestInvocation::waitToDumpWatchdogTimerFired)
+    , m_waitForPostDumpWatchdogTimer(RunLoop::main(), this, &TestInvocation::waitForPostDumpWatchdogTimerFired)
 {
     m_urlString = toWTFString(adoptWK(WKURLCopyString(m_url.get())).get());
 
@@ -1548,7 +1548,7 @@ void TestInvocation::done()
     m_gotFinalMessage = true;
     invalidateWaitToDumpWatchdogTimer();
     invalidateWaitForPostDumpWatchdogTimer();
-    RunLoop::mainSingleton().dispatch([] {
+    RunLoop::main().dispatch([] {
         TestController::singleton().notifyDone();
     });
 }

@@ -233,7 +233,7 @@ void InspectorTimelineAgent::internalStart(std::optional<int>&& maxCallStackDept
             break;
         }
     });
-    RunLoop::currentSingleton().observe(*m_runLoopObserver);
+    RunLoop::current().observe(*m_runLoopObserver);
 #endif
 
     m_frontendDispatcher->recordingStarted(timestamp());

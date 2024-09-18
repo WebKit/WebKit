@@ -1690,7 +1690,7 @@ static void dumpAfterWaitAttributeIsRemoved(WKBundlePageRef page)
     if (hasTestWaitAttribute(page)) {
         WKRetain(page);
         // Use a 1ms interval between tries to allow lower priority run loop sources with zero delays to run.
-        RunLoop::currentSingleton().dispatchAfter(1_ms, [page] {
+        RunLoop::current().dispatchAfter(1_ms, [page] {
             WKBundlePageCallAfterTasksAndTimers(page, [] (void* typelessPage) {
                 auto page = static_cast<WKBundlePageRef>(typelessPage);
                 dumpAfterWaitAttributeIsRemoved(page);

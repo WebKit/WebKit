@@ -213,7 +213,7 @@ void RemoteLayerTreeEventDispatcher::scrollingThreadHandleWheelEvent(const WebWh
     ASSERT(ScrollingThread::isCurrentThread());
     
     auto continueEventHandlingOnMainThread = [protectedThis = Ref { *this }](WheelEventHandlingResult handlingResult) {
-        RunLoop::mainSingleton().dispatch([protectedThis, handlingResult] {
+        RunLoop::main().dispatch([protectedThis, handlingResult] {
             protectedThis->continueWheelEventHandling(handlingResult);
         });
     };
@@ -304,7 +304,7 @@ void RemoteLayerTreeEventDispatcher::wheelEventHandlingCompleted(const PlatformW
             return;
 
         auto result = scrollingTree->handleWheelEventAfterDefaultHandling(wheelEvent, scrollingNodeID, gestureState);
-        RunLoop::mainSingleton().dispatch([protectedThis, wasHandled, result]() {
+        RunLoop::main().dispatch([protectedThis, wasHandled, result]() {
             if (auto* scrollingCoordinator = protectedThis->scrollingCoordinator())
                 scrollingCoordinator->webPageProxy().wheelEventHandlingCompleted(wasHandled || result.wasHandled);
         });
@@ -359,7 +359,7 @@ void RemoteLayerTreeEventDispatcher::startOrStopDisplayLink()
         return;
     }
 
-    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }] {
+    RunLoop::main().dispatch([protectedThis = Ref { *this }] {
         protectedThis->startOrStopDisplayLinkOnMainThread();
     });
 }
@@ -484,7 +484,7 @@ void RemoteLayerTreeEventDispatcher::scheduleDelayedRenderingUpdateDetectionTime
     ASSERT(ScrollingThread::isCurrentThread());
 
     if (!m_delayedRenderingUpdateDetectionTimer)
-        m_delayedRenderingUpdateDetectionTimer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), this, &RemoteLayerTreeEventDispatcher::delayedRenderingUpdateDetectionTimerFired);
+        m_delayedRenderingUpdateDetectionTimer = makeUnique<RunLoop::Timer>(RunLoop::current(), this, &RemoteLayerTreeEventDispatcher::delayedRenderingUpdateDetectionTimerFired);
 
     m_delayedRenderingUpdateDetectionTimer->startOneShot(delay);
 }
@@ -736,7 +736,7 @@ void RemoteLayerTreeEventDispatcher::stopDisplayDidRefreshCallbacks(PlatformDisp
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
 void RemoteLayerTreeEventDispatcher::flushMomentumEventLoggingSoon()
 {
-    RunLoop::currentSingleton().dispatchAfter(1_s, [protectedThis = Ref { *this }] {
+    RunLoop::current().dispatchAfter(1_s, [protectedThis = Ref { *this }] {
         protectedThis->m_momentumEventDispatcher->flushLog();
     });
 }

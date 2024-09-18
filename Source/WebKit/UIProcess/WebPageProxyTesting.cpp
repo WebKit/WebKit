@@ -80,7 +80,7 @@ void WebPageProxyTesting::setDefersLoading(bool defersLoading)
 
 void WebPageProxyTesting::dispatchActivityStateUpdate()
 {
-    RunLoop::currentSingleton().dispatch([protectedPage = protectedPage()] {
+    RunLoop::current().dispatch([protectedPage = protectedPage()] {
         protectedPage->updateActivityState();
         protectedPage->dispatchActivityStateChange();
     });

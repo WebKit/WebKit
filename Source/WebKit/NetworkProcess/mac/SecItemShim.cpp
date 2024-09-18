@@ -75,7 +75,7 @@ static std::optional<SecItemResponseData> sendSecItemRequest(SecItemRequestData:
     std::optional<SecItemResponseData> response;
     BinarySemaphore semaphore;
 
-    RunLoop::mainSingleton().dispatch([&] {
+    RunLoop::main().dispatch([&] {
         if (!globalNetworkProcess()) {
             semaphore.signal();
             return;

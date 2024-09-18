@@ -9197,7 +9197,7 @@ TEST(ProcessSwap, ChangeViewSizeDuringNavigationActionPolicyDecision)
         decisionHandler(WKNavigationActionPolicyAllow);
 
         constexpr auto estimatedDelayForWebProcessLaunch = 5_ms;
-        RunLoop::mainSingleton().dispatchAfter(estimatedDelayForWebProcessLaunch, [webView] {
+        RunLoop::main().dispatchAfter(estimatedDelayForWebProcessLaunch, [webView] {
             [webView setFrame:CGRectMake(0, 0, 320, 568)];
         });
     };

@@ -66,7 +66,7 @@ void ViewUpdateDispatcher::visibleContentRectUpdate(WebCore::PageIdentifier page
             iterator->value.get().visibleContentRectUpdateInfo = visibleContentRectUpdateInfo;
     }
     if (updateListWasEmpty) {
-        RunLoop::mainSingleton().dispatch([this] {
+        RunLoop::main().dispatch([this] {
             dispatchVisibleContentRectUpdate();
         });
     }
