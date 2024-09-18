@@ -241,7 +241,7 @@ String WebAutomationSession::handleForWebFrameID(std::optional<FrameIdentifier> 
     if (!frameID)
         return emptyString();
 
-    if (auto* frame = WebFrameProxy::webFrame(*frameID); frame && frame->isMainFrame())
+    if (RefPtr frame = WebFrameProxy::webFrame(*frameID); frame && frame->isMainFrame())
         return emptyString();
 
     auto iter = m_webFrameHandleMap.find(*frameID);
@@ -1552,8 +1552,8 @@ Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::deleteAllCookies(
 
     String host = activeURL.host().toString();
 
-    auto& cookieStore = page->websiteDataStore().cookieStore();
-    cookieStore.deleteCookiesForHostnames({ host, domainByAddingDotPrefixIfNeeded(host) }, [] { });
+    Ref cookieStore = page->protectedWebsiteDataStore()->cookieStore();
+    cookieStore->deleteCookiesForHostnames({ host, domainByAddingDotPrefixIfNeeded(host) }, [] { });
 
     return { };
 }

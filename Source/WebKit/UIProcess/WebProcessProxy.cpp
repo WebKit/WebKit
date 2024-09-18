@@ -871,7 +871,7 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     updateAudibleMediaAssertions();
     updateMediaStreamingActivity();
     updateBackgroundResponsivenessTimer();
-    websiteDataStore()->updateBlobRegistryPartitioningState();
+    protectedWebsiteDataStore()->updateBlobRegistryPartitioningState();
 
     maybeShutDown();
 }
@@ -1403,8 +1403,9 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     }
 #endif // USE(RUNNINGBOARD) && PLATFORM(MAC)
 
-    throttler().setShouldTakeNearSuspendedAssertion(shouldTakeNearSuspendedAssertion());
-    throttler().setShouldDropNearSuspendedAssertionAfterDelay(shouldDropNearSuspendedAssertionAfterDelay());
+    Ref protectedThrottler = throttler();
+    protectedThrottler->setShouldTakeNearSuspendedAssertion(shouldTakeNearSuspendedAssertion());
+    protectedThrottler->setShouldDropNearSuspendedAssertionAfterDelay(shouldDropNearSuspendedAssertionAfterDelay());
 
 #if PLATFORM(COCOA)
     unblockAccessibilityServerIfNeeded();
@@ -1539,7 +1540,7 @@ bool WebProcessProxy::canBeAddedToWebProcessCache() const
         return false;
     }
 
-    if (WebKit::isInspectorProcessPool(processPool()))
+    if (WebKit::isInspectorProcessPool(protectedProcessPool()))
         return false;
 
     return true;

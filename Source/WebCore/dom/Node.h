@@ -413,6 +413,7 @@ public:
         ASSERT(m_treeScope);
         return *m_treeScope;
     }
+    Ref<TreeScope> protectedTreeScope() const { return treeScope(); }
     void setTreeScopeRecursively(TreeScope&);
     static constexpr ptrdiff_t treeScopeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_treeScope); }
 

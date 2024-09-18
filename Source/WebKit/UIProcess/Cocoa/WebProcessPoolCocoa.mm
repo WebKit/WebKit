@@ -1216,7 +1216,7 @@ void WebProcessPool::displayPropertiesChanged(const WebCore::ScreenProperties& s
         displayLink->displayPropertiesChanged();
 
 #if ENABLE(GPU_PROCESS)
-    if (auto gpuProcess = this->gpuProcess())
+    if (RefPtr gpuProcess = this->gpuProcess())
         gpuProcess->setScreenProperties(screenProperties);
 #endif
 }
