@@ -227,6 +227,10 @@ table.queue-grid tr.platform.macos-sonoma img.logo {
     content: url(../Images/Sonoma.png);
 }
 
+table.queue-grid tr.platform.macos-sequoia img.logo {
+    content: url(../Images/Sequoia.png);
+}
+
 table.queue-grid tr.platform.macos-ventura img.logo {
     content: url(../Images/Ventura.png);
 }

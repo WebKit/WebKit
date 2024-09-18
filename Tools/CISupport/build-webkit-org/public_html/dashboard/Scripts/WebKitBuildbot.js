@@ -26,6 +26,21 @@
 WebKitBuildbot = function()
 {
     const queueInfo = {
+        "Apple-Sequoia-Release-Build": {platform: Dashboard.Platform.macOSSequoia, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
+        "Apple-Sequoia-Debug-Build": {platform: Dashboard.Platform.macOSSequoia, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
+        "Apple-Sequoia-Debug-WK1-Tests": {platform: Dashboard.Platform.macOSSequoia, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
+        "Apple-Sequoia-Debug-WK2-Tests": {platform: Dashboard.Platform.macOSSequoia, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
+        "Apple-Sequoia-Release-WK1-Tests": {platform: Dashboard.Platform.macOSSequoia, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
+        "Apple-Sequoia-Release-WK2-Tests": {platform: Dashboard.Platform.macOSSequoia, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
+        "Apple-Sequoia-Debug-AppleSilicon-WK1-Tests": {platform: Dashboard.Platform.macOSSequoia, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1, heading: "Debug AppleSilicon"},
+        "Apple-Sequoia-Debug-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSSequoia, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Debug AppleSilicon"},
+        "Apple-Sequoia-Release-AppleSilicon-WK1-Tests": {platform: Dashboard.Platform.macOSSequoia, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1, heading: "Release AppleSilicon"},
+        "Apple-Sequoia-Release-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSSequoia, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Release AppleSilicon"},
+        "Apple-Sequoia-Release-WK2-Perf": {platform: Dashboard.Platform.macOSSequoia, debug: false, performance: true, heading: "Performance"},
+        "Apple-Sequoia JSC": {platform: Dashboard.Platform.macOSSequoia, heading: "JavaScript", combinedQueues: {
+            "Apple-Sequoia-AppleSilicon-Release-Test262-Tests": {heading: "Release arm64 Test262 (Tests)"},
+            "Apple-Sequoia-LLINT-CLoop-BuildAndTest": {heading: "LLINT CLoop (BuildAndTest)"},
+        }},
         "Apple-Sonoma-Release-Build": {platform: Dashboard.Platform.macOSSonoma, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Sonoma-Debug-Build": {platform: Dashboard.Platform.macOSSonoma, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Sonoma-Debug-WK1-Tests": {platform: Dashboard.Platform.macOSSonoma, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
@@ -36,11 +51,6 @@ WebKitBuildbot = function()
         "Apple-Sonoma-Debug-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSSonoma, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Debug AppleSilicon"},
         "Apple-Sonoma-Release-AppleSilicon-WK1-Tests": {platform: Dashboard.Platform.macOSSonoma, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1, heading: "Release AppleSilicon"},
         "Apple-Sonoma-Release-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSSonoma, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Release AppleSilicon"},
-        "Apple-Sonoma-Release-WK2-Perf": {platform: Dashboard.Platform.macOSSonoma, debug: false, performance: true, heading: "Performance"},
-        "Apple-Sonoma JSC": {platform: Dashboard.Platform.macOSSonoma, heading: "JavaScript", combinedQueues: {
-            "Apple-Sonoma-AppleSilicon-Release-Test262-Tests": {heading: "Release arm64 Test262 (Tests)"},
-            "Apple-Sonoma-LLINT-CLoop-BuildAndTest": {heading: "LLINT CLoop (BuildAndTest)"},
-        }},
         "Apple-Ventura-Release-Build": {platform: Dashboard.Platform.macOSVentura, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Ventura-Debug-Build": {platform: Dashboard.Platform.macOSVentura, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Ventura-Debug-WK1-Tests": {platform: Dashboard.Platform.macOSVentura, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},

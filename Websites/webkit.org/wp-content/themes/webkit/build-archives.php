@@ -10,10 +10,9 @@ class WebKitBuildArchives {
     private static $object = null;
 
     public static $platforms = array(
+        'mac-sequoia-x86_64%20arm64'     => 'Sequoia',
         'mac-sonoma-x86_64%20arm64'     => 'Sonoma',
         'mac-ventura-x86_64%20arm64'     => 'Ventura',
-        'mac-monterey-x86_64%20arm64'     => 'Monterey',
-        'mac-bigsur-x86_64%20arm64'     => 'Big Sur',
     );
 
     public static function object() {
@@ -93,7 +92,7 @@ add_action('wp_head', function() { ?>
                     list.classList.add("current");
                 };
 
-            var currentHash = window.location.hash.length ? window.location.hash.replace("#", "") : "mac-sonoma-x86_64 arm64";
+            var currentHash = window.location.hash.length ? window.location.hash.replace("#", "") : "mac-sequoia-x86_64 arm64";
             for (var link of tabnav) {
                 link.addEventListener("click", currentTab);
                 if (link.className.indexOf(currentHash) !== -1)
