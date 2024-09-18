@@ -149,7 +149,7 @@ void ThreadedScrollingTree::invalidate()
     // Since this can potentially be the last reference to the scrolling coordinator,
     // we need to release it on the main thread since it has member variables (such as timers)
     // that expect to be destroyed from the main thread.
-    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(m_scrollingCoordinator)] {
+    RunLoop::mainSingleton().dispatch([scrollingCoordinator = WTFMove(m_scrollingCoordinator)] {
     });
 }
 
@@ -263,7 +263,7 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
     addPendingScrollUpdate(WTFMove(scrollUpdate));
 
     auto deferrer = ScrollingTreeWheelEventTestMonitorCompletionDeferrer { *this, node.scrollingNodeID(), WheelEventTestMonitor::DeferReason::ScrollingThreadSyncNeeded };
-    RunLoop::main().dispatch([protectedThis = Ref { *this }, deferrer = WTFMove(deferrer)] {
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, deferrer = WTFMove(deferrer)] {
         if (auto* scrollingCoordinator = protectedThis->m_scrollingCoordinator.get())
             scrollingCoordinator->scrollingThreadAddedPendingUpdate();
     });
@@ -285,7 +285,7 @@ void ThreadedScrollingTree::scrollingTreeNodeScrollUpdated(ScrollingTreeScrollin
 
     addPendingScrollUpdate(WTFMove(scrollUpdate));
 
-    RunLoop::main().dispatch([protectedThis = Ref { *this }] {
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }] {
         if (auto* scrollingCoordinator = protectedThis->m_scrollingCoordinator.get())
             scrollingCoordinator->scrollingThreadAddedPendingUpdate();
     });
@@ -317,7 +317,7 @@ void ThreadedScrollingTree::reportSynchronousScrollingReasonsChanged(MonotonicTi
     if (!scrollingCoordinator)
         return;
 
-    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), timestamp, reasons] {
+    RunLoop::mainSingleton().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), timestamp, reasons] {
         scrollingCoordinator->reportSynchronousScrollingReasonsChanged(timestamp, reasons);
     });
 }
@@ -327,7 +327,7 @@ void ThreadedScrollingTree::reportExposedUnfilledArea(MonotonicTime timestamp, u
     auto scrollingCoordinator = m_scrollingCoordinator;
     if (!scrollingCoordinator)
         return;
-    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), timestamp, unfilledArea] {
+    RunLoop::mainSingleton().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), timestamp, unfilledArea] {
         scrollingCoordinator->reportExposedUnfilledArea(timestamp, unfilledArea);
     });
 }
@@ -339,7 +339,7 @@ void ThreadedScrollingTree::currentSnapPointIndicesDidChange(ScrollingNodeID nod
     if (!scrollingCoordinator)
         return;
 
-    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), nodeID, horizontal, vertical] {
+    RunLoop::mainSingleton().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), nodeID, horizontal, vertical] {
         scrollingCoordinator->setActiveScrollSnapIndices(nodeID, horizontal, vertical);
     });
 }
@@ -352,7 +352,7 @@ void ThreadedScrollingTree::handleWheelEventPhase(ScrollingNodeID nodeID, Platfo
     if (!scrollingCoordinator)
         return;
 
-    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), nodeID, phase] {
+    RunLoop::mainSingleton().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), nodeID, phase] {
         scrollingCoordinator->handleWheelEventPhase(nodeID, phase);
     });
 }
@@ -364,7 +364,7 @@ void ThreadedScrollingTree::setActiveScrollSnapIndices(ScrollingNodeID nodeID, s
     if (!scrollingCoordinator)
         return;
 
-    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), nodeID, horizontalIndex, verticalIndex] {
+    RunLoop::mainSingleton().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), nodeID, horizontalIndex, verticalIndex] {
         scrollingCoordinator->setActiveScrollSnapIndices(nodeID, horizontalIndex, verticalIndex);
     });
 }
@@ -414,7 +414,7 @@ void ThreadedScrollingTree::hasNodeWithAnimatedScrollChanged(bool hasNodeWithAni
     if (!scrollingCoordinator)
         return;
 
-    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), hasNodeWithAnimatedScroll] {
+    RunLoop::mainSingleton().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), hasNodeWithAnimatedScroll] {
         scrollingCoordinator->hasNodeWithAnimatedScrollChanged(hasNodeWithAnimatedScroll);
     });
 }
@@ -482,7 +482,7 @@ void ThreadedScrollingTree::scheduleDelayedRenderingUpdateDetectionTimer(Seconds
     ASSERT(m_treeLock.isLocked());
 
     if (!m_delayedRenderingUpdateDetectionTimer)
-        m_delayedRenderingUpdateDetectionTimer = makeUnique<RunLoop::Timer>(RunLoop::current(), this, &ThreadedScrollingTree::delayedRenderingUpdateDetectionTimerFired);
+        m_delayedRenderingUpdateDetectionTimer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), this, &ThreadedScrollingTree::delayedRenderingUpdateDetectionTimerFired);
 
     m_delayedRenderingUpdateDetectionTimer->startOneShot(delay);
 }
@@ -561,7 +561,7 @@ void ThreadedScrollingTree::receivedWheelEventWithPhases(PlatformWheelEventPhase
     if (!scrollingCoordinator)
         return;
 
-    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), phase, momentumPhase] {
+    RunLoop::mainSingleton().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), phase, momentumPhase] {
         scrollingCoordinator->receivedWheelEventWithPhases(phase, momentumPhase);
     });
 }
@@ -575,7 +575,7 @@ void ThreadedScrollingTree::deferWheelEventTestCompletionForReason(ScrollingNode
     if (!scrollingCoordinator)
         return;
 
-    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), nodeID, reason] {
+    RunLoop::mainSingleton().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), nodeID, reason] {
         scrollingCoordinator->deferWheelEventTestCompletionForReason(nodeID, reason);
     });
 }
@@ -589,7 +589,7 @@ void ThreadedScrollingTree::removeWheelEventTestCompletionDeferralForReason(Scro
     if (!scrollingCoordinator)
         return;
 
-    RunLoop::main().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), nodeID, reason] {
+    RunLoop::mainSingleton().dispatch([scrollingCoordinator = WTFMove(scrollingCoordinator), nodeID, reason] {
         scrollingCoordinator->removeWheelEventTestCompletionDeferralForReason(nodeID, reason);
     });
 }

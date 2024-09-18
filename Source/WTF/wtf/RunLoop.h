@@ -81,17 +81,17 @@ public:
     WTF_EXPORT_PRIVATE static void initializeWeb();
 #endif
 
-    WTF_EXPORT_PRIVATE static RunLoop& current();
-    static Ref<RunLoop> protectedCurrent() { return current(); }
+    // FIXME: Remove main() once mainSingleton() is adopted in Safari.
     WTF_EXPORT_PRIVATE static RunLoop& main();
-    static Ref<RunLoop> protectedMain() { return main(); }
+    WTF_EXPORT_PRIVATE static RunLoop& currentSingleton();
+    WTF_EXPORT_PRIVATE static RunLoop& mainSingleton();
 #if USE(WEB_THREAD)
     WTF_EXPORT_PRIVATE static RunLoop& web();
     WTF_EXPORT_PRIVATE static RunLoop* webIfExists();
 #endif
     WTF_EXPORT_PRIVATE static Ref<RunLoop> create(ASCIILiteral threadName, ThreadType = ThreadType::Unknown, Thread::QOS = Thread::QOS::UserInitiated);
 
-    static bool isMain() { return main().isCurrent(); }
+    static bool isMain() { return mainSingleton().isCurrent(); }
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
     WTF_EXPORT_PRIVATE bool isCurrent() const final;

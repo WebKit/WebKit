@@ -1689,7 +1689,7 @@ public:
                 return;
 
             if (++test->m_frameCounter == test->m_maxFrames)
-                RunLoop::main().dispatch([test] { test->quitMainLoop(); });
+                RunLoop::mainSingleton().dispatch([test] { test->quitMainLoop(); });
         }, this, nullptr))
     {
         g_assert_cmpuint(m_id, >, 0);

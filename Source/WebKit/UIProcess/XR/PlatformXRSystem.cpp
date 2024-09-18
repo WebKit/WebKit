@@ -92,7 +92,7 @@ void PlatformXRSystem::enumerateImmersiveXRDevices(CompletionHandler<void(Vector
     }
 
     xrCoordinator->getPrimaryDeviceInfo(protectedPage(), [completionHandler = WTFMove(completionHandler)](std::optional<XRDeviceInfo> deviceInfo) mutable {
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), deviceInfo = WTFMove(deviceInfo)]() mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), deviceInfo = WTFMove(deviceInfo)]() mutable {
             if (!deviceInfo) {
                 completionHandler({ });
                 return;

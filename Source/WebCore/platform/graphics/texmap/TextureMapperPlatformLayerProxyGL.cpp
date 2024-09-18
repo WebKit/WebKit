@@ -73,7 +73,7 @@ void TextureMapperPlatformLayerProxyGL::activateOnCompositingThread(Compositor* 
         if (m_targetLayer && m_currentBuffer)
             m_targetLayer->setContentsLayer(m_currentBuffer.get());
 
-        m_compositorThreadUpdateTimer = makeUnique<RunLoop::Timer>(RunLoop::current(), this, &TextureMapperPlatformLayerProxyGL::compositorThreadUpdateTimerFired);
+        m_compositorThreadUpdateTimer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), this, &TextureMapperPlatformLayerProxyGL::compositorThreadUpdateTimerFired);
 #if USE(GLIB_EVENT_LOOP)
         m_compositorThreadUpdateTimer->setPriority(RunLoopSourcePriority::CompositingThreadUpdateTimer);
 #endif

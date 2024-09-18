@@ -198,7 +198,7 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
 #if ENABLE(MAC_GESTURE_EVENTS)
 void EventDispatcher::gestureEvent(FrameIdentifier frameID, PageIdentifier pageID, const WebGestureEvent& gestureEvent, CompletionHandler<void(std::optional<WebEventType>, bool, std::optional<RemoteUserInputEventData>)>&& completionHandler)
 {
-    RunLoop::main().dispatch([this, frameID, pageID, gestureEvent, completionHandler = WTFMove(completionHandler)] () mutable {
+    RunLoop::mainSingleton().dispatch([this, frameID, pageID, gestureEvent, completionHandler = WTFMove(completionHandler)] () mutable {
         dispatchGestureEvent(frameID, pageID, gestureEvent, WTFMove(completionHandler));
     });
 }
@@ -242,7 +242,7 @@ void EventDispatcher::touchEvent(PageIdentifier pageID, FrameIdentifier frameID,
     }
 
     if (updateListWasEmpty) {
-        RunLoop::main().dispatch([this] {
+        RunLoop::mainSingleton().dispatch([this] {
             dispatchTouchEvents();
         });
     }
@@ -268,7 +268,7 @@ void EventDispatcher::dispatchTouchEvents()
 void EventDispatcher::dispatchWheelEventViaMainThread(WebCore::PageIdentifier pageID, const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, WheelEventOrigin wheelEventOrigin)
 {
     ASSERT(!RunLoop::isMain());
-    RunLoop::main().dispatch([this, pageID, wheelEvent, wheelEventOrigin, steps = processingSteps - WheelEventProcessingSteps::AsyncScrolling] {
+    RunLoop::mainSingleton().dispatch([this, pageID, wheelEvent, wheelEventOrigin, steps = processingSteps - WheelEventProcessingSteps::AsyncScrolling] {
         dispatchWheelEvent(pageID, wheelEvent, steps, wheelEventOrigin);
     });
 }
@@ -332,7 +332,7 @@ void EventDispatcher::displayDidRefresh(PlatformDisplayID displayID, const Displ
     if (!sendToMainThread)
         return;
 
-    RunLoop::main().dispatch([displayID, displayUpdate]() {
+    RunLoop::mainSingleton().dispatch([displayID, displayUpdate]() {
         DisplayRefreshMonitorManager::sharedManager().displayDidRefresh(displayID, displayUpdate);
     });
 }

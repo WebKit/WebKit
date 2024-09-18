@@ -179,7 +179,7 @@ const size_t AuthenticatorManager::maxTransportNumber = 5;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticatorManager);
 
 AuthenticatorManager::AuthenticatorManager()
-    : m_requestTimeOutTimer(RunLoop::main(), this, &AuthenticatorManager::timeOutTimerFired)
+    : m_requestTimeOutTimer(RunLoop::mainSingleton(), this, &AuthenticatorManager::timeOutTimerFired)
 {
 }
 
@@ -246,7 +246,7 @@ void AuthenticatorManager::enableNativeSupport()
 
 void AuthenticatorManager::clearStateAsync()
 {
-    RunLoop::main().dispatch([weakThis = WeakPtr { *this }] {
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         weakThis->clearState();
@@ -309,7 +309,7 @@ void AuthenticatorManager::respondReceived(Respond&& respond)
 
 void AuthenticatorManager::downgrade(Authenticator* id, Ref<Authenticator>&& downgradedAuthenticator)
 {
-    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, id] {
+    RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, id] {
         if (!weakThis)
             return;
         auto removed = weakThis->m_authenticators.remove(id);
@@ -549,7 +549,7 @@ void AuthenticatorManager::dispatchPanelClientCall(Function<void(const API::WebA
 
     // Call delegates in the next run loop to prevent clients' reentrance that would potentially modify the state
     // of the current run loop in unexpected ways.
-    RunLoop::main().dispatch([weakPanel = WTFMove(weakPanel), call = WTFMove(call)] () {
+    RunLoop::mainSingleton().dispatch([weakPanel = WTFMove(weakPanel), call = WTFMove(call)] () {
         if (!weakPanel)
             return;
         call(*weakPanel);

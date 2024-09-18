@@ -148,7 +148,7 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(Type layerType, GraphicsLayer
     , m_pendingVisibleRectAdjustment(false)
     , m_coordinator(0)
     , m_animationStartedTimer(*this, &CoordinatedGraphicsLayer::animationStartedTimerFired)
-    , m_requestPendingTileCreationTimer(RunLoop::main(), this, &CoordinatedGraphicsLayer::requestPendingTileCreationTimerFired)
+    , m_requestPendingTileCreationTimer(RunLoop::mainSingleton(), this, &CoordinatedGraphicsLayer::requestPendingTileCreationTimerFired)
 {
     static Nicosia::PlatformLayer::LayerID nextLayerID = 1;
     m_id = nextLayerID++;

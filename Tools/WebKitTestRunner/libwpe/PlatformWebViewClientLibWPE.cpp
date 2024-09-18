@@ -60,16 +60,16 @@ PlatformImage PlatformWebViewClientLibWPE::snapshot()
     {
         struct TimeoutTimer {
             TimeoutTimer()
-                : timer(RunLoop::main(), this, &TimeoutTimer::fired)
+                : timer(RunLoop::mainSingleton(), this, &TimeoutTimer::fired)
             {
                 timer.startOneShot(1_s / 60);
             }
 
-            void fired() { RunLoop::main().stop(); }
+            void fired() { RunLoop::mainSingleton().stop(); }
             RunLoop::Timer timer;
         } timeoutTimer;
 
-        RunLoop::main().run();
+        RunLoop::mainSingleton().run();
     }
 
     return m_backend->snapshot();

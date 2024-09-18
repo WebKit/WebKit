@@ -62,7 +62,7 @@ using namespace WebCore;
 
 std::unique_ptr<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create(WebPage& webPage)
 {
-    std::unique_ptr instance = std::unique_ptr<RemoteRenderingBackendProxy>(new RemoteRenderingBackendProxy(RunLoop::main()));
+    std::unique_ptr instance = std::unique_ptr<RemoteRenderingBackendProxy>(new RemoteRenderingBackendProxy(RunLoop::mainSingleton()));
     RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] Created rendering backend for pageProxyID=%" PRIu64 ", webPageID=%" PRIu64, instance->renderingBackendIdentifier().toUInt64(),  webPage.webPageProxyIdentifier().toUInt64(), webPage.identifier().toUInt64());
     return instance;
 }

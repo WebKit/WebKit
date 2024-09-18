@@ -129,14 +129,14 @@ private:
 
             NSFileManager *fileManager = [NSFileManager defaultManager];
             if (![fileManager fileExistsAtPath:[destination URLByDeletingLastPathComponent].path]) {
-                RunLoop::main().dispatch([download] {
+                RunLoop::mainSingleton().dispatch([download] {
                     download->didFail([NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCannotCreateFile userInfo:nil], { });
                 });
                 completionHandler(WebKit::AllowOverwrite::No, { });
                 return;
             }
             if ([fileManager fileExistsAtPath:destination.path]) {
-                RunLoop::main().dispatch([download] {
+                RunLoop::mainSingleton().dispatch([download] {
                     download->didFail([NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCannotCreateFile userInfo:nil], { });
                 });
                 completionHandler(WebKit::AllowOverwrite::No, { });

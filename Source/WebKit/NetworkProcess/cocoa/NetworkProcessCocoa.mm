@@ -200,7 +200,7 @@ void saveCookies(NSHTTPCookieStorage *cookieStorage, CompletionHandler<void()>&&
     ASSERT(cookieStorage);
     [cookieStorage _saveCookies:makeBlockPtr([completionHandler = WTFMove(completionHandler)]() mutable {
         // CFNetwork may call the completion block on a background queue, so we need to redispatch to the main thread.
-        RunLoop::main().dispatch(WTFMove(completionHandler));
+        RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
     }).get()];
 }
 

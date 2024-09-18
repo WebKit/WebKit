@@ -121,7 +121,7 @@ void HidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback)
 #else
         DataSent sent = DataSent::No;
 #endif
-        RunLoop::main().dispatch([callback = WTFMove(callback), sent]() mutable {
+        RunLoop::mainSingleton().dispatch([callback = WTFMove(callback), sent]() mutable {
             callback(sent);
         });
     });

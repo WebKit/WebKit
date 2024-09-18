@@ -205,7 +205,7 @@ void AuxiliaryProcess::stopRunLoop()
 #if !PLATFORM(COCOA)
 void AuxiliaryProcess::platformStopRunLoop()
 {
-    RunLoop::main().stop();
+    RunLoop::mainSingleton().stop();
 }
 #endif
 

@@ -229,7 +229,7 @@ NetworkStorageManager::NetworkStorageManager(NetworkProcess& process, PAL::Sessi
 #endif
 
         IDBStorageManager::createVersionDirectoryIfNeeded(m_customIDBStoragePath);
-        RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis)] { });
+        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
 }
 
@@ -280,7 +280,7 @@ void NetworkStorageManager::close(CompletionHandler<void()>&& completionHandler)
             completionHandler.second(false);
         m_sharedServiceWorkerStorageManager = nullptr;
 
-        RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler();
         });
     });
@@ -320,7 +320,7 @@ void NetworkStorageManager::stopReceivingMessageFromConnection(IPC::Connection& 
         if (m_allowedSitesForConnections)
             m_allowedSitesForConnections->remove(connection);
 
-        RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis)] { });
+        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
 }
 
@@ -421,7 +421,7 @@ void NetworkStorageManager::prepareForEviction()
 {
     assertIsCurrent(workQueue());
 
-    RunLoop::protectedMain()->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }]() mutable {
+    RunLoop::mainSingleton().dispatch([this, weakThis = ThreadSafeWeakPtr { *this }]() mutable {
         auto protectedThis = weakThis.get();
         if (!protectedThis || m_closed || !m_process)
             return;
@@ -434,7 +434,7 @@ void NetworkStorageManager::prepareForEviction()
             protectedWorkQueue()->dispatch([weakThis = WTFMove(weakThis), result = crossThreadCopy(WTFMove(result))]() mutable {
                 if (auto protectedThis = weakThis.get()) {
                     protectedThis->donePrepareForEviction(WTFMove(result));
-                    RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis)] { });
+                    RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis)] { });
                 }
             });
         });
@@ -573,7 +573,7 @@ OriginQuotaManager::Parameters NetworkStorageManager::originQuotaManagerParamete
     OriginQuotaManager::NotifySpaceGrantedFunction notifySpaceGrantedFunction = [weakThis = ThreadSafeWeakPtr { *this }, origin](uint64_t spaceRequested) {
         if (auto protectedThis = weakThis.get()) {
             protectedThis->spaceGrantedForOrigin(origin, spaceRequested);
-            RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis)] { });
+            RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis)] { });
         }
     };
     // Use std::ceil instead of implicit conversion to make result more definitive.
@@ -735,7 +735,7 @@ void NetworkStorageManager::persist(const WebCore::ClientOrigin& origin, Complet
         return completionHandler(persistOrigin(origin));
 
     m_persistCompletionHandlers.append({ origin, WTFMove(completionHandler) });
-    RunLoop::protectedMain()->dispatch([weakThis = ThreadSafeWeakPtr { *this }]() mutable {
+    RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }]() mutable {
         if (auto protectedThis = weakThis.get())
             protectedThis->fetchRegistrableDomainsForPersist();
     });
@@ -761,7 +761,7 @@ void NetworkStorageManager::resetStoragePersistedState(CompletionHandler<void()>
                 FileSystem::deleteFile(persistedFile);
         }
 
-        RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler();
         });
     });
@@ -1044,7 +1044,7 @@ void NetworkStorageManager::fetchData(OptionSet<WebsiteDataType> types, ShouldCo
 
     protectedWorkQueue()->dispatch([this, protectedThis = Ref { *this }, types, shouldComputeSize, completionHandler = WTFMove(completionHandler)]() mutable {
         auto entries = fetchDataFromDisk(types, shouldComputeSize);
-        RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), entries = crossThreadCopy(WTFMove(entries))]() mutable {
+        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), entries = crossThreadCopy(WTFMove(entries))]() mutable {
             completionHandler(WTFMove(entries));
         });
     });
@@ -1091,7 +1091,7 @@ void NetworkStorageManager::deleteData(OptionSet<WebsiteDataType> types, const V
         deleteDataOnDisk(types, -WallTime::infinity(), [&originSet](auto origin) {
             return originSet.contains(origin.topOrigin) || originSet.contains(origin.clientOrigin);
         });
-        RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler();
         });
     });
@@ -1106,7 +1106,7 @@ void NetworkStorageManager::deleteData(OptionSet<WebsiteDataType> types, const W
         deleteDataOnDisk(types, -WallTime::infinity(), [originToDelete = WTFMove(originToDelete)](auto& origin) {
             return origin == originToDelete;
         });
-        RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler();
         });
     });
@@ -1122,7 +1122,7 @@ void NetworkStorageManager::deleteDataModifiedSince(OptionSet<WebsiteDataType> t
             return true;
         });
 
-        RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler();
         });
     });
@@ -1145,7 +1145,7 @@ void NetworkStorageManager::deleteDataForRegistrableDomains(OptionSet<WebsiteDat
             deletedDomains.add(domain);
         }
 
-        RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), domains = crossThreadCopy(WTFMove(deletedDomains))]() mutable {
+        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), domains = crossThreadCopy(WTFMove(deletedDomains))]() mutable {
             completionHandler(WTFMove(domains));
         });
     });
@@ -1169,7 +1169,7 @@ void NetworkStorageManager::moveData(OptionSet<WebsiteDataType> types, WebCore::
         removeOriginStorageManagerIfPossible(targetOrigin);
         removeOriginStorageManagerIfPossible(sourceOrigin);
 
-        RunLoop::protectedMain()->dispatch(WTFMove(completionHandler));
+        RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
     });
 }
 
@@ -1179,7 +1179,7 @@ void NetworkStorageManager::getOriginDirectory(WebCore::ClientOrigin&& origin, W
     ASSERT(!m_closed);
 
     protectedWorkQueue()->dispatch([this, protectedThis = Ref { *this }, type, origin = crossThreadCopy(WTFMove(origin)), completionHandler = WTFMove(completionHandler)]() mutable {
-        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), directory = crossThreadCopy(originStorageManager(origin).resolvedPath(type))]() mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), directory = crossThreadCopy(originStorageManager(origin).resolvedPath(type))]() mutable {
             completionHandler(WTFMove(directory));
         });
         removeOriginStorageManagerIfPossible(origin);
@@ -1244,7 +1244,7 @@ void NetworkStorageManager::syncLocalStorage(CompletionHandler<void()>&& complet
                 localStorageManager->syncLocalStorage();
         }
 
-        RunLoop::protectedMain()->dispatch(WTFMove(completionHandler));
+        RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
     });
 }
 
@@ -1269,7 +1269,7 @@ void NetworkStorageManager::requestSpace(const WebCore::ClientOrigin& origin, ui
 
     protectedWorkQueue()->dispatch([this, protectedThis = Ref { *this }, origin = crossThreadCopy(origin), size, completionHandler = WTFMove(completionHandler)]() mutable {
         originStorageManager(origin).protectedQuotaManager()->requestSpace(size, [completionHandler = WTFMove(completionHandler)](auto decision) mutable {
-            RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), decision]() mutable {
+            RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), decision]() mutable {
                 completionHandler(decision == OriginQuotaManager::Decision::Grant);
             });
         });
@@ -1284,7 +1284,7 @@ void NetworkStorageManager::resetQuotaForTesting(CompletionHandler<void()>&& com
         assertIsCurrent(workQueue());
         for (auto& manager : m_originStorageManagers.values())
             manager->quotaManager().resetQuotaForTesting();
-        RunLoop::protectedMain()->dispatch(WTFMove(completionHandler));
+        RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
     });
 }
 
@@ -1308,7 +1308,7 @@ void NetworkStorageManager::setOriginQuotaRatioEnabledForTesting(bool enabled, C
                 manager->protectedQuotaManager()->updateParametersForTesting(originQuotaManagerParameters(origin));
         }
 
-        RunLoop::protectedMain()->dispatch(WTFMove(completionHandler));
+        RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
     });
 }
 
@@ -1321,7 +1321,7 @@ void NetworkStorageManager::setBackupExclusionPeriodForTesting(Seconds period, C
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, period, completionHandler = WTFMove(completionHandler)]() mutable {
         m_backupExclusionPeriod = period;
-        RunLoop::main().dispatch(WTFMove(completionHandler));
+        RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
     });
 }
 
@@ -1901,7 +1901,7 @@ void NetworkStorageManager::closeServiceWorkerRegistrationFiles(CompletionHandle
                 manager->serviceWorkerStorageManager().closeFiles();
         }
 
-        RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler();
         });
     });
@@ -1926,7 +1926,7 @@ void NetworkStorageManager::clearServiceWorkerRegistrations(CompletionHandler<vo
             }
         }
 
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler();
         });
     });
@@ -1959,7 +1959,7 @@ void NetworkStorageManager::importServiceWorkerRegistrations(CompletionHandler<v
                 result = registrations;
         }
 
-        RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis), result = crossThreadCopy(WTFMove(result)), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), result = crossThreadCopy(WTFMove(result)), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(WTFMove(result));
         });
     });
@@ -1981,7 +1981,7 @@ void NetworkStorageManager::updateServiceWorkerRegistrations(Vector<WebCore::Ser
         else
             result = updateServiceWorkerRegistrationsByOrigin(WTFMove(registrationsToUpdate), WTFMove(registrationsToDelete));
 
-        RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis), result = crossThreadCopy(WTFMove(result)), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), result = crossThreadCopy(WTFMove(result)), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(WTFMove(result));
         });
     });

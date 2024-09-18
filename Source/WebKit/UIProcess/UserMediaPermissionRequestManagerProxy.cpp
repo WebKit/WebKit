@@ -99,8 +99,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(UserMediaPermissionRequestManagerProxy);
 
 UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(WebPageProxy& page)
     : m_page(page)
-    , m_rejectionTimer(RunLoop::protectedMain(), this, &UserMediaPermissionRequestManagerProxy::rejectionTimerFired)
-    , m_watchdogTimer(RunLoop::protectedMain(), this, &UserMediaPermissionRequestManagerProxy::watchdogTimerFired)
+    , m_rejectionTimer(RunLoop::mainSingleton(), this, &UserMediaPermissionRequestManagerProxy::rejectionTimerFired)
+    , m_watchdogTimer(RunLoop::mainSingleton(), this, &UserMediaPermissionRequestManagerProxy::watchdogTimerFired)
 #if !RELEASE_LOG_DISABLED
     , m_logger(page.logger())
     , m_logIdentifier(uniqueLogIdentifier())

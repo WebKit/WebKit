@@ -64,7 +64,7 @@ RealTimeThreads& RealTimeThreads::singleton()
 RealTimeThreads::RealTimeThreads()
     : m_threadGroup(ThreadGroup::create())
 #if USE(GLIB)
-    , m_discardRealTimeKitProxyTimer(RunLoop::main(), this, &RealTimeThreads::discardRealTimeKitProxyTimerFired)
+    , m_discardRealTimeKitProxyTimer(RunLoop::mainSingleton(), this, &RealTimeThreads::discardRealTimeKitProxyTimerFired)
 #endif
 {
 #if USE(GLIB)

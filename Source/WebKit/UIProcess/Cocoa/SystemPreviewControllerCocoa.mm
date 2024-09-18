@@ -463,7 +463,7 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
     if (m_testingCallback)
         std::exchange(m_allowPreviewCallback, nullptr)(true);
     else if (m_showPreviewDelay) {
-        RunLoop::main().dispatchAfter(Seconds { m_showPreviewDelay }, [alert, presentingViewController] {
+        RunLoop::mainSingleton().dispatchAfter(Seconds { m_showPreviewDelay }, [alert, presentingViewController] {
             [presentingViewController presentViewController:alert.get() animated:YES completion:nil];
         });
         m_showPreviewDelay = 0;

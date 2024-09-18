@@ -50,7 +50,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IOSurfacePool);
 
 IOSurfacePool::IOSurfacePool()
-    : m_collectionTimer(RunLoop::main(), this, &IOSurfacePool::collectionTimerFired)
+    : m_collectionTimer(RunLoop::mainSingleton(), this, &IOSurfacePool::collectionTimerFired)
 {
 }
 

@@ -90,7 +90,7 @@ private:
         CachedAssertion(ProcessAssertionCache& cache, Ref<ProcessAssertion>&& assertion)
             : m_cache(cache)
             , m_assertion(WTFMove(assertion))
-            , m_expirationTimer(RunLoop::main(), this, &CachedAssertion::entryExpired)
+            , m_expirationTimer(RunLoop::mainSingleton(), this, &CachedAssertion::entryExpired)
         {
             m_expirationTimer.startOneShot(processAssertionCacheLifetime);
         }
@@ -126,9 +126,9 @@ static uint64_t generatePrepareToSuspendRequestID()
 ProcessThrottler::ProcessThrottler(AuxiliaryProcessProxy& process, bool shouldTakeUIBackgroundAssertion)
     : m_assertionCache(makeUniqueRef<ProcessAssertionCache>())
     , m_process(process)
-    , m_prepareToSuspendTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToSuspendTimeoutTimerFired)
-    , m_dropNearSuspendedAssertionTimer(RunLoop::main(), this, &ProcessThrottler::dropNearSuspendedAssertionTimerFired)
-    , m_prepareToDropLastAssertionTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToDropLastAssertionTimeoutTimerFired)
+    , m_prepareToSuspendTimeoutTimer(RunLoop::mainSingleton(), this, &ProcessThrottler::prepareToSuspendTimeoutTimerFired)
+    , m_dropNearSuspendedAssertionTimer(RunLoop::mainSingleton(), this, &ProcessThrottler::dropNearSuspendedAssertionTimerFired)
+    , m_prepareToDropLastAssertionTimeoutTimer(RunLoop::mainSingleton(), this, &ProcessThrottler::prepareToDropLastAssertionTimeoutTimerFired)
     , m_shouldTakeUIBackgroundAssertion(shouldTakeUIBackgroundAssertion)
 {
 }
@@ -528,7 +528,7 @@ Ref<AuxiliaryProcessProxy> ProcessThrottler::protectedProcess() const
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessThrottlerTimedActivity);
 
 ProcessThrottlerTimedActivity::ProcessThrottlerTimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)
-    : m_timer(RunLoop::main(), this, &ProcessThrottlerTimedActivity::activityTimedOut)
+    : m_timer(RunLoop::mainSingleton(), this, &ProcessThrottlerTimedActivity::activityTimedOut)
     , m_timeout(timeout)
     , m_activity(WTFMove(activity))
 {

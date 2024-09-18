@@ -75,7 +75,7 @@ WebInspectorUIProxy::WebInspectorUIProxy(WebPageProxy& inspectedPage)
     , m_inspectorClient(makeUnique<API::InspectorClient>())
     , m_inspectedPageIdentifier(inspectedPage.identifier())
 #if PLATFORM(MAC)
-    , m_closeFrontendAfterInactivityTimer(RunLoop::main(), this, &WebInspectorUIProxy::closeFrontendAfterInactivityTimerFired)
+    , m_closeFrontendAfterInactivityTimer(RunLoop::mainSingleton(), this, &WebInspectorUIProxy::closeFrontendAfterInactivityTimerFired)
 #endif
 {
     m_inspectedPage->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebInspectorUIProxy::messageReceiverName(), m_inspectedPage->webPageIDInMainFrameProcess(), *this);

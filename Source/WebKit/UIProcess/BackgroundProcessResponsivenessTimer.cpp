@@ -39,8 +39,8 @@ static const Seconds responsivenessTimeout { 90_s };
 BackgroundProcessResponsivenessTimer::BackgroundProcessResponsivenessTimer(WebProcessProxy& webProcessProxy)
     : m_webProcessProxy(webProcessProxy)
     , m_checkingInterval(initialCheckingInterval)
-    , m_responsivenessCheckTimer(RunLoop::main(), this, &BackgroundProcessResponsivenessTimer::responsivenessCheckTimerFired)
-    , m_timeoutTimer(RunLoop::main(), this, &BackgroundProcessResponsivenessTimer::timeoutTimerFired)
+    , m_responsivenessCheckTimer(RunLoop::mainSingleton(), this, &BackgroundProcessResponsivenessTimer::responsivenessCheckTimerFired)
+    , m_timeoutTimer(RunLoop::mainSingleton(), this, &BackgroundProcessResponsivenessTimer::timeoutTimerFired)
 {
 }
 

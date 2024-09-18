@@ -312,7 +312,7 @@ void MediaPlayerPrivateWebM::dataReceived(const SharedBuffer& buffer)
     SourceBufferParser::Segment segment(Ref { const_cast<SharedBuffer&>(buffer) });
     invokeAsync(m_appendQueue, [segment = WTFMove(segment), parser = m_parser]() mutable {
         return MediaPromise::createAndSettle(parser->appendData(WTFMove(segment)));
-    })->whenSettled(RunLoop::main(), [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
+    })->whenSettled(RunLoop::mainSingleton(), [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->appendCompleted(!!result);
     });

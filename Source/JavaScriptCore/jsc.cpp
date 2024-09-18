@@ -2929,7 +2929,7 @@ JSC_DEFINE_HOST_FUNCTION(functionSetTimeout, (JSGlobalObject* globalObject, Call
     // it will cause setTimeout starvation problem (see stress test settimeout-starvation.js).
     JSValue timeout = callFrame->argument(1);
     Seconds delay = timeout.isNumber() ? Seconds::fromMilliseconds(timeout.asNumber()) : Seconds(0);
-    RunLoop::current().dispatchAfter(delay, WTFMove(dispatch));
+    RunLoop::currentSingleton().dispatchAfter(delay, WTFMove(dispatch));
 
     return JSValue::encode(jsUndefined());
 }

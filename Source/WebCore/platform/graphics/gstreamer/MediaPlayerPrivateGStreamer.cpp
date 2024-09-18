@@ -169,8 +169,8 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_maxTimeLoaded(MediaTime::zeroTime())
     , m_preload(player->preload())
     , m_maxTimeLoadedAtLastDidLoadingProgress(MediaTime::zeroTime())
-    , m_drawTimer(RunLoop::main(), this, &MediaPlayerPrivateGStreamer::repaint)
-    , m_pausedTimerHandler(RunLoop::main(), this, &MediaPlayerPrivateGStreamer::pausedTimerFired)
+    , m_drawTimer(RunLoop::mainSingleton(), this, &MediaPlayerPrivateGStreamer::repaint)
+    , m_pausedTimerHandler(RunLoop::mainSingleton(), this, &MediaPlayerPrivateGStreamer::pausedTimerFired)
 #if !RELEASE_LOG_DISABLED
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
@@ -1246,7 +1246,7 @@ void MediaPlayerPrivateGStreamer::videoSinkCapsChanged(GstPad* videoSinkPad)
         return;
     }
 
-    RunLoop::main().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this, caps = WTFMove(caps)] {
+    RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this, caps = WTFMove(caps)] {
         RefPtr self = weakThis.get();
         if (!self)
             return;
@@ -3305,7 +3305,7 @@ bool MediaPlayerPrivateGStreamer::performTaskAtTime(Function<void()>&& task, con
     // Dispatch the task if the time is already reached. Dispatching instead of directly running the
     // task prevents infinite recursion in case the task calls performTaskAtTime() internally.
     if (taskToSchedule)
-        RunLoop::main().dispatch(WTFMove(taskToSchedule.value()));
+        RunLoop::mainSingleton().dispatch(WTFMove(taskToSchedule.value()));
 
     return true;
 }
@@ -3690,7 +3690,7 @@ void MediaPlayerPrivateGStreamer::invalidateCachedPosition() const
 
 void MediaPlayerPrivateGStreamer::invalidateCachedPositionOnNextIteration() const
 {
-    RunLoop::main().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this] {
+    RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this] {
         RefPtr player = weakThis.get();
         if (!player)
             return;
@@ -3704,7 +3704,7 @@ void MediaPlayerPrivateGStreamer::textureMapperPlatformLayerProxyWasInvalidated(
     if (!m_hasFirstVideoSampleBeenRendered)
         return;
 
-    RunLoop::main().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this] {
+    RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this] {
         RefPtr player = weakThis.get();
         if (!player)
             return;
@@ -3729,7 +3729,7 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GRefPtr<GstSample>&& sample)
         MediaTime currentTime = MediaTime(gst_segment_to_stream_time(gst_sample_get_segment(sample.get()), GST_FORMAT_TIME, GST_BUFFER_PTS(buffer)), GST_SECOND);
         DataMutexLocker taskAtMediaTimeScheduler { m_TaskAtMediaTimeSchedulerDataMutex };
         if (auto task = taskAtMediaTimeScheduler->checkTaskForScheduling(currentTime))
-            RunLoop::main().dispatch(WTFMove(task.value()));
+            RunLoop::mainSingleton().dispatch(WTFMove(task.value()));
     }
 
     bool shouldTriggerResize;
@@ -3750,7 +3750,7 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GRefPtr<GstSample>&& sample)
                 return;
             }
         }
-        RunLoop::main().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this, caps = WTFMove(caps)] {
+        RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this, caps = WTFMove(caps)] {
             RefPtr self = weakThis.get();
             if (!self)
                 return;
@@ -4259,7 +4259,7 @@ void MediaPlayerPrivateGStreamer::initializationDataEncountered(InitData&& initD
         return;
     }
 
-    RunLoop::main().dispatch([weakThis = ThreadSafeWeakPtr { *this }, initData = WTFMove(initData)] {
+    RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, initData = WTFMove(initData)] {
         RefPtr self = weakThis.get();
         if (!self)
             return;

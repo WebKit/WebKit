@@ -2574,7 +2574,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
             *didInvalidateResizeAssertions = true;
         }).get()];
 
-        RunLoop::main().dispatchAfter(1_s, [weakSelf = WeakObjCPtr<WKWebView>(self), didInvalidateResizeAssertions] {
+        RunLoop::mainSingleton().dispatchAfter(1_s, [weakSelf = WeakObjCPtr<WKWebView>(self), didInvalidateResizeAssertions] {
             if (*didInvalidateResizeAssertions)
                 return;
 
@@ -2729,7 +2729,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
     }
 
-    RunLoop::main().dispatch([retainedSelf = retainPtr(self)] {
+    RunLoop::mainSingleton().dispatch([retainedSelf = retainPtr(self)] {
         WKWebView *webView = retainedSelf.get();
         if (![webView _isValid])
             return;
@@ -2878,7 +2878,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 
             if (!CGPointEqualToPoint(activePoint, currentPoint)) {
                 RetainPtr<WKScrollView> strongScrollView = _scrollView;
-                RunLoop::main().dispatch([strongScrollView, activePoint] {
+                RunLoop::mainSingleton().dispatch([strongScrollView, activePoint] {
                     [strongScrollView setContentOffset:activePoint animated:NO];
                 });
             }
@@ -3337,7 +3337,7 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 {
     RetainPtr<WKWebView> strongSelf = self;
     [self _doAfterNextPresentationUpdate:[strongSelf] {
-        RunLoop::main().dispatch([strongSelf] {
+        RunLoop::mainSingleton().dispatch([strongSelf] {
             if ([strongSelf->_stableStatePresentationUpdateCallbacks count])
                 [strongSelf _firePresentationUpdateForPendingStableStatePresentationCallbacks];
         });
@@ -3428,7 +3428,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     }).get()];
 
     // Ensure that the live resize snapshot is eventually removed, even if the webpage is unresponsive.
-    RunLoop::main().dispatchAfter(1_s, [liveResizeSnapshotView] {
+    RunLoop::mainSingleton().dispatchAfter(1_s, [liveResizeSnapshotView] {
         [liveResizeSnapshotView removeFromSuperview];
     });
 }
@@ -3651,7 +3651,7 @@ static bool isLockdownModeWarningNeeded()
             return;
         }
 
-        RunLoop::main().dispatch([message = retainPtr(message), protectedSelf = WTFMove(protectedSelf)] {
+        RunLoop::mainSingleton().dispatch([message = retainPtr(message), protectedSelf = WTFMove(protectedSelf)] {
             NSString *appDisplayName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(__bridge NSString *)_kCFBundleDisplayNameKey];
             if (!appDisplayName)
                 appDisplayName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleNameKey];
@@ -4107,7 +4107,7 @@ static bool isLockdownModeWarningNeeded()
 - (void)_doAfterNextStablePresentationUpdate:(dispatch_block_t)updateBlock
 {
     if (![self usesStandardContentView]) {
-        RunLoop::main().dispatch([updateBlock = makeBlockPtr(updateBlock)] {
+        RunLoop::mainSingleton().dispatch([updateBlock = makeBlockPtr(updateBlock)] {
             updateBlock();
         });
         return;

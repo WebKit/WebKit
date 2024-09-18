@@ -43,7 +43,7 @@ static const Seconds releaseUnusedSecondsToleranceOnLimitExceeded { 50_ms };
 static const Seconds releaseUnusedTexturesTimerIntervalOnLimitExceeded { 200_ms };
 
 BitmapTexturePool::BitmapTexturePool()
-    : m_releaseUnusedTexturesTimer(RunLoop::current(), this, &BitmapTexturePool::releaseUnusedTexturesTimerFired)
+    : m_releaseUnusedTexturesTimer(RunLoop::currentSingleton(), this, &BitmapTexturePool::releaseUnusedTexturesTimerFired)
     , m_releaseUnusedSecondsTolerance(releaseUnusedSecondsTolerance)
     , m_releaseUnusedTexturesTimerInterval(releaseUnusedTexturesTimerInterval)
 {

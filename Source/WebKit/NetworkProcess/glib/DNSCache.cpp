@@ -34,7 +34,7 @@ static const Seconds expireInterval = 60_s;
 static const unsigned maxCacheSize = 400;
 
 DNSCache::DNSCache()
-    : m_expiredTimer(RunLoop::main(), this, &DNSCache::removeExpiredResponsesFired)
+    : m_expiredTimer(RunLoop::mainSingleton(), this, &DNSCache::removeExpiredResponsesFired)
 {
     m_expiredTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
 }

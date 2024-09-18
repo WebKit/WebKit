@@ -58,8 +58,8 @@ static void onDeviceDisconnected(ManetteMonitor*, ManetteDevice* device, Manette
 
 ManetteGamepadProvider::ManetteGamepadProvider()
     : m_monitor(adoptGRef(manette_monitor_new()))
-    , m_initialGamepadsConnectedTimer(RunLoop::current(), this, &ManetteGamepadProvider::initialGamepadsConnectedTimerFired)
-    , m_inputNotificationTimer(RunLoop::current(), this, &ManetteGamepadProvider::inputNotificationTimerFired)
+    , m_initialGamepadsConnectedTimer(RunLoop::currentSingleton(), this, &ManetteGamepadProvider::initialGamepadsConnectedTimerFired)
+    , m_inputNotificationTimer(RunLoop::currentSingleton(), this, &ManetteGamepadProvider::inputNotificationTimerFired)
 {
     g_signal_connect(m_monitor.get(), "device-connected", G_CALLBACK(onDeviceConnected), this);
     g_signal_connect(m_monitor.get(), "device-disconnected", G_CALLBACK(onDeviceDisconnected), this);
@@ -89,7 +89,7 @@ void ManetteGamepadProvider::startMonitoringGamepads(GamepadProviderClient& clie
     // devices that were already connected, so we suppress notifying clients of these.
     m_initialGamepadsConnectedTimer.startOneShot(connectionDelayInterval);
 
-    RunLoop::current().dispatch([this] {
+    RunLoop::currentSingleton().dispatch([this] {
         ManetteDevice* device;
         GUniquePtr<ManetteMonitorIter> iter(manette_monitor_iterate(m_monitor.get()));
         while (manette_monitor_iter_next(iter.get(), &device))

@@ -292,7 +292,7 @@ void WebsiteDataStore::fetchAllDataStoreIdentifiers(CompletionHandler<void(Vecto
         auto identifiers = WTF::compactMap(FileSystem::listDirectory(directory), [](auto&& identifierString) {
             return WTF::UUID::parse(identifierString);
         });
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), identifiers = crossThreadCopy(WTFMove(identifiers))]() mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), identifiers = crossThreadCopy(WTFMove(identifiers))]() mutable {
             completionHandler(WTFMove(identifiers));
         });
     });
@@ -323,7 +323,7 @@ void WebsiteDataStore::removeDataStoreWithIdentifier(const WTF::UUID& identifier
         }
 
         bool deleted = FileSystem::deleteNonEmptyDirectory(directory);
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), deleted]() mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), deleted]() mutable {
             if (!deleted)
                 return completionHandler("Failed to delete files on disk"_s);
 
@@ -622,7 +622,7 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
         NSArray<NSString *> *appBoundData = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"WKAppBoundDomains"];
         keyExists = !!appBoundData;
         
-        RunLoop::main().dispatch([forceReinitialization, appBoundData = retainPtr(appBoundData)] {
+        RunLoop::mainSingleton().dispatch([forceReinitialization, appBoundData = retainPtr(appBoundData)] {
             if (hasInitializedAppBoundDomains && forceReinitialization != ForceReinitialization::Yes)
                 return;
 
@@ -677,7 +677,7 @@ void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSe
     // Hopping to the background thread then back to the main thread
     // ensures that initializeAppBoundDomains() has finished.
     appBoundDomainQueue().dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
-        RunLoop::main().dispatch([this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
+        RunLoop::mainSingleton().dispatch([this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
             ASSERT(hasInitializedAppBoundDomains);
             if (m_configuration->enableInAppBrowserPrivacyForTesting())
                 addTestDomains();
@@ -805,7 +805,7 @@ void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReini
         if (!shouldUseRelaxedDomainsIfAvailable)
             return;
 
-        RunLoop::main().dispatch([forceReinitialization, crossSiteTrackingPreventionRelaxedDomains = retainPtr(crossSiteTrackingPreventionRelaxedDomains)] {
+        RunLoop::mainSingleton().dispatch([forceReinitialization, crossSiteTrackingPreventionRelaxedDomains = retainPtr(crossSiteTrackingPreventionRelaxedDomains)] {
             if (hasInitializedManagedDomains && forceReinitialization != ForceReinitialization::Yes)
                 return;
 
@@ -842,7 +842,7 @@ void WebsiteDataStore::ensureManagedDomains(CompletionHandler<void(const HashSet
     // Hopping to the background thread then back to the main thread
     // ensures that initializeManagedDomains() has finished.
     managedDomainQueue().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
+        RunLoop::mainSingleton().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
             ASSERT(hasInitializedManagedDomains);
             completionHandler(managedDomains());
         });
@@ -1000,7 +1000,7 @@ void WebsiteDataStore::loadRecentSearches(const String& name, CompletionHandler<
 {
     m_queue->dispatch([name = name.isolatedCopy(), completionHandler = WTFMove(completionHandler), directory = resolvedDirectories().searchFieldHistoryDirectory.isolatedCopy()]() mutable {
         auto result = WebCore::loadRecentSearchesFromFile(name, directory);
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), result = crossThreadCopy(result)]() mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), result = crossThreadCopy(result)]() mutable {
             completionHandler(WTFMove(result));
         });
     });
@@ -1010,7 +1010,7 @@ void WebsiteDataStore::removeRecentSearches(WallTime oldestTimeToRemove, Complet
 {
     m_queue->dispatch([time = oldestTimeToRemove.isolatedCopy(), directory = resolvedDirectories().searchFieldHistoryDirectory.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         WebCore::removeRecentlyModifiedRecentSearchesFromFile(time, directory);
-        RunLoop::main().dispatch(WTFMove(completionHandler));
+        RunLoop::mainSingleton().dispatch(WTFMove(completionHandler));
     });
 }
 

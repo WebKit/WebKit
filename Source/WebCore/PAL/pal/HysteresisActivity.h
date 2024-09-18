@@ -41,7 +41,7 @@ public:
     explicit HysteresisActivity(Function<void(HysteresisState)>&& callback = [](HysteresisState) { }, Seconds hysteresisSeconds = defaultHysteresisDuration)
         : m_callback(WTFMove(callback))
         , m_hysteresisSeconds(hysteresisSeconds)
-        , m_timer(RunLoop::main(), this, &HysteresisActivity::hysteresisTimerFired)
+        , m_timer(RunLoop::mainSingleton(), this, &HysteresisActivity::hysteresisTimerFired)
     {
     }
 

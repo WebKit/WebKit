@@ -49,8 +49,8 @@ GamepadProviderLibWPE& GamepadProviderLibWPE::singleton()
 
 GamepadProviderLibWPE::GamepadProviderLibWPE()
     : m_provider(wpe_gamepad_provider_create(), wpe_gamepad_provider_destroy)
-    , m_initialGamepadsConnectedTimer(RunLoop::current(), this, &GamepadProviderLibWPE::initialGamepadsConnectedTimerFired)
-    , m_inputNotificationTimer(RunLoop::current(), this, &GamepadProviderLibWPE::inputNotificationTimerFired)
+    , m_initialGamepadsConnectedTimer(RunLoop::currentSingleton(), this, &GamepadProviderLibWPE::initialGamepadsConnectedTimerFired)
+    , m_inputNotificationTimer(RunLoop::currentSingleton(), this, &GamepadProviderLibWPE::inputNotificationTimerFired)
 {
     static const struct wpe_gamepad_provider_client_interface s_client = {
         // connected

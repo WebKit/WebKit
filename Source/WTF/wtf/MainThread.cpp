@@ -66,7 +66,7 @@ bool isMainRunLoop()
 
 void callOnMainRunLoop(Function<void()>&& function)
 {
-    RunLoop::main().dispatch(WTFMove(function));
+    RunLoop::mainSingleton().dispatch(WTFMove(function));
 }
 
 void ensureOnMainRunLoop(Function<void()>&& function)
@@ -74,7 +74,7 @@ void ensureOnMainRunLoop(Function<void()>&& function)
     if (RunLoop::isMain())
         function();
     else
-        RunLoop::main().dispatch(WTFMove(function));
+        RunLoop::mainSingleton().dispatch(WTFMove(function));
 }
 
 void callOnMainThread(Function<void()>&& function)
@@ -86,7 +86,7 @@ void callOnMainThread(Function<void()>&& function)
     }
 #endif
 
-    RunLoop::main().dispatch(WTFMove(function));
+    RunLoop::mainSingleton().dispatch(WTFMove(function));
 }
 
 void ensureOnMainThread(Function<void()>&& function)

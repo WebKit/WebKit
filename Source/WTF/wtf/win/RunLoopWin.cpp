@@ -91,7 +91,7 @@ void RunLoop::run()
 
 void RunLoop::setWakeUpCallback(WTF::Function<void()>&& function)
 {
-    RunLoop::current().m_wakeUpCallback = WTFMove(function);
+    RunLoop::currentSingleton().m_wakeUpCallback = WTFMove(function);
 }
 
 void RunLoop::stop()

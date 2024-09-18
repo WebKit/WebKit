@@ -713,7 +713,7 @@ Error Connection::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, AsyncR
     if (auto replyHandlerToCancel = takeAsyncReplyHandler(replyID)) {
         // FIXME: Current contract is that completionHandler is called on the connection run loop.
         // This does not make sense. However, this needs a change that is done later.
-        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(replyHandlerToCancel)]() mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(replyHandlerToCancel)]() mutable {
             completionHandler(nullptr);
         });
     }
@@ -1633,8 +1633,8 @@ void Connection::wakeUpRunLoop()
 {
     if (!isValid())
         return;
-    if (&dispatcher() == &RunLoop::main())
-        RunLoop::protectedMain()->wakeUp();
+    if (&dispatcher() == &RunLoop::mainSingleton())
+        RunLoop::mainSingleton().wakeUp();
 }
 
 template<typename F>

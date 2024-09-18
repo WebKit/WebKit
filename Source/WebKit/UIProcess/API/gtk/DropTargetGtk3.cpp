@@ -44,7 +44,7 @@ enum DropTargetType { Markup, Text, URIList, NetscapeURL, SmartPaste, Custom };
 
 DropTarget::DropTarget(GtkWidget* webView)
     : m_webView(webView)
-    , m_leaveTimer(RunLoop::main(), this, &DropTarget::leaveTimerFired)
+    , m_leaveTimer(RunLoop::mainSingleton(), this, &DropTarget::leaveTimerFired)
 {
     GRefPtr<GtkTargetList> list = adoptGRef(gtk_target_list_new(nullptr, 0));
     gtk_target_list_add_text_targets(list.get(), DropTargetType::Text);

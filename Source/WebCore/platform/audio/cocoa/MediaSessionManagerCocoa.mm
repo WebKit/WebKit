@@ -73,7 +73,7 @@ std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create
 MediaSessionManagerCocoa::MediaSessionManagerCocoa()
     : m_nowPlayingManager(hasPlatformStrategies() ? platformStrategies()->mediaStrategy().createNowPlayingManager() : nullptr)
     , m_defaultBufferSize(AudioSession::sharedSession().preferredBufferSize())
-    , m_delayCategoryChangeTimer(RunLoop::main(), this, &MediaSessionManagerCocoa::possiblyChangeAudioCategory)
+    , m_delayCategoryChangeTimer(RunLoop::mainSingleton(), this, &MediaSessionManagerCocoa::possiblyChangeAudioCategory)
 {
     ensureCodecsRegistered();
 }

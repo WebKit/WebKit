@@ -39,7 +39,7 @@ namespace WebKit {
 
 ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID displayID, Client& client, WebCore::DisplayUpdate displayUpdate)
     : WebCore::DisplayRefreshMonitor(displayID)
-    , m_displayRefreshTimer(RunLoop::main(), this, &ThreadedDisplayRefreshMonitor::displayRefreshCallback)
+    , m_displayRefreshTimer(RunLoop::mainSingleton(), this, &ThreadedDisplayRefreshMonitor::displayRefreshCallback)
     , m_client(&client)
     , m_displayUpdate(displayUpdate)
 {

@@ -61,7 +61,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MediaDevices);
 
 inline MediaDevices::MediaDevices(Document& document)
     : ActiveDOMObject(document)
-    , m_scheduledEventTimer(RunLoop::main(), this, &MediaDevices::scheduledEventTimerFired)
+    , m_scheduledEventTimer(RunLoop::mainSingleton(), this, &MediaDevices::scheduledEventTimerFired)
     , m_eventNames(eventNames())
     , m_groupIdHashSalt(createVersion4UUIDString())
 {

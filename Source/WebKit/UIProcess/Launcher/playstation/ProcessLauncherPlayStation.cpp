@@ -99,7 +99,7 @@ void ProcessLauncher::launchProcess()
 
     // We've finished launching the process, message back to the main run loop.
     RefPtr<ProcessLauncher> protectedThis(this);
-    RunLoop::main().dispatch([=] {
+    RunLoop::mainSingleton().dispatch([=] {
         protectedThis->didFinishLaunchingProcess(appLocalPid, serverIdentifier);
     });
 }

@@ -40,7 +40,7 @@ static constexpr auto SharedJSContextWKMaxIdleTime = 10_s;
 class SharedJSContextWK {
 public:
     SharedJSContextWK()
-        : m_timer(RunLoop::main(), this, &SharedJSContextWK::releaseContextIfNecessary)
+        : m_timer(RunLoop::mainSingleton(), this, &SharedJSContextWK::releaseContextIfNecessary)
     {
     }
 

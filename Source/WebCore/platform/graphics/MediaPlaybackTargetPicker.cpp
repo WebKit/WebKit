@@ -37,7 +37,7 @@ static const Seconds pendingActionInterval { 100_ms };
 
 MediaPlaybackTargetPicker::MediaPlaybackTargetPicker(Client& client)
     : m_client(&client)
-    , m_pendingActionTimer(RunLoop::main(), this, &MediaPlaybackTargetPicker::pendingActionTimerFired)
+    , m_pendingActionTimer(RunLoop::mainSingleton(), this, &MediaPlaybackTargetPicker::pendingActionTimerFired)
 {
 }
 

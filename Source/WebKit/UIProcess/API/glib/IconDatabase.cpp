@@ -48,7 +48,7 @@ static const Seconds loadedIconExpirationTime { 30_s };
 IconDatabase::IconDatabase(const String& path, AllowDatabaseWrite allowDatabaseWrite)
     : m_workQueue(WorkQueue::create("org.webkit.IconDatabase"_s))
     , m_allowDatabaseWrite(allowDatabaseWrite)
-    , m_clearLoadedIconsTimer(RunLoop::main(), this, &IconDatabase::clearLoadedIconsTimerFired)
+    , m_clearLoadedIconsTimer(RunLoop::mainSingleton(), this, &IconDatabase::clearLoadedIconsTimerFired)
 {
     ASSERT(isMainRunLoop());
     m_clearLoadedIconsTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
@@ -88,7 +88,7 @@ IconDatabase::IconDatabase(const String& path, AllowDatabaseWrite allowDatabaseW
         m_db.executeCommand("PRAGMA cache_size = 200;"_s);
 
         if (allowDatabaseWrite == AllowDatabaseWrite::Yes) {
-            m_pruneTimer = makeUnique<RunLoop::Timer>(RunLoop::current(), this, &IconDatabase::pruneTimerFired);
+            m_pruneTimer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), this, &IconDatabase::pruneTimerFired);
             m_pruneTimer->setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
         }
 
@@ -527,7 +527,7 @@ void IconDatabase::checkIconURLAndSetPageURLIfNeeded(const String& iconURL, cons
             }
         }
         startPruneTimer();
-        RunLoop::main().dispatch([result, changed, completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([result, changed, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(result, changed);
         });
     });
@@ -560,7 +560,7 @@ void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite 
                 updateIconTimestamp(iconID.value(), timestamp.secondsAs<int64_t>());
         }
         startPruneTimer();
-        RunLoop::main().dispatch([this, protectedThis = Ref { *this }, iconURL = WTFMove(iconURL), iconData = WTFMove(iconData), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, iconURL = WTFMove(iconURL), iconData = WTFMove(iconData), completionHandler = WTFMove(completionHandler)]() mutable {
             if (iconURL.isEmpty()) {
                 completionHandler(nullptr);
                 return;
@@ -631,7 +631,7 @@ void IconDatabase::setIconForPageURL(const String& iconURL, std::span<const uint
                 Locker locker { m_pageURLToIconURLMapLock };
                 m_pageURLToIconURLMap.set(pageURL, iconURL);
             }
-            RunLoop::main().dispatch([result, completionHandler = WTFMove(completionHandler)]() mutable {
+            RunLoop::mainSingleton().dispatch([result, completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler(result);
             });
         });
@@ -660,7 +660,7 @@ void IconDatabase::setIconForPageURL(const String& iconURL, std::span<const uint
             transaction.commit();
         }
         startPruneTimer();
-        RunLoop::main().dispatch([result, completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([result, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(result);
         });
     });
@@ -687,7 +687,7 @@ void IconDatabase::clear(CompletionHandler<void()>&& completionHandler)
             createTablesIfNeeded();
         }
 
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler();
         });
     });

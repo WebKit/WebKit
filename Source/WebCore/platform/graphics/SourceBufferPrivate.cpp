@@ -60,7 +60,7 @@ static const unsigned evictionAlgorithmInitialTimeChunk = 30000;
 static const unsigned evictionAlgorithmTimeChunkLowThreshold = 3000;
 
 SourceBufferPrivate::SourceBufferPrivate(MediaSourcePrivate& parent)
-    : SourceBufferPrivate(parent, RunLoop::current())
+    : SourceBufferPrivate(parent, RunLoop::currentSingleton())
 {
 }
 

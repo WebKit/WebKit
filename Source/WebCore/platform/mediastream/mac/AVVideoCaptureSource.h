@@ -169,7 +169,7 @@ private:
     RetainPtr<AVCaptureSession> m_session;
     RetainPtr<AVCaptureDevice> m_device;
 
-    RetainPtr<AVCapturePhotoOutput> m_photoOutput WTF_GUARDED_BY_CAPABILITY(RunLoop::main());
+    RetainPtr<AVCapturePhotoOutput> m_photoOutput WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton());
     std::unique_ptr<TakePhotoNativePromise::Producer> m_photoProducer WTF_GUARDED_BY_LOCK(m_photoLock);
 
     Lock m_photoLock;

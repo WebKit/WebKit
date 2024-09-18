@@ -176,7 +176,7 @@ void ExtensionCapabilityGranter::grant(const ExtensionCapability& capability)
         capability,
         needsGPUProcessGrant ? gpuProcess.get() : nullptr,
         needsWebProcessGrant ? webProcess.get() : nullptr
-    )->whenSettled(RunLoop::main(), [
+    )->whenSettled(RunLoop::mainSingleton(), [
         this,
         weakThis = WeakPtr { *this },
         environmentIdentifier,
@@ -271,7 +271,7 @@ void ExtensionCapabilityGranter::setMediaCapabilityActive(MediaCapability& capab
             return ExtensionCapabilityActivationPromise::createAndResolve();
 #endif
         return ExtensionCapabilityActivationPromise::createAndReject(ExtensionCapabilityGrantError::PlatformError);
-    })->whenSettled(RunLoop::main(), [weakCapability = WeakPtr { capability }, isActive](auto&& result) {
+    })->whenSettled(RunLoop::mainSingleton(), [weakCapability = WeakPtr { capability }, isActive](auto&& result) {
         auto capability = weakCapability.get();
         if (!capability)
             return;

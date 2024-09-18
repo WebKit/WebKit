@@ -965,7 +965,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
         }
 
         [retainedSelf->_view _removeTemporaryDirectoriesWhenDeallocated:std::exchange(retainedSelf->_temporaryUploadedFileURLs, { })];
-        RunLoop::main().dispatch([retainedSelf = WTFMove(retainedSelf), maybeMovedURLs = WTFMove(maybeMovedURLs)] {
+        RunLoop::mainSingleton().dispatch([retainedSelf = WTFMove(retainedSelf), maybeMovedURLs = WTFMove(maybeMovedURLs)] {
             [retainedSelf _chooseFiles:maybeMovedURLs.get() displayString:displayStringForDocumentsAtURLs(maybeMovedURLs.get()) iconImage:WebKit::iconForFiles({ maybeMovedURLs.get()[0].absoluteString }).get()];
         });
     }).get());

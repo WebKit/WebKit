@@ -50,7 +50,7 @@ MainThreadSharedTimer& MainThreadSharedTimer::singleton()
 MainThreadSharedTimer::MainThreadSharedTimer() = default;
 #else
 MainThreadSharedTimer::MainThreadSharedTimer()
-    : m_timer(RunLoop::main(), this, &MainThreadSharedTimer::fired)
+    : m_timer(RunLoop::mainSingleton(), this, &MainThreadSharedTimer::fired)
 {
 #if USE(GLIB)
     m_timer.setPriority(RunLoopSourcePriority::MainThreadSharedTimer);

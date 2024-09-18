@@ -42,7 +42,7 @@ static constexpr auto sharedJSContextMaxIdleTime = 10_s;
 class SharedJSContext {
 public:
     SharedJSContext()
-        : m_timer(RunLoop::main(), this, &SharedJSContext::releaseContextIfNecessary)
+        : m_timer(RunLoop::mainSingleton(), this, &SharedJSContext::releaseContextIfNecessary)
     {
     }
 

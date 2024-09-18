@@ -104,7 +104,7 @@ void VideoPresentationInterfaceLMK::setupFullscreen(UIView& videoView, const Web
 
 void VideoPresentationInterfaceLMK::finalizeSetup()
 {
-    RunLoop::main().dispatch([protectedThis = Ref { *this }] {
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }] {
         if (RefPtr model = protectedThis->videoPresentationModel())
             model->didSetupFullscreen();
     });

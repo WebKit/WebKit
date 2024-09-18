@@ -114,7 +114,7 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(Expected<UniqueRef<Captur
 DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(UniqueRef<Capturer>&& capturer, const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
     : RealtimeMediaSource(device, WTFMove(hashSalts), pageIdentifier)
     , m_capturer(WTFMove(capturer))
-    , m_timer(RunLoop::current(), this, &DisplayCaptureSourceCocoa::emitFrame)
+    , m_timer(RunLoop::currentSingleton(), this, &DisplayCaptureSourceCocoa::emitFrame)
     , m_userActivity("App nap disabled for screen capture"_s)
 {
     m_capturer->setObserver(*this);

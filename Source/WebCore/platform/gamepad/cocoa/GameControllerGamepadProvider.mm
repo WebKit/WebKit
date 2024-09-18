@@ -91,7 +91,7 @@ GameControllerGamepadProvider& GameControllerGamepadProvider::singleton()
 }
 
 GameControllerGamepadProvider::GameControllerGamepadProvider()
-    : m_inputNotificationTimer(RunLoop::current(), this, &GameControllerGamepadProvider::inputNotificationTimerFired)
+    : m_inputNotificationTimer(RunLoop::currentSingleton(), this, &GameControllerGamepadProvider::inputNotificationTimerFired)
 {
 }
 

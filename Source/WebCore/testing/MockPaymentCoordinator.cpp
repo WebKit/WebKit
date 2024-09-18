@@ -83,14 +83,14 @@ bool MockPaymentCoordinator::canMakePayments()
 
 void MockPaymentCoordinator::canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
 {
-    RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), canMakePaymentsWithActiveCard = m_canMakePaymentsWithActiveCard]() mutable {
+    RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), canMakePaymentsWithActiveCard = m_canMakePaymentsWithActiveCard]() mutable {
         completionHandler(canMakePaymentsWithActiveCard);
     });
 }
 
 void MockPaymentCoordinator::openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
 {
-    RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+    RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler(true);
     });
 }
@@ -108,7 +108,7 @@ void MockPaymentCoordinator::dispatchIfShowing(Function<void()>&& function)
     if (showCount <= hideCount)
         return;
 
-    RunLoop::main().dispatch([currentShowCount = showCount, function = WTFMove(function)]() {
+    RunLoop::mainSingleton().dispatch([currentShowCount = showCount, function = WTFMove(function)]() {
         if (showCount > hideCount && showCount == currentShowCount)
             function();
     });

@@ -237,7 +237,7 @@ PluginView::PluginView(HTMLPlugInElement& element, const URL& mainResourceURL, c
     , m_webPage(page)
     , m_mainResourceURL(mainResourceURL)
     , m_shouldUseManualLoader(shouldUseManualLoader)
-    , m_pendingResourceRequestTimer(RunLoop::main(), this, &PluginView::pendingResourceRequestTimerFired)
+    , m_pendingResourceRequestTimer(RunLoop::mainSingleton(), this, &PluginView::pendingResourceRequestTimerFired)
 {
     protectedPlugin()->startLoading();
     m_webPage->addPluginView(*this);

@@ -149,7 +149,7 @@ bool ReplayKitCaptureSource::start()
 
         ++m_frameCount;
 
-        RunLoop::main().dispatch([weakThis, sampleBuffer = retainPtr(sampleBuffer)]() mutable {
+        RunLoop::mainSingleton().dispatch([weakThis, sampleBuffer = retainPtr(sampleBuffer)]() mutable {
             if (!weakThis)
                 return;
 
@@ -159,7 +159,7 @@ bool ReplayKitCaptureSource::start()
 
     auto completionHandler = makeBlockPtr([this, weakThis = WeakPtr { *this }, identifier](NSError * _Nullable error) {
         // FIXME: It should be safe to call `videoFrameAvailable` from any thread. Test this and get rid of this main thread hop.
-        RunLoop::main().dispatch([this, weakThis, error = retainPtr(error), identifier]() mutable {
+        RunLoop::mainSingleton().dispatch([this, weakThis, error = retainPtr(error), identifier]() mutable {
             if (!weakThis || !error)
                 return;
 
@@ -181,7 +181,7 @@ void ReplayKitCaptureSource::screenRecorderDidOutputVideoSample(RetainPtr<CMSamp
 
 void ReplayKitCaptureSource::captureStateDidChange()
 {
-    RunLoop::main().dispatch([this, weakThis = WeakPtr { *this }, identifier = LOGIDENTIFIER]() mutable {
+    RunLoop::mainSingleton().dispatch([this, weakThis = WeakPtr { *this }, identifier = LOGIDENTIFIER]() mutable {
         if (!weakThis)
             return;
 

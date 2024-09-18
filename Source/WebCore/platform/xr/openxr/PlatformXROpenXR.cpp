@@ -363,7 +363,7 @@ Device::FeatureList OpenXRDevice::collectSupportedFeatures() const
 
 void OpenXRDevice::collectSupportedSessionModes()
 {
-    ASSERT(&RunLoop::current() == &m_queue.runLoop());
+    ASSERT(&RunLoop::currentSingleton() == &m_queue.runLoop());
     uint32_t viewConfigurationCount;
     auto result = xrEnumerateViewConfigurations(m_instance, m_systemId, 0, &viewConfigurationCount, nullptr);
     RETURN_IF_FAILED(result, "xrEnumerateViewConfigurations", m_instance);
@@ -397,7 +397,7 @@ void OpenXRDevice::collectSupportedSessionModes()
 
 void OpenXRDevice::collectConfigurationViews()
 {
-    ASSERT(&RunLoop::current() == &m_queue.runLoop());
+    ASSERT(&RunLoop::currentSingleton() == &m_queue.runLoop());
     for (auto& config : m_viewConfigurationProperties.values()) {
         uint32_t viewCount;
         auto configType = config.viewConfigurationType;
@@ -423,7 +423,7 @@ void OpenXRDevice::collectConfigurationViews()
 
 XrSpace OpenXRDevice::createReferenceSpace(XrReferenceSpaceType type)
 {
-    ASSERT(&RunLoop::current() == &m_queue.runLoop());
+    ASSERT(&RunLoop::currentSingleton() == &m_queue.runLoop());
     ASSERT(m_session != XR_NULL_HANDLE);
     ASSERT(m_instance != XR_NULL_HANDLE);
 
@@ -511,7 +511,7 @@ void OpenXRDevice::endSession()
 
 void OpenXRDevice::resetSession()
 {
-    ASSERT(&RunLoop::current() == &m_queue.runLoop());
+    ASSERT(&RunLoop::currentSingleton() == &m_queue.runLoop());
     m_layers.clear();
     m_input.reset();
     if (m_session != XR_NULL_HANDLE) {
@@ -531,7 +531,7 @@ void OpenXRDevice::resetSession()
 
 void OpenXRDevice::handleSessionStateChange()
 {
-    ASSERT(&RunLoop::current() == &m_queue.runLoop());
+    ASSERT(&RunLoop::currentSingleton() == &m_queue.runLoop());
     if (m_sessionState == XR_SESSION_STATE_STOPPING) {
         // The application should exit the render loop and call xrEndSession
         endSession();
@@ -543,7 +543,7 @@ void OpenXRDevice::handleSessionStateChange()
 
 void OpenXRDevice::waitUntilStopping()
 {
-    ASSERT(&RunLoop::current() == &m_queue.runLoop());
+    ASSERT(&RunLoop::currentSingleton() == &m_queue.runLoop());
     pollEvents();
     if (m_sessionState >= XR_SESSION_STATE_STOPPING)
         return;
@@ -554,7 +554,7 @@ void OpenXRDevice::waitUntilStopping()
 
 void OpenXRDevice::updateStageParameters()
 {
-    ASSERT(&RunLoop::current() == &m_queue.runLoop());
+    ASSERT(&RunLoop::currentSingleton() == &m_queue.runLoop());
     if (m_stageSpace == XR_NULL_HANDLE)
         return; // Stage space not requested.
 

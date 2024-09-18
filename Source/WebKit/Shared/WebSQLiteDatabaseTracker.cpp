@@ -70,7 +70,7 @@ void WebSQLiteDatabaseTracker::willBeginFirstTransaction()
 void WebSQLiteDatabaseTracker::didFinishLastTransaction()
 {
     Locker locker { m_lock };
-    RunLoop::main().dispatchAfter(1_s, [this, weakThis = WeakPtr { *this }, hystererisID = ++m_currentHystererisID] {
+    RunLoop::mainSingleton().dispatchAfter(1_s, [this, weakThis = WeakPtr { *this }, hystererisID = ++m_currentHystererisID] {
         if (!weakThis)
             return;
 

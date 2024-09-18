@@ -236,19 +236,19 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_userObservablePageCounter([this](RefCounterEvent) { updateProcessSuppressionState(); })
     , m_processSuppressionDisabledForPageCounter([this](RefCounterEvent) { updateProcessSuppressionState(); })
     , m_hiddenPageThrottlingAutoIncreasesCounter([this](RefCounterEvent) { m_hiddenPageThrottlingTimer.startOneShot(0_s); })
-    , m_hiddenPageThrottlingTimer(RunLoop::main(), this, &WebProcessPool::updateHiddenPageThrottlingAutoIncreaseLimit)
+    , m_hiddenPageThrottlingTimer(RunLoop::mainSingleton(), this, &WebProcessPool::updateHiddenPageThrottlingAutoIncreaseLimit)
 #if ENABLE(GPU_PROCESS)
-    , m_resetGPUProcessCrashCountTimer(RunLoop::main(), [this] { m_recentGPUProcessCrashCount = 0; })
+    , m_resetGPUProcessCrashCountTimer(RunLoop::mainSingleton(), [this] { m_recentGPUProcessCrashCount = 0; })
 #endif
 #if ENABLE(MODEL_PROCESS)
-    , m_resetModelProcessCrashCountTimer(RunLoop::main(), [this] { m_recentModelProcessCrashCount = 0; })
+    , m_resetModelProcessCrashCountTimer(RunLoop::mainSingleton(), [this] { m_recentModelProcessCrashCount = 0; })
 #endif
     , m_foregroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
     , m_backgroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
     , m_backForwardCache(makeUniqueRef<WebBackForwardCache>())
     , m_webProcessCache(makeUniqueRef<WebProcessCache>(*this))
     , m_webProcessWithAudibleMediaCounter([this](RefCounterEvent) { updateAudibleMediaAssertions(); })
-    , m_audibleActivityTimer(RunLoop::main(), this, &WebProcessPool::clearAudibleActivity)
+    , m_audibleActivityTimer(RunLoop::mainSingleton(), this, &WebProcessPool::clearAudibleActivity)
     , m_webProcessWithMediaStreamingCounter([this](RefCounterEvent) { updateMediaStreamingActivity(); })
 {
     static auto s_needsGlobalStaticInitialization = NeedsGlobalStaticInitialization::Yes;

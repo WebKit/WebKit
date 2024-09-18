@@ -78,7 +78,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ViewGestureController);
 
 ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
-    , m_swipeActiveLoadMonitoringTimer(RunLoop::main(), this, &ViewGestureController::checkForActiveLoads)
+    , m_swipeActiveLoadMonitoringTimer(RunLoop::mainSingleton(), this, &ViewGestureController::checkForActiveLoads)
 #if !PLATFORM(IOS_FAMILY)
     , m_pendingSwipeTracker(webPageProxy, *this)
 #endif
@@ -280,7 +280,7 @@ void ViewGestureController::checkForActiveLoads()
 }
 
 ViewGestureController::SnapshotRemovalTracker::SnapshotRemovalTracker()
-    : m_watchdogTimer(RunLoop::main(), this, &SnapshotRemovalTracker::watchdogTimerFired)
+    : m_watchdogTimer(RunLoop::mainSingleton(), this, &SnapshotRemovalTracker::watchdogTimerFired)
 {
 }
 

@@ -42,7 +42,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessStateMonitor);
 
 ProcessStateMonitor::ProcessStateMonitor(Function<void(bool)>&& becomeSuspendedHandler)
     : m_becomeSuspendedHandler(WTFMove(becomeSuspendedHandler))
-    , m_suspendTimer(RunLoop::main(), [this] { suspendTimerFired(); })
+    , m_suspendTimer(RunLoop::mainSingleton(), [this] { suspendTimerFired(); })
 {
     RELEASE_LOG(ProcessSuspension, "%p - ProcessStateMonitor::ProcessStateMonitor", this);
     RELEASE_ASSERT(RunLoop::isMain());

@@ -51,7 +51,7 @@ const unsigned retryTimeOutValueMs = 200;
 
 U2fAuthenticator::U2fAuthenticator(std::unique_ptr<CtapDriver>&& driver)
     : FidoAuthenticator(WTFMove(driver))
-    , m_retryTimer(RunLoop::main(), this, &U2fAuthenticator::retryLastCommand)
+    , m_retryTimer(RunLoop::mainSingleton(), this, &U2fAuthenticator::retryLastCommand)
 {
 }
 

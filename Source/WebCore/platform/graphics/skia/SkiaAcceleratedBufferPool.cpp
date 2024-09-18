@@ -44,7 +44,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SkiaAcceleratedBufferPool);
 
 SkiaAcceleratedBufferPool::SkiaAcceleratedBufferPool()
-    : m_releaseUnusedBuffersTimer(RunLoop::main(), this, &SkiaAcceleratedBufferPool::releaseUnusedBuffersTimerFired)
+    : m_releaseUnusedBuffersTimer(RunLoop::mainSingleton(), this, &SkiaAcceleratedBufferPool::releaseUnusedBuffersTimerFired)
 {
 }
 
