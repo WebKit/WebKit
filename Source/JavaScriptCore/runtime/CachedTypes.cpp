@@ -900,15 +900,21 @@ public:
     void encode(Encoder& encoder, const UnlinkedStringJumpTable& jumpTable)
     {
         m_offsetTable.encode(encoder, jumpTable.m_offsetTable);
+        m_minLength = jumpTable.m_minLength;
+        m_maxLength = jumpTable.m_maxLength;
     }
 
     void decode(Decoder& decoder, UnlinkedStringJumpTable& jumpTable) const
     {
         m_offsetTable.decode(decoder, jumpTable.m_offsetTable);
+        jumpTable.m_minLength = m_minLength;
+        jumpTable.m_maxLength = m_maxLength;
     }
 
 private:
     CachedMemoryCompactLookupOnlyRobinHoodHashMap<CachedRefPtr<CachedStringImpl>, UnlinkedStringJumpTable::OffsetLocation> m_offsetTable;
+    unsigned m_minLength { 0 };
+    unsigned m_maxLength { 0 };
 };
 
 class CachedBitVector : public VariableLengthObject<BitVector> {

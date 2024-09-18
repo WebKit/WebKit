@@ -19966,9 +19966,10 @@ IGNORE_CLANG_WARNINGS_END
 
         LBasicBlock hasImplBlock = m_out.newBlock();
         LBasicBlock is8BitBlock = m_out.newBlock();
+        LBasicBlock isRopeBlock = m_out.newBlock();
         LBasicBlock slowBlock = m_out.newBlock();
 
-        m_out.branch(isRopeString(string, edge), unsure(slowBlock), unsure(hasImplBlock));
+        m_out.branch(isRopeString(string, edge), unsure(isRopeBlock), unsure(hasImplBlock));
 
         LBasicBlock lastNext = m_out.appendTo(hasImplBlock, is8BitBlock);
 
@@ -19981,7 +19982,7 @@ IGNORE_CLANG_WARNINGS_END
                 m_out.constInt32(StringImpl::flagIs8Bit())),
             unsure(slowBlock), unsure(is8BitBlock));
 
-        m_out.appendTo(is8BitBlock, slowBlock);
+        m_out.appendTo(is8BitBlock, isRopeBlock);
 
         LValue buffer = m_out.loadPtr(stringImpl, m_heaps.StringImpl_data);
 
@@ -19993,6 +19994,11 @@ IGNORE_CLANG_WARNINGS_END
             cases.append(StringSwitchCase(myCase.value.stringImpl(), lowBlock(myCase.target.block)));
         std::sort(cases.begin(), cases.end());
         switchStringRecurse(data, buffer, length, cases, 0, 0, cases.size(), 0, false);
+
+        m_out.appendTo(isRopeBlock, slowBlock);
+        const UnlinkedStringJumpTable& unlinkedTable = m_graph.unlinkedStringSwitchJumpTable(data->switchTableIndex);
+        LValue ropeLength = m_out.load32NonNegative(string, m_heaps.JSRopeString_length);
+        m_out.branch(m_out.belowOrEqual(m_out.sub(ropeLength, m_out.constInt32(unlinkedTable.minLength())), m_out.constInt32(unlinkedTable.maxLength() - unlinkedTable.minLength())), unsure(slowBlock), unsure(lowBlock(data->fallThrough.block)));
 
         m_out.appendTo(slowBlock, lastNext);
         switchStringSlow(data, string);

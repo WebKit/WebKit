@@ -18,8 +18,6 @@ function test(createOOMString)
         throw "Case \"three\", shouldn't get here";
         break;
     default:
-        if (createOOMString)
-            throw "Default case, shouldn't get here";
         break;
     }
 }

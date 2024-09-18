@@ -12300,9 +12300,10 @@ void SpeculativeJIT::emitSwitchStringOnString(Node* node, SwitchData* data, GPRR
     GPRReg lengthGPR = length.gpr();
     GPRReg tempGPR = temp.gpr();
     
+    JumpList isRopeCases;
     JumpList slowCases;
     loadPtr(Address(string, JSString::offsetOfValue()), tempGPR);
-    slowCases.append(branchIfRopeStringImpl(tempGPR));
+    isRopeCases.append(branchIfRopeStringImpl(tempGPR));
     load32(Address(tempGPR, StringImpl::lengthMemoryOffset()), lengthGPR);
     
     slowCases.append(branchTest32(
@@ -12320,8 +12321,12 @@ void SpeculativeJIT::emitSwitchStringOnString(Node* node, SwitchData* data, GPRR
     
     std::sort(cases.begin(), cases.end());
     
-    emitBinarySwitchStringRecurse(
-        data, cases, 0, 0, cases.size(), string, lengthGPR, tempGPR, 0, false);
+    emitBinarySwitchStringRecurse(data, cases, 0, 0, cases.size(), string, lengthGPR, tempGPR, 0, false);
+
+    isRopeCases.link(this);
+    load32(Address(string, JSRopeString::offsetOfLength()), tempGPR);
+    sub32(TrustedImm32(unlinkedTable.minLength()), tempGPR);
+    branch32(Above, tempGPR, TrustedImm32(unlinkedTable.maxLength() - unlinkedTable.minLength()), data->fallThrough.block);
     
     slowCases.link(this);
     callOperationWithSilentSpill(operationSwitchString, string, LinkableConstant::globalObject(*this, node), static_cast<size_t>(data->switchTableIndex), TrustedImmPtr(&unlinkedTable), string);

@@ -4416,8 +4416,16 @@ static void prepareJumpTableForStringSwitch(UnlinkedStringJumpTable& jumpTable, 
         UniquedStringImpl* clause = static_cast<StringNode*>(nodes[i])->value().impl();
         ASSERT(clause->isAtom());
         auto result = jumpTable.m_offsetTable.add(clause, UnlinkedStringJumpTable::OffsetLocation { labels[i]->bind(switchAddress), 0 });
-        if (result.isNewEntry)
+        if (result.isNewEntry) {
             result.iterator->value.m_indexInTable = jumpTable.m_offsetTable.size() - 1;
+            jumpTable.m_minLength = std::min(jumpTable.m_minLength, clause->length());
+            jumpTable.m_maxLength = std::max(jumpTable.m_maxLength, clause->length());
+        }
+    }
+
+    if (jumpTable.m_offsetTable.isEmpty()) {
+        jumpTable.m_minLength = 0;
+        jumpTable.m_maxLength = 0;
     }
 }
 

@@ -1873,11 +1873,18 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_string)
     if (!scrutinee.isString())
         JUMP_TO(defaultOffset);
     else {
-        auto scrutineeString = asString(scrutinee)->value(globalObject);
+        auto& unlinkedTable = codeBlock->unlinkedStringSwitchJumpTable(bytecode.m_tableIndex);
+        auto* string = asString(scrutinee);
 
-        LLINT_CHECK_EXCEPTION();
+        unsigned length = string->length();
+        if (length < unlinkedTable.minLength() || length > unlinkedTable.maxLength())
+            JUMP_TO(defaultOffset);
+        else {
+            auto scrutineeString = string->value(globalObject);
+            LLINT_CHECK_EXCEPTION();
 
-        JUMP_TO(codeBlock->unlinkedStringSwitchJumpTable(bytecode.m_tableIndex).offsetForValue(scrutineeString.data.impl(), defaultOffset));
+            JUMP_TO(unlinkedTable.offsetForValue(scrutineeString.data.impl(), defaultOffset));
+        }
     }
     LLINT_END();
 }

@@ -4380,11 +4380,18 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlob
     const StringJumpTable& linkedTable = codeBlock->baselineStringSwitchJumpTable(tableIndex);
 
     if (key.isString()) {
-        auto value = asString(key)->value(globalObject);
-        OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
-
         const UnlinkedStringJumpTable& unlinkedTable = codeBlock->unlinkedStringSwitchJumpTable(tableIndex);
-        result = linkedTable.ctiForValue(unlinkedTable, value.data.impl()).taggedPtr();
+        auto* string = asString(key);
+
+        unsigned length = string->length();
+        if (length < unlinkedTable.minLength() || length > unlinkedTable.maxLength())
+            result = linkedTable.ctiDefault().taggedPtr();
+        else {
+            auto value = string->value(globalObject);
+            OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
+
+            result = linkedTable.ctiForValue(unlinkedTable, value.data.impl()).taggedPtr();
+        }
     } else
         result = linkedTable.ctiDefault().taggedPtr();
 
