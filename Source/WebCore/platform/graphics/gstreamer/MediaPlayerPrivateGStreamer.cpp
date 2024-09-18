@@ -133,6 +133,10 @@
 GST_DEBUG_CATEGORY(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
 
+#ifdef GST_DISABLE_GST_DEBUG
+static constexpr nullptr_t webkit_media_player_debug = nullptr;
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayerPrivateGStreamer);

@@ -49,6 +49,10 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_webrtc_pc_backend_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_pc_backend_debug
 
+#ifdef GST_DISABLE_GST_DEBUG
+static constexpr nullptr_t webkit_webrtc_pc_backend_debug = nullptr;
+#endif
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebRTCLogObserver);
 
 #ifndef GST_DISABLE_GST_DEBUG
