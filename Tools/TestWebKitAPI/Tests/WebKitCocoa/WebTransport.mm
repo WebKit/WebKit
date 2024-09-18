@@ -25,9 +25,13 @@
 
 #import "config.h"
 
+#import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestUIDelegate.h"
 #import "Utilities.h"
 #import "WebTransportServer.h"
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/_WKInternalDebugFeature.h>
 
 namespace TestWebKitAPI {
 

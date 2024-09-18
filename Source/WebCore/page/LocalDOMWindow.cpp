@@ -1269,7 +1269,7 @@ int LocalDOMWindow::outerHeight() const
     if (!page)
         return 0;
 
-    if (page->fingerprintingProtectionsEnabled())
+    if (page->shouldApplyScreenFingerprintingProtections(*protectedDocument()))
         return innerHeight();
 
 #if PLATFORM(IOS_FAMILY)
@@ -1297,7 +1297,7 @@ int LocalDOMWindow::outerWidth() const
     if (!page)
         return 0;
 
-    if (page->fingerprintingProtectionsEnabled())
+    if (page->shouldApplyScreenFingerprintingProtections(*protectedDocument()))
         return innerWidth();
 
 #if PLATFORM(IOS_FAMILY)
@@ -1362,7 +1362,7 @@ int LocalDOMWindow::screenX() const
         return 0;
 
     RefPtr page = frame->page();
-    if (!page || page->fingerprintingProtectionsEnabled())
+    if (!page || page->shouldApplyScreenFingerprintingProtections(*protectedDocument()))
         return 0;
 
     return static_cast<int>(page->chrome().windowRect().x());
@@ -1375,7 +1375,7 @@ int LocalDOMWindow::screenY() const
         return 0;
 
     RefPtr page = frame->page();
-    if (!page || page->fingerprintingProtectionsEnabled())
+    if (!page || page->shouldApplyScreenFingerprintingProtections(*protectedDocument()))
         return 0;
 
     return static_cast<int>(page->chrome().windowRect().y());

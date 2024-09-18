@@ -6049,6 +6049,20 @@ ScriptTelemetryEnabled:
     WebKit:
       default: false
 
+ScriptTelemetryLoggingEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Script Telemetry Logging"
+  humanReadableDescription: "Script telemetry logging enabled"
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 ScrollAnimatorEnabled:
   type: bool
   status: embedder

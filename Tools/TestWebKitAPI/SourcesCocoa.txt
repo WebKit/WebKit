@@ -237,6 +237,7 @@ Tests/WebKitCocoa/RunScriptAfterDocumentLoad.mm
 Tests/WebKitCocoa/SafeBrowsing.mm
 Tests/WebKitCocoa/SampledPageTopColor.mm
 Tests/WebKitCocoa/SchemeRegistry.mm
+Tests/WebKitCocoa/ScriptTelemetryTests.mm
 Tests/WebKitCocoa/ServiceWorkerBasic.mm
 Tests/WebKitCocoa/SessionStorage.mm
 Tests/WebKitCocoa/ShouldGoToBackForwardListItem.mm

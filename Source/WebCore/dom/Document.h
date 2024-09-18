@@ -835,7 +835,7 @@ public:
 
     const URL& url() const final { return m_url; }
     void setURL(const URL&);
-    WEBCORE_EXPORT const URL& urlForBindings() const;
+    WEBCORE_EXPORT const URL& urlForBindings();
 
     URL adjustedURL() const;
 

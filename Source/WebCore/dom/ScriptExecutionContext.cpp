@@ -966,21 +966,31 @@ bool ScriptExecutionContext::requiresScriptExecutionTelemetry(ScriptTelemetryCat
         return false;
 
     auto [taintedness, taintedURL] = JSC::sourceTaintedOriginFromStack(vm, vm->topCallFrame);
-
-    // FIXME: Use this information to emit a console log message.
-    UNUSED_PARAM(taintedURL);
-    UNUSED_PARAM(category);
-
     switch (taintedness) {
     case JSC::SourceTaintedOrigin::Untainted:
     case JSC::SourceTaintedOrigin::IndirectlyTaintedByHistory:
         return false;
     case JSC::SourceTaintedOrigin::IndirectlyTainted:
     case JSC::SourceTaintedOrigin::KnownTainted:
-        return true;
+        break;
     }
-    ASSERT_NOT_REACHED();
-    return false;
+
+    RefPtr document = dynamicDowncast<Document>(*this);
+    if (!document)
+        return true;
+
+    RefPtr page = document->page();
+    if (!page)
+        return true;
+
+    if (!page->settings().scriptTelemetryLoggingEnabled())
+        return true;
+
+    if (!page->reportScriptTelemetry(taintedURL, category))
+        return true;
+
+    addConsoleMessage(MessageSource::JS, MessageLevel::Info, makeString(taintedURL.string(), " tried to access "_s, description(category)));
+    return true;
 }
 
 WebCoreOpaqueRoot root(ScriptExecutionContext* context)

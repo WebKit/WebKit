@@ -29,6 +29,7 @@
 
 #import "CGImagePixelReader.h"
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebCore/ColorSerialization.h>

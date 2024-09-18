@@ -241,6 +241,7 @@
 #include "ScriptModuleLoader.h"
 #include "ScriptRunner.h"
 #include "ScriptSourceCode.h"
+#include "ScriptTelemetryCategory.h"
 #include "ScriptedAnimationController.h"
 #include "ScrollAnimator.h"
 #include "ScrollbarTheme.h"
@@ -4107,7 +4108,7 @@ void Document::setURL(const URL& url)
     updateBaseURL();
 }
 
-const URL& Document::urlForBindings() const
+const URL& Document::urlForBindings()
 {
     auto shouldAdjustURL = [this] {
         if (m_url.url().isEmpty() || !loader() || !isTopDocument() || !frame())
@@ -4117,12 +4118,18 @@ const URL& Document::urlForBindings() const
         if (policySourceLoader && !policySourceLoader->request().url().hasSpecialScheme() && url().protocolIsInHTTPFamily())
             policySourceLoader = loader();
 
-        if (!policySourceLoader || !policySourceLoader->navigationalAdvancedPrivacyProtections().contains(AdvancedPrivacyProtections::BaselineProtections))
+        if (!policySourceLoader)
+            return false;
+
+        auto navigationalProtections = policySourceLoader->navigationalAdvancedPrivacyProtections();
+        if (navigationalProtections.isEmpty())
             return false;
 
         auto preNavigationURL = URL { loader()->originalRequest().httpReferrer() };
-        if (preNavigationURL.isEmpty() || RegistrableDomain { preNavigationURL }.matches(securityOrigin().data()))
+        if (preNavigationURL.isEmpty() || RegistrableDomain { preNavigationURL }.matches(securityOrigin().data())) {
+            // Only apply the protections below following a cross-origin navigation.
             return false;
+        }
 
         auto areSameSiteIgnoringPublicSuffix = [](StringView domain, StringView otherDomain) {
             auto& publicSuffixStore = PublicSuffixStore::singleton();
@@ -4138,22 +4145,39 @@ const URL& Document::urlForBindings() const
             return !firstSubstring.isEmpty() && firstSubstring == substringToSeparator(otherDomainString);
         };
 
-        auto currentHost = securityOrigin().data().host();
-        if (areSameSiteIgnoringPublicSuffix(preNavigationURL.host(), currentHost))
-            return false;
-
-        if (!m_hasLoadedThirdPartyScript)
-            return false;
-
-        if (auto sourceURL = currentSourceURL(); !sourceURL.isEmpty()) {
-            if (RegistrableDomain { sourceURL }.matches(securityOrigin().data()))
+        auto shouldApplyBaselineProtections = [&] {
+            if (!navigationalProtections.contains(AdvancedPrivacyProtections::BaselineProtections))
                 return false;
 
-            if (areSameSiteIgnoringPublicSuffix(sourceURL.host(), currentHost))
+            auto currentHost = securityOrigin().data().host();
+            if (areSameSiteIgnoringPublicSuffix(preNavigationURL.host(), currentHost))
                 return false;
-        }
 
-        return true;
+            if (!m_hasLoadedThirdPartyScript)
+                return false;
+
+            if (auto sourceURL = currentSourceURL(); !sourceURL.isEmpty()) {
+                if (RegistrableDomain { sourceURL }.matches(securityOrigin().data()))
+                    return false;
+
+                if (areSameSiteIgnoringPublicSuffix(sourceURL.host(), currentHost))
+                    return false;
+            }
+
+            return true;
+        };
+
+        auto shouldApplyEnhancedProtections = [&] {
+            if (!navigationalProtections.contains(AdvancedPrivacyProtections::ScriptTelemetry))
+                return false;
+
+            if (!requiresScriptExecutionTelemetry(ScriptTelemetryCategory::QueryParameters))
+                return false;
+
+            return true;
+        };
+
+        return shouldApplyBaselineProtections() || shouldApplyEnhancedProtections();
     }();
 
     if (shouldAdjustURL)
@@ -6528,9 +6552,15 @@ String Document::referrerForBindings()
     if (!policySourceLoader->request().url().hasSpecialScheme() && url().protocolIsInHTTPFamily())
         policySourceLoader = loader();
 
-    if (policySourceLoader && policySourceLoader->navigationalAdvancedPrivacyProtections().contains(AdvancedPrivacyProtections::BaselineProtections)
-        && !RegistrableDomain { URL { frame()->loader().referrer() } }.matches(securityOrigin().data()))
-        return String();
+    if (policySourceLoader && !RegistrableDomain { URL { frame()->loader().referrer() } }.matches(securityOrigin().data())) {
+        auto policies = policySourceLoader->navigationalAdvancedPrivacyProtections();
+        if (policies.contains(AdvancedPrivacyProtections::BaselineProtections))
+            return { };
+
+        if (policies.contains(AdvancedPrivacyProtections::ScriptTelemetry) && requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Referrer))
+            return { };
+    }
+
     return referrer();
 }
 
@@ -10765,6 +10795,8 @@ OptionSet<NoiseInjectionPolicy> Document::noiseInjectionPolicies() const
     OptionSet<NoiseInjectionPolicy> policies;
     if (advancedPrivacyProtections().contains(AdvancedPrivacyProtections::FingerprintingProtections))
         policies.add(NoiseInjectionPolicy::Minimal);
+    if (advancedPrivacyProtections().contains(AdvancedPrivacyProtections::ScriptTelemetry))
+        policies.add(NoiseInjectionPolicy::Enhanced);
     return policies;
 }
 

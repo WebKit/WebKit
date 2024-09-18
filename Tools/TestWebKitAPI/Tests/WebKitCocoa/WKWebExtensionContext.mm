@@ -28,6 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "TestCocoa.h"
+#import "WebExtensionUtilities.h"
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKWebExtensionCommand.h>
 #import <WebKit/WKWebExtensionContextPrivate.h>

@@ -1623,6 +1623,8 @@ void Page::didCommitLoad()
 
     m_elementTargetingController->reset();
 
+    m_reportedScriptsWithTelemetry.clear();
+
     m_isWaitingForLoadToFinish = true;
 }
 
@@ -3161,9 +3163,15 @@ void Page::setCurrentKeyboardScrollingAnimator(KeyboardScrollingAnimator* animat
     m_currentKeyboardScrollingAnimator = animator;
 }
 
-bool Page::fingerprintingProtectionsEnabled() const
+bool Page::shouldApplyScreenFingerprintingProtections(Document& document) const
 {
-    return protectedMainFrame()->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::FingerprintingProtections);
+    if (advancedPrivacyProtections().contains(AdvancedPrivacyProtections::FingerprintingProtections))
+        return true;
+
+    if (advancedPrivacyProtections().contains(AdvancedPrivacyProtections::ScriptTelemetry))
+        return document.requiresScriptExecutionTelemetry(ScriptTelemetryCategory::ScreenOrViewport);
+
+    return false;
 }
 
 OptionSet<AdvancedPrivacyProtections> Page::advancedPrivacyProtections() const
@@ -5057,6 +5065,11 @@ bool Page::isFullscreenManagerEnabled() const
     return settings->fullScreenEnabled() || settings->videoFullscreenRequiresElementFullscreen();
 }
 #endif
+
+bool Page::reportScriptTelemetry(const URL& url, ScriptTelemetryCategory category)
+{
+    return !url.isEmpty() && m_reportedScriptsWithTelemetry.add({ url, category }).isNewEntry;
+}
 
 bool Page::requiresScriptTelemetryForURL(const URL& scriptURL) const
 {
