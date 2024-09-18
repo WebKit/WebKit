@@ -97,8 +97,9 @@ void RemotePresentationContext::getCurrentTexture(WebGPUIdentifier identifier)
     // but for now let's just create a new RemoteTexture object with the expected identifier, just for simplicity.
     // The Web Process should already be caching these current textures internally, so it's unlikely that we'll
     // actually run into a problem here.
-    auto remoteTexture = RemoteTexture::create(*connection, m_gpu, *texture, m_objectHeap, m_streamConnection.copyRef(), identifier);
-    m_objectHeap->addObject(identifier, remoteTexture);
+    Ref objectHeap = protectedObjectHeap();
+    auto remoteTexture = RemoteTexture::create(*connection, protectedGPU(), *texture, objectHeap, m_streamConnection.copyRef(), identifier);
+    objectHeap->addObject(identifier, remoteTexture);
 }
 
 } // namespace WebKit
