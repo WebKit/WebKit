@@ -266,11 +266,6 @@ int XPCServiceMain(int, const char**)
 #endif
     }
 
-#if PLATFORM(MAC)
-    // Don't allow Apple Events in WebKit processes. This can be removed when <rdar://problem/14012823> is fixed.
-    setenv("__APPLEEVENTSSERVICENAME", "", 1);
-#endif
-
     xpc_main(XPCServiceEventHandler);
     return 0;
 }
