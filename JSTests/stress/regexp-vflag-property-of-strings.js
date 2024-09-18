@@ -573,3 +573,8 @@ testRegExpSyntaxError("\\q{a}", "v", "SyntaxError: Invalid regular expression: i
 testRegExp(/[\&\-\!\#\%\,\:\;\<\=\>\@\`\~]*/v, "&-!#%,:;<=>@`~", ["&-!#%,:;<=>@`~"]);
 testRegExp(/[\q{\&\-\!\#\%\,\:\;\<\=\>\@\`\~}X]*/v, "X&-!#%,:;<=>@`~X", ["X&-!#%,:;<=>@`~X"]);
 testRegExp(/[\q{}]/v, "", [""]);
+
+// Test 294
+testRegExp(/[\q{\u{0095}|k}]/vi, "k", ["k"])
+testRegExp(/[\q{\u{0095}|s}]/vi, "s", ["s"])
+

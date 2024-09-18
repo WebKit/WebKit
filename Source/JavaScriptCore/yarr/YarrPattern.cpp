@@ -234,6 +234,8 @@ public:
             }
         }
 
+        std::sort(asciiMatches.begin(), asciiMatches.end());
+        std::sort(unicodeMatches.begin(), unicodeMatches.end());
         performOp();
     }
 
@@ -361,6 +363,9 @@ public:
 
             utf32Strings.append(string);
         }
+
+        std::sort(matches.begin(), matches.end());
+        std::sort(matchesUnicode.begin(), matchesUnicode.end());
 
         performSetOpWithStrings(utf32Strings);
         performSetOpWithMatches(matches, emptyRanges, matchesUnicode, emptyRanges);
