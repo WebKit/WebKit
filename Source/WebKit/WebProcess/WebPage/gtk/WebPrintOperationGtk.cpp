@@ -40,14 +40,21 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/ResourceError.h>
-#include <cairo-pdf.h>
-#include <cairo-ps.h>
-#include <cairo-svg.h>
 #include <gtk/gtk.h>
 #include <memory>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GUniquePtr.h>
+
+#ifdef CAIRO_HAS_PDF_SURFACE
+#include <cairo-pdf.h>
+#endif
+#ifdef CAIRO_HAS_PS_SURFACE
+#include <cairo-ps.h>
+#endif
+#ifdef CAIRO_HAS_SVG_SURFACE
+#include <cairo-svg.h>
+#endif
 
 namespace WebKit {
 
@@ -212,11 +219,16 @@ void WebPrintOperationGtk::startPrint(WebCore::PrintContext* printContext, Compl
     double height = gtk_paper_size_get_height(paperSize, GTK_UNIT_POINTS);
     const char* outputFormat = gtk_print_settings_get(m_printSettings.get(), GTK_PRINT_SETTINGS_OUTPUT_FILE_FORMAT);
     RefPtr<cairo_surface_t> surface;
-    if (!g_strcmp0(outputFormat, "pdf"))
+    if (!g_strcmp0(outputFormat, "pdf")) {
+#ifdef CAIRO_HAS_PDF_SURFACE
         surface = adoptRef(cairo_pdf_surface_create_for_stream(writeCairoStream, this, width, height));
-    else if (!g_strcmp0(outputFormat, "ps"))
+#endif
+    } else if (!g_strcmp0(outputFormat, "ps")) {
+#ifdef CAIRO_HAS_PS_SURFACE
         surface = adoptRef(cairo_ps_surface_create_for_stream(writeCairoStream, this, width, height));
-    else if (!g_strcmp0(outputFormat, "svg")) {
+#endif
+    } else if (!g_strcmp0(outputFormat, "svg")) {
+#ifdef CAIRO_HAS_SVG_SURFACE
         surface = adoptRef(cairo_svg_surface_create_for_stream(writeCairoStream, this, width, height));
 
         const cairo_svg_version_t* versions;
@@ -224,6 +236,7 @@ void WebPrintOperationGtk::startPrint(WebCore::PrintContext* printContext, Compl
         cairo_svg_get_versions(&versions, &versionsCount);
         if (versionsCount)
             cairo_svg_surface_restrict_to_version(surface.get(), versions[versionsCount - 1]);
+#endif
     }
 
     auto lpi = gtk_print_settings_get_printer_lpi(m_printSettings.get());
@@ -259,6 +272,7 @@ void WebPrintOperationGtk::startPage(cairo_t* cr)
     cairo_surface_t* surface = cairo_get_target(cr);
     cairo_surface_type_t surfaceType = cairo_surface_get_type(surface);
     if (surfaceType == CAIRO_SURFACE_TYPE_PS) {
+#ifdef CAIRO_HAS_PS_SURFACE
         cairo_ps_surface_set_size(surface, width, height);
         cairo_ps_surface_dsc_begin_page_setup(surface);
 
@@ -272,7 +286,9 @@ void WebPrintOperationGtk::startPage(cairo_t* cr)
             cairo_ps_surface_dsc_comment(surface, "%%PageOrientation: Landscape");
             break;
         }
+#endif
     } else if (surfaceType == CAIRO_SURFACE_TYPE_PDF) {
+#ifdef CAIRO_HAS_PDF_SURFACE
         switch (gtk_page_setup_get_orientation(m_pageSetup.get())) {
         case GTK_PAGE_ORIENTATION_PORTRAIT:
         case GTK_PAGE_ORIENTATION_REVERSE_PORTRAIT:
@@ -283,6 +299,7 @@ void WebPrintOperationGtk::startPage(cairo_t* cr)
             cairo_pdf_surface_set_size(surface, height, width);
             break;
         }
+#endif
     }
 }
 
@@ -431,7 +448,6 @@ void WebPrintOperationGtk::prepareContextToDraw()
             cairo_scale(m_cairoContext.get(), m_scale, m_scale);
         rotatePageIfNeeded();
         cairo_translate(m_cairoContext.get(), left * m_xDPI, top * m_yDPI);
-
         return;
     }
 
