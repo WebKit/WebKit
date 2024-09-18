@@ -200,6 +200,12 @@ const Logger& RemoteLegacyCDMFactoryProxy::logger() const
 }
 #endif
 
+const SharedPreferencesForWebProcess& RemoteLegacyCDMFactoryProxy::sharedPreferencesForWebProcess() const
+{
+    RefPtr gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get();
+    return gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
+}
+
 }
 
 #endif

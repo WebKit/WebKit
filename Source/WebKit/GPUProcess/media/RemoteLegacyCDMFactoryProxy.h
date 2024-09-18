@@ -77,6 +77,7 @@ public:
     RefPtr<GPUConnectionToWebProcess> gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
 
     bool allowsExitUnderMemoryPressure() const;
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const;

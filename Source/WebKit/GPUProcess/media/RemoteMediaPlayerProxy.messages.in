@@ -76,8 +76,8 @@ messages -> RemoteMediaPlayerProxy {
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    SetLegacyCDMSession(std::optional<WebKit::RemoteLegacyCDMSessionIdentifier> instanceId)
-    KeyAdded()
+    [EnabledBy=LegacyEncryptedMediaAPIEnabled] SetLegacyCDMSession(std::optional<WebKit::RemoteLegacyCDMSessionIdentifier> instanceId)
+    [EnabledBy=LegacyEncryptedMediaAPIEnabled] KeyAdded()
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -87,7 +87,7 @@ messages -> RemoteMediaPlayerProxy {
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
-    SetShouldContinueAfterKeyNeeded(bool should)
+    [EnabledBy=LegacyEncryptedMediaAPIEnabled] SetShouldContinueAfterKeyNeeded(bool should)
 #endif
 
     BeginSimulatedHDCPError()

@@ -194,6 +194,11 @@ WTFLogChannel& RemoteLegacyCDMSessionProxy::logChannel() const
 }
 #endif
 
+const SharedPreferencesForWebProcess& RemoteLegacyCDMSessionProxy::sharedPreferencesForWebProcess() const
+{
+    return m_factory->sharedPreferencesForWebProcess();
+}
+
 } // namespace WebKit
 
 #endif

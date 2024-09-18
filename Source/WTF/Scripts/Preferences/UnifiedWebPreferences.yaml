@@ -3951,6 +3951,7 @@ LegacyEncryptedMediaAPIEnabled:
       default: true
     WebCore:
       default: true
+  sharedPreferenceForWebProcess: true
 
 LegacyLineLayoutVisualCoverageEnabled:
   type: bool

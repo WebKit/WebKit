@@ -23,6 +23,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
+[EnabledBy=LegacyEncryptedMediaAPIEnabled]
 messages -> RemoteLegacyCDMProxy NotRefCounted {
     SupportsMIMEType(String mimeType) -> (bool supports) Synchronous
     CreateSession(String mediaKeysStorageDirectory, uint64_t logIdentifier) -> (WebKit::RemoteLegacyCDMSessionIdentifier identifier) Synchronous
