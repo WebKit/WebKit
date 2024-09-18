@@ -206,14 +206,16 @@ FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheti
                 return { };
             }
             // E. Otherwise, size the item into the available space using its used flex basis in place of its main size, treating a value of content as max-content.
-            auto usedMainSize = maxContentForFlexItem(flexItem);
+            auto usedMainContentSize = maxContentForFlexItem(flexItem);
             if (!flexItem.isContentBoxBased())
-                usedMainSize += flexItem.mainAxis().borderAndPadding;
-            return usedMainSize;
+                usedMainContentSize += flexItem.mainAxis().borderAndPadding;
+            return usedMainContentSize;
         };
         auto flexBaseSize = computedFlexBase();
         // The hypothetical main size is the item's flex base size clamped according to its used min and max main sizes (and flooring the content box size at zero).
-        auto hypotheticalMainSize = std::min(flexItem.mainAxis().maximumUsedSize, std::max(flexItem.mainAxis().minimumUsedSize, flexBaseSize));
+        auto hypotheticalMainSize = std::max(formattingUtils().usedMinimumMainSize(flexItem), flexBaseSize);
+        if (auto usedMaxiumMainSize = formattingUtils().usedMaxiumMainSize(flexItem))
+            hypotheticalMainSize = std::min(*usedMaxiumMainSize, hypotheticalMainSize);
         flexBaseAndHypotheticalMainSizeList.append({ flexBaseSize, hypotheticalMainSize });
     }
     return flexBaseAndHypotheticalMainSizeList;
@@ -391,7 +393,9 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
             for (auto nonFrozenIndex : nonFrozenSet) {
                 auto unclampedMainSize = mainSizeList[nonFrozenIndex];
                 auto& flexItem = flexItems[nonFrozenIndex];
-                auto clampedMainSize = std::min(flexItem.mainAxis().maximumUsedSize, std::max(flexItem.mainAxis().minimumUsedSize, unclampedMainSize));
+                auto clampedMainSize = std::max(formattingUtils().usedMinimumMainSize(flexItem), unclampedMainSize);
+                if (auto usedMaxiumMainSize = formattingUtils().usedMaxiumMainSize(flexItem))
+                    clampedMainSize = std::min(*usedMaxiumMainSize, clampedMainSize);
                 // FIXME: ...and floor its content-box size at zero
                 totalViolation += (clampedMainSize - unclampedMainSize);
                 if (clampedMainSize < unclampedMainSize)
@@ -862,9 +866,14 @@ const ElementBox& FlexLayout::flexContainer() const
     return m_flexFormattingContext.root();
 }
 
-FlexFormattingContext& FlexLayout::formattingContext()
+const FlexFormattingContext& FlexLayout::formattingContext() const
 {
     return m_flexFormattingContext;
+}
+
+const FlexFormattingUtils& FlexLayout::formattingUtils() const
+{
+    return formattingContext().formattingUtils();
 }
 
 }

@@ -38,6 +38,7 @@ class RenderStyle;
 namespace Layout {
 
 class FlexFormattingContext;
+class FlexFormattingUtils;
 struct FlexBaseAndHypotheticalMainSize;
 struct PositionAndMargins;
 
@@ -90,8 +91,10 @@ private:
 
     bool isSingleLineFlexContainer() const { return flexContainer().style().flexWrap() == FlexWrap::NoWrap; }
     const ElementBox& flexContainer() const;
-    FlexFormattingContext& formattingContext();
     const RenderStyle& flexContainerStyle() const { return flexContainer().style(); }
+
+    const FlexFormattingContext& formattingContext() const;
+    const FlexFormattingUtils& formattingUtils() const;
 
 private:
     FlexFormattingContext& m_flexFormattingContext;

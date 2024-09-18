@@ -28,6 +28,7 @@
 
 #include "FlexFormattingContext.h"
 #include "LayoutContext.h"
+#include "LogicalFlexItem.h"
 #include "RenderStyleInlines.h"
 
 namespace WebCore {
@@ -50,6 +51,19 @@ bool FlexFormattingUtils::isReversedToContentDirection(const ElementBox& flexBox
     ASSERT(flexBox.isFlexBox());
     auto flexDirection = flexBox.style().flexDirection();
     return flexDirection == FlexDirection::RowReverse || flexDirection == FlexDirection::ColumnReverse;
+}
+
+LayoutUnit FlexFormattingUtils::usedMinimumMainSize(const LogicalFlexItem& flexItem) const
+{
+    if (auto minimumSize = flexItem.mainAxis().minimumSize)
+        return *minimumSize;
+    return formattingContext().integrationUtils().minContentLogicalWidth(downcast<ElementBox>(flexItem.layoutBox()));
+}
+
+std::optional<LayoutUnit> FlexFormattingUtils::usedMaxiumMainSize(const LogicalFlexItem& flexItem) const
+{
+    // Initial value of 'max-width: none' computes to used 'infinite'
+    return flexItem.mainAxis().maximumSize;
 }
 
 }
