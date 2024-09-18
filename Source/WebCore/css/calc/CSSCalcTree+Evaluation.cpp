@@ -124,10 +124,6 @@ std::optional<double> evaluate(const NonCanonicalDimension& root, const Evaluati
     if (auto canonical = canonicalize(root, options.conversionData))
         return evaluate(*canonical, options);
 
-    // FIXME: This is only needed while CSSToLengthConversionData is optional. Once all callers pass one in, this will go away.
-    if (options.allowUnresolvedUnits)
-        return root.value;
-
     return std::nullopt;
 }
 

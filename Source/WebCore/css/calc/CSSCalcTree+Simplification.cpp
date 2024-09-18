@@ -90,9 +90,9 @@ static bool unitsMatch(const CanonicalDimension& a, const CanonicalDimension& b,
     return a.dimension == b.dimension;
 }
 
-static bool unitsMatch(const NonCanonicalDimension& a, const NonCanonicalDimension& b, const SimplificationOptions& options)
+static bool unitsMatch(const NonCanonicalDimension& a, const NonCanonicalDimension& b, const SimplificationOptions&)
 {
-    return a.unit == b.unit || options.allowNonMatchingUnits;
+    return a.unit == b.unit;
 }
 
 // MARK: Predicate: magnitudeComparable
@@ -134,9 +134,9 @@ constexpr bool fullyResolved(const CanonicalDimension&, const SimplificationOpti
     return true;
 }
 
-constexpr bool fullyResolved(const NonCanonicalDimension&, const SimplificationOptions& options)
+constexpr bool fullyResolved(const NonCanonicalDimension&, const SimplificationOptions&)
 {
-    return options.allowUnresolvedUnits;
+    return false;
 }
 
 std::optional<CanonicalDimension> canonicalize(NonCanonicalDimension root, const std::optional<CSSToLengthConversionData>& conversionData)

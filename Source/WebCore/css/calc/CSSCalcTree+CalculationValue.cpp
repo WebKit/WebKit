@@ -277,8 +277,6 @@ Tree fromCalculationValue(const CalculationValue& calculationValue, const Render
             .conversionData = std::nullopt,
             .symbolTable = { },
             .allowZeroValueLengthRemovalFromSum = true,
-            .allowUnresolvedUnits = false,
-            .allowNonMatchingUnits = false
         },
         .style = style,
     };
@@ -308,8 +306,6 @@ Ref<CalculationValue> toCalculationValue(const Tree& tree, const EvaluationOptio
         .conversionData = options.conversionData,
         .symbolTable = options.symbolTable,
         .allowZeroValueLengthRemovalFromSum = true,
-        .allowUnresolvedUnits = false,
-        .allowNonMatchingUnits = false
     };
     auto simplifiedTree = copyAndSimplify(tree, simplificationOptions);
 

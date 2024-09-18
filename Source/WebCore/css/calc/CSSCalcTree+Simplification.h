@@ -50,12 +50,6 @@ struct SimplificationOptions {
 
     // `allowZeroValueLengthRemovalFromSum` allows removal of 0 value lengths (px, em, etc.) from Sum operations.
     bool allowZeroValueLengthRemovalFromSum = false;
-
-    // `allowUnresolvedUnits` allows math operations to be evaluated even if the unit is not fully canonicalized. Only meaningful if `conversionData` cannot be supplied.
-    bool allowUnresolvedUnits = false;
-
-    // `allowNonMatchingUnits` allows math operations to be evaluated even if the units of its arguments don't match. Only meaningful if `conversionData` cannot be supplied.
-    bool allowNonMatchingUnits = false;
 };
 
 // MARK: Copy & Simplify

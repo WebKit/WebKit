@@ -41,12 +41,6 @@ struct EvaluationOptions {
 
     // `symbolTable` contains information needed to convert unresolved symbols into numeric values.
     const CSSCalcSymbolTable& symbolTable;
-
-    // `allowUnresolvedUnits` allows math operations to be evaluated even if the unit is not fully canonicalized. Only meaningful if `conversionData` cannot be supplied.
-    bool allowUnresolvedUnits = false;
-
-    // `allowNonMatchingUnits` allows math operations to be evaluated even if the units of its arguments don't match. Only meaningful if `conversionData` cannot be supplied.
-    bool allowNonMatchingUnits = false;
 };
 
 std::optional<double> evaluateDouble(const Tree&, const EvaluationOptions&);

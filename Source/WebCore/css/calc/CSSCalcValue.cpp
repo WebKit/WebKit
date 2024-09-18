@@ -69,8 +69,6 @@ RefPtr<CSSCalcValue> CSSCalcValue::parse(CSSValueID function, const CSSParserTok
         .conversionData = std::nullopt,
         .symbolTable = { },
         .allowZeroValueLengthRemovalFromSum = false,
-        .allowUnresolvedUnits = false,
-        .allowNonMatchingUnits = false
     };
 
     auto tree = CSSCalc::parseAndSimplify(tokens, function, parserOptions, simplificationOptions);
@@ -102,8 +100,6 @@ Ref<CSSCalcValue> CSSCalcValue::copySimplified(const CSSToLengthConversionData& 
         .conversionData = conversionData,
         .symbolTable = symbolTable,
         .allowZeroValueLengthRemovalFromSum = true,
-        .allowUnresolvedUnits = false,
-        .allowNonMatchingUnits = false
     };
 
     return create(copyAndSimplify(m_tree, simplificationOptions));
@@ -199,18 +195,22 @@ double CSSCalcValue::doubleValueNoConversionDataRequired(const CSSCalcSymbolTabl
     auto options = CSSCalc::EvaluationOptions {
         .conversionData = std::nullopt,
         .symbolTable = symbolTable,
-        .allowUnresolvedUnits = true,
-        .allowNonMatchingUnits = true
     };
     return clampToPermittedRange(CSSCalc::evaluateDouble(m_tree, options).value_or(0));
 }
 
 double CSSCalcValue::doubleValueDeprecated(const CSSCalcSymbolTable& symbolTable) const
 {
-    if (m_tree.requiresConversionData)
+    if (m_tree.requiresConversionData) {
         ALWAYS_LOG_WITH_STREAM(stream << "ERROR: The value returned from CSSCalcValue::doubleValueDeprecated is likely incorrect as the calculation tree has unresolved units that require CSSToLengthConversionData to interpret. Update caller to use non-deprecated variant of this function.");
+        return 0;
+    }
 
-    return doubleValueNoConversionDataRequired(symbolTable);
+    auto options = CSSCalc::EvaluationOptions {
+        .conversionData = std::nullopt,
+        .symbolTable = symbolTable,
+    };
+    return clampToPermittedRange(CSSCalc::evaluateDouble(m_tree, options).value_or(0));
 }
 
 double CSSCalcValue::doubleValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
