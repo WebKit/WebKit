@@ -2895,9 +2895,11 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
     } else if (!hasLanguageAttribute())
         updateEffectiveLangStateFromParent();
 
-    RefPtr parent = parentOrShadowHostElement();
-    if (UNLIKELY(selfOrPrecedingNodesAffectDirAuto() || (parent && parent->usesEffectiveTextDirection())))
-        updateEffectiveTextDirection();
+    if (!is<HTMLSlotElement>(*this)) {
+        RefPtr parent = parentOrShadowHostElement();
+        if (UNLIKELY(selfOrPrecedingNodesAffectDirAuto() || (parent && parent->usesEffectiveTextDirection())))
+            updateEffectiveTextDirection();
+    }
 
     return InsertedIntoAncestorResult::Done;
 }
