@@ -175,22 +175,22 @@ static void webkit_dmabuf_video_sink_class_init(WebKitDMABufVideoSinkClass* klas
 
 bool webKitDMABufVideoSinkIsEnabled()
 {
-    static bool s_disabled = false;
+    static bool s_enabled = false;
 #if USE(GBM)
     static std::once_flag s_flag;
     std::call_once(s_flag, [&] {
-        const char* value = g_getenv("WEBKIT_GST_DMABUF_SINK_DISABLED");
+        const char* value = g_getenv("WEBKIT_GST_DMABUF_SINK_ENABLED");
         auto valueSpan = span(value);
-        s_disabled = value && (equalLettersIgnoringASCIICase(valueSpan, "true"_s) || equalLettersIgnoringASCIICase(valueSpan, "1"_s));
-        if (!s_disabled && !DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render)) {
+        s_enabled = value && (equalLettersIgnoringASCIICase(valueSpan, "true"_s) || equalLettersIgnoringASCIICase(valueSpan, "1"_s));
+        if (s_enabled && !DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render)) {
             WTFLogAlways("Unable to access the GBM device, disabling DMABuf video sink.");
-            s_disabled = true;
+            s_enabled = false;
         }
     });
 #else
-    s_disabled = true;
+    s_enabled = false;
 #endif
-    return !s_disabled;
+    return s_enabled;
 }
 
 bool webKitDMABufVideoSinkProbePlatform()
