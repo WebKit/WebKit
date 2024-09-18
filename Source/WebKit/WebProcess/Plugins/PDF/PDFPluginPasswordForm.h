@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(MAC)
+#if ENABLE(PDF_PLUGIN)
 
 #include "PDFPluginAnnotation.h"
 
@@ -55,4 +55,4 @@ private:
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC)
+#endif // ENABLE(PDF_PLUGIN)

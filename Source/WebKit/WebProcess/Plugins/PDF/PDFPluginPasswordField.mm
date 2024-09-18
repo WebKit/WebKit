@@ -26,11 +26,10 @@
 #import "config.h"
 #import "PDFPluginPasswordField.h"
 
-#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+#if ENABLE(PDF_PLUGIN)
 
 #import "PDFLayerControllerSPI.h"
 #import "PDFPlugin.h"
-#import <Quartz/Quartz.h>
 #import <WebCore/AddEventListenerOptions.h>
 #import <WebCore/Event.h>
 #import <WebCore/EventNames.h>
@@ -84,4 +83,4 @@ void PDFPluginPasswordField::resetField()
     
 } // namespace WebKit
 
-#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+#endif // ENABLE(PDF_PLUGIN)

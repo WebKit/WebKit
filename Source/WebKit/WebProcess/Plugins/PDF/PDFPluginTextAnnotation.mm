@@ -26,17 +26,14 @@
 #import "config.h"
 #import "PDFPluginTextAnnotation.h"
 
-#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+#if ENABLE(PDF_PLUGIN)
 
 #import "PDFAnnotationTypeHelpers.h"
 #import "PDFKitSPI.h"
-#import "PDFLayerControllerSPI.h"
-#import "PDFPlugin.h"
-#import <Quartz/Quartz.h>
 #import <WebCore/AddEventListenerOptions.h>
 #import <WebCore/CSSPrimitiveValue.h>
 #import <WebCore/CSSPropertyNames.h>
-#import <WebCore/ColorMac.h>
+#import <WebCore/ColorCocoa.h>
 #import <WebCore/ColorSerialization.h>
 #import <WebCore/Event.h>
 #import <WebCore/EventNames.h>
@@ -153,4 +150,4 @@ bool PDFPluginTextAnnotation::handleEvent(Event& event)
 
 } // namespace WebKit
 
-#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+#endif // ENABLE(PDF_PLUGIN)

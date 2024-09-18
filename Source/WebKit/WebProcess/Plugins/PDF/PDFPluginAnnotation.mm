@@ -26,10 +26,9 @@
 #import "config.h"
 #import "PDFPluginAnnotation.h"
 
-#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+#if ENABLE(PDF_PLUGIN)
 
 #import "PDFAnnotationTypeHelpers.h"
-#import "PDFLayerControllerSPI.h"
 #import "PDFPlugin.h"
 #import "PDFPluginBase.h"
 #import "PDFPluginChoiceAnnotation.h"
@@ -39,7 +38,6 @@
 #import <WebCore/AddEventListenerOptions.h>
 #import <WebCore/CSSPrimitiveValue.h>
 #import <WebCore/CSSPropertyNames.h>
-#import <WebCore/ColorMac.h>
 #import <WebCore/Event.h>
 #import <WebCore/EventLoop.h>
 #import <WebCore/EventNames.h>
@@ -61,8 +59,10 @@ RefPtr<PDFPluginAnnotation> PDFPluginAnnotation::create(PDFAnnotation *annotatio
 {
     if (annotationIsWidgetOfType(annotation, WidgetType::Text))
         return PDFPluginTextAnnotation::create(annotation, plugin);
+#if PLATFORM(MAC)
     if (annotationIsWidgetOfType(annotation, WidgetType::Choice))
         return PDFPluginChoiceAnnotation::create(annotation, plugin);
+#endif
 
     return nullptr;
 }
@@ -99,7 +99,7 @@ PDFPluginAnnotation::~PDFPluginAnnotation()
     m_element->removeEventListener(eventNames().changeEvent, *m_eventListener, false);
     m_element->removeEventListener(eventNames().blurEvent, *m_eventListener, false);
 
-    m_eventListener->setAnnotation(0);
+    m_eventListener->setAnnotation(nullptr);
 
     m_element->document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [ weakElement = WeakPtr<Node, WeakPtrImplWithEventTargetData> { element() } ]() {
         if (RefPtr element = weakElement.get())
@@ -136,4 +136,4 @@ void PDFPluginAnnotation::PDFPluginAnnotationEventListener::handleEvent(ScriptEx
 
 } // namespace WebKit
 
-#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+#endif // ENABLE(PDF_PLUGIN)

@@ -269,10 +269,8 @@ void UnifiedPDFPlugin::installPDFDocument()
     updateHUDVisibility();
 #endif
 
-#if PLATFORM(MAC)
     if (isLocked())
         createPasswordEntryForm();
-#endif
 
     if (m_view)
         m_view->layerHostingStrategyDidChange();
@@ -345,8 +343,6 @@ void UnifiedPDFPlugin::didInvalidateDataDetectorHighlightOverlayRects()
 
 #endif
 
-#if PLATFORM(MAC)
-
 void UnifiedPDFPlugin::createPasswordEntryForm()
 {
     if (!supportsForms())
@@ -361,8 +357,6 @@ void UnifiedPDFPlugin::createPasswordEntryForm()
     passwordField->attach(m_annotationContainer.get());
 }
 
-#endif
-
 void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
 {
     std::optional<ShouldUpdateAutoSizeScale> shouldUpdateAutoSizeScaleOverride;
@@ -370,17 +364,13 @@ void UnifiedPDFPlugin::attemptToUnlockPDF(const String& password)
         shouldUpdateAutoSizeScaleOverride = ShouldUpdateAutoSizeScale::Yes;
 
     if (![m_pdfDocument unlockWithPassword:password]) {
-#if PLATFORM(MAC)
         m_passwordField->resetField();
         m_passwordForm->unlockFailed();
-#endif
         return;
     }
 
-#if PLATFORM(MAC)
     m_passwordForm = nullptr;
     m_passwordField = nullptr;
-#endif
 
     updateLayout(AdjustScaleAfterLayout::Yes, shouldUpdateAutoSizeScaleOverride);
 

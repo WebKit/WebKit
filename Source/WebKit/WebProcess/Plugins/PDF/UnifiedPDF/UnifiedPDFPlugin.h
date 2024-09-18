@@ -551,9 +551,7 @@ private:
 
     float scaleForPagePreviews() const;
 
-#if PLATFORM(MAC)
     void createPasswordEntryForm();
-#endif
 
     bool isInDiscreteDisplayMode() const;
     bool isShowingTwoPages() const;
@@ -614,10 +612,10 @@ private:
 
     RetainPtr<WKPDFFormMutationObserver> m_pdfMutationObserver;
 
-#if PLATFORM(MAC)
     RefPtr<PDFPluginPasswordField> m_passwordField;
     RefPtr<PDFPluginPasswordForm> m_passwordForm;
 
+#if PLATFORM(MAC)
     bool m_isScrollingWithAnimationToPageExtent { false };
     std::optional<WebCore::ScrollDirection> m_animatedKeyboardScrollingDirection;
 #endif

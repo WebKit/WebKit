@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+#if ENABLE(PDF_PLUGIN)
 
 #include <WebCore/EventListener.h>
 #include <wtf/CheckedPtr.h>
@@ -112,4 +112,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+#endif // ENABLE(PDF_PLUGIN)
