@@ -899,7 +899,7 @@ static const GB18030EncodeIndex& gb18030EncodeIndex()
 // https://unicode-org.atlassian.net/browse/ICU-22357
 // The 2-byte values are handled correctly by values from gb18030()
 // but these need to be exceptions from gb18030Ranges().
-static std::optional<uint32_t> gb180302022Encode(char32_t codePoint)
+static std::optional<uint32_t> gb18030AsymmetricEncode(char32_t codePoint)
 {
     switch (codePoint) {
     case 0xE81E: return 0xFE59;
@@ -920,30 +920,6 @@ static std::optional<uint32_t> gb180302022Encode(char32_t codePoint)
     case 0xE794: return 0xA6EC;
     case 0xE795: return 0xA6ED;
     case 0xE796: return 0xA6F3;
-    }
-    return std::nullopt;
-}
-static std::optional<char32_t> gb180302022Decode(uint8_t first, uint8_t second, uint8_t third, uint8_t fourth)
-{
-    switch (static_cast<uint32_t>(first) << 24 | static_cast<uint32_t>(second) << 16 | static_cast<uint32_t>(third) << 8 | fourth) {
-    case 0x82359037: return 0x9FB4;
-    case 0x82359038: return 0x9FB5;
-    case 0x82359039: return 0x9FB6;
-    case 0x82359130: return 0x9FB7;
-    case 0x82359131: return 0x9FB8;
-    case 0x82359132: return 0x9FB9;
-    case 0x82359133: return 0x9FBA;
-    case 0x82359134: return 0x9FBB;
-    case 0x84318236: return 0xFE10;
-    case 0x84318237: return 0xFE11;
-    case 0x84318238: return 0xFE12;
-    case 0x84318239: return 0xFE13;
-    case 0x84318330: return 0xFE14;
-    case 0x84318331: return 0xFE15;
-    case 0x84318332: return 0xFE16;
-    case 0x84318333: return 0xFE17;
-    case 0x84318334: return 0xFE18;
-    case 0x84318335: return 0xFE19;
     }
     return std::nullopt;
 }
@@ -973,10 +949,6 @@ String TextCodecCJK::gb18030Decode(std::span<const uint8_t> bytes, bool flush, b
             uint8_t first = std::exchange(m_gb18030First, 0x00);
             uint8_t second = std::exchange(m_gb18030Second, 0x00);
             uint8_t third = std::exchange(m_gb18030Third, 0x00);
-            if (auto codePoint = gb180302022Decode(first, second, third, byte)) {
-                result.append(*codePoint);
-                return SawError::No;
-            }
             if (auto codePoint = gb18030RangesCodePoint(((first - 0x81) * 10 * 126 * 10) + ((second - 0x30) * 10 * 126) + ((third - 0x81) * 10) + byte - 0x30)) {
                 result.append(*codePoint);
                 return SawError::No;
@@ -1064,9 +1036,7 @@ static Vector<uint8_t> gbEncodeShared(StringView string, Function<void(char32_t,
                 result.append(0x80);
                 continue;
             }
-        } else if (auto encoded = gb180302022Encode(codePoint)) {
-            result.append(*encoded >> 24);
-            result.append(*encoded >> 16);
+        } else if (auto encoded = gb18030AsymmetricEncode(codePoint)) {
             result.append(*encoded >> 8);
             result.append(*encoded);
             continue;
