@@ -87,6 +87,7 @@ public:
     bool allowsExitUnderMemoryPressure() const;
 
     const String& mediaKeysStorageDirectory() const;
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const;

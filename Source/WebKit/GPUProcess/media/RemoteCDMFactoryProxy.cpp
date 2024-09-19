@@ -201,6 +201,12 @@ const Logger& RemoteCDMFactoryProxy::logger() const
 }
 #endif
 
+const SharedPreferencesForWebProcess& RemoteCDMFactoryProxy::sharedPreferencesForWebProcess() const
+{
+    auto gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get();
+    return gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
+}
+
 }
 
 #endif

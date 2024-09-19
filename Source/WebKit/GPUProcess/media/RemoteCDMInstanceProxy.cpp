@@ -131,6 +131,11 @@ Ref<WebCore::CDMInstance> RemoteCDMInstanceProxy::protectedInstance() const
     return m_instance;
 }
 
+const SharedPreferencesForWebProcess& RemoteCDMInstanceProxy::sharedPreferencesForWebProcess() const
+{
+    return m_cdm->sharedPreferencesForWebProcess();
+}
+
 }
 
 #endif

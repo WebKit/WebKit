@@ -81,9 +81,9 @@ messages -> RemoteMediaPlayerProxy {
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    CdmInstanceAttached(WebKit::RemoteCDMInstanceIdentifier instanceId)
-    CdmInstanceDetached(WebKit::RemoteCDMInstanceIdentifier instanceId)
-    AttemptToDecryptWithInstance(WebKit::RemoteCDMInstanceIdentifier instanceId)
+    [EnabledBy=EncryptedMediaAPIEnabled] CdmInstanceAttached(WebKit::RemoteCDMInstanceIdentifier instanceId)
+    [EnabledBy=EncryptedMediaAPIEnabled] CdmInstanceDetached(WebKit::RemoteCDMInstanceIdentifier instanceId)
+    [EnabledBy=EncryptedMediaAPIEnabled] AttemptToDecryptWithInstance(WebKit::RemoteCDMInstanceIdentifier instanceId)
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)

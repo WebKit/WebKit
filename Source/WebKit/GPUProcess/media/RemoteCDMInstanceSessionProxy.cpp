@@ -181,6 +181,11 @@ void RemoteCDMInstanceSessionProxy::sessionIdChanged(const String& sessionId)
     gpuConnectionToWebProcess->protectedConnection()->send(Messages::RemoteCDMInstanceSession::SessionIdChanged(sessionId), m_identifier);
 }
 
+const SharedPreferencesForWebProcess& RemoteCDMInstanceSessionProxy::sharedPreferencesForWebProcess() const
+{
+    return m_cdm->sharedPreferencesForWebProcess();
+}
+
 }
 
 #endif

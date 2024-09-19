@@ -116,6 +116,11 @@ void RemoteCDMProxy::setLogIdentifier(uint64_t logIdentifier)
 #endif
 }
 
+const SharedPreferencesForWebProcess& RemoteCDMProxy::sharedPreferencesForWebProcess() const
+{
+    return m_factory->sharedPreferencesForWebProcess();
+}
+
 }
 
 #endif

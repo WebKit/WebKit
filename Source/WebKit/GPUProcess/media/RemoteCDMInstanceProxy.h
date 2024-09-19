@@ -62,6 +62,7 @@ public:
     const RemoteCDMInstanceConfiguration& configuration() const { return m_configuration.get(); }
     WebCore::CDMInstance& instance() { return m_instance; }
     Ref<WebCore::CDMInstance> protectedInstance() const;
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
 private:
     friend class RemoteCDMFactoryProxy;

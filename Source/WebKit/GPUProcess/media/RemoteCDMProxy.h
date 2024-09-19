@@ -35,10 +35,6 @@
 #include <wtf/Forward.h>
 #include <wtf/UniqueRef.h>
 
-namespace WebKit {
-class RemoteCDMProxy;
-}
-
 namespace WTF {
 template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
 template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteCDMProxy> : std::true_type { };
@@ -57,6 +53,7 @@ namespace WebKit {
 class RemoteCDMInstanceProxy;
 struct RemoteCDMInstanceConfiguration;
 struct RemoteCDMConfiguration;
+struct SharedPreferencesForWebProcess;
 
 class RemoteCDMProxy : public IPC::MessageReceiver {
 public:
@@ -70,6 +67,7 @@ public:
     bool supportsInitData(const AtomString&, const WebCore::SharedBuffer&);
     RefPtr<WebCore::SharedBuffer> sanitizeResponse(const WebCore::SharedBuffer& response);
     std::optional<String> sanitizeSessionId(const String& sessionId);
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
