@@ -787,7 +787,7 @@ imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.sharedworker.html [ Skip
 imported/w3c/web-platform-tests/IndexedDB/idbfactory-databases-opaque-origin.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/idbfactory-deleteDatabase-opaque-origin.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/idbfactory-open-opaque-origin.html [ Skip ]
-# Tests fail since import due to lack of ServiceWorker and SharedWorker support. 
+# Tests fail since import due to lack of ServiceWorker and SharedWorker support.
 imported/w3c/web-platform-tests/IndexedDB/idlharness.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/reading-autoincrement-indexes-cursors.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/reading-autoincrement-indexes.any.sharedworker.html [ Skip ]
@@ -2792,7 +2792,7 @@ imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-004.
 imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-backdrop-filter-1.html [ ImageOnlyFailure ]
 css3/filters/hidpi-backdrop-filter-rasterization-scale.html [ ImageOnlyFailure ]
 
-# webkit.org/b/271865 REGRESSION (276749@main): [ MacOS WK1 ] 2X backdrop-filter tests are consistent failures 
+# webkit.org/b/271865 REGRESSION (276749@main): [ MacOS WK1 ] 2X backdrop-filter tests are consistent failures
 [ Sonoma+ ] css3/filters/backdrop/backdrop-filter-uneven-corner-radii.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties/backdrop-filter.html [ Failure ]
 
@@ -2820,9 +2820,9 @@ imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties
 # webkit.org/b/272926 [ Ventura wk1 ] 8 tests in imported/w3c/web-platform-tests/workers are flaky failures
 [ Ventura ] imported/w3c/web-platform-tests/worklets/animation-worklet-credentials.https.html [ Pass Failure ]
 [ Ventura ] imported/w3c/web-platform-tests/worklets/audio-worklet-credentials.https.html [ Pass Failure ]
-[ Ventura ] imported/w3c/web-platform-tests/worklets/audio-worklet-csp.https.html [ Pass Failure ] 
+[ Ventura ] imported/w3c/web-platform-tests/worklets/audio-worklet-csp.https.html [ Pass Failure ]
 [ Ventura ] imported/w3c/web-platform-tests/worklets/audio-worklet-import.https.html [ Pass Failure ]
-[ Ventura ] imported/w3c/web-platform-tests/worklets/audio-worklet-referrer.https.html [ Pass Failure ] 
+[ Ventura ] imported/w3c/web-platform-tests/worklets/audio-worklet-referrer.https.html [ Pass Failure ]
 [ Ventura ] imported/w3c/web-platform-tests/worklets/layout-worklet-credentials.https.html [ Pass Failure ]
 [ Ventura ] imported/w3c/web-platform-tests/worklets/paint-worklet-credentials.https.html [ Pass Failure ]
 [ Ventura+ ] imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-referrer.html [ Pass Failure ]
@@ -2910,3 +2910,6 @@ imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-mode
 
 # webkit.org/b/278293 [MacOS WK1] imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-report-to-only-sends-reports-to-first-endpoint.https.sub.html is a flakey failure
 imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-report-to-only-sends-reports-to-first-endpoint.https.sub.html [ Pass Failure ]
+
+# webkit.org/b/280000 [ macOS wk1 Debug ] svg/zoom/page/zoom-svg-through-object-with-override-size.html is a flaky crash.
+[ Debug ] svg/zoom/page/zoom-svg-through-object-with-override-size.html [ Pass Crash ]
