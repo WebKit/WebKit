@@ -86,6 +86,8 @@ void Download::resume(std::span<const uint8_t> resumeData, const String& path, S
 
         if (usingSecurityScopedURL)
             [placeholderURL stopAccessingSecurityScopedResource];
+
+        m_placeholderURL = placeholderURL;
     }
 #else
     UNUSED_PARAM(activityAccessToken);
