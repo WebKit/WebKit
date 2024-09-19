@@ -3441,7 +3441,8 @@ void WebPageProxy::performDragOperation(DragData& dragData, const String& dragSt
         return;
 
     sendWithAsyncReply(Messages::WebPage::PerformDragOperation(dragData, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionsForUpload)), [this, protectedThis = Ref { *this }] (bool handled) {
-        protectedPageClient()->didPerformDragOperation(handled);
+        if (RefPtr pageClient = optionalProtectedPageClient())
+            pageClient->didPerformDragOperation(handled);
     });
 #endif
 }
