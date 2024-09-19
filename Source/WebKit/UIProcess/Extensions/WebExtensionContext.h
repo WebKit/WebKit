@@ -96,6 +96,7 @@ OBJC_CLASS WKWebViewConfiguration;
 OBJC_CLASS _WKWebExtensionContext;
 OBJC_CLASS _WKWebExtensionContextDelegate;
 OBJC_CLASS _WKWebExtensionDeclarativeNetRequestSQLiteStore;
+OBJC_CLASS _WKWebExtensionLocalization;
 OBJC_CLASS _WKWebExtensionRegisteredScriptsSQLiteStore;
 OBJC_CLASS _WKWebExtensionStorageSQLiteStore;
 OBJC_PROTOCOL(_WKWebExtensionTab);
@@ -291,6 +292,8 @@ public:
 
     const String& uniqueIdentifier() const { return m_uniqueIdentifier; }
     void setUniqueIdentifier(String&&);
+
+    _WKWebExtensionLocalization *localization();
 
     bool isInspectable() const { return m_inspectable; }
     void setInspectable(bool);
@@ -879,6 +882,8 @@ private:
     URL m_baseURL;
     String m_uniqueIdentifier = WTF::UUID::createVersion4().toString();
     bool m_customUniqueIdentifier { false };
+
+    RetainPtr<_WKWebExtensionLocalization> m_localization;
 
     bool m_inspectable { false };
 
