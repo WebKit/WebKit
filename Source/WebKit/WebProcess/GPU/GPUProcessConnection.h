@@ -92,6 +92,7 @@ public:
 #endif
 #if ENABLE(VIDEO)
     RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy();
+    Ref<RemoteVideoFrameObjectHeapProxy> protectedVideoFrameObjectHeapProxy();
     RemoteMediaPlayerManager& mediaPlayerManager();
 #endif
 

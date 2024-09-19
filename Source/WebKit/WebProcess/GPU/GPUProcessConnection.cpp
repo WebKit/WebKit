@@ -206,6 +206,11 @@ RemoteVideoFrameObjectHeapProxy& GPUProcessConnection::videoFrameObjectHeapProxy
     return *m_videoFrameObjectHeapProxy;
 }
 
+Ref<RemoteVideoFrameObjectHeapProxy> GPUProcessConnection::protectedVideoFrameObjectHeapProxy()
+{
+    return videoFrameObjectHeapProxy();
+}
+
 RemoteMediaPlayerManager& GPUProcessConnection::mediaPlayerManager()
 {
     return WebProcess::singleton().remoteMediaPlayerManager();

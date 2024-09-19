@@ -146,17 +146,6 @@ protected:
     void multiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t>&& firstsCountsInstanceCountsAndBaseInstances);
     void multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t>&& countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type);
 
-#include "RemoteGraphicsContextGLFunctionsGenerated.h" // NOLINT
-
-private:
-    void paintNativeImageToImageBuffer(WebCore::NativeImage&, WebCore::RenderingResourceIdentifier);
-    bool webXREnabled() const;
-    bool webXRPromptAccepted() const;
-
-protected:
-    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
-    Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
-    RefPtr<IPC::StreamServerConnection> m_streamConnection;
 #if PLATFORM(COCOA)
     using GCGLContext = WebCore::GraphicsContextGLCocoa;
 #elif USE(GBM)
@@ -164,6 +153,20 @@ protected:
 #else
     using GCGLContext = WebCore::GraphicsContextGLTextureMapperANGLE;
 #endif
+
+#include "RemoteGraphicsContextGLFunctionsGenerated.h" // NOLINT
+
+private:
+    void paintNativeImageToImageBuffer(WebCore::NativeImage&, WebCore::RenderingResourceIdentifier);
+    bool webXREnabled() const;
+    bool webXRPromptAccepted() const;
+    Ref<IPC::StreamConnectionWorkQueue> protectedWorkQueue() const { return m_workQueue; }
+    RefPtr<GCGLContext> protectedContext();
+
+protected:
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
+    RefPtr<IPC::StreamServerConnection> m_streamConnection;
     RefPtr<GCGLContext> m_context WTF_GUARDED_BY_CAPABILITY(workQueue());
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier;
     Ref<RemoteRenderingBackend> m_renderingBackend;

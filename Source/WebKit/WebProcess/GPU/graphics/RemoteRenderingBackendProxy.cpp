@@ -541,8 +541,10 @@ RefPtr<IPC::StreamClientConnection> RemoteRenderingBackendProxy::connection()
     ensureGPUProcessConnection();
     if (!m_isResponsive)
         return nullptr;
-    if (UNLIKELY(!m_connection->hasSemaphores())) {
-        auto error = m_connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidInitialize>(renderingBackendIdentifier());
+
+    RefPtr connection = m_connection;
+    if (UNLIKELY(!connection->hasSemaphores())) {
+        auto error = connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidInitialize>(renderingBackendIdentifier());
         if (error != IPC::Error::NoError) {
             RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::connection() - waitForAndDispatchImmediately returned error: %" PUBLIC_LOG_STRING, renderingBackendIdentifier().toUInt64(), IPC::errorAsString(error).characters());
             didBecomeUnresponsive();
@@ -550,7 +552,7 @@ RefPtr<IPC::StreamClientConnection> RemoteRenderingBackendProxy::connection()
     }
     if (!m_isResponsive)
         return nullptr;
-    return m_connection;
+    return connection;
 }
 
 void RemoteRenderingBackendProxy::didInitialize(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait)

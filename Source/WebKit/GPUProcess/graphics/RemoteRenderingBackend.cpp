@@ -127,7 +127,7 @@ void RemoteRenderingBackend::startListeningForIPC()
 
 void RemoteRenderingBackend::stopListeningForIPC()
 {
-    workQueue().stopAndWaitForCompletion([this] {
+    protectedWorkQueue()->stopAndWaitForCompletion([this] {
         workQueueUninitialize();
     });
 }
@@ -159,7 +159,7 @@ void RemoteRenderingBackend::workQueueUninitialize()
 
 void RemoteRenderingBackend::dispatch(Function<void()>&& task)
 {
-    workQueue().dispatch(WTFMove(task));
+    protectedWorkQueue()->dispatch(WTFMove(task));
 }
 
 IPC::Connection* RemoteRenderingBackend::messageSenderConnection() const
@@ -278,7 +278,7 @@ static void adjustImageBufferRenderingMode(const RemoteSharedResourceCache& shar
 RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat, ImageBufferCreationContext creationContext, RenderingResourceIdentifier imageBufferIdentifier)
 {
     assertIsCurrent(workQueue());
-    if (purpose == RenderingPurpose::Canvas && m_sharedResourceCache->reachedImageBufferForCanvasLimit())
+    if (purpose == RenderingPurpose::Canvas && protectedSharedResourceCache()->reachedImageBufferForCanvasLimit())
         return nullptr;
     adjustImageBufferCreationContext(m_sharedResourceCache, creationContext);
     adjustImageBufferRenderingMode(m_sharedResourceCache, purpose, renderingMode);
@@ -621,7 +621,7 @@ bool RemoteRenderingBackend::shouldUseLockdownFontParser() const
 
 void RemoteRenderingBackend::getImageBufferResourceLimitsForTesting(CompletionHandler<void(WebCore::ImageBufferResourceLimits)>&& callback)
 {
-    callback(m_sharedResourceCache->getResourceLimitsForTesting());
+    callback(protectedSharedResourceCache()->getResourceLimitsForTesting());
 }
 
 } // namespace WebKit
