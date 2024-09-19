@@ -11259,8 +11259,11 @@ void WebPageProxy::setMockCaptureDevicesEnabledOverride(std::optional<bool> enab
     userMediaPermissionRequestManager().setMockCaptureDevicesEnabledOverride(enabled);
 }
 
-void WebPageProxy::willStartCapture(const UserMediaPermissionRequestProxy& request, CompletionHandler<void()>&& callback)
+void WebPageProxy::willStartCapture(UserMediaPermissionRequestProxy& request, CompletionHandler<void()>&& callback)
 {
+    if (auto beforeStartingCaptureCallback = request.beforeStartingCaptureCallback())
+        beforeStartingCaptureCallback();
+
     activateMediaStreamCaptureInPage();
 
 #if ENABLE(GPU_PROCESS)
@@ -11319,8 +11322,34 @@ static WebCore::MediaStreamRequest toUserMediaRequest(WebCore::MediaProducerMedi
     return { };
 }
 
+class ValidateCaptureStateUpdateCallbackHandler final : public RefCounted<ValidateCaptureStateUpdateCallbackHandler> {
+public:
+    using Callback = Function<void(bool)>;
+    static Ref<ValidateCaptureStateUpdateCallbackHandler> create(Callback&& callback) { return adoptRef(*new ValidateCaptureStateUpdateCallbackHandler(WTFMove(callback))); }
+
+    ~ValidateCaptureStateUpdateCallbackHandler()
+    {
+        handle(false);
+    }
+
+    void handle(bool value)
+    {
+        if (auto callback = std::exchange(m_callback, { }))
+            callback(value);
+    }
+
+private:
+    explicit ValidateCaptureStateUpdateCallbackHandler(Callback&& callback)
+        : m_callback(WTFMove(callback))
+    {
+    }
+
+    Callback m_callback;
+};
+
 void WebPageProxy::validateCaptureStateUpdate(WebCore::UserMediaRequestIdentifier requestIdentifier, WebCore::ClientOrigin&& clientOrigin, WebCore::FrameIdentifier frameID, bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
+    WEBPAGEPROXY_RELEASE_LOG(WebRTC, "validateCaptureStateUpdate: isActive=%d kind=%hhu", isActive, kind);
     RefPtr webFrame = WebFrameProxy::webFrame(frameID);
     if (!webFrame) {
         completionHandler(WebCore::Exception { ExceptionCode::InvalidStateError, "no frame available"_s });
@@ -11333,17 +11362,24 @@ void WebPageProxy::validateCaptureStateUpdate(WebCore::UserMediaRequestIdentifie
     }
 
     auto requestPermission = [&] (auto kind, auto completionHandler) {
-        Vector<WebCore::CaptureDevice> audioDevices, videoDevices;
-        if (kind == WebCore::MediaProducerMediaCaptureKind::Camera)
-            videoDevices = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().videoCaptureDeviceManager().captureDevices();
-        else if (kind == WebCore::MediaProducerMediaCaptureKind::Microphone)
-            audioDevices = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().audioCaptureDeviceManager().captureDevices();
-        auto request = UserMediaPermissionRequestProxy::create(userMediaPermissionRequestManager(), requestIdentifier, mainFrame()->frameID(), frameID, clientOrigin.clientOrigin.securityOrigin(), clientOrigin.topOrigin.securityOrigin(), WTFMove(audioDevices), WTFMove(videoDevices), toUserMediaRequest(kind, webPageIDInMainFrameProcess()), [completionHandler = WTFMove(completionHandler)] (bool result) mutable {
+        auto responseHandler = ValidateCaptureStateUpdateCallbackHandler::create([completionHandler = WTFMove(completionHandler)] (bool result) mutable {
             if (!result) {
                 completionHandler(Exception { ExceptionCode::NotAllowedError, "Capture access is denied"_s });
                 return;
             }
             completionHandler({ });
+        });
+
+        Vector<WebCore::CaptureDevice> audioDevices, videoDevices;
+        if (kind == WebCore::MediaProducerMediaCaptureKind::Camera)
+            videoDevices = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().videoCaptureDeviceManager().captureDevices();
+        else if (kind == WebCore::MediaProducerMediaCaptureKind::Microphone)
+            audioDevices = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().audioCaptureDeviceManager().captureDevices();
+        auto request = UserMediaPermissionRequestProxy::create(userMediaPermissionRequestManager(), requestIdentifier, mainFrame()->frameID(), frameID, clientOrigin.clientOrigin.securityOrigin(), clientOrigin.topOrigin.securityOrigin(), WTFMove(audioDevices), WTFMove(videoDevices), toUserMediaRequest(kind, webPageIDInMainFrameProcess()), [responseHandler] (bool result) mutable {
+            responseHandler->handle(result);
+        });
+        request->setBeforeStartingCaptureCallback([responseHandler] () mutable {
+            responseHandler->handle(true);
         });
 
         Ref userMediaOrigin = API::SecurityOrigin::create(request->protectedUserMediaDocumentSecurityOrigin());

@@ -1097,6 +1097,7 @@
 		A17C483B2C98E5C20023F3C7 /* webp-image.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F45C63FE28178A530090DFAB /* webp-image.html */; };
 		A17C483C2C98E5C20023F3C7 /* WebProcessKillIDBCleanup-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */; };
 		A17C483D2C98E5C20023F3C7 /* WebProcessKillIDBCleanup-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */; };
+		A17C483E2C98E5C20023F3AA /* media-session-capture.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0794742C25CB33B000C597AA /* media-session-capture.html */; };
 		A17C483E2C98E5C20023F3C7 /* webrtc-remote-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0794742C25CB33B000C597ED /* webrtc-remote-iframe.html */; };
 		A17C483F2C98E5C20023F3C7 /* webrtc-remote.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0794742C25CB33B000C597EC /* webrtc-remote.html */; };
 		A17C48402C98E5C20023F3C7 /* WebsiteDataStoreCustomPaths.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5120C83B1E674E350025B250 /* WebsiteDataStoreCustomPaths.html */; };
@@ -1840,6 +1841,7 @@
 				A17C46D12C98E54B0023F3C7 /* many-same-origin-iframes.html in Copy Resources */,
 				A17C46D22C98E54B0023F3C7 /* media-loading.html in Copy Resources */,
 				A17C47D22C98E5C20023F3C7 /* media-remote.html in Copy Resources */,
+				A17C483E2C98E5C20023F3AA /* media-session-capture.html in Copy Resources */,
 				A17C46802C98E4D20023F3C7 /* MediaPlaybackSleepAssertion.html in Copy Resources */,
 				A17C46D32C98E54B0023F3C7 /* mediastreamtrack-detached.html in Copy Resources */,
 				A17C46812C98E4D20023F3C7 /* MemoryCacheDisableWithinResourceLoadDelegate.html in Copy Resources */,
@@ -2078,6 +2080,7 @@
 		0766DD1F1A5AD5200023E3BB /* PendingAPIRequestURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PendingAPIRequestURL.cpp; sourceTree = "<group>"; };
 		076E507E1F45031E006E9F5A /* Logging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
 		0794740C25CA0BDE00C597EB /* MediaSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSession.mm; sourceTree = "<group>"; };
+		0794742C25CB33B000C597AA /* media-session-capture.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "media-session-capture.html"; sourceTree = "<group>"; };
 		0794742C25CB33B000C597EB /* media-remote.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "media-remote.html"; sourceTree = "<group>"; };
 		0794742C25CB33B000C597EC /* webrtc-remote.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "webrtc-remote.html"; sourceTree = "<group>"; };
 		0794742C25CB33B000C597ED /* webrtc-remote-iframe.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "webrtc-remote-iframe.html"; sourceTree = "<group>"; };
@@ -5073,6 +5076,7 @@
 				7A6A2C711DCCFB0200C0D085 /* LocalStorageQuirkEnabled.html */,
 				7A33FF2F27C82F0B00D7E03E /* LockdownModePDF.html */,
 				0794742C25CB33B000C597EB /* media-remote.html */,
+				0794742C25CB33B000C597AA /* media-session-capture.html */,
 				9B59F12920340854009E63D5 /* mso-list-compat-mode.html */,
 				9BCD4119206D5ED7001D71BE /* mso-list-on-h4.html */,
 				9BF356CC202D44F200F71160 /* mso-list.html */,

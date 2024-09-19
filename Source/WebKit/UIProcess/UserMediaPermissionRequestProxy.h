@@ -100,6 +100,8 @@ public:
 #endif
 
     CompletionHandler<void(bool)> decisionCompletionHandler() { return std::exchange(m_decisionCompletionHandler, { }); }
+    void setBeforeStartingCaptureCallback(Function<void()>&& callback) { m_beforeStartingCaptureCallback = WTFMove(callback); }
+    Function<void()> beforeStartingCaptureCallback() { return std::exchange(m_beforeStartingCaptureCallback, { }); }
 
 protected:
     UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, WebCore::UserMediaRequestIdentifier, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&, CompletionHandler<void(bool)>&&);
@@ -119,6 +121,7 @@ private:
     bool m_hasPersistentAccess { false };
     WebCore::MediaDeviceHashSalts m_deviceIdentifierHashSalts;
     CompletionHandler<void(bool)> m_decisionCompletionHandler;
+    Function<void()> m_beforeStartingCaptureCallback;
 };
 
 String convertEnumerationToString(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason);
