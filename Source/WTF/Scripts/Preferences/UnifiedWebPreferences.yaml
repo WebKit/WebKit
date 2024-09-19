@@ -5125,21 +5125,6 @@ ObservableEnabled:
     WebCore:
       default: false
 
-OffscreenCanvasDeprecatedCommitEnabled:
-  type: bool
-  status: testable
-  category: dom
-  humanReadableName: "OffscreenCanvasRenderingContext2D's deprecated commit() method"
-  humanReadableDescription: "Support for OffscreenCanvasRenderingContext2D's deprecated commit() method"
-  condition: ENABLE(OFFSCREEN_CANVAS)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 OffscreenCanvasEnabled:
   type: bool
   status: stable
