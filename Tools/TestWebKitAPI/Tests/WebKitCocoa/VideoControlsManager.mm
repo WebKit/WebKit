@@ -262,7 +262,12 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingMutedV
     }];
 }
 
+// rdar://136308546
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosShowControlsForLastInteractedVideo)
+#else
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosShowControlsForLastInteractedVideo)
+#endif
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
     NSPoint clickPoint = NSMakePoint(400, 300);
