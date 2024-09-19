@@ -192,45 +192,17 @@ int equivalentYearForDST(int year)
     return year;
 }
 
-#if OS(WINDOWS)
-typedef BOOL(WINAPI* callGetTimeZoneInformationForYear_t)(USHORT, PDYNAMIC_TIME_ZONE_INFORMATION, LPTIME_ZONE_INFORMATION);
-
-static callGetTimeZoneInformationForYear_t timeZoneInformationForYearFunction()
-{
-    static callGetTimeZoneInformationForYear_t getTimeZoneInformationForYear = nullptr;
-
-    if (getTimeZoneInformationForYear)
-        return getTimeZoneInformationForYear;
-
-    HMODULE module = ::GetModuleHandleW(L"kernel32.dll");
-    if (!module)
-        return nullptr;
-
-    getTimeZoneInformationForYear = reinterpret_cast<callGetTimeZoneInformationForYear_t>(::GetProcAddress(module, "GetTimeZoneInformationForYear"));
-
-    return getTimeZoneInformationForYear;
-}
-#endif
-
 static int32_t calculateUTCOffset()
 {
 #if OS(WINDOWS)
     TIME_ZONE_INFORMATION timeZoneInformation;
     DWORD rc = 0;
 
-    if (callGetTimeZoneInformationForYear_t timeZoneFunction = timeZoneInformationForYearFunction()) {
-        // If available, use the Windows API call that takes into account the varying DST from
-        // year to year.
-        SYSTEMTIME systemTime;
-        ::GetSystemTime(&systemTime);
-        rc = timeZoneFunction(systemTime.wYear, nullptr, &timeZoneInformation);
-        if (rc == TIME_ZONE_ID_INVALID)
-            return 0;
-    } else {
-        rc = ::GetTimeZoneInformation(&timeZoneInformation);
-        if (rc == TIME_ZONE_ID_INVALID)
-            return 0;
-    }
+    SYSTEMTIME systemTime;
+    ::GetSystemTime(&systemTime);
+    rc = ::GetTimeZoneInformationForYear(systemTime.wYear, nullptr, &timeZoneInformation);
+    if (rc == TIME_ZONE_ID_INVALID)
+        return 0;
 
     int32_t bias = timeZoneInformation.Bias;
 
