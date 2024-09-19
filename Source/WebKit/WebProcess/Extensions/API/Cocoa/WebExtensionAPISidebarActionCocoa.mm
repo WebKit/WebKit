@@ -105,6 +105,11 @@ static std::tuple<std::optional<WebExtensionWindowIdentifier>, std::optional<Web
 
 void WebExtensionAPISidebarAction::open(Ref<WebExtensionCallbackHandler>&& callback , NSString **outExceptionString)
 {
+    if (!WebCore::UserGestureIndicator::processingUserGesture()) {
+        *outExceptionString = toErrorString(nil, nil, @"it must be called during a user gesture");
+        return;
+    }
+
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarOpen(std::nullopt, std::nullopt), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error());
@@ -117,6 +122,11 @@ void WebExtensionAPISidebarAction::open(Ref<WebExtensionCallbackHandler>&& callb
 
 void WebExtensionAPISidebarAction::close(Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
+    if (!WebCore::UserGestureIndicator::processingUserGesture()) {
+        *outExceptionString = toErrorString(nil, nil, @"it must be called during a user gesture");
+        return;
+    }
+
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarClose(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error());
@@ -129,6 +139,11 @@ void WebExtensionAPISidebarAction::close(Ref<WebExtensionCallbackHandler>&& call
 
 void WebExtensionAPISidebarAction::toggle(Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
+    if (!WebCore::UserGestureIndicator::processingUserGesture()) {
+        *outExceptionString = toErrorString(nil, nil, @"it must be called during a user gesture");
+        return;
+    }
+
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarToggle(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error());
@@ -149,7 +164,7 @@ void WebExtensionAPISidebarAction::isOpen(NSDictionary *details, Ref<WebExtensio
     }
 
     std::optional<WebExtensionWindowIdentifier> windowId = maybeWindowId ? toWebExtensionWindowIdentifier(((NSNumber *) maybeWindowId).doubleValue) : std::nullopt;
-    if (!isValid(windowId)) {
+    if (windowId && !isValid(windowId)) {
         *outExceptionString = toErrorString(nil, @"details", @"'windowId' is invalid");
         return;
     }

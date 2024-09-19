@@ -42,7 +42,7 @@
 #import <WebKit/WKWebExtensionWindowConfiguration.h>
 #import <WebKit/WebKit.h>
 
-@interface TestWebExtensionsDelegate : NSObject <WKWebExtensionControllerDelegate>
+@interface TestWebExtensionsDelegate : NSObject <WKWebExtensionControllerDelegate, WKWebExtensionControllerDelegatePrivate>
 
 @property (nonatomic, copy) NSArray<id <WKWebExtensionWindow>> *(^openWindows)(WKWebExtensionContext *);
 @property (nonatomic, copy) id <WKWebExtensionWindow> (^focusedWindow)(WKWebExtensionContext *);
@@ -62,6 +62,12 @@
 @property (nonatomic, copy) void (^connectUsingMessagePort)(WKWebExtensionMessagePort *);
 
 @property (nonatomic, copy) void (^presentPopupForAction)(WKWebExtensionAction *);
+
+@property (nonatomic, copy) void (^presentSidebar)(_WKWebExtensionSidebar *);
+
+@property (nonatomic, copy) void (^closeSidebar)(_WKWebExtensionSidebar *);
+
+@property (nonatomic, copy) void (^didUpdateSidebar)(_WKWebExtensionSidebar *);
 
 @end
 

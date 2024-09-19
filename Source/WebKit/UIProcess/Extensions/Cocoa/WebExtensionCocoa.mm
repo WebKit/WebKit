@@ -1009,9 +1009,19 @@ void WebExtension::populateActionPropertiesIfNeeded()
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-bool WebExtension::hasSidebar()
+bool WebExtension::hasSidebarAction()
 {
-    return objectForKey<NSDictionary>(m_manifest, sidebarActionManifestKey) || hasRequestedPermission(WKWebExtensionPermissionSidePanel);
+    return objectForKey<NSDictionary>(m_manifest, sidebarActionManifestKey);
+}
+
+bool WebExtension::hasSidePanel()
+{
+    return hasRequestedPermission(WKWebExtensionPermissionSidePanel);
+}
+
+bool WebExtension::hasAnySidebar()
+{
+    return hasSidebarAction() || hasSidePanel();
 }
 
 CocoaImage *WebExtension::sidebarIcon(CGSize idealSize)

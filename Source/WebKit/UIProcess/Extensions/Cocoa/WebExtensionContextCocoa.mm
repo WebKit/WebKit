@@ -2755,7 +2755,7 @@ std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getSidebar(WebExten
 
 std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getOrCreateSidebar(WebExtensionWindow& window)
 {
-    if (!extension().hasSidebar())
+    if (!extension().hasAnySidebar())
         return std::nullopt;
 
     return m_sidebarWindowMap.ensure(window, [&] {
@@ -2765,7 +2765,7 @@ std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getOrCreateSidebar(
 
 std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getOrCreateSidebar(WebExtensionTab& tab)
 {
-    if (!extension().hasSidebar())
+    if (!extension().hasAnySidebar())
         return std::nullopt;
 
     return m_sidebarTabMap.ensure(tab, [&] {
@@ -2775,7 +2775,7 @@ std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getOrCreateSidebar(
 
 RefPtr<WebExtensionSidebar> WebExtensionContext::getOrCreateSidebar(RefPtr<WebExtensionTab> tab)
 {
-    if (!extension().hasSidebar())
+    if (!extension().hasAnySidebar())
         return nil;
     if (!tab)
         return &defaultSidebar();

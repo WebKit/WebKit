@@ -60,7 +60,7 @@ static ParseResult parseTabIdentifier(NSDictionary *options)
 
 static ParseResult parseWindowIdentifier(NSDictionary *options)
 {
-    id maybeWindowId = [options objectForKey:tabIdKey];
+    id maybeWindowId = [options objectForKey:windowIdKey];
 
     if (!maybeWindowId || [maybeWindowId isKindOfClass:NSNull.class])
         return std::monostate();
@@ -157,6 +157,12 @@ void WebExtensionAPISidePanel::setPanelBehavior(NSDictionary *behavior, Ref<WebE
 
 void WebExtensionAPISidePanel::open(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
+    if (!WebCore::UserGestureIndicator::processingUserGesture()) {
+        // In chrome, this error manifests as a rejected promise, so match this behavior
+        callback->reportError(toErrorString(@"sidePanel.open()", nil, @"it must be called during a user gesture"));
+        return;
+    }
+
     auto tabResult = parseTabIdentifier(options);
     if ((*outExceptionString = indicatesError(tabResult).get()))
         return;

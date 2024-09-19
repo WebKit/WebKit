@@ -373,32 +373,6 @@ void WebExtensionSidebar::setEnabled(bool enabled)
     propertiesDidChange();
 }
 
-bool WebExtensionSidebar::canProgrammaticallyOpenSidebar() const
-{
-    return extensionContext().transform([](auto const& context) -> bool { return !!context.get().extensionController(); })
-        .value_or(false);
-
-    // FIXME: <https://webkit.org/b/277575> also check that the controller delegate responds to whatever selector we use for this
-}
-
-void WebExtensionSidebar::openSidebarWhenReady()
-{
-    // FIXME: <https://webkit.org/b/277575> implement openSidebarWhenReady
-}
-
-bool WebExtensionSidebar::canProgrammaticallyCloseSidebar() const
-{
-    return extensionContext().transform([](auto const& context) -> bool { return !!context.get().extensionController(); })
-        .value_or(false);
-
-    // FIXME: <https://webkit.org/b/277575> also check that the controller delegate responds to whatever selector we use for this
-}
-
-void WebExtensionSidebar::closeSidebarWhenReady()
-{
-    // FIXME: <https://webkit.org/b/277575> implement closeSidebarWhenReady
-}
-
 String WebExtensionSidebar::sidebarPath() const
 {
     return m_sidebarPathOverride

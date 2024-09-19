@@ -32,34 +32,37 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
+#import "WKWebExtensionControllerDelegatePrivate.h"
 #import "WebExtensionSidebar.h"
 
 namespace WebKit {
+
+static NSString * const unknownErrorString = @"an unknown error occurred";
 
 template<typename T>
 static Expected<T, WebExtensionError> toExpected(std::optional<T>&& optional, NSString * const errorMessage = @"value not found")
 {
     if (optional)
         return WTFMove(optional.value());
-    return toWebExtensionError(nil, nil, errorMessage);
+    return makeUnexpected(errorMessage);
 }
 
 static Expected<Ref<WebExtensionSidebar>, WebExtensionError> getSidebarWithIdentifiers(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, WebExtensionContext& context)
 {
     if (windowIdentifier && tabIdentifier)
-        return toWebExtensionError(nil, nil, @"cannot specify both windowId and tabId");
+        return makeUnexpected(@"it cannot specify both 'windowId' and 'tabId'");
 
     if (windowIdentifier) {
         RefPtr window = context.getWindow(*windowIdentifier);
         if (!window)
-            return toWebExtensionError(nil, nil, @"window not found");
+            return makeUnexpected(@"the window was not found");
         return context.getSidebar(*window).value_or(context.defaultSidebar());
     }
 
     if (tabIdentifier) {
         RefPtr tab = context.getTab(*tabIdentifier);
         if (!tab)
-            return toWebExtensionError(nil, nil, @"tab not found");
+            return makeUnexpected(@"the tab was not found");
         return context.getSidebar(*tab)
             .or_else([&] { return context.getSidebar(*(tab->window())); })
             .value_or(context.defaultSidebar());
@@ -71,162 +74,210 @@ static Expected<Ref<WebExtensionSidebar>, WebExtensionError> getSidebarWithIdent
 static Expected<Ref<WebExtensionSidebar>, WebExtensionError> getOrCreateSidebarWithIdentifiers(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, WebExtensionContext& context)
 {
     if (windowIdentifier && tabIdentifier)
-        return toWebExtensionError(nil, nil, @"cannot specify both windowId and tabId");
+        return makeUnexpected(@"it cannot to specify both 'windowId' and 'tabId'");
 
     if (windowIdentifier) {
         RefPtr window = context.getWindow(*windowIdentifier);
         if (!window)
-            return toWebExtensionError(nil, nil, @"window not found");
-        return toExpected(context.getOrCreateSidebar(*window), @"could not create sidebar");
+            return makeUnexpected(@"the window was not found");
+        return toExpected(context.getOrCreateSidebar(*window), unknownErrorString);
     }
 
     if (tabIdentifier) {
         RefPtr tab = context.getTab(*tabIdentifier);
         if (!tab)
-            return toWebExtensionError(nil, nil, @"tab not found");
-        return toExpected(context.getOrCreateSidebar(*tab), @"could not create sidebar");
+            return makeUnexpected(@"the tab was not found");
+        return toExpected(context.getOrCreateSidebar(*tab), unknownErrorString);
     }
 
     return Ref { context.defaultSidebar() };
 }
 
-using UserTriggered = WebExtensionContext::UserTriggered;
-void WebExtensionContext::openSidebarForTab(WebExtensionTab& tab)
+static NSString *scopedAPINameFor(NSString *topLevelAPIMethod, WebExtensionContext& context)
 {
-    ASSERT(isLoaded());
-    if (!isLoaded())
-        return;
+    if (!topLevelAPIMethod)
+        return nil;
 
-    auto maybeSidebar = getOrCreateSidebar(tab);
-    if (!maybeSidebar)
-        return;
+    if (context.extension().hasSidebarAction())
+        return [NSString stringWithFormat:@"sidebarAction.%@", topLevelAPIMethod];
+    if (context.extension().hasSidePanel())
+        return [NSString stringWithFormat:@"sidePanel.%@", topLevelAPIMethod];
 
-    auto& sidebar = maybeSidebar.value().get();
-    if (sidebar.opensSidebar())
-        sidebar.openSidebarWhenReady();
-
-    fireActionClickedEventIfNeeded(&tab);
+    return topLevelAPIMethod;
 }
 
-void WebExtensionContext::closeSidebarForTab(WebExtensionTab& tab)
+void WebExtensionContext::openSidebar(WebExtensionSidebar& sidebar)
 {
     ASSERT(isLoaded());
     if (!isLoaded())
         return;
 
-    auto maybeSidebar = getOrCreateSidebar(tab);
-    if (!maybeSidebar)
+    RefPtr controller = extensionController();
+    if (!controller)
         return;
 
-    auto& sidebar = maybeSidebar.value().get();
-    if (sidebar.canProgrammaticallyCloseSidebar())
-        sidebar.closeSidebarWhenReady();
+    auto *controllerDelegate = controller->delegate();
+    auto *controllerWrapper = controller->wrapper();
+    auto *sidebarWrapper = sidebar.wrapper();
+    auto *contextWrapper = wrapper();
+    if (!(controllerDelegate && controllerWrapper && sidebarWrapper && contextWrapper))
+        return;
+
+    [controllerDelegate _webExtensionController:controllerWrapper presentSidebar:sidebarWrapper forExtensionContext:contextWrapper completionHandler:^(NSError *error) { }];
+}
+
+void WebExtensionContext::closeSidebar(WebExtensionSidebar& sidebar)
+{
+    ASSERT(isLoaded());
+    if (!isLoaded())
+        return;
+
+    RefPtr controller = extensionController();
+    if (!controller)
+        return;
+
+    auto *controllerDelegate = controller->delegate();
+    auto *controllerWrapper = controller->wrapper();
+    auto *sidebarWrapper = sidebar.wrapper();
+    auto *contextWrapper = wrapper();
+    if (!(controllerDelegate && controllerWrapper && sidebarWrapper && contextWrapper))
+        return;
+
+    [controllerDelegate _webExtensionController:controllerWrapper closeSidebar:sidebarWrapper forExtensionContext:contextWrapper completionHandler:^(NSError *error) { }];
+}
+
+bool WebExtensionContext::canProgrammaticallyOpenSidebar()
+{
+    if (!extension().hasAnySidebar())
+        return false;
+
+    RefPtr controller = extensionController();
+    if (!controller)
+        return false;
+
+    auto *controllerDelegate = controller->delegate();
+    if (!controllerDelegate)
+        return false;
+
+    return [controllerDelegate respondsToSelector:@selector(_webExtensionController:presentSidebar:forExtensionContext:completionHandler:)];
+}
+
+bool WebExtensionContext::canProgrammaticallyCloseSidebar()
+{
+    if (!extension().hasAnySidebar())
+        return false;
+
+    RefPtr controller = extensionController();
+    if (!controller)
+        return false;
+
+    auto *controllerDelegate = controller->delegate();
+    if (!controllerDelegate)
+        return false;
+
+    return [controllerDelegate respondsToSelector:@selector(_webExtensionController:closeSidebar:forExtensionContext:completionHandler:)];
 }
 
 void WebExtensionContext::sidebarOpen(const std::optional<WebExtensionWindowIdentifier> windowIdentifier, const std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    // the error below is a placeholder to fill sidebar, since we cannot instantiate it empty
-    Expected<Ref<WebExtensionSidebar>, WebExtensionError> sidebar = toWebExtensionError(nil, nil, @"Placeholder error");
+    static NSString * const apiName = @"open()";
+
+    if (!canProgrammaticallyOpenSidebar()) {
+        completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nil, @"it is not implemented"));
+        return;
+    }
+
     RefPtr<WebExtensionTab> tab;
-
     if (!tabIdentifier && !windowIdentifier) {
-        // In the case where we have neither identifier, we must be servicing sidebarAction rather than sidepanel
+        // In the case where we have neither identifier, we must be servicing sidebarAction rather than sidePanel
         // since sidePanel requires one of the identifiers to be set in calls to open.
-        // The firefox API specifies that open() will just toggle the sidebar in the active window.
-        if (auto window = frontmostWindow()) {
-            auto maybeSidebar = getOrCreateSidebar(*window);
-            if (!maybeSidebar) {
-                completionHandler(toWebExtensionError(nil, nil, @"could not create sidebar"));
-                return;
-            }
-
-            sidebar = WTFMove(maybeSidebar.value());
+        if (RefPtr window = frontmostWindow())
             tab = window->activeTab();
-        } else {
-            completionHandler(toWebExtensionError(nil, nil, @"no windows are open"));
+        else {
+            completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nil, @"no windows are open"));
             return;
         }
     } else {
-        // chrome's sidePanel allows both windowIdentifier and tabIdentifier to be specified for sidePanel.open(), so we will discard windowIdentifier if they are both set
-        // since firefox's sidebarAction takes no arguments to sidebarAction.open(), this does not break behavior for that API
+        // sidePanel allows both windowIdentifier and tabIdentifier to be specified for sidePanel.open(), so we will discard windowIdentifier if they are both set
+        // since sidebarAction.open() takes no arguments, this does not break behavior for that API
         auto correctedWindowIdentifier = tabIdentifier ? std::nullopt : windowIdentifier;
 
         auto maybeSidebar = getOrCreateSidebarWithIdentifiers(correctedWindowIdentifier, tabIdentifier, *this);
         if (!maybeSidebar) {
-            completionHandler(toWebExtensionError(nil, nil, @"could not create sidebar"));
+            completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), @"options", maybeSidebar.error()));
             return;
         }
+        Ref<WebExtensionSidebar> sidebar = WTFMove(maybeSidebar.value());
 
-        sidebar = WTFMove(maybeSidebar.value());
-
-        if (auto window = sidebar.value()->window())
+        if (auto window = sidebar->window())
             tab = window->get().activeTab();
-        else if (auto maybeTab = sidebar.value()->tab())
+        else if (auto maybeTab = sidebar->tab())
             tab = RefPtr { maybeTab.value().ptr() };
         else if (auto window = frontmostWindow())
             tab = window->activeTab();
         else {
-            completionHandler(toWebExtensionError(nil, nil, @"no windows are open"));
+            completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nil, unknownErrorString));
             return;
         }
     }
 
     if (!tab) {
-        completionHandler(toWebExtensionError(nil, nil, @"could not determine active tab"));
+        completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nil, unknownErrorString));
         return;
     }
 
+    std::optional<Ref<WebExtensionSidebar>> sidebar = getOrCreateSidebar(*tab);
     if (!sidebar) {
-        completionHandler(makeUnexpected(sidebar.error()));
+        completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nil, unknownErrorString));
         return;
     }
 
-    if (!sidebar.value()->canProgrammaticallyOpenSidebar()) {
-        completionHandler(toWebExtensionError(nil, nil, @"it is not implemented"));
+    if (!sidebar.value()->isEnabled()) {
+        completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nil, @"the sidebar is not enabled"));
         return;
     }
 
-    if (sidebar.value()->opensSidebar())
-        openSidebarForTab(*tab);
-
+    openSidebar(sidebar.value().get());
     completionHandler({ });
 }
 
 void WebExtensionContext::sidebarClose(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    // This method services a firefox-only API which will just close the sidebar in the active window
+    // This method services a sidebarAction-only API which will just close the sidebar in the active window
+    // as such, we do not need to use scopedAPINameFor(...) here, we can just assume we're servicing sidebarAction
+    static NSString * const apiName = @"sidebarAction.close()";
+
+    if (!canProgrammaticallyCloseSidebar()) {
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
+        return;
+    }
+
     auto window = frontmostWindow();
     if (!window) {
-        completionHandler(toWebExtensionError(nil, nil, @"no windows are open"));
+        completionHandler(toWebExtensionError(apiName, nil, @"no windows are open"));
         return;
     }
 
     auto tab = window->activeTab();
     if (!tab) {
-        completionHandler(toWebExtensionError(nil, nil, @"unable to determine the active tab"));
+        completionHandler(toWebExtensionError(apiName, nil, unknownErrorString));
         return;
     }
 
-    auto maybeSidebar = getOrCreateSidebar(*window);
+    auto maybeSidebar = getOrCreateSidebar(*tab);
     if (!maybeSidebar) {
-        completionHandler(toWebExtensionError(nil, nil, @"the sidebar could not be created"));
+        completionHandler(toWebExtensionError(apiName, nil, unknownErrorString));
         return;
     }
 
-    auto& sidebar = maybeSidebar.value();
-    if (!sidebar->canProgrammaticallyCloseSidebar()) {
-        completionHandler(toWebExtensionError(nil, nil, @"it is not implemented"));
-        return;
-    }
-
-    closeSidebarForTab(*tab);
-
+    Ref sidebar = WTFMove(maybeSidebar.value());
+    closeSidebar(sidebar.get());
     completionHandler({ });
 }
 
 void WebExtensionContext::sidebarIsOpen(const std::optional<WebExtensionWindowIdentifier> windowIdentifier, CompletionHandler<void(Expected<bool, WebExtensionError>&&)>&& completionHandler)
 {
-    // This method services a Firefox-only API which will check if a sidebar is open in the specified window, or the active window if no window is specified
+    // This method services a sidebarAction-only API which will check if a sidebar is open in the specified window, or the active window if no window is specified
     RefPtr<WebExtensionWindow> window;
     if (windowIdentifier)
         window = getWindow(*windowIdentifier);
@@ -245,49 +296,43 @@ void WebExtensionContext::sidebarIsOpen(const std::optional<WebExtensionWindowId
             isOpen |= currentTabSidebar.value()->isOpen();
     }
 
-    if (auto currentWindowSidebar = getSidebar(*window))
-        isOpen |= currentWindowSidebar.value()->isOpen();
-
     completionHandler(isOpen);
 }
 
 void WebExtensionContext::sidebarToggle(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    // this method services a Firefox-only API which toggles the sidebar in the currently active window
+    // this method services a sidebarAction-only API which toggles the sidebar in the currently active window
+    // as such, we do not need to use scopedAPINameFor(...) here, we can just assume we're servicing sidebarAction
+    static NSString * const apiName = @"sidebarAction.toggle()";
+
+    if (!canProgrammaticallyCloseSidebar() || !canProgrammaticallyOpenSidebar()) {
+        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
+        return;
+    }
+
     auto window = frontmostWindow();
     if (!window) {
-        completionHandler(toWebExtensionError(nil, nil, @"no windows are open"));
+        completionHandler(toWebExtensionError(apiName, nil, @"no windows are open"));
         return;
     }
 
     auto tab = window->activeTab();
     if (!tab) {
-        completionHandler(toWebExtensionError(nil, nil, @"unable to determine the active tab"));
+        completionHandler(toWebExtensionError(apiName, nil, unknownErrorString));
         return;
     }
 
-    auto maybeSidebar = getOrCreateSidebar(*window);
+    auto maybeSidebar = getOrCreateSidebar(*tab);
     if (!maybeSidebar) {
-        completionHandler(toWebExtensionError(nil, nil, @"could not create sidebar"));
+        completionHandler(toWebExtensionError(apiName, nil, unknownErrorString));
         return;
     }
 
-    auto& sidebar = maybeSidebar.value();
-    if (sidebar->isOpen()) {
-        if (!sidebar->canProgrammaticallyCloseSidebar()) {
-            completionHandler(toWebExtensionError(nil, nil, @"it is not implemented"));
-            return;
-        }
-
-        closeSidebarForTab(*tab);
-    } else {
-        if (!sidebar->canProgrammaticallyOpenSidebar()) {
-            completionHandler(toWebExtensionError(nil, nil, @"it is not implemented"));
-            return;
-        }
-
-        openSidebarForTab(*tab);
-    }
+    Ref sidebar = WTFMove(maybeSidebar.value());
+    if (sidebar->isOpen())
+        closeSidebar(sidebar.get());
+    else
+        openSidebar(sidebar.get());
 
     completionHandler({ });
 }
@@ -299,9 +344,12 @@ void WebExtensionContext::sidebarSetIcon(const std::optional<WebExtensionWindowI
 
 void WebExtensionContext::sidebarGetTitle(const std::optional<WebExtensionWindowIdentifier> windowIdentifier, const std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
 {
+    // this method services a sidebarAction-only API method
+    static NSString * const apiName = @"sidebarAction.getTitle()";
+
     auto sidebar = getSidebarWithIdentifiers(windowIdentifier, tabIdentifier, *this);
     if (!sidebar) {
-        completionHandler(makeUnexpected(sidebar.error()));
+        completionHandler(toWebExtensionError(apiName, @"details", sidebar.error()));
         return;
     }
 
@@ -310,9 +358,12 @@ void WebExtensionContext::sidebarGetTitle(const std::optional<WebExtensionWindow
 
 void WebExtensionContext::sidebarSetTitle(const std::optional<WebExtensionWindowIdentifier> windowIdentifier, const std::optional<WebExtensionTabIdentifier> tabIdentifier, const std::optional<String>& title, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    // this method services a sidebarAction-only API method
+    static NSString * const apiName = @"sidebarAction.setTitle()";
+
     auto sidebar = getOrCreateSidebarWithIdentifiers(windowIdentifier, tabIdentifier, *this);
     if (!sidebar) {
-        completionHandler(makeUnexpected(sidebar.error()));
+        completionHandler(toWebExtensionError(apiName, @"details", sidebar.error()));
         return;
     }
     sidebar.value()->setTitle(title);
@@ -322,9 +373,19 @@ void WebExtensionContext::sidebarSetTitle(const std::optional<WebExtensionWindow
 
 void WebExtensionContext::sidebarGetOptions(const std::optional<WebExtensionWindowIdentifier> windowIdentifier, const std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<WebExtensionSidebarParameters, WebExtensionError>&&)>&& completionHandler)
 {
+    NSString *apiName;
+    NSString *objectName;
+    if (extension().hasSidePanel()) {
+        apiName = @"sidePanel.getOptions()";
+        objectName = @"options";
+    } else {
+        apiName = @"sidebarAction.getPanel()";
+        objectName = @"details";
+    }
+
     auto maybeSidebar = getOrCreateSidebarWithIdentifiers(windowIdentifier, tabIdentifier, *this);
     if (!maybeSidebar) {
-        completionHandler(makeUnexpected(maybeSidebar.error()));
+        completionHandler(toWebExtensionError(apiName, objectName, maybeSidebar.error()));
         return;
     }
 
@@ -338,9 +399,19 @@ void WebExtensionContext::sidebarGetOptions(const std::optional<WebExtensionWind
 
 void WebExtensionContext::sidebarSetOptions(const std::optional<WebExtensionWindowIdentifier> windowIdentifier, const std::optional<WebExtensionTabIdentifier> tabIdentifier, const std::optional<String>& panelSourcePath, const std::optional<bool> enabled, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    NSString *apiName;
+    NSString *objectName;
+    if (extension().hasSidePanel()) {
+        apiName = @"sidePanel.setOptions()";
+        objectName = @"options";
+    } else {
+        apiName = @"sidebarAction.setPanel()";
+        objectName = @"details";
+    }
+
     auto maybeSidebar = getOrCreateSidebarWithIdentifiers(windowIdentifier, tabIdentifier, *this);
     if (!maybeSidebar) {
-        completionHandler(makeUnexpected(maybeSidebar.error()));
+        completionHandler(toWebExtensionError(apiName, objectName, maybeSidebar.error()));
         return;
     }
 

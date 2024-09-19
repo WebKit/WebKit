@@ -312,7 +312,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 - (BOOL)_hasSidebar
 {
-    return _webExtension->hasSidebar();
+    return _webExtension->hasAnySidebar();
 }
 #else // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 - (BOOL)_hasSidebar
