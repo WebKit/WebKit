@@ -286,10 +286,11 @@
 
 // 32-bit platforms use different calling conventions, so a MUST_TAIL_CALL function
 // written for 64-bit may fail to tail call on 32-bit.
+// It also doesn't work on ppc64le: https://github.com/llvm/llvm-project/issues/98859
 #if COMPILER(CLANG)
 #if __SIZEOF_POINTER__ == 8
 #if !defined(MUST_TAIL_CALL) && defined(__cplusplus) && defined(__has_cpp_attribute)
-#if __has_cpp_attribute(clang::musttail)
+#if __has_cpp_attribute(clang::musttail) && !defined(__powerpc__)
 #define MUST_TAIL_CALL [[clang::musttail]]
 #endif
 #endif
