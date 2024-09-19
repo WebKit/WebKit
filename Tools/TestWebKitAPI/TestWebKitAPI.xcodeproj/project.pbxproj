@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -39,6 +39,7 @@
 				3A5DDAFC28D3F2A7004DA950 /* PBXTargetDependency */,
 				7B9FC58828A26D83007570E7 /* PBXTargetDependency */,
 				7C83E0301D0A5E1B00FEBCF3 /* PBXTargetDependency */,
+				A17C58272C9AAAEE009DD0B5 /* PBXTargetDependency */,
 				7C83E0321D0A5E1D00FEBCF3 /* PBXTargetDependency */,
 			);
 			name = All;
@@ -1126,6 +1127,10 @@
 		A17C57ED2C9A53A0009DD0B5 /* TransformationMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AD3FE8D1D75FB8D00B169A4 /* TransformationMatrix.cpp */; };
 		A17C57EE2C9A53AD009DD0B5 /* WebTransportServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA8650322C7D01CA00117287 /* WebTransportServer.mm */; };
 		A17C57EF2C9A53B7009DD0B5 /* WKWebViewSpatialTrackingLabels.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD780E752BBE176D002A3DEC /* WKWebViewSpatialTrackingLabels.mm */; };
+		A17C58112C9AA132009DD0B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A17C58102C9AA132009DD0B5 /* Assets.xcassets */; };
+		A17C58172C9AA132009DD0B5 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = A17C58162C9AA132009DD0B5 /* main.mm */; };
+		A17C58252C9AAA25009DD0B5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A17C58242C9AAA25009DD0B5 /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, ); };
+		A17C58282C9AAFA6009DD0B5 /* TestWebKitAPIResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A17C46462C98E3430023F3C7 /* TestWebKitAPIResources.bundle */; };
 		A198D0A22BC64D8E0058BBEB /* NowPlayingMetadataObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = A198D0A12BC64D8E0058BBEB /* NowPlayingMetadataObserver.mm */; };
 		A1AD382F2C3DA40B003499BE /* FullscreenLifecycle.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1AD38272C3D9FAF003499BE /* FullscreenLifecycle.mm */; };
 		A1C142C224AA7B2E00444207 /* ContextMenuMouseEvents.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1C142C124AA7B2E00444207 /* ContextMenuMouseEvents.mm */; };
@@ -1400,6 +1405,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = A17C46452C98E3430023F3C7;
 			remoteInfo = TestWebKitAPIResources;
+		};
+		A17C58262C9AAAEE009DD0B5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A17C58012C9AA12F009DD0B5;
+			remoteInfo = TestWebKitAPIApp;
 		};
 		BC575A95126E74E7006F0F12 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3184,6 +3196,12 @@
 		A17C464A2C98E3640023F3C7 /* TestWebKitAPIResources.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestWebKitAPIResources.xcconfig; sourceTree = "<group>"; };
 		A17C48572C98FA3F0023F3C7 /* TestNSBundleExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestNSBundleExtras.h; sourceTree = "<group>"; };
 		A17C48582C98FA3F0023F3C7 /* TestNSBundleExtras.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestNSBundleExtras.m; sourceTree = "<group>"; };
+		A17C58022C9AA12F009DD0B5 /* TestWebKitAPI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestWebKitAPI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A17C58102C9AA132009DD0B5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A17C58162C9AA132009DD0B5 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+		A17C58222C9AA2B0009DD0B5 /* TestWebKitAPIApp.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestWebKitAPIApp.xcconfig; sourceTree = "<group>"; };
+		A17C58232C9AA491009DD0B5 /* TestWebKitAPI.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestWebKitAPI.xcconfig; sourceTree = "<group>"; };
+		A17C58242C9AAA25009DD0B5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/iOSSupport/System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		A17EAC542083056E0084B41B /* find.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = find.pdf; path = Tests/WebKit/find.pdf; sourceTree = SOURCE_ROOT; };
 		A180C0F91EE67DF000468F47 /* RunOpenPanel.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RunOpenPanel.mm; sourceTree = "<group>"; };
 		A18AA8CC1C3FA218009B2B97 /* ContentFiltering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentFiltering.h; sourceTree = "<group>"; };
@@ -3266,7 +3284,7 @@
 		BC90955C125548AA00083756 /* PlatformWebViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformWebViewMac.mm; sourceTree = "<group>"; };
 		BC90957E12554CF900083756 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		BC90957F12554CF900083756 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
-		BC90958012554CF900083756 /* TestWebKitAPI.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TestWebKitAPI.xcconfig; sourceTree = "<group>"; };
+		BC90958012554CF900083756 /* TestWebKitAPIBase.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TestWebKitAPIBase.xcconfig; sourceTree = "<group>"; };
 		BC90964D1255620C00083756 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC909778125571AB00083756 /* simple.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = simple.html; sourceTree = "<group>"; };
 		BC909779125571AB00083756 /* PageLoadBasic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageLoadBasic.cpp; sourceTree = "<group>"; };
@@ -3859,6 +3877,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A17C57FF2C9AA12F009DD0B5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A17C58252C9AAA25009DD0B5 /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BC57597E126E74AF006F0F12 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4056,6 +4082,7 @@
 				7C83DF681D0A590C00FEBCF3 /* libTestWTF.a */,
 				A13EBB491B87339E00097110 /* TestWebKitAPI.wkbundle */,
 				A17C46462C98E3430023F3C7 /* TestWebKitAPIResources.bundle */,
+				A17C58022C9AA12F009DD0B5 /* TestWebKitAPI.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4451,6 +4478,7 @@
 		2E9660DC16C07D7B00371B42 /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				A17C58032C9AA12F009DD0B5 /* app */,
 				F4D4F3B41E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm */,
 				2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */,
 				F48D6C0F224B377000E3E2FB /* PreferredContentMode.mm */,
@@ -4786,6 +4814,7 @@
 				516281282325C45400BB7E42 /* PDFKit.framework */,
 				7A010BCC1D877C0D00EDE72A /* QuartzCore.framework */,
 				574F55D0204D471C002948C6 /* Security.framework */,
+				A17C58242C9AAA25009DD0B5 /* UIKit.framework */,
 				7B9FC5B628A52236007570E7 /* WebCore.framework */,
 				2B648DBA28C1C1F700791F2B /* WebKit.framework */,
 			);
@@ -5181,6 +5210,15 @@
 			path = spi;
 			sourceTree = "<group>";
 		};
+		A17C58032C9AA12F009DD0B5 /* app */ = {
+			isa = PBXGroup;
+			children = (
+				A17C58102C9AA132009DD0B5 /* Assets.xcassets */,
+				A17C58162C9AA132009DD0B5 /* main.mm */,
+			);
+			path = app;
+			sourceTree = "<group>";
+		};
 		A1C4FB6F1BACCEFA003742D0 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -5259,7 +5297,9 @@
 				5735F0251F3A4EA6000EE801 /* TestWebKitAPI-iOS.entitlements */,
 				51EB125324C66BCB000CB030 /* TestWebKitAPI-macOS-internal.entitlements */,
 				7AB0173923FB2BF0002F8366 /* TestWebKitAPI-macOS.entitlements */,
-				BC90958012554CF900083756 /* TestWebKitAPI.xcconfig */,
+				A17C58232C9AA491009DD0B5 /* TestWebKitAPI.xcconfig */,
+				A17C58222C9AA2B0009DD0B5 /* TestWebKitAPIApp.xcconfig */,
+				BC90958012554CF900083756 /* TestWebKitAPIBase.xcconfig */,
 				7CCE7EA31A4115CB00447C4C /* TestWebKitAPILibrary.xcconfig */,
 				A17C464A2C98E3640023F3C7 /* TestWebKitAPIResources.xcconfig */,
 				3A5DDADB28D15328004DA950 /* TestWGSL.xcconfig */,
@@ -6167,6 +6207,23 @@
 			productReference = A17C46462C98E3430023F3C7 /* TestWebKitAPIResources.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
+		A17C58012C9AA12F009DD0B5 /* TestWebKitAPIApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A17C58212C9AA132009DD0B5 /* Build configuration list for PBXNativeTarget "TestWebKitAPIApp" */;
+			buildPhases = (
+				A17C57FE2C9AA12F009DD0B5 /* Sources */,
+				A17C57FF2C9AA12F009DD0B5 /* Frameworks */,
+				A17C58002C9AA12F009DD0B5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TestWebKitAPIApp;
+			productName = TestWebKitAPIApp;
+			productReference = A17C58022C9AA12F009DD0B5 /* TestWebKitAPI.app */;
+			productType = "com.apple.product-type.application";
+		};
 		BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BC575986126E74AF006F0F12 /* Build configuration list for PBXNativeTarget "InjectedBundleTestWebKitAPI" */;
@@ -6216,6 +6273,9 @@
 					A17C46452C98E3430023F3C7 = {
 						CreatedOnToolsVersion = 16.0;
 					};
+					A17C58012C9AA12F009DD0B5 = {
+						CreatedOnToolsVersion = 16.0;
+					};
 					BC57597F126E74AF006F0F12 = {
 						ProvisioningStyle = Manual;
 					};
@@ -6245,6 +6305,7 @@
 				7C83DE951D0A590C00FEBCF3 /* TestWTFLibrary */,
 				7B9FC39428A26137007570E7 /* TestIPC */,
 				8DD76F960486AA7600D96B5E /* TestWebKitAPI */,
+				A17C58012C9AA12F009DD0B5 /* TestWebKitAPIApp */,
 				A17C46452C98E3430023F3C7 /* TestWebKitAPIResources */,
 				3A15783C28D1505B00142DB1 /* TestWGSL */,
 				7C83DF951D0A5AE400FEBCF3 /* TestWTF */,
@@ -6308,6 +6369,15 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		A17C58002C9AA12F009DD0B5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A17C58112C9AA132009DD0B5 /* Assets.xcassets in Resources */,
+				A17C58282C9AAFA6009DD0B5 /* TestWebKitAPIResources.bundle in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BC57597C126E74AF006F0F12 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7126,6 +7196,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A17C57FE2C9AA12F009DD0B5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A17C58172C9AA132009DD0B5 /* main.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BC57597D126E74AF006F0F12 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7235,6 +7313,11 @@
 			target = A17C46452C98E3430023F3C7 /* TestWebKitAPIResources */;
 			targetProxy = A17C48552C98EBF50023F3C7 /* PBXContainerItemProxy */;
 		};
+		A17C58272C9AAAEE009DD0B5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A17C58012C9AA12F009DD0B5 /* TestWebKitAPIApp */;
+			targetProxy = A17C58262C9AAAEE009DD0B5 /* PBXContainerItemProxy */;
+		};
 		BC575A96126E74E7006F0F12 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */;
@@ -7260,14 +7343,14 @@
 /* Begin XCBuildConfiguration section */
 		1DEB927508733DD40010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC90958012554CF900083756 /* TestWebKitAPI.xcconfig */;
+			baseConfigurationReference = A17C58232C9AA491009DD0B5 /* TestWebKitAPI.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		1DEB927608733DD40010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC90958012554CF900083756 /* TestWebKitAPI.xcconfig */;
+			baseConfigurationReference = A17C58232C9AA491009DD0B5 /* TestWebKitAPI.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
@@ -7428,6 +7511,20 @@
 			};
 			name = Release;
 		};
+		A17C58182C9AA132009DD0B5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A17C58222C9AA2B0009DD0B5 /* TestWebKitAPIApp.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		A17C58192C9AA132009DD0B5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A17C58222C9AA2B0009DD0B5 /* TestWebKitAPIApp.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
 		BC575984126E74AF006F0F12 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */;
@@ -7549,6 +7646,15 @@
 			buildConfigurations = (
 				A17C46482C98E3440023F3C7 /* Debug */,
 				A17C46492C98E3440023F3C7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A17C58212C9AA132009DD0B5 /* Build configuration list for PBXNativeTarget "TestWebKitAPIApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A17C58182C9AA132009DD0B5 /* Debug */,
+				A17C58192C9AA132009DD0B5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

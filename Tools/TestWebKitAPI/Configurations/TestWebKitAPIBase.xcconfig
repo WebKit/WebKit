@@ -1,0 +1,162 @@
+// Copyright (C) 2010-2024 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+
+
+GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GTEST_API_=
+
+FRAMEWORK_SEARCH_PATHS = $(FRAMEWORK_SEARCH_PATHS_$(WK_COCOA_TOUCH));
+FRAMEWORK_SEARCH_PATHS_ = $(inherited) $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
+FRAMEWORK_SEARCH_PATHS_cocoatouch = $(inherited);
+
+PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebKit/Platform $(SRCROOT)/../../Source/WebKit/Platform/IPC $(SRCROOT)/../../Source/WebKit/Platform/IPC/darwin $(SRCROOT)/../../Source/WebKit/Platform/IPC/cocoa $(SRCROOT)/../../Source/WebKit/Shared $(SRCROOT)/../../Source/WebKit/Shared/Cocoa $(SRCROOT)/../../Source/WebKit/Shared/cf $(SRCROOT)/../../Source/WebKit/Shared/API/C $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit $(inherited);
+
+WK_APPSERVERSUPPORT_LDFLAGS[sdk=iphone*] = -framework AppServerSupport
+WK_APPSERVERSUPPORT_LDFLAGS[sdk=xr*] = -framework AppServerSupport
+
+WK_AUTHKIT_LDFLAGS = $(WK_AUTHKIT_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_AUTHKIT_LDFLAGS_iphoneos = -framework AuthKit;
+WK_AUTHKIT_LDFLAGS_iphonesimulator = -framework AuthKit;
+WK_AUTHKIT_LDFLAGS_xros = -framework AuthKit;
+WK_AUTHKIT_LDFLAGS_xrsimulator = -framework AuthKit;
+WK_AUTHKIT_LDFLAGS_macosx = -framework AuthKit;
+
+WK_BROWSERENGINEKIT_LDFLAGS =
+WK_BROWSERENGINEKIT_LDFLAGS[sdk=iphone*] = -framework BrowserEngineKit
+WK_BROWSERENGINEKIT_LDFLAGS[sdk=iphone*17.0*] =
+WK_BROWSERENGINEKIT_LDFLAGS[sdk=iphone*17.1*] =
+WK_BROWSERENGINEKIT_LDFLAGS[sdk=iphone*17.2*] =
+WK_BROWSERENGINEKIT_LDFLAGS[sdk=iphone*17.3*] =
+WK_BROWSERENGINEKIT_LDFLAGS[sdk=appletv*] =
+WK_BROWSERENGINEKIT_LDFLAGS[sdk=watch*] =
+WK_BROWSERENGINEKIT_LDFLAGS[sdk=xr*] =
+
+WK_REVEAL_LDFLAGS = $(WK_REVEAL_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_REVEAL_LDFLAGS_macosx = $(WK_REVEAL_LDFLAGS$(WK_MACOS_1015));
+WK_REVEAL_LDFLAGS_MACOS_SINCE_1015 = -framework Reveal;
+
+WK_HID_LDFLAGS = $(WK_HID_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_HID_LDFLAGS_macosx = $(WK_HID_LDFLAGS$(WK_MACOS_1015));
+WK_HID_LDFLAGS_MACOS_SINCE_1015 = -framework HID;
+
+WK_VISIONKITCORE_LDFLAGS = $(WK_VISIONKITCORE_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_VISIONKITCORE_LDFLAGS_iphoneos = -framework VisionKitCore;
+WK_VISIONKITCORE_LDFLAGS_iphonesimulator = -framework VisionKitCore;
+WK_VISIONKITCORE_LDFLAGS_xros = -framework VisionKitCore;
+WK_VISIONKITCORE_LDFLAGS_xrsimulator = -framework VisionKitCore;
+
+WK_OPENGL_LDFLAGS = $(WK_OPENGL_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_OPENGL_LDFLAGS_macosx = -framework OpenGL;
+WK_OPENGL_LDFLAGS_iphoneos = -framework OpenGLES;
+WK_OPENGL_LDFLAGS_iphonesimulator = -framework OpenGLES;
+WK_OPENGL_LDFLAGS_xros = -framework OpenGLES;
+WK_OPENGL_LDFLAGS_xrsimulator = -framework OpenGLES;
+
+WK_PDFKIT_LDFLAGS = $(WK_PDFKIT_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_PDFKIT_LDFLAGS_macosx = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_maccatalyst = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_iphoneos = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_iphonesimulator = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_xros = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_xrsimulator = -framework PDFKit;
+
+WK_SYSTEM_LDFLAGS = $(WK_SYSTEM_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_SYSTEM_LDFLAGS_macosx = -framework System;
+WK_SYSTEM_LDFLAGS_iphoneos = $(WK_SYSTEM_LDFLAGS_$(WK_IOS_15));
+WK_SYSTEM_LDFLAGS_iphonesimulator = $(WK_SYSTEM_LDFLAGS_$(WK_IOS_15));
+WK_SYSTEM_LDFLAGS_IOS_SINCE_15 = -framework System;
+
+WK_UIKITMACHELPER_LDFLAGS = $(WK_UIKITMACHELPER_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_UIKITMACHELPER_LDFLAGS_maccatalyst = -framework UIKitMacHelper;
+
+WK_WEBCORE_LDFLAGS = $(WK_WEBCORE_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_WEBCORE_LDFLAGS_iphoneos = -framework WebCore
+WK_WEBCORE_LDFLAGS_iphonesimulator = -framework WebCore
+WK_WEBCORE_LDFLAGS_watchos = -framework WebCore
+WK_WEBCORE_LDFLAGS_watchsimulator = -framework WebCore
+
+WK_IMAGEIO_LDFLAGS = $(WK_IMAGEIO_LDFLAGS_$(WK_PLATFORM_NAME))
+WK_IMAGEIO_LDFLAGS_iphoneos = -framework ImageIO
+WK_IMAGEIO_LDFLAGS_iphonesimulator = -framework ImageIO
+WK_IMAGEIO_LDFLAGS_maccatalyst = -framework ImageIO
+WK_IMAGEIO_LDFLAGS_macosx = $(WK_IMAGEIO_LDFLAGS$(WK_MACOS_1300));
+WK_IMAGEIO_LDFLAGS_MACOS_SINCE_1300 = -framework ImageIO;
+
+WK_WRITING_TOOLS_LDFLAGS = $(WK_WRITING_TOOLS_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_WRITING_TOOLS_LDFLAGS_iphoneos = $(WK_WRITING_TOOLS_LDFLAGS$(WK_IOS_18));
+WK_WRITING_TOOLS_LDFLAGS_iphonesimulator = $(WK_WRITING_TOOLS_LDFLAGS$(WK_IOS_18));
+WK_WRITING_TOOLS_LDFLAGS_IOS_SINCE_18 = -weak_framework WritingTools;
+WK_WRITING_TOOLS_LDFLAGS_maccatalyst = $(WK_WRITING_TOOLS_LDFLAGS_maccatalyst$(WK_MACOS_1500));
+WK_WRITING_TOOLS_LDFLAGS_maccatalyst_MACOS_SINCE_1500 = -weak_framework WritingTools;
+WK_WRITING_TOOLS_LDFLAGS_macosx = $(WK_WRITING_TOOLS_LDFLAGS$(WK_MACOS_1500));
+WK_WRITING_TOOLS_LDFLAGS_MACOS_SINCE_1500 = -weak_framework WritingTools;
+
+WK_WRITING_TOOLS_UI_LDFLAGS = $(WK_WRITING_TOOLS_UI_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_WRITING_TOOLS_UI_LDFLAGS_iphoneos = $(WK_WRITING_TOOLS_UI_LDFLAGS$(WK_IOS_18));
+WK_WRITING_TOOLS_UI_LDFLAGS_iphonesimulator = ;
+WK_WRITING_TOOLS_UI_LDFLAGS_IOS_SINCE_18 = -weak_framework WritingToolsUI;
+WK_WRITING_TOOLS_UI_LDFLAGS_maccatalyst = $(WK_WRITING_TOOLS_UI_LDFLAGS_maccatalyst$(WK_MACOS_1500));
+WK_WRITING_TOOLS_UI_LDFLAGS_maccatalyst_MACOS_SINCE_1500 = -weak_framework WritingToolsUI;
+WK_WRITING_TOOLS_UI_LDFLAGS_macosx = $(WK_WRITING_TOOLS_UI_LDFLAGS$(WK_MACOS_1500));
+WK_WRITING_TOOLS_UI_LDFLAGS_MACOS_SINCE_1500 = -weak_framework WritingToolsUI;
+
+OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
+
+OTHER_LDFLAGS = $(inherited) -lgtest -lxml2 -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebCore -framework WebKit -lWebCoreTestSupport -framework Metal -framework IOSurface $(WK_APPSERVERSUPPORT_LDFLAGS) $(WK_AUTHKIT_LDFLAGS) -framework Network -framework UniformTypeIdentifiers -framework CoreFoundation -framework CoreServices -framework CFNetwork -framework CoreGraphics -framework CoreLocation -framework CoreText -framework IOKit -lboringssl -licucore -lWebKitPlatform -framework LocalAuthentication -framework QuartzCore -framework Security $(WK_BROWSERENGINEKIT_LDFLAGS) $(WK_HID_LDFLAGS) $(WK_IMAGEIO_LDFLAGS) $(WK_OPENGL_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(WK_SYSTEM_LDFLAGS) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_VISIONKITCORE_LDFLAGS) $(WK_WEBCORE_LDFLAGS) $(WK_REVEAL_LDFLAGS) $(WK_WRITING_TOOLS_LDFLAGS) $(WK_WRITING_TOOLS_UI_LDFLAGS) $(OTHER_LDFLAGS_DELAY_INIT) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH));
+
+OTHER_LDFLAGS_DELAY_INIT[sdk=iphone*] = -Wl,-delay_framework,CoreTelephony;
+OTHER_LDFLAGS_DELAY_INIT[sdk=iphone*17.*] = ;
+OTHER_LDFLAGS_DELAY_INIT[sdk=appletv*] = ;
+OTHER_LDFLAGS_DELAY_INIT[sdk=watch*] = ;
+OTHER_LDFLAGS_DELAY_INIT[sdk=xr*] = ;
+
+OTHER_LDFLAGS_PLATFORM_ = -framework Cocoa -framework Carbon;
+// FIXME: This should not be built on iOS. Instead we should create and use a TestWebKitAPI application.
+OTHER_LDFLAGS_PLATFORM_cocoatouch = -framework WebCore -framework UIKit -framework MobileCoreServices;
+
+LD_RUNPATH_SEARCH_PATHS = "@loader_path";
+
+MAC_CODE_SIGN_ENTITLEMENTS = $(MAC_CODE_SIGN_ENTITLEMENTS_$(USE_INTERNAL_SDK));
+MAC_CODE_SIGN_ENTITLEMENTS_ = Configurations/TestWebKitAPI-macOS.entitlements;
+MAC_CODE_SIGN_ENTITLEMENTS_YES = Configurations/TestWebKitAPI-macOS-internal.entitlements;
+
+CODE_SIGN_ENTITLEMENTS[sdk=embedded*] = Configurations/TestWebKitAPI-iOS.entitlements;
+CODE_SIGN_ENTITLEMENTS[sdk=macosx*] = $(MAC_CODE_SIGN_ENTITLEMENTS);
+
+STRIP_STYLE = debugging;
+
+CODE_SIGN_IDENTITY[sdk=macosx*] = $(CODE_SIGN_IDENTITY_$(CONFIGURATION));
+CODE_SIGN_IDENTITY_Debug = $(CODE_SIGN_IDENTITY_$(USE_INTERNAL_SDK));
+CODE_SIGN_IDENTITY_Release = $(CODE_SIGN_IDENTITY_$(USE_INTERNAL_SDK));
+CODE_SIGN_IDENTITY_ = -;
+CODE_SIGN_IDENTITY_YES = $(WK_ENGINEERING_CODE_SIGN_IDENTITY);
+CODE_SIGN_IDENTITY_Production = $(CODE_SIGN_IDENTITY_Production_$(USE_INTERNAL_SDK));
+CODE_SIGN_IDENTITY_Production_YES = -;
+
+INFOPLIST_FILE = $(SRCROOT)/Info.plist;
+
+ENTITLEMENTS_REQUIRED = $(ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_$(USE_INTERNAL_SDK))
+ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_ = NO;
+ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_NO = NO;
+ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_YES = $(ENTITLEMENTS_REQUIRED);
