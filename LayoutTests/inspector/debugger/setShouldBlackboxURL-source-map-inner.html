@@ -78,10 +78,7 @@ function test()
         name: "Debugger.setShouldBlackboxURL.SourceMap.Pause.inner.Blackbox.middle",
         async test() {
             InspectorTest.log("Fetching scripts...");
-            let {inner, middle} = await getResources();
-
-            InspectorTest.log("Blackboxing script...");
-            WI.debuggerManager.setShouldBlackboxScript(middle, true);
+            let {inner} = await getResources();
 
             InspectorTest.log("Finding pause location...");
             let location = inner.createSourceCodeLocation(1, 0); // first line of `inner`
@@ -100,9 +97,6 @@ function test()
 
             InspectorTest.log("Removing breakpoint...");
             WI.debuggerManager.removeBreakpoint(breakpoint);
-
-            InspectorTest.log("Unblackboxing script...");
-            WI.debuggerManager.setShouldBlackboxScript(middle, false);
         },
     });
 

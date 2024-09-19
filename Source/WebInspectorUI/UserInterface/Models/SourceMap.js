@@ -40,13 +40,11 @@ WI.SourceMap = class SourceMap
         }
 
         this._originalSourceCode = originalSourceCode;
-        this._sourceMapResources = {};
-        this._sourceMapResourcesList = [];
+        this._sourceMapResources = new Map;
 
         this._sourceMappingURL = sourceMappingURL;
         this._reverseMappingsBySourceURL = {};
         this._mappings = [];
-        this._sources = {};
         this._sourceRoot = null;
         this._sourceContentByURL = {};
         this._parseMappingPayload(payload);
@@ -99,24 +97,12 @@ WI.SourceMap = class SourceMap
 
     get resources()
     {
-        return this._sourceMapResourcesList;
-    }
-
-    addResource(resource)
-    {
-        console.assert(!(resource.url in this._sourceMapResources));
-        this._sourceMapResources[resource.url] = resource;
-        this._sourceMapResourcesList.push(resource);
+        return Array.from(this._sourceMapResources.values());
     }
 
     resourceForURL(url)
     {
-        return this._sourceMapResources[url];
-    }
-
-    sources()
-    {
-        return Object.keys(this._sources);
+        return this._sourceMapResources.get(url);
     }
 
     sourceContent(sourceURL)
@@ -135,7 +121,7 @@ WI.SourceMap = class SourceMap
         let startLine = undefined;
         let startColumn = undefined;
         for (let [lineNumber, columnNumber, url] of this._mappings) {
-            blackboxedURLs[url] ??= !!WI.debuggerManager.blackboxDataForSourceCode(this._sourceMapResources[url]);
+            blackboxedURLs[url] ??= !!WI.debuggerManager.blackboxDataForSourceCode(this._sourceMapResources.get(url));
 
             if (blackboxedURLs[url]) {
                 startLine ??= lineNumber;
@@ -208,6 +194,8 @@ WI.SourceMap = class SourceMap
         var sourceColumnNumber = 0;
         var nameIndex = 0;
 
+        let ignoreList = new Set(Array.isArray(map.ignoreList) ? map.ignoreList : []);
+
         var sources = [];
         var originalToCanonicalURLMap = {};
         for (var i = 0; i < map.sources.length; ++i) {
@@ -218,7 +206,12 @@ WI.SourceMap = class SourceMap
             var url = absoluteURL(href, this._sourceMappingURL) || href;
             originalToCanonicalURLMap[originalSourceURL] = url;
             sources.push(url);
-            this._sources[url] = true;
+
+            let sourceMapResource = new WI.SourceMapResource(url, this, {
+                ignored: ignoreList.has(i),
+            });
+            console.assert(!this._sourceMapResources.has(sourceMapResource.url), sourceMapResource);
+            this._sourceMapResources.set(sourceMapResource.url, sourceMapResource);
 
             if (map.sourcesContent && map.sourcesContent[i])
                 this._sourceContentByURL[url] = map.sourcesContent[i];
