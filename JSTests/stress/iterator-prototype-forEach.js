@@ -101,9 +101,9 @@ function shouldThrow(fn, error, message) {
 
 {
     const arr = [1, 2, 3, 4, 5];
-    const result = [];
-    Iterator.prototype.forEach.call(arr, (item, i) => { result.push([item, i]); });
-    sameArray(result, [[1, 0], [2, 1], [3, 2], [4, 3], [5, 4]]);
+    shouldThrow(function () {
+        Iterator.prototype.forEach.call(arr, (item, i) => {});
+    }, TypeError, "Type error")
 }
 
 {

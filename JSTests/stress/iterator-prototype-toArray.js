@@ -95,9 +95,9 @@ function shouldThrow(fn, error, message) {
 
 {
     const arr1 = [1, 2, 3, 4, 5];
-    const arr2 = Iterator.prototype.toArray.call(arr1);
-    sameValue(arr1 === arr2, false);
-    sameArray(arr1, arr2);
+    shouldThrow(function () {
+        Iterator.prototype.toArray.call(arr1);
+    }, TypeError, "Type error");
 }
 
 {
