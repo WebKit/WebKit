@@ -286,6 +286,7 @@ struct Type {
         switch(kind) {
         case TypeKind::I64:
         case TypeKind::Funcref:
+        case TypeKind::Exn:
         case TypeKind::Externref:
         case TypeKind::RefNull:
         case TypeKind::Ref:

@@ -2680,6 +2680,19 @@ wasmOp(rethrow, WasmRethrow, macro(ctx)
     jumpToException()
 end)
 
+wasmOp(throw_ref, WasmThrowRef, macro(ctx)
+    loadp JSWebAssemblyInstance::m_vm[wasmInstance], t5
+    loadp VM::topEntryFrame[t5], t5
+    copyCalleeSavesToEntryFrameCalleeSavesBuffer(t5)
+
+    callWasmSlowPath(_slow_path_wasm_throw_ref)
+    btpz r1, .throw
+    jumpToException()
+.throw:
+    restoreStateAfterCCall()
+    dispatch(ctx)
+end)
+
 macro commonCatchImpl(ctx)
     getVMFromCallFrame(t3, t0)
     restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
@@ -2735,6 +2748,82 @@ end)
 commonWasmOp(wasm_catch_all, WasmCatchAll, macro() end, macro(ctx)
     commonCatchImpl(ctx)
     traceExecution()
+    dispatch(ctx)
+end)
+
+commonWasmOp(wasm_try_table_catch, WasmTryTableCatch, macro() end, macro(ctx)
+    # push the arguments to the stack
+    commonCatchImpl(ctx)
+
+    move r1, t1
+
+    wgetu(ctx, m_startOffset, t2)
+    wgetu(ctx, m_argumentCount, t3)
+
+    lshifti 3, t2
+    subp cfr, t2, t2
+
+.copyLoop:
+    btiz t3, .done
+if JSVALUE64
+    loadq [t1], t6
+    storeq t6, [t2]
+else
+    load2ia [t1], t5, t6
+    store2ia t5, t6, [t2]
+end
+    subi 1, t3
+    # FIXME: Use arm store-add/sub instructions in wasm LLInt catch
+    # https://bugs.webkit.org/show_bug.cgi?id=231210
+    subp 8, t2
+    addp 8, t1
+    jmp .copyLoop
+
+.done:
+    dispatch(ctx)
+end)
+
+commonWasmOp(wasm_try_table_catchref, WasmTryTableCatch, macro() end, macro(ctx)
+    # push the arguments, exnref handled by the slow path
+    commonCatchImpl(ctx)
+
+    move r1, t1
+
+    wgetu(ctx, m_startOffset, t2)
+    wgetu(ctx, m_argumentCount, t3)
+
+    lshifti 3, t2
+    subp cfr, t2, t2
+
+.copyLoop:
+    btiz t3, .done
+if JSVALUE64
+    loadq [t1], t6
+    storeq t6, [t2]
+else
+    load2ia [t1], t5, t6
+    store2ia t5, t6, [t2]
+end
+    subi 1, t3
+    # FIXME: Use arm store-add/sub instructions in wasm LLInt catch
+    # https://bugs.webkit.org/show_bug.cgi?id=231210
+    subp 8, t2
+    addp 8, t1
+    jmp .copyLoop
+
+.done:
+    dispatch(ctx)
+end)
+
+commonWasmOp(wasm_try_table_catchall, WasmTryTableCatch, macro() end, macro(ctx)
+    # don't do anything, we don't push at all just jump
+    commonCatchImpl(ctx)
+    dispatch(ctx)
+end)
+
+commonWasmOp(wasm_try_table_catchallref, WasmTryTableCatch, macro() end, macro(ctx)
+    # exnref handled by the slow path
+    commonCatchImpl(ctx)
     dispatch(ctx)
 end)
 

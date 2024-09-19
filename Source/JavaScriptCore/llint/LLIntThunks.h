@@ -99,6 +99,7 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleCatchThunk(OpcodeSize);
 #if ENABLE(WEBASSEMBLY)
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchThunk(OpcodeSize);
 MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchAllThunk(OpcodeSize);
+MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmTryTableThunk(WasmOpcodeID, OpcodeSize);
 #endif
 
 #if ENABLE(JIT_CAGE)

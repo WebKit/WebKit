@@ -137,7 +137,7 @@ static inline void computeExceptionHandlerLocations(Vector<CodeLocationLabel<Exc
     computeExceptionHandlerAndLoopEntrypointLocations(handlers, ignored, function, context, linkBuffer);
 }
 
-static inline void emitRethrowImpl(CCallHelpers& jit)
+static inline void emitThrowRefImpl(CCallHelpers& jit)
 {
     // JSWebAssemblyInstance in argumentGPR0
     // exception pointer in argumentGPR1

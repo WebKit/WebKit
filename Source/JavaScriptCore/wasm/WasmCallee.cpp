@@ -306,10 +306,27 @@ LLIntCallee::LLIntCallee(FunctionCodeBlockGenerator& generator, size_t index, st
             HandlerInfo& handler = m_exceptionHandlers[i];
             auto& instruction = *m_instructions->at(unlinkedHandler.m_target).ptr();
             CodeLocationLabel<ExceptionHandlerPtrTag> target;
-            if (unlinkedHandler.m_type == HandlerType::Catch)
+            switch (unlinkedHandler.m_type) {
+            case HandlerType::Catch:
                 target = CodeLocationLabel<ExceptionHandlerPtrTag>(LLInt::handleWasmCatch(instruction.width()).code());
-            else
+                break;
+            case HandlerType::CatchAll:
+            case HandlerType::Delegate:
                 target = CodeLocationLabel<ExceptionHandlerPtrTag>(LLInt::handleWasmCatchAll(instruction.width()).code());
+                break;
+            case HandlerType::TryTableCatch:
+                target = CodeLocationLabel<ExceptionHandlerPtrTag>(LLInt::handleWasmTryTable(wasm_try_table_catch, instruction.width()).code());
+                break;
+            case HandlerType::TryTableCatchRef:
+                target = CodeLocationLabel<ExceptionHandlerPtrTag>(LLInt::handleWasmTryTable(wasm_try_table_catchref, instruction.width()).code());
+                break;
+            case HandlerType::TryTableCatchAll:
+                target = CodeLocationLabel<ExceptionHandlerPtrTag>(LLInt::handleWasmTryTable(wasm_try_table_catchall, instruction.width()).code());
+                break;
+            case HandlerType::TryTableCatchAllRef:
+                target = CodeLocationLabel<ExceptionHandlerPtrTag>(LLInt::handleWasmTryTable(wasm_try_table_catchallref, instruction.width()).code());
+                break;
+            }
 
             handler.initialize(unlinkedHandler, target);
         }

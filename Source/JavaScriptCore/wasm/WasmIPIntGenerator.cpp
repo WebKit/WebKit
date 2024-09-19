@@ -183,6 +183,7 @@ public:
     using ControlStack = FunctionParser<IPIntGenerator>::ControlStack;
     using Stack = FunctionParser<IPIntGenerator>::Stack;
     using TypedExpression = FunctionParser<IPIntGenerator>::TypedExpression;
+    using CatchHandler = FunctionParser<IPIntGenerator>::CatchHandler;
 
     static ExpressionType emptyExpression() { return { }; };
     PartialResult WARN_UNUSED_RETURN addDrop(ExpressionType);
@@ -460,6 +461,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlType&);
 
     PartialResult WARN_UNUSED_RETURN addTry(BlockSignature, Stack&, ControlType&, Stack&);
+    PartialResult WARN_UNUSED_RETURN addTryTable(BlockSignature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack);
     PartialResult WARN_UNUSED_RETURN addCatch(unsigned, const TypeDefinition&, Stack&, ControlType&, ResultList&);
     PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned, const TypeDefinition&, ControlType&, ResultList&);
     PartialResult WARN_UNUSED_RETURN addCatchAll(Stack&, ControlType&);
@@ -468,6 +470,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addDelegateToUnreachable(ControlType&, ControlType&);
     PartialResult WARN_UNUSED_RETURN addThrow(unsigned, ArgumentList&, Stack&);
     PartialResult WARN_UNUSED_RETURN addRethrow(unsigned, ControlType&);
+    PartialResult WARN_UNUSED_RETURN addThrowRef(ExpressionType, Stack&);
 
     PartialResult WARN_UNUSED_RETURN addReturn(const ControlType&, const Stack&);
     PartialResult WARN_UNUSED_RETURN addBranch(ControlType&, ExpressionType, const Stack&);
@@ -1873,6 +1876,16 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTry(BlockSignature signature
     return { };
 }
 
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTryTable(BlockSignature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack)
+{
+    UNUSED_PARAM(enclosingStack);
+    UNUSED_PARAM(targets);
+    UNUSED_PARAM(result);
+    UNUSED_PARAM(newStack);
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return { };
+}
+
 void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKind)
 {
     ASSERT(ControlType::isTry(tryBlock));
@@ -2023,6 +2036,12 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRethrow(unsigned, ControlTyp
     m_metadata->addBlankSpace(sizeof(mdRethrow));
     WRITE_TO_METADATA(m_metadata->m_metadata.data() + size, mdRethrow, IPInt::rethrowMetadata);
 
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addThrowRef(ExpressionType, Stack&)
+{
+    ASSERT_NOT_IMPLEMENTED_YET();
     return { };
 }
 

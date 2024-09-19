@@ -72,6 +72,24 @@ public:
         unsigned m_tryDepth;
     };
 
+    struct ControlType;
+
+    struct ControlTryTable {
+        struct TryTableTarget {
+            CatchKind type;
+            uint32_t tag;
+            const TypeDefinition* exceptionSignature;
+            Label* target;
+            unsigned targetStackSize;
+        };
+        using TargetList = Vector<TryTableTarget>;
+
+        Ref<Label> m_try;
+        unsigned m_tryDepth;
+
+        TargetList targets;
+    };
+
     struct ControlCatch {
         CatchKind m_kind;
         Ref<Label> m_tryStart;
@@ -85,8 +103,8 @@ public:
         unsigned m_tryDepth;
     };
 
-    struct ControlType : public std::variant<ControlLoop, ControlTopLevel, ControlBlock, ControlIf, ControlTry, ControlCatch> {
-        using Base = std::variant<ControlLoop, ControlTopLevel, ControlBlock, ControlIf, ControlTry, ControlCatch>;
+    struct ControlType : public std::variant<ControlLoop, ControlTopLevel, ControlBlock, ControlIf, ControlTry, ControlCatch, ControlTryTable> {
+        using Base = std::variant<ControlLoop, ControlTopLevel, ControlBlock, ControlIf, ControlTry, ControlCatch, ControlTryTable>;
 
         ControlType()
             : Base(ControlBlock { })
@@ -118,11 +136,17 @@ public:
             return ControlType(signature, stackSize - signature->argumentCount(), WTFMove(continuation), ControlTry { WTFMove(tryLabel), tryDepth });
         }
 
+        static ControlType createTryTable(BlockSignature signature, unsigned stackSize, Ref<Label>&& tryLabel, RefPtr<Label>&& continuation, unsigned tryDepth, ControlTryTable::TargetList&& targets)
+        {
+            return ControlType(signature, stackSize - signature->argumentCount(), WTFMove(continuation), ControlTryTable { WTFMove(tryLabel), tryDepth, WTFMove(targets) });
+        }
+
         static bool isLoop(const ControlType& control) { return std::holds_alternative<ControlLoop>(control); }
         static bool isTopLevel(const ControlType& control) { return std::holds_alternative<ControlTopLevel>(control); }
         static bool isBlock(const ControlType& control) { return std::holds_alternative<ControlBlock>(control); }
         static bool isIf(const ControlType& control) { return std::holds_alternative<ControlIf>(control); }
         static bool isTry(const ControlType& control) { return std::holds_alternative<ControlTry>(control); }
+        static bool isTryTable(const ControlType& control) { return std::holds_alternative<ControlTryTable>(control); }
         static bool isAnyCatch(const ControlType& control) { return std::holds_alternative<ControlCatch>(control); }
         static bool isCatch(const ControlType& control)
         {
@@ -219,6 +243,7 @@ public:
     using ArgumentList = FunctionParser<LLIntGenerator>::ResultList;
     using Stack = FunctionParser<LLIntGenerator>::Stack;
     using TypedExpression = FunctionParser<LLIntGenerator>::TypedExpression;
+    using CatchHandler = FunctionParser<LLIntGenerator>::CatchHandler;
 
     static ExpressionType emptyExpression() { return { }; };
 
@@ -362,6 +387,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlType&);
 
     PartialResult WARN_UNUSED_RETURN addTry(BlockSignature, Stack& enclosingStack, ControlType& result, Stack& newStack);
+    PartialResult WARN_UNUSED_RETURN addTryTable(BlockSignature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack);
     PartialResult WARN_UNUSED_RETURN addCatch(unsigned exceptionIndex, const TypeDefinition&, Stack&, ControlType&, ResultList&);
     PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition&, ControlType&, ResultList&);
     PartialResult WARN_UNUSED_RETURN addCatchAll(Stack&, ControlType&);
@@ -370,6 +396,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addDelegateToUnreachable(ControlType&, ControlType&);
     PartialResult WARN_UNUSED_RETURN addThrow(unsigned exceptionIndex, ArgumentList& args, Stack&);
     PartialResult WARN_UNUSED_RETURN addRethrow(unsigned, ControlType&);
+    PartialResult WARN_UNUSED_RETURN addThrowRef(ExpressionType exception, Stack&);
 
     PartialResult WARN_UNUSED_RETURN addReturn(const ControlType&, Stack& returnValues);
     PartialResult WARN_UNUSED_RETURN addBranch(ControlType&, ExpressionType condition, Stack& returnValues);
@@ -377,6 +404,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addBranchCast(ControlType&, ExpressionType, Stack&, bool, int32_t, bool);
     PartialResult WARN_UNUSED_RETURN addSwitch(ExpressionType condition, const Vector<ControlType*>& targets, ControlType& defaultTargets, Stack& expressionStack);
     PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry&, Stack& expressionStack);
+    void endTryTable(ControlType&);
     PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&, Stack& expressionStack, bool unreachable = true);
     PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&);
 
@@ -567,6 +595,14 @@ private:
         int* jumpTarget;
     };
 
+    struct CatchEntry {
+        unsigned tryStart;
+        unsigned tryEnd;
+        CatchKind kind;
+        unsigned m_tryDepth;
+        unsigned exceptionIndex;
+    };
+
     struct ConstantMapHashTraits : HashTraits<EncodedJSValue> {
         static constexpr bool emptyValueIsZero = true;
         static void constructDeletedValue(EncodedJSValue& slot) { slot = JSValue::encode(jsNull()); }
@@ -715,6 +751,7 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         switch (signature.argumentType(i).kind) {
         case TypeKind::I32:
         case TypeKind::I64:
+        case TypeKind::Exn:
         case TypeKind::Externref:
         case TypeKind::Funcref:
         case TypeKind::RefNull:
@@ -758,6 +795,7 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         switch (signature.returnType(i).kind) {
         case TypeKind::I32:
         case TypeKind::I64:
+        case TypeKind::Exn:
         case TypeKind::Externref:
         case TypeKind::Funcref:
         case TypeKind::RefNull:
@@ -831,6 +869,7 @@ auto LLIntGenerator::callInformationForCallee(const FunctionSignature& signature
         switch (signature.returnType(i).kind) {
         case TypeKind::I32:
         case TypeKind::I64:
+        case TypeKind::Exn:
         case TypeKind::Externref:
         case TypeKind::Funcref:
         case TypeKind::RefNull:
@@ -906,6 +945,7 @@ auto LLIntGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
         switch (signature.as<FunctionSignature>()->argumentType(i).kind) {
         case TypeKind::I32:
         case TypeKind::I64:
+        case TypeKind::Exn:
         case TypeKind::Externref:
         case TypeKind::Funcref:
         case TypeKind::RefNull:
@@ -1175,6 +1215,32 @@ auto LLIntGenerator::addTry(BlockSignature signature, Stack& enclosingStack, Con
     return { };
 }
 
+auto LLIntGenerator::addTryTable(BlockSignature signature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack) -> PartialResult
+{
+    m_usesExceptions = true;
+    ++m_tryDepth;
+
+    splitStack(signature, enclosingStack, newStack);
+
+    auto targetList = targets.map(
+        [&](const auto& target) -> ControlTryTable::TryTableTarget {
+            return {
+                target.type,
+                target.tag,
+                target.exceptionSignature,
+                target.target->targetLabelForBranch().get(),
+                target.target->stackSize()
+            };
+        }
+    );
+
+    Ref<Label> tryLabel = newEmittedLabel();
+    Ref<Label> continuation = newLabel();
+    result = ControlType::createTryTable(signature, m_stackSize, WTFMove(tryLabel), WTFMove(continuation), m_tryDepth, WTFMove(targetList));
+
+    return { };
+}
+
 void LLIntGenerator::finalizePreviousBlockForCatch(ControlType& data, Stack& expressionStack)
 {
     if (!ControlType::isAnyCatch(data))
@@ -1310,6 +1376,12 @@ auto LLIntGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
     return { };
 }
 
+auto LLIntGenerator::addThrowRef(ExpressionType exception, Stack&) -> PartialResult
+{
+    WasmThrowRef::emit(this, exception);
+    return { };
+}
+
 auto LLIntGenerator::addReturn(const ControlType& data, Stack& returnValues) -> PartialResult
 {
     if (!data.m_signature->returnCount()) {
@@ -1434,6 +1506,81 @@ auto LLIntGenerator::endBlock(ControlEntry& entry, Stack& expressionStack) -> Pa
     return addEndToUnreachable(entry, expressionStack, false);
 }
 
+void LLIntGenerator::endTryTable(ControlType& data)
+{
+    auto tryTable = std::get<ControlTryTable>(data);
+    auto targets = tryTable.targets;
+    unsigned tryEnd = m_lastInstruction.offset() + m_lastInstruction->size();
+    auto end = newLabel();
+    // jump past all handlers
+    WasmJmp::emit(this, end->bind(this));
+    auto oldStackSize = m_stackSize;
+    for (auto& target : targets) {
+        // Set up the catch handler here
+
+        auto targetLabel = target.target;
+        m_stackSize = target.targetStackSize;
+
+
+        ResultList results;
+        if (target.type == CatchKind::Catch || target.type == CatchKind::CatchRef) {
+            auto signature = target.exceptionSignature->as<FunctionSignature>();
+            results.reserveInitialCapacity(signature->argumentCount());
+            for (unsigned i = 0; i < signature->argumentCount(); ++i)
+                results.append(virtualRegisterForLocal(m_stackSize + i));
+        }
+
+        RefPtr<Label> handlerLabel = newEmittedLabel();
+
+        switch (target.type) {
+        case CatchKind::Catch: {
+            WasmTryTableCatch::emit(this, static_cast<unsigned>(target.type), target.tag, virtualRegisterForLocal(0), target.exceptionSignature->as<FunctionSignature>()->argumentCount(), results.isEmpty() ? 0 : -results[0].offset());
+            break;
+        }
+        case CatchKind::CatchRef: {
+            VirtualRegister exception = virtualRegisterForLocal(m_stackSize + target.exceptionSignature->as<FunctionSignature>()->argumentCount());
+            WasmTryTableCatch::emit(this, static_cast<unsigned>(target.type), target.tag, exception, target.exceptionSignature->as<FunctionSignature>()->argumentCount(), results.isEmpty() ? 0 : -results[0].offset());
+            break;
+        }
+        case CatchKind::CatchAll: {
+            WasmTryTableCatch::emit(this, static_cast<unsigned>(target.type), target.tag, virtualRegisterForLocal(0), 0, 0);
+            break;
+        }
+        case CatchKind::CatchAllRef: {
+            VirtualRegister exception = virtualRegisterForLocal(m_stackSize);
+            WasmTryTableCatch::emit(this, static_cast<unsigned>(target.type), target.tag, exception, 0, 0);
+            break;
+        }
+        }
+
+        // finish the thunk with a jump
+
+        WasmJmp::emit(this, targetLabel->bind(this));
+
+        HandlerType handlerType;
+        switch (target.type) {
+        case CatchKind::Catch:
+            handlerType = HandlerType::TryTableCatch;
+            break;
+        case CatchKind::CatchRef:
+            handlerType = HandlerType::TryTableCatchRef;
+            break;
+        case CatchKind::CatchAll:
+            handlerType = HandlerType::TryTableCatchAll;
+            break;
+        case CatchKind::CatchAllRef:
+            handlerType = HandlerType::TryTableCatchAllRef;
+            break;
+        }
+
+        m_codeBlock->addExceptionHandler({ handlerType, tryTable.m_try.get().location(), tryEnd, handlerLabel->location(), m_tryDepth + 1, target.tag });
+
+        // reset for the next handler
+        m_stackSize = oldStackSize;
+    }
+    emitLabel(end);
+}
+
 
 auto LLIntGenerator::addEndToUnreachable(ControlEntry& entry, Stack& expressionStack, bool unreachable) -> PartialResult
 {
@@ -1442,12 +1589,15 @@ auto LLIntGenerator::addEndToUnreachable(ControlEntry& entry, Stack& expressionS
     unsigned stackSize = data.stackSize();
     if (ControlType::isAnyCatch(entry.controlData))
         ++stackSize; // Account for the caught exception
-    RELEASE_ASSERT(unreachable || m_stackSize ==  stackSize + data.m_signature->returnCount());
+    RELEASE_ASSERT(unreachable || m_stackSize == stackSize + data.m_signature->returnCount());
+
+    if (ControlType::isTry(data) || ControlType::isTryTable(data) || ControlType::isAnyCatch(data))
+        --m_tryDepth;
+
+    if (ControlType::isTryTable(data))
+        endTryTable(data);
 
     m_stackSize = data.stackSize();
-
-    if (ControlType::isTry(data) || ControlType::isAnyCatch(data))
-        --m_tryDepth;
 
     for (unsigned i = 0; i < data.m_signature->returnCount(); ++i) {
         // We don't want to do a consistency check here because we just reset the stack size

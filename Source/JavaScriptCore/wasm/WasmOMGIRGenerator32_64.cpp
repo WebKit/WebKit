@@ -193,6 +193,9 @@ public:
             case BlockType::Try:
                 out.print("Try: ");
                 break;
+            case BlockType::TryTable:
+                out.print("TryTable: ");
+                break;
             case BlockType::Catch:
                 out.print("Catch: ");
                 break;
@@ -289,6 +292,25 @@ public:
 
         unsigned stackSize() const { return m_stackSize; }
 
+        struct TryTableTarget {
+            CatchKind type;
+            uint32_t tag;
+            const TypeDefinition* exceptionSignature;
+            ControlData* target;
+        };
+        using TargetList = Vector<TryTableTarget>;
+
+        void setTryTableTargets(TargetList&& targets)
+        {
+            m_tryTableTargets = WTFMove(targets);
+        }
+
+        void endTryTable(unsigned tryEndCallSiteIndex)
+        {
+            ASSERT(blockType() == BlockType::TryTable);
+            m_tryEnd = tryEndCallSiteIndex;
+        }
+
     private:
         // FIXME: Compress OMGIRGenerator::ControlData fields using an union
         // https://bugs.webkit.org/show_bug.cgi?id=231212
@@ -304,6 +326,7 @@ public:
         unsigned m_tryCatchDepth;
         CatchKind m_catchKind;
         Variable* m_exception;
+        TargetList m_tryTableTargets;
     };
 
     using ControlType = ControlData;
@@ -313,6 +336,7 @@ public:
     using ControlStack = FunctionParser<OMGIRGenerator>::ControlStack;
     using Stack = FunctionParser<OMGIRGenerator>::Stack;
     using TypedExpression = FunctionParser<OMGIRGenerator>::TypedExpression;
+    using CatchHandler = FunctionParser<OMGIRGenerator>::CatchHandler;
 
     static_assert(std::is_same_v<ResultList, FunctionParser<OMGIRGenerator>::ResultList>);
 
@@ -681,6 +705,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlData&);
 
     PartialResult WARN_UNUSED_RETURN addTry(BlockSignature, Stack& enclosingStack, ControlType& result, Stack& newStack);
+    PartialResult WARN_UNUSED_RETURN addTryTable(BlockSignature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack);
     PartialResult WARN_UNUSED_RETURN addCatch(unsigned exceptionIndex, const TypeDefinition&, Stack&, ControlType&, ResultList&);
     PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition&, ControlType&, ResultList&);
     PartialResult WARN_UNUSED_RETURN addCatchAll(Stack&, ControlType&);
@@ -689,6 +714,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addDelegateToUnreachable(ControlType&, ControlType&);
     PartialResult WARN_UNUSED_RETURN addThrow(unsigned exceptionIndex, ArgumentList& args, Stack&);
     PartialResult WARN_UNUSED_RETURN addRethrow(unsigned, ControlType&);
+    PartialResult WARN_UNUSED_RETURN addThrowRef(ExpressionType exception, Stack&);
 
     PartialResult WARN_UNUSED_RETURN addInlinedReturn(const Stack& returnValues);
     PartialResult WARN_UNUSED_RETURN addReturn(const ControlData&, const Stack& returnValues);
@@ -831,6 +857,7 @@ private:
     Value* loadFromScratchBuffer(unsigned& indexInBuffer, Value* pointer, B3::Type);
     void connectControlAtEntrypoint(unsigned& indexInBuffer, Value* pointer, ControlData&, Stack& expressionStack, ControlData& currentData, bool fillLoopPhis = false);
     Value* emitCatchImpl(CatchKind, ControlType&, unsigned exceptionIndex = 0);
+    void emitCatchTableImpl(ControlData& entryData, const ControlData::TryTableTarget&, const Stack&);
     PatchpointExceptionHandle preparePatchpointForExceptions(BasicBlock*, PatchpointValue*);
 
     Origin origin();
@@ -4330,6 +4357,30 @@ auto OMGIRGenerator::addTry(BlockSignature signature, Stack& enclosingStack, Con
     return { };
 }
 
+auto OMGIRGenerator::addTryTable(BlockSignature signature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack) -> PartialResult
+{
+    ++m_tryCatchDepth;
+    TRACE_CF("TRY");
+
+    auto targetList = targets.map(
+        [&](const auto& target) -> ControlData::TryTableTarget {
+            return {
+                target.type,
+                target.tag,
+                target.exceptionSignature,
+                target.target
+            };
+        }
+    );
+
+    BasicBlock* continuation = m_proc.addBlock();
+    splitStack(signature, enclosingStack, newStack);
+    result = ControlData(m_proc, origin(), signature, BlockType::TryTable, m_stackSize, continuation, advanceCallSiteIndex(), m_tryCatchDepth);
+    result.setTryTableTargets(WTFMove(targetList));
+
+    return { };
+}
+
 auto OMGIRGenerator::addCatch(unsigned exceptionIndex, const TypeDefinition& signature, Stack& currentStack, ControlType& data, ResultList& results) -> PartialResult
 {
     TRACE_CF("CATCH: ", signature);
@@ -4461,6 +4512,89 @@ Value* OMGIRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned
     return buffer;
 }
 
+auto OMGIRGenerator::emitCatchTableImpl(ControlData& data, const ControlData::TryTableTarget& target, const Stack& stack) -> void
+{
+    auto block = m_proc.addBlock();
+    m_rootBlocks.append(block);
+    auto oldBlock = m_currentBlock;
+    m_currentBlock = block;
+
+    HandlerType handlerType;
+    switch (target.type) {
+    case CatchKind::Catch:
+        handlerType = HandlerType::TryTableCatch;
+        break;
+    case CatchKind::CatchRef:
+        handlerType = HandlerType::TryTableCatchRef;
+        break;
+    case CatchKind::CatchAll:
+        handlerType = HandlerType::TryTableCatchAll;
+        break;
+    case CatchKind::CatchAllRef:
+        handlerType = HandlerType::TryTableCatchAllRef;
+        break;
+    }
+    m_exceptionHandlers.append({ handlerType, data.tryStart(), data.tryEnd(), 0, m_tryCatchDepth, target.tag });
+
+    auto signature = target.exceptionSignature;
+
+    reloadMemoryRegistersFromInstance(m_info.memory, instanceValue(), m_currentBlock);
+
+    Value* pointer = block->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR0);
+    Value* exception = block->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR1);
+    Value* buffer = block->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR2);
+
+    unsigned indexInBuffer = 0;
+
+    Vector<OMGIRGenerator*> frames;
+    for (auto* currentFrame = this; currentFrame; currentFrame = currentFrame->m_inlineParent)
+        frames.append(currentFrame);
+    frames.reverse();
+
+    for (auto* currentFrame : frames) {
+        for (auto& local : currentFrame->m_locals)
+            m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, loadFromScratchBuffer(indexInBuffer, pointer, local->type()));
+
+        for (unsigned controlIndex = 0; controlIndex < currentFrame->m_parser->controlStack().size(); ++controlIndex) {
+            auto& controlData = currentFrame->m_parser->controlStack()[controlIndex].controlData;
+            auto& expressionStack = currentFrame->m_parser->controlStack()[controlIndex].enclosedExpressionStack;
+            connectControlAtEntrypoint(indexInBuffer, pointer, controlData, expressionStack, data);
+        }
+
+        auto& topControlData = currentFrame->m_parser->controlStack().last().controlData;
+        auto& topExpressionStack = currentFrame->m_parser->expressionStack();
+        connectControlAtEntrypoint(indexInBuffer, pointer, topControlData, topExpressionStack, data);
+    }
+
+    auto newStack = stack;
+
+    if (target.type == CatchKind::Catch || target.type == CatchKind::CatchRef) {
+        unsigned offset = 0;
+        for (unsigned i = 0; i < signature->template as<FunctionSignature>()->argumentCount(); ++i) {
+            Type type = signature->as<FunctionSignature>()->argumentType(i);
+            Variable* var = m_proc.addVariable(toB3Type(type));
+            Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(type), origin(), buffer, offset * sizeof(uint64_t));
+            set(var, value);
+            newStack.constructAndAppend(type, var);
+            offset += type.kind == TypeKind::V128 ? 2 : 1;
+        }
+    }
+
+    if (target.type == CatchKind::CatchRef || target.type == CatchKind::CatchAllRef) {
+        Variable* var = m_proc.addVariable(pointerType());
+        set(var, exception);
+        push(exception);
+        newStack.constructAndAppend(Type { TypeKind::RefNull, static_cast<TypeIndex>(TypeKind::Exn) }, var);
+    }
+
+    unifyValuesWithBlock(newStack, *target.target);
+
+    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), FrequentedBlock(target.target->targetBlockForBranch(), FrequencyClass::Normal));
+    target.target->targetBlockForBranch()->addPredecessor(block);
+
+    m_currentBlock = oldBlock;
+}
+
 auto OMGIRGenerator::addDelegate(ControlType& target, ControlType& data) -> PartialResult
 {
     return addDelegateToUnreachable(target, data);
@@ -4519,10 +4653,36 @@ auto OMGIRGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
     patch->setGenerator([this, handle] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         handle.generate(jit, params, this);
-        emitRethrowImpl(jit);
+        emitThrowRefImpl(jit);
     });
     m_currentBlock->append(patch);
 
+    return { };
+}
+
+auto WARN_UNUSED_RETURN OMGIRGenerator::addThrowRef(ExpressionType exn, Stack&) -> PartialResult
+{
+    TRACE_CF("THROW_REF");
+
+    PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, origin(), cloningForbidden(Patchpoint));
+    patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
+    patch->effects.terminal = true;
+    patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
+    Value* exception = get(exn);
+    patch->append(exception , ValueRep::reg(GPRInfo::argumentGPR1));
+    CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+        m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), exception, constant(Wasm::toB3Type(exnrefType()), JSValue::encode(jsNull()))));
+
+    check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitExceptionCheck(jit, ExceptionType::NullExnReference);
+    });
+    PatchpointExceptionHandle handle = preparePatchpointForExceptions(m_currentBlock, patch);
+    patch->setGenerator([this, handle] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        handle.generate(jit, params, this);
+        emitThrowRefImpl(jit);
+    });
+    m_currentBlock->append(patch);
     return { };
 }
 
@@ -4695,6 +4855,13 @@ auto OMGIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expre
         m_currentBlock->addPredecessor(data.special);
     } else if (data.blockType() == BlockType::Try || data.blockType() == BlockType::Catch)
         --m_tryCatchDepth;
+    else if (data.blockType() == BlockType::TryTable) {
+        // emit each handler as a new basic block
+        data.endTryTable(advanceCallSiteIndex());
+        for (auto& target : data.m_tryTableTargets)
+            emitCatchTableImpl(data, target, expressionStack);
+        --m_tryCatchDepth;
+    }
 
     if (data.blockType() != BlockType::Loop) {
         for (unsigned i = 0; i < data.signature()->returnCount(); ++i) {

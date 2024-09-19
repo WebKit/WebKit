@@ -1891,6 +1891,11 @@ op :rethrow,
         exception: VirtualRegister,
     }
 
+op :throw_ref,
+    args: {
+        exception: VirtualRegister,
+    }
+
 op_group :Catch,
     [
         :catch,
@@ -1908,6 +1913,21 @@ op_group :CatchAll,
     ],
     args: {
         exception: VirtualRegister,
+    }
+
+op_group :TryTableCatch,
+    [
+        :try_table_catch,
+        :try_table_catchref,
+        :try_table_catchall,
+        :try_table_catchallref,
+    ],
+    args: {
+        kind: unsigned,
+        exceptionIndex: unsigned,
+        exception: VirtualRegister,
+        argumentCount: unsigned,
+        startOffset: unsigned,
     }
 
 op :ref_i31,

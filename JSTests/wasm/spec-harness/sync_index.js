@@ -84,6 +84,9 @@ function eq_externref(x, y) {
 function eq_funcref(x, y) {
   return x === y ? 1 : 0;
 }
+function eq_ref(x, y) {
+  return x === y ? 1 : 0;
+}
 
 let $$;
 
@@ -101,6 +104,7 @@ function reinitializeRegistry() {
         is_funcref: is_funcref,
         eq_externref: eq_externref,
         eq_funcref: eq_funcref,
+        eq_ref: eq_ref,
         print: console.log.bind(console),
         print_i32: console.log.bind(console),
         print_i64: console.log.bind(console),
@@ -190,6 +194,18 @@ function assert_invalid(bytes) {
 }
 
 const assert_malformed = assert_invalid;
+
+function assert_invalid_custom(bytes) {
+    uniqueTest(() => {
+        try {
+            module(bytes, /* valid */ true);
+        } catch(e) {
+            throw new Error('failed on custom section error');
+        }
+    }, "A wast module that should have an invalid or malformed custom section.");
+}
+
+const assert_malformed_custom = assert_invalid_custom;
 
 function instance(bytes, imports = registry, valid = true) {
     if (imports instanceof Result) {
@@ -314,6 +330,20 @@ function assert_trap(action) {
             assert_true(e instanceof WebAssembly.RuntimeError, `expected runtime error, observed ${e}:`);
         }
     }, "A wast module that must trap at runtime.");
+}
+
+function assert_exception(action) {
+    let result = action();
+
+    _assert(result instanceof Result);
+
+    uniqueTest(() => {
+        assert_true(result.isError(), 'expected error result');
+        if (result.isError()) {
+            let e = result.value;
+            assert_true(e instanceof WebAssembly.Exception, `expected runtime error, observed ${e}:`);
+        }
+    }, "A wast module that must throw an exception at runtime.");
 }
 
 let StackOverflow;

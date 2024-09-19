@@ -662,6 +662,16 @@ public:
 
         void setTryInfo(unsigned tryStart, unsigned tryEnd, unsigned tryCatchDepth);
 
+        struct TryTableTarget {
+            CatchKind type;
+            uint32_t tag;
+            const TypeDefinition* exceptionSignature;
+            ControlData* target;
+        };
+        using TargetList = Vector<TryTableTarget>;
+
+        void setTryTableTargets(TargetList&&);
+
         void setIfBranch(MacroAssembler::Jump branch);
 
         void setLoopLabel(MacroAssembler::Label label);
@@ -689,6 +699,7 @@ public:
         unsigned m_tryStart { 0 };
         unsigned m_tryEnd { 0 };
         unsigned m_tryCatchDepth { 0 };
+        Vector<TryTableTarget, 8> m_tryTableTargets;
     };
 
     friend struct ControlData;
@@ -702,6 +713,7 @@ public:
     using TypedExpression = typename FunctionParserTypes<ControlType, ExpressionType, CallType>::TypedExpression;
     using Stack = FunctionParser<BBQJIT>::Stack;
     using ControlStack = FunctionParser<BBQJIT>::ControlStack;
+    using CatchHandler = FunctionParser<BBQJIT>::CatchHandler;
 
     unsigned stackCheckSize() const { return alignedFrameSize(m_maxCalleeStackSize + m_frameSize); }
 
@@ -1699,7 +1711,7 @@ public:
 
     StackMap makeStackMap(const ControlData& data, Stack& enclosingStack);
 
-    void emitLoopTierUpCheckAndOSREntryData(const ControlData& data, Stack& enclosingStack, unsigned loopIndex);
+    void emitLoopTierUpCheckAndOSREntryData(const ControlData&, Stack& enclosingStack, unsigned loopIndex);
 
     PartialResult WARN_UNUSED_RETURN addLoop(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack, uint32_t loopIndex);
 
@@ -1710,12 +1722,14 @@ public:
     PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlData& data);
 
     PartialResult WARN_UNUSED_RETURN addTry(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack);
+    PartialResult WARN_UNUSED_RETURN addTryTable(BlockSignature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack);
 
     void emitCatchPrologue();
 
     void emitCatchAllImpl(ControlData& dataCatch);
 
     void emitCatchImpl(ControlData& dataCatch, const TypeDefinition& exceptionSignature, ResultList& results);
+    void emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTarget&);
 
     PartialResult WARN_UNUSED_RETURN addCatch(unsigned exceptionIndex, const TypeDefinition& exceptionSignature, Stack& expressionStack, ControlType& data, ResultList& results);
 
@@ -1732,6 +1746,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addThrow(unsigned exceptionIndex, ArgumentList& arguments, Stack&);
 
     PartialResult WARN_UNUSED_RETURN addRethrow(unsigned, ControlType& data);
+
+    PartialResult WARN_UNUSED_RETURN addThrowRef(ExpressionType exception, Stack&);
 
     void prepareForExceptions();
 

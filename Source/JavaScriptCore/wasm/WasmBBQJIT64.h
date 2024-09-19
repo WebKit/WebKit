@@ -544,6 +544,7 @@ void BBQJIT::emitCCall(Func function, const Vector<Value, N>& arguments, Value& 
     case TypeKind::Arrayref:
     case TypeKind::Structref:
     case TypeKind::Funcref:
+    case TypeKind::Exn:
     case TypeKind::Externref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:

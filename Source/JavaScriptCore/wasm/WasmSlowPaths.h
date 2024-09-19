@@ -84,6 +84,7 @@ WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_wait64);
 WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_notify);
 WASM_SLOW_PATH_HIDDEN_DECL(throw);
 WASM_SLOW_PATH_HIDDEN_DECL(rethrow);
+WASM_SLOW_PATH_HIDDEN_DECL(throw_ref);
 WASM_SLOW_PATH_HIDDEN_DECL(retrieve_and_clear_exception);
 WASM_SLOW_PATH_HIDDEN_DECL(array_new);
 WASM_SLOW_PATH_HIDDEN_DECL(array_get);

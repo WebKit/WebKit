@@ -367,6 +367,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, EncodedJSValue, 
         case TypeKind::Ref:
         case TypeKind::Externref:
         case TypeKind::Funcref:
+        case TypeKind::Exn:
         case TypeKind::I32: {
             if (wasmParam.isStackArgument()) {
                 uint64_t raw = *access.operator()<uint64_t>(cfr, wasmParam.offsetFromSP() + sizeof(CallerFrameAndPC));

@@ -170,6 +170,7 @@ private:
         case TypeKind::I32:
         case TypeKind::I64:
         case TypeKind::Funcref:
+        case TypeKind::Exn:
         case TypeKind::Externref:
         case TypeKind::Ref:
         case TypeKind::RefNull:
@@ -196,6 +197,7 @@ public:
             switch (signature.returnType(i).kind) {
             case TypeKind::I32:
             case TypeKind::I64:
+            case TypeKind::Exn:
             case TypeKind::Externref:
             case TypeKind::Funcref:
             case TypeKind::RefNull:
@@ -245,6 +247,7 @@ public:
             switch (signature.argumentType(i).kind) {
             case TypeKind::I32:
             case TypeKind::I64:
+            case TypeKind::Exn:
             case TypeKind::Externref:
             case TypeKind::Funcref:
             case TypeKind::RefNull:
@@ -375,6 +378,7 @@ private:
         case TypeKind::I32:
         case TypeKind::I64:
         case TypeKind::Funcref:
+        case TypeKind::Exn:
         case TypeKind::Externref:
         case TypeKind::Ref:
         case TypeKind::RefNull:
@@ -478,6 +482,7 @@ private:
         switch (valueType.kind) {
         case TypeKind::I64:
         case TypeKind::Funcref:
+        case TypeKind::Exn:
         case TypeKind::Externref:
         case TypeKind::RefNull:
         case TypeKind::Ref:
@@ -505,6 +510,7 @@ public:
             switch (signature.returnType(i).kind) {
             case TypeKind::I64:
             case TypeKind::Funcref:
+            case TypeKind::Exn:
             case TypeKind::Externref:
             case TypeKind::RefNull:
             case TypeKind::Ref:
@@ -545,6 +551,7 @@ public:
             switch (signature.argumentType(i).kind) {
             case TypeKind::I64:
             case TypeKind::Funcref:
+            case TypeKind::Exn:
             case TypeKind::Externref:
             case TypeKind::RefNull:
             case TypeKind::Ref:

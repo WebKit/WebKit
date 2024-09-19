@@ -322,6 +322,7 @@ TypeKind BBQJIT::toValueKind(TypeKind kind)
     case TypeKind::Func:
     case TypeKind::I31ref:
     case TypeKind::Funcref:
+    case TypeKind::Exn:
     case TypeKind::Ref:
     case TypeKind::RefNull:
     case TypeKind::Rec:
@@ -631,6 +632,11 @@ void ControlData::setTryInfo(unsigned tryStart, unsigned tryEnd, unsigned tryCat
     m_tryCatchDepth = tryCatchDepth;
 }
 
+void ControlData::setTryTableTargets(TargetList &&targets)
+{
+    m_tryTableTargets = WTFMove(targets);
+}
+
 void ControlData::setIfBranch(MacroAssembler::Jump branch)
 {
     ASSERT(m_blockType == BlockType::If);
@@ -779,6 +785,7 @@ Value BBQJIT::addConstant(Type type, uint64_t value)
     case TypeKind::Structref:
     case TypeKind::Arrayref:
     case TypeKind::Funcref:
+    case TypeKind::Exn:
     case TypeKind::Externref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
@@ -3090,6 +3097,7 @@ ControlData WARN_UNUSED_RETURN BBQJIT::addTopLevel(BlockSignature signature)
         case TypeKind::V128:
             clear(ClearMode::Zero, type, m_locals[i]);
             break;
+        case TypeKind::Exn:
         case TypeKind::Externref:
         case TypeKind::Funcref:
         case TypeKind::Ref:
@@ -3200,6 +3208,7 @@ B3::Type BBQJIT::toB3Type(TypeKind kind)
     case TypeKind::Structref:
     case TypeKind::Arrayref:
     case TypeKind::Funcref:
+    case TypeKind::Exn:
     case TypeKind::Externref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
@@ -3437,6 +3446,35 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addTry(BlockSignature signature, Stack&
     return { };
 }
 
+PartialResult WARN_UNUSED_RETURN BBQJIT::addTryTable(BlockSignature signature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack)
+{
+    m_usesExceptions = true;
+    ++m_tryCatchDepth;
+    ++m_callSiteIndex;
+
+    auto targetList = targets.map(
+        [&](const auto& target) -> ControlData::TryTableTarget {
+            return {
+                target.type,
+                target.tag,
+                target.exceptionSignature,
+                target.target
+            };
+        }
+    );
+
+    result = ControlData(*this, BlockType::TryTable, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->argumentCount());
+    result.setTryInfo(m_callSiteIndex, m_callSiteIndex, m_tryCatchDepth);
+    result.setTryTableTargets(WTFMove(targetList));
+    currentControlData().flushAndSingleExit(*this, result, enclosingStack, true, false);
+
+    LOG_INSTRUCTION("TryTable", *signature);
+    LOG_INDENT();
+    splitStack(signature, enclosingStack, newStack);
+    result.startBlock(*this, newStack);
+    return { };
+}
+
 PartialResult WARN_UNUSED_RETURN BBQJIT::addCatch(unsigned exceptionIndex, const TypeDefinition& exceptionSignature, Stack& expressionStack, ControlType& data, ResultList& results)
 {
     m_usesExceptions = true;
@@ -3567,6 +3605,35 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addThrow(unsigned exceptionIndex, Argum
     }
     m_jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR0);
     emitThrowImpl(m_jit, exceptionIndex);
+
+    return { };
+}
+
+PartialResult WARN_UNUSED_RETURN BBQJIT::addThrowRef(Value exception, Stack&)
+{
+
+    LOG_INSTRUCTION("ThrowRef", exception);
+
+    emitMove(exception, Location::fromGPR(GPRInfo::argumentGPR1));
+    consume(exception);
+
+    ++m_callSiteIndex;
+    bool mayHaveExceptionHandlers = !m_hasExceptionHandlers || m_hasExceptionHandlers.value();
+    if (mayHaveExceptionHandlers) {
+        m_jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+        flushRegisters();
+    }
+
+    // Check for a null exception
+    m_jit.move(CCallHelpers::TrustedImmPtr(JSValue::encode(jsNull())), wasmScratchGPR);
+    auto nullexn = m_jit.branchPtr(CCallHelpers::Equal, GPRInfo::argumentGPR1, wasmScratchGPR);
+
+    m_jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR0);
+    emitThrowRefImpl(m_jit);
+
+    nullexn.linkTo(m_jit.label(), &m_jit);
+
+    emitThrowException(ExceptionType::NullExnReference);
 
     return { };
 }
@@ -3793,6 +3860,24 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addEndToUnreachable(ControlEntry& entry
         entryData.flushAndSingleExit(*this, entryData, entry.enclosedExpressionStack, false, true, unreachable);
         entryData.linkJumps(&m_jit);
         break;
+    case BlockType::TryTable: {
+        // normal execution: jump past the handlers
+        entryData.flushAndSingleExit(*this, entryData, entry.enclosedExpressionStack, false, true, unreachable);
+        entryData.addBranch(m_jit.jump());
+        // similar to LLInt, we make a handler section to avoid jumping into random parts of code and not having
+        // a real landing pad
+        // FIXME: should we generate this all at the end of the code? this might help icache performance since
+        // exceptions are rare
+        ++m_callSiteIndex;
+
+        for (auto& target : entryData.m_tryTableTargets)
+            emitCatchTableImpl(entryData, target);
+
+        // we're done!
+        --m_tryCatchDepth;
+        entryData.linkJumps(&m_jit);
+        break;
+    }
     default:
         entryData.flushAndSingleExit(*this, entryData, entry.enclosedExpressionStack, false, true, unreachable);
         entryData.linkJumps(&m_jit);

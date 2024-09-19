@@ -248,6 +248,11 @@ inline Type arrayrefType(bool isNullable = true)
     return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Arrayref) };
 }
 
+inline Type exnrefType()
+{
+    return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Exn) };
+}
+
 inline bool isRefWithTypeIndex(Type type)
 {
     return isRefType(type) && !typeIndexIsType(type.index);
@@ -356,6 +361,7 @@ inline bool isValidHeapTypeKind(intptr_t kind)
     switch (kind) {
     case static_cast<intptr_t>(TypeKind::Funcref):
     case static_cast<intptr_t>(TypeKind::Externref):
+    case static_cast<intptr_t>(TypeKind::Exn):
         return true;
     case static_cast<intptr_t>(TypeKind::I31ref):
     case static_cast<intptr_t>(TypeKind::Arrayref):
@@ -397,6 +403,8 @@ inline const char* heapTypeKindAsString(TypeKind kind)
         return "nofunc";
     case TypeKind::Nullexternref:
         return "noextern";
+    case TypeKind::Exn:
+        return "exn";
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return "";

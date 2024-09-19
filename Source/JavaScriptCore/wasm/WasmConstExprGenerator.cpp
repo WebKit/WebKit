@@ -171,6 +171,7 @@ public:
     using ControlStack = FunctionParser<ConstExprGenerator>::ControlStack;
     using Stack = FunctionParser<ConstExprGenerator>::Stack;
     using TypedExpression = FunctionParser<ConstExprGenerator>::TypedExpression;
+    using CatchHandler = FunctionParser<ConstExprGenerator>::CatchHandler;
 
     enum class Mode : uint8_t {
         Validate,
@@ -229,6 +230,7 @@ public:
         case TypeKind::Structref:
         case TypeKind::Arrayref:
         case TypeKind::Funcref:
+        case TypeKind::Exn:
         case TypeKind::Externref:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
@@ -645,6 +647,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addElse(ControlData&, Stack&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlData&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addTry(BlockSignature, Stack&, ControlType&, Stack&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addTryTable(BlockSignature, Stack&, const Vector<CatchHandler>&, ControlType&, Stack&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addCatch(unsigned, const TypeDefinition&, Stack&, ControlType&, ResultList&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned, const TypeDefinition&, ControlType&, ResultList&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addCatchAll(Stack&, ControlType&) CONST_EXPR_STUB
@@ -653,6 +656,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addDelegateToUnreachable(ControlType&, ControlType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addThrow(unsigned, ArgumentList&, Stack&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addRethrow(unsigned, ControlType&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addThrowRef(ExpressionType, Stack&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addReturn(const ControlData&, const Stack&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType, Stack&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addBranchNull(ControlType&, ExpressionType, Stack&, bool, ExpressionType&) CONST_EXPR_STUB

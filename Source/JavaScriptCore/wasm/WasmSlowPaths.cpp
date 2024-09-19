@@ -40,6 +40,7 @@
 #include "WasmCallee.h"
 #include "WasmCallingConvention.h"
 #include "WasmFunctionCodeBlockGenerator.h"
+#include "WasmFunctionParser.h"
 #include "WasmLLIntBuiltin.h"
 #include "WasmLLIntGenerator.h"
 #include "WasmModuleInformation.h"
@@ -1087,6 +1088,29 @@ WASM_SLOW_PATH_DECL(rethrow)
     WASM_RETURN_TWO(vm.targetMachinePCForThrow, nullptr);
 }
 
+WASM_SLOW_PATH_DECL(throw_ref)
+{
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
+
+    JSGlobalObject* globalObject = instance->globalObject();
+    VM& vm = globalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    auto instruction = pc->as<WasmThrowRef>();
+    auto exceptionPtr = READ(instruction.m_exception).pointer();
+    EncodedJSValue exception = EncodedJSValue(exceptionPtr);
+
+    if (JSValue::decode(exception) == jsNull())
+        WASM_THROW(Wasm::ExceptionType::NullExnReference);
+
+    throwException(globalObject, throwScope, reinterpret_cast<JSWebAssemblyException*>(exceptionPtr));
+
+    genericUnwind(vm, callFrame);
+    ASSERT(!!vm.callFrameForCatch);
+    ASSERT(!!vm.targetMachinePCForThrow);
+    WASM_RETURN_TWO(vm.targetMachinePCForThrow, exceptionPtr);
+}
+
 WASM_SLOW_PATH_DECL(retrieve_and_clear_exception)
 {
     UNUSED_PARAM(callFrame);
@@ -1115,8 +1139,12 @@ WASM_SLOW_PATH_DECL(retrieve_and_clear_exception)
         handleCatch(pc->as<WasmCatch>());
     else if (pc->is<WasmCatchAll>())
         handleCatchAll(pc->as<WasmCatchAll>());
-    else
-        RELEASE_ASSERT_NOT_REACHED();
+    else if (pc->is<WasmTryTableCatch>()) {
+        payload = bitwise_cast<void*>(jsDynamicCast<JSWebAssemblyException*>(thrownValue)->payload().span().data());
+        auto instr = pc->as<WasmTryTableCatch>();
+        if (instr.m_kind == static_cast<unsigned>(Wasm::CatchKind::CatchRef) || instr.m_kind == static_cast<unsigned>(Wasm::CatchKind::CatchAllRef))
+            callFrame->uncheckedR(pc->as<WasmTryTableCatch>().m_exception) = thrownValue;
+    }
 
     // We want to clear the exception here rather than in the catch prologue
     // JIT code because clearing it also entails clearing a bit in an Atomic

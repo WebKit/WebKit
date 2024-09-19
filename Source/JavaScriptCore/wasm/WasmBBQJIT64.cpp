@@ -117,6 +117,7 @@ uint32_t BBQJIT::sizeOfType(TypeKind type)
     case TypeKind::Subfinal:
     case TypeKind::Struct:
     case TypeKind::Structref:
+    case TypeKind::Exn:
     case TypeKind::Externref:
     case TypeKind::Array:
     case TypeKind::Arrayref:
@@ -225,6 +226,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::getGlobal(uint32_t index, Value& result
         case TypeKind::Subfinal:
         case TypeKind::Struct:
         case TypeKind::Structref:
+        case TypeKind::Exn:
         case TypeKind::Externref:
         case TypeKind::Array:
         case TypeKind::Arrayref:
@@ -306,6 +308,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::setGlobal(uint32_t index, Value value)
         case TypeKind::Subfinal:
         case TypeKind::Struct:
         case TypeKind::Structref:
+        case TypeKind::Exn:
         case TypeKind::Externref:
         case TypeKind::Array:
         case TypeKind::Arrayref:
@@ -2966,9 +2969,7 @@ void BBQJIT::emitCatchImpl(ControlData& dataCatch, const TypeDefinition& excepti
     dataCatch.startBlock(*this, emptyStack);
 
     if (exceptionSignature.as<FunctionSignature>()->argumentCount()) {
-        ScratchScope<1, 0> scratches(*this);
-        GPRReg bufferGPR = scratches.gpr(0);
-        m_jit.loadPtr(Address(GPRInfo::returnValueGPR, JSWebAssemblyException::offsetOfPayload() + JSWebAssemblyException::Payload::offsetOfStorage()), bufferGPR);
+        m_jit.loadPtr(Address(GPRInfo::returnValueGPR, JSWebAssemblyException::offsetOfPayload() + JSWebAssemblyException::Payload::offsetOfStorage()), wasmScratchGPR);
         unsigned offset = 0;
         for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i) {
             Type type = exceptionSignature.as<FunctionSignature>()->argumentType(i);
@@ -2976,7 +2977,7 @@ void BBQJIT::emitCatchImpl(ControlData& dataCatch, const TypeDefinition& excepti
             Location slot = canonicalSlot(result);
             switch (type.kind) {
             case TypeKind::I32:
-                m_jit.transfer32(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
+                m_jit.transfer32(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
                 break;
             case TypeKind::I31ref:
             case TypeKind::I64:
@@ -2985,6 +2986,7 @@ void BBQJIT::emitCatchImpl(ControlData& dataCatch, const TypeDefinition& excepti
             case TypeKind::Arrayref:
             case TypeKind::Structref:
             case TypeKind::Funcref:
+            case TypeKind::Exn:
             case TypeKind::Externref:
             case TypeKind::Eqref:
             case TypeKind::Anyref:
@@ -2997,16 +2999,16 @@ void BBQJIT::emitCatchImpl(ControlData& dataCatch, const TypeDefinition& excepti
             case TypeKind::Array:
             case TypeKind::Struct:
             case TypeKind::Func:
-                m_jit.transfer64(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
+                m_jit.transfer64(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
                 break;
             case TypeKind::F32:
-                m_jit.transfer32(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
+                m_jit.transfer32(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
                 break;
             case TypeKind::F64:
-                m_jit.transfer64(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
+                m_jit.transfer64(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
                 break;
             case TypeKind::V128:
-                m_jit.transferVector(Address(bufferGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
+                m_jit.transferVector(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
                 break;
             case TypeKind::Void:
                 RELEASE_ASSERT_NOT_REACHED();
@@ -3017,6 +3019,107 @@ void BBQJIT::emitCatchImpl(ControlData& dataCatch, const TypeDefinition& excepti
             offset += type.kind == TypeKind::V128 ? 2 : 1;
         }
     }
+}
+
+void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTarget& target)
+{
+    HandlerType handlerType;
+    switch (target.type) {
+    case CatchKind::Catch:
+        handlerType = HandlerType::TryTableCatch;
+        break;
+    case CatchKind::CatchRef:
+        handlerType = HandlerType::TryTableCatchRef;
+        break;
+    case CatchKind::CatchAll:
+        handlerType = HandlerType::TryTableCatchAll;
+        break;
+    case CatchKind::CatchAllRef:
+        handlerType = HandlerType::TryTableCatchAllRef;
+        break;
+    }
+
+    JIT_COMMENT(m_jit, "catch handler");
+    m_catchEntrypoints.append(m_jit.label());
+    m_exceptionHandlers.append({ handlerType, entryData.tryStart(), m_callSiteIndex, 0, m_tryCatchDepth, target.tag });
+    emitCatchPrologue();
+
+    if (target.type == CatchKind::CatchRef || target.type == CatchKind::CatchAllRef) {
+        if (target.target->targetLocations().last().isGPR())
+            m_jit.move(GPRInfo::returnValueGPR, target.target->targetLocations().last().asGPR());
+        else
+            m_jit.storePtr(GPRInfo::returnValueGPR, target.target->targetLocations().last().asAddress());
+    }
+
+    if (target.type == CatchKind::Catch || target.type == CatchKind::CatchRef) {
+        auto signature = target.exceptionSignature->template as<FunctionSignature>();
+        if (signature->argumentCount()) {
+            m_jit.loadPtr(Address(GPRInfo::returnValueGPR, JSWebAssemblyException::offsetOfPayload() + JSWebAssemblyException::Payload::offsetOfStorage()), wasmScratchGPR);
+            unsigned offset = 0;
+            for (unsigned i = 0; i < signature->argumentCount(); ++i) {
+                Type type = signature->argumentType(i);
+                Location slot = target.target->targetLocations()[i];
+                switch (type.kind) {
+                case TypeKind::I32:
+                    if (slot.isGPR())
+                        m_jit.load32(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asGPR());
+                    else
+                        m_jit.transfer32(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
+                    break;
+                case TypeKind::I31ref:
+                case TypeKind::I64:
+                case TypeKind::Ref:
+                case TypeKind::RefNull:
+                case TypeKind::Arrayref:
+                case TypeKind::Structref:
+                case TypeKind::Funcref:
+                case TypeKind::Exn:
+                case TypeKind::Externref:
+                case TypeKind::Eqref:
+                case TypeKind::Anyref:
+                case TypeKind::Nullref:
+                case TypeKind::Nullfuncref:
+                case TypeKind::Nullexternref:
+                case TypeKind::Rec:
+                case TypeKind::Sub:
+                case TypeKind::Subfinal:
+                case TypeKind::Array:
+                case TypeKind::Struct:
+                case TypeKind::Func:
+                    if (slot.isGPR())
+                        m_jit.load64(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asGPR());
+                    else
+                        m_jit.transfer64(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
+                    break;
+                case TypeKind::F32:
+                    if (slot.isFPR())
+                        m_jit.loadFloat(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asFPR());
+                    else
+                        m_jit.transfer32(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
+                    break;
+                case TypeKind::F64:
+                    if (slot.isFPR())
+                        m_jit.loadDouble(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asFPR());
+                    else
+                        m_jit.transfer64(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
+                    break;
+                case TypeKind::V128:
+                    if (slot.isGPR())
+                        m_jit.loadVector(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asFPR());
+                    else
+                        m_jit.transferVector(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
+                    break;
+                case TypeKind::Void:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+                offset += type.kind == TypeKind::V128 ? 2 : 1;
+            }
+        }
+    }
+
+    // jump to target
+    target.target->addBranch(m_jit.jump());
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addRethrow(unsigned, ControlType& data)
@@ -3031,7 +3134,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addRethrow(unsigned, ControlType& data)
     }
     emitMove(this->exception(data), Location::fromGPR(GPRInfo::argumentGPR1));
     m_jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR0);
-    emitRethrowImpl(m_jit);
+    emitThrowRefImpl(m_jit);
     return { };
 }
 
@@ -4724,6 +4827,7 @@ void BBQJIT::emitStoreConst(Value constant, Location loc)
     case TypeKind::Arrayref:
     case TypeKind::Structref:
     case TypeKind::RefNull:
+    case TypeKind::Exn:
     case TypeKind::Externref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
@@ -4767,6 +4871,7 @@ void BBQJIT::emitMoveConst(Value constant, Location loc)
     case TypeKind::Arrayref:
     case TypeKind::Structref:
     case TypeKind::RefNull:
+    case TypeKind::Exn:
     case TypeKind::Externref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
@@ -4806,6 +4911,7 @@ void BBQJIT::emitStore(TypeKind type, Location src, Location dst)
         m_jit.storeDouble(src.asFPR(), dst.asAddress());
         break;
     case TypeKind::I31ref:
+    case TypeKind::Exn:
     case TypeKind::Externref:
     case TypeKind::Ref:
     case TypeKind::RefNull:
@@ -4845,6 +4951,7 @@ void BBQJIT::emitMoveMemory(TypeKind type, Location src, Location dst)
         m_jit.transfer64(src.asAddress(), dst.asAddress());
         break;
     case TypeKind::I31ref:
+    case TypeKind::Exn:
     case TypeKind::Externref:
     case TypeKind::Ref:
     case TypeKind::RefNull:
@@ -4878,6 +4985,7 @@ void BBQJIT::emitMoveRegister(TypeKind type, Location src, Location dst)
     case TypeKind::I32:
     case TypeKind::I31ref:
     case TypeKind::I64:
+    case TypeKind::Exn:
     case TypeKind::Externref:
     case TypeKind::Ref:
     case TypeKind::RefNull:
@@ -4924,6 +5032,7 @@ void BBQJIT::emitLoad(TypeKind type, Location src, Location dst)
     case TypeKind::I31ref:
     case TypeKind::Ref:
     case TypeKind::RefNull:
+    case TypeKind::Exn:
     case TypeKind::Externref:
     case TypeKind::Funcref:
     case TypeKind::Arrayref:

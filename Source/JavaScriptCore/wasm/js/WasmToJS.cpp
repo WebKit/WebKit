@@ -163,6 +163,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(TypeIn
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case TypeKind::RefNull:
             case TypeKind::Ref:
+            case TypeKind::Exn:
             case TypeKind::Externref:
             case TypeKind::Funcref:
             case TypeKind::I32:
@@ -257,6 +258,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(TypeIn
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case TypeKind::RefNull:
             case TypeKind::Ref:
+            case TypeKind::Exn:
             case TypeKind::Externref:
             case TypeKind::Funcref:
             case TypeKind::I32:
