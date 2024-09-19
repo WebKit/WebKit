@@ -387,12 +387,6 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
         return makeUnexpected(ContentRuleListStore::Error::CompileFailed);
     }
 
-    auto mappedData = adoptAndMapFile(temporaryFileHandle, 0, metaData.fileSize());
-    if (mappedData.isNull()) {
-        WTFLogAlways("Content Rule List compiling failed: Mapping file failed.");
-        return makeUnexpected(ContentRuleListStore::Error::CompileFailed);
-    }
-
     // Try and delete any files at the destination instead of overwriting them
     // in case there is already a file there and it is mmapped.
     deleteFile(finalFilePath);
@@ -401,10 +395,16 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
         WTFLogAlways("Content Rule List compiling failed: Moving file failed.");
         return makeUnexpected(ContentRuleListStore::Error::CompileFailed);
     }
-    
+
     if (!FileSystem::makeSafeToUseMemoryMapForPath(finalFilePath))
         return makeUnexpected(ContentRuleListStore::Error::CompileFailed);
-    
+
+    auto mappedData = mapFile(finalFilePath);
+    if (mappedData.isNull()) {
+        WTFLogAlways("Content Rule List compiling failed: Mapping file failed.");
+        return makeUnexpected(ContentRuleListStore::Error::CompileFailed);
+    }
+
     return {{ WTFMove(metaData), WTFMove(mappedData) }};
 }
 
