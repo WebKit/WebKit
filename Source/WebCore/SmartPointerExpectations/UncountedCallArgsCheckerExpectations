@@ -791,7 +791,6 @@ css/CSSCounterValue.cpp
 css/CSSCounterValue.h
 css/CSSCrossfadeValue.cpp
 css/CSSCursorImageValue.cpp
-css/CSSCustomPropertyValue.cpp
 css/CSSFilterImageValue.cpp
 css/CSSFontFace.cpp
 css/CSSFontFaceRule.cpp
@@ -875,7 +874,6 @@ css/StyleRuleImport.cpp
 css/StyleRuleImport.h
 css/StyleSheetContents.cpp
 css/StyleSheetList.cpp
-css/color/CSSUnresolvedColorKeyword.cpp
 css/color/CSSUnresolvedLightDark.cpp
 css/parser/CSSParserImpl.cpp
 css/parser/CSSPropertyParser.cpp

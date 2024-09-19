@@ -36,14 +36,12 @@ UIProcess/API/Cocoa/WKWebView.mm
 UIProcess/API/Cocoa/WKWebViewTesting.mm
 UIProcess/API/Cocoa/_WKDataTask.mm
 UIProcess/API/Cocoa/_WKDownload.mm
-UIProcess/Automation/WebAutomationSession.cpp
 UIProcess/BrowsingContextGroup.cpp
 UIProcess/Cocoa/GroupActivities/GroupActivitiesSessionNotifier.mm
 UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.mm
 UIProcess/Cocoa/UIDelegate.mm
 UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp
 UIProcess/Cocoa/WebPageProxyCocoa.mm
-UIProcess/Cocoa/WebProcessPoolCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIPortCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionContextCocoa.mm
 UIProcess/Gamepad/UIGamepadProvider.cpp
