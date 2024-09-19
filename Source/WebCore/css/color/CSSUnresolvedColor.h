@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +33,7 @@
 #include "CSSUnresolvedColorKeyword.h"
 #include "CSSUnresolvedColorLayers.h"
 #include "CSSUnresolvedColorMix.h"
+#include "CSSUnresolvedContrastColor.h"
 #include "CSSUnresolvedLightDark.h"
 #include "CSSUnresolvedRelativeColor.h"
 #include <variant>
@@ -77,6 +79,7 @@ private:
         CSSUnresolvedColorHex,
         CSSUnresolvedColorLayers,
         CSSUnresolvedColorMix,
+        CSSUnresolvedContrastColor,
         CSSUnresolvedLightDark,
         CSSUnresolvedAbsoluteColor<RGBFunctionLegacy<NumberRaw>>,
         CSSUnresolvedAbsoluteColor<RGBFunctionLegacy<PercentageRaw>>,

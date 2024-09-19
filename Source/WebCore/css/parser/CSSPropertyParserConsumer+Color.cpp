@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +54,7 @@
 #include "CSSUnresolvedColorLayers.h"
 #include "CSSUnresolvedColorMix.h"
 #include "CSSUnresolvedColorResolutionState.h"
+#include "CSSUnresolvedContrastColor.h"
 #include "CSSUnresolvedLightDark.h"
 #include "CSSUnresolvedRelativeColor.h"
 #include "CSSValuePool.h"
@@ -85,6 +87,7 @@ struct ColorParserState {
         : allowedColorTypes { options.allowedColorTypes }
         , acceptQuirkyColors { options.acceptQuirkyColors }
         , colorLayersEnabled { context.colorLayersEnabled }
+        , contrastColorEnabled { context.contrastColorEnabled }
         , lightDarkEnabled { context.lightDarkEnabled }
         , mode { context.mode }
     {
@@ -94,6 +97,7 @@ struct ColorParserState {
 
     bool acceptQuirkyColors;
     bool colorLayersEnabled;
+    bool contrastColorEnabled;
     bool lightDarkEnabled;
 
     CSSParserMode mode;
@@ -609,6 +613,7 @@ static bool hasNonCalculatedZeroPercentage(const CSSUnresolvedColorMix::Componen
 static std::optional<CSSUnresolvedColor> consumeColorMixFunction(CSSParserTokenRange& range, ColorParserState& state)
 {
     // color-mix() = color-mix( <color-interpolation-method> , [ <color> && <percentage [0,100]>? ]#{2})
+    // https://drafts.csswg.org/css-color-5/#color-mix
 
     ASSERT(range.peek().functionId() == CSSValueColorMix);
 
@@ -661,11 +666,43 @@ static std::optional<CSSUnresolvedColor> consumeColorMixFunction(CSSParserTokenR
     };
 }
 
+// MARK: - contrast-color()
+
+static std::optional<CSSUnresolvedColor> consumeContrastColorFunction(CSSParserTokenRange& range, ColorParserState& state)
+{
+    // contrast-color() = contrast-color( <color> max? )
+    // https://drafts.csswg.org/css-color-5/#funcdef-contrast-color
+
+    ASSERT(range.peek().functionId() == CSSValueContrastColor);
+
+    if (!state.contrastColorEnabled)
+        return std::nullopt;
+
+    auto args = consumeFunction(range);
+
+    auto color = consumeColor(args, state);
+    if (!color)
+        return std::nullopt;
+
+    bool max = consumeIdentRaw<CSSValueMax>(args).has_value();
+
+    if (!args.atEnd())
+        return std::nullopt;
+
+    return CSSUnresolvedColor {
+        CSSUnresolvedContrastColor {
+            .color = makeUniqueRef<CSSUnresolvedColor>(WTFMove(*color)),
+            .max = max
+        }
+    };
+}
+
 // MARK: - light-dark()
 
 static std::optional<CSSUnresolvedColor> consumeLightDarkFunction(CSSParserTokenRange& range, ColorParserState& state)
 {
     // light-dark() = light-dark( <color>, <color> )
+    // https://drafts.csswg.org/css-color-5/#light-dark
 
     ASSERT(range.peek().functionId() == CSSValueLightDark);
 
@@ -737,6 +774,9 @@ static std::optional<CSSUnresolvedColor> consumeAColorFunction(CSSParserTokenRan
         break;
     case CSSValueColorMix:
         color = consumeColorMixFunction(colorRange, state);
+        break;
+    case CSSValueContrastColor:
+        color = consumeContrastColorFunction(colorRange, state);
         break;
     case CSSValueLightDark:
         color = consumeLightDarkFunction(colorRange, state);

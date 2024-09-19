@@ -1050,6 +1050,20 @@ CSSContentVisibilityEnabled:
     WebCore:
       default: true
 
+CSSContrastColorEnabled:
+  type: bool
+  category: css
+  status: preview
+  humanReadableName: "CSS contrast-color()"
+  humanReadableDescription: "Enable support for CSS Color Module Level 5 contrast-color()"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSCounterStyleAtRuleImageSymbolsEnabled:
   type: bool
   status: testable

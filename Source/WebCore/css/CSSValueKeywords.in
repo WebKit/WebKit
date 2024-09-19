@@ -1609,6 +1609,10 @@ color-layers
 // color-mix()
 color-mix
 
+// contrast-color()
+contrast-color
+// max
+
 // light-dark()
 light-dark
 
