@@ -2910,3 +2910,6 @@ imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-mode
 
 # webkit.org/b/278293 [MacOS WK1] imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-report-to-only-sends-reports-to-first-endpoint.https.sub.html is a flakey failure
 imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-report-to-only-sends-reports-to-first-endpoint.https.sub.html [ Pass Failure ]
+
+# webkit.org/b/280000 [ macOS wk1 Debug ] svg/zoom/page/zoom-svg-through-object-with-override-size.html is a flaky crash.
+[ Debug ] svg/zoom/page/zoom-svg-through-object-with-override-size.html [ Pass Crash ]
