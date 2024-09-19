@@ -329,11 +329,11 @@ void VideoPresentationModelContext::fullscreenModeChanged(WebCore::HTMLMediaElem
 #if PLATFORM(IOS_FAMILY)
 UIViewController *VideoPresentationModelContext::presentingViewController()
 {
-    if (!m_manager)
+    if (!m_manager || !m_manager->m_page)
         return nullptr;
 
-    if (auto* page = m_manager->m_page.get())
-        return page->protectedPageClient()->presentingViewController();
+    if (RefPtr pageClient = m_manager->m_page->pageClient())
+        return pageClient->presentingViewController();
     return nullptr;
 }
 
@@ -926,7 +926,8 @@ void VideoPresentationManagerProxy::setupFullscreenWithID(PlaybackSessionContext
 
     RetainPtr view = model->layerHostView() ? static_cast<WKLayerHostView*>(model->layerHostView()) : createLayerHostViewWithID(contextId, videoLayerID, initialSize, hostingDeviceScaleFactor);
 #if USE(EXTENSIONKIT)
-    if (UIView *visibilityPropagationView = m_page->pageClient().createVisibilityPropagationView())
+    RefPtr pageClient = m_page->pageClient();
+    if (UIView *visibilityPropagationView = pageClient ? pageClient->createVisibilityPropagationView() : nullptr)
         [view setVisibilityPropagationView:visibilityPropagationView];
 #else
     UNUSED_VARIABLE(view);

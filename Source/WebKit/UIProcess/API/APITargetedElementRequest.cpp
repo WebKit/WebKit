@@ -57,8 +57,10 @@ void TargetedElementRequest::setSearchText(WTF::String&& searchText)
 WebCore::TargetedElementRequest TargetedElementRequest::makeRequest(const WebKit::WebPageProxy& page) const
 {
     auto request = m_request;
-    if (std::holds_alternative<WebCore::FloatPoint>(m_request.data))
-        request.data = page.protectedPageClient()->webViewToRootView(point());
+    if (std::holds_alternative<WebCore::FloatPoint>(m_request.data)) {
+        if (RefPtr pageClient = page.pageClient())
+            request.data = pageClient->webViewToRootView(point());
+    }
     return request;
 }
 

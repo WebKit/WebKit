@@ -407,7 +407,7 @@ void WKPageGoBack(WKPageRef pageRef)
 {
     CRASH_IF_SUSPENDED;
     auto& page = *toImpl(pageRef);
-    if (page.pageClient().hasBrowsingWarning()) {
+    if (RefPtr pageClient = page.pageClient(); pageClient->hasBrowsingWarning()) {
         WKPageReload(pageRef);
         return;
     }

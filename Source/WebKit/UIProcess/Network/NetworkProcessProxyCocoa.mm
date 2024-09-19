@@ -135,12 +135,12 @@ void NetworkProcessProxy::getWindowSceneAndBundleIdentifierForPaymentPresentatio
     auto sceneIdentifier = nullString();
     auto bundleIdentifier = WebCore::applicationBundleIdentifier();
     auto page = WebProcessProxy::webPage(webPageProxyIdentifier);
-    if (!page) {
+    if (!page || !page->pageClient()) {
         completionHandler(sceneIdentifier, bundleIdentifier);
         return;
     }
 
-    sceneIdentifier = page->pageClient().sceneID();
+    sceneIdentifier = page->pageClient()->sceneID();
     RetainPtr<WKWebView> webView = page->cocoaView();
     id webViewUIDelegate = [webView UIDelegate];
     if ([webViewUIDelegate respondsToSelector:@selector(_hostSceneIdentifierForWebView:)])

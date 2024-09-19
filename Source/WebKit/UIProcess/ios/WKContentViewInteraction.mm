@@ -6684,7 +6684,8 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 #else
             platformReplacement = nsReplacement;
 #endif
-            page->pageClient().replaceDictationAlternatives(platformReplacement.get(), context);
+            if (RefPtr pageClient = page->pageClient())
+                pageClient->replaceDictationAlternatives(platformReplacement.get(), context);
         }
         page->clearDictationAlternatives(WTFMove(contextsToRemove));
     });

@@ -234,7 +234,7 @@ void ProvisionalPageProxy::cancel()
 
 void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& websitePolicies)
 {
-    m_drawingArea = m_page->pageClient().createDrawingAreaProxy(protectedProcess());
+    m_drawingArea = m_page->protectedPageClient()->createDrawingAreaProxy(protectedProcess());
 
     bool registerWithInspectorController { true };
     if (websitePolicies)
