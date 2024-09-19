@@ -92,7 +92,7 @@ class GLibPort(Port):
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_TOP_LEVEL')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_DEBUG')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_DISABLE_GL_SINK')
-        self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_DMABUF_SINK_ENABLED')
+        self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_DMABUF_SINK_DISABLED')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_HARNESS_DUMP_DIR')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_USE_PLAYBIN3')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_HOLE_PUNCH_QUIRK')
