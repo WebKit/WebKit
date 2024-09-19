@@ -188,7 +188,7 @@ FontSelectionValue fontStyleAngleFromCSSValue(const CSSValue& value, const CSSTo
 std::optional<FontSelectionValue> fontStyleFromCSSValueDeprecated(const CSSValue& value)
 {
     if (auto* fontStyleValue = dynamicDowncast<CSSFontStyleWithAngleValue>(value))
-        return fontStyleAngleFromCSSValueDeprecated(fontStyleValue->obliqueAngle());
+        return fontStyleAngleFromCSSValueDeprecated(fontStyleValue->protectedObliqueAngle());
 
     auto valueID = value.valueID();
     if (valueID == CSSValueNormal)
@@ -201,7 +201,7 @@ std::optional<FontSelectionValue> fontStyleFromCSSValueDeprecated(const CSSValue
 std::optional<FontSelectionValue> fontStyleFromCSSValue(const CSSValue& value, const CSSToLengthConversionData& conversionData)
 {
     if (auto* fontStyleValue = dynamicDowncast<CSSFontStyleWithAngleValue>(value))
-        return fontStyleAngleFromCSSValue(fontStyleValue->obliqueAngle(), conversionData);
+        return fontStyleAngleFromCSSValue(fontStyleValue->protectedObliqueAngle(), conversionData);
 
     auto valueID = value.valueID();
     if (valueID == CSSValueNormal)
@@ -416,9 +416,9 @@ FontFeatureSettings fontFeatureSettingsFromCSSValue(const CSSValue& value, const
     }
 
     FontFeatureSettings settings;
-    for (auto& item : downcast<CSSValueList>(value)) {
-        auto& feature = downcast<CSSFontFeatureValue>(item);
-        settings.insert(FontFeature(feature.tag(), feature.value().resolveAsNumber<int>(conversionData)));
+    for (Ref item : downcast<CSSValueList>(value)) {
+        auto& feature = downcast<CSSFontFeatureValue>(item.get());
+        settings.insert(FontFeature(feature.tag(), feature.protectedValue()->resolveAsNumber<int>(conversionData)));
     }
     return settings;
 }
@@ -433,9 +433,9 @@ FontVariationSettings fontVariationSettingsFromCSSValue(const CSSValue& value, c
     }
 
     FontVariationSettings settings;
-    for (auto& item : downcast<CSSValueList>(value)) {
-        auto& feature = downcast<CSSFontVariationValue>(item);
-        settings.insert({ feature.tag(), feature.value().resolveAsNumber<float>(conversionData) });
+    for (Ref item : downcast<CSSValueList>(value)) {
+        auto& feature = downcast<CSSFontVariationValue>(item.get());
+        settings.insert({ feature.tag(), feature.protectedValue()->resolveAsNumber<float>(conversionData) });
     }
     return settings;
 }
@@ -465,11 +465,11 @@ FontSizeAdjust fontSizeAdjustFromCSSValue(const CSSValue& value, const CSSToLeng
         return FontCascadeDescription::initialFontSizeAdjust();
 
     auto metric = fromCSSValueID<FontSizeAdjust::Metric>(downcast<CSSPrimitiveValue>(pair->first()).valueID());
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(pair->second());
-    if (primitiveValue.isNumber())
-        return { metric, FontSizeAdjust::ValueType::Number, primitiveValue.resolveAsNumber(conversionData) };
+    Ref primitiveValue = downcast<CSSPrimitiveValue>(pair->second());
+    if (primitiveValue->isNumber())
+        return { metric, FontSizeAdjust::ValueType::Number, primitiveValue->resolveAsNumber(conversionData) };
 
-    ASSERT(primitiveValue.valueID() == CSSValueFromFont);
+    ASSERT(primitiveValue->valueID() == CSSValueFromFont);
     return { metric, FontSizeAdjust::ValueType::FromFont, std::nullopt };
 }
 

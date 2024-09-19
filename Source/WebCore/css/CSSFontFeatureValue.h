@@ -42,6 +42,7 @@ public:
 
     const FontTag& tag() const { return m_tag; }
     const CSSPrimitiveValue& value() const { return m_value; }
+    Ref<CSSPrimitiveValue> protectedValue() const { return m_value; }
     String customCSSText() const;
 
     bool equals(const CSSFontFeatureValue&) const;

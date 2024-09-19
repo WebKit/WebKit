@@ -35,6 +35,7 @@ public:
     static Ref<CSSFontStyleWithAngleValue> create(Ref<CSSPrimitiveValue>&& obliqueAngle);
 
     const CSSPrimitiveValue& obliqueAngle() const { return m_obliqueAngle; }
+    Ref<CSSPrimitiveValue> protectedObliqueAngle() const { return m_obliqueAngle; }
 
     String customCSSText() const;
     bool equals(const CSSFontStyleWithAngleValue&) const;

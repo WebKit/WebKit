@@ -77,6 +77,8 @@ public:
     void processTerminated();
 
 private:
+    Ref<Client> protectedClient() const;
+
     void timerFired();
 
     bool mayBecomeUnresponsive() const;
