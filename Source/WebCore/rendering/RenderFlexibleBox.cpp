@@ -1268,8 +1268,9 @@ LayoutUnit RenderFlexibleBox::computeFlexBaseSizeForFlexItem(RenderBox& flexItem
 
 void RenderFlexibleBox::performFlexLayout(bool relayoutChildren)
 {
-    if (LayoutIntegration::canUseForFlexLayout(*this))
-        return layoutUsingFlexFormattingContext();
+    if (layoutUsingFlexFormattingContext())
+        return;
+
     FlexLineStates lineStates;
     LayoutUnit sumFlexBaseSize;
     double totalFlexGrow;
@@ -2660,19 +2661,22 @@ LayoutUnit RenderFlexibleBox::computeGap(RenderFlexibleBox::GapType gapType) con
     return minimumValueForLength(gapLength.length(), availableSize);
 }
 
-void RenderFlexibleBox::layoutUsingFlexFormattingContext()
+bool RenderFlexibleBox::layoutUsingFlexFormattingContext()
 {
-    if (!m_modernFlexLayout)
-        m_modernFlexLayout = makeUnique<LayoutIntegration::FlexLayout>(*this);
+    if (!LayoutIntegration::canUseForFlexLayout(*this))
+        return false;
 
-    m_modernFlexLayout->updateFormattingRootGeometryAndInvalidate();
+    auto flexLayout = LayoutIntegration::FlexLayout { *this };
+
+    flexLayout.updateFormattingRootGeometryAndInvalidate();
 
     resetHasDefiniteHeight();
     for (auto& flexItem : childrenOfType<RenderBlock>(*this))
-        m_modernFlexLayout->updateFlexItemDimensions(flexItem);
-    m_modernFlexLayout->layout();
-    setLogicalHeight(std::max(logicalHeight(), borderBefore() + paddingBefore() + m_modernFlexLayout->contentBoxLogicalHeight() + borderAfter() + paddingAfter()));
+        flexLayout.updateFlexItemDimensions(flexItem);
+    flexLayout.layout();
+    setLogicalHeight(std::max(logicalHeight(), borderBefore() + paddingBefore() + flexLayout.contentBoxLogicalHeight() + borderAfter() + paddingAfter()));
     updateLogicalHeight();
+    return true;
 }
 
 const RenderBox* RenderFlexibleBox::firstBaselineCandidateOnLine(OrderIterator flexItemIterator, ItemPosition baselinePosition, size_t numberOfItemsOnLine) const
