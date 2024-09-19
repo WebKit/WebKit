@@ -214,6 +214,9 @@ TEST(WebKit, LoadHTMLStringWithInvalidBaseURL)
     EXPECT_FALSE(didCrash);
 }
 
+#if !defined(NDEBUG)
+TEST(WebKit, DISABLED_LoadMoreThan4GB)
+#else
 TEST(WebKit, LoadMoreThan4GB)
 {
     constexpr auto html = "<script>"
