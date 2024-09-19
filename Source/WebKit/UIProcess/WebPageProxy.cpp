@@ -6781,6 +6781,10 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
 #if ENABLE(MEDIA_STREAM)
     if (m_userMediaPermissionRequestManager)
         m_userMediaPermissionRequestManager->didCommitLoadForFrame(frameID);
+    if (frame->isMainFrame()) {
+        m_shouldListenToVoiceActivity = false;
+        m_mutedCaptureKindsDesiredByWebApp = { };
+    }
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
@@ -8460,7 +8464,52 @@ void WebPageProxy::setMediaVolume(float volume)
     send(Messages::WebPage::SetMediaVolume(volume));
 }
 
-void WebPageProxy::setMuted(WebCore::MediaProducerMutedStateFlags state, CompletionHandler<void()>&& completionHandler)
+#if ENABLE(MEDIA_STREAM)
+static WebCore::MediaProducerMutedStateFlags applyWebAppDesiredMutedKinds(WebCore::MediaProducerMutedStateFlags state, OptionSet<WebCore::MediaProducerMediaCaptureKind> desiredMutedKinds)
+{
+    if (desiredMutedKinds.contains(WebCore::MediaProducerMediaCaptureKind::EveryKind))
+        return MediaProducer::MediaStreamCaptureIsMuted;
+
+    if (desiredMutedKinds.contains(WebCore::MediaProducerMediaCaptureKind::Microphone))
+        state.add(WebCore::MediaProducer::MutedState::AudioCaptureIsMuted);
+    if (desiredMutedKinds.contains(WebCore::MediaProducerMediaCaptureKind::Camera))
+        state.add(WebCore::MediaProducer::MutedState::VideoCaptureIsMuted);
+    if (desiredMutedKinds.contains(WebCore::MediaProducerMediaCaptureKind::Display)) {
+        state.add(WebCore::MediaProducer::MutedState::ScreenCaptureIsMuted);
+        state.add(WebCore::MediaProducer::MutedState::WindowCaptureIsMuted);
+    }
+    if (desiredMutedKinds.contains(WebCore::MediaProducerMediaCaptureKind::SystemAudio))
+        state.add(WebCore::MediaProducer::MutedState::SystemAudioCaptureIsMuted);
+
+    return state;
+}
+
+static void updateMutedCaptureKindsDesiredByWebApp(OptionSet<WebCore::MediaProducerMediaCaptureKind>& mutedCaptureKindsDesiredByWebApp, WebCore::MediaProducerMutedStateFlags newState)
+{
+    if (newState.contains(WebCore::MediaProducerMutedState::AudioCaptureIsMuted))
+        mutedCaptureKindsDesiredByWebApp.add(WebCore::MediaProducerMediaCaptureKind::Microphone);
+    else
+        mutedCaptureKindsDesiredByWebApp.remove(WebCore::MediaProducerMediaCaptureKind::Microphone);
+
+    if (newState.contains(WebCore::MediaProducerMutedState::VideoCaptureIsMuted))
+        mutedCaptureKindsDesiredByWebApp.add(WebCore::MediaProducerMediaCaptureKind::Camera);
+    else
+        mutedCaptureKindsDesiredByWebApp.remove(WebCore::MediaProducerMediaCaptureKind::Camera);
+
+    if (newState.contains(WebCore::MediaProducerMutedState::ScreenCaptureIsMuted)
+        || newState.contains(WebCore::MediaProducerMutedState::WindowCaptureIsMuted))
+        mutedCaptureKindsDesiredByWebApp.add(WebCore::MediaProducerMediaCaptureKind::Display);
+    else
+        mutedCaptureKindsDesiredByWebApp.remove(WebCore::MediaProducerMediaCaptureKind::Display);
+
+    if (newState.contains(WebCore::MediaProducerMutedState::SystemAudioCaptureIsMuted))
+        mutedCaptureKindsDesiredByWebApp.add(WebCore::MediaProducerMediaCaptureKind::SystemAudio);
+    else
+        mutedCaptureKindsDesiredByWebApp.remove(WebCore::MediaProducerMediaCaptureKind::SystemAudio);
+}
+#endif
+
+void WebPageProxy::setMuted(WebCore::MediaProducerMutedStateFlags state, FromApplication fromApplication, CompletionHandler<void()>&& completionHandler)
 {
     if (!isAllowedToChangeMuteState())
         state.add(WebCore::MediaProducer::MediaStreamCaptureIsMuted);
@@ -8471,6 +8520,9 @@ void WebPageProxy::setMuted(WebCore::MediaProducerMutedStateFlags state, Complet
         return completionHandler();
 
 #if ENABLE(MEDIA_STREAM)
+    if (fromApplication == FromApplication::Yes)
+        updateMutedCaptureKindsDesiredByWebApp(m_mutedCaptureKindsDesiredByWebApp, state);
+
     bool hasMutedCaptureStreams = internals().mediaState.containsAny(WebCore::MediaProducer::MutedCaptureMask);
     if (hasMutedCaptureStreams && !(state.containsAny(WebCore::MediaProducer::MediaStreamCaptureIsMuted)))
         WebProcessProxy::muteCaptureInPagesExcept(m_webPageID);
@@ -8478,15 +8530,15 @@ void WebPageProxy::setMuted(WebCore::MediaProducerMutedStateFlags state, Complet
 
     protectedLegacyMainFrameProcess()->pageMutedStateChanged(m_webPageID, state);
 
-    WEBPAGEPROXY_RELEASE_LOG(Media, "setMuted: %d", state.toRaw());
+#if ENABLE(MEDIA_STREAM)
+    auto newState = applyWebAppDesiredMutedKinds(state, m_mutedCaptureKindsDesiredByWebApp);
+#else
+    auto newState = state;
+#endif
+    WEBPAGEPROXY_RELEASE_LOG(Media, "setMuted, app state = %d, final state = %d", state.toRaw(), newState.toRaw());
 
-    sendWithAsyncReply(Messages::WebPage::SetMuted(state), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPage::SetMuted(newState), WTFMove(completionHandler));
     activityStateDidChange({ ActivityState::IsAudible, ActivityState::IsCapturingMedia });
-}
-
-void WebPageProxy::setMuted(WebCore::MediaProducerMutedStateFlags state)
-{
-    setMuted(state, [] { });
 }
 
 void WebPageProxy::setMediaCaptureEnabled(bool enabled)
@@ -10529,6 +10581,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #if ENABLE(MEDIA_STREAM)
     m_userMediaPermissionRequestManager = nullptr;
     m_shouldListenToVoiceActivity = false;
+    m_mutedCaptureKindsDesiredByWebApp = { };
 #endif
 
 #if ENABLE(POINTER_LOCK)
@@ -11369,6 +11422,21 @@ void WebPageProxy::willStartCapture(UserMediaPermissionRequestProxy& request, Co
     if (auto beforeStartingCaptureCallback = request.beforeStartingCaptureCallback())
         beforeStartingCaptureCallback();
 
+    switch (request.requestType()) {
+    case WebCore::MediaStreamRequest::Type::UserMedia:
+        if (request.userRequest().audioConstraints.isValid)
+            m_mutedCaptureKindsDesiredByWebApp.remove(WebCore::MediaProducerMediaCaptureKind::Microphone);
+        if (request.userRequest().videoConstraints.isValid)
+            m_mutedCaptureKindsDesiredByWebApp.remove(WebCore::MediaProducerMediaCaptureKind::Camera);
+        break;
+    case WebCore::MediaStreamRequest::Type::DisplayMediaWithAudio:
+        m_mutedCaptureKindsDesiredByWebApp.remove(WebCore::MediaProducerMediaCaptureKind::SystemAudio);
+        FALLTHROUGH;
+    case WebCore::MediaStreamRequest::Type::DisplayMedia:
+        m_mutedCaptureKindsDesiredByWebApp.remove(WebCore::MediaProducerMediaCaptureKind::Display);
+        break;
+    }
+
     activateMediaStreamCaptureInPage();
 
 #if ENABLE(GPU_PROCESS)
@@ -11462,6 +11530,7 @@ void WebPageProxy::validateCaptureStateUpdate(WebCore::UserMediaRequestIdentifie
     }
 
     if (!isActive) {
+        m_mutedCaptureKindsDesiredByWebApp.add(kind);
         completionHandler({ });
         return;
     }
@@ -11518,6 +11587,8 @@ void WebPageProxy::validateCaptureStateUpdate(WebCore::UserMediaRequestIdentifie
     case WebCore::MediaProducerMediaCaptureKind::EveryKind:
         ASSERT_NOT_REACHED();
     }
+
+    m_mutedCaptureKindsDesiredByWebApp.remove(kind);
     completionHandler({ });
 }
 
@@ -11535,7 +11606,7 @@ void WebPageProxy::voiceActivityDetected()
 {
     send(Messages::WebPage::VoiceActivityDetected { });
 }
-#endif
+#endif // ENABLE(MEDIA_STREAM)
 
 void WebPageProxy::syncIfMockDevicesEnabledChanged()
 {
