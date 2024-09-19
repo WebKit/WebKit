@@ -31,7 +31,7 @@
 #include <WebCore/DMABufBuffer.h>
 #include <WebCore/GraphicsLayerContentsDisplayDelegateTextureMapper.h>
 #include <WebCore/TextureMapperFlags.h>
-#include <WebCore/TextureMapperPlatformLayerProxyGL.h>
+#include <WebCore/TextureMapperPlatformLayerProxy.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -64,7 +64,7 @@ public:
 
 private:
     explicit RemoteGraphicsLayerContentsDisplayDelegateGBM(bool isOpaque)
-        : GraphicsLayerContentsDisplayDelegateTextureMapper(TextureMapperPlatformLayerProxyGL::create(TextureMapperPlatformLayerProxy::ContentType::WebGL))
+        : GraphicsLayerContentsDisplayDelegateTextureMapper(TextureMapperPlatformLayerProxy::create(TextureMapperPlatformLayerProxy::ContentType::WebGL))
         , m_isOpaque(isOpaque)
     {
         m_proxy->setSwapBuffersFunction([this](TextureMapperPlatformLayerProxy& proxy) mutable {
@@ -76,8 +76,7 @@ private:
                 flags.add(TextureMapperFlags::ShouldBlend);
 
             Locker locker { proxy.lock() };
-            auto layerBuffer = CoordinatedPlatformLayerBufferDMABuf::create(Ref { *m_displayBuffer }, flags, WTFMove(m_fenceFD));
-            downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
+            proxy.pushNextBuffer(CoordinatedPlatformLayerBufferDMABuf::create(Ref { *m_displayBuffer }, flags, WTFMove(m_fenceFD)));
         });
     }
 

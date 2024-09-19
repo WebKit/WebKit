@@ -47,7 +47,7 @@
 #include "CoordinatedPlatformLayerBufferRGB.h"
 #include "GraphicsLayerContentsDisplayDelegateTextureMapper.h"
 #include "TextureMapperFlags.h"
-#include "TextureMapperPlatformLayerProxyGL.h"
+#include "TextureMapperPlatformLayerProxy.h"
 #else
 #include "PlatformLayerDisplayDelegate.h"
 #include "TextureMapperGCGLPlatformLayer.h"
@@ -299,7 +299,7 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
 bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
 {
 #if USE(COORDINATED_GRAPHICS)
-    auto proxy = TextureMapperPlatformLayerProxyGL::create(TextureMapperPlatformLayerProxy::ContentType::WebGL);
+    auto proxy = TextureMapperPlatformLayerProxy::create(TextureMapperPlatformLayerProxy::ContentType::WebGL);
     proxy->setSwapBuffersFunction([this](TextureMapperPlatformLayerProxy& proxy) mutable {
         if (!m_isCompositorTextureInitialized)
             return;
@@ -310,8 +310,7 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
 
         auto fboSize = getInternalFramebufferSize();
         Locker locker { proxy.lock() };
-        auto layerBuffer = CoordinatedPlatformLayerBufferRGB::create(m_compositorTextureID, fboSize, flags, WTFMove(m_frameFence));
-        downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
+        proxy.pushNextBuffer(CoordinatedPlatformLayerBufferRGB::create(m_compositorTextureID, fboSize, flags, WTFMove(m_frameFence)));
     });
     m_layerContentsDisplayDelegate = GraphicsLayerContentsDisplayDelegateTextureMapper::create(WTFMove(proxy));
 #else

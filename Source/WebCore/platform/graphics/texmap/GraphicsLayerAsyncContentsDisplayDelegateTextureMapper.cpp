@@ -32,12 +32,12 @@
 #include "ImageBuffer.h"
 #include "NativeImage.h"
 #include "TextureMapperFlags.h"
-#include "TextureMapperPlatformLayerProxyGL.h"
+#include "TextureMapperPlatformLayerProxy.h"
 
 namespace WebCore {
 
 GraphicsLayerAsyncContentsDisplayDelegateTextureMapper::GraphicsLayerAsyncContentsDisplayDelegateTextureMapper(CoordinatedGraphicsLayer& layer)
-    : m_proxy(TextureMapperPlatformLayerProxyGL::create(TextureMapperPlatformLayerProxy::ContentType::OffscreenCanvas))
+    : m_proxy(TextureMapperPlatformLayerProxy::create(TextureMapperPlatformLayerProxy::ContentType::OffscreenCanvas))
 {
     layer.setContentsToPlatformLayer(m_proxy.ptr(), GraphicsLayer::ContentsLayerPurpose::Canvas);
 }
@@ -54,8 +54,7 @@ bool GraphicsLayerAsyncContentsDisplayDelegateTextureMapper::tryCopyToLayer(Imag
     OptionSet<TextureMapperFlags> flags;
     if (image->hasAlpha())
         flags.add(TextureMapperFlags::ShouldBlend);
-    auto layerBuffer = CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(), flags, nullptr);
-    downcast<TextureMapperPlatformLayerProxyGL>(m_proxy.get()).pushNextBuffer(WTFMove(layerBuffer));
+    m_proxy->pushNextBuffer(CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(), flags, nullptr));
     return true;
 }
 

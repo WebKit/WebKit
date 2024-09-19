@@ -32,7 +32,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/texmap/TextureMapperLayer.h
     platform/graphics/texmap/TextureMapperPlatformLayer.h
     platform/graphics/texmap/TextureMapperPlatformLayerProxy.h
-    platform/graphics/texmap/TextureMapperPlatformLayerProxyGL.h
     platform/graphics/texmap/TextureMapperSolidColorLayer.h
     platform/graphics/texmap/TextureMapperTile.h
     platform/graphics/texmap/TextureMapperTiledBackingStore.h
@@ -45,7 +44,6 @@ if (USE_COORDINATED_GRAPHICS)
     list(APPEND WebCore_SOURCES
         platform/graphics/texmap/GraphicsLayerAsyncContentsDisplayDelegateTextureMapper.cpp
         platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp
-        platform/graphics/texmap/TextureMapperPlatformLayerProxyGL.cpp
 
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
