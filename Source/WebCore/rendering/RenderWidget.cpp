@@ -175,6 +175,9 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
     if (widget == m_widget)
         return;
 
+    if (is<RemoteFrameView>(m_widget) != is<RemoteFrameView>(widget))
+        frameOwnerElement().scheduleInvalidateStyleAndLayerComposition();
+
     if (m_widget) {
         moveWidgetToParentSoon(*m_widget, nullptr);
         view().frameView().willRemoveWidgetFromRenderTree(*m_widget);
@@ -206,7 +209,7 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
         }
         moveWidgetToParentSoon(*m_widget, &view().frameView());
     }
-    
+
     if (CheckedPtr cache = document().existingAXObjectCache())
         cache->childrenChanged(this);
 }
