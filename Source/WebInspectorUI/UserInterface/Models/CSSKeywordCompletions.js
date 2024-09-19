@@ -395,6 +395,9 @@ WI.CSSKeywordCompletions.InheritedProperties = new Set([
     "text-rendering",
     "text-shadow",
     "text-transform",
+    "text-wrap",
+    "text-wrap-mode",
+    "text-wrap-style",
     "visibility",
     "white-space",
     "widows",
@@ -1382,6 +1385,15 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     ],
     "text-underline-width": [
         "normal", "medium", "auto", "thick", "thin", "calc()",
+    ],
+    "text-wrap": [
+        "wrap", "nowrap", "balance", "stable", 
+    ],
+    "text-wrap-mode": [
+        "wrap", "nowrap",
+    ],
+    "text-wrap-style": [
+        "auto", "balance", "stable",
     ],
     "transform-style": [
         "flat", "preserve-3d",
