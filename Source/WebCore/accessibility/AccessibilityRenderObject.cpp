@@ -2378,11 +2378,12 @@ void AccessibilityRenderObject::addAttachmentChildren()
         return;
 
     // LocalFrameView's need to be inserted into the AX hierarchy when encountered.
-    Widget* widget = widgetForAttachmentView();
+    RefPtr widget = widgetForAttachmentView();
     if (!widget || !(widget->isLocalFrameView() || widget->isRemoteFrameView()))
         return;
 
-    addChild(axObjectCache()->getOrCreate(*widget));
+    if (CheckedPtr cache = axObjectCache())
+        addChild(cache->getOrCreate(*widget));
 }
 
 #if PLATFORM(COCOA)
