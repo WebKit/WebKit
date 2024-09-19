@@ -108,7 +108,7 @@ void ManagedMediaSource::monitorSourceBuffers()
 {
     MediaSource::monitorSourceBuffers();
 
-    if (!activeSourceBuffers() || !activeSourceBuffers()->length()) {
+    if (!activeSourceBuffers()->length()) {
         setStreaming(true);
         return;
     }

@@ -385,7 +385,7 @@ void MediaSource::completeSeek()
     MediaTimePromise::AutoRejectProducer producer(PlatformMediaError::SourceRemoved);
     Ref promise = producer.promise();
 
-    scriptExecutionContext()->enqueueTaskWhenSettled(SourceBuffer::ComputeSeekPromise::all(WTF::map(*m_activeSourceBuffers, [&](auto&& sourceBuffer) {
+    scriptExecutionContext()->enqueueTaskWhenSettled(SourceBuffer::ComputeSeekPromise::all(WTF::map(m_activeSourceBuffers.get(), [&](auto&& sourceBuffer) {
         return sourceBuffer->computeSeekTime(seekTarget);
     })), TaskSource::MediaElement, [producer = WTFMove(producer), weakThis = WeakPtr { *this }, this, time = seekTarget.time](auto&& results) {
         RefPtr protectedThis = weakThis.get();
@@ -412,7 +412,7 @@ void MediaSource::completeSeek()
 
 Ref<MediaPromise> MediaSource::seekToTime(const MediaTime& time)
 {
-    for (auto& sourceBuffer : *m_activeSourceBuffers)
+    for (auto& sourceBuffer : m_activeSourceBuffers.get())
         sourceBuffer->seekToTime(time);
     return MediaPromise::createAndResolve();
 }
@@ -541,10 +541,6 @@ void MediaSource::monitorSourceBuffers()
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#buffer-monitoring
 
     // Note, the behavior if activeSourceBuffers is empty is undefined.
-    if (!m_activeSourceBuffers) {
-        m_private->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveNothing);
-        return;
-    }
 
     // ↳ If the HTMLMediaElement.readyState attribute equals HAVE_NOTHING:
     if (m_private->mediaPlayerReadyState() == MediaPlayer::ReadyState::HaveNothing) {
@@ -637,7 +633,7 @@ ExceptionOr<void> MediaSource::setDuration(double duration)
 
     // 3. If the updating attribute equals true on any SourceBuffer in sourceBuffers, then throw an InvalidStateError
     // exception and abort these steps.
-    for (auto& sourceBuffer : *m_sourceBuffers) {
+    for (auto& sourceBuffer : m_sourceBuffers.get()) {
         if (sourceBuffer->updating())
             return Exception { ExceptionCode::InvalidStateError };
     }
@@ -662,7 +658,7 @@ ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& newDuration)
     // across all SourceBuffer objects in sourceBuffers.
     MediaTime highestPresentationTimestamp;
     MediaTime highestEndTime;
-    for (auto& sourceBuffer : *m_sourceBuffers) {
+    for (auto& sourceBuffer : m_sourceBuffers.get()) {
         highestPresentationTimestamp = std::max(highestPresentationTimestamp, sourceBuffer->highestPresentationTimestamp());
         highestEndTime = std::max(highestEndTime, sourceBuffer->bufferedInternal().maximumBufferedTime());
     }
@@ -742,7 +738,7 @@ void MediaSource::streamEndedWithError(std::optional<EndOfStreamError> error)
         // 1. Run the duration change algorithm with new duration set to the highest end time reported by
         // the buffered attribute across all SourceBuffer objects in sourceBuffers.
         MediaTime maxEndTime;
-        for (auto& sourceBuffer : *m_sourceBuffers) {
+        for (auto& sourceBuffer : m_sourceBuffers.get()) {
             if (auto length = sourceBuffer->bufferedInternal().length())
                 maxEndTime = std::max(sourceBuffer->bufferedInternal().end(length - 1), maxEndTime);
         }
@@ -1217,7 +1213,7 @@ void MediaSource::openIfInEndedState()
 
     setReadyState(ReadyState::Open);
     m_private->unmarkEndOfStream();
-    for (auto& sourceBuffer : *m_sourceBuffers)
+    for (auto& sourceBuffer : m_sourceBuffers.get())
         sourceBuffer->setMediaSourceEnded(false);
 }
 
@@ -1275,7 +1271,7 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
     if (isOpen()) {
         m_sourceopenPending = false;
         scheduleEvent(eventNames().sourceopenEvent);
-        for (auto& sourceBuffer : *m_sourceBuffers)
+        for (auto& sourceBuffer : m_sourceBuffers.get())
             sourceBuffer->setMediaSourceEnded(false);
         monitorSourceBuffers();
         return;
@@ -1290,7 +1286,7 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
         // We need to force the recalculation of the buffered range as its value depends
         // on the readyState.
         // https://w3c.github.io/media-source/#htmlmediaelement-extensions-buffered
-        for (auto& sourceBuffer : *m_sourceBuffers)
+        for (auto& sourceBuffer : m_sourceBuffers.get())
             sourceBuffer->setMediaSourceEnded(true);
         updateBufferedIfNeeded(true /* force */);
     } else {
@@ -1306,7 +1302,7 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
 
 Vector<PlatformTimeRanges> MediaSource::activeRanges() const
 {
-    return WTF::map(*m_activeSourceBuffers, [](auto& sourceBuffer) {
+    return WTF::map(m_activeSourceBuffers.get(), [](auto& sourceBuffer) {
         return sourceBuffer->bufferedInternal();
     });
 }
@@ -1366,12 +1362,12 @@ URLRegistry& MediaSource::registry() const
 void MediaSource::regenerateActiveSourceBuffers()
 {
     Vector<RefPtr<SourceBuffer>> newList;
-    for (auto& sourceBuffer : *m_sourceBuffers) {
+    for (auto& sourceBuffer : m_sourceBuffers.get()) {
         if (sourceBuffer->active())
             newList.append(sourceBuffer);
     }
     m_activeSourceBuffers->swap(newList);
-    for (auto& sourceBuffer : *m_activeSourceBuffers)
+    for (auto& sourceBuffer : m_activeSourceBuffers.get())
         sourceBuffer->setBufferedDirty(true);
 
     notifyElementUpdateMediaState();
@@ -1407,7 +1403,7 @@ void MediaSource::updateBufferedIfNeeded(bool force)
     if (!force && m_activeSourceBuffers->length() && std::all_of(m_activeSourceBuffers->begin(), m_activeSourceBuffers->end(), [](auto& buffer) { return !buffer->isBufferedDirty(); }))
         return;
 
-    for (auto& sourceBuffer : *m_activeSourceBuffers)
+    for (auto& sourceBuffer : m_activeSourceBuffers.get())
         sourceBuffer->setBufferedDirty(false);
 
     PlatformTimeRanges buffered;
@@ -1479,7 +1475,7 @@ void MediaSource::sourceBufferReceivedFirstInitializationSegmentChanged()
 {
     if (m_private && m_private->mediaPlayerReadyState() == MediaPlayer::ReadyState::HaveNothing) {
         // 6.1 If one or more objects in sourceBuffers have first initialization segment flag set to false, then abort these steps.
-        for (auto& sourceBuffer : *sourceBuffers()) {
+        for (auto& sourceBuffer : m_sourceBuffers.get()) {
             if (!sourceBuffer->receivedFirstInitializationSegment())
                 return;
         }
@@ -1563,7 +1559,7 @@ void MediaSource::memoryPressure()
 {
     if (!isManaged())
         return;
-    for (auto& sourceBuffer : *m_sourceBuffers)
+    for (auto& sourceBuffer : m_sourceBuffers.get())
         sourceBuffer->memoryPressure();
 }
 
@@ -1582,6 +1578,16 @@ bool MediaSource::enabledForContext(ScriptExecutionContext& context)
 
     ASSERT(context.isDocument());
     return true;
+}
+
+Ref<SourceBufferList> MediaSource::sourceBuffers() const
+{
+    return m_sourceBuffers;
+}
+
+Ref<SourceBufferList> MediaSource::activeSourceBuffers() const
+{
+    return m_activeSourceBuffers;
 }
 
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)

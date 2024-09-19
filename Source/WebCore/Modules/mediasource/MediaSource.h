@@ -124,8 +124,8 @@ public:
     ReadyState readyState() const;
     ExceptionOr<void> endOfStream(std::optional<EndOfStreamError>);
 
-    SourceBufferList* sourceBuffers() { return m_sourceBuffers.get(); }
-    SourceBufferList* activeSourceBuffers() { return m_activeSourceBuffers.get(); }
+    Ref<SourceBufferList> sourceBuffers() const;
+    Ref<SourceBufferList> activeSourceBuffers() const;
     ExceptionOr<Ref<SourceBuffer>> addSourceBuffer(const String& type);
     ExceptionOr<void> removeSourceBuffer(SourceBuffer&);
     static bool isTypeSupported(ScriptExecutionContext&, const String& type);
@@ -226,8 +226,8 @@ private:
 
     static URLRegistry* s_registry;
 
-    RefPtr<SourceBufferList> m_sourceBuffers;
-    RefPtr<SourceBufferList> m_activeSourceBuffers;
+    const Ref<SourceBufferList> m_sourceBuffers;
+    const Ref<SourceBufferList> m_activeSourceBuffers;
     std::optional<SeekTarget> m_pendingSeekTarget;
     std::optional<MediaTimePromise::AutoRejectProducer> m_seekTargetPromise;
     bool m_openDeferred { false };
