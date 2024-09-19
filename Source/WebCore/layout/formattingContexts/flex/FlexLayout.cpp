@@ -426,8 +426,6 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
 
 FlexLayout::SizeList FlexLayout::hypotheticalCrossSizeForFlexItems(const LogicalFlexItems& flexItems, const SizeList& flexItemsMainSizeList)
 {
-    UNUSED_PARAM(flexItemsMainSizeList);
-    // FIXME: This is where layout is called on flex items.
     SizeList hypotheticalCrossSizeList(flexItems.size());
     for (size_t flexItemIndex = 0; flexItemIndex < flexItems.size(); ++flexItemIndex) {
         auto& flexItem = flexItems[flexItemIndex];
@@ -437,15 +435,11 @@ FlexLayout::SizeList FlexLayout::hypotheticalCrossSizeForFlexItems(const Logical
             continue;
         }
         auto& flexItemBox = flexItem.layoutBox();
-        auto crossSizeAfterPerformingLayout = [&]() -> LayoutUnit {
-            if (!flexItemBox.establishesInlineFormattingContext()) {
-                ASSERT_NOT_IMPLEMENTED_YET();
-                return { };
-            }
+        auto crossContentSizeAfterPerformingLayout = [&]() -> LayoutUnit {
             formattingContext().integrationUtils().layoutWithFormattingContextForBox(downcast<ElementBox>(flexItemBox), flexItemsMainSizeList[flexItemIndex]);
-            return BoxGeometry::marginBoxRect(formattingContext().geometryForFlexItem(flexItemBox)).height();
+            return formattingContext().geometryForFlexItem(flexItemBox).contentBoxHeight();
         };
-        auto usedCrossSize = crossSizeAfterPerformingLayout();
+        auto usedCrossSize = crossContentSizeAfterPerformingLayout();
         if (!flexItem.isContentBoxBased())
             usedCrossSize += flexItem.crossAxis().borderAndPadding;
         hypotheticalCrossSizeList[flexItemIndex] = usedCrossSize;
