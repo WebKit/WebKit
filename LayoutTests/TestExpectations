@@ -6984,10 +6984,6 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across
 
 webkit.org/b/242658 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Slow Pass Failure ]
 
-# These tests are crashing in debug since its import.
-webkit.org/b/256976 [ Debug ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/cross-document-traversal-same-document-nav.html [ Skip ]
-webkit.org/b/256976 [ Debug ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/same-document-nav-cross-document-traversal.html [ Skip ]
-
 # Test has been timing out since its import.
 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-handler-content-attributes.html [ Skip ]
 

@@ -540,8 +540,10 @@ void HistoryController::updateForCommit()
         // Tell all other frames in the tree to commit their provisional items and
         // restore their scroll position.  We'll avoid this frame (which has already
         // committed) and its children (which will be replaced).
-        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame()))
-            localFrame->checkedHistory()->recursiveUpdateForCommit();
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame())) {
+            if (localFrame->checkedHistory()->isFrameLoadComplete())
+                localFrame->checkedHistory()->recursiveUpdateForCommit();
+        }
     }
 }
 
