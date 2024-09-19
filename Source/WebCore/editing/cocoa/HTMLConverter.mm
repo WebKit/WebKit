@@ -2437,21 +2437,36 @@ template<typename Data>
 using ElementCache = WeakHashMap<Element, Data, WeakPtrImplWithEventTargetData>;
 
 #if ENABLE(WRITING_TOOLS)
+static bool elementQualifiesForWritingToolsPreservation(Element* element)
+{
+    // If the element is a mail blockquote, it should be preserved after a Writing Tools composition.
+    if (isMailBlockquote(*element))
+        return true;
+
+    // If the element is a tab span node, it is a tab character with `whitespace:pre`, and need not be preserved.
+    if (tabSpanNode(element))
+        return false;
+
+    // If the element has no renderer, it can't have `whitespace:pre` so it need not be preserved.
+    auto renderer = element->renderer();
+    if (!renderer)
+        return false;
+
+    // If the element has `whitespace:pre` (except for the aforementioned exceptions), it should be preserved.
+    if (renderer->style().whiteSpace() == WhiteSpace::Pre)
+        return true;
+
+    // Otherwise, it need not be preserved.
+    return false;
+}
+
 static bool hasAncestorQualifyingForWritingToolsPreservation(Element* ancestor, ElementCache<bool>& cache)
 {
     if (!ancestor)
         return false;
 
     if (!cache.contains(*ancestor)) {
-        auto result = [&] {
-            if (isMailBlockquote(*ancestor))
-                return true;
-
-            if (auto renderer = ancestor->renderer(); renderer && renderer->style().whiteSpace() == WhiteSpace::Pre)
-                return true;
-
-            return hasAncestorQualifyingForWritingToolsPreservation(ancestor->parentElement(), cache);
-        }();
+        auto result = elementQualifiesForWritingToolsPreservation(ancestor) || hasAncestorQualifyingForWritingToolsPreservation(ancestor->parentElement(), cache);
 
         cache.set(*ancestor, result);
         return result;

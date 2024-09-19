@@ -597,7 +597,7 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
             weakThis->compositionSessionDidReceiveTextWithReplacementRangeAsync(sourceAnimationUUID, destinationAnimationUUID, attributedText, range, context, finished, runMode);
     };
 
-    // We only get a single replace call for smart replies with finished = true. We use this flag to not run the final replace for a compsition
+    // We only get a single replace call for smart replies with finished = true. We use this flag to not run the final replace for a composition
     // session, so for smart replies, we need to make sure to not send with this flag, so that we can be sure to do the animation for smart replies.
     if (session.compositionType == WritingTools::SessionCompositionType::SmartReply)
         finished = false;

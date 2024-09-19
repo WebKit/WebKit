@@ -1262,6 +1262,33 @@ TEST(WritingTools, CompositionWithAttributedStringAttributes)
     TestWebKitAPI::Util::run(&finished);
 }
 
+TEST(WritingTools, CompositionWithTabCharacters)
+{
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p style='height: 12px'></p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.querySelector('p'));"];
+    [webView waitForNextPresentationUpdate];
+
+    [webView _synchronouslyExecuteEditCommand:@"InsertText" argument:@"Hello"];
+    [webView _synchronouslyExecuteEditCommand:@"InsertTab" argument:@""];
+    [webView _synchronouslyExecuteEditCommand:@"InsertText" argument:@"World"];
+
+    __block bool finished = false;
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        [contexts.firstObject.attributedText enumerateAttribute:WTWritingToolsPreservedAttributeName inRange:NSMakeRange(0, [contexts.firstObject.attributedText length]) options:0 usingBlock:^(id value, NSRange attributeRange, BOOL *stop) {
+            EXPECT_EQ(0, [value integerValue]);
+        }];
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
 TEST(WritingTools, CompositionWithUnderline)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
