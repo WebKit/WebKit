@@ -150,7 +150,8 @@ private:
 
     RemoteResourceCache& resourceCache() const;
     WebCore::ControlFactory& controlFactory();
-    WebCore::GraphicsContext& drawingContext() { return m_imageBuffer->context(); }
+    Ref<WebCore::ControlFactory> protectedControlFactory() { return controlFactory(); }
+    WebCore::GraphicsContext& drawingContext() { return Ref { m_imageBuffer }->context(); }
     RefPtr<WebCore::ImageBuffer> imageBuffer(WebCore::RenderingResourceIdentifier) const;
     std::optional<WebCore::SourceImage> sourceImage(WebCore::RenderingResourceIdentifier) const;
 

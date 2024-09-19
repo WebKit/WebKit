@@ -240,7 +240,7 @@ void LibWebRTCCodecsProxy::flushDecoder(VideoDecoderIdentifier identifier, Compl
     doDecoderTask(identifier, [&](auto& decoder) {
         decoder.webrtcDecoder->flush();
         // FIXME: It would be nice to ASSERT that when executing callback, the decoding task deque is empty.
-        workQueue().dispatch(WTFMove(completionHandler));
+        protectedWorkQueue()->dispatch(WTFMove(completionHandler));
     });
 }
 
@@ -499,7 +499,7 @@ void LibWebRTCCodecsProxy::flushEncoder(VideoEncoderIdentifier identifier, Compl
     if (auto* encoder = findEncoder(identifier))
         webrtc::flushLocalEncoder(encoder->webrtcEncoder);
     // FIXME: It would be nice to ASSERT that when executing callback, the encoding task deque is empty.
-    workQueue().dispatch(WTFMove(callback));
+    protectedWorkQueue()->dispatch(WTFMove(callback));
 }
 
 void LibWebRTCCodecsProxy::setEncodeRates(VideoEncoderIdentifier identifier, uint32_t bitRate, uint32_t frameRate, CompletionHandler<void()>&& callback)

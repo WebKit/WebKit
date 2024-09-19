@@ -539,10 +539,10 @@ bool RemoteDisplayListRecorderProxy::recordResourceUse(ImageBuffer& imageBuffer)
 
 bool RemoteDisplayListRecorderProxy::recordResourceUse(const SourceImage& image)
 {
-    if (auto imageBuffer = image.imageBufferIfExists())
+    if (RefPtr imageBuffer = image.imageBufferIfExists())
         return recordResourceUse(*imageBuffer);
 
-    if (auto nativeImage = image.nativeImageIfExists())
+    if (RefPtr nativeImage = image.nativeImageIfExists())
         return recordResourceUse(*nativeImage);
 
     return true;
