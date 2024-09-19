@@ -152,7 +152,7 @@ public:
                 delete static_cast<const T*>(this);
             });
         } else {
-            static_assert(!sizeof(T), "Unexpected destructionThread enumerator");
+            STATIC_ASSERT_NOT_REACHED_FOR_VALUE(destructionThread, "Unexpected destructionThread enumerator value");
         }
     }
 
@@ -172,7 +172,7 @@ public:
                 delete static_cast<const T*>(this);
             });
         } else {
-            static_assert(!sizeof(T), "Unexpected destructionThread enumerator");
+            STATIC_ASSERT_NOT_REACHED_FOR_VALUE(destructionThread, "Unexpected destructionThread enumerator value");
         }
     }
 

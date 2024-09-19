@@ -546,6 +546,28 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #endif
 #endif
 
+#ifdef __cplusplus
+namespace WTF {
+template <typename T>
+static constexpr bool unreachableForType = false;
+template <auto v>
+static constexpr bool unreachableForValue = false;
+} // namespace WTF
+// This could be used in a function template, or a member function of a class template.
+// It will trigger in code that gets instantiated when it shouldn't, for example a template function invocation, or a constexpr-if/else branch that is actually taken.
+// The 1st parameter TYPE or COMPILE_TIME_VALUE is necessary as part of delaying the assertion evaluation until instantiation, and that parameter will be visible in compiler errors.
+// The 2nd parameter is an optional explanation string.
+#define STATIC_ASSERT_NOT_REACHED_FOR_TYPE(TYPE, ...) do { \
+    static_assert(WTF::unreachableForType<TYPE>, ##__VA_ARGS__); \
+    CRASH(); \
+} while (0)
+
+#define STATIC_ASSERT_NOT_REACHED_FOR_VALUE(COMPILE_TIME_VALUE, ...) do { \
+    static_assert(WTF::unreachableForValue<COMPILE_TIME_VALUE>, ##__VA_ARGS__); \
+    CRASH(); \
+} while (0)
+#endif // __cplusplus
+
 /* FATAL */
 
 #if FATAL_DISABLED
