@@ -375,6 +375,9 @@ WI.CSSKeywordCompletions.InheritedProperties = new Set([
     "print-color-adjust",
     "quotes",
     "resize",
+    "ruby-align",
+    "ruby-overhang",
+    "ruby-position",
     "shape-rendering",
     "speak-as",
     "stroke",
@@ -1316,6 +1319,15 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     ],
     "resize": [
         "none", "auto", "both", "horizontal", "vertical",
+    ],
+    "ruby-align": [
+        "start", "center", "space-between", "space-around",
+    ],
+    "ruby-overhang": [
+        "auto", "none",
+    ],
+    "ruby-position": [
+        "over", "under", "inter-character",
     ],
     "shape-rendering": [
         "auto", "optimizeSpeed", "geometricPrecision", "crispedges",
