@@ -2663,7 +2663,8 @@ LayoutUnit RenderFlexibleBox::computeGap(RenderFlexibleBox::GapType gapType) con
 
 bool RenderFlexibleBox::layoutUsingFlexFormattingContext()
 {
-    if (!LayoutIntegration::canUseForFlexLayout(*this))
+    m_hasFlexFormattingContextLayout = LayoutIntegration::canUseForFlexLayout(*this);
+    if (!m_hasFlexFormattingContextLayout)
         return false;
 
     auto flexLayout = LayoutIntegration::FlexLayout { *this };

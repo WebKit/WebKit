@@ -1135,6 +1135,28 @@ void RenderBlock::paintCaret(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     }
 }
 
+void RenderBlock::paintDebugBoxShadowIfApplicable(GraphicsContext& context, const LayoutRect& paintRect) const
+{
+    // FIXME: Use a more generic, modern-layout wide setting instead.
+    if (!settings().legacyLineLayoutVisualCoverageEnabled())
+        return;
+
+    auto* flexBox = dynamicDowncast<RenderFlexibleBox>(this);
+    if (!flexBox)
+        return;
+
+    constexpr size_t shadowExtent = 3;
+    GraphicsContextStateSaver stateSaver(context);
+
+    auto shadowRect = paintRect;
+    shadowRect.inflate(shadowExtent);
+    context.clip(shadowRect);
+    context.setDropShadow({ { -shadowRect.width(), 0 }, 30, flexBox->hasModernLayout() ? SRGBA<uint8_t> { 0, 180, 230, 200 } : SRGBA<uint8_t> { 200, 100, 100, 200 }, ShadowRadiusMode::Default });
+    context.clipOut(paintRect);
+    shadowRect.move(shadowRect.width(), 0);
+    context.fillRect(shadowRect, Color::black);
+}
+
 void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     PaintPhase paintPhase = paintInfo.phase;
@@ -1143,6 +1165,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     if ((paintPhase == PaintPhase::BlockBackground || paintPhase == PaintPhase::ChildBlockBackground) && style().usedVisibility() == Visibility::Visible) {
         if (hasVisibleBoxDecorations())
             paintBoxDecorations(paintInfo, paintOffset);
+        paintDebugBoxShadowIfApplicable(paintInfo.context(), { paintOffset, size() });
     }
     
     // Paint legends just above the border before we scroll or clip.

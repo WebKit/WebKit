@@ -463,6 +463,8 @@ private:
 
     void absoluteQuadsIgnoringContinuation(const FloatRect&, Vector<FloatQuad>&, bool* wasFixed) const override;
 
+    void paintDebugBoxShadowIfApplicable(GraphicsContext&, const LayoutRect&) const;
+
 protected:
     void dirtyForLayoutFromPercentageHeightDescendants();
 
