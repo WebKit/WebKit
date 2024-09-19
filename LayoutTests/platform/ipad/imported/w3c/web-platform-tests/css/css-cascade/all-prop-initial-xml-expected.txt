@@ -274,6 +274,7 @@ PASS rotate
 PASS row-gap
 PASS ruby-align
 PASS ruby-overhang
+PASS ruby-position
 PASS rx
 PASS ry
 PASS scale
@@ -382,9 +383,6 @@ PASS z-index
 PASS zoom
 PASS -apple-pay-button-style
 PASS -apple-pay-button-type
-PASS -webkit-backdrop-filter
-PASS -webkit-background-clip
-PASS -webkit-background-origin
 PASS -webkit-border-horizontal-spacing
 PASS -webkit-border-vertical-spacing
 PASS -webkit-box-align
@@ -397,7 +395,6 @@ PASS -webkit-box-ordinal-group
 PASS -webkit-box-orient
 PASS -webkit-box-pack
 PASS -webkit-box-reflect
-PASS -webkit-box-shadow
 PASS -webkit-column-axis
 PASS -webkit-column-progression
 PASS -webkit-cursor-visibility
@@ -412,15 +409,11 @@ PASS -webkit-line-clamp
 PASS -webkit-line-grid
 PASS -webkit-line-snap
 PASS -webkit-locale
-PASS -webkit-mask-clip
-PASS -webkit-mask-composite
 PASS -webkit-mask-position-x
 PASS -webkit-mask-position-y
-PASS -webkit-mask-source-type
 PASS -webkit-nbsp-mode
 PASS -webkit-rtl-ordering
 PASS -webkit-ruby-position
-PASS -webkit-text-combine
 PASS -webkit-text-fill-color
 PASS -webkit-text-security
 PASS -webkit-text-stroke-color
