@@ -318,7 +318,7 @@ void WebUserContentControllerProxy::removeAllUserStyleSheets()
 #endif
     {
         HashCountedSet<RefPtr<API::ContentWorld>> worlds;
-        for (auto userStyleSheet : protectedUserScripts()->elementsOfType<API::UserStyleSheet>())
+        for (auto userStyleSheet : protectedUserStyleSheets()->elementsOfType<API::UserStyleSheet>())
             worlds.add(const_cast<API::ContentWorld*>(&userStyleSheet->contentWorld()));
 
         auto worldIdentifiers = WTF::map(worlds, [](auto& entry) {
@@ -337,7 +337,7 @@ void WebUserContentControllerProxy::removeAllUserStyleSheets()
     ASSERT(removeWebExtensions == RemoveWebExtensions::No);
 
     Vector<Ref<API::UserStyleSheet>> styleSheetsToRemove;
-    for (auto userStyleSheet : protectedUserScripts()->elementsOfType<API::UserStyleSheet>()) {
+    for (auto userStyleSheet : protectedUserStyleSheets()->elementsOfType<API::UserStyleSheet>()) {
         if (WebExtensionMatchPattern::isWebExtensionURL(userStyleSheet->userStyleSheet().url()))
             continue;
         styleSheetsToRemove.append(const_cast<API::UserStyleSheet&>(*userStyleSheet));
