@@ -47,7 +47,6 @@ GraphicsLayerContentsDisplayDelegateGBM::GraphicsLayerContentsDisplayDelegateGBM
         if (!m_isOpaque)
             flags.add(TextureMapperFlags::ShouldBlend);
 
-        Locker locker { proxy.lock() };
         proxy.pushNextBuffer(CoordinatedPlatformLayerBufferDMABuf::create(Ref { *m_buffer }, flags, WTFMove(m_fence)));
     });
 }

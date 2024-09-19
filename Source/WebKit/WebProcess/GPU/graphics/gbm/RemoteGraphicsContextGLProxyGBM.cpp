@@ -74,8 +74,6 @@ private:
             OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
             if (!m_isOpaque)
                 flags.add(TextureMapperFlags::ShouldBlend);
-
-            Locker locker { proxy.lock() };
             proxy.pushNextBuffer(CoordinatedPlatformLayerBufferDMABuf::create(Ref { *m_displayBuffer }, flags, WTFMove(m_fenceFD)));
         });
     }

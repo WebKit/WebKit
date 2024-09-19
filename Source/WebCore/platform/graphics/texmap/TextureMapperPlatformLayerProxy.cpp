@@ -53,10 +53,16 @@ TextureMapperPlatformLayerProxy::~TextureMapperPlatformLayerProxy()
         m_targetLayer->setContentsLayer(nullptr);
 }
 
-bool TextureMapperPlatformLayerProxy::isActive() const
+bool TextureMapperPlatformLayerProxy::isActiveLocked() const
 {
     ASSERT(m_lock.isHeld());
     return !!m_targetLayer && !!m_compositor;
+}
+
+bool TextureMapperPlatformLayerProxy::isActive()
+{
+    Locker locker { m_lock };
+    return isActiveLocked();
 }
 
 void TextureMapperPlatformLayerProxy::activateOnCompositingThread(Compositor* compositor, TextureMapperLayer* targetLayer)
@@ -134,7 +140,7 @@ void TextureMapperPlatformLayerProxy::swapBuffer()
 
 void TextureMapperPlatformLayerProxy::pushNextBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& newBuffer)
 {
-    ASSERT(m_lock.isHeld());
+    Locker locker { m_lock };
     m_pendingBuffer = WTFMove(newBuffer);
     m_wasBufferDropped = false;
 
@@ -163,12 +169,6 @@ void TextureMapperPlatformLayerProxy::swapBuffersIfNeeded()
 
 void TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture(bool shouldWait)
 {
-    {
-        Locker locker { m_lock };
-        if (!isActive())
-            return;
-    }
-
     auto dropBufferFunction = [this, protectedThis = Ref { *this }, shouldWait] {
         Locker locker { m_lock };
 
@@ -180,7 +180,7 @@ void TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture(bo
             }
         });
 
-        if (!isActive() || !m_currentBuffer)
+        if (!isActiveLocked() || !m_currentBuffer)
             return;
 
         m_pendingBuffer = nullptr;
@@ -209,6 +209,9 @@ void TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture(bo
 bool TextureMapperPlatformLayerProxy::scheduleUpdateOnCompositorThread(Function<void()>&& updateFunction)
 {
     Locker locker { m_lock };
+    if (!isActiveLocked())
+        return false;
+
     m_compositorThreadUpdateFunction = WTFMove(updateFunction);
 
     if (!m_compositorThreadUpdateTimer)

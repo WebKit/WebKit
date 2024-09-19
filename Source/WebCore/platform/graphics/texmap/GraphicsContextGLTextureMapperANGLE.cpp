@@ -309,7 +309,6 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
             flags.add(TextureMapperFlags::ShouldBlend);
 
         auto fboSize = getInternalFramebufferSize();
-        Locker locker { proxy.lock() };
         proxy.pushNextBuffer(CoordinatedPlatformLayerBufferRGB::create(m_compositorTextureID, fboSize, flags, WTFMove(m_frameFence)));
     });
     m_layerContentsDisplayDelegate = GraphicsLayerContentsDisplayDelegateTextureMapper::create(WTFMove(proxy));

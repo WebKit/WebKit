@@ -66,7 +66,6 @@ FloatSize MediaPlayerPrivateHolePunch::naturalSize() const
 
 void MediaPlayerPrivateHolePunch::pushNextHolePunchBuffer()
 {
-    Locker locker { m_platformLayer->lock() };
     proxy.pushNextBuffer(CoordinatedPlatformLayerBufferHolePunch::create(m_size));
 }
 

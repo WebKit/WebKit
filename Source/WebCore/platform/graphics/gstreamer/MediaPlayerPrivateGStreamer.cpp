@@ -3313,7 +3313,6 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
 
     ++m_sampleCount;
 
-    Locker locker { m_platformLayer->lock() };
     if (!m_platformLayer->isActive()) {
         GST_ERROR_OBJECT(pipeline(), "TextureMapperPlatformLayerProxy is inactive");
         textureMapperPlatformLayerProxyWasInvalidated();
@@ -3808,7 +3807,6 @@ GstElement* MediaPlayerPrivateGStreamer::createHolePunchVideoSink()
 void MediaPlayerPrivateGStreamer::pushNextHolePunchBuffer()
 {
     ASSERT(isHolePunchRenderingEnabled());
-    Locker locker { m_platformLayer->lock() };
     m_platformLayer->pushNextBuffer(CoordinatedPlatformLayerBufferHolePunch::create(m_size, m_videoSink.get(), m_quirksManagerForTesting ? m_quirksManagerForTesting.copyRef() : RefPtr { &GStreamerQuirksManager::singleton() }));
 }
 

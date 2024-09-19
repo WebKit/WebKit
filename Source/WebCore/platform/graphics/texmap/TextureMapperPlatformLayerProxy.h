@@ -60,11 +60,9 @@ public:
 
     virtual ~TextureMapperPlatformLayerProxy();
 
-    Lock& lock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
-    bool isActive() const;
-
     ContentType contentType() const { return m_contentType; }
 
+    bool isActive();
     void activateOnCompositingThread(Compositor*, TextureMapperLayer*);
     void invalidate();
     void swapBuffer();
@@ -76,6 +74,8 @@ public:
 
 private:
     explicit TextureMapperPlatformLayerProxy(ContentType);
+
+    bool isActiveLocked() const;
 
     bool scheduleUpdateOnCompositorThread(Function<void()>&&);
     void compositorThreadUpdateTimerFired();

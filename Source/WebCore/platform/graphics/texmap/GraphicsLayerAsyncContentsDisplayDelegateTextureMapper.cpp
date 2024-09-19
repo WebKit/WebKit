@@ -50,7 +50,6 @@ bool GraphicsLayerAsyncContentsDisplayDelegateTextureMapper::tryCopyToLayer(Imag
     if (!image)
         return false;
 
-    Locker locker { m_proxy->lock() };
     OptionSet<TextureMapperFlags> flags;
     if (image->hasAlpha())
         flags.add(TextureMapperFlags::ShouldBlend);

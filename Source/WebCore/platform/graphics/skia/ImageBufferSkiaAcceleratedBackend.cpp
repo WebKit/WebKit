@@ -94,7 +94,6 @@ ImageBufferSkiaAcceleratedBackend::ImageBufferSkiaAcceleratedBackend(const Param
             if (!image)
                 return;
 
-            Locker locker { proxy.lock() };
             OptionSet<TextureMapperFlags> flags;
             if (image->hasAlpha())
                 flags.add(TextureMapperFlags::ShouldBlend);
