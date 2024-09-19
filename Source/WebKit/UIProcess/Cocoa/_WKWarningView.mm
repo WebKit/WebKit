@@ -405,12 +405,13 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
     [self addSubview:box.get()];
 
     [NSLayoutConstraint activateConstraints:@[
+#if HAVE(SAFE_BROWSING)
 #if PLATFORM(WATCHOS)
         [[[box leadingAnchor] anchorWithOffsetToAnchor:[exclamationPoint leadingAnchor]] constraintEqualToAnchor:[[exclamationPoint trailingAnchor] anchorWithOffsetToAnchor:[box trailingAnchor]]],
         [[[box leadingAnchor] anchorWithOffsetToAnchor:[title leadingAnchor]] constraintEqualToConstant:marginSize],
         [[[exclamationPoint bottomAnchor] anchorWithOffsetToAnchor:[title topAnchor]] constraintEqualToConstant:marginSize],
         [[[box topAnchor] anchorWithOffsetToAnchor:[exclamationPoint topAnchor]] constraintEqualToConstant:marginSize + self.frame.size.height / 2],
-#elif HAVE(SAFE_BROWSING)
+#else
         [[[box leadingAnchor] anchorWithOffsetToAnchor:[exclamationPoint leadingAnchor]] constraintEqualToConstant:marginSize],
         [[[box leadingAnchor] anchorWithOffsetToAnchor:[title leadingAnchor]] constraintEqualToConstant:marginSize * 1.5 + exclamationPointSize],
         [[[title topAnchor] anchorWithOffsetToAnchor:[exclamationPoint topAnchor]] constraintEqualToAnchor:[[exclamationPoint bottomAnchor] anchorWithOffsetToAnchor:[title bottomAnchor]]],
@@ -418,6 +419,7 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 #endif
         [[[title bottomAnchor] anchorWithOffsetToAnchor:[warning topAnchor]] constraintEqualToConstant:marginSize],
         [[self.topAnchor anchorWithOffsetToAnchor:[box topAnchor]] constraintEqualToAnchor:[[box bottomAnchor] anchorWithOffsetToAnchor:self.bottomAnchor] multiplier:topToBottomMarginMultiplier],
+#endif // HAVE(SAFE_BROWSING)
     ]];
 
 #if HAVE(SAFE_BROWSING)
