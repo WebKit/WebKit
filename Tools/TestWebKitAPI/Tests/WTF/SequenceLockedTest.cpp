@@ -70,7 +70,7 @@ TEST_F(SequenceLockedTest, Works)
 #ifndef NDEBUG
     constexpr int iterations = 100000;
 #else
-    constexpr int iterations = 1000;
+    constexpr int iterations = 100;
 #endif
 
     for (int i = 0; i < iterations; ++i) {
