@@ -38,6 +38,7 @@
 #include "RenderInline.h"
 #include "RenderStyle.h"
 #include "RenderStyleInlines.h"
+#include "StyleBuilderConverter.h"
 #include "StyleBuilderState.h"
 #include "StyleScope.h"
 #include "WritingMode.h"
@@ -49,6 +50,23 @@
 namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AnchorPositionedState);
+
+static bool isInsetProperty(CSSPropertyID propertyID)
+{
+    switch (propertyID) {
+    case CSSPropertyLeft:
+    case CSSPropertyRight:
+    case CSSPropertyTop:
+    case CSSPropertyBottom:
+    case CSSPropertyInsetInlineStart:
+    case CSSPropertyInsetInlineEnd:
+    case CSSPropertyInsetBlockStart:
+    case CSSPropertyInsetBlockEnd:
+        return true;
+    default:
+        return false;
+    }
+};
 
 static BoxAxis mapInsetPropertyToPhysicalAxis(CSSPropertyID id, const RenderStyle& style)
 {
@@ -363,23 +381,58 @@ static Length computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<const 
 
 Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderState, const CSSAnchorValue& anchorValue)
 {
-    // FIXME: Determine when this if guard is true and what it means.
-    if (!builderState.element())
-        return Length(0, LengthType::Fixed);
+    auto fallbackValue = [&] {
+        // https://drafts.csswg.org/css-anchor-position-1/#anchor-valid
+        // If any of these conditions are false, the anchor() function resolves to its specified fallback value
+        if (auto* fallback = anchorValue.fallback())
+            return BuilderConverter::convertLength(builderState, *fallback);
+
+        // If no fallback value is specified, it makes the declaration referencing it invalid at computed-value time.
+
+        // https://drafts.csswg.org/css-variables-2/#invalid-variables
+        // Either the property’s inherited value or its initial value depending on whether the property is inherited or not,
+        // respectively, as if the property’s value had been specified as the unset keyword.
+        // FIXME: This does not implement unset corretly for non-inset properties.
+        const auto insetPropertyUnsetValue = RenderStyle::initialOffset();
+        return insetPropertyUnsetValue;
+    };
+
+    auto propertyID = builderState.cssPropertyID();
+    const auto& style = builderState.style();
+
+    // https://drafts.csswg.org/css-anchor-position-1/#anchor-valid
+    auto isValidAnchor = [&] {
+        if (!builderState.element())
+            return false;
+
+        // FIXME: Support pseudo-elements.
+        if (style.pseudoElementType() != PseudoId::None)
+            return false;
+
+        // FIXME: Support animations and transitions.
+        if (style.hasAnimationsOrTransitions())
+            return false;
+
+        // It’s being used in an inset property...
+        if (!isInsetProperty(propertyID))
+            return false;
+
+        // ...on an absolutely-positioned element.
+        if (!style.hasOutOfFlowPosition())
+            return false;
+
+        // If its <anchor-side> specifies a physical keyword, it’s being used in an inset property in that axis.
+        // (For example, left can only be used in left, right, or a logical inset property in the horizontal axis.)
+        if (!anchorSideMatchesInsetProperty(anchorValue.anchorSide()->valueID(), propertyID, style))
+            return false;
+
+        return true;
+    };
+
+    if (!isValidAnchor())
+        return fallbackValue();
+
     Ref anchorPositionedElement = *builderState.element();
-
-    // FIXME: Support pseudo-elements.
-    if (builderState.style().pseudoElementType() != PseudoId::None)
-        return Length(0, LengthType::Fixed);
-
-    // FIXME: Support animations and transitions.
-    if (builderState.style().hasAnimationsOrTransitions())
-        return Length(0, LengthType::Fixed);
-
-    // In-flow elements cannot be anchor-positioned.
-    // FIXME: Should attempt to resolve the fallback value.
-    if (!builderState.style().hasOutOfFlowPosition())
-        return Length(0, LengthType::Fixed);
 
     auto& anchorPositionedStates = anchorPositionedElement->document().styleScope().anchorPositionedStates();
     auto& anchorPositionedState = *anchorPositionedStates.ensure(anchorPositionedElement, [&] {
@@ -398,7 +451,7 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
     // the anchors referenced by the anchor-positioned element. Until then, we cannot
     // resolve this anchor() instance.
     if (anchorPositionedState.stage < AnchorPositionResolutionStage::FoundAnchors)
-        return Length(0, LengthType::Fixed);
+        return fallbackValue();
 
     // Anchor value may now be resolved using layout information
     CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
@@ -411,16 +464,16 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
 
     RefPtr anchorElement = anchorString.isNull() ? nullptr : anchorPositionedState.anchorElements.get(anchorString);
     if (!anchorElement) {
-        // FIXME: Should rely on fallback, and also should behave as unset if fallback doesn't exist.
         // See: https://drafts.csswg.org/css-anchor-position-1/#valid-anchor-function
         anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
-        return Length(0, LengthType::Fixed);
+
+        return fallbackValue();
     }
 
     if (auto* state = anchorPositionedStates.get(*anchorElement)) {
         // Check if the anchor is itself anchor-positioned but hasn't been positioned yet.
         if (state->stage != AnchorPositionResolutionStage::Positioned)
-            return Length(0, LengthType::Fixed);
+            return fallbackValue();
     }
 
     anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
@@ -428,19 +481,9 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
     CheckedPtr anchorRenderer = anchorElement->renderer();
     ASSERT(anchorRenderer);
 
-    // Confirm that the axis specified by the inset property matches the side provided in
-    // the anchor() call.
-    auto insetPropertyID = builderState.cssPropertyID();
-    auto& anchorPositionedElementStyle = anchorPositionedElement->renderer()->style();
-    if (!anchorSideMatchesInsetProperty(anchorValue.anchorSide()->valueID(), insetPropertyID, anchorPositionedElementStyle)) {
-        // FIXME: Should rely on fallback, and also should behave as unset if fallback doesn't exist.
-        // See: https://drafts.csswg.org/css-anchor-position-1/#valid-anchor-function
-        return Length(0, LengthType::Fixed);
-    }
-
     // Proceed with computing the inset value for the specified inset property.
     CheckedRef anchorBox = downcast<RenderBoxModelObject>(*anchorRenderer);
-    return computeInsetValue(insetPropertyID, anchorBox, *anchorPositionedRenderer, anchorValue);
+    return computeInsetValue(propertyID, anchorBox, *anchorPositionedRenderer, anchorValue);
 }
 
 static const RenderElement* penultimateContainingBlockChainElement(const RenderElement* descendant, const RenderElement* ancestor)

@@ -46,6 +46,8 @@ public:
     String anchorElementString() const;
     Ref<CSSValue> anchorSide() const;
 
+    const CSSPrimitiveValue* fallback() const { return m_fallback.get(); }
+
 private:
     CSSAnchorValue(RefPtr<CSSPrimitiveValue>&& anchorElement, Ref<CSSValue>&& anchorSide, RefPtr<CSSPrimitiveValue>&& fallback)
         : CSSValue(ClassType::Anchor)

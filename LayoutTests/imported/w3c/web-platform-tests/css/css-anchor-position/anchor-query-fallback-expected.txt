@@ -1,31 +1,15 @@
 
-FAIL .target 1 assert_equals:
-<div class="target" style="left: anchor(--inexist-anchor left, 50px)" data-offset-x="50"></div>
-offsetLeft expected 50 but got 0
+PASS .target 1
 FAIL .target 2 assert_equals:
 <div class="target" style="width: anchor-size(--inexist-anchor width, 50px)" data-expected-width="50"></div>
 width expected 50 but got 0
-FAIL .target 3 assert_equals:
-<div class="target" style="left: anchor(--a1 top, 50px)" data-offset-x="50"></div>
-offsetLeft expected 50 but got 0
-FAIL .target 4 assert_equals:
-<div class="target" style="left: anchor(--a1 bottom, 50px)" data-offset-x="50"></div>
-offsetLeft expected 50 but got 0
-FAIL .target 5 assert_equals:
-<div class="target" style="top: anchor(--a1 left, 50px)" data-offset-y="50"></div>
-offsetTop expected 50 but got 0
-FAIL .target 6 assert_equals:
-<div class="target" style="top: anchor(--a1 right, 50px)" data-offset-y="50"></div>
-offsetTop expected 50 but got 0
-FAIL .target 7 assert_equals:
-<div class="target" style="left: anchor(--inexist-anchor left, 50%)" data-offset-x="150"></div>
-offsetLeft expected 150 but got 0
-FAIL .target 8 assert_equals:
-<div class="target" style="left: anchor(--inexist-anchor left, calc(20% + 20px))" data-offset-x="80"></div>
-offsetLeft expected 80 but got 0
-FAIL .target 9 assert_equals:
-<div class="target" style="top: anchor(--a1 left, anchor(--a2 top))" data-offset-y="100"></div>
-offsetTop expected 100 but got 0
+PASS .target 3
+PASS .target 4
+PASS .target 5
+PASS .target 6
+PASS .target 7
+PASS .target 8
+PASS .target 9
 FAIL .target 10 assert_equals:
 <div class="target" style="top: anchor(--a1 left, calc((anchor(--a1 bottom) + anchor(--a2 top)) / 2))" data-offset-y="75"></div>
 offsetTop expected 75 but got 0
