@@ -779,6 +779,11 @@ void WebPageProxy::willStartUserTriggeredZooming()
     legacyMainFrameProcess().send(Messages::WebPage::WillStartUserTriggeredZooming(), webPageIDInMainFrameProcess());
 }
 
+void WebPageProxy::didEndUserTriggeredZooming()
+{
+    legacyMainFrameProcess().send(Messages::WebPage::DidEndUserTriggeredZooming(), webPageIDInMainFrameProcess());
+}
+
 void WebPageProxy::potentialTapAtPosition(const WebCore::FloatPoint& position, bool shouldRequestMagnificationInformation, WebKit::TapIdentifier requestID)
 {
     hideValidationMessage();

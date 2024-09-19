@@ -2071,6 +2071,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     if (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateBegan) {
         _page->willStartUserTriggeredZooming();
+
+        if (_page->mainFramePluginHandlesPageScaleGesture())
+            return;
+
         [_contentView scrollViewWillStartPanOrPinchGesture];
     }
     [_contentView willStartZoomOrScroll];
@@ -2277,6 +2281,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (![self usesStandardContentView] && [_customContentView respondsToSelector:@selector(web_scrollViewDidZoom:)])
         [_customContentView web_scrollViewDidZoom:scrollView];
 
+    if (_page->mainFramePluginHandlesPageScaleGesture())
+        return;
+
     [self _updateScrollViewBackground];
     [self _scheduleVisibleContentRectUpdateAfterScrollInView:scrollView];
 }
@@ -2287,6 +2294,13 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         [_customContentView web_scrollViewDidEndZooming:scrollView withView:view atScale:scale];
 
     ASSERT(scrollView == _scrollView);
+
+    if (_page->mainFramePluginHandlesPageScaleGesture()) {
+        _page->didEndUserTriggeredZooming();
+        [self _scheduleVisibleContentRectUpdateAfterScrollInView:scrollView];
+        return;
+    }
+
     // FIXME: remove when rdar://problem/36065495 is fixed.
     // When rotating with two fingers down, UIScrollView can set a bogus content view position.
     // "Center" is top left because we set the anchorPoint to 0,0.

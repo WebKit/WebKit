@@ -1718,6 +1718,8 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     void willStartUserTriggeredZooming();
+    void didEndUserTriggeredZooming();
+    bool mainFramePluginHandlesPageScaleGesture() const { return m_mainFramePluginHandlesPageScaleGesture; }
 
     void potentialTapAtPosition(const WebCore::FloatPoint&, bool shouldRequestMagnificationInformation, TapIdentifier requestID);
     void commitPotentialTap(OptionSet<WebEventModifier>, TransactionID layerTreeTransactionIdAtLastTouchStart, WebCore::PointerID);
