@@ -30,7 +30,6 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
-#import <wtf/Platform.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
@@ -263,12 +262,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingMutedV
     }];
 }
 
-// rdar://136308546
-#if MAC_OS_SINCE(SONOMA)
-TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosShowControlsForLastInteractedVideo)
-#else
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosShowControlsForLastInteractedVideo)
-#endif
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
     NSPoint clickPoint = NSMakePoint(400, 300);
