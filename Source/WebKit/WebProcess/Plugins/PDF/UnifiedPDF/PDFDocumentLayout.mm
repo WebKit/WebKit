@@ -370,7 +370,6 @@ auto PDFDocumentLayout::updateLayout(IntSize pluginSize, ShouldUpdateAutoSizeSca
 
     layoutUpdateChanges.set(LayoutUpdateChange::PageGeometries, oldPageGeometry != m_pageGeometry);
 
-    shouldUpdateScale = layoutUpdateChanges.contains(LayoutUpdateChange::PageGeometries) ? ShouldUpdateAutoSizeScale::Yes : shouldUpdateScale;
     layoutPages(pluginSize, maxRowSize, shouldUpdateScale);
 
     layoutUpdateChanges.set(LayoutUpdateChange::DocumentBounds, oldDocumentBounds != m_documentBounds);
