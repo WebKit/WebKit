@@ -6652,7 +6652,8 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     if (frame->isMainFrame()) {
         internals().pageLoadState.didCommitLoad(transaction, certificateInfo, markPageInsecure, usedLegacyTLS, wasPrivateRelayed, frameInfo.securityOrigin);
         m_shouldSuppressNextAutomaticNavigationSnapshot = false;
-        m_framesWithSubresourceLoadingForPageLoadTiming.clear();
+        if (m_preferences->siteIsolationEnabled())
+            m_framesWithSubresourceLoadingForPageLoadTiming.clear();
     } else if (markPageInsecure)
         internals().pageLoadState.didDisplayOrRunInsecureContent(transaction);
 
