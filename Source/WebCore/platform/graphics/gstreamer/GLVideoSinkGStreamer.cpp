@@ -79,6 +79,43 @@ static void initializeDMABufAvailability()
     });
 }
 
+#if !GST_CHECK_VERSION(1, 24, 0)
+static GstVideoFormat drmFourccToGstVideoFormat(uint32_t fourcc)
+{
+    switch (fourcc) {
+    case DRM_FORMAT_XRGB8888:
+        return GST_VIDEO_FORMAT_BGRx;
+    case DRM_FORMAT_XBGR8888:
+        return GST_VIDEO_FORMAT_RGBx;
+    case DRM_FORMAT_ARGB8888:
+        return GST_VIDEO_FORMAT_BGRA;
+    case DRM_FORMAT_ABGR8888:
+        return GST_VIDEO_FORMAT_RGBA;
+    case DRM_FORMAT_YUV420:
+        return GST_VIDEO_FORMAT_I420;
+    case DRM_FORMAT_YVU420:
+        return GST_VIDEO_FORMAT_YV12;
+    case DRM_FORMAT_NV12:
+        return GST_VIDEO_FORMAT_NV12;
+    case DRM_FORMAT_NV21:
+        return GST_VIDEO_FORMAT_NV21;
+    case DRM_FORMAT_YUV444:
+        return GST_VIDEO_FORMAT_Y444;
+    case DRM_FORMAT_YUV411:
+        return GST_VIDEO_FORMAT_Y41B;
+    case DRM_FORMAT_YUV422:
+        return GST_VIDEO_FORMAT_Y42B;
+    case DRM_FORMAT_P010:
+        return GST_VIDEO_FORMAT_P010_10LE;
+    default:
+        break;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return GST_VIDEO_FORMAT_UNKNOWN;
+}
+#endif
+
 static GRefPtr<GstCaps> buildDMABufCaps()
 {
     GRefPtr<GstCaps> caps = adoptGRef(gst_caps_from_string("video/x-raw(memory:DMABuf), width = " GST_VIDEO_SIZE_RANGE ", height = " GST_VIDEO_SIZE_RANGE ", framerate = " GST_VIDEO_FPS_RANGE));
@@ -126,7 +163,7 @@ static GRefPtr<GstCaps> buildDMABufCaps()
 #else
         GValue value = G_VALUE_INIT;
         g_value_init(&value, G_TYPE_STRING);
-        g_value_set_string(&value, gst_video_format_to_string(gst_video_dma_drm_fourcc_to_format(format.fourcc)));
+        g_value_set_string(&value, gst_video_format_to_string(drmFourccToGstVideoFormat(format.fourcc)));
         gst_value_list_append_value(&supportedFormats, &value);
         g_value_unset(&value);
 #endif
