@@ -103,7 +103,7 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect
         DisplayList::RecorderImpl recordingContext(*displayList, GraphicsContextState(), FloatRect({ }, tileRect.size()), AffineTransform());
         paintIntoGraphicsContext(recordingContext);
 
-        workerPool->postTask([buffer = Ref { buffer }, displayList = WTFMove(displayList), tileRect] {
+        workerPool->postTask([buffer = Ref { buffer }, displayList = WTFMove(displayList), tileRect]() mutable {
             RELEASE_ASSERT(buffer->surface());
             if (auto* canvas = buffer->surface()->getCanvas()) {
                 static thread_local RefPtr<ControlFactory> s_controlFactory;
@@ -118,6 +118,11 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect
                 WTFEndSignpost(canvas, PaintTile);
             }
             buffer->completePainting();
+
+            // Destruct display list on main thread.
+            ensureOnMainThread([displayList = WTFMove(displayList)]() mutable {
+                displayList = nullptr;
+            });
         });
 
         WTFEndSignpost(this, RecordTile);
