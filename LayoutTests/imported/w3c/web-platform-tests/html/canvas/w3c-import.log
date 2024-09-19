@@ -16,3 +16,6 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/README.md
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/color.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/historical.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/historical.window.js

@@ -16,8 +16,15 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates/reftest.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates/reftest_element.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates/reftest_element_grid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates/reftest_grid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates/reftest_offscreen.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates/reftest_offscreen_grid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates/reftest_worker.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates/reftest_worker_grid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates/testharness_element.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates/testharness_element_grid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates/testharness_offscreen.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates/testharness_offscreen_grid.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates/testharness_worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/tools/templates/testharness_worker_grid.js
