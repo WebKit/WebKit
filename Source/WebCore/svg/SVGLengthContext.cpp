@@ -41,27 +41,22 @@ SVGLengthContext::SVGLengthContext(const SVGElement* context)
 {
 }
 
-SVGLengthContext::SVGLengthContext(const SVGElement* context, const FloatRect& viewport)
-    : m_context(context)
-    , m_overriddenViewport(viewport)
-{
-}
-
 SVGLengthContext::~SVGLengthContext() = default;
 
 FloatRect SVGLengthContext::resolveRectangle(const SVGElement* context, SVGUnitTypes::SVGUnitType type, const FloatRect& viewport, const SVGLengthValue& x, const SVGLengthValue& y, const SVGLengthValue& width, const SVGLengthValue& height)
 {
     ASSERT(type != SVGUnitTypes::SVG_UNIT_TYPE_UNKNOWN);
-    if (type == SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE) {
-        SVGLengthContext lengthContext(context);
-        return FloatRect(x.value(lengthContext), y.value(lengthContext), width.value(lengthContext), height.value(lengthContext));
+    if (type != SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE) {
+        auto viewportSize = viewport.size();
+        return FloatRect(
+            convertValueFromPercentageToUserUnits(x.valueAsPercentage(), x.lengthMode(), viewportSize) + viewport.x(),
+            convertValueFromPercentageToUserUnits(y.valueAsPercentage(), y.lengthMode(), viewportSize) + viewport.y(),
+            convertValueFromPercentageToUserUnits(width.valueAsPercentage(), width.lengthMode(), viewportSize),
+            convertValueFromPercentageToUserUnits(height.valueAsPercentage(), height.lengthMode(), viewportSize));
     }
 
-    SVGLengthContext lengthContext(context, viewport);
-    return FloatRect(x.value(lengthContext) + viewport.x(),
-                     y.value(lengthContext) + viewport.y(),
-                     width.value(lengthContext),
-                     height.value(lengthContext));
+    SVGLengthContext lengthContext(context);
+    return FloatRect(x.value(lengthContext), y.value(lengthContext), width.value(lengthContext), height.value(lengthContext));
 }
 
 FloatPoint SVGLengthContext::resolvePoint(const SVGElement* context, SVGUnitTypes::SVGUnitType type, const SVGLengthValue& x, const SVGLengthValue& y)
@@ -128,14 +123,6 @@ float SVGLengthContext::valueForLength(const Length& length, SVGLengthMode lengt
 
 ExceptionOr<float> SVGLengthContext::convertValueToUserUnits(float value, SVGLengthType lengthType, SVGLengthMode lengthMode) const
 {
-    // If the SVGLengthContext carries a custom viewport, force resolving against it.
-    if (!m_overriddenViewport.isZero()) {
-        // 100% = 100.0 instead of 1.0 for historical reasons, this could eventually be changed
-        if (lengthType == SVGLengthType::Percentage)
-            value /= 100;
-        return convertValueFromPercentageToUserUnits(value, lengthMode);
-    }
-
     switch (lengthType) {
     case SVGLengthType::Unknown:
         return Exception { ExceptionCode::NotSupportedError };
@@ -211,7 +198,12 @@ ExceptionOr<float> SVGLengthContext::convertValueFromPercentageToUserUnits(float
     if (!viewportSize)
         return Exception { ExceptionCode::NotSupportedError };
 
-    return value * dimensionForLengthMode(lengthMode, *viewportSize);
+    return convertValueFromPercentageToUserUnits(value, lengthMode, *viewportSize);
+}
+
+float SVGLengthContext::convertValueFromPercentageToUserUnits(float value, SVGLengthMode lengthMode, FloatSize viewportSize)
+{
+    return value * dimensionForLengthMode(lengthMode, viewportSize);
 }
 
 static inline const RenderStyle* renderStyleForLengthResolving(const SVGElement* context)
@@ -287,10 +279,6 @@ std::optional<FloatSize> SVGLengthContext::viewportSize() const
     if (!m_context)
         return std::nullopt;
 
-    // If an overridden viewport is given, it has precedence.
-    if (!m_overriddenViewport.isZero())
-        return m_overriddenViewport.size();
-
     if (!m_viewportSize)
         m_viewportSize = computeViewportSize();
     
@@ -299,7 +287,6 @@ std::optional<FloatSize> SVGLengthContext::viewportSize() const
 
 std::optional<FloatSize> SVGLengthContext::computeViewportSize() const
 {
-    ASSERT(m_overriddenViewport.isZero());
     ASSERT(m_context);
 
     // Root <svg> element lengths are resolved against the top level viewport,

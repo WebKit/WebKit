@@ -99,7 +99,7 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (93,2) size 54x69
             chunk 1 (middle anchor) text run 1 at (150.74,340.00) startOffset 0 endOffset 1 width 35.57: "K"
         RenderSVGInlineText {#text} at (0,0) size 0x0
-          [filter="dropShadow"] RenderSVGResourceFilter {filter} at (-45,-50) size 540x600
+          [filter="dropShadow"] RenderSVGResourceFilter {filter} at (0,0) size 0x0
       RenderSVGText {text} at (263,291) size 148x81 contains 1 chunk(s)
         [filter="dropShadow"] RenderSVGResourceFilter {filter} at (249.09,283.50) size 176.25x96
         RenderSVGInlineText {#text} at (0,20) size 36x60
@@ -118,7 +118,7 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (92,2) size 54x69
             chunk 1 (middle anchor) text run 1 at (360.69,340.00) startOffset 0 endOffset 1 width 35.52: "K"
         RenderSVGInlineText {#text} at (0,0) size 0x0
-          [filter="dropShadow"] RenderSVGResourceFilter {filter} at (-45,-50) size 540x600
+          [filter="dropShadow"] RenderSVGResourceFilter {filter} at (0,0) size 0x0
       RenderSVGText {text} at (87,389) size 66x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 66x14
           chunk 1 (middle anchor) text run 1 at (87.17,400.00) startOffset 0 endOffset 13 width 65.66: "(System font)"
