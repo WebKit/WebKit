@@ -5944,14 +5944,16 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
                 } else {
                     RefPtr<RegisterID> propertyName;
                     if (m_containsRestElement)
-                        propertyName = generator.emitNodeForProperty(args->argumentRegister(indexInArguments++), target.propertyExpression);
+                        propertyName = generator.emitNodeForProperty(args->argumentRegister(indexInArguments), target.propertyExpression);
                     else
                         propertyName = generator.emitNodeForProperty(target.propertyExpression);
                     if (!target.propertyExpression->isNumber() && !target.propertyExpression->isString()) {
                         // ToPropertyKey(Number | String) does not have side-effect.
                         // And for Number case, passing it to GetByVal is better for performance.
-                        propertyName = generator.emitToPropertyKeyOrNumber(propertyName.get(), propertyName.get());
+                        propertyName = generator.emitToPropertyKeyOrNumber(m_containsRestElement ? args->argumentRegister(indexInArguments) : generator.newTemporary(), propertyName.get());
                     }
+                    if (m_containsRestElement)
+                        indexInArguments++;
                     if (target.pattern->isAssignmentElementNode())
                         targetBaseAndPropertyName = static_cast<AssignmentElementNode*>(target.pattern)->emitNodesForDestructuring(generator);
                     generator.emitGetByVal(temp.get(), rhs, propertyName.get());
