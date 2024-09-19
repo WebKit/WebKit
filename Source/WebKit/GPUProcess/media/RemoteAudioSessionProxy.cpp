@@ -37,7 +37,7 @@
 #include <WebCore/AudioSession.h>
 #include <wtf/TZoneMalloc.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, protectedConnection().get())
 
 namespace WebKit {
 
@@ -129,19 +129,19 @@ void RemoteAudioSessionProxy::setIsPlayingToBluetoothOverride(std::optional<bool
 
 void RemoteAudioSessionProxy::configurationChanged()
 {
-    connection().send(Messages::RemoteAudioSession::ConfigurationChanged(configuration()), { });
+    protectedConnection()->send(Messages::RemoteAudioSession::ConfigurationChanged(configuration()), { });
 }
 
 void RemoteAudioSessionProxy::beginInterruption()
 {
     m_isInterrupted = true;
-    connection().send(Messages::RemoteAudioSession::BeginInterruptionRemote(), { });
+    protectedConnection()->send(Messages::RemoteAudioSession::BeginInterruptionRemote(), { });
 }
 
 void RemoteAudioSessionProxy::endInterruption(AudioSession::MayResume mayResume)
 {
     m_isInterrupted = false;
-    connection().send(Messages::RemoteAudioSession::EndInterruptionRemote(mayResume), { });
+    protectedConnection()->send(Messages::RemoteAudioSession::EndInterruptionRemote(mayResume), { });
 }
 
 void RemoteAudioSessionProxy::beginInterruptionRemote()
@@ -178,9 +178,9 @@ bool RemoteAudioSessionProxy::allowTestOnlyIPC()
     return false;
 }
 
-IPC::Connection& RemoteAudioSessionProxy::connection()
+Ref<IPC::Connection> RemoteAudioSessionProxy::protectedConnection() const
 {
-    return m_gpuConnection.get()->connection();
+    return m_gpuConnection.get()->protectedConnection();
 }
 
 void RemoteAudioSessionProxy::triggerBeginInterruptionForTesting()

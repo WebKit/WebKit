@@ -147,7 +147,7 @@ void RemoteCDMInstanceSessionProxy::updateKeyStatuses(KeyStatusVector&& keyStatu
     if (!gpuConnectionToWebProcess)
         return;
 
-    gpuConnectionToWebProcess->connection().send(Messages::RemoteCDMInstanceSession::UpdateKeyStatuses(WTFMove(keyStatuses)), m_identifier);
+    gpuConnectionToWebProcess->protectedConnection()->send(Messages::RemoteCDMInstanceSession::UpdateKeyStatuses(WTFMove(keyStatuses)), m_identifier);
 }
 
 void RemoteCDMInstanceSessionProxy::sendMessage(CDMMessageType type, Ref<SharedBuffer>&& message)
@@ -162,7 +162,7 @@ void RemoteCDMInstanceSessionProxy::sendMessage(CDMMessageType type, Ref<SharedB
     if (!gpuConnectionToWebProcess)
         return;
 
-    gpuConnectionToWebProcess->connection().send(Messages::RemoteCDMInstanceSession::SendMessage(type, WTFMove(message)), m_identifier);
+    gpuConnectionToWebProcess->protectedConnection()->send(Messages::RemoteCDMInstanceSession::SendMessage(type, WTFMove(message)), m_identifier);
 }
 
 void RemoteCDMInstanceSessionProxy::sessionIdChanged(const String& sessionId)
@@ -178,7 +178,7 @@ void RemoteCDMInstanceSessionProxy::sessionIdChanged(const String& sessionId)
     if (!gpuConnectionToWebProcess)
         return;
 
-    gpuConnectionToWebProcess->connection().send(Messages::RemoteCDMInstanceSession::SessionIdChanged(sessionId), m_identifier);
+    gpuConnectionToWebProcess->protectedConnection()->send(Messages::RemoteCDMInstanceSession::SessionIdChanged(sessionId), m_identifier);
 }
 
 }

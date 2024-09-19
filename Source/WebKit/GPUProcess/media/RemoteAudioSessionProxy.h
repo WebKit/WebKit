@@ -106,7 +106,7 @@ private:
     bool allowTestOnlyIPC();
 
     RemoteAudioSessionProxyManager& audioSessionManager();
-    IPC::Connection& connection();
+    Ref<IPC::Connection> protectedConnection() const;
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnection;
     WebCore::AudioSession::CategoryType m_category { WebCore::AudioSession::CategoryType::None };
