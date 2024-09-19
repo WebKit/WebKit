@@ -792,7 +792,8 @@ std::optional<Child> simplify(Product& root, const SimplificationOptions& option
             },
             [&](const Percentage& percentage) -> bool {
                 auto multipliedType = Type::multiply(productResult.type, getType(percentage));
-                ASSERT(multipliedType);
+                if (!multipliedType)
+                    return false;
 
                 productResult.type = *multipliedType;
                 productResult.value *= percentage.value;
@@ -800,7 +801,8 @@ std::optional<Child> simplify(Product& root, const SimplificationOptions& option
             },
             [&](const CanonicalDimension& canonicalDimension) -> bool {
                 auto multipliedType = Type::multiply(productResult.type, getType(canonicalDimension.dimension));
-                ASSERT(multipliedType);
+                if (!multipliedType)
+                    return false;
 
                 productResult.type = *multipliedType;
                 productResult.value *= canonicalDimension.value;
@@ -816,7 +818,8 @@ std::optional<Child> simplify(Product& root, const SimplificationOptions& option
                     [&](const Percentage& percentage) -> bool {
                         auto invertedPercentageChildType = Type::invert(getType(percentage));
                         auto multipliedType = Type::multiply(productResult.type, invertedPercentageChildType);
-                        ASSERT(multipliedType);
+                        if (!multipliedType)
+                            return false;
 
                         productResult.type = *multipliedType;
                         productResult.value /= percentage.value;
@@ -825,7 +828,8 @@ std::optional<Child> simplify(Product& root, const SimplificationOptions& option
                     [&](const CanonicalDimension& canonicalDimension) -> bool {
                         auto invertedCanonicalDimensionType = Type::invert(getType(canonicalDimension));
                         auto multipliedType = Type::multiply(productResult.type, invertedCanonicalDimensionType);
-                        ASSERT(multipliedType);
+                        if (!multipliedType)
+                            return false;
 
                         productResult.type = *multipliedType;
                         productResult.value /= canonicalDimension.value;
