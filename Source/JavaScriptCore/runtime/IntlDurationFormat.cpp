@@ -761,6 +761,7 @@ JSObject* IntlDurationFormat::resolvedOptions(JSGlobalObject* globalObject) cons
     VM& vm = globalObject->vm();
     JSObject* options = constructEmptyObject(globalObject);
     options->putDirect(vm, vm.propertyNames->locale, jsString(vm, m_locale));
+    options->putDirect(vm, vm.propertyNames->numberingSystem, jsString(vm, m_numberingSystem));
     options->putDirect(vm, vm.propertyNames->style, jsNontrivialString(vm, styleString(m_style)));
 
     for (unsigned index = 0; index < numberOfTemporalUnits; ++index) {
@@ -770,8 +771,8 @@ JSObject* IntlDurationFormat::resolvedOptions(JSGlobalObject* globalObject) cons
         options->putDirect(vm, displayName(vm, unit), jsNontrivialString(vm, displayString(unitData.display())));
     }
 
-    options->putDirect(vm, vm.propertyNames->fractionalDigits, m_fractionalDigits == fractionalDigitsUndefinedValue ? jsUndefined() : jsNumber(m_fractionalDigits));
-    options->putDirect(vm, vm.propertyNames->numberingSystem, jsString(vm, m_numberingSystem));
+    if (m_fractionalDigits != fractionalDigitsUndefinedValue)
+        options->putDirect(vm, vm.propertyNames->fractionalDigits, jsNumber(m_fractionalDigits));
     return options;
 }
 
