@@ -103,7 +103,7 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect
         auto recordingContext = makeUnique<DisplayList::DrawingContext>(tileRect.size());
         paintIntoGraphicsContext(recordingContext->context());
 
-        workerPool->postTask([buffer = Ref { buffer }, recordingContext = WTFMove(recordingContext), tileRect] {
+        workerPool->postTask([buffer = Ref { buffer }, recordingContext = WTFMove(recordingContext), tileRect] mutable {
             RELEASE_ASSERT(buffer->surface());
             if (auto* canvas = buffer->surface()->getCanvas()) {
                 WTFBeginSignpost(canvas, PaintTile, "Skia unaccelerated multithread, dirty region %ix%i+%i+%i", tileRect.x(), tileRect.y(), tileRect.width(), tileRect.height());
@@ -114,6 +114,11 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect
                 WTFEndSignpost(canvas, PaintTile);
             }
             buffer->completePainting();
+
+            // Destruct display list on main thread.
+            ensureOnMainThread([recordingContext = WTFMove(recordingContext)]() mutable {
+                recordingContext = nullptr;
+            });
         });
 
         WTFEndSignpost(this, RecordTile);
