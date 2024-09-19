@@ -46,11 +46,12 @@ public:
     virtual ~FrameLoadStateObserver() = default;
     virtual void didReceiveProvisionalURL(const URL&) { }
     virtual void didStartProvisionalLoad(const URL&) { }
-    virtual void didFailProvisionalLoad() { }
+    virtual void didFailProvisionalLoad(const URL&) { }
+    virtual void didFailLoad(const URL&) { }
     virtual void didCancelProvisionalLoad() { }
     virtual void didCommitProvisionalLoad() { }
     virtual void didCommitProvisionalLoad(IsMainFrame) { }
-    virtual void didFinishLoad(const URL&) { }
+    virtual void didFinishLoad(IsMainFrame, const URL&) { }
 };
 
 class FrameLoadState {

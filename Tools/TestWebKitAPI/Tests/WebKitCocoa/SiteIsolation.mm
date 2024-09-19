@@ -3394,4 +3394,16 @@ TEST(SiteIsolation, NavigateNestedRootFramesBackForward)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "b");
 }
 
+TEST(SiteIsolation, RedirectToCSP)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/initial'></iframe>"_s } },
+        { "/initial"_s, { 302, { { "Location"_s, "https://example.org/redirected"_s } }, "redirecting..."_s } },
+        { "/redirected"_s, { { { "Content-Type"_s, "text/html"_s }, { "Content-Security-Policy"_s, "frame-ancestors 'none'"_s } }, "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+}
+
 }

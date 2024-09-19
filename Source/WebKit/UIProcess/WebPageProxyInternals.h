@@ -163,16 +163,23 @@ private:
         m_loadingFrameCount++;
     }
 
-    void didFailProvisionalLoad() final
+    void didFailProvisionalLoad(const URL&) final
     {
         ASSERT(m_loadingFrameCount);
         m_loadingFrameCount--;
     }
 
-    void didFinishLoad(const URL&) final
+    void didFailLoad(const URL&) final
     {
         ASSERT(m_loadingFrameCount);
         m_loadingFrameCount--;
+    }
+
+    void didFinishLoad(IsMainFrame, const URL& url) final
+    {
+        ASSERT(m_loadingFrameCount);
+        m_loadingFrameCount--;
+        // FIXME: Assert that m_loadingFrameCount is zero if this is a main frame.
     }
 
     size_t m_loadingFrameCount { 0 };
