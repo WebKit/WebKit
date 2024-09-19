@@ -1861,7 +1861,9 @@ TEST(WKNavigation, HTTPSOnlyHTTPFallbackContinue)
     }, HTTPServer::Protocol::HttpsProxy);
     HTTPServer httpServer({
         { "http://site.example/secure"_s, { { }, "not secure"_s } },
-        { "http://site2.example/page2"_s, { 302, { { "Location"_s, "https://site.example/page2"_s } }, "not secure"_s } }
+        { "http://site2.example/page2"_s, { 302, { { "Location"_s, "https://site.example/page2"_s } }, "not secure"_s } },
+        { "http://site.example/page3"_s, { } },
+        { "http://site.example/page2"_s, { } }
     }, HTTPServer::Protocol::Http);
 
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);

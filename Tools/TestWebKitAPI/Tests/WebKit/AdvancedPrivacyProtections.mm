@@ -450,6 +450,7 @@ TEST(AdvancedPrivacyProtections, ApplyNavigationalProtectionsAfterMultiplePSON)
     QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"", @"", @"" ], @[ @"", @"", @"" ] };
     HTTPServer server({
         { "/landing"_s, { "<script>window.result = document.referrer;</script>"_s } },
+        { "/landing?garply=20"_s, { } }
     }, HTTPServer::Protocol::Http);
 
     auto refreshHeaderContent = makeString("1;URL=http://127.0.0.1:"_s, server.port(), "/landing?foo=10&garply=20&bar=30&baz=40"_s);
