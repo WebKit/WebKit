@@ -40,12 +40,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/ResourceError.h>
-#include <gtk/gtk.h>
-#include <memory>
-#include <wtf/URL.h>
-#include <wtf/Vector.h>
-#include <wtf/glib/GUniquePtr.h>
-
+#include <cairo.h>
 #ifdef CAIRO_HAS_PDF_SURFACE
 #include <cairo-pdf.h>
 #endif
@@ -55,6 +50,11 @@
 #ifdef CAIRO_HAS_SVG_SURFACE
 #include <cairo-svg.h>
 #endif
+#include <gtk/gtk.h>
+#include <memory>
+#include <wtf/URL.h>
+#include <wtf/Vector.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
 
