@@ -75,7 +75,7 @@ void CoordinatedBackingStoreTile::swapBuffers(TextureMapper& textureMapper)
         if (update.buffer->isBackedByOpenGL()) {
             WTFBeginSignpost(this, CopyTextureGPUToGPU);
             auto& buffer = static_cast<Nicosia::AcceleratedBuffer&>(*update.buffer);
-            m_texture->copyFromExternalTexture(buffer.textureID(), update.sourceRect, toIntSize(update.bufferOffset));
+            m_texture->copyFromExternalTexture(buffer.texture().id(), update.sourceRect, toIntSize(update.bufferOffset));
             update.buffer = nullptr;
             WTFEndSignpost(this, CopyTextureGPUToGPU);
             WTFEndSignpost(this, CoordinatedSwapBuffer);

@@ -37,6 +37,7 @@ class IntSize;
 
 class BitmapTexturePool {
     WTF_MAKE_NONCOPYABLE(BitmapTexturePool);
+    WTF_MAKE_FAST_ALLOCATED();
 public:
     BitmapTexturePool();
 

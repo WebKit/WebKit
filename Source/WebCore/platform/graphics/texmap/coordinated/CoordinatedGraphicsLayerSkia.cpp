@@ -32,7 +32,6 @@
 #include "GraphicsContextSkia.h"
 #include "NicosiaBuffer.h"
 #include "PlatformDisplay.h"
-#include "SkiaAcceleratedBufferPool.h"
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkColorSpace.h>
 #include <skia/gpu/GrBackendSurface.h>
@@ -68,25 +67,32 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect
     auto paintBuffer = [&](Nicosia::Buffer& buffer) {
         buffer.beginPainting();
 
-        RELEASE_ASSERT(buffer.surface());
-        if (auto* canvas = buffer.surface()->getCanvas()) {
+        if (auto* canvas = buffer.canvas()) {
+            canvas->save();
+            canvas->clear(SkColors::kTransparent);
+
             GraphicsContextSkia context(*canvas, buffer.isBackedByOpenGL() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated, RenderingPurpose::LayerBacking);
             paintIntoGraphicsContext(context);
+
+            canvas->restore();
         }
 
         buffer.completePainting();
     };
 
     // Skia/GPU - accelerated rendering.
-    if (auto* acceleratedBufferPool = m_coordinator->skiaAcceleratedBufferPool()) {
-        PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent();
-        if (auto buffer = acceleratedBufferPool->acquireBuffer(tileRect.size(), !contentsOpaque())) {
-            WTFBeginSignpost(this, PaintTile, "Skia accelerated, dirty region %ix%i+%i+%i", tileRect.x(), tileRect.y(), tileRect.width(), tileRect.height());
-            paintBuffer(*buffer);
-            WTFEndSignpost(this, PaintTile);
+    auto* skiaGLContext = PlatformDisplay::sharedDisplay().skiaGLContext();
+    if (auto* acceleratedBitmapTexturePool = m_coordinator->skiaAcceleratedBitmapTexturePool(); acceleratedBitmapTexturePool && skiaGLContext->makeContextCurrent()) {
+        OptionSet<BitmapTexture::Flags> textureFlags;
+        if (!contentsOpaque())
+            textureFlags.add(BitmapTexture::Flags::SupportsAlpha);
 
-            return Ref { *buffer };
-        }
+        auto buffer = Nicosia::AcceleratedBuffer::create(acceleratedBitmapTexturePool->acquireTexture(tileRect.size(), textureFlags));
+        WTFBeginSignpost(this, PaintTile, "Skia accelerated, dirty region %ix%i+%i+%i", tileRect.x(), tileRect.y(), tileRect.width(), tileRect.height());
+        paintBuffer(buffer.get());
+        WTFEndSignpost(this, PaintTile);
+
+        return buffer;
     }
 
     // Skia/CPU - unaccelerated rendering.
@@ -104,8 +110,10 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect
         paintIntoGraphicsContext(recordingContext);
 
         workerPool->postTask([buffer = Ref { buffer }, displayList = WTFMove(displayList), tileRect]() mutable {
-            RELEASE_ASSERT(buffer->surface());
-            if (auto* canvas = buffer->surface()->getCanvas()) {
+            if (auto* canvas = buffer->canvas()) {
+                canvas->save();
+                canvas->clear(SkColors::kTransparent);
+
                 static thread_local RefPtr<ControlFactory> s_controlFactory;
                 if (!s_controlFactory)
                     s_controlFactory = ControlFactory::create();
@@ -116,6 +124,7 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect
                 context.drawDisplayListItems(displayList->items(), displayList->resourceHeap(), *s_controlFactory, FloatPoint::zero());
 
                 WTFEndSignpost(canvas, PaintTile);
+                canvas->restore();
             }
             buffer->completePainting();
 
@@ -144,11 +153,15 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintImage(Image& image)
     // Always render unaccelerated here for now.
     auto buffer = Nicosia::UnacceleratedBuffer::create(IntSize(image.size()), !image.currentFrameKnownToBeOpaque() ? Nicosia::Buffer::SupportsAlpha : Nicosia::Buffer::NoFlags);
     buffer->beginPainting();
-    RELEASE_ASSERT(buffer->surface());
-    if (auto* canvas = buffer->surface()->getCanvas()) {
+    if (auto* canvas = buffer->canvas()) {
+        canvas->save();
+        canvas->clear(SkColors::kTransparent);
+
         GraphicsContextSkia context(*canvas, RenderingMode::Unaccelerated, RenderingPurpose::LayerBacking);
         IntRect rect { IntPoint::zero(), IntSize { image.size() } };
         context.drawImage(image, rect, rect, ImagePaintingOptions(CompositeOperator::Copy));
+
+        canvas->restore();
     }
     buffer->completePainting();
     return buffer;

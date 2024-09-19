@@ -51,8 +51,8 @@
 #if USE(CAIRO)
 #include <WebCore/NicosiaPaintingEngine.h>
 #elif USE(SKIA)
+#include <WebCore/BitmapTexturePool.h>
 #include <WebCore/ProcessCapabilities.h>
-#include <WebCore/SkiaAcceleratedBufferPool.h>
 #endif
 
 #if USE(GLIB_EVENT_LOOP)
@@ -91,7 +91,7 @@ CompositingCoordinator::CompositingCoordinator(WebPage& page, CompositingCoordin
 {
 #if USE(SKIA)
     if (ProcessCapabilities::canUseAcceleratedBuffers() && PlatformDisplay::sharedDisplay().skiaGLContext())
-        m_skiaAcceleratedBufferPool = makeUnique<SkiaAcceleratedBufferPool>();
+        m_skiaAcceleratedBitmapTexturePool = makeUnique<BitmapTexturePool>();
     else if (auto numberOfThreads = skiaNumberOfCpuPaintingThreads(); numberOfThreads > 0)
         m_skiaUnacceleratedThreadedRenderingPool = WorkerPool::create("SkiaPaintingThread"_s, numberOfThreads);
 #endif
@@ -123,7 +123,7 @@ void CompositingCoordinator::invalidate()
     purgeBackingStores();
 
 #if USE(SKIA)
-    m_skiaAcceleratedBufferPool = nullptr;
+    m_skiaAcceleratedBitmapTexturePool = nullptr;
     m_skiaUnacceleratedThreadedRenderingPool = nullptr;
 #endif
 }

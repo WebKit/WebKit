@@ -37,11 +37,13 @@
 
 #if USE(SKIA)
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/core/SkCanvas.h>
 #include <skia/core/SkSurface.h>
 IGNORE_CLANG_WARNINGS_END
 #endif
 
 namespace WebCore {
+class BitmapTexture;
 class GLFence;
 enum class PixelFormat : uint8_t;
 }
@@ -60,7 +62,6 @@ public:
 
     virtual WebCore::IntSize size() const = 0;
     virtual bool isBackedByOpenGL() const = 0;
-    virtual void platformWaitUntilPaintingComplete() { };
 
     bool supportsAlpha() const { return m_flags & SupportsAlpha; }
 
@@ -69,7 +70,7 @@ public:
     virtual void waitUntilPaintingComplete() = 0;
 
 #if USE(SKIA)
-    SkSurface* surface() const { return m_surface.get(); }
+    SkCanvas* canvas();
 #endif
 
     static void resetMemoryUsage();
@@ -79,6 +80,7 @@ protected:
     explicit Buffer(Flags);
 
 #if USE(SKIA)
+    virtual bool tryEnsureSurface() = 0;
     sk_sp<SkSurface> m_surface;
 #endif
 
@@ -106,6 +108,9 @@ private:
     bool isBackedByOpenGL() const final { return false; }
     WebCore::IntSize size() const final { return m_size; }
 
+#if USE(SKIA)
+    bool tryEnsureSurface() final;
+#endif
     void beginPainting() final;
     void completePainting() final;
     void waitUntilPaintingComplete() final;
@@ -128,22 +133,23 @@ private:
 #if USE(SKIA)
 class AcceleratedBuffer final : public Buffer {
 public:
-    WEBCORE_EXPORT static Ref<Buffer> create(sk_sp<SkSurface>&&, Flags);
+    WEBCORE_EXPORT static Ref<Buffer> create(Ref<WebCore::BitmapTexture>&&);
     WEBCORE_EXPORT virtual ~AcceleratedBuffer();
 
-    unsigned textureID() const { return m_textureID; }
+    WebCore::BitmapTexture& texture() const { return m_texture.get(); }
 
 private:
-    AcceleratedBuffer(sk_sp<SkSurface>&&, Flags);
+    AcceleratedBuffer(Ref<WebCore::BitmapTexture>&&, Flags);
 
     bool isBackedByOpenGL() const final { return true; }
     WebCore::IntSize size() const final;
 
-    void beginPainting() final;
+    bool tryEnsureSurface() final;
+    void beginPainting() final { }
     void completePainting() final;
     void waitUntilPaintingComplete() final;
 
-    unsigned m_textureID { 0 };
+    Ref<WebCore::BitmapTexture> m_texture;
     std::unique_ptr<WebCore::GLFence> m_fence;
 };
 #endif
