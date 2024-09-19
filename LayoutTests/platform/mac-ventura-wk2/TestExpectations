@@ -70,3 +70,6 @@ view-gestures/smart-magnify/double-tap-zoom-scroll-above-top.html [ Timeout Pass
 
 # webkit.org/b/280019 [EWS] fast/canvas/offscreen-giant.html is constant failure in Ventura Intel EWS
 [ Release x86_64 ] fast/canvas/offscreen-giant.html [ Skip ]
+
+# webkit.org/b/280024 [EWS] fast/canvas/webgl/drawingbuffer-test.html is a constant failure in Ventura Intel EWS
+[ Release x86_64 ] fast/canvas/webgl/drawingbuffer-test.html [ Skip ]
