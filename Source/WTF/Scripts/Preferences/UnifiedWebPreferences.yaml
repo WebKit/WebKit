@@ -4252,6 +4252,7 @@ LoginStatusAPIEnabled:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 LoginStatusAPIRequiresWebAuthnEnabled:
   type: bool
