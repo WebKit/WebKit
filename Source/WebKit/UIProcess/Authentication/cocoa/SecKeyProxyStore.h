@@ -33,15 +33,6 @@
 
 OBJC_CLASS SecKeyProxy;
 
-namespace WebKit {
-class SecKeyProxyStore;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::SecKeyProxyStore> : std::true_type { };
-}
-
 namespace WebCore {
 class Credential;
 }

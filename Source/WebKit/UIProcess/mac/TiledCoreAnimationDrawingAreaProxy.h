@@ -30,15 +30,6 @@
 #include "DrawingAreaProxy.h"
 
 namespace WebKit {
-class TiledCoreAnimationDrawingAreaProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::TiledCoreAnimationDrawingAreaProxy> : std::true_type { };
-}
-
-namespace WebKit {
 
 class TiledCoreAnimationDrawingAreaProxy final : public DrawingAreaProxy {
     WTF_MAKE_TZONE_ALLOCATED(TiledCoreAnimationDrawingAreaProxy);

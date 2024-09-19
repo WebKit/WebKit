@@ -36,15 +36,6 @@
 #include <wtf/WeakHashMap.h>
 
 namespace WebKit {
-class RemoteLayerTreeDrawingAreaProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteLayerTreeDrawingAreaProxy> : std::true_type { };
-}
-
-namespace WebKit {
 
 class RemoteLayerTreeTransaction;
 class RemotePageDrawingAreaProxy;

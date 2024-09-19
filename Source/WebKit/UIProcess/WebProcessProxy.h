@@ -72,15 +72,6 @@
 #include "DisplayLinkProcessProxyClient.h"
 #endif
 
-namespace WebKit {
-class WebProcessProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebProcessProxy> : std::true_type { };
-}
-
 namespace API {
 class Navigation;
 class PageConfiguration;

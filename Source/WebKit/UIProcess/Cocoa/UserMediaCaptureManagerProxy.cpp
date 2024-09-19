@@ -55,15 +55,6 @@
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, m_connectionProxy->connection(), completion)
 
 namespace WebKit {
-class UserMediaCaptureManagerProxySourceProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::UserMediaCaptureManagerProxySourceProxy> : std::true_type { };
-}
-
-namespace WebKit {
 using namespace WebCore;
 
 class UserMediaCaptureManagerProxySourceProxy final

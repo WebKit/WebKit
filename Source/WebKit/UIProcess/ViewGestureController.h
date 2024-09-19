@@ -92,15 +92,6 @@ typedef void* PlatformScrollEvent;
 #endif
 
 namespace WebKit {
-class ViewGestureController;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ViewGestureController> : std::true_type { };
-}
-
-namespace WebKit {
 
 class ViewSnapshot;
 class WebBackForwardListItem;
