@@ -1,6 +1,0 @@
-PASS Rendered signal is of correct length.
-PASS Rendered signal exactly matches the audio-rate gain changing signal.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
