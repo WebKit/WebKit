@@ -99,7 +99,7 @@ void RemoteRenderBundleEncoder::setIndexBuffer(WebGPUIdentifier buffer, WebCore:
 
 void RemoteRenderBundleEncoder::setVertexBuffer(WebCore::WebGPU::Index32 slot, WebGPUIdentifier buffer, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
 {
-    RefPtr convertedBuffer = m_objectHeap->convertBufferFromBacking(buffer).get();
+    RefPtr convertedBuffer = protectedObjectHeap()->convertBufferFromBacking(buffer).get();
     ASSERT(convertedBuffer);
     if (!convertedBuffer)
         return;
@@ -174,13 +174,14 @@ void RemoteRenderBundleEncoder::insertDebugMarker(String&& markerLabel)
 
 void RemoteRenderBundleEncoder::finish(const WebGPU::RenderBundleDescriptor& descriptor, WebGPUIdentifier identifier)
 {
-    auto convertedDescriptor = m_objectHeap->convertFromBacking(descriptor);
+    Ref objectHeap = protectedObjectHeap();
+    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
     MESSAGE_CHECK(convertedDescriptor);
 
     auto renderBundle = m_backing->finish(*convertedDescriptor);
     MESSAGE_CHECK(renderBundle);
-    auto remoteRenderBundle = RemoteRenderBundle::create(*renderBundle, protectedObjectHeap(), m_streamConnection.copyRef(), protectedGPU(), identifier);
-    protectedObjectHeap()->addObject(identifier, remoteRenderBundle);
+    auto remoteRenderBundle = RemoteRenderBundle::create(*renderBundle, objectHeap, m_streamConnection.copyRef(), protectedGPU(), identifier);
+    objectHeap->addObject(identifier, remoteRenderBundle);
 }
 
 void RemoteRenderBundleEncoder::setLabel(String&& label)
