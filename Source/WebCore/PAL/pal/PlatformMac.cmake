@@ -61,6 +61,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/AudioToolboxSPI.h
     spi/cocoa/CFNSURLConnectionSPI.h
     spi/cocoa/CommonCryptoSPI.h
+    spi/cocoa/CoreCryptoSPI.h
     spi/cocoa/CoreServicesSPI.h
     spi/cocoa/CoreTelephonySPI.h
     spi/cocoa/CryptoKitPrivateSPI.h

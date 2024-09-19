@@ -72,6 +72,7 @@ Tests/WebKitCocoa/BundleParameters.mm
 Tests/WebKitCocoa/BundleRangeHandle.mm
 Tests/WebKitCocoa/CSSViewportUnits.mm
 Tests/WebKitCocoa/CancelFontSubresource.mm
+Tests/WebKitCocoa/CryptoAPI.mm
 Tests/WebKitCocoa/LockdownModeFonts.mm
 Tests/WebKitCocoa/Challenge.mm
 Tests/WebKitCocoa/ClickAutoFillButton.mm

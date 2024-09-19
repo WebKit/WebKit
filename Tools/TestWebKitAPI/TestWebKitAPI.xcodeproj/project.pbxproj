@@ -2724,6 +2724,7 @@
 		57F10D921C7E7B3800ECDF30 /* IsNavigationActionTrusted.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IsNavigationActionTrusted.mm; sourceTree = "<group>"; };
 		57F1C91025DDD51900E8F6EA /* PrivateClickMeasurementCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PrivateClickMeasurementCocoa.mm; sourceTree = "<group>"; };
 		57F56A5B1C7F8A4000F31D7E /* IsNavigationActionTrusted.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IsNavigationActionTrusted.html; sourceTree = "<group>"; };
+		5B603C002ADD8B0000C4BC8C /* CryptoAPI.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CryptoAPI.mm; sourceTree = "<group>"; };
 		5C0160C021A132320077FA32 /* JITEnabled.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JITEnabled.mm; sourceTree = "<group>"; };
 		5C050D542A8ADBC7004A2BA4 /* FrameTreeChecks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameTreeChecks.h; sourceTree = "<group>"; };
 		5C0BF88C1DD5957400B00328 /* MemoryPressureHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryPressureHandler.mm; sourceTree = "<group>"; };
@@ -4159,6 +4160,7 @@
 				1C79201B234BDD9B001EAF23 /* CopyRTF.mm */,
 				9B7A37C21F8AEBA5004AA228 /* CopyURL.mm */,
 				510A921D24DB38ED00BFD89C /* CreateWebArchive.mm */,
+				5B603C002ADD8B0000C4BC8C /* CryptoAPI.mm */,
 				952F7164270BD97E00D00DCC /* CSSViewportUnits.mm */,
 				46A911582108E66B0078D40D /* CustomUserAgent.mm */,
 				2DC4CF761D2D9DD800ECCC94 /* DataDetection.mm */,
