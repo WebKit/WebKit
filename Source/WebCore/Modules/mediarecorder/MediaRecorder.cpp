@@ -149,7 +149,7 @@ ExceptionOr<void> MediaRecorder::startRecording(std::optional<unsigned> timeSlic
 
     updateBitRates();
 
-    Options options;
+    Options options { m_options };
     options.audioBitsPerSecond = m_audioBitsPerSecond;
     options.videoBitsPerSecond = m_videoBitsPerSecond;
 

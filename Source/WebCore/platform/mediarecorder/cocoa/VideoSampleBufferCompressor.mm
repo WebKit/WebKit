@@ -105,8 +105,10 @@ void VideoSampleBufferCompressor::flushInternal(bool isFinished)
         auto error = PAL::VTCompressionSessionCompleteFrames(m_vtSession.get(), PAL::kCMTimeInvalid);
         RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTCompressionSessionCompleteFrames failed with %d", error);
 
-        if (!isFinished)
+        if (!isFinished) {
+            m_needsKeyframe = true;
             return;
+        }
 
         error = PAL::CMBufferQueueMarkEndOfData(m_outputBufferQueue.get());
         RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor CMBufferQueueMarkEndOfData failed with %d", error);
@@ -193,6 +195,17 @@ bool VideoSampleBufferCompressor::initCompressionSession(CMVideoFormatDescriptio
     return YES;
 }
 
+static CFDictionaryRef forceKeyFrameDictionary()
+{
+    static NeverDestroyed<RetainPtr<CFDictionaryRef>> dictionary = [] {
+        auto key = PAL::kVTEncodeFrameOptionKey_ForceKeyFrame;
+        auto value = kCFBooleanTrue;
+        return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, (const void**)&key, (const void**)&value, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    }();
+
+    return dictionary.get().get();
+}
+
 void VideoSampleBufferCompressor::processSampleBuffer(CMSampleBufferRef buffer)
 {
     if (!m_vtSession) {
@@ -203,7 +216,11 @@ void VideoSampleBufferCompressor::processSampleBuffer(CMSampleBufferRef buffer)
     auto imageBuffer = PAL::CMSampleBufferGetImageBuffer(buffer);
     auto presentationTimeStamp = PAL::CMSampleBufferGetPresentationTimeStamp(buffer);
     auto duration = PAL::CMSampleBufferGetDuration(buffer);
-    auto error = PAL::VTCompressionSessionEncodeFrame(m_vtSession.get(), imageBuffer, presentationTimeStamp, duration, NULL, this, NULL);
+    auto error = PAL::VTCompressionSessionEncodeFrame(m_vtSession.get(), imageBuffer, presentationTimeStamp, duration, m_needsKeyframe ? forceKeyFrameDictionary() : NULL, this, NULL);
+
+    if (m_needsKeyframe)
+        m_needsKeyframe = false;
+
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTCompressionSessionEncodeFrame failed with %d", error);
 }
 
