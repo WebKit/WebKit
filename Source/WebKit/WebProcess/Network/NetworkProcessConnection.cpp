@@ -94,39 +94,39 @@ NetworkProcessConnection::~NetworkProcessConnection()
     m_connection->invalidate();
 }
 
-void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+bool NetworkProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::WebResourceLoader::messageReceiverName()) {
         if (auto* webResourceLoader = WebProcess::singleton().webLoaderStrategy().webResourceLoaderForIdentifier(LegacyNullableAtomicObjectIdentifier<WebCore::ResourceLoader>(decoder.destinationID())))
-            webResourceLoader->didReceiveWebResourceLoaderMessage(connection, decoder);
-        return;
+            webResourceLoader->didReceiveMessage(connection, decoder);
+        return true;
     }
     if (decoder.messageReceiverName() == Messages::WebBroadcastChannelRegistry::messageReceiverName()) {
         WebProcess::singleton().broadcastChannelRegistry().didReceiveMessage(connection, decoder);
-        return;
+        return true;
     }
     if (decoder.messageReceiverName() == Messages::WebSocketChannel::messageReceiverName()) {
         WebProcess::singleton().webSocketChannelManager().didReceiveMessage(connection, decoder);
-        return;
+        return true;
     }
     if (decoder.messageReceiverName() == Messages::WebPage::messageReceiverName()) {
         if (auto* webPage = WebProcess::singleton().webPage(ObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
-            webPage->didReceiveWebPageMessage(connection, decoder);
-        return;
+            webPage->didReceiveMessage(connection, decoder);
+        return true;
     }
     if (decoder.messageReceiverName() == Messages::StorageAreaMap::messageReceiverName()) {
         if (auto storageAreaMap = WebProcess::singleton().storageAreaMap(LegacyNullableObjectIdentifier<StorageAreaMapIdentifierType>(decoder.destinationID())))
             storageAreaMap->didReceiveMessage(connection, decoder);
-        return;
+        return true;
     }
     if (decoder.messageReceiverName() == Messages::WebFileSystemStorageConnection::messageReceiverName()) {
         WebProcess::singleton().fileSystemStorageConnection().didReceiveMessage(connection, decoder);
-        return;
+        return true;
     }
     if (decoder.messageReceiverName() == Messages::WebTransportSession::messageReceiverName() && WebProcess::singleton().isWebTransportEnabled()) {
         if (auto* webTransportSession = WebProcess::singleton().webTransportSession(WebTransportSessionIdentifier(decoder.destinationID())))
             webTransportSession->didReceiveMessage(connection, decoder);
-        return;
+        return true;
     }
 
 #if USE(LIBWEBRTC)
@@ -136,7 +136,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
             network.monitor().didReceiveMessage(connection, decoder);
         else
             RELEASE_LOG_ERROR(WebRTC, "Received WebRTCMonitor message while libWebRTCNetwork is not active");
-        return;
+        return true;
     }
     if (decoder.messageReceiverName() == Messages::WebRTCResolver::messageReceiverName()) {
         auto& network = WebProcess::singleton().libWebRTCNetwork();
@@ -144,49 +144,48 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
             network.resolver(LegacyNullableAtomicObjectIdentifier<LibWebRTCResolverIdentifierType>(decoder.destinationID())).didReceiveMessage(connection, decoder);
         else
             RELEASE_LOG_ERROR(WebRTC, "Received WebRTCResolver message while libWebRTCNetwork is not active");
-        return;
+        return true;
     }
 #endif
 
     if (decoder.messageReceiverName() == Messages::WebIDBConnectionToServer::messageReceiverName()) {
         if (m_webIDBConnection)
             m_webIDBConnection->didReceiveMessage(connection, decoder);
-        return;
+        return true;
     }
 
     if (decoder.messageReceiverName() == Messages::WebSWClientConnection::messageReceiverName()) {
         serviceWorkerConnection().didReceiveMessage(connection, decoder);
-        return;
+        return true;
     }
     if (decoder.messageReceiverName() == Messages::WebSWContextManagerConnection::messageReceiverName()) {
         ASSERT(SWContextManager::singleton().connection());
         if (auto* contextManagerConnection = SWContextManager::singleton().connection())
             static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveMessage(connection, decoder);
-        return;
+        return true;
     }
     if (decoder.messageReceiverName() == Messages::WebSharedWorkerObjectConnection::messageReceiverName()) {
         sharedWorkerConnection().didReceiveMessage(connection, decoder);
-        return;
+        return true;
     }
     if (decoder.messageReceiverName() == Messages::WebSharedWorkerContextManagerConnection::messageReceiverName()) {
         ASSERT(SharedWorkerContextManager::singleton().connection());
         if (auto* contextManagerConnection = SharedWorkerContextManager::singleton().connection())
             static_cast<WebSharedWorkerContextManagerConnection&>(*contextManagerConnection).didReceiveMessage(connection, decoder);
-        return;
+        return true;
     }
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinator::messageReceiverName()) {
         if (auto webPage = WebProcess::singleton().webPage(ObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
             webPage->paymentCoordinator()->didReceiveMessage(connection, decoder);
-        return;
+        return true;
     }
 #endif
-
-    didReceiveNetworkProcessConnectionMessage(connection, decoder);
+    return false;
 }
 
-bool NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+bool NetworkProcessConnection::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     if (decoder.messageReceiverName() == Messages::WebSWContextManagerConnection::messageReceiverName()) {
         ASSERT(SWContextManager::singleton().connection());
@@ -202,8 +201,6 @@ bool NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection& connection
         return false;
     }
 #endif
-
-    ASSERT_NOT_REACHED();
     return false;
 }
 

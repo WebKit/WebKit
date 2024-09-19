@@ -469,22 +469,6 @@ void NetworkProcessProxy::networkProcessDidTerminate(ProcessTerminationReason re
     m_dataTasks.clear();
 }
 
-void NetworkProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
-{
-    if (dispatchMessage(connection, decoder))
-        return;
-
-    didReceiveNetworkProcessProxyMessage(connection, decoder);
-}
-
-bool NetworkProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
-{
-    if (dispatchSyncMessage(connection, decoder, replyEncoder))
-        return true;
-
-    return didReceiveSyncNetworkProcessProxyMessage(connection, decoder, replyEncoder);
-}
-
 void NetworkProcessProxy::didClose(IPC::Connection& connection)
 {
 #if OS(DARWIN)
