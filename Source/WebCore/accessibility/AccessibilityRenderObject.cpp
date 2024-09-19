@@ -2397,8 +2397,9 @@ void AccessibilityRenderObject::addAttachmentChildren()
     Widget* widget = widgetForAttachmentView();
     if (!widget || !widget->isLocalFrameView())
         return;
-    
-    addChild(axObjectCache()->getOrCreate(widget));
+
+    if (CheckedPtr cache = axObjectCache())
+        addChild(cache->getOrCreate(widget));
 }
 
 #if PLATFORM(COCOA)
