@@ -78,3 +78,10 @@
 .media-controls.fullscreen.tvos .slider.default.disabled > .appearance > .fill > :is(.primary, .secondary) {
     display: initial;
 }
+
+.media-controls.fullscreen.tvos > .controls-bar.overflow {
+    position: absolute;
+    left: auto;
+    right: var(--tvos-controls-horizontal-margin);
+    bottom: calc(var(--tvos-controls-vertical-margin) + var(--tvos-controls-bar-height) + var(--tvos-metadata-container-bottom-margin));
+}
