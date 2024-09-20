@@ -111,6 +111,8 @@ public:
     bool needsFullscreenObjectFitQuirk() const;
     bool needsWeChatScrollingQuirk() const;
 
+    bool needsYouTubeDarkModeQuirk() const;
+
     bool shouldOpenAsAboutBlank(const String&) const;
 
     bool needsPreloadAutoQuirk() const;
@@ -270,6 +272,7 @@ private:
     mutable std::optional<bool> m_shouldDisableElementFullscreen;
     mutable std::optional<bool> m_shouldIgnorePlaysInlineRequirementQuirk;
     mutable std::optional<bool> m_needsRelaxedCorsMixedContentCheckQuirk;
+    mutable std::optional<bool> m_needsYouTubeDarkModeQuirk;
 
     Vector<RegistrableDomain> m_subFrameDomainsForStorageAccessQuirk;
 };

@@ -654,6 +654,18 @@ bool Quirks::needsYouTubeOverflowScrollQuirk() const
 #endif
 }
 
+// youtube.com rdar://135886305
+bool Quirks::needsYouTubeDarkModeQuirk() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_needsYouTubeDarkModeQuirk)
+        m_needsYouTubeDarkModeQuirk = isDomain("youtube.com"_s);
+
+    return *m_needsYouTubeDarkModeQuirk;
+}
+
 // gizmodo.com rdar://102227302
 bool Quirks::needsFullscreenDisplayNoneQuirk() const
 {

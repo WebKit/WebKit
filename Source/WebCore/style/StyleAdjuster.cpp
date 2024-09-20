@@ -984,6 +984,17 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
     }
 #endif
 #endif
+
+#if ENABLE(DARK_MODE_CSS)
+    if (m_document->quirks().needsYouTubeDarkModeQuirk()) {
+        // Sets color-scheme to dark if dark attribute is applied to root element.
+        if (m_element && m_element == m_document->documentElement()) {
+            static MainThreadNeverDestroyed<const AtomString> darkMode("dark"_s);
+            if (m_element->hasAttribute(darkMode))
+                style.setColorScheme(StyleColorScheme(ColorScheme::Dark, true));
+        }
+    }
+#endif
 }
 
 void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& update, const Document& document)
