@@ -82,8 +82,12 @@ void PreconnectTask::willSendRedirectedRequest(ResourceRequest&&, ResourceReques
 
 void PreconnectTask::didReceiveResponse(ResourceResponse&& response, PrivateRelayed, ResponseCompletionHandler&& completionHandler)
 {
+#if !USE(CURL)
     ASSERT_NOT_REACHED();
+#endif
+
     completionHandler(PolicyAction::Ignore);
+    didFinish(ResourceError { ResourceError::Type::Cancellation }, NetworkLoadMetrics::emptyMetrics());
 }
 
 void PreconnectTask::didReceiveBuffer(const FragmentedSharedBuffer&, uint64_t reportedEncodedDataLength)
