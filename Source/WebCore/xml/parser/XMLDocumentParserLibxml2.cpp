@@ -1223,7 +1223,6 @@ static xmlEntityPtr getEntityHandler(void* closure, const xmlChar* name)
 
     xmlEntityPtr ent = xmlGetPredefinedEntity(name);
     if (ent) {
-        ent->etype = XML_INTERNAL_PREDEFINED_ENTITY;
         return ent;
     }
 
