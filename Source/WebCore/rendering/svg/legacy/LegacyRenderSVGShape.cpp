@@ -453,7 +453,8 @@ float LegacyRenderSVGShape::strokeWidth() const
 {
     Ref graphicsElement = this->graphicsElement();
     SVGLengthContext lengthContext(graphicsElement.ptr());
-    return lengthContext.valueForLength(style().strokeWidth());
+    auto strokeWidth = lengthContext.valueForLength(style().strokeWidth());
+    return std::isnan(strokeWidth) ? 0 : strokeWidth;
 }
 
 Path& LegacyRenderSVGShape::ensurePath()
