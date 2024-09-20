@@ -829,6 +829,7 @@
 		E336BD2F2BAB8A0400E8471C /* CharacterProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = E336BD2E2BAB8A0400E8471C /* CharacterProperties.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33E83ED2C719900002FBCCD /* simdutf_impl.cpp.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E83EC2C719900002FBCCD /* simdutf_impl.cpp.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E34745D32945E33700F670F2 /* simdutf_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = E34745D12945E33700F670F2 /* simdutf_impl.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E35702522C9D4CEC009292DE /* simd128.h in Headers */ = {isa = PBXBuildFile; fileRef = E35702502C9D4CEC009292DE /* simd128.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3618AB92AD8C4BA00DA7E43 /* ButterflyArray.h in Headers */ = {isa = PBXBuildFile; fileRef = E3618AB82AD8C4B900DA7E43 /* ButterflyArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E361DB532891159C00B2A2B8 /* FastFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E361DB512891159B00B2A2B8 /* FastFloat.cpp */; };
 		E361DB542891159C00B2A2B8 /* FastFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = E361DB522891159C00B2A2B8 /* FastFloat.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1783,6 +1784,7 @@
 		E34CD0D022810A020020D299 /* Packed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Packed.h; sourceTree = "<group>"; };
 		E3538D4C276220880075DA50 /* EmbeddedFixedVector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmbeddedFixedVector.h; sourceTree = "<group>"; };
 		E3538D4D276220880075DA50 /* TrailingArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrailingArray.h; sourceTree = "<group>"; };
+		E35702502C9D4CEC009292DE /* simd128.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = simd128.h; sourceTree = "<group>"; };
 		E360C7642127B85B00C90F0E /* UnalignedAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnalignedAccess.h; sourceTree = "<group>"; };
 		E360C7652127B85C00C90F0E /* Unexpected.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Unexpected.h; sourceTree = "<group>"; };
 		E3618AB82AD8C4B900DA7E43 /* ButterflyArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ButterflyArray.h; sourceTree = "<group>"; };
@@ -2994,6 +2996,14 @@
 			path = simdutf;
 			sourceTree = "<group>";
 		};
+		E35702512C9D4CEC009292DE /* wasm */ = {
+			isa = PBXGroup;
+			children = (
+				E35702502C9D4CEC009292DE /* simd128.h */,
+			);
+			path = wasm;
+			sourceTree = "<group>";
+		};
 		E361DB56289115D000B2A2B8 /* fast_float */ = {
 			isa = PBXGroup;
 			children = (
@@ -3024,6 +3034,7 @@
 			isa = PBXGroup;
 			children = (
 				E396C11B2BE885D9000CBAE1 /* arm */,
+				E35702512C9D4CEC009292DE /* wasm */,
 				E3ABBABD2BE88FBE00D84916 /* simde.h */,
 			);
 			path = simde;
@@ -3469,6 +3480,7 @@
 				DD3DC88B27A4BF8E007E5B61 /* SharedTask.h in Headers */,
 				DDF307F227C086EA006A526F /* Signals.h in Headers */,
 				DD03059327B5DA0D00344002 /* SignedPtr.h in Headers */,
+				E35702522C9D4CEC009292DE /* simd128.h in Headers */,
 				E3ABBABE2BE88FBE00D84916 /* simde.h in Headers */,
 				E38C82692BECAE9D0071EF52 /* SIMDHelpers.h in Headers */,
 				E38C7CD82C366A1800BB9B18 /* SIMDUTF.h in Headers */,

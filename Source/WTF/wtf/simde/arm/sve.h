@@ -1,5 +1,5 @@
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/sve.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -31,7 +31,7 @@
 #define SIMDE_ARM_SVE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/sve/types.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -83,7 +83,7 @@
 #define SIMDE_ARM_SVE_TYPES_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-common.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -117,7 +117,7 @@
 #define SIMDE_COMMON_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/hedley.h :: */
 /* Hedley - https://nemequ.github.io/hedley
  * Created by Evan Nemerson <evan@nemerson.com>
@@ -2168,7 +2168,7 @@ HEDLEY_DIAGNOSTIC_POP
 
 #define SIMDE_VERSION_MAJOR 0
 #define SIMDE_VERSION_MINOR 8
-#define SIMDE_VERSION_MICRO 2
+#define SIMDE_VERSION_MICRO 3
 #define SIMDE_VERSION HEDLEY_VERSION_ENCODE(SIMDE_VERSION_MAJOR, SIMDE_VERSION_MINOR, SIMDE_VERSION_MICRO)
 // Also update meson.build in the root directory of the repository
 
@@ -2176,7 +2176,7 @@ HEDLEY_DIAGNOSTIC_POP
 #include <stdint.h>
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-detect-clang.h :: */
 /* Detect Clang Version
  * Created by Evan Nemerson <evan@nemerson.com>
@@ -2311,7 +2311,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_DETECT_CLANG_H) */
 /* :: End simde/simde-detect-clang.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-arch.h :: */
 /* Architecture detection
  * Created by Evan Nemerson <evan@nemerson.com>
@@ -2358,7 +2358,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARCH_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* Alpha
    <https://en.wikipedia.org/wiki/DEC_Alpha> */
@@ -2445,6 +2445,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif
 #if defined(__ARM_FEATURE_CRYPTO) && __ARM_FEATURE_CRYPTO
 #  define SIMDE_ARCH_ARM_CRYPTO
+#endif
+#if defined(__ARM_FEATURE_CRC32) && __ARM_FEATURE_CRC32
+#  define SIMDE_ARCH_ARM_CRC32
 #endif
 #if defined(__ARM_FEATURE_DOTPROD) && __ARM_FEATURE_DOTPROD
 #  define SIMDE_ARCH_ARM_DOTPROD
@@ -3003,7 +3006,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_ARCH_H) */
 /* :: End simde/simde-arch.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-features.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -3040,9 +3043,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_FEATURES_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-diagnostic.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -3094,11 +3097,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_DIAGNOSTIC_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* This is only to help us implement functions like _mm_undefined_ps. */
 #if defined(SIMDE_DIAGNOSTIC_DISABLE_UNINITIALIZED_)
@@ -3819,7 +3822,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif
 
 #if !defined(SIMDE_ARM_NEON_A32V8_NATIVE) && !defined(SIMDE_ARM_NEON_A32V8_NO_NATIVE) && !defined(SIMDE_NO_NATIVE)
-  #if defined(SIMDE_ARCH_ARM_NEON) && SIMDE_ARCH_ARM_CHECK(8,0) && (__ARM_NEON_FP & 0x02)
+  #if defined(SIMDE_ARCH_ARM_NEON) && SIMDE_ARCH_ARM_CHECK(8,0) && defined (__ARM_NEON_FP) && (__ARM_NEON_FP & 0x02)
     #define SIMDE_ARM_NEON_A32V8_NATIVE
   #endif
 #endif
@@ -4239,9 +4242,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_FEATURES_H) */
 /* :: End simde/simde-features.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-math.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -4279,9 +4282,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_MATH_H 1
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 #include <stdint.h>
 #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
@@ -4422,7 +4425,7 @@ SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
   #endif
 #endif
 
-#if !defined(SIMDE_NANF)
+#if !defined(SIMDE_MATH_NANF)
   #if \
       HEDLEY_HAS_BUILTIN(__builtin_nanf) || \
       HEDLEY_GCC_VERSION_CHECK(3,3,0) || \
@@ -5199,16 +5202,36 @@ simde_math_fpclass(double v, const int imm8) {
   #endif
 #endif
 
+#if !defined(simde_math_pow)
+  #if SIMDE_MATH_BUILTIN_LIBM(pow)
+    #define simde_math_pow(y, x) __builtin_pow(y, x)
+  #elif defined(SIMDE_MATH_HAVE_CMATH)
+    #define simde_math_pow(y, x) std::pow(y, x)
+  #elif defined(SIMDE_MATH_HAVE_MATH_H)
+    #define simde_math_pow(y, x) pow(y, x)
+  #endif
+#endif
+
+#if !defined(simde_math_powf)
+  #if SIMDE_MATH_BUILTIN_LIBM(powf)
+    #define simde_math_powf(y, x) __builtin_powf(y, x)
+  #elif defined(SIMDE_MATH_HAVE_CMATH)
+    #define simde_math_powf(y, x) std::pow(y, x)
+  #elif defined(SIMDE_MATH_HAVE_MATH_H)
+    #define simde_math_powf(y, x) powf(y, x)
+  #endif
+#endif
+
 #if HEDLEY_HAS_BUILTIN(__builtin_exp10) ||  HEDLEY_GCC_VERSION_CHECK(3,4,0)
   #  define simde_math_exp10(v) __builtin_exp10(v)
 #else
-#  define simde_math_exp10(v) pow(10.0, (v))
+#  define simde_math_exp10(v) simde_math_pow(10.0, (v))
 #endif
 
 #if HEDLEY_HAS_BUILTIN(__builtin_exp10f) ||  HEDLEY_GCC_VERSION_CHECK(3,4,0)
   #  define simde_math_exp10f(v) __builtin_exp10f(v)
 #else
-#  define simde_math_exp10f(v) powf(10.0f, (v))
+#  define simde_math_exp10f(v) simde_math_powf(10.0f, (v))
 #endif
 
 #if !defined(simde_math_fabs)
@@ -5448,26 +5471,6 @@ simde_math_fpclass(double v, const int imm8) {
     #define simde_math_nearbyintf(v) std::nearbyint(v)
   #elif defined(SIMDE_MATH_HAVE_MATH_H)
     #define simde_math_nearbyintf(v) nearbyintf(v)
-  #endif
-#endif
-
-#if !defined(simde_math_pow)
-  #if SIMDE_MATH_BUILTIN_LIBM(pow)
-    #define simde_math_pow(y, x) __builtin_pow(y, x)
-  #elif defined(SIMDE_MATH_HAVE_CMATH)
-    #define simde_math_pow(y, x) std::pow(y, x)
-  #elif defined(SIMDE_MATH_HAVE_MATH_H)
-    #define simde_math_pow(y, x) pow(y, x)
-  #endif
-#endif
-
-#if !defined(simde_math_powf)
-  #if SIMDE_MATH_BUILTIN_LIBM(powf)
-    #define simde_math_powf(y, x) __builtin_powf(y, x)
-  #elif defined(SIMDE_MATH_HAVE_CMATH)
-    #define simde_math_powf(y, x) std::pow(y, x)
-  #elif defined(SIMDE_MATH_HAVE_MATH_H)
-    #define simde_math_powf(y, x) powf(y, x)
   #endif
 #endif
 
@@ -6312,7 +6315,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_MATH_H) */
 /* :: End simde/simde-math.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-constify.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -6367,7 +6370,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_CONSTIFY_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DIAGNOSTIC_DISABLE_VARIADIC_MACROS_
@@ -6714,7 +6717,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif
 /* :: End simde/simde-constify.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-align.h :: */
 /* Alignment
  * Created by Evan Nemerson <evan@nemerson.com>
@@ -6771,7 +6774,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ALIGN_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 /* I know this seems a little silly, but some non-hosted compilers
  * don't have stddef.h, so we try to accommodate them. */
@@ -7969,7 +7972,7 @@ SIMDE_DEFINE_CONVERSION_FUNCTION_(simde_float64_as_uint64,      uint64_t, simde_
 SIMDE_DEFINE_CONVERSION_FUNCTION_(simde_uint64_as_float64, simde_float64, uint64_t)
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/check.h :: */
 /* Check (assertions)
  * Portable Snippets - https://github.com/nemequ/portable-snippets
@@ -7991,9 +7994,9 @@ SIMDE_DEFINE_CONVERSION_FUNCTION_(simde_uint64_as_float64, simde_float64, uint64
 #endif
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 #include <stdint.h>
 
 #if !defined(_WIN32)
@@ -8034,7 +8037,7 @@ SIMDE_DEFINE_CONVERSION_FUNCTION_(simde_uint64_as_float64, simde_float64, uint64
 #  endif
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/debug-trap.h :: */
 /* Debugging assertions and traps
  * Portable Snippets - https://github.com/nemequ/portable-snippets
@@ -8523,6 +8526,9 @@ HEDLEY_DIAGNOSTIC_POP
 #    if (!HEDLEY_GCC_VERSION_CHECK(9,0,0) && !defined(SIMDE_ARCH_AARCH64)) || (!defined(SIMDE_ARCH_AARCH64) && defined(SIMDE_ARCH_ARM))
 #      define SIMDE_BUG_GCC_REV_260989
 #    endif
+#    if !HEDLEY_GCC_VERSION_CHECK(11,5,0) && (defined(SIMDE_ARCH_ARM4) || defined(SIMDE_ARCH_AARCH64))
+#      define SIMDE_BUG_GCC_114521
+#    endif
 #    if defined(SIMDE_ARCH_ARM) && !defined(SIMDE_ARCH_AARCH64)
 #      define SIMDE_BUG_GCC_95399
 #      define SIMDE_BUG_GCC_95471
@@ -8720,7 +8726,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* !defined(SIMDE_COMMON_H) */
 /* :: End simde/simde-common.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/simde-f16.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -8750,11 +8756,11 @@ HEDLEY_DIAGNOSTIC_POP
  */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 #if !defined(SIMDE_FLOAT16_H)
 #define SIMDE_FLOAT16_H
@@ -8798,11 +8804,13 @@ SIMDE_BEGIN_DECLS_
   #elif !defined(__EMSCRIPTEN__) && !(defined(__clang__) && defined(SIMDE_ARCH_POWER)) && \
     !(defined(HEDLEY_MSVC_VERSION) && defined(__clang__)) && \
     !(defined(SIMDE_ARCH_MIPS) && defined(__clang__)) && \
+    !(defined(SIMDE_ARCH_ZARCH) && defined(__clang__)) && \
     !(defined(__clang__) && defined(SIMDE_ARCH_RISCV64)) && ( \
       defined(SIMDE_X86_AVX512FP16_NATIVE) || \
       (defined(SIMDE_ARCH_X86_SSE2) && HEDLEY_GCC_VERSION_CHECK(12,0,0)) || \
       (defined(SIMDE_ARCH_AARCH64) && HEDLEY_GCC_VERSION_CHECK(7,0,0) && !defined(__cplusplus)) || \
-      ((defined(SIMDE_ARCH_X86) || defined(SIMDE_ARCH_AMD64)) && SIMDE_DETECT_CLANG_VERSION_CHECK(15,0,0)) || \
+      (defined(SIMDE_ARCH_AARCH64) && HEDLEY_GCC_VERSION_CHECK(13,0,0)) || \
+      ((defined(SIMDE_ARCH_X86_SSE2) || defined(SIMDE_ARCH_AMD64)) && SIMDE_DETECT_CLANG_VERSION_CHECK(15,0,0)) || \
       (!(defined(SIMDE_ARCH_X86) || defined(SIMDE_ARCH_AMD64)) && SIMDE_DETECT_CLANG_VERSION_CHECK(6,0,0))) || \
       defined(SIMDE_ARCH_RISCV_ZVFH)
     /* We haven't found a better way to detect this.  It seems like defining
@@ -9904,7 +9912,7 @@ HEDLEY_DIAGNOSTIC_POP
  * arm/sve/types.h, it might be better to think of it more as
  * arm/sve/common.h. */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/sve/cnt.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -9936,7 +9944,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_SVE_CNT_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -10002,7 +10010,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_SVE_CNT_H */
 /* :: End simde/arm/sve/cnt.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/sve/ld1.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -10045,7 +10053,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_SVE_LD1_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -10365,7 +10373,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_SVE_LD1_H */
 /* :: End simde/arm/sve/ld1.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/sve/ptest.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -10397,7 +10405,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_SVE_PTEST_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -10441,7 +10449,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_SVE_PTEST_H */
 /* :: End simde/arm/sve/ptest.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/sve/ptrue.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -10473,7 +10481,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_SVE_PTRUE_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -10603,7 +10611,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_SVE_PTRUE_H */
 /* :: End simde/arm/sve/ptrue.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/sve/st1.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -10635,7 +10643,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_SVE_ST1_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -10915,7 +10923,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_SVE_ST1_H */
 /* :: End simde/arm/sve/st1.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/sve/whilelt.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -10947,7 +10955,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_SVE_WHILELT_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -11767,7 +11775,7 @@ HEDLEY_DIAGNOSTIC_POP
 /* :: End simde/arm/sve/types.h :: */
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/sve/add.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -11799,9 +11807,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_SVE_ADD_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/sve/sel.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -11833,9 +11841,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_SVE_SEL_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/sve/reinterpret.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -11867,7 +11875,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_SVE_REINTERPRET_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -13190,7 +13198,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_SVE_SEL_H */
 /* :: End simde/arm/sve/sel.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/sve/dup.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -13222,11 +13230,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_SVE_DUP_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -15649,7 +15657,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_SVE_ADD_H */
 /* :: End simde/arm/sve/add.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/sve/and.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -15681,9 +15689,9 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_SVE_AND_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -16658,9 +16666,9 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_SVE_AND_H */
 /* :: End simde/arm/sve/and.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/sve/cmplt.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -16692,7 +16700,7 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_SVE_CMPLT_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -17168,15 +17176,15 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_SVE_CMPLT_H */
 /* :: End simde/arm/sve/cmplt.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/sve/qadd.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -17208,11 +17216,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_SVE_QADD_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -17681,13 +17689,13 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_SVE_QADD_H */
 /* :: End simde/arm/sve/qadd.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/sve/sub.h :: */
 /* SPDX-License-Identifier: MIT
  *
@@ -17719,11 +17727,11 @@ HEDLEY_DIAGNOSTIC_POP
 #define SIMDE_ARM_SVE_SUB_H
 
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -19044,7 +19052,7 @@ HEDLEY_DIAGNOSTIC_POP
 #endif /* SIMDE_ARM_SVE_SUB_H */
 /* :: End simde/arm/sve/sub.h :: */
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
-/* 71fd833d9666141edcd1d3c109a80e228303d8d7 */
+/* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 
 #endif /* SIMDE_ARM_SVE_H */
 /* :: End simde/arm/sve.h :: */
