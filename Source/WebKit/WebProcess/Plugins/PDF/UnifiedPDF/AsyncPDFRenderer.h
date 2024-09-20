@@ -116,6 +116,8 @@ public:
     // Updates existing tiles. Can result in temporarily stale content.
     void pdfContentChangedInRect(const WebCore::GraphicsLayer*, float pageScaleFactor, const WebCore::FloatRect& paintingRect, std::optional<PDFLayoutRow>);
 
+    void pdfContentScaleChanged(const WebCore::GraphicsLayer*, float newScaleFactor);
+
     void generatePreviewImageForPage(PDFDocumentLayout::PageIndex, float scale);
     RefPtr<WebCore::ImageBuffer> previewImageForPage(PDFDocumentLayout::PageIndex) const;
     void removePreviewForPage(PDFDocumentLayout::PageIndex);
@@ -153,7 +155,15 @@ private:
     void didAddGrid(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
     void willRemoveGrid(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
 
-    void enqueueTilePaintIfNecessary(const WebCore::TiledBacking&, const TileForGrid&, const WebCore::FloatRect& tileRect, const std::optional<WebCore::FloatRect>& clipRect = { });
+    void prepareContentForTile(WebCore::TiledBacking&, WebCore::TileGridIdentifier, WebCore::TileIndex, const WebCore::FloatRect& tileClip, WebCore::TileConfigurationChangeIdentifier, std::function<void(WebCore::TileIndex)>&&) final;
+    void cancelPrepareContentForTile(WebCore::TiledBacking&, WebCore::TileGridIdentifier, WebCore::TileIndex, WebCore::TileConfigurationChangeIdentifier) final;
+    void didCancelTileConfigurationChange(WebCore::TileConfigurationChangeIdentifier) final;
+
+    void didPrepareContentForTile(TileForGrid);
+    void tileConfigurationChangeCompletionHandler(WebCore::TileGridIdentifier, const std::optional<WebCore::TileGridIdentifier>&);
+
+    enum class TilePaintNotEnqueuedReason : uint8_t { PageCoverageEmpty, FullTilePaintPending };
+    Expected<std::monostate, TilePaintNotEnqueuedReason> enqueueTilePaintIfNecessary(const WebCore::TiledBacking&, const TileForGrid&, const WebCore::FloatRect& tileRect, const std::optional<WebCore::FloatRect>& clipRect = { });
     void enqueuePaintWithClip(const TileForGrid&, const TileRenderInfo&);
 
     void serviceRequestQueue();
@@ -215,6 +225,9 @@ private:
 
     PDFPageIndexToPreviewHash m_enqueuedPagePreviews;
     PDFPageIndexToBufferHash m_pagePreviews;
+
+    std::optional<WebCore::TileConfigurationChangeIdentifier> m_currentTileConfigurationChange;
+    HashMap<TileForGrid, std::function<void(WebCore::TileIndex)>> m_tileContentPreparationCallbacks;
 
     std::atomic<bool> m_showDebugBorders { false };
 };

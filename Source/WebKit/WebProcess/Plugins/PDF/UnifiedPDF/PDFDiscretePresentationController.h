@@ -71,7 +71,7 @@ private:
     void deviceOrPageScaleFactorChanged() override;
 
     void setupLayers(WebCore::GraphicsLayer& scrolledContentsLayer) override;
-    void updateLayersOnLayoutChange(WebCore::FloatSize documentSize, WebCore::FloatSize centeringOffset, double scaleFactor) override;
+    void updateLayersOnLayoutChange(WebCore::FloatSize documentSize, WebCore::FloatSize centeringOffset, double scaleFactor, LayoutChangeInformation) override;
 
     void updateIsInWindow(bool isInWindow) override;
     void updateDebugBorders(bool showDebugBorders, bool showRepaintCounters) override;

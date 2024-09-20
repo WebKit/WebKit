@@ -174,7 +174,7 @@ void PDFScrollingPresentationController::setupLayers(GraphicsLayer& scrolledCont
 #endif
 }
 
-void PDFScrollingPresentationController::updateLayersOnLayoutChange(FloatSize documentSize, FloatSize centeringOffset, double scaleFactor)
+void PDFScrollingPresentationController::updateLayersOnLayoutChange(FloatSize documentSize, FloatSize centeringOffset, double scaleFactor, LayoutChangeInformation layoutChangeInformation)
 {
     m_contentsLayer->setSize(documentSize);
     m_contentsLayer->setNeedsDisplay();
@@ -184,6 +184,10 @@ void PDFScrollingPresentationController::updateLayersOnLayoutChange(FloatSize do
     m_selectionLayer->setNeedsDisplay();
 #endif
 
+    if (layoutChangeInformation.scaleFactorChangedAfterInitialLayout()) {
+        if (RefPtr asyncRenderer = asyncRendererIfExists())
+            asyncRenderer->pdfContentScaleChanged(m_contentsLayer.get(), scaleFactor);
+    }
     TransformationMatrix transform;
     transform.scale(scaleFactor);
     transform.translate(centeringOffset.width(), centeringOffset.height());

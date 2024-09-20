@@ -79,7 +79,14 @@ public:
     virtual void deviceOrPageScaleFactorChanged() = 0;
 
     virtual void setupLayers(WebCore::GraphicsLayer&) = 0;
-    virtual void updateLayersOnLayoutChange(WebCore::FloatSize documentSize, WebCore::FloatSize centeringOffset, double scaleFactor) = 0;
+
+    struct LayoutChangeInformation {
+        bool scaleFactorChanged { false };
+        bool isInitialLayout { false };
+
+        bool scaleFactorChangedAfterInitialLayout() const { return scaleFactorChanged && !isInitialLayout; }
+    };
+    virtual void updateLayersOnLayoutChange(WebCore::FloatSize documentSize, WebCore::FloatSize centeringOffset, double scaleFactor, LayoutChangeInformation) = 0;
 
     virtual void updateIsInWindow(bool isInWindow) = 0;
     virtual void updateDebugBorders(bool showDebugBorders, bool showRepaintCounters) = 0;

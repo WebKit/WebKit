@@ -354,7 +354,7 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
     FloatRect coverageRect = m_controller.coverageRect();
     IntRect bounds = m_controller.bounds();
 
-    LOG_WITH_STREAM(Tiling, stream << "TileGrid " << this << " (controller " << &m_controller << ") revalidateTiles: bounds " << bounds << " coverageRect" << coverageRect << " validation: " << validationPolicy);
+    LOG_WITH_STREAM(Tiling, stream << "TileGrid " << this << " (controller " << &m_controller << ") revalidateTiles: bounds " << bounds << " coverageRect " << coverageRect << " validation: " << validationPolicy);
 
     FloatRect scaledRect(coverageRect);
     scaledRect.scale(m_scale);
@@ -495,7 +495,14 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
         m_secondaryTileCoverageRects.clear();
     }
 
-    m_controller.didRevalidateTiles();
+    m_controller.didRevalidateTiles(m_tiles.keys());
+
+    for (auto& entry : m_tiles) {
+        TileIndex tileIndex = entry.key;
+        TileInfo& tileInfo = entry.value;
+        if (!tileInfo.hasStaleContent)
+            m_controller.addPendingTileToActiveTileConfigurationChangeIfNeeded(tileIndex);
+    }
 }
 
 TileGrid::TileCohort TileGrid::nextTileCohort() const

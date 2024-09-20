@@ -27,8 +27,10 @@
 
 #include "IntPoint.h"
 #include "PlatformLayerIdentifier.h"
+#include "TileConfigurationChangeIdentifier.h"
 #include "TileGridIdentifier.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
@@ -66,6 +68,10 @@ enum class TiledBackingScrollability : uint8_t {
     VerticallyScrollable    = 1 << 1
 };
 
+enum class TileConfigurationChangeReason : uint8_t { ContentsScaleChanged };
+
+enum class DidCancelTileConfigurationChange : bool { No, Yes };
+
 using TileIndex = IntPoint;
 class TiledBacking;
 
@@ -83,8 +89,11 @@ public:
 
     virtual void coverageRectDidChange(TiledBacking&, const FloatRect&) = 0;
     virtual void tilingScaleFactorDidChange(TiledBacking&, float) = 0;
-};
 
+    virtual void prepareContentForTile(TiledBacking&, TileGridIdentifier, TileIndex, const FloatRect&, TileConfigurationChangeIdentifier, std::function<void(TileIndex)>&&) = 0;
+    virtual void cancelPrepareContentForTile(TiledBacking&, TileGridIdentifier, TileIndex, TileConfigurationChangeIdentifier) = 0;
+    virtual void didCancelTileConfigurationChange(TileConfigurationChangeIdentifier) = 0;
+};
 
 class TiledBacking : public CanMakeCheckedPtr<TiledBacking> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(TiledBacking);
@@ -93,6 +102,11 @@ public:
     virtual ~TiledBacking() = default;
 
     virtual PlatformLayerIdentifier layerIdentifier() const = 0;
+
+    virtual std::optional<TileConfigurationChangeIdentifier> activeConfigurationChange() const = 0;
+    virtual TileConfigurationChangeIdentifier initiateTileConfigurationChange(CompletionHandler<void(TileGridIdentifier oldGrid, const std::optional<TileGridIdentifier>& newGrid)>&&) = 0;
+    virtual void didPrepareContentForTile(TileGridIdentifier, TileIndex) = 0;
+    virtual void commitTileConfigurationChange(TileGridIdentifier oldGrid, TileGridIdentifier newGrid) = 0;
 
     virtual void setClient(TiledBackingClient*) = 0;
 

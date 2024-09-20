@@ -1915,6 +1915,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     if (affectedByTransformAnimation && m_layer->layerType() == PlatformCALayer::LayerType::LayerTypeTiledBackingLayer)
         client().notifySubsequentFlushRequired(this);
 
+    // FIXME: Can communicate with client that a scale changed. Can cancel pending update if scale didn't change.
     if (layerTypeChanged)
         client().didChangePlatformLayerForLayer(this);
 

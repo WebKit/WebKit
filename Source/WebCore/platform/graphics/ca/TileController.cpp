@@ -116,6 +116,115 @@ std::optional<TileGridIdentifier> TileController::secondaryGridIdentifier() cons
     return { };
 }
 
+std::optional<TileConfigurationChangeIdentifier> TileController::activeConfigurationChange() const
+{
+    return m_asyncTileConfigurationChangeData.transform([](const auto& data) {
+        return data.tileConfigurationChange;
+    });
+}
+
+void TileController::destroyExistingTileConfigurationChange()
+{
+    ASSERT(m_asyncTileConfigurationChangeData);
+
+    auto tileConfigurationChange = m_asyncTileConfigurationChangeData->tileConfigurationChange;
+    if (m_client)
+        m_client->didCancelTileConfigurationChange(tileConfigurationChange);
+
+    m_asyncTileConfigurationChangeData->completionHandler(primaryGridIdentifier(), { });
+    m_asyncTileConfigurationChangeData.reset();
+}
+
+void TileController::addPendingTileToActiveTileConfigurationChangeIfNeeded(TileIndex tile)
+{
+    if (!m_asyncTileConfigurationChangeData)
+        return;
+
+    // FIXME [aprotyas]: Either -- overwrite new entry or don't call prepareContentForTile if not new entry
+    auto& pendingTiles = m_asyncTileConfigurationChangeData->pendingTiles;
+    auto tileGridIdentifier = m_asyncTileConfigurationChangeData->pendingTileGrid->identifier();
+    auto configurationChange = *activeConfigurationChange();
+
+    if (pendingTiles.contains(tile) && m_client)
+        m_client->cancelPrepareContentForTile(*this, tileGridIdentifier, pendingTiles.take(tile), configurationChange);
+
+    auto newTile = *m_asyncTileConfigurationChangeData->pendingTiles.add(tile).iterator;
+    auto tileRect = m_asyncTileConfigurationChangeData->pendingTileGrid->rectForTile(newTile);
+    if (m_client) {
+        m_client->prepareContentForTile(*this, tileGridIdentifier, newTile, tileRect, configurationChange, [tileGridIdentifier, newTile, this](auto completedTile) {
+            ASSERT_UNUSED(newTile, newTile == completedTile);
+            didPrepareContentForTile(tileGridIdentifier, completedTile);
+        });
+    }
+
+    if (m_asyncTileConfigurationChangeData)
+        ALWAYS_LOG_WITH_STREAM(stream << "[aprotyas] TileController::addPendingTileToActiveTileConfigurationChangeIfNeeded -- added tile " << tile << " (" << tileGridIdentifier << ") to pending tiles -- size " << m_asyncTileConfigurationChangeData->pendingTiles.size());
+}
+
+void TileController::addPendingTilesToActiveTileConfigurationChangeIfNeeded(const TileGridIndexIteratorRange& tiles)
+{
+    for (const auto& tile : tiles)
+        addPendingTileToActiveTileConfigurationChangeIfNeeded(tile);
+}
+
+TileConfigurationChangeIdentifier TileController::initiateTileConfigurationChange(CompletionHandler<void(TileGridIdentifier oldGrid, const std::optional<TileGridIdentifier>& newGrid)>&& completionHandler)
+{
+    if (m_asyncTileConfigurationChangeData)
+        destroyExistingTileConfigurationChange();
+
+    m_asyncTileConfigurationChangeData = { TileConfigurationChangeIdentifier::generate(), makeUnique<TileGrid>(*this), WTFMove(completionHandler), { } };
+    if (m_client)
+        m_client->didAddGrid(*this, m_asyncTileConfigurationChangeData->pendingTileGrid->identifier());
+
+    return m_asyncTileConfigurationChangeData->tileConfigurationChange;
+}
+
+void TileController::didPrepareContentForTile(TileGridIdentifier tileGridIdentifier, TileIndex tile)
+{
+    if (!m_asyncTileConfigurationChangeData) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    ASSERT(m_asyncTileConfigurationChangeData->pendingTileGrid->identifier() == tileGridIdentifier);
+
+    m_asyncTileConfigurationChangeData->pendingTiles.remove(tile);
+    ALWAYS_LOG_WITH_STREAM(stream << "[aprotyas] TileController::didPrepareContentForTile -- removed tile " << tile << " (" << tileGridIdentifier << ") from pending tiles -- size " << m_asyncTileConfigurationChangeData->pendingTiles.size());
+    if (!m_asyncTileConfigurationChangeData->pendingTiles.isEmpty())
+        return;
+
+    m_asyncTileConfigurationChangeData->completionHandler(primaryGridIdentifier(), tileGridIdentifier);
+
+    m_asyncTileConfigurationChangeData.reset();
+}
+
+void TileController::commitTileConfigurationChange(TileGridIdentifier oldGrid, TileGridIdentifier newGrid)
+{
+    if (!m_asyncTileConfigurationChangeData)
+        return;
+
+    ASSERT(tileGrid().identifier() == oldGrid);
+    ASSERT(m_asyncTileConfigurationChangeData->pendingTileGrid->identifier() == newGrid);
+
+    ALWAYS_LOG_WITH_STREAM(stream << "[aprotyas] TileController::commitTileConfigurationChange -- old grid " << oldGrid << " new grid " << newGrid);
+
+    if (m_tileGrid && m_client)
+        m_client->willRemoveGrid(*this, oldGrid);
+
+    m_tileGrid = std::exchange(m_asyncTileConfigurationChangeData->pendingTileGrid, nullptr);
+
+    // FIXME [aprotyas]: Is this necessary?
+    m_tileGrid->setIsZoomedOutTileGrid(false);
+
+    // FIXME [aprotyas]: We need to force this reset because of the next few lines... so maybe let's restructure this code?
+    m_asyncTileConfigurationChangeData.reset();
+
+    if (m_tileGrid && m_client)
+        m_client->didAddGrid(*this, newGrid);
+
+    tileGridsChanged();
+}
+
 void TileController::tileCacheLayerBoundsChanged()
 {
     ASSERT(owningGraphicsLayer()->isCommittingChanges());
@@ -125,12 +234,20 @@ void TileController::tileCacheLayerBoundsChanged()
 
 void TileController::setNeedsDisplay()
 {
+//    TileGrid& grid = m_asyncTileConfigurationChangeData ? *m_asyncTileConfigurationChangeData->pendingTileGrid : tileGrid();
+//    grid.setNeedsDisplay();
+    if (m_asyncTileConfigurationChangeData)
+        m_asyncTileConfigurationChangeData->pendingTileGrid->setNeedsDisplay();
     tileGrid().setNeedsDisplay();
     clearZoomedOutTileGrid();
 }
 
 void TileController::setNeedsDisplayInRect(const IntRect& rect)
 {
+//    TileGrid& grid = m_asyncTileConfigurationChangeData ? *m_asyncTileConfigurationChangeData->pendingTileGrid : tileGrid();
+//    grid.setNeedsDisplayInRect(rect);
+    if (m_asyncTileConfigurationChangeData)
+        m_asyncTileConfigurationChangeData->pendingTileGrid->setNeedsDisplayInRect(rect);
     tileGrid().setNeedsDisplayInRect(rect);
     if (m_zoomedOutTileGrid)
         m_zoomedOutTileGrid->dropTilesInRect(rect);
@@ -148,6 +265,7 @@ void TileController::setContentsScale(float contentsScale)
     
     LOG_WITH_STREAM(Tiling, stream << "TileController " << this << " setContentsScale " << contentsScale << " computed scale " << scale << " (deviceScaleFactor " << deviceScaleFactor << ")");
 
+    // FIXME [aprotyas]: No work needed, probably want to cancel an async change.
     if (tileGrid().scale() == scale && m_deviceScaleFactor == deviceScaleFactor && !m_hasTilesWithTemporaryScaleFactor)
         return;
 
@@ -157,6 +275,7 @@ void TileController::setContentsScale(float contentsScale)
     if (m_coverageMap)
         m_coverageMap->setDeviceScaleFactor(deviceScaleFactor);
 
+    // FIXME [aprotyas]: We probably want to cancel an async change here too.
     if (m_zoomedOutTileGrid && m_zoomedOutTileGrid->scale() == scale) {
         if (m_tileGrid && m_client)
             m_client->willRemoveGrid(*this, m_tileGrid->identifier());
@@ -183,12 +302,14 @@ void TileController::setContentsScale(float contentsScale)
     }
 
     auto oldScale = tileGrid().scale();
-    tileGrid().setScale(scale);
+
+    TileGrid& grid = m_asyncTileConfigurationChangeData ? *m_asyncTileConfigurationChangeData->pendingTileGrid : tileGrid();
+    grid.setScale(scale);
 
     if (m_client && scale != oldScale)
         m_client->tilingScaleFactorDidChange(*this, scale);
 
-    tileGrid().setNeedsDisplay();
+    grid.setNeedsDisplay();
 }
 
 float TileController::contentsScale() const
@@ -358,7 +479,8 @@ void TileController::setTileCoverage(TileCoverage coverage)
 void TileController::revalidateTiles()
 {
     ASSERT(owningGraphicsLayer()->isCommittingChanges());
-    tileGrid().revalidateTiles();
+    TileGrid& grid = m_asyncTileConfigurationChangeData ? *m_asyncTileConfigurationChangeData->pendingTileGrid : tileGrid();
+    grid.revalidateTiles();
 }
 
 void TileController::setTileDebugBorderWidth(float borderWidth)
@@ -629,18 +751,21 @@ void TileController::tileSizeChangeTimerFired()
 
 IntSize TileController::tileSize() const
 {
-    return tileGrid().tileSize();
+    const TileGrid& grid = m_asyncTileConfigurationChangeData ? *m_asyncTileConfigurationChangeData->pendingTileGrid : tileGrid();
+    return grid.tileSize();
 }
 
 FloatRect TileController::rectForTile(TileIndex tileIndex) const
 {
-    return tileGrid().rectForTile(tileIndex);
+    const TileGrid& grid = m_asyncTileConfigurationChangeData ? *m_asyncTileConfigurationChangeData->pendingTileGrid : tileGrid();
+    return grid.rectForTile(tileIndex);
 }
 
 IntSize TileController::computeTileSize()
 {
+    TileGrid& grid = m_asyncTileConfigurationChangeData ? *m_asyncTileConfigurationChangeData->pendingTileGrid : tileGrid();
     if (m_inLiveResize || m_tileSizeLocked)
-        return tileGrid().tileSize();
+        return grid.tileSize();
 
     const int kLowestCommonDenominatorMaxTileSize = 4 * 1024;
     IntSize maxTileSize(kLowestCommonDenominatorMaxTileSize, kLowestCommonDenominatorMaxTileSize);
@@ -657,10 +782,10 @@ IntSize TileController::computeTileSize()
     IntSize tileSize(kDefaultTileSize, kDefaultTileSize);
 
     if (m_scrollability == Scrollability::NotScrollable) {
-        IntSize scaledSize = expandedIntSize(boundsWithoutMargin().size() * tileGrid().scale());
+        IntSize scaledSize = expandedIntSize(boundsWithoutMargin().size() * grid.scale());
         tileSize = scaledSize.constrainedBetween(IntSize(kDefaultTileSize, kDefaultTileSize), maxTileSize);
     } else if (m_scrollability == Scrollability::VerticallyScrollable)
-        tileSize.setWidth(std::min(std::max<int>(ceilf(boundsWithoutMargin().width() * tileGrid().scale()), kDefaultTileSize), maxTileSize.width()));
+        tileSize.setWidth(std::min(std::max<int>(ceilf(boundsWithoutMargin().width() * grid.scale()), kDefaultTileSize), maxTileSize.width()));
 
     LOG_WITH_STREAM(Scrolling, stream << "TileController::tileSize newSize=" << tileSize);
 
@@ -696,13 +821,15 @@ void TileController::tileRevalidationTimerFired()
         : OptionSet { TileGrid::UnparentAllTiles });
 }
 
-void TileController::didRevalidateTiles()
+void TileController::didRevalidateTiles(const TileGridIndexIteratorRange& /*tiles*/)
 {
     m_boundsAtLastRevalidate = bounds();
 
     LOG_WITH_STREAM(Tiling, stream << "TileController " << this << " (bounds " << bounds() << ") didRevalidateTiles - tileCoverageRect " << tileCoverageRect() << " grid extent " << tileGridExtent() << " memory use " << (retainedTileBackingStoreMemory() / (1024 * 1024)) << "MB");
 
     updateTileCoverageMap();
+
+//    addPendingTilesToActiveTileConfigurationChangeIfNeeded(tiles);
 }
 
 unsigned TileController::blankPixelCount() const
@@ -743,12 +870,14 @@ void TileController::updateTileCoverageMap()
 
 IntRect TileController::tileGridExtent() const
 {
-    return tileGrid().extent();
+    const TileGrid& grid = m_asyncTileConfigurationChangeData ? *m_asyncTileConfigurationChangeData->pendingTileGrid : tileGrid();
+    return grid.extent();
 }
 
 double TileController::retainedTileBackingStoreMemory() const
 {
-    double bytes = tileGrid().retainedTileBackingStoreMemory();
+    const TileGrid& grid = m_asyncTileConfigurationChangeData ? *m_asyncTileConfigurationChangeData->pendingTileGrid : tileGrid();
+    double bytes = grid.retainedTileBackingStoreMemory();
     if (m_zoomedOutTileGrid)
         bytes += m_zoomedOutTileGrid->retainedTileBackingStoreMemory();
     return bytes;
@@ -757,7 +886,8 @@ double TileController::retainedTileBackingStoreMemory() const
 // Return the rect in layer coords, not tile coords.
 IntRect TileController::tileCoverageRect() const
 {
-    return tileGrid().tileCoverageRect();
+    const TileGrid& grid = m_asyncTileConfigurationChangeData ? *m_asyncTileConfigurationChangeData->pendingTileGrid : tileGrid();
+    return grid.tileCoverageRect();
 }
 
 PlatformCALayer* TileController::tiledScrollingIndicatorLayer()

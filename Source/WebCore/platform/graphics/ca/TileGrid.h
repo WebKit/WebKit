@@ -29,6 +29,7 @@
 #include "IntRect.h"
 #include "PlatformCALayerClient.h"
 #include "TileGridIdentifier.h"
+#include "TileGridTypes.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/HashCountedSet.h>
@@ -45,8 +46,6 @@ namespace WebCore {
 class GraphicsContext;
 class PlatformCALayer;
 class TileController;
-
-using TileIndex = IntPoint;
 
 class TileGrid : public PlatformCALayerClient {
     WTF_MAKE_TZONE_ALLOCATED(TileGrid);
@@ -100,14 +99,10 @@ public:
     void removeUnparentedTilesNow();
 #endif
 
-    using TileCohort = unsigned;
-    static constexpr TileCohort visibleTileCohort = std::numeric_limits<TileCohort>::max();
+    using TileCohort = WebCore::TileCohort;
+    static constexpr auto visibleTileCohort = WebCore::visibleTileCohort;
 
-    struct TileInfo {
-        RefPtr<PlatformCALayer> layer;
-        TileCohort cohort { visibleTileCohort };
-        bool hasStaleContent { false };
-    };
+    using TileInfo = WebCore::TileInfo;
 
 private:
     void setTileNeedsDisplayInRect(const TileIndex&, TileInfo&, const IntRect& repaintRectInTileCoords, const IntRect& coverageRectInTileCoords);
@@ -161,7 +156,7 @@ private:
     Ref<PlatformCALayer> m_containerLayer;
 #endif
 
-    HashMap<TileIndex, TileInfo> m_tiles;
+    TileGridIndexCollectionType m_tiles;
 
     IntRect m_primaryTileCoverageRect;
     Vector<FloatRect> m_secondaryTileCoverageRects;

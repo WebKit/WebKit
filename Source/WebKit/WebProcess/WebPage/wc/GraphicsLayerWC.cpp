@@ -98,6 +98,11 @@ public:
     void setClient(TiledBackingClient*) final { }
     PlatformLayerIdentifier layerIdentifier() const final { return *m_owner.primaryLayerID(); }
     TileGridIdentifier primaryGridIdentifier() const final { return TileGridIdentifier { 0 }; }
+    std::optional<TileConfigurationChangeIdentifier> activeConfigurationChange() const final { return { }; }
+    TileConfigurationChangeIdentifier initiateTileConfigurationChange(CompletionHandler<void(TileGridIdentifier oldGrid, const std::optional<TileGridIdentifier>& newGrid)>&&) final;
+    void didPrepareContentForTile(TileIndex) final { }
+    void commitTileConfigurationChange(TileGridIdentifier, TileGridIdentifier) final { };
+
     std::optional<TileGridIdentifier> secondaryGridIdentifier() const final { return { }; }
     void setVisibleRect(const FloatRect&) final { }
     FloatRect visibleRect() const final { return { }; };
@@ -754,6 +759,12 @@ void GraphicsLayerWC::recursiveCommitChanges(const TransformState& state)
         static_cast<GraphicsLayerWC*>(replica)->recursiveCommitChanges(localState);
     for (auto& child : children())
         static_cast<GraphicsLayerWC*>(child.ptr())->recursiveCommitChanges(localState);
+}
+
+TileConfigurationChangeIdentifier GraphicsLayerWC::initiateTileConfigurationChange(CompletionHandler<void(TileGridIdentifier oldGrid, const std::optional<TileGridIdentifier>& newGrid)>&&)
+{
+    completionHandler(TileGridIdentifier { 0 }, TileGridIdentifier { 0 });
+    return TileConfigurationChangeIdentifier { 0 };
 }
 
 } // namespace WebKit
