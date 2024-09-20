@@ -899,7 +899,7 @@ static const GB18030EncodeIndex& gb18030EncodeIndex()
 // https://unicode-org.atlassian.net/browse/ICU-22357
 // The 2-byte values are handled correctly by values from gb18030()
 // but these need to be exceptions from gb18030Ranges().
-static std::optional<uint32_t> gb18030AsymmetricEncode(char32_t codePoint)
+static std::optional<uint16_t> gb18030AsymmetricEncode(UChar codePoint)
 {
     switch (codePoint) {
     case 0xE81E: return 0xFE59;
@@ -1031,12 +1031,11 @@ static Vector<uint8_t> gbEncodeShared(StringView string, Function<void(char32_t,
             unencodableHandler(codePoint, result);
             continue;
         }
-        if (isGBK == IsGBK::Yes) {
-            if (codePoint == 0x20AC) {
-                result.append(0x80);
-                continue;
-            }
-        } else if (auto encoded = gb18030AsymmetricEncode(codePoint)) {
+        if (isGBK == IsGBK::Yes && codePoint == 0x20AC) {
+            result.append(0x80);
+            continue;
+        }
+        if (auto encoded = gb18030AsymmetricEncode(codePoint)) {
             result.append(*encoded >> 8);
             result.append(*encoded);
             continue;
