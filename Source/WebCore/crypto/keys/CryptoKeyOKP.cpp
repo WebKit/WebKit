@@ -98,8 +98,6 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importJwk(CryptoAlgorithmIdentifier identifie
         if (keyData.crv != "Ed25519"_s)
             return nullptr;
         // FIXME: Do we have tests for these checks ?
-        if (!keyData.alg.isEmpty() && keyData.alg != "EdDSA"_s)
-            return nullptr;
         if (usages && !keyData.use.isEmpty() && keyData.use != "sign"_s)
             return nullptr;
         if (keyData.key_ops && ((keyData.usages & usages) != usages))
