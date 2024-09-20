@@ -37,6 +37,7 @@ class AnimationTimelinesController;
 class CSSScrollValue;
 class Element;
 class RenderStyle;
+class ScrollableArea;
 
 class ScrollTimeline : public AnimationTimeline {
 public:
@@ -58,11 +59,19 @@ public:
     AnimationTimeline::ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents() override;
 
     AnimationTimelinesController* controller() const override;
+    static ScrollableArea* scrollableAreaForSourceRenderer(RenderElement*, Ref<Document>);
 
 protected:
     explicit ScrollTimeline(const AtomString&, ScrollAxis);
 
 private:
+    struct Data {
+        float maxScrollOffset = 0;
+        float scrollOffset = 0;
+    };
+
+    Data computeScrollTimelineData() const;
+
     enum class Scroller : uint8_t { Nearest, Root, Self };
 
     explicit ScrollTimeline(ScrollTimelineOptions&& = { });
