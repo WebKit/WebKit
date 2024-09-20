@@ -27,7 +27,7 @@
 
 #include "ElementChildIteratorInlines.h"
 #include "RuleFeature.h"
-#include "SelectorFilter.h"
+#include "SelectorFilterInlines.h"
 #include "StyleRule.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/TZoneMallocInlines.h>

@@ -33,6 +33,7 @@
 #include "CommonAtomStrings.h"
 #include "ElementInlines.h"
 #include "HTMLNames.h"
+#include "SelectorFilterInlines.h"
 #include "ShadowRoot.h"
 #include "StyledElement.h"
 
@@ -179,83 +180,6 @@ void SelectorFilter::collectSimpleSelectorHash(CollectedSelectorHashes& collecte
     default:
         break;
     }
-}
-
-void SelectorFilter::collectSelectorHashes(CollectedSelectorHashes& collectedHashes, const CSSSelector& rightmostSelector, IncludeRightmost includeRightmost)
-{
-    auto [selector, relation, skipOverSubselectors] = [&] {
-        if (includeRightmost == IncludeRightmost::No)
-            return std::tuple { rightmostSelector.tagHistory(), rightmostSelector.relation(), true };
-
-        return std::tuple { &rightmostSelector, CSSSelector::Relation::Subselector, false };
-    }();
-
-    for (; selector; selector = selector->tagHistory()) {
-        // Only collect identifiers that match ancestors.
-        switch (relation) {
-        case CSSSelector::Relation::Subselector:
-            if (!skipOverSubselectors)
-                collectSimpleSelectorHash(collectedHashes, *selector);
-            break;
-        case CSSSelector::Relation::DirectAdjacent:
-        case CSSSelector::Relation::IndirectAdjacent:
-        case CSSSelector::Relation::ShadowDescendant:
-        case CSSSelector::Relation::ShadowPartDescendant:
-        case CSSSelector::Relation::ShadowSlotted:
-            skipOverSubselectors = true;
-            break;
-        case CSSSelector::Relation::DescendantSpace:
-        case CSSSelector::Relation::Child:
-            skipOverSubselectors = false;
-            collectSimpleSelectorHash(collectedHashes, *selector);
-            break;
-        }
-        relation = selector->relation();
-    }
-}
-
-auto SelectorFilter::chooseSelectorHashesForFilter(const CollectedSelectorHashes& collectedSelectorHashes) -> Hashes
-{
-    Hashes resultHashes;
-    unsigned index = 0;
-
-    auto addIfNew = [&] (unsigned hash) {
-        for (unsigned i = 0; i < index; ++i) {
-            if (resultHashes[i] == hash)
-                return;
-        }
-        resultHashes[index++] = hash;
-    };
-
-    auto copyHashes = [&] (auto& hashes) {
-        for (auto& hash : hashes) {
-            addIfNew(hash);
-            if (index == resultHashes.size())
-                return true;
-        }
-        return false;
-    };
-
-    // There is a limited number of slots. Prefer more specific selector types.
-    if (copyHashes(collectedSelectorHashes.ids))
-        return resultHashes;
-    if (copyHashes(collectedSelectorHashes.attributes))
-        return resultHashes;
-    if (copyHashes(collectedSelectorHashes.classes))
-        return resultHashes;
-    if (copyHashes(collectedSelectorHashes.tags))
-        return resultHashes;
-
-    // Null-terminate if not full.
-    resultHashes[index] = 0;
-    return resultHashes;
-}
-
-SelectorFilter::Hashes SelectorFilter::collectHashes(const CSSSelector& selector)
-{
-    CollectedSelectorHashes collectedHashes;
-    collectSelectorHashes(collectedHashes, selector, IncludeRightmost::No);
-    return chooseSelectorHashesForFilter(collectedHashes);
 }
 
 SelectorFilter::CollectedSelectorHashes SelectorFilter::collectHashesForTesting(const CSSSelector& selector)

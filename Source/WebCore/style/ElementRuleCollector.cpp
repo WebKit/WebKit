@@ -45,6 +45,7 @@
 #include "SVGElement.h"
 #include "SelectorCheckerTestFunctions.h"
 #include "SelectorCompiler.h"
+#include "SelectorFilterInlines.h"
 #include "SelectorMatchingState.h"
 #include "ShadowRoot.h"
 #include "StyleProperties.h"
