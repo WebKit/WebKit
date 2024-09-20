@@ -38,24 +38,19 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
-class RemoteLegacyCDMFactoryProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteLegacyCDMFactoryProxy> : std::true_type { };
-}
-
-namespace WebKit {
 
 class RemoteLegacyCDMSessionProxy;
 class RemoteLegacyCDMProxy;
 struct RemoteLegacyCDMConfiguration;
 
-class RemoteLegacyCDMFactoryProxy final : public IPC::MessageReceiver {
+class RemoteLegacyCDMFactoryProxy final : public RefCounted<RemoteLegacyCDMFactoryProxy>, public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLegacyCDMFactoryProxy);
 public:
-    RemoteLegacyCDMFactoryProxy(GPUConnectionToWebProcess&);
+    static Ref<RemoteLegacyCDMFactoryProxy> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
+    {
+        return adoptRef(*new RemoteLegacyCDMFactoryProxy(gpuConnectionToWebProcess));
+    }
+
     virtual ~RemoteLegacyCDMFactoryProxy();
 
     void clear();
@@ -84,6 +79,8 @@ public:
 #endif
 
 private:
+    RemoteLegacyCDMFactoryProxy(GPUConnectionToWebProcess&);
+
     friend class GPUProcessConnection;
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

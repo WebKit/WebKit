@@ -35,11 +35,6 @@
 #include <wtf/Forward.h>
 #include <wtf/UniqueRef.h>
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteCDMProxy> : std::true_type { };
-}
-
 namespace WebCore {
 class SharedBuffer;
 enum class CDMRequirement : uint8_t;
@@ -55,9 +50,9 @@ struct RemoteCDMInstanceConfiguration;
 struct RemoteCDMConfiguration;
 struct SharedPreferencesForWebProcess;
 
-class RemoteCDMProxy : public IPC::MessageReceiver {
+class RemoteCDMProxy : public RefCounted<RemoteCDMProxy>, public IPC::MessageReceiver {
 public:
-    static std::unique_ptr<RemoteCDMProxy> create(RemoteCDMFactoryProxy&, std::unique_ptr<WebCore::CDMPrivate>&&);
+    static RefPtr<RemoteCDMProxy> create(RemoteCDMFactoryProxy&, std::unique_ptr<WebCore::CDMPrivate>&&);
     ~RemoteCDMProxy();
 
     const RemoteCDMConfiguration& configuration() const { return m_configuration.get(); }

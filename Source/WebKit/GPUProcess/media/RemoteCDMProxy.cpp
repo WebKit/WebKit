@@ -39,7 +39,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-std::unique_ptr<RemoteCDMProxy> RemoteCDMProxy::create(RemoteCDMFactoryProxy& factory, std::unique_ptr<WebCore::CDMPrivate>&& priv)
+RefPtr<RemoteCDMProxy> RemoteCDMProxy::create(RemoteCDMFactoryProxy& factory, std::unique_ptr<WebCore::CDMPrivate>&& priv)
 {
     if (!priv)
         return nullptr;
@@ -50,8 +50,8 @@ std::unique_ptr<RemoteCDMProxy> RemoteCDMProxy::create(RemoteCDMFactoryProxy& fa
         priv->supportsServerCertificates(),
         priv->supportsSessions()
     });
-    // Use new() to access CDMPrivate's private constructor.
-    return std::unique_ptr<RemoteCDMProxy>(new RemoteCDMProxy(factory, WTFMove(priv), WTFMove(configuration)));
+
+    return adoptRef(new RemoteCDMProxy(factory, WTFMove(priv), WTFMove(configuration)));
 }
 
 RemoteCDMProxy::RemoteCDMProxy(RemoteCDMFactoryProxy& factory, std::unique_ptr<CDMPrivate>&& priv, UniqueRef<RemoteCDMConfiguration>&& configuration)

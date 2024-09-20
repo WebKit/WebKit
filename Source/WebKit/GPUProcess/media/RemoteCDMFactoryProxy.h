@@ -40,25 +40,19 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
-class RemoteCDMFactoryProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteCDMFactoryProxy> : std::true_type { };
-}
-
-namespace WebKit {
 
 class RemoteCDMInstanceProxy;
 class RemoteCDMInstanceSessionProxy;
 class RemoteCDMProxy;
 struct RemoteCDMConfiguration;
 
-class RemoteCDMFactoryProxy final : public IPC::MessageReceiver, WebCore::CDMPrivateClient {
+class RemoteCDMFactoryProxy final : public RefCounted<RemoteCDMFactoryProxy>, public IPC::MessageReceiver, WebCore::CDMPrivateClient {
     WTF_MAKE_TZONE_ALLOCATED(RemoteCDMFactoryProxy);
 public:
-    RemoteCDMFactoryProxy(GPUConnectionToWebProcess&);
+    static Ref<RemoteCDMFactoryProxy> create(GPUConnectionToWebProcess& gpuConnection)
+    {
+        return adoptRef(*new RemoteCDMFactoryProxy(gpuConnection));
+    }
     virtual ~RemoteCDMFactoryProxy();
 
     void clear();
@@ -72,7 +66,7 @@ public:
     bool didReceiveSyncCDMInstanceMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
     bool didReceiveSyncCDMInstanceSessionMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
-    void addProxy(const RemoteCDMIdentifier&, std::unique_ptr<RemoteCDMProxy>&&);
+    void addProxy(const RemoteCDMIdentifier&, RefPtr<RemoteCDMProxy>&&);
     void removeProxy(const RemoteCDMIdentifier&);
 
     void addInstance(const RemoteCDMInstanceIdentifier&, std::unique_ptr<RemoteCDMInstanceProxy>&&);
@@ -94,6 +88,8 @@ public:
 #endif
 
 private:
+    RemoteCDMFactoryProxy(GPUConnectionToWebProcess&);
+
     friend class GPUProcessConnection;
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -104,7 +100,7 @@ private:
     void supportsKeySystem(const String& keySystem, CompletionHandler<void(bool)>&&);
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
-    HashMap<RemoteCDMIdentifier, std::unique_ptr<RemoteCDMProxy>> m_proxies;
+    HashMap<RemoteCDMIdentifier, RefPtr<RemoteCDMProxy>> m_proxies;
     HashMap<RemoteCDMInstanceIdentifier, std::unique_ptr<RemoteCDMInstanceProxy>> m_instances;
     HashMap<RemoteCDMInstanceSessionIdentifier, std::unique_ptr<RemoteCDMInstanceSessionProxy>> m_sessions;
 

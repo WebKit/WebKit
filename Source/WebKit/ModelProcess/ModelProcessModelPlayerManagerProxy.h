@@ -35,23 +35,19 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
-class ModelProcessModelPlayerManagerProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ModelProcessModelPlayerManagerProxy> : std::true_type { };
-}
-
-namespace WebKit {
 
 class ModelProcessModelPlayerProxy;
 
 class ModelProcessModelPlayerManagerProxy
-    : public IPC::MessageReceiver {
+    : public RefCounted<ModelProcessModelPlayerManagerProxy>
+    , public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(ModelProcessModelPlayerManagerProxy);
 public:
-    explicit ModelProcessModelPlayerManagerProxy(ModelConnectionToWebProcess&);
+    static Ref<ModelProcessModelPlayerManagerProxy> create(ModelConnectionToWebProcess& modelConnectionToWebProcess)
+    {
+        return adoptRef(*new ModelProcessModelPlayerManagerProxy(modelConnectionToWebProcess));
+    }
+
     ~ModelProcessModelPlayerManagerProxy();
 
     ModelConnectionToWebProcess* modelConnectionToWebProcess() { return m_modelConnectionToWebProcess.get(); }
@@ -61,6 +57,8 @@ public:
     void didReceivePlayerMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
+    explicit ModelProcessModelPlayerManagerProxy(ModelConnectionToWebProcess&);
+
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Messages

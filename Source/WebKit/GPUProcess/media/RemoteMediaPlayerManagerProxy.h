@@ -47,27 +47,21 @@
 #endif
 
 namespace WebKit {
-class RemoteMediaPlayerManagerProxy;
-class VideoReceiverEndpointMessage;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteMediaPlayerManagerProxy> : std::true_type { };
-}
-
-namespace WebKit {
 
 class RemoteMediaPlayerProxy;
 struct RemoteMediaPlayerConfiguration;
 struct RemoteMediaPlayerProxyConfiguration;
 
 class RemoteMediaPlayerManagerProxy
-    : public IPC::MessageReceiver
+    : public RefCounted<RemoteMediaPlayerManagerProxy>, public IPC::MessageReceiver
 {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaPlayerManagerProxy);
 public:
-    explicit RemoteMediaPlayerManagerProxy(GPUConnectionToWebProcess&);
+    static Ref<RemoteMediaPlayerManagerProxy> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
+    {
+        return adoptRef(*new RemoteMediaPlayerManagerProxy(gpuConnectionToWebProcess));
+    }
+
     ~RemoteMediaPlayerManagerProxy();
 
     RefPtr<GPUConnectionToWebProcess> gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
@@ -92,6 +86,8 @@ public:
 #endif
 
 private:
+    explicit RemoteMediaPlayerManagerProxy(GPUConnectionToWebProcess&);
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;

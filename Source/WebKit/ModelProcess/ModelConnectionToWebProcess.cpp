@@ -62,7 +62,7 @@ Ref<ModelConnectionToWebProcess> ModelConnectionToWebProcess::create(ModelProces
 }
 
 ModelConnectionToWebProcess::ModelConnectionToWebProcess(ModelProcess& modelProcess, WebCore::ProcessIdentifier webProcessIdentifier, PAL::SessionID sessionID, IPC::Connection::Handle&& connectionHandle, ModelProcessConnectionParameters&& parameters)
-    : m_modelProcessModelPlayerManagerProxy(makeUniqueRef<ModelProcessModelPlayerManagerProxy>(*this))
+    : m_modelProcessModelPlayerManagerProxy(ModelProcessModelPlayerManagerProxy::create(*this))
     , m_connection(IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(connectionHandle) }))
     , m_modelProcess(modelProcess)
     , m_webProcessIdentifier(webProcessIdentifier)

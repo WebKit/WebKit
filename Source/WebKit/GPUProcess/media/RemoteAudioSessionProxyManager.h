@@ -34,25 +34,21 @@
 #include <wtf/WeakRef.h>
 
 namespace WebKit {
-class RemoteAudioSessionProxyManager;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteAudioSessionProxyManager> : std::true_type { };
-}
-
-namespace WebKit {
 
 class GPUProcess;
 class RemoteAudioSessionProxy;
 
 class RemoteAudioSessionProxyManager
-    : public WebCore::AudioSessionInterruptionObserver
+    : public RefCounted<RemoteAudioSessionProxyManager>
+    , public WebCore::AudioSessionInterruptionObserver
     , private WebCore::AudioSessionConfigurationChangeObserver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAudioSessionProxyManager);
 public:
-    RemoteAudioSessionProxyManager(GPUProcess&);
+    static Ref<RemoteAudioSessionProxyManager> create(GPUProcess& gpuProcess)
+    {
+        return adoptRef(*new RemoteAudioSessionProxyManager(gpuProcess));
+    }
+
     ~RemoteAudioSessionProxyManager();
 
     void addProxy(RemoteAudioSessionProxy&, std::optional<audit_token_t>);
@@ -77,6 +73,8 @@ public:
     using WebCore::AudioSessionInterruptionObserver::WeakPtrImplType;
 
 private:
+    RemoteAudioSessionProxyManager(GPUProcess&);
+
     void beginAudioSessionInterruption() final;
     void endAudioSessionInterruption(WebCore::AudioSession::MayResume) final;
 

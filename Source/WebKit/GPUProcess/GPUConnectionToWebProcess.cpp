@@ -280,7 +280,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     , m_webProcessIdentifier(webProcessIdentifier)
     , m_webProcessIdentity(adjustProcessIdentityIfNeeded(WTFMove(parameters.webProcessIdentity)))
 #if ENABLE(VIDEO)
-    , m_remoteMediaPlayerManagerProxy(makeUniqueRef<RemoteMediaPlayerManagerProxy>(*this))
+    , m_remoteMediaPlayerManagerProxy(RemoteMediaPlayerManagerProxy::create(*this))
 #endif
     , m_sessionID(sessionID)
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
@@ -638,7 +638,7 @@ RemoteMediaRecorderManager& GPUConnectionToWebProcess::mediaRecorderManager()
 RemoteCDMFactoryProxy& GPUConnectionToWebProcess::cdmFactoryProxy()
 {
     if (!m_cdmFactoryProxy)
-        m_cdmFactoryProxy = makeUnique<RemoteCDMFactoryProxy>(*this);
+        m_cdmFactoryProxy = RemoteCDMFactoryProxy::create(*this);
 
     return *m_cdmFactoryProxy;
 }
@@ -648,7 +648,7 @@ RemoteCDMFactoryProxy& GPUConnectionToWebProcess::cdmFactoryProxy()
 RemoteAudioSessionProxy& GPUConnectionToWebProcess::audioSessionProxy()
 {
     if (!m_audioSessionProxy) {
-        m_audioSessionProxy = RemoteAudioSessionProxy::create(*this).moveToUniquePtr();
+        m_audioSessionProxy = RemoteAudioSessionProxy::create(*this);
 
         auto auditToken = gpuProcess().protectedParentProcessConnection()->getAuditToken();
         protectedGPUProcess()->audioSessionManager().addProxy(*m_audioSessionProxy, auditToken);
@@ -846,7 +846,7 @@ void GPUConnectionToWebProcess::overridePresentingApplicationPIDIfNeeded()
 RemoteLegacyCDMFactoryProxy& GPUConnectionToWebProcess::legacyCdmFactoryProxy()
 {
     if (!m_legacyCdmFactoryProxy)
-        m_legacyCdmFactoryProxy = makeUnique<RemoteLegacyCDMFactoryProxy>(*this);
+        m_legacyCdmFactoryProxy = RemoteLegacyCDMFactoryProxy::create(*this);
 
     return *m_legacyCdmFactoryProxy;
 }

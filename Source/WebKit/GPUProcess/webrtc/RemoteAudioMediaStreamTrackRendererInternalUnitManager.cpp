@@ -47,24 +47,21 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
-class RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit> : std::true_type { };
-}
-
-namespace WebKit {
 
 class RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit
-    : public CanMakeWeakPtr<RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit>
+    : public RefCounted<RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit>
+    , public CanMakeWeakPtr<RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit>
     , public WebCore::CoreAudioSpeakerSamplesProducer
     , public WebCore::AudioSessionInterruptionObserver
     , private WebCore::AudioMediaStreamTrackRendererInternalUnit::Client {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit);
 public:
-    RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier, Ref<IPC::Connection>&&, bool shouldRegisterAsSpeakerSamplesProducer, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, size_t)>&&);
+    static Ref<RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit> create(
+        AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, Ref<IPC::Connection>&& connection, bool shouldRegisterAsSpeakerSamplesProducer,
+        CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, size_t)>&& callback) {
+        return adoptRef(*new RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit(identifier, WTFMove(connection), shouldRegisterAsSpeakerSamplesProducer, WTFMove(callback)));
+    }
+
     ~RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit();
 
     void start(ConsumerSharedCARingBuffer::Handle&&, IPC::Semaphore&&);
@@ -78,6 +75,8 @@ public:
     using WebCore::AudioSessionInterruptionObserver::WeakPtrImplType;
 
 private:
+    RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier, Ref<IPC::Connection>&&, bool shouldRegisterAsSpeakerSamplesProducer, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, size_t)>&&);
+
     // CoreAudioSpeakerSamplesProducer
     const WebCore::CAAudioStreamDescription& format() final { return *m_description; }
     void captureUnitIsStarting() final;
@@ -123,7 +122,7 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::createUnit(AudioMed
 {
     ASSERT(!m_units.contains(identifier));
     if (auto connection = m_gpuConnectionToWebProcess.get())
-        m_units.add(identifier, makeUniqueRef<RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit>(identifier, connection->connection(), connection->isLastToCaptureAudio(), WTFMove(callback)));
+        m_units.add(identifier, RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::create(identifier, connection->connection(), connection->isLastToCaptureAudio(), WTFMove(callback)));
 }
 
 void RemoteAudioMediaStreamTrackRendererInternalUnitManager::deleteUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier)

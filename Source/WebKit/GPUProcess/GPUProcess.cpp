@@ -582,7 +582,7 @@ WebCore::NowPlayingManager& GPUProcess::nowPlayingManager()
 RemoteAudioSessionProxyManager& GPUProcess::audioSessionManager() const
 {
     if (!m_audioSessionManager)
-        m_audioSessionManager = WTF::makeUnique<RemoteAudioSessionProxyManager>(const_cast<GPUProcess&>(*this));
+        m_audioSessionManager = RemoteAudioSessionProxyManager::create(const_cast<GPUProcess&>(*this));
     return *m_audioSessionManager;
 }
 #endif

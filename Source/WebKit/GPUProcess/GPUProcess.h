@@ -248,7 +248,7 @@ private:
     String m_uiProcessName;
 #endif
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
-    mutable std::unique_ptr<RemoteAudioSessionProxyManager> m_audioSessionManager;
+    mutable RefPtr<RemoteAudioSessionProxyManager> m_audioSessionManager;
 #endif
 #if ENABLE(WEBXR)
     std::optional<WebCore::ProcessIdentity> m_processIdentity;

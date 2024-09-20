@@ -132,7 +132,7 @@ bool RemoteCDMFactoryProxy::didReceiveSyncCDMInstanceSessionMessage(IPC::Connect
     return false;
 }
 
-void RemoteCDMFactoryProxy::addProxy(const RemoteCDMIdentifier& identifier, std::unique_ptr<RemoteCDMProxy>&& proxy)
+void RemoteCDMFactoryProxy::addProxy(const RemoteCDMIdentifier& identifier, RefPtr<RemoteCDMProxy>&& proxy)
 {
     ASSERT(!m_proxies.contains(identifier));
     m_proxies.set(identifier, WTFMove(proxy));

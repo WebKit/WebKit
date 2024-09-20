@@ -45,11 +45,6 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAudioSessionProxy);
 
-UniqueRef<RemoteAudioSessionProxy> RemoteAudioSessionProxy::create(GPUConnectionToWebProcess& gpuConnection)
-{
-    return makeUniqueRef<RemoteAudioSessionProxy>(gpuConnection);
-}
-
 RemoteAudioSessionProxy::RemoteAudioSessionProxy(GPUConnectionToWebProcess& gpuConnection)
     : m_gpuConnection(gpuConnection)
 {

@@ -118,7 +118,7 @@ private:
 
     static uint64_t gObjectCountForTesting;
 
-    UniqueRef<ModelProcessModelPlayerManagerProxy> m_modelProcessModelPlayerManagerProxy;
+    Ref<ModelProcessModelPlayerManagerProxy> m_modelProcessModelPlayerManagerProxy;
 
     RefPtr<Logger> m_logger;
 
