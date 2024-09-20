@@ -163,8 +163,8 @@ private:
     void overridePrefersContrast(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
     void overridePrefersColorScheme(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
 
-    Ref<Inspector::Protocol::Page::Frame> buildObjectForFrame(LocalFrame*);
-    Ref<Inspector::Protocol::Page::FrameResourceTree> buildObjectForFrameTree(LocalFrame*);
+    Ref<Inspector::Protocol::Page::Frame> buildObjectForFrame(Frame*);
+    Ref<Inspector::Protocol::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);
 
     std::unique_ptr<Inspector::PageFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::PageBackendDispatcher> m_backendDispatcher;

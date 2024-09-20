@@ -1082,19 +1082,21 @@ void InspectorPageAgent::didRecalculateStyle()
     m_overlay->update();
 }
 
-Ref<Inspector::Protocol::Page::Frame> InspectorPageAgent::buildObjectForFrame(LocalFrame* frame)
+Ref<Inspector::Protocol::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)
 {
     ASSERT_ARG(frame, frame);
 
     auto frameObject = Inspector::Protocol::Page::Frame::create()
         .setId(frameId(frame))
-        .setLoaderId(loaderId(frame->loader().documentLoader()))
-        .setUrl(frame->document()->url().string())
-        .setMimeType(frame->loader().documentLoader()->responseMIMEType())
-        .setSecurityOrigin(frame->document()->securityOrigin().toRawString())
         .release();
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(frame)) {
+        frameObject->setLoaderId(loaderId(localFrame->loader().documentLoader()));
+        frameObject->setUrl(localFrame->document()->url().string());
+        frameObject->setMimeType(localFrame->loader().documentLoader()->responseMIMEType());
+        frameObject->setSecurityOrigin(localFrame->document()->securityOrigin().toRawString());
+    }
     if (frame->tree().parent())
-        frameObject->setParentId(frameId(dynamicDowncast<LocalFrame>(frame->tree().parent())));
+        frameObject->setParentId(frameId(frame->tree().parent()));
     if (frame->ownerElement()) {
         String name = frame->ownerElement()->getNameAttribute();
         if (name.isEmpty())
@@ -1105,7 +1107,7 @@ Ref<Inspector::Protocol::Page::Frame> InspectorPageAgent::buildObjectForFrame(Lo
     return frameObject;
 }
 
-Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjectForFrameTree(LocalFrame* frame)
+Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjectForFrameTree(Frame* frame)
 {
     ASSERT_ARG(frame, frame);
 
@@ -1116,23 +1118,25 @@ Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjec
         .setResources(subresources.copyRef())
         .release();
 
-    for (auto* cachedResource : cachedResourcesForFrame(frame)) {
-        auto resourceObject = Inspector::Protocol::Page::FrameResource::create()
-            .setUrl(cachedResource->url().string())
-            .setType(cachedResourceTypeJSON(*cachedResource))
-            .setMimeType(cachedResource->response().mimeType())
-            .release();
-        if (cachedResource->wasCanceled())
-            resourceObject->setCanceled(true);
-        else if (cachedResource->status() == CachedResource::LoadError || cachedResource->status() == CachedResource::DecodeError)
-            resourceObject->setFailed(true);
-        String sourceMappingURL = InspectorPageAgent::sourceMapURLForResource(cachedResource);
-        if (!sourceMappingURL.isEmpty())
-            resourceObject->setSourceMapURL(sourceMappingURL);
-        String targetId = cachedResource->resourceRequest().initiatorIdentifier();
-        if (!targetId.isEmpty())
-            resourceObject->setTargetId(targetId);
-        subresources->addItem(WTFMove(resourceObject));
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(frame)) {
+        for (auto* cachedResource : cachedResourcesForFrame(localFrame)) {
+            auto resourceObject = Inspector::Protocol::Page::FrameResource::create()
+                .setUrl(cachedResource->url().string())
+                .setType(cachedResourceTypeJSON(*cachedResource))
+                .setMimeType(cachedResource->response().mimeType())
+                .release();
+            if (cachedResource->wasCanceled())
+                resourceObject->setCanceled(true);
+            else if (cachedResource->status() == CachedResource::LoadError || cachedResource->status() == CachedResource::DecodeError)
+                resourceObject->setFailed(true);
+            String sourceMappingURL = InspectorPageAgent::sourceMapURLForResource(cachedResource);
+            if (!sourceMappingURL.isEmpty())
+                resourceObject->setSourceMapURL(sourceMappingURL);
+            String targetId = cachedResource->resourceRequest().initiatorIdentifier();
+            if (!targetId.isEmpty())
+                resourceObject->setTargetId(targetId);
+            subresources->addItem(WTFMove(resourceObject));
+        }
     }
 
     RefPtr<JSON::ArrayOf<Inspector::Protocol::Page::FrameResourceTree>> childrenArray;
@@ -1141,10 +1145,7 @@ Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjec
             childrenArray = JSON::ArrayOf<Inspector::Protocol::Page::FrameResourceTree>::create();
             result->setChildFrames(*childrenArray);
         }
-        auto* localChild = dynamicDowncast<LocalFrame>(child);
-        if (!localChild)
-            continue;
-        childrenArray->addItem(buildObjectForFrameTree(localChild));
+        childrenArray->addItem(buildObjectForFrameTree(child));
     }
     return result;
 }
