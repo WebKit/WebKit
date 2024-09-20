@@ -60,6 +60,18 @@ bool PatchCustom::isValidForm(Inst& inst)
     return ok;
 }
 
+#if USE(JSVALUE32_64)
+bool CCallCustom::isValidArg(Arg& arg)
+{
+    return arg.isTmp() || arg.isTmpPair() || arg.isStackMemory() || arg.isSomeImm();
+}
+#else
+bool CCallCustom::isValidArg(Arg& arg)
+{
+    return arg.isTmp() || arg.isStackMemory() || arg.isSomeImm();
+}
+#endif
+
 bool CCallCustom::isValidForm(Inst& inst)
 {
     CCallValue* value = inst.origin->as<CCallValue>();
@@ -85,7 +97,7 @@ bool CCallCustom::isValidForm(Inst& inst)
     // The arguments can only refer to the stack, tmps, or immediates.
     for (unsigned i = inst.args.size() - 1; i; --i) {
         Arg arg = inst.args[i];
-        if (!arg.isTmp() && !arg.isStackMemory() && !arg.isSomeImm())
+        if (!isValidArg(arg))
             return false;
     }
 
