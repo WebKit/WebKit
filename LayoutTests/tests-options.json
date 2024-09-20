@@ -2558,9 +2558,6 @@
     "imported/w3c/web-platform-tests/editing/run/unlink.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/encoding/api-invalid-label.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-decode-cseucpkdfmtjapanese.html": [
         "slow"
     ],
@@ -2753,9 +2750,6 @@
     "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-han.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-hangul.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-misc.html": [
         "slow"
     ],
@@ -2859,9 +2853,6 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-href.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/encoding/single-byte-decoder.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.html": [

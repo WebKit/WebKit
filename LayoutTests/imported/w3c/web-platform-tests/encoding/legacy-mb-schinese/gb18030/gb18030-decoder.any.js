@@ -47,6 +47,7 @@ decode([0x83, 0x36, 0xC8, 0x30], "\uE7C8", "legacy ICU special case 1");
 decode([0xA1, 0xAD], "\u2026", "legacy ICU special case 2");
 decode([0xA1, 0xAB], "\uFF5E", "legacy ICU special case 3");
 
+// GB18030-2022
 decode([0xA6, 0xD9], "\uFE10", "GB18030-2022 1");
 decode([0xA6, 0xDA], "\uFE12", "GB18030-2022 2");
 decode([0xA6, 0xDB], "\uFE11", "GB18030-2022 3");

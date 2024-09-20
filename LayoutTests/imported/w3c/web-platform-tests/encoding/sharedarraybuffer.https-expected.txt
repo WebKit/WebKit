@@ -1,5 +1,3 @@
 
-FAIL decoding SharedArrayBuffer assert_throws_js: constructing TextDecoder with SharedArrayBuffer view should throw function "() => {
-    decoder.decode(new Uint8Array(buffer));
-  }" did not throw
+PASS decoding SharedArrayBuffer
 

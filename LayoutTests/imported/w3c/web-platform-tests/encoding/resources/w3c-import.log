@@ -21,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encoding/resources/encodings.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/resources/ranges.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/resources/single-byte-raw.py
+/LayoutTests/imported/w3c/web-platform-tests/encoding/resources/text-html-meta-charset.py
 /LayoutTests/imported/w3c/web-platform-tests/encoding/resources/text-plain-charset.py
 /LayoutTests/imported/w3c/web-platform-tests/encoding/resources/two-boms-utf-16be.html
 /LayoutTests/imported/w3c/web-platform-tests/encoding/resources/two-boms-utf-16le.html
