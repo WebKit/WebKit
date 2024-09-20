@@ -50,7 +50,7 @@ function continueTesting() {
 
     debug("");
     debug("Check transform value");
-    shouldBeEqualToString("currentView.transformString", "translate(0 10) translate(25 25) rotate(45) translate(-25 -25) scale(0.7 0.7)");
+    shouldBeEqualToString("currentView.transformString", "translate(0, 10) translate(25, 25) rotate(45) translate(-25, -25) scale(0.7, 0.7)");
     shouldBe("currentView.transform.numberOfItems", "5");
 
     shouldBe("currentView.transform.getItem(0).type", "SVGTransform.SVG_TRANSFORM_TRANSLATE");
@@ -99,7 +99,7 @@ function continueTesting() {
     completeTest();
 }
 
-testFragment("svgView(viewBox(0,0,100,50);preserveAspectRatio(xMinYMid slice);transform(translate(0 10) translate(25 25) rotate(45) translate(-25 -25) scale(0.7 0.7));viewTarget(blub);zoomAndPan(disable))");
+testFragment("svgView(viewBox(0,0,100,50);preserveAspectRatio(xMinYMid slice);transform(translate(0, 10) translate(25, 25) rotate(45) translate(-25, -25) scale(0.7, 0.7));viewTarget(blub);zoomAndPan(disable))");
 successfullyParsed = true;
 </script>
 </body>

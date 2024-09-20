@@ -248,7 +248,7 @@ private:
     static void appendFixedPrecisionNumbers(StringBuilder& builder, Number number, Numbers... numbers)
     {
         if (builder.length() && builder[builder.length() - 1] != '(')
-            builder.append(' ');
+            builder.append(", ");
         // FIXME: Shortest form would be better, but fixed precision is required for now to smooth over precision errors caused by converting float to double and back since we use AffineTransform to store transforms.
         builder.append(FormattedNumber::fixedPrecision(number));
         appendFixedPrecisionNumbers(builder, numbers...);

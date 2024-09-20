@@ -110,7 +110,7 @@ function testSecondViewElement() {
     shouldBe("currentView.viewBox.baseVal.height", "30");
     shouldBeEqualToString("currentView.viewBoxString", "10 10 30 30");
 
-    nextView = "#svgView(viewBox(0 0 10 15);transform(scale(2 2));preserveAspectRatio(xMinYMax meet))";
+    nextView = "#svgView(viewBox(0 0 10 15);transform(scale(2, 2));preserveAspectRatio(xMinYMax meet))";
     debug("");
     debug("Loading external SVG " + externalSVGFileName + nextView + "...");
     debug("");
@@ -129,7 +129,7 @@ function testCustomViewSpec() {
 
     debug("");
     debug("Check transform value");
-    shouldBeEqualToString("currentView.transformString", "scale(2 2)");
+    shouldBeEqualToString("currentView.transformString", "scale(2, 2)");
     shouldBe("currentView.transform.numberOfItems", "1");
 
     shouldBe("currentView.transform.getItem(0).type", "SVGTransform.SVG_TRANSFORM_SCALE");
