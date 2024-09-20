@@ -81,7 +81,12 @@ void SpeechRecognitionRemoteRealtimeMediaSourceManager::remoteSourceStopped(WebC
 
 IPC::Connection* SpeechRecognitionRemoteRealtimeMediaSourceManager::messageSenderConnection() const
 {
-    return &m_process->connection();
+    return &protectedProcess()->connection();
+}
+
+Ref<const WebProcessProxy> SpeechRecognitionRemoteRealtimeMediaSourceManager::protectedProcess() const
+{
+    return m_process.get();
 }
 
 uint64_t SpeechRecognitionRemoteRealtimeMediaSourceManager::messageSenderDestinationID() const

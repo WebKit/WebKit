@@ -202,8 +202,8 @@ public:
     ResponsivenessTimer& responsivenessTimer() { return m_responsivenessTimer; }
     const ResponsivenessTimer& responsivenessTimer() const { return m_responsivenessTimer; }
 
-    void ref() final { ThreadSafeRefCounted::ref(); }
-    void deref() final { ThreadSafeRefCounted::deref(); }
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
 
     bool operator==(const AuxiliaryProcessProxy& other) const { return (this == &other); }
 

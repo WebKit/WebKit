@@ -85,6 +85,8 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
+    Ref<const WebProcessProxy> protectedProcess() const;
+
     WeakRef<const WebProcessProxy> m_process;
     HashMap<WebCore::RealtimeMediaSourceIdentifier, ThreadSafeWeakPtr<SpeechRecognitionRemoteRealtimeMediaSource>> m_sources;
 };
