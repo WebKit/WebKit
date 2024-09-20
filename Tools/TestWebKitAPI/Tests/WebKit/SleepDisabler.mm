@@ -33,12 +33,7 @@
 
 #if WK_HAVE_C_SPI
 
-// FIXME: Remove after rdar://134545195 is resolved
-#if PLATFORM(IOS)
-TEST(WebKit, DISABLED_SleepDisabler)
-#else
 TEST(WebKit, SleepDisabler)
-#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
@@ -118,13 +113,15 @@ public:
     }
 };
 
-TEST_F(SleepDisabler, Basic)
+// FIXME: Remove after rdar://134545195 is resolved
+TEST_F(SleepDisabler, DISABLED_Basic)
 {
     loadPlayingPage(@"video-with-audio");
     hasSleepDisablerShouldBecomeEqualTo(true);
 }
 
-TEST_F(SleepDisabler, Pause)
+// FIXME: Remove after rdar://134545195 is resolved
+TEST_F(SleepDisabler, DISABLED_Pause)
 {
     loadPlayingPage(@"video-with-audio");
     hasSleepDisablerShouldBecomeEqualTo(true);
@@ -133,7 +130,8 @@ TEST_F(SleepDisabler, Pause)
     hasSleepDisablerShouldBecomeEqualTo(false);
 }
 
-TEST_F(SleepDisabler, Mute)
+// FIXME: Remove after rdar://134545195 is resolved
+TEST_F(SleepDisabler, DISABLED_Mute)
 {
     loadPlayingPage(@"video-with-audio");
     hasSleepDisablerShouldBecomeEqualTo(true);
@@ -142,7 +140,8 @@ TEST_F(SleepDisabler, Mute)
     hasSleepDisablerShouldBecomeEqualTo(false);
 }
 
-TEST_F(SleepDisabler, Unmute)
+// FIXME: Remove after rdar://134545195 is resolved
+TEST_F(SleepDisabler, DISABLED_Unmute)
 {
     loadPlayingPage(@"video-with-audio");
     hasSleepDisablerShouldBecomeEqualTo(true);
@@ -154,7 +153,8 @@ TEST_F(SleepDisabler, Unmute)
     hasSleepDisablerShouldBecomeEqualTo(true);
 }
 
-TEST_F(SleepDisabler, DisableAudioTrack)
+// FIXME: Remove after rdar://134545195 is resolved
+TEST_F(SleepDisabler, DISABLED_DisableAudioTrack)
 {
     loadPlayingPage(@"video-with-audio");
     hasSleepDisablerShouldBecomeEqualTo(true);
@@ -163,7 +163,8 @@ TEST_F(SleepDisabler, DisableAudioTrack)
     hasSleepDisablerShouldBecomeEqualTo(false);
 }
 
-TEST_F(SleepDisabler, Loop)
+// FIXME: Remove after rdar://134545195 is resolved
+TEST_F(SleepDisabler, DISABLED_Loop)
 {
     loadPlayingPage(@"video-with-audio");
     hasSleepDisablerShouldBecomeEqualTo(true);
@@ -172,7 +173,8 @@ TEST_F(SleepDisabler, Loop)
     hasSleepDisablerShouldBecomeEqualTo(false);
 }
 
-TEST_F(SleepDisabler, ChangeSrc)
+// FIXME: Remove after rdar://134545195 is resolved
+TEST_F(SleepDisabler, DISABLED_ChangeSrc)
 {
     loadPlayingPage(@"video-with-audio");
     hasSleepDisablerShouldBecomeEqualTo(true);
@@ -181,7 +183,8 @@ TEST_F(SleepDisabler, ChangeSrc)
     hasSleepDisablerShouldBecomeEqualTo(false);
 }
 
-TEST_F(SleepDisabler, Load)
+// FIXME: Remove after rdar://134545195 is resolved
+TEST_F(SleepDisabler, DISABLED_Load)
 {
     loadPlayingPage(@"video-with-audio");
     hasSleepDisablerShouldBecomeEqualTo(true);
@@ -192,7 +195,8 @@ TEST_F(SleepDisabler, Load)
     hasSleepDisablerShouldBecomeEqualTo(true);
 }
 
-TEST_F(SleepDisabler, Unload)
+// FIXME: Remove after rdar://134545195 is resolved
+TEST_F(SleepDisabler, DISABLED_Unload)
 {
     loadPlayingPage(@"video-with-audio");
     hasSleepDisablerShouldBecomeEqualTo(true);
@@ -201,7 +205,8 @@ TEST_F(SleepDisabler, Unload)
     hasSleepDisablerShouldBecomeEqualTo(false);
 }
 
-TEST_F(SleepDisabler, Navigate)
+// FIXME: Remove after rdar://134545195 is resolved
+TEST_F(SleepDisabler, DISABLED_Navigate)
 {
     loadPlayingPage(@"video-with-audio");
     hasSleepDisablerShouldBecomeEqualTo(true);
@@ -222,7 +227,8 @@ TEST_F(SleepDisabler, DISABLED_NavigateBack)
     hasSleepDisablerShouldBecomeEqualTo(true);
 }
 
-TEST_F(SleepDisabler, Reload)
+// FIXME: Remove after rdar://134545195 is resolved
+TEST_F(SleepDisabler, DISABLED_Reload)
 {
     loadPlayingPage(@"video-with-audio");
     hasSleepDisablerShouldBecomeEqualTo(true);
@@ -233,7 +239,8 @@ TEST_F(SleepDisabler, Reload)
     hasSleepDisablerShouldBecomeEqualTo(true);
 }
 
-TEST_F(SleepDisabler, Close)
+// FIXME: Remove after rdar://134545195 is resolved
+TEST_F(SleepDisabler, DISABLED_Close)
 {
     loadPlayingPage(@"video-with-audio");
     hasSleepDisablerShouldBecomeEqualTo(true);
@@ -242,7 +249,8 @@ TEST_F(SleepDisabler, Close)
     hasSleepDisablerShouldBecomeEqualTo(false);
 }
 
-TEST_F(SleepDisabler, Crash)
+// FIXME: Remove after rdar://134545195 is resolved
+TEST_F(SleepDisabler, DISABLED_Crash)
 {
     loadPlayingPage(@"video-with-audio");
     hasSleepDisablerShouldBecomeEqualTo(true);
