@@ -902,14 +902,6 @@ static const GB18030EncodeIndex& gb18030EncodeIndex()
 static std::optional<uint32_t> gb18030AsymmetricEncode(char32_t codePoint)
 {
     switch (codePoint) {
-    case 0xE81E: return 0xFE59;
-    case 0xE826: return 0xFE61;
-    case 0xE82B: return 0xFE66;
-    case 0xE82C: return 0xFE67;
-    case 0xE832: return 0xFE6D;
-    case 0xE843: return 0xFE7E;
-    case 0xE854: return 0xFE90;
-    case 0xE864: return 0xFEA0;
     case 0xE78D: return 0xA6D9;
     case 0xE78F: return 0xA6DB;
     case 0xE78E: return 0xA6DA;
@@ -920,6 +912,14 @@ static std::optional<uint32_t> gb18030AsymmetricEncode(char32_t codePoint)
     case 0xE794: return 0xA6EC;
     case 0xE795: return 0xA6ED;
     case 0xE796: return 0xA6F3;
+    case 0xE81E: return 0xFE59;
+    case 0xE826: return 0xFE61;
+    case 0xE82B: return 0xFE66;
+    case 0xE82C: return 0xFE67;
+    case 0xE832: return 0xFE6D;
+    case 0xE843: return 0xFE7E;
+    case 0xE854: return 0xFE90;
+    case 0xE864: return 0xFEA0;
     }
     return std::nullopt;
 }
