@@ -59,7 +59,7 @@ Ref<WebGeolocationManagerProxy> WebGeolocationManagerProxy::create(WebProcessPoo
 WebGeolocationManagerProxy::WebGeolocationManagerProxy(WebProcessPool* processPool)
     : WebContextSupplement(processPool)
 {
-    WebContextSupplement::processPool()->addMessageReceiver(Messages::WebGeolocationManagerProxy::messageReceiverName(), *this);
+    WebContextSupplement::protectedProcessPool()->addMessageReceiver(Messages::WebGeolocationManagerProxy::messageReceiverName(), *this);
 }
 
 WebGeolocationManagerProxy::~WebGeolocationManagerProxy() = default;
@@ -106,16 +106,16 @@ void WebGeolocationManagerProxy::providerDidChangePosition(WebGeolocationPositio
 {
     for (auto& [registrableDomain, perDomainData] : m_perDomainData) {
         perDomainData->lastPosition = position->corePosition();
-        for (auto& process : perDomainData->watchers)
-            process.send(Messages::WebGeolocationManager::DidChangePosition(registrableDomain, perDomainData->lastPosition.value()), 0);
+        for (Ref process : perDomainData->watchers)
+            process->send(Messages::WebGeolocationManager::DidChangePosition(registrableDomain, perDomainData->lastPosition.value()), 0);
     }
 }
 
 void WebGeolocationManagerProxy::providerDidFailToDeterminePosition(const String& errorMessage)
 {
     for (auto& [registrableDomain, perDomainData] : m_perDomainData) {
-        for (auto& proxy : perDomainData->watchers)
-            proxy.send(Messages::WebGeolocationManager::DidFailToDeterminePosition(registrableDomain, errorMessage), 0);
+        for (Ref proxy : perDomainData->watchers)
+            proxy->send(Messages::WebGeolocationManager::DidFailToDeterminePosition(registrableDomain, errorMessage), 0);
     }
 }
 
@@ -124,8 +124,8 @@ void WebGeolocationManagerProxy::resetPermissions()
 {
     ASSERT(m_clientProvider);
     for (auto& [registrableDomain, perDomainData] : m_perDomainData) {
-        for (auto& proxy : perDomainData->watchers)
-            proxy.send(Messages::WebGeolocationManager::ResetPermissions(registrableDomain), 0);
+        for (Ref proxy : perDomainData->watchers)
+            proxy->send(Messages::WebGeolocationManager::ResetPermissions(registrableDomain), 0);
     }
 }
 #endif
