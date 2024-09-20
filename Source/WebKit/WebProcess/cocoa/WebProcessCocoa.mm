@@ -832,7 +832,7 @@ static void registerLogHook()
 #ifdef NDEBUG
         // Don't send messages with types we don't want to log in release. Even though OS_LOG_TYPE_DEFAULT is the minimum,
         // the hook will be called for other subsystems with debug and info types.
-        if (type & (OS_LOG_TYPE_DEBUG | OS_LOG_TYPE_INFO))
+        if (type == OS_LOG_TYPE_DEBUG)
             return;
 #endif
 
