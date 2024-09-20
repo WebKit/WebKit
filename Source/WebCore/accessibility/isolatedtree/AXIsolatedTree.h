@@ -451,10 +451,9 @@ private:
     void queueChange(const NodeChange&) WTF_REQUIRES_LOCK(m_changeLogLock);
     void queueRemovals(Vector<AXID>&&);
     void queueRemovalsLocked(Vector<AXID>&&) WTF_REQUIRES_LOCK(m_changeLogLock);
-    void queueRemovalsAndUnresolvedChanges(Vector<AXID>&&);
+    void queueRemovalsAndUnresolvedChanges();
     Vector<NodeChange> resolveAppends();
     void queueAppendsAndRemovals(Vector<NodeChange>&&, Vector<AXID>&&);
-    void protectFromDeletion(AXID);
 
     const ProcessID m_processID { presentingApplicationPID() };
     unsigned m_maxTreeDepth { 0 };
@@ -486,14 +485,16 @@ private:
     // The value is whether the wrapper should be attached on the main thread or the AX thread.
     HashMap<AXID, AttachWrapper> m_unresolvedPendingAppends;
     // Only accessed on the main thread.
+    // While performing tree updates, we append nodes to this list that are no longer connected
+    // in the tree and should be removed. This list turns into m_pendingSubtreeRemovals when
+    // handed off to the secondary thread.
+    Vector<AXID> m_subtreesToRemove;
+    // Only accessed on the main thread.
     // This is used when updating the isolated tree in response to dynamic children changes.
     // It is required to protect objects from being incorrectly deleted when they are re-parented,
     // as the original parent will want to queue it for removal, but we need to keep the object around
     // for the new parent.
     HashSet<AXID> m_protectedFromDeletionIDs;
-    // True if m_protectedFromDeletionIDs has changed, and m_pendingProtectedFromDeletionIDs needs to be updated as a result.
-    // Only accessed on the main-thread.
-    bool m_protectedFromDeletionIDsIsDirty { false };
     // Only accessed on the main thread.
     // Objects whose parent has changed, and said change needs to be synced to the secondary thread.
     HashSet<AXID> m_needsParentUpdate;
