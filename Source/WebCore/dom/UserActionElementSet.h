@@ -27,10 +27,13 @@
 
 #pragma once
 
+#include "EventTarget.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
+#include <wtf/WeakHashMap.h>
 
 namespace WebCore {
 
@@ -75,7 +78,7 @@ private:
     void clearFlags(Element&, OptionSet<Flag>);
     bool hasFlag(const Element&, Flag) const;
 
-    HashMap<RefPtr<Element>, OptionSet<Flag>> m_elements;
+    WeakHashMap<Element, OptionSet<Flag>, WeakPtrImplWithEventTargetData> m_elements;
 };
 
 } // namespace WebCore
