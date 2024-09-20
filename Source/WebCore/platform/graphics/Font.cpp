@@ -551,7 +551,7 @@ RefPtr<Font> Font::createScaledFont(const FontDescription& fontDescription, floa
 }
 
 #if !USE(CORE_TEXT)
-GlyphBufferAdvance Font::applyTransforms(GlyphBuffer&, unsigned, unsigned, bool, bool, const AtomString&, StringView, TextDirection) const
+GlyphBufferAdvance Font::applyTransforms(GlyphBuffer&, unsigned, bool, bool, const AtomString&, StringView, TextDirection) const
 {
     return makeGlyphBufferAdvance();
 }

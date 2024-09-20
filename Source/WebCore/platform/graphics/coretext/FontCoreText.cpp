@@ -541,7 +541,7 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     return advance.width;
 }
 
-GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned beginningGlyphIndex, unsigned beginningStringIndex, bool enableKerning, bool requiresShaping, const AtomString& locale, StringView text, TextDirection textDirection) const
+GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned beginningGlyphIndex, bool enableKerning, bool requiresShaping, const AtomString& locale, StringView text, TextDirection textDirection) const
 {
     UNUSED_PARAM(requiresShaping);
 
@@ -564,19 +564,14 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
         *newIndicesPointer = glyphBuffer.offsetsInString(beginningGlyphIndex);
     };
 
-    auto substring = text.substring(beginningStringIndex);
     constexpr unsigned bufferSize = 256;
-    auto upconvertedCharacters = substring.upconvertedCharacters<bufferSize>();
+    auto upconvertedCharacters = text.upconvertedCharacters<bufferSize>();
     auto localeString = locale.isNull() ? nullptr : LocaleCocoa::canonicalLanguageIdentifierFromString(locale);
     auto numberOfInputGlyphs = glyphBuffer.size() - beginningGlyphIndex;
     // FIXME: Enable kerning for single glyphs when rdar://82195405 is fixed
     CTFontShapeOptions options = kCTFontShapeWithClusterComposition
         | (enableKerning && numberOfInputGlyphs ? kCTFontShapeWithKerning : 0)
         | (textDirection == TextDirection::RTL ? kCTFontShapeRightToLeft : 0);
-
-    // FIXME: This shouldn't actually be necessary, if we pass in a pointer to the base of the string.
-    for (unsigned i = 0; i < glyphBuffer.size() - beginningGlyphIndex; ++i)
-        glyphBuffer.offsetsInString(beginningGlyphIndex)[i] -= beginningStringIndex;
 
     LOG_WITH_STREAM(TextShaping,
         stream << "Simple shaping " << numberOfInputGlyphs << " glyphs in font " << String(adoptCF(CTFontCopyPostScriptName(getCTFont())).get()) << ".\n";
@@ -648,9 +643,6 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
 
     ASSERT(numberOfInputGlyphs || glyphBuffer.size() == beginningGlyphIndex);
     ASSERT(numberOfInputGlyphs || (!initialAdvance.width && !initialAdvance.height));
-
-    for (unsigned i = 0; i < glyphBuffer.size() - beginningGlyphIndex; ++i)
-        glyphBuffer.offsetsInString(beginningGlyphIndex)[i] += beginningStringIndex;
 
     if (textDirection == TextDirection::RTL)
         glyphBuffer.reverse(beginningGlyphIndex, glyphBuffer.size() - beginningGlyphIndex);
