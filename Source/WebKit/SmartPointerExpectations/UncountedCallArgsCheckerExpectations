@@ -1,12 +1,10 @@
 AutomationFrontendDispatchers.cpp
 AutomationProtocolObjects.h
 GPUProcess/graphics/ImageBufferShareableAllocator.cpp
-GPUProcess/graphics/RemoteDisplayListRecorder.cpp
 GPUProcess/graphics/RemoteDisplayListRecorder.h
 GPUProcess/graphics/RemoteGraphicsContextGL.cpp
 GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h
 GPUProcess/graphics/RemoteImageBuffer.cpp
-GPUProcess/graphics/RemoteRenderingBackend.cpp
 GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp
 GPUProcess/graphics/WebGPU/RemoteBindGroup.cpp
 GPUProcess/graphics/WebGPU/RemoteCompositorIntegration.cpp
@@ -23,7 +21,6 @@ GPUProcess/media/RemoteMediaResourceLoader.cpp
 GPUProcess/media/RemoteSourceBufferProxy.cpp
 GPUProcess/media/RemoteTextTrackProxy.cpp
 GPUProcess/media/RemoteVideoTrackProxy.cpp
-GPUProcess/webrtc/LibWebRTCCodecsProxy.mm
 JSWebExtensionAPIAction.mm
 JSWebExtensionAPIAlarms.mm
 JSWebExtensionAPICommands.mm
@@ -228,12 +225,6 @@ UIProcess/API/Cocoa/WKProcessPool.mm
 UIProcess/API/Cocoa/WKURLSchemeTask.mm
 UIProcess/API/Cocoa/WKUserContentController.mm
 UIProcess/API/Cocoa/WKUserScript.mm
-UIProcess/API/Cocoa/WKWebExtensionAction.mm
-UIProcess/API/Cocoa/WKWebExtensionCommand.mm
-UIProcess/API/Cocoa/WKWebExtensionController.mm
-UIProcess/API/Cocoa/WKWebExtensionControllerConfiguration.mm
-UIProcess/API/Cocoa/WKWebExtensionDataRecord.mm
-UIProcess/API/Cocoa/WKWebExtensionMatchPattern.mm
 UIProcess/API/Cocoa/WKWebExtensionMessagePort.mm
 UIProcess/API/Cocoa/WKWebView.mm
 UIProcess/API/Cocoa/WKWebViewConfiguration.mm
@@ -265,8 +256,6 @@ UIProcess/API/Cocoa/_WKThumbnailView.mm
 UIProcess/API/Cocoa/_WKUserStyleSheet.mm
 UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.mm
 UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm
-UIProcess/API/Cocoa/_WKWebPushMessage.mm
-UIProcess/API/Cocoa/_WKWebPushSubscriptionData.mm
 UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm
 UIProcess/API/mac/WKWebViewMac.mm
 UIProcess/API/mac/WKWebViewTestingMac.mm
@@ -286,7 +275,6 @@ UIProcess/Cocoa/SOAuthorization/PopUpSOAuthorizationSession.mm
 UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm
 UIProcess/Cocoa/UIDelegate.mm
 UIProcess/Cocoa/UIRemoteObjectRegistry.cpp
-UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp
 UIProcess/Cocoa/UserMediaPermissionRequestManagerProxy.mm
 UIProcess/Cocoa/VideoPresentationManagerProxy.mm
 UIProcess/Cocoa/WKEditCommand.mm
@@ -376,7 +364,6 @@ UIProcess/WebPageProxyTesting.cpp
 UIProcess/WebPreferences.cpp
 UIProcess/WebProcessActivityState.cpp
 UIProcess/WebProcessCache.cpp
-UIProcess/WebScreenOrientationManagerProxy.cpp
 UIProcess/WebURLSchemeTask.cpp
 UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
 UIProcess/WebsiteData/WebsiteDataStore.cpp
@@ -418,9 +405,7 @@ WebProcess/FileAPI/BlobRegistryProxy.cpp
 WebProcess/FullScreen/WebFullScreenManager.cpp
 WebProcess/GPU/GPUProcessConnection.cpp
 WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp
-WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp
 WebProcess/GPU/graphics/RemoteNativeImageBackendProxy.cpp
-WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp
 WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp
 WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp
 WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBitmapBackend.cpp

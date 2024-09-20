@@ -52,7 +52,6 @@ css/StyleSheetContents.h
 css/StyleSheetList.h
 css/color/CSSUnresolvedStyleColorResolutionState.h
 css/parser/SizesCalcParser.h
-dom/ActiveDOMObject.cpp
 dom/CollectionIndexCache.h
 dom/ContainerNode.h
 dom/ElementAncestorIterator.h
@@ -60,7 +59,6 @@ dom/Node.cpp
 dom/Node.h
 dom/QualifiedName.h
 dom/TreeScope.h
-dom/WindowOrWorkerGlobalScopeTrustedTypes.cpp
 editing/cocoa/HTMLConverter.mm
 html/FormListedElement.cpp
 html/LinkIconCollector.h
