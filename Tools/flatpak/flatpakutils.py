@@ -872,7 +872,7 @@ class WebkitFlatpak:
             "--session-bus",
             "--no-a11y-bus",
             "--filesystem=" + self.socket_dir.name,
-            "--env=AT_SPI_BUS_ADDRESS=unix:path=" + self.a11y_socket.name,
+            "--env=AT_SPI_BUS_ADDRESS=" + self.a11y_socket.name,
         ]
 
     def run_in_sandbox(self, *args, **kwargs):
