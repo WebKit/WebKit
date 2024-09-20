@@ -136,7 +136,7 @@ void HTMLSelectElement::optionSelectedByUser(int optionIndex, bool fireOnChangeN
     if (optionIndex == selectedIndex())
         return;
 
-    selectOption(optionIndex, DeselectOtherOptions | (fireOnChangeNow ? DispatchChangeEvent : 0) | UserDriven);
+    selectOption(optionIndex, DeselectOtherOptions | MakeOptionDirty | (fireOnChangeNow ? DispatchChangeEvent : 0) | UserDriven);
 }
 
 bool HTMLSelectElement::hasPlaceholderLabelOption() const
@@ -689,11 +689,13 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
         if (!element || element->isDisabledFormControl())
             continue;
 
-        if (i >= start && i <= end)
+        if (i >= start && i <= end) {
             element->setSelectedState(m_activeSelectionState);
-        else if (deselectOtherOptions || i >= m_cachedStateForActiveSelection.size())
+            element->setDirty(true);
+        } else if (deselectOtherOptions || i >= m_cachedStateForActiveSelection.size()) {
             element->setSelectedState(false);
-        else
+            element->setDirty(true);
+        } else
             element->setSelectedState(m_cachedStateForActiveSelection[i]);
     }
 
@@ -874,7 +876,7 @@ int HTMLSelectElement::selectedIndex() const
 
 void HTMLSelectElement::setSelectedIndex(int index)
 {
-    selectOption(index, DeselectOtherOptions);
+    selectOption(index, DeselectOtherOptions | MakeOptionDirty);
 }
 
 void HTMLSelectElement::optionSelectionStateChanged(HTMLOptionElement& option, bool optionIsSelected)
@@ -890,7 +892,7 @@ void HTMLSelectElement::optionSelectionStateChanged(HTMLOptionElement& option, b
 
 void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
 {
-    bool shouldDeselect = !m_multiple || (flags & DeselectOtherOptions);
+    bool shouldDeselect = !m_multiple || (flags & (DeselectOtherOptions | MakeOptionDirty));
 
     auto& items = listItems();
     int listIndex = optionToListIndex(optionIndex);
@@ -908,6 +910,8 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
         if (m_activeSelectionEndIndex < 0 || shouldDeselect)
             setActiveSelectionEndIndex(listIndex);
         option->setSelectedState(true);
+        if (flags & MakeOptionDirty)
+            option->setDirty(true);
     }
 
     invalidateSelectedItems();
@@ -1037,14 +1041,18 @@ void HTMLSelectElement::restoreFormControlState(const FormControlState& state)
         return;
 
     for (auto& element : items) {
-        if (RefPtr option = dynamicDowncast<HTMLOptionElement>(*element))
+        if (RefPtr option = dynamicDowncast<HTMLOptionElement>(*element)) {
             option->setSelectedState(false);
+            option->setDirty(false);
+        }
     }
 
     if (!multiple()) {
         size_t foundIndex = searchOptionsForValue(state[0], 0, itemsSize);
-        if (foundIndex != notFound)
+        if (foundIndex != notFound) {
             Ref { downcast<HTMLOptionElement>(*items[foundIndex]) }->setSelectedState(true);
+            Ref { downcast<HTMLOptionElement>(*items[foundIndex]) }->setDirty(true);
+        }
     } else {
         size_t startIndex = 0;
         for (auto& value : state) {
@@ -1054,6 +1062,7 @@ void HTMLSelectElement::restoreFormControlState(const FormControlState& state)
             if (foundIndex == notFound)
                 continue;
             Ref { downcast<HTMLOptionElement>(*items[foundIndex]) }->setSelectedState(true);
+            Ref { downcast<HTMLOptionElement>(*items[foundIndex]) }->setDirty(true);
             startIndex = foundIndex + 1;
         }
     }
@@ -1074,7 +1083,7 @@ void HTMLSelectElement::parseMultipleAttribute(const AtomString& value)
         invalidateStyleAndRenderersForSubtree();
     if (oldMultiple != m_multiple) {
         if (oldSelectedIndex >= 0)
-            setSelectedIndex(oldSelectedIndex);
+            selectOption(oldSelectedIndex, DeselectOtherOptions);
         else
             reset();
     }
@@ -1119,6 +1128,7 @@ void HTMLSelectElement::reset()
         } else
             option->setSelectedState(false);
 
+        option->setDirty(false);
         if (!firstOption && !option->isDisabledFormControl())
             firstOption = WTFMove(option);
     }
@@ -1217,7 +1227,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
             handled = false;
 
         if (handled && static_cast<size_t>(listIndex) < listItems.size())
-            selectOption(listToOptionIndex(listIndex), DeselectOtherOptions | DispatchChangeEvent | UserDriven);
+            selectOption(listToOptionIndex(listIndex), DeselectOtherOptions | MakeOptionDirty | DispatchChangeEvent | UserDriven);
 
         if (handled)
             keyboardEvent->setDefaultHandled();
@@ -1340,8 +1350,10 @@ void HTMLSelectElement::updateSelectedState(int listIndex, bool multi, bool shif
         // selection), should select or deselect.
         if (option->selected() && multiSelect)
             m_activeSelectionState = false;
-        if (!m_activeSelectionState)
+        if (!m_activeSelectionState) {
             option->setSelectedState(false);
+            option->setDirty(true);
+        }
     }
 
     // If we're not in any special multiple selection mode, then deselect all
@@ -1356,8 +1368,10 @@ void HTMLSelectElement::updateSelectedState(int listIndex, bool multi, bool shif
         setActiveSelectionAnchorIndex(selectedIndex());
 
     // Set the selection state of the clicked option.
-    if (RefPtr option = dynamicDowncast<HTMLOptionElement>(clickedElement); option && !option->isDisabledFormControl())
+    if (RefPtr option = dynamicDowncast<HTMLOptionElement>(clickedElement); option && !option->isDisabledFormControl()) {
         option->setSelectedState(true);
+        option->setDirty(true);
+    }
 
     // If there was no selectedIndex() for the previous initialization, or If
     // we're doing a single selection, or a multiple selection (using cmd or
@@ -1634,7 +1648,7 @@ void HTMLSelectElement::typeAheadFind(KeyboardEvent& event)
     int index = m_typeAhead.handleEvent(&event, TypeAhead::MatchPrefix | TypeAhead::CycleFirstChar);
     if (index < 0)
         return;
-    selectOption(listToOptionIndex(index), DeselectOtherOptions | DispatchChangeEvent | UserDriven);
+    selectOption(listToOptionIndex(index), DeselectOtherOptions | MakeOptionDirty | DispatchChangeEvent | UserDriven);
     if (!usesMenuList())
         listBoxOnChange();
 }
