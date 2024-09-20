@@ -1033,6 +1033,8 @@ private:
     RetainPtr<_WKWebExtensionStorageSQLiteStore> m_localStorageStore;
     RetainPtr<_WKWebExtensionStorageSQLiteStore> m_sessionStorageStore;
     RetainPtr<_WKWebExtensionStorageSQLiteStore> m_syncStorageStore;
+
+    ProcessThrottler::ActivityVariant m_activityForBackgroundWebView;
 };
 
 template<typename T>

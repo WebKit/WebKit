@@ -3339,7 +3339,7 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose
     auto *preferences = configuration.preferences;
     preferences._javaScriptCanAccessClipboard = hasPermission(WKWebExtensionPermissionClipboardWrite);
 
-    if (purpose == WebViewPurpose::Background || purpose == WebViewPurpose::Inspector) {
+    if (purpose == WebViewPurpose::Inspector) {
         // FIXME: <https://webkit.org/b/263286> Consider allowing the background page to throttle or be suspended.
         preferences._hiddenPageDOMTimerThrottlingEnabled = NO;
         preferences._pageVisibilityBasedProcessSuppressionEnabled = NO;
@@ -3452,9 +3452,12 @@ void WebExtensionContext::loadBackgroundWebView()
     clearError(Error::BackgroundContentFailedToLoad);
     m_backgroundContentLoadError = nil;
 
+    auto backgroundPage = m_backgroundWebView.get()._page;
+    Ref process = backgroundPage->protectedLegacyMainFrameProcess();
+    m_activityForBackgroundWebView = process->throttler().foregroundActivity("Web extension activity"_s);
+
     if (!extension().backgroundContentIsServiceWorker()) {
-        auto backgroundPage = m_backgroundWebView.get()._page;
-        backgroundPage->legacyMainFrameProcess().send(Messages::WebExtensionContextProxy::SetBackgroundPageIdentifier(backgroundPage->webPageIDInMainFrameProcess()), identifier());
+        process->send(Messages::WebExtensionContextProxy::SetBackgroundPageIdentifier(backgroundPage->webPageIDInMainFrameProcess()), identifier());
 
         [m_backgroundWebView loadRequest:[NSURLRequest requestWithURL:backgroundContentURL()]];
         return;
@@ -3478,6 +3481,8 @@ void WebExtensionContext::unloadBackgroundWebView()
 
     m_backgroundContentIsLoaded = false;
     m_unloadBackgroundWebViewTimer = nullptr;
+
+    m_activityForBackgroundWebView = nullptr;
 
     [m_backgroundWebView _close];
     m_backgroundWebView = nil;
