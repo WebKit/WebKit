@@ -45,13 +45,13 @@ namespace WebCore {
 
 class AudioDestination {
 public:
+    DECLARE_VIRTUAL_REFCOUNTED;
+
     // Pass in (numberOfInputChannels > 0) if live/local audio input is desired.
     // Port-specific device identification information for live/local input streams can be passed in the inputDeviceId.
     WEBCORE_EXPORT static Ref<AudioDestination> create(AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate);
 
     virtual ~AudioDestination() = default;
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
 
     void clearCallback();
 

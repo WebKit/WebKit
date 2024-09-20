@@ -107,8 +107,8 @@ public:
     MediaPlayerPrivateGStreamer(MediaPlayer*);
     virtual ~MediaPlayerPrivateGStreamer();
 
-    void ref() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
-    void deref() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     static void registerMediaEngine(MediaEngineRegistrar);
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);

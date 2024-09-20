@@ -58,12 +58,10 @@ class RTCRtpScriptTransformer
     , public ActiveDOMObject
     , public CanMakeWeakPtr<RTCRtpScriptTransformer> {
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static ExceptionOr<Ref<RTCRtpScriptTransformer>> create(ScriptExecutionContext&, MessageWithMessagePorts&&);
     ~RTCRtpScriptTransformer();
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     ReadableStream& readable();
     ExceptionOr<Ref<WritableStream>> writable();

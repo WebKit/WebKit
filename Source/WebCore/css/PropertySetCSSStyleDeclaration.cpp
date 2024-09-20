@@ -46,12 +46,12 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PropertySetCSSStyleDeclaration);
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(StyleRuleCSSStyleDeclaration);
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InlineCSSStyleDeclaration);
 
-void PropertySetCSSStyleDeclaration::ref()
+void PropertySetCSSStyleDeclaration::ref() const
 { 
     m_propertySet->ref();
 }
 
-void PropertySetCSSStyleDeclaration::deref()
+void PropertySetCSSStyleDeclaration::deref() const
 {
     m_propertySet->deref(); 
 }

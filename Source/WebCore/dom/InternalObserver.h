@@ -38,6 +38,8 @@ namespace WebCore {
 
 class InternalObserver : public ActiveDOMObject, public RefCounted<InternalObserver> {
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     virtual ~InternalObserver() = default;
 
     virtual void next(JSC::JSValue) = 0;
@@ -47,10 +49,6 @@ public:
     }
 
     virtual void error(JSC::JSValue);
-
-    // ActiveDOMObject
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     virtual void visitAdditionalChildren(JSC::AbstractSlotVisitor&) const = 0;
     virtual void visitAdditionalChildren(JSC::SlotVisitor&) const = 0;

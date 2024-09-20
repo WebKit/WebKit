@@ -63,6 +63,8 @@ class MediaStreamTrack
 {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaStreamTrack);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     class Observer {
     public:
         virtual ~Observer() = default;
@@ -157,10 +159,6 @@ public:
 
     void addObserver(Observer&);
     void removeObserver(Observer&);
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     void setIdForTesting(String&& id) { m_private->setIdForTesting(WTFMove(id)); }
 

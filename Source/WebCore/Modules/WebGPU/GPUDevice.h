@@ -89,16 +89,14 @@ class XRBinding;
 class GPUDevice : public RefCounted<GPUDevice>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(GPUDevice);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<GPUDevice> create(ScriptExecutionContext* scriptExecutionContext, Ref<WebGPU::Device>&& backing, String&& queueLabel)
     {
         return adoptRef(*new GPUDevice(scriptExecutionContext, WTFMove(backing), WTFMove(queueLabel)));
     }
 
     virtual ~GPUDevice();
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     String label() const;
     void setLabel(String&&);

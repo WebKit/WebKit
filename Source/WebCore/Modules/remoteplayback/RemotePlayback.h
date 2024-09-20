@@ -50,6 +50,8 @@ class RemotePlayback final
 {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RemotePlayback);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<RemotePlayback> create(HTMLMediaElement&);
     ~RemotePlayback();
 
@@ -71,10 +73,6 @@ public:
     State state() const { return m_state; }
 
     void invalidate();
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     WebCoreOpaqueRoot opaqueRootConcurrently() const;
     Node* ownerNode() const;

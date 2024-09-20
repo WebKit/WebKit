@@ -38,8 +38,7 @@ class SharedBuffer;
 
 class CurlRequestClient {
 public:
-    virtual void ref() = 0;
-    virtual void deref() = 0;
+    DECLARE_VIRTUAL_REFCOUNTED;
 
     virtual void curlDidSendData(CurlRequest&, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) = 0;
     virtual void curlDidReceiveResponse(CurlRequest&, CurlResponse&&) = 0;

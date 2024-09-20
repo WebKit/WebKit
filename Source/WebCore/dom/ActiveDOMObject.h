@@ -51,6 +51,8 @@ enum class ReasonForSuspension : uint8_t {
 
 class WEBCORE_EXPORT ActiveDOMObject : public ContextDestructionObserver {
 public:
+    DECLARE_VIRTUAL_REFCOUNTED;
+
     // The suspendIfNeeded must be called exactly once after object construction to update
     // the suspended state to match that of the ScriptExecutionContext.
     void suspendIfNeeded();
@@ -69,9 +71,6 @@ public:
     // any ActiveDOMObject. That means they must not result in calls to arbitrary JavaScript.
     virtual void suspend(ReasonForSuspension);
     virtual void resume();
-
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
 
     // This function must not have a side effect of creating an ActiveDOMObject.
     // That means it must not result in calls to arbitrary JavaScript.

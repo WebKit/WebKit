@@ -44,6 +44,8 @@ class MockMediaPlayerMediaSource final
     , public RefCounted<MockMediaPlayerMediaSource>
     , public CanMakeWeakPtr<MockMediaPlayerMediaSource> {
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     explicit MockMediaPlayerMediaSource(MediaPlayer*);
 
     // MediaPlayer Engine Support
@@ -52,9 +54,6 @@ public:
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     virtual ~MockMediaPlayerMediaSource();
-
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
 
     void advanceCurrentTime();
     MediaTime currentTime() const override;

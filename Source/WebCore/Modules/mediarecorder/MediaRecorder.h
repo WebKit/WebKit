@@ -50,6 +50,8 @@ class MediaRecorder final
     , private MediaStreamTrackPrivateObserver {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaRecorder);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     enum class RecordingState { Inactive, Recording, Paused };
     
     ~MediaRecorder();
@@ -66,10 +68,6 @@ public:
     RecordingState state() const { return m_state; }
     const String& mimeType() const { return m_options.mimeType; }
 
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-    
     ExceptionOr<void> startRecording(std::optional<unsigned>);
     void stopRecording();
     ExceptionOr<void> requestData();

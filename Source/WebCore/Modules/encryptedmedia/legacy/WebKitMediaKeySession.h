@@ -44,6 +44,8 @@ class WebKitMediaKeys;
 class WebKitMediaKeySession final : public RefCounted<WebKitMediaKeySession>, public EventTarget, public ActiveDOMObject, private LegacyCDMSessionClient {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebKitMediaKeySession);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<WebKitMediaKeySession> create(Document&, WebKitMediaKeys&, const String& keySystem);
     ~WebKitMediaKeySession();
 
@@ -59,10 +61,6 @@ public:
 
     void generateKeyRequest(const String& mimeType, Ref<Uint8Array>&& initData);
     RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     WebKitMediaKeySession(Document&, WebKitMediaKeys&, const String& keySystem);

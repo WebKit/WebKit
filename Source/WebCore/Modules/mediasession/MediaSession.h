@@ -79,12 +79,10 @@ public:
 class MediaSession : public RefCounted<MediaSession>, public ActiveDOMObject, public CanMakeWeakPtr<MediaSession> {
     WTF_MAKE_TZONE_ALLOCATED(MediaSession);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<MediaSession> create(Navigator&);
     ~MediaSession();
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     MediaMetadata* metadata() const { return m_metadata.get(); };
     void setMetadata(RefPtr<MediaMetadata>&&);

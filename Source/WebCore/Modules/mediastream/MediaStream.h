@@ -57,6 +57,8 @@ class MediaStream final
     , public RefCounted<MediaStream> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(MediaStream, WEBCORE_EXPORT);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<MediaStream> create(Document&);
     static Ref<MediaStream> create(Document&, MediaStream&);
     static Ref<MediaStream> create(Document&, const Vector<Ref<MediaStreamTrack>>&);
@@ -96,10 +98,6 @@ public:
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MediaStream; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     void addTrackFromPlatform(Ref<MediaStreamTrack>&&);
 

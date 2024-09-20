@@ -50,6 +50,8 @@ class EventSource final : public RefCounted<EventSource>, public EventTarget, pr
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EventSource);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventSource);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     struct Init {
         bool withCredentials;
     };
@@ -71,10 +73,6 @@ public:
     State readyState() const;
 
     void close();
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     EventSource(ScriptExecutionContext&, const URL&, const Init&);

@@ -36,6 +36,8 @@ namespace WebCore {
 
 class ReadableStreamSource {
 public:
+    DECLARE_VIRTUAL_REFCOUNTED;
+
     WEBCORE_EXPORT ReadableStreamSource();
     WEBCORE_EXPORT virtual ~ReadableStreamSource();
 
@@ -44,9 +46,6 @@ public:
     void cancel(JSC::JSValue);
 
     bool isPulling() const { return !!m_promise; }
-
-    virtual void ref() = 0;
-    virtual void deref() = 0;
 
 protected:
     ReadableStreamDefaultController& controller() { return m_controller.value(); }
@@ -73,8 +72,7 @@ class RefCountedReadableStreamSource
     : public ReadableStreamSource
     , public RefCounted<RefCountedReadableStreamSource> {
 public:
-    void ref() final { RefCounted<RefCountedReadableStreamSource>::ref(); };
-    void deref() final { RefCounted<RefCountedReadableStreamSource>::deref(); };
+    DEFINE_VIRTUAL_REFCOUNTED;
 };
 
 class SimpleReadableStreamSource

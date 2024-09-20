@@ -40,10 +40,9 @@ class CSSStyleDeclaration : public ScriptWrappable, public CanMakeSingleThreadWe
     WTF_MAKE_NONCOPYABLE(CSSStyleDeclaration);
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSStyleDeclaration);
 public:
-    virtual ~CSSStyleDeclaration() = default;
+    DECLARE_VIRTUAL_REFCOUNTED;
 
-    virtual void ref() = 0;
-    virtual void deref() = 0;
+    virtual ~CSSStyleDeclaration() = default;
 
     virtual StyledElement* parentElement() const { return nullptr; }
     virtual CSSRule* parentRule() const = 0;

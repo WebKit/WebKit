@@ -91,6 +91,8 @@ class RTCPeerConnection final
 {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(RTCPeerConnection, WEBCORE_EXPORT);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static ExceptionOr<Ref<RTCPeerConnection>> create(Document&, RTCConfiguration&&);
     WEBCORE_EXPORT virtual ~RTCPeerConnection();
 
@@ -165,10 +167,6 @@ public:
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCPeerConnection; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     // Used for testing with a mock
     WEBCORE_EXPORT void emulatePlatformEvent(const String& action);

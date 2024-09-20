@@ -46,6 +46,8 @@ class ScriptExecutionContext;
 class CookieStore final : public RefCounted<CookieStore>, public EventTarget, public ActiveDOMObject, public CookieChangeListener {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CookieStore);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<CookieStore> create(ScriptExecutionContext*);
     ~CookieStore();
 
@@ -60,10 +62,6 @@ public:
 
     void remove(String&& name, Ref<DeferredPromise>&&);
     void remove(CookieStoreDeleteOptions&&, Ref<DeferredPromise>&&);
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     using EventTarget::weakPtrFactory;
     using EventTarget::WeakValueType;

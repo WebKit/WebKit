@@ -96,8 +96,8 @@ public:
     MediaPlayerPrivateRemote(WebCore::MediaPlayer*, WebCore::MediaPlayerEnums::MediaEngineIdentifier, WebCore::MediaPlayerIdentifier, RemoteMediaPlayerManager&);
     ~MediaPlayerPrivateRemote();
 
-    void ref() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
-    void deref() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 

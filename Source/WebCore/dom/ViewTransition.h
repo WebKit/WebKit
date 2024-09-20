@@ -155,14 +155,12 @@ public:
 class ViewTransition : public RefCounted<ViewTransition>, public VisibilityChangeClient, public ActiveDOMObject {
     WTF_MAKE_TZONE_ALLOCATED(ViewTransition);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<ViewTransition> createSamePage(Document&, RefPtr<ViewTransitionUpdateCallback>&&, Vector<AtomString>&&);
     static RefPtr<ViewTransition> resolveInboundCrossDocumentViewTransition(Document&, std::unique_ptr<ViewTransitionParams>);
     static Ref<ViewTransition> setupCrossDocumentViewTransition(Document&);
     ~ViewTransition();
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     void skipTransition();
     void skipViewTransition(ExceptionOr<JSC::JSValue>&&);

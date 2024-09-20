@@ -69,6 +69,8 @@ class DownloadManager : public CanMakeCheckedPtr<DownloadManager> {
 public:
     class Client {
     public:
+        DECLARE_VIRTUAL_REFCOUNTED;
+
         virtual ~Client() { }
 
         // CheckedPtr interface
@@ -83,10 +85,6 @@ public:
         virtual IPC::Connection* parentProcessConnectionForDownloads() = 0;
         virtual AuthenticationManager& downloadsAuthenticationManager() = 0;
         virtual NetworkSession* networkSession(PAL::SessionID) const = 0;
-
-        // RefPtr interface
-        virtual void ref() const = 0;
-        virtual void deref() const = 0;
     };
 
     explicit DownloadManager(Client&);

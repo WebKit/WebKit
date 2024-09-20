@@ -42,6 +42,8 @@ class RTCRtpSender;
 class RTCDTMFSender final : public RefCounted<RTCDTMFSender>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RTCDTMFSender);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<RTCDTMFSender> create(ScriptExecutionContext&, RTCRtpSender&, std::unique_ptr<RTCDTMFSenderBackend>&&);
     virtual ~RTCDTMFSender();
 
@@ -49,10 +51,6 @@ public:
     String toneBuffer() const;
 
     ExceptionOr<void> insertDTMF(const String& tones, size_t duration, size_t interToneGap);
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     RTCDTMFSender(ScriptExecutionContext&, RTCRtpSender&, std::unique_ptr<RTCDTMFSenderBackend>&&);

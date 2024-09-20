@@ -40,6 +40,8 @@ class ScriptExecutionContext;
 class ReportingObserver final : public RefCounted<ReportingObserver>, public ActiveDOMObject  {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ReportingObserver);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     struct Options {
         std::optional<Vector<AtomString>> types;
         bool buffered { false };
@@ -57,9 +59,6 @@ public:
 
     ReportingObserverCallback& callbackConcurrently();
 
-    // ActiveDOMObject
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
     bool virtualHasPendingActivity() const final;
 
 private:

@@ -65,16 +65,14 @@ template<typename IDLType> class DOMPromiseProxy;
 class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTarget, public ActiveDOMObject, public CDMInstanceSessionClient {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(MediaKeySession, WEBCORE_EXPORT);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<MediaKeySession> create(Document&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstanceSession>&&);
     WEBCORE_EXPORT virtual ~MediaKeySession();
 
     using CDMInstanceSessionClient::weakPtrFactory;
     using CDMInstanceSessionClient::WeakValueType;
     using CDMInstanceSessionClient::WeakPtrImplType;
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     bool isClosed() const { return m_closed; }
 

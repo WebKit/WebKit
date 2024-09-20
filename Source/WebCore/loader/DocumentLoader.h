@@ -198,6 +198,10 @@ class DocumentLoader
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DocumentLoader);
     friend class ContentFilter;
 public:
+#if ENABLE(CONTENT_FILTERING)
+    DEFINE_VIRTUAL_REFCOUNTED;
+#endif
+
     static Ref<DocumentLoader> create(const ResourceRequest& request, const SubstituteData& data)
     {
         return adoptRef(*new DocumentLoader(request, data));
@@ -459,8 +463,6 @@ public:
     void setBlockedPageURL(const URL& blockedPageURL) { m_blockedPageURL = blockedPageURL; }
     void setSubstituteDataFromContentFilter(SubstituteData&& substituteDataFromContentFilter) { m_substituteDataFromContentFilter = WTFMove(substituteDataFromContentFilter); }
     ContentFilter* contentFilter() const { return m_contentFilter.get(); }
-    void ref() const final { RefCounted<DocumentLoader>::ref(); }
-    void deref() const final { RefCounted<DocumentLoader>::deref(); }
 
     WEBCORE_EXPORT ResourceError handleContentFilterDidBlock(ContentFilterUnblockHandler, String&& unblockRequestDeniedScript);
 #endif

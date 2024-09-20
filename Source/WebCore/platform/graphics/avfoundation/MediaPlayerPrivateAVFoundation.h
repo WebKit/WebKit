@@ -55,8 +55,8 @@ class MediaPlayerPrivateAVFoundation
 public:
     virtual ~MediaPlayerPrivateAVFoundation();
 
-    void ref() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
-    void deref() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     virtual void metadataLoaded();
     virtual void playabilityKnown();

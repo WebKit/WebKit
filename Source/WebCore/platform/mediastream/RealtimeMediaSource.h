@@ -143,6 +143,8 @@ public:
 #endif
     };
 
+    DECLARE_VIRTUAL_REFCOUNTED;
+
     virtual ~RealtimeMediaSource();
 
     // Can be called in worker threads.
@@ -225,8 +227,6 @@ public:
 
     virtual const RealtimeMediaSourceCapabilities& capabilities() = 0;
     virtual const RealtimeMediaSourceSettings& settings() = 0;
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
     virtual ThreadSafeWeakPtrControlBlock& controlBlock() const = 0;
 
     using TakePhotoNativePromise = NativePromise<std::pair<Vector<uint8_t>, String>, String>;

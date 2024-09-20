@@ -70,11 +70,10 @@ class MediaPlayerPrivateMediaSourceAVFObjC
     , private LoggerHelper
 {
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     explicit MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer*);
     virtual ~MediaPlayerPrivateMediaSourceAVFObjC();
-
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
 
     static void registerMediaEngine(MediaEngineRegistrar);
 

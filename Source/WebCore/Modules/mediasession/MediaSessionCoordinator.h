@@ -48,6 +48,8 @@ class MediaSessionCoordinator
     , public EventTarget  {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(MediaSessionCoordinator, WEBCORE_EXPORT);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     WEBCORE_EXPORT static Ref<MediaSessionCoordinator> create(ScriptExecutionContext*);
     WEBCORE_EXPORT ~MediaSessionCoordinator();
     WEBCORE_EXPORT void setMediaSessionCoordinatorPrivate(Ref<MediaSessionCoordinatorPrivate>&&);
@@ -69,10 +71,6 @@ public:
     using MediaSessionCoordinatorClient::weakPtrFactory;
     using MediaSessionCoordinatorClient::WeakValueType;
     using MediaSessionCoordinatorClient::WeakPtrImplType;
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     struct PlaySessionCommand {
         std::optional<double> atTime;

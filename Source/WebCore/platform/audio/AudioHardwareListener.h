@@ -46,8 +46,7 @@ public:
         virtual void audioOutputDeviceChanged() = 0;
     };
 
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
+    DECLARE_VIRTUAL_REFCOUNTED;
 
     using CreationFunction = Function<Ref<AudioHardwareListener>(AudioHardwareListener::Client&)>;
     WEBCORE_EXPORT static void setCreationFunction(CreationFunction&&);

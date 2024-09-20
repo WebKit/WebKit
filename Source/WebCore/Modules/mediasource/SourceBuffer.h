@@ -73,16 +73,14 @@ class SourceBuffer
 {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SourceBuffer);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<SourceBuffer> create(Ref<SourceBufferPrivate>&&, MediaSource&);
     virtual ~SourceBuffer();
 
     using CanMakeWeakPtr<SourceBuffer>::weakPtrFactory;
     using CanMakeWeakPtr<SourceBuffer>::WeakValueType;
     using CanMakeWeakPtr<SourceBuffer>::WeakPtrImplType;
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     static bool enabledForContext(ScriptExecutionContext&);
 

@@ -744,9 +744,7 @@ private:
 class PendingImageBitmap final : public RefCounted<PendingImageBitmap>, public ActiveDOMObject, public FileReaderLoaderClient {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(PendingImageBitmap);
 public:
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
+    DEFINE_VIRTUAL_REFCOUNTED;
 
     static void fetch(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>&& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::ImageBitmapCompletionHandler&& completionHandler)
     {

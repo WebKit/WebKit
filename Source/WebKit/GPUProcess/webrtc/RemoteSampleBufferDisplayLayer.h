@@ -51,6 +51,8 @@ class GPUConnectionToWebProcess;
 class RemoteSampleBufferDisplayLayer : public RefCounted<RemoteSampleBufferDisplayLayer>, public WebCore::SampleBufferDisplayLayerClient, public IPC::MessageReceiver, private IPC::MessageSender {
     WTF_MAKE_TZONE_ALLOCATED(RemoteSampleBufferDisplayLayer);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static RefPtr<RemoteSampleBufferDisplayLayer> create(GPUConnectionToWebProcess&, SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);
     ~RemoteSampleBufferDisplayLayer();
 
@@ -66,9 +68,6 @@ public:
 
     CGRect bounds() const;
     void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRight>&&);
-
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
 
 private:
     RemoteSampleBufferDisplayLayer(GPUConnectionToWebProcess&, SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);

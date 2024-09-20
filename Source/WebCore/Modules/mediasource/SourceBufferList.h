@@ -45,6 +45,8 @@ class WebCoreOpaqueRoot;
 class SourceBufferList final : public RefCounted<SourceBufferList>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SourceBufferList);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<SourceBufferList> create(ScriptExecutionContext*);
     virtual ~SourceBufferList();
 
@@ -68,10 +70,6 @@ public:
     // EventTarget interface
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::SourceBufferList; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     explicit SourceBufferList(ScriptExecutionContext*);

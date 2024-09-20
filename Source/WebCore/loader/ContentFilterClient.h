@@ -48,9 +48,9 @@ class SubstituteData;
 
 class ContentFilterClient : public CanMakeWeakPtr<ContentFilterClient> {
 public:
+    DECLARE_VIRTUAL_REFCOUNTED;
+
     virtual ~ContentFilterClient() = default;
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
 
     virtual void dataReceivedThroughContentFilter(const SharedBuffer&, size_t) = 0;
     virtual ResourceError contentFilterDidBlock(ContentFilterUnblockHandler, String&& unblockRequestDeniedScript) = 0;

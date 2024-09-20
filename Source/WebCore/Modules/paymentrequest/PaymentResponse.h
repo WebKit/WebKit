@@ -49,6 +49,8 @@ template<typename IDLType> class DOMPromiseDeferred;
 class PaymentResponse final : public ActiveDOMObject, public EventTarget, public RefCounted<PaymentResponse> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PaymentResponse);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     using DetailsFunction = Function<JSC::Strong<JSC::JSObject>(JSC::JSGlobalObject&)>;
 
     static Ref<PaymentResponse> create(ScriptExecutionContext* context, PaymentRequest& request)
@@ -91,10 +93,6 @@ public:
     void abortWithException(Exception&&);
     bool hasRetryPromise() const { return !!m_retryPromise; }
     void settleRetryPromise(ExceptionOr<void>&& = { });
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     PaymentResponse(ScriptExecutionContext*, PaymentRequest&);

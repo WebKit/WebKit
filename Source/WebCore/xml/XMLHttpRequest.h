@@ -58,6 +58,8 @@ class XMLHttpRequest final : public ActiveDOMObject, public RefCounted<XMLHttpRe
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(XMLHttpRequest, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(XMLHttpRequest);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<XMLHttpRequest> create(ScriptExecutionContext&);
     WEBCORE_EXPORT ~XMLHttpRequest();
 
@@ -128,10 +130,6 @@ public:
     XMLHttpRequestUpload* optionalUpload() const { return m_upload.get(); }
 
     const ResourceResponse& resourceResponse() const { return m_response; }
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     size_t memoryCost() const;
 

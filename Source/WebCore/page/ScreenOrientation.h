@@ -41,6 +41,8 @@ class DeferredPromise;
 class ScreenOrientation final : public ActiveDOMObject, public EventTarget, public ScreenOrientationManagerObserver, public VisibilityChangeClient, public RefCounted<ScreenOrientation> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ScreenOrientation);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<ScreenOrientation> create(Document*);
     ~ScreenOrientation();
 
@@ -55,10 +57,6 @@ public:
     ExceptionOr<void> unlock();
     Type type() const;
     uint16_t angle() const;
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     ScreenOrientation(Document*);

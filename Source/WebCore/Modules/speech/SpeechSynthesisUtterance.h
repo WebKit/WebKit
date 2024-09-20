@@ -40,6 +40,8 @@ namespace WebCore {
 class WEBCORE_EXPORT SpeechSynthesisUtterance final : public PlatformSpeechSynthesisUtteranceClient, public RefCounted<SpeechSynthesisUtterance>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(SpeechSynthesisUtterance, WEBCORE_EXPORT);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     using UtteranceCompletionHandler = Function<void(const SpeechSynthesisUtterance&)>;
     static Ref<SpeechSynthesisUtterance> create(ScriptExecutionContext&, const String&, UtteranceCompletionHandler&&);
     static Ref<SpeechSynthesisUtterance> create(ScriptExecutionContext&, const String&);
@@ -69,10 +71,6 @@ public:
 
     MonotonicTime startTime() const { return m_platformUtterance->startTime(); }
     void setStartTime(MonotonicTime startTime) { m_platformUtterance->setStartTime(startTime); }
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     PlatformSpeechSynthesisUtterance* platformUtterance() const { return m_platformUtterance.get(); }
 

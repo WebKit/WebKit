@@ -412,7 +412,7 @@ CSSStyleDeclaration& MutableStyleProperties::ensureCSSStyleDeclaration()
         ASSERT(!m_cssomWrapper->parentElement());
         return *m_cssomWrapper;
     }
-    m_cssomWrapper = makeUnique<PropertySetCSSStyleDeclaration>(*this);
+    m_cssomWrapper = makeUniqueWithoutRefCountedCheck<PropertySetCSSStyleDeclaration>(*this);
     return *m_cssomWrapper;
 }
 

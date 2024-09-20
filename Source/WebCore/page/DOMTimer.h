@@ -47,11 +47,9 @@ class DOMTimer final : public RefCounted<DOMTimer>, public ActiveDOMObject, publ
     WTF_MAKE_NONCOPYABLE(DOMTimer);
     WTF_MAKE_TZONE_ALLOCATED(DOMTimer);
 public:
-    WEBCORE_EXPORT virtual ~DOMTimer();
+    DEFINE_VIRTUAL_REFCOUNTED;
 
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
+    WEBCORE_EXPORT virtual ~DOMTimer();
 
     static Seconds defaultMinimumInterval() { return 4_ms; }
     static Seconds defaultAlignmentInterval() { return 0_s; }

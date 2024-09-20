@@ -78,6 +78,8 @@ class MediaSource
 {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaSource);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static void setRegistry(URLRegistry*);
     static MediaSource* lookup(const String& url) { return s_registry ? static_cast<MediaSource*>(s_registry->lookup(url)) : nullptr; }
 
@@ -87,10 +89,6 @@ public:
     using CanMakeWeakPtr<MediaSource>::weakPtrFactory;
     using CanMakeWeakPtr<MediaSource>::WeakValueType;
     using CanMakeWeakPtr<MediaSource>::WeakPtrImplType;
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     static bool enabledForContext(ScriptExecutionContext&);
 

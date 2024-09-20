@@ -60,16 +60,14 @@ struct WorkerOptions;
 class Worker final : public AbstractWorker, public ActiveDOMObject, private WorkerScriptLoaderClient {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Worker);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     using AbstractWorker::weakPtrFactory;
     using AbstractWorker::WeakValueType;
     using AbstractWorker::WeakPtrImplType;
 
     static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, JSC::RuntimeFlags, std::variant<RefPtr<TrustedScriptURL>, String>&&, WorkerOptions&&);
     virtual ~Worker();
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
 

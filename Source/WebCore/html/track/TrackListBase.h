@@ -53,6 +53,8 @@ using TrackID = uint64_t;
 class TrackListBase : public RefCounted<TrackListBase>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(TrackListBase);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     virtual ~TrackListBase();
 
     enum Type { BaseTrackList, TextTrackList, AudioTrackList, VideoTrackList };
@@ -64,10 +66,6 @@ public:
     virtual void remove(TrackBase&, bool scheduleEvent = true);
     virtual void remove(TrackID, bool scheduleEvent = true);
     virtual RefPtr<TrackBase> find(TrackID) const;
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const override = 0;

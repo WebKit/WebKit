@@ -59,6 +59,8 @@ struct ResolutionContext;
 class WebAnimation : public RefCounted<WebAnimation>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebAnimation);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<WebAnimation> create(Document&, AnimationEffect*);
     static Ref<WebAnimation> create(Document&, AnimationEffect*, AnimationTimeline*);
     ~WebAnimation();
@@ -162,10 +164,6 @@ public:
     // ContextDestructionObserver.
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void contextDestroyed() final;
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 protected:
     explicit WebAnimation(Document&);

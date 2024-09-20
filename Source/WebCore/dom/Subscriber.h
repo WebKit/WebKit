@@ -40,6 +40,8 @@ class Subscriber final : public ActiveDOMObject, public ScriptWrappable, public 
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Subscriber);
 
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     void next(JSC::JSValue);
     void complete();
     void error(JSC::JSValue);
@@ -59,10 +61,6 @@ public:
     InternalObserver* observerConcurrently();
     void visitAdditionalChildren(JSC::AbstractSlotVisitor&);
     void visitAdditionalChildren(JSC::SlotVisitor&);
-
-    // ActiveDOMObject
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     bool m_active = true;
