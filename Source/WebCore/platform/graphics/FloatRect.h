@@ -380,6 +380,7 @@ WEBCORE_EXPORT FloatRect encloseRectToDevicePixels(const FloatRect&, float devic
 WEBCORE_EXPORT IntRect enclosingIntRect(const FloatRect&);
 WEBCORE_EXPORT IntRect enclosingIntRectPreservingEmptyRects(const FloatRect&);
 WEBCORE_EXPORT IntRect roundedIntRect(const FloatRect&);
+WEBCORE_EXPORT IntRect essentiallyEnclosingIntRect(const FloatRect&);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatRect&);
 

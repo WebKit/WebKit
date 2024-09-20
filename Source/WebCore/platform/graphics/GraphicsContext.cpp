@@ -226,14 +226,14 @@ static IntSize scaledImageBufferSize(const FloatSize& size, const FloatSize& sca
 {
     // Enlarge the buffer size if the context's transform is scaling it so we need a higher
     // resolution than one pixel per unit.
-    return expandedIntSize(size * scale);
+    return essentiallyExpandedIntSize(size * scale);
 }
 
 static IntRect scaledImageBufferRect(const FloatRect& rect, const FloatSize& scale)
 {
     auto scaledRect = rect;
     scaledRect.scale(scale);
-    return enclosingIntRect(scaledRect);
+    return essentiallyEnclosingIntRect(scaledRect);
 }
 
 static FloatSize clampingScaleForImageBufferSize(const FloatSize& size)
@@ -287,13 +287,11 @@ RefPtr<ImageBuffer> GraphicsContext::createScaledImageBuffer(const FloatRect& re
         return nullptr;
 
     imageBuffer->context().scale(clampingScale);
-    
-    // 'rect' is mapped to a rectangle inside expandedScaledRect.
-    imageBuffer->context().translate(-expandedScaledRect.location());
-    
-    // The size of this rectangle is not necessarily equal to expandedScaledRect.size().
-    // So use 'scale' not 'expandedScaledRect.size() / rect.size()'.
-    imageBuffer->context().scale(scale);
+
+    // 'expandedScaledRect' is mapped to 'rect'. So use 'expandedScaledRect.size() / size'
+    // not 'scale' because they are not necessarily equal.
+    imageBuffer->context().scale(expandedScaledRect.size() / rect.size());
+    imageBuffer->context().translate(-rect.location());
     return imageBuffer;
 }
 

@@ -194,6 +194,13 @@ IntRect enclosingIntRect(const FloatRect& rect)
     return IntRect(IntPoint(location), IntSize(maxPoint - location));
 }
 
+IntRect essentiallyEnclosingIntRect(const FloatRect& rect)
+{
+    IntPoint minMin = essentiallyFlooredIntPoint(rect.minXMinYCorner());
+    IntPoint maxMax = essentiallyCeiledIntPoint(rect.maxXMaxYCorner());
+    return { minMin, IntSize { maxMax - minMin } };
+}
+
 IntRect enclosingIntRectPreservingEmptyRects(const FloatRect& rect)
 {
     // Empty rects with fractional x, y values turn into non-empty rects when converting to enclosing.

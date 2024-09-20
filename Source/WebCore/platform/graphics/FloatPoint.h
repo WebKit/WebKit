@@ -271,6 +271,11 @@ inline void FloatPoint::rotate(double angleInRadians, const FloatPoint& aboutPoi
     m_x = newX;
 }
 
+inline FloatSize toFloatSize(const FloatPoint& a)
+{
+    return FloatSize(a.x(), a.y());
+}
+
 inline IntSize flooredIntSize(const FloatPoint& p)
 {
     return IntSize(clampToInteger(floorf(p.x())), clampToInteger(floorf(p.y())));
@@ -286,9 +291,19 @@ inline IntPoint flooredIntPoint(const FloatPoint& p)
     return IntPoint(clampToInteger(floorf(p.x())), clampToInteger(floorf(p.y())));
 }
 
+inline IntPoint essentiallyFlooredIntPoint(const FloatPoint& p)
+{
+    return IntPoint { essentiallyFlooredIntSize(toFloatSize(p)) };
+}
+
 inline IntPoint ceiledIntPoint(const FloatPoint& p)
 {
     return IntPoint(clampToInteger(ceilf(p.x())), clampToInteger(ceilf(p.y())));
+}
+
+inline IntPoint essentiallyCeiledIntPoint(const FloatPoint& p)
+{
+    return IntPoint { essentiallyExpandedIntSize(toFloatSize(p)) };
 }
 
 inline FloatPoint floorPointToDevicePixels(const FloatPoint& p, float deviceScaleFactor)
@@ -299,11 +314,6 @@ inline FloatPoint floorPointToDevicePixels(const FloatPoint& p, float deviceScal
 inline FloatPoint ceilPointToDevicePixels(const FloatPoint& p, float deviceScaleFactor)
 {
     return FloatPoint(ceilf(p.x() * deviceScaleFactor)  / deviceScaleFactor, ceilf(p.y() * deviceScaleFactor)  / deviceScaleFactor);
-}
-
-inline FloatSize toFloatSize(const FloatPoint& a)
-{
-    return FloatSize(a.x(), a.y());
 }
 
 inline FloatPoint toFloatPoint(const FloatSize& a)

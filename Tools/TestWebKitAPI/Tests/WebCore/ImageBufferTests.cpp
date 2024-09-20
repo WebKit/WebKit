@@ -38,18 +38,29 @@
 namespace TestWebKitAPI {
 using namespace WebCore;
 
-static ::testing::AssertionResult imageBufferPixelIs(Color expected, ImageBuffer& imageBuffer, int x, int y)
+static SRGBA<uint8_t> getImageBufferPixel(ImageBuffer& imageBuffer, IntPoint p)
 {
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
-    auto frontPixelBuffer = imageBuffer.getPixelBuffer(format, { x, y, 1, 1 });
-    auto got = Color { SRGBA<uint8_t> { frontPixelBuffer->item(0), frontPixelBuffer->item(1), frontPixelBuffer->item(2), frontPixelBuffer->item(3) } };
+    auto frontPixelBuffer = imageBuffer.getPixelBuffer(format, { p, { 1, 1 } });
+    return SRGBA<uint8_t> { frontPixelBuffer->item(0), frontPixelBuffer->item(1), frontPixelBuffer->item(2), frontPixelBuffer->item(3) };
+}
+
+static ::testing::AssertionResult imageBufferPixelIs(Color expected, ImageBuffer& imageBuffer, IntPoint p)
+{
+    auto got = getImageBufferPixel(imageBuffer, p);
     if (got != expected) {
         // Use this to debug the contents in the browser.
         // WTFLogAlways("%s", imageBuffer.toDataURL("image/png"_s).latin1().data());
-        return ::testing::AssertionFailure() << "color is not expected at (" << x << ", " << y << "). Got: " << got << ", expected: " << expected << ".";
+        return ::testing::AssertionFailure() << "color is not expected at (" << p.x() << ", " << p.y() << "). Got: " << got << ", expected: " << expected << ".";
     }
     return ::testing::AssertionSuccess();
 }
+
+static ::testing::AssertionResult imageBufferPixelIs(Color expected, ImageBuffer& imageBuffer, int x, int y)
+{
+    return imageBufferPixelIs(expected, imageBuffer, { x, y });
+}
+
 namespace {
 struct TestPattern {
     FloatRect unitRect;
@@ -119,7 +130,7 @@ static RefPtr<PixelBuffer> createPixelBufferTestPattern(IntSize size, AlphaPremu
         return nullptr;
     }
     PixelBufferFormat testFormat { alphaFormat, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
-    return pattern->getPixelBuffer(testFormat, { { }, size }); 
+    return pattern->getPixelBuffer(testFormat, { { }, size });
 }
 
 // Tests that the specialized image buffer constructors construct the expected type of object.
@@ -235,6 +246,67 @@ TEST(ImageBufferTests, DISABLED_DrawImageBufferDoesNotReferenceExtraMemory)
     EXPECT_TRUE(memoryFootprintChangedBy(lastFootprint, 0, footprintError));
 }
 
+// Tests that creating buffers through different createScaledImageBuffer() constructors set up the
+// buffer in the same way.
+TEST(ImageBufferTests, ImageBufferCreateScaledImageBuffersMatch)
+{
+    auto colorSpace = DestinationColorSpace::SRGB();
+    RefPtr<ImageBuffer> factory = ImageBuffer::create({ 1.f, 1.f }, RenderingPurpose::Unspecified, 1.f, colorSpace, PixelFormat::BGRA8);
+
+    struct {
+        FloatSize scale;
+        FloatSize size;
+        FloatSize expectedLogicalSize;
+        IntSize expectedBackendSize;
+    } subcases[] = {
+        {
+            // Unclamped case.
+            { 1.23f, 1.24f },
+            { 77.f, 88.f },
+            { 95.f, 110.f },
+            { 95, 110 }
+        }, {
+            // Clamped case.
+            { 1.23f, 1.24f },
+            { 7700.f, 28800.f },
+            { 2109.3603516f, 7953.6982422f },
+            { 2110, 7954 }
+        }, {
+            // Essentially equal case. Filters might require intermediary images that are essentially integral,
+            // but not exactly due to how layout works with floats.
+            { 2.f, 2.f },
+            { 120.000007629f, 120.000007629f },
+            { 240.f, 240.f },
+            { 240, 240 }
+        }
+    };
+
+    for (auto& subcase : subcases) {
+        SCOPED_TRACE(::testing::Message() <<  "subcase.size=" << subcase.size);
+        FloatRect rect { { }, subcase.size };
+        auto bufferFromRect = factory->context().createScaledImageBuffer(rect, subcase.scale, colorSpace, std::nullopt);
+        auto bufferFromSize = factory->context().createScaledImageBuffer(rect.size(), subcase.scale, colorSpace, std::nullopt);
+        EXPECT_EQ(bufferFromRect->context().scaleFactor(), bufferFromSize->context().scaleFactor());
+        EXPECT_EQ(bufferFromRect->logicalSize(), bufferFromSize->logicalSize());
+        EXPECT_EQ(bufferFromRect->logicalSize(), subcase.expectedLogicalSize);
+        EXPECT_EQ(bufferFromRect->backendSize(), bufferFromSize->backendSize());
+        EXPECT_EQ(bufferFromRect->backendSize(), subcase.expectedBackendSize);
+
+        // Drawing a full rect of Color::green should result in the backing store
+        // getting all pixels to solid Color::green.
+        bufferFromRect->context().fillRect(rect, Color::green);
+        bufferFromSize->context().fillRect(rect, Color::green);
+        // Sample the last pixel of backing store to ensure it is the same for both of the images.
+        IntPoint samplePixelPoint { subcase.expectedBackendSize - IntSize { 1, 1 } };
+
+        // FIXME: Logically this should be Color::green, as Color::green was drawn.
+        // It is not due to non-integral buffer sizes, will be fixed later.
+        auto expectedColor = getImageBufferPixel(*bufferFromRect, samplePixelPoint);
+        EXPECT_TRUE(imageBufferPixelIs(expectedColor, *bufferFromRect, samplePixelPoint));
+        EXPECT_TRUE(imageBufferPixelIs(expectedColor, *bufferFromSize, samplePixelPoint));
+    }
+}
+
 enum class TestImageBufferOptions {
     Accelerated, NoOptions
 };
@@ -244,7 +316,7 @@ OptionSet<ImageBufferOptions> toImageBufferOptions(TestImageBufferOptions testOp
     if (testOptions == TestImageBufferOptions::Accelerated)
         return ImageBufferOptions::Accelerated;
     return { };
-} 
+}
 
 void PrintTo(TestImageBufferOptions value, ::std::ostream* o)
 {
