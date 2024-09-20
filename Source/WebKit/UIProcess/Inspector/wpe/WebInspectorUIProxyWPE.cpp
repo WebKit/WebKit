@@ -102,7 +102,7 @@ static Ref<WebsiteDataStore> inspectorWebsiteDataStore()
     return WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::generatePersistentSessionID());
 }
 
-WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
+RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
 {
     auto* inspectedWPEView = m_inspectedPage->wpeView();
     if (!inspectedWPEView)
@@ -147,7 +147,7 @@ WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
     wpe_view_set_toplevel(wpeView, nullptr);
     wpe_toplevel_resize(m_inspectorWindow.get(), initialWindowWidth, initialWindowHeight);
 
-    return page.ptr();
+    return page;
 }
 
 void WebInspectorUIProxy::platformCreateFrontendWindow()

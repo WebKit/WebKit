@@ -254,7 +254,7 @@ static void webProcessDidCrash(WKPageRef, const void* clientInfo)
     inspector->closeForCrash();
 }
 
-WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
+RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
 {
     ASSERT(m_inspectedPage);
 
@@ -303,9 +303,9 @@ WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
     m_inspectedViewParentWindow = ::GetParent(m_inspectedViewWindow);
     auto view = WebView::create(r, pageConfiguration, m_inspectedViewParentWindow);
     m_inspectorView = &view.leakRef();
-    auto inspectorPage = m_inspectorView->page();
+    RefPtr inspectorPage = m_inspectorView->page();
     m_inspectorViewWindow = reinterpret_cast<HWND>(inspectorPage->viewWidget());
-    WKPageSetPageNavigationClient(toAPI(inspectorPage), &navigationClient.base);
+    WKPageSetPageNavigationClient(toAPI(inspectorPage.get()), &navigationClient.base);
 
     inspectorPage->setURLSchemeHandlerForScheme(InspectorResourceURLSchemeHandler::create(), "inspector-resource"_s);
 

@@ -224,7 +224,7 @@ private:
     void sendMessageToFrontend(const String& message) override;
     ConnectionType connectionType() const override { return ConnectionType::Local; }
 
-    WebPageProxy* platformCreateFrontendPage();
+    RefPtr<WebPageProxy> platformCreateFrontendPage();
     void platformCreateFrontendWindow();
     void platformCloseFrontendPageAndWindow();
 

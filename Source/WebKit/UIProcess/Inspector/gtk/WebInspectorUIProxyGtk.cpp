@@ -176,7 +176,7 @@ static Ref<WebsiteDataStore> inspectorWebsiteDataStore()
     return WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::generatePersistentSessionID());
 }
 
-WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
+RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
 {
     ASSERT(m_inspectedPage);
     ASSERT(!m_inspectorView);
@@ -293,12 +293,12 @@ WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
         nullptr, // hideContextMenu
     };
 
-    WebPageProxy* inspectorPage = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_inspectorView.get()));
+    RefPtr inspectorPage = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_inspectorView.get()));
     ASSERT(inspectorPage);
 
-    WKPageSetPageUIClient(toAPI(inspectorPage), &uiClient.base);
-    WKPageSetPageNavigationClient(toAPI(inspectorPage), &navigationClient.base);
-    WKPageSetPageContextMenuClient(toAPI(inspectorPage), &contextMenuClient.base);
+    WKPageSetPageUIClient(toAPI(inspectorPage.get()), &uiClient.base);
+    WKPageSetPageNavigationClient(toAPI(inspectorPage.get()), &navigationClient.base);
+    WKPageSetPageContextMenuClient(toAPI(inspectorPage.get()), &contextMenuClient.base);
 
     return inspectorPage;
 }

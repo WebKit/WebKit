@@ -313,7 +313,7 @@ using namespace WebCore;
 
 void WebInspectorUIProxy::didBecomeActive()
 {
-    m_inspectorPage->legacyMainFrameProcess().send(Messages::WebInspectorUI::UpdateFindString(WebKit::stringForFind()), m_inspectorPage->webPageIDInMainFrameProcess());
+    protectedInspectorPage()->protectedLegacyMainFrameProcess()->send(Messages::WebInspectorUI::UpdateFindString(WebKit::stringForFind()), m_inspectorPage->webPageIDInMainFrameProcess());
 }
 
 void WebInspectorUIProxy::attachmentViewDidChange(NSView *oldView, NSView *newView)
@@ -441,7 +441,7 @@ void WebInspectorUIProxy::showSavePanel(NSWindow *frontendWindow, NSURL *platfor
         didShowModal([savePanel runModal]);
 }
 
-WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
+RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
 {
     RefPtr inspectedPage = m_inspectedPage.get();
     ASSERT(m_inspectedPage);
@@ -462,9 +462,8 @@ WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
     m_inspectorViewController = adoptNS([[WKInspectorViewController alloc] initWithConfiguration: WebKit::wrapper(configuration.get()) inspectedPage:inspectedPage.get()]);
     [m_inspectorViewController.get() setDelegate:m_objCAdapter.get()];
 
-    WebPageProxy *inspectorPage = [m_inspectorViewController webView]->_page.get();
+    RefPtr inspectorPage = [m_inspectorViewController webView]->_page.get();
     ASSERT(inspectorPage);
-
     return inspectorPage;
 }
 
@@ -474,7 +473,7 @@ void WebInspectorUIProxy::platformCreateFrontendWindow()
 
     NSRect savedWindowFrame = NSZeroRect;
     if (RefPtr inspectedPage = protectedInspectedPage()) {
-        NSString *savedWindowFrameString = inspectedPage->pageGroup().preferences().inspectorWindowFrame();
+        NSString *savedWindowFrameString = inspectedPage->protectedPageGroup()->protectedPreferences()->inspectorWindowFrame();
         savedWindowFrame = NSRectFromString(savedWindowFrameString);
     }
 
@@ -554,7 +553,7 @@ void WebInspectorUIProxy::platformHide()
 void WebInspectorUIProxy::platformResetState()
 {
     if (RefPtr inspectedPage = m_inspectedPage.get())
-        inspectedPage->pageGroup().preferences().deleteInspectorWindowFrame();
+        inspectedPage->protectedPageGroup()->protectedPreferences()->deleteInspectorWindowFrame();
 }
 
 void WebInspectorUIProxy::platformBringToFront()
@@ -723,7 +722,7 @@ void WebInspectorUIProxy::windowFrameDidChange()
         return;
 
     NSString *frameString = NSStringFromRect([m_inspectorWindow frame]);
-    inspectedPage->pageGroup().preferences().setInspectorWindowFrame(frameString);
+    inspectedPage->protectedPageGroup()->protectedPreferences()->setInspectorWindowFrame(frameString);
 }
 
 void WebInspectorUIProxy::windowFullScreenDidChange()
@@ -846,15 +845,15 @@ void WebInspectorUIProxy::platformAttach()
     switch (m_attachmentSide) {
     case AttachmentSide::Bottom:
         [inspectorView setAutoresizingMask:NSViewWidthSizable | NSViewMaxYMargin];
-        currentDimension = inspectorPagePreferences().inspectorAttachedHeight();
+        currentDimension = protectedInspectorPagePreferences()->inspectorAttachedHeight();
         break;
     case AttachmentSide::Right:
         [inspectorView setAutoresizingMask:NSViewHeightSizable | NSViewMinXMargin];
-        currentDimension = inspectorPagePreferences().inspectorAttachedWidth();
+        currentDimension = protectedInspectorPagePreferences()->inspectorAttachedWidth();
         break;
     case AttachmentSide::Left:
         [inspectorView setAutoresizingMask:NSViewHeightSizable | NSViewMaxXMargin];
-        currentDimension = inspectorPagePreferences().inspectorAttachedWidth();
+        currentDimension = protectedInspectorPagePreferences()->inspectorAttachedWidth();
         break;
     }
 

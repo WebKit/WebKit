@@ -210,7 +210,7 @@ void WebSWServerToContextConnection::fireBackgroundFetchEvent(ServiceWorkerIdent
 void WebSWServerToContextConnection::fireBackgroundFetchClickEvent(ServiceWorkerIdentifier serviceWorkerIdentifier, const BackgroundFetchInformation& info, CompletionHandler<void(bool)>&& callback)
 {
     if (!m_processingFunctionalEventCount++)
-        m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::StartServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
+        protectedConnection()->protectedNetworkProcess()->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::StartServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
 
     sendWithAsyncReply(Messages::WebSWContextManagerConnection::FireBackgroundFetchClickEvent { serviceWorkerIdentifier, info }, [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](bool wasProcessed) mutable {
         CheckedPtr checkedThis = weakThis.get();
@@ -218,7 +218,7 @@ void WebSWServerToContextConnection::fireBackgroundFetchClickEvent(ServiceWorker
             return callback(wasProcessed);
 
         if (!--checkedThis->m_processingFunctionalEventCount)
-            checkedThis->m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { checkedThis->webProcessIdentifier() }, 0);
+            checkedThis->protectedConnection()->protectedNetworkProcess()->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { checkedThis->webProcessIdentifier() }, 0);
 
         callback(wasProcessed);
     });
