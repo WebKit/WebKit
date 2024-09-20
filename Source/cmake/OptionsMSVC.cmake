@@ -6,6 +6,9 @@ function(MSVC_ADD_COMPILE_OPTIONS)
     endforeach ()
 endfunction()
 
+# Use AT&T syntax for inline asm
+MSVC_ADD_COMPILE_OPTIONS(/clang:-masm=att)
+
 # Create pdb files for debugging purposes, also for Release builds
 MSVC_ADD_COMPILE_OPTIONS(/Zi /GS)
 
