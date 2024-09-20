@@ -1197,7 +1197,10 @@ void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale, st
     auto layoutSize = availableContentsRect().size();
     auto autoSizeMode = shouldUpdateAutoSizeScaleOverride.value_or(m_didLayoutWithValidDocument ? m_shouldUpdateAutoSizeScale : ShouldUpdateAutoSizeScale::Yes);
 
-    auto anchoringInfo = m_presentationController->pdfPositionForCurrentView(shouldAdjustScale == AdjustScaleAfterLayout::Yes || autoSizeMode == ShouldUpdateAutoSizeScale::Yes);
+    auto computeAnchoringInfo = [&] {
+        return m_presentationController->pdfPositionForCurrentView(shouldAdjustScale == AdjustScaleAfterLayout::Yes || autoSizeMode == ShouldUpdateAutoSizeScale::Yes);
+    };
+    auto anchoringInfo = computeAnchoringInfo();
 
     auto layoutUpdateChanges = m_documentLayout.updateLayout(layoutSize, autoSizeMode);
     updateScrollbars();
@@ -1225,7 +1228,17 @@ void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale, st
 
     LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin::updateLayout - scale " << m_scaleFactor << " normalization factor " << m_scaleNormalizationFactor << " layout scale " << m_documentLayout.scale());
 
-    if (anchoringInfo && layoutUpdateChanges.isEmpty())
+    constexpr OptionSet allLayoutChangeTypes {
+        PDFDocumentLayout::LayoutUpdateChange::PageGeometries,
+        PDFDocumentLayout::LayoutUpdateChange::DocumentBounds,
+    };
+    if (layoutUpdateChanges.containsAll(allLayoutChangeTypes)) {
+        anchoringInfo = anchoringInfo.and_then([&](const PDFPresentationController::VisiblePDFPosition&) {
+            return computeAnchoringInfo();
+        });
+    }
+
+    if (anchoringInfo)
         m_presentationController->restorePDFPosition(*anchoringInfo);
 }
 
