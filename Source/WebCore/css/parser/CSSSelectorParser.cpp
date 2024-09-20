@@ -1028,6 +1028,8 @@ CSSSelector::AttributeMatchType CSSSelectorParser::consumeAttributeFlags(CSSPars
     const CSSParserToken& flag = range.consumeIncludingWhitespace();
     if (equalLettersIgnoringASCIICase(flag.value(), "i"_s))
         return CSSSelector::CaseInsensitive;
+    if (equalLettersIgnoringASCIICase(flag.value(), "s"_s))
+        return CSSSelector::CaseSensitive;
     m_failedParsing = true;
     return CSSSelector::CaseSensitive;
 }
