@@ -120,6 +120,7 @@ void FunctionIPIntMetadataGenerator::addLEB128V128Constant(v128_t value, size_t 
     WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::const128Metadata);
 }
 
+#if USE(JSVALUE64)
 void FunctionIPIntMetadataGenerator::addReturnData(const Vector<Type, 16>& types)
 {
     const int returnGPRs = 2;
@@ -146,6 +147,34 @@ void FunctionIPIntMetadataGenerator::addReturnData(const Vector<Type, 16>& types
     m_returnMetadata = m_metadata.size();
     m_metadata.appendVector(uINTBytecode);
 }
+#else
+void FunctionIPIntMetadataGenerator::addReturnData(const Vector<Type, 16>& types)
+{
+    const int returnGPRs = 1;
+    const int returnFPRs = 1;
+    // uINT: the interpreter smaller than mINT
+    // 0x00: r2, r0
+    // 0x01: unused
+    // 0x02: fr0
+    // 0x03: stack (TODO)
+    // 0x04: return
+    Vector<uint8_t, 16> uINTBytecode;
+    int gprsUsed = 0;
+    int fprsUsed = 0;
+    for (size_t i = 0; i < types.size(); ++i) {
+        auto type = types[i];
+        if ((type.isF32() || type.isF64()) && fprsUsed != returnFPRs)
+            uINTBytecode.append(2 + fprsUsed++);
+        else if (gprsUsed != returnGPRs)
+            uINTBytecode.append(gprsUsed++);
+        else
+            uINTBytecode.append(0x03);
+    }
+    uINTBytecode.append(0x04);
+    m_returnMetadata = m_metadata.size();
+    m_metadata.appendVector(uINTBytecode);
+}
+#endif
 
 } }
 

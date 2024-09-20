@@ -41,7 +41,11 @@
 namespace JSC { namespace Wasm {
 
 constexpr unsigned numberOfLLIntCalleeSaveRegisters = 2;
+#if CPU(ARM)
+constexpr unsigned numberOfIPIntCalleeSaveRegisters = 2;
+#else
 constexpr unsigned numberOfIPIntCalleeSaveRegisters = 3;
+#endif
 constexpr unsigned numberOfLLIntInternalRegisters = 2;
 
 struct ArgumentLocation {

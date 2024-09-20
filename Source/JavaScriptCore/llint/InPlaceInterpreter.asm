@@ -120,6 +120,9 @@ const wasmInstance = csr0
 if X86_64 or ARM64 or ARM64E or RISCV64
     const memoryBase = csr3
     const boundsCheckingSize = csr4
+elsif ARMv7
+    const memoryBase = t2
+    const boundsCheckingSize = t3
 else
     const memoryBase = invalidGPR
     const boundsCheckingSize = invalidGPR
@@ -243,8 +246,23 @@ end
 
 # Operation Calls
 
+macro functionCall(fn)
+    push PC, MC
+    push PL, ws0
+    fn()
+    pop ws0, PL
+    pop MC, PC
+    if ARM64 or ARM64E
+        pcrtoaddr _ipint_unreachable, IB
+    end
+end
+
 macro operationCall(fn)
-    move wasmInstance, a0
+    if ARMv7
+        loadp CodeBlock[cfr], a0
+    else
+        move wasmInstance, a0
+    end
     push PC, MC
     push PL, ws0
     fn()
@@ -258,7 +276,11 @@ end
 macro operationCallMayThrow(fn)
     storei PC, CallSiteIndex[cfr]
 
-    move wasmInstance, a0
+    if ARMv7
+        loadp CodeBlock[cfr], a0
+    else
+        move wasmInstance, a0
+    end
     push PC, MC
     push PL, ws0
     fn()
@@ -276,6 +298,9 @@ end
 # Exception handling
 
 macro ipintException(exception)
+    if ARMv7
+        loadp CodeBlock[cfr], wasmInstance
+    end
     storei constexpr Wasm::ExceptionType::%exception%, ArgumentCountIncludingThis + PayloadOffset[cfr]
     jmp _wasm_throw_from_slow_path_trampoline
 end
