@@ -162,6 +162,13 @@
    },
    {
       "emails" : [
+         "ja_lopezlozoya@apple.com"
+      ],
+      "github" : "lopezlozoya",
+      "name" : "Adan Lopez"
+   },
+   {
+      "emails" : [
          "adele@apple.com"
       ],
       "expertise" : "HTML Forms, Security, Layout and Rendering, Web Compatibility (General)",
