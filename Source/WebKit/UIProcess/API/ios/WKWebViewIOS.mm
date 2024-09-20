@@ -4105,6 +4105,11 @@ static bool isLockdownModeWarningNeeded()
 
 - (UIView *)_safeBrowsingWarning
 {
+    return self._warningView;
+}
+
+- (UIView *)_browsingWarning
+{
     return _warningView.get();
 }
 

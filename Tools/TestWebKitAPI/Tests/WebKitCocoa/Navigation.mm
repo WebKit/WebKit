@@ -58,6 +58,14 @@ static NSTimeInterval redirectDelay;
 static bool didCancelRedirect;
 static bool didReceiveAllowPrivateToken;
 
+@interface WKWebView ()
+#if !TARGET_OS_IPHONE
+@property (nonatomic, readonly) NSView *_browsingWarning;
+#else
+@property (nonatomic, readonly) UIView *_browsingWarning;
+#endif
+@end
+
 @interface NavigationDelegate : NSObject <WKNavigationDelegate, _WKWebsiteDataStoreDelegate>
 @end
 
@@ -1822,17 +1830,17 @@ TEST(WKNavigation, HTTPSOnlyHTTPFallbackGoBack)
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure"]]];
 
-    EXPECT_NULL([webView _safeBrowsingWarning]);
-    while (![webView _safeBrowsingWarning])
+    EXPECT_NULL([webView _browsingWarning]);
+    while (![webView _browsingWarning])
         TestWebKitAPI::Util::spinRunLoop();
-    EXPECT_NOT_NULL([webView _safeBrowsingWarning]);
+    EXPECT_NOT_NULL([webView _browsingWarning]);
 
     EXPECT_EQ(errorCode, 0);
     EXPECT_FALSE(finishedSuccessfully);
     EXPECT_FALSE(failedNavigation);
 
     EXPECT_WK_STREQ([webView title], "This Connection Is Not Secure");
-    checkTitleAndClick([webView _safeBrowsingWarning].subviews.firstObject.subviews[3], "Go Back");
+    checkTitleAndClick([webView _browsingWarning].subviews.firstObject.subviews[3], "Go Back");
     Util::run(&failedNavigation);
 
     EXPECT_EQ(errorCode, NSURLErrorServerCertificateUntrusted);
@@ -1901,17 +1909,17 @@ TEST(WKNavigation, HTTPSOnlyHTTPFallbackContinue)
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure"]]];
 
-    EXPECT_NULL([webView _safeBrowsingWarning]);
-    while (![webView _safeBrowsingWarning])
+    EXPECT_NULL([webView _browsingWarning]);
+    while (![webView _browsingWarning])
         TestWebKitAPI::Util::spinRunLoop();
-    EXPECT_NOT_NULL([webView _safeBrowsingWarning]);
+    EXPECT_NOT_NULL([webView _browsingWarning]);
 
     EXPECT_EQ(errorCode, 0);
     EXPECT_FALSE(finishedSuccessfully);
     EXPECT_FALSE(failedNavigation);
 
     EXPECT_WK_STREQ([webView title], "This Connection Is Not Secure");
-    checkTitleAndClick([webView _safeBrowsingWarning].subviews.firstObject.subviews[4], "Continue");
+    checkTitleAndClick([webView _browsingWarning].subviews.firstObject.subviews[4], "Continue");
     Util::run(&finishedSuccessfully);
 
     EXPECT_EQ(errorCode, 0);
@@ -2109,12 +2117,12 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure"]]];
 
-    EXPECT_NULL([webView _safeBrowsingWarning]);
-    while (![webView _safeBrowsingWarning])
+    EXPECT_NULL([webView _browsingWarning]);
+    while (![webView _browsingWarning])
         TestWebKitAPI::Util::spinRunLoop();
-    EXPECT_NOT_NULL([webView _safeBrowsingWarning]);
+    EXPECT_NOT_NULL([webView _browsingWarning]);
 
-    checkTitleAndClick([webView _safeBrowsingWarning].subviews.firstObject.subviews[3], "Go Back");
+    checkTitleAndClick([webView _browsingWarning].subviews.firstObject.subviews[3], "Go Back");
     TestWebKitAPI::Util::run(&didFailNavigation);
 
     EXPECT_EQ(errorCode, NSURLErrorServerCertificateUntrusted);
@@ -2207,12 +2215,12 @@ TEST(WKNavigation, HTTPSOnlyWithSameSiteBypass)
     }];
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
 
-    EXPECT_NULL([webView _safeBrowsingWarning]);
-    while (![webView _safeBrowsingWarning])
+    EXPECT_NULL([webView _browsingWarning]);
+    while (![webView _browsingWarning])
         TestWebKitAPI::Util::spinRunLoop();
-    EXPECT_NOT_NULL([webView _safeBrowsingWarning]);
+    EXPECT_NOT_NULL([webView _browsingWarning]);
 
-    checkTitleAndClick([webView _safeBrowsingWarning].subviews.firstObject.subviews[3], "Go Back");
+    checkTitleAndClick([webView _browsingWarning].subviews.firstObject.subviews[3], "Go Back");
     TestWebKitAPI::Util::run(&didFailNavigation);
 
     EXPECT_EQ(errorCode, NSURLErrorServerCertificateUntrusted);
@@ -2285,12 +2293,12 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure"]]];
 
-    EXPECT_NULL([webView _safeBrowsingWarning]);
-    while (![webView _safeBrowsingWarning])
+    EXPECT_NULL([webView _browsingWarning]);
+    while (![webView _browsingWarning])
         TestWebKitAPI::Util::spinRunLoop();
-    EXPECT_NOT_NULL([webView _safeBrowsingWarning]);
+    EXPECT_NOT_NULL([webView _browsingWarning]);
 
-    checkTitleAndClick([webView _safeBrowsingWarning].subviews.firstObject.subviews[3], "Go Back");
+    checkTitleAndClick([webView _browsingWarning].subviews.firstObject.subviews[3], "Go Back");
     TestWebKitAPI::Util::run(&didFailNavigation);
 
     EXPECT_EQ(errorCode, _WKErrorCodeHTTPSUpgradeRedirectLoop);
@@ -2311,12 +2319,12 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
     loadCount = 0;
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure2"]]];
 
-    EXPECT_NULL([webView _safeBrowsingWarning]);
-    while (![webView _safeBrowsingWarning])
+    EXPECT_NULL([webView _browsingWarning]);
+    while (![webView _browsingWarning])
         TestWebKitAPI::Util::spinRunLoop();
-    EXPECT_NOT_NULL([webView _safeBrowsingWarning]);
+    EXPECT_NOT_NULL([webView _browsingWarning]);
 
-    checkTitleAndClick([webView _safeBrowsingWarning].subviews.firstObject.subviews[3], "Go Back");
+    checkTitleAndClick([webView _browsingWarning].subviews.firstObject.subviews[3], "Go Back");
     TestWebKitAPI::Util::run(&didFailNavigation);
 
     EXPECT_EQ(errorCode, kCFURLErrorHTTPTooManyRedirects);
@@ -2438,9 +2446,9 @@ TEST(WKNavigation, HTTPSFirstWithHTTPRedirect)
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure"]]];
 
-    EXPECT_NULL([webView _safeBrowsingWarning]);
+    EXPECT_NULL([webView _browsingWarning]);
     TestWebKitAPI::Util::run(&finishedSuccessfully);
-    EXPECT_NULL([webView _safeBrowsingWarning]);
+    EXPECT_NULL([webView _browsingWarning]);
     EXPECT_FALSE(didFailNavigation);
     EXPECT_EQ(loadCount, 3);
 
