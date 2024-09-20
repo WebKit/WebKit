@@ -429,6 +429,8 @@ struct ImageAnalysisContextMenuActionData {
 #endif
 
 #if ENABLE(WRITING_TOOLS)
+    BOOL _isPresentingWritingTools;
+
     RetainPtr<WKSTextAnimationManager> _textAnimationManager;
 #endif
 
