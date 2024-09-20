@@ -104,6 +104,7 @@ public:
     }
 
     RealtimeMediaSource& source() { return m_source; }
+    Ref<RealtimeMediaSource> protectedSource() { return source(); }
 
     void audioUnitWillStart() final
     {
@@ -176,7 +177,8 @@ public:
     {
         ASSERT(isMainRunLoop());
 
-        m_pendingAction = m_pendingAction->isResolved() ? action() : m_pendingAction->whenSettled(RunLoop::main(), WTFMove(action));
+        Ref pendingAction = WTFMove(m_pendingAction);
+        m_pendingAction = pendingAction->isResolved() ? action() : pendingAction->whenSettled(RunLoop::protectedMain(), WTFMove(action));
     }
 
     void applyConstraints(WebCore::MediaConstraints&& constraints, CompletionHandler<void(std::optional<RealtimeMediaSource::ApplyConstraintsError>&&)> callback)
@@ -223,9 +225,10 @@ public:
         if (!m_settings) {
             m_settings = m_source->settings();
             if (m_widthConstraint || m_heightConstraint) {
-                auto desiredSize = m_source->computeResizedVideoFrameSize({ m_widthConstraint, m_heightConstraint }, m_source->intrinsicSize());
+                Ref source = m_source;
+                auto desiredSize = source->computeResizedVideoFrameSize({ m_widthConstraint, m_heightConstraint }, source->intrinsicSize());
 
-                auto videoFrameRotation = m_source->videoFrameRotation();
+                auto videoFrameRotation = source->videoFrameRotation();
                 if (videoFrameRotation == VideoFrameRotation::Left || videoFrameRotation == VideoFrameRotation::Right)
                     desiredSize = desiredSize.transposedSize();
 
@@ -261,7 +264,7 @@ public:
                 return GenericPromise::createAndResolve();
             }
 
-            return m_source->takePhoto(WTFMove(photoSettings))->whenSettled(RunLoop::main(), [takePhotoProducer = WTFMove(takePhotoProducer)] (auto&& result) mutable {
+            return protectedSource()->takePhoto(WTFMove(photoSettings))->whenSettled(RunLoop::protectedMain(), [takePhotoProducer = WTFMove(takePhotoProducer)] (auto&& result) mutable {
                 ASSERT(isMainRunLoop());
 
                 takePhotoProducer.settle(WTFMove(result));
@@ -475,11 +478,11 @@ static bool canCaptureFromMultipleCameras()
 CaptureSourceOrError UserMediaCaptureManagerProxy::createCameraSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
 {
     auto& perPageSources = m_pageSources.ensure(pageIdentifier, [] { return PageSources { }; }).iterator->value;
-    for (auto& cameraSource : perPageSources.cameraSources) {
+    for (Ref cameraSource : perPageSources.cameraSources) {
         // FIXME: Optimize multiple concurrent cameras.
-        if (cameraSource.persistentID() == device.persistentId() && !cameraSource.isEnded()) {
+        if (cameraSource->persistentID() == device.persistentId() && !cameraSource->isEnded()) {
             // We can reuse the source, let's do it.
-            auto source = cameraSource.clone();
+            auto source = cameraSource->clone();
             perPageSources.cameraSources.add(source.get());
             return source;
         }
@@ -538,7 +541,7 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
 
     auto source = sourceOrError.source();
 #if !RELEASE_LOG_DISABLED
-    source->setLogger(m_connectionProxy->logger(), LoggerHelper::uniqueLogIdentifier());
+    source->setLogger(m_connectionProxy->protectedLogger(), LoggerHelper::uniqueLogIdentifier());
 #endif
 
     ASSERT(!m_proxies.contains(id));
@@ -553,7 +556,7 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
             return;
         }
 
-        completionHandler({ }, proxy->settings(), proxy->source().capabilities());
+        completionHandler({ }, proxy->settings(), proxy->protectedSource()->capabilities());
         m_proxies.add(id, WTFMove(proxy));
     };
 
@@ -618,7 +621,7 @@ void UserMediaCaptureManagerProxy::capabilities(RealtimeMediaSourceIdentifier id
 {
     RealtimeMediaSourceCapabilities capabilities;
     if (auto* proxy = m_proxies.get(id))
-        capabilities = proxy->source().capabilities();
+        capabilities = proxy->protectedSource()->capabilities();
     completionHandler(WTFMove(capabilities));
 }
 
@@ -626,7 +629,7 @@ void UserMediaCaptureManagerProxy::applyConstraints(RealtimeMediaSourceIdentifie
 {
     auto* proxy = m_proxies.get(id);
     if (!proxy) {
-        m_connectionProxy->connection().send(Messages::UserMediaCaptureManager::ApplyConstraintsFailed(id, { }, "Unknown source"_s), 0);
+        m_connectionProxy->protectedConnection()->send(Messages::UserMediaCaptureManager::ApplyConstraintsFailed(id, { }, "Unknown source"_s), 0);
         return;
     }
 
@@ -640,11 +643,11 @@ void UserMediaCaptureManagerProxy::applyConstraints(RealtimeMediaSourceIdentifie
             return;
 
         if (result) {
-            m_connectionProxy->connection().send(Messages::UserMediaCaptureManager::ApplyConstraintsFailed(id, result->invalidConstraint, result->message), 0);
+            m_connectionProxy->protectedConnection()->send(Messages::UserMediaCaptureManager::ApplyConstraintsFailed(id, result->invalidConstraint, result->message), 0);
             return;
         }
 
-        m_connectionProxy->connection().send(Messages::UserMediaCaptureManager::ApplyConstraintsSucceeded(id, proxy->settings()), 0);
+        m_connectionProxy->protectedConnection()->send(Messages::UserMediaCaptureManager::ApplyConstraintsSucceeded(id, proxy->settings()), 0);
     });
 }
 
@@ -653,7 +656,7 @@ void UserMediaCaptureManagerProxy::clone(RealtimeMediaSourceIdentifier clonedID,
     MESSAGE_CHECK(m_proxies.contains(clonedID));
     MESSAGE_CHECK(!m_proxies.contains(newSourceID));
     if (auto* proxy = m_proxies.get(clonedID)) {
-        auto sourceClone = proxy->source().clone();
+        auto sourceClone = proxy->protectedSource()->clone();
         if (sourceClone->deviceType() == WebCore::CaptureDevice::DeviceType::Camera)
             m_pageSources.ensure(pageIdentifier, [] { return PageSources { }; }).iterator->value.cameraSources.add(sourceClone.get());
 
@@ -674,7 +677,7 @@ void UserMediaCaptureManagerProxy::takePhoto(RealtimeMediaSourceIdentifier sourc
         return;
     }
 
-    proxy->takePhoto(WTFMove(settings))->whenSettled(RunLoop::main(), WTFMove(handler));
+    proxy->takePhoto(WTFMove(settings))->whenSettled(RunLoop::protectedMain(), WTFMove(handler));
 }
 
 
@@ -687,7 +690,7 @@ void UserMediaCaptureManagerProxy::getPhotoCapabilities(RealtimeMediaSourceIdent
         return;
     }
 
-    proxy->getPhotoCapabilities()->whenSettled(RunLoop::main(), WTFMove(handler));
+    proxy->getPhotoCapabilities()->whenSettled(RunLoop::protectedMain(), WTFMove(handler));
 }
 
 void UserMediaCaptureManagerProxy::getPhotoSettings(RealtimeMediaSourceIdentifier sourceID, GetPhotoSettingsCallback&& handler)
@@ -698,7 +701,7 @@ void UserMediaCaptureManagerProxy::getPhotoSettings(RealtimeMediaSourceIdentifie
         return;
     }
 
-    proxy->getPhotoSettings()->whenSettled(RunLoop::main(), [handler = WTFMove(handler)] (auto&& result) mutable {
+    proxy->getPhotoSettings()->whenSettled(RunLoop::protectedMain(), [handler = WTFMove(handler)] (auto&& result) mutable {
         handler(WTFMove(result));
     });
 }

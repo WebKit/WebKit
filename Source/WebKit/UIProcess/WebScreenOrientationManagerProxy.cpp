@@ -45,14 +45,14 @@ WebScreenOrientationManagerProxy::WebScreenOrientationManagerProxy(WebPageProxy&
     : m_page(page)
     , m_currentOrientation(orientation)
 {
-    m_page->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebScreenOrientationManagerProxy::messageReceiverName(), m_page->webPageIDInMainFrameProcess(), *this);
+    protectedPage()->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebScreenOrientationManagerProxy::messageReceiverName(), m_page->webPageIDInMainFrameProcess(), *this);
 }
 
 WebScreenOrientationManagerProxy::~WebScreenOrientationManagerProxy()
 {
     unlockIfNecessary();
 
-    m_page->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::WebScreenOrientationManagerProxy::messageReceiverName(), m_page->webPageIDInMainFrameProcess());
+    protectedPage()->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::WebScreenOrientationManagerProxy::messageReceiverName(), m_page->webPageIDInMainFrameProcess());
 }
 
 const SharedPreferencesForWebProcess& WebScreenOrientationManagerProxy::sharedPreferencesForWebProcess() const
@@ -74,7 +74,7 @@ void WebScreenOrientationManagerProxy::setCurrentOrientation(WebCore::ScreenOrie
     if (!m_shouldSendChangeNotifications)
         return;
 
-    m_page->protectedLegacyMainFrameProcess()->send(Messages::WebScreenOrientationManager::OrientationDidChange(orientation), m_page->webPageIDInMainFrameProcess());
+    protectedPage()->protectedLegacyMainFrameProcess()->send(Messages::WebScreenOrientationManager::OrientationDidChange(orientation), m_page->webPageIDInMainFrameProcess());
     if (m_currentLockRequest)
         m_currentLockRequest(std::nullopt);
 }
@@ -187,5 +187,10 @@ std::optional<WebCore::Exception> WebScreenOrientationManagerProxy::platformShou
     return std::nullopt;
 }
 #endif
+
+Ref<WebPageProxy> WebScreenOrientationManagerProxy::protectedPage() const
+{
+    return m_page.get();
+}
 
 } // namespace WebKit

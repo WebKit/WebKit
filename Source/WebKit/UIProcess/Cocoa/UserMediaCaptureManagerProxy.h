@@ -70,8 +70,10 @@ public:
         virtual void addMessageReceiver(IPC::ReceiverName, IPC::MessageReceiver&) = 0;
         virtual void removeMessageReceiver(IPC::ReceiverName) = 0;
         virtual IPC::Connection& connection() = 0;
+        Ref<IPC::Connection> protectedConnection() { return connection(); }
         virtual bool willStartCapture(WebCore::CaptureDevice::DeviceType) const = 0;
         virtual Logger& logger() = 0;
+        Ref<Logger> protectedLogger() { return logger(); };
         virtual bool setCaptureAttributionString() { return true; }
         virtual const WebCore::ProcessIdentity& resourceOwner() const = 0;
 #if ENABLE(APP_PRIVACY_REPORT)

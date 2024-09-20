@@ -305,7 +305,7 @@ private:
         return dummy.get();
     }
 
-    Ref<WebProcessProxy> protectedProcess() { return m_process.get(); }
+    Ref<WebProcessProxy> protectedProcess() const { return m_process.get(); }
 
     WeakRef<WebProcessProxy> m_process;
 };
