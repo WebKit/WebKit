@@ -45,28 +45,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(FontFaceSet);
 
-Ref<FontFaceSet> FontFaceSet::create(ScriptExecutionContext& context, const Vector<Ref<FontFace>>& initialFaces)
-{
-    Ref<FontFaceSet> result = adoptRef(*new FontFaceSet(context, initialFaces));
-    result->suspendIfNeeded();
-    return result;
-}
-
 Ref<FontFaceSet> FontFaceSet::create(ScriptExecutionContext& context, CSSFontFaceSet& backing)
 {
     Ref<FontFaceSet> result = adoptRef(*new FontFaceSet(context, backing));
     result->suspendIfNeeded();
     return result;
-}
-
-FontFaceSet::FontFaceSet(ScriptExecutionContext& context, const Vector<Ref<FontFace>>& initialFaces)
-    : ActiveDOMObject(&context)
-    , m_backing(CSSFontFaceSet::create())
-    , m_readyPromise(makeUniqueRef<ReadyPromise>(*this, &FontFaceSet::readyPromiseResolve))
-{
-    m_backing->addFontEventClient(*this);
-    for (auto& face : initialFaces)
-        add(face);
 }
 
 FontFaceSet::FontFaceSet(ScriptExecutionContext& context, CSSFontFaceSet& backing)
