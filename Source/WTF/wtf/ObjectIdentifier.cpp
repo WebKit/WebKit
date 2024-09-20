@@ -27,15 +27,27 @@
 #include "ObjectIdentifier.h"
 
 #include "MainThread.h"
+#include "MathExtras.h"
 #include <atomic>
 
 namespace WTF {
 
+static uint64_t currentMainThreadIdentifier;
+static std::atomic<uint64_t> currentThreadSafeIdentifier;
+
+void initializeObjectIdentifierDomain(ObjectIdentifierDomain domain)
+{
+    ASSERT(!currentMainThreadIdentifier);
+    ASSERT(!currentThreadSafeIdentifier);
+    currentMainThreadIdentifier = static_cast<uint64_t>(domain);
+    ASSERT(ctz(currentMainThreadIdentifier) >= 60); // 1 identifier per ns, 2^60 identifiers, 1e18ns. 1e16 ns/year that is still scale of 100 years.
+    currentThreadSafeIdentifier = currentMainThreadIdentifier;
+}
+
 uint64_t ObjectIdentifierMainThreadAccessTraits<uint64_t>::generateIdentifierInternal()
 {
     ASSERT(isMainThread()); // You should use AtomicObjectIdentifier if you're hitting this assertion.
-    static uint64_t current = 0;
-    return ++current;
+    return ++currentMainThreadIdentifier;
 }
 
 TextStream& operator<<(TextStream& ts, const ObjectIdentifierGenericBase<uint64_t>& identifier)
@@ -46,8 +58,7 @@ TextStream& operator<<(TextStream& ts, const ObjectIdentifierGenericBase<uint64_
 
 uint64_t ObjectIdentifierThreadSafeAccessTraits<uint64_t>::generateIdentifierInternal()
 {
-    static std::atomic<uint64_t> current;
-    return ++current;
+    return ++currentThreadSafeIdentifier;
 }
 
 UUID ObjectIdentifierMainThreadAccessTraits<UUID>::generateIdentifierInternal()
