@@ -1023,6 +1023,11 @@ std::optional<T> gstStructureGet(const GstStructure* structure, ASCIILiteral key
 template<typename T>
 std::optional<T> gstStructureGet(const GstStructure* structure, StringView key)
 {
+    if (!structure) {
+        ASSERT_NOT_REACHED_WITH_MESSAGE("tried to access a field of a null GstStructure");
+        return std::nullopt;
+    }
+
     T value;
     auto strKey = key.toStringWithoutCopying();
     if constexpr(std::is_same_v<T, int>) {
@@ -1067,16 +1072,31 @@ template std::optional<bool> gstStructureGet(const GstStructure*, StringView key
 
 StringView gstStructureGetString(const GstStructure* structure, ASCIILiteral key)
 {
+    if (!structure) {
+        ASSERT_NOT_REACHED_WITH_MESSAGE("tried to access a field of a null GstStructure");
+        return { };
+    }
+
     return gstStructureGetString(structure, StringView { key });
 }
 
 StringView gstStructureGetString(const GstStructure* structure, StringView key)
 {
+    if (!structure) {
+        ASSERT_NOT_REACHED_WITH_MESSAGE("tried to access a field of a null GstStructure");
+        return { };
+    }
+
     return StringView::fromLatin1(gst_structure_get_string(structure, static_cast<const char*>(key.rawCharacters())));
 }
 
 StringView gstStructureGetName(const GstStructure* structure)
 {
+    if (!structure) {
+        ASSERT_NOT_REACHED_WITH_MESSAGE("tried to access a field of a null GstStructure");
+        return { };
+    }
+
     return StringView::fromLatin1(gst_structure_get_name(structure));
 }
 

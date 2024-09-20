@@ -3911,6 +3911,9 @@ bool MediaPlayerPrivateGStreamer::updateVideoSinkStatistics()
 
     GUniqueOutPtr<GstStructure> stats;
     g_object_get(m_videoSink.get(), "stats", &stats.outPtr(), nullptr);
+    if (!stats)
+        return false;
+
     auto totalVideoFrames = gstStructureGet<uint64_t>(stats.get(), "rendered"_s);
     auto droppedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "dropped"_s);
 
