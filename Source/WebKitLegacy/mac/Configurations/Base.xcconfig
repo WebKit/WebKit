@@ -111,7 +111,9 @@ ADDITIONAL_SDKS = $(WK_ADDITIONAL_SDKS);
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;
 
-OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
+HEADER_SEARCH_PATHS = . "$(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADERS_FOLDER_PATH)" $(HEADER_SEARCH_PATHS);
+LIBRARY_SEARCH_PATHS = $(SDK_DIR)$(WK_LIBRARY_INSTALL_PATH) $(inherited);
+SYSTEM_HEADER_SEARCH_PATHS = $(WK_PRIVATE_SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_HEADERS_FOLDER_PATH) $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders $(inherited);
 
 LLVM_LTO = $(WK_USER_LTO_MODE_$(WK_LTO_MODE));
 

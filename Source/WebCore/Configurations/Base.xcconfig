@@ -109,7 +109,9 @@ STRIP_INSTALLED_PRODUCT[config=Debug] = NO;
 SDKROOT = macosx.internal;
 ADDITIONAL_SDKS = $(WK_ADDITIONAL_SDKS);
 
-OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
+HEADER_SEARCH_PATHS = . "$(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADERS_FOLDER_PATH)" $(HEADER_SEARCH_PATHS);
+LIBRARY_SEARCH_PATHS = $(SDK_DIR)$(WK_LIBRARY_INSTALL_PATH) $(inherited);
+SYSTEM_HEADER_SEARCH_PATHS = $(WK_PRIVATE_SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_HEADERS_FOLDER_PATH) $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders $(inherited);
 
 // This is required to make LLVM_TARGET_TRIPLE_SUFFIX propagate into scripts.
 LLVM_TARGET_TRIPLE_SUFFIX = $(inherited);
