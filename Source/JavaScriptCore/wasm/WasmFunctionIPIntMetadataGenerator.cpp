@@ -52,23 +52,23 @@ void FunctionIPIntMetadataGenerator::addBlankSpace(size_t size)
 
 void FunctionIPIntMetadataGenerator::addLength(size_t length)
 {
-    IPInt::InstructionLengthMetadata InstructionLengthMetadata {
+    IPInt::InstructionLengthMetadata instructionLength {
         .length = safeCast<uint8_t>(length)
     };
     size_t size = m_metadata.size();
-    m_metadata.grow(size + sizeof(InstructionLengthMetadata));
-    WRITE_TO_METADATA(m_metadata.data() + size, InstructionLengthMetadata, IPInt::InstructionLengthMetadata);
+    m_metadata.grow(size + sizeof(instructionLength));
+    WRITE_TO_METADATA(m_metadata.data() + size, instructionLength, IPInt::InstructionLengthMetadata);
 }
 
 void FunctionIPIntMetadataGenerator::addLEB128ConstantInt32AndLength(uint32_t value, size_t length)
 {
-    IPInt::const32Metadata mdConst {
+    IPInt::Const32Metadata mdConst {
         .instructionLength = { .length = safeCast<uint8_t>(length) },
         .value = value
     };
     size_t size = m_metadata.size();
     m_metadata.grow(size + sizeof(mdConst));
-    WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::const32Metadata);
+    WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::Const32Metadata);
 }
 
 void FunctionIPIntMetadataGenerator::addLEB128ConstantAndLengthForType(Type type, uint64_t value, size_t length)
@@ -82,42 +82,42 @@ void FunctionIPIntMetadataGenerator::addLEB128ConstantAndLengthForType(Type type
             m_metadata.grow(size + sizeof(mdConst));
             WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::InstructionLengthMetadata);
         } else {
-            IPInt::const32Metadata mdConst {
+            IPInt::Const32Metadata mdConst {
                 .instructionLength = { .length = safeCast<uint8_t>(length) },
                 .value = static_cast<uint32_t>(value)
             };
             m_metadata.grow(size + sizeof(mdConst));
-            WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::const32Metadata);
+            WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::Const32Metadata);
         }
     } else if (type.isI64()) {
         size_t size = m_metadata.size();
-        IPInt::const64Metadata mdConst {
+        IPInt::Const64Metadata mdConst {
             .instructionLength = { .length = safeCast<uint8_t>(length) },
             .value = static_cast<uint64_t>(value)
         };
         m_metadata.grow(size + sizeof(mdConst));
-        WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::const64Metadata);
-    }  else if (type.isFuncref()) {
+        WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::Const64Metadata);
+    } else if (type.isRef() || type.isRefNull() || type.isFuncref()) {
         size_t size = m_metadata.size();
-        IPInt::const32Metadata mdConst {
+        IPInt::Const32Metadata mdConst {
             .instructionLength = { .length = safeCast<uint8_t>(length) },
             .value = static_cast<uint32_t>(value)
         };
         m_metadata.grow(size + sizeof(mdConst));
-        WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::const32Metadata);
+        WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::Const32Metadata);
     } else if (!type.isF32() && !type.isF64())
         ASSERT_NOT_IMPLEMENTED_YET();
 }
 
 void FunctionIPIntMetadataGenerator::addLEB128V128Constant(v128_t value, size_t length)
 {
-    IPInt::const128Metadata mdConst {
+    IPInt::Const128Metadata mdConst {
         .instructionLength = { .length = safeCast<uint8_t>(length) },
         .value = value
     };
     size_t size = m_metadata.size();
     m_metadata.grow(size + sizeof(mdConst));
-    WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::const128Metadata);
+    WRITE_TO_METADATA(m_metadata.data() + size, mdConst, IPInt::Const128Metadata);
 }
 
 void FunctionIPIntMetadataGenerator::addReturnData(const Vector<Type, 16>& types)
@@ -130,21 +130,18 @@ void FunctionIPIntMetadataGenerator::addReturnData(const Vector<Type, 16>& types
     // 0x02: fr0
     // 0x03: stack (TODO)
     // 0x04: return
-    Vector<uint8_t, 16> uINTBytecode;
     int gprsUsed = 0;
     int fprsUsed = 0;
     for (size_t i = 0; i < types.size(); ++i) {
         auto type = types[i];
         if ((type.isF32() || type.isF64()) && fprsUsed != returnFPRs)
-            uINTBytecode.append(2 + fprsUsed++);
+            m_uINTBytecode.append(2 + fprsUsed++);
         else if (gprsUsed != returnGPRs)
-            uINTBytecode.append(gprsUsed++);
+            m_uINTBytecode.append(gprsUsed++);
         else
-            uINTBytecode.append(0x03);
+            m_uINTBytecode.append(0x03);
     }
-    uINTBytecode.append(0x04);
-    m_returnMetadata = m_metadata.size();
-    m_metadata.appendVector(uINTBytecode);
+    m_uINTBytecode.append(0x04);
 }
 
 } }

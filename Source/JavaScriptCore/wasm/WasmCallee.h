@@ -486,12 +486,13 @@ public:
     // I couldn't figure out how to stop LLIntOffsetsExtractor.cpp from yelling at me.
     // So just making these public.
     const uint8_t* m_bytecode;
-    const uint32_t m_bytecodeLength;
+    const uint8_t* m_bytecodeEnd;
     Vector<uint8_t> m_metadataVector;
     const uint8_t* m_metadata;
     Vector<uint8_t> m_argumINTBytecode;
     const uint8_t* m_argumINTBytecodePointer;
-    const uint32_t m_returnMetadata;
+    Vector<uint8_t> m_uINTBytecode;
+    const uint8_t* m_uINTBytecodePointer;
 
     unsigned m_localSizeToAlloc;
     unsigned m_numRethrowSlotsToAlloc;

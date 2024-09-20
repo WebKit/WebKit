@@ -53,32 +53,32 @@ namespace IPInt {
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(prologue_osr, CallFrame* callFrame);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(loop_osr, CallFrame* callFrame, uint32_t pc, uint64_t* pl);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(loop_osr, CallFrame* callFrame, uint8_t* pc, IPIntLocal* pl);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(epilogue_osr, CallFrame* callFrame);
 #endif
 
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(retrieve_and_clear_exception, CallFrame*, v128_t* stack, uint64_t* pl);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(throw_exception, CallFrame*, uint64_t* arguments, unsigned exceptionIndex);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(retrieve_and_clear_exception, CallFrame*, IPIntStackEntry* stack, IPIntLocal* pl);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(throw_exception, CallFrame*, IPIntStackEntry* arguments, unsigned exceptionIndex);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(rethrow_exception, CallFrame*, uint64_t* pl, unsigned tryDepth);
 
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(ref_func, unsigned index);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_get, unsigned, unsigned);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_set, unsigned tableIndex, unsigned index, EncodedJSValue value);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_init, tableInitMetadata* metadata);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_fill, tableFillMetadata* metadata);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_grow, tableGrowMetadata* metadata);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_init, IPIntStackEntry* sp, TableInitMetadata* metadata);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_fill, IPIntStackEntry* sp, TableFillMetadata* metadata);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_grow, IPIntStackEntry* sp, TableGrowMetadata* metadata);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL_1P(current_memory);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_grow, int32_t);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_init, int32_t, int32_t, int64_t);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_init, int32_t, IPIntStackEntry*);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(data_drop, int32_t);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_copy, int32_t, int32_t, int32_t);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_fill, int32_t, int32_t, int32_t);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(elem_drop, int32_t);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_copy, tableCopyMetadata* metadata);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_copy, IPIntStackEntry* sp, TableCopyMetadata* metadata);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(table_size, int32_t);
 
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(call_indirect, callIndirectMetadata* call);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(call, callMetadata* call);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(call_indirect, CallFrame* callFrame, unsigned* functionIndex, CallIndirectMetadata* call);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(call, unsigned functionIndex, EncodedJSValue* callee);
 
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(set_global_ref, uint32_t globalIndex, JSValue value);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(get_global_64, unsigned);

@@ -123,6 +123,7 @@ LLINT_DECLARE_ROUTINE_VALIDATE(fuzzer_return_early_from_loop_hint);
 LLINT_DECLARE_ROUTINE_VALIDATE(js_to_wasm_wrapper_entry);
 LLINT_DECLARE_ROUTINE_VALIDATE(wasm_to_wasm_wrapper_entry);
 LLINT_DECLARE_ROUTINE_VALIDATE(wasm_to_js_wrapper_entry);
+LLINT_DECLARE_ROUTINE_VALIDATE(ipint_trampoline);
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
 #define LLINT_OP_EXTRAS(validateLabel) bitwise_cast<void*>(validateLabel)
@@ -181,6 +182,7 @@ static LLIntOperations llintOperations()
             LLINT_ROUTINE(js_to_wasm_wrapper_entry)
             LLINT_ROUTINE(wasm_to_wasm_wrapper_entry)
             LLINT_ROUTINE(wasm_to_js_wrapper_entry)
+            LLINT_ROUTINE(ipint_trampoline)
 
             LLINT_OP(op_catch)
             LLINT_OP(wasm_catch)

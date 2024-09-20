@@ -6,12 +6,12 @@
 
 macro saveIPIntRegisters()
     subp IPIntCalleeSaveSpaceStackAligned, sp
-    store2ia PM, PB, -8[cfr]
+    store2ia MC, PC, -8[cfr]
     storep wasmInstance, -16[cfr]
 end
 
 macro restoreIPIntRegisters()
-    load2ia -8[cfr], PM, PB
+    load2ia -8[cfr], MC, PC
     loadp -16[cfr], wasmInstance
     addp IPIntCalleeSaveSpaceStackAligned, sp
 end
@@ -25,7 +25,7 @@ macro nextIPIntInstruction()
     # bpeq t0, 0, .fine
     # break
 # .fine:
-    loadb [PB, PC, 1], t0
+    loadb [PC], t0
 if ARMv7
     lshiftp 8, t0
     leap (_ipint_unreachable + 1), t1
@@ -132,7 +132,7 @@ macro ipintEntry()
     move sp, t6
     subp t7, sp
     move sp, t7
-    loadp Wasm::IPIntCallee::m_argumINTBytecodePointer[ws0], PM
+    loadp Wasm::IPIntCallee::m_argumINTBytecodePointer[ws0], MC
 
     push csr1, t4, t5
 
@@ -143,8 +143,8 @@ macro ipintEntry()
 end
 
 macro argumINTDispatch()
-    loadb [PM], csr1
-    addp 1, PM
+    loadb [MC], csr1
+    addp 1, MC
     lshiftp 6, csr1
     leap (_argumINT_begin + 1), t7
     addp csr1, t7
@@ -179,8 +179,8 @@ reservedOpcode(0xa)
 
 
 macro uintDispatch()
-    loadb [PM], t6
-    addp 1, PM
+    loadb [MC], t6
+    addp 1, MC
     bilt t6, 5, .safe
     break
 .safe:
@@ -193,14 +193,13 @@ end
 
 instructionLabel(_end)
     #loadp UnboxedWasmCalleeStackSlot[cfr], ws0
-    loadi Wasm::IPIntCallee::m_bytecodeLength[ws0], t0
-    subp 1, t0
+    loadi Wasm::IPIntCallee::m_bytecodeEnd[ws0], t0
     bpeq PC, t0, .ipint_end_ret
     advancePC(1)
     nextIPIntInstruction()
 .ipint_end_ret:
+    loadp Wasm::IPIntCallee::m_uINTBytecodePointer[ws0], MC
     ipintEpilogueOSR(10)
-    addp MC, PM
     uintDispatch()
 
 unimplementedInstruction(_br)
@@ -1056,7 +1055,7 @@ _uint_begin:
 uintAlign(_r1)
     break
 
-uintAlign(_fr1)
+uintAlign(_fr0)
     break
 
 uintAlign(_stack)

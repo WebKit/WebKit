@@ -712,7 +712,7 @@ extern "C" void ipint_catch_all_entry();
 #define FOR_EACH_IPINT_UINT_OPCODE(m) \
     m(0x00, uint_r0) \
     m(0x01, uint_r1) \
-    m(0x02, uint_fr1) \
+    m(0x02, uint_fr0) \
     m(0x03, uint_stack) \
     m(0x04, uint_ret) \
 

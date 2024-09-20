@@ -22,98 +22,135 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# IPInt: the WASM in-place interpreter
-# DISCLAIMER: not tested on x86 yet (as of 05 Jul 2023); IPInt may break *very* badly.
+# IPInt: the Wasm in-place interpreter
 #
-# docs by Daniel Liu <daniel_liu4@apple.com / danlliu@umich.edu>; 2023 intern project
+# docs by Daniel Liu <daniel_liu4@apple.com>; started as a 2023 intern project
 #
-# 0. OfflineASM:
-# --------------
-#
-# For a crash course on OfflineASM, check out LowLevelInterpreter.asm.
-#
-# 1. Code Structure
-# -----------------
-#
-# IPInt is designed to start up quickly and interpret WASM code efficiently. To optimize for speed, we utilize a jump
-# table, using the opcode's first byte as an offset. This jump table is set up in _ipint_setup. 
-# For more complex opcodes (ex. SIMD), we define additional jump tables that utilize further bytes as indices.
-#
-# 2. Setting Up
-# -------------
-#
-# Before we can execute WebAssembly, we have to handle the call frame that is given to us. This is handled in _ipint_entry.
-# We start by saving registers to the stack as per the system calling convention. Then, we have IPInt specific logic:
-#
-# 2.1. Locals
-# -----------
-#
-# To ensure that we are able to access local variables quickly, we allocate a section of the stack to store local variables.
-# We allocate 8 bytes for each local variable on the stack.
-#
-# Additionally, we need to load the parameters to the function into local variables. As per the calling convention, arguments
-# are passed via registers, and then on the stack if all argument registers have been exhausted. Thus, we need to handle those
-# cases. We keep track of the number of arguments in IPIntCallee, allowing us to know exactly where to load arguments from.
-#
-# Finally, we set the value of the `PL` (pointer to locals) register to the position of the first local. This allows us to quickly
-# index into locals.
-#
-# 2.2. Bytecode and Metadata
-# --------------------------
-#
-# The final step before executing is to load the bytecode to execute, as well as the metadata. For an explanation of why we use
-# metadata in IPInt, check out WasmIPIntGenerator.cpp. We load these into registers `PB` (pointer to bytecode) and `PM` (pointer
-# to metadata). Additionally, registers `PC` (program counter) and `MC` (metadata counter) are set to 0.
-#
-# 3. Executing WebAssembly
-# ------------------------
-#
-# WebAssembly execution revolves around a stack machine, which we run on the program stack. We work with the constraint
-# that the stack must be 16B aligned by ensuring that pushes and pops are always 16B. This makes certain opcodes (ex. drop)
-# much easier as well.
-#
-# For each instruction, we align its assembly to a 256B boundary. Thus, we can take (address of instruction 0) + opcode * 256
-# to find the exact point where we need to jump for each opcode without any dependent loads.
-#
-# 4. Returning
-# ------------
-#
-# To return values to the caller, IPInt uses the standard WebAssembly calling convention. Return values are passed in the
-# system return registers, and on the stack if not possible. After this, we perform cleanup logic to reset the stack to its
-# original state, and return to the caller.
+# Contents:
+# 0. Documentation comments
+# 1. Interpreter definitions
+#   1.1: Register definitions
+#   1.2: Constant definitions
+# 2. Core interpreter macros
+# 3. Helper interpreter macros
+# 4. Interpreter entrypoints
+# 5. Instruction implementation
 #
 
-#################################
-# Register and Size Definitions #
-#################################
+##############################
+# 1. Interpreter definitions #
+##############################
 
-# PC = t4
-if X86_64 or ARM64 or ARM64E or RISCV64
-    const MC = t5  # Metadata counter (index into metadata)
-    const PL = t6  # Pointer to locals (index into locals)
-elsif ARMv7
-    const MC = t6
-    const PL = t7
-else
-    const MC = invalidGPR
-    const PL = invalidGPR
-end
-const PM = metadataTable
+# -------------------------
+# 1.1: Register definitions
+# -------------------------
+
+# IPInt uses a number of core registers which store the interpreter's state:
+# - PC: (Program Counter) IPInt's program counter. This records the interpreter's position in Wasm bytecode.
+# - MC: (Metadata Counter) IPInt's metadata pointer. This records the corresponding position in generated metadata.
+# - WI: (Wasm Instance) pointer to the current JSWebAssemblyInstance object. This is used for accessing
+#       function-specific data.
+# - PL: (Pointer to Locals) pointer to the address of local 0 in the current function. This is used for accessing
+#       locals quickly.
+# - MB: (Memory Base) pointer to the current Wasm memory base address.
+# - BC: (Bounds Check) the size of the current Wasm memory region, for bounds checking.
+#
+# Additionally, there are a few registers that are optionally supported for optimization:
+# - IB: (Instruction Base) pointer to the address of the `unreachable` (0x00) label, removing the need to reload
+#       this address at every dispatch.
+# - HR: (Hoist Register) used for hoisting the load of the next opcode in Wasm instructions with low register
+#       pressure, helping reduce the impact of load misses.
+#
+# Finally, we provide four "sc" (safe for call) registers which are guaranteed to not overlap with argument
+# registers (sc0, sc1, sc2, sc3)
 
 if ARM64 or ARM64E
-    const IB = t7  # instruction base
+    const PC = csr7
+    const MC = csr6
+    const WI = csr0
+    const PL = t6
+    const MB = csr3
+    const BC = csr4
+
+    const IB = t7
+    const HR = t3
+
+    const sc0 = ws0
+    const sc1 = ws1
+    const sc2 = ws2
+    const sc3 = ws3
+elsif X86_64
+    const PC = csr2
+    const MC = csr1
+    const WI = csr0
+    const PL = t6
+    const MB = csr3
+    const BC = csr4
+
+    const IB = invalidGPR
+    const HR = invalidGPR
+
+    const sc0 = t0
+    const sc1 = t4
+    const sc2 = t7
+    const sc3 = t5
+elsif RISCV64
+    const PC = csr7
+    const MC = csr6
+    const WI = csr0
+    const PL = csr10
+    const MB = csr3
+    const BC = csr4
+
+    const IB = invalidGPR
+    const HR = invalidGPR
+
+    const sc0 = ws0
+    const sc1 = ws1
+    const sc2 = csr9
+    const sc3 = csr10
+elsif ARMv7
+    const PC = csr1
+    const MC = t6
+    const WI = csr0
+    const PL = t7
+    const MB = invalidGPR
+    const BC = invalidGPR
+
+    const IB = invalidGPR
+    const HR = invalidGPR
+
+    const sc0 = t4
+    const sc1 = t5
+    const sc2 = t6
+    const sc3 = t7
+else
+    const PC = invalidGPR
+    const MC = invalidGPR
+    const WI = invalidGPR
+    const PL = invalidGPR
+    const MB = invalidGPR
+    const BC = invalidGPR
+
+    const IB = invalidGPR
+    const HR = invalidGPR
+
+    const sc0 = invalidGPR
+    const sc1 = invalidGPR
+    const sc2 = invalidGPR
+    const sc3 = invalidGPR
 end
 
-# TODO: SIMD support, since locals will need double the space. Can we do it only sometimes?
-# May just need to write metadata that rewrites offsets. May be worth the space savings.
-# Actually, what if we just use the same thing but have a SIMD section separately allocated that
-# is "pointed" to by the 8B entries on the stack? Easier and we only need to allocate SIMD when we need
-# instead of blowing up the stack. Argument copying a little trickier though.
+# -------------------------
+# 1.2: Constant definitions
+# -------------------------
 
 const PtrSize = constexpr (sizeof(void*))
 const MachineRegisterSize = constexpr (sizeof(CPURegister))
 const SlotSize = constexpr (sizeof(Register))
-const LocalSize = SlotSize
+
+# amount of memory a local takes up on the stack (16 bytes for a v128)
+const LocalSize = 16
 const StackValueSize = 16
 
 const wasmInstance = csr0
@@ -127,17 +164,44 @@ end
 
 const UnboxedWasmCalleeStackSlot = CallerFrame - constexpr Wasm::numberOfIPIntCalleeSaveRegisters * SlotSize - MachineRegisterSize
 
-##########
-# Macros #
-##########
-
-# Callee Save
-
 # FIXME: This happens to work because UnboxedWasmCalleeStackSlot sits in the extra space we should be more precise in case we want to use an even number of callee saves in the future.
-const IPIntCalleeSaveSpaceStackAligned = 2*CalleeSaveSpaceStackAligned
+const IPIntCalleeSaveSpaceAsVirtualRegisters = constexpr Wasm::numberOfIPIntCalleeSaveRegisters + constexpr Wasm::numberOfIPIntInternalRegisters
+const IPIntCalleeSaveSpaceStackAligned = (IPIntCalleeSaveSpaceAsVirtualRegisters * SlotSize + StackAlignment - 1) & ~StackAlignmentMask
+const IPIntCalleeSaveSpaceStackAligned = 2*IPIntCalleeSaveSpaceStackAligned
+
+# ---------------------------
+# 1.2: Optional optimizations
+# ---------------------------
+
+macro IfIPIntUsesIB(m)
+    if ARM64 or ARM64E
+        m()
+    end
+end
+
+macro IfIPIntUsesHR(m, m2)
+    if ARM64 or ARM64E
+        m()
+    else
+        m2()
+    end
+end
+
+macro HoistNextOpcode(offset)
+    IfIPIntUsesHR(macro()
+        loadb offset[PC], HR
+    end, macro() end)
+end
+
+##############################
+# 2. Core interpreter macros #
+##############################
+
+# -----------------------------------
+# 2.1: Core interpreter functionality
+# -----------------------------------
 
 # Get IPIntCallee object at startup
-
 macro getIPIntCallee()
     loadp Callee[cfr], ws0
 if JSVALUE64
@@ -150,7 +214,6 @@ end
 end
 
 # Tail-call dispatch
-
 macro advancePC(amount)
     addp amount, PC
 end
@@ -168,7 +231,6 @@ macro advanceMCByReg(amount)
 end
 
 # Typed push/pop to make code pretty
-
 macro pushFloat32FT0()
     pushFPR()
 end
@@ -201,6 +263,51 @@ macro popFloat64FT1()
     popFPR1()
 end
 
+macro decodeLEBVarUInt32(offset, dst, scratch1, scratch2, scratch3, scratch4)
+    # if it's a single byte, fastpath it
+    const tempPC = scratch4
+    leap offset[PC], tempPC
+    loadb [tempPC], dst
+
+    bbb dst, 0x80, .fastpath
+    # otherwise, set up for second iteration
+    # next shift is 7
+    move 7, scratch1
+    # take off high bit
+    subi 0x80, dst
+.loop:
+    addp 1, tempPC
+    loadb [tempPC], scratch2
+    # scratch3 = high bit 7
+    # leave scratch2 with low bits 6-0
+    move 0x80, scratch3
+    andi scratch2, scratch3
+    xori scratch3, scratch2
+    lshifti scratch1, scratch2
+    addi 7, scratch1
+    ori scratch2, dst
+    bbneq scratch3, 0, .loop
+.fastpath:
+end
+
+macro checkStackOverflow(callee, scratch)
+    loadi Wasm::IPIntCallee::m_maxFrameSizeInV128[callee], scratch
+    lshiftp 4, scratch
+    subp cfr, scratch, scratch
+
+    bpa scratch, cfr, .stackOverflow
+    bpbeq JSWebAssemblyInstance::m_softStackLimit[wasmInstance], scratch, .stackHeightOK
+
+.stackOverflow:
+    ipintException(StackOverflow)
+
+.stackHeightOK:
+end
+
+# ----------------------
+# 2.2: Code organization
+# ----------------------
+
 # Instruction labels
 # Important Note: If you don't use the unaligned global label from C++ (in our case we use the
 # labels in InPlaceInterpreter.cpp) then some linkers will still remove the definition which
@@ -227,8 +334,11 @@ macro reservedOpcode(opcode)
     unimplementedInstruction(_reserved_%opcode%)
 end
 
-# Memory
+# ---------------------------------------
+# 2.3: Interacting with the outside world
+# ---------------------------------------
 
+# Memory
 macro ipintReloadMemory()
     if ARM64 or ARM64E
         loadpairq JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase, boundsCheckingSize
@@ -274,14 +384,12 @@ macro operationCallMayThrow(fn)
 end
 
 # Exception handling
-
 macro ipintException(exception)
     storei constexpr Wasm::ExceptionType::%exception%, ArgumentCountIncludingThis + PayloadOffset[cfr]
     jmp _wasm_throw_from_slow_path_trampoline
 end
 
 # OSR
-
 macro ipintPrologueOSR(increment)
 if JIT and not ARMv7
     loadp UnboxedWasmCalleeStackSlot[cfr], ws0
@@ -404,38 +512,9 @@ if JIT and not ARMv7
 end
 end
 
-
-
-macro decodeLEBVarUInt32(offset, dst, scratch1, scratch2, scratch3, scratch4)
-    # if it's a single byte, fastpath it
-    const tempPC = scratch4
-    leap offset[PC], tempPC
-    loadb [PB, tempPC], dst
-
-    bbb dst, 0x80, .fastpath
-    # otherwise, set up for second iteration
-    # next shift is 7
-    move 7, scratch1
-    # take off high bit
-    subi 0x80, dst
-.loop:
-    addp 1, tempPC
-    loadb [PB, tempPC], scratch2
-    # scratch3 = high bit 7
-    # leave scratch2 with low bits 6-0
-    move 0x80, scratch3
-    andi scratch2, scratch3
-    xori scratch3, scratch2
-    lshifti scratch1, scratch2
-    addi 7, scratch1
-    ori scratch2, dst
-    bbneq scratch3, 0, .loop
-.fastpath:
-end
-
-########################
-# In-Place Interpreter #
-########################
+################################
+# 3. Helper interpreter macros #
+################################
 
 macro argumINTAlign(instrname)
     aligned _ipint_argumINT%instrname%_validate 64
@@ -455,22 +534,13 @@ macro uintAlign(instrname)
     _uint%instrname%:
 end
 
-macro checkStackOverflow(callee, scratch)
-    loadi Wasm::IPIntCallee::m_maxFrameSizeInV128[callee], scratch
-    lshiftp 4, scratch
-    subp cfr, scratch, scratch
-
-    bpa scratch, cfr, .stackOverflow
-    bpbeq JSWebAssemblyInstance::m_softStackLimit[wasmInstance], scratch, .stackHeightOK
-
-.stackOverflow:
-    ipintException(StackOverflow)
-
-.stackHeightOK:
-end
+##############################
+# 4. Interpreter entrypoints #
+##############################
 
 global _ipint_entry
 _ipint_entry:
+.ipint_entry:
 if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
     preserveCallerPCAndCFR()
     saveIPIntRegisters()
@@ -492,13 +562,11 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
 
     move sp, PL
 
-    if ARM64 or ARM64E
+    IfIPIntUsesIB(macro ()
         pcrtoaddr _ipint_unreachable, IB
-    end
-    loadp Wasm::IPIntCallee::m_bytecode[ws0], PB
-    move 0, PC
-    loadp Wasm::IPIntCallee::m_metadata[ws0], PM
-    move 0, MC
+    end)
+    loadp Wasm::IPIntCallee::m_bytecode[ws0], PC
+    loadp Wasm::IPIntCallee::m_metadata[ws0], MC
     # Load memory
     ipintReloadMemory()
 
@@ -521,77 +589,6 @@ else
     ret
 end
 
-global _ipint_entry_simd
-_ipint_entry_simd:
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
-    preserveCallerPCAndCFR()
-    saveIPIntRegisters()
-    storep wasmInstance, CodeBlock[cfr]
-    getIPIntCallee()
-
-    checkStackOverflow(ws0, csr3)
-
-    # Allocate space for locals and rethrow values
-    if ARM64 or ARM64E
-        loadpairi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0, csr3
-    else
-        loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0
-        loadi Wasm::IPIntCallee::m_numRethrowSlotsToAlloc[ws0], csr3
-    end
-    addq csr3, csr0
-    mulq LocalSize, csr0
-    move sp, csr3
-    subq csr0, sp
-    move sp, csr4
-    loadp Wasm::IPIntCallee::m_argumINTBytecodePointer[ws0], PM
-
-    push csr0, csr1, csr2, csr3
-
-    # PM = location in argumINT bytecode
-    # csr0 = tmp
-    # csr1 = dst
-    # csr2 = src
-    # csr3 = end
-    # csr4 = for dispatch
-
-const argumINTDest = csr1
-const argumINTSrc = csr2
-    move csr4, argumINTDest
-    leap FirstArgumentOffset[cfr], argumINTSrc
-
-    argumINTDispatch()
-
-.ipint_entry_end_local_simd:
-    # zero out remaining locals
-    bqeq argumINTDest, csr3, .ipint_entry_finish_zero_simd
-    storeq 0, [argumINTDest]
-    addq 8, argumINTDest
-
-    jmp .ipint_entry_end_local_simd
-.ipint_entry_finish_zero_simd:
-    pop csr3, csr2, csr1, csr0
-
-    loadp CodeBlock[cfr], wasmInstance
-    # OSR Check
-    ipintPrologueOSR(5)
-
-    move sp, PL
-
-    if ARM64 or ARM64E
-        pcrtoaddr _ipint_unreachable, IB
-    end
-    loadp Wasm::IPIntCallee::m_bytecode[ws0], PB
-    move 0, PC
-    loadp Wasm::IPIntCallee::m_metadata[ws0], PM
-    move 0, MC
-    # Load memory
-    ipintReloadMemory()
-
-    nextIPIntInstruction()
-else
-    break
-end
-
 macro ipintCatchCommon()
     getVMFromCallFrame(t3, t0)
     restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
@@ -608,8 +605,10 @@ macro ipintCatchCommon()
     if ARM64 or ARM64E
         pcrtoaddr _ipint_unreachable, IB
     end
-    loadp Wasm::IPIntCallee::m_bytecode[ws0], PB
-    loadp Wasm::IPIntCallee::m_metadata[ws0], PM
+    loadp Wasm::IPIntCallee::m_bytecode[ws0], t0
+    loadp Wasm::IPIntCallee::m_metadata[ws0], t1
+    addp t0, PC
+    addp t1, MC
 
     # Recompute PL
     if ARM64 or ARM64E
@@ -619,12 +618,11 @@ macro ipintCatchCommon()
         loadi Wasm::IPIntCallee::m_numRethrowSlotsToAlloc[ws0], t1
     end
     addq t1, t0
-    # FIXME: Can this be an leaq?
     mulq LocalSize, t0
     addq IPIntCalleeSaveSpaceStackAligned, t0
     subq cfr, t0, PL
 
-    loadi [PM, MC], t0
+    loadi [MC], t0
     # 1 << 4 == StackValueSize
     lshiftq 4, t0
     addq IPIntCalleeSaveSpaceStackAligned, t0
@@ -665,17 +663,23 @@ else
     break
 end
 
-# Value-representation-specific code.
+# Trampoline entrypoints
+
+op(ipint_trampoline, macro ()
+    tagReturnAddress sp
+    jmp .ipint_entry
+end)
+
+#################################
+# 5. Instruction implementation #
+#################################
+
 if JSVALUE64 and (ARM64 or ARM64E or X86_64)
     include InPlaceInterpreter64
 elsif ARMv7
     include InPlaceInterpreter32_64
 else
 # For unimplemented architectures: make sure that the assertions can still find the labels
-
-    #############################
-    # 0x00 - 0x11: control flow #
-    #############################
 
 unimplementedInstruction(_unreachable)
 unimplementedInstruction(_nop)
@@ -709,11 +713,6 @@ unimplementedInstruction(_select_t)
 reservedOpcode(0x1d)
 reservedOpcode(0x1e)
 reservedOpcode(0x1f)
-
-    ###################################
-    # 0x20 - 0x26: get and set values #
-    ###################################
-
 unimplementedInstruction(_local_get)
 unimplementedInstruction(_local_set)
 unimplementedInstruction(_local_tee)
@@ -747,20 +746,10 @@ unimplementedInstruction(_i64_store16_mem)
 unimplementedInstruction(_i64_store32_mem)
 unimplementedInstruction(_memory_size)
 unimplementedInstruction(_memory_grow)
-
-    ################################
-    # 0x41 - 0x44: constant values #
-    ################################
-
 unimplementedInstruction(_i32_const)
 unimplementedInstruction(_i64_const)
 unimplementedInstruction(_f32_const)
 unimplementedInstruction(_f64_const)
-
-    ###############################
-    # 0x45 - 0x4f: i32 comparison #
-    ###############################
-
 unimplementedInstruction(_i32_eqz)
 unimplementedInstruction(_i32_eq)
 unimplementedInstruction(_i32_ne)
@@ -772,11 +761,6 @@ unimplementedInstruction(_i32_le_s)
 unimplementedInstruction(_i32_le_u)
 unimplementedInstruction(_i32_ge_s)
 unimplementedInstruction(_i32_ge_u)
-
-    ###############################
-    # 0x50 - 0x5a: i64 comparison #
-    ###############################
-
 unimplementedInstruction(_i64_eqz)
 unimplementedInstruction(_i64_eq)
 unimplementedInstruction(_i64_ne)
@@ -788,33 +772,18 @@ unimplementedInstruction(_i64_le_s)
 unimplementedInstruction(_i64_le_u)
 unimplementedInstruction(_i64_ge_s)
 unimplementedInstruction(_i64_ge_u)
-
-    ###############################
-    # 0x5b - 0x60: f32 comparison #
-    ###############################
-
 unimplementedInstruction(_f32_eq)
 unimplementedInstruction(_f32_ne)
 unimplementedInstruction(_f32_lt)
 unimplementedInstruction(_f32_gt)
 unimplementedInstruction(_f32_le)
 unimplementedInstruction(_f32_ge)
-
-    ###############################
-    # 0x61 - 0x66: f64 comparison #
-    ###############################
-
 unimplementedInstruction(_f64_eq)
 unimplementedInstruction(_f64_ne)
 unimplementedInstruction(_f64_lt)
 unimplementedInstruction(_f64_gt)
 unimplementedInstruction(_f64_le)
 unimplementedInstruction(_f64_ge)
-
-    ###############################
-    # 0x67 - 0x78: i32 operations #
-    ###############################
-
 unimplementedInstruction(_i32_clz)
 unimplementedInstruction(_i32_ctz)
 unimplementedInstruction(_i32_popcnt)
@@ -833,11 +802,6 @@ unimplementedInstruction(_i32_shr_s)
 unimplementedInstruction(_i32_shr_u)
 unimplementedInstruction(_i32_rotl)
 unimplementedInstruction(_i32_rotr)
-
-    ###############################
-    # 0x79 - 0x8a: i64 operations #
-    ###############################
-
 unimplementedInstruction(_i64_clz)
 unimplementedInstruction(_i64_ctz)
 unimplementedInstruction(_i64_popcnt)
@@ -856,11 +820,6 @@ unimplementedInstruction(_i64_shr_s)
 unimplementedInstruction(_i64_shr_u)
 unimplementedInstruction(_i64_rotl)
 unimplementedInstruction(_i64_rotr)
-
-    ###############################
-    # 0x8b - 0x98: f32 operations #
-    ###############################
-
 unimplementedInstruction(_f32_abs)
 unimplementedInstruction(_f32_neg)
 unimplementedInstruction(_f32_ceil)
@@ -875,11 +834,6 @@ unimplementedInstruction(_f32_div)
 unimplementedInstruction(_f32_min)
 unimplementedInstruction(_f32_max)
 unimplementedInstruction(_f32_copysign)
-
-    ###############################
-    # 0x99 - 0xa6: f64 operations #
-    ###############################
-
 unimplementedInstruction(_f64_abs)
 unimplementedInstruction(_f64_neg)
 unimplementedInstruction(_f64_ceil)
@@ -894,11 +848,6 @@ unimplementedInstruction(_f64_div)
 unimplementedInstruction(_f64_min)
 unimplementedInstruction(_f64_max)
 unimplementedInstruction(_f64_copysign)
-
-    ############################
-    # 0xa7 - 0xc4: conversions #
-    ############################
-
 unimplementedInstruction(_i32_wrap_i64)
 unimplementedInstruction(_i32_trunc_f32_s)
 unimplementedInstruction(_i32_trunc_f32_u)
@@ -940,11 +889,6 @@ reservedOpcode(0xcc)
 reservedOpcode(0xcd)
 reservedOpcode(0xce)
 reservedOpcode(0xcf)
-
-    #####################
-    # 0xd0 - 0xd2: refs #
-    #####################
-
 unimplementedInstruction(_ref_null_t)
 unimplementedInstruction(_ref_is_null)
 unimplementedInstruction(_ref_func)
@@ -995,7 +939,7 @@ unimplementedInstruction(_atomic)
 reservedOpcode(0xff)
 
     #######################
-    ## 0xFC instructions ##
+    ## 0xfc instructions ##
     #######################
 
 unimplementedInstruction(_i32_trunc_sat_f32_s)
@@ -1021,7 +965,6 @@ unimplementedInstruction(_table_fill)
     ## SIMD Instructions ##
     #######################
 
-# 0xFD 0x00 - 0xFD 0x0B: memory
 unimplementedInstruction(_simd_v128_load_mem)
 unimplementedInstruction(_simd_v128_load_8x8s_mem)
 unimplementedInstruction(_simd_v128_load_8x8u_mem)
@@ -1034,11 +977,7 @@ unimplementedInstruction(_simd_v128_load16_splat_mem)
 unimplementedInstruction(_simd_v128_load32_splat_mem)
 unimplementedInstruction(_simd_v128_load64_splat_mem)
 unimplementedInstruction(_simd_v128_store_mem)
-
-# 0xFD 0x0C: v128.const
 unimplementedInstruction(_simd_v128_const)
-
-# 0xFD 0x0D - 0xFD 0x14: splat (+ shuffle/swizzle)
 unimplementedInstruction(_simd_i8x16_shuffle)
 unimplementedInstruction(_simd_i8x16_swizzle)
 unimplementedInstruction(_simd_i8x16_splat)
@@ -1047,15 +986,12 @@ unimplementedInstruction(_simd_i32x4_splat)
 unimplementedInstruction(_simd_i64x2_splat)
 unimplementedInstruction(_simd_f32x4_splat)
 unimplementedInstruction(_simd_f64x2_splat)
-
-# 0xFD 0x15 - 0xFD 0x22: extract and replace lanes
 unimplementedInstruction(_simd_i8x16_extract_lane_s)
 unimplementedInstruction(_simd_i8x16_extract_lane_u)
 unimplementedInstruction(_simd_i8x16_replace_lane)
 unimplementedInstruction(_simd_i16x8_extract_lane_s)
 unimplementedInstruction(_simd_i16x8_extract_lane_u)
 unimplementedInstruction(_simd_i16x8_replace_lane)
-
 unimplementedInstruction(_simd_i32x4_extract_lane)
 unimplementedInstruction(_simd_i32x4_replace_lane)
 unimplementedInstruction(_simd_i64x2_extract_lane)
@@ -1064,8 +1000,6 @@ unimplementedInstruction(_simd_f32x4_extract_lane)
 unimplementedInstruction(_simd_f32x4_replace_lane)
 unimplementedInstruction(_simd_f64x2_extract_lane)
 unimplementedInstruction(_simd_f64x2_replace_lane)
-
-# 0xFD 0x23 - 0xFD 0x2C: i8x16 operations
 unimplementedInstruction(_simd_i8x16_eq)
 unimplementedInstruction(_simd_i8x16_ne)
 unimplementedInstruction(_simd_i8x16_lt_s)
@@ -1076,8 +1010,6 @@ unimplementedInstruction(_simd_i8x16_le_s)
 unimplementedInstruction(_simd_i8x16_le_u)
 unimplementedInstruction(_simd_i8x16_ge_s)
 unimplementedInstruction(_simd_i8x16_ge_u)
-
-# 0xFD 0x2D - 0xFD 0x36: i8x16 operations
 unimplementedInstruction(_simd_i16x8_eq)
 unimplementedInstruction(_simd_i16x8_ne)
 unimplementedInstruction(_simd_i16x8_lt_s)
@@ -1088,8 +1020,6 @@ unimplementedInstruction(_simd_i16x8_le_s)
 unimplementedInstruction(_simd_i16x8_le_u)
 unimplementedInstruction(_simd_i16x8_ge_s)
 unimplementedInstruction(_simd_i16x8_ge_u)
-
-# 0xFD 0x37 - 0xFD 0x40: i32x4 operations
 unimplementedInstruction(_simd_i32x4_eq)
 unimplementedInstruction(_simd_i32x4_ne)
 unimplementedInstruction(_simd_i32x4_lt_s)
@@ -1100,24 +1030,18 @@ unimplementedInstruction(_simd_i32x4_le_s)
 unimplementedInstruction(_simd_i32x4_le_u)
 unimplementedInstruction(_simd_i32x4_ge_s)
 unimplementedInstruction(_simd_i32x4_ge_u)
-
-# 0xFD 0x41 - 0xFD 0x46: f32x4 operations
 unimplementedInstruction(_simd_f32x4_eq)
 unimplementedInstruction(_simd_f32x4_ne)
 unimplementedInstruction(_simd_f32x4_lt)
 unimplementedInstruction(_simd_f32x4_gt)
 unimplementedInstruction(_simd_f32x4_le)
 unimplementedInstruction(_simd_f32x4_ge)
-
-# 0xFD 0x47 - 0xFD 0x4c: f64x2 operations
 unimplementedInstruction(_simd_f64x2_eq)
 unimplementedInstruction(_simd_f64x2_ne)
 unimplementedInstruction(_simd_f64x2_lt)
 unimplementedInstruction(_simd_f64x2_gt)
 unimplementedInstruction(_simd_f64x2_le)
 unimplementedInstruction(_simd_f64x2_ge)
-
-# 0xFD 0x4D - 0xFD 0x53: v128 operations
 unimplementedInstruction(_simd_v128_not)
 unimplementedInstruction(_simd_v128_and)
 unimplementedInstruction(_simd_v128_andnot)
@@ -1125,8 +1049,6 @@ unimplementedInstruction(_simd_v128_or)
 unimplementedInstruction(_simd_v128_xor)
 unimplementedInstruction(_simd_v128_bitselect)
 unimplementedInstruction(_simd_v128_any_true)
-
-# 0xFD 0x54 - 0xFD 0x5D: v128 load/store lane
 unimplementedInstruction(_simd_v128_load8_lane_mem)
 unimplementedInstruction(_simd_v128_load16_lane_mem)
 unimplementedInstruction(_simd_v128_load32_lane_mem)
@@ -1137,12 +1059,8 @@ unimplementedInstruction(_simd_v128_store32_lane_mem)
 unimplementedInstruction(_simd_v128_store64_lane_mem)
 unimplementedInstruction(_simd_v128_load32_zero_mem)
 unimplementedInstruction(_simd_v128_load64_zero_mem)
-
-# 0xFD 0x5E - 0xFD 0x5F: f32x4/f64x2 conversion
 unimplementedInstruction(_simd_f32x4_demote_f64x2_zero)
 unimplementedInstruction(_simd_f64x2_promote_low_f32x4)
-
-# 0xFD 0x60 - 0x66: i8x16 operations
 unimplementedInstruction(_simd_i8x16_abs)
 unimplementedInstruction(_simd_i8x16_neg)
 unimplementedInstruction(_simd_i8x16_popcnt)
@@ -1150,14 +1068,10 @@ unimplementedInstruction(_simd_i8x16_all_true)
 unimplementedInstruction(_simd_i8x16_bitmask)
 unimplementedInstruction(_simd_i8x16_narrow_i16x8_s)
 unimplementedInstruction(_simd_i8x16_narrow_i16x8_u)
-
-# 0xFD 0x67 - 0xFD 0x6A: f32x4 operations
 unimplementedInstruction(_simd_f32x4_ceil)
 unimplementedInstruction(_simd_f32x4_floor)
 unimplementedInstruction(_simd_f32x4_trunc)
 unimplementedInstruction(_simd_f32x4_nearest)
-
-# 0xFD 0x6B - 0xFD 0x73: i8x16 binary operations
 unimplementedInstruction(_simd_i8x16_shl)
 unimplementedInstruction(_simd_i8x16_shr_s)
 unimplementedInstruction(_simd_i8x16_shr_u)
@@ -1167,31 +1081,18 @@ unimplementedInstruction(_simd_i8x16_add_sat_u)
 unimplementedInstruction(_simd_i8x16_sub)
 unimplementedInstruction(_simd_i8x16_sub_sat_s)
 unimplementedInstruction(_simd_i8x16_sub_sat_u)
-
-# 0xFD 0x74 - 0xFD 0x75: f64x2 operations
 unimplementedInstruction(_simd_f64x2_ceil)
 unimplementedInstruction(_simd_f64x2_floor)
-
-# 0xFD 0x76 - 0xFD 0x79: i8x16 binary operations
 unimplementedInstruction(_simd_i8x16_min_s)
 unimplementedInstruction(_simd_i8x16_min_u)
 unimplementedInstruction(_simd_i8x16_max_s)
 unimplementedInstruction(_simd_i8x16_max_u)
-
-# 0xFD 0x7A: f64x2 trunc
 unimplementedInstruction(_simd_f64x2_trunc)
-
-# 0xFD 0x7B: i8x16 avgr_u
 unimplementedInstruction(_simd_i8x16_avgr_u)
-
-# 0xFD 0x7C - 0xFD 0x7F: extadd_pairwise
 unimplementedInstruction(_simd_i16x8_extadd_pairwise_i8x16_s)
 unimplementedInstruction(_simd_i16x8_extadd_pairwise_i8x16_u)
 unimplementedInstruction(_simd_i32x4_extadd_pairwise_i16x8_s)
 unimplementedInstruction(_simd_i32x4_extadd_pairwise_i16x8_u)
-
-# 0xFD 0x80 0x01 - 0xFD 0x93 0x01: i16x8 operations
-
 unimplementedInstruction(_simd_i16x8_abs)
 unimplementedInstruction(_simd_i16x8_neg)
 unimplementedInstruction(_simd_i16x8_q15mulr_sat_s)
@@ -1212,13 +1113,7 @@ unimplementedInstruction(_simd_i16x8_add_sat_u)
 unimplementedInstruction(_simd_i16x8_sub)
 unimplementedInstruction(_simd_i16x8_sub_sat_s)
 unimplementedInstruction(_simd_i16x8_sub_sat_u)
-
-# 0xFD 0x94 0x01: f64x2.nearest
-
 unimplementedInstruction(_simd_f64x2_nearest)
-
-# 0xFD 0x95 0x01 - 0xFD 0x9F 0x01: i16x8 operations
-
 unimplementedInstruction(_simd_i16x8_mul)
 unimplementedInstruction(_simd_i16x8_min_s)
 unimplementedInstruction(_simd_i16x8_min_u)
@@ -1230,9 +1125,6 @@ unimplementedInstruction(_simd_i16x8_extmul_low_i8x16_s)
 unimplementedInstruction(_simd_i16x8_extmul_high_i8x16_s)
 unimplementedInstruction(_simd_i16x8_extmul_low_i8x16_u)
 unimplementedInstruction(_simd_i16x8_extmul_high_i8x16_u)
-
-# 0xFD 0xA0 0x01 - 0xFD 0xBF 0x01: i32x4 operations
-
 unimplementedInstruction(_simd_i32x4_abs)
 unimplementedInstruction(_simd_i32x4_neg)
 reservedOpcode(0xfda201)
@@ -1265,9 +1157,6 @@ unimplementedInstruction(_simd_i32x4_extmul_low_i16x8_s)
 unimplementedInstruction(_simd_i32x4_extmul_high_i16x8_s)
 unimplementedInstruction(_simd_i32x4_extmul_low_i16x8_u)
 unimplementedInstruction(_simd_i32x4_extmul_high_i16x8_u)
-
-# 0xFD 0xC0 0x01 - 0xFD 0xDF 0x01: i64x2 operations
-
 unimplementedInstruction(_simd_i64x2_abs)
 unimplementedInstruction(_simd_i64x2_neg)
 reservedOpcode(0xfdc201)
@@ -1300,9 +1189,6 @@ unimplementedInstruction(_simd_i64x2_extmul_low_i32x4_s)
 unimplementedInstruction(_simd_i64x2_extmul_high_i32x4_s)
 unimplementedInstruction(_simd_i64x2_extmul_low_i32x4_u)
 unimplementedInstruction(_simd_i64x2_extmul_high_i32x4_u)
-
-# 0xFD 0xE0 0x01 - 0xFD 0xEB 0x01: f32x4 operations
-
 unimplementedInstruction(_simd_f32x4_abs)
 unimplementedInstruction(_simd_f32x4_neg)
 reservedOpcode(0xfde201)
@@ -1315,9 +1201,6 @@ unimplementedInstruction(_simd_f32x4_min)
 unimplementedInstruction(_simd_f32x4_max)
 unimplementedInstruction(_simd_f32x4_pmin)
 unimplementedInstruction(_simd_f32x4_pmax)
-
-# 0xFD 0xEC 0x01 - 0xFD 0xF7 0x01: f64x2 operations
-
 unimplementedInstruction(_simd_f64x2_abs)
 unimplementedInstruction(_simd_f64x2_neg)
 reservedOpcode(0xfdee01)
@@ -1330,9 +1213,6 @@ unimplementedInstruction(_simd_f64x2_min)
 unimplementedInstruction(_simd_f64x2_max)
 unimplementedInstruction(_simd_f64x2_pmin)
 unimplementedInstruction(_simd_f64x2_pmax)
-
-# 0xFD 0xF8 0x01 - 0xFD 0xFF 0x01: trunc/convert
-
 unimplementedInstruction(_simd_i32x4_trunc_sat_f32x4_s)
 unimplementedInstruction(_simd_i32x4_trunc_sat_f32x4_u)
 unimplementedInstruction(_simd_f32x4_convert_i32x4_s)
@@ -1428,3 +1308,4 @@ unimplementedInstruction(_i64_atomic_rmw8_cmpxchg_u)
 unimplementedInstruction(_i64_atomic_rmw16_cmpxchg_u)
 unimplementedInstruction(_i64_atomic_rmw32_cmpxchg_u)
 end
+

@@ -88,7 +88,16 @@ public:
 
 private:
 
-    void addBlankSpace(size_t);
+    inline void addBlankSpace(size_t);
+    template <typename T> inline void addBlankSpace() { addBlankSpace(sizeof(T)); };
+
+    template <typename T> inline void appendMetadata(T t)
+    {
+        auto size = m_metadata.size();
+        addBlankSpace<T>();
+        WRITE_TO_METADATA(m_metadata.data() + size, t, T);
+    };
+
     void addLength(size_t length);
     void addLEB128ConstantInt32AndLength(uint32_t value, size_t length);
     void addLEB128ConstantAndLengthForType(Type, uint64_t value, size_t length);
@@ -101,7 +110,7 @@ private:
 
     std::span<const uint8_t> m_bytecode;
     Vector<uint8_t> m_metadata { };
-    uint32_t m_returnMetadata { 0 };
+    Vector<uint8_t, 8> m_uINTBytecode { };
 
     uint32_t m_bytecodeOffset { 0 };
     unsigned m_maxFrameSizeInV128 { 0 };
@@ -115,10 +124,6 @@ private:
     Vector<const TypeDefinition*> m_signatures;
     HashMap<IPIntPC, IPIntTierUpCounter::OSREntryData> m_tierUpCounter;
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
-
-    // Optimization to skip large numbers of blocks
-
-    Vector<uint32_t> m_repeatedControlFlowInstructionMetadataOffsets;
 };
 
 } } // namespace JSC::Wasm

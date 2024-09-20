@@ -214,12 +214,13 @@ IPIntCallee::IPIntCallee(FunctionIPIntMetadataGenerator& generator, size_t index
     , m_functionIndex(generator.m_functionIndex)
     , m_signatures(WTFMove(generator.m_signatures))
     , m_bytecode(generator.m_bytecode.data() + generator.m_bytecodeOffset)
-    , m_bytecodeLength(generator.m_bytecode.size() - generator.m_bytecodeOffset)
+    , m_bytecodeEnd(m_bytecode + (generator.m_bytecode.size() - generator.m_bytecodeOffset - 1))
     , m_metadataVector(WTFMove(generator.m_metadata))
     , m_metadata(m_metadataVector.data())
     , m_argumINTBytecode(WTFMove(generator.m_argumINTBytecode))
     , m_argumINTBytecodePointer(m_argumINTBytecode.data())
-    , m_returnMetadata(generator.m_returnMetadata)
+    , m_uINTBytecode(WTFMove(generator.m_uINTBytecode))
+    , m_uINTBytecodePointer(m_uINTBytecode.data())
     , m_localSizeToAlloc(roundUpToMultipleOf<2>(generator.m_numLocals))
     , m_numRethrowSlotsToAlloc(generator.m_numAlignedRethrowSlots)
     , m_numLocals(generator.m_numLocals)
@@ -445,18 +446,27 @@ JSEntrypointCallee::JSEntrypointCallee(TypeIndex typeIndex, bool usesSIMD)
 
 #if ENABLE(JIT)
     if (Options::useJIT()) {
-        if (usesSIMD)
-            m_wasmFunctionPrologue = LLInt::wasmFunctionEntryThunkSIMD().code().retagged<WasmEntryPtrTag>();
-        else
-            m_wasmFunctionPrologue = LLInt::wasmFunctionEntryThunk().code().retagged<WasmEntryPtrTag>();
-        return;
-    }
+#else
+    if (false) {
 #endif
-
-    if (usesSIMD)
-        m_wasmFunctionPrologue = CodePtr<CFunctionPtrTag>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_simd_trampoline)).retagged<WasmEntryPtrTag>();
-    else
-        m_wasmFunctionPrologue = CodePtr<CFunctionPtrTag>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline)).retagged<WasmEntryPtrTag>();
+        if (Options::useWasmIPInt())
+            m_wasmFunctionPrologue = LLInt::inPlaceInterpreterEntryThunk().code().retagged<WasmEntryPtrTag>();
+        else {
+            if (usesSIMD)
+                m_wasmFunctionPrologue = LLInt::wasmFunctionEntryThunkSIMD().code().retagged<WasmEntryPtrTag>();
+            else
+                m_wasmFunctionPrologue = LLInt::wasmFunctionEntryThunk().code().retagged<WasmEntryPtrTag>();
+        }
+    } else {
+        if (Options::useWasmIPInt())
+            m_wasmFunctionPrologue = CodePtr<CFunctionPtrTag>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(ipint_trampoline)).retagged<WasmEntryPtrTag>();
+        else {
+            if (usesSIMD)
+                m_wasmFunctionPrologue = CodePtr<CFunctionPtrTag>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_simd_trampoline)).retagged<WasmEntryPtrTag>();
+            else
+                m_wasmFunctionPrologue = CodePtr<CFunctionPtrTag>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline)).retagged<WasmEntryPtrTag>();
+        }
+    }
 }
 
 CodePtr<WasmEntryPtrTag> JSEntrypointCallee::entrypointImpl() const

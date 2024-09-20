@@ -126,15 +126,14 @@ void IPIntPlan::compileFunction(uint32_t functionIndex)
         auto callee = IPIntCallee::create(*m_wasmInternalFunctions[functionIndex], functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
         ASSERT(!callee->entrypoint());
 
-        if (Options::useJIT()) {
 #if ENABLE(JIT)
-            if (m_moduleInformation->usesSIMD(functionIndex))
-                callee->setEntrypoint(LLInt::inPlaceInterpreterEntryThunkSIMD().retaggedCode<WasmEntryPtrTag>());
-            else
-                callee->setEntrypoint(LLInt::inPlaceInterpreterEntryThunk().retaggedCode<WasmEntryPtrTag>());
+        if (Options::useJIT())
+            callee->setEntrypoint(LLInt::inPlaceInterpreterEntryThunk().retaggedCode<WasmEntryPtrTag>());
+#else
+        if (false);
 #endif
-        } else
-            callee->setEntrypoint(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline));
+        else
+            callee->setEntrypoint(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(ipint_trampoline));
         ipintCallee = callee.ptr();
         m_calleesVector[functionIndex] = WTFMove(callee);
     } else
@@ -153,32 +152,25 @@ void IPIntPlan::compileFunction(uint32_t functionIndex)
 
 }
 
-// FIXME: Get IPInt working again now that we don't always JIT wrappers.
-bool IPIntPlan::ensureEntrypoint(IPIntCallee& ipintCallee, unsigned functionIndex)
+bool IPIntPlan::ensureEntrypoint(IPIntCallee&, unsigned functionIndex)
 {
     if (m_entrypoints[functionIndex])
         return true;
 
-    if (!LIKELY(Options::useJIT()))
-        return false;
-
-    UNUSED_PARAM(ipintCallee);
-    UNUSED_PARAM(functionIndex);
-    return false;
+    m_entrypoints[functionIndex] = JSEntrypointCallee::create(m_moduleInformation->internalFunctionTypeIndices[functionIndex], m_moduleInformation->usesSIMD(functionIndex));
+    return true;
 }
 
 void IPIntPlan::didCompleteCompilation()
 {
     generateStubsIfNecessary();
 
-#if ENABLE(JIT)
     unsigned functionCount = m_wasmInternalFunctions.size();
     if (!m_callees && functionCount) {
         m_callees = m_calleesVector.data();
         if (!m_moduleInformation->clobberingTailCalls().isEmpty())
             computeTransitiveTailCalls();
     }
-#endif
 
     if (m_compilerMode == CompilerMode::Validation)
         return;
@@ -193,8 +185,11 @@ void IPIntPlan::didCompleteCompilation()
                 }
             }
         }
-        if (auto& callee = m_entrypoints[functionIndex])
+        if (auto& callee = m_entrypoints[functionIndex]) {
+            if (callee->compilationMode() == CompilationMode::JSToWasmEntrypointMode)
+                static_cast<JSEntrypointCallee*>(callee.get())->setWasmCallee(CalleeBits::encodeNativeCallee(&m_callees[functionIndex].get()));
             m_jsEntrypointCallees.add(functionIndex, callee);
+        }
     }
 
     for (auto& unlinked : m_unlinkedWasmToWasmCalls) {

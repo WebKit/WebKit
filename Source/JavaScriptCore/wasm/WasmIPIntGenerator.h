@@ -43,9 +43,34 @@ Expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompil
 
 namespace IPInt {
 
-#pragma pack(1)
+constexpr static unsigned STACK_ENTRY_SIZE = 16; // bytes
+struct IPIntStackEntry {
+    union {
+        int32_t i32;
+        float f32;
+        int64_t i64;
+        double f64;
+        v128_t v128;
+        EncodedJSValue ref;
+    };
+};
 
-// mINT: mini-interpreter / minimalist interpreter (whichever floats your boat)
+constexpr static unsigned LOCAL_SIZE = 16; // bytes
+struct IPIntLocal {
+    union {
+        int32_t i32;
+        float f32;
+        int64_t i64;
+        double f64;
+        v128_t v128;
+        EncodedJSValue ref;
+    };
+};
+
+static_assert(sizeof(IPIntStackEntry) == STACK_ENTRY_SIZE);
+static_assert(sizeof(IPIntLocal) == LOCAL_SIZE);
+
+#pragma pack(1)
 
 // Metadata structure for control flow instructions
 
@@ -54,110 +79,93 @@ struct InstructionLengthMetadata {
 };
 
 struct BlockMetadata {
-    uint32_t newPC; // 2B for new PC
-    uint32_t newMC; // 2B for new MC
+    uint32_t deltaPC; // 4B for new PC
+    uint32_t deltaMC; // 4B for new MC
 };
 
 struct IfMetadata {
-    uint32_t elsePC; // 4B PC for new else PC
-    uint32_t elseMC; // 4B MC of new else MC
+    uint32_t elseDeltaPC; // 4B PC for new else PC
+    uint32_t elseDeltaMC; // 4B MC of new else MC
     InstructionLengthMetadata instructionLength;
 };
 
-struct throwMetadata {
+struct ThrowMetadata {
     uint32_t exceptionIndex; // 4B for exception index
 };
 
-struct rethrowMetadata {
+struct RethrowMetadata {
     uint32_t tryDepth; // 4B for try depth
 };
 
-struct catchMetadata {
+struct CatchMetadata {
     uint32_t stackSizeInV128; // 4B for stack size
 };
 
-struct branchTargetMetadata {
-    BlockMetadata block; // 2B for stack values to pop
-    uint16_t toPop; // 2B for stack values to keep
-    uint16_t toKeep;
+struct BranchTargetMetadata {
+    BlockMetadata block; // 8B for target
+    uint16_t toPop; // 2B for stack values to pop
+    uint16_t toKeep; // 2B for stack values to keep
 };
 
-struct branchMetadata {
-    branchTargetMetadata target;
+struct BranchMetadata {
+    BranchTargetMetadata target;
     InstructionLengthMetadata instructionLength;
 };
 
-struct switchMetadata {
+struct SwitchMetadata {
     uint32_t size; // 4B for number of jump targets
-    branchTargetMetadata target[0];
+    BranchTargetMetadata target[0];
 };
 
 // Global get/set metadata structure
 
-struct globalMetadata {
+struct GlobalMetadata {
     uint32_t index; // 4B for index of global
     InstructionLengthMetadata instructionLength;
     uint8_t bindingMode; // 1B for bindingMode
     uint8_t isRef; // 1B for ref flag
 };
 
-// Constant metadat structures
+// Constant metadata structures
 
-struct const32Metadata {
+struct Const32Metadata {
     InstructionLengthMetadata instructionLength;
     uint32_t value;
 };
 
-struct const64Metadata {
+struct Const64Metadata {
     InstructionLengthMetadata instructionLength;
     uint64_t value;
 };
 
-struct const128Metadata {
+struct Const128Metadata {
     InstructionLengthMetadata instructionLength;
     v128_t value;
 };
 
-struct tableInitMetadata {
+struct TableInitMetadata {
     uint32_t elementIndex; // 4B for index of element
     uint32_t tableIndex; // 4B for index of table
-    uint32_t dst; // 4B for destination (set by interpreter)
-    uint32_t src; // 4B for source (set by interpreter)
-    uint32_t length; // 4B for length (set by interpreter)
     InstructionLengthMetadata instructionLength;
 };
 
-struct tableFillMetadata {
+struct TableFillMetadata {
     uint32_t tableIndex; // 4B for index of table
-    EncodedJSValue fill; // 8B for fill value
-    uint32_t offset; // 4B for offset (set by interpreter)
-    uint32_t length; // 4B for length (set by interpreter)
     InstructionLengthMetadata instructionLength;
 };
 
-struct tableGrowMetadata {
+struct TableGrowMetadata {
     uint32_t tableIndex; // 4B for index of table
-    EncodedJSValue fill; // 8B for fill value
-    uint32_t length; // 4B for length (set by interpreter)
     InstructionLengthMetadata instructionLength;
 };
 
-struct tableCopyMetadata {
+struct TableCopyMetadata {
     uint32_t dstTableIndex; // 4B for index of destination table
     uint32_t srcTableIndex; // 4B for index of source table
-    uint32_t dstOffset; // 4B for destination offset (set by interpreter)
-    uint32_t srcOffset; // 4B for source offset (set by interpreter)
-    uint32_t length; // 4B for length (set by interpreter)
     InstructionLengthMetadata instructionLength;
 };
 
 // Metadata structure for calls:
-
-struct calleeMetadata {
-    JSWebAssemblyInstance* instance; // Ptr for callee instance (set by operation)
-    void* entrypoint; // Ptr for callee entrypoint (set by operation)
-    EncodedJSValue boxedCallee; // 8B for callee (set by operation)
-};
 
 enum class CallArgumentBytecode : uint8_t { // (mINT)
     ArgumentGPR = 0x0, // 0x00 - 0x07: push into a0, a1, ...
@@ -168,20 +176,16 @@ enum class CallArgumentBytecode : uint8_t { // (mINT)
     End = 0xf // 0x0f: stop
 };
 
-struct callMetadata {
+struct CallMetadata {
     uint8_t length; // 1B for instruction length
     uint32_t functionIndex; // 4B for decoded index
-    calleeMetadata callee;
     CallArgumentBytecode argumentBytecode[0];
 };
 
-struct callIndirectMetadata {
+struct CallIndirectMetadata {
     uint8_t length; // 1B for length
     uint32_t tableIndex; // 4B for table index
     uint32_t typeIndex; // 4B for type index
-    uint32_t functionRef; // 4B for function ref (set by interpreter)
-    CallFrame* callFrame; // Ptr for call frame (set by interpreter)
-    calleeMetadata callee;
     CallArgumentBytecode argumentBytecode[0];
 };
 
