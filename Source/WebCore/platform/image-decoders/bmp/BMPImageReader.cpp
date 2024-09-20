@@ -386,8 +386,8 @@ bool BMPImageReader::processBitmasks()
         // supposed to be ignored in non-BITFIELDS cases.
         // 16 bits:    MSB <-                     xRRRRRGG GGGBBBBB -> LSB
         // 24/32 bits: MSB <- [AAAAAAAA] RRRRRRRR GGGGGGGG BBBBBBBB -> LSB
-        const int numBits = (m_infoHeader.biBitCount == 16) ? 5 : 8;
-        for (int i = 0; i <= 2; ++i)
+        const unsigned numBits = (m_infoHeader.biBitCount == 16) ? 5 : 8;
+        for (unsigned i = 0; i <= 2; ++i)
             m_bitMasks[i] = ((static_cast<uint32_t>(1) << (numBits * (3 - i))) - 1) ^ ((static_cast<uint32_t>(1) << (numBits * (2 - i))) - 1);
 
         // For Windows V4+ 32-bit RGB, don't overwrite the alpha mask from the
@@ -426,7 +426,7 @@ bool BMPImageReader::processBitmasks()
     m_needToProcessBitmasks = false;
 
     // Check masks and set shift values.
-    for (int i = 0; i < 4; ++i) {
+    for (unsigned i = 0; i < 4; ++i) {
         // Trim the mask to the allowed bit depth.  Some Windows V4+ BMPs
         // specify a bogus alpha channel in bits that don't exist in the pixel
         // data (for example, bits 25-31 in a 24-bit RGB format).
@@ -443,18 +443,18 @@ bool BMPImageReader::processBitmasks()
         }
 
         // Make sure bitmask does not overlap any other bitmasks.
-        for (int j = 0; j < i; ++j) {
+        for (unsigned j = 0; j < i; ++j) {
             if (tempMask & m_bitMasks[j])
                 return m_parent->setFailed();
         }
 
         // Count offset into pixel data.
-        for (m_bitShiftsRight[i] = 0; !(tempMask & 1); tempMask >>= 1)
-            ++m_bitShiftsRight[i];
+        unsigned rightOffset = ctz(tempMask);
+        tempMask >>= rightOffset;
 
-        // Count size of mask.
-        for (m_bitShiftsLeft[i] = 8; tempMask & 1; tempMask >>= 1)
-            --m_bitShiftsLeft[i];
+        // Count offset of mask from most significant bit
+        unsigned leftOffset = ctz(~tempMask);
+        tempMask >>= leftOffset;
 
         // Make sure bitmask is contiguous.
         if (tempMask)
@@ -462,10 +462,21 @@ bool BMPImageReader::processBitmasks()
 
         // Since RGBABuffer tops out at 8 bits per channel, adjust the shift
         // amounts to use the most significant 8 bits of the channel.
-        if (m_bitShiftsLeft[i] < 0) {
-            m_bitShiftsRight[i] -= m_bitShiftsLeft[i];
-            m_bitShiftsLeft[i] = 0;
+        if (leftOffset > 8) {
+
+            // Carry over excess shifts to rightOffset, as a negative
+            // offset to the left is a positive offset to the right.
+            rightOffset += leftOffset - 8;
+
+            // Cap leftOffset at 8
+            leftOffset = 8;
         }
+
+        m_bitShiftsRight[i] = rightOffset;
+
+        // m_bitShiftsLeft is the offset from the most significant bit,
+        // so find the mask size by subtracting the offset from 8.
+        m_bitShiftsLeft[i] = 8 - leftOffset;
     }
 
     return true;
@@ -592,14 +603,11 @@ bool BMPImageReader::processRLEData()
                 // Because processNonRLEData() expects m_decodedOffset to
                 // point to the beginning of the pixel data, bump it past
                 // the escape bytes and then reset if decoding failed.
-                m_decodedOffset += 2;
                 const ProcessingResult result = processNonRLEData(true, code);
-                if (result == Failure)
-                    return m_parent->setFailed();
-                if (result == InsufficientData) {
-                    m_decodedOffset -= 2;
-                    return false;
-                }
+                if (result != Success)
+                    return (result == Failure) ? m_parent->setFailed() : false;
+
+                m_decodedOffset += 2;
                 break;
             }
             }
@@ -628,9 +636,9 @@ bool BMPImageReader::processRLEData()
                 }
                 if ((colorIndexes[0] >= m_infoHeader.biClrUsed) || (colorIndexes[1] >= m_infoHeader.biClrUsed))
                     return m_parent->setFailed();
-                for (int which = 0; m_coord.x() < endX; ) {
+                for (unsigned which = 0; m_coord.x() < endX;) {
                     setI(colorIndexes[which]);
-                    which = !which;
+                    which ^= 1;
                 }
 
                 m_decodedOffset += 2;
@@ -711,7 +719,7 @@ BMPImageReader::ProcessingResult BMPImageReader::processNonRLEData(bool inRLE, i
                 // As an optimization, avoid setting "hasAlpha" to true for
                 // images where all alpha values are 255; opaque images are
                 // faster to draw.
-                int alpha = getAlpha(pixel);
+                unsigned alpha = getAlpha(pixel);
                 if (!m_seenNonZeroAlphaPixel && !alpha) {
                     m_seenZeroAlphaPixel = true;
                     alpha = 255;

@@ -322,8 +322,8 @@ private:
     // could go either direction. (If only "<< -x" were equivalent to
     // ">> x"...)
     uint32_t m_bitMasks[4];
-    int m_bitShiftsRight[4];
-    int m_bitShiftsLeft[4];
+    unsigned m_bitShiftsRight[4];
+    unsigned m_bitShiftsLeft[4];
 
     // The color palette, for paletted formats.
     Vector<RGBTriple> m_colorTable;
