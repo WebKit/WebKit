@@ -47,6 +47,10 @@
 #endif
 
 namespace WebKit {
+class VideoReceiverEndpointMessage;
+}
+
+namespace WebKit {
 
 class RemoteMediaPlayerProxy;
 struct RemoteMediaPlayerConfiguration;
