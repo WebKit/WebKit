@@ -1424,6 +1424,8 @@ ExceptionOr<void> HTMLInputElement::showPicker()
     if (!window || !window->hasTransientActivation())
         return Exception { ExceptionCode::NotAllowedError, "Input showPicker() requires a user gesture."_s };
 
+    window->consumeTransientActivation();
+
     m_inputType->showPicker();
     return { };
 }
