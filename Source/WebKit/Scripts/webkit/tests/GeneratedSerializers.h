@@ -330,6 +330,17 @@ template<> struct ArgumentCoder<RetainPtr<CFFooRef>> {
     static std::optional<RetainPtr<CFFooRef>> decode(Decoder&);
 };
 
+template<> struct ArgumentCoder<CFTypeRef> {
+    static void encode(Encoder&, CFTypeRef);
+};
+template<> struct ArgumentCoder<RetainPtr<CFTypeRef>> {
+    static void encode(Encoder& encoder, const RetainPtr<CFTypeRef>& retainPtr)
+    {
+        ArgumentCoder<CFTypeRef>::encode(encoder, retainPtr.get());
+    }
+    static std::optional<RetainPtr<CFTypeRef>> decode(Decoder&);
+};
+
 #if USE(CFBAR)
 template<> struct ArgumentCoder<CFBarRef> {
     static void encode(Encoder&, CFBarRef);

@@ -271,6 +271,9 @@ secure_coding_headers: <pal/cocoa/DataDetectorsCoreSoftLink.h>
 CFFooRef wrapped by WebKit::FooWrapper {
 }
 
+CFTypeRef wrapped by WebCore::GenericTypeWrapper {
+}
+
 #if USE(CFBAR)
 additional_forward_declaration: typedef struct __CFBar * CFBarRef
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder, FromCFMethod=WebKit::BarWrapper::createFromCF, ToCFMethod=createCFBar(*result)] CFBarRef wrapped by WebKit::BarWrapper {

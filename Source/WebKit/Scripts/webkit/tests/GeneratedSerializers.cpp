@@ -60,6 +60,7 @@
 #include <WebCore/AppKitControlSystemImage.h>
 #endif
 #include <WebCore/FloatBoxExtent.h>
+#include <WebCore/GenericTypeWrapper.h>
 #include <WebCore/InheritanceGrandchild.h>
 #include <WebCore/InheritsFrom.h>
 #include <WebCore/MoveOnlyBaseClass.h>
@@ -1232,7 +1233,27 @@ std::optional<RetainPtr<CFFooRef>> ArgumentCoder<RetainPtr<CFFooRef>>::decode(De
     auto result = decoder.decode<WebKit::FooWrapper>();
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
-    return result->toCF();
+    auto cfResult = result->toCF();
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    if (CFGetTypeID(cfResult.get()) != CFFooGetTypeID())
+        return std::nullopt;
+#pragma clang diagnostic pop
+    return WTFMove(cfResult);
+}
+
+void ArgumentCoder<CFTypeRef>::encode(Encoder& encoder, CFTypeRef instance)
+{
+    encoder << WebCore::GenericTypeWrapper { instance };
+}
+
+std::optional<RetainPtr<CFTypeRef>> ArgumentCoder<RetainPtr<CFTypeRef>>::decode(Decoder& decoder)
+{
+    auto result = decoder.decode<WebCore::GenericTypeWrapper>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    auto cfResult = result->toCF();
+    return WTFMove(cfResult);
 }
 
 #if USE(CFBAR)
@@ -1251,7 +1272,13 @@ std::optional<RetainPtr<CFBarRef>> ArgumentCoder<RetainPtr<CFBarRef>>::decode(De
     auto result = decoder.decode<WebKit::BarWrapper>();
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
-    return createCFBar(*result);
+    auto cfResult = createCFBar(*result);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    if (CFGetTypeID(cfResult.get()) != CFBarGetTypeID())
+        return std::nullopt;
+#pragma clang diagnostic pop
+    return WTFMove(cfResult);
 }
 
 #endif

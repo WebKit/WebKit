@@ -385,7 +385,13 @@ std::optional<RetainPtr<CFStringRef>> ArgumentCoder<RetainPtr<CFStringRef>>::dec
     auto result = decoder.decode<WTF::String>();
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
-    return result->createCFString();
+    auto cfResult = result->createCFString();
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    if (CFGetTypeID(cfResult.get()) != CFStringGetTypeID())
+        return std::nullopt;
+#pragma clang diagnostic pop
+    return WTFMove(cfResult);
 }
 
 #endif

@@ -61,6 +61,7 @@
 #include <WebCore/AppKitControlSystemImage.h>
 #endif
 #include <WebCore/FloatBoxExtent.h>
+#include <WebCore/GenericTypeWrapper.h>
 #include <WebCore/InheritanceGrandchild.h>
 #include <WebCore/InheritsFrom.h>
 #include <WebCore/MoveOnlyBaseClass.h>
@@ -430,6 +431,9 @@ Vector<SerializedTypeInfo> allSerializedTypes()
 #endif // ENABLE(DATA_DETECTION)
         { "CFFooRef"_s, {
             { "WebKit::FooWrapper"_s, "wrapper"_s }
+        } },
+        { "CFTypeRef"_s, {
+            { "WebCore::GenericTypeWrapper"_s, "wrapper"_s }
         } },
 #if USE(CFBAR)
         { "CFBarRef"_s, {

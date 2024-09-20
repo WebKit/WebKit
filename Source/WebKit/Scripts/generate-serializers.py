@@ -840,11 +840,17 @@ def decode_cf_type(type):
     result.append('    auto result = decoder.decode<' + type.cf_wrapper_type() + '>();')
     result.append('    if (UNLIKELY(!decoder.isValid()))')
     result.append('        return std::nullopt;')
-    cf_method = 'toCF'
     if type.to_cf_method is not None:
-        result.append('    return ' + type.to_cf_method + ';')
+        result.append('    auto cfResult = ' + type.to_cf_method + ';')
     else:
-        result.append('    return result->toCF();')
+        result.append('    auto cfResult = result->toCF();')
+    if type.cf_type != "CFType":
+        result.append('#pragma clang diagnostic push')
+        result.append('#pragma clang diagnostic ignored "-Wdeprecated-declarations"')
+        result.append('    if (CFGetTypeID(cfResult.get()) != ' + type.cf_type + 'GetTypeID())')
+        result.append('        return std::nullopt;')
+        result.append('#pragma clang diagnostic pop')
+    result.append('    return WTFMove(cfResult);')
     return result
 
 def decode_type(type):
