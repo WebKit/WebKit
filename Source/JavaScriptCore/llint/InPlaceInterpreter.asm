@@ -23,7 +23,7 @@
 
 #
 # IPInt: the WASM in-place interpreter
-# DISCLAIMER: not tested on x86 yet (as of 05 Jul 2023); IPInt may break *very* badly.
+# DISCLAIMER: ipint tests passing on x86, but JetStream wasm benchmarks are breaking stack alignment
 #
 # docs by Daniel Liu <daniel_liu4@apple.com / danlliu@umich.edu>; 2023 intern project
 #
@@ -554,7 +554,7 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     # csr3 = end
     # csr4 = for dispatch
 
-const argumINTDest = csr1
+const argumINTDest = csr0
 const argumINTSrc = csr2
     move csr4, argumINTDest
     leap FirstArgumentOffset[cfr], argumINTSrc

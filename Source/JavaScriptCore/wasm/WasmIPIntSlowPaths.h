@@ -40,13 +40,13 @@ class JSWebAssemblyInstance;
 namespace IPInt {
 
 #define WASM_IPINT_EXTERN_CPP_DECL(name, ...) \
-    extern "C" UGPRPair ipint_extern_##name(JSWebAssemblyInstance* instance, __VA_ARGS__)
+    extern "C" UGPRPair SYSV_ABI ipint_extern_##name(JSWebAssemblyInstance* instance, __VA_ARGS__)
 
 #define WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(name, ...) \
     WASM_IPINT_EXTERN_CPP_DECL(name, __VA_ARGS__) REFERENCED_FROM_ASM WTF_INTERNAL
 
 #define WASM_IPINT_EXTERN_CPP_DECL_1P(name) \
-    extern "C" UGPRPair ipint_extern_##name(JSWebAssemblyInstance* instance)
+    extern "C" UGPRPair SYSV_ABI ipint_extern_##name(JSWebAssemblyInstance* instance)
 
 #define WASM_IPINT_EXTERN_CPP_HIDDEN_DECL_1P(name) \
     WASM_IPINT_EXTERN_CPP_DECL_1P(name) REFERENCED_FROM_ASM WTF_INTERNAL
