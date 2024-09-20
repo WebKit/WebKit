@@ -73,25 +73,37 @@ static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WG
     return { { *wgsl, hints } };
 }
 
-id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& msl, String&& label, NSError** error)
+id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& msl, String&& label, NSError** errorPointer)
 {
     auto options = [MTLCompileOptions new];
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     options.fastMathEnabled = YES;
 ALLOW_DEPRECATED_DECLARATIONS_END
-    // FIXME(PERFORMANCE): Run the asynchronous version of this
-    id<MTLLibrary> library = [device newLibraryWithSource:msl options:options error:error];
-    if (error && *error) {
+
+    __block id<MTLLibrary> returnLibrary = nil;
+    __block NSError *err = nil;
+
+    [device newLibraryWithSource:msl options:options completionHandler:^(id<MTLLibrary> library, NSError *error) {
+        if (error) {
+        // Handle errors
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250442
 #ifdef NDEBUG
-        *error = [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Failed to compile the shader source, generated metal:\n%@", (NSString*)msl] }];
+            error = [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Failed to compile the shader source, generated metal:\n%@", (NSString*)msl] }];
 #else
-        WTFLogAlways("MSL compilation error: %@", [*error localizedDescription]);
+            WTFLogAlways("MSL compilation error: %@", [error localizedDescription]);
 #endif
-        return nil;
-    }
-    library.label = label;
-    return library;
+            err = error;
+
+        } else {
+            // Library compiled successfully
+            library.label = label;
+            returnLibrary = library;
+        }
+    }];
+
+    *errorPointer = err;
+
+    return returnLibrary;
 }
 
 static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptor& suppliedHints, String&& label)
