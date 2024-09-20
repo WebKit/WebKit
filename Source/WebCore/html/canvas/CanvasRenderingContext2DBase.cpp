@@ -2554,9 +2554,10 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
     if (!sw || !sh)
         return Exception { ExceptionCode::IndexSizeError };
 
+    RefPtr scriptContext = canvasBase().scriptExecutionContext();
     if (!canvasBase().originClean()) {
         static NeverDestroyed<String> consoleMessage(MAKE_STATIC_STRING_IMPL("Unable to get image data from canvas because the canvas has been tainted by cross-origin data."));
-        canvasBase().scriptExecutionContext()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
+        scriptContext->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage);
         return Exception { ExceptionCode::SecurityError };
     }
 
@@ -2570,6 +2571,19 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
     }
 
     IntRect imageDataRect { sx, sy, sw, sh };
+
+    if (scriptContext && scriptContext->requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Canvas)) {
+        RefPtr buffer = canvasBase().createImageForNoiseInjection();
+        if (!buffer)
+            return Exception { ExceptionCode::InvalidStateError };
+
+        auto format = PixelBufferFormat { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, buffer->colorSpace() };
+        RefPtr pixelBuffer = dynamicDowncast<ByteArrayPixelBuffer>(buffer->getPixelBuffer(format, imageDataRect));
+        if (!pixelBuffer)
+            return Exception { ExceptionCode::InvalidStateError };
+
+        return { { ImageData::create(pixelBuffer.releaseNonNull()) } };
+    }
 
     auto computedColorSpace = ImageData::computeColorSpace(settings, m_settings.colorSpace);
 
@@ -2587,7 +2601,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(computedColorSpace) };
     RefPtr pixelBuffer = dynamicDowncast<ByteArrayPixelBuffer>(buffer->getPixelBuffer(format, imageDataRect));
     if (!pixelBuffer) {
-        canvasBase().scriptExecutionContext()->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error,
+        scriptContext->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error,
             makeString("Unable to get image data from canvas. Requested size was "_s, imageDataRect.width(), " x "_s, imageDataRect.height()));
         return Exception { ExceptionCode::InvalidStateError };
     }

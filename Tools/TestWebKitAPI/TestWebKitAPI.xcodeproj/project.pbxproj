@@ -1264,6 +1264,8 @@
 		F425831624F07CA5006B985D /* WKWebViewCoders.mm in Sources */ = {isa = PBXBuildFile; fileRef = F425831524F07CA5006B985D /* WKWebViewCoders.mm */; };
 		F42D634422A1729F00D2FB3A /* AutocorrectionTestsIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F42D634322A1729F00D2FB3A /* AutocorrectionTestsIOS.mm */; };
 		F434CA1A22E65BCA005DDB26 /* ScrollToRevealSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = F434CA1922E65BCA005DDB26 /* ScrollToRevealSelection.mm */; };
+		F43B320E2C9C801100838ABA /* audio-fingerprinting.js in Copy Resources */ = {isa = PBXBuildFile; fileRef = F43B320C2C9C801100838ABA /* audio-fingerprinting.js */; };
+		F43B320F2C9C801100838ABA /* canvas-fingerprinting.js in Copy Resources */ = {isa = PBXBuildFile; fileRef = F43B320D2C9C801100838ABA /* canvas-fingerprinting.js */; };
 		F43CAB1D278A326500C8D0A2 /* CloseWhileCommittingLoad.mm in Sources */ = {isa = PBXBuildFile; fileRef = F43CAB1C278A326500C8D0A2 /* CloseWhileCommittingLoad.mm */; };
 		F43E3BBF20DADA1E00A4E7ED /* WKScrollViewTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F43E3BBE20DADA1E00A4E7ED /* WKScrollViewTests.mm */; };
 		F442851D2140DF2900CCDA22 /* NSFontPanelTesting.mm in Sources */ = {isa = PBXBuildFile; fileRef = F442851C2140DF2900CCDA22 /* NSFontPanelTesting.mm */; };
@@ -1570,6 +1572,7 @@
 				A17C46942C98E54B0023F3C7 /* audio-buffer-size.html in Copy Resources */,
 				A17C47172C98E5C20023F3C7 /* audio-context-playing.html in Copy Resources */,
 				A17C47182C98E5C20023F3C7 /* audio-fingerprinting.html in Copy Resources */,
+				F43B320E2C9C801100838ABA /* audio-fingerprinting.js in Copy Resources */,
 				A17C48472C98E6360023F3C7 /* audio-only.html in Copy Resources */,
 				A17C47192C98E5C20023F3C7 /* audio-with-controls.html in Copy Resources */,
 				A17C46952C98E54B0023F3C7 /* audio-with-play-button.html in Copy Resources */,
@@ -1597,6 +1600,7 @@
 				A17C47222C98E5C20023F3C7 /* camera-to-canvas.html in Copy Resources */,
 				A17C466C2C98E4D20023F3C7 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */,
 				A17C47232C98E5C20023F3C7 /* canvas-fingerprinting.html in Copy Resources */,
+				F43B320F2C9C801100838ABA /* canvas-fingerprinting.js in Copy Resources */,
 				A17C47242C98E5C20023F3C7 /* canvas-image-data.html in Copy Resources */,
 				A17C47252C98E5C20023F3C7 /* change-video-source-on-click.html in Copy Resources */,
 				A17C47262C98E5C20023F3C7 /* change-video-source-on-end.html in Copy Resources */,
@@ -3623,6 +3627,8 @@
 		F434CA1922E65BCA005DDB26 /* ScrollToRevealSelection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollToRevealSelection.mm; sourceTree = "<group>"; };
 		F4352F9E26D4037000E605E4 /* editable-responsive-body.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "editable-responsive-body.html"; sourceTree = "<group>"; };
 		F4365E232BB1181A005E8C1A /* element-targeting-2.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "element-targeting-2.html"; sourceTree = "<group>"; };
+		F43B320C2C9C801100838ABA /* audio-fingerprinting.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "audio-fingerprinting.js"; sourceTree = "<group>"; };
+		F43B320D2C9C801100838ABA /* canvas-fingerprinting.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "canvas-fingerprinting.js"; sourceTree = "<group>"; };
 		F43C3823278133190099ABCE /* NSResponderTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NSResponderTests.mm; sourceTree = "<group>"; };
 		F43CAB1C278A326500C8D0A2 /* CloseWhileCommittingLoad.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CloseWhileCommittingLoad.mm; sourceTree = "<group>"; };
 		F43E3BBE20DADA1E00A4E7ED /* WKScrollViewTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKScrollViewTests.mm; sourceTree = "<group>"; };
@@ -4920,6 +4926,7 @@
 				3760C4F221124BD000233ACC /* AttrStyle.html */,
 				46F03C1B255B2D3600AA51C5 /* audio-context-playing.html */,
 				F4D0A6332A2D51F800D47257 /* audio-fingerprinting.html */,
+				F43B320C2C9C801100838ABA /* audio-fingerprinting.js */,
 				C94415FF21430B6700B1EDDA /* audio-with-controls.html */,
 				CD57779A211CE6B7001B371E /* audio-with-web-audio.html */,
 				F41AB9981EF4692C0083FA08 /* autofocus-contenteditable.html */,
@@ -4931,6 +4938,7 @@
 				2DE71AFF1D49C2F000904094 /* blinking-div.html */,
 				0794742C25CB33B000C597EE /* camera-to-canvas.html */,
 				F4D0A6362A2D51F900D47257 /* canvas-fingerprinting.html */,
+				F43B320D2C9C801100838ABA /* canvas-fingerprinting.js */,
 				F4E7A66227222BB100E74D36 /* canvas-image-data.html */,
 				2EFF06C41D8867700004BB30 /* change-video-source-on-click.html */,
 				2EFF06C61D886A560004BB30 /* change-video-source-on-end.html */,

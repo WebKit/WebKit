@@ -47,6 +47,7 @@
 #include "OffscreenCanvasRenderingContext2D.h"
 #include "Page.h"
 #include "PlaceholderRenderingContext.h"
+#include "ScriptTelemetryCategory.h"
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerNavigator.h"
@@ -315,14 +316,25 @@ void OffscreenCanvas::convertToBlob(ImageEncodeOptions&& options, Ref<DeferredPr
         promise->reject(ExceptionCode::IndexSizeError);
         return;
     }
+
+    auto encodingMIMEType = toEncodingMimeType(options.type);
+    auto quality = qualityFromDouble(options.quality);
+
+    if (RefPtr context = canvasBaseScriptExecutionContext(); context && context->requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Canvas)) {
+        RefPtr buffer = createImageForNoiseInjection();
+        auto blobData = buffer->toData(encodingMIMEType, quality);
+        if (blobData.isEmpty())
+            promise->reject(ExceptionCode::EncodingError);
+        else
+            promise->resolveWithNewlyCreated<IDLInterface<Blob>>(Blob::create(context.get(), WTFMove(blobData), encodingMIMEType));
+        return;
+    }
+
     RefPtr buffer = makeRenderingResultsAvailable();
     if (!buffer) {
         promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
-
-    auto encodingMIMEType = toEncodingMimeType(options.type);
-    auto quality = qualityFromDouble(options.quality);
 
     Vector<uint8_t> blobData = buffer->toData(encodingMIMEType, quality);
     if (blobData.isEmpty()) {

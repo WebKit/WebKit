@@ -3038,7 +3038,7 @@ TEST(SiteIsolation, NavigateNestedIframeSameOriginBackForward)
 
 TEST(SiteIsolation, AdvancedPrivacyProtectionsHideScreenMetricsFromBindings)
 {
-    auto frameHTML = [NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"audio-fingerprinting" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];
+    auto frameHTML = [NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"simple" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];
     HTTPServer server({
         { "/example"_s, { "<iframe src='https://frame.com/frame'></iframe>"_s } },
         { "/frame"_s, { frameHTML } }

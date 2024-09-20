@@ -1007,12 +1007,7 @@ TEST(AdvancedPrivacyProtections, AddNoiseToWebAudioAPIsAfterReducingPrivacyProte
     checkFingerprintForNoise(@"testOscillatorCompressor");
 }
 
-// FIXME when rdar://115137641 is resolved.
-#if PLATFORM(MAC)
-TEST(AdvancedPrivacyProtections, DISABLED_VerifyHashFromNoisyCanvas2DAPI)
-#else
 TEST(AdvancedPrivacyProtections, VerifyHashFromNoisyCanvas2DAPI)
-#endif
 {
     auto testURL = [NSBundle.test_resourcesBundle URLForResource:@"canvas-fingerprinting" withExtension:@"html"];
     auto resourcesURL = NSBundle.test_resourcesBundle.resourceURL;
@@ -1036,7 +1031,10 @@ TEST(AdvancedPrivacyProtections, VerifyHashFromNoisyCanvas2DAPI)
         [webView1 callAsyncJavaScriptAndWait:scriptToRun],
         [webView2 callAsyncJavaScriptAndWait:scriptToRun]
     };
+#if !CPU(X86_64)
+    // FIXME: Enable this check on x86_64 when rdar://115137641 is resolved.
     EXPECT_TRUE([values.first isEqualToString:values.second]);
+#endif
 
     values = std::pair {
         [webView1 callAsyncJavaScriptAndWait:scriptToRun],

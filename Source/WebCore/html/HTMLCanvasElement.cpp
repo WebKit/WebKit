@@ -69,6 +69,7 @@
 #include "RenderHTMLCanvas.h"
 #include "ResourceLoadObserver.h"
 #include "ScriptController.h"
+#include "ScriptTelemetryCategory.h"
 #include "Settings.h"
 #include "StringAdaptors.h"
 #include "WebCoreOpaqueRoot.h"
@@ -693,6 +694,13 @@ ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType,
     auto encodingMIMEType = toEncodingMimeType(mimeType);
     auto quality = qualityFromJSValue(qualityValue);
 
+    if (document().requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Canvas)) {
+        if (RefPtr buffer = createImageForNoiseInjection())
+            return UncachedString { buffer->toDataURL(encodingMIMEType, quality) };
+
+        return UncachedString { "data:,"_s };
+    }
+
 #if USE(CG)
     // Try to get ImageData first, as that may avoid lossy conversions.
     if (auto imageData = getImageData())
@@ -730,14 +738,22 @@ ExceptionOr<void> HTMLCanvasElement::toBlob(Ref<BlobCallback>&& callback, const 
 
     auto encodingMIMEType = toEncodingMimeType(mimeType);
     auto quality = qualityFromJSValue(qualityValue);
-
-#if USE(CG)
-    if (auto imageData = getImageData()) {
+    auto scheduleCallbackWithBlobData = [&](Ref<BlobCallback>&& callback, Vector<uint8_t>&& blobData) {
         RefPtr<Blob> blob;
-        Vector<uint8_t> blobData = encodeData(imageData->pixelBuffer(), encodingMIMEType, quality);
         if (!blobData.isEmpty())
             blob = Blob::create(&document(), WTFMove(blobData), encodingMIMEType);
         callback->scheduleCallback(document(), WTFMove(blob));
+    };
+
+    if (document().requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Canvas)) {
+        RefPtr buffer = createImageForNoiseInjection();
+        scheduleCallbackWithBlobData(WTFMove(callback), buffer ? buffer->toData(encodingMIMEType, quality) : Vector<uint8_t> { });
+        return { };
+    }
+
+#if USE(CG)
+    if (auto imageData = getImageData()) {
+        scheduleCallbackWithBlobData(WTFMove(callback), encodeData(imageData->pixelBuffer(), encodingMIMEType, quality));
         return { };
     }
 #endif
@@ -747,11 +763,7 @@ ExceptionOr<void> HTMLCanvasElement::toBlob(Ref<BlobCallback>&& callback, const 
         callback->scheduleCallback(document(), nullptr);
         return { };
     }
-    RefPtr<Blob> blob;
-    Vector<uint8_t> blobData = buffer->toData(encodingMIMEType, quality);
-    if (!blobData.isEmpty())
-        blob = Blob::create(&document(), WTFMove(blobData), encodingMIMEType);
-    callback->scheduleCallback(document(), WTFMove(blob));
+    scheduleCallbackWithBlobData(WTFMove(callback), buffer->toData(encodingMIMEType, quality));
     return { };
 }
 

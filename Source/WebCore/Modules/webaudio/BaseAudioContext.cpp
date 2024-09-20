@@ -76,6 +76,7 @@
 #include "PlatformMediaSessionManager.h"
 #include "ScriptController.h"
 #include "ScriptProcessorNode.h"
+#include "ScriptTelemetryCategory.h"
 #include "StereoPannerNode.h"
 #include "StereoPannerOptions.h"
 #include "WaveShaperNode.h"
@@ -120,6 +121,17 @@ static HashSet<uint64_t>& liveAudioContexts()
     return contexts;
 }
 
+static OptionSet<NoiseInjectionPolicy> effectiveNoiseInjectionPolicies(Document& document)
+{
+    OptionSet<NoiseInjectionPolicy> policies;
+    auto documentPolicies = document.noiseInjectionPolicies();
+    if (documentPolicies.contains(NoiseInjectionPolicy::Minimal))
+        policies.add(NoiseInjectionPolicy::Minimal);
+    if (documentPolicies.contains(NoiseInjectionPolicy::Enhanced) && document.requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Audio))
+        policies.add(NoiseInjectionPolicy::Enhanced);
+    return policies;
+}
+
 BaseAudioContext::BaseAudioContext(Document& document)
     : ActiveDOMObject(document)
 #if !RELEASE_LOG_DISABLED
@@ -129,7 +141,7 @@ BaseAudioContext::BaseAudioContext(Document& document)
     , m_contextID(generateContextID())
     , m_worklet(AudioWorklet::create(*this))
     , m_listener(AudioListener::create(*this))
-    , m_noiseInjectionPolicies(document.noiseInjectionPolicies())
+    , m_noiseInjectionPolicies(effectiveNoiseInjectionPolicies(document))
 {
     liveAudioContexts().add(m_contextID);
 

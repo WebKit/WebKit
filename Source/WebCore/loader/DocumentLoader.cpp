@@ -2671,11 +2671,6 @@ bool DocumentLoader::allowsActiveContentRuleListActionsForURL(const String& cont
     return false;
 }
 
-bool DocumentLoader::fingerprintingProtectionsEnabled() const
-{
-    return m_advancedPrivacyProtections.contains(AdvancedPrivacyProtections::FingerprintingProtections);
-}
-
 void DocumentLoader::setHTTPSByDefaultMode(HTTPSByDefaultMode mode)
 {
     if (mode == HTTPSByDefaultMode::Disabled) {

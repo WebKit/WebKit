@@ -143,6 +143,8 @@ OptionSet<NoiseInjectionPolicy> WorkerOrWorkletGlobalScope::noiseInjectionPolici
     OptionSet<NoiseInjectionPolicy> policies;
     if (m_advancedPrivacyProtections.contains(AdvancedPrivacyProtections::FingerprintingProtections))
         policies.add(NoiseInjectionPolicy::Minimal);
+    if (m_advancedPrivacyProtections.contains(AdvancedPrivacyProtections::ScriptTelemetry))
+        policies.add(NoiseInjectionPolicy::Enhanced);
     return policies;
 }
 
