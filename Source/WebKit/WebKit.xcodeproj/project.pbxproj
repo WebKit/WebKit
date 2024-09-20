@@ -18506,7 +18506,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SCRIPT_INPUT_FILE_0}\"\n";
+			shellScript = "\"${SCRIPT_INPUT_FILE_0}\" --timestamp=\"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 		3713F0231429063D0036387F /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;

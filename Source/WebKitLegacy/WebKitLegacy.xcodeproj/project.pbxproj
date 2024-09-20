@@ -3363,10 +3363,11 @@
 			);
 			outputPaths = (
 				"$(TARGET_TEMP_DIR)/ReexportedFromWebCore.exp",
+				"$(TARGET_TEMP_DIR)/MigratedHeaders.json",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "rm -f \"${SCRIPT_OUTPUT_FILE_0}\" && \"${SCRIPT_INPUT_FILE_0}\"\n";
+			shellScript = "rm -f \"${SCRIPT_OUTPUT_FILE_0}\" && \"${SCRIPT_INPUT_FILE_0}\" --tapi-filelist=\"${SCRIPT_OUTPUT_FILE_1}\" --rule=\"${SCRIPT_INPUT_FILE_1}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

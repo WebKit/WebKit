@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import argparse
+import json
 import os
 import shutil
 import subprocess
@@ -13,8 +15,13 @@ postprocess_rule_env["SCRIPT_OUTPUT_FILE_LIST_COUNT"] = "0"
 excluded_patterns = list(map(Path, os.environ.get("EXCLUDED_SOURCE_FILE_NAMES", "").split()))
 included_patterns = list(map(Path, os.environ.get("INCLUDED_SOURCE_FILE_NAMES", "").split()))
 
-migrate_rule = os.environ.get("SCRIPT_INPUT_FILE_1")
-timestamp = os.environ.get("SCRIPT_OUTPUT_FILE_0")
+parser = argparse.ArgumentParser()
+parser.add_argument('--timestamp')
+parser.add_argument('--tapi-filelist')
+parser.add_argument('--rule', dest='migrate_rule')
+
+opts = parser.parse_args()
+tapi_filelist = {"headers": [], "version": "3"}
 
 
 def pattern_match(path, pattern):
@@ -45,19 +52,32 @@ for file_number in range(int(os.environ["SCRIPT_OUTPUT_FILE_LIST_COUNT"])):
                 and not any(pattern_match(input_file, pattern) for pattern in included_patterns):
             continue
 
-        if migrate_rule:
+        visibility = None
+        if "PrivateHeaders" in output_file.parts:
+            visibility = "private"
+        elif "Headers" in output_file.parts:
+            visibility = "public"
+        if visibility:
+            tapi_filelist["headers"].append({
+                "path": str(output_file),
+                "type": visibility
+            })
+
+        if opts.migrate_rule:
             postprocess_rule_env["INPUT_FILE_PATH"] = input_file
             postprocess_rule_env["INPUT_FILE_NAME"] = input_file.name
             postprocess_rule_env["SCRIPT_OUTPUT_FILE_0"] = output_file
-            if "PrivateHeaders" in output_file.parts:
-                postprocess_rule_env["SCRIPT_HEADER_VISIBILITY"] = "private"
-            elif "Headers" in output_file.parts:
-                postprocess_rule_env["SCRIPT_HEADER_VISIBILITY"] = "public"
+            if visibility:
+                postprocess_rule_env["SCRIPT_HEADER_VISIBILITY"] = visibility
             print("RuleScriptExecution", output_file, input_file, file=sys.stderr)
-            subprocess.check_call((migrate_rule), env=postprocess_rule_env)
+            subprocess.check_call((opts.migrate_rule), env=postprocess_rule_env)
         else:
             print(output_file, "->", input_file, file=sys.stderr)
             shutil.copy(input_file, output_file)
 
-if timestamp:
-    Path(timestamp).touch()
+if opts.tapi_filelist:
+    with open(opts.tapi_filelist, "w") as fd:
+        json.dump(tapi_filelist, fd, indent=2)
+
+if opts.timestamp:
+    Path(opts.timestamp).touch()
