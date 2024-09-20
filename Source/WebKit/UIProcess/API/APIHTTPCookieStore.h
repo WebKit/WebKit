@@ -30,21 +30,13 @@
 #include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
 #if USE(SOUP)
 #include "SoupCookiePersistentStorageType.h"
 #endif
-
-namespace API {
-class HTTPCookieStoreObserver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<API::HTTPCookieStoreObserver> : std::true_type { };
-}
 
 namespace WebCore {
 struct Cookie;
@@ -60,7 +52,7 @@ namespace API {
 
 class HTTPCookieStore;
 
-class HTTPCookieStoreObserver : public CanMakeWeakPtr<HTTPCookieStoreObserver> {
+class HTTPCookieStoreObserver : public RefCountedAndCanMakeWeakPtr<HTTPCookieStoreObserver> {
 public:
     virtual ~HTTPCookieStoreObserver() { }
     virtual void cookiesDidChange(HTTPCookieStore&) = 0;

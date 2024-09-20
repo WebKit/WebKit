@@ -483,7 +483,7 @@ WebsiteDataStore* WebExtensionController::websiteDataStore(std::optional<PAL::Se
 void WebExtensionController::addWebsiteDataStore(WebsiteDataStore& dataStore)
 {
     if (!m_cookieStoreObserver)
-        m_cookieStoreObserver = makeUnique<HTTPCookieStoreObserver>(*this);
+        m_cookieStoreObserver = HTTPCookieStoreObserver::create(*this);
 
     m_websiteDataStores.add(dataStore);
     dataStore.protectedCookieStore()->registerObserver(*m_cookieStoreObserver);
