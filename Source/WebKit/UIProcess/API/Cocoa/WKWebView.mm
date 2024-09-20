@@ -1978,7 +1978,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     isAppInitiated = request.attribution == NSURLRequestAttributionDeveloper;
 #endif
 
-    return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString, isAppInitiated)).autorelease();
+    return wrapper(_page->loadFile(URL.filePathURL.absoluteString, readAccessURL.absoluteString, isAppInitiated)).autorelease();
 }
 
 - (WebCore::CocoaColor *)themeColor
