@@ -29,11 +29,14 @@
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
+#import "TestWKWebView.h"
 #import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
 
@@ -127,6 +130,62 @@ TEST(Preconnect, HTTPS)
     [webView loadRequest:server.request()];
     Util::run(&requested);
     EXPECT_TRUE(receivedChallenge);
+}
+
+TEST(Preconnect, HTTPSWithHTTPFallback)
+{
+    bool connectedHTTPS = false;
+    bool connectedHTTP = false;
+    bool requestedHTTPS = false;
+    bool requestedHTTP = false;
+    __block bool receivedChallenge = false;
+    HTTPServer httpsServer([&] (Connection connection) {
+        connectedHTTPS = true;
+        connection.receiveHTTPRequest([&](Vector<char>&&) {
+            requestedHTTPS = true;
+        });
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    HTTPServer httpServer([&] (Connection connection) {
+        connectedHTTP = true;
+        connection.receiveHTTPRequest([&](Vector<char>&&) {
+            requestedHTTP = true;
+        });
+    }, HTTPServer::Protocol::Http);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPProxyPort: @(httpServer.port()),
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(httpsServer.port())
+    }];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+    [delegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        receivedChallenge = true;
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    }];
+    delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences._networkConnectionIntegrityPolicy |= _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSFirst;
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+    auto request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit/"]];
+    [webView _preconnectToServer:request.URL];
+    Util::run(&connectedHTTPS);
+    Util::spinRunLoop(10);
+    EXPECT_FALSE(receivedChallenge);
+    EXPECT_FALSE(requestedHTTPS);
+    [webView loadRequest:request];
+    Util::run(&requestedHTTPS);
+    EXPECT_TRUE(connectedHTTP);
+    EXPECT_TRUE(receivedChallenge);
+    EXPECT_FALSE(requestedHTTP);
 }
 
 #if HAVE(PRECONNECT_PING)
