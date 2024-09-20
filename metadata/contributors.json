@@ -6591,6 +6591,13 @@
    },
    {
       "emails" : [
+         "p_choudhury@apple.com"
+      ],
+      "github" : "pratiksha-99",
+      "name" : "Pratiksha Choudhury"
+   },
+   {
+      "emails" : [
          "pravind@webkit.org",
          "pravin.d@samsung.com"
       ],
