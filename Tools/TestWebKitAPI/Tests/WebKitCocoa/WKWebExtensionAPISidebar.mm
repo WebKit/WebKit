@@ -78,6 +78,11 @@ static auto *sidePanelManifest = @{
     @"side_panel": @{
         @"default_path": @"sidebar.html",
     },
+
+    @"action": @{
+        @"default_title": @"Test Action",
+        @"default_popup": @"sidebar.html",
+    },
 };
 
 static auto *sidebarActionAndPanelManifest = @{
@@ -1288,6 +1293,75 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelOpenForWindowSucceedsWithUserGesture)
     [manager run];
 
     EXPECT_EQ(presentSidebarCallCount, 1);
+}
+
+TEST_F(WKWebExtensionAPISidebar, SidePanelSetPanelBehaviorPersists)
+{
+    auto *script = @[
+        @"let panelBehavior = await browser.sidePanel.getPanelBehavior()",
+        @"browser.test.assertFalse(panelBehavior.openPanelOnActionClick)",
+
+        @"await browser.test.assertSafeResolve(() => browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }))",
+        @"let newPanelBehavior = await browser.sidePanel.getPanelBehavior()",
+        @"browser.test.assertTrue(newPanelBehavior.openPanelOnActionClick)",
+
+        @"await browser.test.assertSafeResolve(() => browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: false }))",
+        @"let newNewPanelBehavior = await browser.sidePanel.getPanelBehavior()",
+        @"browser.test.assertFalse(newNewPanelBehavior.openPanelOnActionClick)",
+
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(sidePanelManifest, @{ @"background.js": Util::constructScript(script) }, sidebarConfig);
+}
+
+TEST_F(WKWebExtensionAPISidebar, SidePanelOpensSidebarOnActionClickWhenConfigured)
+{
+    auto *script = @[
+        @"await browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: true })",
+        @"let initialPanelBehavior = await browser.sidePanel.getPanelBehavior()",
+        @"browser.test.assertTrue(initialPanelBehavior.openPanelOnActionClick)",
+        @"browser.test.yield('Perform action')",
+
+        @"await browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: false })",
+        @"let newPanelBehavior = await browser.sidePanel.getPanelBehavior()",
+        @"browser.test.assertFalse(newPanelBehavior.openPanelOnActionClick)",
+        @"browser.test.yield('Perform action again')",
+    ];
+
+    auto *resources = @{
+        @"background.js": Util::constructScript(script),
+        @"sidebar.html": @"<h1>Sidebar</h1>",
+    };
+
+    int presentSidebarCallCount = 0;
+    int *presentSidebarCallCountPtr = &presentSidebarCallCount;
+    int presentActionPopupCallCount = 0;
+    int *presentActionPopupCallCountPtr = &presentActionPopupCallCount;
+
+    auto manager = getManagerFor(resources, sidePanelManifest);
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+        (*presentActionPopupCallCountPtr)++;
+        [manager done];
+    };
+    manager.get().internalDelegate.presentSidebar = ^(_WKWebExtensionSidebar *) {
+        (*presentSidebarCallCountPtr)++;
+    };
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Perform action");
+    [manager.get().context performActionForTab:manager.get().defaultTab];
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Perform action again");
+    EXPECT_EQ(presentSidebarCallCount, 1);
+    EXPECT_EQ(presentActionPopupCallCount, 0);
+    [manager.get().context performActionForTab:manager.get().defaultTab];
+    [manager run];
+
+    EXPECT_EQ(presentSidebarCallCount, 1);
+    EXPECT_EQ(presentActionPopupCallCount, 1);
 }
 
 } // namespace TestWebKitAPI

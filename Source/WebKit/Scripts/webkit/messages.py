@@ -504,6 +504,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::TransactionID',
         'WebKit::WCContentBufferIdentifier',
         'WebKit::WCLayerTreeHostIdentifier',
+        'WebKit::WebExtensionActionClickBehavior',
         'WebKit::WebExtensionCommandParameters',
         'WebKit::WebExtensionContentWorldType',
         'WebKit::WebExtensionDataType',

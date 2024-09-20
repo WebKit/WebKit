@@ -424,6 +424,17 @@ void WebExtensionContext::sidebarSetOptions(const std::optional<WebExtensionWind
     completionHandler({ });
 }
 
+void WebExtensionContext::sidebarSetActionClickBehavior(WebExtensionActionClickBehavior behavior, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+{
+    m_actionClickBehavior = behavior;
+    completionHandler({ });
+}
+
+void WebExtensionContext::sidebarGetActionClickBehavior(CompletionHandler<void(Expected<WebExtensionActionClickBehavior, WebExtensionError>&&)>&& completionHandler)
+{
+    completionHandler(m_actionClickBehavior);
+}
+
 bool WebExtensionContext::isSidebarMessageAllowed()
 {
     if (auto *controller = extensionController())

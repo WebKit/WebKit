@@ -2719,6 +2719,17 @@ void WebExtensionContext::performAction(WebExtensionTab* tab, UserTriggered user
     if (tab && userTriggered == UserTriggered::Yes)
         userGesturePerformed(*tab);
 
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    std::optional<Ref<WebExtensionSidebar>> sidebar;
+    if (m_actionClickBehavior == WebExtensionActionClickBehavior::OpenSidebar && (sidebar = getOrCreateSidebar(*tab)) && canProgrammaticallyOpenSidebar() && canProgrammaticallyCloseSidebar() && sidebar.value()->opensSidebar()) {
+        if (!sidebar.value()->isOpen())
+            openSidebar(sidebar.value());
+        else
+            closeSidebar(sidebar.value());
+        return;
+    }
+#endif
+
     auto action = getOrCreateAction(tab);
     if (action->presentsPopup()) {
         action->presentPopupWhenReady();

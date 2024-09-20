@@ -295,6 +295,7 @@ $(PROJECT_DIR)/Shared/Extensions/WebExtensionMatchedRuleParameters.serialization
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMenuItem.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMessageSenderParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionSidebarParameters.serialization.in
+$(PROJECT_DIR)/Shared/Extensions/WebExtensionActionClickBehavior.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionStorage.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionTab.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionTabParameters.serialization.in
