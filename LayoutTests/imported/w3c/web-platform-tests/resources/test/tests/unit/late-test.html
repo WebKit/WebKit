@@ -6,7 +6,6 @@
 <body>
 <div id="log"></div>
 <script src="/resources/testharness.js"></script>
-<script src="/resources/testharnessreport.js"></script>
 <p>This test simulates an automated test running scenario, where the test
 results emitted by testharness.js may be interpreted after some delay. It is
 intended to demonstrate that in such cases, any additional tests which are
@@ -20,7 +19,6 @@ async_test(function(t) {
     var source = [
         "<div id='log'></div>",
         "<script src='/resources/testharness.js'></" + "script>",
-        "<script src='/resources/testharnessreport.js'></" + "script>",
         "<script>",
         "parent.childReady(window);",
         "setup({ explicit_done: true });",

@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <title>Upgrade Insecure Requests: Basics.</title>
 <script src="/js-test-resources/testharness.js"></script>
-<script src="/js-test-resources/testharnessreport.js"></script>
 
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <div id="console"></div>
 <script>
-if (window.testRunner)
-    testRunner.dumpAsText();
 
 // This is a bit of a hack. UPGRADE doesn't upgrade the port number, so we
 // specify this non-existent URL ('http' over port 8443). If UPGRADE doesn't
