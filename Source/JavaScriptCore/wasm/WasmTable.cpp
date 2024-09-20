@@ -30,7 +30,6 @@
 
 #include "JSCJSValueInlines.h"
 #include "JSWebAssemblyInstance.h"
-#include "JSWebAssemblyTable.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <type_traits>
 #include <wtf/CheckedArithmetic.h>

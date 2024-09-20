@@ -70,6 +70,7 @@
 #include "WasmSIMDOpcodes.h"
 #include "WasmThunks.h"
 #include "WasmTypeDefinitionInlines.h"
+#include "WebAssemblyFunctionBase.h"
 #include <limits>
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>

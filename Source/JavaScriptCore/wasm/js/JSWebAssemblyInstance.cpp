@@ -41,6 +41,7 @@
 #include "WasmModuleInformation.h"
 #include "WasmTag.h"
 #include "WasmTypeDefinitionInlines.h"
+#include "WebAssemblyFunctionBase.h"
 #include "WebAssemblyModuleRecord.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/StdLibExtras.h>

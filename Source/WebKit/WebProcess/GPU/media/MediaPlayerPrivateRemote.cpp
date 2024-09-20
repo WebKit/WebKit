@@ -71,6 +71,7 @@
 #include <WebCore/TextureMapperPlatformLayerProxyProvider.h>
 #elif USE(TEXTURE_MAPPER)
 #include <WebCore/TextureMapperPlatformLayer.h>
+#include <WebCore/TextureMapperPlatformLayerProxy.h>
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

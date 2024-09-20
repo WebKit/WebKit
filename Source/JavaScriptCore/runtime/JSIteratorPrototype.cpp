@@ -35,7 +35,6 @@
 #include "JSCBuiltins.h"
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
-#include "JSIterator.h"
 #include "JSIteratorConstructor.h"
 #include "JSObject.h"
 #include "VMEntryScopeInlines.h"

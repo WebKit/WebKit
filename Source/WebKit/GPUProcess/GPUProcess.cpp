@@ -414,7 +414,7 @@ void GPUProcess::updateSandboxAccess(const Vector<SandboxExtension::Handle>& ext
 #if ENABLE(MEDIA_STREAM)
 void GPUProcess::setMockCaptureDevicesEnabled(bool isEnabled)
 {
-    MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(isEnabled);
+    WebCore::MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(isEnabled);
 }
 
 void GPUProcess::setUseSCContentSharingPicker(bool use)
@@ -426,7 +426,7 @@ void GPUProcess::setUseSCContentSharingPicker(bool use)
 #endif
 }
 
-void GPUProcess::setOrientationForMediaCapture(IntDegrees orientation)
+void GPUProcess::setOrientationForMediaCapture(WebCore::IntDegrees orientation)
 {
     m_orientation = orientation;
     for (auto& connection : m_webProcessConnections.values())
@@ -462,37 +462,37 @@ void GPUProcess::updateCaptureOrigin(const WebCore::SecurityOriginData& originDa
 
 void GPUProcess::addMockMediaDevice(const WebCore::MockMediaDevice& device)
 {
-    MockRealtimeMediaSourceCenter::addDevice(device);
+    WebCore::MockRealtimeMediaSourceCenter::addDevice(device);
 }
 
 void GPUProcess::clearMockMediaDevices()
 {
-    MockRealtimeMediaSourceCenter::setDevices({ });
+    WebCore::MockRealtimeMediaSourceCenter::setDevices({ });
 }
 
 void GPUProcess::removeMockMediaDevice(const String& persistentId)
 {
-    MockRealtimeMediaSourceCenter::removeDevice(persistentId);
+    WebCore::MockRealtimeMediaSourceCenter::removeDevice(persistentId);
 }
 
 void GPUProcess::setMockMediaDeviceIsEphemeral(const String& persistentId, bool isEphemeral)
 {
-    MockRealtimeMediaSourceCenter::setDeviceIsEphemeral(persistentId, isEphemeral);
+    WebCore::MockRealtimeMediaSourceCenter::setDeviceIsEphemeral(persistentId, isEphemeral);
 }
 
 void GPUProcess::resetMockMediaDevices()
 {
-    MockRealtimeMediaSourceCenter::resetDevices();
+    WebCore::MockRealtimeMediaSourceCenter::resetDevices();
 }
 
 void GPUProcess::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
 {
-    MockRealtimeMediaSourceCenter::setMockCaptureDevicesInterrupted(isCameraInterrupted, isMicrophoneInterrupted);
+    WebCore::MockRealtimeMediaSourceCenter::setMockCaptureDevicesInterrupted(isCameraInterrupted, isMicrophoneInterrupted);
 }
 
 void GPUProcess::triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay)
 {
-    MockRealtimeMediaSourceCenter::singleton().triggerMockCaptureConfigurationChange(forMicrophone, forDisplay);
+    WebCore::MockRealtimeMediaSourceCenter::singleton().triggerMockCaptureConfigurationChange(forMicrophone, forDisplay);
 }
 
 void GPUProcess::setShouldListenToVoiceActivity(bool shouldListen)

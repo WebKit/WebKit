@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "Logging.h"
 #include "RemoteBindGroup.h"
 #include "RemoteBindGroupLayout.h"
 #include "RemoteBuffer.h"

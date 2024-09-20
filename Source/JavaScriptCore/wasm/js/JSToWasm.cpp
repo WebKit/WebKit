@@ -40,6 +40,7 @@
 #include "WasmOperations.h"
 #include "WasmThunks.h"
 #include "WasmToJS.h"
+#include "WebAssemblyFunctionBase.h"
 
 namespace JSC {
 namespace Wasm {

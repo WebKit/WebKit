@@ -59,6 +59,7 @@
 #include "WasmOps.h"
 #include "WasmThunks.h"
 #include "WasmTypeDefinition.h"
+#include "WebAssemblyFunctionBase.h"
 #include <bit>
 #include <wtf/Assertions.h>
 #include <wtf/Compiler.h>
