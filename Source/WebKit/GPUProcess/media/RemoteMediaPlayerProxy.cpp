@@ -479,7 +479,7 @@ void RemoteMediaPlayerProxy::mediaPlayerTimeChanged()
 void RemoteMediaPlayerProxy::mediaPlayerDurationChanged()
 {
     updateCachedState(true);
-    m_cachedState.duration = m_player->duration();
+    m_cachedState.duration = protectedPlayer()->duration();
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::DurationChanged(m_cachedState), m_id);
 }
 
@@ -583,10 +583,11 @@ void RemoteMediaPlayerProxy::mediaPlayerBufferedTimeRangesChanged()
 
 void RemoteMediaPlayerProxy::mediaPlayerSeekableTimeRangesChanged()
 {
-    m_cachedState.minTimeSeekable = m_player->minTimeSeekable();
-    m_cachedState.maxTimeSeekable = m_player->maxTimeSeekable();
-    m_cachedState.seekableTimeRangesLastModifiedTime = m_player->seekableTimeRangesLastModifiedTime();
-    m_cachedState.liveUpdateInterval = m_player->liveUpdateInterval();
+    RefPtr player = m_player;
+    m_cachedState.minTimeSeekable = player->minTimeSeekable();
+    m_cachedState.maxTimeSeekable = player->maxTimeSeekable();
+    m_cachedState.seekableTimeRangesLastModifiedTime = player->seekableTimeRangesLastModifiedTime();
+    m_cachedState.liveUpdateInterval = player->liveUpdateInterval();
 
     if (!m_updateCachedStateMessageTimer.isActive())
         sendCachedState();
@@ -662,7 +663,7 @@ void RemoteMediaPlayerProxy::addRemoteVideoTrackProxy(WebCore::VideoTrackPrivate
         return;
 
 #if !RELEASE_LOG_DISABLED
-    track.setLogger(mediaPlayerLogger(), mediaPlayerLogIdentifier());
+    track.setLogger(protectedMediaPlayerLogger(), mediaPlayerLogIdentifier());
 #endif
 
     for (auto& videoTrack : m_videoTracks) {
@@ -694,7 +695,7 @@ void RemoteMediaPlayerProxy::addRemoteTextTrackProxy(WebCore::InbandTextTrackPri
         return;
 
 #if !RELEASE_LOG_DISABLED
-    track.setLogger(mediaPlayerLogger(), mediaPlayerLogIdentifier());
+    track.setLogger(protectedMediaPlayerLogger(), mediaPlayerLogIdentifier());
 #endif
 
     for (auto& textTrack : m_textTracks) {
@@ -824,8 +825,9 @@ void RemoteMediaPlayerProxy::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(b
 
 void RemoteMediaPlayerProxy::setWirelessVideoPlaybackDisabled(bool disabled)
 {
-    m_player->setWirelessVideoPlaybackDisabled(disabled);
-    m_cachedState.wirelessVideoPlaybackDisabled = m_player->wirelessVideoPlaybackDisabled();
+    RefPtr player = m_player;
+    player->setWirelessVideoPlaybackDisabled(disabled);
+    m_cachedState.wirelessVideoPlaybackDisabled = player->wirelessVideoPlaybackDisabled();
     sendCachedState();
 }
 
@@ -1169,7 +1171,7 @@ void RemoteMediaPlayerProxy::updateCachedVideoMetrics()
     if (m_hasPlaybackMetricsUpdatePending)
         return;
     m_hasPlaybackMetricsUpdatePending = true;
-    m_player->asyncVideoPlaybackQualityMetrics()->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this](auto&& result) {
+    m_player->asyncVideoPlaybackQualityMetrics()->whenSettled(RunLoop::protectedCurrent(), [weakThis = WeakPtr { *this }, this](auto&& result) {
         if (!weakThis)
             return;
         if (result) {
