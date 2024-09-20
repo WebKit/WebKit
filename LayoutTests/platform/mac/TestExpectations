@@ -2401,3 +2401,6 @@ imported/w3c/web-platform-tests/css/css-writing-modes/text-orientation-upright-s
 [ Sonoma+ ] http/tests/media/video-error-abort.html [ Failure ]
 [ Sonoma+ ] http/tests/media/video-served-as-text.html [ Failure ]
 [ Sonoma+ ] http/tests/media/video-throttled-load-metadata.html [ Failure ]
+
+# webkit.org/b/280091 REGRESSION (283643@main) : [ macOS  ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-path-changes-svg.tentative.html is a flaky failure.
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-path-changes-svg.tentative.html [ Pass Failure ]
