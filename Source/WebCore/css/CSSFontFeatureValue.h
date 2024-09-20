@@ -26,12 +26,10 @@
 
 #pragma once
 
-#include "CSSValue.h"
+#include "CSSPrimitiveValue.h"
 #include "FontTaggedSettings.h"
 
 namespace WebCore {
-
-class CSSPrimitiveValue;
 
 class CSSFontFeatureValue final : public CSSValue {
 public:

@@ -21,6 +21,7 @@
 #include "config.h"
 #include "MathObject.h"
 
+#include "IteratorOperations.h"
 #include "JSCInlines.h"
 #include "MathCommon.h"
 #include <wtf/Assertions.h>

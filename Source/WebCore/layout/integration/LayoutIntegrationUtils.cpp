@@ -27,6 +27,7 @@
 #include "LayoutIntegrationUtils.h"
 
 #include "LayoutBox.h"
+#include "LayoutIntegrationFormattingContextLayout.h"
 #include "LayoutState.h"
 #include "RenderObject.h"
 

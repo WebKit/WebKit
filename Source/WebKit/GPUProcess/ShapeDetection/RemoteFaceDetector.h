@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
+#include "RemoteRenderingBackend.h"
 #include "ShapeDetectionIdentifier.h"
 #include "StreamMessageReceiver.h"
 #include <WebCore/ProcessIdentifier.h>

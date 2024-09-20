@@ -31,7 +31,10 @@
 #include "RemoteComputePassEncoderMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
+#include <WebCore/WebGPUBindGroup.h>
+#include <WebCore/WebGPUBuffer.h>
 #include <WebCore/WebGPUComputePassEncoder.h>
+#include <WebCore/WebGPUComputePipeline.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {

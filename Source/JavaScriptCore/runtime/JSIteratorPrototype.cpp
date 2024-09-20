@@ -28,6 +28,7 @@
 #include "config.h"
 #include "JSIteratorPrototype.h"
 
+#include "BuiltinNames.h"
 #include "CachedCall.h"
 #include "InterpreterInlines.h"
 #include "IteratorOperations.h"

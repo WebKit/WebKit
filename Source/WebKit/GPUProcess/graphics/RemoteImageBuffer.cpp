@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GPUConnectionToWebProcess.h"
 #include "IPCSemaphore.h"
 #include "RemoteImageBufferMessages.h"
 #include "RemoteRenderingBackend.h"

@@ -51,7 +51,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePageProxy);
 
-RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, const Site& site, WebPageProxyMessageReceiverRegistration* registrationToTransfer)
+RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, const WebCore::Site& site, WebPageProxyMessageReceiverRegistration* registrationToTransfer)
     : m_webPageID(page.webPageIDInMainFrameProcess()) // FIXME: We should generate a new identifier so that it will be more obvious when we get things wrong.
     , m_process(process)
     , m_page(page)

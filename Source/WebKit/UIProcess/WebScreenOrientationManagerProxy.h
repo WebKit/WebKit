@@ -38,6 +38,7 @@ class Exception;
 namespace WebKit {
 
 class WebPageProxy;
+struct SharedPreferencesForWebProcess;
 
 class WebScreenOrientationManagerProxy final : public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(WebScreenOrientationManagerProxy);

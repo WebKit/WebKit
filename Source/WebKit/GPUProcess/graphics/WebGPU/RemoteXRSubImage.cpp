@@ -30,9 +30,11 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteGPU.h"
+#include "RemoteTexture.h"
 #include "RemoteXRSubImageMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
+#include <WebCore/WebGPUTexture.h>
 #include <WebCore/WebGPUXRSubImage.h>
 #include <wtf/TZoneMalloc.h>
 

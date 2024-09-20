@@ -32,6 +32,8 @@
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/WebGPUBindGroup.h>
+#include <WebCore/WebGPUBuffer.h>
+#include <WebCore/WebGPURenderBundle.h>
 #include <WebCore/WebGPURenderPassEncoder.h>
 #include <WebCore/WebGPURenderPipeline.h>
 #include <wtf/TZoneMallocInlines.h>

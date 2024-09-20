@@ -30,6 +30,7 @@
 #include "PushClientConnectionMessages.h"
 #include "WebPushMessage.h"
 #include <WebCore/ExceptionData.h>
+#include <WebCore/NotificationData.h>
 #include <WebCore/PushPermissionState.h>
 #include <WebCore/PushSubscriptionData.h>
 

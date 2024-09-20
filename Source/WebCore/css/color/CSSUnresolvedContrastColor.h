@@ -24,13 +24,12 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
+#include "StyleColor.h"
 
 namespace WebCore {
 
 class CSSUnresolvedColor;
 class Color;
-class StyleColor;
 
 struct CSSUnresolvedColorResolutionState;
 struct CSSUnresolvedStyleColorResolutionState;

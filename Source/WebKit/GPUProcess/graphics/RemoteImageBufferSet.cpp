@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RemoteImageBufferSet.h"
 
+#include "GPUConnectionToWebProcess.h"
 #include "ImageBufferBackendHandleSharing.h"
 #include "Logging.h"
 #include "RemoteImageBufferSetMessages.h"

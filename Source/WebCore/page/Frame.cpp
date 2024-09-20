@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Frame.h"
 
+#include "FrameLoaderClient.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLIFrameElement.h"
 #include "HistoryController.h"

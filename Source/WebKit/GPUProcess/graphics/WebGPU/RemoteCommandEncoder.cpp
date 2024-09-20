@@ -37,6 +37,7 @@
 #include "StreamServerConnection.h"
 #include "WebGPUComputePassDescriptor.h"
 #include "WebGPUObjectHeap.h"
+#include <WebCore/WebGPUBuffer.h>
 #include <WebCore/WebGPUCommandEncoder.h>
 #include <wtf/TZoneMallocInlines.h>
 
