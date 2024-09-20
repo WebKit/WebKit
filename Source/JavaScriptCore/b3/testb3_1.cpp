@@ -867,6 +867,9 @@ void run(const TestConfig* config)
     RUN(testConstDoubleMove());
     RUN(testConstFloatMove());
 
+    RUN_UNARY(testSShrCompare32, int32OperandsMore());
+    RUN_UNARY(testSShrCompare64, int64OperandsMore());
+
     if (isX86()) {
         RUN(testBranchBitAndImmFusion(Identity, Int64, 1, Air::BranchTest32, Air::Arg::Tmp));
         RUN(testBranchBitAndImmFusion(Identity, Int64, 0xff, Air::BranchTest32, Air::Arg::Tmp));
