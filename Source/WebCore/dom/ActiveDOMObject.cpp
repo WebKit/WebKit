@@ -155,25 +155,25 @@ public:
         , m_object(object)
         , m_dispatchEvent(WTFMove(dispatchEvent))
     {
-        ++m_object.m_pendingActivityInstanceCount;
+        ++m_object->m_pendingActivityInstanceCount;
     }
 
     ~ActiveDOMObjectEventDispatchTask()
     {
-        ASSERT(m_object.m_pendingActivityInstanceCount);
-        --m_object.m_pendingActivityInstanceCount;
+        ASSERT(m_object->m_pendingActivityInstanceCount);
+        --m_object->m_pendingActivityInstanceCount;
     }
 
     void execute() final
     {
         // If this task executes after the script execution context has been stopped, don't
         // actually dispatch the event.
-        if (m_object.isAllowedToRunScript())
+        if (m_object->isAllowedToRunScript())
             m_dispatchEvent();
     }
 
 private:
-    ActiveDOMObject& m_object;
+    Ref<ActiveDOMObject> m_object;
     Function<void()> m_dispatchEvent;
 };
 
