@@ -57,13 +57,13 @@ TiledCoreAnimationDrawingAreaProxy::~TiledCoreAnimationDrawingAreaProxy()
 
 void TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange()
 {
-    auto webPageProxy = protectedWebPageProxy();
+    Ref webPageProxy = m_webPageProxy.get();
     send(Messages::DrawingArea::SetDeviceScaleFactor(webPageProxy->deviceScaleFactor()));
 }
 
 void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()
 {
-    if (!m_webPageProxy->hasRunningProcess())
+    if (!protectedWebPageProxy()->hasRunningProcess())
         return;
 
     // We only want one UpdateGeometry message in flight at once, so if we've already sent one but
@@ -76,12 +76,12 @@ void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()
 
 void TiledCoreAnimationDrawingAreaProxy::colorSpaceDidChange()
 {
-    send(Messages::DrawingArea::SetColorSpace(m_webPageProxy->colorSpace()));
+    send(Messages::DrawingArea::SetColorSpace(protectedWebPageProxy()->colorSpace()));
 }
 
 void TiledCoreAnimationDrawingAreaProxy::minimumSizeForAutoLayoutDidChange()
 {
-    if (!m_webPageProxy->hasRunningProcess())
+    if (!protectedWebPageProxy()->hasRunningProcess())
         return;
 
     // We only want one UpdateGeometry message in flight at once, so if we've already sent one but
@@ -94,7 +94,7 @@ void TiledCoreAnimationDrawingAreaProxy::minimumSizeForAutoLayoutDidChange()
 
 void TiledCoreAnimationDrawingAreaProxy::sizeToContentAutoSizeMaximumSizeDidChange()
 {
-    if (!m_webPageProxy->hasRunningProcess())
+    if (!protectedWebPageProxy()->hasRunningProcess())
         return;
 
     // We only want one UpdateGeometry message in flight at once, so if we've already sent one but
@@ -138,7 +138,7 @@ void TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry()
 void TiledCoreAnimationDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStateChangeID, WebProcessProxy& process)
 {
     Seconds activityStateUpdateTimeout = Seconds::fromMilliseconds(250);
-    process.connection().waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateActivityState>(protectedWebPageProxy()->webPageIDInMainFrameProcess(), activityStateUpdateTimeout, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+    process.protectedConnection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateActivityState>(protectedWebPageProxy()->webPageIDInMainFrameProcess(), activityStateUpdateTimeout, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::willSendUpdateGeometry()
@@ -152,7 +152,7 @@ void TiledCoreAnimationDrawingAreaProxy::willSendUpdateGeometry()
 
 MachSendRight TiledCoreAnimationDrawingAreaProxy::createFence()
 {
-    RetainPtr<CAContext> rootLayerContext = [m_webPageProxy->acceleratedCompositingRootLayer() context];
+    RetainPtr<CAContext> rootLayerContext = [protectedWebPageProxy()->acceleratedCompositingRootLayer() context];
     if (!rootLayerContext)
         return MachSendRight();
 

@@ -629,7 +629,7 @@ void RemoteLayerTreeDrawingAreaProxy::windowKindDidChange()
 
 void RemoteLayerTreeDrawingAreaProxy::minimumSizeForAutoLayoutDidChange()
 {
-    if (!m_webPageProxy->hasRunningProcess())
+    if (!protectedWebPageProxy()->hasRunningProcess())
         return;
 
     if (m_isWaitingForDidUpdateGeometry)
@@ -640,7 +640,7 @@ void RemoteLayerTreeDrawingAreaProxy::minimumSizeForAutoLayoutDidChange()
 
 void RemoteLayerTreeDrawingAreaProxy::sizeToContentAutoSizeMaximumSizeDidChange()
 {
-    if (!m_webPageProxy->hasRunningProcess())
+    if (!protectedWebPageProxy()->hasRunningProcess())
         return;
 
     if (m_isWaitingForDidUpdateGeometry)
