@@ -39,6 +39,7 @@ enum class IncludedElement : uint8_t {
     Images = 1 << 0,
     Attachments = 1 << 1,
     PreservedContent = 1 << 2,
+    NonRenderedContent = 1 << 3,
 };
 
 WEBCORE_EXPORT AttributedString editingAttributedString(const SimpleRange&, OptionSet<IncludedElement> = { IncludedElement::Images });

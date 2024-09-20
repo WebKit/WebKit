@@ -178,7 +178,14 @@ void WritingToolsController::willBeginWritingToolsSession(const std::optional<Wr
     // The attributed string produced uses all `IncludedElement`s so that no information is lost; each element
     // will be encoded as an NSTextAttachment.
 
-    auto attributedStringFromRange = editingAttributedString(*contextRange, { IncludedElement::Images, IncludedElement::Attachments, IncludedElement::PreservedContent });
+    static constexpr OptionSet allIncludedElements {
+        IncludedElement::Images,
+        IncludedElement::Attachments,
+        IncludedElement::PreservedContent,
+        IncludedElement::NonRenderedContent,
+    };
+
+    auto attributedStringFromRange = editingAttributedString(*contextRange, allIncludedElements);
     auto selectedTextCharacterRange = selectedTextRange ? characterRange(*contextRange, *selectedTextRange) : CharacterRange { };
 
     if (attributedStringFromRange.string.isEmpty())
