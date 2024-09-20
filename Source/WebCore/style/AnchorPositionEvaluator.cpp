@@ -384,7 +384,7 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
     auto fallbackValue = [&] {
         // https://drafts.csswg.org/css-anchor-position-1/#anchor-valid
         // If any of these conditions are false, the anchor() function resolves to its specified fallback value
-        if (auto* fallback = anchorValue.fallback())
+        if (RefPtr fallback = anchorValue.fallback())
             return BuilderConverter::convertLength(builderState, *fallback);
 
         // If no fallback value is specified, it makes the declaration referencing it invalid at computed-value time.
