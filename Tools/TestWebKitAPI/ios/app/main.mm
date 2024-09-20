@@ -24,11 +24,10 @@
  */
 
 #import "config.h"
-#import <UIKit/UIKit.h>
 
-#if !defined(BUILDING_TEST_IPC) && !defined(BUILDING_TEST_WTF) && !defined(BUILDING_TEST_WGSL)
-#import <WebKit/WKProcessPoolPrivate.h>
-#endif
+#import "TestBundleLoader.h"
+#import <UIKit/UIKit.h>
+#import <WebKit/WebKitPrivate.h>
 
 static NSString * const sceneConfigurationName = @"Default Configuration";
 
@@ -63,12 +62,23 @@ static NSString * const sceneConfigurationName = @"Default Configuration";
 
 @end
 
+static void registerTestClasses()
+{
+    NSURL *testBundleURL = [NSURL URLWithString:@"TestWebKitAPIBundle.xctest" relativeToURL:NSBundle.mainBundle.builtInPlugInsURL];
+    if (!testBundleURL)
+        return;
+
+    Class principalClass = [NSBundle bundleWithURL:testBundleURL].principalClass;
+    if ([principalClass respondsToSelector:@selector(registerTestClasses)])
+        [principalClass registerTestClasses];
+}
+
 int main(int argc, char * argv[])
 {
     NSString *appDelegateClassName;
 
     @autoreleasepool {
-        appDelegateClassName = NSStringFromClass([AppDelegate class]);
+        appDelegateClassName = NSStringFromClass(AppDelegate.class);
 
         [NSUserDefaults.standardUserDefaults removePersistentDomainForName:@"TestWebKitAPI"];
 
@@ -82,6 +92,8 @@ int main(int argc, char * argv[])
 #if !defined(BUILDING_TEST_IPC) && !defined(BUILDING_TEST_WTF) && !defined(BUILDING_TEST_WGSL)
         [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];
 #endif
+
+        registerTestClasses();
     }
 
     return UIApplicationMain(argc, argv, nil, appDelegateClassName);

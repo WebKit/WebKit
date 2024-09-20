@@ -39,3 +39,5 @@ INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPort
 INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight;
 
 CLANG_ENABLE_OBJC_ARC = YES;
+
+GTEST_LDFLAGS = -framework gtest;
