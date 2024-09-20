@@ -79,19 +79,19 @@ struct OriginalAdvancesForCharacterTreatedAsSpace {
     float advance { 0 };
 };
 
-inline auto WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsigned lastGlyphCount, const Font& font, CharactersTreatedAsSpace& charactersTreatedAsSpace) -> ApplyFontTransformsResult
+float WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsigned lastGlyphCount, const Font& font, CharactersTreatedAsSpace& charactersTreatedAsSpace)
 {
     auto glyphBufferSize = glyphBuffer.size();
     ASSERT(lastGlyphCount <= glyphBufferSize);
     if (lastGlyphCount >= glyphBufferSize)
-        return { 0, makeGlyphBufferAdvance() };
+        return 0;
 
     GlyphBufferAdvance* advances = glyphBuffer.advances(0);
     float beforeWidth = 0;
     for (unsigned i = lastGlyphCount; i < glyphBufferSize; ++i)
         beforeWidth += width(advances[i]);
 
-    auto initialAdvance = font.applyTransforms(glyphBuffer, lastGlyphCount, m_currentCharacterIndex, m_enableKerning, m_requiresShaping, m_font->fontDescription().computedLocale(), m_run->text(), direction());
+    font.applyTransforms(glyphBuffer, lastGlyphCount, m_currentCharacterIndex, m_enableKerning, m_requiresShaping, m_font->fontDescription().computedLocale(), m_run->text(), direction());
 
     glyphBufferSize = glyphBuffer.size();
     advances = glyphBuffer.advances(0);
@@ -118,7 +118,7 @@ inline auto WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsigne
     for (unsigned i = lastGlyphCount; i < glyphBufferSize; ++i)
         afterWidth += width(advances[i]);
 
-    return { afterWidth - beforeWidth, initialAdvance };
+    return afterWidth - beforeWidth;
 }
 
 static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treatAsSpace, bool ltr, bool isAfterExpansion, bool forbidLeftExpansion, bool forbidRightExpansion, bool forceLeftExpansion, bool forceRightExpansion)
@@ -148,40 +148,6 @@ static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treat
     if (forceRightExpansion)
         expandRight = true;
     return std::make_pair(expandLeft, expandRight);
-}
-
-static void expandWithInitialAdvance(GlyphBufferAdvance& advanceToExpand, const GlyphBufferAdvance& initialAdvance)
-{
-    setWidth(advanceToExpand, width(advanceToExpand) + width(initialAdvance));
-    setHeight(advanceToExpand, height(advanceToExpand) + height(initialAdvance));
-}
-
-void WidthIterator::applyInitialAdvance(GlyphBuffer& glyphBuffer, GlyphBufferAdvance initialAdvance, unsigned lastGlyphCount)
-{
-    ASSERT(glyphBuffer.size() >= lastGlyphCount);
-
-    if (glyphBuffer.size() <= lastGlyphCount)
-        return;
-
-    ASSERT(lastGlyphCount || (!width(m_leftoverInitialAdvance) && !height(m_leftoverInitialAdvance)));
-
-    if (rtl() && lastGlyphCount) {
-        auto& visuallyLastAdvance = *glyphBuffer.advances(lastGlyphCount);
-        expandWithInitialAdvance(visuallyLastAdvance, m_leftoverInitialAdvance);
-        m_runWidthSoFar += width(m_leftoverInitialAdvance);
-        m_leftoverInitialAdvance = makeGlyphBufferAdvance();
-    }
-
-    if (rtl())
-        m_leftoverInitialAdvance = initialAdvance;
-    else {
-        if (lastGlyphCount) {
-            auto& visuallyPreviousAdvance = *glyphBuffer.advances(lastGlyphCount - 1);
-            expandWithInitialAdvance(visuallyPreviousAdvance, initialAdvance);
-            m_runWidthSoFar += width(initialAdvance);
-        } else
-            glyphBuffer.expandInitialAdvance(initialAdvance);
-    }
 }
 
 bool WidthIterator::hasExtraSpacing() const
@@ -305,9 +271,8 @@ void WidthIterator::commitCurrentFontRange(AdvanceInternalState& advanceInternal
         ASSERT(&advanceInternalState.glyphBuffer.fontAt(i) == advanceInternalState.rangeFont);
 #endif
 
-    auto applyFontTransformsResult = applyFontTransforms(advanceInternalState.glyphBuffer, advanceInternalState.lastGlyphCount, *advanceInternalState.rangeFont, advanceInternalState.charactersTreatedAsSpace);
-    m_runWidthSoFar += applyFontTransformsResult.additionalAdvance;
-    applyInitialAdvance(advanceInternalState.glyphBuffer, applyFontTransformsResult.initialAdvance, advanceInternalState.lastGlyphCount);
+    auto additionalAdvance = applyFontTransforms(advanceInternalState.glyphBuffer, advanceInternalState.lastGlyphCount, *advanceInternalState.rangeFont, advanceInternalState.charactersTreatedAsSpace);
+    m_runWidthSoFar += additionalAdvance;
     m_currentCharacterIndex = advanceInternalState.currentCharacterIndex;
 
     if (advanceInternalState.widthOfCurrentFontRange && m_fallbackFonts && advanceInternalState.rangeFont != advanceInternalState.primaryFont.ptr())
@@ -796,8 +761,6 @@ void WidthIterator::finalize(GlyphBuffer& buffer)
 {
     ASSERT(rtl() || !m_leftoverJustificationWidth);
     // In LTR these do nothing. In RTL, these add left width by moving the whole run to the right.
-    buffer.expandInitialAdvance(m_leftoverInitialAdvance);
-    m_runWidthSoFar += width(m_leftoverInitialAdvance);
     buffer.expandInitialAdvance(m_leftoverJustificationWidth);
     m_runWidthSoFar += m_leftoverJustificationWidth;
     m_leftoverJustificationWidth = 0;
