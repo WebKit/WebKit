@@ -35,6 +35,11 @@ namespace API {
 
 DataTask::~DataTask() = default;
 
+Ref<DataTaskClient> DataTask::protectedClient() const
+{
+    return m_client;
+}
+
 void DataTask::setClient(Ref<DataTaskClient>&& client)
 {
     m_client = WTFMove(client);

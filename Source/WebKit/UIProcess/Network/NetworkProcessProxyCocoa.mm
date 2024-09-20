@@ -55,7 +55,8 @@ RefPtr<XPCEventHandler> NetworkProcessProxy::xpcEventHandler() const
 
 bool NetworkProcessProxy::XPCEventHandler::handleXPCEvent(xpc_object_t event) const
 {
-    if (!m_networkProcess)
+    RefPtr networkProcess = m_networkProcess.get();
+    if (!networkProcess)
         return false;
 
     if (!event || xpc_get_type(event) == XPC_TYPE_ERROR)
@@ -66,14 +67,14 @@ bool NetworkProcessProxy::XPCEventHandler::handleXPCEvent(xpc_object_t event) co
         return false;
 
     if (LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName == messageName) {
-        m_networkProcess->m_endpointMessage = event;
+        networkProcess->m_endpointMessage = event;
         for (auto& processPool : WebProcessPool::allProcessPools()) {
             for (Ref process : processPool->processes())
-                m_networkProcess->sendXPCEndpointToProcess(process);
+                networkProcess->sendXPCEndpointToProcess(process);
         }
 #if ENABLE(GPU_PROCESS)
-        if (auto gpuProcess = GPUProcessProxy::singletonIfCreated())
-            m_networkProcess->sendXPCEndpointToProcess(*gpuProcess);
+        if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
+            networkProcess->sendXPCEndpointToProcess(*gpuProcess);
 #endif
     }
 

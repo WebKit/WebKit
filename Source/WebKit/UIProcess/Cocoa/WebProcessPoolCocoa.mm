@@ -522,9 +522,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     // FIXME: Filter by process's site when site isolation is enabled
-    parameters.storageAccessUserAgentStringQuirksData = StorageAccessUserAgentStringQuirkController::shared().cachedListData();
+    parameters.storageAccessUserAgentStringQuirksData = StorageAccessUserAgentStringQuirkController::sharedSingleton().cachedListData();
 
-    for (auto&& entry : StorageAccessPromptQuirkController::shared().cachedListData()) {
+    for (auto&& entry : StorageAccessPromptQuirkController::sharedSingleton().cachedListData()) {
         if (!entry.triggerPages.isEmpty()) {
             for (auto&& page : entry.triggerPages)
                 parameters.storageAccessPromptQuirksDomains.add(RegistrableDomain { page });
@@ -534,7 +534,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             parameters.storageAccessPromptQuirksDomains.add(domain);
     }
 
-    parameters.scriptTelemetryRules = ScriptTelemetryController::shared().cachedListData();
+    parameters.scriptTelemetryRules = ScriptTelemetryController::sharedSingleton().cachedListData();
 #endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 }
 
@@ -558,7 +558,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.ftpEnabled = [defaults objectForKey:WebPreferencesKey::ftpEnabledKey()] && [defaults boolForKey:WebPreferencesKey::ftpEnabledKey()];
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::shared().cachedListData();
+    parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::sharedSingleton().cachedListData();
 #endif
 }
 

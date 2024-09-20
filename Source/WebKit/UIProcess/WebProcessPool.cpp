@@ -316,20 +316,20 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #endif
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    Ref storageAccessUserAgentStringQuirkController = StorageAccessUserAgentStringQuirkController::shared();
-    Ref storageAccessPromptQuirkController = StorageAccessPromptQuirkController::shared();
-    Ref scriptTelemetryController = ScriptTelemetryController::shared();
+    Ref storageAccessUserAgentStringQuirkController = StorageAccessUserAgentStringQuirkController::sharedSingleton();
+    Ref storageAccessPromptQuirkController = StorageAccessPromptQuirkController::sharedSingleton();
+    Ref scriptTelemetryController = ScriptTelemetryController::sharedSingleton();
 
     m_storageAccessUserAgentStringQuirksDataUpdateObserver = storageAccessUserAgentStringQuirkController->observeUpdates([weakThis = WeakPtr { *this }] {
         // FIXME: Filter by process's site when site isolation is enabled
         if (RefPtr protectedThis = weakThis.get())
-            protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateStorageAccessUserAgentStringQuirks(StorageAccessUserAgentStringQuirkController::shared().cachedListData()));
+            protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateStorageAccessUserAgentStringQuirks(StorageAccessUserAgentStringQuirkController::sharedSingleton().cachedListData()));
     });
 
     m_storageAccessPromptQuirksDataUpdateObserver = storageAccessPromptQuirkController->observeUpdates([weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get()) {
             HashSet<WebCore::RegistrableDomain> domainSet;
-            for (auto&& entry : StorageAccessPromptQuirkController::shared().cachedListData()) {
+            for (auto&& entry : StorageAccessPromptQuirkController::sharedSingleton().cachedListData()) {
                 if (!entry.triggerPages.isEmpty()) {
                     for (auto&& page : entry.triggerPages)
                         domainSet.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(page.string()));
@@ -349,7 +349,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         if (!protectedThis)
             return;
 
-        if (auto data = ScriptTelemetryController::shared().cachedListData(); !data.isEmpty())
+        if (auto data = ScriptTelemetryController::sharedSingleton().cachedListData(); !data.isEmpty())
             protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateScriptTelemetryFilter(WTFMove(data)));
     });
     scriptTelemetryController->initializeIfNeeded();

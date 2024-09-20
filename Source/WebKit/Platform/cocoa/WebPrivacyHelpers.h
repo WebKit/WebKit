@@ -96,7 +96,7 @@ protected:
 template<typename DerivedType, typename BackingDataType>
 class ListDataController : public ListDataControllerBase {
 public:
-    static DerivedType& shared()
+    static DerivedType& sharedSingleton()
     {
         static MainThreadNeverDestroyed<DerivedType> sharedInstance;
         return sharedInstance.get();
