@@ -577,7 +577,16 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTile
             TileIndex tileIndex(x, y);
 
             IntRect tileRect = rectForTileIndex(tileIndex);
-            TileInfo& tileInfo = m_tiles.add(tileIndex, TileInfo()).iterator->value;
+
+            HashMap<TileIndex, TileInfo>::iterator it;
+            constexpr size_t kMaxTileCountPerGrid = 8 * 1024;
+            if (UNLIKELY(m_tiles.size() >= kMaxTileCountPerGrid)) {
+                it = m_tiles.find(tileIndex);
+                if (it == m_tiles.end())
+                    continue;
+            } else
+                it = m_tiles.add(tileIndex, TileInfo()).iterator;
+            TileInfo& tileInfo = it->value;
 
             coverageRect.unite(tileRect);
 
