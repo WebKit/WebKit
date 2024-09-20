@@ -658,6 +658,14 @@ Effects Value::effects() const
     case Floor:
     case Sqrt:
     case BitwiseCast:
+    case TruncDoubleToInt32:
+    case TruncDoubleToUInt32:
+    case TruncDoubleToInt64:
+    case TruncDoubleToUInt64:
+    case TruncFloatToInt32:
+    case TruncFloatToUInt32:
+    case TruncFloatToInt64:
+    case TruncFloatToUInt64:
     case SExt8:
     case SExt16:
     case SExt8To64:
@@ -885,6 +893,14 @@ ValueKey Value::key() const
     case DoubleToFloat:
     case Check:
     case BitwiseCast:
+    case TruncDoubleToInt32:
+    case TruncDoubleToUInt32:
+    case TruncDoubleToInt64:
+    case TruncDoubleToUInt64:
+    case TruncFloatToInt32:
+    case TruncFloatToUInt32:
+    case TruncFloatToInt64:
+    case TruncFloatToUInt64:
     case Neg:
     case Depend:
         return ValueKey(kind(), type(), child(0));
@@ -1110,6 +1126,10 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
     case BelowEqual:
     case EqualOrUnordered:
     case TruncHigh:
+    case TruncDoubleToInt32:
+    case TruncDoubleToUInt32:
+    case TruncFloatToInt32:
+    case TruncFloatToUInt32:
         return Int32;
     case Trunc:
         return firstChild->type() == Int64 ? Int32 : Float;
@@ -1118,6 +1138,10 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
     case SExt32:
     case ZExt32:
     case Stitch:
+    case TruncDoubleToInt64:
+    case TruncDoubleToUInt64:
+    case TruncFloatToInt64:
+    case TruncFloatToUInt64:
         return Int64;
     case FloatToDouble:
     case IToD:

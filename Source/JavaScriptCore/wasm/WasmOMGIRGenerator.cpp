@@ -3076,13 +3076,11 @@ auto OMGIRGenerator::atomicFence(ExtAtomicOpType, uint8_t) -> PartialResult
     return { };
 }
 
-auto OMGIRGenerator::truncSaturated(Ext1OpType op, ExpressionType argVar, ExpressionType& result, Type returnType, Type) -> PartialResult
+auto OMGIRGenerator::truncSaturated(Ext1OpType op, ExpressionType argVar, ExpressionType& result, Type, Type) -> PartialResult
 {
     Value* arg = get(argVar);
     Value* maxFloat = nullptr;
     Value* minFloat = nullptr;
-    Value* signBitConstant = nullptr;
-    bool requiresMacroScratchRegisters = false;
     switch (op) {
     case Ext1OpType::I32TruncSatF32S:
         maxFloat = constant(Float, bitwise_cast<uint32_t>(-static_cast<float>(std::numeric_limits<int32_t>::min())));
@@ -3107,12 +3105,6 @@ auto OMGIRGenerator::truncSaturated(Ext1OpType op, ExpressionType argVar, Expres
     case Ext1OpType::I64TruncSatF32U:
         maxFloat = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int64_t>::min()) * static_cast<float>(-2.0)));
         minFloat = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(-1.0)));
-        // Since x86 doesn't have an instruction to convert floating points to unsigned integers, we at least try to do the smart thing if
-        // the numbers would be positive anyway as a signed integer. Since we cannot materialize constants into fprs we have b3 do it
-        // so we can pool them if needed.
-        if (isX86())
-            signBitConstant = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
-        requiresMacroScratchRegisters = true;
         break;
     case Ext1OpType::I64TruncSatF64S:
         maxFloat = constant(Double, bitwise_cast<uint64_t>(-static_cast<double>(std::numeric_limits<int64_t>::min())));
@@ -3121,78 +3113,42 @@ auto OMGIRGenerator::truncSaturated(Ext1OpType op, ExpressionType argVar, Expres
     case Ext1OpType::I64TruncSatF64U:
         maxFloat = constant(Double, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int64_t>::min()) * -2.0));
         minFloat = constant(Double, bitwise_cast<uint64_t>(-1.0));
-        // Since x86 doesn't have an instruction to convert floating points to unsigned integers, we at least try to do the smart thing if
-        // the numbers are would be positive anyway as a signed integer. Since we cannot materialize constants into fprs we have b3 do it
-        // so we can pool them if needed.
-        if (isX86())
-            signBitConstant = constant(Double, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
-        requiresMacroScratchRegisters = true;
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
 
-    PatchpointValue* patchpoint = append<PatchpointValue>(m_proc, toB3Type(returnType), origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    if (requiresMacroScratchRegisters) {
-        if (isX86()) {
-            ASSERT(signBitConstant);
-            patchpoint->append(signBitConstant, ValueRep::SomeRegister);
-            patchpoint->numFPScratchRegisters = 1;
-        }
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+    Value* truncated = nullptr;
+    switch (op) {
+    case Ext1OpType::I32TruncSatF32S:
+        truncated = append<Value>(m_proc, TruncFloatToInt32, origin(), arg);
+        break;
+    case Ext1OpType::I32TruncSatF32U:
+        truncated = append<Value>(m_proc, TruncFloatToUInt32, origin(), arg);
+        break;
+    case Ext1OpType::I32TruncSatF64S:
+        truncated = append<Value>(m_proc, TruncDoubleToInt32, origin(), arg);
+        break;
+    case Ext1OpType::I32TruncSatF64U:
+        truncated = append<Value>(m_proc, TruncDoubleToUInt32, origin(), arg);
+        break;
+    case Ext1OpType::I64TruncSatF32S:
+        truncated = append<Value>(m_proc, TruncFloatToInt64, origin(), arg);
+        break;
+    case Ext1OpType::I64TruncSatF64S:
+        truncated = append<Value>(m_proc, TruncDoubleToInt64, origin(), arg);
+        break;
+    case Ext1OpType::I64TruncSatF32U:
+        truncated = append<Value>(m_proc, TruncFloatToUInt64, origin(), arg);
+        break;
+    case Ext1OpType::I64TruncSatF64U:
+        truncated = append<Value>(m_proc, TruncDoubleToUInt64, origin(), arg);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
     }
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        switch (op) {
-        case Ext1OpType::I32TruncSatF32S:
-            jit.truncateFloatToInt32(params[1].fpr(), params[0].gpr());
-            break;
-        case Ext1OpType::I32TruncSatF32U:
-            jit.truncateFloatToUint32(params[1].fpr(), params[0].gpr());
-            break;
-        case Ext1OpType::I32TruncSatF64S:
-            jit.truncateDoubleToInt32(params[1].fpr(), params[0].gpr());
-            break;
-        case Ext1OpType::I32TruncSatF64U:
-            jit.truncateDoubleToUint32(params[1].fpr(), params[0].gpr());
-            break;
-        case Ext1OpType::I64TruncSatF32S:
-            jit.truncateFloatToInt64(params[1].fpr(), params[0].gpr());
-            break;
-        case Ext1OpType::I64TruncSatF32U: {
-            AllowMacroScratchRegisterUsage allowScratch(jit);
-            ASSERT(requiresMacroScratchRegisters);
-            FPRReg scratch = InvalidFPRReg;
-            FPRReg constant = InvalidFPRReg;
-            if (isX86()) {
-                scratch = params.fpScratch(0);
-                constant = params[2].fpr();
-            }
-            jit.truncateFloatToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
-            break;
-        }
-        case Ext1OpType::I64TruncSatF64S:
-            jit.truncateDoubleToInt64(params[1].fpr(), params[0].gpr());
-            break;
-        case Ext1OpType::I64TruncSatF64U: {
-            AllowMacroScratchRegisterUsage allowScratch(jit);
-            ASSERT(requiresMacroScratchRegisters);
-            FPRReg scratch = InvalidFPRReg;
-            FPRReg constant = InvalidFPRReg;
-            if (isX86()) {
-                scratch = params.fpScratch(0);
-                constant = params[2].fpr();
-            }
-            jit.truncateDoubleToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
-            break;
-        }
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
-    });
-    patchpoint->effects = Effects::none();
 
     Value* maxResult = nullptr;
     Value* minResult = nullptr;
@@ -3232,7 +3188,7 @@ auto OMGIRGenerator::truncSaturated(Ext1OpType op, ExpressionType argVar, Expres
         append<Value>(m_proc, GreaterThan, origin(), arg, minFloat),
         append<Value>(m_proc, B3::Select, origin(),
             append<Value>(m_proc, LessThan, origin(), arg, maxFloat),
-            patchpoint, maxResult),
+            truncated, maxResult),
         requiresNaNCheck ? append<Value>(m_proc, B3::Select, origin(), append<Value>(m_proc, Equal, origin(), arg, arg), minResult, zero) : minResult));
 
     return { };
@@ -6490,13 +6446,8 @@ auto OMGIRGenerator::addI32TruncSF64(ExpressionType argVar, ExpressionType& resu
     trap->setGenerator([=, this] (CCallHelpers& jit, const StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
-    PatchpointValue* patchpoint = append<PatchpointValue>(m_proc, Int32, origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        jit.truncateDoubleToInt32(params[1].fpr(), params[0].gpr());
-    });
-    patchpoint->effects = Effects::none();
-    result = push(patchpoint);
+    Value* truncated = append<Value>(m_proc, TruncDoubleToInt32, origin(), arg);
+    result = push(truncated);
     return { };
 }
 
@@ -6513,13 +6464,8 @@ auto OMGIRGenerator::addI32TruncSF32(ExpressionType argVar, ExpressionType& resu
     trap->setGenerator([=, this] (CCallHelpers& jit, const StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
-    PatchpointValue* patchpoint = append<PatchpointValue>(m_proc, Int32, origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        jit.truncateFloatToInt32(params[1].fpr(), params[0].gpr());
-    });
-    patchpoint->effects = Effects::none();
-    result = push(patchpoint);
+    Value* truncated = append<Value>(m_proc, TruncFloatToInt32, origin(), arg);
+    result = push(truncated);
     return { };
 }
 
@@ -6537,13 +6483,8 @@ auto OMGIRGenerator::addI32TruncUF64(ExpressionType argVar, ExpressionType& resu
     trap->setGenerator([=, this] (CCallHelpers& jit, const StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
-    PatchpointValue* patchpoint = append<PatchpointValue>(m_proc, Int32, origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        jit.truncateDoubleToUint32(params[1].fpr(), params[0].gpr());
-    });
-    patchpoint->effects = Effects::none();
-    result = push(patchpoint);
+    Value* truncated = append<Value>(m_proc, TruncDoubleToUInt32, origin(), arg);
+    result = push(truncated);
     return { };
 }
 
@@ -6560,13 +6501,8 @@ auto OMGIRGenerator::addI32TruncUF32(ExpressionType argVar, ExpressionType& resu
     trap->setGenerator([=, this] (CCallHelpers& jit, const StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
-    PatchpointValue* patchpoint = append<PatchpointValue>(m_proc, Int32, origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        jit.truncateFloatToUint32(params[1].fpr(), params[0].gpr());
-    });
-    patchpoint->effects = Effects::none();
-    result = push(patchpoint);
+    Value* truncated = append<Value>(m_proc, TruncFloatToUInt32, origin(), arg);
+    result = push(truncated);
     return { };
 }
 
@@ -6583,13 +6519,8 @@ auto OMGIRGenerator::addI64TruncSF64(ExpressionType argVar, ExpressionType& resu
     trap->setGenerator([=, this] (CCallHelpers& jit, const StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
-    PatchpointValue* patchpoint = append<PatchpointValue>(m_proc, Int64, origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        jit.truncateDoubleToInt64(params[1].fpr(), params[0].gpr());
-    });
-    patchpoint->effects = Effects::none();
-    result = push(patchpoint);
+    Value* truncated = append<Value>(m_proc, TruncDoubleToInt64, origin(), arg);
+    result = push(truncated);
     return { };
 }
 
@@ -6606,33 +6537,8 @@ auto OMGIRGenerator::addI64TruncUF64(ExpressionType argVar, ExpressionType& resu
     trap->setGenerator([=, this] (CCallHelpers& jit, const StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
-
-    Value* signBitConstant;
-    if (isX86()) {
-        // Since x86 doesn't have an instruction to convert floating points to unsigned integers, we at least try to do the smart thing if
-        // the numbers are would be positive anyway as a signed integer. Since we cannot materialize constants into fprs we have b3 do it
-        // so we can pool them if needed.
-        signBitConstant = constant(Double, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
-    }
-    PatchpointValue* patchpoint = append<PatchpointValue>(m_proc, Int64, origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    if (isX86()) {
-        patchpoint->append(signBitConstant, ValueRep::SomeRegister);
-        patchpoint->numFPScratchRegisters = 1;
-    }
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        AllowMacroScratchRegisterUsage allowScratch(jit);
-        FPRReg scratch = InvalidFPRReg;
-        FPRReg constant = InvalidFPRReg;
-        if (isX86()) {
-            scratch = params.fpScratch(0);
-            constant = params[2].fpr();
-        }
-        jit.truncateDoubleToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
-    });
-    patchpoint->effects = Effects::none();
-    result = push(patchpoint);
+    Value* truncated = append<Value>(m_proc, TruncDoubleToUInt64, origin(), arg);
+    result = push(truncated);
     return { };
 }
 
@@ -6649,13 +6555,8 @@ auto OMGIRGenerator::addI64TruncSF32(ExpressionType argVar, ExpressionType& resu
     trap->setGenerator([=, this] (CCallHelpers& jit, const StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
-    PatchpointValue* patchpoint = append<PatchpointValue>(m_proc, Int64, origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        jit.truncateFloatToInt64(params[1].fpr(), params[0].gpr());
-    });
-    patchpoint->effects = Effects::none();
-    result = push(patchpoint);
+    Value* truncated = append<Value>(m_proc, TruncFloatToInt64, origin(), arg);
+    result = push(truncated);
     return { };
 }
 
@@ -6672,33 +6573,8 @@ auto OMGIRGenerator::addI64TruncUF32(ExpressionType argVar, ExpressionType& resu
     trap->setGenerator([=, this] (CCallHelpers& jit, const StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
-
-    Value* signBitConstant;
-    if (isX86()) {
-        // Since x86 doesn't have an instruction to convert floating points to unsigned integers, we at least try to do the smart thing if
-        // the numbers would be positive anyway as a signed integer. Since we cannot materialize constants into fprs we have b3 do it
-        // so we can pool them if needed.
-        signBitConstant = constant(Float, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
-    }
-    PatchpointValue* patchpoint = append<PatchpointValue>(m_proc, Int64, origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    if (isX86()) {
-        patchpoint->append(signBitConstant, ValueRep::SomeRegister);
-        patchpoint->numFPScratchRegisters = 1;
-    }
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        AllowMacroScratchRegisterUsage allowScratch(jit);
-        FPRReg scratch = InvalidFPRReg;
-        FPRReg constant = InvalidFPRReg;
-        if (isX86()) {
-            scratch = params.fpScratch(0);
-            constant = params[2].fpr();
-        }
-        jit.truncateFloatToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
-    });
-    patchpoint->effects = Effects::none();
-    result = push(patchpoint);
+    Value* truncated = append<Value>(m_proc, TruncFloatToUInt64, origin(), arg);
+    result = push(truncated);
     return { };
 }
 

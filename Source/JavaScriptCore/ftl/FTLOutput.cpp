@@ -344,38 +344,17 @@ LValue Output::doubleMin(LValue lhs, LValue rhs)
 
 LValue Output::doubleToInt(LValue value)
 {
-    PatchpointValue* result = patchpoint(Int32);
-    result->append(value, ValueRep::SomeRegister);
-    result->setGenerator(
-        [] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-            jit.truncateDoubleToInt32(params[1].fpr(), params[0].gpr());
-        });
-    result->effects = Effects::none();
-    return result;
+    return m_block->appendNew<B3::Value>(m_proc, B3::TruncDoubleToInt32, origin(), value);
 }
 
 LValue Output::doubleToInt64(LValue value)
 {
-    PatchpointValue* result = patchpoint(Int64);
-    result->append(value, ValueRep::SomeRegister);
-    result->setGenerator(
-        [] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-            jit.truncateDoubleToInt64(params[1].fpr(), params[0].gpr());
-        });
-    result->effects = Effects::none();
-    return result;
+    return m_block->appendNew<B3::Value>(m_proc, B3::TruncDoubleToInt64, origin(), value);
 }
 
 LValue Output::doubleToUInt(LValue value)
 {
-    PatchpointValue* result = patchpoint(Int32);
-    result->append(value, ValueRep::SomeRegister);
-    result->setGenerator(
-        [] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-            jit.truncateDoubleToUint32(params[1].fpr(), params[0].gpr());
-        });
-    result->effects = Effects::none();
-    return result;
+    return m_block->appendNew<B3::Value>(m_proc, B3::TruncDoubleToUInt32, origin(), value);
 }
 
 LValue Output::signExt32To64(LValue value)
