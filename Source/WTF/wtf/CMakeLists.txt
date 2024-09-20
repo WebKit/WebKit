@@ -403,6 +403,7 @@ set(WTF_PUBLIC_HEADERS
     simde/simde.h
     simde/arm/neon.h
     simde/arm/sve.h
+    simde/wasm/simd128.h
 
     simdutf/simdutf_impl.h
 
