@@ -1331,8 +1331,6 @@ imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas
 
 imported/w3c/web-platform-tests/html/semantics/rellist-feature-detection.html [ Skip ] # Failure
 
-webkit.org/b/279647 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-redirect-to-javascript.html [ Skip ] # Crash
-
 #//////////////////////////////////////////////////////////////////////////////////////////
 # forms
 #//////////////////////////////////////////////////////////////////////////////////////////
