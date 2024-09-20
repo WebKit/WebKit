@@ -3,8 +3,8 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
  *           (C) 2005, 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2013 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -1054,40 +1054,40 @@ void BorderPainter::clipBorderSidePolygon(const RoundedRect& outerBorder, const 
         quad = { outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMinYCorner(), outerRect.maxXMinYCorner() };
 
         if (!innerBorder.radii().topLeft().isZero())
-            findIntersection(outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.minXMaxYCorner(), innerRect.maxXMinYCorner(), quad[1]);
+            findIntersection(quad[0], quad[1], FloatPoint(quad[1].x() + innerBorder.radii().topLeft().width(), quad[1].y()), FloatPoint(quad[1].x(), quad[1].y() + innerBorder.radii().topLeft().height()), quad[1]);
 
         if (!innerBorder.radii().topRight().isZero())
-            findIntersection(outerRect.maxXMinYCorner(), innerRect.maxXMinYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMaxYCorner(), quad[2]);
+            findIntersection(quad[3], quad[2], FloatPoint(quad[2].x() - innerBorder.radii().topRight().width(), quad[2].y()), FloatPoint(quad[2].x(), quad[2].y() + innerBorder.radii().topRight().height()), quad[2]);
         break;
 
     case BoxSide::Left:
         quad = { outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.minXMaxYCorner(), outerRect.minXMaxYCorner() };
 
         if (!innerBorder.radii().topLeft().isZero())
-            findIntersection(outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.minXMaxYCorner(), innerRect.maxXMinYCorner(), quad[1]);
+            findIntersection(quad[0], quad[1], FloatPoint(quad[1].x() + innerBorder.radii().topLeft().width(), quad[1].y()), FloatPoint(quad[1].x(), quad[1].y() + innerBorder.radii().topLeft().height()), quad[1]);
 
         if (!innerBorder.radii().bottomLeft().isZero())
-            findIntersection(outerRect.minXMaxYCorner(), innerRect.minXMaxYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMaxYCorner(), quad[2]);
+            findIntersection(quad[3], quad[2], FloatPoint(quad[2].x() + innerBorder.radii().bottomLeft().width(), quad[2].y()), FloatPoint(quad[2].x(), quad[2].y() - innerBorder.radii().bottomLeft().height()), quad[2]);
         break;
 
     case BoxSide::Bottom:
         quad = { outerRect.minXMaxYCorner(), innerRect.minXMaxYCorner(), innerRect.maxXMaxYCorner(), outerRect.maxXMaxYCorner() };
 
         if (!innerBorder.radii().bottomLeft().isZero())
-            findIntersection(outerRect.minXMaxYCorner(), innerRect.minXMaxYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMaxYCorner(), quad[1]);
+            findIntersection(quad[0], quad[1], FloatPoint(quad[1].x() + innerBorder.radii().bottomLeft().width(), quad[1].y()), FloatPoint(quad[1].x(), quad[1].y() - innerBorder.radii().bottomLeft().height()), quad[1]);
 
         if (!innerBorder.radii().bottomRight().isZero())
-            findIntersection(outerRect.maxXMaxYCorner(), innerRect.maxXMaxYCorner(), innerRect.maxXMinYCorner(), innerRect.minXMaxYCorner(), quad[2]);
+            findIntersection(quad[3], quad[2], FloatPoint(quad[2].x() - innerBorder.radii().bottomRight().width(), quad[2].y()), FloatPoint(quad[2].x(), quad[2].y() - innerBorder.radii().bottomRight().height()), quad[2]);
         break;
 
     case BoxSide::Right:
         quad = { outerRect.maxXMinYCorner(), innerRect.maxXMinYCorner(), innerRect.maxXMaxYCorner(), outerRect.maxXMaxYCorner() };
 
         if (!innerBorder.radii().topRight().isZero())
-            findIntersection(outerRect.maxXMinYCorner(), innerRect.maxXMinYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMaxYCorner(), quad[1]);
+            findIntersection(quad[0], quad[1], FloatPoint(quad[1].x() - innerBorder.radii().topRight().width(), quad[1].y()), FloatPoint(quad[1].x(), quad[1].y() + innerBorder.radii().topRight().height()), quad[1]);
 
         if (!innerBorder.radii().bottomRight().isZero())
-            findIntersection(outerRect.maxXMaxYCorner(), innerRect.maxXMaxYCorner(), innerRect.maxXMinYCorner(), innerRect.minXMaxYCorner(), quad[2]);
+            findIntersection(quad[3], quad[2], FloatPoint(quad[2].x() - innerBorder.radii().bottomRight().width(), quad[2].y()), FloatPoint(quad[2].x(), quad[2].y() - innerBorder.radii().bottomRight().height()), quad[2]);
         break;
     }
 
@@ -1101,12 +1101,33 @@ void BorderPainter::clipBorderSidePolygon(const RoundedRect& outerBorder, const 
         return;
     }
 
-    // Square off the end which shouldn't be affected by antialiasing, and clip.
+    // If antialiasing settings for the first edge and second edge is different,
+    // they have to be addressed separately. We do this by breaking the quad into
+    // two parallelograms, made by moving quad[1] and quad[2].
+    float ax = quad[1].x() - quad[0].x();
+    float ay = quad[1].y() - quad[0].y();
+    float bx = quad[2].x() - quad[1].x();
+    float by = quad[2].y() - quad[1].y();
+    float cx = quad[3].x() - quad[2].x();
+    float cy = quad[3].y() - quad[2].y();
+
+    const static float epsilon = 1e-2f;
+    float r1, r2;
+    if (std::abs(bx) < epsilon && std::abs(by) < epsilon) {
+        // The quad was actually a triangle.
+        r1 = r2 = 1.0f;
+    } else {
+        // Extend parallelogram a bit to hide calculation error
+        const static float extendFill = 1e-2f;
+
+        r1 = (-ax * by + ay * bx) / (cx * by - cy * bx) + extendFill;
+        r2 = (-cx * by + cy * bx) / (ax * by - ay * bx) + extendFill;
+    }
+
     Vector<FloatPoint> firstQuad = {
         quad[0],
         quad[1],
-        quad[2],
-        side == BoxSide::Top || side == BoxSide::Bottom ? FloatPoint(quad[3].x(), quad[2].y()) : FloatPoint(quad[2].x(), quad[3].y()),
+        quad[2] = FloatPoint(quad[3].x() + r2 * ax, quad[3].y() + r2 * ay),
         quad[3]
     };
     bool wasAntialiased = graphicsContext.shouldAntialias();
@@ -1115,12 +1136,10 @@ void BorderPainter::clipBorderSidePolygon(const RoundedRect& outerBorder, const 
 
     Vector<FloatPoint> secondQuad = {
         quad[0],
-        side == BoxSide::Top || side == BoxSide::Bottom ? FloatPoint(quad[0].x(), quad[1].y()) : FloatPoint(quad[1].x(), quad[0].y()),
-        quad[1],
+        quad[1] = FloatPoint(quad[0].x() - r1 * cx, quad[0].y() - r1 * cy),
         quad[2],
         quad[3]
     };
-    // Antialiasing affects the second side.
     graphicsContext.setShouldAntialias(!secondEdgeMatches);
     graphicsContext.clipPath(Path(secondQuad), WindRule::NonZero);
 
