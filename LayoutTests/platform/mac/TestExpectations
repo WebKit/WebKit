@@ -835,9 +835,6 @@ webkit.org/b/140589 svg/text/text-text-06-t.svg [ Failure ]
 webkit.org/b/137098 svg/text/text-hkern.svg [ Failure ]
 webkit.org/b/137100 svg/text/text-vkern.svg [ Failure ]
 
-# Sometimes has an extra space at the end
-fast/forms/focus-selection-textarea.html [ Pass Failure ]
-
 # See also: rdar://problem/27356144
 webkit.org/b/142726 fast/images/animated-png.html [ Skip ]
 

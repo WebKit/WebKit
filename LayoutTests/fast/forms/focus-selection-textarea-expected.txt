@@ -7,9 +7,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > #document-fragment to 0 of DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 5 of #text > BODY > HTML > #document to 5 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > LABEL > BODY > HTML > #document to 1 of #text > LABEL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -36,8 +34,8 @@ This test checks whether the selection is restored, cleared, or set to the full 
 
 PASS first.selectionStart is 11
 PASS first.selectionEnd is 18
-FAIL first.selectionStart should be 11. Was 0.
-FAIL first.selectionEnd should be 18. Was 0.
+PASS first.selectionStart is 11
+PASS first.selectionEnd is 18
 PASS second.selectionStart is 11
 PASS second.selectionEnd is 18
 PASS second.selectionStart is 11
@@ -64,10 +62,13 @@ PASS seventh.selectionStart is 11
 PASS seventh.selectionEnd is 18
 PASS eighth.selectionStart is 11
 PASS eighth.selectionEnd is 18
-FAIL eighth.selectionStart should be 11. Was 0.
-FAIL eighth.selectionEnd should be 18. Was 0.
+PASS eighth.selectionStart is 11
+PASS eighth.selectionEnd is 18
 PASS ninth.selectionStart is 11
 PASS ninth.selectionEnd is 18
 PASS ninth.selectionStart is 11
 PASS ninth.selectionEnd is 18
+PASS successfullyParsed is true
+
+TEST COMPLETE
 
