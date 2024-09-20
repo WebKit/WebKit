@@ -28,14 +28,21 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#import "GPUProcessProxyMessages.h"
+#import "LayerHostingContext.h"
 #import "Logging.h"
 #import "MediaPermissionUtilities.h"
+#import "MessageSenderInlines.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/RealtimeMediaSourceCenter.h>
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/SecurityOrigin.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <wtf/OSObjectPtr.h>
+
+#if USE(EXTENSIONKIT)
+#import "WKProcessExtension.h"
+#endif
 
 #if HAVE(SYSTEM_STATUS)
 #import "SystemStatusSPI.h"
@@ -121,6 +128,30 @@ void GPUConnectionToWebProcess::setMediaEnvironment(WebCore::PageIdentifier page
         m_mediaEnvironments.remove(pageIdentifier);
     else
         m_mediaEnvironments.set(pageIdentifier, mediaEnvironment);
+}
+#endif
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+void GPUConnectionToWebProcess::createVisibilityPropagationContextForPage(WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID, bool canShowWhileLocked)
+{
+#if USE(EXTENSIONKIT)
+    if (WKProcessExtension.sharedInstance)
+        return;
+#endif
+
+    auto contextForVisibilityPropagation = LayerHostingContext::createForExternalHostingProcess({ canShowWhileLocked });
+    RELEASE_LOG(Process, "GPUConnectionToWebProcess::createVisibilityPropagationContextForPage: pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", contextID=%u", pageProxyID.toUInt64(), pageID.toUInt64(), contextForVisibilityPropagation->contextID());
+    gpuProcess().send(Messages::GPUProcessProxy::DidCreateContextForVisibilityPropagation(pageProxyID, pageID, contextForVisibilityPropagation->contextID()));
+    m_visibilityPropagationContexts.add(std::make_pair(pageProxyID, pageID), WTFMove(contextForVisibilityPropagation));
+}
+
+void GPUConnectionToWebProcess::destroyVisibilityPropagationContextForPage(WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID)
+{
+    RELEASE_LOG(Process, "GPUConnectionToWebProcess::destroyVisibilityPropagationContextForPage: pageProxyID=%" PRIu64 ", webPageID=%" PRIu64, pageProxyID.toUInt64(), pageID.toUInt64());
+
+    auto key = std::make_pair(pageProxyID, pageID);
+    ASSERT(m_visibilityPropagationContexts.contains(key));
+    m_visibilityPropagationContexts.remove(key);
 }
 #endif
 
