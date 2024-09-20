@@ -1650,56 +1650,81 @@ void GraphicsLayerCA::setContentsScaleLimitingFactor(float factor)
 
 GraphicsLayerCA::VisibleAndCoverageRects GraphicsLayerCA::computeVisibleAndCoverageRect(TransformState& state, bool preserves3D, ComputeVisibleRectFlags flags) const
 {
-    FloatPoint position = approximatePosition();
+    auto computeVisibleAndCoverageRects = [&](TransformState& state, TransformationMatrix& transform) -> std::pair<FloatRect, FloatRect> {
+        bool applyWasClamped;
+        TransformState::TransformAccumulation accumulation = preserves3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform;
+        state.applyTransform(transform, accumulation, &applyWasClamped);
+
+        bool mapWasClamped;
+        auto clipRectFromParent = state.mappedQuad(&mapWasClamped).boundingBox();
+
+        auto clipRectForSelf = FloatRect { { }, m_size };
+        if (!applyWasClamped && !mapWasClamped)
+            clipRectForSelf.intersect(clipRectFromParent);
+
+        if (masksToBounds()) {
+            ASSERT(accumulation == TransformState::FlattenTransform);
+            // Flatten, and replace the quad in the TransformState with one that is clipped to this layer's bounds.
+            state.flatten();
+            state.setQuad(clipRectForSelf);
+            if (state.isMappingSecondaryQuad())
+                state.setSecondaryQuad(FloatQuad { clipRectForSelf });
+        }
+
+        auto boundsOrigin = m_boundsOrigin;
+#if PLATFORM(IOS_FAMILY)
+        // In WK1, UIKit may be changing layer bounds behind our back in overflow-scroll layers, so use the layer's origin.
+        if (m_layer->type() == PlatformCALayer::Type::Cocoa)
+            boundsOrigin = m_layer->bounds().location();
+#endif
+
+        auto coverageRect = clipRectForSelf;
+        auto quad = state.mappedSecondaryQuad(&mapWasClamped);
+        if (quad && !mapWasClamped && !applyWasClamped)
+            coverageRect = (*quad).boundingBox();
+
+        if (!boundsOrigin.isZero()) {
+            state.move(LayoutSize { toFloatSize(-boundsOrigin) }, accumulation);
+            clipRectForSelf.moveBy(boundsOrigin);
+            coverageRect.moveBy(boundsOrigin);
+        }
+
+        return { clipRectForSelf, coverageRect };
+    };
+
+    auto position = approximatePosition();
     client().customPositionForVisibleRectComputation(this, position);
 
+    // If this graphics layer is targeted by a repeating transform animation, we want to compute a set of
+    // secondary coverage rectangles that will cover the initial and final states of the iterating animation.
+    // This will let us pre-populate tiles for the start and end states and avoid flashing when we reach the
+    // iteration boundary due to the animated transform, computed through WebCore's timing, and the animated
+    // value computed by Core Animation's accelerated animation resolving on different sides of that boundary.
+    auto secondaryCoverageRects = [&]() -> std::optional<Vector<FloatRect>> {
+        if (!(flags & RespectAnimatingTransforms) || m_transformsAtAnimationIterationBoundary.isEmpty())
+            return std::nullopt;
+
+        TransformState transformStateCopy(state);
+        auto secondaryCoverageRects = m_transformsAtAnimationIterationBoundary.map([&](auto& transform) {
+            TransformState startTransformState(transformStateCopy);
+            TransformationMatrix computedTransform = layerTransform(position, &transform);
+            return computeVisibleAndCoverageRects(startTransformState, computedTransform).second;
+        });
+
+        return secondaryCoverageRects;
+    }();
+
+    // First, let's get the live transform.
     TransformationMatrix currentTransform;
     auto transform = [&]() {
         if ((flags & RespectAnimatingTransforms) && client().getCurrentTransform(this, currentTransform))
             return layerTransform(position, &currentTransform);
-
         return layerTransform(position);
     }();
 
-    bool applyWasClamped;
-    TransformState::TransformAccumulation accumulation = preserves3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform;
-    state.applyTransform(transform, accumulation, &applyWasClamped);
+    auto [visibleRect, coverageRect] = computeVisibleAndCoverageRects(state, transform);
 
-    bool mapWasClamped;
-    auto clipRectFromParent = state.mappedQuad(&mapWasClamped).boundingBox();
-
-    auto clipRectForSelf = FloatRect { { }, m_size };
-    if (!applyWasClamped && !mapWasClamped)
-        clipRectForSelf.intersect(clipRectFromParent);
-
-    if (masksToBounds()) {
-        ASSERT(accumulation == TransformState::FlattenTransform);
-        // Flatten, and replace the quad in the TransformState with one that is clipped to this layer's bounds.
-        state.flatten();
-        state.setQuad(clipRectForSelf);
-        if (state.isMappingSecondaryQuad())
-            state.setSecondaryQuad(FloatQuad { clipRectForSelf });
-    }
-
-    auto boundsOrigin = m_boundsOrigin;
-#if PLATFORM(IOS_FAMILY)
-    // In WK1, UIKit may be changing layer bounds behind our back in overflow-scroll layers, so use the layer's origin.
-    if (m_layer->type() == PlatformCALayer::Type::Cocoa)
-        boundsOrigin = m_layer->bounds().location();
-#endif
-
-    auto coverageRect = clipRectForSelf;
-    auto quad = state.mappedSecondaryQuad(&mapWasClamped);
-    if (quad && !mapWasClamped && !applyWasClamped)
-        coverageRect = (*quad).boundingBox();
-
-    if (!boundsOrigin.isZero()) {
-        state.move(LayoutSize { toFloatSize(-boundsOrigin) }, accumulation);
-        clipRectForSelf.moveBy(boundsOrigin);
-        coverageRect.moveBy(boundsOrigin);
-    }
-
-    return { clipRectForSelf, coverageRect, currentTransform };
+    return { visibleRect, coverageRect, secondaryCoverageRects, currentTransform };
 }
 
 bool GraphicsLayerCA::adjustCoverageRect(VisibleAndCoverageRects& rects, const FloatRect& oldVisibleRect) const
@@ -1768,6 +1793,8 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
     if (coverageRectChanged) {
         addUncommittedChanges(CoverageRectChanged);
         m_coverageRect = rects.coverageRect;
+        if (auto secondaryCoverageRects = rects.secondaryCoverageRects)
+            m_secondaryCoverageRects = *secondaryCoverageRects;
     }
 
     adjustContentsScaleLimitingFactor();
@@ -1864,8 +1891,11 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition, layerTypeChanged);
 
     bool nowRunningTransformAnimation = wasRunningTransformAnimation;
-    if (m_uncommittedChanges & AnimationChanged)
+    if (m_uncommittedChanges & AnimationChanged) {
         nowRunningTransformAnimation = isRunningTransformAnimation();
+        if (tiledBacking())
+            m_transformsAtAnimationIterationBoundary = client().transformsAtAnimationIterationBoundary(this);
+    }
 
     if (wasRunningTransformAnimation != nowRunningTransformAnimation)
         childCommitState.ancestorStartedOrEndedTransformAnimation = true;
@@ -2803,6 +2833,8 @@ void GraphicsLayerCA::updateCoverage(const CommitState& commitState)
     if (TiledBacking* backing = tiledBacking()) {
         backing->setVisibleRect(m_visibleRect);
         backing->setCoverageRect(m_coverageRect);
+        for (auto& rect : m_secondaryCoverageRects)
+            backing->prepopulateRect(rect);
     }
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)

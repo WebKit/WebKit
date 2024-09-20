@@ -193,6 +193,8 @@ public:
 
     WebAnimationType animationType() const { return m_animationType; }
 
+    void populateStylesAtIterationBoundary(Vector<const RenderStyle*>&);
+
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     const AcceleratedEffect* acceleratedRepresentation() const { return m_acceleratedRepresentation.get(); }
     void setAcceleratedRepresentation(const AcceleratedEffect* acceleratedRepresentation) { m_acceleratedRepresentation = acceleratedRepresentation; }

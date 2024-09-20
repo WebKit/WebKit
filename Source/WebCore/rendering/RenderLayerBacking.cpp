@@ -3934,6 +3934,11 @@ bool RenderLayerBacking::getCurrentTransform(const GraphicsLayer* graphicsLayer,
     return false;
 }
 
+Vector<TransformationMatrix> RenderLayerBacking::transformsAtAnimationIterationBoundary(const GraphicsLayer*) const
+{
+    return m_owningLayer.transformsAtAnimationIterationBoundary();
+}
+
 bool RenderLayerBacking::isTrackingRepaints() const
 {
     return static_cast<GraphicsLayerClient&>(compositor()).isTrackingRepaints();

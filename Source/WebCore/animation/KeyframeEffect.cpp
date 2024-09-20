@@ -2866,4 +2866,24 @@ bool KeyframeEffect::isPropertyAdditiveOrCumulative(KeyframeInterpolation::Prope
     });
 }
 
+void KeyframeEffect::populateStylesAtIterationBoundary(Vector<const RenderStyle*>& styles)
+{
+    if (iterations() <= 1)
+        return;
+
+    auto numberOfKeyframes = m_blendingKeyframes.size();
+    if (!numberOfKeyframes)
+        return;
+
+    auto addKeyframeStyle = [&](const BlendingKeyframe& keyframe) {
+        auto offset = keyframe.offset();
+        if (!offset || offset == 1)
+            styles.append(keyframe.style());
+    };
+
+    addKeyframeStyle(m_blendingKeyframes[0]);
+    if (numberOfKeyframes > 1)
+        addKeyframeStyle(m_blendingKeyframes[numberOfKeyframes - 1]);
+}
+
 } // namespace WebCore

@@ -1459,6 +1459,8 @@ TransformationMatrix RenderLayer::currentTransform(OptionSet<RenderStyle::Transf
     // Query the animatedStyle() to obtain the current transformation, when accelerated transform animations are running.
     auto styleable = Styleable::fromRenderer(renderer());
     if ((styleable && styleable->isRunningAcceleratedTransformAnimation()) || !options.contains(RenderStyle::TransformOperationOption::TransformOrigin)) {
+        // FIXME: we should filter this call to only account for transforms
+        // such that we don't bother with non-transform related animation resolution.
         std::unique_ptr<RenderStyle> animatedStyle = renderer().animatedStyle();
 
         TransformationMatrix transform;
@@ -1486,6 +1488,25 @@ TransformationMatrix RenderLayer::renderableTransform(OptionSet<PaintBehavior> p
     }
 
     return *m_transform;
+}
+
+Vector<TransformationMatrix> RenderLayer::transformsAtAnimationIterationBoundary() const
+{
+    Vector<TransformationMatrix> transforms;
+
+    auto styleable = Styleable::fromRenderer(renderer());
+    if (styleable && styleable->isRunningAcceleratedTransformAnimation()) {
+        ASSERT(styleable->keyframeEffectStack());
+        for (auto* style : styleable->keyframeEffectStack()->stylesAtIterationBoundary()) {
+            if (!style->hasTransformRelatedProperty())
+                continue;
+            TransformationMatrix transform;
+            updateTransformFromStyle(transform, *style, RenderStyle::individualTransformOperations());
+            transforms.append(transform);
+        }
+    }
+
+    return transforms;
 }
 
 RenderLayer* RenderLayer::enclosingOverflowClipLayer(IncludeSelfOrNot includeSelf) const

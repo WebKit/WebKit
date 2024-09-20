@@ -98,6 +98,9 @@ public:
     // initialized to identity already. Returns false if the layer has no transform.
     virtual bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const { return false; }
 
+    // Provides animated transforms, if any, for the first and last keyframe of transform-related animations set to iterate.
+    virtual Vector<TransformationMatrix> transformsAtAnimationIterationBoundary(const GraphicsLayer*) const { return { }; }
+
     // Allows the client to modify a layer position used during the visibleRect calculation, for example to ignore
     // scroll overhang.
     virtual void customPositionForVisibleRectComputation(const GraphicsLayer*, FloatPoint&) const { }

@@ -240,6 +240,7 @@ public:
 
     void didChangePlatformLayerForLayer(const GraphicsLayer*) override;
     bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const override;
+    Vector<TransformationMatrix> transformsAtAnimationIterationBoundary(const GraphicsLayer*) const override;
 
     bool isTrackingRepaints() const override;
     bool shouldSkipLayerInDump(const GraphicsLayer*, OptionSet<LayerTreeAsTextOptions>) const override;

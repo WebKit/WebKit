@@ -328,4 +328,12 @@ bool KeyframeEffectStack::hasAcceleratedEffects(const Settings& settings) const
     return false;
 }
 
+Vector<const RenderStyle*> KeyframeEffectStack::stylesAtIterationBoundary() const
+{
+    Vector<const RenderStyle*> styles;
+    for (auto& effect : m_effects)
+        effect->populateStylesAtIterationBoundary(styles);
+    return styles;
+}
+
 } // namespace WebCore

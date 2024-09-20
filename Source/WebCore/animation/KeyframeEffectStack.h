@@ -89,6 +89,8 @@ public:
     void setAcceleratedEffects(WeakListHashSet<AcceleratedEffect>&& acceleratedEffects) { m_acceleratedEffects = WTFMove(acceleratedEffects); }
 #endif
 
+    Vector<const RenderStyle*> stylesAtIterationBoundary() const;
+
 private:
     void ensureEffectsAreSorted();
     bool hasMatchingEffect(const Function<bool(const KeyframeEffect&)>&) const;

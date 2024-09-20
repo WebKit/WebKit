@@ -366,6 +366,7 @@ private:
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
         FloatRect visibleRect;
         FloatRect coverageRect;
+        std::optional<Vector<FloatRect>> secondaryCoverageRects;
         TransformationMatrix animatingTransform;
     };
     
@@ -675,6 +676,9 @@ private:
     FloatRect m_coverageRect; // Area for which we should maintain backing store, in the coordinate space of this layer.
     FloatSize m_sizeAtLastCoverageRectUpdate;
     FloatSize m_pixelAlignmentOffset;
+
+    Vector<FloatRect> m_secondaryCoverageRects;
+    Vector<TransformationMatrix> m_transformsAtAnimationIterationBoundary;
 
     Color m_contentsSolidColor;
 

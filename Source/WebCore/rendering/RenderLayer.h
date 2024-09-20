@@ -753,7 +753,8 @@ public:
     TransformationMatrix currentTransform(OptionSet<RenderStyle::TransformOperationOption>) const;
     TransformationMatrix currentTransform() const;
     TransformationMatrix renderableTransform(OptionSet<PaintBehavior>) const;
-    
+    Vector<TransformationMatrix> transformsAtAnimationIterationBoundary() const;
+
     // Get the children transform (to apply a perspective on children), which is applied to transformed sublayers, but not this layer.
     // Returns true if the layer has a perspective.
     // Note that this transform has the perspective-origin baked in.
