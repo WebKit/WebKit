@@ -34,6 +34,7 @@
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/WebGPUIntegralTypes.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
@@ -64,7 +65,7 @@ class ObjectHeap;
 }
 
 class RemoteXRView final : public IPC::StreamMessageReceiver {
-    WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRView);
+    WTF_MAKE_TZONE_ALLOCATED(RemoteXRView);
 public:
     static Ref<RemoteXRView> create(WebCore::WebGPU::XRView& xrView, WebGPU::ObjectHeap& objectHeap, RemoteGPU& gpu, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
