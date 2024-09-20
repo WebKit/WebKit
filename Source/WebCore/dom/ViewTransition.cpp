@@ -187,6 +187,9 @@ void ViewTransition::skipViewTransition(ExceptionOr<JSC::JSValue>&& reason)
     }
 
     m_updateCallbackDone.first->whenSettled([this, protectedThis = Ref { *this }] {
+        if (isContextStopped())
+            return;
+
         switch (m_updateCallbackDone.first->status()) {
         case DOMPromise::Status::Fulfilled:
             m_finished.second->resolve();
