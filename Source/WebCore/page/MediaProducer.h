@@ -72,11 +72,11 @@ enum class MediaProducerMediaState : uint32_t {
 using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
 
 enum class MediaProducerMediaCaptureKind : uint8_t {
-    Microphone = 1 << 0,
-    Camera = 1 << 1,
-    Display = 1 << 2,
-    SystemAudio = 1 << 3,
-    EveryKind = 1 << 4,
+    Microphone,
+    Camera,
+    Display,
+    SystemAudio,
+    EveryKind,
 };
 
 enum class MediaProducerMutedState : uint8_t {
