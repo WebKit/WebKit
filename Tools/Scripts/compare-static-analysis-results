@@ -80,7 +80,7 @@ def find_diff(args, file1, file2):
             f.close()
 
     with open(file1) as baseline_file, open(file2) as new_file:
-        baseline_list = [line for line in baseline_file.read().splitlines() if not line.startswith('//')]  # Remove lines from the copyright
+        baseline_list = [line for line in baseline_file.read().splitlines() if not line.startswith('//') and line.strip()]  # Remove lines from the copyright
         new_file_list = new_file.read().splitlines()
         # Find new regressions
         diff_new_from_baseline = set(new_file_list) - set(baseline_list)
