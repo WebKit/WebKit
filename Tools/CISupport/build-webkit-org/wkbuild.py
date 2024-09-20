@@ -50,12 +50,12 @@ def _should_file_trigger_build(target_platform, file):
         "mac-sequoia",
         "ios-17",
         "ios-simulator-17",
-        "visionos-1",
-        "visionos-simulator-1",
-        "tvos-17",
-        "tvos-simulator-17",
-        "watchos-10",
-        "watchos-simulator-10",
+        "visionos-2",
+        "visionos-simulator-2",
+        "tvos-18",
+        "tvos-simulator-18",
+        "watchos-11",
+        "watchos-simulator-11",
     ))
 
     directories = [

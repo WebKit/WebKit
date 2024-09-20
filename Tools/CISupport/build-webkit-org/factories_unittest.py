@@ -1037,7 +1037,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-visionOS-1-Release-Build': [
+        'Apple-visionOS-2-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1048,7 +1048,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-visionOS-1-Simulator-Release-Build': [
+        'Apple-visionOS-2-Simulator-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1060,7 +1060,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit',
             'trigger'
         ],
-        'Apple-visionOS-1-Simulator-Debug-Build': [
+        'Apple-visionOS-2-Simulator-Debug-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1072,7 +1072,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit',
             'trigger'
         ],
-        'Apple-visionOS-1-Simulator-Release-WK2-Tests': [
+        'Apple-visionOS-2-Simulator-Release-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1096,7 +1096,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-visionOS-1-Simulator-Debug-WK2-Tests': [
+        'Apple-visionOS-2-Simulator-Debug-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1120,7 +1120,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-tvOS-17-Release-Build': [
+        'Apple-tvOS-18-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1131,7 +1131,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-tvOS-Simulator-17-Release-Build': [
+        'Apple-tvOS-Simulator-18-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1142,7 +1142,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-watchOS-10-Release-Build': [
+        'Apple-watchOS-11-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1153,7 +1153,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-watchOS-Simulator-10-Release-Build': [
+        'Apple-watchOS-Simulator-11-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',

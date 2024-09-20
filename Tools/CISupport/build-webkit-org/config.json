@@ -62,19 +62,19 @@
                   { "name": "bot667", "platform": "ios-simulator-17"},
                   { "name": "bot664", "platform": "ios-simulator-17"},
                                     
-                  { "name": "bot134", "platform": "visionos-simulator-1" },
-                  { "name": "bot135", "platform": "visionos-simulator-1" },
-                  { "name": "bot137", "platform": "visionos-simulator-1" },
-                  { "name": "bot138", "platform": "visionos-1" },
-                  { "name": "bot139", "platform": "visionos-simulator-1" },
-                  { "name": "bot140", "platform": "visionos-simulator-1" },
-                  { "name": "bot143", "platform": "visionos-simulator-1" },
-                  { "name": "bot144", "platform": "visionos-simulator-1" },
+                  { "name": "bot134", "platform": "visionos-simulator-2" },
+                  { "name": "bot135", "platform": "visionos-simulator-2" },
+                  { "name": "bot137", "platform": "visionos-simulator-2" },
+                  { "name": "bot138", "platform": "visionos-2" },
+                  { "name": "bot139", "platform": "visionos-simulator-2" },
+                  { "name": "bot140", "platform": "visionos-simulator-2" },
+                  { "name": "bot143", "platform": "visionos-simulator-2" },
+                  { "name": "bot144", "platform": "visionos-simulator-2" },
 
-                  { "name": "bot609", "platform": "watchos-10" },
-                  { "name": "bot672", "platform": "watchos-simulator-10" },
-                  { "name": "bot607", "platform": "tvos-17" },
-                  { "name": "bot608", "platform": "tvos-simulator-17" },
+                  { "name": "bot609", "platform": "watchos-11" },
+                  { "name": "bot672", "platform": "watchos-simulator-11" },
+                  { "name": "bot607", "platform": "tvos-18" },
+                  { "name": "bot608", "platform": "tvos-simulator-18" },
 
                   { "name": "wincairo-debug-build-01", "platform": "win" },
                   { "name": "wincairo-debug-tests-01", "platform": "win" },
@@ -410,52 +410,52 @@
                     "workernames": ["bot664"]
                   },
                   {
-                    "name": "Apple-visionOS-1-Release-Build", "factory": "BuildFactory",
-                    "platform": "visionos-1", "configuration": "release", "architectures": ["arm64"],
+                    "name": "Apple-visionOS-2-Release-Build", "factory": "BuildFactory",
+                    "platform": "visionos-2", "configuration": "release", "architectures": ["arm64"],
                     "workernames": ["bot138"]
                   },
                   {
-                    "name": "Apple-visionOS-1-Simulator-Release-Build", "factory": "BuildFactory",
-                    "platform": "visionos-simulator-1", "configuration": "release", "architectures": ["arm64"],
-                    "triggers": ["visionos-simulator-1-release-tests-wk2"],
+                    "name": "Apple-visionOS-2-Simulator-Release-Build", "factory": "BuildFactory",
+                    "platform": "visionos-simulator-2", "configuration": "release", "architectures": ["arm64"],
+                    "triggers": ["visionos-simulator-2-release-tests-wk2"],
                     "workernames": ["bot134"]
                   },
                   {
-                    "name": "Apple-visionOS-1-Simulator-Debug-Build", "factory": "BuildFactory",
-                    "platform": "visionos-simulator-1", "configuration": "debug", "architectures": ["arm64"],
-                    "triggers": ["visionos-simulator-1-debug-tests-wk2"],
+                    "name": "Apple-visionOS-2-Simulator-Debug-Build", "factory": "BuildFactory",
+                    "platform": "visionos-simulator-2", "configuration": "debug", "architectures": ["arm64"],
+                    "triggers": ["visionos-simulator-2-debug-tests-wk2"],
                     "workernames": ["bot135", "bot137"]
                   },
                   {
-                    "name": "Apple-visionOS-1-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "visionos-simulator-1", "configuration": "release", "architectures": ["arm64"], "device_model": "visionpro",
+                    "name": "Apple-visionOS-2-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
+                    "platform": "visionos-simulator-2", "configuration": "release", "architectures": ["arm64"], "device_model": "visionpro",
                     "additionalArguments": ["--no-retry-failures", "--child-processes=1"],
                     "workernames": ["bot139", "bot140"]
                   },
                   {
-                    "name": "Apple-visionOS-1-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "visionos-simulator-1", "configuration": "debug", "architectures": ["arm64"], "device_model": "visionpro",
+                    "name": "Apple-visionOS-2-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
+                    "platform": "visionos-simulator-2", "configuration": "debug", "architectures": ["arm64"], "device_model": "visionpro",
                     "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-processes=1"],
                     "workernames": ["bot143", "bot144"]
                   },
                   {
-                    "name": "Apple-tvOS-17-Release-Build", "factory": "BuildFactory",
-                    "platform": "tvos-17", "configuration": "release", "architectures": ["arm64"],
+                    "name": "Apple-tvOS-18-Release-Build", "factory": "BuildFactory",
+                    "platform": "tvos-18", "configuration": "release", "architectures": ["arm64"],
                     "workernames": ["bot607"]
                   },
                   {
-                    "name": "Apple-tvOS-Simulator-17-Release-Build", "factory": "BuildFactory",
-                    "platform": "tvos-simulator-17", "configuration": "release", "architectures": ["arm64"],
+                    "name": "Apple-tvOS-Simulator-18-Release-Build", "factory": "BuildFactory",
+                    "platform": "tvos-simulator-18", "configuration": "release", "architectures": ["arm64"],
                     "workernames": ["bot608"]
                   },
                   {
-                    "name": "Apple-watchOS-10-Release-Build", "factory": "BuildFactory",
-                    "platform": "watchos-10", "configuration": "release", "architectures": ["arm64_32", "arm64"],
+                    "name": "Apple-watchOS-11-Release-Build", "factory": "BuildFactory",
+                    "platform": "watchos-11", "configuration": "release", "architectures": ["arm64_32", "arm64"],
                     "workernames": ["bot609"]
                   },
                   {
-                    "name": "Apple-watchOS-Simulator-10-Release-Build", "factory": "BuildFactory",
-                    "platform": "watchos-simulator-10", "configuration": "release", "architectures": ["arm64"],
+                    "name": "Apple-watchOS-Simulator-11-Release-Build", "factory": "BuildFactory",
+                    "platform": "watchos-simulator-11", "configuration": "release", "architectures": ["arm64"],
                     "workernames": ["bot672"]
                   },
                   {
@@ -875,23 +875,23 @@
                   { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-17", "branch": "main", "treeStableTimer": 45.0,
                     "builderNames": ["Apple-iOS-17-Simulator-Release-Build", "Apple-iOS-17-Simulator-Debug-Build"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "visionos-1", "branch": "main", "treeStableTimer": 45.0,
-                  "builderNames": ["Apple-visionOS-1-Release-Build"]
+                  { "type": "PlatformSpecificScheduler", "platform": "visionos-2", "branch": "main", "treeStableTimer": 45.0,
+                  "builderNames": ["Apple-visionOS-2-Release-Build"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "visionos-simulator-1", "branch": "main", "treeStableTimer": 45.0,
-                  "builderNames": ["Apple-visionOS-1-Simulator-Release-Build", "Apple-visionOS-1-Simulator-Debug-Build"]
+                  { "type": "PlatformSpecificScheduler", "platform": "visionos-simulator-2", "branch": "main", "treeStableTimer": 45.0,
+                  "builderNames": ["Apple-visionOS-2-Simulator-Release-Build", "Apple-visionOS-2-Simulator-Debug-Build"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "tvos-17", "branch": "main", "treeStableTimer": 45.0,
-                    "builderNames": ["Apple-tvOS-17-Release-Build"]
+                  { "type": "PlatformSpecificScheduler", "platform": "tvos-18", "branch": "main", "treeStableTimer": 45.0,
+                    "builderNames": ["Apple-tvOS-18-Release-Build"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "tvos-simulator-17", "branch": "main", "treeStableTimer": 45.0,
-                    "builderNames": ["Apple-tvOS-Simulator-17-Release-Build"]
+                  { "type": "PlatformSpecificScheduler", "platform": "tvos-simulator-18", "branch": "main", "treeStableTimer": 45.0,
+                    "builderNames": ["Apple-tvOS-Simulator-18-Release-Build"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "watchos-10", "branch": "main", "treeStableTimer": 45.0,
-                    "builderNames": ["Apple-watchOS-10-Release-Build"]
+                  { "type": "PlatformSpecificScheduler", "platform": "watchos-11", "branch": "main", "treeStableTimer": 45.0,
+                    "builderNames": ["Apple-watchOS-11-Release-Build"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-10", "branch": "main", "treeStableTimer": 45.0,
-                    "builderNames": ["Apple-watchOS-Simulator-10-Release-Build"]
+                  { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-11", "branch": "main", "treeStableTimer": 45.0,
+                    "builderNames": ["Apple-watchOS-Simulator-11-Release-Build"]
                   },
                   { "type": "Triggerable", "name": "ios-simulator-17-release-tests-wk2",
                     "builderNames": ["Apple-iOS-17-Simulator-Release-WK2-Tests"]
@@ -905,11 +905,11 @@
                   { "type": "Triggerable", "name": "ipados-simulator-17-debug-tests-wk2",
                     "builderNames": ["Apple-iPadOS-17-Simulator-Debug-WK2-Tests"]
                   },
-                  { "type": "Triggerable", "name": "visionos-simulator-1-release-tests-wk2",
-                  "builderNames": ["Apple-visionOS-1-Simulator-Release-WK2-Tests"]
+                  { "type": "Triggerable", "name": "visionos-simulator-2-release-tests-wk2",
+                  "builderNames": ["Apple-visionOS-2-Simulator-Release-WK2-Tests"]
                   },
-                  { "type": "Triggerable", "name": "visionos-simulator-1-debug-tests-wk2",
-                  "builderNames": ["Apple-visionOS-1-Simulator-Debug-WK2-Tests"]
+                  { "type": "Triggerable", "name": "visionos-simulator-2-debug-tests-wk2",
+                  "builderNames": ["Apple-visionOS-2-Simulator-Debug-WK2-Tests"]
                   },
                   { "type": "Triggerable", "name": "gtk-linux-64-release-tests",
                     "builderNames": ["GTK-Linux-64-bit-Release-Tests"]
