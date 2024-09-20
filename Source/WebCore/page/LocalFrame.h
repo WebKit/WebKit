@@ -314,7 +314,6 @@ public:
     void didAccessWindowProxyPropertyViaOpener(WindowProxyProperty);
 #endif
 
-    WEBCORE_EXPORT RefPtr<DocumentLoader> loaderForWebsitePolicies() const;
     void storageAccessExceptionReceivedForDomain(const RegistrableDomain&);
     bool requestSkipUserActivationCheckForStorageAccess(const RegistrableDomain&);
 
