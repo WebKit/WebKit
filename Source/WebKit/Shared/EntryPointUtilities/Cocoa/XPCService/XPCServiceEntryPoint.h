@@ -52,7 +52,7 @@ namespace WebKit {
 
 class XPCServiceInitializerDelegate {
 public:
-    XPCServiceInitializerDelegate(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
+    XPCServiceInitializerDelegate(XPCPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
         : m_connection(WTFMove(connection))
         , m_initializerMessage(initializerMessage)
     {
@@ -74,7 +74,7 @@ protected:
     bool hasEntitlement(ASCIILiteral entitlement);
     bool isClientSandboxed();
 
-    OSObjectPtr<xpc_connection_t> m_connection;
+    XPCPtr<xpc_connection_t> m_connection;
     xpc_object_t m_initializerMessage;
 };
 
@@ -93,7 +93,7 @@ enum class EnableLockdownMode: bool { No, Yes };
 void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode, bool isWebContentProcess);
 
 template<typename XPCServiceType, typename XPCServiceInitializerDelegateType, bool isWebContentProcess = false>
-void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
+void XPCServiceInitializer(XPCPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
 {
     XPCServiceInitializerDelegateType delegate(WTFMove(connection), initializerMessage);
 

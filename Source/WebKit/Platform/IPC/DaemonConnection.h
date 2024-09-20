@@ -31,7 +31,7 @@
 #include <wtf/text/CString.h>
 
 #if PLATFORM(COCOA)
-#include <wtf/OSObjectPtr.h>
+#include <wtf/XPCPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 #endif
 
@@ -60,13 +60,15 @@ public:
     virtual ~Connection() = default;
 
 #if PLATFORM(COCOA)
-    explicit Connection(OSObjectPtr<xpc_connection_t>&& connection)
-        : m_connection(WTFMove(connection)) { }
+    explicit Connection(XPCPtr<xpc_connection_t>&& connection)
+        : m_connection(WTFMove(connection))
+    {
+    }
     xpc_connection_t get() const { return m_connection.get(); }
     void send(xpc_object_t) const;
     void sendWithReply(xpc_object_t, CompletionHandler<void(xpc_object_t)>&&) const;
 protected:
-    mutable OSObjectPtr<xpc_connection_t> m_connection;
+    mutable XPCPtr<xpc_connection_t> m_connection;
 #endif
     virtual void initializeConnectionIfNeeded() const { }
 };
@@ -83,7 +85,7 @@ public:
 
     virtual void newConnectionWasInitialized() const = 0;
 #if PLATFORM(COCOA)
-    virtual OSObjectPtr<xpc_object_t> dictionaryFromMessage(typename Traits::MessageType, EncodedMessage&&) const = 0;
+    virtual XPCPtr<xpc_object_t> dictionaryFromMessage(typename Traits::MessageType, EncodedMessage&&) const = 0;
     virtual void connectionReceivedEvent(xpc_object_t) = 0;
 #endif
 

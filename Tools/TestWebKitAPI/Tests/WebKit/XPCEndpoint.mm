@@ -57,7 +57,7 @@ private:
         if (messageName && !strcmp(messageName, testMessageFromClient)) {
             endpointReceivedMessageFromClient = true;
 
-            auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+            auto message = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
             xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, testMessageFromEndpoint);
             xpc_connection_send_message(connection, message.get());
         }
@@ -74,7 +74,7 @@ private:
     }
     void didConnect() final
     {
-        auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        auto message = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, testMessageFromClient);
         xpc_connection_send_message(connection().get(), message.get());
 

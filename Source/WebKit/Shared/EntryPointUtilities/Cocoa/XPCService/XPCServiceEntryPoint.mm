@@ -162,7 +162,7 @@ bool XPCServiceInitializerDelegate::isClientSandboxed()
 void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
 {
     static NeverDestroyed<OSObjectPtr<os_transaction_t>> globalTransaction;
-    static NeverDestroyed<OSObjectPtr<dispatch_source_t>> globalSource;
+    static NeverDestroyed<GCDPtr<dispatch_source_t>> globalSource;
 
     // Because we don't use RunningBoard on macOS, we leak an OS transaction to control the lifetime of our XPC
     // services ourselves. However, one of the side effects of leaking this transaction is that the default SIGTERM
@@ -172,7 +172,7 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
     // control our lifetime via process assertions instead of leaking this OS transaction.
     static dispatch_once_t flag;
     dispatch_once(&flag, ^{
-        globalSource.get() = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGTERM, 0, dispatch_get_main_queue()));
+        globalSource.get() = adoptGCDObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGTERM, 0, dispatch_get_main_queue()));
         dispatch_source_set_event_handler(globalSource.get().get(), ^{
             exitProcess(0);
         });

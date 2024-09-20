@@ -32,7 +32,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
-#include <wtf/OSObjectPtr.h>
+#include <wtf/GCDPtr.h>
 #endif
 
 #if USE(GLIB)
@@ -64,7 +64,7 @@ public:
 
 #if PLATFORM(COCOA)
     enum class Backing { Buffer, Map };
-    Data(OSObjectPtr<dispatch_data_t>&&, Backing = Backing::Buffer);
+    Data(GCDPtr<dispatch_data_t>&&, Backing = Backing::Buffer);
 #endif
 #if USE(GLIB)
     Data(GRefPtr<GBytes>&&, FileSystem::PlatformFileHandle fd = FileSystem::invalidPlatformFileHandle);
@@ -95,7 +95,7 @@ public:
 #endif
 private:
 #if PLATFORM(COCOA)
-    mutable OSObjectPtr<dispatch_data_t> m_dispatchData;
+    mutable GCDPtr<dispatch_data_t> m_dispatchData;
     mutable std::span<const uint8_t> m_data;
 #endif
 #if USE(GLIB)

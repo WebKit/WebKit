@@ -105,7 +105,7 @@ void WebCoreDecompressionSession::setTimebaseWithLockHeld(CMTimebaseRef timebase
 
     if (m_timebase) {
         if (!m_timerSource) {
-            m_timerSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue()));
+            m_timerSource = adoptGCDObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue()));
             dispatch_source_set_event_handler(m_timerSource.get(), [this] {
                 automaticDequeue();
             });

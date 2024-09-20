@@ -82,7 +82,7 @@ IOChannel::IOChannel(String&& filePath, Type type, std::optional<WorkQueue::QOS>
     int fd = ::open(path.data(), oflag, mode);
     m_fileDescriptor = fd;
 
-    m_dispatchIO = adoptOSObject(dispatch_io_create(DISPATCH_IO_RANDOM, fd, dispatch_get_global_queue(dispatchQueueIdentifier(dispatchQOS), 0), [fd](int) {
+    m_dispatchIO = adoptGCDObject(dispatch_io_create(DISPATCH_IO_RANDOM, fd, dispatch_get_global_queue(dispatchQueueIdentifier(dispatchQOS), 0), [fd](int) {
         close(fd);
     }));
     ASSERT(m_dispatchIO.get());
@@ -104,7 +104,7 @@ void IOChannel::read(size_t offset, size_t size, WTF::WorkQueueBase& queue, Func
         ASSERT_UNUSED(done, done || !didCallCompletionHandler);
         if (didCallCompletionHandler)
             return;
-        Data data { OSObjectPtr<dispatch_data_t> { fileData } };
+        Data data { GCDPtr<dispatch_data_t> { fileData } };
         auto callback = WTFMove(completionHandler);
         callback(data, error);
         didCallCompletionHandler = true;

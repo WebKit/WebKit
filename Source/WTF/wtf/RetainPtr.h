@@ -194,8 +194,8 @@ template<typename T> RetainPtr<typename RetainPtr<T>::HelperPtrType> retainPtr(T
 
 template<typename T> inline RetainPtr<T>::~RetainPtr()
 {
-    if (auto ptr = std::exchange(m_ptr, nullptr))
-        CFRelease(ptr);
+    if (m_ptr)
+        CFRelease(m_ptr);
 }
 
 template<typename T> inline RetainPtr<T>::RetainPtr(PtrType ptr)

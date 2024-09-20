@@ -34,7 +34,7 @@
 #import <Metal/Metal.h>
 #import <WebCore/PlatformXR.h>
 #import <WebCore/PlatformXRPose.h>
-#import <wtf/OSObjectPtr.h>
+#import <wtf/GCDPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/WeakObjCPtr.h>
 
@@ -384,7 +384,7 @@ id<WKARPresentationSession> createPresentationSession(ARSession *session, WKARPr
 #pragma mark - _WKTransientGestureRecognizer implementation
 
 @implementation _WKTransientGestureRecognizer {
-    OSObjectPtr<dispatch_queue_t> _accessQueue;
+    GCDPtr<dispatch_queue_t> _accessQueue;
     WeakObjCPtr<_WKARPresentationSession> _session;
     RetainPtr<NSMutableDictionary<NSNumber *, _WKTransientAction *>> _transientActions;
 }
@@ -393,7 +393,7 @@ id<WKARPresentationSession> createPresentationSession(ARSession *session, WKARPr
 {
     self = [super init];
     if (self) {
-        _accessQueue = adoptOSObject(dispatch_queue_create("com.apple.WebContent._WKTransientGestureRecognizer.AccessQueue", DISPATCH_QUEUE_SERIAL_WITH_AUTORELEASE_POOL));
+        _accessQueue = adoptGCDObject(dispatch_queue_create("com.apple.WebContent._WKTransientGestureRecognizer.AccessQueue", DISPATCH_QUEUE_SERIAL_WITH_AUTORELEASE_POOL));
         _session = session;
         _transientActions = adoptNS([NSMutableDictionary new]);
     }

@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include <wtf/GCDPtr.h>
 #include <wtf/OSObjectPtr.h>
 
 #include <CoreFoundation/CoreFoundation.h>
@@ -47,7 +48,7 @@ namespace TestWebKitAPI {
 
 TEST(OS_OBJECT_PTR_TEST_NAME, AdoptOSObject)
 {
-    OSObjectPtr<dispatch_queue_t> foo = adoptOSObject(dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL));
+    GCDPtr<dispatch_queue_t> foo = adoptGCDObject(dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL));
     uintptr_t fooPtr;
     AUTORELEASEPOOL_FOR_ARC_DEBUG {
         fooPtr = reinterpret_cast<uintptr_t>(foo.get());
@@ -76,7 +77,7 @@ TEST(OS_OBJECT_PTR_TEST_NAME, RetainRelease)
 
 TEST(OS_OBJECT_PTR_TEST_NAME, LeakRef)
 {
-    OSObjectPtr<dispatch_queue_t> foo = adoptOSObject(dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL));
+    GCDPtr<dispatch_queue_t> foo = adoptGCDObject(dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL));
     uintptr_t fooPtr;
     AUTORELEASEPOOL_FOR_ARC_DEBUG {
         fooPtr = reinterpret_cast<uintptr_t>(foo.get());
@@ -90,7 +91,7 @@ TEST(OS_OBJECT_PTR_TEST_NAME, LeakRef)
     EXPECT_EQ(nullptr, foo.get());
     EXPECT_EQ(1, CFGetRetainCount((CFTypeRef)fooPtr));
 
-    WTF::releaseOSObject(queue);
+    WTF::releaseGCDObject(queue);
 }
 
 } // namespace TestWebKitAPI

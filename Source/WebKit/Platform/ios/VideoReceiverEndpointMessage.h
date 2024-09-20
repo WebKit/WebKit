@@ -42,7 +42,7 @@ public:
 
     static ASCIILiteral messageName() { return "video-receiver-endpoint"_s; }
     static VideoReceiverEndpointMessage decode(xpc_object_t);
-    OSObjectPtr<xpc_object_t> encode() const;
+    XPCPtr<xpc_object_t> encode() const;
 
     const WebCore::ProcessIdentifier& processIdentifier() const { return m_processIdentifier; }
     const WebCore::HTMLMediaElementIdentifier& mediaElementIdentifier() const { return m_mediaElementIdentifier; }

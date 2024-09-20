@@ -52,7 +52,8 @@
 
 #if OS(DARWIN)
 #include <mach/mach_port.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/GCDPtr.h>
+#include <wtf/XPCPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 #endif
 
@@ -278,14 +279,14 @@ public:
             : port(port)
         {
         }
-        Identifier(mach_port_t port, OSObjectPtr<xpc_connection_t> xpcConnection)
+        Identifier(mach_port_t port, XPCPtr<xpc_connection_t> xpcConnection)
             : port(port)
             , xpcConnection(WTFMove(xpcConnection))
         {
         }
         explicit operator bool() const { return MACH_PORT_VALID(port); }
         mach_port_t port { MACH_PORT_NULL };
-        OSObjectPtr<xpc_connection_t> xpcConnection;
+        XPCPtr<xpc_connection_t> xpcConnection;
 #endif
     };
 
@@ -669,14 +670,14 @@ private:
     void cancelSendSource();
 
     mach_port_t m_sendPort { MACH_PORT_NULL };
-    OSObjectPtr<dispatch_source_t> m_sendSource;
+    GCDPtr<dispatch_source_t> m_sendSource;
 
     mach_port_t m_receivePort { MACH_PORT_NULL };
-    OSObjectPtr<dispatch_source_t> m_receiveSource;
+    GCDPtr<dispatch_source_t> m_receiveSource;
 
     std::unique_ptr<MachMessage> m_pendingOutgoingMachMessage;
 
-    OSObjectPtr<xpc_connection_t> m_xpcConnection;
+    XPCPtr<xpc_connection_t> m_xpcConnection;
     std::atomic<bool> m_didRequestProcessTermination { false };
 #elif OS(WINDOWS)
     // Called on the connection queue.

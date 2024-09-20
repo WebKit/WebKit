@@ -41,7 +41,7 @@ void XPCEndpointClient::setEndpoint(xpc_endpoint_t endpoint)
         if (m_connection)
             return;
 
-        m_connection = adoptOSObject(xpc_connection_create_from_endpoint(endpoint));
+        m_connection = adoptXPCObject(xpc_connection_create_from_endpoint(endpoint));
 
         xpc_connection_set_target_queue(m_connection.get(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
         xpc_connection_set_event_handler(m_connection.get(), ^(xpc_object_t message) {
@@ -75,7 +75,7 @@ void XPCEndpointClient::setEndpoint(xpc_endpoint_t endpoint)
     didConnect();
 }
 
-OSObjectPtr<xpc_connection_t> XPCEndpointClient::connection()
+XPCPtr<xpc_connection_t> XPCEndpointClient::connection()
 {
     Locker locker { m_connectionLock };
     return m_connection;

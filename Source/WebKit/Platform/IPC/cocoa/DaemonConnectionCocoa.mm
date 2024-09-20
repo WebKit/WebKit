@@ -64,7 +64,7 @@ void ConnectionToMachService<Traits>::initializeConnectionIfNeeded() const
 {
     if (m_connection)
         return;
-    m_connection = adoptOSObject(xpc_connection_create_mach_service(m_machServiceName.data(), dispatch_get_main_queue(), 0));
+    m_connection = adoptXPCObject(xpc_connection_create_mach_service(m_machServiceName.data(), dispatch_get_main_queue(), 0));
     xpc_connection_set_event_handler(m_connection.get(), [weakThis = WeakPtr { *this }](xpc_object_t event) {
         if (!weakThis)
             return;

@@ -26,8 +26,8 @@
 #import "config.h"
 #import <wtf/cocoa/Entitlements.h>
 
-#import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/XPCPtr.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/text/WTFString.h>
 
@@ -48,13 +48,13 @@ bool hasEntitlement(audit_token_t token, ASCIILiteral entitlement)
 
 bool hasEntitlement(xpc_connection_t connection, StringView entitlement)
 {
-    auto value = adoptOSObject(xpc_connection_copy_entitlement_value(connection, entitlement.utf8().data()));
+    auto value = adoptXPCObject(xpc_connection_copy_entitlement_value(connection, entitlement.utf8().data()));
     return value && xpc_get_type(value.get()) == XPC_TYPE_BOOL && xpc_bool_get_value(value.get());
 }
 
 bool hasEntitlement(xpc_connection_t connection, ASCIILiteral entitlement)
 {
-    auto value = adoptOSObject(xpc_connection_copy_entitlement_value(connection, entitlement.characters()));
+    auto value = adoptXPCObject(xpc_connection_copy_entitlement_value(connection, entitlement.characters()));
     return value && xpc_get_type(value.get()) == XPC_TYPE_BOOL && xpc_bool_get_value(value.get());
 }
 

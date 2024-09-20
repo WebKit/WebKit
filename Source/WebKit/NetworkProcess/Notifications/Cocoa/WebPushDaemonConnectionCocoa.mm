@@ -44,10 +44,10 @@ void Connection::newConnectionWasInitialized() const
     sendWithoutUsingIPCConnection(Messages::PushClientConnection::InitializeConnection(m_configuration));
 }
 
-static OSObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&& encoder)
+static XPCPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder> &&encoder)
 {
     auto xpcData = encoderToXPCData(WTFMove(encoder));
-    auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    auto dictionary = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_uint64(dictionary.get(), WebPushD::protocolVersionKey, WebPushD::protocolVersionValue);
     xpc_dictionary_set_value(dictionary.get(), WebPushD::protocolEncodedMessageKey, xpcData.get());
 

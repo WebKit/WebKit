@@ -49,15 +49,15 @@ void MemoryPressureHandler::platformReleaseMemory(Critical critical)
     }
 }
 
-static OSObjectPtr<dispatch_source_t>& memoryPressureEventSource()
+static GCDPtr<dispatch_source_t> &memoryPressureEventSource()
 {
-    static NeverDestroyed<OSObjectPtr<dispatch_source_t>> source;
+    static NeverDestroyed<GCDPtr<dispatch_source_t>> source;
     return source.get();
 }
 
-static OSObjectPtr<dispatch_source_t>& timerEventSource()
+static GCDPtr<dispatch_source_t> &timerEventSource()
 {
-    static NeverDestroyed<OSObjectPtr<dispatch_source_t>> source;
+    static NeverDestroyed<GCDPtr<dispatch_source_t>> source;
     return source.get();
 }
 
@@ -84,7 +84,7 @@ void MemoryPressureHandler::install()
 
     dispatch_async(m_dispatchQueue.get(), ^{
         auto memoryStatusFlags = DISPATCH_MEMORYPRESSURE_NORMAL | DISPATCH_MEMORYPRESSURE_WARN | DISPATCH_MEMORYPRESSURE_CRITICAL | DISPATCH_MEMORYPRESSURE_PROC_LIMIT_WARN | DISPATCH_MEMORYPRESSURE_PROC_LIMIT_CRITICAL;
-        memoryPressureEventSource() = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, memoryStatusFlags, m_dispatchQueue.get()));
+        memoryPressureEventSource() = adoptGCDObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, memoryStatusFlags, m_dispatchQueue.get()));
 
         dispatch_source_set_event_handler(memoryPressureEventSource().get(), ^{
             auto status = dispatch_source_get_data(memoryPressureEventSource().get());
@@ -197,7 +197,7 @@ void MemoryPressureHandler::uninstall()
 void MemoryPressureHandler::holdOff(Seconds seconds)
 {
     dispatch_async(m_dispatchQueue.get(), ^{
-        timerEventSource() = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, m_dispatchQueue.get()));
+        timerEventSource() = adoptGCDObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, m_dispatchQueue.get()));
         if (timerEventSource()) {
             dispatch_set_context(timerEventSource().get(), this);
             // FIXME: The final argument `s_minimumHoldOffTime.seconds()` seems wrong.

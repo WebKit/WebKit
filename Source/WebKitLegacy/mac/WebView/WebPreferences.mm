@@ -52,6 +52,7 @@
 #import <pal/text/TextEncodingRegistry.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Compiler.h>
+#import <wtf/GCDPtr.h>
 #import <wtf/MainThread.h>
 #import <wtf/OptionSet.h>
 #import <wtf/RetainPtr.h>
@@ -200,13 +201,13 @@ struct WebPreferencesPrivate
 public:
     WebPreferencesPrivate()
 #if PLATFORM(IOS_FAMILY)
-        : readWriteQueue { adoptNS(dispatch_queue_create("com.apple.WebPreferences.ReadWriteQueue", DISPATCH_QUEUE_CONCURRENT)) }
+        : readWriteQueue { adoptGCDObject(dispatch_queue_create("com.apple.WebPreferences.ReadWriteQueue", DISPATCH_QUEUE_CONCURRENT)) }
 #endif
     {
     }
 
 #if PLATFORM(IOS_FAMILY)
-    RetainPtr<dispatch_queue_t> readWriteQueue;
+    GCDPtr<dispatch_queue_t> readWriteQueue;
 #endif
     RetainPtr<NSMutableDictionary> values;
     RetainPtr<NSString> identifier;

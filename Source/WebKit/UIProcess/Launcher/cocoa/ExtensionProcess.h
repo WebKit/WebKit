@@ -29,8 +29,8 @@
 #include "ExtensionCapabilityGrant.h"
 
 #include <wtf/BlockPtr.h>
-#include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/XPCPtr.h>
 
 #if USE(EXTENSIONKIT)
 OBJC_CLASS BEWebContentProcess;
@@ -59,7 +59,7 @@ public:
 #endif
 
     void invalidate() const;
-    OSObjectPtr<xpc_connection_t> makeLibXPCConnection() const;
+    XPCPtr<xpc_connection_t> makeLibXPCConnection() const;
     PlatformGrant grantCapability(const PlatformCapability&, BlockPtr<void()>&& invalidationHandler = ^{ }) const;
     RetainPtr<UIInteraction> createVisibilityPropagationInteraction() const;
 

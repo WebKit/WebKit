@@ -42,7 +42,7 @@ namespace TestWebKitAPI {
 VirtualGamepad::VirtualGamepad(const GamepadMapping& gamepadMapping)
     : m_gamepadMapping(gamepadMapping)
 {
-    m_dispatchQueue = adoptOSObject(dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL));
+    m_dispatchQueue = adoptGCDObject(dispatch_queue_create(0, DISPATCH_QUEUE_SERIAL));
     m_uniqueID = NSUUID.UUID.UUIDString;
 
     m_buttonValues = Vector<float>(m_gamepadMapping.buttonCount, 0.0);

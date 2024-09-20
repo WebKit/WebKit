@@ -65,7 +65,7 @@ void LaunchServicesDatabaseManager::handleEvent(xpc_object_t message)
 
 void LaunchServicesDatabaseManager::didConnect()
 {
-    auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    auto message = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcRequestLaunchServicesDatabaseUpdateMessageName);
 
     auto connection = this->connection();

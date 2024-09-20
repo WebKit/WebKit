@@ -94,6 +94,7 @@ set(WTF_PUBLIC_HEADERS
     FunctionDispatcher.h
     FunctionPtr.h
     FunctionTraits.h
+    GCDPtr.h
     GenericHashKey.h
     GenericTimeMixin.h
     GetPtr.h
@@ -361,6 +362,7 @@ set(WTF_PUBLIC_HEADERS
     WordLock.h
     WorkQueue.h
     WorkerPool.h
+    XPCPtr.h
     dtoa.h
 
     dragonbox/dragonbox.h

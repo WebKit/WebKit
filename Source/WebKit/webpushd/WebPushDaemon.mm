@@ -350,7 +350,7 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
     }
 #endif
 
-    auto reply = adoptOSObject(xpc_dictionary_create_reply(request));
+    auto reply = adoptXPCObject(xpc_dictionary_create_reply(request));
     auto replyHandler = [xpcConnection = WTFMove(xpcConnection), reply = WTFMove(reply)] (UniqueRef<IPC::Encoder>&& encoder) {
         RELEASE_ASSERT(RunLoop::isMain());
         auto xpcData = WebKit::encoderToXPCData(WTFMove(encoder));

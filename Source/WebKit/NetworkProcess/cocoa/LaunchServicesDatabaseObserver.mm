@@ -41,7 +41,7 @@ LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver(NetworkProcess&)
 {
 #if HAVE(LSDATABASECONTEXT) && !HAVE(SYSTEM_CONTENT_LS_DATABASE)
     m_observer = [LSDatabaseContext.sharedDatabaseContext addDatabaseChangeObserver4WebKit:^(xpc_object_t change) {
-        auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        auto message = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName);
         xpc_dictionary_set_value(message.get(), LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseKey, change);
 
@@ -59,7 +59,7 @@ ASCIILiteral LaunchServicesDatabaseObserver::supplementName()
     return "LaunchServicesDatabaseObserverSupplement"_s;
 }
 
-void LaunchServicesDatabaseObserver::startObserving(OSObjectPtr<xpc_connection_t> connection)
+void LaunchServicesDatabaseObserver::startObserving(XPCPtr<xpc_connection_t> connection)
 {
     {
         Locker locker { m_connectionsLock };
@@ -70,7 +70,7 @@ void LaunchServicesDatabaseObserver::startObserving(OSObjectPtr<xpc_connection_t
     [LSDatabaseContext.sharedDatabaseContext getSystemContentDatabaseObject4WebKit:makeBlockPtr([connection = connection] (xpc_object_t _Nullable object, NSError * _Nullable error) {
         if (!object)
             return;
-        auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        auto message = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName);
         xpc_dictionary_set_value(message.get(), LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseKey, object);
 
@@ -79,7 +79,7 @@ void LaunchServicesDatabaseObserver::startObserving(OSObjectPtr<xpc_connection_t
     }).get()];
 #elif HAVE(LSDATABASECONTEXT)
     RetainPtr<id> observer = [LSDatabaseContext.sharedDatabaseContext addDatabaseChangeObserver4WebKit:^(xpc_object_t change) {
-        auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        auto message = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName);
         xpc_dictionary_set_value(message.get(), LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseKey, change);
 
@@ -88,7 +88,7 @@ void LaunchServicesDatabaseObserver::startObserving(OSObjectPtr<xpc_connection_t
 
     [LSDatabaseContext.sharedDatabaseContext removeDatabaseChangeObserver4WebKit:observer.get()];
 #else
-    auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    auto message = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName);
     xpc_connection_send_message(connection.get(), message.get());
 #endif

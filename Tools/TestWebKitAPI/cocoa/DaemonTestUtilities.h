@@ -28,6 +28,7 @@
 #if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
 
 #import <wtf/RetainPtr.h>
+#import <wtf/XPCPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
 @class NSDictionary;

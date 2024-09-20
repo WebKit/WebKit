@@ -1859,7 +1859,7 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
 // lock to prevent potentially re-entering WebCore.
 static void WebThreadLockAfterDelegateCallbacksHaveCompleted()
 {
-    auto delegateSemaphore = adoptOSObject(dispatch_semaphore_create(0));
+    auto delegateSemaphore = adoptGCDObject(dispatch_semaphore_create(0));
     WebThreadRun(^{
         dispatch_semaphore_signal(delegateSemaphore.get());
     });

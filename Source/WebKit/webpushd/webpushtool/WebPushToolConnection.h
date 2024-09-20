@@ -30,10 +30,10 @@
 #include <WebCore/PushPermissionState.h>
 #include <memory>
 #include <wtf/CompletionHandler.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/XPCPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 
 using WebKit::WebPushD::PushMessageForTesting;
@@ -86,7 +86,7 @@ private:
     String m_bundleIdentifier;
     String m_pushPartition;
 
-    RetainPtr<xpc_connection_t> m_connection;
+    XPCPtr<xpc_connection_t> m_connection;
     ASCIILiteral m_serviceName;
 };
 

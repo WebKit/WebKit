@@ -38,7 +38,7 @@ PowerObserver::PowerObserver(Function<void()>&& powerOnHander)
     , m_powerConnection(0)
     , m_notificationPort(nullptr)
     , m_notifierReference(0)
-    , m_dispatchQueue(adoptOSObject(dispatch_queue_create("com.apple.WebKit.PowerObserver", 0)))
+    , m_dispatchQueue(adoptGCDObject(dispatch_queue_create("com.apple.WebKit.PowerObserver", 0)))
 {
     m_powerConnection = IORegisterForSystemPower(this, &m_notificationPort, [](void* context, io_service_t service, uint32_t messageType, void* messageArgument) {
         static_cast<PowerObserver*>(context)->didReceiveSystemPowerNotification(service, messageType, messageArgument);

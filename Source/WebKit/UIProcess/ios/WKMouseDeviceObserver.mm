@@ -30,15 +30,15 @@
 
 #import "WebProcessProxy.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/GCDPtr.h>
 #import <wtf/MainThread.h>
-#import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 
 @implementation WKMouseDeviceObserver {
     BOOL _hasMouseDevice;
     size_t _startCount;
     RetainPtr<id<BSInvalidatable>> _token;
-    OSObjectPtr<dispatch_queue_t> _deviceObserverTokenQueue;
+    GCDPtr<dispatch_queue_t> _deviceObserverTokenQueue;
 }
 
 + (WKMouseDeviceObserver *)sharedInstance
@@ -52,7 +52,7 @@
     if (!(self = [super init]))
         return nil;
 
-    _deviceObserverTokenQueue = adoptOSObject(dispatch_queue_create("WKMouseDeviceObserver _deviceObserverTokenQueue", DISPATCH_QUEUE_SERIAL));
+    _deviceObserverTokenQueue = adoptGCDObject(dispatch_queue_create("WKMouseDeviceObserver _deviceObserverTokenQueue", DISPATCH_QUEUE_SERIAL));
 
     return self;
 }

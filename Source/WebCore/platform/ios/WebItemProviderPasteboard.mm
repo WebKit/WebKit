@@ -37,12 +37,12 @@
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
-#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
-#import <wtf/OSObjectPtr.h>
+#import <wtf/GCDPtr.h>
 #import <wtf/RetainPtr.h>
+#import <pal/ios/UIKitSoftLink.h>
 
 typedef void(^ItemProviderDataLoadCompletionHandler)(NSData *, NSError *);
 typedef void(^ItemProviderFileLoadCompletionHandler)(NSURL *, BOOL, NSError *);
@@ -829,8 +829,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     auto setFileURLsLock = adoptNS([[NSLock alloc] init]);
-    auto synchronousFileLoadingGroup = adoptOSObject(dispatch_group_create());
-    auto fileLoadingGroup = adoptOSObject(dispatch_group_create());
+    auto synchronousFileLoadingGroup = adoptGCDObject(dispatch_group_create());
+    auto fileLoadingGroup = adoptGCDObject(dispatch_group_create());
     for (WebItemProviderLoadResult *loadResult in loadResults.get()) {
         for (NSString *typeToLoad in loadResult.typesToLoad) {
             dispatch_group_enter(fileLoadingGroup.get());

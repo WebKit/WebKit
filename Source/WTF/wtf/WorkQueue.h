@@ -34,7 +34,7 @@
 
 #if USE(COCOA_EVENT_LOOP)
 #include <dispatch/dispatch.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/GCDPtr.h>
 #else
 #include <wtf/RunLoop.h>
 #endif
@@ -63,13 +63,13 @@ protected:
     };
     WorkQueueBase(ASCIILiteral name, Type, QOS);
 #if USE(COCOA_EVENT_LOOP)
-    explicit WorkQueueBase(OSObjectPtr<dispatch_queue_t>&&);
+    explicit WorkQueueBase(GCDPtr<dispatch_queue_t>&&);
 #else
     explicit WorkQueueBase(RunLoop&);
 #endif
 
 #if USE(COCOA_EVENT_LOOP)
-    OSObjectPtr<dispatch_queue_t> m_dispatchQueue;
+    GCDPtr<dispatch_queue_t> m_dispatchQueue;
 #else
     RunLoop* m_runLoop;
 #endif

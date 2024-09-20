@@ -29,7 +29,7 @@
 
 #include <dispatch/dispatch.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/GCDPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
@@ -114,7 +114,7 @@ private:
     RetainPtr<NSString> m_uniqueID;
     RetainPtr<HIDUserDevice> m_userDevice;
     RetainPtr<HIDDevice> m_device;
-    OSObjectPtr<dispatch_queue_t> m_dispatchQueue;
+    GCDPtr<dispatch_queue_t> m_dispatchQueue;
 
     Vector<float> m_buttonValues;
     Vector<float> m_axisValues;

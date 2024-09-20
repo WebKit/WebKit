@@ -40,6 +40,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/XPCPtr.h>
 
 typedef CFTypeRef CMBufferRef;
 typedef const struct __CFArray * CFArrayRef;
@@ -141,7 +142,7 @@ private:
     RetainPtr<CMTimebaseRef> m_timebase WTF_GUARDED_BY_LOCK(m_lock);
     const Ref<WorkQueue> m_decompressionQueue;
     const Ref<WorkQueue> m_enqueingQueue;
-    OSObjectPtr<dispatch_source_t> m_timerSource WTF_GUARDED_BY_LOCK(m_lock);
+    GCDPtr<dispatch_source_t> m_timerSource WTF_GUARDED_BY_LOCK(m_lock);
     Function<void()> m_notificationCallback WTF_GUARDED_BY_CAPABILITY(mainThread);
     Function<void()> m_hasAvailableFrameCallback WTF_GUARDED_BY_CAPABILITY(mainThread);
     Function<void(RetainPtr<CMSampleBufferRef>&&)> m_newDecodedFrameCallback WTF_GUARDED_BY_CAPABILITY(mainThread);

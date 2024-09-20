@@ -38,7 +38,7 @@
 #endif
 
 #if PLATFORM(COCOA)
-#include <wtf/OSObjectPtr.h>
+#include <wtf/GCDPtr.h>
 #endif
 
 namespace WTF {
@@ -131,7 +131,7 @@ public:
     WTF_EXPORT_PRIVATE MemoryUsagePolicy currentMemoryUsagePolicy();
 
 #if PLATFORM(COCOA)
-    void setDispatchQueue(OSObjectPtr<dispatch_queue_t>&& queue)
+    void setDispatchQueue(GCDPtr<dispatch_queue_t>&& queue)
     {
         RELEASE_ASSERT(!m_installed);
         m_dispatchQueue = WTFMove(queue);
@@ -268,7 +268,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    OSObjectPtr<dispatch_queue_t> m_dispatchQueue;
+    GCDPtr<dispatch_queue_t> m_dispatchQueue;
 #endif
 };
 

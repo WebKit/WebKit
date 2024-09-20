@@ -84,7 +84,7 @@ void ServicesController::refreshExistingServices(bool refreshImmediately)
 
     auto refreshTime = dispatch_time(DISPATCH_TIME_NOW, refreshImmediately ? 0 : (int64_t)(1 * NSEC_PER_SEC));
     dispatch_after(refreshTime, m_refreshQueue, ^{
-        auto serviceLookupGroup = adoptOSObject(dispatch_group_create());
+        auto serviceLookupGroup = adoptGCDObject(dispatch_group_create());
 
         static NSImage *image { [[NSImage alloc] init] };
         hasCompatibleServicesForItems(serviceLookupGroup.get(), @[ image ], [this] (bool hasServices) {

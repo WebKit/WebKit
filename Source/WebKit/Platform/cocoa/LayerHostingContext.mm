@@ -219,7 +219,7 @@ LayerHostingContextID LayerHostingContext::cachedContextID()
 }
 
 #if USE(EXTENSIONKIT)
-OSObjectPtr<xpc_object_t> LayerHostingContext::xpcRepresentation() const
+XPCPtr<xpc_object_t> LayerHostingContext::xpcRepresentation() const
 {
     if (!m_hostable)
         return nullptr;
@@ -228,7 +228,7 @@ OSObjectPtr<xpc_object_t> LayerHostingContext::xpcRepresentation() const
 
 RetainPtr<BELayerHierarchyHostingTransactionCoordinator> LayerHostingContext::createHostingUpdateCoordinator(mach_port_t sendRight)
 {
-    auto xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    auto xpcRepresentation = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_mach_send(xpcRepresentation.get(), machPortKey, sendRight);
     NSError* error = nil;
     auto coordinator = [getBELayerHierarchyHostingTransactionCoordinatorClass() coordinatorWithXPCRepresentation:xpcRepresentation.get() error:&error];
@@ -239,7 +239,7 @@ RetainPtr<BELayerHierarchyHostingTransactionCoordinator> LayerHostingContext::cr
 
 RetainPtr<BELayerHierarchyHandle> LayerHostingContext::createHostingHandle(uint64_t pid, uint64_t contextID)
 {
-    auto xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    auto xpcRepresentation = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_uint64(xpcRepresentation.get(), processIDKey, pid);
     xpc_dictionary_set_uint64(xpcRepresentation.get(), contextIDKey, contextID);
     NSError* error = nil;

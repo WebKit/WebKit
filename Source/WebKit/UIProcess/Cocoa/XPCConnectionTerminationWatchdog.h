@@ -25,9 +25,9 @@
 
 #pragma once
 
-#import <wtf/OSObjectPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Seconds.h>
+#import <wtf/XPCPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
 #if USE(EXTENSIONKIT_PROCESS_TERMINATION)
@@ -60,7 +60,7 @@ private:
 #if USE(EXTENSIONKIT_PROCESS_TERMINATION)
     std::optional<ExtensionProcess> m_process;
 #else
-    OSObjectPtr<xpc_connection_t> m_xpcConnection;
+    XPCPtr<xpc_connection_t> m_xpcConnection;
 #endif
 };
 

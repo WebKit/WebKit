@@ -124,7 +124,7 @@ static void checkFrameworkVersion(xpc_object_t message)
 
 void XPCServiceEventHandler(xpc_connection_t peer)
 {
-    OSObjectPtr<xpc_connection_t> retainedPeerConnection(peer);
+    XPCPtr<xpc_connection_t> retainedPeerConnection(peer);
 
     xpc_connection_set_target_queue(peer, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
     xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
@@ -211,7 +211,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
                 return;
             }
 
-            auto reply = adoptOSObject(xpc_dictionary_create_reply(event));
+            auto reply = adoptXPCObject(xpc_dictionary_create_reply(event));
             xpc_dictionary_set_string(reply.get(), "message-name", "process-finished-launching");
             xpc_connection_send_message(xpc_dictionary_get_remote_connection(event), reply.get());
 
@@ -223,7 +223,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             if (fd != -1)
                 dup2(fd, STDERR_FILENO);
 
-            WorkQueue::main().dispatchSync([initializerFunctionPtr, event = OSObjectPtr<xpc_object_t>(event), retainedPeerConnection] {
+            WorkQueue::main().dispatchSync([initializerFunctionPtr, event = XPCPtr<xpc_object_t>(event), retainedPeerConnection] {
                 WTF::initializeMainThread();
 
                 initializeCFPrefs();
@@ -246,7 +246,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
 
 int XPCServiceMain(int, const char**)
 {
-    auto bootstrap = adoptOSObject(xpc_copy_bootstrap());
+    auto bootstrap = adoptXPCObject(xpc_copy_bootstrap());
 
     if (bootstrap) {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)

@@ -122,7 +122,7 @@
 
 #if PLATFORM(COCOA)
 #include <crt_externs.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/GCDPtr.h>
 #include <wtf/cocoa/CrashReporter.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
@@ -4423,7 +4423,7 @@ int jscmain(int argc, char** argv)
 #if PLATFORM(COCOA)
     auto& memoryPressureHandler = MemoryPressureHandler::singleton();
     {
-        auto queue = adoptOSObject(dispatch_queue_create("jsc shell memory pressure handler", DISPATCH_QUEUE_SERIAL));
+        auto queue = adoptGCDObject(dispatch_queue_create("jsc shell memory pressure handler", DISPATCH_QUEUE_SERIAL));
         memoryPressureHandler.setDispatchQueue(WTFMove(queue));
     }
     Box<Critical> memoryPressureCriticalState = Box<Critical>::create(Critical::No);

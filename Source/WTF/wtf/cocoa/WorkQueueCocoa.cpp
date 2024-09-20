@@ -76,7 +76,7 @@ void WorkQueueBase::dispatchSync(Function<void()>&& function)
     dispatch_sync_f(m_dispatchQueue.get(), new Function<void()> { WTFMove(function) }, dispatchWorkItem<Function<void()>>);
 }
 
-WorkQueueBase::WorkQueueBase(OSObjectPtr<dispatch_queue_t>&& dispatchQueue)
+WorkQueueBase::WorkQueueBase(GCDPtr<dispatch_queue_t>&& dispatchQueue)
     : m_dispatchQueue(WTFMove(dispatchQueue))
     , m_threadID(mainThreadID)
 {
@@ -86,7 +86,7 @@ void WorkQueueBase::platformInitialize(ASCIILiteral name, Type type, QOS qos)
 {
     dispatch_queue_attr_t attr = type == Type::Concurrent ? DISPATCH_QUEUE_CONCURRENT : DISPATCH_QUEUE_SERIAL;
     attr = dispatch_queue_attr_make_with_qos_class(attr, Thread::dispatchQOSClass(qos), 0);
-    m_dispatchQueue = adoptOSObject(dispatch_queue_create(name, attr));
+    m_dispatchQueue = adoptGCDObject(dispatch_queue_create(name, attr));
     dispatch_set_context(m_dispatchQueue.get(), this);
     // We use &s_uid for the key, since it's convenient. Dispatch does not dereference it.
     // We use s_uid to generate the id so that WorkQueues and Threads share the id namespace.

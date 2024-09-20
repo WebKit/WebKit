@@ -103,13 +103,14 @@
 #import <pal/text/TextCodecUTF8.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/FileSystem.h>
+#import <wtf/GCDPtr.h>
 #import <wtf/ListHashSet.h>
 #import <wtf/NativePromise.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/OSObjectPtr.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/XPCPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
 #import <wtf/threads/BinarySemaphore.h>
@@ -1267,7 +1268,7 @@ void MediaPlayerPrivateAVFoundationObjC::beginLoadingMetadata()
 {
     INFO_LOG(LOGIDENTIFIER);
 
-    OSObjectPtr<dispatch_group_t> metadataLoadingGroup = adoptOSObject(dispatch_group_create());
+    GCDPtr<dispatch_group_t> metadataLoadingGroup = adoptGCDObject(dispatch_group_create());
     dispatch_group_enter(metadataLoadingGroup.get());
     ThreadSafeWeakPtr weakThis { *this };
     [m_avAsset loadValuesAsynchronouslyForKeys:assetMetadataKeyNames() completionHandler:^{

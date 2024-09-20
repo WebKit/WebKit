@@ -33,7 +33,7 @@
 namespace WebCore {
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-using VideoReceiverEndpoint = OSObjectPtr<xpc_object_t>;
+using VideoReceiverEndpoint = XPCPtr<xpc_object_t>;
 #else
 using VideoReceiverEndpoint = void*;
 #endif

@@ -50,7 +50,7 @@ void terminateWithReason(xpc_connection_t connection, ReasonCode, const char*)
 
 #if USE(EXIT_XPC_MESSAGE_WORKAROUND)
     // Give the process a chance to exit cleanly by sending a XPC message to request termination, then try xpc_connection_kill.
-    auto exitMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    auto exitMessage = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(exitMessage.get(), messageNameKey, exitProcessMessage.characters());
     xpc_connection_send_message(connection, exitMessage.get());
 #endif

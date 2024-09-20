@@ -33,7 +33,7 @@
 #include <wtf/BlockPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/GCDPtr.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSDictionary;
@@ -119,7 +119,7 @@ private:
     RetainPtr<CMSampleBufferRef> m_currentFrame;
     RefPtr<ScreenCaptureSessionSource> m_sessionSource;
     RetainPtr<SCStreamConfiguration> m_streamConfiguration;
-    OSObjectPtr<dispatch_queue_t> m_captureQueue;
+    GCDPtr<dispatch_queue_t> m_captureQueue;
     CaptureDevice m_captureDevice;
     uint32_t m_deviceID { 0 };
     mutable std::optional<IntSize> m_intrinsicSize;

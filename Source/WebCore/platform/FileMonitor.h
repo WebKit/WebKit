@@ -32,7 +32,7 @@
 
 #if USE(COCOA_EVENT_LOOP)
 #include <dispatch/dispatch.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/GCDPtr.h>
 #endif
 
 #if USE(GLIB)
@@ -52,7 +52,7 @@ public:
 
 private:
 #if USE(COCOA_EVENT_LOOP)
-    OSObjectPtr<dispatch_source_t> m_platformMonitor;
+    GCDPtr<dispatch_source_t> m_platformMonitor;
 #endif
 #if USE(GLIB)
     static void fileChangedCallback(GFileMonitor*, GFile*, GFile*, GFileMonitorEvent, FileMonitor*);

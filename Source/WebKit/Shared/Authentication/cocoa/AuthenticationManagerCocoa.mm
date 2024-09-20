@@ -54,7 +54,7 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
 #if USE(EXIT_XPC_MESSAGE_WORKAROUND)
         handleXPCExitMessage(event);
 #endif
-        callOnMainRunLoop([event = OSObjectPtr(event), weakThis = weakThis] {
+        callOnMainRunLoop([event = XPCPtr(event), weakThis = weakThis] {
             RELEASE_ASSERT(isMainRunLoop());
 
             xpc_type_t type = xpc_get_type(event.get());

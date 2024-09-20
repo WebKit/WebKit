@@ -74,7 +74,7 @@ private:
 #endif
     std::atomic<bool> m_wasDeleted { false }; // Try to narrow down a crash, https://bugs.webkit.org/show_bug.cgi?id=165659
 #if PLATFORM(COCOA)
-    OSObjectPtr<dispatch_io_t> m_dispatchIO;
+    GCDPtr<dispatch_io_t> m_dispatchIO;
 #endif
 #if USE(GLIB)
     GRefPtr<GInputStream> m_inputStream;

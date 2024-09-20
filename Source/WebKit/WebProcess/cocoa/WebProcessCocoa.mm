@@ -363,13 +363,13 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if HAVE(VIDEO_RESTRICTED_DECODING)
 #if (PLATFORM(MAC) || PLATFORM(MACCATALYST)) && !ENABLE(TRUSTD_BLOCKING_IN_WEBCONTENT)
-    OSObjectPtr<dispatch_semaphore_t> codeCheckSemaphore;
+    GCDPtr<dispatch_semaphore_t> codeCheckSemaphore;
     if (SandboxExtension::consumePermanently(parameters.trustdExtensionHandle)) {
         // Open up a Mach connection to trustd by doing a code check validation on the main bundle.
         // This is required since launchd will be blocked after process launch, which prevents new Mach connections to be created.
         // FIXME: remove this once <rdar://90127163> is fixed.
         // Dispatch this work on a thread to avoid blocking the main thread. We will wait for this to complete at the end of this method.
-        codeCheckSemaphore = adoptOSObject(dispatch_semaphore_create(0));
+        codeCheckSemaphore = adoptGCDObject(dispatch_semaphore_create(0));
         dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0), [codeCheckSemaphore = codeCheckSemaphore] {
             auto bundleURL = adoptCF(CFBundleCopyBundleURL(CFBundleGetMainBundle()));
             SecStaticCodeRef code = nullptr;

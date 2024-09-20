@@ -30,10 +30,11 @@
 #include "PlatformContentFilter.h"
 #include <objc/NSObjCRuntime.h>
 #include <wtf/Compiler.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/GCDPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/XPCPtr.h>
 
 enum NEFilterSourceStatus : NSInteger;
 
@@ -65,7 +66,7 @@ private:
     void initialize(const URL* = nullptr);
     void handleDecision(NEFilterSourceStatus, NSData *replacementData);
 
-    OSObjectPtr<dispatch_queue_t> m_queue;
+    GCDPtr<dispatch_queue_t> m_queue;
     RetainPtr<NSData> m_replacementData;
     RetainPtr<NEFilterSource> m_neFilterSource;
 };

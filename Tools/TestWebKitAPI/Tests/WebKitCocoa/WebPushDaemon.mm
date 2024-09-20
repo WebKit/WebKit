@@ -56,9 +56,10 @@
 #import <mach/mach_init.h>
 #import <mach/task.h>
 #import <wtf/BlockPtr.h>
-#import <wtf/OSObjectPtr.h>
+#import <wtf/GCDPtr.h>
 #import <wtf/UUID.h>
 #import <wtf/UniqueRef.h>
+#import <wtf/XPCPtr.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/Base64.h>
@@ -229,18 +230,18 @@ private:
     bool performSendWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&) const final;
     bool performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&&, CompletionHandler<void(IPC::Decoder*)>&&) const final;
 
-    OSObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&&) const;
+    XPCPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder> &&) const;
 
     IPC::Connection* messageSenderConnection() const final { return nullptr; }
     uint64_t messageSenderDestinationID() const final { return 0; }
 
-    OSObjectPtr<xpc_connection_t> m_connection;
+    XPCPtr<xpc_connection_t> m_connection;
     bool m_shouldIncrementProtocolVersionForTesting { false };
 };
 
-OSObjectPtr<xpc_object_t> WebPushXPCConnectionMessageSender::messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&& encoder) const
+XPCPtr<xpc_object_t> WebPushXPCConnectionMessageSender::messageDictionaryFromEncoder(UniqueRef<IPC::Encoder> &&encoder) const
 {
-    auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    auto dictionary = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
 
     uint64_t protocolVersion = WebKit::WebPushD::protocolVersionValue;
     if (m_shouldIncrementProtocolVersionForTesting)
@@ -253,7 +254,7 @@ OSObjectPtr<xpc_object_t> WebPushXPCConnectionMessageSender::messageDictionaryFr
         // Explicitly clear out the encoder, destroying it.
         blockEncoder.moveToUniquePtr();
     }));
-    auto encoderData = adoptOSObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
+    auto encoderData = adoptXPCObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
 
     xpc_dictionary_set_value(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, encoderData.get());
 
@@ -318,9 +319,9 @@ static WebKit::WebPushD::WebPushDaemonConnectionConfiguration defaultWebPushDaem
     IGNORE_CLANG_WARNINGS_END
 }
 
-RetainPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* serviceName, std::optional<WebKit::WebPushD::WebPushDaemonConnectionConfiguration> configuration = std::nullopt)
+XPCPtr<xpc_connection_t> createAndConfigureConnectionToService(const char *serviceName, std::optional<WebKit::WebPushD::WebPushDaemonConnectionConfiguration> configuration = std::nullopt)
 {
-    auto connection = adoptNS(xpc_connection_create_mach_service(serviceName, dispatch_get_main_queue(), 0));
+    auto connection = adoptXPCObject(xpc_connection_create_mach_service(serviceName, dispatch_get_main_queue(), 0));
     xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t) { });
     xpc_connection_activate(connection.get());
     auto sender = WebPushXPCConnectionMessageSender { connection.get() };
@@ -336,7 +337,7 @@ TEST(WebPushD, BasicCommunication)
 {
     NSURL *tempDir = setUpTestWebPushD();
 
-    auto connection = adoptNS(xpc_connection_create_mach_service("org.webkit.webpushtestdaemon.service", dispatch_get_main_queue(), 0));
+    auto connection = adoptXPCObject(xpc_connection_create_mach_service("org.webkit.webpushtestdaemon.service", dispatch_get_main_queue(), 0));
 
     __block bool done = false;
     __block bool interrupted = false;

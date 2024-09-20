@@ -27,9 +27,9 @@
 
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/OSObjectPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/XPCPtr.h>
 
 OBJC_CLASS CALayer;
 OBJC_CLASS CAContext;
@@ -115,7 +115,7 @@ public:
     LayerHostingContextID cachedContextID();
 
 #if USE(EXTENSIONKIT)
-    OSObjectPtr<xpc_object_t> xpcRepresentation() const;
+    XPCPtr<xpc_object_t> xpcRepresentation() const;
     RetainPtr<BELayerHierarchy> hostable() const { return m_hostable; }
 
     static RetainPtr<BELayerHierarchyHandle> createHostingHandle(uint64_t pid, uint64_t contextID);

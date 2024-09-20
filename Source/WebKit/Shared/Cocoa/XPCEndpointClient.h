@@ -29,7 +29,7 @@
 
 #include <WebKit/WKBase.h>
 #include <wtf/Lock.h>
-#include <wtf/OSObjectPtr.h>
+#include <wtf/XPCPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 
 namespace WebKit {
@@ -41,14 +41,14 @@ public:
     WK_EXPORT void setEndpoint(xpc_endpoint_t);
 
 protected:
-    WK_EXPORT OSObjectPtr<xpc_connection_t> connection();
+    WK_EXPORT XPCPtr<xpc_connection_t> connection();
 
 private:
     virtual void handleEvent(xpc_object_t) = 0;
     virtual void didConnect() = 0;
 
     Lock m_connectionLock;
-    OSObjectPtr<xpc_connection_t> m_connection WTF_GUARDED_BY_LOCK(m_connectionLock);
+    XPCPtr<xpc_connection_t> m_connection WTF_GUARDED_BY_LOCK(m_connectionLock);
 };
 
 }

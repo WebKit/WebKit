@@ -35,11 +35,11 @@ namespace WebKit {
 namespace NetworkCache {
 
 Data::Data(std::span<const uint8_t> data)
-    : m_dispatchData(adoptOSObject(dispatch_data_create(data.data(), data.size(), nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT)))
+    : m_dispatchData(adoptGCDObject(dispatch_data_create(data.data(), data.size(), nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT)))
 {
 }
 
-Data::Data(OSObjectPtr<dispatch_data_t>&& dispatchData, Backing backing)
+Data::Data(GCDPtr<dispatch_data_t> &&dispatchData, Backing backing)
     : m_dispatchData(WTFMove(dispatchData))
     , m_isMap(backing == Backing::Map && dispatch_data_get_size(m_dispatchData.get()))
 {
@@ -47,7 +47,7 @@ Data::Data(OSObjectPtr<dispatch_data_t>&& dispatchData, Backing backing)
 
 Data Data::empty()
 {
-    return { OSObjectPtr<dispatch_data_t> { dispatch_data_empty } };
+    return { GCDPtr<dispatch_data_t> { dispatch_data_empty } };
 }
 
 std::span<const uint8_t> Data::span() const
@@ -55,7 +55,7 @@ std::span<const uint8_t> Data::span() const
     if (!m_data.data() && m_dispatchData) {
         const void* data = nullptr;
         size_t size = 0;
-        m_dispatchData = adoptOSObject(dispatch_data_create_map(m_dispatchData.get(), &data, &size));
+        m_dispatchData = adoptGCDObject(dispatch_data_create_map(m_dispatchData.get(), &data, &size));
         m_data = { static_cast<const uint8_t*>(data), size };
     }
     return m_data;
@@ -84,7 +84,7 @@ bool Data::apply(const Function<bool(std::span<const uint8_t>)>& applier) const
 
 Data Data::subrange(size_t offset, size_t size) const
 {
-    return { adoptOSObject(dispatch_data_create_subrange(dispatchData(), offset, size)) };
+    return { adoptGCDObject(dispatch_data_create_subrange(dispatchData(), offset, size)) };
 }
 
 Data concatenate(const Data& a, const Data& b)
@@ -93,7 +93,7 @@ Data concatenate(const Data& a, const Data& b)
         return b;
     if (b.isNull())
         return a;
-    return { adoptOSObject(dispatch_data_create_concat(a.dispatchData(), b.dispatchData())) };
+    return { adoptGCDObject(dispatch_data_create_concat(a.dispatchData(), b.dispatchData())) };
 }
 
 Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::PlatformFileHandle fd)
@@ -103,7 +103,7 @@ Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::Platfor
     ASSERT(map);
     ASSERT(map != MAP_FAILED);
     FileSystem::closeFile(fd);
-    auto bodyMap = adoptOSObject(dispatch_data_create(map, size, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [map, size] {
+    auto bodyMap = adoptGCDObject(dispatch_data_create(map, size, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [map, size] {
         munmap(map, size);
     }));
     return { WTFMove(bodyMap), Data::Backing::Map };
