@@ -828,11 +828,42 @@ webkit.org/b/252878 webrtc/datachannel/bufferedAmountLowThreshold-default.html [
 
 webkit.org/b/235885 webrtc/video-remote-mute.html [ Timeout ]
 
-webkit.org/b/276587 webrtc/video-av1.html [ Timeout ]
 
 webkit.org/b/265290 webrtc/datachannel/basic.html [ Pass Crash ]
 webkit.org/b/265290 webrtc/datachannel/bufferedAmount-afterClose.html [ Pass Crash ]
 webkit.org/b/265290 webrtc/datachannel/bufferedAmountLowThreshold.html [ Pass Crash Failure ]
+
+# Crashes are cuase webkit.org/b/267411.
+webkit.org/b/257624 webrtc/audio-replace-track.html [ Failure Pass Timeout Crash ]
+webkit.org/b/235885 webrtc/audio-video-element-playing.html [ Failure Crash ]
+webkit.org/b/258296 webrtc/canvas-to-peer-connection.html [ Failure Timeout Crash ]
+webrtc/captureCanvas-webrtc-with-video-scaling-adaptation.html [ Failure Timeout Crash ]
+webrtc/captureCanvas-webrtc.html [ Pass Timeout Crash ]
+webrtc/clone-audio-track.html [ Pass Failure Crash ]
+webkit.org/b/209183 webrtc/concurrentVideoPlayback.html [ Pass Timeout Crash ]
+webkit.org/b/224074 webrtc/concurrentVideoPlayback2.html [ Timeout Pass Crash ]
+webkit.org/b/235885 webrtc/direction-change.html [ Failure Crash ]
+webrtc/h264-baseline.html [ Failure Timeout Crash ]
+webkit.org/b/269285 webrtc/h265.html [ Failure Crash ]
+webrtc/peer-connection-audio-mute.html [ Pass Crash ]
+webkit.org/b/264680 webrtc/peer-connection-audio-mute2.html [ Failure Pass Timeout Crash ]
+webrtc/peer-connection-audio-unmute.html [ Failure Pass Timeout Crash ]
+webrtc/peer-connection-remote-audio-mute.html [ Pass Crash ]
+webkit.org/b/235885 webrtc/peerconnection-page-cache.html [ Timeout Crash ]
+webrtc/receiver-track-should-stay-live-even-if-receiver-is-inactive.html [ Pass Timeout Crash ]
+webkit.org/b/235885 webrtc/remove-track.html [ Failure Crash ]
+webkit.org/b/187064 webrtc/video-addTrack.html [ Failure Pass Timeout Crash ]
+webkit.org/b/276587 webrtc/video-av1.html [ Timeout Crash ]
+webkit.org/b/257624 webrtc/video-mute-vp8.html [ Pass Timeout Crash ]
+webkit.org/b/257624 webrtc/video-mute.html [ Pass Timeout Crash ]
+webrtc/video-replace-track-to-null.html [ Pass Crash ]
+webkit.org/b/187064 webrtc/video-rotation.html [ Failure Timeout Crash ]
+webkit.org/b/235885 webrtc/video-stats.html [ Failure Crash ]
+webkit.org/b/261024 webrtc/video-unmute.html [ Pass Timeout Crash ]
+webrtc/vp9-profile2.html [ Pass Crash ]
+webrtc/vp9-sw.html [ Failure Crash ]
+webkit.org/b/261024 webrtc/vp9.html [ Failure Pass Timeout Crash ]
+
 
 # Expected to pass/fail in GStreamer 1.22, and a bit slow for us, creating 256 end-points in a row.
 webkit.org/b/265290 webrtc/datachannel/multiple-connections.html [ Pass Failure Timeout Crash ]
@@ -1336,8 +1367,9 @@ webkit.org/b/251554 imported/w3c/web-platform-tests/html/user-activation/consump
 ######################################################
 # Test failures from turning GPU Process on by default
 
-# Media failures
-webkit.org/b/236926 webrtc/vp8-then-h264-gpu-process-crash.html [ Timeout Pass ]
+# Media failures.
+# Crash is due to webkit.org/b/267411.
+webkit.org/b/236926 webrtc/vp8-then-h264-gpu-process-crash.html [ Timeout Pass Crash ]
 
 ############ end of test failures related to GPU Process on by default
 
@@ -1453,8 +1485,7 @@ webkit.org/b/261024 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_fr
 webkit.org/b/261024 imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_colno.htm [ Failure Pass ]
 webkit.org/b/261024 js/cached-window-properties.html [ Pass Timeout ]
 webkit.org/b/261024 webgl/1.0.x/conformance/reading/read-pixels-test.html [ Pass Timeout ]
-# Uncomment when webkit.org/b/267411 is fixed
-#webkit.org/b/261024 webrtc/vp9.html [ Failure Pass Timeout ]
+
 
 imported/w3c/web-platform-tests/css/filter-effects/background-image-blur-repaint.html [ ImageOnlyFailure ]
 
@@ -1529,7 +1560,7 @@ webkit.org/b/268470 fast/mediastream/device-change-event-2.html [ Timeout ]
 
 [ Debug ] fast/media/mq-resolution.html [ Crash ]
 
-webrtc/captureCanvas-webrtc-with-video-scaling-adaptation.html [ Failure Timeout ]
+
 
 webkit.org/b/268917 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-promises.https.html [ Pass Crash ]
 webkit.org/b/268917 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletglobalscope-sample-rate.https.html [ Pass Crash ]
