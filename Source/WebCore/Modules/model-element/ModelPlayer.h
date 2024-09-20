@@ -43,7 +43,7 @@ class Model;
 class TransformationMatrix;
 
 class WEBCORE_EXPORT ModelPlayer : public RefCounted<ModelPlayer> {
-    WTF_MAKE_TZONE_ALLOCATED(ModelPlayer);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ModelPlayer, WEBCORE_EXPORT);
 public:
     virtual ~ModelPlayer();
 

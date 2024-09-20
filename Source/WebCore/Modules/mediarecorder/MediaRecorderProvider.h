@@ -36,7 +36,7 @@ class MediaStreamPrivate;
 struct MediaRecorderPrivateOptions;
 
 class WEBCORE_EXPORT MediaRecorderProvider {
-    WTF_MAKE_TZONE_ALLOCATED(MediaRecorderProvider);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MediaRecorderProvider, WEBCORE_EXPORT);
 public:
     MediaRecorderProvider() = default;
     virtual ~MediaRecorderProvider() = default;

@@ -37,7 +37,7 @@ namespace WebCore {
 class ContentType;
 
 class WEBCORE_EXPORT MIMETypeCache {
-    WTF_MAKE_TZONE_ALLOCATED(MIMETypeCache);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MIMETypeCache, WEBCORE_EXPORT);
 public:
     MIMETypeCache() = default;
     virtual ~MIMETypeCache() = default;

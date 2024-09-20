@@ -99,7 +99,7 @@ private:
 };
 
 class WEBCORE_EXPORT WebVTTParser final {
-    WTF_MAKE_TZONE_ALLOCATED(WebVTTParser);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebVTTParser, WEBCORE_EXPORT);
 public:
     enum ParseState {
         Initial,

@@ -55,7 +55,7 @@ class WEBCORE_EXPORT PlaybackSessionInterfaceIOS
     : public PlaybackSessionModelClient
     , public RefCounted<PlaybackSessionInterfaceIOS>
     , public CanMakeCheckedPtr<PlaybackSessionInterfaceIOS> {
-    WTF_MAKE_TZONE_ALLOCATED(PlaybackSessionInterfaceIOS);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PlaybackSessionInterfaceIOS, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceIOS);
 public:
     void initialize();

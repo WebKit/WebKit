@@ -46,7 +46,7 @@ class WEBCORE_EXPORT PlaybackSessionInterfaceMac final
     : public PlaybackSessionModelClient
     , public RefCounted<PlaybackSessionInterfaceMac>
     , public CanMakeCheckedPtr<PlaybackSessionInterfaceMac> {
-    WTF_MAKE_TZONE_ALLOCATED(PlaybackSessionInterfaceMac);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PlaybackSessionInterfaceMac, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceMac);
 public:
     static Ref<PlaybackSessionInterfaceMac> create(PlaybackSessionModel&);

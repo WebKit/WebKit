@@ -64,7 +64,7 @@ protected:
 };
 
 class WEBCORE_EXPORT PlatformSpeechSynthesizer : public RefCounted<PlatformSpeechSynthesizer> {
-    WTF_MAKE_TZONE_ALLOCATED(PlatformSpeechSynthesizer);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(PlatformSpeechSynthesizer, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static Ref<PlatformSpeechSynthesizer> create(PlatformSpeechSynthesizerClient&);
 

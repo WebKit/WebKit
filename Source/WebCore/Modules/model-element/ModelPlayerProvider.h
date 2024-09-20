@@ -34,7 +34,7 @@ class ModelPlayer;
 class ModelPlayerClient;
 
 class WEBCORE_EXPORT ModelPlayerProvider {
-    WTF_MAKE_TZONE_ALLOCATED(ModelPlayerProvider);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ModelPlayerProvider, WEBCORE_EXPORT);
 public:
     virtual ~ModelPlayerProvider();
 

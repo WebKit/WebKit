@@ -47,7 +47,7 @@ class Logger;
 namespace WebCore {
 
 class WEBCORE_EXPORT SharedRoutingArbitratorToken : public CanMakeWeakPtr<SharedRoutingArbitratorToken> {
-    WTF_MAKE_TZONE_ALLOCATED(SharedRoutingArbitratorToken);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(SharedRoutingArbitratorToken, WEBCORE_EXPORT);
 public:
     static UniqueRef<SharedRoutingArbitratorToken> create();
     const void* logIdentifier() const;

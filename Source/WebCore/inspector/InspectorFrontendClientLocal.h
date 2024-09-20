@@ -54,7 +54,7 @@ class InspectorFrontendClientLocal : public InspectorFrontendClient {
     WTF_MAKE_NONCOPYABLE(InspectorFrontendClientLocal);
 public:
     class WEBCORE_EXPORT Settings {
-        WTF_MAKE_TZONE_ALLOCATED(Settings);
+        WTF_MAKE_TZONE_ALLOCATED_EXPORT(Settings, WEBCORE_EXPORT);
     public:
         Settings() = default;
         virtual ~Settings() = default;

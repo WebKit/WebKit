@@ -336,7 +336,7 @@ public:
 };
 
 class WEBCORE_EXPORT MediaPlayer : public MediaPlayerEnums, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaPlayer, WTF::DestructionThread::Main> {
-    WTF_MAKE_TZONE_ALLOCATED(MediaPlayer);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MediaPlayer, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(MediaPlayer);
 public:
     static Ref<MediaPlayer> create(MediaPlayerClient&);

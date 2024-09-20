@@ -42,7 +42,7 @@ class LibWebRTCAudioModule;
 class PlatformAudioData;
 
 class WEBCORE_EXPORT AudioMediaStreamTrackRenderer : public LoggerHelper {
-    WTF_MAKE_TZONE_ALLOCATED(AudioMediaStreamTrackRenderer);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AudioMediaStreamTrackRenderer, WEBCORE_EXPORT);
 public:
     struct Init {
         Function<void()>&& crashCallback;

@@ -52,7 +52,7 @@ public:
 };
 
 class WEBCORE_EXPORT NowPlayingManager : public RemoteCommandListenerClient {
-    WTF_MAKE_TZONE_ALLOCATED(NowPlayingManager);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(NowPlayingManager, WEBCORE_EXPORT);
 public:
     NowPlayingManager();
     ~NowPlayingManager();
