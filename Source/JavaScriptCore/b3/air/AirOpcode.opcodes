@@ -1620,9 +1620,21 @@ BranchSub32 U:G:32, U:G:32, UZD:G:32 /branch
     x86: ResCond, Tmp, Addr
     x86: ResCond, Addr, Tmp
 
+# Say EZD, so that it does not alias with any of the input.
+# This is necessary to undo sub operation when speculation fails.
+arm64: BranchSub32 U:G:32, U:G:32, U:G:32, EZD:G:32 /branch
+    ResCond, Tmp, Tmp, Tmp
+    ResCond, Tmp, Imm, Tmp
+
 64: BranchSub64 U:G:32, U:G:64, UD:G:64 /branch
     ResCond, Imm, Tmp
     ResCond, Tmp, Tmp
+
+# Say EZD, so that it does not alias with any of the input.
+# This is necessary to undo sub operation when speculation fails.
+arm64: BranchSub64 U:G:32, U:G:64, U:G:64, EZD:G:64 /branch
+    ResCond, Tmp, Tmp, Tmp
+    ResCond, Tmp, Imm, Tmp
 
 BranchNeg32 U:G:32, UZD:G:32 /branch
     ResCond, Tmp
