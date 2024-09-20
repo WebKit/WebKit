@@ -145,6 +145,11 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
     if (!alwaysRunsAtBackgroundPriority.isEmpty())
         extraInitializationData.add("always-runs-at-background-priority"_s, alwaysRunsAtBackgroundPriority);
 
+#if ENABLE(IPC_TRACE)
+    auto ipcTracingEnabled = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "ipc-tracing-enabled"));
+    if (!ipcTracingEnabled.isEmpty())
+        extraInitializationData.add("ipc-tracing-enabled"_s, ipcTracingEnabled);
+#endif
     return true;
 }
 

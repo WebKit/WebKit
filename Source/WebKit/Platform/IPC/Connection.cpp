@@ -511,6 +511,20 @@ bool Connection::open(Client& client, SerialFunctionDispatcher& dispatcher)
     return true;
 }
 
+#if ENABLE(IPC_TRACE)
+static bool globalIPCTracingEnabled = false;
+
+void Connection::enableIPCTracing()
+{
+    globalIPCTracingEnabled = true;
+}
+
+bool Connection::ipcTracingEnabled()
+{
+    return globalIPCTracingEnabled;
+}
+#endif
+
 #if !USE(UNIX_DOMAIN_SOCKETS)
 bool Connection::platformPrepareForOpen()
 {

@@ -105,6 +105,11 @@ void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters
     ContentWorldIdentifier::enableGenerationProtection();
     WebPageProxyIdentifier::enableGenerationProtection();
 
+#if ENABLE(IPC_TRACE)
+    if (parameters.extraInitializationData.contains("ipc-tracing-enabled"_s))
+        IPC::Connection::enableIPCTracing();
+#endif
+
     m_connection = IPC::Connection::createClientConnection(parameters.connectionIdentifier);
     initializeConnection(m_connection.get());
     m_connection->open(*this);

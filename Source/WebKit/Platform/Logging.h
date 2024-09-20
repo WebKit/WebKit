@@ -61,6 +61,7 @@ extern "C" {
     M(Gamepad) \
     M(IPC) \
     M(IPCMessages) \
+    M(IPCTrace) \
     M(ITPDebug) \
     M(IconDatabase) \
     M(Images) \

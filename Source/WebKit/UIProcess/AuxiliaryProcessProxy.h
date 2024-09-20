@@ -302,6 +302,10 @@ private:
     // Connection::Client
     void requestRemoteProcessTermination() final;
 
+#if ENABLE(IPC_TRACE)
+    static bool ipcTraceEnabled(ProcessLauncher::ProcessType);
+#endif
+
     ResponsivenessTimer m_responsivenessTimer;
     Vector<PendingMessage> m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;
