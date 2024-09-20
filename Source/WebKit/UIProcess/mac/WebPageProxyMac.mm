@@ -656,7 +656,7 @@ void WebPageProxy::platformDidSelectItemFromActiveContextMenu(const WebContextMe
 
 #endif
 
-std::optional<IPC::AsyncReplyID> WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCategory, CompletionHandler<void()>&& completionHandler, std::optional<FrameIdentifier> frameID)
+std::optional<IPC::ReplyID> WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCategory, CompletionHandler<void()>&& completionHandler, std::optional<FrameIdentifier> frameID)
 {
     switch (pasteAccessCategory) {
     case DOMPasteAccessCategory::General:

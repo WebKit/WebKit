@@ -89,7 +89,7 @@ private:
     void renderingUpdateFramesPerSecondChanged() final;
     void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) final;
 
-    void dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) final;
+    void dispatchAfterEnsuringDrawing(IPC::ReplyID) final;
     virtual void willCommitLayerTree(RemoteLayerTreeTransaction&) { }
 
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) final;
@@ -191,7 +191,7 @@ private:
     RefPtr<BackingStoreFlusher> m_backingStoreFlusher;
 
     TransactionID m_currentTransactionID;
-    Vector<IPC::AsyncReplyID> m_pendingCallbackIDs;
+    Vector<IPC::ReplyID> m_pendingCallbackIDs;
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
 
     OptionSet<WebCore::LayoutMilestone> m_pendingNewlyReachedPaintingMilestones;

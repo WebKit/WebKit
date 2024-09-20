@@ -24,7 +24,7 @@ messages -> DrawingAreaProxy NotRefCounted {
     EnterAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
     UpdateAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
     DidFirstLayerFlush(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
-    DispatchPresentationCallbacksAfterFlushingLayers(Vector<IPC::AsyncReplyID> callbackIDs);
+    DispatchPresentationCallbacksAfterFlushingLayers(Vector<IPC::ReplyID> callbackIDs);
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     Update(uint64_t stateID, struct WebKit::UpdateInfo updateInfo) CanDispatchOutOfOrder

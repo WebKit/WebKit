@@ -72,6 +72,7 @@ public:
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
+    static constexpr IPC::MessageName replyName = IPC::MessageName::SyncMessageReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<uint8_t>;
     using Reply = CompletionHandler<void(uint8_t)>;

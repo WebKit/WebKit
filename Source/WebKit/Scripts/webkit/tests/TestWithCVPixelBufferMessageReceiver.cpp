@@ -45,10 +45,14 @@ void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::
 {
     Ref protectedThis { *this };
 #if USE(AVFOUNDATION)
-    if (decoder.messageName() == Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::name())
-        return IPC::handleMessage<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer>(connection, decoder, this, &TestWithCVPixelBuffer::sendCVPixelBuffer);
-    if (decoder.messageName() == Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::name())
-        return IPC::handleMessageAsync<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer>(connection, decoder, this, &TestWithCVPixelBuffer::receiveCVPixelBuffer);
+    if (decoder.messageName() == Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::name()) {
+        IPC::handleMessage<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer>(connection, decoder, this, &TestWithCVPixelBuffer::sendCVPixelBuffer);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::name()) {
+        IPC::handleMessageWithReply<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer>(connection, decoder, this, &TestWithCVPixelBuffer::receiveCVPixelBuffer);
+        return;
+    }
 #endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);

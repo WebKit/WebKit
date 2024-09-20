@@ -116,12 +116,6 @@ void StreamServerConnection::didReceiveMessage(Connection&, Decoder&)
     // All messages go to message queue.
     ASSERT_NOT_REACHED();
 }
-bool StreamServerConnection::didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&)
-{
-    // All messages go to message queue.
-    ASSERT_NOT_REACHED();
-    return false;
-}
 
 void StreamServerConnection::didClose(Connection&)
 {
@@ -275,7 +269,7 @@ RefPtr<StreamConnectionWorkQueue> StreamServerConnection::protectedWorkQueue() c
 }
 
 #if ENABLE(IPC_TESTING_API)
-void StreamServerConnection::sendDeserializationErrorSyncReply(Connection::SyncRequestID syncRequestID)
+void StreamServerConnection::sendDeserializationErrorSyncReply(ReplyID syncRequestID)
 {
     auto encoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID.toUInt64());
     encoder->setSyncMessageDeserializationFailure();

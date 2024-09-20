@@ -42,10 +42,14 @@ namespace WebKit {
 void TestWithImageData::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithImageData::SendImageData::name())
-        return IPC::handleMessage<Messages::TestWithImageData::SendImageData>(connection, decoder, this, &TestWithImageData::sendImageData);
-    if (decoder.messageName() == Messages::TestWithImageData::ReceiveImageData::name())
-        return IPC::handleMessageAsync<Messages::TestWithImageData::ReceiveImageData>(connection, decoder, this, &TestWithImageData::receiveImageData);
+    if (decoder.messageName() == Messages::TestWithImageData::SendImageData::name()) {
+        IPC::handleMessage<Messages::TestWithImageData::SendImageData>(connection, decoder, this, &TestWithImageData::sendImageData);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithImageData::ReceiveImageData::name()) {
+        IPC::handleMessageWithReply<Messages::TestWithImageData::ReceiveImageData>(connection, decoder, this, &TestWithImageData::receiveImageData);
+        return;
+    }
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)

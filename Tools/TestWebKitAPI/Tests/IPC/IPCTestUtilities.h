@@ -51,7 +51,7 @@ struct MockTestMessage1 {
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = true;
     static constexpr bool replyCanDispatchOutOfOrder = false;
-    static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(123); }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::IPCTester_EmptyMessage; }
     std::tuple<> arguments() { return { }; }
 };
 
@@ -59,10 +59,10 @@ struct MockTestMessageWithAsyncReply1 {
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
-    static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(124); }
-    // Just using WebPage_GetBytecodeProfileReply as something that is async message name.
-    // If WebPage_GetBytecodeProfileReply is removed, just use another one.
-    static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::WebPage_GetBytecodeProfileReply; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::IPCTester_AsyncPing; }
+    // Just using IPCTester_AsyncPingReply as something that is async message name.
+    // If IPCTester_AsyncPingReply is removed, just use another one.
+    static constexpr IPC::MessageName replyName = IPC::MessageName::IPCTester_AsyncPingReply;
     std::tuple<> arguments() { return { }; }
     using ReplyArguments = std::tuple<uint64_t>;
     using Promise = WTF::NativePromise<uint64_t, IPC::Error>;
@@ -107,32 +107,18 @@ public:
     }
 
     // Handler returns false if the message should be just recorded.
-    void setAsyncMessageHandler(Function<bool(IPC::Decoder&)>&& handler)
+    void setMessageHandler(Function<bool(IPC::Connection&, IPC::Decoder&)>&& handler)
     {
-        m_asyncMessageHandler = WTFMove(handler);
+        m_messageHandler = WTFMove(handler);
     }
 
     // IPC::Connection::Client overrides.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder) override
+    void didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder) override
     {
-        if (m_asyncMessageHandler && m_asyncMessageHandler(decoder))
+        if (m_messageHandler && m_messageHandler(connection, decoder))
             return;
         m_messages.append({ decoder.messageName(), decoder.destinationID() });
         m_continueWaitForMessage = true;
-    }
-
-    // Handler contract as IPC::MessageReceiver::didReceiveSyncMessage: false on invalid message, may adopt encoder,
-    // decoder used only during the call, if encoder not adopted it will be submitted.
-    void setSyncMessageHandler(Function<bool(IPC::Decoder&, UniqueRef<IPC::Encoder>&)>&& handler)
-    {
-        m_syncMessageHandler = WTFMove(handler);
-    }
-
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) override
-    {
-        if (m_syncMessageHandler)
-            return m_syncMessageHandler(decoder, encoder);
-        return false;
     }
 
     void didClose(IPC::Connection&) override
@@ -150,8 +136,7 @@ private:
     std::optional<IPC::MessageName> m_didReceiveInvalidMessage;
     Deque<MessageInfo> m_messages;
     bool m_continueWaitForMessage { false };
-    Function<bool(IPC::Decoder&)> m_asyncMessageHandler;
-    Function<bool(IPC::Decoder&, UniqueRef<IPC::Encoder>&)> m_syncMessageHandler;
+    Function<bool(IPC::Connection&, IPC::Decoder&)> m_messageHandler;
 };
 
 enum class ConnectionTestDirection {

@@ -122,11 +122,6 @@ bool ModelProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::D
     return false;
 }
 
-bool ModelProcessConnection::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
-{
-    return messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
-}
-
 void ModelProcessConnection::didInitialize(std::optional<ModelProcessConnectionInfo>&& info)
 {
     if (!info) {

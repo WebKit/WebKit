@@ -78,7 +78,7 @@ public:
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBufferReply; }
+    static constexpr IPC::MessageName replyName = IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBufferReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<RetainPtr<CVPixelBufferRef>>;
     using Reply = CompletionHandler<void(RetainPtr<CVPixelBufferRef>&&)>;

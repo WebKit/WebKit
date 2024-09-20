@@ -630,7 +630,6 @@ public:
     void setActiveOpenPanelResultListener(Ref<WebOpenPanelResultListener>&&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
     // -- InjectedBundle methods
 #if ENABLE(CONTEXT_MENUS)

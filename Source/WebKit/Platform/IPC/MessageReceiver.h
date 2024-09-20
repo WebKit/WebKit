@@ -60,12 +60,6 @@ public:
         ASSERT_NOT_REACHED();
     }
 
-    virtual bool didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&)
-    {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
 private:
     friend class MessageReceiverMap;
 

@@ -78,7 +78,7 @@ public:
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageReply; }
+    static constexpr IPC::MessageName replyName = IPC::MessageName::TestWithSuperclass_TestAsyncMessageReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::MainThread;
     using ReplyArguments = std::tuple<uint64_t>;
     using Reply = CompletionHandler<void(uint64_t)>;
@@ -108,7 +108,7 @@ public:
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply; }
+    static constexpr IPC::MessageName replyName = IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
     using Reply = CompletionHandler<void()>;
@@ -133,7 +133,7 @@ public:
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply; }
+    static constexpr IPC::MessageName replyName = IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<bool, uint64_t>;
     using Reply = CompletionHandler<void(bool, uint64_t)>;
@@ -158,7 +158,7 @@ public:
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply; }
+    static constexpr IPC::MessageName replyName = IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<bool>;
     using Reply = CompletionHandler<void(bool)>;
@@ -187,6 +187,7 @@ public:
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
+    static constexpr IPC::MessageName replyName = IPC::MessageName::SyncMessageReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<uint8_t>;
     using Reply = CompletionHandler<void(uint8_t)>;
@@ -213,6 +214,7 @@ public:
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
+    static constexpr IPC::MessageName replyName = IPC::MessageName::SyncMessageReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<std::optional<WebKit::TestClassName>>;
     using Reply = CompletionHandler<void(std::optional<WebKit::TestClassName>&&)>;

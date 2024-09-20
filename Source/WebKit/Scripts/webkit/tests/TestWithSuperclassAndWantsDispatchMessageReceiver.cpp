@@ -40,21 +40,17 @@ namespace WebKit {
 void TestWithSuperclassAndWantsDispatch::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithSuperclassAndWantsDispatch::LoadURL::name())
-        return IPC::handleMessage<Messages::TestWithSuperclassAndWantsDispatch::LoadURL>(connection, decoder, this, &TestWithSuperclassAndWantsDispatch::loadURL);
+    if (decoder.messageName() == Messages::TestWithSuperclassAndWantsDispatch::LoadURL::name()) {
+        IPC::handleMessage<Messages::TestWithSuperclassAndWantsDispatch::LoadURL>(connection, decoder, this, &TestWithSuperclassAndWantsDispatch::loadURL);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithSuperclassAndWantsDispatch::TestSyncMessage::name()) {
+        IPC::handleMessageWithReply<Messages::TestWithSuperclassAndWantsDispatch::TestSyncMessage>(connection, decoder, this, &TestWithSuperclassAndWantsDispatch::testSyncMessage);
+        return;
+    }
     if (dispatchMessage(connection, decoder))
         return;
     WebPageBase::didReceiveMessage(connection, decoder);
-}
-
-bool TestWithSuperclassAndWantsDispatch::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
-{
-    Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithSuperclassAndWantsDispatch::TestSyncMessage::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithSuperclassAndWantsDispatch::TestSyncMessage>(connection, decoder, replyEncoder, this, &TestWithSuperclassAndWantsDispatch::testSyncMessage);
-    if (dispatchSyncMessage(connection, decoder, replyEncoder))
-        return true;
-    return WebPageBase::didReceiveSyncMessage(connection, decoder, replyEncoder);
 }
 
 } // namespace WebKit

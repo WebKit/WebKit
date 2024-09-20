@@ -73,7 +73,7 @@ class StreamServerConnection final : public ThreadSafeRefCounted<StreamServerCon
     WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StreamServerConnection);
 public:
-    using AsyncReplyID = Connection::AsyncReplyID;
+    using ReplyID = IPC::ReplyID;
     using Handle = StreamServerConnectionHandle;
 
     static RefPtr<StreamServerConnection> tryCreate(Handle&&, const StreamServerConnectionParameters&);
@@ -97,14 +97,11 @@ public:
     template<typename T, typename RawValue> Error send(T&& message, const ObjectIdentifierGenericBase<RawValue>& destinationID);
 
     template<typename T, typename... Arguments>
-    void sendSyncReply(Connection::SyncRequestID, Arguments&&...);
+    void sendReply(ReplyID, Arguments&&...);
 
 #if ENABLE(IPC_TESTING_API)
-    void sendDeserializationErrorSyncReply(Connection::SyncRequestID);
+    void sendDeserializationErrorSyncReply(ReplyID);
 #endif
-
-    template<typename T, typename... Arguments>
-    void sendAsyncReply(AsyncReplyID, Arguments&&...);
 
     Semaphore& clientWaitSemaphore() { return m_clientWaitSemaphore; }
 
@@ -116,7 +113,6 @@ private:
 
     // Connection::Client
     void didReceiveMessage(Connection&, Decoder&) final;
-    bool didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&) final;
     void didClose(Connection&) final;
     void didReceiveInvalidMessage(Connection&, MessageName, int32_t indexOfObjectFailingDecoding) final;
 
@@ -125,6 +121,10 @@ private:
     bool dispatchOutOfStreamMessage(Decoder&&);
 
     RefPtr<StreamConnectionWorkQueue> protectedWorkQueue() const;
+    template<typename T, typename... Arguments>
+    void sendSyncReply(ReplyID, Arguments&&...);
+    template<typename T, typename... Arguments>
+    void sendAsyncReply(ReplyID, Arguments&&...);
 
     using WakeUpClient = StreamServerConnectionBuffer::WakeUpClient;
     const Ref<IPC::Connection> m_connection;
@@ -152,7 +152,16 @@ Error StreamServerConnection::send(T&& message, const ObjectIdentifierGenericBas
 }
 
 template<typename T, typename... Arguments>
-void StreamServerConnection::sendSyncReply(Connection::SyncRequestID syncRequestID, Arguments&&... arguments)
+void StreamServerConnection::sendReply(ReplyID replyID, Arguments&&... arguments)
+{
+    if constexpr(T::isSync)
+        sendSyncReply<T>(replyID, std::forward<Arguments>(arguments)...);
+    else
+        sendAsyncReply<T>(replyID, std::forward<Arguments>(arguments)...);
+}
+
+template<typename T, typename... Arguments>
+void StreamServerConnection::sendSyncReply(ReplyID replyID, Arguments&&... arguments)
 {
     if constexpr(T::isReplyStreamEncodable) {
         if (m_isDispatchingStreamMessage) {
@@ -165,7 +174,7 @@ void StreamServerConnection::sendSyncReply(Connection::SyncRequestID syncRequest
             StreamConnectionEncoder outOfStreamEncoder { MessageName::ProcessOutOfStreamMessage, span.data(), span.size() };
         }
     }
-    auto encoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID.toUInt64());
+    auto encoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, replyID.toUInt64());
     (encoder.get() << ... << std::forward<Arguments>(arguments));
     if (m_isDispatchingStreamMessage) {
         // Send sync reply only after releasing the buffer. Otherwise client might receive the message before server
@@ -179,9 +188,9 @@ void StreamServerConnection::sendSyncReply(Connection::SyncRequestID syncRequest
 }
 
 template<typename T, typename... Arguments>
-void StreamServerConnection::sendAsyncReply(AsyncReplyID asyncReplyID, Arguments&&... arguments)
+void StreamServerConnection::sendAsyncReply(ReplyID replyID, Arguments&&... arguments)
 {
-    auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), asyncReplyID.toUInt64());
+    auto encoder = makeUniqueRef<Encoder>(T::replyName, replyID.toUInt64());
     (encoder.get() << ... << std::forward<Arguments>(arguments));
     m_connection->sendSyncReply(WTFMove(encoder));
 }

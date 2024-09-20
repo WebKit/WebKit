@@ -217,7 +217,7 @@ void WebPageProxy::loadRecentSearches(IPC::Connection& connection, const String&
     m_websiteDataStore->loadRecentSearches(name, WTFMove(completionHandler));
 }
 
-std::optional<IPC::AsyncReplyID> WebPageProxy::grantAccessToCurrentPasteboardData(const String& pasteboardName, CompletionHandler<void()>&& completionHandler, std::optional<FrameIdentifier> frameID)
+std::optional<IPC::ReplyID> WebPageProxy::grantAccessToCurrentPasteboardData(const String& pasteboardName, CompletionHandler<void()>&& completionHandler, std::optional<FrameIdentifier> frameID)
 {
     if (!hasRunningProcess()) {
         completionHandler();

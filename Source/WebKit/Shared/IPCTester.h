@@ -58,7 +58,6 @@ public:
 
     // IPC::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 private:
     // Messages.
     void startMessageTesting(IPC::Connection&, String&& driverName);
@@ -71,6 +70,7 @@ private:
     void sendSameSemaphoreBack(IPC::Connection&, IPC::Semaphore&&);
     void sendSemaphoreBackAndSignalProtocol(IPC::Connection&, IPC::Semaphore&&);
     void sendAsyncMessageToReceiver(IPC::Connection&, uint32_t);
+    void emptyMessage();
     void asyncPing(uint32_t value, CompletionHandler<void(uint32_t)>&&);
     void syncPing(IPC::Connection&, uint32_t value, CompletionHandler<void(uint32_t)>&&);
     void syncPingEmptyReply(IPC::Connection&, uint32_t value, CompletionHandler<void()>&&);

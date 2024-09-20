@@ -78,7 +78,7 @@ public:
     static constexpr bool isReplyStreamEncodable = true;
     static constexpr bool isStreamBatched = false;
 
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_SendStringAsyncReply; }
+    static constexpr IPC::MessageName replyName = IPC::MessageName::TestWithStream_SendStringAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<int64_t>;
     using Reply = CompletionHandler<void(int64_t)>;
@@ -109,6 +109,7 @@ public:
     static constexpr bool isReplyStreamEncodable = true;
     static constexpr bool isStreamBatched = false;
 
+    static constexpr IPC::MessageName replyName = IPC::MessageName::SyncMessageReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<int64_t>;
     using Reply = CompletionHandler<void(int64_t)>;
@@ -138,7 +139,7 @@ public:
     static constexpr bool isReplyStreamEncodable = true;
     static constexpr bool isStreamBatched = false;
 
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_CallWithIdentifierReply; }
+    static constexpr IPC::MessageName replyName = IPC::MessageName::TestWithStream_CallWithIdentifierReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
     using Reply = CompletionHandler<void()>;
@@ -192,6 +193,7 @@ public:
     static constexpr bool isReplyStreamEncodable = false;
     static constexpr bool isStreamBatched = false;
 
+    static constexpr IPC::MessageName replyName = IPC::MessageName::SyncMessageReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<MachSendRight>;
     using Reply = CompletionHandler<void(MachSendRight&&)>;
@@ -218,6 +220,7 @@ public:
     static constexpr bool isReplyStreamEncodable = false;
     static constexpr bool isStreamBatched = false;
 
+    static constexpr IPC::MessageName replyName = IPC::MessageName::SyncMessageReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<MachSendRight>;
     using Reply = CompletionHandler<void(MachSendRight&&)>;

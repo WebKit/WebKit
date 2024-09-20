@@ -39,8 +39,10 @@ namespace WebKit {
 
 void TestWithStreamBatched::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)
 {
-    if (decoder.messageName() == Messages::TestWithStreamBatched::SendString::name())
-        return IPC::handleMessage<Messages::TestWithStreamBatched::SendString>(connection.protectedConnection(), decoder, this, &TestWithStreamBatched::sendString);
+    if (decoder.messageName() == Messages::TestWithStreamBatched::SendString::name()) {
+        IPC::handleMessage<Messages::TestWithStreamBatched::SendString>(connection, decoder, this, &TestWithStreamBatched::sendString);
+        return;
+    }
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(connection);
 #if ENABLE(IPC_TESTING_API)

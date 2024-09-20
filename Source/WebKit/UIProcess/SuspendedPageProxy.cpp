@@ -299,11 +299,6 @@ void SuspendedPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Dec
 #endif
 }
 
-bool SuspendedPageProxy::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&)
-{
-    return false;
-}
-
 #if !LOG_DISABLED
 
 String SuspendedPageProxy::loggingString() const

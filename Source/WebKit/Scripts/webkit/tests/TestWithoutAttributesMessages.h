@@ -304,7 +304,7 @@ public:
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_CreatePluginReply; }
+    static constexpr IPC::MessageName replyName = IPC::MessageName::TestWithoutAttributes_CreatePluginReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<bool>;
     using Reply = CompletionHandler<void(bool)>;
@@ -332,7 +332,7 @@ public:
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_RunJavaScriptAlertReply; }
+    static constexpr IPC::MessageName replyName = IPC::MessageName::TestWithoutAttributes_RunJavaScriptAlertReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
     using Reply = CompletionHandler<void()>;
@@ -360,7 +360,7 @@ public:
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_GetPluginsReply; }
+    static constexpr IPC::MessageName replyName = IPC::MessageName::TestWithoutAttributes_GetPluginsReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<Vector<WebCore::PluginInfo>>;
     using Reply = CompletionHandler<void(Vector<WebCore::PluginInfo>&&)>;
@@ -388,6 +388,7 @@ public:
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
+    static constexpr IPC::MessageName replyName = IPC::MessageName::SyncMessageReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<IPC::Connection::Handle>;
     using Reply = CompletionHandler<void(IPC::Connection::Handle&&)>;
@@ -414,6 +415,7 @@ public:
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
+    static constexpr IPC::MessageName replyName = IPC::MessageName::SyncMessageReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
     using Reply = CompletionHandler<void()>;
@@ -530,7 +532,7 @@ public:
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithoutAttributes_InterpretKeyEventReply; }
+    static constexpr IPC::MessageName replyName = IPC::MessageName::TestWithoutAttributes_InterpretKeyEventReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<Vector<WebCore::KeypressCommand>>;
     using Reply = CompletionHandler<void(Vector<WebCore::KeypressCommand>&&)>;

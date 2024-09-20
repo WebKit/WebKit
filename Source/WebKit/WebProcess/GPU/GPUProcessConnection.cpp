@@ -289,11 +289,6 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
     return false;
 }
 
-bool GPUProcessConnection::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
-{
-    return messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
-}
-
 void GPUProcessConnection::didInitialize(std::optional<GPUProcessConnectionInfo>&& info)
 {
     if (!info) {

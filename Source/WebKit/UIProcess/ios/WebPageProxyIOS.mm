@@ -1112,7 +1112,7 @@ size_t WebPageProxy::computePagesForPrintingiOS(FrameIdentifier frameID, const P
     return pageCount;
 }
 
-IPC::Connection::AsyncReplyID WebPageProxy::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+IPC::ReplyID WebPageProxy::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler({ });
@@ -1122,7 +1122,7 @@ IPC::Connection::AsyncReplyID WebPageProxy::drawToPDFiOS(FrameIdentifier frameID
     return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawToPDFiOS(frameID, printInfo, pageCount), WTFMove(completionHandler));
 }
 
-IPC::Connection::AsyncReplyID WebPageProxy::drawToImage(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
+IPC::ReplyID WebPageProxy::drawToImage(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler({ });
@@ -1617,7 +1617,7 @@ void WebPageProxy::Internals::isUserFacingChanged(bool isUserFacing)
 
 #endif
 
-std::optional<IPC::AsyncReplyID> WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCategory, CompletionHandler<void()>&& completionHandler, std::optional<FrameIdentifier> frameID)
+std::optional<IPC::ReplyID> WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCategory, CompletionHandler<void()>&& completionHandler, std::optional<FrameIdentifier> frameID)
 {
     switch (pasteAccessCategory) {
     case DOMPasteAccessCategory::General:

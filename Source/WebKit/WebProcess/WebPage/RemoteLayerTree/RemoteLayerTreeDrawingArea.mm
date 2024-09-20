@@ -529,7 +529,7 @@ void RemoteLayerTreeDrawingArea::activityStateDidChange(OptionSet<WebCore::Activ
     callback();
 }
 
-void RemoteLayerTreeDrawingArea::dispatchAfterEnsuringDrawing(IPC::AsyncReplyID callbackID)
+void RemoteLayerTreeDrawingArea::dispatchAfterEnsuringDrawing(IPC::ReplyID callbackID)
 {
     // Assume that if someone is listening for this transaction's completion, that they want it to
     // be a "complete" paint (including images that would normally be asynchronously decoding).

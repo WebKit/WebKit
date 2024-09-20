@@ -43,11 +43,6 @@ void StreamClientConnection::DedicatedConnectionClient::didReceiveMessage(Connec
     m_receiver.didReceiveMessage(connection, decoder);
 }
 
-bool StreamClientConnection::DedicatedConnectionClient::didReceiveSyncMessage(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder)
-{
-    return m_receiver.didReceiveSyncMessage(connection, decoder, replyEncoder);
-}
-
 void StreamClientConnection::DedicatedConnectionClient::didClose(Connection& connection)
 {
     // Client is expected to listen to Connection::didClose() from the connection it sent to the dedicated connection to.

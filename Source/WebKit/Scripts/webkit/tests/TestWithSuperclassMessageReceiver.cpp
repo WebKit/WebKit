@@ -45,29 +45,37 @@ namespace WebKit {
 void TestWithSuperclass::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithSuperclass::LoadURL::name())
-        return IPC::handleMessage<Messages::TestWithSuperclass::LoadURL>(connection, decoder, this, &TestWithSuperclass::loadURL);
+    if (decoder.messageName() == Messages::TestWithSuperclass::LoadURL::name()) {
+        IPC::handleMessage<Messages::TestWithSuperclass::LoadURL>(connection, decoder, this, &TestWithSuperclass::loadURL);
+        return;
+    }
 #if ENABLE(TEST_FEATURE)
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessage::name())
-        return IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessage>(connection, decoder, this, &TestWithSuperclass::testAsyncMessage);
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments::name())
-        return IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithNoArguments);
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments::name())
-        return IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithMultipleArguments);
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithConnection::name())
-        return IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessageWithConnection>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithConnection);
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessage::name()) {
+        IPC::handleMessageWithReply<Messages::TestWithSuperclass::TestAsyncMessage>(connection, decoder, this, &TestWithSuperclass::testAsyncMessage);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments::name()) {
+        IPC::handleMessageWithReply<Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithNoArguments);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments::name()) {
+        IPC::handleMessageWithReply<Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithMultipleArguments);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithConnection::name()) {
+        IPC::handleMessageWithReply<Messages::TestWithSuperclass::TestAsyncMessageWithConnection>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithConnection);
+        return;
+    }
 #endif
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestSyncMessage::name()) {
+        IPC::handleMessageWithReply<Messages::TestWithSuperclass::TestSyncMessage>(connection, decoder, this, &TestWithSuperclass::testSyncMessage);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithSuperclass::TestSynchronousMessage::name()) {
+        IPC::handleMessageWithReply<Messages::TestWithSuperclass::TestSynchronousMessage>(connection, decoder, this, &TestWithSuperclass::testSynchronousMessage);
+        return;
+    }
     WebPageBase::didReceiveMessage(connection, decoder);
-}
-
-bool TestWithSuperclass::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
-{
-    Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestSyncMessage::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithSuperclass::TestSyncMessage>(connection, decoder, replyEncoder, this, &TestWithSuperclass::testSyncMessage);
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestSynchronousMessage::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithSuperclass::TestSynchronousMessage>(connection, decoder, replyEncoder, this, &TestWithSuperclass::testSynchronousMessage);
-    return WebPageBase::didReceiveSyncMessage(connection, decoder, replyEncoder);
 }
 
 } // namespace WebKit

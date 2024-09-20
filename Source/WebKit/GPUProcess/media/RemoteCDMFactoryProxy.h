@@ -58,13 +58,9 @@ public:
     void clear();
 
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
-    bool didReceiveSyncMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) { return didReceiveSyncMessage(connection, decoder, encoder); }
     void didReceiveCDMMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveCDMInstanceMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveCDMInstanceSessionMessage(IPC::Connection&, IPC::Decoder&);
-    bool didReceiveSyncCDMMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
-    bool didReceiveSyncCDMInstanceMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
-    bool didReceiveSyncCDMInstanceSessionMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
     void addProxy(const RemoteCDMIdentifier&, RefPtr<RemoteCDMProxy>&&);
     void removeProxy(const RemoteCDMIdentifier&);
@@ -93,7 +89,6 @@ private:
     friend class GPUProcessConnection;
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     // Messages
     void createCDM(const String& keySystem, CompletionHandler<void(RemoteCDMIdentifier&&, RemoteCDMConfiguration&&)>&&);
