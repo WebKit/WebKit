@@ -147,7 +147,7 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVImageBufferCleanApertureVer
 
 #if PLATFORM(IOS_FAMILY)
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVPixelBufferOpenGLESCompatibilityKey, CFStringRef)
-#define kCVPixelBufferExtendedPixelsRightKey get_CoreVideo_kCVPixelBufferOpenGLESCompatibilityKey()
+#define kCVPixelBufferOpenGLESCompatibilityKey get_CoreVideo_kCVPixelBufferOpenGLESCompatibilityKey()
 #endif
 
 #if PLATFORM(MAC)
