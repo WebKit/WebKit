@@ -67,12 +67,12 @@ void SessionStorageManager::connectionClosed(IPC::Connection::UniqueID connectio
 
 void SessionStorageManager::removeNamespace(StorageNamespaceIdentifier namespaceIdentifier)
 {
-    auto identifier = m_storageAreasByNamespace.take(namespaceIdentifier);
-    if (!identifier.isValid())
+    auto identifier = m_storageAreasByNamespace.takeOptional(namespaceIdentifier);
+    if (!identifier)
         return;
 
-    m_storageAreas.remove(identifier);
-    m_registry->unregisterStorageArea(identifier);
+    m_storageAreas.remove(*identifier);
+    m_registry->unregisterStorageArea(*identifier);
 }
 
 StorageAreaIdentifier SessionStorageManager::addStorageArea(std::unique_ptr<MemoryStorageArea> storageArea, StorageNamespaceIdentifier namespaceIdentifier)
@@ -85,17 +85,17 @@ StorageAreaIdentifier SessionStorageManager::addStorageArea(std::unique_ptr<Memo
     return identifier;
 }
 
-StorageAreaIdentifier SessionStorageManager::connectToSessionStorageArea(IPC::Connection::UniqueID connection, StorageAreaMapIdentifier sourceIdentifier, const WebCore::ClientOrigin& origin, StorageNamespaceIdentifier namespaceIdentifier)
+std::optional<StorageAreaIdentifier> SessionStorageManager::connectToSessionStorageArea(IPC::Connection::UniqueID connection, StorageAreaMapIdentifier sourceIdentifier, const WebCore::ClientOrigin& origin, StorageNamespaceIdentifier namespaceIdentifier)
 {
-    auto identifier = m_storageAreasByNamespace.get(namespaceIdentifier);
-    if (!identifier.isValid()) {
+    auto identifier = m_storageAreasByNamespace.getOptional(namespaceIdentifier);
+    if (!identifier) {
         auto newStorageArea = makeUnique<MemoryStorageArea>(origin);
         identifier = addStorageArea(WTFMove(newStorageArea), namespaceIdentifier);
     }
 
-    auto storageArea = m_storageAreas.get(identifier);
+    auto storageArea = m_storageAreas.get(*identifier);
     if (!storageArea)
-        return StorageAreaIdentifier { };
+        return std::nullopt;
 
     storageArea->addListener(connection, sourceIdentifier);
 
@@ -104,11 +104,11 @@ StorageAreaIdentifier SessionStorageManager::connectToSessionStorageArea(IPC::Co
 
 void SessionStorageManager::cancelConnectToSessionStorageArea(IPC::Connection::UniqueID connection, StorageNamespaceIdentifier namespaceIdentifier)
 {
-    auto identifier = m_storageAreasByNamespace.get(namespaceIdentifier);
-    if (!identifier.isValid())
+    auto identifier = m_storageAreasByNamespace.getOptional(namespaceIdentifier);
+    if (!identifier)
         return;
 
-    auto* storageArea = m_storageAreas.get(identifier);
+    auto* storageArea = m_storageAreas.get(*identifier);
     if (!storageArea)
         return;
 
@@ -123,11 +123,11 @@ void SessionStorageManager::disconnectFromStorageArea(IPC::Connection::UniqueID 
 
 void SessionStorageManager::cloneStorageArea(StorageNamespaceIdentifier sourceNamespaceIdentifier, StorageNamespaceIdentifier targetNamespaceIdentifier)
 {
-    auto identifier = m_storageAreasByNamespace.get(sourceNamespaceIdentifier);
-    if (!identifier.isValid())
+    auto identifier = m_storageAreasByNamespace.getOptional(sourceNamespaceIdentifier);
+    if (!identifier)
         return;
 
-    if (auto storageArea = m_storageAreas.get(identifier))
+    if (auto storageArea = m_storageAreas.get(*identifier))
         addStorageArea(storageArea->clone(), targetNamespaceIdentifier);
 }
 

@@ -204,7 +204,6 @@ template: enum class TestWebKitAPI::TestedObjectIdentifierType
 template: struct IPC::AsyncReplyIDType
 template: struct WebCore::WebSocketFrame
 template: struct WebKit::ConnectionAsyncReplyHandler
-template: struct WebKit::StorageAreaIdentifierType
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::LegacyNullableAtomicObjectIdentifier {
     [Validator='WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
 }
@@ -213,6 +212,7 @@ header: <wtf/ObjectIdentifier.h>
 template: enum class WebCore::IDBObjectStoreIdentifierType
 template: enum class WebCore::ServiceWorkerJobIdentifierType
 template: enum class WebCore::ServiceWorkerRegistrationIdentifierType
+template: struct WebKit::StorageAreaIdentifierType
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::AtomicObjectIdentifier {
     [Validator='WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
 }

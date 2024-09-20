@@ -294,7 +294,11 @@ void StorageAreaMap::sendConnectMessage(SendMode mode)
 
     if (mode == SendMode::Sync) {
         auto sendResult = ipcConnection->sendSync(Messages::NetworkStorageManager::ConnectToStorageAreaSync(type, identifier(), namespaceIdentifier, origin), 0);
-        auto [remoteAreaIdentifier, items, messageIdentifier] = sendResult.takeReplyOr(StorageAreaIdentifier { }, HashMap<String, String> { }, 0);
+        if (!sendResult.succeeded()) {
+            didConnect(std::nullopt, { }, 0);
+            return;
+        }
+        auto [remoteAreaIdentifier, items, messageIdentifier] = sendResult.takeReply();
         didConnect(remoteAreaIdentifier, WTFMove(items), messageIdentifier);
         return;
     }
@@ -323,17 +327,17 @@ void StorageAreaMap::connect()
     sendConnectMessage(SendMode::Async);
 }
 
-void StorageAreaMap::didConnect(StorageAreaIdentifier remoteAreaIdentifier, HashMap<String, String>&& items, uint64_t messageIdentifier)
+void StorageAreaMap::didConnect(std::optional<StorageAreaIdentifier> remoteAreaIdentifier, HashMap<String, String>&& items, uint64_t messageIdentifier)
 {
     m_isWaitingForConnectReply = false;
     if (messageIdentifier < m_lastHandledMessageIdentifier)
         return;
 
     m_lastHandledMessageIdentifier = messageIdentifier;
-    if (!remoteAreaIdentifier.isValid())
+    if (!remoteAreaIdentifier)
         return;
 
-    m_remoteAreaIdentifier = remoteAreaIdentifier;
+    m_remoteAreaIdentifier = *remoteAreaIdentifier;
     m_map = makeUnique<StorageMap>(m_quotaInBytes);
     m_map->importItems(WTFMove(items));
 }

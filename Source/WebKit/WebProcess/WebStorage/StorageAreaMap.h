@@ -107,7 +107,7 @@ private:
     enum class SendMode : bool { Async, Sync };
     void sendConnectMessage(SendMode);
     void connectSync();
-    void didConnect(StorageAreaIdentifier, HashMap<String, String>&&, uint64_t messageIdentifier);
+    void didConnect(std::optional<StorageAreaIdentifier>, HashMap<String, String>&&, uint64_t messageIdentifier);
 
     uint64_t m_lastHandledMessageIdentifier { 0 };
     StorageNamespaceImpl& m_namespace;
