@@ -571,7 +571,7 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
     auto numberOfInputGlyphs = glyphBuffer.size() - beginningGlyphIndex;
     // FIXME: Enable kerning for single glyphs when rdar://82195405 is fixed
     CTFontShapeOptions options = kCTFontShapeWithClusterComposition
-        | (enableKerning && numberOfInputGlyphs ? kCTFontShapeWithKerning : 0)
+        | (enableKerning && (numberOfInputGlyphs > 1) ? kCTFontShapeWithKerning : 0)
         | (textDirection == TextDirection::RTL ? kCTFontShapeRightToLeft : 0);
 
     // FIXME: This shouldn't actually be necessary, if we pass in a pointer to the base of the string.
