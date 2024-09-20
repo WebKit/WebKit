@@ -92,7 +92,7 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
         return CSSValuePair::create(createValue(size.width), createValue(size.height));
     };
     auto createCoordinatePair = [&](const LengthPoint& point) {
-        return CSSValuePair::createNoncoalescing(createValue(point.x()), createValue(point.y()));
+        return CSSValuePair::createNoncoalescing(createValue(point.x), createValue(point.y));
     };
     auto createReflectedSumValue = [&](const Length& a, const Length& b) {
         auto reflected = convertTo100PercentMinusLengthSum(a, b);

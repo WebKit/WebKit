@@ -44,7 +44,7 @@ public:
     ShadowData() = default;
 
     ShadowData(const LengthPoint& location, Length radius, Length spread, ShadowStyle style, bool isWebkitBoxShadow, const StyleColor& color)
-        : m_location(location.x(), location.y())
+        : m_location(location.x, location.y)
         , m_spread(spread)
         , m_radius(radius)
         , m_color(color)
@@ -62,8 +62,8 @@ public:
 
     bool operator==(const ShadowData& o) const;
     
-    const Length& x() const { return m_location.x(); }
-    const Length& y() const { return m_location.y(); }
+    const Length& x() const { return m_location.x; }
+    const Length& y() const { return m_location.y; }
     const LengthPoint& location() const { return m_location; }
     const Length& radius() const { return m_radius; }
 

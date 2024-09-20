@@ -3155,8 +3155,8 @@ header: <WebCore/PathOperation.h>
 
 header: <WebCore/LengthPoint.h>
 struct WebCore::LengthPoint {
-    WebCore::Length x();
-    WebCore::Length y();
+    WebCore::Length x;
+    WebCore::Length y;
 }
 
 [RefCounted, CustomHeader] class WebCore::RayPathOperation {

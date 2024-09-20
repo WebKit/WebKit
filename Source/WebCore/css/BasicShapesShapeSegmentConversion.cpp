@@ -43,8 +43,8 @@ static auto lengthToCSSValue(const Length& value, const RenderStyle& style)
 static auto lengthPointToCSSValue(const LengthPoint& value, const RenderStyle& style)
 {
     return CSSValuePair::createNoncoalescing(
-        CSSPrimitiveValue::create(value.x(), style),
-        CSSPrimitiveValue::create(value.y(), style));
+        CSSPrimitiveValue::create(value.x, style),
+        CSSPrimitiveValue::create(value.y, style));
 }
 
 static auto lengthSizeToCSSValue(const LengthSize& value, const RenderStyle& style)

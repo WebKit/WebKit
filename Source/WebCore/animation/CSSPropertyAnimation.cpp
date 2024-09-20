@@ -1017,8 +1017,8 @@ private:
     {
         auto fromLengthPoint = value(from);
         auto toLengthPoint = value(to);
-        return lengthsRequireBlendingForAccumulativeIteration(fromLengthPoint.x(), toLengthPoint.x())
-            || lengthsRequireBlendingForAccumulativeIteration(fromLengthPoint.y(), toLengthPoint.y());
+        return lengthsRequireBlendingForAccumulativeIteration(fromLengthPoint.x, toLengthPoint.x)
+            || lengthsRequireBlendingForAccumulativeIteration(fromLengthPoint.y, toLengthPoint.y);
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
@@ -1048,7 +1048,7 @@ private:
         auto valueFrom = value(from);
         auto valueTo = value(to);
 
-        return !valueFrom.x().isAuto() && !valueTo.x().isAuto() && !valueFrom.x().isNormal() && !valueTo.x().isNormal();
+        return !valueFrom.x.isAuto() && !valueTo.x.isAuto() && !valueFrom.x.isNormal() && !valueTo.x.isNormal();
     }
 };
 

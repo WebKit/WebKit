@@ -1930,18 +1930,18 @@ static Element* styleElementForNode(Node* node)
 
 static Ref<CSSValue> valueForPosition(const RenderStyle& style, const LengthPoint& position)
 {
-    return CSSValueList::createSpaceSeparated(ComputedStyleExtractor::zoomAdjustedPixelValueForLength(position.x(), style),
-        ComputedStyleExtractor::zoomAdjustedPixelValueForLength(position.y(), style));
+    return CSSValueList::createSpaceSeparated(ComputedStyleExtractor::zoomAdjustedPixelValueForLength(position.x, style),
+        ComputedStyleExtractor::zoomAdjustedPixelValueForLength(position.y, style));
 }
 
 static bool isAuto(const LengthPoint& position)
 {
-    return position.x().isAuto() && position.y().isAuto();
+    return position.x.isAuto() && position.y.isAuto();
 }
 
 static bool isNormal(const LengthPoint& position)
 {
-    return position.x().isNormal();
+    return position.x.isNormal();
 }
 
 static Ref<CSSValue> valueForPositionOrAuto(const RenderStyle& style, const LengthPoint& position)
@@ -2010,7 +2010,7 @@ static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathO
     case PathOperation::Type::Ray: {
         auto& ray = uncheckedDowncast<RayPathOperation>(*operation);
         auto angle = CSSPrimitiveValue::create(ray.angle(), CSSUnitType::CSS_DEG);
-        RefPtr<CSSValuePair> position = ray.position().x().isAuto() ? nullptr : RefPtr { CSSValuePair::createNoncoalescing(Ref { ComputedStyleExtractor::zoomAdjustedPixelValueForLength(ray.position().x(), style) }, Ref { ComputedStyleExtractor::zoomAdjustedPixelValueForLength(ray.position().y(), style) }) };
+        RefPtr<CSSValuePair> position = ray.position().x.isAuto() ? nullptr : RefPtr { CSSValuePair::createNoncoalescing(Ref { ComputedStyleExtractor::zoomAdjustedPixelValueForLength(ray.position().x, style) }, Ref { ComputedStyleExtractor::zoomAdjustedPixelValueForLength(ray.position().y, style) }) };
         return CSSRayValue::create(WTFMove(angle), valueIDForRaySize(ray.size()), ray.isContaining(), WTFMove(position), ray.referenceBox());
     }
     }

@@ -513,8 +513,8 @@ LayoutRect RenderReplaced::replacedContentRect(const LayoutSize& intrinsicSize) 
 
     LengthPoint objectPosition = style().objectPosition();
 
-    LayoutUnit xOffset = minimumValueForLength(objectPosition.x(), contentRect.width() - finalRect.width());
-    LayoutUnit yOffset = minimumValueForLength(objectPosition.y(), contentRect.height() - finalRect.height());
+    LayoutUnit xOffset = minimumValueForLength(objectPosition.x, contentRect.width() - finalRect.width());
+    LayoutUnit yOffset = minimumValueForLength(objectPosition.y, contentRect.height() - finalRect.height());
 
     finalRect.move(xOffset, yOffset);
 
