@@ -90,14 +90,14 @@ void LibWebRTCCodecsProxy::stopListeningForIPC(Ref<LibWebRTCCodecsProxy>&& refFr
         auto decoders = WTFMove(m_decoders);
         for (auto& decoder : decoders.values()) {
             while (!decoder.decodingCallbacks.isEmpty())
-                decoder.decodingCallbacks.takeFirst()(false);
+                decoder.decodingCallbacks.takeFirst()(makeUnexpected("Decoder stopped"_s));
         }
         decoders.clear();
         auto encoders = WTFMove(m_encoders);
         for (auto& encoder : encoders.values()) {
             webrtc::releaseLocalEncoder(encoder.webrtcEncoder);
             while (!encoder.encodingCallbacks.isEmpty())
-                encoder.encodingCallbacks.takeFirst()(false);
+                encoder.encodingCallbacks.takeFirst()(makeUnexpected("Encoder stopped"_s));
         }
     });
 }
@@ -228,7 +228,7 @@ void LibWebRTCCodecsProxy::releaseDecoder(VideoDecoderIdentifier identifier)
 
     m_queue->dispatch([decodingCallbacks = WTFMove(iterator->value.decodingCallbacks)] () mutable {
         while (!decodingCallbacks.isEmpty())
-            decodingCallbacks.takeFirst()(-2);
+            decodingCallbacks.takeFirst()(makeUnexpected("Decoder released"_s));
     });
 
     m_decoders.remove(iterator);
@@ -251,14 +251,14 @@ void LibWebRTCCodecsProxy::setDecoderFormatDescription(VideoDecoderIdentifier id
     });
 }
 
-void LibWebRTCCodecsProxy::decodeFrame(VideoDecoderIdentifier identifier, int64_t timeStamp, std::span<const uint8_t> data, CompletionHandler<void(bool)>&& callback) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+void LibWebRTCCodecsProxy::decodeFrame(VideoDecoderIdentifier identifier, int64_t timeStamp, std::span<const uint8_t> data, CompletionHandler<void(Expected<void, String>&&)>&& callback) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     doDecoderTask(identifier, [&, callback = WTFMove(callback)] (auto& decoder) mutable {
         if (decoder.frameRateMonitor)
             decoder.frameRateMonitor->update();
         if (decoder.webrtcDecoder->decodeFrame(timeStamp, data)) {
             m_connection->send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
-            callback(false);
+            callback(makeUnexpected("Decoder failed synchronously"_s));
             return;
         }
         decoder.decodingCallbacks.append(WTFMove(callback));
@@ -386,7 +386,7 @@ void LibWebRTCCodecsProxy::releaseEncoder(VideoEncoderIdentifier identifier)
 
     m_queue->dispatch([encodingCallbacks = WTFMove(encoder.encodingCallbacks)] () mutable {
         while (!encodingCallbacks.isEmpty())
-            encodingCallbacks.takeFirst()(-2);
+            encodingCallbacks.takeFirst()(makeUnexpected("Encoder released"_s));
     });
 
     m_hasEncodersOrDecoders = !m_encoders.isEmpty() || !m_decoders.isEmpty();
@@ -426,7 +426,7 @@ static inline webrtc::VideoRotation toWebRTCVideoRotation(WebCore::VideoFrame::R
     return webrtc::kVideoRotation_0;
 }
 
-void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, SharedVideoFrame&& sharedVideoFrame, int64_t timeStamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame, CompletionHandler<void(bool)>&& callback)
+void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, SharedVideoFrame&& sharedVideoFrame, int64_t timeStamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame, CompletionHandler<void(Expected<void, String>&&)>&& callback)
 {
     assertIsCurrent(workQueue());
     auto* encoder = findEncoder(identifier);
@@ -434,13 +434,13 @@ void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, Shared
         // Make sure to read RemoteVideoFrameReadReference to prevent memory leaks.
         if (std::holds_alternative<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer))
             m_videoFrameObjectHeap->get(WTFMove(std::get<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer)));
-        callback(false);
+        callback(makeUnexpected("No encoder found"_s));
         return;
     }
 
     auto pixelBuffer = encoder->frameReader->readBuffer(WTFMove(sharedVideoFrame.buffer));
     if (!pixelBuffer) {
-        callback(false);
+        callback(makeUnexpected("No encoded frame buffer found"_s));
         return;
     }
 
@@ -450,7 +450,7 @@ void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, Shared
         }
         pixelBuffer = m_pixelBufferConformer->convert(pixelBuffer.get());
         if (!pixelBuffer) {
-            callback(false);
+            callback(makeUnexpected("Unable to convert encoded frame buffer"_s));
             return;
         }
     }
@@ -471,8 +471,14 @@ void LibWebRTCCodecsProxy::notifyEncoderResult(VideoEncoderIdentifier identifier
             return;
 
         assertIsCurrent(workQueue());
-        if (auto* encoder = findEncoder(identifier))
-            encoder->encodingCallbacks.takeFirst()(result);
+        if (auto* encoder = findEncoder(identifier)) {
+            auto callback = encoder->encodingCallbacks.takeFirst();
+            if (!result) {
+                callback(makeUnexpected("Encoding task failed"_s));
+                return;
+            }
+            callback({ });
+        }
     });
 }
 
@@ -489,7 +495,12 @@ void LibWebRTCCodecsProxy::notifyDecoderResult(VideoDecoderIdentifier identifier
         if (iterator == m_decoders.end())
             return;
 
-        iterator->value.decodingCallbacks.takeFirst()(result);
+        auto callback = iterator->value.decodingCallbacks.takeFirst();
+        if (!result) {
+            callback(makeUnexpected("Decoding task failed"_s));
+            return;
+        }
+        callback({ });
     });
 }
 
