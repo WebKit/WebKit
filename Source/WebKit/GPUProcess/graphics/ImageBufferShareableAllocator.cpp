@@ -67,11 +67,11 @@ RefPtr<ImageBuffer> ImageBufferShareableAllocator::createImageBuffer(const Float
 
 RefPtr<PixelBuffer> ImageBufferShareableAllocator::createPixelBuffer(const PixelBufferFormat& format, const IntSize& size) const
 {
-    auto pixelBuffer = ShareablePixelBuffer::tryCreate(format, size);
+    RefPtr pixelBuffer = ShareablePixelBuffer::tryCreate(format, size);
     if (!pixelBuffer)
         return nullptr;
 
-    auto handle = pixelBuffer->data().createHandle(SharedMemory::Protection::ReadOnly);
+    auto handle = pixelBuffer->protectedData()->createHandle(SharedMemory::Protection::ReadOnly);
     if (!handle)
         return nullptr;
 

@@ -256,6 +256,7 @@ public:
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     LibWebRTCCodecs& libWebRTCCodecs();
+    Ref<LibWebRTCCodecs> protectedLibWebRTCCodecs();
 #endif
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     AudioMediaStreamTrackRendererInternalUnitManager& audioMediaStreamTrackRendererInternalUnitManager();
@@ -338,6 +339,7 @@ public:
     WebBadgeClient& badgeClient() { return m_badgeClient.get(); }
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
     RemoteMediaPlayerManager& remoteMediaPlayerManager() { return m_remoteMediaPlayerManager.get(); }
+    Ref<RemoteMediaPlayerManager> protectedRemoteMediaPlayerManager();
 #endif
 #if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
     RemoteImageDecoderAVFManager& remoteImageDecoderAVFManager() { return m_remoteImageDecoderAVFManager.get(); }

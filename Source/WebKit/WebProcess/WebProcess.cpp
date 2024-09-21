@@ -1393,6 +1393,11 @@ LibWebRTCCodecs& WebProcess::libWebRTCCodecs()
         m_libWebRTCCodecs = LibWebRTCCodecs::create();
     return *m_libWebRTCCodecs;
 }
+
+Ref<LibWebRTCCodecs> WebProcess::protectedLibWebRTCCodecs()
+{
+    return libWebRTCCodecs();
+}
 #endif
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
@@ -2404,6 +2409,13 @@ bool WebProcess::requiresScriptTelemetryForURL(const URL& url, const WebCore::Se
 {
     return m_scriptTelemetryFilter && m_scriptTelemetryFilter->matches(url, topOrigin);
 }
+
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+Ref<RemoteMediaPlayerManager> WebProcess::protectedRemoteMediaPlayerManager()
+{
+    return m_remoteMediaPlayerManager;
+}
+#endif
 
 } // namespace WebKit
 

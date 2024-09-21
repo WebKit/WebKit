@@ -53,7 +53,7 @@ RemoteBindGroup::~RemoteBindGroup() = default;
 
 void RemoteBindGroup::destruct()
 {
-    m_objectHeap->removeObject(m_identifier);
+    Ref { m_objectHeap.get() }->removeObject(m_identifier);
 }
 
 void RemoteBindGroup::updateExternalTextures(WebGPUIdentifier externalTextureIdentifier)
