@@ -114,8 +114,14 @@
         }).get();
 
         effect.get().completion = makeBlockPtr([weakSelf = WeakObjCPtr<WKTextAnimationManager>(self), uuid = RetainPtr(uuid)] {
-            if (auto strongSelf = weakSelf.get())
-                [strongSelf removeTextAnimationForAnimationID:uuid.get()];
+            auto strongSelf = weakSelf.get();
+            if (!strongSelf)
+                return;
+
+            [strongSelf removeTextAnimationForAnimationID:uuid.get()];
+
+            if (![strongSelf hasActiveTextAnimationType])
+                [strongSelf hideTextAnimationView];
         }).get();
 
         break;
@@ -133,8 +139,14 @@
             auto strongWebView = weakWebView.get();
             auto animationID = WTF::UUID::fromNSUUID(uuid.get());
 
-            if (auto strongSelf = weakSelf.get())
-                [strongSelf removeTextAnimationForAnimationID:uuid.get()];
+            auto strongSelf = weakSelf.get();
+            if (!strongSelf)
+                return;
+
+            [strongSelf removeTextAnimationForAnimationID:uuid.get()];
+
+            if (![strongSelf hasActiveTextAnimationType])
+                [strongSelf hideTextAnimationView];
 
             if (!strongWebView || !animationID)
                 return;
@@ -165,9 +177,6 @@
         [_effectView removeEffect:[effectData effectID]];
         [_chunkToEffect removeObjectForKey:uuid];
     }
-
-    if (![self hasActiveTextAnimationType])
-        [_effectView removeFromSuperview];
 }
 
 - (void)hideTextAnimationView
@@ -212,7 +221,6 @@
     }
 
     _webView->page().getTextIndicatorForID(*uuid, [protectedSelf = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)] (std::optional<WebCore::TextIndicatorData> indicatorData) {
-
         if (!indicatorData) {
             completionHandler(nil);
             return;
@@ -239,9 +247,9 @@
             textRectInSnapshotCoordinates.scale(indicatorData->contentImageScaleFactor);
             [textPreviews addObject:adoptNS([PAL::alloc_WTTextPreviewInstance() initWithSnapshotImage:adoptCF(CGImageCreateWithImageInRect(snapshotPlatformImage, textRectInSnapshotCoordinates)).get() presentationFrame:textLineFrameInBoundingRectCoordinates]).get()];
         }
+
         completionHandler(textPreviews.get());
     });
-
 }
 
 - (void)textPreviewForRect:(CGRect)rect completion:(void (^)(_WTTextPreview *preview))completionHandler
@@ -255,6 +263,7 @@
             completionHandler(nil);
             return;
         }
+
         auto bitmap = WebCore::ShareableBitmap::create(WTFMove(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
         RetainPtr textPreview = adoptNS([PAL::alloc_WTTextPreviewInstance() initWithSnapshotImage:cgImage.get() presentationFrame:rect]);
@@ -271,6 +280,7 @@
             completionHandler();
         return;
     }
+
     _webView->page().updateUnderlyingTextVisibilityForTextAnimationID(*uuid, isTextVisible, [completionHandler = makeBlockPtr(completionHandler)] () {
         if (completionHandler)
             completionHandler();
