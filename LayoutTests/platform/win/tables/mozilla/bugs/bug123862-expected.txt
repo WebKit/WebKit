@@ -6,30 +6,30 @@ layer at (0,0) size 800x256
       RenderTable {TABLE} at (0,0) size 200x32 [border: (2px solid #000000)]
         RenderTableSection {TBODY} at (2,2) size 196x28
           RenderTableRow {TR} at (0,2) size 196x24
-            RenderTableCell {TD} at (2,2) size 192x24 [bgcolor=#EEFFEE] [border: (1px solid #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 192x24 [bgcolor=#EEFFEE] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 116x19
                 text run at (2,2) width 116: "no cols or colspans"
       RenderTable {TABLE} at (0,48) size 200x32 [border: (2px solid #000000)]
         RenderTableSection {TBODY} at (2,2) size 196x28
           RenderTableRow {TR} at (0,2) size 196x24
-            RenderTableCell {TD} at (2,2) size 192x24 [bgcolor=#EEFFEE] [border: (1px solid #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 192x24 [bgcolor=#EEFFEE] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 41x19
                 text run at (2,2) width 41: "cols=4"
       RenderTable {TABLE} at (0,96) size 200x32 [border: (2px solid #000000)]
         RenderTableSection {TBODY} at (2,2) size 196x28
           RenderTableRow {TR} at (0,2) size 196x24
-            RenderTableCell {TD} at (2,2) size 192x24 [bgcolor=#EEFFEE] [border: (1px solid #808080)] [r=0 c=0 rs=1 cs=4]
+            RenderTableCell {TD} at (2,2) size 192x24 [bgcolor=#EEFFEE] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=4]
               RenderText {#text} at (2,2) size 63x19
                 text run at (2,2) width 63: "colspan=4"
       RenderTable {TABLE} at (0,144) size 200x32 [border: (2px solid #000000)]
         RenderTableSection {TBODY} at (2,2) size 196x28
           RenderTableRow {TR} at (0,2) size 196x24
-            RenderTableCell {TD} at (2,2) size 192x24 [bgcolor=#EEFFEE] [border: (1px solid #808080)] [r=0 c=0 rs=1 cs=4]
+            RenderTableCell {TD} at (2,2) size 192x24 [bgcolor=#EEFFEE] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=4]
               RenderText {#text} at (2,2) size 112x19
                 text run at (2,2) width 112: "cols=4, colspan=4"
       RenderTable {TABLE} at (0,192) size 200x32 [border: (2px solid #000000)]
         RenderTableSection {TBODY} at (2,2) size 196x28
           RenderTableRow {TR} at (0,2) size 196x24
-            RenderTableCell {TD} at (2,2) size 192x24 [bgcolor=#EEFFEE] [border: (1px solid #808080)] [r=0 c=0 rs=1 cs=4]
+            RenderTableCell {TD} at (2,2) size 192x24 [bgcolor=#EEFFEE] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=4]
               RenderText {#text} at (2,2) size 75x19
                 text run at (2,2) width 75: "see previous"

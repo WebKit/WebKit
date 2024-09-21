@@ -6,18 +6,18 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x20
         RenderText {#text} at (0,0) size 214x19
           text run at (0,0) width 214: "the lower left cell should be colored"
-      RenderTable {TABLE} at (0,20) size 31x56 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,20) size 31x56 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 29x54
           RenderTableRow {TR} at (0,2) size 29x24
-            RenderTableCell {TD} at (2,2) size 11x24 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 11x24 [bgcolor=#FFFF00] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 7x19
                 text run at (2,2) width 7: "a"
-            RenderTableCell {TD} at (15,2) size 12x24 [bgcolor=#00FFFF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (15,2) size 12x24 [bgcolor=#00FFFF] [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 8x19
                 text run at (2,2) width 8: "b"
           RenderTableRow {TR} at (0,28) size 29x24
-            RenderTableCell {TD} at (2,28) size 11x24 [bgcolor=#FF00FF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,28) size 11x24 [bgcolor=#FF00FF] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderBR {BR} at (2,2) size 0x19
-            RenderTableCell {TD} at (15,28) size 12x24 [bgcolor=#088880] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (15,28) size 12x24 [bgcolor=#088880] [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 7x19
                 text run at (2,2) width 7: "c"

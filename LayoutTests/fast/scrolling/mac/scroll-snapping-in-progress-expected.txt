@@ -1,4 +1,4 @@
-Scroll-snap offsets for 'container': vertical = { 0, 30, 150, 270, 390, 510, 615 }
+Scroll-snap offsets for 'container': vertical = { 30, 150, 270, 390, 510, 595 }
 Initial state:
 PASS window.internals.isScrollSnapInProgress(container) is false
 

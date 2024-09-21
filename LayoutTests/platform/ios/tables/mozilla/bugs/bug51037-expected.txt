@@ -28,13 +28,13 @@ layer at (48,87) size 141x14
     RenderText {#text} at (0,0) size 32x14
       text run at (0,0) width 32: "120px"
 layer at (250,120) size 29x52
-  RenderTable {TABLE} at (250,120) size 30x52 [border: (1px outset #808080)]
+  RenderTable {TABLE} at (250,120) size 30x52 [border: (1px outset #000000)]
     RenderTableSection {TBODY} at (1,1) size 28x50
       RenderTableRow {TR} at (0,2) size 28x22
-        RenderTableCell {TD} at (2,2) size 24x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableCell {TD} at (2,2) size 24x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
           RenderText {#text} at (1,1) size 22x19
             text run at (1,1) width 22: "foo"
       RenderTableRow {TR} at (0,26) size 28x22
-        RenderTableCell {TD} at (2,26) size 24x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+        RenderTableCell {TD} at (2,26) size 24x22 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
           RenderText {#text} at (1,1) size 21x19
             text run at (1,1) width 21: "bar"

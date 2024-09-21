@@ -9,10 +9,10 @@ layer at (0,0) size 800x600
       RenderBlock (floating) {P} at (230,78) size 554x20
         RenderText {#text} at (0,0) size 554x19
           text run at (0,0) width 554: "The table below should span the width of the page, not just to the left edge of this text."
-      RenderTable {TABLE} at (0,114) size 784x68 [border: (10px outset #808080)]
+      RenderTable {TABLE} at (0,114) size 784x68 [border: (10px outset #000000)]
         RenderTableSection {TBODY} at (10,10) size 764x48
           RenderTableRow {TR} at (0,2) size 764x44
-            RenderTableCell {TD} at (2,2) size 760x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 760x44 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 737x39
                 text run at (2,2) width 375: "This is a table that should fill the entire width of the page. "
                 text run at (376,2) width 363: "It should clear the float and then take up the width of the"

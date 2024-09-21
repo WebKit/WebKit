@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 240x210 [border: none]
         RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: none (1px solid #000000) none (1px solid #000000)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0 [border: none (1px solid #000000) none (1px solid #000000)]
-        RenderTableSection {TBODY} at (0,0) size 239x209 [border: (1px solid #808080) none (1px solid #808080) none]
+        RenderTableSection {TBODY} at (0,0) size 239x209 [border: (1px solid #000000) none (1px solid #000000) none]
           RenderTableRow {TR} at (0,0) size 239x27
             RenderTableCell {TH} at (0,0) size 83x27 [border: (1px none #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (10,5) size 64x18

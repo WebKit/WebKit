@@ -48,18 +48,18 @@ layer at (0,0) size 800x745
           text run at (0,66) width 589: "mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon. "
           text run at (588,66) width 183: "Note that this is not required"
           text run at (0,86) width 232: "under CSS1, but it is recommended."
-      RenderTable {TABLE} at (0,415) size 784x314 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,415) size 784x314 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x312
           RenderTableRow {TR} at (0,0) size 782x28
-            RenderTableCell {TD} at (0,0) size 783x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 783x28 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (4,4) size 161x19
                 RenderText {#text} at (4,4) size 161x19
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 782x284
-            RenderTableCell {TD} at (0,156) size 13x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,156) size 13x28 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,132) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,28) size 771x284 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,28) size 771x284 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x60
                 RenderInline (generated) at (0,0) size 10x19 [color=#800000]
                   RenderText at (0,0) size 10x19

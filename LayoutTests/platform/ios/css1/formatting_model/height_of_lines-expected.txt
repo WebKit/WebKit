@@ -79,18 +79,18 @@ layer at (0,0) size 800x2285
           text run at (60,423) width 7: ". "
           text run at (67,423) width 686: "The last image in this paragraph has -10px margins set on it, so that should pull the text in toward the image in the vertical"
           text run at (0,464) width 256: "direction, and also in the horizontal direction."
-      RenderTable {TABLE} at (0,1271) size 784x998 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,1271) size 784x998 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x996
           RenderTableRow {TR} at (0,0) size 782x28
-            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (4,4) size 161x19
                 RenderText {#text} at (4,4) size 161x19
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 782x968
-            RenderTableCell {TD} at (0,498) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,498) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,474) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,28) size 770x968 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,28) size 770x968 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x463
                 RenderText {#text} at (0,1) size 757x239
                   text run at (0,1) width 413: "This paragraph should have a font size of 14px and a line height of 20px. "

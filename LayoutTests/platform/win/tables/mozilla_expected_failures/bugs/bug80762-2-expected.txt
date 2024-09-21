@@ -3,21 +3,21 @@ layer at (0,0) size 785x812
 layer at (0,0) size 785x812
   RenderBlock {HTML} at (0,0) size 785x812
     RenderBody {BODY} at (8,8) size 769x796
-      RenderTable {TABLE} at (0,0) size 769x796 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,0) size 769x796 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x794
           RenderTableRow {TR} at (0,0) size 767x22
-            RenderTableCell {TD} at (0,0) size 72x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 72x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 20x19
                 text run at (1,1) width 20: "foo"
-            RenderTableCell {TD} at (71,0) size 697x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (71,0) size 697x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 20x19
                 text run at (1,1) width 20: "bar"
           RenderTableRow {TR} at (0,22) size 767x772
-            RenderTableCell {TD} at (0,22) size 768x772 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
-              RenderTable {TABLE} at (1,1) size 766x770 [border: (1px outset #808080)]
+            RenderTableCell {TD} at (0,22) size 768x772 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=2]
+              RenderTable {TABLE} at (1,1) size 766x770 [border: (1px outset #000000)]
                 RenderTableSection {TBODY} at (1,1) size 764x768
                   RenderTableRow {TR} at (0,2) size 764x764
-                    RenderTableCell {TD} at (2,2) size 760x764 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (2,2) size 760x764 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 713x39
                         text run at (2,2) width 713: "When the Whiten house burned down in Renfrew Ontario, the insurer denied liability, asserting that the Plaintiff Daphne"
                         text run at (2,22) width 395: "Whiten was the cause of the fire herself and had committed arson."

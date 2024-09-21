@@ -321,18 +321,18 @@ layer at (0,0) size 800x4213
         RenderText {#text} at (0,0) size 767x39
           text run at (0,0) width 767: "This paragraph should be black, because the color declaration after the previous ruleset should be considered part of the"
           text run at (0,20) width 632: "selector for this ruleset, and this ruleset therefore has an invalid selector and should not be applied."
-      RenderTable {TABLE} at (0,2499) size 784x1698 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,2499) size 784x1698 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x1696
           RenderTableRow {TR} at (0,0) size 782x28
-            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (4,4) size 161x19
                 RenderText {#text} at (4,4) size 161x19
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 782x1668
-            RenderTableCell {TD} at (0,848) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,848) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,824) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,28) size 770x1668 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,28) size 770x1668 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x20 [color=#008000]
                 RenderText {#text} at (0,0) size 493x19
                   text run at (0,0) width 493: "This paragraph should be green, because only the rotation should be ignored."

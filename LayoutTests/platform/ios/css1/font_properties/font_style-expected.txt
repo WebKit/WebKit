@@ -31,18 +31,18 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 216x19
             text run at (0,0) width 216: "This paragraph should be normal."
         RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,231) size 581x130 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,231) size 581x130 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 579x128
           RenderTableRow {TR} at (0,0) size 579x28
-            RenderTableCell {TD} at (0,0) size 579x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 579x28 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (4,4) size 161x19
                 RenderText {#text} at (4,4) size 161x19
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 579x100
-            RenderTableCell {TD} at (0,64) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,64) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,40) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,28) size 567x100 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,28) size 567x100 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 559x20
                 RenderText {#text} at (0,0) size 510x19
                   text run at (0,0) width 510: "This paragraph should be in italics, but the last word of the sentence should be "

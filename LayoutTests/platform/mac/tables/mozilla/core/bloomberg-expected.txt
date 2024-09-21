@@ -3,10 +3,10 @@ layer at (0,0) size 785x669
 layer at (0,0) size 785x669
   RenderBlock {HTML} at (0,0) size 785x669
     RenderBody {BODY} at (8,8) size 769x645 [color=#333333] [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 636x617 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,0) size 636x617 [border: (1px outset #333333)]
         RenderTableSection {TBODY} at (1,1) size 634x615
           RenderTableRow {TR} at (0,0) size 634x24
-            RenderTableCell {TD} at (0,0) size 148x615 [bgcolor=#660000] [border: (1px inset #808080)] [r=0 c=0 rs=6 cs=1]
+            RenderTableCell {TD} at (0,0) size 148x615 [bgcolor=#660000] [border: (1px inset #333333)] [r=0 c=0 rs=6 cs=1]
               RenderInline {B} at (4,2) size 65x18
                 RenderInline {A} at (4,2) size 65x18
                   RenderInline {FONT} at (4,4) size 65x15 [color=#FFFFFF]
@@ -207,24 +207,24 @@ layer at (0,0) size 785x669
                     text run at (4,578) width 72: "To Advertise"
                 RenderBR {BR} at (75,576) size 1x18
               RenderBR {BR} at (4,593) size 0x18
-            RenderTableCell {TD} at (148,0) size 486x24 [bgcolor=#660000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=3]
+            RenderTableCell {TD} at (148,0) size 486x24 [bgcolor=#660000] [border: (1px inset #333333)] [r=0 c=1 rs=1 cs=3]
               RenderImage {IMG} at (10,4) size 466x16
           RenderTableRow {TR} at (0,24) size 634x69
-            RenderTableCell {TD} at (148,24) size 128x69 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (148,24) size 128x69 [border: (1px inset #333333)] [r=1 c=1 rs=1 cs=1]
               RenderInline {A} at (4,50) size 120x18
                 RenderText {#text} at (0,0) size 0x0
                 RenderImage {IMG} at (4,4) size 120x60
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderImage {IMG} at (4,64) size 120x1
-            RenderTableCell {TD} at (276,24) size 175x69 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (276,24) size 175x69 [border: (1px inset #333333)] [r=1 c=2 rs=1 cs=1]
               RenderInline {A} at (4,50) size 167x18
                 RenderText {#text} at (0,0) size 0x0
                 RenderImage {IMG} at (4,4) size 167x60
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderImage {IMG} at (4,64) size 167x1
-            RenderTableCell {TD} at (451,24) size 183x521 [bgcolor=#CCCC99] [border: (1px inset #808080)] [r=1 c=3 rs=6 cs=1]
+            RenderTableCell {TD} at (451,24) size 183x521 [bgcolor=#CCCC99] [border: (1px inset #333333)] [r=1 c=3 rs=6 cs=1]
               RenderBlock (anonymous) at (4,4) size 175x26
                 RenderInline {FONT} at (19,-1) size 137x13
                   RenderInline {FONT} at (19,0) size 137x11
@@ -276,7 +276,7 @@ layer at (0,0) size 785x669
                 RenderText {#text} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,93) size 634x116
-            RenderTableCell {TD} at (148,93) size 303x116 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=2]
+            RenderTableCell {TD} at (148,93) size 303x116 [bgcolor=#FFFFFF] [border: (1px inset #333333)] [r=2 c=1 rs=1 cs=2]
               RenderInline {A} at (295,4) size 0x18
                 RenderImage {IMG} at (4,4) size 288x26
               RenderBR {BR} at (295,4) size 0x18
@@ -294,7 +294,7 @@ layer at (0,0) size 785x669
                     text run at (4,94) width 47: "More..."
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,209) size 634x406
-            RenderTableCell {TD} at (148,209) size 303x313 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
+            RenderTableCell {TD} at (148,209) size 303x313 [bgcolor=#C0C0C0] [border: (1px inset #333333)] [r=3 c=1 rs=1 cs=2]
               RenderImage {IMG} at (4,4) size 290x35
               RenderBR {BR} at (294,25) size 0x18
               RenderInline {A} at (4,37) size 248x18

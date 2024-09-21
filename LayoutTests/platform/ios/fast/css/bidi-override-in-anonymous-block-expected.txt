@@ -171,7 +171,7 @@ layer at (0,0) size 800x1300
       RenderBlock {P} at (0,971) size 784x20
         RenderText {#text} at (0,0) size 426x19
           text run at (0,0) width 426: "The following 2 tables should be identical, ignorning whitespaces:"
-      RenderTable {TABLE} at (1,1007) size 85x72 [border: (1px solid #808080)]
+      RenderTable {TABLE} at (1,1007) size 85x72 [border: (1px solid #000000)]
         RenderBlock {CAPTION} at (0,0) size 85x20
           RenderText {#text} at (0,0) size 85x19
             text run at (0,0) width 85: "NormalTable"

@@ -29,10 +29,10 @@ layer at (0,0) size 785x1826
               RenderTable {TABLE} at (0,0) size 0x0 [bgcolor=#FFFF00]
       RenderBlock (anonymous) at (0,340) size 769x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,360) size 769x344 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,360) size 769x344 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x342
           RenderTableRow {TR} at (0,0) size 767x342
-            RenderTableCell {TD} at (0,0) size 46x342 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 46x342 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 44x339
                 text run at (1,1) width 44: "XXXX"
                 text run at (1,21) width 44: "XXXX"
@@ -51,14 +51,14 @@ layer at (0,0) size 785x1826
                 text run at (1,281) width 44: "XXXX"
                 text run at (1,301) width 44: "XXXX"
                 text run at (1,321) width 44: "XXXX"
-            RenderTableCell {TD} at (46,170) size 721x2 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (46,170) size 721x2 [bgcolor=#008000] [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (1,1) size 0x0 [bgcolor=#FFFF00]
       RenderBlock (anonymous) at (0,704) size 769x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,724) size 769x346 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,724) size 769x346 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x344
           RenderTableRow {TR} at (0,0) size 767x344
-            RenderTableCell {TD} at (0,0) size 48x344 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 48x344 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 44x339
                 text run at (2,2) width 44: "XXXX"
                 text run at (2,22) width 44: "XXXX"
@@ -77,7 +77,7 @@ layer at (0,0) size 785x1826
                 text run at (2,282) width 44: "XXXX"
                 text run at (2,302) width 44: "XXXX"
                 text run at (2,322) width 44: "XXXX"
-            RenderTableCell {TD} at (48,170) size 719x4 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (48,170) size 719x4 [bgcolor=#008000] [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (2,2) size 0x0 [bgcolor=#FFFF00]
       RenderBlock (anonymous) at (0,1070) size 769x20
         RenderBR {BR} at (0,0) size 0x19

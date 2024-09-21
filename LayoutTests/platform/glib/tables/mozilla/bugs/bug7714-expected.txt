@@ -9,65 +9,65 @@ layer at (0,0) size 800x600
           text run at (0,18) width 784: "cellspacing=0 for this table. In Nav4.5, this example can be viewed. In 5.0 (jun08 win95), this example displays (apparently)"
           text run at (0,36) width 770: "as a simple 2x2 table (i.e., some elements are not displayed at all). (The numbers are the position of each TD in the HTML"
           text run at (0,54) width 50: "source)."
-      RenderTable {TABLE} at (0,88) size 22x122 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,88) size 22x122 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 20x120
           RenderTableRow {TR} at (0,0) size 20x20
-            RenderTableCell {TD} at (0,10) size 10x20 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+            RenderTableCell {TD} at (0,10) size 10x20 [border: (1px inset #000000)] [r=0 c=0 rs=2 cs=1]
               RenderText {#text} at (1,11) size 8x17
                 text run at (1,1) width 8: "1"
-            RenderTableCell {TD} at (10,0) size 10x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (10,0) size 10x20 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 8x17
                 text run at (1,1) width 8: "2"
           RenderTableRow {TR} at (0,20) size 20x20
-            RenderTableCell {TD} at (10,30) size 10x20 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
+            RenderTableCell {TD} at (10,30) size 10x20 [border: (1px inset #000000)] [r=1 c=1 rs=2 cs=1]
               RenderText {#text} at (1,11) size 8x17
                 text run at (1,1) width 8: "3"
           RenderTableRow {TR} at (0,40) size 20x20
-            RenderTableCell {TD} at (0,50) size 10x20 [border: (1px inset #808080)] [r=2 c=0 rs=2 cs=1]
+            RenderTableCell {TD} at (0,50) size 10x20 [border: (1px inset #000000)] [r=2 c=0 rs=2 cs=1]
               RenderText {#text} at (1,11) size 8x17
                 text run at (1,1) width 8: "4"
           RenderTableRow {TR} at (0,60) size 20x20
-            RenderTableCell {TD} at (10,70) size 10x20 [border: (1px inset #808080)] [r=3 c=1 rs=2 cs=1]
+            RenderTableCell {TD} at (10,70) size 10x20 [border: (1px inset #000000)] [r=3 c=1 rs=2 cs=1]
               RenderText {#text} at (1,11) size 8x17
                 text run at (1,1) width 8: "5"
           RenderTableRow {TR} at (0,80) size 20x20
-            RenderTableCell {TD} at (0,90) size 10x20 [border: (1px inset #808080)] [r=4 c=0 rs=2 cs=1]
+            RenderTableCell {TD} at (0,90) size 10x20 [border: (1px inset #000000)] [r=4 c=0 rs=2 cs=1]
               RenderText {#text} at (1,11) size 8x17
                 text run at (1,1) width 8: "6"
           RenderTableRow {TR} at (0,100) size 20x20
-            RenderTableCell {TD} at (10,100) size 10x20 [border: (1px inset #808080)] [r=5 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (10,100) size 10x20 [border: (1px inset #000000)] [r=5 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 8x17
                 text run at (1,1) width 8: "7"
       RenderBlock {P} at (0,226) size 784x36
         RenderText {#text} at (0,0) size 766x35
           text run at (0,0) width 766: "This is the same table as above, but cellspacing=5 in this case. For 5.0, (jun08 win95) notice the odd cellspacing overlaps."
           text run at (0,18) width 128: "See also bug #6304."
-      RenderTable {TABLE} at (0,278) size 37x147 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,278) size 37x147 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 35x145
           RenderTableRow {TR} at (0,5) size 35x20
-            RenderTableCell {TD} at (5,15) size 10x20 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+            RenderTableCell {TD} at (5,15) size 10x20 [border: (1px inset #000000)] [r=0 c=0 rs=2 cs=1]
               RenderText {#text} at (1,11) size 8x17
                 text run at (1,1) width 8: "1"
-            RenderTableCell {TD} at (20,5) size 10x20 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (20,5) size 10x20 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 8x17
                 text run at (1,1) width 8: "2"
           RenderTableRow {TR} at (0,30) size 35x15
-            RenderTableCell {TD} at (20,40) size 10x20 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
+            RenderTableCell {TD} at (20,40) size 10x20 [border: (1px inset #000000)] [r=1 c=1 rs=2 cs=1]
               RenderText {#text} at (1,11) size 8x17
                 text run at (1,1) width 8: "3"
           RenderTableRow {TR} at (0,50) size 35x20
-            RenderTableCell {TD} at (5,60) size 10x20 [border: (1px inset #808080)] [r=2 c=0 rs=2 cs=1]
+            RenderTableCell {TD} at (5,60) size 10x20 [border: (1px inset #000000)] [r=2 c=0 rs=2 cs=1]
               RenderText {#text} at (1,11) size 8x17
                 text run at (1,1) width 8: "4"
           RenderTableRow {TR} at (0,75) size 35x15
-            RenderTableCell {TD} at (20,85) size 10x20 [border: (1px inset #808080)] [r=3 c=1 rs=2 cs=1]
+            RenderTableCell {TD} at (20,85) size 10x20 [border: (1px inset #000000)] [r=3 c=1 rs=2 cs=1]
               RenderText {#text} at (1,11) size 8x17
                 text run at (1,1) width 8: "5"
           RenderTableRow {TR} at (0,95) size 35x20
-            RenderTableCell {TD} at (5,107) size 10x21 [border: (1px inset #808080)] [r=4 c=0 rs=2 cs=1]
+            RenderTableCell {TD} at (5,107) size 10x21 [border: (1px inset #000000)] [r=4 c=0 rs=2 cs=1]
               RenderText {#text} at (1,13) size 8x18
                 text run at (1,1) width 8: "6"
           RenderTableRow {TR} at (0,120) size 35x20
-            RenderTableCell {TD} at (20,120) size 10x20 [border: (1px inset #808080)] [r=5 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (20,120) size 10x20 [border: (1px inset #000000)] [r=5 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 8x17
                 text run at (1,1) width 8: "7"

@@ -8,16 +8,16 @@ layer at (0,0) size 800x600
           text run at (0,0) width 642: "This table uses a ROWSPAN attribute in the first TH tag. The ROWSPAN attribute has a value of 2."
         RenderBR {BR} at (641,0) size 1x18
         RenderBR {BR} at (0,18) size 0x18
-      RenderTable {TABLE} at (0,36) size 289x52 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,36) size 289x52 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 287x50
           RenderTableRow {TR} at (0,2) size 287x22
-            RenderTableCell {TH} at (2,14) size 72x22 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+            RenderTableCell {TH} at (2,14) size 72x22 [border: (1px inset #000000)] [r=0 c=0 rs=2 cs=1]
               RenderText {#text} at (2,14) size 68x18
                 text run at (2,2) width 68: "Platforms"
-            RenderTableCell {TH} at (75,2) size 210x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TH} at (75,2) size 210x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 206x18
                 text run at (2,2) width 206: "Netscape Communicator 4.0.6"
           RenderTableRow {TR} at (0,26) size 287x22
-            RenderTableCell {TD} at (75,26) size 210x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (75,26) size 210x22 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 143x18
                 text run at (2,2) width 143: "Available Everywhere"

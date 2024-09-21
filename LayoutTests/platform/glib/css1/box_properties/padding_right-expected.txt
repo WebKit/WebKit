@@ -69,18 +69,18 @@ layer at (0,0) size 785x1153
           text run at (35,18) width 329: "and the normal padding should be aqua (light blue). "
           text run at (364,18) width 405: "The text has been right-aligned in order to make the lack of right"
           text run at (634,36) width 135: "padding easier to see."
-      RenderTable {TABLE} at (0,627) size 769x510 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,627) size 769x510 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x508
           RenderTableRow {TR} at (0,0) size 767x26
-            RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (4,4) size 161x17
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x482
-            RenderTableCell {TD} at (0,254) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,254) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,232) size 4x17
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 755x482 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 755x482 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x18 [bgcolor=#C0C0C0]
                 RenderText {#text} at (0,0) size 203x17
                   text run at (0,0) width 203: "This element has a class of zero."

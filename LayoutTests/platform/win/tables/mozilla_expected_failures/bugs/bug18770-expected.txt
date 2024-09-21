@@ -7,19 +7,19 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 600x100
           RenderTableRow {TR} at (0,0) size 600x100
             RenderTableCell {TD} at (0,7) size 111x86 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 111x86 [border: (1px outset #808080)]
+              RenderTable {TABLE} at (0,0) size 111x86 [border: (1px outset #000000)]
                 RenderTableSection {TBODY} at (1,1) size 109x84
                   RenderTableRow {TR} at (0,0) size 109x62
-                    RenderTableCell {TD} at (0,0) size 109x62 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+                    RenderTableCell {TD} at (0,0) size 109x62 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
                       RenderText {#text} at (1,1) size 107x59
                         text run at (1,1) width 41: "R1C1,"
                         text run at (1,21) width 90: "COLSPAN=2"
                         text run at (1,41) width 107: "WIDTH=\"100%\""
                   RenderTableRow {TR} at (0,62) size 109x22
-                    RenderTableCell {TD} at (0,62) size 55x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (0,62) size 55x22 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 37x19
                         text run at (1,1) width 37: "R2C1"
-                    RenderTableCell {TD} at (54,62) size 55x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                    RenderTableCell {TD} at (54,62) size 55x22 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 37x19
                         text run at (1,1) width 37: "R2C2"
             RenderTableCell {TD} at (111,0) size 489x100 [r=0 c=1 rs=1 cs=1]

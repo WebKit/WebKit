@@ -24,18 +24,18 @@ layer at (0,0) size 800x600
             text run at (576,0) width 50: "Normal"
         RenderText {#text} at (625,0) size 5x19
           text run at (625,0) width 5: "."
-      RenderTable {TABLE} at (0,181) size 652x94 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,181) size 652x94 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 650x92
           RenderTableRow {TR} at (0,0) size 650x28
-            RenderTableCell {TD} at (0,0) size 650x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 650x28 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (4,4) size 161x19
                 RenderText {#text} at (4,4) size 161x19
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 650x64
-            RenderTableCell {TD} at (0,46) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,46) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,22) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,28) size 638x64 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,28) size 638x64 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 630x20
                 RenderText {#text} at (0,0) size 270x19
                   text run at (0,0) width 270: "This Paragraph should be in Small Caps."

@@ -1,4 +1,6 @@
 (repaint rects
+  (rect 0 0 152 152)
+  (rect 0 0 156 156)
   (rect 0 312 800 156)
   (rect 0 312 800 156)
   (rect 0 312 800 156)

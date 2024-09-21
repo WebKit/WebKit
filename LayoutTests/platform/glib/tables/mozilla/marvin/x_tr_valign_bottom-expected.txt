@@ -6,12 +6,12 @@ layer at (0,0) size 800x272
       RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 164x17
           text run at (0,0) width 164: "TR VALIGN=BOTTOM"
-      RenderTable {table} at (0,34) size 784x214 [border: (1px outset #808080)]
+      RenderTable {table} at (0,34) size 784x214 [border: (1px outset #000000)]
         RenderTableSection (anonymous) at (1,1) size 782x212
           RenderTableRow {tr} at (0,2) size 782x208
-            RenderTableCell {td} at (2,2) size 204x208 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {td} at (2,2) size 204x208 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderImage {img} at (2,2) size 200x200
-            RenderTableCell {td} at (208,152) size 572x58 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (208,152) size 572x58 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,152) size 561x53
                 text run at (2,2) width 363: "The bottom of this text should be vertically aligned to the "
                 text run at (365,2) width 198: "bottom of the image. x-fill x-fill"

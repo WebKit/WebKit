@@ -6,7 +6,7 @@ layer at (0,0) size 800x238
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 317x17
           text run at (0,0) width 317: "There should be no red borders on the table below"
-      RenderTable {TABLE} at (0,34) size 163x180 [border: (2px none #808080)]
+      RenderTable {TABLE} at (0,34) size 163x180 [border: (2px none #000000)]
         RenderTableSection {TBODY} at (2,2) size 158x175
           RenderTableRow {TR} at (0,0) size 158x58
             RenderTableCell {TD} at (0,16) size 54x26 [border: (3px groove #00FF00)] [r=0 c=0 rs=1 cs=1]

@@ -7,7 +7,7 @@ layer at (0,0) size 800x160
         RenderText {#text} at (0,0) size 432x19
           text run at (0,0) width 372: "All four sides of the frame surrounding the table below should "
           text run at (372,0) width 60: "be visible."
-      RenderTable {table} at (0,36) size 181x100 [border: (1px solid #808080)]
+      RenderTable {table} at (0,36) size 181x100 [border: (1px solid #000000)]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
         RenderTableCol {colgroup} at (0,0) size 0x0

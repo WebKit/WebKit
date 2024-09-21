@@ -8,30 +8,30 @@ layer at (0,0) size 785x704
           text run at (0,0) width 424: "This first table is the simple test case. Colspan confuses the width "
           text run at (423,0) width 332: "allocation when there is an image in the colspanned"
           text run at (0,18) width 28: "row."
-      RenderTable {TABLE} at (0,52) size 620x94 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,52) size 620x94 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 618x92
           RenderTableRow {TR} at (0,2) size 618x22
-            RenderTableCell {TD} at (2,2) size 414x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 414x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 22x18
                 text run at (2,2) width 22: "foo"
-            RenderTableCell {TD} at (417,2) size 200x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (417,2) size 200x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x18
                 text run at (2,2) width 21: "bar"
           RenderTableRow {TR} at (0,26) size 618x64
-            RenderTableCell {TD} at (2,26) size 615x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (2,26) size 615x64 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (2,2) size 468x60
               RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,162) size 769x18
         RenderText {#text} at (0,0) size 641x18
           text run at (0,0) width 380: "This second table is the same as the first, minus the second "
           text run at (379,0) width 262: "'colspan=2' row. Widths are now correct."
-      RenderTable {TABLE} at (0,196) size 620x28 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,196) size 620x28 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 618x26
           RenderTableRow {TR} at (0,2) size 618x22
-            RenderTableCell {TD} at (2,2) size 413x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 413x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 22x18
                 text run at (2,2) width 22: "foo"
-            RenderTableCell {TD} at (416,2) size 201x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (416,2) size 201x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x18
                 text run at (2,2) width 21: "bar"
       RenderBlock {P} at (0,240) size 769x54
@@ -44,42 +44,42 @@ layer at (0,0) size 785x704
       RenderBlock {P} at (0,310) size 769x18
         RenderText {#text} at (0,0) size 176x18
           text run at (0,0) width 176: "Here the <img width=600>"
-      RenderTable {TABLE} at (0,344) size 620x94 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,344) size 620x94 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 618x92
           RenderTableRow {TR} at (0,2) size 618x22
-            RenderTableCell {TD} at (2,2) size 414x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 414x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 22x18
                 text run at (2,2) width 22: "foo"
-            RenderTableCell {TD} at (417,2) size 200x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (417,2) size 200x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x18
                 text run at (2,2) width 21: "bar"
           RenderTableRow {TR} at (0,26) size 618x64
-            RenderTableCell {TD} at (2,26) size 615x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (2,26) size 615x64 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (2,2) size 600x60
               RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,454) size 769x18
         RenderText {#text} at (0,0) size 318x18
           text run at (0,0) width 318: "Here the <img width=400> (error is almost zero)."
-      RenderTable {TABLE} at (0,488) size 620x28 [bgcolor=#DDDDDD] [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,488) size 620x28 [bgcolor=#DDDDDD] [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 618x26
           RenderTableRow {TR} at (0,2) size 618x22
-            RenderTableCell {TD} at (2,2) size 413x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 413x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 139x18
                 text run at (2,2) width 139: "foo (single row table)"
-            RenderTableCell {TD} at (416,2) size 201x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (416,2) size 201x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 138x18
                 text run at (2,2) width 138: "bar (single row table)"
-      RenderTable {TABLE} at (0,516) size 620x94 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,516) size 620x94 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 618x92
           RenderTableRow {TR} at (0,2) size 618x22
-            RenderTableCell {TD} at (2,2) size 414x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 414x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 22x18
                 text run at (2,2) width 22: "foo"
-            RenderTableCell {TD} at (417,2) size 200x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (417,2) size 200x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x18
                 text run at (2,2) width 21: "bar"
           RenderTableRow {TR} at (0,26) size 618x64
-            RenderTableCell {TD} at (2,26) size 615x64 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (2,26) size 615x64 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (2,2) size 400x60
               RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,626) size 769x54

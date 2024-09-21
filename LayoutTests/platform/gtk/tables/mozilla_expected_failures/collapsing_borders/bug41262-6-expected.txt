@@ -7,13 +7,13 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (339,0) size 106x82 [border: none]
           RenderTableSection {THEAD} at (0,0) size 105x21
             RenderTableRow {TR} at (0,0) size 105x21
-              RenderTableCell {TD} at (0,0) size 36x21 [border: (1px none #808080) none none (1px solid #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,0) size 36x21 [border: (1px none #808080) none none (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 29x17
                   text run at (2,2) width 29: "EST"
-              RenderTableCell {TD} at (36,0) size 30x21 [border: (1px none #808080) none none (1px solid #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (36,0) size 30x21 [border: (1px none #808080) none none (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 27x17
                   text run at (2,2) width 27: "1am"
-              RenderTableCell {TD} at (66,0) size 39x21 [border: (1px none #808080) none none (1px solid #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (66,0) size 39x21 [border: (1px none #808080) none none (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 28x17
                   text run at (2,2) width 28: "8pm"
           RenderTableSection {TBODY} at (0,21) size 105x40

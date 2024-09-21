@@ -88,18 +88,18 @@ layer at (0,0) size 800x706
                 RenderImage {IMG} at (0,10) size 100x1
               RenderTableCell {TD} at (600,10) size 20x1 [bgcolor=#000000] [r=0 c=14 rs=1 cs=1]
                 RenderImage {IMG} at (0,10) size 20x1
-      RenderTable {TABLE} at (0,439) size 784x239 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,439) size 784x239 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x237
           RenderTableRow {TR} at (0,0) size 782x28
-            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (4,4) size 161x19
                 RenderText {#text} at (4,4) size 161x19
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 782x209
-            RenderTableCell {TD} at (0,118) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,118) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,94) size 4x20
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,28) size 770x209 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,28) size 770x209 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x40
                 RenderText {#text} at (0,0) size 762x39
                   text run at (0,0) width 762: "The four floating DIV elements below should appear next to each other horizontally. The table at the bottom of this"

@@ -53,10 +53,10 @@ layer at (0,0) size 785x1046
       RenderBlock (floating) {DIV} at (52,508) size 29x29 [border: (1px dotted #008000)]
       RenderBlock (floating) {DIV} at (93,508) size 24x24 [border: (1px dotted #008000)]
 layer at (8,564) size 446x474
-  RenderTable {TABLE} at (0,548) size 446x474 [border: (5px outset #808080)]
+  RenderTable {TABLE} at (0,548) size 446x474 [border: (5px outset #000000)]
     RenderTableSection {TBODY} at (5,5) size 436x464
       RenderTableRow {TR} at (0,2) size 436x460
-        RenderTableCell {TD} at (2,2) size 432x460 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableCell {TD} at (2,2) size 432x460 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
           RenderBlock (floating) {DIV} at (8,8) size 34x34 [border: (1px dotted #008000)]
           RenderBlock (floating) {DIV} at (54,8) size 29x29 [border: (1px dotted #008000)]
           RenderBlock (floating) {DIV} at (95,8) size 24x24 [border: (1px dotted #008000)]

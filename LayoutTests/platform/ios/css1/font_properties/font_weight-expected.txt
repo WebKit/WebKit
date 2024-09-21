@@ -69,18 +69,18 @@ layer at (0,0) size 800x1083
             text run at (497,0) width 46: "normal"
         RenderText {#text} at (542,0) size 5x19
           text run at (542,0) width 5: "."
-      RenderTable {TABLE} at (0,632) size 569x435 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,632) size 569x435 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 567x432
           RenderTableRow {TR} at (0,0) size 567x28
-            RenderTableCell {TD} at (0,0) size 567x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 567x28 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (4,4) size 161x19
                 RenderText {#text} at (4,4) size 161x19
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 567x404
-            RenderTableCell {TD} at (0,215) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,215) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,191) size 4x20
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,28) size 555x404 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,28) size 555x404 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 547x20
                 RenderText {#text} at (0,0) size 200x19
                   text run at (0,0) width 200: "This sentence should be bold."

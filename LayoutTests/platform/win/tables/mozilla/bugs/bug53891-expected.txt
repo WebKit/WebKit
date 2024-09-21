@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 284x118 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,0) size 284x118 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 282x116
           RenderTableRow {TR} at (0,2) size 282x112
-            RenderTableCell {TD} at (2,2) size 204x112 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 200x108 [border: (10px outset #808080)]
+            RenderTableCell {TD} at (2,2) size 204x112 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 200x108 [border: (10px outset #000000)]
                 RenderTableSection {TBODY} at (10,10) size 180x88
                   RenderTableRow {TR} at (0,2) size 180x84
-                    RenderTableCell {TD} at (2,22) size 44x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (2,22) size 44x44 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (2,2) size 40x40
-                    RenderTableCell {TD} at (48,2) size 130x84 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                    RenderTableCell {TD} at (48,2) size 130x84 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 121x79
                         text run at (2,2) width 121: "xxx xxx xxx xxx xxx"
                         text run at (2,22) width 121: "xxx xxx xxx xxx xxx"
                         text run at (2,42) width 121: "xxx xxx xxx xxx xxx"
                         text run at (2,62) width 121: "xxx xxx xxx xxx xxx"
-            RenderTableCell {TD} at (208,46) size 72x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (208,46) size 72x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 68x19
                 text run at (2,2) width 68: "row2, cell2"

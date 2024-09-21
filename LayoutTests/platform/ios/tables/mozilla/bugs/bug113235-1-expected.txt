@@ -3,26 +3,26 @@ layer at (0,0) size 800x12133
 layer at (0,0) size 800x12133
   RenderBlock {HTML} at (0,0) size 800x12134
     RenderBody {BODY} at (8,8) size 784x12118
-      RenderTable {TABLE} at (0,0) size 731x12118 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,0) size 731x12118 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 729x12116
           RenderTableRow {TR} at (0,2) size 729x12112
-            RenderTableCell {TD} at (2,2) size 12x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 12x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 8x19
                 text run at (2,2) width 8: "x"
-            RenderTableCell {TD} at (16,2) size 711x12112 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (16,2) size 711x12112 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (2,2) size 707x0
                 RenderInline {FONT} at (0,0) size 0x0
                   RenderText {#text} at (0,0) size 0x0
               RenderBlock (anonymous) at (2,2) size 707x56
-                RenderTable {TABLE} at (0,0) size 567x56 [border: (1px outset #808080)]
+                RenderTable {TABLE} at (0,0) size 567x56 [border: (1px outset #000000)]
                   RenderTableSection {TBODY} at (1,1) size 565x54
                     RenderTableRow {TR} at (0,2) size 565x24
-                      RenderTableCell {TD} at (2,2) size 112x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderTableCell {TD} at (2,2) size 112x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                         RenderText {#text} at (2,2) size 5x19
                           text run at (2,2) width 5: " "
-                      RenderTableCell {TD} at (115,2) size 448x4 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderTableCell {TD} at (115,2) size 448x4 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
                     RenderTableRow {TR} at (0,28) size 565x24
-                      RenderTableCell {TD} at (2,28) size 112x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                      RenderTableCell {TD} at (2,28) size 112x24 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
                         RenderText {#text} at (2,2) size 108x19
                           text run at (2,2) width 108: "Search again..."
               RenderBlock (anonymous) at (2,58) size 707x16
