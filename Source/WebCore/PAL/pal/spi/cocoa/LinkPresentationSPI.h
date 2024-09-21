@@ -45,8 +45,21 @@
 
 #else
 
+@interface LPSpecializationMetadata : NSObject <NSSecureCoding, NSCopying>
+@end
+
+@interface LPFileMetadata : LPSpecializationMetadata
+@property (nonatomic, copy) NSString *name;
+@property (nonatomic, copy) NSString *type;
+@property (nonatomic, assign) uint64_t size;
+@end
+
 @interface LPLinkMetadata ()
+
 - (void)_setIncomplete:(BOOL)incomplete;
+
+@property (nonatomic, copy) LPSpecializationMetadata *specialization;
+
 @end
 
 #if !PLATFORM(APPLETV)
