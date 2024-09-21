@@ -65,8 +65,7 @@ void JSIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
         // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype-@@tostringtag
         putDirectCustomGetterSetterWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, CustomGetterSetter::create(vm, iteratorProtoToStringTagGetter, iteratorProtoToStringTagSetter), static_cast<unsigned>(PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor));
         // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.toarray
-        JSFunction* toArray = JSFunction::create(vm, globalObject, 0, "toArray"_s, iteratorProtoFuncToArray, ImplementationVisibility::Public);
-        putDirectWithoutTransition(vm, vm.propertyNames->toArray, toArray, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toArray"_s, iteratorProtoFuncToArray, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Private);
         // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.foreach
         JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("forEach"_s, iteratorProtoFuncForEach, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Private);
         // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.some
