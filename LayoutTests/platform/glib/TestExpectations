@@ -1295,6 +1295,12 @@ webkit.org/b/212893 [ Release ] http/tests/navigation/page-cache-video.html [ Fa
 
 webkit.org/b/187804 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure Crash ]
 
+# Lack of AudioSession category
+http/wpt/mediasession/setCaptureState-audio-category.html [ Skip ]
+
+# Lack of voice activity detection mock
+http/wpt/mediasession/voiceActivityDetection.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2389,11 +2395,7 @@ webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Skip ]
 # Flakes moved from wpe/TestExpectations -- if they're flaky in WPE they're very likely to be flaky in GTK
 http/tests/webrtc/muted-video-mediastream-invisible-autoplay.html [ Failure Timeout Pass ]
 
-# Lack of AudioSession category
-http/wpt/mediasession/setCaptureState-audio-category.html [ Skip ]
-
-# Lack of voice activity detection mock
-http/wpt/mediasession/voiceActivityDetection.html [ Skip ]
+webkit.org/b/280117 webrtc/audio-muted-stats.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
