@@ -504,6 +504,8 @@ public:
     const WebCore::ProcessIdentity& processIdentity();
 #endif
 
+    void markAsUsedForSiteIsolation() { m_usedForSiteIsolation = true; }
+
 private:
     Type type() const final { return Type::WebContent; }
 
@@ -690,6 +692,7 @@ private:
 
     std::optional<WebCore::RegistrableDomain> m_registrableDomain;
     bool m_isInProcessCache { false };
+    bool m_usedForSiteIsolation { false };
 
     enum class NoOrMaybe { No, Maybe } m_isResponsive;
     Vector<CompletionHandler<void(bool webProcessIsResponsive)>> m_isResponsiveCallbacks;

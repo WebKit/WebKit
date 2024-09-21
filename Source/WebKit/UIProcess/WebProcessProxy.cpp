@@ -1541,6 +1541,12 @@ bool WebProcessProxy::canBeAddedToWebProcessCache() const
         return false;
     }
 
+    if (m_usedForSiteIsolation) {
+        // FIXME: The WebProcessCache is organized by RegistrableDomain not Site, and it is only set when the main frame loads a URL with that domain,
+        // so processes used for iframes are not correctly reused. Implement this in a way that doesn't break PLT.
+        return false;
+    }
+
     if (WebKit::isInspectorProcessPool(protectedProcessPool()))
         return false;
 
