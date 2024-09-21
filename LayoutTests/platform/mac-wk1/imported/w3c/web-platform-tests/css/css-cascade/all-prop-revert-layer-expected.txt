@@ -323,6 +323,7 @@ PASS text-underline-offset
 PASS text-underline-position
 PASS text-wrap-mode
 PASS text-wrap-style
+PASS timeline-scope
 PASS top
 PASS touch-action
 PASS transform

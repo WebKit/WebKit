@@ -3194,6 +3194,19 @@ static Ref<CSSValue> valueForAnchorName(const Vector<AtomString>& names)
     return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
+static Ref<CSSValue> valueForTimelineScopeNames(const Vector<AtomString>& names)
+{
+    if (names.isEmpty())
+        return CSSPrimitiveValue::create(CSSValueNone);
+
+    CSSValueListBuilder list;
+    for (auto& name : names) {
+        ASSERT(!name.isNull());
+        list.append(CSSPrimitiveValue::createCustomIdent(name));
+    }
+    return CSSValueList::createCommaSeparated(WTFMove(list));
+}
+
 static Ref<CSSValue> scrollTimelineShorthandValue(const Vector<Ref<ScrollTimeline>>& timelines)
 {
     if (timelines.isEmpty())
@@ -4862,6 +4875,17 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         if (style.positionAnchor().isNull())
             return CSSPrimitiveValue::create(CSSValueAuto);
         return CSSPrimitiveValue::createCustomIdent(style.positionAnchor());
+    case CSSPropertyTimelineScope:
+        switch (style.timelineScope().type) {
+        case TimelineScope::Type::None:
+            return CSSPrimitiveValue::create(CSSValueNone);
+        case TimelineScope::Type::All:
+            return CSSPrimitiveValue::create(CSSValueAll);
+        case TimelineScope::Type::Ident:
+            return valueForTimelineScopeNames(style.timelineScope().scopeNames);
+        }
+        ASSERT_NOT_REACHED();
+        return CSSPrimitiveValue::create(CSSValueNone);
 
     // Unimplemented CSS 3 properties (including CSS3 shorthand properties).
     case CSSPropertyAll:

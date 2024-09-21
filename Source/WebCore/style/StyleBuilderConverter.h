@@ -238,6 +238,8 @@ public:
 
     static RefPtr<TimingFunction> convertTimingFunction(BuilderState&, const CSSValue&);
 
+    static TimelineScope convertTimelineScope(BuilderState&, const CSSValue&);
+
 private:
     friend class BuilderCustom;
 
@@ -2165,6 +2167,29 @@ inline RefPtr<TimingFunction> BuilderConverter::convertTimingFunction(BuilderSta
 {
     return createTimingFunction(value);
 }
+
+inline TimelineScope BuilderConverter::convertTimelineScope(BuilderState&, const CSSValue& value)
+{
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        switch (primitiveValue->valueID()) {
+        case CSSValueNone:
+            return { };
+        case CSSValueAll:
+            return { TimelineScope::Type::All, { } };
+        default:
+            return { TimelineScope::Type::Ident, { AtomString { primitiveValue->stringValue() } } };
+        }
+    }
+
+    auto* list = dynamicDowncast<CSSValueList>(value);
+    if (!list)
+        return { };
+
+    return { TimelineScope::Type::Ident, WTF::map(*list, [&](auto& item) {
+        return AtomString { downcast<CSSPrimitiveValue>(item).stringValue() };
+    }) };
+}
+
 
 } // namespace Style
 } // namespace WebCore

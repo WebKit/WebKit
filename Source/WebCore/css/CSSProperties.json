@@ -9259,6 +9259,17 @@
                 "url": "https://www.w3.org/TR/css-shapes/#propdef-shape-image-threshold"
             }
         },
+        "timeline-scope": {
+           "codegen-properties": {
+               "converter": "TimelineScope",
+               "parser-grammar": "none | all | <dashed-ident>#",
+               "settings-flag": "scrollDrivenAnimationsEnabled"
+           },
+           "specification": {
+               "category": "scroll-animations",
+               "url": "https://drafts.csswg.org/scroll-animations-1/#timeline-scope"
+           }
+       },
         "view-timeline": {
             "codegen-properties": {
                 "longhands": [

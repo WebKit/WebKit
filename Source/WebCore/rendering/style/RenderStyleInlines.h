@@ -518,6 +518,7 @@ inline Vector<ViewTimelineInsets> RenderStyle::initialViewTimelineInsets() { ret
 inline Vector<Style::ScopedName> RenderStyle::initialViewTransitionClasses() { return { }; }
 inline std::optional<Style::ScopedName> RenderStyle::initialViewTransitionName() { return std::nullopt; }
 constexpr Visibility RenderStyle::initialVisibility() { return Visibility::Visible; }
+inline const TimelineScope RenderStyle::initialTimelineScope() { return { }; }
 constexpr WhiteSpaceCollapse RenderStyle::initialWhiteSpaceCollapse() { return WhiteSpaceCollapse::Collapse; }
 constexpr WordBreak RenderStyle::initialWordBreak() { return WordBreak::Normal; }
 inline Length RenderStyle::initialLetterSpacing() { return zeroLength(); }
@@ -683,6 +684,7 @@ inline const Vector<Ref<ViewTimeline>>& RenderStyle::viewTimelines() const { ret
 inline const Vector<ScrollAxis>& RenderStyle::viewTimelineAxes() const { return m_nonInheritedData->rareData->viewTimelineAxes; }
 inline const Vector<ViewTimelineInsets>& RenderStyle::viewTimelineInsets() const { return m_nonInheritedData->rareData->viewTimelineInsets; }
 inline const Vector<AtomString>& RenderStyle::viewTimelineNames() const { return m_nonInheritedData->rareData->viewTimelineNames; }
+inline const TimelineScope& RenderStyle::timelineScope() const { return m_nonInheritedData->rareData->timelineScope; }
 inline std::optional<ScrollbarColor> RenderStyle::scrollbarColor() const { return m_rareInheritedData->scrollbarColor.asOptional(); }
 inline const StyleColor& RenderStyle::scrollbarThumbColor() const { return m_rareInheritedData->scrollbarColor->thumbColor; }
 inline const StyleColor& RenderStyle::scrollbarTrackColor() const { return m_rareInheritedData->scrollbarColor->trackColor; }

@@ -4289,6 +4289,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertySpeakAs:
         case CSSPropertyTextCombineUpright:
         case CSSPropertyTextOrientation:
+        case CSSPropertyTimelineScope:
         case CSSPropertyTransition:
         case CSSPropertyTransitionBehavior:
         case CSSPropertyTransitionDelay:
