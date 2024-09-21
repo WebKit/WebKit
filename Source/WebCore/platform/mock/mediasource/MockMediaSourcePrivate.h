@@ -49,6 +49,7 @@ public:
     constexpr MediaPlatformType platformType() const final { return MediaPlatformType::Mock; }
 
     RefPtr<MediaPlayerPrivateInterface> player() const final;
+    void setPlayer(WebCore::MediaPlayerPrivateInterface*) final;
 
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
 

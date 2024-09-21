@@ -56,6 +56,7 @@ public:
     static Ref<MediaSourcePrivateGStreamer> open(MediaSourcePrivateClient&, MediaPlayerPrivateGStreamerMSE&);
     virtual ~MediaSourcePrivateGStreamer();
 
+    void setPlayer(MediaPlayerPrivateInterface*) final;
     RefPtr<MediaPlayerPrivateInterface> player() const final;
 
     constexpr MediaPlatformType platformType() const final { return MediaPlatformType::GStreamer; }
@@ -74,6 +75,8 @@ public:
     void startPlaybackIfHasAllTracks();
     bool hasAllTracks() const { return m_hasAllTracks; }
 
+    void detach();
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
     ASCIILiteral logClassName() const override { return "MediaSourcePrivateGStreamer"_s; }
@@ -85,8 +88,9 @@ public:
 
 private:
     MediaSourcePrivateGStreamer(MediaSourcePrivateClient&, MediaPlayerPrivateGStreamerMSE&);
+    RefPtr<MediaPlayerPrivateGStreamerMSE> platformPlayer() const;
 
-    MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
+    ThreadSafeWeakPtr<MediaPlayerPrivateGStreamerMSE> m_playerPrivate;
     bool m_hasAllTracks { false };
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;

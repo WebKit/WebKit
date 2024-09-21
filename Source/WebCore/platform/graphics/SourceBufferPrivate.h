@@ -144,6 +144,10 @@ public:
     // Methods for ManagedSourceBuffer
     WEBCORE_EXPORT virtual void memoryPressure(const MediaTime& currentTime);
 
+    // Methods for Detachable MediaSource
+    virtual void detach() { }
+    WEBCORE_EXPORT virtual void attach();
+
     // Internals Utility methods
     using SamplesPromise = NativePromise<Vector<String>, PlatformMediaError>;
     WEBCORE_EXPORT virtual Ref<SamplesPromise> bufferedSamplesForTrackId(TrackID);
@@ -275,6 +279,7 @@ private:
     MediaTime m_groupEndTimestamp { MediaTime::zeroTime() };
 
     bool m_isMediaSourceEnded { false };
+    std::optional<InitializationSegment> m_lastInitializationSegment;
 };
 
 } // namespace WebCore

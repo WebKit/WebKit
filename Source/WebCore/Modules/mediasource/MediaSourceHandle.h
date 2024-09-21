@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class MediaSource;
+class MediaSource;
 class MediaSourcePrivate;
 class MediaSourcePrivateClient;
 
@@ -49,6 +50,7 @@ public:
 
     bool isDetached() const { return m_detached; }
     bool canDetach() const;
+    bool detachable() const { return m_detachable; }
 
     void setHasEverBeenAssignedAsSrcObject();
     bool hasEverBeenAssignedAsSrcObject() const;
@@ -66,12 +68,13 @@ private:
 
     using DispatcherType = Function<void(TaskType, bool)>;
 
-    static Ref<MediaSourceHandle> create(MediaSource&, DispatcherType&&);
-    MediaSourceHandle(MediaSource&, DispatcherType&&);
+    static Ref<MediaSourceHandle> create(MediaSource&, DispatcherType&&, bool);
+    MediaSourceHandle(MediaSource&, DispatcherType&&, bool);
     explicit MediaSourceHandle(MediaSourceHandle&);
     void mediaSourceDidOpen(MediaSourcePrivate&);
     void setDetached(bool value) { m_detached = value; }
 
+    const bool m_detachable;
     bool m_detached { false };
     Ref<SharedPrivate> m_private;
 };

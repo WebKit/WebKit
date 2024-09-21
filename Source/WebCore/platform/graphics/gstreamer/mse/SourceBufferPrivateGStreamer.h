@@ -57,7 +57,7 @@ class MediaSourcePrivateGStreamer;
 class SourceBufferPrivateGStreamer final : public SourceBufferPrivate, public CanMakeWeakPtr<SourceBufferPrivateGStreamer> {
 public:
     static bool isContentTypeSupported(const ContentType&);
-    static Ref<SourceBufferPrivateGStreamer> create(MediaSourcePrivateGStreamer&, const ContentType&, MediaPlayerPrivateGStreamerMSE&);
+    static Ref<SourceBufferPrivateGStreamer> create(MediaSourcePrivateGStreamer&, const ContentType&);
     ~SourceBufferPrivateGStreamer();
 
     constexpr MediaPlatformType platformType() const final { return MediaPlatformType::GStreamer; }
@@ -96,13 +96,15 @@ public:
 private:
     friend class AppendPipeline;
 
-    SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer&, const ContentType&, MediaPlayerPrivateGStreamerMSE&);
+    SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer&, const ContentType&);
+    RefPtr<MediaPlayerPrivateGStreamerMSE> player() const;
 
     void notifyClientWhenReadyForMoreSamples(TrackID) override;
 
+    void detach() final;
+
     bool m_hasBeenRemovedFromMediaSource { false };
     ContentType m_type;
-    MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
     std::unique_ptr<AppendPipeline> m_appendPipeline;
     StdUnorderedMap<TrackID, RefPtr<MediaSourceTrackGStreamer>> m_tracks;
     std::optional<MediaPromise::Producer> m_appendPromise;

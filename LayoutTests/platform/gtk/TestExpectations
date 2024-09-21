@@ -1798,6 +1798,7 @@ webkit.org/b/256768 fast/mediastream/captureStream/canvas3d.html [ Failure Pass 
 webkit.org/b/249477 media/audioSession/audioSessionType.html [ Skip ]
 
 media/media-source/media-source-rendering-update-count.html [ Skip ]
+media/media-source/media-detachablemse-append.html [ Skip ]
 
 # Tests failing while still having the right values in expected related to the import in webkit.org/b/252516
 imported/w3c/web-platform-tests/css/css-tables/table-model-fixup-2.html [ Failure ]

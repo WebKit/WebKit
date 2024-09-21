@@ -108,10 +108,6 @@ RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& ma
 
 RemoteMediaPlayerProxy::~RemoteMediaPlayerProxy()
 {
-#if ENABLE(MEDIA_SOURCE)
-    if (m_mediaSourceProxy)
-        m_mediaSourceProxy->shutdown();
-#endif
     if (m_performTaskAtTimeCompletionHandler)
         m_performTaskAtTimeCompletionHandler(std::nullopt);
     setShouldEnableAudioSourceProvider(false);
@@ -194,11 +190,15 @@ void RemoteMediaPlayerProxy::loadMediaSource(URL&& url, const WebCore::ContentTy
         completionHandler(WTFMove(configuration));
         return;
     }
-
-    if (m_mediaSourceProxy)
-        m_mediaSourceProxy->shutdown();
-    m_mediaSourceProxy = adoptRef(*new RemoteMediaSourceProxy(*m_manager->gpuConnectionToWebProcess(), mediaSourceIdentifier, webMParserEnabled, *this));
+    bool reattached = false;
+    if (RefPtr mediaSourceProxy = m_manager->pendingMediaSource(mediaSourceIdentifier)) {
+        m_mediaSourceProxy = WTFMove(mediaSourceProxy);
+        reattached = true;
+    } else
+        m_mediaSourceProxy = adoptRef(*new RemoteMediaSourceProxy(*m_manager, mediaSourceIdentifier, webMParserEnabled, *this));
     m_player->load(url, contentType, *protectedMediaSourceProxy());
+    if (reattached)
+        m_mediaSourceProxy->setMediaPlayers(*this, m_player->playerPrivate());
     getConfiguration(configuration);
     completionHandler(WTFMove(configuration));
 }

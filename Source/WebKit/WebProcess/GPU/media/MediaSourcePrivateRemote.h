@@ -72,8 +72,12 @@ public:
     void unmarkEndOfStream() final;
     WebCore::MediaPlayer::ReadyState mediaPlayerReadyState() const final;
     void setMediaPlayerReadyState(WebCore::MediaPlayer::ReadyState) final;
+    void setPlayer(WebCore::MediaPlayerPrivateInterface*) final;
+    void shutdown() final;
 
     void setTimeFudgeFactor(const MediaTime&) final;
+
+    RemoteMediaSourceIdentifier identifier() const { return m_identifier; }
 
     static WorkQueue& queue();
 
@@ -94,7 +98,6 @@ public:
         void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
         void proxyWaitForTarget(const WebCore::SeekTarget&, CompletionHandler<void(WebCore::MediaTimePromise::Result&&)>&&);
         void proxySeekToTime(const MediaTime&, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&&);
-        void mediaSourcePrivateShuttingDown(CompletionHandler<void()>&&);
 
         RefPtr<WebCore::MediaSourcePrivateClient> client() const;
         ThreadSafeWeakPtr<MediaSourcePrivateRemote> m_parent;
@@ -129,5 +132,9 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::MediaSourcePrivateRemote)
+static bool isType(const WebCore::MediaSourcePrivate& mediaSource) { return mediaSource.platformType() == WebCore::MediaPlatformType::Remote; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)

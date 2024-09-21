@@ -59,7 +59,7 @@ public:
     void remove(SourceBuffer&);
     bool contains(SourceBuffer& buffer) { return m_list.find(&buffer) != notFound; }
     void clear();
-    void swap(Vector<RefPtr<SourceBuffer>>&);
+    void replaceWith(Vector<RefPtr<SourceBuffer>>&&);
 
     auto begin() { return m_list.begin(); }
     auto end() { return m_list.end(); }

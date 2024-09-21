@@ -55,6 +55,8 @@ public:
 
     virtual ~MockMediaPlayerMediaSource();
 
+    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::MockMSE; }
+
     void advanceCurrentTime();
     MediaTime currentTime() const override;
     bool timeIsProgressing() const override;
@@ -109,6 +111,10 @@ private:
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MockMediaPlayerMediaSource)
+static bool isType(const WebCore::MediaPlayerPrivateInterface& player) { return player.mediaPlayerType() == WebCore::MediaPlayerType::MockMSE; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(MEDIA_SOURCE)
 

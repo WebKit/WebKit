@@ -108,6 +108,11 @@ void MediaSourceInterfaceMainThread::memoryPressure()
     m_mediaSource->memoryPressure();
 }
 
+bool MediaSourceInterfaceMainThread::detachable() const
+{
+    return m_mediaSource->detachable();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_SOURCE)

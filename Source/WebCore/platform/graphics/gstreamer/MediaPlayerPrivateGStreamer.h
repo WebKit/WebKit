@@ -107,6 +107,8 @@ public:
     MediaPlayerPrivateGStreamer(MediaPlayer*);
     virtual ~MediaPlayerPrivateGStreamer();
 
+    constexpr MediaPlayerType mediaPlayerType() const override { return MediaPlayerType::GStreamer; }
+
     void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
@@ -609,5 +611,10 @@ private:
     RefPtr<GStreamerQuirksManager> m_quirksManagerForTesting;
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaPlayerPrivateGStreamer)
+static bool isType(const WebCore::MediaPlayerPrivateInterface& player) { return player.mediaPlayerType() == WebCore::MediaPlayerType::GStreamer; }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

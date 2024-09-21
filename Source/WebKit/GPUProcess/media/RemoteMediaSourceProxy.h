@@ -45,13 +45,12 @@ class Decoder;
 
 namespace WebCore {
 class ContentType;
-class MediaSourcePrivate;
 class PlatformTimeRanges;
 }
 
 namespace WebKit {
 
-class GPUConnectionToWebProcess;
+class RemoteMediaPlayerManagerProxy;
 class RemoteMediaPlayerProxy;
 
 class RemoteMediaSourceProxy final
@@ -59,13 +58,17 @@ class RemoteMediaSourceProxy final
     , private IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSourceProxy);
 public:
-    RemoteMediaSourceProxy(GPUConnectionToWebProcess&, RemoteMediaSourceIdentifier, bool webMParserEnabled, RemoteMediaPlayerProxy&);
+    RemoteMediaSourceProxy(RemoteMediaPlayerManagerProxy&, RemoteMediaSourceIdentifier, bool webMParserEnabled, RemoteMediaPlayerProxy&);
     virtual ~RemoteMediaSourceProxy();
+
+    void setMediaPlayers(RemoteMediaPlayerProxy&, WebCore::MediaPlayerPrivateInterface*);
 
     // MediaSourcePrivateClient overrides
     void setPrivateAndOpen(Ref<WebCore::MediaSourcePrivate>&&) final;
+    void reOpen() final;
     Ref<WebCore::MediaTimePromise> waitForTarget(const WebCore::SeekTarget&) final;
     Ref<WebCore::MediaPromise> seekToTime(const MediaTime&) final;
+    RefPtr<WebCore::MediaSourcePrivate> mediaSourcePrivate() const final { return m_private; }
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(const void*) final;
@@ -73,7 +76,6 @@ public:
 
     void failedToCreateRenderer(RendererType) final;
 
-    void shutdown();
     const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
 private:
@@ -89,9 +91,13 @@ private:
     void unmarkEndOfStream();
     void setMediaPlayerReadyState(WebCore::MediaPlayerEnums::ReadyState);
     void setTimeFudgeFactor(const MediaTime&);
-    void disconnect();
+    void attached();
+    void shutdown();
 
-    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
+    void disconnect();
+    RefPtr<GPUConnectionToWebProcess> connectionToWebProcess() const;
+
+    WeakPtr<RemoteMediaPlayerManagerProxy> m_manager;
     RemoteMediaSourceIdentifier m_identifier;
     bool m_webMParserEnabled { false };
     RefPtr<WebCore::MediaSourcePrivate> m_private;

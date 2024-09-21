@@ -1882,6 +1882,11 @@ void HTMLMediaElement::loadResource(const URL& initialURL, const ContentType& in
 
         if (m_mediaSource) {
             ALWAYS_LOG(LOGIDENTIFIER, "loading MSE blob");
+            if (url.protocolIs(mediaSourceBlobProtocol) && m_mediaSource->detachable()) {
+                document().addConsoleMessage(MessageSource::MediaSource, MessageLevel::Error, makeString("Unable to attach detachable MediaSource via blob URL, use srcObject attribute"_s));
+                return mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
+            }
+
             if (!m_mediaSource->attachToElement(*this)) {
                 // Forget our reference to the MediaSource, so we leave it alone
                 // while processing remainder of load failure.

@@ -45,10 +45,15 @@ class VideoFrame;
 
 class MediaPlayerPrivateInterface {
 public:
+    // MediaPlayerPrivateInterface subclasses should be ref-counted, but each subclass may choose whether
+    // to be RefCounted or ThreadSafeRefCounted. Therefore, each subclass must implement a pair of
+    // virtual ref()/deref() methods. See NullMediaPlayerPrivate for an example.
     DECLARE_VIRTUAL_REFCOUNTED;
 
     WEBCORE_EXPORT MediaPlayerPrivateInterface();
     WEBCORE_EXPORT virtual ~MediaPlayerPrivateInterface();
+
+    virtual constexpr MediaPlayerType mediaPlayerType() const = 0;
 
     virtual void load(const String&) { }
     virtual void load(const URL& url, const ContentType&, const String&) { load(url.string()); }

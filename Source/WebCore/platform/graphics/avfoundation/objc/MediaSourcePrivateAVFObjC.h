@@ -67,6 +67,7 @@ public:
     constexpr MediaPlatformType platformType() const final { return MediaPlatformType::AVFObjC; }
 
     RefPtr<MediaPlayerPrivateInterface> player() const final;
+    void setPlayer(MediaPlayerPrivateInterface*) final;
 
     AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) final;
     void durationChanged(const MediaTime&) final;

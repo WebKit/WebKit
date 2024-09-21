@@ -113,7 +113,12 @@ void MockMediaPlayerMediaSource::load(const String&)
 
 void MockMediaPlayerMediaSource::load(const URL&, const ContentType&, MediaSourcePrivateClient& source)
 {
-    m_mediaSourcePrivate = MockMediaSourcePrivate::create(*this, source);
+    if (RefPtr mediaSourcePrivate = downcast<MockMediaSourcePrivate>(source.mediaSourcePrivate())) {
+        mediaSourcePrivate->setPlayer(this);
+        m_mediaSourcePrivate = WTFMove(mediaSourcePrivate);
+        source.reOpen();
+    } else
+        m_mediaSourcePrivate = MockMediaSourcePrivate::create(*this, source);
 }
 
 void MockMediaPlayerMediaSource::cancelLoad()

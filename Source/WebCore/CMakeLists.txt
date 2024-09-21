@@ -442,6 +442,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediasource/ManagedSourceBuffer.idl
     Modules/mediasource/MediaSource.idl
     Modules/mediasource/MediaSourceHandle.idl
+    Modules/mediasource/MediaSourceInit.idl
     Modules/mediasource/SourceBuffer.idl
     Modules/mediasource/SourceBufferList.idl
     Modules/mediasource/TextTrack+MediaSource.idl

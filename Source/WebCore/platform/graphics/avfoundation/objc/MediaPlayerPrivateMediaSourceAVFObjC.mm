@@ -310,7 +310,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const URL&, const ContentType&, 
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(*this, client);
+    if (RefPtr mediaSourcePrivate = downcast<MediaSourcePrivateAVFObjC>(client.mediaSourcePrivate())) {
+        mediaSourcePrivate->setPlayer(this);
+        m_mediaSourcePrivate = WTFMove(mediaSourcePrivate);
+        client.reOpen();
+    } else
+        m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(*this, client);
     m_mediaSourcePrivate->setResourceOwner(m_resourceOwner);
     m_mediaSourcePrivate->setVideoRenderer(layerOrVideoRenderer());
     m_mediaSourcePrivate->setDecompressionSession(m_decompressionSession.get());

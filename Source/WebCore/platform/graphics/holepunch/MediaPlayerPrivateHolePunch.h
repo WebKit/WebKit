@@ -45,6 +45,8 @@ public:
     MediaPlayerPrivateHolePunch(MediaPlayer*);
     ~MediaPlayerPrivateHolePunch();
 
+    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::HolePunch; }
+
     static void registerMediaEngine(MediaEngineRegistrar);
 
     void load(const String&) final;

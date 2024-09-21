@@ -116,6 +116,8 @@ public:
 
     static Ref<NullMediaPlayerPrivate> create(MediaPlayer& player) { return adoptRef(*new NullMediaPlayerPrivate(player)); }
 
+    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::Null; }
+
     void load(const String&) final { }
 #if ENABLE(MEDIA_SOURCE)
     void load(const URL&, const ContentType&, MediaSourcePrivateClient&) final { }

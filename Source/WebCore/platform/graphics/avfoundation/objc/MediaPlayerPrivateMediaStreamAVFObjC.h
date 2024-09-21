@@ -66,6 +66,8 @@ public:
     explicit MediaPlayerPrivateMediaStreamAVFObjC(MediaPlayer*);
     virtual ~MediaPlayerPrivateMediaStreamAVFObjC();
 
+    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::AVFObjCMediaStream; }
+
     static void registerMediaEngine(MediaEngineRegistrar);
 
     using NativeImageCreator = RefPtr<NativeImage> (*)(const VideoFrame&);

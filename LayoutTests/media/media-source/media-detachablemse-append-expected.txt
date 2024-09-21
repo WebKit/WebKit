@@ -1,0 +1,38 @@
+
+RUN(video.srcObject = source)
+RUN(video.muted = true)
+RUN(video.playsInline = true)
+RUN(video.disableRemotePlayback = true)
+EVENT(sourceopen)
+EXPECTED (source.detachable == 'true') OK
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(loadedmetadata)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+EXPECTED (video.videoTracks.length >= 1 == 'true') OK
+EXPECTED (video.audioTracks.length >= 1 == 'true') OK
+RUN(source.endOfStream())
+EVENT(sourceended)
+RUN(readyState = video.readyState)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+RUN(video.srcObject = null)
+EXPECTED (video.buffered.length == '0') OK
+EXPECTED (video.readyState == '0') OK
+EXPECTED (isNaN(video.duration) == 'true') OK
+EXPECTED (video.videoTracks.length == '0') OK
+EXPECTED (video.audioTracks.length == '0') OK
+RUN(video.srcObject = source)
+EVENT(sourceopen)
+EVENT(sourceended)
+EXPECTED (source.readyState == 'ended') OK
+EXPECTED (video.duration > 0 == 'true') OK
+EVENT(loadedmetadata)
+EVENT(loadeddata)
+EXPECTED (video.buffered.length == '1') OK
+EXPECTED (video.readyState == '4') OK
+EXPECTED (video.videoTracks.length >= 1 == 'true') OK
+EXPECTED (video.audioTracks.length >= 1 == 'true') OK
+RUN(video.play())
+END OF TEST
+

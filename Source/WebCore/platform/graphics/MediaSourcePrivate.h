@@ -41,6 +41,7 @@
 namespace WebCore {
 
 class ContentType;
+class MediaPlayerPrivateInterface;
 class SourceBufferPrivate;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 class LegacyCDMSession;
@@ -72,6 +73,8 @@ public:
 
     RefPtr<MediaSourcePrivateClient> client() const;
     virtual RefPtr<MediaPlayerPrivateInterface> player() const = 0;
+    virtual void setPlayer(MediaPlayerPrivateInterface*) = 0;
+    virtual void shutdown();
 
     virtual constexpr MediaPlatformType platformType() const = 0;
     virtual AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) = 0;

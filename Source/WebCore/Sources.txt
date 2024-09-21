@@ -4046,6 +4046,7 @@ JSMediaSession.cpp
 JSMediaSettingsRange.cpp
 JSMediaSource.cpp
 JSMediaSourceHandle.cpp
+JSMediaSourceInit.cpp
 JSMediaStream.cpp
 JSMediaStreamAudioDestinationNode.cpp
 JSMediaStreamAudioSourceNode.cpp

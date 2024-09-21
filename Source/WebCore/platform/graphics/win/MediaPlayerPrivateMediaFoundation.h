@@ -61,6 +61,8 @@ public:
     explicit MediaPlayerPrivateMediaFoundation(MediaPlayer*);
     ~MediaPlayerPrivateMediaFoundation();
 
+    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::MediaFoundation; }
+
     static void registerMediaEngine(MediaEngineRegistrar);
 
     static void getSupportedTypes(HashSet<String>& types);

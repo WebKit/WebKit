@@ -2379,6 +2379,21 @@ DeprecationReportingEnabled:
     WebCore:
       default: false
 
+DetachableMediaSourceEnabled:
+  type: bool
+  status: developer
+  category: media
+  humanReadableName: "Detachable Media Source"
+  humanReadableDescription: "Detachable Media Source API"
+  condition: ENABLE(MEDIA_SOURCE)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DetailsNameAttributeEnabled:
   type: bool
   status: stable

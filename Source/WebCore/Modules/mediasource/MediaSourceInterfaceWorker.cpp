@@ -138,6 +138,11 @@ void MediaSourceInterfaceWorker::memoryPressure()
     });
 }
 
+bool MediaSourceInterfaceWorker::detachable() const
+{
+    return m_handle->detachable();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_SOURCE_IN_WORKERS)

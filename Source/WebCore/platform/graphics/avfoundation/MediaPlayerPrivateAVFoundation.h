@@ -55,6 +55,8 @@ class MediaPlayerPrivateAVFoundation
 public:
     virtual ~MediaPlayerPrivateAVFoundation();
 
+    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::AVFObjC; }
+
     void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 

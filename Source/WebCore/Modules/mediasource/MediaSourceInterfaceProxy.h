@@ -58,6 +58,7 @@ public:
     virtual bool isManaged() const = 0;
     virtual void setAsSrcObject(bool) = 0;
     virtual void memoryPressure() = 0;
+    virtual bool detachable() const = 0;
 };
 
 } // namespace WebCore

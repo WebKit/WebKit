@@ -45,6 +45,9 @@
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 #include <WebCore/VideoReceiverEndpoint.h>
 #endif
+#if ENABLE(MEDIA_SOURCE)
+#include "RemoteMediaSourceIdentifier.h"
+#endif
 
 namespace WebKit {
 class VideoReceiverEndpointMessage;
@@ -55,6 +58,8 @@ namespace WebKit {
 class RemoteMediaPlayerProxy;
 struct RemoteMediaPlayerConfiguration;
 struct RemoteMediaPlayerProxyConfiguration;
+class RemoteMediaSourceProxy;
+class VideoReceiverEndpointMessage;
 
 class RemoteMediaPlayerManagerProxy
     : public RefCounted<RemoteMediaPlayerManagerProxy>, public IPC::MessageReceiver
@@ -89,6 +94,12 @@ public:
     void handleVideoReceiverEndpointMessage(const VideoReceiverEndpointMessage&);
 #endif
 
+#if ENABLE(MEDIA_SOURCE)
+    RefPtr<RemoteMediaSourceProxy> pendingMediaSource(RemoteMediaSourceIdentifier);
+    void registerMediaSource(RemoteMediaSourceIdentifier, RemoteMediaSourceProxy&);
+    void invalidateMediaSource(RemoteMediaSourceIdentifier);
+#endif
+
 private:
     explicit RemoteMediaPlayerManagerProxy(GPUConnectionToWebProcess&);
 
@@ -114,6 +125,10 @@ private:
         WebCore::PlatformVideoTarget videoTarget;
     };
     HashMap<WebCore::HTMLMediaElementIdentifier, VideoRecevierEndpointCacheEntry> m_videoReceiverEndpointCache;
+#endif
+
+#if ENABLE(MEDIA_SOURCE)
+    HashMap<RemoteMediaSourceIdentifier, RefPtr<RemoteMediaSourceProxy>> m_pendingMediaSources;
 #endif
 
 #if !RELEASE_LOG_DISABLED

@@ -34,6 +34,7 @@ messages -> RemoteMediaSourceProxy NotRefCounted {
     SetTimeFudgeFactor(MediaTime fudgeFactor)
     MarkEndOfStream(enum:uint8_t WebCore::MediaSourcePrivateEndOfStreamStatus status)
     UnmarkEndOfStream()
+    Shutdown()
 }
 
 #endif

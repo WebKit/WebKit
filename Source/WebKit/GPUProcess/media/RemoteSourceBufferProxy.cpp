@@ -74,6 +74,11 @@ RemoteSourceBufferProxy::~RemoteSourceBufferProxy()
     disconnect();
 }
 
+void RemoteSourceBufferProxy::setMediaPlayer(RemoteMediaPlayerProxy& remoteMediaPlayerProxy)
+{
+    m_remoteMediaPlayerProxy = remoteMediaPlayerProxy;
+}
+
 RefPtr<IPC::Connection> RemoteSourceBufferProxy::connection() const
 {
     RefPtr connection = m_connectionToWebProcess.get();
@@ -96,35 +101,14 @@ Ref<MediaPromise> RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitiali
     ASSERT(isMainRunLoop());
 
     RefPtr remoteMediaPlayerProxy { m_remoteMediaPlayerProxy.get() };
-    if (!remoteMediaPlayerProxy)
+
+    auto segmentInfo = createInitializationSegmentInfo(WTFMove(segment));
+    if (!segmentInfo)
         return MediaPromise::createAndReject(PlatformMediaError::ClientDisconnected);
 
-    InitializationSegmentInfo segmentInfo;
-    segmentInfo.duration = segment.duration;
-
-    segmentInfo.audioTracks = segment.audioTracks.map([&](auto& audioTrackInfo) {
-        auto id = audioTrackInfo.track->id();
-        remoteMediaPlayerProxy->addRemoteAudioTrackProxy(*audioTrackInfo.protectedTrack());
-        m_mediaDescriptions.try_emplace(id, *audioTrackInfo.description);
-        return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*audioTrackInfo.description), id };
-    });
-
-    segmentInfo.videoTracks = segment.videoTracks.map([&](auto& videoTrackInfo) {
-        auto id = videoTrackInfo.track->id();
-        remoteMediaPlayerProxy->addRemoteVideoTrackProxy(*videoTrackInfo.protectedTrack());
-        m_mediaDescriptions.try_emplace(id, *videoTrackInfo.description);
-        return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*videoTrackInfo.description), id };
-    });
-
-    segmentInfo.textTracks = segment.textTracks.map([&](auto& textTrackInfo) {
-        auto id = textTrackInfo.track->id();
-        remoteMediaPlayerProxy->addRemoteTextTrackProxy(*textTrackInfo.protectedTrack());
-        m_mediaDescriptions.try_emplace(id, *textTrackInfo.description);
-        return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*textTrackInfo.description), id };
-    });
-
+    ASSERT(remoteMediaPlayerProxy);
     // We need to wait for the CP's MediaPlayerRemote to have created all the tracks
-    return remoteMediaPlayerProxy->commitAllTransactions()->whenSettled(RunLoop::protectedCurrent(), [weakThis = ThreadSafeWeakPtr { *this }, this, segmentInfo = WTFMove(segmentInfo)](auto&& result) mutable -> Ref<MediaPromise> {
+    return remoteMediaPlayerProxy->commitAllTransactions()->whenSettled(RunLoop::protectedCurrent(), [weakThis = ThreadSafeWeakPtr { *this }, this, segmentInfo = WTFMove(*segmentInfo)](auto&& result) mutable -> Ref<MediaPromise> {
         RefPtr protectedThis = weakThis.get();
         RefPtr connection = m_connectionToWebProcess.get();
         if (!protectedThis  || !result || !connection)
@@ -356,14 +340,69 @@ void RemoteSourceBufferProxy::setMaximumQueueDepthForTrackID(TrackID trackID, ui
     m_sourceBufferPrivate->setMaximumQueueDepthForTrackID(trackID, depth);
 }
 
-void RemoteSourceBufferProxy::shutdown()
+void RemoteSourceBufferProxy::detach()
 {
-    RefPtr connection = m_connectionToWebProcess.get();
-    if (!connection)
-        return;
-    connection->protectedConnection()->sendWithAsyncReply(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateShuttingDown(), [this, protectedThis = Ref { *this }, protectedConnection = Ref { *connection }] {
-        disconnect();
-    }, m_identifier);
+    m_sourceBufferPrivate->detach();
+}
+
+void RemoteSourceBufferProxy::attach()
+{
+    m_sourceBufferPrivate->attach();
+}
+
+Ref<MediaPromise> RemoteSourceBufferProxy::sourceBufferPrivateDidAttach(InitializationSegment&& segment)
+{
+    ASSERT(isMainRunLoop());
+
+    RefPtr remoteMediaPlayerProxy { m_remoteMediaPlayerProxy.get() };
+
+    auto segmentInfo = createInitializationSegmentInfo(WTFMove(segment));
+    if (!segmentInfo)
+        return MediaPromise::createAndReject(PlatformMediaError::ClientDisconnected);
+
+    ASSERT(remoteMediaPlayerProxy);
+    // We need to wait for the CP's MediaPlayerRemote to have created all the tracks
+    return remoteMediaPlayerProxy->commitAllTransactions()->whenSettled(RunLoop::protectedCurrent(), [weakThis = ThreadSafeWeakPtr { *this }, this, segmentInfo = WTFMove(*segmentInfo)](auto&& result) mutable -> Ref<MediaPromise> {
+        RefPtr protectedThis = weakThis.get();
+        RefPtr connection = m_connectionToWebProcess.get();
+        if (!protectedThis  || !result || !connection)
+            return MediaPromise::createAndReject(PlatformMediaError::IPCError);
+
+        return connection->protectedConnection()->sendWithPromisedReply<MediaPromiseConverter>(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDidAttach(WTFMove(segmentInfo)), m_identifier);
+    });
+}
+
+std::optional<InitializationSegmentInfo> RemoteSourceBufferProxy::createInitializationSegmentInfo(InitializationSegment&& segment)
+{
+    RefPtr remoteMediaPlayerProxy { m_remoteMediaPlayerProxy.get() };
+    if (!remoteMediaPlayerProxy)
+        return { };
+
+    InitializationSegmentInfo segmentInfo;
+    segmentInfo.duration = segment.duration;
+
+    segmentInfo.audioTracks = segment.audioTracks.map([&](auto& audioTrackInfo) {
+        auto id = audioTrackInfo.track->id();
+        remoteMediaPlayerProxy->addRemoteAudioTrackProxy(*audioTrackInfo.track);
+        m_mediaDescriptions.try_emplace(id, *audioTrackInfo.description);
+        return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*audioTrackInfo.description), id };
+    });
+
+    segmentInfo.videoTracks = segment.videoTracks.map([&](auto& videoTrackInfo) {
+        auto id = videoTrackInfo.track->id();
+        remoteMediaPlayerProxy->addRemoteVideoTrackProxy(*videoTrackInfo.track);
+        m_mediaDescriptions.try_emplace(id, *videoTrackInfo.description);
+        return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*videoTrackInfo.description), id };
+    });
+
+    segmentInfo.textTracks = segment.textTracks.map([&](auto& textTrackInfo) {
+        auto id = textTrackInfo.track->id();
+        remoteMediaPlayerProxy->addRemoteTextTrackProxy(*textTrackInfo.track);
+        m_mediaDescriptions.try_emplace(id, *textTrackInfo.description);
+        return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*textTrackInfo.description), id };
+    });
+
+    return segmentInfo;
 }
 
 const SharedPreferencesForWebProcess& RemoteSourceBufferProxy::sharedPreferencesForWebProcess() const

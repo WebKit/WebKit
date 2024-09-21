@@ -1007,7 +1007,14 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
 {
     if (m_remoteEngineIdentifier == MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE
         || (platformStrategies()->mediaStrategy().mockMediaSourceEnabled() && m_remoteEngineIdentifier == MediaPlayerEnums::MediaEngineIdentifier::MockMSE)) {
-        auto identifier = RemoteMediaSourceIdentifier::generate();
+
+        RefPtr mediaSourcePrivate = downcast<MediaSourcePrivateRemote>(client.mediaSourcePrivate());
+        RemoteMediaSourceIdentifier identifier;
+        if (mediaSourcePrivate) {
+            mediaSourcePrivate->setPlayer(this);
+            identifier = mediaSourcePrivate->identifier();
+        } else
+            identifier = RemoteMediaSourceIdentifier::generate();
         connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::LoadMediaSource(url, contentType, DeprecatedGlobalSettings::webMParserEnabled(), identifier), [weakThis = ThreadSafeWeakPtr { *this }, this](RemoteMediaPlayerConfiguration&& configuration) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
@@ -1020,8 +1027,12 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
             updateConfiguration(WTFMove(configuration));
             player->mediaEngineUpdated();
         }, m_id);
-        m_mediaSourcePrivate = MediaSourcePrivateRemote::create(m_manager.gpuProcessConnection(), identifier, m_manager.typeCache(m_remoteEngineIdentifier), *this, client);
-
+        if (mediaSourcePrivate) {
+            m_mediaSourcePrivate = WTFMove(mediaSourcePrivate);
+            // MediaSource can only be re-opened after RemoteMediaPlayerProxy::LoadMediaSource has been called.
+            client.reOpen();
+        } else
+            m_mediaSourcePrivate = MediaSourcePrivateRemote::create(m_manager.gpuProcessConnection(), identifier, m_manager.typeCache(m_remoteEngineIdentifier), *this, client);
         return;
     }
 

@@ -157,6 +157,21 @@ enum class MediaPlatformType {
     Remote
 };
 
+enum class MediaPlayerType {
+    Null,
+    Mock,
+    MockMSE,
+    MediaFoundation,
+    AVFObjC,
+    AVFObjCMSE,
+    AVFObjCMediaStream,
+    CocoaWebM,
+    GStreamer,
+    GStreamerMSE,
+    HolePunch,
+    Remote
+};
+
 using TrackID = uint64_t;
 
 class MediaPlayerClient : public CanMakeWeakPtr<MediaPlayerClient> {

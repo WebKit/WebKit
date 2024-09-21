@@ -572,6 +572,7 @@ $(PROJECT_DIR)/Modules/mediasource/ManagedMediaSource.idl
 $(PROJECT_DIR)/Modules/mediasource/ManagedSourceBuffer.idl
 $(PROJECT_DIR)/Modules/mediasource/MediaSource.idl
 $(PROJECT_DIR)/Modules/mediasource/MediaSourceHandle.idl
+$(PROJECT_DIR)/Modules/mediasource/MediaSourceInit.idl
 $(PROJECT_DIR)/Modules/mediasource/SourceBuffer.idl
 $(PROJECT_DIR)/Modules/mediasource/SourceBufferList.idl
 $(PROJECT_DIR)/Modules/mediasource/TextTrack+MediaSource.idl

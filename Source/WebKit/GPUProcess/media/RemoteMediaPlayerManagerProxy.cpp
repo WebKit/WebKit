@@ -71,6 +71,10 @@ void RemoteMediaPlayerManagerProxy::clear()
 
     for (auto& proxy : proxies.values())
         proxy->invalidate();
+
+#if ENABLE(MEDIA_SOURCE)
+    m_pendingMediaSources.clear();
+#endif
 }
 
 void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier identifier, MediaPlayerClientIdentifier clientIdentifier, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& proxyConfiguration)
@@ -206,6 +210,34 @@ std::optional<ShareableBitmap::Handle> RemoteMediaPlayerManagerProxy::bitmapImag
 
     return bitmap->createHandle();
 }
+
+#if ENABLE(MEDIA_SOURCE)
+void RemoteMediaPlayerManagerProxy::registerMediaSource(RemoteMediaSourceIdentifier identifier, RemoteMediaSourceProxy& mediaSource)
+{
+    ASSERT(RunLoop::isMain());
+
+    ASSERT(!m_pendingMediaSources.contains(identifier));
+    m_pendingMediaSources.add(identifier, &mediaSource);
+}
+
+void RemoteMediaPlayerManagerProxy::invalidateMediaSource(RemoteMediaSourceIdentifier identifier)
+{
+    ASSERT(RunLoop::isMain());
+
+    ASSERT(m_pendingMediaSources.contains(identifier));
+    m_pendingMediaSources.remove(identifier);
+}
+
+RefPtr<RemoteMediaSourceProxy> RemoteMediaPlayerManagerProxy::pendingMediaSource(RemoteMediaSourceIdentifier identifier)
+{
+    ASSERT(RunLoop::isMain());
+
+    auto iterator = m_pendingMediaSources.find(identifier);
+    if (iterator == m_pendingMediaSources.end())
+        return nullptr;
+    return iterator->value;
+}
+#endif
 
 } // namespace WebKit
 

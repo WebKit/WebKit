@@ -301,6 +301,10 @@ bool MediaSourcePrivate::timeIsProgressing() const
     return false;
 }
 
+void MediaSourcePrivate::shutdown()
+{
+}
+
 } // namespace WebCore
 
 #endif
