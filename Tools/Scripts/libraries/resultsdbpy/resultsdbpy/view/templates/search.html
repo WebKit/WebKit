@@ -53,12 +53,14 @@ DASHBOARD_QUERY.forEach(query => {
     delete parameters.suite;
     delete parameters.warnAfter;
     delete parameters.expireAfter;
+    delete parameters.sequentialFailures;
     dashboards.push(new Dashboard(
         query.title ? query.title : '?',
         query.suite,
         parameters,
         query.warnAfter,
         query.expireAfter,
+        query.sequentialFailures,
     ));
 });
 
