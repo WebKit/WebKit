@@ -181,7 +181,7 @@ private:
     RetainPtr<CALayer> m_tileMapHostLayer;
     RetainPtr<CALayer> m_exposedRectIndicatorLayer;
 
-    IPC::AsyncReplyID m_replyForUnhidingContent;
+    Markable<IPC::AsyncReplyID> m_replyForUnhidingContent;
 
     unsigned m_countOfTransactionsWithNonEmptyLayerChanges { 0 };
 

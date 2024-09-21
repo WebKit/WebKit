@@ -38,7 +38,7 @@ enum class SendSyncOption : uint8_t;
 struct AsyncReplyIDType;
 struct ConnectionAsyncReplyHandler;
 template<typename> class ConnectionSendSyncResult;
-using AsyncReplyID = LegacyNullableAtomicObjectIdentifier<AsyncReplyIDType>;
+using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
 
 class MessageSender {
 public:
@@ -63,12 +63,12 @@ public:
     template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> inline SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID, Timeout, OptionSet<SendSyncOption>);
 
     using AsyncReplyID = IPC::AsyncReplyID;
-    template<typename T, typename C> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler);
-    template<typename T, typename C> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, OptionSet<SendOption>);
-    template<typename T, typename C> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID);
-    template<typename T, typename C> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption>);
-    template<typename T, typename C, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID);
-    template<typename T, typename C, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> inline AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID, OptionSet<SendOption>);
+    template<typename T, typename C> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler);
+    template<typename T, typename C> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, OptionSet<SendOption>);
+    template<typename T, typename C> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID);
+    template<typename T, typename C> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption>);
+    template<typename T, typename C, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID);
+    template<typename T, typename C, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID, OptionSet<SendOption>);
 
     template<typename T> Ref<typename T::Promise> inline sendWithPromisedReply(T&& message);
     template<typename T> Ref<typename T::Promise> inline sendWithPromisedReply(T&& message, uint64_t destinationID);

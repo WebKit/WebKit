@@ -34,7 +34,7 @@
 
 namespace IPC {
 struct AsyncReplyIDType;
-using AsyncReplyID = LegacyNullableAtomicObjectIdentifier<AsyncReplyIDType>;
+using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
 class SharedBufferReference;
 }
 

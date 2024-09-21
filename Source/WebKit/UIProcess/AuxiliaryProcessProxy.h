@@ -107,10 +107,10 @@ public:
 
     enum class ShouldStartProcessThrottlerActivity : bool { No, Yes };
     using AsyncReplyID = IPC::Connection::AsyncReplyID;
-    template<typename T, typename C> AsyncReplyID sendWithAsyncReply(T&&, C&&, uint64_t destinationID = 0, OptionSet<IPC::SendOption> = { }, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
+    template<typename T, typename C> std::optional<AsyncReplyID> sendWithAsyncReply(T&&, C&&, uint64_t destinationID = 0, OptionSet<IPC::SendOption> = { }, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
 
     template<typename T, typename C, typename RawValue>
-    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, const ObjectIdentifierGenericBase<RawValue>& destinationID, OptionSet<IPC::SendOption> sendOptions = { }, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes)
+    std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, const ObjectIdentifierGenericBase<RawValue>& destinationID, OptionSet<IPC::SendOption> sendOptions = { }, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes)
     {
         return sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), destinationID.toUInt64(), sendOptions, shouldStartProcessThrottlerActivity);
     }
@@ -354,7 +354,7 @@ AuxiliaryProcessProxy::SendSyncResult<T> AuxiliaryProcessProxy::sendSync(T&& mes
 }
 
 template<typename T, typename C>
-AuxiliaryProcessProxy::AsyncReplyID AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
+std::optional<AuxiliaryProcessProxy::AsyncReplyID> AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
 {
     static_assert(!T::isSync, "Async message expected");
 
@@ -364,7 +364,7 @@ AuxiliaryProcessProxy::AsyncReplyID AuxiliaryProcessProxy::sendWithAsyncReply(T&
     auto replyID = handler.replyID;
     if (sendMessage(WTFMove(encoder), sendOptions, WTFMove(handler), shouldStartProcessThrottlerActivity))
         return replyID;
-    return { };
+    return std::nullopt;
 }
 
 inline AuxiliaryProcessProxy::State AuxiliaryProcessProxy::state() const

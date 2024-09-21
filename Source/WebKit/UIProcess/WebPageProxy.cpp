@@ -11961,7 +11961,7 @@ void WebPageProxy::endPrinting(CompletionHandler<void()>&& callback)
         sendWithAsyncReply(Messages::WebPage::EndPrinting(), WTFMove(callback));
 }
 
-IPC::Connection::AsyncReplyID WebPageProxy::computePagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&& callback)
+std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::computePagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&& callback)
 {
     m_isInPrintingMode = true;
     if (m_isPerformingDOMPrintOperation)
@@ -11970,7 +11970,7 @@ IPC::Connection::AsyncReplyID WebPageProxy::computePagesForPrinting(FrameIdentif
 }
 
 #if PLATFORM(COCOA)
-IPC::Connection::AsyncReplyID WebPageProxy::drawRectToImage(WebFrameProxy& frame, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& callback)
+std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawRectToImage(WebFrameProxy& frame, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& callback)
 {
     auto frameID = frame.frameID();
     if (m_isPerformingDOMPrintOperation)
@@ -11978,7 +11978,7 @@ IPC::Connection::AsyncReplyID WebPageProxy::drawRectToImage(WebFrameProxy& frame
     return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawRectToImage(frameID, printInfo, rect, imageSize), WTFMove(callback));
 }
 
-IPC::Connection::AsyncReplyID WebPageProxy::drawPagesToPDF(WebFrameProxy& frame, const PrintInfo& printInfo, uint32_t first, uint32_t count, CompletionHandler<void(API::Data*)>&& callback)
+std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawPagesToPDF(WebFrameProxy& frame, const PrintInfo& printInfo, uint32_t first, uint32_t count, CompletionHandler<void(API::Data*)>&& callback)
 {
     auto frameID = frame.frameID();
     if (m_isPerformingDOMPrintOperation)
@@ -14748,7 +14748,7 @@ decltype(auto) WebPageProxy::sendToWebPage(std::optional<FrameIdentifier> frameI
 }
 
 template<typename M, typename C>
-IPC::AsyncReplyID WebPageProxy::sendWithAsyncReplyToProcessContainingFrame(std::optional<FrameIdentifier> frameID, M&& message, C&& completionHandler, OptionSet<IPC::SendOption> options)
+std::optional<IPC::AsyncReplyID> WebPageProxy::sendWithAsyncReplyToProcessContainingFrame(std::optional<FrameIdentifier> frameID, M&& message, C&& completionHandler, OptionSet<IPC::SendOption> options)
 {
     return sendToWebPage(frameID,
         [&message, &completionHandler, options] (auto& targetPage) {
@@ -14801,7 +14801,7 @@ INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::CollapseSelectionInFrame);
 #undef INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME
 
 #define INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(message) \
-    template IPC::AsyncReplyID WebPageProxy::sendWithAsyncReplyToProcessContainingFrame<Messages::message, Messages::message::Reply>(std::optional<WebCore::FrameIdentifier>, Messages::message&&, Messages::message::Reply&&, OptionSet<IPC::SendOption>)
+    template std::optional<IPC::AsyncReplyID> WebPageProxy::sendWithAsyncReplyToProcessContainingFrame<Messages::message, Messages::message::Reply>(std::optional<WebCore::FrameIdentifier>, Messages::message&&, Messages::message::Reply&&, OptionSet<IPC::SendOption>)
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebAutomationSessionProxy::ComputeElementLayout);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebAutomationSessionProxy::GetComputedRole);
 INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(WebAutomationSessionProxy::GetComputedLabel);

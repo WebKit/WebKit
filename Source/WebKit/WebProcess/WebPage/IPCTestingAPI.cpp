@@ -549,7 +549,7 @@ static JSValueRef jsSendWithAsyncReply(IPC::Connection& connection, uint64_t des
         },
         IPC::Connection::AsyncReplyID::generate()
     };
-    auto asyncReplyID = handler.replyID;
+    auto asyncReplyID = *handler.replyID;
     auto result = connection.sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(handler), IPC::SendOption::IPCTestingMessage);
     if (result != IPC::Error::NoError) {
         *exception = createErrorFromIPCError(context, result);

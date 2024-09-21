@@ -244,7 +244,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     Lock _pendingBackgroundPrintFormattersLock;
     RetainPtr<NSMutableSet> _pendingBackgroundPrintFormatters;
-    IPC::Connection::AsyncReplyID _printRenderingCallbackID;
+    Markable<IPC::Connection::AsyncReplyID> _printRenderingCallbackID;
     _WKPrintRenderingCallbackType _printRenderingCallbackType;
 
     Vector<RetainPtr<NSURL>> _temporaryURLsToDeleteWhenDeallocated;
@@ -888,7 +888,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 - (void)_resetPrintingState
 {
-    _printRenderingCallbackID = { };
+    _printRenderingCallbackID = std::nullopt;
 
     Locker locker { _pendingBackgroundPrintFormattersLock };
     for (_WKWebViewPrintFormatter *printFormatter in _pendingBackgroundPrintFormatters.get())
@@ -1246,7 +1246,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         // Begin generating the image in expectation of a (eventual) request for the drawn data.
         auto callbackID = retainedSelf->_page->drawToImage(*[formatterAttributes frameID], [formatterAttributes printInfo], [isPrintingOnBackgroundThread, printFormatter, retainedSelf](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) mutable {
             if (!isPrintingOnBackgroundThread)
-                retainedSelf->_printRenderingCallbackID = { };
+                retainedSelf->_printRenderingCallbackID = std::nullopt;
             else {
                 Locker locker { retainedSelf->_pendingBackgroundPrintFormattersLock };
                 [retainedSelf->_pendingBackgroundPrintFormatters removeObject:printFormatter.get()];
@@ -1282,7 +1282,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         // Begin generating the PDF in expectation of a (eventual) request for the drawn data.
         auto callbackID = retainedSelf->_page->drawToPDFiOS(*[formatterAttributes frameID], [formatterAttributes printInfo], [formatterAttributes pageCount], [isPrintingOnBackgroundThread, printFormatter, retainedSelf](RefPtr<WebCore::SharedBuffer>&& pdfData) mutable {
             if (!isPrintingOnBackgroundThread)
-                retainedSelf->_printRenderingCallbackID = { };
+                retainedSelf->_printRenderingCallbackID = std::nullopt;
             else {
                 Locker locker { retainedSelf->_pendingBackgroundPrintFormattersLock };
                 [retainedSelf->_pendingBackgroundPrintFormatters removeObject:printFormatter.get()];
@@ -1310,11 +1310,11 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         if (_printRenderingCallbackType != _WKPrintRenderingCallbackTypePrint)
             return;
 
-        auto callbackID = std::exchange(_printRenderingCallbackID, { });
+        auto callbackID = std::exchange(_printRenderingCallbackID, std::nullopt);
         if (!callbackID)
             return;
 
-        _page->legacyMainFrameProcess().connection().waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::DrawToPDFiOS>(callbackID, Seconds::infinity());
+        _page->legacyMainFrameProcess().connection().waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::DrawToPDFiOS>(*callbackID, Seconds::infinity());
         return;
     }
 
@@ -1354,11 +1354,11 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         if (_printRenderingCallbackType != _WKPrintRenderingCallbackTypePreview)
             return;
 
-        auto callbackID = std::exchange(_printRenderingCallbackID, { });
+        auto callbackID = std::exchange(_printRenderingCallbackID, std::nullopt);
         if (!callbackID)
             return;
 
-        _page->legacyMainFrameProcess().connection().waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::DrawRectToImage>(callbackID, Seconds::infinity());
+        _page->legacyMainFrameProcess().connection().waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::DrawRectToImage>(*callbackID, Seconds::infinity());
         return;
     }
 

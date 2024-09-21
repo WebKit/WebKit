@@ -1112,21 +1112,21 @@ size_t WebPageProxy::computePagesForPrintingiOS(FrameIdentifier frameID, const P
     return pageCount;
 }
 
-IPC::Connection::AsyncReplyID WebPageProxy::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler({ });
-        return { };
+        return std::nullopt;
     }
 
     return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawToPDFiOS(frameID, printInfo, pageCount), WTFMove(completionHandler));
 }
 
-IPC::Connection::AsyncReplyID WebPageProxy::drawToImage(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
+std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToImage(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler({ });
-        return { };
+        return std::nullopt;
     }
 
     return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawToImage(frameID, printInfo), WTFMove(completionHandler));

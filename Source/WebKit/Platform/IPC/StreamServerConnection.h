@@ -104,7 +104,7 @@ public:
 #endif
 
     template<typename T, typename... Arguments>
-    void sendAsyncReply(AsyncReplyID, Arguments&&...);
+    void sendAsyncReply(std::optional<AsyncReplyID>, Arguments&&...);
 
     Semaphore& clientWaitSemaphore() { return m_clientWaitSemaphore; }
 
@@ -179,9 +179,9 @@ void StreamServerConnection::sendSyncReply(Connection::SyncRequestID syncRequest
 }
 
 template<typename T, typename... Arguments>
-void StreamServerConnection::sendAsyncReply(AsyncReplyID asyncReplyID, Arguments&&... arguments)
+void StreamServerConnection::sendAsyncReply(std::optional<AsyncReplyID> asyncReplyID, Arguments&&... arguments)
 {
-    auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), asyncReplyID.toUInt64());
+    auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), asyncReplyID ? asyncReplyID->toUInt64() : 0);
     (encoder.get() << ... << std::forward<Arguments>(arguments));
     m_connection->sendSyncReply(WTFMove(encoder));
 }

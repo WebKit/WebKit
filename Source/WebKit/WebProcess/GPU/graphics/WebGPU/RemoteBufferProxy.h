@@ -72,7 +72,7 @@ private:
         return root().protectedStreamClientConnection()->sendSync(WTFMove(message), backing());
     }
     template<typename T, typename C>
-    WARN_UNUSED_RETURN IPC::StreamClientConnection::AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler)
+    WARN_UNUSED_RETURN std::optional<IPC::StreamClientConnection::AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler)
     {
         return root().protectedStreamClientConnection()->sendWithAsyncReply(WTFMove(message), completionHandler, backing());
     }

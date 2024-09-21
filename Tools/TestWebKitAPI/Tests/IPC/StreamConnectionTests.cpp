@@ -329,11 +329,11 @@ public:
             assertIsCurrent(serverQueue());
             if (decoder.messageName() != MockStreamTestMessageWithAsyncReply1::name())
                 return false;
-            using AsyncReplyID =IPC::StreamServerConnection::AsyncReplyID;
+            using AsyncReplyID = IPC::StreamServerConnection::AsyncReplyID;
             auto contents = decoder.decode<uint64_t>();
             auto asyncReplyID = decoder.decode<AsyncReplyID>();
             ASSERT(decoder.isValid());
-            m_serverConnection->sendAsyncReply<MockStreamTestMessageWithAsyncReply1>(asyncReplyID.value_or(AsyncReplyID { }), contents.value_or(0));
+            m_serverConnection->sendAsyncReply<MockStreamTestMessageWithAsyncReply1>(asyncReplyID, contents.value_or(0));
             return true;
         });
         serverQueue().dispatch([this, serverConnection = WTFMove(serverConnection)] () mutable {
@@ -462,7 +462,7 @@ TEST_P(StreamMessageTest, SendAsyncReply)
             EXPECT_GE(value, 100u) << j;
             replies.add(value);
         }, defaultDestinationID());
-        EXPECT_TRUE(result.isValid());
+        EXPECT_TRUE(!!result);
     }
     while (replies.size() < 55u)
         RunLoop::current().cycle();
@@ -494,7 +494,7 @@ TEST_P(StreamMessageTest, SendAsyncReplyCancel)
             EXPECT_EQ(value, 0u) << j; // Cancel handler returns 0 for uint64_t.
             replies.add(j);
         }, defaultDestinationID());
-        EXPECT_TRUE(result.isValid());
+        EXPECT_TRUE(!!result);
     }
     m_clientConnection->invalidate();
     workQueueWait.signal();

@@ -275,7 +275,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
     // set the root node during the same CA transaction.
     for (auto& callbackID : layerTreeTransaction.callbackIDs()) {
         if (callbackID == m_replyForUnhidingContent) {
-            m_replyForUnhidingContent = AsyncReplyID { };
+            m_replyForUnhidingContent = std::nullopt;
             break;
         }
     }

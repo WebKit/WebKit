@@ -690,7 +690,7 @@ Error Connection::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, AsyncR
 {
     ASSERT(replyHandler.replyID);
     ASSERT(replyHandler.completionHandler);
-    auto replyID = replyHandler.replyID;
+    auto replyID = *replyHandler.replyID;
     encoder.get() << replyID;
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
@@ -724,7 +724,7 @@ Error Connection::sendMessageWithAsyncReplyWithDispatcher(UniqueRef<Encoder>&& e
 {
     ASSERT(replyHandler.replyID);
     ASSERT(replyHandler.completionHandler);
-    auto replyID = replyHandler.replyID;
+    auto replyID = *replyHandler.replyID;
     encoder.get() << replyID;
     addAsyncReplyHandlerWithDispatcher(WTFMove(replyHandler));
     auto error = sendMessage(WTFMove(encoder), sendOptions, qos);
@@ -1045,7 +1045,7 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
         return;
 
     if (message->messageReceiverName() == ReceiverName::AsyncReply) {
-        if (auto replyHandlerWithDispatcher = takeAsyncReplyHandlerWithDispatcherWithLockHeld(LegacyNullableAtomicObjectIdentifier<AsyncReplyIDType>(message->destinationID()))) {
+        if (auto replyHandlerWithDispatcher = takeAsyncReplyHandlerWithDispatcherWithLockHeld(AtomicObjectIdentifier<AsyncReplyIDType>(message->destinationID()))) {
             replyHandlerWithDispatcher(message.moveToUniquePtr());
             return;
         }
@@ -1364,7 +1364,7 @@ void Connection::dispatchMessage(Decoder& decoder)
     assertIsCurrent(dispatcher());
     RELEASE_ASSERT(m_client);
     if (decoder.messageReceiverName() == ReceiverName::AsyncReply) {
-        auto handler = takeAsyncReplyHandler(LegacyNullableAtomicObjectIdentifier<AsyncReplyIDType>(decoder.destinationID()));
+        auto handler = takeAsyncReplyHandler(AtomicObjectIdentifier<AsyncReplyIDType>(decoder.destinationID()));
         if (!handler) {
             markCurrentlyDispatchedMessageAsInvalid();
 #if ENABLE(IPC_TESTING_API)
@@ -1569,14 +1569,14 @@ void Connection::dispatchIncomingMessages()
 void Connection::addAsyncReplyHandler(AsyncReplyHandler&& handler)
 {
     Locker locker { m_incomingMessagesLock };
-    auto result = m_asyncReplyHandlers.add(handler.replyID, WTFMove(handler.completionHandler));
+    auto result = m_asyncReplyHandlers.add(*handler.replyID, WTFMove(handler.completionHandler));
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 void Connection::addAsyncReplyHandlerWithDispatcher(AsyncReplyHandlerWithDispatcher&& handler)
 {
     Locker locker { m_incomingMessagesLock };
-    auto result = m_asyncReplyHandlerWithDispatchers.add(handler.replyID, WTFMove(handler.completionHandler));
+    auto result = m_asyncReplyHandlerWithDispatchers.add(*handler.replyID, WTFMove(handler.completionHandler));
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 

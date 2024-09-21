@@ -61,10 +61,10 @@ class WebFrameProxy;
     RetainPtr<PDFDocument> _printedPagesPDFDocument;
     Vector<Vector<RetainPtr<PDFDestination>>> _linkDestinationsPerPage;
 
-    IPC::Connection::AsyncReplyID _expectedComputedPagesCallback;
+    Markable<IPC::Connection::AsyncReplyID> _expectedComputedPagesCallback;
     HashMap<IPC::Connection::AsyncReplyID, WebCore::IntRect> _expectedPreviewCallbacks;
-    IPC::Connection::AsyncReplyID _latestExpectedPreviewCallback;
-    IPC::Connection::AsyncReplyID _expectedPrintCallback;
+    Markable<IPC::Connection::AsyncReplyID> _latestExpectedPreviewCallback;
+    Markable<IPC::Connection::AsyncReplyID> _expectedPrintCallback;
 
     BOOL _isPrintingFromSecondaryThread;
     Lock _printingCallbackMutex;
