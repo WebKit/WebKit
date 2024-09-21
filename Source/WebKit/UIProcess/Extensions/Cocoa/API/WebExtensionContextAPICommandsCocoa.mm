@@ -43,7 +43,7 @@ namespace WebKit {
 
 bool WebExtensionContext::isCommandsMessageAllowed()
 {
-    return isLoaded() && extension().hasCommands();
+    return isLoaded() && protectedExtension()->hasCommands();
 }
 
 void WebExtensionContext::commandsGetAll(CompletionHandler<void(Vector<WebExtensionCommandParameters>)>&& completionHandler)

@@ -118,6 +118,7 @@ public:
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     WebInspectorUIExtensionControllerProxy* extensionController() const { return m_extensionController.get(); }
+    RefPtr<WebInspectorUIExtensionControllerProxy> protectedExtensionController() const;
 #endif
 
     bool isConnected() const { return !!m_inspectorPage; }

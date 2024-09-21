@@ -55,7 +55,7 @@ namespace API {
 using namespace WebKit::NetworkCache;
 using namespace FileSystem;
 
-ContentRuleListStore& ContentRuleListStore::defaultStore()
+ContentRuleListStore& ContentRuleListStore::defaultStoreSingleton()
 {
     static NeverDestroyed<Ref<ContentRuleListStore>> defaultStore = adoptRef(*new ContentRuleListStore());
     return defaultStore->get();

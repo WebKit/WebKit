@@ -67,7 +67,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRulesetStateFromStorage()
     auto *savedRulesetState = objectForKey<NSDictionary>(m_state, declarativeNetRequestRulesetStateKey);
     if (!savedRulesetState.count) {
         // Populate with the default enabled state.
-        for (auto& ruleset : extension().declarativeNetRequestRulesets()) {
+        for (auto& ruleset : protectedExtension()->declarativeNetRequestRulesets()) {
             if (ruleset.enabled)
                 m_enabledStaticRulesetIDs.add(ruleset.rulesetID);
         }
@@ -75,8 +75,9 @@ void WebExtensionContext::loadDeclarativeNetRequestRulesetStateFromStorage()
         return;
     }
 
+    RefPtr extension = m_extension;
     for (NSString *savedIdentifier in savedRulesetState) {
-        auto ruleset = extension().declarativeNetRequestRuleset(savedIdentifier);
+        auto ruleset = extension->declarativeNetRequestRuleset(savedIdentifier);
         if (!ruleset)
             continue;
 
@@ -108,8 +109,9 @@ WebExtensionContext::DeclarativeNetRequestValidatedRulesets WebExtensionContext:
 {
     WebExtension::DeclarativeNetRequestRulesetVector validatedRulesets;
 
+    RefPtr extension = m_extension;
     for (auto& identifier : rulesetIdentifiers) {
-        auto ruleset = extension().declarativeNetRequestRuleset(identifier);
+        auto ruleset = extension->declarativeNetRequestRuleset(identifier);
         if (!ruleset)
             return toWebExtensionError(@"declarativeNetRequest.updateEnabledRulesets()", nil, @"Failed to apply rules. Invalid ruleset id: %@.", (NSString *)identifier);
 
@@ -121,8 +123,9 @@ WebExtensionContext::DeclarativeNetRequestValidatedRulesets WebExtensionContext:
 
 void WebExtensionContext::declarativeNetRequestToggleRulesets(const Vector<String>& rulesetIdentifiers, bool newValue, NSMutableDictionary *rulesetIdentifiersToEnabledState)
 {
+    RefPtr extension = m_extension;
     for (auto& identifier : rulesetIdentifiers) {
-        auto ruleset = extension().declarativeNetRequestRuleset(identifier);
+        auto ruleset = extension->declarativeNetRequestRuleset(identifier);
         if (!ruleset)
             continue;
 

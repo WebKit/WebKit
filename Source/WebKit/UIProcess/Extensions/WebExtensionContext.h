@@ -446,6 +446,7 @@ public:
 #endif
 
     WebExtensionAction& defaultAction();
+    Ref<WebExtensionAction> protectedDefaultAction() { return defaultAction(); }
     Ref<WebExtensionAction> getAction(WebExtensionWindow*);
     Ref<WebExtensionAction> getAction(WebExtensionTab*);
     Ref<WebExtensionAction> getOrCreateAction(WebExtensionWindow*);

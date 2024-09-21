@@ -835,6 +835,13 @@ void WebInspectorUIProxy::evaluateInFrontendForTesting(const String& expression)
     inspectorPage->protectedLegacyMainFrameProcess()->send(Messages::WebInspectorUI::EvaluateInFrontendForTesting(expression), inspectorPage->webPageIDInMainFrameProcess());
 }
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+RefPtr<WebInspectorUIExtensionControllerProxy> WebInspectorUIProxy::protectedExtensionController() const
+{
+    return extensionController();
+}
+#endif
+
 // Unsupported configurations can use the stubs provided here.
 
 #if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN) && !ENABLE(WPE_PLATFORM)

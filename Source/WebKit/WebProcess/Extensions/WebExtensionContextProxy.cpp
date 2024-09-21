@@ -127,7 +127,7 @@ Vector<Ref<WebPage>> WebExtensionContextProxy::popupPages(std::optional<WebExten
         if (windowIdentifier && entry.value.second && entry.value.second.value() != windowIdentifier.value())
             continue;
 
-        result.append(entry.key);
+        result.append(Ref { entry.key });
     }
 
     return result;
@@ -149,7 +149,7 @@ Vector<Ref<WebPage>> WebExtensionContextProxy::tabPages(std::optional<WebExtensi
         if (windowIdentifier && entry.value.second && entry.value.second.value() != windowIdentifier.value())
             continue;
 
-        result.append(entry.key);
+        result.append(Ref { entry.key });
     }
 
     return result;
