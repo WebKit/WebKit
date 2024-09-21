@@ -106,9 +106,11 @@ void OSREntryPlan::work(CompilationEffort)
     CompilationMode targetCompilationMode = m_callee->compilationMode() == CompilationMode::LLIntMode ? CompilationMode::BBQForOSREntryMode : CompilationMode::OMGForOSREntryMode;
     Ref<OSREntryCallee> callee = OSREntryCallee::create(targetCompilationMode, functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), m_loopIndex);
 
+    beginCompilerSignpost(callee.get());
     Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
     CompilationContext context;
     auto parseAndCompileResult = parseAndCompileOMG(context, callee.get(), function, signature, unlinkedCalls, m_calleeGroup.get(), m_moduleInformation.get(), m_mode, targetCompilationMode, m_functionIndex, m_hasExceptionHandlers, m_loopIndex);
+    endCompilerSignpost(callee.get());
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };

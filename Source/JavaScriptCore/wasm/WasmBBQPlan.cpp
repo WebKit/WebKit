@@ -264,7 +264,9 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
     Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileResult;
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
+    beginCompilerSignpost(callee);
     parseAndCompileResult = parseAndCompileBBQ(context, callee, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, m_hasExceptionHandlers, UINT32_MAX, tierUp);
+    endCompilerSignpost(callee);
 #endif
 
     if (UNLIKELY(!parseAndCompileResult)) {

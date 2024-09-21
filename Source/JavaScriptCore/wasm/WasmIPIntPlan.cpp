@@ -96,8 +96,10 @@ void IPIntPlan::compileFunction(uint32_t functionIndex)
     unsigned functionIndexSpace = m_moduleInformation->importFunctionTypeIndices.size() + functionIndex;
     ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace) == typeIndex);
 
+    beginCompilerSignpost(CompilationMode::IPIntMode, functionIndexSpace);
     m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
     auto parseAndCompileResult = parseAndCompileMetadata(function.data, signature, m_moduleInformation.get(), functionIndex);
+    endCompilerSignpost(CompilationMode::IPIntMode, functionIndexSpace);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };

@@ -114,9 +114,11 @@ void OMGPlan::work(CompilationEffort)
 
     Ref<OMGCallee> callee = OMGCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
 
+    beginCompilerSignpost(callee.get());
     Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
     CompilationContext context;
     auto parseAndCompileResult = parseAndCompileOMG(context, callee.get(), function, signature, unlinkedCalls, m_calleeGroup.get(), m_moduleInformation.get(), m_mode, CompilationMode::OMGMode, m_functionIndex, m_hasExceptionHandlers, UINT32_MAX);
+    endCompilerSignpost(callee.get());
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };
