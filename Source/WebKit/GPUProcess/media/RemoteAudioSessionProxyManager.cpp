@@ -83,10 +83,10 @@ void RemoteAudioSessionProxyManager::updateCategory()
     HashCountedSet<AudioSession::CategoryType, WTF::IntHash<AudioSession::CategoryType>, WTF::StrongEnumHashTraits<AudioSession::CategoryType>> categoryCounts;
     HashCountedSet<AudioSession::Mode, WTF::IntHash<AudioSession::Mode>, WTF::StrongEnumHashTraits<AudioSession::Mode>> modeCounts;
     HashCountedSet<RouteSharingPolicy, WTF::IntHash<RouteSharingPolicy>, WTF::StrongEnumHashTraits<RouteSharingPolicy>> policyCounts;
-    for (auto& otherProxy : m_proxies) {
-        categoryCounts.add(otherProxy.category());
-        modeCounts.add(otherProxy.mode());
-        policyCounts.add(otherProxy.routeSharingPolicy());
+    for (Ref otherProxy : m_proxies) {
+        categoryCounts.add(otherProxy->category());
+        modeCounts.add(otherProxy->mode());
+        policyCounts.add(otherProxy->routeSharingPolicy());
     }
 
     AudioSession::CategoryType category = AudioSession::CategoryType::None;
@@ -132,9 +132,9 @@ void RemoteAudioSessionProxyManager::updatePreferredBufferSizeForProcess()
     }
 #endif
     size_t preferredBufferSize = std::numeric_limits<size_t>::max();
-    for (auto& proxy : m_proxies) {
-        if (proxy.preferredBufferSize() && proxy.preferredBufferSize() < preferredBufferSize)
-            preferredBufferSize = proxy.preferredBufferSize();
+    for (Ref proxy : m_proxies) {
+        if (proxy->preferredBufferSize() && proxy->preferredBufferSize() < preferredBufferSize)
+            preferredBufferSize = proxy->preferredBufferSize();
     }
 
     if (preferredBufferSize != std::numeric_limits<size_t>::max())

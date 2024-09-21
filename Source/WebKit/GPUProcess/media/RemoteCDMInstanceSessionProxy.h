@@ -82,6 +82,8 @@ private:
     void sessionIdChanged(const String&) final;
     PlatformDisplayID displayID() final { return m_displayID; }
 
+    RefPtr<RemoteCDMProxy> protectedCdm() const;
+
     WeakPtr<RemoteCDMProxy> m_cdm;
     Ref<WebCore::CDMInstanceSession> m_session;
     RemoteCDMInstanceSessionIdentifier m_identifier;

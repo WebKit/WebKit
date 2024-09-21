@@ -138,19 +138,19 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::deleteUnit(AudioMed
 
 void RemoteAudioMediaStreamTrackRendererInternalUnitManager::startUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, IPC::Semaphore&& semaphore)
 {
-    if (auto* unit = m_units.get(identifier))
+    if (RefPtr unit = m_units.get(identifier))
         unit->start(WTFMove(handle), WTFMove(semaphore));
 }
 
 void RemoteAudioMediaStreamTrackRendererInternalUnitManager::stopUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier)
 {
-    if (auto* unit = m_units.get(identifier))
+    if (RefPtr unit = m_units.get(identifier))
         unit->stop();
 }
 
 void RemoteAudioMediaStreamTrackRendererInternalUnitManager::setAudioOutputDevice(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, const String& deviceId)
 {
-    if (auto* unit = m_units.get(identifier))
+    if (RefPtr unit = m_units.get(identifier))
         unit->setAudioOutputDevice(deviceId);
 }
 

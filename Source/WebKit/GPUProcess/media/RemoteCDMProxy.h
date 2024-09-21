@@ -58,6 +58,7 @@ public:
     const RemoteCDMConfiguration& configuration() const { return m_configuration.get(); }
 
     RemoteCDMFactoryProxy* factory() const { return m_factory.get(); }
+    RefPtr<RemoteCDMFactoryProxy> protectedFactory() const { return m_factory.get(); }
 
     bool supportsInitData(const AtomString&, const WebCore::SharedBuffer&);
     RefPtr<WebCore::SharedBuffer> sanitizeResponse(const WebCore::SharedBuffer& response);

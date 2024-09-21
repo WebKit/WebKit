@@ -100,6 +100,7 @@ private:
     bool allowTestOnlyIPC();
 
     RemoteAudioSessionProxyManager& audioSessionManager();
+    Ref<RemoteAudioSessionProxyManager> protectedAudioSessionManager();
     Ref<IPC::Connection> protectedConnection() const;
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnection;

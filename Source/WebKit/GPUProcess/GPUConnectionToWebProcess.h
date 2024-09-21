@@ -208,13 +208,16 @@ public:
     const WebCore::ProcessIdentity& webProcessIdentity() const { return m_webProcessIdentity; }
 #if ENABLE(ENCRYPTED_MEDIA)
     RemoteCDMFactoryProxy& cdmFactoryProxy();
+    Ref<RemoteCDMFactoryProxy> protectedCdmFactoryProxy();
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RemoteLegacyCDMFactoryProxy& legacyCdmFactoryProxy();
+    Ref<RemoteLegacyCDMFactoryProxy> protectedLegacyCdmFactoryProxy();
 #endif
     RemoteMediaEngineConfigurationFactoryProxy& mediaEngineConfigurationFactoryProxy();
 #if ENABLE(VIDEO)
     RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy() { return m_remoteMediaPlayerManagerProxy.get(); }
+    Ref<RemoteMediaPlayerManagerProxy> protectedRemoteMediaPlayerManagerProxy();
 #endif
 #if USE(AUDIO_SESSION)
     RemoteAudioSessionProxyManager& audioSessionManager();
@@ -309,6 +312,7 @@ private:
 
 #if USE(AUDIO_SESSION)
     RemoteAudioSessionProxy& audioSessionProxy();
+    Ref<RemoteAudioSessionProxy> protectedAudioSessionProxy();
     using EnsureAudioSessionCompletion = CompletionHandler<void(const RemoteAudioSessionConfiguration&)>;
     void ensureAudioSession(EnsureAudioSessionCompletion&&);
 #endif

@@ -96,7 +96,7 @@ void RemoteCDMProxy::createInstance(CompletionHandler<void(RemoteCDMInstanceIden
     auto identifier = RemoteCDMInstanceIdentifier::generate();
     auto instance = RemoteCDMInstanceProxy::create(*this, privateInstance.releaseNonNull(), identifier);
     RemoteCDMInstanceConfiguration configuration = instance->configuration();
-    m_factory->addInstance(identifier, WTFMove(instance));
+    protectedFactory()->addInstance(identifier, WTFMove(instance));
     completion(identifier, WTFMove(configuration));
 }
 
@@ -118,7 +118,7 @@ void RemoteCDMProxy::setLogIdentifier(uint64_t logIdentifier)
 
 const SharedPreferencesForWebProcess& RemoteCDMProxy::sharedPreferencesForWebProcess() const
 {
-    return m_factory->sharedPreferencesForWebProcess();
+    return protectedFactory()->sharedPreferencesForWebProcess();
 }
 
 }

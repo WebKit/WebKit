@@ -74,7 +74,7 @@ void RemoteCDMInstanceSessionProxy::requestLicense(LicenseType type, KeyGrouping
     }
 
     // Implement the CDMPrivate::supportsInitData() check here:
-    if (!m_cdm->supportsInitData(initDataType, *initData)) {
+    if (!protectedCdm()->supportsInitData(initDataType, *initData)) {
         completion({ }, emptyString(), false, false);
         return;
     }
@@ -92,7 +92,7 @@ void RemoteCDMInstanceSessionProxy::updateLicense(String sessionId, LicenseType 
     }
 
     // Implement the CDMPrivate::sanitizeResponse() check here:
-    auto sanitizedResponse = m_cdm->sanitizeResponse(*response);
+    auto sanitizedResponse = protectedCdm()->sanitizeResponse(*response);
     if (!sanitizedResponse) {
         completion(false, { }, std::nullopt, std::nullopt, false);
         return;
@@ -106,7 +106,7 @@ void RemoteCDMInstanceSessionProxy::updateLicense(String sessionId, LicenseType 
 void RemoteCDMInstanceSessionProxy::loadSession(LicenseType type, String sessionId, String origin, LoadSessionCallback&& completion)
 {
     // Implement the CDMPrivate::sanitizeSessionId() check here:
-    auto sanitizedSessionId = m_cdm->sanitizeSessionId(sessionId);
+    auto sanitizedSessionId = protectedCdm()->sanitizeSessionId(sessionId);
     if (!sanitizedSessionId) {
         completion(std::nullopt, std::nullopt, std::nullopt, false, CDMInstanceSession::SessionLoadFailure::MismatchedSessionType);
         return;
@@ -183,7 +183,12 @@ void RemoteCDMInstanceSessionProxy::sessionIdChanged(const String& sessionId)
 
 const SharedPreferencesForWebProcess& RemoteCDMInstanceSessionProxy::sharedPreferencesForWebProcess() const
 {
-    return m_cdm->sharedPreferencesForWebProcess();
+    return protectedCdm()->sharedPreferencesForWebProcess();
+}
+
+RefPtr<RemoteCDMProxy> RemoteCDMInstanceSessionProxy::protectedCdm() const
+{
+    return m_cdm.get();
 }
 
 }

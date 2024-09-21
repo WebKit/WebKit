@@ -585,6 +585,11 @@ RemoteAudioSessionProxyManager& GPUProcess::audioSessionManager() const
         m_audioSessionManager = RemoteAudioSessionProxyManager::create(const_cast<GPUProcess&>(*this));
     return *m_audioSessionManager;
 }
+
+Ref<RemoteAudioSessionProxyManager> GPUProcess::protectedAudioSessionManager() const
+{
+    return audioSessionManager();
+}
 #endif
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
@@ -621,13 +626,13 @@ void GPUProcess::processIsStartingToCaptureAudio(GPUConnectionToWebProcess& proc
 #if ENABLE(VIDEO)
 void GPUProcess::requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completion)
 {
-    auto iterator = m_webProcessConnections.find(processIdentifier);
-    if (iterator == m_webProcessConnections.end()) {
+    RefPtr connection = m_webProcessConnections.get(processIdentifier);
+    if (!connection) {
         completion(std::nullopt);
         return;
     }
 
-    completion(iterator->value->remoteMediaPlayerManagerProxy().bitmapImageForCurrentTime(playerIdentifier));
+    completion(connection->protectedRemoteMediaPlayerManagerProxy()->bitmapImageForCurrentTime(playerIdentifier));
 }
 #endif
 

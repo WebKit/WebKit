@@ -95,7 +95,7 @@ void RemoteCDMFactoryProxy::supportsKeySystem(const String& keySystem, Completio
 
 void RemoteCDMFactoryProxy::didReceiveCDMMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (auto* proxy = m_proxies.get(LegacyNullableObjectIdentifier<RemoteCDMIdentifierType>(decoder.destinationID())))
+    if (RefPtr proxy = m_proxies.get(LegacyNullableObjectIdentifier<RemoteCDMIdentifierType>(decoder.destinationID())))
         proxy->didReceiveMessage(connection, decoder);
 }
 
@@ -113,7 +113,7 @@ void RemoteCDMFactoryProxy::didReceiveCDMInstanceSessionMessage(IPC::Connection&
 
 bool RemoteCDMFactoryProxy::didReceiveSyncCDMMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
 {
-    if (auto* proxy = m_proxies.get(LegacyNullableObjectIdentifier<RemoteCDMIdentifierType>(decoder.destinationID())))
+    if (RefPtr proxy = m_proxies.get(LegacyNullableObjectIdentifier<RemoteCDMIdentifierType>(decoder.destinationID())))
         return proxy->didReceiveSyncMessage(connection, decoder, encoder);
     return false;
 }

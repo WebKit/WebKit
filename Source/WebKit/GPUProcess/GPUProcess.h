@@ -99,6 +99,7 @@ public:
 
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     RemoteAudioSessionProxyManager& audioSessionManager() const;
+    Ref<RemoteAudioSessionProxyManager> protectedAudioSessionManager() const;
 #endif
 
     WebCore::NowPlayingManager& nowPlayingManager();

@@ -63,14 +63,15 @@ void RemoteLegacyCDMProxy::supportsMIMEType(const String& mimeType, SupportsMIME
 
 void RemoteLegacyCDMProxy::createSession(const String& keySystem, uint64_t logIdentifier, CreateSessionCallback&& callback)
 {
-    if (!m_cdm || !m_factory) {
+    RefPtr factory = m_factory.get();
+    if (!m_cdm || !factory) {
         callback({ });
         return;
     }
 
     auto sessionIdentifier = RemoteLegacyCDMSessionIdentifier::generate();
-    auto session = RemoteLegacyCDMSessionProxy::create(*m_factory, logIdentifier, sessionIdentifier, *m_cdm);
-    m_factory->addSession(sessionIdentifier, WTFMove(session));
+    auto session = RemoteLegacyCDMSessionProxy::create(*factory, logIdentifier, sessionIdentifier, *m_cdm);
+    factory->addSession(sessionIdentifier, WTFMove(session));
     callback(WTFMove(sessionIdentifier));
 }
 
@@ -83,14 +84,15 @@ void RemoteLegacyCDMProxy::setPlayerId(std::optional<MediaPlayerIdentifier>&& pl
 
 RefPtr<MediaPlayer> RemoteLegacyCDMProxy::cdmMediaPlayer(const LegacyCDM*) const
 {
-    if (!m_playerId || !m_factory)
+    RefPtr factory = m_factory.get();
+    if (!m_playerId || !factory)
         return nullptr;
 
-    RefPtr gpuConnectionToWebProcess = m_factory->gpuConnectionToWebProcess();
+    RefPtr gpuConnectionToWebProcess = factory->gpuConnectionToWebProcess();
     if (!gpuConnectionToWebProcess)
         return nullptr;
 
-    return gpuConnectionToWebProcess->remoteMediaPlayerManagerProxy().mediaPlayer(m_playerId);
+    return gpuConnectionToWebProcess->protectedRemoteMediaPlayerManagerProxy()->mediaPlayer(m_playerId);
 }
 
 const SharedPreferencesForWebProcess& RemoteLegacyCDMProxy::sharedPreferencesForWebProcess() const
