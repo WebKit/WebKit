@@ -50,7 +50,6 @@ JSCSSRule.h
 JSCSSRuleList.cpp
 JSCSSStyleDeclaration.cpp
 JSCSSStyleSheet.cpp
-JSCSSStyleValue.cpp
 JSCSSTransition.cpp
 JSCanvasCaptureMediaStreamTrack.cpp
 JSCanvasRenderingContext2D.h
