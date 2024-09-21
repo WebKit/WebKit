@@ -84,25 +84,16 @@ static std::optional<CSSUnresolvedColor> makeCSSUnresolvedColor(std::optional<T>
 // down the stack and levels of color parsing nesting.
 struct ColorParserState {
     ColorParserState(const CSSParserContext& context, const CSSColorParsingOptions& options)
-        : allowedColorTypes { options.allowedColorTypes }
+        : context { context }
+        , allowedColorTypes { options.allowedColorTypes }
         , acceptQuirkyColors { options.acceptQuirkyColors }
-        , colorLayersEnabled { context.colorLayersEnabled }
-        , contrastColorEnabled { context.contrastColorEnabled }
-        , lightDarkEnabled { context.lightDarkEnabled }
-        , mode { context.mode }
     {
     }
 
+    const CSSParserContext& context;
     OptionSet<StyleColor::CSSColorType> allowedColorTypes;
-
-    bool acceptQuirkyColors;
-    bool colorLayersEnabled;
-    bool contrastColorEnabled;
-    bool lightDarkEnabled;
-
-    CSSParserMode mode;
-
-    unsigned nestingLevel = 0;
+    bool acceptQuirkyColors { false };
+    unsigned nestingLevel { 0 };
 };
 
 // RAII helper to increment/decrement nesting level.
@@ -136,7 +127,7 @@ static std::optional<CSSUnresolvedAbsoluteColorComponent<Descriptor, Index>> con
     using TypeList = GetComponentResultTypeList<Descriptor, Index>;
     using Consumer = brigand::wrap<TypeList, MetaConsumerWrapper>;
 
-    auto result = Consumer::consume(range, { }, { .parserMode = state.mode });
+    auto result = Consumer::consume(range, state.context, { }, { .parserMode = state.context.mode });
     if (!result)
         return { };
 
@@ -151,7 +142,7 @@ static std::optional<CSSUnresolvedRelativeColorComponent<Descriptor, Index>> con
     using TypeList = brigand::append<GetComponentResultTypeList<Descriptor, Index>, brigand::list<SymbolRaw>>;
     using Consumer = brigand::wrap<TypeList, MetaConsumerWrapper>;
 
-    auto result = Consumer::consume(range, WTFMove(symbolsAllowed), { .parserMode = state.mode });
+    auto result = Consumer::consume(range, state.context, WTFMove(symbolsAllowed), { .parserMode = state.context.mode });
     if (!result)
         return { };
 
@@ -536,7 +527,7 @@ static std::optional<CSSUnresolvedColor> consumeColorLayersFunction(CSSParserTok
 
     ASSERT(range.peek().functionId() == CSSValueColorLayers);
 
-    if (!state.colorLayersEnabled)
+    if (!state.context.colorLayersEnabled)
         return std::nullopt;
 
     auto args = consumeFunction(range);
@@ -571,7 +562,7 @@ static std::optional<CSSUnresolvedColorMix::Component> consumeColorMixComponent(
 
     std::optional<CSSUnresolvedColorMix::Component::Percentage> percentage;
 
-    if (auto percent = MetaConsumer<PercentageRaw>::consume(args, { }, { })) {
+    if (auto percent = MetaConsumer<PercentageRaw>::consume(args, state.context, { }, { })) {
         if (PercentageRaw* rawValue = std::get_if<PercentageRaw>(&(*percent))) {
             auto value = rawValue->value;
             if (value < 0.0 || value > 100.0)
@@ -585,7 +576,7 @@ static std::optional<CSSUnresolvedColorMix::Component> consumeColorMixComponent(
         return std::nullopt;
 
     if (!percentage) {
-        if (auto percent = MetaConsumer<PercentageRaw>::consume(args, { }, { })) {
+        if (auto percent = MetaConsumer<PercentageRaw>::consume(args, state.context, { }, { })) {
             if (PercentageRaw* rawValue = std::get_if<PercentageRaw>(&(*percent))) {
                 auto value = rawValue->value;
                 if (value < 0.0 || value > 100.0)
@@ -622,7 +613,7 @@ static std::optional<CSSUnresolvedColor> consumeColorMixFunction(CSSParserTokenR
     if (args.peek().id() != CSSValueIn)
         return std::nullopt;
 
-    auto colorInterpolationMethod = consumeColorInterpolationMethod(args);
+    auto colorInterpolationMethod = consumeColorInterpolationMethod(args, state.context);
     if (!colorInterpolationMethod)
         return std::nullopt;
 
@@ -675,7 +666,7 @@ static std::optional<CSSUnresolvedColor> consumeContrastColorFunction(CSSParserT
 
     ASSERT(range.peek().functionId() == CSSValueContrastColor);
 
-    if (!state.contrastColorEnabled)
+    if (!state.context.contrastColorEnabled)
         return std::nullopt;
 
     auto args = consumeFunction(range);
@@ -706,7 +697,7 @@ static std::optional<CSSUnresolvedColor> consumeLightDarkFunction(CSSParserToken
 
     ASSERT(range.peek().functionId() == CSSValueLightDark);
 
-    if (!state.lightDarkEnabled)
+    if (!state.context.lightDarkEnabled)
         return std::nullopt;
 
     auto args = consumeFunction(range);
@@ -840,7 +831,7 @@ std::optional<CSSUnresolvedColor> consumeColor(CSSParserTokenRange& range, Color
 
     auto keyword = range.peek().id();
     if (StyleColor::isColorKeyword(keyword, state.allowedColorTypes)) {
-        if (!isColorKeywordAllowedInMode(keyword, state.mode))
+        if (!isColorKeywordAllowedInMode(keyword, state.context.mode))
             return { };
 
         consumeIdentRaw(range);

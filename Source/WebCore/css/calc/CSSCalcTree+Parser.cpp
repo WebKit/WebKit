@@ -30,6 +30,7 @@
 #include "CSSCalcTree+Simplification.h"
 #include "CSSCalcTree.h"
 #include "CSSCalcValue.h"
+#include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserHelpers.h"
@@ -66,6 +67,9 @@ static std::optional<std::pair<Number, Type>> lookupConstantNumber(CSSValueID sy
 enum class ParseStatus { OK, TooDeep, NoMoreTokens };
 
 struct ParserState {
+    // CSSParserContext used to initiate the parse.
+    const CSSParserContext& parserContext;
+
     // ParserOptions used to initiate the parse.
     const ParserOptions& parserOptions;
 
@@ -101,15 +105,20 @@ static std::optional<TypedChild> parseCalcNumber(const CSSParserToken&, ParserSt
 static std::optional<TypedChild> parseCalcPercentage(const CSSParserToken&, ParserState&);
 static std::optional<TypedChild> parseCalcDimension(const CSSParserToken&, ParserState&);
 
-std::optional<Tree> parseAndSimplify(CSSParserTokenRange tokens, CSSValueID function, const ParserOptions& parserOptions, const SimplificationOptions& simplificationOptions)
+std::optional<Tree> parseAndSimplify(CSSParserTokenRange& range, const CSSParserContext& parserContext, const ParserOptions& parserOptions, const SimplificationOptions& simplificationOptions)
 {
-    ASSERT(isCalcFunction(function));
+    auto function = range.peek().functionId();
+    if (!isCalcFunction(function, parserContext))
+        return std::nullopt;
+
+    auto tokens = CSSPropertyParserHelpers::consumeFunction(range);
 
     LOG_WITH_STREAM(Calc, stream << "Starting top level parse/simplification of function " << nameLiteralForSerialization(function) << "(" << tokens.serialize() << ") with expected type " << parserOptions.category);
 
     // -- Parsing --
 
     ParserState state {
+        .parserContext = parserContext,
         .parserOptions = parserOptions,
         .simplificationOptions = &simplificationOptions
     };
@@ -134,7 +143,7 @@ std::optional<Tree> parseAndSimplify(CSSParserTokenRange tokens, CSSValueID func
         .type = root->type,
         .category = parserOptions.category,
         .stage = CSSCalc::Stage::Specified,
-        .range = parserOptions.range,
+        .range = parserOptions.propertyOptions.valueRange,
         .requiresConversionData = state.requiresConversionData
     };
 
@@ -143,7 +152,7 @@ std::optional<Tree> parseAndSimplify(CSSParserTokenRange tokens, CSSValueID func
     return result;
 }
 
-bool isCalcFunction(CSSValueID functionId)
+bool isCalcFunction(CSSValueID functionId, const CSSParserContext&)
 {
     switch (functionId) {
     case CSSValueCalc:
@@ -301,7 +310,7 @@ template<typename Op> static std::optional<TypedChild> consumeExactlyTwoArgument
     }
 
     if (!validateType<Op::input>(sumB->type)) {
-        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - argument #1 has invalid type:  " << sumA->type);
+        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - argument #2 has invalid type:  " << sumB->type);
         return std::nullopt;
     }
 
@@ -888,13 +897,13 @@ std::optional<TypedChild> parseCalcValue(CSSParserTokenRange& tokens, int depth,
     if (checkDepthAndIndex(depth, tokens) != ParseStatus::OK)
         return std::nullopt;
 
-    auto findBlock = [](auto& tokens) -> std::optional<CSSValueID> {
+    auto findBlock = [&](auto& tokens) -> std::optional<CSSValueID> {
         if (tokens.peek().type() == LeftParenthesisToken) {
             // Simple blocks (e.g. parenthesis around additional expressions) can be treated just like a nested calc().
             return CSSValueCalc;
         }
 
-        if (auto functionId = tokens.peek().functionId(); isCalcFunction(functionId))
+        if (auto functionId = tokens.peek().functionId(); isCalcFunction(functionId, state.parserContext))
             return functionId;
         return std::nullopt;
     };

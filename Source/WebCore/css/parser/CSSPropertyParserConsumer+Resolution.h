@@ -33,11 +33,13 @@ namespace WebCore {
 class CSSPrimitiveValue;
 class CSSParserTokenRange;
 
+struct CSSParserContext;
+
 namespace CSSPropertyParserHelpers {
 
 // MARK: - Consumer functions
 
-RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange&);
+RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange&, const CSSParserContext&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

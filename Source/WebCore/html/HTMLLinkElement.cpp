@@ -580,7 +580,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
     if (auto restoredSheet = const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->restoreParsedStyleSheet(parserContext, cachePolicy, frame->loader())) {
         ASSERT(restoredSheet->isCacheable());
         ASSERT(!restoredSheet->isLoading());
-        initializeStyleSheet(restoredSheet.releaseNonNull(), *cachedStyleSheet, MediaQueryParserContext(document()));
+        initializeStyleSheet(restoredSheet.releaseNonNull(), *cachedStyleSheet, MediaQueryParserContext(parserContext));
 
         m_loading = false;
         sheetLoaded();
@@ -589,7 +589,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
     }
 
     auto styleSheet = StyleSheetContents::create(href, parserContext);
-    initializeStyleSheet(styleSheet.copyRef(), *cachedStyleSheet, MediaQueryParserContext(document()));
+    initializeStyleSheet(styleSheet.copyRef(), *cachedStyleSheet, MediaQueryParserContext(parserContext));
 
     // FIXME: Set the visibility option based on m_sheet being clean or not.
     // Best approach might be to set it on the style sheet content itself or its context parser otherwise.

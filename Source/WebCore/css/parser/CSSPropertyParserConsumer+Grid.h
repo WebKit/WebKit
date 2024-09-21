@@ -47,14 +47,14 @@ enum TrackListType : uint8_t { GridTemplate, GridTemplateNoRepeat, GridAuto };
 
 bool isGridBreadthIdent(CSSValueID);
 bool parseGridTemplateAreasRow(StringView gridRowNames, NamedGridAreaMap&, const size_t rowCount, size_t& columnCount);
-RefPtr<CSSGridLineNamesValue> consumeGridLineNames(CSSParserTokenRange&, AllowEmpty = AllowEmpty::No);
-RefPtr<CSSValue> consumeGridLine(CSSParserTokenRange&);
+RefPtr<CSSGridLineNamesValue> consumeGridLineNames(CSSParserTokenRange&, const CSSParserContext&, AllowEmpty = AllowEmpty::No);
+RefPtr<CSSValue> consumeGridLine(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeGridTrackSize(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeGridTrackList(CSSParserTokenRange&, const CSSParserContext&, TrackListType);
 RefPtr<CSSValue> consumeGridTemplatesRowsOrColumns(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeGridTemplateAreas(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeMasonryAutoFlow(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeGridTemplateAreas(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeMasonryAutoFlow(CSSParserTokenRange&, const CSSParserContext&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

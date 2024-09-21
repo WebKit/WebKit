@@ -32,31 +32,33 @@ namespace WebCore {
 class CSSParserTokenRange;
 class CSSValue;
 
+struct CSSParserContext;
+
 namespace CSSPropertyParserHelpers {
 
 // MARK: <'align-content'>
 // https://drafts.csswg.org/css-align/#propdef-align-content
-RefPtr<CSSValue> consumeAlignContent(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeAlignContent(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: <'justify-content'>
 // https://drafts.csswg.org/css-align/#propdef-justify-content
-RefPtr<CSSValue> consumeJustifyContent(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeJustifyContent(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: <'align-self'>
 // https://drafts.csswg.org/css-align/#propdef-align-self
-RefPtr<CSSValue> consumeAlignSelf(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeAlignSelf(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: <'justify-self'>
 // https://drafts.csswg.org/css-align/#propdef-justify-self
-RefPtr<CSSValue> consumeJustifySelf(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeJustifySelf(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: <'align-items'>
 // https://drafts.csswg.org/css-align/#propdef-align-items
-RefPtr<CSSValue> consumeAlignItems(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeAlignItems(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: <'justify-items'>
 // https://drafts.csswg.org/css-align/#propdef-justify-items
-RefPtr<CSSValue> consumeJustifyItems(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeJustifyItems(CSSParserTokenRange&, const CSSParserContext&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

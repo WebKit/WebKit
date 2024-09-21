@@ -26,9 +26,11 @@
 #include "config.h"
 #include "ViewTransition.h"
 
+#include "CSSFunctionValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
 #include "CSSTransformListValue.h"
+#include "CSSValuePool.h"
 #include "CheckVisibilityOptions.h"
 #include "ComputedStyleExtractor.h"
 #include "Document.h"

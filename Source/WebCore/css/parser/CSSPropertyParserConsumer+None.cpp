@@ -37,7 +37,7 @@ std::optional<NoneRaw> validatedNoneRaw(NoneRaw value, CSSPropertyParserOptions)
     return value;
 }
 
-std::optional<NoneRaw> NoneKnownTokenTypeIdentConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions)
+std::optional<NoneRaw> NoneKnownTokenTypeIdentConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions)
 {
     ASSERT(range.peek().type() == IdentToken);
 

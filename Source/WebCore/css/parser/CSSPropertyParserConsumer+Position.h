@@ -48,13 +48,13 @@ struct PositionCoordinates {
     Ref<CSSValue> y;
 };
 
-RefPtr<CSSValue> consumePosition(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, PositionSyntax);
+RefPtr<CSSValue> consumePosition(CSSParserTokenRange&, const CSSParserContext&, UnitlessQuirk, PositionSyntax);
 
 RefPtr<CSSValue> consumePositionX(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumePositionY(CSSParserTokenRange&, const CSSParserContext&);
 
-std::optional<PositionCoordinates> consumePositionCoordinates(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, PositionSyntax, NegativePercentagePolicy = NegativePercentagePolicy::Forbid);
-std::optional<PositionCoordinates> consumeOneOrTwoValuedPositionCoordinates(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk);
+std::optional<PositionCoordinates> consumePositionCoordinates(CSSParserTokenRange&, const CSSParserContext&, UnitlessQuirk, PositionSyntax, NegativePercentagePolicy = NegativePercentagePolicy::Forbid);
+std::optional<PositionCoordinates> consumeOneOrTwoValuedPositionCoordinates(CSSParserTokenRange&, const CSSParserContext&, UnitlessQuirk);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

@@ -42,17 +42,17 @@ std::optional<AngleRaw> validatedRange(AngleRaw, CSSPropertyParserOptions);
 
 struct AngleKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<AngleRaw>> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<UnevaluatedCalc<AngleRaw>> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct AngleKnownTokenTypeDimensionConsumer {
     static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static std::optional<AngleRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<AngleRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct AngleKnownTokenTypeNumberConsumer {
     static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<AngleRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<AngleRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 template<> struct ConsumerDefinition<AngleRaw> {

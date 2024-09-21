@@ -40,7 +40,7 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-static RefPtr<CSSValue> consumeCounter(CSSParserTokenRange& range, int defaultValue)
+static RefPtr<CSSValue> consumeCounter(CSSParserTokenRange& range, const CSSParserContext& context, int defaultValue)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
@@ -50,7 +50,7 @@ static RefPtr<CSSValue> consumeCounter(CSSParserTokenRange& range, int defaultVa
         auto counterName = consumeCustomIdent(range);
         if (!counterName)
             return nullptr;
-        if (auto counterValue = consumeInteger(range))
+        if (auto counterValue = consumeInteger(range, context))
             list.append(CSSValuePair::create(counterName.releaseNonNull(), counterValue.releaseNonNull()));
         else
             list.append(CSSValuePair::create(counterName.releaseNonNull(), CSSPrimitiveValue::createInteger(defaultValue)));
@@ -58,30 +58,30 @@ static RefPtr<CSSValue> consumeCounter(CSSParserTokenRange& range, int defaultVa
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-RefPtr<CSSValue> consumeCounterReset(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeCounterReset(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // <'counter-reset'> = [ <counter-name> <integer>? | <reversed-counter-name> <integer>? ]+ | none
     // https://drafts.csswg.org/css-lists/#propdef-counter-reset
 
     // FIXME: Implement support for `reversed-counter-name`.
 
-    return consumeCounter(range, 0);
+    return consumeCounter(range, context, 0);
 }
 
-RefPtr<CSSValue> consumeCounterIncrement(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeCounterIncrement(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // <'counter-increment'> = [ <counter-name> <integer>? ]+ | none
     // https://drafts.csswg.org/css-lists/#propdef-counter-increment
 
-    return consumeCounter(range, 1);
+    return consumeCounter(range, context, 1);
 }
 
-RefPtr<CSSValue> consumeCounterSet(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeCounterSet(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // <'counter-set'> = [ <counter-name> <integer>? ]+ | none
     // https://drafts.csswg.org/css-lists/#propdef-counter-set
 
-    return consumeCounter(range, 0);
+    return consumeCounter(range, context, 0);
 }
 
 RefPtr<CSSValue> consumeListStyleType(CSSParserTokenRange& range, const CSSParserContext& context)

@@ -36,23 +36,25 @@ namespace WebCore {
 class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
 
+struct CSSParserContext;
+
 namespace CSSPropertyParserHelpers {
 
 std::optional<LengthRaw> validatedRange(LengthRaw, CSSPropertyParserOptions);
 
 struct LengthKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<LengthRaw>> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<UnevaluatedCalc<LengthRaw>> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct LengthKnownTokenTypeDimensionConsumer {
     static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static std::optional<LengthRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<LengthRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct LengthKnownTokenTypeNumberConsumer {
     static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<LengthRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<LengthRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 template<> struct ConsumerDefinition<LengthRaw> {

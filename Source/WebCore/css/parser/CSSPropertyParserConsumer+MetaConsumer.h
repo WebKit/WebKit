@@ -160,23 +160,23 @@ struct MetaConsumer {
     using ResultType = typename MetaConsumeResult<Ts...>::type;
 
     template<typename... Args>
-    static std::optional<ResultType> consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options, Args&&... args)
+    static std::optional<ResultType> consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options, Args&&... args)
     {
         switch (range.peek().type()) {
         case FunctionToken:
-            return MetaConsumerUnroller<FunctionToken, ResultType, Ts...>::consume(range, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
+            return MetaConsumerUnroller<FunctionToken, ResultType, Ts...>::consume(range, context, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
 
         case NumberToken:
-            return MetaConsumerUnroller<NumberToken, ResultType, Ts...>::consume(range, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
+            return MetaConsumerUnroller<NumberToken, ResultType, Ts...>::consume(range, context, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
 
         case PercentageToken:
-            return MetaConsumerUnroller<PercentageToken, ResultType, Ts...>::consume(range, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
+            return MetaConsumerUnroller<PercentageToken, ResultType, Ts...>::consume(range, context, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
 
         case DimensionToken:
-            return MetaConsumerUnroller<DimensionToken, ResultType, Ts...>::consume(range, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
+            return MetaConsumerUnroller<DimensionToken, ResultType, Ts...>::consume(range, context, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
 
         case IdentToken:
-            return MetaConsumerUnroller<IdentToken, ResultType, Ts...>::consume(range, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
+            return MetaConsumerUnroller<IdentToken, ResultType, Ts...>::consume(range, context, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
 
         default:
             return { };

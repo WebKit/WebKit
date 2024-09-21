@@ -36,18 +36,20 @@ namespace WebCore {
 class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
 
+struct CSSParserContext;
+
 namespace CSSPropertyParserHelpers {
 
 std::optional<NumberRaw> validatedRange(NumberRaw, CSSPropertyParserOptions);
 
 struct NumberKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<NumberRaw>> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<UnevaluatedCalc<NumberRaw>> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct NumberKnownTokenTypeNumberConsumer {
     static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<NumberRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<NumberRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 template<> struct ConsumerDefinition<NumberRaw> {

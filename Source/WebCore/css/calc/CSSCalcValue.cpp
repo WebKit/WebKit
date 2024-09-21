@@ -51,19 +51,13 @@
 
 namespace WebCore {
 
-bool CSSCalcValue::isCalcFunction(CSSValueID functionId)
-{
-    return CSSCalc::isCalcFunction(functionId);
-}
-
-RefPtr<CSSCalcValue> CSSCalcValue::parse(CSSValueID function, const CSSParserTokenRange& tokens, Calculation::Category category, ValueRange range, CSSCalcSymbolsAllowed symbolsAllowed)
+RefPtr<CSSCalcValue> CSSCalcValue::parse(CSSParserTokenRange& tokens, const CSSParserContext& context, Calculation::Category category, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserHelpers::CSSPropertyParserOptions propertyOptions)
 {
     auto parserOptions = CSSCalc::ParserOptions {
         .category = category,
         .allowedSymbols = WTFMove(symbolsAllowed),
-        .range = range
+        .propertyOptions = propertyOptions
     };
-
     auto simplificationOptions = CSSCalc::SimplificationOptions {
         .category = category,
         .conversionData = std::nullopt,
@@ -73,7 +67,7 @@ RefPtr<CSSCalcValue> CSSCalcValue::parse(CSSValueID function, const CSSParserTok
         .allowNonMatchingUnits = false
     };
 
-    auto tree = CSSCalc::parseAndSimplify(tokens, function, parserOptions, simplificationOptions);
+    auto tree = CSSCalc::parseAndSimplify(tokens, context, parserOptions, simplificationOptions);
     if (!tree)
         return nullptr;
 

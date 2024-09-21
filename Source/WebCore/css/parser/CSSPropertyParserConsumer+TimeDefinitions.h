@@ -36,23 +36,25 @@ namespace WebCore {
 class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
 
+struct CSSParserContext;
+
 namespace CSSPropertyParserHelpers {
 
 std::optional<TimeRaw> validatedRange(TimeRaw, CSSPropertyParserOptions);
 
 struct TimeKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<TimeRaw>> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<UnevaluatedCalc<TimeRaw>> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct TimeKnownTokenTypeDimensionConsumer {
     static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static std::optional<TimeRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<TimeRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct TimeKnownTokenTypeNumberConsumer {
     static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<TimeRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<TimeRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 template<> struct ConsumerDefinition<TimeRaw> {

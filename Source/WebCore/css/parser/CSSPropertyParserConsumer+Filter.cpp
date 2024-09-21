@@ -38,6 +38,7 @@
 #include "CSSPropertyParserConsumer+Percentage.h"
 #include "CSSPropertyParserConsumer+URL.h"
 #include "CSSPropertyParserHelpers.h"
+#include "CSSShadowValue.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSTokenizer.h"
 #include "CSSValueKeywords.h"
@@ -61,13 +62,13 @@ template<CSSValueID filterFunction> static constexpr bool isAllowed(AllowedFilte
     return false;
 }
 
-template<CSSValueID filterFunction> static RefPtr<CSSValue> consumeNumberOrPercentFilterParameter(CSSParserTokenRange& args, const CSSParserContext&)
+template<CSSValueID filterFunction> static RefPtr<CSSValue> consumeNumberOrPercentFilterParameter(CSSParserTokenRange& args, const CSSParserContext& context)
 {
-    if (RefPtr percentage = consumePercentage(args, ValueRange::NonNegative)) {
+    if (RefPtr percentage = consumePercentage(args, context, ValueRange::NonNegative)) {
         if (!filterFunctionAllowsValuesGreaterThanOne<filterFunction>() && percentage->resolveAsPercentageIfNotCalculated() > 100.0)
             percentage = CSSPrimitiveValue::create(100.0, CSSUnitType::CSS_PERCENTAGE);
         return percentage;
-    } else if (RefPtr number = consumeNumber(args, ValueRange::NonNegative)) {
+    } else if (RefPtr number = consumeNumber(args, context, ValueRange::NonNegative)) {
         if (!filterFunctionAllowsValuesGreaterThanOne<filterFunction>() && number->resolveAsNumberIfNotCalculated() > 1.0)
             number = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_NUMBER);
         return number;
@@ -182,7 +183,7 @@ static RefPtr<CSSFunctionValue> consumeFilterFunctionHueRotate(CSSParserTokenRan
     if (args.atEnd())
         return CSSFunctionValue::create(function);
 
-    auto parsedValue = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
+    auto parsedValue = consumeAngle(args, context, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
     if (!parsedValue || !args.atEnd())
         return nullptr;
 

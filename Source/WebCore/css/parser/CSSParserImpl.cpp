@@ -820,7 +820,7 @@ RefPtr<StyleRuleFontFeatureValuesBlock> CSSParserImpl::consumeFontFeatureValuesR
 
     auto [type, maxValues] = fontFeatureValuesTypeMappings(id);
 
-    auto consumeTag = [](CSSParserTokenRange range, std::optional<unsigned> maxValues) -> std::optional<FontFeatureValuesTag> {
+    auto consumeTag = [this](CSSParserTokenRange range, std::optional<unsigned> maxValues) -> std::optional<FontFeatureValuesTag> {
         if (range.peek().type() != IdentToken)
             return { };
         auto name = range.consumeIncludingWhitespace().value();
@@ -830,7 +830,7 @@ RefPtr<StyleRuleFontFeatureValuesBlock> CSSParserImpl::consumeFontFeatureValuesR
 
         Vector<unsigned> values;
         while (!range.atEnd()) {
-            auto value = CSSPropertyParserHelpers::consumeNonNegativeInteger(range);
+            auto value = CSSPropertyParserHelpers::consumeNonNegativeInteger(range, m_context);
             if (!value)
                 return { };
             ASSERT(value->isInteger());
@@ -878,7 +878,7 @@ RefPtr<StyleRuleFontFeatureValues> CSSParserImpl::consumeFontFeatureValuesRule(C
     // @font-feature-values <family-name># { <declaration-list> }
 
     auto originalPrelude = prelude;
-    auto fontFamilies = CSSPropertyParserHelpers::consumeFontFeatureValuesPreludeFamilyNameList(prelude);
+    auto fontFamilies = CSSPropertyParserHelpers::consumeFontFeatureValuesPreludeFamilyNameList(prelude, m_context);
     if (fontFamilies.isEmpty() || !prelude.atEnd())
         return nullptr;
 

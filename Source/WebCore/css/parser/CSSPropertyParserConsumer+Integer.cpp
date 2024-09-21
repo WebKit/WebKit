@@ -34,35 +34,35 @@ namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
 template<typename IntType, IntegerValueRange integerRange>
-static RefPtr<CSSPrimitiveValue> consumeIntegerType(CSSParserTokenRange& range)
+static RefPtr<CSSPrimitiveValue> consumeIntegerType(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return CSSPrimitiveValueResolver<IntegerRaw<IntType, integerRange>>::consumeAndResolve(range, { }, { }, { });
+    return CSSPrimitiveValueResolver<IntegerRaw<IntType, integerRange>>::consumeAndResolve(range, context, { }, { }, { });
 }
 
-RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange& range)
+RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeIntegerType<int, IntegerValueRange::All>(range);
+    return consumeIntegerType<int, IntegerValueRange::All>(range, context);
 }
 
-RefPtr<CSSPrimitiveValue> consumeNonNegativeInteger(CSSParserTokenRange& range)
+RefPtr<CSSPrimitiveValue> consumeNonNegativeInteger(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeIntegerType<int, IntegerValueRange::NonNegative>(range);
+    return consumeIntegerType<int, IntegerValueRange::NonNegative>(range, context);
 }
 
-RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange& range)
+RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeIntegerType<unsigned, IntegerValueRange::Positive>(range);
+    return consumeIntegerType<unsigned, IntegerValueRange::Positive>(range, context);
 }
 
-RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange& range, IntegerValueRange valueRange)
+RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange& range, const CSSParserContext& context, IntegerValueRange valueRange)
 {
     switch (valueRange) {
     case IntegerValueRange::All:
-        return consumeInteger(range);
+        return consumeInteger(range, context);
     case IntegerValueRange::Positive:
-        return consumePositiveInteger(range);
+        return consumePositiveInteger(range, context);
     case IntegerValueRange::NonNegative:
-        return consumeNonNegativeInteger(range);
+        return consumeNonNegativeInteger(range, context);
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -35,13 +35,15 @@ namespace WebCore {
 class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
 
+struct CSSParserContext;
+
 namespace CSSPropertyParserHelpers {
 
 std::optional<NoneRaw> validatedNoneRaw(NoneRaw, CSSPropertyParserOptions);
 
 struct NoneKnownTokenTypeIdentConsumer {
     static constexpr CSSParserTokenType tokenType = IdentToken;
-    static std::optional<NoneRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<NoneRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 template<> struct ConsumerDefinition<NoneRaw> {

@@ -472,11 +472,8 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("parser-function", allowed_types=[str]),
         Schema.Entry("parser-function-allows-number-or-integer-input", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-function-requires-additional-parameters", allowed_types=[list], default_value=[]),
-        Schema.Entry("parser-function-requires-context", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-function-requires-context-mode", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-function-requires-current-shorthand", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-function-requires-current-property", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-function-requires-quirks-mode", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-function-requires-value-pool", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-grammar", allowed_types=[str]),
         Schema.Entry("parser-grammar-comment", allowed_types=[str]),
@@ -578,7 +575,7 @@ class StylePropertyCodeGenProperties:
                 raise Exception(f"{key_path} can't be both a cascade alias and a shorthand.")
 
         if json_value.get("parser-grammar"):
-            for entry_name in ["parser-function", "parser-function-requires-additional-parameters", "parser-function-requires-context", "parser-function-requires-context-mode", "parser-function-requires-current-shorthand", "parser-function-requires-current-property", "parser-function-requires-quirks-mode", "parser-function-requires-value-pool", "skip-parser", "longhands"]:
+            for entry_name in ["parser-function", "parser-function-requires-additional-parameters", "parser-function-requires-current-shorthand", "parser-function-requires-current-property", "parser-function-requires-value-pool", "skip-parser", "longhands"]:
                 if entry_name in json_value:
                     raise Exception(f"{key_path} can't have both 'parser-grammar' and '{entry_name}'.")
             grammar = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar"])
@@ -975,11 +972,8 @@ class DescriptorCodeGenProperties:
         Schema.Entry("parser-function", allowed_types=[str]),
         Schema.Entry("parser-function-allows-number-or-integer-input", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-function-requires-additional-parameters", allowed_types=[list], default_value=[]),
-        Schema.Entry("parser-function-requires-context", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-function-requires-context-mode", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-function-requires-current-shorthand", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-function-requires-current-property", allowed_types=[bool], default_value=False),
-        Schema.Entry("parser-function-requires-quirks-mode", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-function-requires-value-pool", allowed_types=[bool], default_value=False),
         Schema.Entry("parser-grammar", allowed_types=[str]),
         Schema.Entry("parser-grammar-comment", allowed_types=[str]),
@@ -1022,7 +1016,7 @@ class DescriptorCodeGenProperties:
                 del json_value["longhands"]
 
         if json_value.get("parser-grammar"):
-            for entry_name in ["parser-function", "parser-function-requires-additional-parameters", "parser-function-requires-context", "parser-function-requires-context-mode", "parser-function-requires-current-shorthand", "parser-function-requires-current-property", "parser-function-requires-quirks-mode", "parser-function-requires-value-pool", "skip-parser", "longhands"]:
+            for entry_name in ["parser-function", "parser-function-requires-additional-parameters", "parser-function-requires-current-shorthand", "parser-function-requires-current-property", "parser-function-requires-value-pool", "skip-parser", "longhands"]:
                 if entry_name in json_value:
                     raise Exception(f"{key_path} can't have both 'parser-grammar' and '{entry_name}.")
             grammar = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar"])
@@ -1495,7 +1489,6 @@ class BuiltinSchema:
 class ReferenceTerm:
     builtins = BuiltinSchema(
         BuiltinSchema.Entry("angle", "consumeAngle",
-            BuiltinSchema.OptionalParameter("mode", values={"svg": "SVGAttributeMode", "strict": "HTMLStandardMode"}, default=None),
             BuiltinSchema.OptionalParameter("unitless", values={"unitless-allowed": "UnitlessQuirk::Allow"}, default="UnitlessQuirk::Forbid"),
             BuiltinSchema.OptionalParameter("unitless-zero", values={"unitless-zero-allowed": "UnitlessZeroQuirk::Allow"}, default="UnitlessZeroQuirk::Forbid")),
         BuiltinSchema.Entry("length", "consumeLength",
@@ -1504,11 +1497,9 @@ class ReferenceTerm:
             BuiltinSchema.OptionalParameter("unitless", values={"unitless-allowed": "UnitlessQuirk::Allow"}, default="UnitlessQuirk::Forbid")),
         BuiltinSchema.Entry("length-percentage", "consumeLengthPercentage",
             BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "ValueRange::NonNegative"}, default="ValueRange::All"),
-            BuiltinSchema.OptionalParameter("mode", values={"svg": "SVGAttributeMode", "strict": "HTMLStandardMode"}, default=None),
             BuiltinSchema.OptionalParameter("unitless", values={"unitless-allowed": "UnitlessQuirk::Allow"}, default="UnitlessQuirk::Forbid")),
         BuiltinSchema.Entry("time", "consumeTime",
             BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "ValueRange::NonNegative"}, default="ValueRange::All"),
-            BuiltinSchema.OptionalParameter("mode", values={"svg": "SVGAttributeMode", "strict": "HTMLStandardMode"}, default=None),
             BuiltinSchema.OptionalParameter("unitless", values={"unitless-allowed": "UnitlessQuirk::Allow"}, default="UnitlessQuirk::Forbid")),
         BuiltinSchema.Entry("integer", "consumeInteger",
             BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "IntegerValueRange::NonNegative", "[1,inf]": "IntegerValueRange::Positive"}, default="IntegerValueRange::All")),
@@ -4412,27 +4403,30 @@ class TermGeneratorReferenceTerm(TermGenerator):
         if self.term.is_builtin:
             builtin = self.term.builtin
             if isinstance(builtin, BuiltinAngleConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {context_string}.mode, {builtin.unitless}, {builtin.unitless_zero})"
+                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.unitless}, {builtin.unitless_zero})"
             elif isinstance(builtin, BuiltinTimeConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {context_string}.mode, {builtin.value_range}, {builtin.unitless})"
+                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.value_range}, {builtin.unitless})"
             elif isinstance(builtin, BuiltinLengthConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {builtin.mode or f'{context_string}.mode'}, {builtin.value_range}, {builtin.unitless})"
+                if builtin.mode:
+                    return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.mode}, {builtin.value_range}, {builtin.unitless})"
+                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.value_range}, {builtin.unitless})"
             elif isinstance(builtin, BuiltinLengthPercentageConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {builtin.mode or f'{context_string}.mode'}, {builtin.value_range}, {builtin.unitless})"
+                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.value_range}, {builtin.unitless})"
             elif isinstance(builtin, BuiltinIntegerConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {builtin.value_range})"
+                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.value_range})"
             elif isinstance(builtin, BuiltinNumberConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {builtin.value_range})"
+                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.value_range})"
             elif isinstance(builtin, BuiltinPercentageConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {builtin.value_range})"
+                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.value_range})"
             elif isinstance(builtin, BuiltinPositionConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {context_string}.mode, {builtin.unitless}, PositionSyntax::Position)"
+                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.unitless}, PositionSyntax::Position)"
             elif isinstance(builtin, BuiltinColorConsumer):
                 if builtin.quirky_colors:
                     return f"{builtin.consume_function_name}({range_string}, {context_string}, {{ .acceptQuirkyColors = ({context_string}.mode == HTMLQuirksMode) }})"
                 return f"{builtin.consume_function_name}({range_string}, {context_string})"
+            elif self.requires_context:
+                return f"{builtin.consume_function_name}({range_string}, {context_string})"
             else:
-                assert(not self.requires_context)
                 return f"{builtin.consume_function_name}({range_string})"
         else:
             return f"consume{self.term.name.id_without_prefix}({range_string}, {context_string})"
@@ -4446,21 +4440,21 @@ class TermGeneratorReferenceTerm(TermGenerator):
             elif isinstance(builtin, BuiltinTimeConsumer):
                 return True
             elif isinstance(builtin, BuiltinLengthConsumer):
-                return builtin.mode is None
+                return True
             elif isinstance(builtin, BuiltinLengthPercentageConsumer):
-                return builtin.mode is None
+                return True
             elif isinstance(builtin, BuiltinIntegerConsumer):
-                return False
+                return True
             elif isinstance(builtin, BuiltinNumberConsumer):
-                return False
+                return True
             elif isinstance(builtin, BuiltinPercentageConsumer):
-                return False
+                return True
             elif isinstance(builtin, BuiltinPositionConsumer):
                 return True
             elif isinstance(builtin, BuiltinColorConsumer):
                 return True
             elif isinstance(builtin, BuiltinResolutionConsumer):
-                return False
+                return True
             elif isinstance(builtin, BuiltinStringConsumer):
                 return False
             elif isinstance(builtin, BuiltinCustomIdentConsumer):
@@ -4470,9 +4464,9 @@ class TermGeneratorReferenceTerm(TermGenerator):
             elif isinstance(builtin, BuiltinURLConsumer):
                 return False
             elif isinstance(builtin, BuiltinFeatureTagValueConsumer):
-                return False
+                return True
             elif isinstance(builtin, BuiltinVariationTagValueConsumer):
-                return False
+                return True
             else:
                 raise Exception(f"Unknown builtin type used: {builtin.name.name}")
         else:
@@ -4840,18 +4834,11 @@ class CustomPropertyConsumer(PropertyConsumer):
         return self.__str__()
 
     def generate_call_string(self, *, range_string, id_string, current_shorthand_string, context_string):
-        parameters = []
+        parameters = [range_string, context_string]
         if self.property.codegen_properties.parser_function_requires_current_property:
             parameters.append(id_string)
-        parameters.append(range_string)
         if self.property.codegen_properties.parser_function_requires_current_shorthand:
             parameters.append(current_shorthand_string)
-        if self.property.codegen_properties.parser_function_requires_context:
-            parameters.append(context_string)
-        if self.property.codegen_properties.parser_function_requires_context_mode:
-            parameters.append(f"{context_string}.mode")
-        if self.property.codegen_properties.parser_function_requires_quirks_mode:
-            parameters.append(f"{context_string}.mode == HTMLQuirksMode")
         if self.property.codegen_properties.parser_function_requires_value_pool:
             parameters.append("CSSValuePool::singleton()")
         parameters += self.property.codegen_properties.parser_function_requires_additional_parameters

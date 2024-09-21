@@ -42,6 +42,10 @@ namespace Calculation {
 enum class Category : uint8_t;
 }
 
+namespace CSSPropertyParserHelpers {
+struct CSSPropertyParserOptions;
+}
+
 class CSSCalcSymbolTable;
 class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
@@ -49,6 +53,7 @@ class CSSToLengthConversionData;
 class CalculationValue;
 class RenderStyle;
 
+struct CSSParserContext;
 struct Length;
 
 enum CSSValueID : uint16_t;
@@ -58,9 +63,7 @@ enum class ValueRange : uint8_t;
 
 class CSSCalcValue final : public CSSValue {
 public:
-    static bool isCalcFunction(CSSValueID);
-
-    static RefPtr<CSSCalcValue> parse(CSSValueID function, const CSSParserTokenRange&, Calculation::Category, ValueRange, CSSCalcSymbolsAllowed);
+    static RefPtr<CSSCalcValue> parse(CSSParserTokenRange&, const CSSParserContext&, Calculation::Category, CSSCalcSymbolsAllowed, CSSPropertyParserHelpers::CSSPropertyParserOptions);
 
     static Ref<CSSCalcValue> create(const CalculationValue&, const RenderStyle&);
     static Ref<CSSCalcValue> create(CSSCalc::Tree&&);

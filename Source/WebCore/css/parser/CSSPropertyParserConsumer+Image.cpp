@@ -72,8 +72,7 @@ namespace CSSPropertyParserHelpers {
 
 enum class DeprecatedGradientPointAxis { Horizontal, Vertical };
 
-template<DeprecatedGradientPointAxis axis>
-static RefPtr<CSSPrimitiveValue> consumeDeprecatedGradientPointValue(CSSParserTokenRange& range)
+template<DeprecatedGradientPointAxis axis> static RefPtr<CSSPrimitiveValue> consumeDeprecatedGradientPointValue(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().type() == IdentToken) {
         if ((axis == DeprecatedGradientPointAxis::Horizontal && consumeIdent<CSSValueLeft>(range)) || (axis == DeprecatedGradientPointAxis::Vertical && consumeIdent<CSSValueTop>(range)))
@@ -84,19 +83,19 @@ static RefPtr<CSSPrimitiveValue> consumeDeprecatedGradientPointValue(CSSParserTo
             return CSSPrimitiveValue::create(50, CSSUnitType::CSS_PERCENTAGE);
         return nullptr;
     }
-    RefPtr<CSSPrimitiveValue> result = consumePercentage(range);
+    RefPtr<CSSPrimitiveValue> result = consumePercentage(range, context);
     if (!result)
-        result = consumeNumber(range);
+        result = consumeNumber(range, context);
     return result;
 }
 
-static std::optional<CSSGradientDeprecatedPoint> consumeDeprecatedGradientPoint(CSSParserTokenRange& range)
+static std::optional<CSSGradientDeprecatedPoint> consumeDeprecatedGradientPoint(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    auto x = consumeDeprecatedGradientPointValue<DeprecatedGradientPointAxis::Horizontal>(range);
+    auto x = consumeDeprecatedGradientPointValue<DeprecatedGradientPointAxis::Horizontal>(range, context);
     if (!x)
         return std::nullopt;
 
-    auto y = consumeDeprecatedGradientPointValue<DeprecatedGradientPointAxis::Vertical>(range);
+    auto y = consumeDeprecatedGradientPointValue<DeprecatedGradientPointAxis::Vertical>(range, context);
     if (!y)
         return std::nullopt;
 
@@ -134,7 +133,7 @@ static bool consumeDeprecatedGradientColorStop(CSSParserTokenRange& range, CSSGr
         position = CSSPrimitiveValue::create(1);
         break;
     case CSSValueColorStop:
-        position = consumePercentageOrNumber(args);
+        position = consumePercentageOrNumber(args, context);
         if (!position)
             return false;
         if (!consumeCommaIncludingWhitespace(args))
@@ -169,14 +168,14 @@ static RefPtr<CSSValue> consumeDeprecatedLinearGradient(CSSParserTokenRange& ran
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
-    auto first = consumeDeprecatedGradientPoint(range);
+    auto first = consumeDeprecatedGradientPoint(range, context);
     if (!first)
         return nullptr;
 
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
-    auto second = consumeDeprecatedGradientPoint(range);
+    auto second = consumeDeprecatedGradientPoint(range, context);
     if (!second)
         return nullptr;
 
@@ -202,28 +201,28 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& ran
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
-    auto first = consumeDeprecatedGradientPoint(range);
+    auto first = consumeDeprecatedGradientPoint(range, context);
     if (!first)
         return nullptr;
 
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
-    auto firstRadius = MetaConsumer<NumberRaw>::consume(range, { }, radiusConsumeOptions);
+    auto firstRadius = MetaConsumer<NumberRaw>::consume(range, context, { }, radiusConsumeOptions);
     if (!firstRadius)
         return nullptr;
 
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
-    auto second = consumeDeprecatedGradientPoint(range);
+    auto second = consumeDeprecatedGradientPoint(range, context);
     if (!second)
         return nullptr;
 
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
-    auto secondRadius = MetaConsumer<NumberRaw>::consume(range, { }, radiusConsumeOptions);
+    auto secondRadius = MetaConsumer<NumberRaw>::consume(range, context, { }, radiusConsumeOptions);
     if (!secondRadius)
         return nullptr;
 
@@ -305,7 +304,7 @@ static std::optional<CSSGradientColorStopList> consumeLengthColorStopList(CSSPar
 
 static std::optional<CSSGradientColorStopList> consumeAngularColorStopList(CSSParserTokenRange& range, const CSSParserContext& context, SupportsColorHints supportsColorHints)
 {
-    return consumeColorStopList(range, context, supportsColorHints, [&] { return consumeAngleOrPercent(range, context.mode); });
+    return consumeColorStopList(range, context, supportsColorHints, [&] { return consumeAngleOrPercent(range, context); });
 }
 
 static CSSGradientColorInterpolationMethod computeGradientColorInterpolationMethod(std::optional<ColorInterpolationMethod> parsedColorInterpolationMethod, const CSSGradientColorStopList& stops)
@@ -412,7 +411,7 @@ static RefPtr<CSSValue> consumePrefixedLinearGradient(CSSParserTokenRange& range
         .unitlessZero = UnitlessZeroQuirk::Allow
     };
 
-    if (auto angle = MetaConsumer<AngleRaw>::consume(range, { }, angleConsumeOptions)) {
+    if (auto angle = MetaConsumer<AngleRaw>::consume(range, context, { }, angleConsumeOptions)) {
         gradientLine = WTF::switchOn(WTFMove(*angle), [](auto&& value) -> CSSPrefixedLinearGradientValue::GradientLine { return value; });
         if (!consumeCommaIncludingWhitespace(range))
             return nullptr;
@@ -582,7 +581,7 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& range, const 
     std::optional<ColorInterpolationMethod> colorInterpolationMethod;
 
     if (range.peek().id() == CSSValueIn) {
-        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        colorInterpolationMethod = consumeColorInterpolationMethod(range, context);
         if (!colorInterpolationMethod)
             return nullptr;
     }
@@ -595,7 +594,7 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& range, const 
         .unitlessZero = UnitlessZeroQuirk::Allow
     };
 
-    if (auto angle = MetaConsumer<AngleRaw>::consume(range, { }, angleConsumeOptions))
+    if (auto angle = MetaConsumer<AngleRaw>::consume(range, context, { }, angleConsumeOptions))
         gradientLine = WTF::switchOn(WTFMove(*angle), [](auto&& value) -> CSSLinearGradientValue::GradientLine { return value; });
     else if (range.peek().id() == CSSValueTo) {
         auto keywordGradientLine = consumeKeywordGradientLine(range);
@@ -605,7 +604,7 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& range, const 
     }
 
     if (gradientLine && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
-        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        colorInterpolationMethod = consumeColorInterpolationMethod(range, context);
         if (!colorInterpolationMethod)
             return nullptr;
     }
@@ -656,7 +655,7 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
     std::optional<ColorInterpolationMethod> colorInterpolationMethod;
 
     if (range.peek().id() == CSSValueIn) {
-        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        colorInterpolationMethod = consumeColorInterpolationMethod(range, context);
         if (!colorInterpolationMethod)
             return nullptr;
     }
@@ -718,7 +717,7 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
     }
 
     if ((shape || size || position) && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
-        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        colorInterpolationMethod = consumeColorInterpolationMethod(range, context);
         if (!colorInterpolationMethod)
             return nullptr;
     }
@@ -822,7 +821,7 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& range, const C
     std::optional<ColorInterpolationMethod> colorInterpolationMethod;
 
     if (range.peek().id() == CSSValueIn) {
-        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        colorInterpolationMethod = consumeColorInterpolationMethod(range, context);
         if (!colorInterpolationMethod)
             return nullptr;
     }
@@ -837,7 +836,7 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& range, const C
             .unitlessZero = UnitlessZeroQuirk::Allow
         };
 
-        auto angleValue = MetaConsumer<AngleRaw>::consume(range, { }, angleConsumeOptions);
+        auto angleValue = MetaConsumer<AngleRaw>::consume(range, context, { }, angleConsumeOptions);
         if (!angleValue)
             return nullptr;
         angle = WTF::switchOn(WTFMove(*angleValue), [](auto&& value) -> CSSConicGradientValue::Angle { return value; });
@@ -852,7 +851,7 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& range, const C
     }
 
     if ((!std::holds_alternative<std::monostate>(angle) || position) && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
-        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        colorInterpolationMethod = consumeColorInterpolationMethod(range, context);
         if (!colorInterpolationMethod)
             return nullptr;
     }
@@ -896,7 +895,7 @@ static RefPtr<CSSValue> consumeCrossFade(CSSParserTokenRange& args, const CSSPar
     if (!toImageValueOrNone || !consumeCommaIncludingWhitespace(args))
         return nullptr;
 
-    auto value = consumePercentageDividedBy100OrNumber(args);
+    auto value = consumePercentageDividedBy100OrNumber(args, context);
     if (!value)
         return nullptr;
 
@@ -977,7 +976,7 @@ struct ImageSetTypeFunctionRaw {
 struct ImageSetTypeFunctionRawKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
 
-    static std::optional<ImageSetTypeFunctionRaw> consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions)
+    static std::optional<ImageSetTypeFunctionRaw> consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions)
     {
         ASSERT(range.peek().type() == FunctionToken);
         if (range.peek().functionId() != CSSValueType)
@@ -1003,7 +1002,7 @@ template<> struct ConsumerDefinition<ImageSetTypeFunctionRaw> {
 
 // MARK: Image Set Resolution + Type Function
 
-static RefPtr<CSSPrimitiveValue> consumeImageSetResolutionOrTypeFunction(CSSParserTokenRange& range, ValueRange valueRange)
+static RefPtr<CSSPrimitiveValue> consumeImageSetResolutionOrTypeFunction(CSSParserTokenRange& range, const CSSParserContext& context, ValueRange valueRange)
 {
     // [ <resolution> || type(<string>) ]
     //
@@ -1018,7 +1017,7 @@ static RefPtr<CSSPrimitiveValue> consumeImageSetResolutionOrTypeFunction(CSSPars
         .unitlessZero = UnitlessZeroQuirk::Allow
     };
 
-    auto result = MetaConsumer<ResolutionRaw, ImageSetTypeFunctionRaw>::consume(range, { }, options);
+    auto result = MetaConsumer<ResolutionRaw, ImageSetTypeFunctionRaw>::consume(range, context, { }, options);
     if (!result)
         return { };
 
@@ -1046,7 +1045,7 @@ static RefPtr<CSSImageSetOptionValue> consumeImageSetOption(CSSParserTokenRange&
 
     // Optional resolution and type in any order.
     for (size_t i = 0; i < 2 && !range.atEnd(); ++i) {
-        if (auto optionalArgument = consumeImageSetResolutionOrTypeFunction(range, ValueRange::NonNegative)) {
+        if (auto optionalArgument = consumeImageSetResolutionOrTypeFunction(range, context, ValueRange::NonNegative)) {
             if ((resolution && optionalArgument->isResolution()) || (type && optionalArgument->isString()))
                 return nullptr;
 

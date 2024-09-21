@@ -63,11 +63,11 @@ namespace CSSPropertyParserHelpers {
 //   [ center | [ left | right ] <length-percentage>? ] &&
 //   [ center | [ top | bottom ] <length-percentage>? ]
 
-static RefPtr<CSSPrimitiveValue> consumePositionComponent(CSSParserTokenRange& range, CSSParserMode parserMode, UnitlessQuirk unitless, NegativePercentagePolicy negativePercentagePolicy = NegativePercentagePolicy::Forbid)
+static RefPtr<CSSPrimitiveValue> consumePositionComponent(CSSParserTokenRange& range, const CSSParserContext& context, UnitlessQuirk unitless, NegativePercentagePolicy negativePercentagePolicy = NegativePercentagePolicy::Forbid)
 {
     if (range.peek().type() == IdentToken)
         return consumeIdent<CSSValueLeft, CSSValueTop, CSSValueBottom, CSSValueRight, CSSValueCenter>(range);
-    return consumeLengthPercentage(range, parserMode, ValueRange::All, unitless, UnitlessZeroQuirk::Allow, negativePercentagePolicy);
+    return consumeLengthPercentage(range, context.mode, ValueRange::All, unitless, UnitlessZeroQuirk::Allow, negativePercentagePolicy);
 }
 
 static bool isHorizontalPositionKeywordOnly(const CSSPrimitiveValue& value)
@@ -188,21 +188,21 @@ static std::optional<PositionCoordinates> positionFromFourValues(std::array<RefP
 
 // FIXME: This may consume from the range upon failure. The background
 // shorthand works around it, but we should just fix it here.
-std::optional<PositionCoordinates> consumePositionCoordinates(CSSParserTokenRange& range, CSSParserMode parserMode, UnitlessQuirk unitless, PositionSyntax positionSyntax, NegativePercentagePolicy negativePercentagePolicy)
+std::optional<PositionCoordinates> consumePositionCoordinates(CSSParserTokenRange& range, const CSSParserContext& context, UnitlessQuirk unitless, PositionSyntax positionSyntax, NegativePercentagePolicy negativePercentagePolicy)
 {
-    auto value1 = consumePositionComponent(range, parserMode, unitless, negativePercentagePolicy);
+    auto value1 = consumePositionComponent(range, context, unitless, negativePercentagePolicy);
     if (!value1)
         return std::nullopt;
 
-    auto value2 = consumePositionComponent(range, parserMode, unitless, negativePercentagePolicy);
+    auto value2 = consumePositionComponent(range, context, unitless, negativePercentagePolicy);
     if (!value2)
         return positionFromOneValue(*value1);
 
-    auto value3 = consumePositionComponent(range, parserMode, unitless, negativePercentagePolicy);
+    auto value3 = consumePositionComponent(range, context, unitless, negativePercentagePolicy);
     if (!value3)
         return positionFromTwoValues(*value1, *value2);
 
-    auto value4 = consumePositionComponent(range, parserMode, unitless, negativePercentagePolicy);
+    auto value4 = consumePositionComponent(range, context, unitless, negativePercentagePolicy);
 
     std::array<RefPtr<CSSPrimitiveValue>, 5> values {
         WTFMove(value1),
@@ -221,25 +221,25 @@ std::optional<PositionCoordinates> consumePositionCoordinates(CSSParserTokenRang
     return backgroundPositionFromThreeValues(WTFMove(values));
 }
 
-RefPtr<CSSValue> consumePosition(CSSParserTokenRange& range, CSSParserMode parserMode, UnitlessQuirk unitless, PositionSyntax positionSyntax)
+RefPtr<CSSValue> consumePosition(CSSParserTokenRange& range, const CSSParserContext& context, UnitlessQuirk unitless, PositionSyntax positionSyntax)
 {
-    if (auto coordinates = consumePositionCoordinates(range, parserMode, unitless, positionSyntax))
+    if (auto coordinates = consumePositionCoordinates(range, context, unitless, positionSyntax))
         return CSSValuePair::createNoncoalescing(WTFMove(coordinates->x), WTFMove(coordinates->y));
     return nullptr;
 }
 
-std::optional<PositionCoordinates> consumeOneOrTwoValuedPositionCoordinates(CSSParserTokenRange& range, CSSParserMode parserMode, UnitlessQuirk unitless)
+std::optional<PositionCoordinates> consumeOneOrTwoValuedPositionCoordinates(CSSParserTokenRange& range, const CSSParserContext& context, UnitlessQuirk unitless)
 {
-    auto value1 = consumePositionComponent(range, parserMode, unitless);
+    auto value1 = consumePositionComponent(range, context, unitless);
     if (!value1)
         return std::nullopt;
-    auto value2 = consumePositionComponent(range, parserMode, unitless);
+    auto value2 = consumePositionComponent(range, context, unitless);
     if (!value2)
         return positionFromOneValue(*value1);
     return positionFromTwoValues(*value1, *value2);
 }
 
-static RefPtr<CSSValue> consumeSingleAxisPosition(CSSParserTokenRange& range, CSSParserMode parserMode, BoxOrient orientation)
+static RefPtr<CSSValue> consumeSingleAxisPosition(CSSParserTokenRange& range, const CSSParserContext& context, BoxOrient orientation)
 {
     RefPtr<CSSPrimitiveValue> value1;
 
@@ -259,7 +259,7 @@ static RefPtr<CSSValue> consumeSingleAxisPosition(CSSParserTokenRange& range, CS
             return value1;
     }
 
-    auto value2 = consumeLengthPercentage(range, parserMode);
+    auto value2 = consumeLengthPercentage(range, context.mode);
     if (value1 && value2)
         return CSSValuePair::create(value1.releaseNonNull(), value2.releaseNonNull());
 
@@ -268,12 +268,12 @@ static RefPtr<CSSValue> consumeSingleAxisPosition(CSSParserTokenRange& range, CS
 
 RefPtr<CSSValue> consumePositionX(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeSingleAxisPosition(range, context.mode, BoxOrient::Horizontal);
+    return consumeSingleAxisPosition(range, context, BoxOrient::Horizontal);
 }
 
 RefPtr<CSSValue> consumePositionY(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeSingleAxisPosition(range, context.mode, BoxOrient::Vertical);
+    return consumeSingleAxisPosition(range, context, BoxOrient::Vertical);
 }
 
 } // namespace CSSPropertyParserHelpers

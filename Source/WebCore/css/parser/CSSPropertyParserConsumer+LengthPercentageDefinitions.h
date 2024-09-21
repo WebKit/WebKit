@@ -36,28 +36,30 @@ namespace WebCore {
 class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
 
+struct CSSParserContext;
+
 namespace CSSPropertyParserHelpers {
 
 std::optional<LengthPercentageRaw> validatedRange(LengthPercentageRaw, CSSPropertyParserOptions);
 
 struct LengthPercentageKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<LengthPercentageRaw>> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<UnevaluatedCalc<LengthPercentageRaw>> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct LengthPercentageKnownTokenTypeDimensionConsumer {
     static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static std::optional<LengthPercentageRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<LengthPercentageRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct LengthPercentageKnownTokenTypePercentConsumer {
     static constexpr CSSParserTokenType tokenType = PercentageToken;
-    static std::optional<LengthPercentageRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<LengthPercentageRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct LengthPercentageKnownTokenTypeNumberConsumer {
     static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<LengthPercentageRaw> consume(CSSParserTokenRange&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<LengthPercentageRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 template<> struct ConsumerDefinition<LengthPercentageRaw> {

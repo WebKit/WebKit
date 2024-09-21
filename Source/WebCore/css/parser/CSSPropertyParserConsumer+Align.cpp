@@ -145,7 +145,7 @@ static RefPtr<CSSValue> consumeSelfPositionOverflowPosition(CSSParserTokenRange&
     return selfPosition;
 }
 
-RefPtr<CSSValue> consumeAlignContent(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeAlignContent(CSSParserTokenRange& range, const CSSParserContext&)
 {
     // <'align-content'> = normal | <baseline-position> | <content-distribution> | <overflow-position>? <content-position>
     // https://drafts.csswg.org/css-align/#propdef-align-content
@@ -153,7 +153,7 @@ RefPtr<CSSValue> consumeAlignContent(CSSParserTokenRange& range)
     return consumeContentDistributionOverflowPosition(range, isContentPositionKeyword);
 }
 
-RefPtr<CSSValue> consumeJustifyContent(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeJustifyContent(CSSParserTokenRange& range, const CSSParserContext&)
 {
     // <'justify-content'> = normal | <content-distribution> | <overflow-position>? [ <content-position> | left | right ]
     // https://drafts.csswg.org/css-align/#propdef-justify-content
@@ -164,7 +164,7 @@ RefPtr<CSSValue> consumeJustifyContent(CSSParserTokenRange& range)
     return consumeContentDistributionOverflowPosition(range, isContentPositionOrLeftOrRightKeyword);
 }
 
-RefPtr<CSSValue> consumeAlignSelf(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeAlignSelf(CSSParserTokenRange& range, const CSSParserContext&)
 {
     // <'align-self'> = auto | normal | stretch | <baseline-position> | <overflow-position>? <self-position>
     // https://drafts.csswg.org/css-align/#propdef-align-self
@@ -172,7 +172,7 @@ RefPtr<CSSValue> consumeAlignSelf(CSSParserTokenRange& range)
     return consumeSelfPositionOverflowPosition(range, isSelfPositionKeyword);
 }
 
-RefPtr<CSSValue> consumeJustifySelf(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeJustifySelf(CSSParserTokenRange& range, const CSSParserContext&)
 {
     // <'justify-self'> = auto | normal | stretch | <baseline-position> | <overflow-position>? [ <self-position> | left | right ]
     // https://drafts.csswg.org/css-align/#propdef-justify-self
@@ -180,7 +180,7 @@ RefPtr<CSSValue> consumeJustifySelf(CSSParserTokenRange& range)
     return consumeSelfPositionOverflowPosition(range, isSelfPositionOrLeftOrRightKeyword);
 }
 
-RefPtr<CSSValue> consumeAlignItems(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeAlignItems(CSSParserTokenRange& range, const CSSParserContext&)
 {
     // <'align-items'> = normal | stretch | <baseline-position> | [ <overflow-position>? <self-position> ]
     // https://drafts.csswg.org/css-align/#propdef-align-items
@@ -191,7 +191,7 @@ RefPtr<CSSValue> consumeAlignItems(CSSParserTokenRange& range)
     return consumeSelfPositionOverflowPosition(range, isSelfPositionKeyword);
 }
 
-RefPtr<CSSValue> consumeJustifyItems(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeJustifyItems(CSSParserTokenRange& range, const CSSParserContext&)
 {
     // <'justify-items'> = normal | stretch | <baseline-position> | <overflow-position>? [ <self-position> | left | right ] | legacy | legacy && [ left | right | center ]
     // https://drafts.csswg.org/css-align/#propdef-justify-items

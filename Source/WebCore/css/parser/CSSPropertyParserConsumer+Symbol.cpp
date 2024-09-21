@@ -36,7 +36,7 @@ std::optional<SymbolRaw> validatedRange(SymbolRaw value, CSSPropertyParserOption
     return value;
 }
 
-std::optional<SymbolRaw> SymbolKnownTokenTypeIdentConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions)
+std::optional<SymbolRaw> SymbolKnownTokenTypeIdentConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions)
 {
     ASSERT(range.peek().type() == IdentToken);
 

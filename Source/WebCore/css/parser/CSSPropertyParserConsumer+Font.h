@@ -96,19 +96,19 @@ struct UnresolvedFont {
 
 // MARK: 'font' (shorthand)
 // https://drafts.csswg.org/css-fonts-4/#font-prop
-std::optional<UnresolvedFont> parseUnresolvedFont(const String&, CSSParserMode);
+std::optional<UnresolvedFont> parseUnresolvedFont(const String&, const CSSParserContext&);
 
 // MARK: 'font-weight'
 // https://drafts.csswg.org/css-fonts-4/#font-weight-prop
-RefPtr<CSSValue> consumeFontWeight(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFontWeight(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: 'font-style'
 // https://drafts.csswg.org/css-fonts-4/#font-style-prop
-RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange&, CSSParserMode);
+RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: 'font-family'
 // https://drafts.csswg.org/css-fonts-4/#font-family-prop
-RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange&, const CSSParserContext&);
 // Sub-production of 'font-family': <generic-family>
 // https://drafts.csswg.org/css-fonts-4/#generic-family-name-syntax
 const AtomString& genericFontFamily(CSSValueID);
@@ -116,30 +116,30 @@ WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID);
 
 // MARK: 'font-variant-ligatures'
 // https://drafts.csswg.org/css-fonts-4/#propdef-font-variant-ligatures
-RefPtr<CSSValue> consumeFontVariantLigatures(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFontVariantLigatures(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: 'font-variant-east-asian'
 // https://drafts.csswg.org/css-fonts-4/#font-variant-east-asian-prop
-RefPtr<CSSValue> consumeFontVariantEastAsian(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFontVariantEastAsian(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: 'font-variant-alternates'
 // https://drafts.csswg.org/css-fonts-4/#font-variant-alternates-prop
-RefPtr<CSSValue> consumeFontVariantAlternates(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFontVariantAlternates(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: 'font-variant-numeric'
 // https://drafts.csswg.org/css-fonts-4/#font-variant-numeric-prop
-RefPtr<CSSValue> consumeFontVariantNumeric(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFontVariantNumeric(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: 'font-size-adjust'
 // https://drafts.csswg.org/css-fonts-4/#font-size-adjust-prop
-RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange&, const CSSParserContext&);
 
 
 // MARK: - @font-face descriptor consumers
 
 // MARK: @font-face 'font-family'
 // https://drafts.csswg.org/css-fonts-4/#font-family-desc
-RefPtr<CSSValue> consumeFontFaceFontFamily(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFontFaceFontFamily(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: @font-face 'src'
 // https://drafts.csswg.org/css-fonts-4/#src-desc
@@ -147,10 +147,10 @@ RefPtr<CSSValueList> parseFontFaceSrc(const String&, const CSSParserContext&);
 RefPtr<CSSValueList> consumeFontFaceSrc(CSSParserTokenRange&, const CSSParserContext&);
 // Sub-production of 'src: <font-tech>
 // https://drafts.csswg.org/css-fonts-4/#font-tech-values
-Vector<FontTechnology> consumeFontTech(CSSParserTokenRange&, bool singleValue = false);
+Vector<FontTechnology> consumeFontTech(CSSParserTokenRange&, const CSSParserContext&, bool singleValue = false);
 // Sub-production of 'src': <font-format>
 // https://drafts.csswg.org/css-fonts-4/#font-format-values
-String consumeFontFormat(CSSParserTokenRange&, bool rejectStringValues = false);
+String consumeFontFormat(CSSParserTokenRange&, const CSSParserContext&, bool rejectStringValues = false);
 
 // MARK: @font-face 'size-adjust'
 // https://drafts.csswg.org/css-fonts-5/#size-adjust-desc
@@ -159,7 +159,7 @@ RefPtr<CSSValue> parseFontFaceSizeAdjust(const String&, ScriptExecutionContext&)
 // MARK: @font-face 'unicode-range'
 // https://drafts.csswg.org/css-fonts-4/#unicode-range-desc
 RefPtr<CSSValueList> parseFontFaceUnicodeRange(const String&, ScriptExecutionContext&);
-RefPtr<CSSValueList> consumeFontFaceUnicodeRange(CSSParserTokenRange&);
+RefPtr<CSSValueList> consumeFontFaceUnicodeRange(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: @font-face 'font-display'
 // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-display
@@ -168,11 +168,11 @@ RefPtr<CSSValue> parseFontFaceDisplay(const String&, ScriptExecutionContext&);
 // MARK: @font-face 'font-style'
 // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-style
 RefPtr<CSSValue> parseFontFaceFontStyle(const String&, ScriptExecutionContext&);
-RefPtr<CSSValue> consumeFontFaceFontStyle(CSSParserTokenRange&, CSSParserMode);
+RefPtr<CSSValue> consumeFontFaceFontStyle(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: @font-face 'font-feature-tag'
 // https://drafts.csswg.org/css-fonts-4/#feature-tag-value
-RefPtr<CSSValue> consumeFeatureTagValue(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFeatureTagValue(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: @font-face 'font-feature-settings'
 // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-feature-settings
@@ -181,23 +181,23 @@ RefPtr<CSSValue> parseFontFaceFeatureSettings(const String&, ScriptExecutionCont
 // MARK: @font-face 'font-variation-settings'
 // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-variation-settings
 #if ENABLE(VARIATION_FONTS)
-RefPtr<CSSValue> consumeVariationTagValue(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeVariationTagValue(CSSParserTokenRange&, const CSSParserContext&);
 #endif
 
 // MARK: @font-face 'font-stretch'
 // https://drafts.csswg.org/css-fonts-4/#font-stretch-desc
 RefPtr<CSSValue> parseFontFaceFontStretch(const String&, ScriptExecutionContext&);
-RefPtr<CSSValue> consumeFontFaceFontStretch(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFontFaceFontStretch(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: @font-face 'font-weight'
 // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-weight
 RefPtr<CSSValue> parseFontFaceFontWeight(const String&, ScriptExecutionContext&);
-RefPtr<CSSValue> consumeFontFaceFontWeight(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFontFaceFontWeight(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: - @font-palette-values descriptor consumers:
 
 // MARK: @font-palette-values 'font-family'
-RefPtr<CSSValue> consumeFontPaletteValuesFontFamily(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeFontPaletteValuesFontFamily(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: @font-palette-values 'override-colors'
 // https://drafts.csswg.org/css-fonts-4/#descdef-font-palette-values-override-colors
@@ -207,7 +207,7 @@ RefPtr<CSSValue> consumeFontPaletteValuesOverrideColors(CSSParserTokenRange&, co
 
 // MARK: @font-feature-values 'prelude family name list'
 // https://drafts.csswg.org/css-fonts-4/#font-feature-values-syntax
-Vector<AtomString> consumeFontFeatureValuesPreludeFamilyNameList(CSSParserTokenRange&);
+Vector<AtomString> consumeFontFeatureValuesPreludeFamilyNameList(CSSParserTokenRange&, const CSSParserContext&);
 
 // Template and inline implementations are at the bottom of the file for readability.
 

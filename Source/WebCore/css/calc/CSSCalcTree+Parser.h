@@ -25,6 +25,7 @@
 #pragma once
 
 #include "CSSCalcSymbolsAllowed.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include <optional>
 
 namespace WebCore {
@@ -34,9 +35,9 @@ enum class Category : uint8_t;
 }
 
 class CSSParserTokenRange;
+struct CSSParserContext;
 
 enum CSSValueID : uint16_t;
-enum class ValueRange : uint8_t;
 
 namespace CSSCalc {
 
@@ -50,15 +51,15 @@ struct ParserOptions {
     // `allowedSymbols` contains additional symbols that can be used in the calculation. These will need to be resolved before the calculation can be resolved.
     CSSCalcSymbolsAllowed allowedSymbols;
 
-    // `range` contains the numeric range the fully resolved calculation must be clamped to.
-    ValueRange range;
+    // `propertyOptions` contains options about the specific property the calc() is intended to be used with.
+    CSSPropertyParserHelpers::CSSPropertyParserOptions propertyOptions;
 };
 
 // Parses and simplifies the provided `CSSParserTokenRange` into a CSSCalc::Tree. Returns `std::nullopt` on failure.
-std::optional<Tree> parseAndSimplify(CSSParserTokenRange, CSSValueID function, const ParserOptions&, const SimplificationOptions&);
+std::optional<Tree> parseAndSimplify(CSSParserTokenRange&, const CSSParserContext&, const ParserOptions&, const SimplificationOptions&);
 
 // Returns whether the provided `CSSValueID` is one of the functions that should be parsed as a `calc()`.
-bool isCalcFunction(CSSValueID function);
+bool isCalcFunction(CSSValueID function, const CSSParserContext&);
 
 } // namespace CSSCalc
 } // namespace WebCore

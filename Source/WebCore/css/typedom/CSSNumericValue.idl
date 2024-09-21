@@ -44,5 +44,5 @@ typedef (double or CSSNumericValue) CSSNumberish;
     CSSMathSum toSum(USVString... units);
     CSSNumericType type();
 
-    [Exposed=Window] static CSSNumericValue parse(USVString cssText);
+    [Exposed=Window, CallWith=CurrentDocument] static CSSNumericValue parse(USVString cssText);
 };

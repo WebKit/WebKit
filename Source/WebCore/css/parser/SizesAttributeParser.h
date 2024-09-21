@@ -40,6 +40,8 @@ namespace WebCore {
 class CSSValue;
 class Document;
 
+struct CSSParserContext;
+
 class SizesAttributeParser {
 public:
     SizesAttributeParser(const String&, const Document&);
@@ -52,9 +54,9 @@ public:
     auto& dynamicMediaQueryResults() const { return m_dynamicMediaQueryResults; }
 
 private:
-    bool parse(CSSParserTokenRange);
+    bool parse(CSSParserTokenRange, const CSSParserContext&);
     float effectiveSize();
-    bool calculateLengthInPixels(CSSParserTokenRange, float& result);
+    std::optional<float> calculateLengthInPixels(CSSParserTokenRange);
     bool mediaConditionMatches(const MQ::MediaQuery&);
     unsigned effectiveSizeDefaultValue();
 

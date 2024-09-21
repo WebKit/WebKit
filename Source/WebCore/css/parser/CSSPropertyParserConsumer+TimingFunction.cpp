@@ -42,7 +42,7 @@ namespace CSSPropertyParserHelpers {
 // MARK: - <steps()>
 // https://drafts.csswg.org/css-easing-1/#funcdef-step-easing-function-steps
 
-static RefPtr<CSSValue> consumeSteps(CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeSteps(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // <steps-easing-function> = steps(<integer>, <step-position>?)
     // <step-position> = jump-start | jump-end | jump-none | jump-both | start | end
@@ -58,7 +58,7 @@ static RefPtr<CSSValue> consumeSteps(CSSParserTokenRange& range)
     CSSParserTokenRange rangeCopy = range;
     CSSParserTokenRange args = consumeFunction(rangeCopy);
 
-    auto stepsValue = consumePositiveInteger(args);
+    auto stepsValue = consumePositiveInteger(args, context);
     if (!stepsValue)
         return nullptr;
 
@@ -105,15 +105,15 @@ static RefPtr<CSSValue> consumeSteps(CSSParserTokenRange& range)
 // MARK: - <linear()>
 // https://drafts.csswg.org/css-easing-2/#the-linear-easing-function
 
-static std::optional<CSSLinearTimingFunctionValue::LinearStop::Length> consumeLinearStopLength(CSSParserTokenRange& args)
+static std::optional<CSSLinearTimingFunctionValue::LinearStop::Length> consumeLinearStopLength(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     // <linear-stop-length> = <percentage>{1,2}
 
-    auto input = consumePercentage(args);
+    auto input = consumePercentage(args, context);
     if (!input)
         return std::nullopt;
 
-    auto extra = consumePercentage(args);
+    auto extra = consumePercentage(args, context);
 
     return CSSLinearTimingFunctionValue::LinearStop::Length {
         .input = input.releaseNonNull(),
@@ -121,15 +121,15 @@ static std::optional<CSSLinearTimingFunctionValue::LinearStop::Length> consumeLi
     };
 }
 
-static std::optional<CSSLinearTimingFunctionValue::LinearStop> consumeLinearStop(CSSParserTokenRange& args)
+static std::optional<CSSLinearTimingFunctionValue::LinearStop> consumeLinearStop(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     // <linear-stop> = <number> && <linear-stop-length>?
 
-    auto output = consumeNumber(args);
+    auto output = consumeNumber(args, context);
     if (!output)
         return std::nullopt;
 
-    auto input = consumeLinearStopLength(args);
+    auto input = consumeLinearStopLength(args, context);
 
     return CSSLinearTimingFunctionValue::LinearStop {
         .output = output.releaseNonNull(),
@@ -137,7 +137,7 @@ static std::optional<CSSLinearTimingFunctionValue::LinearStop> consumeLinearStop
     };
 }
 
-static RefPtr<CSSValue> consumeLinear(CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeLinear(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // <linear-easing-function> = linear(<linear-stop-list>)
     // <linear-stop-list> = [ <linear-stop> ]#
@@ -151,7 +151,7 @@ static RefPtr<CSSValue> consumeLinear(CSSParserTokenRange& range)
     Vector<CSSLinearTimingFunctionValue::LinearStop> stops;
 
     while (true) {
-        auto linearStop = consumeLinearStop(args);
+        auto linearStop = consumeLinearStop(args, context);
         if (!linearStop)
             break;
 
@@ -171,7 +171,7 @@ static RefPtr<CSSValue> consumeLinear(CSSParserTokenRange& range)
 // MARK: - <cubic-bezier()>
 // https://drafts.csswg.org/css-easing-1/#funcdef-cubic-bezier-easing-function-cubic-bezier
 
-static RefPtr<CSSValue> consumeCubicBezier(CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeCubicBezier(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // cubic-bezier(<number [0,1]>, <number>, <number [0,1]>, <number>)
 
@@ -179,28 +179,28 @@ static RefPtr<CSSValue> consumeCubicBezier(CSSParserTokenRange& range)
     CSSParserTokenRange rangeCopy = range;
     CSSParserTokenRange args = consumeFunction(rangeCopy);
 
-    auto x1 = consumeNumber(args, ValueRange::NonNegative);
+    auto x1 = consumeNumber(args, context, ValueRange::NonNegative);
     if (!x1 || (!x1->isCalculated() && x1->resolveAsNumberNoConversionDataRequired() > 1))
         return nullptr;
 
     if (!consumeCommaIncludingWhitespace(args))
         return nullptr;
 
-    auto y1 = consumeNumber(args);
+    auto y1 = consumeNumber(args, context);
     if (!y1)
         return nullptr;
 
     if (!consumeCommaIncludingWhitespace(args))
         return nullptr;
 
-    auto x2 = consumeNumber(args, ValueRange::NonNegative);
+    auto x2 = consumeNumber(args, context, ValueRange::NonNegative);
     if (!x2 || (!x2->isCalculated() && x2->resolveAsNumberNoConversionDataRequired() > 1))
         return nullptr;
 
     if (!consumeCommaIncludingWhitespace(args))
         return nullptr;
 
-    auto y2 = consumeNumber(args);
+    auto y2 = consumeNumber(args, context);
     if (!y2)
         return nullptr;
 
@@ -214,11 +214,15 @@ static RefPtr<CSSValue> consumeCubicBezier(CSSParserTokenRange& range)
 // MARK: - <spring()>
 // Non-standard
 
-static RefPtr<CSSValue> consumeSpringFunction(CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeSpringFunction(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // spring(<number [>0,∞]>, <number [>0,∞]>, <number [0,∞]>, <number>)
 
     ASSERT(range.peek().functionId() == CSSValueSpring);
+
+    if (!context.springTimingFunctionEnabled)
+        return nullptr;
+
     CSSParserTokenRange rangeCopy = range;
     CSSParserTokenRange args = consumeFunction(rangeCopy);
 
@@ -226,22 +230,22 @@ static RefPtr<CSSValue> consumeSpringFunction(CSSParserTokenRange& range)
     // If spring() ever goes further with standardization, the allowable ranges for `mass` and `stiffness` should be reconsidered.
 
     // Mass must be greater than 0.
-    auto mass = consumeNumber(args);
+    auto mass = consumeNumber(args, context);
     if (!mass || !mass->isPositive().value_or(false))
         return nullptr;
 
     // Stiffness must be greater than 0.
-    auto stiffness = consumeNumber(args);
+    auto stiffness = consumeNumber(args, context);
     if (!stiffness || !stiffness->isPositive().value_or(false))
         return nullptr;
 
     // Damping coefficient must be greater than or equal to 0.
-    auto damping = consumeNumber(args, ValueRange::NonNegative);
+    auto damping = consumeNumber(args, context, ValueRange::NonNegative);
     if (!damping)
         return nullptr;
 
     // Initial velocity may have any value.
-    auto initialVelocity = consumeNumber(args);
+    auto initialVelocity = consumeNumber(args, context);
     if (!initialVelocity)
         return nullptr;
 
@@ -278,16 +282,16 @@ RefPtr<CSSValue> consumeTimingFunction(CSSParserTokenRange& range, const CSSPars
 
     switch (range.peek().functionId()) {
     case CSSValueLinear:
-        return consumeLinear(range);
+        return consumeLinear(range, context);
 
     case CSSValueCubicBezier:
-        return consumeCubicBezier(range);
+        return consumeCubicBezier(range, context);
 
     case CSSValueSteps:
-        return consumeSteps(range);
+        return consumeSteps(range, context);
 
     case CSSValueSpring:
-        return context.springTimingFunctionEnabled ? consumeSpringFunction(range) : nullptr;
+        return consumeSpringFunction(range, context);
 
     default:
         break;

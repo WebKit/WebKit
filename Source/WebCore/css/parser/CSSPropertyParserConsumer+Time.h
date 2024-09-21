@@ -32,11 +32,13 @@ namespace WebCore {
 
 class CSSPrimitiveValue;
 
+struct CSSParserContext;
+
 namespace CSSPropertyParserHelpers {
 
 // MARK: - Consumer functions
 
-RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange&, CSSParserMode, ValueRange = ValueRange::All, UnitlessQuirk = UnitlessQuirk::Forbid);
+RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange&, const CSSParserContext&, ValueRange = ValueRange::All, UnitlessQuirk = UnitlessQuirk::Forbid);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

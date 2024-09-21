@@ -40,10 +40,10 @@ namespace CSSPropertyParserHelpers {
 // MARK: - Consumer functions
 
 // MARK: - Angle
-RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
+RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange&, const CSSParserContext&, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
 
 // MARK: - Angle or Percent
-RefPtr<CSSPrimitiveValue> consumeAngleOrPercent(CSSParserTokenRange&, CSSParserMode);
+RefPtr<CSSPrimitiveValue> consumeAngleOrPercent(CSSParserTokenRange&, const CSSParserContext&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

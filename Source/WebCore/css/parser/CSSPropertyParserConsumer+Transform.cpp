@@ -48,10 +48,10 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-static bool consumeNumbers(CSSParserTokenRange& args, CSSValueListBuilder& arguments, unsigned numberOfArguments)
+static bool consumeNumbers(CSSParserTokenRange& args, const CSSParserContext& context, CSSValueListBuilder& arguments, unsigned numberOfArguments)
 {
     do {
-        auto parsedValue = consumeNumber(args);
+        auto parsedValue = consumeNumber(args, context);
         if (!parsedValue)
             return false;
         arguments.append(parsedValue.releaseNonNull());
@@ -61,10 +61,10 @@ static bool consumeNumbers(CSSParserTokenRange& args, CSSValueListBuilder& argum
     return true;
 }
 
-static bool consumeNumbersOrPercents(CSSParserTokenRange& args, CSSValueListBuilder& arguments, unsigned numberOfArguments)
+static bool consumeNumbersOrPercents(CSSParserTokenRange& args, const CSSParserContext& context, CSSValueListBuilder& arguments, unsigned numberOfArguments)
 {
     auto parseNumberAndAppend = [&] {
-        auto parsedValue = consumePercentageDividedBy100OrNumber(args);
+        auto parsedValue = consumePercentageDividedBy100OrNumber(args, context);
         if (!parsedValue)
             return false;
         arguments.append(parsedValue.releaseNonNull());
@@ -85,24 +85,24 @@ static bool consumeNumbersOrPercents(CSSParserTokenRange& args, CSSValueListBuil
 
 // MARK: Matrix
 
-static std::optional<CSSValueListBuilder> consumeMatrixFunctionArguments(CSSParserTokenRange& args, const CSSParserContext&)
+static std::optional<CSSValueListBuilder> consumeMatrixFunctionArguments(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     // https://drafts.csswg.org/css-transforms-1/#funcdef-transform-matrix
     // matrix() = matrix( <number>#{6} )
 
     CSSValueListBuilder arguments;
-    if (!consumeNumbers(args, arguments,  6))
+    if (!consumeNumbers(args, context, arguments,  6))
         return { };
     return { WTFMove(arguments) };
 }
 
-static std::optional<CSSValueListBuilder> consumeMatrix3dFunctionArguments(CSSParserTokenRange& args, const CSSParserContext&)
+static std::optional<CSSValueListBuilder> consumeMatrix3dFunctionArguments(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     // https://drafts.csswg.org/css-transforms-2/#funcdef-matrix3d
     // matrix3d() = matrix3d( <number>#{16} )
 
     CSSValueListBuilder arguments;
-    if (!consumeNumbers(args, arguments,  16))
+    if (!consumeNumbers(args, context, arguments,  16))
         return { };
     return { WTFMove(arguments) };
 }
@@ -114,7 +114,7 @@ static std::optional<CSSValueListBuilder> consumeRotateFunctionArguments(CSSPars
     // https://drafts.csswg.org/css-transforms-1/#funcdef-transform-rotate
     // rotate() = rotate( [ <angle> | <zero> ] )
 
-    auto angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
+    auto angle = consumeAngle(args, context, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
     if (!angle)
         return { };
     return { { angle.releaseNonNull() } };
@@ -126,13 +126,13 @@ static std::optional<CSSValueListBuilder> consumeRotate3dFunctionArguments(CSSPa
     // rotate3d() = rotate3d( <number> , <number> , <number> , [ <angle> | <zero> ] )
 
     CSSValueListBuilder arguments;
-    if (!consumeNumbers(args, arguments, 3))
+    if (!consumeNumbers(args, context, arguments, 3))
         return { };
 
     if (!consumeCommaIncludingWhitespace(args))
         return { };
 
-    auto angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
+    auto angle = consumeAngle(args, context, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
     if (!angle)
         return { };
     arguments.append(angle.releaseNonNull());
@@ -145,7 +145,7 @@ static std::optional<CSSValueListBuilder> consumeRotateXFunctionArguments(CSSPar
     // https://drafts.csswg.org/css-transforms-2/#funcdef-rotatex
     // rotateX() = rotateX( [ <angle> | <zero> ] )
 
-    auto angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
+    auto angle = consumeAngle(args, context, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
     if (!angle)
         return { };
     return { { angle.releaseNonNull() } };
@@ -156,7 +156,7 @@ static std::optional<CSSValueListBuilder> consumeRotateYFunctionArguments(CSSPar
     // https://drafts.csswg.org/css-transforms-2/#funcdef-rotatey
     // rotateY() = rotateY( [ <angle> | <zero> ] )
 
-    auto angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
+    auto angle = consumeAngle(args, context, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
     if (!angle)
         return { };
     return { { angle.releaseNonNull() } };
@@ -167,7 +167,7 @@ static std::optional<CSSValueListBuilder> consumeRotateZFunctionArguments(CSSPar
     // https://drafts.csswg.org/css-transforms-2/#funcdef-rotatez
     // rotateZ() = rotateZ( [ <angle> | <zero> ] )
 
-    auto angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
+    auto angle = consumeAngle(args, context, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
     if (!angle)
         return { };
     return { { angle.releaseNonNull() } };
@@ -182,13 +182,13 @@ static std::optional<CSSValueListBuilder> consumeSkewFunctionArguments(CSSParser
 
     CSSValueListBuilder arguments;
 
-    auto angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
+    auto angle = consumeAngle(args, context, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
     if (!angle)
         return { };
     arguments.append(angle.releaseNonNull());
 
     if (consumeCommaIncludingWhitespace(args)) {
-        angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
+        angle = consumeAngle(args, context, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
         if (!angle)
             return { };
         arguments.append(angle.releaseNonNull());
@@ -202,7 +202,7 @@ static std::optional<CSSValueListBuilder> consumeSkewXFunctionArguments(CSSParse
     // https://drafts.csswg.org/css-transforms-1/#funcdef-transform-skewx
     // skewX() = skewX( [ <angle> | <zero> ] )
 
-    auto angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
+    auto angle = consumeAngle(args, context, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
     if (!angle)
         return { };
     return { { angle.releaseNonNull() } };
@@ -213,7 +213,7 @@ static std::optional<CSSValueListBuilder> consumeSkewYFunctionArguments(CSSParse
     // https://drafts.csswg.org/css-transforms-1/#funcdef-transform-skewy
     // skewY() = skewY( [ <angle> | <zero> ] )
 
-    auto angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
+    auto angle = consumeAngle(args, context, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
     if (!angle)
         return { };
     return { { angle.releaseNonNull() } };
@@ -221,20 +221,20 @@ static std::optional<CSSValueListBuilder> consumeSkewYFunctionArguments(CSSParse
 
 // MARK: Scale
 
-static std::optional<CSSValueListBuilder> consumeScaleFunctionArguments(CSSParserTokenRange& args, const CSSParserContext&)
+static std::optional<CSSValueListBuilder> consumeScaleFunctionArguments(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     // https://drafts.csswg.org/css-transforms-2/#funcdef-scale
     // scale() = scale( [ <number> | <percentage> ]#{1,2} )
 
     CSSValueListBuilder arguments;
 
-    auto value = consumePercentageDividedBy100OrNumber(args);
+    auto value = consumePercentageDividedBy100OrNumber(args, context);
     if (!value)
         return { };
     arguments.append(value.releaseNonNull());
 
     if (consumeCommaIncludingWhitespace(args)) {
-        value = consumePercentageDividedBy100OrNumber(args);
+        value = consumePercentageDividedBy100OrNumber(args, context);
         if (!value)
             return { };
         arguments.append(value.releaseNonNull());
@@ -243,46 +243,46 @@ static std::optional<CSSValueListBuilder> consumeScaleFunctionArguments(CSSParse
     return { WTFMove(arguments) };
 }
 
-static std::optional<CSSValueListBuilder> consumeScale3dFunctionArguments(CSSParserTokenRange& args, const CSSParserContext&)
+static std::optional<CSSValueListBuilder> consumeScale3dFunctionArguments(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     // https://drafts.csswg.org/css-transforms-2/#funcdef-scale3d
     // scale3d() = scale3d( [ <number> | <percentage> ]#{3} )
 
     CSSValueListBuilder arguments;
-    if (!consumeNumbersOrPercents(args, arguments, 3))
+    if (!consumeNumbersOrPercents(args, context, arguments, 3))
         return { };
 
     return { WTFMove(arguments) };
 }
 
-static std::optional<CSSValueListBuilder> consumeScaleXFunctionArguments(CSSParserTokenRange& args, const CSSParserContext&)
+static std::optional<CSSValueListBuilder> consumeScaleXFunctionArguments(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     // https://drafts.csswg.org/css-transforms-2/#funcdef-scalex
     // scaleX() = scaleX( [ <number> | <percentage> ] )
 
-    auto value = consumePercentageDividedBy100OrNumber(args);
+    auto value = consumePercentageDividedBy100OrNumber(args, context);
     if (!value)
         return { };
     return { { value.releaseNonNull() } };
 }
 
-static std::optional<CSSValueListBuilder> consumeScaleYFunctionArguments(CSSParserTokenRange& args, const CSSParserContext&)
+static std::optional<CSSValueListBuilder> consumeScaleYFunctionArguments(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     // https://drafts.csswg.org/css-transforms-2/#funcdef-scaley
     // scaleY() = scaleY( [ <number> | <percentage> ] )
 
-    auto value = consumePercentageDividedBy100OrNumber(args);
+    auto value = consumePercentageDividedBy100OrNumber(args, context);
     if (!value)
         return { };
     return { { value.releaseNonNull() } };
 }
 
-static std::optional<CSSValueListBuilder> consumeScaleZFunctionArguments(CSSParserTokenRange& args, const CSSParserContext&)
+static std::optional<CSSValueListBuilder> consumeScaleZFunctionArguments(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     // https://drafts.csswg.org/css-transforms-2/#funcdef-scalez
     // scaleZ() = scaleZ( [ <number> | <percentage> ] )
 
-    auto value = consumePercentageDividedBy100OrNumber(args);
+    auto value = consumePercentageDividedBy100OrNumber(args, context);
     if (!value)
         return { };
     return { { value.releaseNonNull() } };
@@ -298,13 +298,13 @@ static std::optional<CSSValueListBuilder> consumeTranslateFunctionArguments(CSSP
 
     CSSValueListBuilder arguments;
 
-    auto firstValue = consumeLengthPercentage(args, context.mode);
+    auto firstValue = consumeLengthPercentage(args, context);
     if (!firstValue)
         return { };
     arguments.append(firstValue.releaseNonNull());
 
     if (consumeCommaIncludingWhitespace(args)) {
-        auto secondValue = consumeLengthPercentage(args, context.mode);
+        auto secondValue = consumeLengthPercentage(args, context);
         if (!secondValue)
             return { };
         // A second value of `0` is the same as no second argument, so there is no need to store one if we know it is `0`.
@@ -320,21 +320,21 @@ static std::optional<CSSValueListBuilder> consumeTranslate3dFunctionArguments(CS
     // https://drafts.csswg.org/css-transforms-2/#funcdef-translate3d
     // translate3d() = translate3d( <length-percentage> , <length-percentage> , <length> )
 
-    auto firstValue = consumeLengthPercentage(args, context.mode);
+    auto firstValue = consumeLengthPercentage(args, context);
     if (!firstValue)
         return { };
 
     if (!consumeCommaIncludingWhitespace(args))
         return { };
 
-    auto secondValue = consumeLengthPercentage(args, context.mode);
+    auto secondValue = consumeLengthPercentage(args, context);
     if (!secondValue)
         return { };
 
     if (!consumeCommaIncludingWhitespace(args))
         return { };
 
-    auto thirdValue = consumeLength(args, context.mode);
+    auto thirdValue = consumeLength(args, context);
     if (!thirdValue)
         return { };
 
@@ -350,7 +350,7 @@ static std::optional<CSSValueListBuilder> consumeTranslateXFunctionArguments(CSS
     // https://drafts.csswg.org/css-transforms-1/#funcdef-transform-translatex
     // translateX() = translateX( <length-percentage> )
 
-    auto value = consumeLengthPercentage(args, context.mode);
+    auto value = consumeLengthPercentage(args, context);
     if (!value)
         return { };
 
@@ -362,7 +362,7 @@ static std::optional<CSSValueListBuilder> consumeTranslateYFunctionArguments(CSS
     // https://drafts.csswg.org/css-transforms-1/#funcdef-transform-translatey
     // translateY() = translateY( <length-percentage> )
 
-    auto value = consumeLengthPercentage(args, context.mode);
+    auto value = consumeLengthPercentage(args, context);
     if (!value)
         return { };
 
@@ -374,7 +374,7 @@ static std::optional<CSSValueListBuilder> consumeTranslateZFunctionArguments(CSS
     // https://drafts.csswg.org/css-transforms-2/#funcdef-translatez
     // translateZ() = translateZ( <length> )
 
-    auto value = consumeLength(args, context.mode);
+    auto value = consumeLength(args, context);
     if (!value)
         return { };
 
@@ -392,7 +392,7 @@ static std::optional<CSSValueListBuilder> consumePerspectiveFunctionArguments(CS
         return { { perspective.releaseNonNull() } };
 
     // FIXME: Non-standard addition.
-    if (auto perspective = consumeNumber(range, ValueRange::NonNegative))
+    if (auto perspective = consumeNumber(range, context, ValueRange::NonNegative))
         return { { perspective.releaseNonNull() } };
 
     return { };
@@ -529,7 +529,7 @@ RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange& range, const CSSParserCon
     // value is missing, it defaults to 0px. If three values are given, this specifies a 3d translation, equivalent to the
     // translate3d() function.
 
-    auto x = consumeLengthPercentage(range, context.mode);
+    auto x = consumeLengthPercentage(range, context);
     if (!x)
         return nullptr;
 
@@ -538,7 +538,7 @@ RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange& range, const CSSParserCon
     if (range.atEnd())
         return CSSValueList::createSpaceSeparated(x.releaseNonNull());
 
-    auto y = consumeLengthPercentage(range, context.mode);
+    auto y = consumeLengthPercentage(range, context);
     if (!y)
         return nullptr;
 
@@ -555,7 +555,7 @@ RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange& range, const CSSParserCon
         return CSSValueList::createSpaceSeparated(x.releaseNonNull(), y.releaseNonNull());
     }
 
-    auto z = consumeLength(range, context.mode);
+    auto z = consumeLength(range, context);
     if (!z)
         return nullptr;
 
@@ -594,7 +594,7 @@ RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, const CSSParserContex
 
     while (!range.atEnd()) {
         // First, attempt to parse a number, which might be in a series of 3 specifying the rotation axis.
-        auto parsedValue = consumeNumber(range);
+        auto parsedValue = consumeNumber(range, context);
         if (parsedValue) {
             // If we've encountered an axis identifier, then this value is invalid.
             if (axisIdentifier)
@@ -606,7 +606,7 @@ RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, const CSSParserContex
 
         // Then, attempt to parse an angle. We try this as a fallback rather than the first option because
         // a unitless 0 angle would be consumed as an angle.
-        parsedValue = consumeAngle(range, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
+        parsedValue = consumeAngle(range, context, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
         if (parsedValue) {
             // If we had already parsed an angle or numbers but not 3 in a row, this value is invalid.
             if (angle || (!list.isEmpty() && list.size() != 3))
@@ -671,7 +671,7 @@ RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, const CSSParserContex
     return nullptr;
 }
 
-RefPtr<CSSValue> consumeScale(CSSParserTokenRange& range, const CSSParserContext&)
+RefPtr<CSSValue> consumeScale(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // https://drafts.csswg.org/css-transforms-2/#propdef-scale
     // none | [ <number> | <percentage> ]{1,3}
@@ -688,7 +688,7 @@ RefPtr<CSSValue> consumeScale(CSSParserTokenRange& range, const CSSParserContext
     // If one or two values are given, this specifies a 2d scaling, equivalent to the scale() function.
     // If three values are given, this specifies a 3d scaling, equivalent to the scale3d() function.
 
-    auto x = consumePercentageDividedBy100OrNumber(range);
+    auto x = consumePercentageDividedBy100OrNumber(range, context);
     if (!x)
         return nullptr;
 
@@ -697,7 +697,7 @@ RefPtr<CSSValue> consumeScale(CSSParserTokenRange& range, const CSSParserContext
     if (range.atEnd())
         return CSSValueList::createSpaceSeparated(x.releaseNonNull());
 
-    auto y = consumePercentageDividedBy100OrNumber(range);
+    auto y = consumePercentageDividedBy100OrNumber(range, context);
     if (!y)
         return nullptr;
 
@@ -713,7 +713,7 @@ RefPtr<CSSValue> consumeScale(CSSParserTokenRange& range, const CSSParserContext
         return CSSValueList::createSpaceSeparated(x.releaseNonNull());
     }
 
-    auto z = consumePercentageDividedBy100OrNumber(range);
+    auto z = consumePercentageDividedBy100OrNumber(range, context);
     if (!z)
         return nullptr;
 

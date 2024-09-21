@@ -39,6 +39,8 @@ class CSSCalcSymbolTable;
 enum CSSParserMode : uint8_t;
 enum class ValueRange : uint8_t;
 
+struct CSSParserContext;
+
 namespace CSSPropertyParserHelpers {
 
 template<typename R, typename Base, typename... Ts>
@@ -52,9 +54,9 @@ struct MetaResolver : Base {
         });
     }
 
-    static ResultType consumeAndResolve(CSSParserTokenRange& range, CSSCalcSymbolsAllowed symbolsAllowed, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
+    static ResultType consumeAndResolve(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
     {
-        auto result = MetaConsumer<Ts...>::consume(range, WTFMove(symbolsAllowed), options);
+        auto result = MetaConsumer<Ts...>::consume(range, context, WTFMove(symbolsAllowed), options);
         if (!result)
             return { };
         return resolve(WTFMove(*result), symbolTable, options);

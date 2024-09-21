@@ -149,7 +149,7 @@ bool parseGridTemplateAreasRow(StringView gridRowNames, NamedGridAreaMap& gridAr
 }
 
 
-RefPtr<CSSValue> consumeGridLine(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeGridLine(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // <grid-line> = auto
     //             | <custom-ident>
@@ -163,21 +163,21 @@ RefPtr<CSSValue> consumeGridLine(CSSParserTokenRange& range)
 
     RefPtr<CSSPrimitiveValue> spanValue;
     RefPtr<CSSPrimitiveValue> gridLineName;
-    RefPtr<CSSPrimitiveValue> numericValue = consumeInteger(range);
+    RefPtr<CSSPrimitiveValue> numericValue = consumeInteger(range, context);
     if (numericValue) {
         gridLineName = consumeCustomIdentForGridLine(range);
         spanValue = consumeIdent<CSSValueSpan>(range);
     } else {
         spanValue = consumeIdent<CSSValueSpan>(range);
         if (spanValue) {
-            numericValue = consumeInteger(range);
+            numericValue = consumeInteger(range, context);
             gridLineName = consumeCustomIdentForGridLine(range);
             if (!numericValue)
-                numericValue = consumeInteger(range);
+                numericValue = consumeInteger(range, context);
         } else {
             gridLineName = consumeCustomIdentForGridLine(range);
             if (gridLineName) {
-                numericValue = consumeInteger(range);
+                numericValue = consumeInteger(range, context);
                 spanValue = consumeIdent<CSSValueSpan>(range);
                 if (!spanValue && !numericValue)
                     return gridLineName;
@@ -279,7 +279,7 @@ RefPtr<CSSValue> consumeGridTrackSize(CSSParserTokenRange& range, const CSSParse
     return consumeGridBreadth(range, context);
 }
 
-RefPtr<CSSGridLineNamesValue> consumeGridLineNames(CSSParserTokenRange& range, AllowEmpty allowEmpty)
+RefPtr<CSSGridLineNamesValue> consumeGridLineNames(CSSParserTokenRange& range, const CSSParserContext&, AllowEmpty allowEmpty)
 {
     CSSParserTokenRange rangeCopy = range;
     if (rangeCopy.consumeIncludingWhitespace().type() != LeftBracketToken)
@@ -296,7 +296,7 @@ RefPtr<CSSGridLineNamesValue> consumeGridLineNames(CSSParserTokenRange& range, A
     return CSSGridLineNamesValue::create(lineNames);
 }
 
-static bool consumeGridTrackRepeatFunction(CSSParserTokenRange& range, CSSParserMode mode, CSSValueListBuilder& list, bool& isAutoRepeat, bool& allTracksAreFixedSized)
+static bool consumeGridTrackRepeatFunction(CSSParserTokenRange& range, const CSSParserContext& context, CSSValueListBuilder& list, bool& isAutoRepeat, bool& allTracksAreFixedSized)
 {
     CSSParserTokenRange args = consumeFunction(range);
 
@@ -306,25 +306,25 @@ static bool consumeGridTrackRepeatFunction(CSSParserTokenRange& range, CSSParser
     auto autoRepeatType = consumeIdentRaw<CSSValueAutoFill, CSSValueAutoFit>(args);
     isAutoRepeat = autoRepeatType.has_value();
     if (!isAutoRepeat) {
-        repetitions = consumePositiveInteger(args);
+        repetitions = consumePositiveInteger(args, context);
         if (!repetitions)
             return false;
     }
     if (!consumeCommaIncludingWhitespace(args))
         return false;
-    if (auto lineNames = consumeGridLineNames(args))
+    if (auto lineNames = consumeGridLineNames(args, context))
         repeatedValues.append(lineNames.releaseNonNull());
 
     size_t numberOfTracks = 0;
     while (!args.atEnd()) {
-        auto trackSize = consumeGridTrackSize(args, mode);
+        auto trackSize = consumeGridTrackSize(args, context);
         if (!trackSize)
             return false;
         if (allTracksAreFixedSized)
             allTracksAreFixedSized = isGridTrackFixedSized(*trackSize);
         repeatedValues.append(trackSize.releaseNonNull());
         ++numberOfTracks;
-        if (auto lineNames = consumeGridLineNames(args))
+        if (auto lineNames = consumeGridLineNames(args, context))
             repeatedValues.append(lineNames.releaseNonNull());
     }
     // We should have found at least one <track-size> or else it is not a valid <track-list>.
@@ -342,13 +342,13 @@ static bool consumeGridTrackRepeatFunction(CSSParserTokenRange& range, CSSParser
     return true;
 }
 
-static bool consumeSubgridNameRepeatFunction(CSSParserTokenRange& range, CSSValueListBuilder& list, bool& isAutoRepeat)
+static bool consumeSubgridNameRepeatFunction(CSSParserTokenRange& range, const CSSParserContext& context, CSSValueListBuilder& list, bool& isAutoRepeat)
 {
     CSSParserTokenRange args = consumeFunction(range);
     RefPtr<CSSPrimitiveValue> repetitions;
     isAutoRepeat = consumeIdentRaw<CSSValueAutoFill>(args).has_value();
     if (!isAutoRepeat) {
-        repetitions = consumePositiveInteger(args);
+        repetitions = consumePositiveInteger(args, context);
         if (!repetitions)
             return false;
         if (auto repetitionsInteger = repetitions->resolveAsIntegerIfNotCalculated(); repetitionsInteger && repetitionsInteger > GridPosition::max())
@@ -359,7 +359,7 @@ static bool consumeSubgridNameRepeatFunction(CSSParserTokenRange& range, CSSValu
 
     CSSValueListBuilder repeatedValues;
     do {
-        auto lineNames = consumeGridLineNames(args, AllowEmpty::Yes);
+        auto lineNames = consumeGridLineNames(args, context, AllowEmpty::Yes);
         if (!lineNames)
             return false;
         repeatedValues.append(lineNames.releaseNonNull());
@@ -384,12 +384,12 @@ RefPtr<CSSValue> consumeGridTrackList(CSSParserTokenRange& range, const CSSParse
         while (!range.atEnd() && range.peek().type() != DelimiterToken) {
             if (range.peek().functionId() == CSSValueRepeat) {
                 bool isAutoRepeat;
-                if (!consumeSubgridNameRepeatFunction(range, values, isAutoRepeat))
+                if (!consumeSubgridNameRepeatFunction(range, context, values, isAutoRepeat))
                     return nullptr;
                 if (isAutoRepeat && seenAutoRepeat)
                     return nullptr;
                 seenAutoRepeat = seenAutoRepeat || isAutoRepeat;
-            } else if (auto value = consumeGridLineNames(range, AllowEmpty::Yes))
+            } else if (auto value = consumeGridLineNames(range, context, AllowEmpty::Yes))
                 values.append(value.releaseNonNull());
             else
                 return nullptr;
@@ -404,19 +404,19 @@ RefPtr<CSSValue> consumeGridTrackList(CSSParserTokenRange& range, const CSSParse
     CSSValueListBuilder values;
     bool allowRepeat = trackListType == GridTemplate;
     bool allTracksAreFixedSized = true;
-    if (auto lineNames = consumeGridLineNames(range))
+    if (auto lineNames = consumeGridLineNames(range, context))
         values.append(lineNames.releaseNonNull());
     do {
         bool isAutoRepeat;
         if (range.peek().functionId() == CSSValueRepeat) {
             if (!allowRepeat)
                 return nullptr;
-            if (!consumeGridTrackRepeatFunction(range, context.mode, values, isAutoRepeat, allTracksAreFixedSized))
+            if (!consumeGridTrackRepeatFunction(range, context, values, isAutoRepeat, allTracksAreFixedSized))
                 return nullptr;
             if (isAutoRepeat && seenAutoRepeat)
                 return nullptr;
             seenAutoRepeat = seenAutoRepeat || isAutoRepeat;
-        } else if (RefPtr<CSSValue> value = consumeGridTrackSize(range, context.mode)) {
+        } else if (RefPtr<CSSValue> value = consumeGridTrackSize(range, context)) {
             if (allTracksAreFixedSized)
                 allTracksAreFixedSized = isGridTrackFixedSized(*value);
             values.append(value.releaseNonNull());
@@ -426,7 +426,7 @@ RefPtr<CSSValue> consumeGridTrackList(CSSParserTokenRange& range, const CSSParse
             return nullptr;
         if (!allowGridLineNames && range.peek().type() == LeftBracketToken)
             return nullptr;
-        if (auto lineNames = consumeGridLineNames(range))
+        if (auto lineNames = consumeGridLineNames(range, context))
             values.append(lineNames.releaseNonNull());
     } while (!range.atEnd() && range.peek().type() != DelimiterToken);
     return CSSValueList::createSpaceSeparated(WTFMove(values));
@@ -444,7 +444,7 @@ RefPtr<CSSValue> consumeGridTemplatesRowsOrColumns(CSSParserTokenRange& range, c
     return consumeGridTrackList(range, context, GridTemplate);
 }
 
-RefPtr<CSSValue> consumeGridTemplateAreas(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeGridTemplateAreas(CSSParserTokenRange& range, const CSSParserContext&)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
@@ -462,7 +462,7 @@ RefPtr<CSSValue> consumeGridTemplateAreas(CSSParserTokenRange& range)
     return CSSGridTemplateAreasValue::create(WTFMove(map), rowCount, columnCount);
 }
 
-RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange& range, const CSSParserContext&)
 {
     auto rowOrColumnValue = consumeIdent<CSSValueRow, CSSValueColumn>(range);
     auto denseAlgorithm = consumeIdent<CSSValueDense>(range);
@@ -482,7 +482,7 @@ RefPtr<CSSValue> consumeGridAutoFlow(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(WTFMove(parsedValues));
 }
 
-RefPtr<CSSValue> consumeMasonryAutoFlow(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeMasonryAutoFlow(CSSParserTokenRange& range, const CSSParserContext&)
 {
     auto packOrNextValue = consumeIdent<CSSValuePack, CSSValueNext>(range);
     auto definiteFirstOrOrderedValue = consumeIdent<CSSValueDefiniteFirst, CSSValueOrdered>(range);
