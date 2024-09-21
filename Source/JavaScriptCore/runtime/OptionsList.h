@@ -579,6 +579,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, wasmIPIntTiersUpToBBQ, true, Normal, "Allow IPInt to tier up to BBQ"_s) \
     v(Bool, wasmIPIntTiersUpToOMG, true, Normal, "Allow IPInt to tier up to OMG"_s) \
     v(Bool, forceAllFunctionsToUseSIMD, false, Normal, "Force all functions to act conservatively w.r.t fp/vector registers for testing."_s) \
+    v(Bool, useOMGInlining, true, Normal, "Use OMG inlining"_s) \
     \
     /* Feature Flags */\
     \
