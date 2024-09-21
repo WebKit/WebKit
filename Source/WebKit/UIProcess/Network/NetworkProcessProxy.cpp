@@ -1491,7 +1491,7 @@ void NetworkProcessProxy::endServiceWorkerBackgroundProcessing(WebCore::ProcessI
 void NetworkProcessProxy::requestBackgroundFetchPermission(PAL::SessionID sessionID, const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& callback)
 {
     RELEASE_LOG(ServiceWorker, "%p - NetworkProcessProxy::requestBackgroundFetchPermission", this);
-    auto* store = websiteDataStoreFromSessionID(sessionID);
+    RefPtr store = websiteDataStoreFromSessionID(sessionID);
 
     if (!store) {
         callback(false);
@@ -1542,7 +1542,7 @@ void NetworkProcessProxy::clickBackgroundFetch(PAL::SessionID sessionID, const S
 
 void NetworkProcessProxy::notifyBackgroundFetchChange(PAL::SessionID sessionID, const String& backgroundFetchIdentifier, BackgroundFetchChange backgroundFetchChange)
 {
-    auto* store = websiteDataStoreFromSessionID(sessionID);
+    RefPtr store = websiteDataStoreFromSessionID(sessionID);
     if (!store)
         return;
     store->client().notifyBackgroundFetchChange(backgroundFetchIdentifier, backgroundFetchChange);
@@ -1551,7 +1551,7 @@ void NetworkProcessProxy::notifyBackgroundFetchChange(PAL::SessionID sessionID, 
 void NetworkProcessProxy::requestStorageSpace(PAL::SessionID sessionID, const WebCore::ClientOrigin& origin, uint64_t currentQuota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t> quota)>&& completionHandler)
 {
     RELEASE_LOG(Storage, "%p - NetworkProcessProxy::requestStorageSpace", this);
-    auto* store = websiteDataStoreFromSessionID(sessionID);
+    RefPtr store = websiteDataStoreFromSessionID(sessionID);
 
     if (!store) {
         completionHandler({ });

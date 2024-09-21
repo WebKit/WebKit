@@ -1929,7 +1929,7 @@ void NetworkStorageManager::clearServiceWorkerRegistrations(CompletionHandler<vo
             }
         }
 
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler();
         });
     });

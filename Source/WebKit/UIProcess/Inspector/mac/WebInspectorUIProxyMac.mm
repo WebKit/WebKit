@@ -79,7 +79,7 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 
 - (WKInspectorRef)inspectorRef
 {
-    return toAPI(_inspectorProxy.get());
+    return toAPI(self._protectedInspector.get());
 }
 
 - (_WKInspector *)inspector
@@ -87,6 +87,11 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
     if (RefPtr proxy = _inspectorProxy.get())
         return wrapper(*proxy);
     return nil;
+}
+
+- (RefPtr<WebKit::WebInspectorUIProxy>)_protectedInspector
+{
+    return _inspectorProxy.get();
 }
 
 - (instancetype)initWithWebInspectorUIProxy:(WebKit::WebInspectorUIProxy*)inspectorProxy

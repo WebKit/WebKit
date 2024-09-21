@@ -361,8 +361,8 @@ bool WebUserContentControllerProxy::addUserScriptMessageHandler(WebScriptMessage
 
     m_scriptMessageHandlers.add(handler.identifier(), &handler);
 
-    for (auto& process : m_processes)
-        process.send(Messages::WebUserContentController::AddUserScriptMessageHandlers({ { handler.identifier(), world->identifier(), handler.name() } }), identifier());
+    for (Ref process : m_processes)
+        process->send(Messages::WebUserContentController::AddUserScriptMessageHandlers({ { handler.identifier(), world->identifier(), handler.name() } }), identifier());
     
     return true;
 }
