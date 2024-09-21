@@ -51,6 +51,30 @@ if (DEVELOPER_MODE)
     list(APPEND MiniBrowser_PRIVATE_DEFINITIONS WEBKIT_INJECTED_BUNDLE_PATH="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 endif ()
 
+if (USE_SKIA)
+    list(APPEND MiniBrowser_PRIVATE_LIBRARIES Skia)
+    if (NOT USE_SYSTEM_MALLOC)
+        #
+        # Skia uses WTF::fastMalloc only when built inside libWPEWebKit.
+        # Add the malloc allocator here to make the linker skil the symbols
+        # from the static library which have references to WTF.
+        #
+        list(APPEND MiniBrowser_SOURCES
+            ${THIRDPARTY_DIR}/skia/src/ports/SkMemory_malloc.cpp
+        )
+    endif ()
+
+    if (NOT DEFINED CXX_COMPILER_SUPPORTS_-Wno-unused-parameter)
+        check_cxx_compiler_flag(-Wno-unused-parameter CXX_COMPILER_SUPPORTS_-Wno-unused-parameter)
+    endif ()
+    if (CXX_COMPILER_SUPPORTS_-Wno-unused-parameter)
+        set_property(
+            SOURCE ${THIRDPARTY_DIR}/skia/src/ports/SkMemory_malloc.cpp
+            APPEND PROPERTY COMPILE_OPTIONS -Wno-unused-parameter
+        )
+    endif ()
+endif ()
+
 WEBKIT_EXECUTABLE_DECLARE(MiniBrowser)
 WEBKIT_EXECUTABLE(MiniBrowser)
 

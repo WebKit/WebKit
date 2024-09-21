@@ -4,7 +4,7 @@ list(APPEND ImageDiff_SOURCES
 
 if (NOT USE_SYSTEM_MALLOC)
     #
-    # Skia is built to use bmalloc/fastMalloc, but ImageDiff should not
+    # Skia is built to use WTF::fastMalloc, but ImageDiff should not
     # link to WTF. Adding the malloc allocator source will make the linker
     # skip the memory allocator symbols from the Skia static library, thus
     # avoiding the need to link to WTF.

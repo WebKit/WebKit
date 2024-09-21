@@ -20,5 +20,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 list(APPEND WebCore_LIBRARIES
     HarfBuzz::HarfBuzz
     HarfBuzz::ICU
+)
+
+list(APPEND WebCore_PRIVATE_LIBRARIES
     Skia
 )
