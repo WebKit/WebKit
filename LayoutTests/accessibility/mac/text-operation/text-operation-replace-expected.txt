@@ -14,6 +14,16 @@ PASS: operationResult[0] === '[replaced string]'
 PASS: operationResult[1] === '[replaced string]'
 PASS: operationResult[2] === '[Replaced String]'
 PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT4: [Replaced String] quick brown [replaced string] jumps over the [replaced string] dog.'
+PASS: operationResult.length === 3
+PASS: operationResult[0] === 'three'
+PASS: operationResult[1] === 'two'
+PASS: operationResult[2] === 'One'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT5: One quick brown two jumps over the three dog.'
+PASS: operationResult.length === 3
+PASS: operationResult[0] === 'three'
+PASS: operationResult[1] === 'two'
+PASS: operationResult[2] === ''
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT6:  quick brown two jumps over the three dog.'
 
 PASS successfullyParsed is true
 

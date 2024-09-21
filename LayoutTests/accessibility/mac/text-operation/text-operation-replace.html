@@ -11,6 +11,8 @@
     <p contenteditable="true" id="text2">TEXT2: <span id="target2">The</span> quick brown fox jumps over the lazy dog.</p>
     <p contenteditable="true" id="text3">TEXT3: The quick brown fox jumps over the <span id="target3">lazy</span> dog.</p>
     <p contenteditable="true" id="text4">TEXT4: <span id="target4">The</span> quick brown  <span id="target5">fox</span> jumps over the <span id="target6">lazy</span> dog.</p>
+    <p contenteditable="true" id="text5">TEXT5: <span id="target7">The</span> quick brown  <span id="target8">fox</span> jumps over the <span id="target9">lazy</span> dog.</p>
+    <p contenteditable="true" id="text6">TEXT6: <span id="target10">The</span> quick brown  <span id="target11">fox</span> jumps over the <span id="target12">lazy</span> dog.</p>
 </div>
 
 <script>
@@ -51,7 +53,7 @@ if (window.accessibilityController) {
         output += expect("operationResult[0]", "'LAZY'");
         output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: TEXT3: The quick brown fox jumps over the LAZY dog.'");
 
-        // Validate that the case of the replacement string is preserved across multiple replacements.
+        // Validate that the case of the replacement string is modified appropriately across multiple replacements.
         text = accessibilityController.accessibleElementById("text4");
         markers = [await selectElementTextById("target6"), await selectElementTextById("target5"), await selectElementTextById("target4")];
         await waitForNotification(text, "AXValueChanged", () => {
@@ -62,6 +64,31 @@ if (window.accessibilityController) {
         output += expect("operationResult[1]", "'[replaced string]'");
         output += expect("operationResult[2]", "'[Replaced String]'");
         output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: TEXT4: [Replaced String] quick brown [replaced string] jumps over the [replaced string] dog.'");
+
+        // Validate that the case of the replacement string is modified appropriately across multiple replacements with individual replacement strings.
+        text = accessibilityController.accessibleElementById("text5");
+        markers = [await selectElementTextById("target9"), await selectElementTextById("target8"), await selectElementTextById("target7")];
+        await waitForNotification(text, "AXValueChanged", () => {
+            operationResult = text.performTextOperation("TextOperationReplace", markers, ["Three", "Two", "One"], /* smart replace */ false);
+        });
+        output += expect("operationResult.length", "3");
+        output += expect("operationResult[0]", "'three'");
+        output += expect("operationResult[1]", "'two'");
+        output += expect("operationResult[2]", "'One'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: TEXT5: One quick brown two jumps over the three dog.'");
+
+        // Assert the behavior when fewer individual replacement strings than the number of ranges are provided.
+        // THIS IS NOT A VALID USE OF THE API. This test case asserts the existing behavior to catch accidental changes.
+        text = accessibilityController.accessibleElementById("text6");
+        markers = [await selectElementTextById("target12"), await selectElementTextById("target11"), await selectElementTextById("target10")];
+        await waitForNotification(text, "AXValueChanged", () => {
+            operationResult = text.performTextOperation("TextOperationReplace", markers, ["Three", "Two"], /* smart replace */ false);
+        });
+        output += expect("operationResult.length", "3");
+        output += expect("operationResult[0]", "'three'");
+        output += expect("operationResult[1]", "'two'");
+        output += expect("operationResult[2]", "''");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: TEXT6:  quick brown two jumps over the three dog.'");
 
         document.getElementById("test-content").remove();
         debug(output);

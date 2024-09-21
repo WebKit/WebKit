@@ -649,7 +649,7 @@ enum class AccessibilityTextOperationSmartReplace : bool { No, Yes };
 struct AccessibilityTextOperation {
     Vector<SimpleRange> textRanges; // text on which perform the operation.
     AccessibilityTextOperationType type { AccessibilityTextOperationType::Select };
-    String replacementText; // For type = Replace, ReplacePreserveCase.
+    Vector<String> replacementStrings; // For type = Replace, ReplacePreserveCase.
     AccessibilityTextOperationSmartReplace smartReplace { AccessibilityTextOperationSmartReplace::Yes };
 };
 

@@ -1029,12 +1029,22 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
     if (!frame)
         return result;
 
-    for (const auto& textRange : operation.textRanges) {
+    size_t replacementStringsCount = operation.replacementStrings.size();
+    bool useFirstReplacementStringForAllReplacements = (replacementStringsCount == 1);
+
+    for (size_t i = 0; i < operation.textRanges.size(); ++i) {
+        auto textRange = operation.textRanges[i];
+
+        String replacementString;
+        if (useFirstReplacementStringForAllReplacements)
+            replacementString = operation.replacementStrings[0];
+        else if (i < replacementStringsCount)
+            replacementString = operation.replacementStrings[i];
+
         if (!frame->selection().setSelectedRange(textRange, Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes))
             continue;
 
         String text = plainText(textRange);
-        String replacementString = operation.replacementText;
         bool replaceSelection = false;
         switch (operation.type) {
         case AccessibilityTextOperationType::Capitalize:

@@ -417,6 +417,12 @@ static id parameterizedAttributeValueForTesting(const RefPtr<AXCoreObject>&, NSS
 #define NSAccessibilityTextOperationReplacementString @"AXTextOperationReplacementString"
 #endif
 
+#ifndef NSAccessibilityTextOperationIndividualReplacementStrings
+// Array of replacement text for operation replace. The array should contain
+// the same number of items as the number of text operation ranges.
+#define NSAccessibilityTextOperationIndividualReplacementStrings @"AXTextOperationIndividualReplacementStrings"
+#endif
+
 #ifndef NSAccessibilityTextOperationSmartReplace
 // Boolean specifying whether a smart replacement should be performed.
 #define NSAccessibilityTextOperationSmartReplace @"AXTextOperationSmartReplace"
@@ -673,7 +679,7 @@ static std::pair<AccessibilitySearchTextCriteria, AccessibilityTextOperation> ac
     }
 
     if ([replacementStringParameter isKindOfClass:[NSString class]])
-        operation.replacementText = replacementStringParameter;
+        operation.replacementStrings = { String(replacementStringParameter) };
 
     if ([searchStringsParameter isKindOfClass:[NSArray class]])
         criteria.searchStrings = makeVector<String>(searchStringsParameter);
@@ -717,6 +723,7 @@ static AccessibilityTextOperation accessibilityTextOperationForParameterizedAttr
 
     NSArray *markerRanges = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationMarkerRanges];
     NSString *operationType = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationType];
+    NSArray *individualReplacementStrings = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationIndividualReplacementStrings];
     NSString *replacementString = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationReplacementString];
     NSNumber *smartReplace = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationSmartReplace];
 
@@ -740,8 +747,10 @@ static AccessibilityTextOperation accessibilityTextOperationForParameterizedAttr
             operation.type = AccessibilityTextOperationType::Uppercase;
     }
 
-    if ([replacementString isKindOfClass:[NSString class]])
-        operation.replacementText = replacementString;
+    if ([individualReplacementStrings isKindOfClass:[NSArray class]]) {
+        operation.replacementStrings = makeVector<String>(individualReplacementStrings);
+    } else if ([replacementString isKindOfClass:[NSString class]])
+        operation.replacementStrings = { String(replacementString) };
 
     if ([smartReplace isKindOfClass:[NSNumber class]])
         operation.smartReplace = [smartReplace boolValue] ? AccessibilityTextOperationSmartReplace::Yes : AccessibilityTextOperationSmartReplace::No;

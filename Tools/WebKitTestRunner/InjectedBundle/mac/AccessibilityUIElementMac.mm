@@ -342,7 +342,7 @@ static NSDictionary *searchTextParameterizedAttributeForCriteria(JSContextRef co
     return parameterizedAttribute;
 }
 
-static NSDictionary *textOperationParameterizedAttribute(JSContextRef context, JSStringRef operationType, JSValueRef markerRanges, JSStringRef replacement, bool shouldSmartReplace)
+static NSDictionary *textOperationParameterizedAttribute(JSContextRef context, JSStringRef operationType, JSValueRef markerRanges, JSValueRef replacementStrings, bool shouldSmartReplace)
 {
     NSMutableDictionary *attributeParameters = [NSMutableDictionary dictionary];
 
@@ -361,8 +361,17 @@ static NSDictionary *textOperationParameterizedAttribute(JSContextRef context, J
         [attributeParameters setObject:platformRanges forKey:@"AXTextOperationMarkerRanges"];
     }
 
-    if (replacement)
-        [attributeParameters setObject:[NSString stringWithJSStringRef:replacement] forKey:@"AXTextOperationReplacementString"];
+    if (JSValueIsString(context, replacementStrings))
+        [attributeParameters setObject:toWTFString(context, replacementStrings) forKey:@"AXTextOperationReplacementString"];
+    else {
+        NSMutableArray *individualReplacementStringsParameter = [NSMutableArray array];
+        JSObjectRef replacementStringsArray = JSValueToObject(context, replacementStrings, nullptr);
+        unsigned replacementStringsArrayLength = arrayLength(context, replacementStringsArray);
+        for (unsigned i = 0; i < replacementStringsArrayLength; ++i)
+            [individualReplacementStringsParameter addObject:toWTFString(context, JSObjectGetPropertyAtIndex(context, replacementStringsArray, i, nullptr))];
+
+        [attributeParameters setObject:individualReplacementStringsParameter forKey:@"AXTextOperationIndividualReplacementStrings"];
+    }
 
     [attributeParameters setObject:[NSNumber numberWithBool:shouldSmartReplace] forKey:@"AXTextOperationSmartReplace"];
 
@@ -1492,10 +1501,10 @@ JSValueRef AccessibilityUIElement::searchTextWithCriteria(JSContextRef context, 
     return nullptr;
 }
 
-JSValueRef AccessibilityUIElement::performTextOperation(JSContextRef context, JSStringRef operationType, JSValueRef markerRanges, JSStringRef replacement, bool shouldSmartReplace)
+JSValueRef AccessibilityUIElement::performTextOperation(JSContextRef context, JSStringRef operationType, JSValueRef markerRanges, JSValueRef replacementStrings, bool shouldSmartReplace)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSDictionary *parameterizedAttribute = textOperationParameterizedAttribute(context, operationType, markerRanges, replacement, shouldSmartReplace);
+    NSDictionary *parameterizedAttribute = textOperationParameterizedAttribute(context, operationType, markerRanges, replacementStrings, shouldSmartReplace);
     auto result = attributeValueForParameter(@"AXTextOperation", parameterizedAttribute);
     if ([result isKindOfClass:[NSArray class]])
         return makeValueRefForValue(context, result.get());
