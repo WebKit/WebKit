@@ -59,7 +59,7 @@ Ref<WebGeolocationManagerProxy> WebGeolocationManagerProxy::create(WebProcessPoo
 WebGeolocationManagerProxy::WebGeolocationManagerProxy(WebProcessPool* processPool)
     : WebContextSupplement(processPool)
 {
-    WebContextSupplement::protectedProcessPool()->addMessageReceiver(Messages::WebGeolocationManagerProxy::messageReceiverName(), *this);
+    WebContextSupplement::processPool()->addMessageReceiver(Messages::WebGeolocationManagerProxy::messageReceiverName(), *this);
 }
 
 WebGeolocationManagerProxy::~WebGeolocationManagerProxy() = default;
