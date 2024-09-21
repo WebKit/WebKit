@@ -73,3 +73,9 @@ view-gestures/smart-magnify/double-tap-zoom-scroll-above-top.html [ Timeout Pass
 
 # webkit.org/b/280024 [EWS] fast/canvas/webgl/drawingbuffer-test.html is a constant failure in Ventura Intel EWS
 [ Release x86_64 ] fast/canvas/webgl/drawingbuffer-test.html [ Skip ]
+
+# webkit.org/b/280098 4 tests in imported/w3c/web-platform-tests/css/ are constant failures in Ventura Intel EWS
+[ Release x86_64 ] imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-border-radius-001.html [ Skip ]
+[ Release x86_64 ] imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties.html [ Skip ]
+[ Release x86_64 ] imported/w3c/web-platform-tests/css/css-images/tiled-radial-gradients.html [ Skip ]
+[ Release x86_64 ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-offscreen-old.html [ Skip ]
