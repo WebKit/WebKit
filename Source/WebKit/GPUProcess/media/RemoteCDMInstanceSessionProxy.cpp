@@ -136,54 +136,41 @@ void RemoteCDMInstanceSessionProxy::storeRecordOfKeyUsage(const String& sessionI
 
 void RemoteCDMInstanceSessionProxy::updateKeyStatuses(KeyStatusVector&& keyStatuses)
 {
-    if (!m_cdm)
-        return;
-
-    auto* factory = m_cdm->factory();
-    if (!factory)
-        return;
-
-    RefPtr gpuConnectionToWebProcess = factory->gpuConnectionToWebProcess();
-    if (!gpuConnectionToWebProcess)
-        return;
-
-    gpuConnectionToWebProcess->protectedConnection()->send(Messages::RemoteCDMInstanceSession::UpdateKeyStatuses(WTFMove(keyStatuses)), m_identifier);
+    if (RefPtr connection = this->connection())
+        connection->send(Messages::RemoteCDMInstanceSession::UpdateKeyStatuses(WTFMove(keyStatuses)), m_identifier);
 }
 
 void RemoteCDMInstanceSessionProxy::sendMessage(CDMMessageType type, Ref<SharedBuffer>&& message)
 {
-    if (!m_cdm)
-        return;
-    auto* factory = m_cdm->factory();
-    if (!factory)
-        return;
-
-    RefPtr gpuConnectionToWebProcess = factory->gpuConnectionToWebProcess();
-    if (!gpuConnectionToWebProcess)
-        return;
-
-    gpuConnectionToWebProcess->protectedConnection()->send(Messages::RemoteCDMInstanceSession::SendMessage(type, WTFMove(message)), m_identifier);
+    if (RefPtr connection = this->connection())
+        connection->send(Messages::RemoteCDMInstanceSession::SendMessage(type, WTFMove(message)), m_identifier);
 }
 
 void RemoteCDMInstanceSessionProxy::sessionIdChanged(const String& sessionId)
 {
-    if (!m_cdm)
-        return;
-
-    auto* factory = m_cdm->factory();
-    if (!factory)
-        return;
-
-    RefPtr gpuConnectionToWebProcess = factory->gpuConnectionToWebProcess();
-    if (!gpuConnectionToWebProcess)
-        return;
-
-    gpuConnectionToWebProcess->protectedConnection()->send(Messages::RemoteCDMInstanceSession::SessionIdChanged(sessionId), m_identifier);
+    if (RefPtr connection = this->connection())
+        connection->send(Messages::RemoteCDMInstanceSession::SessionIdChanged(sessionId), m_identifier);
 }
 
 const SharedPreferencesForWebProcess& RemoteCDMInstanceSessionProxy::sharedPreferencesForWebProcess() const
 {
     return protectedCdm()->sharedPreferencesForWebProcess();
+}
+
+IPC::Connection* RemoteCDMInstanceSessionProxy::connection() const
+{
+    if (!m_cdm)
+        return nullptr;
+
+    RefPtr factory = m_cdm->factory();
+    if (!factory)
+        return nullptr;
+
+    RefPtr gpuConnectionToWebProcess = factory->gpuConnectionToWebProcess();
+    if (!gpuConnectionToWebProcess)
+        return nullptr;
+
+    return &gpuConnectionToWebProcess->connection();
 }
 
 RefPtr<RemoteCDMProxy> RemoteCDMInstanceSessionProxy::protectedCdm() const

@@ -65,6 +65,8 @@ private:
     // LegacyCDMClient
     RefPtr<WebCore::MediaPlayer> cdmMediaPlayer(const WebCore::LegacyCDM*) const final;
 
+    RefPtr<RemoteLegacyCDMFactoryProxy> protectedFactory() const { return m_factory.get(); }
+
     WeakPtr<RemoteLegacyCDMFactoryProxy> m_factory;
     WebCore::MediaPlayerIdentifier m_playerId;
     std::unique_ptr<WebCore::LegacyCDM> m_cdm;

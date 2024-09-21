@@ -82,6 +82,7 @@ private:
     void sessionIdChanged(const String&) final;
     PlatformDisplayID displayID() final { return m_displayID; }
 
+    IPC::Connection* connection() const;
     RefPtr<RemoteCDMProxy> protectedCdm() const;
 
     WeakPtr<RemoteCDMProxy> m_cdm;
