@@ -790,7 +790,7 @@ RefPtr<ArrayBuffer> RemoteMediaPlayerProxy::mediaPlayerCachedKeyForKeyId(const S
     if (!m_legacySession)
         return nullptr;
 
-    if (auto cdmSession = m_manager->gpuConnectionToWebProcess()->legacyCdmFactoryProxy().getSession(*m_legacySession))
+    if (auto cdmSession = m_manager->gpuConnectionToWebProcess()->protectedLegacyCdmFactoryProxy()->getSession(*m_legacySession))
         return cdmSession->getCachedKeyForKeyId(keyId);
     return nullptr;
 }
@@ -1017,7 +1017,7 @@ void RemoteMediaPlayerProxy::setLegacyCDMSession(std::optional<RemoteLegacyCDMSe
         return;
 
     if (m_legacySession) {
-        if (auto cdmSession = m_manager->gpuConnectionToWebProcess()->legacyCdmFactoryProxy().getSession(*m_legacySession)) {
+        if (auto cdmSession = m_manager->gpuConnectionToWebProcess()->protectedLegacyCdmFactoryProxy()->getSession(*m_legacySession)) {
             m_player->setCDMSession(nullptr);
             cdmSession->setPlayer(nullptr);
         }
@@ -1026,7 +1026,7 @@ void RemoteMediaPlayerProxy::setLegacyCDMSession(std::optional<RemoteLegacyCDMSe
     m_legacySession = instanceId;
 
     if (m_legacySession) {
-        if (auto cdmSession = m_manager->gpuConnectionToWebProcess()->legacyCdmFactoryProxy().getSession(*m_legacySession)) {
+        if (auto cdmSession = m_manager->gpuConnectionToWebProcess()->protectedLegacyCdmFactoryProxy()->getSession(*m_legacySession)) {
             m_player->setCDMSession(cdmSession->session());
             cdmSession->setPlayer(*this);
         }
@@ -1046,7 +1046,7 @@ void RemoteMediaPlayerProxy::cdmInstanceAttached(RemoteCDMInstanceIdentifier&& i
     if (!m_manager || !m_manager->gpuConnectionToWebProcess())
         return;
 
-    if (auto* instanceProxy = m_manager->gpuConnectionToWebProcess()->cdmFactoryProxy().getInstance(instanceId))
+    if (auto* instanceProxy = m_manager->gpuConnectionToWebProcess()->protectedCdmFactoryProxy()->getInstance(instanceId))
         m_player->cdmInstanceAttached(instanceProxy->protectedInstance());
 }
 
@@ -1056,7 +1056,7 @@ void RemoteMediaPlayerProxy::cdmInstanceDetached(RemoteCDMInstanceIdentifier&& i
     if (!m_manager || !m_manager->gpuConnectionToWebProcess())
         return;
 
-    if (auto* instanceProxy = m_manager->gpuConnectionToWebProcess()->cdmFactoryProxy().getInstance(instanceId))
+    if (auto* instanceProxy = m_manager->gpuConnectionToWebProcess()->protectedCdmFactoryProxy()->getInstance(instanceId))
         m_player->cdmInstanceDetached(instanceProxy->protectedInstance());
 }
 
@@ -1066,7 +1066,7 @@ void RemoteMediaPlayerProxy::attemptToDecryptWithInstance(RemoteCDMInstanceIdent
     if (!m_manager || !m_manager->gpuConnectionToWebProcess())
         return;
 
-    if (auto* instanceProxy = m_manager->gpuConnectionToWebProcess()->cdmFactoryProxy().getInstance(instanceId))
+    if (auto* instanceProxy = m_manager->gpuConnectionToWebProcess()->protectedCdmFactoryProxy()->getInstance(instanceId))
         m_player->attemptToDecryptWithInstance(instanceProxy->protectedInstance());
 }
 #endif
