@@ -37,7 +37,7 @@ function some(predicate)
     var count = 0;
     var iterator = this;
     var wrapper = { @@iterator: function () { return iterator; }};
-    for (const item of wrapper) {
+    for (var item of wrapper) {
         if (predicate(item, count++))
             return true;
     }
@@ -59,7 +59,7 @@ function every(predicate)
     var count = 0;
     var iterator = this;
     var wrapper = { @@iterator: function () { return iterator; }};
-    for (const item of wrapper) {
+    for (var item of wrapper) {
         if (!predicate(item, count++))
             return false;
     }
@@ -81,7 +81,7 @@ function find(predicate)
     var count = 0;
     var iterator = this;
     var wrapper = { @@iterator: function () { return iterator; }};
-    for (const item of wrapper) {
+    for (var item of wrapper) {
         if (predicate(item, count++))
             return item;
     }
