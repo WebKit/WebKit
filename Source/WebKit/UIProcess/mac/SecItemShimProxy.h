@@ -48,7 +48,6 @@ private:
 
     // IPC::Connection::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
     void secItemRequest(IPC::Connection&, const SecItemRequestData&, CompletionHandler<void(std::optional<SecItemResponseData>&&)>&&);
     void secItemRequestSync(IPC::Connection&, const SecItemRequestData&, CompletionHandler<void(std::optional<SecItemResponseData>&&)>&&);

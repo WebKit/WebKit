@@ -132,7 +132,6 @@ private:
     void callCloseCompletionHandlers();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }

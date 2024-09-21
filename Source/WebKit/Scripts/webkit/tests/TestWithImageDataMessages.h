@@ -73,7 +73,7 @@ public:
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithImageData_ReceiveImageDataReply; }
+    static constexpr IPC::MessageName replyName = IPC::MessageName::TestWithImageData_ReceiveImageDataReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<RefPtr<WebCore::ImageData>>;
     using Reply = CompletionHandler<void(RefPtr<WebCore::ImageData>&&)>;

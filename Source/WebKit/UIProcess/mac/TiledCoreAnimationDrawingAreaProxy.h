@@ -55,7 +55,7 @@ private:
     void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
 
     void waitForDidUpdateActivityState(ActivityStateChangeID, WebProcessProxy&) override;
-    void dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection&, Vector<IPC::AsyncReplyID>&&) final;
+    void dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection&, Vector<IPC::ReplyID>&&) final;
 
     std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() final;
 

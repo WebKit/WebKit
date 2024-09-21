@@ -151,14 +151,6 @@ void RemoteMediaPlayerManagerProxy::didReceivePlayerMessage(IPC::Connection& con
         player->didReceiveMessage(connection, decoder);
 }
 
-bool RemoteMediaPlayerManagerProxy::didReceiveSyncPlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
-{
-    ASSERT(RunLoop::isMain());
-    if (RefPtr player = m_proxies.get(LegacyNullableObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())))
-        return player->didReceiveSyncMessage(connection, decoder, encoder);
-    return false;
-}
-
 RefPtr<MediaPlayer> RemoteMediaPlayerManagerProxy::mediaPlayer(const MediaPlayerIdentifier& identifier)
 {
     ASSERT(RunLoop::isMain());

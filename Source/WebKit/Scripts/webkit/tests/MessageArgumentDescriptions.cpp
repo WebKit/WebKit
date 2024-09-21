@@ -512,7 +512,7 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
 
 Vector<ASCIILiteral> serializedIdentifiers()
 {
-    static_assert(sizeof(uint64_t) == sizeof(IPC::AsyncReplyID));
+    static_assert(sizeof(uint64_t) == sizeof(IPC::ReplyID));
 #if PLATFORM(COCOA)
     static_assert(sizeof(uint64_t) == sizeof(WebCore::AttributedStringTextListID));
 #endif
@@ -657,7 +657,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebTransportStreamIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebURLSchemeHandlerIdentifier));
     return {
-        "IPC::AsyncReplyID"_s,
+        "IPC::ReplyID"_s,
 #if PLATFORM(COCOA)
         "WebCore::AttributedStringTextListID"_s,
 #endif

@@ -80,9 +80,8 @@ public:
 
     template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState>
     Error send(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID);
-    using AsyncReplyID = Connection::AsyncReplyID;
     template<typename T, typename C, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState>
-    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID);
+    ReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID);
 
     template<typename T>
     using SendSyncResult = Connection::SendSyncResult<T>;
@@ -91,7 +90,7 @@ public:
     template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState>
     Error waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID, OptionSet<WaitForOption> = { });
     template<typename>
-    Error waitForAsyncReplyAndDispatchImmediately(AsyncReplyID);
+    Error waitForAsyncReplyAndDispatchImmediately(ReplyID);
 
     void addWorkQueueMessageReceiver(ReceiverName, WorkQueue&, WorkQueueMessageReceiver&, uint64_t destinationID = 0);
     void removeWorkQueueMessageReceiver(ReceiverName, uint64_t destinationID = 0);
@@ -126,7 +125,6 @@ private:
         DedicatedConnectionClient(Connection::Client&);
         // Connection::Client overrides.
         void didReceiveMessage(Connection&, Decoder&) final;
-        bool didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&) final;
         void didClose(Connection&) final;
         void didReceiveInvalidMessage(Connection&, MessageName, int32_t indexOfObjectFailingDecoding) final;
     private:
@@ -171,7 +169,7 @@ Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V, W,
 }
 
 template<typename T, typename C, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState>
-StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID)
+ReplyID StreamClientConnection::sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID)
 {
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     auto signpostIdentifier = Connection::generateSignpostIdentifier();
@@ -206,7 +204,7 @@ StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(
 
     sendProcessOutOfStreamMessage(WTFMove(*span));
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID.toUInt64());
-    encoder.get() << message.arguments() << replyID;
+    encoder.get() << replyID << message.arguments();
     if (connection->sendMessage(WTFMove(encoder), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply, { }) == Error::NoError)
         return replyID;
 
@@ -226,7 +224,7 @@ template<typename T, typename... AdditionalData>
 bool StreamClientConnection::trySendStream(std::span<uint8_t> span, T& message, AdditionalData&&... args)
 {
     StreamConnectionEncoder messageEncoder { T::name(), span.data(), span.size() };
-    if (((messageEncoder << message.arguments()) << ... << std::forward<decltype(args)>(args))) {
+    if (((messageEncoder << ... << std::forward<decltype(args)>(args)) << message.arguments())) {
         auto wakeUpResult = m_buffer.release(messageEncoder.size());
         if constexpr (T::isStreamBatched)
             wakeUpServerBatched(wakeUpResult);
@@ -275,7 +273,7 @@ Error StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifierGene
 }
 
 template<typename T>
-Error StreamClientConnection::waitForAsyncReplyAndDispatchImmediately(AsyncReplyID replyID)
+Error StreamClientConnection::waitForAsyncReplyAndDispatchImmediately(ReplyID replyID)
 {
     Timeout timeout = defaultTimeout();
     return protectedConnection()->waitForAsyncReplyAndDispatchImmediately<T>(replyID, timeout);

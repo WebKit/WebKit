@@ -201,7 +201,7 @@ template: enum class WebKit::VideoEncoderIdentifierType
 template: enum class WebKit::WCContentBufferIdentifierType
 template: enum class WebKit::WebGPUIdentifierType
 template: enum class TestWebKitAPI::TestedObjectIdentifierType
-template: struct IPC::AsyncReplyIDType
+template: struct IPC::ReplyIDType
 template: struct WebCore::WebSocketFrame
 template: struct WebKit::ConnectionAsyncReplyHandler
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::LegacyNullableAtomicObjectIdentifier {

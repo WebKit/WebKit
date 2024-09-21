@@ -72,7 +72,7 @@ public:
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphoreReply; }
+    static constexpr IPC::MessageName replyName = IPC::MessageName::TestWithSemaphore_ReceiveSemaphoreReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<IPC::Semaphore>;
     using Reply = CompletionHandler<void(IPC::Semaphore&&)>;

@@ -111,27 +111,6 @@ void RemoteCDMFactoryProxy::didReceiveCDMInstanceSessionMessage(IPC::Connection&
         session->didReceiveMessage(connection, decoder);
 }
 
-bool RemoteCDMFactoryProxy::didReceiveSyncCDMMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
-{
-    if (auto* proxy = m_proxies.get(LegacyNullableObjectIdentifier<RemoteCDMIdentifierType>(decoder.destinationID())))
-        return proxy->didReceiveSyncMessage(connection, decoder, encoder);
-    return false;
-}
-
-bool RemoteCDMFactoryProxy::didReceiveSyncCDMInstanceMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
-{
-    if (auto* instance = m_instances.get(LegacyNullableObjectIdentifier<RemoteCDMInstanceIdentifierType>(decoder.destinationID())))
-        return instance->didReceiveSyncMessage(connection, decoder, encoder);
-    return false;
-}
-
-bool RemoteCDMFactoryProxy::didReceiveSyncCDMInstanceSessionMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
-{
-    if (auto* session = m_sessions.get(LegacyNullableObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(decoder.destinationID())))
-        return session->didReceiveSyncMessage(connection, decoder, encoder);
-    return false;
-}
-
 void RemoteCDMFactoryProxy::addProxy(const RemoteCDMIdentifier& identifier, RefPtr<RemoteCDMProxy>&& proxy)
 {
     ASSERT(!m_proxies.contains(identifier));

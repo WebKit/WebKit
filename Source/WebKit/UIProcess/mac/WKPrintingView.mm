@@ -212,7 +212,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return lastPage;
 }
 
-- (IPC::Connection::AsyncReplyID)_expectedPreviewCallbackForRect:(const WebCore::IntRect&)rect
+- (IPC::ReplyID)_expectedPreviewCallbackForRect:(const WebCore::IntRect&)rect
 {
     for (auto iter = _expectedPreviewCallbacks.begin(); iter != _expectedPreviewCallbacks.end(); ++iter) {
         if (iter->value  == rect)
@@ -223,7 +223,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 struct IPCCallbackContext {
     RetainPtr<WKPrintingView> view;
-    IPC::Connection::AsyncReplyID callbackID;
+    IPC::ReplyID callbackID;
 };
 
 static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle, IPCCallbackContext* context)

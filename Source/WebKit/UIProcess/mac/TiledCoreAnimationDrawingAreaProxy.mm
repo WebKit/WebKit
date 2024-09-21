@@ -206,7 +206,7 @@ void TiledCoreAnimationDrawingAreaProxy::commitTransientZoom(double scale, Float
     sendWithAsyncReply(Messages::DrawingArea::CommitTransientZoom(scale, origin), [] { });
 }
 
-void TiledCoreAnimationDrawingAreaProxy::dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection& connection, Vector<IPC::AsyncReplyID>&& callbackIDs)
+void TiledCoreAnimationDrawingAreaProxy::dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection& connection, Vector<IPC::ReplyID>&& callbackIDs)
 {
     for (auto& callbackID : callbackIDs) {
         if (auto callback = connection.takeAsyncReplyHandler(callbackID))

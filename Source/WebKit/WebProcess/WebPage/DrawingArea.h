@@ -223,7 +223,7 @@ private:
     virtual void setDeviceScaleFactor(float) { }
     virtual void setColorSpace(std::optional<WebCore::DestinationColorSpace>) { }
 
-    virtual void dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) = 0;
+    virtual void dispatchAfterEnsuringDrawing(IPC::ReplyID) = 0;
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)

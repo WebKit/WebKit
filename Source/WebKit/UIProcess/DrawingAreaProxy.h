@@ -124,7 +124,7 @@ public:
     virtual WTF::MachSendRight createFence();
 #endif
 
-    virtual void dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection&, Vector<IPC::AsyncReplyID>&&) { }
+    virtual void dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection&, Vector<IPC::ReplyID>&&) { }
 
     virtual bool shouldCoalesceVisualEditorStateUpdates() const { return false; }
     virtual bool shouldSendWheelEventsToEventDispatcher() const { return false; }

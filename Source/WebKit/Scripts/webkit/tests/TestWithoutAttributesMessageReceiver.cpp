@@ -68,59 +68,107 @@ namespace WebKit {
 void TestWithoutAttributes::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithoutAttributes::LoadURL::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::LoadURL>(connection, decoder, this, &TestWithoutAttributes::loadURL);
+    if (decoder.messageName() == Messages::TestWithoutAttributes::LoadURL::name()) {
+        IPC::handleMessage<Messages::TestWithoutAttributes::LoadURL>(connection, decoder, this, &TestWithoutAttributes::loadURL);
+        return;
+    }
 #if ENABLE(TOUCH_EVENTS)
-    if (decoder.messageName() == Messages::TestWithoutAttributes::LoadSomething::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::LoadSomething>(connection, decoder, this, &TestWithoutAttributes::loadSomething);
+    if (decoder.messageName() == Messages::TestWithoutAttributes::LoadSomething::name()) {
+        IPC::handleMessage<Messages::TestWithoutAttributes::LoadSomething>(connection, decoder, this, &TestWithoutAttributes::loadSomething);
+        return;
+    }
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-    if (decoder.messageName() == Messages::TestWithoutAttributes::TouchEvent::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::TouchEvent>(connection, decoder, this, &TestWithoutAttributes::touchEvent);
+    if (decoder.messageName() == Messages::TestWithoutAttributes::TouchEvent::name()) {
+        IPC::handleMessage<Messages::TestWithoutAttributes::TouchEvent>(connection, decoder, this, &TestWithoutAttributes::touchEvent);
+        return;
+    }
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
-    if (decoder.messageName() == Messages::TestWithoutAttributes::AddEvent::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::AddEvent>(connection, decoder, this, &TestWithoutAttributes::addEvent);
+    if (decoder.messageName() == Messages::TestWithoutAttributes::AddEvent::name()) {
+        IPC::handleMessage<Messages::TestWithoutAttributes::AddEvent>(connection, decoder, this, &TestWithoutAttributes::addEvent);
+        return;
+    }
 #endif
 #if ENABLE(TOUCH_EVENTS)
-    if (decoder.messageName() == Messages::TestWithoutAttributes::LoadSomethingElse::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::LoadSomethingElse>(connection, decoder, this, &TestWithoutAttributes::loadSomethingElse);
+    if (decoder.messageName() == Messages::TestWithoutAttributes::LoadSomethingElse::name()) {
+        IPC::handleMessage<Messages::TestWithoutAttributes::LoadSomethingElse>(connection, decoder, this, &TestWithoutAttributes::loadSomethingElse);
+        return;
+    }
 #endif
-    if (decoder.messageName() == Messages::TestWithoutAttributes::DidReceivePolicyDecision::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::DidReceivePolicyDecision>(connection, decoder, this, &TestWithoutAttributes::didReceivePolicyDecision);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::Close::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::Close>(connection, decoder, this, &TestWithoutAttributes::close);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::PreferencesDidChange::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::PreferencesDidChange>(connection, decoder, this, &TestWithoutAttributes::preferencesDidChange);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::SendDoubleAndFloat::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::SendDoubleAndFloat>(connection, decoder, this, &TestWithoutAttributes::sendDoubleAndFloat);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::SendInts::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::SendInts>(connection, decoder, this, &TestWithoutAttributes::sendInts);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::CreatePlugin::name())
-        return IPC::handleMessageAsync<Messages::TestWithoutAttributes::CreatePlugin>(connection, decoder, this, &TestWithoutAttributes::createPlugin);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::RunJavaScriptAlert::name())
-        return IPC::handleMessageAsync<Messages::TestWithoutAttributes::RunJavaScriptAlert>(connection, decoder, this, &TestWithoutAttributes::runJavaScriptAlert);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::GetPlugins::name())
-        return IPC::handleMessageAsync<Messages::TestWithoutAttributes::GetPlugins>(connection, decoder, this, &TestWithoutAttributes::getPlugins);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::TestParameterAttributes::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::TestParameterAttributes>(connection, decoder, this, &TestWithoutAttributes::testParameterAttributes);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::TemplateTest::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::TemplateTest>(connection, decoder, this, &TestWithoutAttributes::templateTest);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::SetVideoLayerID::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::SetVideoLayerID>(connection, decoder, this, &TestWithoutAttributes::setVideoLayerID);
+    if (decoder.messageName() == Messages::TestWithoutAttributes::DidReceivePolicyDecision::name()) {
+        IPC::handleMessage<Messages::TestWithoutAttributes::DidReceivePolicyDecision>(connection, decoder, this, &TestWithoutAttributes::didReceivePolicyDecision);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutAttributes::Close::name()) {
+        IPC::handleMessage<Messages::TestWithoutAttributes::Close>(connection, decoder, this, &TestWithoutAttributes::close);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutAttributes::PreferencesDidChange::name()) {
+        IPC::handleMessage<Messages::TestWithoutAttributes::PreferencesDidChange>(connection, decoder, this, &TestWithoutAttributes::preferencesDidChange);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutAttributes::SendDoubleAndFloat::name()) {
+        IPC::handleMessage<Messages::TestWithoutAttributes::SendDoubleAndFloat>(connection, decoder, this, &TestWithoutAttributes::sendDoubleAndFloat);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutAttributes::SendInts::name()) {
+        IPC::handleMessage<Messages::TestWithoutAttributes::SendInts>(connection, decoder, this, &TestWithoutAttributes::sendInts);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutAttributes::CreatePlugin::name()) {
+        IPC::handleMessageWithReply<Messages::TestWithoutAttributes::CreatePlugin>(connection, decoder, this, &TestWithoutAttributes::createPlugin);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutAttributes::RunJavaScriptAlert::name()) {
+        IPC::handleMessageWithReply<Messages::TestWithoutAttributes::RunJavaScriptAlert>(connection, decoder, this, &TestWithoutAttributes::runJavaScriptAlert);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutAttributes::GetPlugins::name()) {
+        IPC::handleMessageWithReply<Messages::TestWithoutAttributes::GetPlugins>(connection, decoder, this, &TestWithoutAttributes::getPlugins);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutAttributes::GetPluginProcessConnection::name()) {
+        IPC::handleMessageWithReply<Messages::TestWithoutAttributes::GetPluginProcessConnection>(connection, decoder, this, &TestWithoutAttributes::getPluginProcessConnection);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutAttributes::TestMultipleAttributes::name()) {
+        IPC::handleMessageWithReply<Messages::TestWithoutAttributes::TestMultipleAttributes>(connection, decoder, this, &TestWithoutAttributes::testMultipleAttributes);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutAttributes::TestParameterAttributes::name()) {
+        IPC::handleMessage<Messages::TestWithoutAttributes::TestParameterAttributes>(connection, decoder, this, &TestWithoutAttributes::testParameterAttributes);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutAttributes::TemplateTest::name()) {
+        IPC::handleMessage<Messages::TestWithoutAttributes::TemplateTest>(connection, decoder, this, &TestWithoutAttributes::templateTest);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutAttributes::SetVideoLayerID::name()) {
+        IPC::handleMessage<Messages::TestWithoutAttributes::SetVideoLayerID>(connection, decoder, this, &TestWithoutAttributes::setVideoLayerID);
+        return;
+    }
 #if PLATFORM(MAC)
-    if (decoder.messageName() == Messages::TestWithoutAttributes::DidCreateWebProcessConnection::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::DidCreateWebProcessConnection>(connection, decoder, this, &TestWithoutAttributes::didCreateWebProcessConnection);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::InterpretKeyEvent::name())
-        return IPC::handleMessageAsync<Messages::TestWithoutAttributes::InterpretKeyEvent>(connection, decoder, this, &TestWithoutAttributes::interpretKeyEvent);
+    if (decoder.messageName() == Messages::TestWithoutAttributes::DidCreateWebProcessConnection::name()) {
+        IPC::handleMessage<Messages::TestWithoutAttributes::DidCreateWebProcessConnection>(connection, decoder, this, &TestWithoutAttributes::didCreateWebProcessConnection);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithoutAttributes::InterpretKeyEvent::name()) {
+        IPC::handleMessageWithReply<Messages::TestWithoutAttributes::InterpretKeyEvent>(connection, decoder, this, &TestWithoutAttributes::interpretKeyEvent);
+        return;
+    }
 #endif
 #if ENABLE(DEPRECATED_FEATURE)
-    if (decoder.messageName() == Messages::TestWithoutAttributes::DeprecatedOperation::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::DeprecatedOperation>(connection, decoder, this, &TestWithoutAttributes::deprecatedOperation);
+    if (decoder.messageName() == Messages::TestWithoutAttributes::DeprecatedOperation::name()) {
+        IPC::handleMessage<Messages::TestWithoutAttributes::DeprecatedOperation>(connection, decoder, this, &TestWithoutAttributes::deprecatedOperation);
+        return;
+    }
 #endif
 #if ENABLE(FEATURE_FOR_TESTING)
-    if (decoder.messageName() == Messages::TestWithoutAttributes::ExperimentalOperation::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::ExperimentalOperation>(connection, decoder, this, &TestWithoutAttributes::experimentalOperation);
+    if (decoder.messageName() == Messages::TestWithoutAttributes::ExperimentalOperation::name()) {
+        IPC::handleMessage<Messages::TestWithoutAttributes::ExperimentalOperation>(connection, decoder, this, &TestWithoutAttributes::experimentalOperation);
+        return;
+    }
 #endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
@@ -129,24 +177,6 @@ void TestWithoutAttributes::didReceiveMessage(IPC::Connection& connection, IPC::
         return;
 #endif // ENABLE(IPC_TESTING_API)
     ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
-}
-
-bool TestWithoutAttributes::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
-{
-    Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithoutAttributes::GetPluginProcessConnection::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithoutAttributes::GetPluginProcessConnection>(connection, decoder, replyEncoder, this, &TestWithoutAttributes::getPluginProcessConnection);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::TestMultipleAttributes::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithoutAttributes::TestMultipleAttributes>(connection, decoder, replyEncoder, this, &TestWithoutAttributes::testMultipleAttributes);
-    UNUSED_PARAM(connection);
-    UNUSED_PARAM(decoder);
-    UNUSED_PARAM(replyEncoder);
-#if ENABLE(IPC_TESTING_API)
-    if (connection.ignoreInvalidMessageForTesting())
-        return false;
-#endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()).characters(), decoder.destinationID());
-    return false;
 }
 
 } // namespace WebKit

@@ -244,7 +244,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     Lock _pendingBackgroundPrintFormattersLock;
     RetainPtr<NSMutableSet> _pendingBackgroundPrintFormatters;
-    IPC::Connection::AsyncReplyID _printRenderingCallbackID;
+    IPC::ReplyID _printRenderingCallbackID;
     _WKPrintRenderingCallbackType _printRenderingCallbackType;
 
     Vector<RetainPtr<NSURL>> _temporaryURLsToDeleteWhenDeallocated;

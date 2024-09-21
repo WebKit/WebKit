@@ -39,10 +39,14 @@ namespace WebKit {
 void TestWithSemaphore::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithSemaphore::SendSemaphore::name())
-        return IPC::handleMessage<Messages::TestWithSemaphore::SendSemaphore>(connection, decoder, this, &TestWithSemaphore::sendSemaphore);
-    if (decoder.messageName() == Messages::TestWithSemaphore::ReceiveSemaphore::name())
-        return IPC::handleMessageAsync<Messages::TestWithSemaphore::ReceiveSemaphore>(connection, decoder, this, &TestWithSemaphore::receiveSemaphore);
+    if (decoder.messageName() == Messages::TestWithSemaphore::SendSemaphore::name()) {
+        IPC::handleMessage<Messages::TestWithSemaphore::SendSemaphore>(connection, decoder, this, &TestWithSemaphore::sendSemaphore);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithSemaphore::ReceiveSemaphore::name()) {
+        IPC::handleMessageWithReply<Messages::TestWithSemaphore::ReceiveSemaphore>(connection, decoder, this, &TestWithSemaphore::receiveSemaphore);
+        return;
+    }
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)

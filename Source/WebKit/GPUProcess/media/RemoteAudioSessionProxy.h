@@ -78,7 +78,6 @@ public:
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     RefPtr<GPUConnectionToWebProcess> gpuConnectionToWebProcess() const;
 

@@ -185,25 +185,6 @@ bool NetworkProcessConnection::dispatchMessage(IPC::Connection& connection, IPC:
     return false;
 }
 
-bool NetworkProcessConnection::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
-{
-    if (decoder.messageReceiverName() == Messages::WebSWContextManagerConnection::messageReceiverName()) {
-        ASSERT(SWContextManager::singleton().connection());
-        if (auto* contextManagerConnection = SWContextManager::singleton().connection())
-            return static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveSyncMessage(connection, decoder, replyEncoder);
-        return false;
-    }
-
-#if ENABLE(APPLE_PAY_REMOTE_UI)
-    if (decoder.messageReceiverName() == Messages::WebPaymentCoordinator::messageReceiverName()) {
-        if (auto webPage = WebProcess::singleton().webPage(ObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
-            return webPage->paymentCoordinator()->didReceiveSyncMessage(connection, decoder, replyEncoder);
-        return false;
-    }
-#endif
-    return false;
-}
-
 void NetworkProcessConnection::didClose(IPC::Connection&)
 {
     // The NetworkProcess probably crashed.

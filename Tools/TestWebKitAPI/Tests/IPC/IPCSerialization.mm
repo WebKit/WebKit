@@ -665,7 +665,7 @@ public:
 
     // We can use any MessageName here
     static IPC::MessageName name() { return IPC::MessageName::IPCTester_AsyncPing; }
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::IPCTester_AsyncPingReply; }
+    static constexpr IPC::MessageName replyName = IPC::MessageName::IPCTester_AsyncPingReply;
 
     static constexpr bool isSync = false;
 
@@ -690,7 +690,7 @@ public:
 
     // We can use any MessageName here
     static IPC::MessageName name() { return IPC::MessageName::IPCTester_AsyncPing; }
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::IPCTester_AsyncPingReply; }
+    static constexpr IPC::MessageName replyName = IPC::MessageName::IPCTester_AsyncPingReply;
 
     static constexpr bool isSync = false;
 

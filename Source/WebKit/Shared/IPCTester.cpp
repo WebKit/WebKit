@@ -203,6 +203,10 @@ void IPCTester::releaseConnectionTester(IPCConnectionTesterIdentifier identifier
     completionHandler();
 }
 
+void IPCTester::emptyMessage()
+{
+}
+
 void IPCTester::asyncPing(uint32_t value, CompletionHandler<void(uint32_t)>&& completionHandler)
 {
     completionHandler(value + 1);

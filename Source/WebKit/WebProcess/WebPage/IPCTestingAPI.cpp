@@ -171,7 +171,6 @@ private:
 
     // IPC::Connection::Client overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
     void didClose(IPC::Connection&) final;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t) final;
 
@@ -247,7 +246,6 @@ private:
     public:
         // IPC::MessageReceiver overrides.
         void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final { ASSERT_NOT_REACHED(); }
-        bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final { ASSERT_NOT_REACHED(); return false; }
         void didClose(IPC::Connection&) final { }
         void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t indexOfObjectFailingDecoding) final { ASSERT_NOT_REACHED(); }
     } m_dummyMessageReceiver;
@@ -521,9 +519,6 @@ static JSValueRef jsSend(IPC::Connection& connection, uint64_t destinationID, IP
 
 static JSValueRef jsSendWithAsyncReply(IPC::Connection& connection, uint64_t destinationID, IPC::MessageName messageName, JSContextRef context, const JSObjectRef callback, const JSValueRef messageArguments, JSValueRef* exception)
 {
-    auto encoder = makeUniqueRef<IPC::Encoder>(messageName, destinationID);
-    if (messageArguments && !encodeArgument(encoder.get(), context, messageArguments, exception))
-        return JSValueMakeUndefined(context);
     JSGlobalContextRetain(JSContextGetGlobalContext(context));
     JSValueProtect(context, callback);
     IPC::Connection::AsyncReplyHandler handler = {
@@ -547,9 +542,13 @@ static JSValueRef jsSendWithAsyncReply(IPC::Connection& connection, uint64_t des
                 arguments[0] = toRef(globalObject, jsResult);
             JSObjectCallAsFunction(context, callback, callback, 1, arguments, nullptr);
         },
-        IPC::Connection::AsyncReplyID::generate()
+        IPC::ReplyID::generate()
     };
     auto asyncReplyID = handler.replyID;
+    auto encoder = makeUniqueRef<IPC::Encoder>(messageName, destinationID);
+    encoder.get() << asyncReplyID;
+    if (messageArguments && !encodeArgument(encoder.get(), context, messageArguments, exception))
+        return JSValueMakeUndefined(context);
     auto result = connection.sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(handler), IPC::SendOption::IPCTestingMessage);
     if (result != IPC::Error::NoError) {
         *exception = createErrorFromIPCError(context, result);
@@ -560,7 +559,7 @@ static JSValueRef jsSendWithAsyncReply(IPC::Connection& connection, uint64_t des
 
 static JSValueRef jsSendSync(IPC::Connection& connection, uint64_t destinationID, IPC::MessageName messageName, IPC::Timeout timeout, JSContextRef context, const JSValueRef messageArguments, JSValueRef* exception)
 {
-    IPC::Connection::SyncRequestID syncRequestID;
+    IPC::ReplyID syncRequestID;
     auto encoder = connection.createSyncMessageEncoder(messageName, destinationID, syncRequestID);
     if (messageArguments && !encodeArgument(encoder.get(), context, messageArguments, exception))
         return JSValueMakeUndefined(context);
@@ -600,7 +599,7 @@ static JSValueRef jsWaitForMessage(IPC::Connection& connection, uint64_t destina
 
 static JSValueRef jsWaitForAsyncReplyAndDispatchImmediately(IPC::Connection& connection, uint64_t destinationID, IPC::MessageName messageName, IPC::Timeout timeout, JSContextRef context, JSValueRef* exception)
 {
-    auto handler = connection.takeAsyncReplyHandler(IPC::Connection::AsyncReplyID { destinationID });
+    auto handler = connection.takeAsyncReplyHandler(IPC::ReplyID { destinationID });
     if (!handler) {
         *exception = createError(context, "IPC error: no handler"_s);
         return JSValueMakeUndefined(context);
@@ -783,12 +782,6 @@ void JSIPCConnection::finalize(JSObjectRef object)
 void JSIPCConnection::didReceiveMessage(IPC::Connection&, IPC::Decoder&)
 {
     ASSERT_NOT_REACHED();
-}
-
-bool JSIPCConnection::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&)
-{
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 void JSIPCConnection::didClose(IPC::Connection&)
@@ -3052,7 +3045,7 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (decoder.isSyncMessage()) {
-        if (auto syncRequestID = decoder.decode<IPC::Connection::SyncRequestID>()) {
+        if (auto syncRequestID = decoder.decode<IPC::ReplyID>()) {
             jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "syncRequestID"_s), JSC::JSValue(syncRequestID->toUInt64()));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
@@ -3072,7 +3065,7 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
     }
 
     if (!decoder.isSyncMessage() && messageReplyArgumentDescriptions(decoder.messageName())) {
-        if (auto asyncReplyID = decoder.decode<IPC::Connection::AsyncReplyID>()) {
+        if (auto asyncReplyID = decoder.decode<IPC::ReplyID>()) {
             jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "listenerID"_s), JSC::JSValue(asyncReplyID->toUInt64()));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }

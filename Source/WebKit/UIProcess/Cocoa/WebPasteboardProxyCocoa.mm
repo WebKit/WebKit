@@ -58,7 +58,7 @@ void WebPasteboardProxy::grantAccessToCurrentTypes(WebProcessProxy& process, con
     grantAccess(process, pasteboardName, PasteboardAccessType::Types);
 }
 
-std::optional<IPC::AsyncReplyID> WebPasteboardProxy::grantAccessToCurrentData(WebProcessProxy& process, const String& pasteboardName, CompletionHandler<void()>&& completionHandler)
+std::optional<IPC::ReplyID> WebPasteboardProxy::grantAccessToCurrentData(WebProcessProxy& process, const String& pasteboardName, CompletionHandler<void()>&& completionHandler)
 {
     grantAccess(process, pasteboardName, PasteboardAccessType::TypesAndData);
     auto pasteboard = PlatformPasteboard(pasteboardName);
