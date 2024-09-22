@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class SMILRepeatCount;
 class SMILTime {
 public:
     SMILTime() : m_time(0) { }
@@ -47,6 +48,9 @@ public:
     bool isFinite() const { return m_time < indefiniteValue; }
     bool isIndefinite() const { return m_time == indefiniteValue; }
     bool isUnresolved() const { return m_time == unresolvedValue; }
+
+    SMILTime repeat(SMILRepeatCount) const;
+    SMILTime operator-() const { return -m_time; }
     
 private:
     static const double unresolvedValue;
@@ -91,7 +95,5 @@ inline bool operator<(const SMILTimeWithOrigin& a, const SMILTimeWithOrigin& b) 
 
 SMILTime operator+(const SMILTime&, const SMILTime&);
 SMILTime operator-(const SMILTime&, const SMILTime&);
-// So multiplying times does not make too much sense but SMIL defines it for duration * repeatCount
-SMILTime operator*(const SMILTime&, const SMILTime&);
 
 } // namespace WebCore

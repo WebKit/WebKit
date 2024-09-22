@@ -149,7 +149,7 @@ SVGSMILElement::SVGSMILElement(const QualifiedName& tagName, Document& doc, Uniq
     , m_documentOrderIndex(0)
     , m_cachedDur(invalidCachedTime)
     , m_cachedRepeatDur(invalidCachedTime)
-    , m_cachedRepeatCount(invalidCachedTime)
+    , m_cachedRepeatCount(SMILRepeatCount::invalid())
     , m_cachedMin(invalidCachedTime)
     , m_cachedMax(invalidCachedTime)
 {
@@ -382,15 +382,14 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
 {
     auto parseString = value.trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
     
-    double sign = 1.;
+    bool isNegated = false;
     size_t pos = parseString.find('+');
     if (pos == notFound) {
         pos = parseString.find('-');
-        if (pos != notFound)
-            sign = -1.;
+        isNegated = pos != notFound;
     }
     StringView conditionString;
-    SMILTime offset = 0;
+    SMILTime offset;
     if (pos == notFound)
         conditionString = parseString;
     else {
@@ -399,7 +398,8 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
         offset = parseOffsetValue(offsetString);
         if (offset.isUnresolved())
             return false;
-        offset = offset * sign;
+        if (isNegated)
+            offset = -offset;
     }
     if (conditionString.isEmpty())
         return false;
@@ -536,7 +536,7 @@ void SVGSMILElement::svgAttributeChanged(const QualifiedName& attrName)
         m_cachedRepeatDur = invalidCachedTime;
         break;
     case AttributeNames::repeatCountAttr:
-        m_cachedRepeatCount = invalidCachedTime;
+        m_cachedRepeatCount = SMILRepeatCount::invalid();
         break;
     case AttributeNames::minAttr:
         m_cachedMin = invalidCachedTime;
@@ -715,20 +715,26 @@ SMILTime SVGSMILElement::repeatDur() const
     return m_cachedRepeatDur;
 }
     
-// So a count is not really a time but let just all pretend we did not notice.
-SMILTime SVGSMILElement::repeatCount() const
-{    
-    if (m_cachedRepeatCount != invalidCachedTime)
-        return m_cachedRepeatCount;
-    const AtomString& value = attributeWithoutSynchronization(SVGNames::repeatCountAttr);
+static SMILRepeatCount parseRepeatCount(const AtomString& value)
+{
     if (value.isNull())
-        return SMILTime::unresolved();
-
+        return SMILRepeatCount::unspecified();
     if (value == indefiniteAtom())
-        return SMILTime::indefinite();
+        return SMILRepeatCount::indefinite();
     bool ok;
     double result = value.string().toDouble(&ok);
-    return m_cachedRepeatCount = (ok && result > 0 && std::isfinite(result)) ? result : SMILTime::unresolved();
+    if (ok && result > 0 && std::isfinite(result))
+        return SMILRepeatCount::numeric(result);
+    return SMILRepeatCount::unspecified();
+}
+
+SMILRepeatCount SVGSMILElement::repeatCount() const
+{
+    if (!m_cachedRepeatCount.isValid())
+        m_cachedRepeatCount = parseRepeatCount(attributeWithoutSynchronization(SVGNames::repeatCountAttr));
+
+    ASSERT(m_cachedRepeatCount.isValid());
+    return m_cachedRepeatCount;
 }
 
 SMILTime SVGSMILElement::maxValue() const
@@ -823,12 +829,12 @@ SMILTime SVGSMILElement::repeatingDuration() const
 {
     // Computing the active duration
     // http://www.w3.org/TR/SMIL2/smil-timing.html#Timing-ComputingActiveDur
-    SMILTime repeatCount = this->repeatCount();
+    SMILRepeatCount repeatCount = this->repeatCount();
     SMILTime repeatDur = this->repeatDur();
     SMILTime simpleDuration = this->simpleDuration();
-    if (!simpleDuration || (repeatDur.isUnresolved() && repeatCount.isUnresolved()))
+    if (!simpleDuration || (repeatDur.isUnresolved() && repeatCount.isUnspecified()))
         return simpleDuration;
-    SMILTime repeatCountDuration = simpleDuration * repeatCount;
+    SMILTime repeatCountDuration = simpleDuration.repeat(repeatCount);
     return std::min(repeatCountDuration, std::min(repeatDur, SMILTime::indefinite()));
 }
 
@@ -837,7 +843,7 @@ SMILTime SVGSMILElement::resolveActiveEnd(SMILTime resolvedBegin, SMILTime resol
     // Computing the active duration
     // http://www.w3.org/TR/SMIL2/smil-timing.html#Timing-ComputingActiveDur
     SMILTime preliminaryActiveDuration;
-    if (!resolvedEnd.isUnresolved() && dur().isUnresolved() && repeatDur().isUnresolved() && repeatCount().isUnresolved())
+    if (!resolvedEnd.isUnresolved() && dur().isUnresolved() && repeatDur().isUnresolved() && repeatCount().isUnspecified())
         preliminaryActiveDuration = resolvedEnd - resolvedBegin;
     else if (!resolvedEnd.isFinite())
         preliminaryActiveDuration = repeatingDuration();

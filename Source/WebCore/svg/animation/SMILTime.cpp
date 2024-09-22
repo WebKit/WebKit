@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SMILTime.h"
 
-#include <float.h>
+#include "SMILRepeatCount.h"
 
 namespace WebCore {
 
@@ -52,15 +52,12 @@ SMILTime operator-(const SMILTime& a, const SMILTime& b)
     return a.value() - b.value();
 }
 
-SMILTime operator*(const SMILTime& a,  const SMILTime& b)
+SMILTime SMILTime::repeat(SMILRepeatCount repeatCount) const
 {
-    if (a.isUnresolved() || b.isUnresolved())
-        return SMILTime::unresolved();
-    if (!a.value() || !b.value())
-        return SMILTime(0);
-    if (a.isIndefinite() || b.isIndefinite())
+    ASSERT(repeatCount.isValid());
+    if (repeatCount.isIndefinite() || repeatCount.isUnspecified())
         return SMILTime::indefinite();
-    return a.value() * b.value();
+    return SMILTime(m_time * repeatCount.numericValue());
 }
 
 } // namespace WebCore

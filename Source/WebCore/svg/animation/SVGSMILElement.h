@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "SMILRepeatCount.h"
 #include "SMILTime.h"
 #include "SVGElement.h"
 #include <wtf/HashSet.h>
@@ -74,7 +75,7 @@ public:
 
     SMILTime dur() const;
     SMILTime repeatDur() const;
-    SMILTime repeatCount() const;
+    SMILRepeatCount repeatCount() const;
     SMILTime maxValue() const;
     SMILTime minValue() const;
 
@@ -215,7 +216,7 @@ private:
 
     mutable SMILTime m_cachedDur;
     mutable SMILTime m_cachedRepeatDur;
-    mutable SMILTime m_cachedRepeatCount;
+    mutable SMILRepeatCount m_cachedRepeatCount;
     mutable SMILTime m_cachedMin;
     mutable SMILTime m_cachedMax;
 
