@@ -47,7 +47,7 @@ StackVisitor::StackVisitor(CallFrame* startFrame, VM& vm, bool skipFirstFrame)
     m_frame.m_wasmDistanceFromDeepestInlineFrame = 0;
     CallFrame* topFrame;
     if (startFrame) {
-        ASSERT(!vm.topCallFrame || reinterpret_cast<void*>(vm.topCallFrame) != vm.topEntryFrame);
+        ASSERT(!vm.topCallFrame || static_cast<void*>(vm.topCallFrame) != vm.topEntryFrame);
 
         m_frame.m_entryFrame = vm.topEntryFrame;
         topFrame = vm.topCallFrame;

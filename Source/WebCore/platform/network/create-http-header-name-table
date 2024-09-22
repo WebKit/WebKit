@@ -137,7 +137,7 @@ bool findHTTPHeaderName(StringView stringView, HTTPHeaderName& headerName)
         return false;
 
     if (stringView.is8Bit()) {
-        if (auto nameAndString = HTTPHeaderNamesHash::findHeaderNameImpl(reinterpret_cast<const char*>(stringView.span8().data()), length)) {
+        if (auto nameAndString = HTTPHeaderNamesHash::findHeaderNameImpl(byteCast<char>(stringView.span8().data()), length)) {
             headerName = nameAndString->headerName;
             return true;
         }

@@ -837,7 +837,7 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
 
     auto forEachActiveDataSegment = [&] (auto fn) {
         auto& wasmMemory = m_instance->memory()->memory();
-        uint8_t* memory = reinterpret_cast<uint8_t*>(wasmMemory.basePointer());
+        uint8_t* memory = static_cast<uint8_t*>(wasmMemory.basePointer());
         uint64_t sizeInBytes = wasmMemory.size();
 
         for (const Wasm::Segment::Ptr& segment : data) {

@@ -428,11 +428,11 @@ static int findMonth(std::span<const LChar> monthStr)
 static bool parseInt(std::span<const LChar>& string, int base, int* result)
 {
     char* stopPosition;
-    long longResult = strtol(reinterpret_cast<const char*>(string.data()), &stopPosition, base);
+    long longResult = strtol(byteCast<char>(string.data()), &stopPosition, base);
     // Avoid the use of errno as it is not available on Windows CE
-    if (string.data() == reinterpret_cast<const LChar*>(stopPosition) || longResult <= std::numeric_limits<int>::min() || longResult >= std::numeric_limits<int>::max())
+    if (byteCast<char>(string.data()) == stopPosition || longResult <= std::numeric_limits<int>::min() || longResult >= std::numeric_limits<int>::max())
         return false;
-    string = string.subspan(reinterpret_cast<const LChar*>(stopPosition) - string.data());
+    string = string.subspan(stopPosition - byteCast<char>(string.data()));
     *result = longResult;
     return true;
 }
@@ -440,11 +440,11 @@ static bool parseInt(std::span<const LChar>& string, int base, int* result)
 static bool parseLong(std::span<const LChar>& string, int base, long* result)
 {
     char* stopPosition;
-    *result = strtol(reinterpret_cast<const char*>(string.data()), &stopPosition, base);
+    *result = strtol(byteCast<char>(string.data()), &stopPosition, base);
     // Avoid the use of errno as it is not available on Windows CE
-    if (string.data() == reinterpret_cast<const LChar*>(stopPosition) || *result == std::numeric_limits<long>::min() || *result == std::numeric_limits<long>::max())
+    if (byteCast<char>(string.data()) == stopPosition || *result == std::numeric_limits<long>::min() || *result == std::numeric_limits<long>::max())
         return false;
-    string = string.subspan(reinterpret_cast<const LChar*>(stopPosition) - string.data());
+    string = string.subspan(stopPosition - byteCast<char>(string.data()));
     return true;
 }
 

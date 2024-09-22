@@ -210,7 +210,7 @@ void CodeBlock::dumpSource(PrintStream& out)
 {
     ScriptExecutable* executable = ownerExecutable();
     if (executable->isFunctionExecutable()) {
-        FunctionExecutable* functionExecutable = reinterpret_cast<FunctionExecutable*>(executable);
+        auto functionExecutable = static_cast<FunctionExecutable*>(executable);
         StringView source = functionExecutable->source().provider()->getRange(
             functionExecutable->parametersStartOffset(),
             functionExecutable->functionEnd() + 1); // Type profiling end offset is the character before the '}'.

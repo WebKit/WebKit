@@ -438,7 +438,7 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         }
 #endif
 
-        void* reservationEnd = reinterpret_cast<uint8_t*>(reservation.base) + reservation.size;
+        void* reservationEnd = static_cast<uint8_t*>(reservation.base) + reservation.size;
         g_jscConfig.startExecutableMemory = reservation.base;
         g_jscConfig.endExecutableMemory = reservationEnd;
 

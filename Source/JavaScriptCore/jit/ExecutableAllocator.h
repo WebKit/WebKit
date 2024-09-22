@@ -128,7 +128,7 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
 #endif
     if (isJITPC(dst)) {
         RELEASE_ASSERT(!Gigacage::contains(src));
-        RELEASE_ASSERT(reinterpret_cast<uint8_t*>(dst) + n <= endOfFixedExecutableMemoryPool());
+        RELEASE_ASSERT(static_cast<uint8_t*>(dst) + n <= endOfFixedExecutableMemoryPool());
 
 #if ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
         auto checkForZeroes = [n] (const void* buffer_v) {

@@ -480,7 +480,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         filenames.append(String::fromUTF8(fileURL.fileSystemRepresentation));
 
     NSData *png = UIImagePNGRepresentation(iconImage);
-    RefPtr<API::Data> iconImageDataRef = adoptRef(WebKit::toImpl(WKDataCreate(reinterpret_cast<const unsigned char*>([png bytes]), [png length])));
+    RefPtr iconImageDataRef = adoptRef(WebKit::toImpl(WKDataCreate(static_cast<const unsigned char*>([png bytes]), [png length])));
 
     _listener->chooseFiles(filenames, displayString, iconImageDataRef.get());
     [self _dispatchDidDismiss];

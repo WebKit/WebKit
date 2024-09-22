@@ -414,7 +414,7 @@ static void imageBytesForSource(const auto& sourceDescriptor, const auto& destin
             return callback({ }, 0, 0);
 
         auto sizeInBytes = height * CGImageGetBytesPerRow(platformImage.get());
-        auto bytePointer = reinterpret_cast<const uint8_t*>(CFDataGetBytePtr(pixelDataCfData.get()));
+        auto bytePointer = CFDataGetBytePtr(pixelDataCfData.get());
         auto requiredSize = width * height * 4;
         auto alphaInfo = CGImageGetAlphaInfo(platformImage.get());
         bool channelLayoutIsRGB = false;

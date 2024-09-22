@@ -26,18 +26,19 @@
 #import "config.h"
 #import "CoreIPCCFURL.h"
 
+#import <wtf/cocoa/TypeCastsCocoa.h>
+
 namespace WebKit {
 
 std::optional<CoreIPCCFURL> CoreIPCCFURL::createWithBaseURLAndBytes(std::optional<CoreIPCCFURL>&& baseURL, Vector<uint8_t>&& bytes)
 {
     if (bytes.isEmpty()) {
         // CFURL can't hold an empty URL, unlike NSURL.
-        return CoreIPCCFURL { (__bridge CFURLRef)[NSURL URLWithString:@""] };
+        return CoreIPCCFURL { bridge_cast([NSURL URLWithString:@""]) };
     }
 
-    CFURLRef cfBaseURL = baseURL ? baseURL->m_cfURL.get() : nullptr;
-    RetainPtr<CFURLRef> newCFURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, reinterpret_cast<const UInt8*>(bytes.data()), bytes.size(), kCFStringEncodingUTF8, cfBaseURL, true));
-    if (newCFURL)
+    CFURLRef baseCFURL = baseURL ? baseURL->m_cfURL.get() : nullptr;
+    if (RetainPtr newCFURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes.data(), bytes.size(), kCFStringEncodingUTF8, baseCFURL, true)))
         return CoreIPCCFURL { WTFMove(newCFURL) };
 
     return std::nullopt;
