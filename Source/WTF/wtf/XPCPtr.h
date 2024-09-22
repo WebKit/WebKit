@@ -151,26 +151,6 @@ private:
     T m_ptr;
 };
 
-template<typename T> inline void swap(RetainPtr<T>& a, RetainPtr<T>& b)
-{
-    a.swap(b);
-}
-
-template<typename T, typename U> constexpr bool operator==(const RetainPtr<T>& a, const RetainPtr<U>& b)
-{ 
-    return a.get() == b.get(); 
-}
-
-template<typename T, typename U> constexpr bool operator==(const RetainPtr<T>& a, U* b)
-{
-    return a.get() == b; 
-}
-
-template<typename T, typename U> constexpr bool operator==(T* a, const RetainPtr<U>& b)
-{
-    return a == b.get(); 
-}
-
 template<typename T> struct IsSmartPtr<XPCPtr<T>> {
     static constexpr bool value = true;
     static constexpr bool isNullable = true;
