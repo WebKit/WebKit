@@ -114,7 +114,7 @@ endif ()
 # The target definition lists sources which always get built.
 # The rest may be added later as-needed with target_sources().
 #
-add_library(Skia STATIC
+add_library(Skia OBJECT
     src/base/SkArenaAlloc.cpp
     src/base/SkBezierCurves.cpp
     src/base/SkBlockAllocator.cpp
@@ -892,20 +892,6 @@ add_library(Skia STATIC
     modules/skcms/src/skcms_TransformSkx.cc
 )
 
-if (USE_SYSTEM_MALLOC)
-    target_sources(Skia PRIVATE src/ports/SkMemory_malloc.cpp)
-else ()
-    # Using WTF headers needs including Source/WTF/config.h first, and
-    # in turn that needs cmakeconfig.h from the top build directory, so
-    # arrange the include directories accordingly.
-    target_sources(Skia PRIVATE ${WEBCORE_DIR}/platform/skia/SkiaAllocatorFastMalloc.cpp)
-    set_property(
-        SOURCE ${WEBCORE_DIR}/platform/skia/SkiaAllocatorFastMalloc.cpp
-        APPEND PROPERTY INCLUDE_DIRECTORIES ${WTF_DIR} ${CMAKE_BINARY_DIR}
-    )
-    target_link_libraries(Skia PRIVATE WebKit::WTF)
-endif ()
-
 target_link_libraries(Skia PRIVATE
     Epoxy::Epoxy
     Fontconfig::Fontconfig
@@ -1046,3 +1032,30 @@ if (Skia_SkCMS_SKX_OPTS)
 else ()
     target_compile_definitions(Skia PRIVATE SKCMS_DISABLE_SKX)
 endif ()
+
+#
+add_library(SkiaMalloc STATIC
+    src/ports/SkMemory_malloc.cpp
+)
+target_link_libraries(SkiaMalloc PUBLIC Skia)
+
+if (USE_SYSTEM_MALLOC)
+    add_library(Skia::Skia ALIAS SkiaMalloc)
+else ()
+    add_library(SkiaBMalloc STATIC
+        src/ports/SkMemory_bmalloc.cpp
+    )
+    target_link_libraries(SkiaBMalloc PUBLIC Skia)
+    add_library(Skia::Skia ALIAS SkiaBMalloc)
+
+    get_target_property(bmalloc_target_type bmalloc TYPE)
+    if (bmalloc_target_type STREQUAL OBJECT_LIBRARY)
+        target_link_libraries(SkiaBMalloc PRIVATE $<TARGET_OBJECTS:bmalloc>)
+        target_include_directories(SkiaBMalloc PUBLIC
+            $<TARGET_PROPERTY:WebKit::bmalloc,INTERFACE_INCLUDE_DIRECTORIES>)
+    else ()
+        target_link_libraries(SkiaBMalloc PUBLIC WebKit::bmalloc)
+    endif ()
+    unset(bmalloc_target_type)
+endif ()
+

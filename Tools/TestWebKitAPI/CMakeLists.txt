@@ -242,6 +242,10 @@ if (ENABLE_WEBCORE)
         ${TESTWEBKITAPI_DIR}
     )
 
+    if (USE_SKIA)
+        list(APPEND TestWebCore_LIBRARIES Skia::Skia)
+    endif ()
+
     set(TestWebCore_DEFINITIONS
       WEBKIT_SRC_DIR="${CMAKE_SOURCE_DIR}"
     )
@@ -348,6 +352,10 @@ if (ENABLE_WEBKIT)
         ${WebKit_FRAMEWORK_HEADERS_DIR}
     )
 
+    if (USE_SKIA)
+        list(APPEND TestWebKit_LIBRARIES Skia::Skia)
+    endif ()
+
     set(TestWebKit_LIBRARIES
         TestWebKitAPIBase
         WebKit::gtest
@@ -368,6 +376,10 @@ if (ENABLE_WEBKIT)
     target_compile_definitions(TestWebKitAPIBase PRIVATE BUILDING_TestWebKit)
     target_include_directories(TestWebKitAPIBase PRIVATE ${TestWebKit_PRIVATE_INCLUDE_DIRECTORIES})
     target_link_libraries(TestWebKitAPIBase PRIVATE WebKit::WebKit WebKit::gtest)
+
+    if (USE_SKIA)
+        target_link_libraries(TestWebKitAPIBase PUBLIC Skia::Skia)
+    endif ()
 
     if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKitAPIBase ${TestWebKitAPI_DISABLED_WARNINGS} -Wno-deprecated-declarations)

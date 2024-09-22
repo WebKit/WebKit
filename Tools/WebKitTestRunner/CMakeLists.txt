@@ -119,6 +119,11 @@ set(TestRunnerInjectedBundle_DEPENDENCIES
     TestRunnerInjectedBundleBindings
 )
 
+if (USE_SKIA)
+    list(APPEND WebKitTestRunner_LIBRARIES Skia::Skia)
+    list(APPEND TestRunnerInjectedBundle_LIBRARIES Skia::Skia)
+endif ()
+
 WEBKIT_EXECUTABLE_DECLARE(WebKitTestRunner)
 WEBKIT_LIBRARY_DECLARE(TestRunnerInjectedBundle)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()

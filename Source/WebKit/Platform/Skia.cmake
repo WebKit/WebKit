@@ -15,6 +15,6 @@ list(APPEND WebKit_SERIALIZATION_IN_FILES
     Shared/skia/CoreIPCSkData.serialization.in
 )
 
-list(APPEND WebKit_LIBRARIES
-    Skia
+list(APPEND WebKit_PRIVATE_LIBRARIES
+    Skia::Skia
 )

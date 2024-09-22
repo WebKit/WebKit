@@ -42,6 +42,10 @@ set(WebKitAPITest_LIBRARIES
     WebKit::WebKit
 )
 
+if (USE_SKIA)
+    list(APPEND WebKitAPITest_LIBRARIES Skia::Skia)
+endif ()
+
 set(WebKitGLibAPITestsCore_LIBRARIES
     WebKit::WebKit
 )
@@ -57,6 +61,10 @@ set(WebKitGLibAPITestExtension_LIBRARIES
     ${GLIB_LIBRARIES}
     WebKit::WebKit
 )
+
+if (USE_SKIA)
+    list(APPEND WebKitGLibAPITestExtension_LIBRARIES Skia::Skia)
+endif ()
 
 set(WebKitGLibAPIWebProcessTests
     ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGLib/DOMElementTest.cpp
