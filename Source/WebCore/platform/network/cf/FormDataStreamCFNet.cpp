@@ -302,8 +302,11 @@ static CFTypeRef formCopyProperty(CFReadStreamRef, CFStringRef propertyName, voi
         return CFNumberCreate(0, kCFNumberLongLongType, &formDataAsNumber);
     }
 
-    if (kCFCompareEqualTo == CFStringCompare(propertyName, formDataStreamLengthPropertyName(), 0))
-        return CFStringCreateWithFormat(0, 0, CFSTR("%llu"), form->streamLength);
+    if (kCFCompareEqualTo == CFStringCompare(propertyName, formDataStreamLengthPropertyName(), 0)) {
+        char text[24];
+        snprintf(text, sizeof(text), "%llu", form->streamLength);
+        return CFStringCreateWithCString(0, const_cast<const char*>(text), kCFStringEncodingASCII);
+    }
 
     return 0;
 }
