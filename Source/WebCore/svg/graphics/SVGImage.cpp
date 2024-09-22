@@ -254,15 +254,12 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     imageBufferSize.scale(imageBufferScale.width(), imageBufferScale.height());
 
     RefPtr buffer = context.createImageBuffer(expandedIntSize(imageBufferSize.size()));
-    if (!buffer) // Failed to allocate buffer.
+    if (!buffer)
         return;
+
     drawForContainer(buffer->context(), containerSize, containerZoom, initialFragmentURL, imageBufferSize, zoomedContainerRect);
     if (context.drawLuminanceMask())
         buffer->convertToLuminanceMask();
-
-    RefPtr image = ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
-    if (!image)
-        return;
 
     // Adjust the source rect and transform due to the image buffer's scaling.
     FloatRect scaledSrcRect = srcRect;
@@ -271,7 +268,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     unscaledPatternTransform.scale(1 / imageBufferScale.width(), 1 / imageBufferScale.height());
 
     context.setDrawLuminanceMask(false);
-    context.drawPattern(*image, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, options);
+    context.drawPattern(*buffer, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, options);
 }
 
 ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)
