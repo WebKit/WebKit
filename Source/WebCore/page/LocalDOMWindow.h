@@ -193,6 +193,7 @@ public:
     String origin() const;
     SecurityOrigin* securityOrigin() const;
 
+
     // DOM Level 2 AbstractView Interface
 
     WEBCORE_EXPORT Document* document() const;
@@ -257,6 +258,8 @@ public:
     bool isSecureContext() const;
 
     bool crossOriginIsolated() const;
+
+    bool isSameSecurityOriginAsMainFrame() const;
 
     // Events
     // EventTarget API
@@ -383,7 +386,7 @@ private:
     void failedToRegisterDeviceMotionEventListener();
 #endif
 
-    bool isSameSecurityOriginAsMainFrame() const;
+
 
 #if ENABLE(GAMEPAD)
     void incrementGamepadEventListenerCount();

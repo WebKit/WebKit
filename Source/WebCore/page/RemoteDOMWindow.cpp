@@ -66,22 +66,25 @@ void RemoteDOMWindow::closePage()
     m_frame->client().closePage();
 }
 
+
+
 void RemoteDOMWindow::frameDetached()
 {
     m_frame = nullptr;
 }
 
-void RemoteDOMWindow::focus(LocalDOMWindow&)
+void RemoteDOMWindow::focus(LocalDOMWindow& incumbentWindow)
 {
-    // FIXME(264713): Add security checks here equivalent to LocalDOMWindow::focus().
-    if (m_frame && m_frame->isMainFrame())
+    if (!incumbentWindow.isSameSecurityOriginAsMainFrame())
+        return;
+
+    if (m_frame && m_frame->isMainFrame() && !m_frame->settings().windowFocusRestricted())
         m_frame->client().focus();
 }
 
 void RemoteDOMWindow::blur()
 {
-    // FIXME(268121): Add security checks here equivalent to LocalDOMWindow::blur().
-    if (m_frame && m_frame->isMainFrame())
+    if (m_frame && m_frame->isMainFrame() && !m_frame->settings().windowFocusRestricted())
         m_frame->client().unfocus();
 }
 
