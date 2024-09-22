@@ -104,6 +104,7 @@ bool ModelProcessModelPlayerProxy::transformSupported(const simd_float4x4& trans
 void ModelProcessModelPlayerProxy::invalidate()
 {
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy invalidated id=%" PRIu64, this, m_id.toUInt64());
+    [m_layer setPlayer:nullptr];
 }
 
 template<typename T>

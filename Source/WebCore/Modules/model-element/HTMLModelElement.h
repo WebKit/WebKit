@@ -145,6 +145,7 @@ private:
     void setSourceURL(const URL&);
     void modelDidChange();
     void createModelPlayer();
+    void deleteModelPlayer();
 
     HTMLModelElement& readyPromiseResolve();
 

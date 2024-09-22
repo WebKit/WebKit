@@ -41,6 +41,7 @@ public:
     // FIXME: Once all clients have adopted ModelPlayerProvider, this should
     // be changed to return a Ref<ModelPlayer>
     virtual RefPtr<ModelPlayer> createModelPlayer(ModelPlayerClient&) = 0;
+    virtual void deleteModelPlayer(ModelPlayer&) = 0;
 };
 
 }

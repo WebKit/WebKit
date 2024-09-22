@@ -157,8 +157,7 @@ void HTMLModelElement::setSourceURL(const URL& url)
         m_resource = nullptr;
     }
 
-    if (m_modelPlayer)
-        m_modelPlayer = nullptr;
+    deleteModelPlayer();
 
 #if ENABLE(MODEL_PROCESS)
     m_entityTransform = DOMMatrixReadOnly::create(TransformationMatrix::identity, DOMMatrixReadOnly::Is2D::No);
@@ -313,6 +312,13 @@ void HTMLModelElement::createModelPlayer()
     // FIXME: We need to tell the player if the size changes as well, so passing this
     // in with load probably doesn't make sense.
     m_modelPlayer->load(*m_model, size);
+}
+
+void HTMLModelElement::deleteModelPlayer()
+{
+    if (m_modelPlayer)
+        document().page()->modelPlayerProvider().deleteModelPlayer(*m_modelPlayer);
+    m_modelPlayer = nullptr;
 }
 
 bool HTMLModelElement::usesPlatformLayer() const

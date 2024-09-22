@@ -51,7 +51,6 @@ public:
 private:
     explicit ModelProcessModelPlayer(WebCore::ModelPlayerIdentifier, WebPage&, WebCore::ModelPlayerClient&);
 
-    WebCore::ModelPlayerIdentifier identifier() { return m_id; }
     WebPage* page() { return m_page.get(); }
     WebCore::ModelPlayerClient* client() { return m_client.get(); }
 
@@ -63,6 +62,7 @@ private:
     void didUpdateEntityTransform(const WebCore::TransformationMatrix&);
 
     // WebCore::ModelPlayer overrides.
+    WebCore::ModelPlayerIdentifier identifier() const final { return m_id; }
     void load(WebCore::Model&, WebCore::LayoutSize) final;
     void sizeDidChange(WebCore::LayoutSize) final;
     PlatformLayer* layer() final;

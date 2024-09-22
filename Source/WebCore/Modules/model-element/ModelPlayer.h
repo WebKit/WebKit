@@ -36,6 +36,10 @@
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
 
+#if ENABLE(MODEL_PROCESS)
+#include "ModelPlayerIdentifier.h"
+#endif
+
 namespace WebCore {
 
 class Color;
@@ -46,6 +50,10 @@ class WEBCORE_EXPORT ModelPlayer : public RefCounted<ModelPlayer> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ModelPlayer, WEBCORE_EXPORT);
 public:
     virtual ~ModelPlayer();
+
+#if ENABLE(MODEL_PROCESS)
+    virtual ModelPlayerIdentifier identifier() const = 0;
+#endif
 
     virtual void load(Model&, LayoutSize) = 0;
     virtual void sizeDidChange(LayoutSize) = 0;

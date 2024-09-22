@@ -68,7 +68,6 @@ public:
 
     static bool transformSupported(const simd_float4x4& transform);
 
-    WebCore::ModelPlayerIdentifier identifier() const { return m_id; }
     void invalidate();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     template<typename T> void send(T&& message);
@@ -87,6 +86,7 @@ public:
     void didFailLoading(WebCore::REModelLoader&, const WebCore::ResourceError&) final;
 
     // WebCore::ModelPlayer overrides.
+    WebCore::ModelPlayerIdentifier identifier() const final { return m_id; }
     void load(WebCore::Model&, WebCore::LayoutSize) final;
     void sizeDidChange(WebCore::LayoutSize) final;
     PlatformLayer* layer() final;
