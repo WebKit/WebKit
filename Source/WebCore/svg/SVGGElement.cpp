@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -74,15 +74,6 @@ bool SVGGElement::rendererIsNeeded(const RenderStyle&)
     // Unlike SVGElement::rendererIsNeeded(), we still create renderers, even if
     // display is set to 'none' - which is special to SVG <g> container elements.
     return parentOrShadowHostElement() && parentOrShadowHostElement()->isSVGElement();
-}
-
-void SVGGElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
-{
-    if (name == SVGNames::transformAttr) {
-        addPropertyToPresentationalHintStyle(style, CSSPropertyTransform, value);
-        return;
-    }
-    SVGElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 }

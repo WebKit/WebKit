@@ -60,8 +60,6 @@ public:
     SVGAnimatedEnumeration& patternContentUnitsAnimated() { return m_patternContentUnits; }
     SVGAnimatedTransformList& patternTransformAnimated() { return m_patternTransform; }
 
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
-
 private:
     SVGPatternElement(const QualifiedName&, Document&);
 
