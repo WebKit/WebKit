@@ -59,23 +59,31 @@ static inline const char* resolveDefaultLocale(const char* locale)
 
 #else
 
-static inline char* copyShortASCIIString(CFStringRef string)
+static const char* copyDefaultLocale()
 {
-    // OK to have a fixed size buffer and to only handle ASCII since we only use this for locale names.
-    char buffer[256];
-    if (!string || !CFStringGetCString(string, buffer, sizeof(buffer), kCFStringEncodingASCII))
-        return strdup("");
-    return strdup(buffer);
-}
+    auto CurrentLocale = adoptCF(CFLocaleCopyCurrent());
+    auto LocaleValue = static_cast<CFStringRef>(CFLocaleGetValue(CurrentLocale.get(), kCFLocaleCollatorIdentifier));
 
-static char* copyDefaultLocale()
-{
-#if !PLATFORM(IOS_FAMILY)
-    return copyShortASCIIString(static_cast<CFStringRef>(CFLocaleGetValue(adoptCF(CFLocaleCopyCurrent()).get(), kCFLocaleCollatorIdentifier)));
-#else
-    // FIXME: Documentation claims the code above would work on iOS 4.0 and later. After test that works, we should remove this and use that instead.
-    return copyShortASCIIString(adoptCF(static_cast<CFStringRef>(CFPreferencesCopyValue(CFSTR("AppleCollationOrder"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost))).get());
-#endif
+    if (!LocaleValue)
+        return "";
+
+    // Fast path
+    if (auto ptr = CFStringGetCStringPtr(LocaleValue, kCFStringEncodingASCII))
+        return strdup(ptr);
+
+    // OK to only handle ASCII since we only use this for locale names.
+    CFIndex size = CFStringGetLength(LocaleValue);
+    char* ret = static_cast<char*>(malloc(size));
+    if (!ret)
+        return "";
+
+    if (CFStringGetCString(LocaleValue, ret, size, kCFStringEncodingASCII))
+        return ret;
+
+    free(ret);
+
+    // OK to return a static string since this is never meant to be freed anyway.
+    return "";
 }
 
 static inline const char* resolveDefaultLocale(const char* locale)
@@ -84,7 +92,7 @@ static inline const char* resolveDefaultLocale(const char* locale)
         return locale;
     // Since iOS and OS X don't set UNIX locale to match the user's selected locale, the ICU default locale is not the right one.
     // So, instead of passing null to ICU, we pass the name of the user's selected locale.
-    static char* defaultLocale;
+    static const char* defaultLocale;
     static std::once_flag initializeDefaultLocaleOnce;
     std::call_once(initializeDefaultLocaleOnce, []{
         defaultLocale = copyDefaultLocale();
