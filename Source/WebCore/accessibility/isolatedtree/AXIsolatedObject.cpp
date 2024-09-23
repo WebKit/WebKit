@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,11 +40,11 @@
 #include <wtf/text/MakeString.h>
 
 #if PLATFORM(MAC)
-#import <pal/spi/mac/HIServicesSPI.h>
+#include <pal/spi/mac/HIServicesSPI.h>
 #endif
 
 #if PLATFORM(COCOA)
-#include <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
+#include <pal/spi/cocoa/AccessibilitySupportSPI.h>
 #endif
 
 namespace WebCore {
@@ -623,8 +623,8 @@ void AXIsolatedObject::setChildrenIDs(Vector<AXID>&& ids)
 const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool updateChildrenIfNeeded)
 {
 #if USE(APPLE_INTERNAL_SDK)
-    ASSERT(_AXSIsolatedTreeModeFunctionIsAvailable() && ((_AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread && !isMainThread())
-        || (_AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeMainThread && isMainThread())));
+    ASSERT((_AXSIsolatedTreeMode() == AXSIsolatedTreeModeSecondaryThread && !isMainThread())
+        || (_AXSIsolatedTreeMode() == AXSIsolatedTreeModeMainThread && isMainThread()));
 #elif USE(ATSPI)
     ASSERT(!isMainThread());
 #endif

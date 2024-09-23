@@ -40,7 +40,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include <pal/spi/cocoa/AccessibilitySupportSPI.h>
-#include <wtf/SoftLinking.h>
 
 #define NOTIFICATION_CENTER CFNotificationCenterGetDarwinNotifyCenter()
 #define INCREASE_CONTRAST_PREFERENCE CFSTR("DarkenSystemColors")

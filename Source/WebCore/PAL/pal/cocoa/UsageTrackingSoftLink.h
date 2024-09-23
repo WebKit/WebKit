@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, UsageTracking);
 
 SOFT_LINK_CLASS_FOR_HEADER(PAL, USVideoUsage);
-#define _AXSIsolatedTreeModeFunctionIsAvailable PAL::canLoad_libAccessibility__AXSIsolatedTreeMode
 
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, UsageTracking, USVideoMetadataKeyCanShowControlsManager, NSString *)
 #define USVideoMetadataKeyCanShowControlsManager PAL::get_UsageTracking_USVideoMetadataKeyCanShowControlsManager()

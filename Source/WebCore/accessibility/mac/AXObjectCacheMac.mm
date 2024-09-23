@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,6 @@
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #import <pal/spi/cocoa/AccessibilitySupportSPI.h>
-#import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
 #endif
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -771,8 +770,7 @@ bool AXObjectCache::isIsolatedTreeEnabled()
         enabled = true;
     } else {
         enabled = DeprecatedGlobalSettings::isAccessibilityIsolatedTreeEnabled() // Used to turn off in apps other than Safari, e.g., Mail.
-            && _AXSIsolatedTreeModeFunctionIsAvailable()
-            && _AXSIsolatedTreeMode_Soft() != AXSIsolatedTreeModeOff // Used to switch via system defaults.
+            && _AXSIsolatedTreeMode() != AXSIsolatedTreeModeOff // Used to switch via system defaults.
             && clientSupportsIsolatedTree();
     }
 
@@ -785,7 +783,7 @@ void AXObjectCache::initializeAXThreadIfNeeded()
     if (LIKELY(axThreadInitialized || !isMainThread()))
         return;
 
-    if (_AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread) {
+    if (_AXSIsolatedTreeMode() == AXSIsolatedTreeModeSecondaryThread) {
         _AXUIElementUseSecondaryAXThread(true);
         axThreadInitialized = true;
     }
