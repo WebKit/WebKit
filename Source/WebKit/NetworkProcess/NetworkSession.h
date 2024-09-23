@@ -237,6 +237,7 @@ public:
     void setBlobRegistryTopOriginPartitioningEnabled(bool);
     void setShouldSendPrivateTokenIPCForTesting(bool);
     bool shouldSendPrivateTokenIPCForTesting() const { return m_shouldSendPrivateTokenIPCForTesting; }
+    void setOptInCookiePartitioningEnabled(bool);
 
 #if PLATFORM(COCOA)
     AppPrivacyReportTestingData& appPrivacyReportTestingData() { return m_appPrivacyReportTestingData; }

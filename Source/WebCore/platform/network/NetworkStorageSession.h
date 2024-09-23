@@ -249,6 +249,8 @@ public:
     WEBCORE_EXPORT void didCommitCrossSiteLoadWithDataTransferFromPrevalentResource(const RegistrableDomain& toDomain, PageIdentifier);
     WEBCORE_EXPORT void resetCrossSiteLoadsWithLinkDecorationForTesting();
     WEBCORE_EXPORT void setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode);
+    WEBCORE_EXPORT void setOptInCookiePartitioningEnabled(bool);
+    bool isOptInCookiePartitioningEnabled() const { return m_isOptInCookiePartitioningEnabled; }
 
     WEBCORE_EXPORT const static HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& storageAccessQuirks();
     WEBCORE_EXPORT static void updateStorageAccessPromptQuirks(Vector<OrganizationStorageAccessPromptQuirk>&&);
@@ -311,6 +313,7 @@ private:
     MemoryCompactRobinHoodHashMap<String, WeakHashSet<CookieChangeObserver>> m_cookieChangeObservers;
 #endif
     WeakHashSet<CookiesEnabledStateObserver> m_cookiesEnabledStateObservers;
+    bool m_isOptInCookiePartitioningEnabled { false };
 
     CredentialStorage m_credentialStorage;
 

@@ -830,7 +830,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
 
     updateRegistrationWithDataStore();
     updateBackgroundResponsivenessTimer();
-    protectedWebsiteDataStore()->updateBlobRegistryPartitioningState();
+    protectedWebsiteDataStore()->propagateSettingUpdatesToNetworkProcess();
 
     // If this was previously a standalone worker process with no pages we need to call didChangeThrottleState()
     // to update our process assertions on the network process since standalone worker processes do not hold
@@ -871,7 +871,7 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     updateAudibleMediaAssertions();
     updateMediaStreamingActivity();
     updateBackgroundResponsivenessTimer();
-    protectedWebsiteDataStore()->updateBlobRegistryPartitioningState();
+    protectedWebsiteDataStore()->propagateSettingUpdatesToNetworkProcess();
 
     maybeShutDown();
 }

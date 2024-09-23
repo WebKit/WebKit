@@ -380,6 +380,11 @@ void NetworkStorageSession::setThirdPartyCookieBlockingMode(ThirdPartyCookieBloc
     m_thirdPartyCookieBlockingMode = blockingMode;
 }
 
+void NetworkStorageSession::setOptInCookiePartitioningEnabled(bool enabled)
+{
+    m_isOptInCookiePartitioningEnabled = enabled;
+}
+
 #if ENABLE(APP_BOUND_DOMAINS)
 void NetworkStorageSession::setAppBoundDomains(HashSet<RegistrableDomain>&& domains)
 {

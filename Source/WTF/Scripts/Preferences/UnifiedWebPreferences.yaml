@@ -5207,6 +5207,20 @@ OpportunisticSweepingAndGarbageCollectionEnabled:
     WebCore:
       default: false
 
+OptInPartitionedCookiesEnabled:
+  type: bool
+  status: unstable
+  category: dom
+  humanReadableName: "Opt-in partitioned cookies (CHIPS)"
+  humanReadableDescription: "Enable opt-in partitioned cookies"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 OpusDecoderEnabled:
   type: bool
   status: mature

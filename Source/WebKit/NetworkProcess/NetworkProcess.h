@@ -302,6 +302,7 @@ public:
 
     void setBlobRegistryTopOriginPartitioningEnabled(PAL::SessionID, bool) const;
     void setShouldSendPrivateTokenIPCForTesting(PAL::SessionID, bool) const;
+    void setOptInCookiePartitioningEnabled(PAL::SessionID, bool) const;
 
     void preconnectTo(PAL::SessionID, WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::ResourceRequest&&, WebCore::StoredCredentialsPolicy, std::optional<NavigatingToAppBoundDomain>);
 
