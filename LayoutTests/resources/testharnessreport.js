@@ -66,13 +66,6 @@ if (self.testRunner) {
     *   manner that allows dumpAsText to produce readable test results
     */
     add_completion_callback(function (tests, harness_status) {
-        // Only pay attention to results at the top-level window.
-        // Ideally testharness.js would allow us to only attach a completion handler in this case:
-        // https://github.com/web-platform-tests/rfcs/pull/168
-        if (window !== window.top || (orig_opener !== null && orig_opener !== window)) {
-            return;
-        }
-
         var resultStr = "\n";
 
         // Sanitizes the given text for display in test results.
