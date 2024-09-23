@@ -194,7 +194,12 @@ TEST(VideoControlsManager, VideoControlsManagerSingleLargeVideo)
     [webView waitForMediaControlsToShow];
 }
 
+// rdar://136308546
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerSingleSmallVideo)
+#else
 TEST(VideoControlsManager, VideoControlsManagerSingleSmallVideo)
+#endif
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
@@ -226,7 +231,12 @@ TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosWithAudioA
     EXPECT_TRUE([[webView controlledElementID] isEqualToString:@"bar"]);
 }
 
+// rdar://136308546
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosScrollPausedVideoOutOfView)
+#else
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPausedVideoOutOfView)
+#endif
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
 
@@ -238,7 +248,12 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPausedVideoOu
     }];
 }
 
+// rdar://136308546
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosScrollPlayingVideoWithSoundOutOfView)
+#else
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingVideoWithSoundOutOfView)
+#endif
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
 
@@ -250,7 +265,12 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingVideoW
     }];
 }
 
+// rdar://136308546
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosScrollPlayingMutedVideoOutOfView)
+#else
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingMutedVideoOutOfView)
+#endif
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
 
@@ -294,7 +314,12 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosShowControlsForLast
     TestWebKitAPI::Util::run(&secondVideoPaused);
 }
 
+// rdar://136308546
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosSwitchControlledVideoWhenScrolling)
+#else
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosSwitchControlledVideoWhenScrolling)
+#endif
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 800, 600));
 
@@ -334,7 +359,12 @@ TEST(VideoControlsManager, VideoControlsManagerSingleSmallAutoplayingVideo)
     }];
 }
 
+// rdar://136308546
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerLargeAutoplayingVideoSeeksAfterEnding)
+#else
 TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoSeeksAfterEnding)
+#endif
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));
 
@@ -576,7 +606,12 @@ TEST(VideoControlsManager, TogglePlaybackForControlledVideo)
     [webView waitForVideoToPlay];
 }
 
+// rdar://136308546
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+TEST(VideoControlsManager, DISABLED_StartPlayingLargestVideoInViewport)
+#else
 TEST(VideoControlsManager, StartPlayingLargestVideoInViewport)
+#endif
 {
     RetainPtr webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 640, 480));
     [webView synchronouslyLoadTestPageNamed:@"large-videos-with-audio"];
