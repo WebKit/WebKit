@@ -1146,13 +1146,11 @@ void AVVideoCaptureSource::monitorOrientation(OrientationNotifier& notifier)
 {
 #if PLATFORM(IOS_FAMILY)
     if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeExternalUnknown() && [device() deviceType] == AVCaptureDeviceTypeExternalUnknown)
-        return;
+        m_useSensorAndDeviceOrientation = false;
+#endif
 
     notifier.addObserver(*this);
     orientationChanged(notifier.orientation());
-#else
-    UNUSED_PARAM(notifier);
-#endif
 }
 
 void AVVideoCaptureSource::orientationChanged(IntDegrees orientation)
@@ -1163,8 +1161,26 @@ void AVVideoCaptureSource::orientationChanged(IntDegrees orientation)
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "rotation = ", m_videoFrameRotation, ", orientation = ", m_deviceOrientation);
 }
 
+void AVVideoCaptureSource::rotationAngleForHorizonLevelDisplayChanged(const String& devicePersistentId, VideoFrameRotation videoFrameRotation)
+{
+    if (captureDevice().persistentId() != devicePersistentId)
+        return;
+
+    m_useSensorAndDeviceOrientation = false;
+
+    if (videoFrameRotation == m_videoFrameRotation)
+        return;
+
+    m_videoFrameRotation = videoFrameRotation;
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "rotation = ", m_videoFrameRotation);
+    notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
+}
+
 void AVVideoCaptureSource::computeVideoFrameRotation()
 {
+    if (!m_useSensorAndDeviceOrientation)
+        return;
+
     bool frontCamera = [device() position] == AVCaptureDevicePositionFront;
     VideoFrame::Rotation videoFrameRotation;
     switch (m_sensorOrientation - m_deviceOrientation) {

@@ -40,6 +40,8 @@ messages -> GPUProcess : AuxiliaryProcess {
 #if ENABLE(MEDIA_STREAM)
     SetMockCaptureDevicesEnabled(bool isEnabled)
     SetOrientationForMediaCapture(WebCore::IntDegrees orientation);
+    RotationAngleForCaptureDeviceChanged(String persistentId, enum:uint16_t WebCore::VideoFrameRotation rotation);
+
     UpdateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID) -> ()
     UpdateCaptureOrigin(WebCore::SecurityOriginData originData, WebCore::ProcessIdentifier processID)
     AddMockMediaDevice(struct WebCore::MockMediaDevice device)

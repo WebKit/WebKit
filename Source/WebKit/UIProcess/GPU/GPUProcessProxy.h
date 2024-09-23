@@ -49,10 +49,13 @@
 
 namespace WebCore {
 class CaptureDevice;
-enum class DisplayCapturePromptType : uint8_t;
+class SecurityOriginData;
+
 struct MockMediaDevice;
 struct ScreenProperties;
-class SecurityOriginData;
+
+enum class DisplayCapturePromptType : uint8_t;
+enum class VideoFrameRotation : uint16_t;
 }
 
 namespace WebKit {
@@ -89,6 +92,9 @@ public:
     void setUseMockCaptureDevices(bool);
     void setUseSCContentSharingPicker(bool);
     void setOrientationForMediaCapture(WebCore::IntDegrees);
+    void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
+    void startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
+    void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&, WebCore::ProcessIdentifier);
     void addMockMediaDevice(const WebCore::MockMediaDevice&);

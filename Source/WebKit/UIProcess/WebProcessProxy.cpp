@@ -736,6 +736,16 @@ RefPtr<WebPageProxy> WebProcessProxy::webPage(WebPageProxyIdentifier pageID)
     return globalPageMap().get(pageID);
 }
 
+RefPtr<WebPageProxy> WebProcessProxy::webPage(PageIdentifier pageID)
+{
+    for (Ref page : globalPages()) {
+        if (page->webPageIDInMainFrameProcess() == pageID)
+            return page;
+    }
+
+    return nullptr;
+}
+
 RefPtr<WebPageProxy> WebProcessProxy::audioCapturingWebPage()
 {
     for (Ref page : globalPages()) {

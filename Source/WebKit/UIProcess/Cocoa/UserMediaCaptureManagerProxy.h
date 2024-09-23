@@ -79,6 +79,9 @@ public:
 #endif
         virtual void startProducingData(WebCore::CaptureDevice::DeviceType) { }
         virtual RemoteVideoFrameObjectHeap* remoteVideoFrameObjectHeap() { return nullptr; }
+
+        virtual void startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&) { }
+        virtual void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&) { }
     };
     explicit UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&&);
     ~UserMediaCaptureManagerProxy();
@@ -87,6 +90,7 @@ public:
     void clear();
 
     void setOrientation(WebCore::IntDegrees);
+    void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
 
     void didReceiveMessageFromGPUProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);

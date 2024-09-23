@@ -211,6 +211,7 @@ public:
 
     static RefPtr<WebProcessProxy> processForIdentifier(WebCore::ProcessIdentifier);
     static RefPtr<WebPageProxy> webPage(WebPageProxyIdentifier);
+    static RefPtr<WebPageProxy> webPage(WebCore::PageIdentifier);
     static RefPtr<WebPageProxy> audioCapturingWebPage();
 #if ENABLE(WEBXR) && !USE(OPENXR)
     static RefPtr<WebPageProxy> webPageWithActiveXRSession();

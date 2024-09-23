@@ -223,6 +223,7 @@ enum class TextCheckingType : uint8_t;
 enum class TextGranularity : uint8_t;
 enum class TrackingType : uint8_t;
 enum class UserInterfaceLayoutDirection : bool;
+enum class VideoFrameRotation : uint16_t;
 enum class WheelEventProcessingSteps : uint8_t;
 enum class WheelScrollGestureState : uint8_t;
 enum class WillContinueLoading : bool;
@@ -2100,6 +2101,9 @@ public:
 #if ENABLE(MEDIA_STREAM)
     void setMockCaptureDevicesEnabledOverride(std::optional<bool>);
     void willStartCapture(UserMediaPermissionRequestProxy&, CompletionHandler<void()>&&);
+    void startMonitoringCaptureDeviceRotation(const String&);
+    void stopMonitoringCaptureDeviceRotation(const String&);
+    void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
 #endif
 
     void maybeInitializeSandboxExtensionHandle(WebProcessProxy&, const URL&, const URL& resourceDirectoryURL, bool checkAssumedReadAccessToResourceURL, CompletionHandler<void(std::optional<SandboxExtensionHandle>)>&&);

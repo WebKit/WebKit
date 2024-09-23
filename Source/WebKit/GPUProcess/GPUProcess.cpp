@@ -433,6 +433,12 @@ void GPUProcess::setOrientationForMediaCapture(WebCore::IntDegrees orientation)
         connection->setOrientationForMediaCapture(orientation);
 }
 
+void GPUProcess::rotationAngleForCaptureDeviceChanged(const String& persistentId, WebCore::VideoFrameRotation rotation)
+{
+    for (auto& connection : m_webProcessConnections.values())
+        connection->rotationAngleForCaptureDeviceChanged(persistentId, rotation);
+}
+
 void GPUProcess::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(WebRTC, "GPUProcess::updateCaptureAccess: Entering (audio=%d, video=%d, display=%d)", allowAudioCapture, allowVideoCapture, allowDisplayCapture);

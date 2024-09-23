@@ -257,6 +257,16 @@ private:
 
     RemoteVideoFrameObjectHeap* remoteVideoFrameObjectHeap() final { return &m_process.get()->videoFrameObjectHeap(); }
 
+    void startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageIdentifier, const String& persistentId) final
+    {
+        m_process.get()->startMonitoringCaptureDeviceRotation(pageIdentifier, persistentId);
+    }
+
+    void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageIdentifier, const String& persistentId) final
+    {
+        m_process.get()->stopMonitoringCaptureDeviceRotation(pageIdentifier, persistentId);
+    }
+
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_process;
 };
 
@@ -1143,6 +1153,36 @@ void GPUConnectionToWebProcess::setOrientationForMediaCapture(IntDegrees orienta
 // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=211085>
 #if PLATFORM(COCOA)
     userMediaCaptureManagerProxy().setOrientation(orientation);
+#endif
+}
+
+void GPUConnectionToWebProcess::startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageIdentifier, const String& persistentId)
+{
+#if PLATFORM(COCOA)
+    gpuProcess().protectedParentProcessConnection()->send(Messages::GPUProcessProxy::StartMonitoringCaptureDeviceRotation(pageIdentifier, persistentId), 0);
+#else
+    UNUSED_PARAM(pageIdentifier);
+    UNUSED_PARAM(persistentId);
+#endif
+}
+
+void GPUConnectionToWebProcess::stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageIdentifier, const String& persistentId)
+{
+#if PLATFORM(COCOA)
+    gpuProcess().protectedParentProcessConnection()->send(Messages::GPUProcessProxy::StopMonitoringCaptureDeviceRotation(pageIdentifier, persistentId), 0);
+#else
+    UNUSED_PARAM(pageIdentifier);
+    UNUSED_PARAM(persistentId);
+#endif
+}
+
+void GPUConnectionToWebProcess::rotationAngleForCaptureDeviceChanged(const String& persistentId, WebCore::VideoFrameRotation rotation)
+{
+#if PLATFORM(COCOA)
+    userMediaCaptureManagerProxy().rotationAngleForCaptureDeviceChanged(persistentId, rotation);
+#else
+    UNUSED_PARAM(persistentId);
+    UNUSED_PARAM(rotation);
 #endif
 }
 

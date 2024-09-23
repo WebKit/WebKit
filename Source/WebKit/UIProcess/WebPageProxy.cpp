@@ -11609,6 +11609,45 @@ void WebPageProxy::voiceActivityDetected()
 {
     send(Messages::WebPage::VoiceActivityDetected { });
 }
+
+void WebPageProxy::startMonitoringCaptureDeviceRotation(const String& persistentId)
+{
+#if HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
+    if (!m_preferences->useAVCaptureDeviceRotationCoordinatorAPI())
+        return;
+
+    userMediaPermissionRequestManager().startMonitoringCaptureDeviceRotation(persistentId);
+#endif // HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
+}
+
+void WebPageProxy::stopMonitoringCaptureDeviceRotation(const String& persistentId)
+{
+#if HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
+    if (!m_preferences->useAVCaptureDeviceRotationCoordinatorAPI())
+        return;
+
+    userMediaPermissionRequestManager().stopMonitoringCaptureDeviceRotation(persistentId);
+#endif // HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
+}
+
+void WebPageProxy::rotationAngleForCaptureDeviceChanged(const String& persistentId, WebCore::VideoFrameRotation rotation)
+{
+#if HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
+    if (!preferences().useAVCaptureDeviceRotationCoordinatorAPI())
+        return;
+
+#if ENABLE(GPU_PROCESS)
+    if (preferences().captureVideoInGPUProcessEnabled()) {
+        if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
+            gpuProcess->rotationAngleForCaptureDeviceChanged(persistentId, rotation);
+        return;
+    }
+#endif // ENABLE(GPU_PROCESS)
+
+    if (auto* proxy = protectedLegacyMainFrameProcess()->userMediaCaptureManagerProxy())
+        proxy->rotationAngleForCaptureDeviceChanged(persistentId, rotation);
+#endif // HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
+}
 #endif // ENABLE(MEDIA_STREAM)
 
 void WebPageProxy::syncIfMockDevicesEnabledChanged()

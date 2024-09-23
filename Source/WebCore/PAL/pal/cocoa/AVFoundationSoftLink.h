@@ -103,7 +103,11 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, AVCaptureVideoDataOutput)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVFrameRateRange)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVCaptureDeviceDiscoverySession)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVCapturePhotoOutput)
+
+#if HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVCaptureDeviceRotationCoordinator)
 #endif
+#endif // HAVE(AVCAPTUREDEVICE)
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioTimePitchAlgorithmSpectral, NSString *)
 #define AVAudioTimePitchAlgorithmSpectral PAL::get_AVFoundation_AVAudioTimePitchAlgorithmSpectral()

@@ -29,6 +29,7 @@
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 #include "Connection.h"
+#include "GPUProcessProxy.h"
 #include "RemoteCaptureSampleManagerMessages.h"
 #include "RemoteVideoFrameObjectHeap.h"
 #include "SharedCARingBuffer.h"
@@ -518,6 +519,7 @@ CaptureSourceOrError UserMediaCaptureManagerProxy::createCameraSource(const Capt
 
     auto source = sourceOrError.source();
     source->monitorOrientation(m_orientationNotifier);
+    m_connectionProxy->startMonitoringCaptureDeviceRotation(pageIdentifier, device.persistentId());
     perPageSources.cameraSources.add(source.get());
     return source;
 }
@@ -630,6 +632,30 @@ void UserMediaCaptureManagerProxy::stopProducingData(RealtimeMediaSourceIdentifi
 
 void UserMediaCaptureManagerProxy::removeSource(RealtimeMediaSourceIdentifier id)
 {
+    RefPtr proxy = m_proxies.get(id);
+    if (!proxy)
+        return;
+
+    Ref source = proxy->protectedSource();
+    if (auto pageIdentifier = source->pageIdentifier()) {
+        auto iterator = m_pageSources.find(*pageIdentifier);
+        if (iterator != m_pageSources.end()) {
+            auto& pageSources = iterator->value;
+            if (source->deviceType() == WebCore::CaptureDevice::DeviceType::Camera) {
+                if (pageSources.cameraSources.remove(source.get())) {
+                    bool shouldContinueMonitoring = false;
+                    pageSources.cameraSources.forEach([&] (auto& cameraSource) {
+                        shouldContinueMonitoring |= cameraSource.persistentID() == source->persistentID() && !cameraSource.isEnded();
+                    });
+                    if (!shouldContinueMonitoring)
+                        m_connectionProxy->stopMonitoringCaptureDeviceRotation(*pageIdentifier, source->persistentID());
+                }
+            } else if (source->deviceType() == WebCore::CaptureDevice::DeviceType::Microphone) {
+                if (source.ptr() == pageSources.microphoneSource.get().get())
+                    iterator->value.microphoneSource = nullptr;
+            }
+        }
+    }
     m_proxies.remove(id);
 }
 
@@ -757,6 +783,11 @@ void UserMediaCaptureManagerProxy::close()
 void UserMediaCaptureManagerProxy::setOrientation(WebCore::IntDegrees orientation)
 {
     m_orientationNotifier.orientationChanged(orientation);
+}
+
+void UserMediaCaptureManagerProxy::rotationAngleForCaptureDeviceChanged(const String& persistentId, WebCore::VideoFrameRotation rotation)
+{
+    m_orientationNotifier.rotationAngleForCaptureDeviceChanged(persistentId, rotation);
 }
 
 bool UserMediaCaptureManagerProxy::hasSourceProxies() const

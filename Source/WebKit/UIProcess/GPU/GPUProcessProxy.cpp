@@ -846,6 +846,23 @@ void GPUProcessProxy::voiceActivityDetected()
         page->voiceActivityDetected();
 }
 
+void GPUProcessProxy::startMonitoringCaptureDeviceRotation(PageIdentifier pageID, const String& persistentId)
+{
+    if (auto page = WebProcessProxy::webPage(pageID))
+        page->startMonitoringCaptureDeviceRotation(persistentId);
+}
+
+void GPUProcessProxy::stopMonitoringCaptureDeviceRotation(PageIdentifier pageID, const String& persistentId)
+{
+    if (auto page = WebProcessProxy::webPage(pageID))
+        page->stopMonitoringCaptureDeviceRotation(persistentId);
+}
+
+void GPUProcessProxy::rotationAngleForCaptureDeviceChanged(const String& persistentId, WebCore::VideoFrameRotation rotation)
+{
+    send(Messages::GPUProcess::RotationAngleForCaptureDeviceChanged(persistentId, rotation), 0);
+}
+
 #if PLATFORM(IOS_FAMILY)
 void GPUProcessProxy::statusBarWasTapped(CompletionHandler<void()>&& completionHandler)
 {

@@ -7338,6 +7338,18 @@ UseARKitForModel:
     WebKit:
       default: true
 
+UseAVCaptureDeviceRotationCoordinatorAPI:
+  type: bool
+  status: internal
+  humanReadableName: "Use AVCaptureDeviceRotationCoordinator API"
+  humanReadableDescription: "Use AVCaptureDeviceRotationCoordinator API"
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  condition: HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
+  defaultValue:
+    WebKit:
+      default: true
+
 UseAsyncUIKitInteractions:
   type: bool
   status: internal

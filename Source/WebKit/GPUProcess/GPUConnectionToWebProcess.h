@@ -185,6 +185,9 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     void setOrientationForMediaCapture(WebCore::IntDegrees);
+    void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
+    void startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
+    void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&);
     void updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture);
     void updateCaptureOrigin(const WebCore::SecurityOriginData&);
     bool setCaptureAttributionString();
