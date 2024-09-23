@@ -1092,10 +1092,6 @@ void WebEditorClient::getGuessesForWord(const String& word, const String& contex
 
 #endif // !PLATFORM(IOS_FAMILY)
 
-void WebEditorClient::willSetInputMethodState()
-{
-}
-
 void WebEditorClient::setInputMethodState(WebCore::Element*)
 {
 }

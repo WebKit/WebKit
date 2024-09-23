@@ -194,7 +194,6 @@ public:
     virtual void updateSpellingUIWithMisspelledWord(const String&) = 0;
     virtual void showSpellingUI(bool show) = 0;
     virtual bool spellingUIIsShowing() = 0;
-    virtual void willSetInputMethodState() = 0;
     virtual void setInputMethodState(Element*) = 0;
 
     // Support for global selections, used on platforms like the X Window System that treat

@@ -368,7 +368,6 @@ private:
     void showSpellingUI(bool) final { }
     bool spellingUIIsShowing() final { return false; }
 
-    void willSetInputMethodState() final { }
     void setInputMethodState(Element*) final { }
 
     class EmptyTextCheckerClient final : public TextCheckerClient {
