@@ -2604,6 +2604,40 @@ TEST(WritingTools, IsWritingToolsActiveAPIWithNoInlineEditing)
     TestWebKitAPI::Util::run(&finished);
 }
 
+#if PLATFORM(IOS_FAMILY)
+
+TEST(WritingTools, PanelHidesInputAccessoryView)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    RetainPtr delegate = adoptNS([TestInputDelegate new]);
+    [webView _setInputDelegate:delegate.get()];
+
+    bool focused = false;
+    [delegate setFocusStartsInputSessionPolicyHandler:[&](WKWebView *, id<_WKFocusedElementInfo>) {
+        focused = true;
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    [webView synchronouslyLoadHTMLString:@"<input autofocus value='foo bar' type='text'>"];
+    TestWebKitAPI::Util::run(&focused);
+
+    [webView selectAll:nil];
+
+    RetainPtr contentView = [webView textInputContentView];
+
+    EXPECT_NOT_NULL([contentView inputAccessoryView]);
+
+    [contentView willPresentWritingTools];
+
+    EXPECT_NULL([contentView inputAccessoryView]);
+
+    [contentView didDismissWritingTools];
+
+    EXPECT_NOT_NULL([contentView inputAccessoryView]);
+}
+
+#endif
+
 #if PLATFORM(MAC)
 
 TEST(WritingTools, ShowAffordance)
