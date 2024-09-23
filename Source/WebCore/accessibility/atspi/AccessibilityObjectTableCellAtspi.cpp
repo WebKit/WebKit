@@ -63,7 +63,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
         if (!g_strcmp0(propertyName, "RowSpan"))
             return g_variant_new_int32(atspiObject->rowSpan());
         if (!g_strcmp0(propertyName, "Table")) {
-            auto* axObject = atspiObject->m_coreObject;
+            auto* axObject = atspiObject->m_coreObject.get();
             if (!axObject || !axObject->isExposedTableCell())
                 return AccessibilityAtspi::singleton().nullReference();
 
@@ -74,7 +74,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
                     break;
 
                 wrapper->updateBackingStore();
-                axObject = wrapper->m_coreObject;
+                axObject = wrapper->m_coreObject.get();
                 if (axObject && axObject->isTable())
                     break;
             }

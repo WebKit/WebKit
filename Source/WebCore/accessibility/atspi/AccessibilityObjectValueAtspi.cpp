@@ -97,7 +97,7 @@ double AccessibilityObjectAtspi::minimumIncrement() const
     if (!m_coreObject)
         return 0;
 
-    auto stepAttribute = static_cast<AccessibilityObject*>(m_coreObject)->getAttribute(HTMLNames::stepAttr);
+    auto stepAttribute = static_cast<AccessibilityObject*>(m_coreObject.get())->getAttribute(HTMLNames::stepAttr);
     if (!stepAttribute.isEmpty())
         return stepAttribute.toFloat();
 

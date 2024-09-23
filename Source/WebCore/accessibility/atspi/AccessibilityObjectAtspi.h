@@ -23,6 +23,7 @@
 #include "AXCoreObject.h"
 #include "AccessibilityAtspi.h"
 #include "AccessibilityAtspiEnums.h"
+#include "AccessibilityRootAtspi.h"
 #include "IntRect.h"
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
@@ -33,8 +34,6 @@ typedef struct _GVariant GVariant;
 typedef struct _GVariantBuilder GVariantBuilder;
 
 namespace WebCore {
-class AXCoreObject;
-class AccessibilityRootAtspi;
 
 using RelationMap = HashMap<Atspi::Relation, Vector<RefPtr<AccessibilityObjectAtspi>>, IntHash<Atspi::Relation>, WTF::StrongEnumHashTraits<Atspi::Relation>>;
 
@@ -280,9 +279,9 @@ private:
     static GDBusInterfaceVTable s_tableCellFunctions;
     static GDBusInterfaceVTable s_collectionFunctions;
 
-    AXCoreObject* m_coreObject { nullptr };
+    RefPtr<AXCoreObject> m_coreObject;
     OptionSet<Interface> m_interfaces;
-    AccessibilityRootAtspi* m_root { nullptr };
+    RefPtr<AccessibilityRootAtspi> m_root;
     std::optional<RefPtr<AccessibilityObjectAtspi>> m_parent;
     bool m_isRegistered { false };
     String m_path;
