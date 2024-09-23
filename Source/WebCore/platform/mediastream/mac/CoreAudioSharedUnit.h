@@ -82,7 +82,7 @@ public:
         virtual OSStatus defaultOutputDevice(uint32_t*) = 0;
         virtual void delaySamples(Seconds) { }
         virtual Seconds verifyCaptureInterval(bool isProducingSamples) const { return isProducingSamples ? 20_s : 2_s; }
-        virtual void setVoiceActivityDetection(bool) = 0;
+        virtual bool setVoiceActivityDetection(bool) = 0;
     };
 
     WEBCORE_EXPORT static CoreAudioSharedUnit& unit();
@@ -168,6 +168,9 @@ private:
 
     void verifyIsCapturing();
 
+    void updateVoiceActiveDetection();
+    bool shouldEnableVoiceActivityDetection() const;
+
     CreationCallback m_creationCallback;
     GetSampleRateCallback m_getSampleRateCallback;
     std::unique_ptr<InternalUnit> m_ioUnit;
@@ -215,6 +218,7 @@ private:
 
     bool m_shouldUseVPIO { true };
     bool m_shouldSetVoiceActivityListener { false };
+    bool m_voiceActivityDetectionEnabled { false };
 #if PLATFORM(MAC)
     StoredAudioUnit m_storedVPIOUnit { nullptr };
     Timer m_storedVPIOUnitDeallocationTimer;

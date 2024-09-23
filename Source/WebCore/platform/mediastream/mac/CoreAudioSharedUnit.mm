@@ -47,7 +47,7 @@ static int speechActivityListenerCallback(AudioObjectID deviceID, UInt32, const 
     return 0;
 }
 
-static void manageSpeechActivityListener(uint32_t deviceID, bool enable)
+static bool manageSpeechActivityListener(uint32_t deviceID, bool enable)
 {
     const AudioObjectPropertyAddress kVoiceActivityDetectionEnable {
         kAudioDevicePropertyVoiceActivityDetectionEnable,
@@ -56,7 +56,10 @@ static void manageSpeechActivityListener(uint32_t deviceID, bool enable)
     };
     UInt32 shouldEnable = enable;
     auto error = AudioObjectSetPropertyData(deviceID, &kVoiceActivityDetectionEnable, 0, NULL, sizeof(UInt32), &shouldEnable);
-    RELEASE_LOG_ERROR_IF(error, WebRTC, "CoreAudioSharedUnit manageSpeechActivityListener unable to set kVoiceActivityDetectionEnable, error %d (%.4s)", (int)error, (char*)&error);
+    if (error) {
+        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit manageSpeechActivityListener unable to set kVoiceActivityDetectionEnable, error %d (%.4s)", (int)error, (char*)&error);
+        return false;
+    }
 
     const AudioObjectPropertyAddress kVoiceActivityDetectionState {
         kAudioDevicePropertyVoiceActivityDetectionState,
@@ -67,11 +70,12 @@ static void manageSpeechActivityListener(uint32_t deviceID, bool enable)
     if (!enable) {
         error = AudioObjectRemovePropertyListener(deviceID, &kVoiceActivityDetectionState, (AudioObjectPropertyListenerProc)speechActivityListenerCallback, NULL);
         RELEASE_LOG_ERROR_IF(error, WebRTC, "CoreAudioSharedUnit manageSpeechActivityListener unable to remove kVoiceActivityDetectionEnable listener, error %d (%.4s)", (int)error, (char*)&error);
-        return;
+        return !error;
     }
 
     error = AudioObjectAddPropertyListener(deviceID, &kVoiceActivityDetectionState, (AudioObjectPropertyListenerProc)speechActivityListenerCallback, NULL);
     RELEASE_LOG_ERROR_IF(error, WebRTC, "CoreAudioSharedUnit manageSpeechActivityListener unable to set kVoiceActivityDetectionEnable listener, error %d (%.4s)", (int)error, (char*)&error);
+    return !error;
 }
 
 void CoreAudioSharedUnit::processVoiceActivityEvent(AudioObjectID deviceID)
@@ -97,51 +101,34 @@ void CoreAudioSharedUnit::processVoiceActivityEvent(AudioObjectID deviceID)
 }
 #endif // PLATFORM(MAC) && HAVE(VOICEACTIVITYDETECTION)
 
-void CoreAudioSharedInternalUnit::setVoiceActivityDetection(bool shouldEnable)
+bool CoreAudioSharedInternalUnit::setVoiceActivityDetection(bool shouldEnable)
 {
 #if HAVE(VOICEACTIVITYDETECTION)
 #if PLATFORM(MAC)
     auto deviceID = CoreAudioSharedUnit::unit().captureDeviceID();
     if (!deviceID) {
         if (auto err = defaultInputDevice(&deviceID))
-            return;
+            return false;
     }
-    manageSpeechActivityListener(deviceID, shouldEnable);
+    return manageSpeechActivityListener(deviceID, shouldEnable);
 #else
     const UInt32 outputBus = 0;
     AUVoiceIOMutedSpeechActivityEventListener listener = ^(AUVoiceIOSpeechActivityEvent event) {
-        if (event == kAUVoiceIOSpeechActivityHasStarted)
-            CoreAudioSharedUnit::unit().voiceActivityDetected();
+        if (event == kAUVoiceIOSpeechActivityHasStarted) {
+            callOnMainThread([] {
+                CoreAudioSharedUnit::unit().voiceActivityDetected();
+            });
+        }
     };
 
-    set(kAUVoiceIOProperty_MutedSpeechActivityEventListener, kAudioUnitScope_Global, outputBus, shouldEnable ? &listener : nullptr, sizeof(AUVoiceIOMutedSpeechActivityEventListener));
+    auto err = set(kAUVoiceIOProperty_MutedSpeechActivityEventListener, kAudioUnitScope_Global, outputBus, shouldEnable ? &listener : nullptr, sizeof(AUVoiceIOMutedSpeechActivityEventListener));
+    RELEASE_LOG_ERROR_IF(err, WebRTC, "@@@@@ CoreAudioSharedInternalUnit::setVoiceActivityDetection failed activation, error %d (%.4s)", (int)err, (char*)&err);
+    return !err;
 #endif
 #else
     UNUSED_PARAM(shouldEnable);
+    return false;
 #endif // HAVE(VOICEACTIVITYDETECTION)
-}
-
-void CoreAudioSharedUnit::enableMutedSpeechActivityEventListener(Function<void()>&& callback)
-{
-    setVoiceActivityListenerCallback(WTFMove(callback));
-
-    if (!m_ioUnit) {
-        m_shouldSetVoiceActivityListener = true;
-        return;
-    }
-
-    m_ioUnit->setVoiceActivityDetection(true);
-}
-
-void CoreAudioSharedUnit::disableMutedSpeechActivityEventListener()
-{
-    setVoiceActivityListenerCallback({ });
-    if (!m_ioUnit) {
-        m_shouldSetVoiceActivityListener = false;
-        return;
-    }
-
-    m_ioUnit->setVoiceActivityDetection(false);
 }
 
 } // namespace WebCore

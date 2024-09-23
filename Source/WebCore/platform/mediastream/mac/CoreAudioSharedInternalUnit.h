@@ -49,7 +49,7 @@ private:
     OSStatus render(AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32, UInt32, AudioBufferList*) final;
     OSStatus defaultInputDevice(uint32_t*) final;
     OSStatus defaultOutputDevice(uint32_t*) final;
-    void setVoiceActivityDetection(bool) final;
+    bool setVoiceActivityDetection(bool) final;
 
     CoreAudioSharedUnit::StoredAudioUnit m_audioUnit;
     bool m_shouldUseVPIO { false };

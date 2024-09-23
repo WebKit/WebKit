@@ -128,6 +128,7 @@ protected:
     virtual bool migrateToNewDefaultDevice(const CaptureDevice&) { return false; }
 
     void setVoiceActivityListenerCallback(Function<void()>&& callback) { m_voiceActivityCallback = WTFMove(callback); }
+    bool hasVoiceActivityListenerCallback() const { return !!m_voiceActivityCallback; }
     void voiceActivityDetected();
 
     void disableVoiceActivityThrottleTimerForTesting() { m_voiceActivityThrottleTimer.stop(); }
