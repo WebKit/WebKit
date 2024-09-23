@@ -1122,7 +1122,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         mutedState.remove(WebCore::MediaProducerMutedState::AudioCaptureIsMuted);
     else if (state == WKMediaCaptureStateMuted)
         mutedState.add(WebCore::MediaProducerMutedState::AudioCaptureIsMuted);
-    _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
+    _page->setMuted(mutedState, WebKit::WebPageProxy::FromApplication::Yes, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
@@ -1144,7 +1144,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         mutedState.remove(WebCore::MediaProducerMutedState::VideoCaptureIsMuted);
     else if (state == WKMediaCaptureStateMuted)
         mutedState.add(WebCore::MediaProducerMutedState::VideoCaptureIsMuted);
-    _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
+    _page->setMuted(mutedState, WebKit::WebPageProxy::FromApplication::Yes, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
@@ -4532,7 +4532,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     if (mutedState & _WKMediaScreenCaptureMuted)
         coreState.add(WebCore::MediaProducerMutedState::ScreenCaptureIsMuted);
 
-    _page->setMuted(coreState);
+    _page->setMuted(coreState, WebKit::WebPageProxy::FromApplication::Yes);
 }
 
 - (void)_removeDataDetectedLinks:(dispatch_block_t)completion
@@ -4625,7 +4625,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
         mutedState.remove(displayMutedFlags);
     else if (state == WKDisplayCaptureStateMuted)
         mutedState.add(displayMutedFlags);
-    _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
+    _page->setMuted(mutedState, WebKit::WebPageProxy::FromApplication::Yes, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
@@ -4647,7 +4647,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
         mutedState.remove(WebCore::MediaProducerMutedState::WindowCaptureIsMuted);
     else if (state == WKSystemAudioCaptureStateMuted)
         mutedState.add(WebCore::MediaProducerMutedState::WindowCaptureIsMuted);
-    _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
+    _page->setMuted(mutedState, WebKit::WebPageProxy::FromApplication::Yes, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
