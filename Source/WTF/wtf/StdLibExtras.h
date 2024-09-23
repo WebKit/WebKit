@@ -38,6 +38,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Compiler.h>
 #include <wtf/GetPtr.h>
+#include <wtf/IterationStatus.h>
 #include <wtf/TypeCasts.h>
 
 // Use this macro to declare and define a debug-only global variable that may have a
@@ -393,7 +394,7 @@ bool findBitInWord(T word, size_t& startOrResultIndex, size_t endIndex, bool val
 {
     static_assert(std::is_unsigned<T>::value, "Type used in findBitInWord must be unsigned");
 
-    constexpr size_t bitsInWord = sizeof(word) * 8;
+    constexpr size_t bitsInWord = sizeof(word) * CHAR_BIT;
     ASSERT_UNUSED(bitsInWord, startOrResultIndex <= bitsInWord && endIndex <= bitsInWord);
 
     size_t index = startOrResultIndex;
@@ -885,6 +886,98 @@ template<class F, class T>
 constexpr decltype(auto) apply(F&& functor, T&& tupleLike)
 {
     return apply_impl(std::forward<F>(functor), std::forward<T>(tupleLike), std::make_index_sequence<std::tuple_size_v<std::remove_reference_t<T>>> { });
+}
+
+template<typename WordType, typename Func>
+ALWAYS_INLINE constexpr void forEachSetBit(std::span<const WordType> bits, const Func& func)
+{
+    constexpr size_t wordSize = sizeof(WordType) * CHAR_BIT;
+    for (size_t i = 0; i < bits.size(); ++i) {
+        WordType word = bits[i];
+        if (!word)
+            continue;
+        size_t base = i * wordSize;
+
+#if CPU(X86_64) || CPU(ARM64)
+        // We should only use ctz() when we know that ctz() is implementated using
+        // a fast hardware instruction. Otherwise, this will actually result in
+        // worse performance.
+        while (word) {
+            WordType temp = word & -word;
+            size_t offset = ctz(word);
+            if constexpr (std::is_same_v<IterationStatus, decltype(func(base + offset))>) {
+                if (func(base + offset) == IterationStatus::Done)
+                    return;
+            } else
+                func(base + offset);
+            word ^= temp;
+        }
+#else
+        for (size_t j = 0; j < wordSize; ++j) {
+            if (word & 1) {
+                if constexpr (std::is_same_v<IterationStatus, decltype(func(base + j))>) {
+                    if (func(base + j) == IterationStatus::Done)
+                        return;
+                } else
+                    func(base + j);
+            }
+            word >>= 1;
+        }
+#endif
+    }
+}
+
+template<typename WordType, typename Func>
+ALWAYS_INLINE constexpr void forEachSetBit(std::span<const WordType> bits, size_t startIndex, const Func& func)
+{
+    constexpr size_t wordSize = sizeof(WordType) * CHAR_BIT;
+    auto iterate = [&](WordType word, size_t i) ALWAYS_INLINE_LAMBDA {
+        size_t base = i * wordSize;
+
+#if CPU(X86_64) || CPU(ARM64)
+        // We should only use ctz() when we know that ctz() is implementated using
+        // a fast hardware instruction. Otherwise, this will actually result in
+        // worse performance.
+        while (word) {
+            WordType temp = word & -word;
+            size_t offset = ctz(word);
+            if constexpr (std::is_same_v<IterationStatus, decltype(func(base + offset))>) {
+                if (func(base + offset) == IterationStatus::Done)
+                    return;
+            } else
+                func(base + offset);
+            word ^= temp;
+        }
+#else
+        for (size_t j = 0; j < wordSize; ++j) {
+            if (word & 1) {
+                if constexpr (std::is_same_v<IterationStatus, decltype(func(base + j))>) {
+                    if (func(base + j) == IterationStatus::Done)
+                        return;
+                } else
+                    func(base + j);
+            }
+            word >>= 1;
+        }
+#endif
+    };
+
+    size_t startWord = startIndex / wordSize;
+    if (startWord >= bits.size())
+        return;
+
+    WordType word = bits[startWord];
+    size_t startIndexInWord = startIndex - startWord * wordSize;
+    WordType masked = word & (~((static_cast<WordType>(1) << startIndexInWord) - 1));
+    if (masked)
+        iterate(masked, startWord);
+
+    for (size_t i = startWord + 1; i < bits.size(); ++i) {
+        WordType word = bits[i];
+        if (!word)
+            continue;
+        iterate(word, i);
+    }
 }
 
 } // namespace WTF
