@@ -673,7 +673,7 @@ struct TextUnderElementMode {
     bool considerHiddenState { true };
     bool inHiddenSubtree { false };
     TrimWhitespace trimWhitespace { TrimWhitespace::Yes };
-    Node* ignoredChildNode { nullptr };
+    CheckedPtr<Node> ignoredChildNode { nullptr };
 
     bool isHidden() { return considerHiddenState && inHiddenSubtree; }
 };

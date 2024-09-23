@@ -309,6 +309,15 @@ TextStream& operator<<(TextStream& ts, const Ref<T>& item)
     return ts << item.get();
 }
 
+template<typename T>
+TextStream& operator<<(TextStream& ts, const CheckedPtr<T>& item)
+{
+    if (item)
+        return ts << *item;
+
+    return ts << "null";
+}
+
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
 TextStream& operator<<(TextStream& ts, const HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>& map)
 {
