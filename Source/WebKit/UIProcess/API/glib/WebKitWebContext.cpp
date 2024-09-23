@@ -433,9 +433,11 @@ static void webkitWebContextConstructed(GObject* object)
     API::ProcessPoolConfiguration configuration;
     configuration.setInjectedBundlePath(FileSystem::stringFromFileSystemRepresentation(bundleFilename.get()));
     configuration.setUsesWebProcessCache(true);
-#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
+#if PLATFORM(GTK) && !USE(GTK4)
     configuration.setProcessSwapsOnNavigation(priv->psonEnabled);
+#if USE(CAIRO)
     configuration.setUseSystemAppearanceForScrollbars(priv->useSystemAppearanceForScrollbars);
+#endif
 #else
     configuration.setProcessSwapsOnNavigation(true);
 #endif
