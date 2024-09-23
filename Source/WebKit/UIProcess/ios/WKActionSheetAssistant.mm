@@ -800,7 +800,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([dataDetectorsActions count] == 0)
         return;
     
-#if USE(UICONTEXTMENU) && HAVE(UICONTEXTMENU_LOCATION)
+#if USE(UICONTEXTMENU)
     if ([_view window])
         self._dataDetectorContextMenuPresenter.present(_positionInformation->request.point);
 #else
