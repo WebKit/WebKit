@@ -299,8 +299,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     AccessibilitySettingsDidChange()
 
-    ScalePage(double scale, WebCore::IntPoint origin)
-    ScalePageInViewCoordinates(double scale, WebCore::IntPoint centerInViewCoordinates)
+    DidScalePage(double scale, WebCore::IntPoint origin)
+    DidScalePageInViewCoordinates(double scale, WebCore::IntPoint origin)
+    DidScalePageRelativeToScrollPosition(double scale, WebCore::IntPoint origin)
     ScaleView(double scale)
 
     SetUseFixedLayout(bool fixed)
