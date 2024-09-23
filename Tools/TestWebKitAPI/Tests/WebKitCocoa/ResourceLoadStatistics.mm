@@ -979,7 +979,12 @@ TEST(ResourceLoadStatistics, MigrateDataFromIncorrectCreateTableSchema)
     TestWebKitAPI::Util::run(&doneFlag);
 }
 
+// rdar://136535465
+#if PLATFORM(MAC)
+TEST(ResourceLoadStatistics, DISABLED_MigrateDataFromMissingTopFrameUniqueRedirectSameSiteStrictTableSchema)
+#else
 TEST(ResourceLoadStatistics, MigrateDataFromMissingTopFrameUniqueRedirectSameSiteStrictTableSchema)
+#endif
 {
     auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
 
@@ -1264,7 +1269,12 @@ TEST(ResourceLoadStatistics, BackForwardPerPageData)
     TestWebKitAPI::Util::run(&doneFlag);
 }
 
+// rdar://136535465
+#if PLATFORM(MAC)
+TEST(ResourceLoadStatistics, DISABLED_MigrateDistinctDataFromTableWithMissingIndexes)
+#else
 TEST(ResourceLoadStatistics, MigrateDistinctDataFromTableWithMissingIndexes)
+#endif
 {
     auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
 
