@@ -47,19 +47,20 @@ public:
     BoxGeometryUpdater(BoxTree&, Layout::LayoutState&);
     BoxGeometryUpdater(Layout::LayoutState&);
 
-    void setGeometriesForLayout();
+    void setGeometriesForLayout(LayoutUnit availableLogicalWidth);
     void setGeometriesForIntrinsicWidth(Layout::IntrinsicWidthMode);
-    void updateGeometryAfterLayout(const Layout::ElementBox&);
+    void updateGeometryAfterLayout(const Layout::ElementBox&, LayoutUnit availableWidth);
 
-    Layout::ConstraintsForInlineContent updateInlineContentConstraints();
+    Layout::ConstraintsForInlineContent updateInlineContentConstraints(LayoutUnit availableWidth);
     HashMap<const Layout::ElementBox*, LayoutUnit> takeNestedListMarkerOffsets() { return WTFMove(m_nestedListMarkerOffsets); }
 
 private:
-    void updateLayoutBoxDimensions(const RenderBox&, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
+    void updateBoxGeometry(const RenderElement&, LayoutUnit availableWidth);
+
+    void updateLayoutBoxDimensions(const RenderBox&, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
     void updateLineBreakBoxDimensions(const RenderLineBreak&);
-    void updateInlineBoxDimensions(const RenderInline&, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
-    void updateListMarkerDimensions(const RenderListMarker&, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
-    void updateGeometryAfterLayout(const RenderElement&);
+    void updateInlineBoxDimensions(const RenderInline&, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
+    void updateListMarkerDimensions(const RenderListMarker&, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
 
     BoxTree& boxTree() { return *m_boxTree; }
     const BoxTree& boxTree() const { return *m_boxTree; }

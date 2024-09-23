@@ -241,9 +241,9 @@ bool LineLayout::shouldInvalidateLineLayoutPathAfterTreeMutation(const RenderBlo
     return shouldInvalidateLineLayoutPathAfterChangeFor(parent, renderer, lineLayout, isRemoval ? TypeOfChangeForInvalidation::NodeRemoval : TypeOfChangeForInvalidation::NodeInsertion);
 }
 
-void LineLayout::updateInlineContentDimensions()
+void LineLayout::updateInlineContentDimensions(LayoutUnit availableLogicalWidth)
 {
-    m_boxGeometryUpdater.setGeometriesForLayout();
+    m_boxGeometryUpdater.setGeometriesForLayout(availableLogicalWidth);
 }
 
 void LineLayout::updateStyle(const RenderObject& renderer)
@@ -563,9 +563,9 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
     }
 }
 
-void LineLayout::updateInlineContentConstraints()
+void LineLayout::updateInlineContentConstraints(LayoutUnit availableLogicalWidth)
 {
-    m_inlineContentConstraints = m_boxGeometryUpdater.updateInlineContentConstraints();
+    m_inlineContentConstraints = m_boxGeometryUpdater.updateInlineContentConstraints(availableLogicalWidth);
 }
 
 void LineLayout::preparePlacedFloats()

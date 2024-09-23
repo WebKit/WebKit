@@ -27,6 +27,7 @@
 #include "LayoutIntegrationFormattingContextLayout.h"
 
 #include "LayoutIntegrationBoxGeometryUpdater.h"
+#include "RenderBlock.h"
 #include "RenderBox.h"
 
 namespace WebCore {
@@ -47,7 +48,7 @@ void layoutWithFormattingContextForBox(const Layout::ElementBox& box, std::optio
         renderer.clearOverridingLogicalWidthLength();
 
     auto updater = BoxGeometryUpdater { layoutState };
-    updater.updateGeometryAfterLayout(box);
+    updater.updateGeometryAfterLayout(box, widthConstraint.value_or(renderer.containingBlock()->availableLogicalWidth()));
 }
 
 LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& box, LogicalWidthType logicalWidthType)
