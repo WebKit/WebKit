@@ -101,7 +101,12 @@ TEST(WebKit, LoadInvalidURLRequest)
     }
 }
 
+// rdar://136531022
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000)
+TEST(WebKit, DISABLED_LoadInvalidURLRequestNonASCII)
+#else
 TEST(WebKit, LoadInvalidURLRequestNonASCII)
+#endif
 {
     __block bool done = false;
     auto delegate = adoptNS([TestNavigationDelegate new]);

@@ -342,8 +342,9 @@ TEST(WebKit, HTTPProxyAuthentication)
     EXPECT_WK_STREQ([delegate waitForAlert], "success!");
 }
 
+// rdar://136531022
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
-TEST(WebKit, ProxyConfigurationAuthentication)
+TEST(WebKit, DISABLED_ProxyConfigurationAuthentication)
 {
     auto server = proxyAuthenticationServer();
     auto webView = adoptNS([WKWebView new]);
@@ -418,7 +419,12 @@ TEST(WebKit, SecureProxyConnection)
     TestWebKitAPI::Util::run(&receivedValidClientHello);
 }
 
+// rdar://136531022
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000)
+TEST(WebKit, DISABLED_RelaxThirdPartyCookieBlocking)
+#else
 TEST(WebKit, RelaxThirdPartyCookieBlocking)
+#endif
 {
     __block bool setDefaultCookieAcceptPolicy = false;
     [[WKWebsiteDataStore defaultDataStore].httpCookieStore _setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain completionHandler:^{
