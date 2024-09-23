@@ -299,17 +299,15 @@ void PDFScrollingPresentationController::updateDebugBorders(bool showDebugBorder
         layer.setShowRepaintCounter(showRepaintCounters);
     };
 
-    if (m_pageBackgroundsContainerLayer) {
+    if (m_pageBackgroundsContainerLayer)
         propagateSettingsToLayer(*m_pageBackgroundsContainerLayer);
-    }
-    if (m_contentsLayer) {
+    
+    if (m_contentsLayer)
         propagateSettingsToLayer(*m_contentsLayer);
-    }
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
 
-    if (m_selectionLayer) {
+    if (m_selectionLayer)
         propagateSettingsToLayer(*m_selectionLayer);
-    }
 #endif
     if (m_pageBackgroundsContainerLayer) {
         for (auto& pageLayer : m_pageBackgroundsContainerLayer->children()) {
