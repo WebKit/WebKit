@@ -425,10 +425,8 @@ void WritingToolsController::intelligenceTextAnimationsDidComplete()
     }
 
     auto selectionRange = state->reappliedCommands.last()->endingSelection().firstRange();
-    if (!selectionRange) {
-        ASSERT_NOT_REACHED();
+    if (!selectionRange)
         return;
-    }
 
     auto visibleSelection = VisibleSelection { *selectionRange };
     if (visibleSelection.isNoneOrOrphaned())
@@ -747,6 +745,26 @@ void WritingToolsController::didEndWritingToolsSession<WritingTools::Session::Ty
 template<>
 void WritingToolsController::didEndWritingToolsSession<WritingTools::Session::Type::Composition>(bool accepted)
 {
+    bool shouldConsiderAnimationsCompleted = [&] {
+        CheckedPtr state = currentState<WritingTools::Session::Type::Composition>();
+        if (!state) {
+            ASSERT_NOT_REACHED();
+            return false;
+        }
+
+        return !state->replacedRange && !state->pendingReplacedRange;
+    }();
+
+    if (shouldConsiderAnimationsCompleted) {
+        // If `didEndWritingToolsSession` is called prior to any `didReceiveText` invocation, that implies that `finished`
+        // will never be `true`. Consequently, the intelligence text animations will never be considered to be "complete"
+        // since they depend on `finish` being `true`.
+        //
+        // In this case, there will be no source nor final animation, but there will be an initial animation, so consider
+        // the intelligence text animations to be complete so that the state can be reset and the animation successfully removed.
+        intelligenceTextAnimationsDidComplete();
+    }
+
     auto clearState = WTF::makeScopeExit([&] mutable {
         this->removeCompositionClearStateDeferralReason<CompositionState::ClearStateDeferralReason::SessionInProgress>();
     });
