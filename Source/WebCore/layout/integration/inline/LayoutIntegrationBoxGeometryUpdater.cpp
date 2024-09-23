@@ -130,55 +130,53 @@ BoxGeometryUpdater::BoxGeometryUpdater(Layout::LayoutState& layoutState)
 {
 }
 
-void BoxGeometryUpdater::updateListMarkerDimensions(const RenderListMarker& listMarker, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)
+void BoxGeometryUpdater::setListMarkerOffsetForMarkerOutside(const RenderListMarker& listMarker)
 {
-    updateLayoutBoxDimensions(listMarker, availableWidth, intrinsicWidthMode);
-    if (intrinsicWidthMode)
-        return;
-
     auto& layoutBox = *listMarker.layoutBox();
-    if (layoutBox.isListMarkerOutside()) {
-        auto* ancestor = listMarker.containingBlock();
-        auto offsetFromParentListItem = [&] {
-            auto hasAccountedForBorderAndPadding = false;
-            auto offset = LayoutUnit { };
-            for (; ancestor; ancestor = ancestor->containingBlock()) {
-                if (!hasAccountedForBorderAndPadding)
-                    offset -= (ancestor->borderStart() + ancestor->paddingStart());
-                if (is<RenderListItem>(*ancestor))
-                    break;
-                offset -= (ancestor->marginStart());
-                if (ancestor->isFlexItem()) {
-                    offset -= ancestor->logicalLeft();
-                    hasAccountedForBorderAndPadding = true;
-                    continue;
-                }
-                hasAccountedForBorderAndPadding = false;
-            }
-            return offset;
-        }();
-        auto offsetFromAssociatedListItem = [&] {
-            auto* associatedListItem = listMarker.listItem();
-            if (ancestor == associatedListItem || !ancestor) {
-                // FIXME: Handle column spanner case when ancestor is null_ptr here.
-                return offsetFromParentListItem;
-            }
-            auto offset = offsetFromParentListItem;
-            for (ancestor = ancestor->containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+    ASSERT(layoutBox.isListMarkerOutside());
+    auto* ancestor = listMarker.containingBlock();
+
+    auto offsetFromParentListItem = [&] {
+        auto hasAccountedForBorderAndPadding = false;
+        auto offset = LayoutUnit { };
+        for (; ancestor; ancestor = ancestor->containingBlock()) {
+            if (!hasAccountedForBorderAndPadding)
                 offset -= (ancestor->borderStart() + ancestor->paddingStart());
-                if (ancestor == associatedListItem)
-                    break;
+            if (is<RenderListItem>(*ancestor))
+                break;
+            offset -= (ancestor->marginStart());
+            if (ancestor->isFlexItem()) {
+                offset -= ancestor->logicalLeft();
+                hasAccountedForBorderAndPadding = true;
+                continue;
             }
-            return offset;
-        }();
-        if (offsetFromAssociatedListItem) {
-            auto& listMarkerGeometry = layoutState().ensureGeometryForBox(layoutBox);
-            // Make sure that the line content does not get pulled in to logical left direction due to
-            // the large negative margin (i.e. this ensures that logical left of the list content stays at the line start)
-            listMarkerGeometry.setHorizontalMargin({ listMarkerGeometry.marginStart() + offsetFromParentListItem, listMarkerGeometry.marginEnd() - offsetFromParentListItem });
-            if (auto nestedOffset = offsetFromAssociatedListItem - offsetFromParentListItem)
-                m_nestedListMarkerOffsets.set(&layoutBox, nestedOffset);
+            hasAccountedForBorderAndPadding = false;
         }
+        return offset;
+    }();
+
+    auto offsetFromAssociatedListItem = [&] {
+        auto* associatedListItem = listMarker.listItem();
+        if (ancestor == associatedListItem || !ancestor) {
+            // FIXME: Handle column spanner case when ancestor is null_ptr here.
+            return offsetFromParentListItem;
+        }
+        auto offset = offsetFromParentListItem;
+        for (ancestor = ancestor->containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+            offset -= (ancestor->borderStart() + ancestor->paddingStart());
+            if (ancestor == associatedListItem)
+                break;
+        }
+        return offset;
+    }();
+
+    if (offsetFromAssociatedListItem) {
+        auto& listMarkerGeometry = layoutState().ensureGeometryForBox(layoutBox);
+        // Make sure that the line content does not get pulled in to logical left direction due to
+        // the large negative margin (i.e. this ensures that logical left of the list content stays at the line start)
+        listMarkerGeometry.setHorizontalMargin({ listMarkerGeometry.marginStart() + offsetFromParentListItem, listMarkerGeometry.marginEnd() - offsetFromParentListItem });
+        if (auto nestedOffset = offsetFromAssociatedListItem - offsetFromParentListItem)
+            m_nestedListMarkerOffsets.set(&layoutBox, nestedOffset);
     }
 }
 
@@ -430,17 +428,14 @@ void BoxGeometryUpdater::setGeometriesForIntrinsicWidth(Layout::IntrinsicWidthMo
             updateLineBreakBoxDimensions(*renderLineBreak);
             continue;
         }
+
         if (auto* renderInline = dynamicDowncast<RenderInline>(renderer)) {
             updateInlineBoxDimensions(*renderInline, { }, intrinsicWidthMode);
             continue;
         }
-        if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderer)) {
-            updateListMarkerDimensions(*renderListMarker, { }, intrinsicWidthMode);
-            continue;
-        }
+
         if (auto* renderBox = dynamicDowncast<RenderBox>(renderer)) {
-            // FIXME: Add support for flexing boxes.
-            ASSERT(renderBox->style().logicalWidth().isFixed());
+            ASSERT(renderBox->style().logicalWidth().isFixed() || is<RenderListMarker>(*renderBox));
             updateLayoutBoxDimensions(*renderBox, { }, intrinsicWidthMode);
         }
     }
@@ -488,17 +483,18 @@ void BoxGeometryUpdater::updateGeometryAfterLayout(const Layout::ElementBox& box
 
 void BoxGeometryUpdater::updateBoxGeometry(const RenderElement& renderer, LayoutUnit availableWidth)
 {
-    if (is<RenderReplaced>(renderer) || is<RenderTable>(renderer) || is<RenderListItem>(renderer) || is<RenderBlock>(renderer) || is<RenderFrameSet>(renderer))
-        updateLayoutBoxDimensions(downcast<RenderBox>(renderer), availableWidth);
-
-    if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderer))
-        updateListMarkerDimensions(*renderListMarker, availableWidth);
+    if (auto* renderBox = dynamicDowncast<RenderBox>(renderer)) {
+        updateLayoutBoxDimensions(*renderBox, availableWidth);
+        if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderer); renderListMarker && !renderListMarker->isInside())
+            setListMarkerOffsetForMarkerOutside(*renderListMarker);
+        return;
+    }
 
     if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer))
-        updateLineBreakBoxDimensions(*renderLineBreak);
+        return updateLineBreakBoxDimensions(*renderLineBreak);
 
     if (auto* renderInline = dynamicDowncast<RenderInline>(renderer))
-        updateInlineBoxDimensions(*renderInline, availableWidth);
+        return updateInlineBoxDimensions(*renderInline, availableWidth);
 }
 
 const Layout::ElementBox& BoxGeometryUpdater::rootLayoutBox() const
