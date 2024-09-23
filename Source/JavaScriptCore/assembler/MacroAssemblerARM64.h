@@ -2650,6 +2650,29 @@ public:
         m_assembler.frintz<32>(dest, src);
     }
 
+    void roundTowardZeroInt32Double(FPRegisterID src, FPRegisterID dest)
+    {
+        ASSERT(supportsRoundFloatToIntegerFloat());
+        m_assembler.frint32z<64>(dest, src);
+    }
+
+    void roundTowardZeroInt32Float(FPRegisterID src, FPRegisterID dest)
+    {
+        ASSERT(supportsRoundFloatToIntegerFloat());
+        m_assembler.frint32z<32>(dest, src);
+    }
+
+    void roundTowardZeroInt64Double(FPRegisterID src, FPRegisterID dest)
+    {
+        ASSERT(supportsRoundFloatToIntegerFloat());
+        m_assembler.frint64z<64>(dest, src);
+    }
+
+    void roundTowardZeroInt64Float(FPRegisterID src, FPRegisterID dest)
+    {
+        ASSERT(supportsRoundFloatToIntegerFloat());
+        m_assembler.frint64z<32>(dest, src);
+    }
 
     // Convert 'src' to an integer, and places the resulting 'dest'.
     // If the result is not representable as a 32 bit value, branch.
@@ -2658,9 +2681,12 @@ public:
     void branchConvertDoubleToInt32(FPRegisterID src, RegisterID dest, JumpList& failureCases, FPRegisterID, bool negZeroCheck = true)
     {
         m_assembler.fcvtns<32, 64>(dest, src);
-
-        // Convert the integer result back to float & compare to the original value - if not equal or unordered (NaN) then jump.
-        m_assembler.scvtf<64, 32>(fpTempRegister, dest);
+        if (supportsRoundFloatToIntegerFloat())
+            m_assembler.frint32z<64>(fpTempRegister, src);
+        else {
+            // Convert the integer result back to float & compare to the original value - if not equal or unordered (NaN) then jump.
+            m_assembler.scvtf<64, 32>(fpTempRegister, dest);
+        }
         failureCases.append(branchDouble(DoubleNotEqualOrUnordered, src, fpTempRegister));
 
         // Test for negative zero.
@@ -5484,6 +5510,18 @@ public:
 #endif
     }
 
+    ALWAYS_INLINE static bool supportsRoundFloatToIntegerFloat()
+    {
+#if HAVE(FRINT_INSTRUCTION)
+        return true;
+#else
+        if (s_frintCheckState == CPUIDCheckState::NotChecked)
+            collectCPUFeatures();
+
+        return s_frintCheckState == CPUIDCheckState::Set;
+#endif
+    }
+
     void convertDoubleToInt32UsingJavaScriptSemantics(FPRegisterID src, RegisterID dest)
     {
         m_assembler.fjcvtzs(dest, src); // This zero extends.
@@ -7015,6 +7053,7 @@ protected:
     JS_EXPORT_PRIVATE static CPUIDCheckState s_lseCheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_jscvtCheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_float16CheckState;
+    JS_EXPORT_PRIVATE static CPUIDCheckState s_frintCheckState;
 
     CachedTempRegister m_dataMemoryTempRegister;
     CachedTempRegister m_cachedMemoryTempRegister;

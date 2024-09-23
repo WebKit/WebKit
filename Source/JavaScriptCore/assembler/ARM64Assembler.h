@@ -676,6 +676,13 @@ protected:
         FPDataOp_FNMUL
     };
 
+    enum FPDataOp4Source {
+        FPDataOp_FRINT32Z = 0b00,
+        FPDataOp_FRINT32X = 0b01,
+        FPDataOp_FRINT64Z = 0b10,
+        FPDataOp_FRINT64X = 0b11,
+    };
+
     enum SIMD3Same {
         SIMD_LogicalOp = 0x03
     };
@@ -3230,6 +3237,34 @@ public:
     }
 
     template<int datasize>
+    ALWAYS_INLINE void frint32x(FPRegisterID vd, FPRegisterID vn)
+    {
+        CHECK_DATASIZE();
+        insn(floatingPointDataProcessing4Source(DATASIZE, FPDataOp_FRINT32X, vn, vd));
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void frint32z(FPRegisterID vd, FPRegisterID vn)
+    {
+        CHECK_DATASIZE();
+        insn(floatingPointDataProcessing4Source(DATASIZE, FPDataOp_FRINT32Z, vn, vd));
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void frint64x(FPRegisterID vd, FPRegisterID vn)
+    {
+        CHECK_DATASIZE();
+        insn(floatingPointDataProcessing4Source(DATASIZE, FPDataOp_FRINT64X, vn, vd));
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void frint64z(FPRegisterID vd, FPRegisterID vn)
+    {
+        CHECK_DATASIZE();
+        insn(floatingPointDataProcessing4Source(DATASIZE, FPDataOp_FRINT64Z, vn, vd));
+    }
+
+    template<int datasize>
     ALWAYS_INLINE void fsqrt(FPRegisterID vd, FPRegisterID vn)
     {
         CHECK_DATASIZE();
@@ -4376,6 +4411,13 @@ protected:
         const int M = 0;
         const int S = 0;
         return (0x1f000000 | M << 31 | S << 29 | type << 22 | o1 << 21 | rm << 16 | o2 << 15 | ra << 10 | rn << 5 | rd);
+    }
+
+    ALWAYS_INLINE static int floatingPointDataProcessing4Source(Datasize type, FPDataOp4Source opcode, FPRegisterID rn, FPRegisterID rd)
+    {
+        const int M = 0;
+        const int S = 0;
+        return (0b0'0'0'11110'00'10100'00'10000'00000'00000 | M << 31 | S << 29 | type << 22 | opcode << 15 | rn << 5 | rd);
     }
 
     // 'V' means vector

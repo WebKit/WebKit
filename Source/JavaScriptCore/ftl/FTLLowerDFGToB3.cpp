@@ -1993,9 +1993,7 @@ private:
             LBasicBlock continuation = m_out.newBlock();
 
             ValueFromBlock fastResult = m_out.anchor(doubleValue);
-            m_out.branch(
-                m_out.doubleEqual(doubleValue, doubleValue),
-                usually(continuation), rarely(intCase));
+            m_out.branch(m_out.doubleEqual(doubleValue, doubleValue), usually(continuation), rarely(intCase));
 
             LBasicBlock lastNext = m_out.appendTo(intCase, continuation);
 
@@ -2141,6 +2139,44 @@ private:
             });
         result->effects = Effects::none();
         return result;
+    }
+
+    LValue tryDoubleToInt32AsDouble(LValue value)
+    {
+#if CPU(ARM64)
+        if (MacroAssemblerARM64::supportsRoundFloatToIntegerFloat()) {
+            PatchpointValue* converted = m_out.patchpoint(Double);
+            converted->append(value, ValueRep::SomeRegister);
+            converted->setGenerator(
+                [](CCallHelpers& jit, const StackmapGenerationParams& params) {
+                    jit.roundTowardZeroInt32Double(params[1].fpr(), params[0].fpr());
+                });
+            converted->effects = Effects::none();
+            return converted;
+        }
+#else
+        UNUSED_PARAM(value);
+#endif
+        return nullptr;
+    }
+
+    LValue tryDoubleToInt64AsDouble(LValue value)
+    {
+#if CPU(ARM64)
+        if (MacroAssemblerARM64::supportsRoundFloatToIntegerFloat()) {
+            PatchpointValue* converted = m_out.patchpoint(Double);
+            converted->append(value, ValueRep::SomeRegister);
+            converted->setGenerator(
+                [](CCallHelpers& jit, const StackmapGenerationParams& params) {
+                    jit.roundTowardZeroInt64Double(params[1].fpr(), params[0].fpr());
+                });
+            converted->effects = Effects::none();
+            return converted;
+        }
+#else
+        UNUSED_PARAM(value);
+#endif
+        return nullptr;
     }
 
     LValue unboxRealNumberDouble(LValue boxed, Node* node = nullptr)
@@ -3259,8 +3295,10 @@ private:
             LBasicBlock nanExceptionResultIsNaN = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
-            LValue integerExponent = m_out.doubleToInt(exponent);
-            LValue integerExponentConvertedToDouble = m_out.intToDouble(integerExponent);
+            LValue integerExponent = m_out.doubleToInt32(exponent);
+            LValue integerExponentConvertedToDouble = tryDoubleToInt32AsDouble(exponent);
+            if (!integerExponentConvertedToDouble)
+                integerExponentConvertedToDouble = m_out.intToDouble(integerExponent);
             LValue exponentIsInteger = m_out.doubleEqual(exponent, integerExponentConvertedToDouble);
             m_out.branch(exponentIsInteger, unsure(integerExponentIsSmallBlock), unsure(doubleExponentPowBlockEntry));
 
@@ -13151,10 +13189,13 @@ IGNORE_CLANG_WARNINGS_END
 
                 m_out.appendTo(isDouble, innerLastNext);
                 LValue doubleValue = unboxDouble(boxedValue);
-                LValue intInDouble = m_out.doubleToInt(doubleValue);
-                intValues.append(m_out.anchor(intInDouble));
+                LValue intValue = m_out.doubleToInt32(doubleValue);
+                LValue intInDouble = tryDoubleToInt32AsDouble(doubleValue);
+                if (!intInDouble)
+                    intInDouble = m_out.intToDouble(intValue);
+                intValues.append(m_out.anchor(intValue));
                 m_out.branch(
-                    m_out.doubleEqual(m_out.intToDouble(intInDouble), doubleValue),
+                    m_out.doubleEqual(intInDouble, doubleValue),
                     unsure(switchOnInts), unsure(lowBlock(data->fallThrough.block)));
                 break;
             }
@@ -13912,8 +13953,10 @@ IGNORE_CLANG_WARNINGS_END
         m_out.branch(m_out.doubleNotEqualOrUnordered(doubleValue, doubleValue), unsure(continuation), unsure(notNaNCase));
 
         m_out.appendTo(notNaNCase, convertibleCase);
-        LValue integerValue = m_out.doubleToInt(doubleValue);
-        LValue integerValueConvertedToDouble = m_out.intToDouble(integerValue);
+        LValue integerValue = m_out.doubleToInt32(doubleValue);
+        LValue integerValueConvertedToDouble = tryDoubleToInt32AsDouble(doubleValue);
+        if (!integerValueConvertedToDouble)
+            integerValueConvertedToDouble = m_out.intToDouble(integerValue);
         ValueFromBlock doubleResult = m_out.anchor(key);
         m_out.branch(m_out.doubleNotEqualOrUnordered(doubleValue, integerValueConvertedToDouble), unsure(continuation), unsure(convertibleCase));
 
@@ -18621,7 +18664,7 @@ IGNORE_CLANG_WARNINGS_END
             LValue milliseconds = m_out.loadDouble(base, m_heaps.DateInstance_internalNumber);
             LValue msPerSecondConstant = m_out.constDouble(msPerSecond);
             LValue seconds = m_out.doubleFloor(m_out.doubleDiv(milliseconds, msPerSecondConstant));
-            LValue result = m_out.doubleToInt(m_out.doubleSub(milliseconds, m_out.doubleMul(seconds, msPerSecondConstant)));
+            LValue result = m_out.doubleToInt32(m_out.doubleSub(milliseconds, m_out.doubleMul(seconds, msPerSecondConstant)));
             setJSValue(m_out.select(m_out.doubleNotEqualOrUnordered(milliseconds, milliseconds), m_out.constInt64(JSValue::encode(jsNaN())), boxInt32(result)));
             break;
         }
@@ -20642,7 +20685,7 @@ IGNORE_CLANG_WARNINGS_END
                 patchpoint->effects = Effects::none();
                 doubleValue = patchpoint;
 
-                intValues.append(m_out.anchor(m_out.doubleToInt(doubleValue)));
+                intValues.append(m_out.anchor(m_out.doubleToInt32(doubleValue)));
                 m_out.jump(continuation);
 
                 m_out.appendTo(continuation, lastNext);
@@ -20659,41 +20702,6 @@ IGNORE_CLANG_WARNINGS_END
         return valueAsInt32;
     }
 
-    LValue doubleToInt32(LValue doubleValue, double low, double high, bool isSigned = true)
-    {
-        LBasicBlock greatEnough = m_out.newBlock();
-        LBasicBlock withinRange = m_out.newBlock();
-        LBasicBlock slowPath = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
-
-        Vector<ValueFromBlock, 2> results;
-
-        m_out.branch(
-            m_out.doubleGreaterThanOrEqual(doubleValue, m_out.constDouble(low)),
-            unsure(greatEnough), unsure(slowPath));
-
-        LBasicBlock lastNext = m_out.appendTo(greatEnough, withinRange);
-        m_out.branch(
-            m_out.doubleLessThanOrEqual(doubleValue, m_out.constDouble(high)),
-            unsure(withinRange), unsure(slowPath));
-
-        m_out.appendTo(withinRange, slowPath);
-        LValue fastResult;
-        if (isSigned)
-            fastResult = m_out.doubleToInt(doubleValue);
-        else
-            fastResult = m_out.doubleToUInt(doubleValue);
-        results.append(m_out.anchor(fastResult));
-        m_out.jump(continuation);
-
-        m_out.appendTo(slowPath, continuation);
-        results.append(m_out.anchor(m_out.castToInt32(m_out.callWithoutSideEffects(Int64, operationToInt32, doubleValue))));
-        m_out.jump(continuation);
-
-        m_out.appendTo(continuation, lastNext);
-        return m_out.phi(Int32, results);
-    }
-
     LValue doubleToInt32(LValue doubleValue)
     {
 #if CPU(ARM64)
@@ -20708,30 +20716,63 @@ IGNORE_CLANG_WARNINGS_END
         }
 #endif
 
+        auto sensibleDoubleToInt32 = [&](LValue doubleValue) -> LValue {
+            LBasicBlock slowPath = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            LValue fastResultValue = m_out.doubleToInt32(doubleValue);
+            ValueFromBlock fastResult = m_out.anchor(fastResultValue);
+            m_out.branch(
+                m_out.equal(fastResultValue, m_out.constInt32(0x80000000)),
+                rarely(slowPath), usually(continuation));
+
+            LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
+            ValueFromBlock slowResult = m_out.anchor(m_out.castToInt32(m_out.callWithoutSideEffects(Int64, operationToInt32SensibleSlow, doubleValue)));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            return m_out.phi(Int32, fastResult, slowResult);
+        };
+
         if (hasSensibleDoubleToInt())
             return sensibleDoubleToInt32(doubleValue);
 
+        auto doubleToInt32WithLimits = [&](LValue doubleValue, double low, double high, bool isSigned = true) {
+            LBasicBlock greatEnough = m_out.newBlock();
+            LBasicBlock withinRange = m_out.newBlock();
+            LBasicBlock slowPath = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            Vector<ValueFromBlock, 2> results;
+
+            m_out.branch(
+                m_out.doubleGreaterThanOrEqual(doubleValue, m_out.constDouble(low)),
+                unsure(greatEnough), unsure(slowPath));
+
+            LBasicBlock lastNext = m_out.appendTo(greatEnough, withinRange);
+            m_out.branch(
+                m_out.doubleLessThanOrEqual(doubleValue, m_out.constDouble(high)),
+                unsure(withinRange), unsure(slowPath));
+
+            m_out.appendTo(withinRange, slowPath);
+            LValue fastResult;
+            if (isSigned)
+                fastResult = m_out.doubleToInt32(doubleValue);
+            else
+                fastResult = m_out.doubleToUInt32(doubleValue);
+            results.append(m_out.anchor(fastResult));
+            m_out.jump(continuation);
+
+            m_out.appendTo(slowPath, continuation);
+            results.append(m_out.anchor(m_out.castToInt32(m_out.callWithoutSideEffects(Int64, operationToInt32, doubleValue))));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            return m_out.phi(Int32, results);
+        };
+
         double limit = pow(2, 31) - 1;
-        return doubleToInt32(doubleValue, -limit, limit);
-    }
-
-    LValue sensibleDoubleToInt32(LValue doubleValue)
-    {
-        LBasicBlock slowPath = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
-
-        LValue fastResultValue = m_out.doubleToInt(doubleValue);
-        ValueFromBlock fastResult = m_out.anchor(fastResultValue);
-        m_out.branch(
-            m_out.equal(fastResultValue, m_out.constInt32(0x80000000)),
-            rarely(slowPath), usually(continuation));
-
-        LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
-        ValueFromBlock slowResult = m_out.anchor(m_out.castToInt32(m_out.callWithoutSideEffects(Int64, operationToInt32SensibleSlow, doubleValue)));
-        m_out.jump(continuation);
-
-        m_out.appendTo(continuation, lastNext);
-        return m_out.phi(Int32, fastResult, slowResult);
+        return doubleToInt32WithLimits(doubleValue, -limit, limit);
     }
 
     // This is a mechanism for creating a code generator that fills in a gap in the code using our
@@ -21550,7 +21591,9 @@ IGNORE_CLANG_WARNINGS_END
     LValue doubleToStrictInt52(ExitKind exitKind, Edge edge, LValue value)
     {
         LValue integerValue = m_out.doubleToInt64(value);
-        LValue integerValueConvertedToDouble = m_out.intToDouble(integerValue);
+        LValue integerValueConvertedToDouble = tryDoubleToInt64AsDouble(value);
+        if (!integerValueConvertedToDouble)
+            integerValueConvertedToDouble = m_out.intToDouble(integerValue);
         LValue valueNotConvertibleToInteger = m_out.doubleNotEqualOrUnordered(value, integerValueConvertedToDouble);
         speculate(exitKind, doubleValue(value), edge.node(), valueNotConvertibleToInteger);
 
@@ -21576,10 +21619,11 @@ IGNORE_CLANG_WARNINGS_END
 
     LValue convertDoubleToInt32(LValue value, bool shouldCheckNegativeZero)
     {
-        LValue integerValue = m_out.doubleToInt(value);
-        LValue integerValueConvertedToDouble = m_out.intToDouble(integerValue);
-        LValue valueNotConvertibleToInteger = m_out.doubleNotEqualOrUnordered(value, integerValueConvertedToDouble);
-        speculate(Overflow, FormattedValue(DataFormatDouble, value), m_node, valueNotConvertibleToInteger);
+        LValue integerValue = m_out.doubleToInt32(value);
+        LValue int32InDouble = tryDoubleToInt32AsDouble(value);
+        if (!int32InDouble)
+            int32InDouble = m_out.intToDouble(integerValue);
+        speculate(Overflow, FormattedValue(DataFormatDouble, value), m_node, m_out.doubleNotEqualOrUnordered(value, int32InDouble));
 
         if (shouldCheckNegativeZero) {
             LBasicBlock valueIsZero = m_out.newBlock();

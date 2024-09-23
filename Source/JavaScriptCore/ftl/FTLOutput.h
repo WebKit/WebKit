@@ -193,9 +193,9 @@ public:
     LValue doubleMax(LValue, LValue);
     LValue doubleMin(LValue, LValue);
 
-    LValue doubleToInt(LValue);
+    LValue doubleToInt32(LValue);
     LValue doubleToInt64(LValue);
-    LValue doubleToUInt(LValue);
+    LValue doubleToUInt32(LValue);
 
     LValue signExt32To64(LValue);
     LValue signExt32ToPtr(LValue);

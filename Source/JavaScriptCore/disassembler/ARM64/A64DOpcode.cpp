@@ -126,6 +126,7 @@ static const OpcodeGroupInitializer opcodeGroupList[] = {
     OPCODE_GROUP_ENTRY(0x1d, A64DOpcodeLoadStoreUnsignedImmediate),
     OPCODE_GROUP_ENTRY(0x1e, A64DOpcodeFloatingPointCompare),
     OPCODE_GROUP_ENTRY(0x1e, A64DOpcodeFloatingPointConditionalSelect),
+    OPCODE_GROUP_ENTRY(0x1e, A64DOpcodeFloatingPointDataProcessing4Source),
     OPCODE_GROUP_ENTRY(0x1e, A64DOpcodeFloatingPointDataProcessing2Source),
     OPCODE_GROUP_ENTRY(0x1e, A64DOpcodeFloatingPointDataProcessing1Source),
     OPCODE_GROUP_ENTRY(0x1e, A64DOpcodeFloatingFixedPointConversions),
@@ -827,6 +828,33 @@ const char* A64DOpcodeFloatingPointDataProcessing2Source::format()
     appendFPRegisterName(rn(), registerSize);
     appendSeparator();
     appendFPRegisterName(rm(), registerSize);
+
+    return m_formatBuffer;
+}
+
+const char* const A64DOpcodeFloatingPointDataProcessing4Source::s_opNames[4] = {
+    "frint32z", "frint32x", "frint64z", "frint64x"
+};
+
+const char* A64DOpcodeFloatingPointDataProcessing4Source::format()
+{
+    if (mBit())
+        return A64DOpcode::format();
+
+    if (sBit())
+        return A64DOpcode::format();
+
+    if (type() & 0x2)
+        return A64DOpcode::format();
+
+    if (opNum() > 4)
+        return A64DOpcode::format();
+
+    appendInstructionName(opName());
+    unsigned registerSize = type() + 2;
+    appendFPRegisterName(rd(), registerSize);
+    appendSeparator();
+    appendFPRegisterName(rn(), registerSize);
 
     return m_formatBuffer;
 }
