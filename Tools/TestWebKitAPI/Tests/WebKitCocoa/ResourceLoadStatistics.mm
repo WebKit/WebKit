@@ -89,8 +89,8 @@ static void ensureITPFileIsCreated()
     [dataStore _setResourceLoadStatisticsEnabled:NO];
 }
 
-// FIXME when rdar://109481486 is resolved
-#if PLATFORM(IOS) || PLATFORM(VISION)
+// FIXME when rdar://109481486 is resolved rdar://134535336
+#if PLATFORM(IOS) || PLATFORM(VISION) || PLATFORM(MAC)
 TEST(ResourceLoadStatistics, DISABLED_GrandfatherCallback)
 #else
 TEST(ResourceLoadStatistics, GrandfatherCallback)
@@ -891,7 +891,12 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummary)
     TestWebKitAPI::Util::run(&doneFlag);
 }
 
+// rdar://134535336
+#if PLATFORM(IOS) || PLATFORM(MAC)
+TEST(ResourceLoadStatistics, DISABLED_MigrateDataFromIncorrectCreateTableSchema)
+#else
 TEST(ResourceLoadStatistics, MigrateDataFromIncorrectCreateTableSchema)
+#endif
 {
     auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
 
