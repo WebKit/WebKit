@@ -162,7 +162,7 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
     }
 }
 
-static std::optional<InputMethodState> inputMethodSateForElement(Element* element)
+static std::optional<InputMethodState> inputMethodStateForElement(Element* element)
 {
     if (!element || !element->shouldUseInputMethod())
         return std::nullopt;
@@ -190,7 +190,7 @@ static std::optional<InputMethodState> inputMethodSateForElement(Element* elemen
 
 void WebPage::setInputMethodState(Element* element)
 {
-    auto state = inputMethodSateForElement(element);
+    auto state = inputMethodStateForElement(element);
     if (m_inputMethodState == state)
         return;
 
