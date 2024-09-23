@@ -183,9 +183,9 @@ void OMGPlan::work(CompilationEffort)
 
         {
             if (BBQCallee* bbqCallee = m_calleeGroup->bbqCallee(locker, m_functionIndex)) {
-                Locker locker { bbqCallee->tierUpCount()->getLock() };
+                Locker locker { bbqCallee->tierUpCounter().getLock() };
                 bbqCallee->setReplacement(callee.copyRef());
-                bbqCallee->tierUpCount()->setCompilationStatusForOMG(mode(), TierUpCount::CompilationStatus::Compiled);
+                bbqCallee->tierUpCounter().setCompilationStatusForOMG(mode(), TierUpCount::CompilationStatus::Compiled);
             }
             if (Options::useWasmIPInt() && m_calleeGroup->m_ipintCallees) {
                 IPIntCallee& ipintCallee = m_calleeGroup->m_ipintCallees->at(m_functionIndex).get();

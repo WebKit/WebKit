@@ -509,6 +509,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Int32, thresholdForBBQOptimizeSoon, 50, Normal, nullptr) \
     v(Int32, thresholdForOMGOptimizeAfterWarmUp, 50000, Normal, "The count before we tier up a function to OMG."_s) \
     v(Int32, thresholdForOMGOptimizeSoon, 500, Normal, nullptr) \
+    v(Unsigned, maximumOMGCandidateCost, 40000, Normal, nullptr) \
     v(Int32, omgTierUpCounterIncrementForLoop, 1, Normal, "The amount the tier up counter is incremented on each loop backedge."_s) \
     v(Int32, omgTierUpCounterIncrementForEntry, 15, Normal, "The amount the tier up counter is incremented on each function entry."_s) \
     v(Bool, useWasmFastMemory, true, Normal, "If true, we will try to use a 32-bit address space with a signal handler to bounds check wasm memory."_s) \

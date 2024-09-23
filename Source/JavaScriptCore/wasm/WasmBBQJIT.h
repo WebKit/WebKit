@@ -864,7 +864,7 @@ public:
 
     static constexpr bool tierSupportsSIMD = true;
 
-    BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, BBQCallee& callee, const FunctionData& function, uint32_t functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount* tierUp);
+    BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, BBQCallee& callee, const FunctionData& function, uint32_t functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry);
 
     ALWAYS_INLINE static Value emptyExpression()
     {
@@ -2254,6 +2254,8 @@ private:
 
     void F64CopysignHelper(Location lhsLocation, Location rhsLocation, Location resultLocation);
 
+    bool canTierUpToOMG() const;
+
     CCallHelpers& m_jit;
     BBQCallee& m_callee;
     const FunctionData& m_function;
@@ -2263,7 +2265,6 @@ private:
     MemoryMode m_mode;
     Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls;
     std::optional<bool> m_hasExceptionHandlers;
-    TierUpCount* m_tierUp;
     FunctionParser<BBQJIT>* m_parser;
     Vector<uint32_t, 4> m_arguments;
     ControlData m_topLevel;
@@ -2327,7 +2328,7 @@ using MinOrMax = BBQJIT::MinOrMax;
 class BBQCallee;
 
 using BBQJIT = BBQJITImpl::BBQJIT;
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext&, BBQCallee&, const FunctionData&, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, unsigned, TierUpCount* = nullptr);
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext&, BBQCallee&, const FunctionData&, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, unsigned);
 
 } } // namespace JSC::Wasm
 

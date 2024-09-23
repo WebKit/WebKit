@@ -875,8 +875,11 @@ static void doOSREntry(JSWebAssemblyInstance* instance, Probe::Context& context,
     context.gpr(GPRInfo::nonPreservedNonArgumentGPR0) = bitwise_cast<UCPURegister>(osrEntryCallee.entrypoint().taggedPtr<>());
 }
 
-inline bool shouldJIT(unsigned functionIndex)
+inline bool shouldOMGJIT(JSWebAssemblyInstance* instance, unsigned functionIndex)
 {
+    auto& info = instance->module().moduleInformation();
+    if (info.functions[functionIndex].data.size() > Options::maximumOMGCandidateCost())
+        return false;
     if (!Options::wasmFunctionIndexRangeToCompile().isInRange(functionIndex))
         return false;
     return true;
@@ -890,9 +893,9 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (JSWebAss
     uint32_t functionIndexInSpace = functionIndex + calleeGroup.functionImportCount();
     ASSERT(calleeGroup.wasmBBQCalleeFromFunctionIndexSpace(functionIndexInSpace).compilationMode() == Wasm::CompilationMode::BBQMode);
     BBQCallee& callee = static_cast<BBQCallee&>(calleeGroup.wasmBBQCalleeFromFunctionIndexSpace(functionIndexInSpace));
-    TierUpCount& tierUp = *callee.tierUpCount();
+    TierUpCount& tierUp = callee.tierUpCounter();
 
-    if (!shouldJIT(functionIndex)) {
+    if (!shouldOMGJIT(instance, functionIndex)) {
         tierUp.deferIndefinitely();
         return;
     }
@@ -955,9 +958,9 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
     uint32_t functionIndexInSpace = functionIndex + calleeGroup.functionImportCount();
     ASSERT(calleeGroup.wasmBBQCalleeFromFunctionIndexSpace(functionIndexInSpace).compilationMode() == Wasm::CompilationMode::BBQMode);
     BBQCallee& callee = static_cast<BBQCallee&>(calleeGroup.wasmBBQCalleeFromFunctionIndexSpace(functionIndexInSpace));
-    TierUpCount& tierUp = *callee.tierUpCount();
+    TierUpCount& tierUp = callee.tierUpCounter();
 
-    if (!shouldJIT(functionIndex)) {
+    if (!shouldOMGJIT(instance, functionIndex)) {
         tierUp.deferIndefinitely();
         return returnWithoutOSREntry();
     }
@@ -1140,7 +1143,6 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmLoopOSREnterBBQJIT, void, (Probe::Context & context))
 {
-    TierUpCount& tierUp = *context.arg<TierUpCount*>();
     uint64_t* osrEntryScratchBuffer = bitwise_cast<uint64_t*>(context.gpr(GPRInfo::argumentGPR0));
     unsigned loopIndex = osrEntryScratchBuffer[0]; // First entry in scratch buffer is the loop index when tiering up to BBQ.
 
@@ -1148,7 +1150,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmLoopOSREnterBBQJIT, void, (Probe:
     CalleeBits calleeBits = *bitwise_cast<CalleeBits*>(bitwise_cast<uint8_t*>(context.fp()) + (unsigned)CallFrameSlot::callee * sizeof(Register));
     BBQCallee& callee = *bitwise_cast<BBQCallee*>(calleeBits.asNativeCallee());
 
-    OSREntryData& entryData = tierUp.osrEntryData(loopIndex);
+    OSREntryData& entryData = callee.tierUpCounter().osrEntryData(loopIndex);
     RELEASE_ASSERT(entryData.loopIndex() == loopIndex);
 
     const StackMap& stackMap = entryData.values();

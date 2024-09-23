@@ -158,8 +158,15 @@ static inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, JSWebAs
         if (Options::wasmLLIntTiersUpToBBQ() && Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(functionIndex))
             plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-        else // No need to check OMG allow list: if we didn't want to compile this function, shouldJIT should have returned false.
+        else {
+            if (instance->module().moduleInformation().functions[callee->functionIndex()].data.size() > Options::maximumOMGCandidateCost()) {
+                tierUpCounter.deferIndefinitely();
+                return false;
+            }
+
+            // No need to check OMG allow list: if we didn't want to compile this function, shouldJIT should have returned false.
             plan = adoptRef(*new Wasm::OMGPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), functionIndex, callee->hasExceptionHandlers(), memoryMode, Wasm::Plan::dontFinalize()));
+        }
 #endif
 
         if (plan) {
@@ -207,8 +214,14 @@ static inline std::optional<Wasm::Plan::Error> jitCompileSIMDFunction(Wasm::LLIn
     if (Options::wasmLLIntTiersUpToBBQ())
         plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-    else
+    else {
+        if (instance->module().moduleInformation().functions[callee->functionIndex()].data.size() > Options::maximumOMGCandidateCost()) {
+            tierUpCounter.deferIndefinitely();
+            return std::nullopt;
+        }
+
         plan = adoptRef(*new Wasm::OMGPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), functionIndex, callee->hasExceptionHandlers(), memoryMode, Wasm::Plan::dontFinalize()));
+    }
 #endif
 
     Wasm::ensureWorklist().enqueue(*plan);
@@ -301,72 +314,76 @@ WASM_SLOW_PATH_DECL(loop_osr)
         RELEASE_ASSERT(sharedLoopEntrypoint);
 
         WASM_RETURN_TWO(buffer, sharedLoopEntrypoint->taggedPtr());
-    } else {
+    }
+
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-        const auto doOSREntry = [&](Wasm::OSREntryCallee* osrEntryCallee) {
-            if (osrEntryCallee->loopIndex() != osrEntryData.loopIndex)
-                WASM_RETURN_TWO(nullptr, nullptr);
-
-            size_t osrEntryScratchBufferSize = osrEntryCallee->osrEntryScratchBufferSize();
-            RELEASE_ASSERT(osrEntryScratchBufferSize == osrEntryData.values.size());
-
-            if (osrEntryCallee->stackCheckSize() != Wasm::stackCheckNotNeeded) {
-                uintptr_t stackPointer = reinterpret_cast<uintptr_t>(currentStackPointer());
-                uintptr_t stackExtent = stackPointer - osrEntryCallee->stackCheckSize();
-                uintptr_t stackLimit = reinterpret_cast<uintptr_t>(instance->softStackLimit());
-                if (UNLIKELY(stackExtent >= stackPointer || stackExtent <= stackLimit)) {
-                    dataLogLnIf(Options::verboseOSR(), "Skipping OMG loop tier up due to stack check; ", RawHex(stackPointer), " -> ", RawHex(stackExtent), " is past soft limit ", RawHex(stackLimit));
-                    WASM_RETURN_TWO(nullptr, nullptr);
-                }
-            }
-
-            uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryScratchBufferSize);
-            if (!buffer)
-                WASM_RETURN_TWO(nullptr, nullptr);
-
-            uint32_t index = 0;
-            for (VirtualRegister reg : osrEntryData.values)
-                buffer[index++] = READ(reg).encodedJSValue();
-
-            WASM_RETURN_TWO(buffer, osrEntryCallee->entrypoint().taggedPtr());
-        };
-
-        MemoryMode memoryMode = instance->memory()->mode();
-        if (auto* osrEntryCallee = callee->osrEntryCallee(memoryMode))
-            return doOSREntry(osrEntryCallee);
-
-        bool compile = false;
-        {
-            Locker locker { tierUpCounter.m_lock };
-            switch (tierUpCounter.loopCompilationStatus(memoryMode)) {
-            case Wasm::LLIntTierUpCounter::CompilationStatus::NotCompiled:
-                compile = true;
-                tierUpCounter.setLoopCompilationStatus(memoryMode, Wasm::LLIntTierUpCounter::CompilationStatus::Compiling);
-                break;
-            case Wasm::LLIntTierUpCounter::CompilationStatus::Compiling:
-                tierUpCounter.optimizeAfterWarmUp();
-                break;
-            case Wasm::LLIntTierUpCounter::CompilationStatus::Compiled:
-                break;
-            }
-        }
-
-        if (compile) {
-            Ref<Wasm::Plan> plan = adoptRef(*static_cast<Wasm::Plan*>(new Wasm::OSREntryPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), Ref<Wasm::Callee>(*callee), callee->functionIndex(), callee->hasExceptionHandlers(), osrEntryData.loopIndex, memoryMode, Wasm::Plan::dontFinalize())));
-            Wasm::ensureWorklist().enqueue(plan.copyRef());
-            if (UNLIKELY(!Options::useConcurrentJIT()))
-                plan->waitForCompletion();
-            else
-                tierUpCounter.optimizeAfterWarmUp();
-        }
-
-        if (auto* osrEntryCallee = callee->osrEntryCallee(memoryMode))
-            return doOSREntry(osrEntryCallee);
-
-#endif
-
+    if (instance->module().moduleInformation().functions[callee->functionIndex()].data.size() > Options::maximumOMGCandidateCost()) {
+        callee->tierUpCounter().deferIndefinitely();
         WASM_RETURN_TWO(nullptr, nullptr);
     }
+
+    const auto doOSREntry = [&](Wasm::OSREntryCallee* osrEntryCallee) {
+        if (osrEntryCallee->loopIndex() != osrEntryData.loopIndex)
+            WASM_RETURN_TWO(nullptr, nullptr);
+
+        size_t osrEntryScratchBufferSize = osrEntryCallee->osrEntryScratchBufferSize();
+        RELEASE_ASSERT(osrEntryScratchBufferSize == osrEntryData.values.size());
+
+        if (osrEntryCallee->stackCheckSize() != Wasm::stackCheckNotNeeded) {
+            uintptr_t stackPointer = reinterpret_cast<uintptr_t>(currentStackPointer());
+            uintptr_t stackExtent = stackPointer - osrEntryCallee->stackCheckSize();
+            uintptr_t stackLimit = reinterpret_cast<uintptr_t>(instance->softStackLimit());
+            if (UNLIKELY(stackExtent >= stackPointer || stackExtent <= stackLimit)) {
+                dataLogLnIf(Options::verboseOSR(), "Skipping OMG loop tier up due to stack check; ", RawHex(stackPointer), " -> ", RawHex(stackExtent), " is past soft limit ", RawHex(stackLimit));
+                WASM_RETURN_TWO(nullptr, nullptr);
+            }
+        }
+
+        uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryScratchBufferSize);
+        if (!buffer)
+            WASM_RETURN_TWO(nullptr, nullptr);
+
+        uint32_t index = 0;
+        for (VirtualRegister reg : osrEntryData.values)
+            buffer[index++] = READ(reg).encodedJSValue();
+
+        WASM_RETURN_TWO(buffer, osrEntryCallee->entrypoint().taggedPtr());
+    };
+
+    MemoryMode memoryMode = instance->memory()->mode();
+    if (auto* osrEntryCallee = callee->osrEntryCallee(memoryMode))
+        return doOSREntry(osrEntryCallee);
+
+    bool compile = false;
+    {
+        Locker locker { tierUpCounter.m_lock };
+        switch (tierUpCounter.loopCompilationStatus(memoryMode)) {
+        case Wasm::LLIntTierUpCounter::CompilationStatus::NotCompiled:
+            compile = true;
+            tierUpCounter.setLoopCompilationStatus(memoryMode, Wasm::LLIntTierUpCounter::CompilationStatus::Compiling);
+            break;
+        case Wasm::LLIntTierUpCounter::CompilationStatus::Compiling:
+            tierUpCounter.optimizeAfterWarmUp();
+            break;
+        case Wasm::LLIntTierUpCounter::CompilationStatus::Compiled:
+            break;
+        }
+    }
+
+    if (compile) {
+        Ref<Wasm::Plan> plan = adoptRef(*static_cast<Wasm::Plan*>(new Wasm::OSREntryPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), Ref<Wasm::Callee>(*callee), callee->functionIndex(), callee->hasExceptionHandlers(), osrEntryData.loopIndex, memoryMode, Wasm::Plan::dontFinalize())));
+        Wasm::ensureWorklist().enqueue(plan.copyRef());
+        if (UNLIKELY(!Options::useConcurrentJIT()))
+            plan->waitForCompletion();
+        else
+            tierUpCounter.optimizeAfterWarmUp();
+    }
+
+    if (auto* osrEntryCallee = callee->osrEntryCallee(memoryMode))
+        return doOSREntry(osrEntryCallee);
+
+#endif
+    WASM_RETURN_TWO(nullptr, nullptr);
 }
 
 WASM_SLOW_PATH_DECL(epilogue_osr)

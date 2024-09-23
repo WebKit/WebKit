@@ -133,17 +133,14 @@ void BBQPlan::work(CompilationEffort effort)
 
     CompilationContext context;
     Vector<UnlinkedWasmToWasmCall> unlinkedWasmToWasmCalls;
-    std::unique_ptr<TierUpCount> tierUp;
-    tierUp = makeUnique<TierUpCount>();
     size_t functionIndexSpace = m_functionIndex + m_moduleInformation->importFunctionCount();
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
 
     bool usesSIMD = m_moduleInformation->usesSIMD(m_functionIndex);
     SavedFPWidth savedFPWidth = usesSIMD ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors;
-    auto* tierUpPointer = tierUp.get();
-    Ref<BBQCallee> callee = BBQCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(tierUp), savedFPWidth);
-    std::unique_ptr<InternalFunction> function = compileFunction(m_functionIndex, callee.get(), context, unlinkedWasmToWasmCalls, tierUpPointer);
+    Ref<BBQCallee> callee = BBQCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), savedFPWidth);
+    std::unique_ptr<InternalFunction> function = compileFunction(m_functionIndex, callee.get(), context, unlinkedWasmToWasmCalls);
 
     LinkBuffer linkBuffer(*context.wasmEntrypointJIT, callee.ptr(), LinkBuffer::Profile::WasmBBQ, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
@@ -226,18 +223,13 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
 {
     m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
 
-    std::unique_ptr<TierUpCount> tierUp;
-    if (Options::useBBQTierUpChecks())
-        tierUp = makeUnique<TierUpCount>();
-
     unsigned functionIndexSpace = m_moduleInformation->importFunctionCount() + functionIndex;
     bool usesSIMD = m_moduleInformation->usesSIMD(functionIndex);
     SavedFPWidth savedFPWidth = usesSIMD ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors;
-    auto* tierUpPointer = tierUp.get();
     auto& context = m_compilationContexts[functionIndex];
-    Ref<BBQCallee> bbqCallee = BBQCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), WTFMove(tierUp), savedFPWidth);
+    Ref<BBQCallee> bbqCallee = BBQCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), savedFPWidth);
     auto* calleePtr = bbqCallee.ptr();
-    m_wasmInternalFunctions[functionIndex] = compileFunction(functionIndex, bbqCallee.get(), context, m_unlinkedWasmToWasmCalls[functionIndex], tierUpPointer);
+    m_wasmInternalFunctions[functionIndex] = compileFunction(functionIndex, bbqCallee.get(), context, m_unlinkedWasmToWasmCalls[functionIndex]);
     {
         auto linkBuffer = makeUnique<LinkBuffer>(*context.wasmEntrypointJIT, calleePtr, LinkBuffer::Profile::WasmBBQ, JITCompilationCanFail);
         if (linkBuffer->isValid())
@@ -254,7 +246,7 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
     }
 }
 
-std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionIndex, BBQCallee& callee, CompilationContext& context, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, TierUpCount* tierUp)
+std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionIndex, BBQCallee& callee, CompilationContext& context, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls)
 {
     const auto& function = m_moduleInformation->functions[functionIndex];
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
@@ -265,7 +257,7 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
     beginCompilerSignpost(callee);
-    parseAndCompileResult = parseAndCompileBBQ(context, callee, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, m_hasExceptionHandlers, UINT32_MAX, tierUp);
+    parseAndCompileResult = parseAndCompileBBQ(context, callee, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, m_hasExceptionHandlers, UINT32_MAX);
     endCompilerSignpost(callee);
 #endif
 

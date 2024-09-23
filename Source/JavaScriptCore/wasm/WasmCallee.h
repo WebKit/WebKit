@@ -346,10 +346,9 @@ class BBQCallee final : public OptimizingJITCallee {
 public:
     static constexpr unsigned extraOSRValuesForLoopIndex = 1;
 
-    static Ref<BBQCallee> create(size_t index, std::pair<const Name*,
-        RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount, SavedFPWidth savedFPWidth)
+    static Ref<BBQCallee> create(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, SavedFPWidth savedFPWidth)
     {
-        return adoptRef(*new BBQCallee(index, WTFMove(name), WTFMove(tierUpCount), savedFPWidth));
+        return adoptRef(*new BBQCallee(index, WTFMove(name), savedFPWidth));
     }
 
     OSREntryCallee* osrEntryCallee() { return m_osrEntryCallee.get(); }
@@ -371,7 +370,7 @@ public:
 
 #endif
 
-    TierUpCount* tierUpCount() { return m_tierUpCount.get(); }
+    TierUpCount& tierUpCounter() { return m_tierUpCounter; }
 
     std::optional<CodeLocationLabel<WasmEntryPtrTag>> sharedLoopEntrypoint() { return m_sharedLoopEntrypoint; }
     const Vector<CodeLocationLabel<WasmEntryPtrTag>>& loopEntrypoints() { return m_loopEntrypoints; }
@@ -407,9 +406,8 @@ public:
     }
 
 private:
-    BBQCallee(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount, SavedFPWidth savedFPWidth)
+    BBQCallee(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, SavedFPWidth savedFPWidth)
         : OptimizingJITCallee(Wasm::CompilationMode::BBQMode, index, WTFMove(name))
-        , m_tierUpCount(WTFMove(tierUpCount))
         , m_savedFPWidth(savedFPWidth)
     {
     }
@@ -418,7 +416,7 @@ private:
 #if ENABLE(WEBASSEMBLY_OMGJIT)
     RefPtr<OMGCallee> m_replacement;
 #endif
-    std::unique_ptr<TierUpCount> m_tierUpCount;
+    TierUpCount m_tierUpCounter;
     std::optional<CodeLocationLabel<WasmEntryPtrTag>> m_sharedLoopEntrypoint;
     Vector<CodeLocationLabel<WasmEntryPtrTag>> m_loopEntrypoints;
     unsigned m_osrEntryScratchBufferSize { 0 };

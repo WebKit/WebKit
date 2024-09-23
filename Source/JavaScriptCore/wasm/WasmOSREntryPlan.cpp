@@ -177,10 +177,10 @@ void OSREntryPlan::work(CompilationEffort)
             }
             case CompilationMode::BBQMode: {
                 BBQCallee* bbqCallee = static_cast<BBQCallee*>(m_callee.ptr());
-                Locker locker { bbqCallee->tierUpCount()->getLock() };
+                Locker locker { bbqCallee->tierUpCounter().getLock() };
                 bbqCallee->setOSREntryCallee(callee.copyRef(), mode());
-                bbqCallee->tierUpCount()->osrEntryTriggers()[m_loopIndex] = TierUpCount::TriggerReason::CompilationDone;
-                bbqCallee->tierUpCount()->setCompilationStatusForOMGForOSREntry(mode(), TierUpCount::CompilationStatus::Compiled);
+                bbqCallee->tierUpCounter().osrEntryTriggers()[m_loopIndex] = TierUpCount::TriggerReason::CompilationDone;
+                bbqCallee->tierUpCounter().setCompilationStatusForOMGForOSREntry(mode(), TierUpCount::CompilationStatus::Compiled);
                 break;
             }
             default:
