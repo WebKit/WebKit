@@ -82,3 +82,6 @@ view-gestures/smart-magnify/double-tap-zoom-scroll-above-top.html [ Timeout Pass
 
 # webkit.org/b/280186 [EWS] imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas.html is failing on Ventura Intel EWS
 [ Release x86_64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas.html [ Skip ]
+
+# webkit.org/b/280187 [EWS] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html is constant failure on Ventura Intel EWS
+[ Release x86_64 ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html [ Skip ]
