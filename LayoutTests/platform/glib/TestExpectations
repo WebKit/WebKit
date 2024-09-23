@@ -1301,6 +1301,9 @@ http/wpt/mediasession/setCaptureState-audio-category.html [ Skip ]
 # Lack of voice activity detection mock
 http/wpt/mediasession/voiceActivityDetection.html [ Skip ]
 
+# Seek on live streams not implemented.
+webkit.org/b/280069 imported/w3c/web-platform-tests/webvtt/api/VTTRegion/non-visible-cue-with-region.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
