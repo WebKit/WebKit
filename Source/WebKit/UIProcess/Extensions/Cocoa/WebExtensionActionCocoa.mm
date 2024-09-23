@@ -459,12 +459,11 @@ static void* kvoContext = &kvoContext;
 
         [self _updateDetentForSheetPresentationController:dynamic_objc_cast<UISheetPresentationController>(presentationController)];
     } else {
-        CGSize boundsSize = _popupWebView.bounds.size;
         CGSize contentSize = _popupWebView.scrollView.contentSize;
         CGSize desiredSize = CGSizeMake(std::min(contentSize.width, maximumPopoverWidth), std::min(contentSize.height, maximumPopoverHeight));
 
-        CGFloat minimumWidth = std::min(desiredSize.width, boundsSize.width);
-        CGFloat minimumHeight = _popupWebView.contentSizeHasStabilized ? std::min(desiredSize.height, boundsSize.height) : minimumPopoverHeight;
+        CGFloat minimumWidth = desiredSize.width;
+        CGFloat minimumHeight = _popupWebView.contentSizeHasStabilized ? std::min(desiredSize.height, minimumPopoverHeight) : minimumPopoverHeight;
         CGSize minimumLayoutSize = CGSizeMake(minimumWidth, minimumHeight);
 
         [_popupWebView _overrideLayoutParametersWithMinimumLayoutSize:minimumLayoutSize minimumUnobscuredSizeOverride:minimumLayoutSize maximumUnobscuredSizeOverride:CGSizeZero];
