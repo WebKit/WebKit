@@ -201,7 +201,7 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
 
     auto encoderSinkPad = adoptGRef(gst_element_get_static_pad(m_encoder.get(), "sink"));
     if (!gst_pad_is_linked(encoderSinkPad.get())) {
-        if (!gst_element_link_many(m_outgoingSource.get(), m_inputSelector.get(), m_liveSync.get(), m_videoFlip.get(), nullptr)) {
+        if (!gst_element_link_many(m_outgoingSource.get(), m_liveSync.get(), m_videoFlip.get(), nullptr)) {
             GST_ERROR_OBJECT(m_bin.get(), "Unable to link outgoing source to videoflip");
             return false;
         }
@@ -221,62 +221,6 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     }
 
     return gst_element_link_many(m_encoder.get(), m_payloader.get(), m_postEncoderQueue.get(), nullptr);
-}
-
-void RealtimeOutgoingVideoSourceGStreamer::connectFallbackSource()
-{
-    GST_DEBUG_OBJECT(m_bin.get(), "Connecting fallback video source");
-    if (!m_fallbackPad) {
-        m_fallbackSource = makeGStreamerElement("videotestsrc", nullptr);
-        if (!m_fallbackSource) {
-            WTFLogAlways("Unable to connect fallback videotestsrc element, expect broken behavior. Please install gst-plugins-base.");
-            return;
-        }
-
-        gst_util_set_object_arg(G_OBJECT(m_fallbackSource.get()), "pattern", "black");
-
-        gst_bin_add(GST_BIN_CAST(m_bin.get()), m_fallbackSource.get());
-
-        m_fallbackPad = adoptGRef(gst_element_request_pad_simple(m_inputSelector.get(), "sink_%u"));
-
-        auto srcPad = adoptGRef(gst_element_get_static_pad(m_fallbackSource.get(), "src"));
-        gst_pad_link(srcPad.get(), m_fallbackPad.get());
-        gst_element_sync_state_with_parent(m_fallbackSource.get());
-    }
-
-    stopUpdatingStats();
-    g_object_set(m_inputSelector.get(), "active-pad", m_fallbackPad.get(), nullptr);
-}
-
-void RealtimeOutgoingVideoSourceGStreamer::unlinkOutgoingSource()
-{
-    GST_DEBUG_OBJECT(m_bin.get(), "Unlinking outgoing video source");
-    if (m_statsPadProbeId) {
-        auto binSrcPad = adoptGRef(gst_element_get_static_pad(m_bin.get(), "src"));
-        gst_pad_remove_probe(binSrcPad.get(), m_statsPadProbeId);
-        m_statsPadProbeId = 0;
-    }
-
-    auto srcPad = adoptGRef(gst_element_get_static_pad(m_outgoingSource.get(), "video_src0"));
-    auto peerPad = adoptGRef(gst_pad_get_peer(srcPad.get()));
-    if (!peerPad) {
-        GST_DEBUG_OBJECT(m_bin.get(), "Outgoing video source not linked");
-        return;
-    }
-
-    gst_pad_unlink(srcPad.get(), peerPad.get());
-    gst_element_release_request_pad(m_inputSelector.get(), peerPad.get());
-}
-
-void RealtimeOutgoingVideoSourceGStreamer::linkOutgoingSource()
-{
-    GST_DEBUG_OBJECT(m_bin.get(), "Linking outgoing video source");
-    auto srcPad = adoptGRef(gst_element_get_static_pad(m_outgoingSource.get(), "video_src0"));
-    auto sinkPad = adoptGRef(gst_element_request_pad_simple(m_inputSelector.get(), "sink_%u"));
-    gst_pad_link(srcPad.get(), sinkPad.get());
-    g_object_set(m_inputSelector.get(), "active-pad", sinkPad.get(), nullptr);
-
-    flush();
 }
 
 void RealtimeOutgoingVideoSourceGStreamer::startUpdatingStats()

@@ -148,19 +148,13 @@ bool GStreamerRtpSenderBackend::replaceTrack(RTCRtpSender& sender, MediaStreamTr
 
     switchOn(m_source, [&](Ref<RealtimeOutgoingAudioSourceGStreamer>& source) {
         ASSERT(track->source().type() == RealtimeMediaSource::Type::Audio);
-        if (replace) {
-            source->stop();
-            source->setSource(track->privateTrack());
-            source->flush();
-        }
+        if (replace)
+            source->replaceTrack(&track->privateTrack());
         source->start();
     }, [&](Ref<RealtimeOutgoingVideoSourceGStreamer>& source) {
         ASSERT(track->source().type() == RealtimeMediaSource::Type::Video);
-        if (replace) {
-            source->stop();
-            source->setSource(track->privateTrack());
-            source->flush();
-        }
+        if (replace)
+            source->replaceTrack(&track->privateTrack());
         source->start();
     }, [&](std::nullptr_t&) {
         GST_DEBUG_OBJECT(m_rtcSender.get(), "No outgoing source yet");

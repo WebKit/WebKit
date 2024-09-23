@@ -39,10 +39,6 @@ protected:
 private:
     RTCRtpCapabilities rtpCapabilities() const final;
 
-    void connectFallbackSource() final;
-    void unlinkOutgoingSource() final;
-    void linkOutgoingSource() final;
-
     GRefPtr<GstElement> m_audioconvert;
     GRefPtr<GstElement> m_audioresample;
     GRefPtr<GstElement> m_inputCapsFilter;
