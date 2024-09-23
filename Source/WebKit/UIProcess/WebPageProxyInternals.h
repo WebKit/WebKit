@@ -175,11 +175,12 @@ private:
         m_loadingFrameCount--;
     }
 
-    void didFinishLoad(IsMainFrame, const URL& url) final
+    void didFinishLoad(IsMainFrame isMainFrame, const URL& url) final
     {
         ASSERT(m_loadingFrameCount);
         m_loadingFrameCount--;
-        // FIXME: Assert that m_loadingFrameCount is zero if this is a main frame.
+        if (isMainFrame == IsMainFrame::Yes)
+            ASSERT(!m_loadingFrameCount);
     }
 
     size_t m_loadingFrameCount { 0 };
