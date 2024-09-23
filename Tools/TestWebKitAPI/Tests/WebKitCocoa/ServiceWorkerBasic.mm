@@ -3353,7 +3353,12 @@ function check()
 </html>
 )SWRESOURCE"_s;
 
+// rdar://136529803
+#if (PLATFORM(MAC))
+TEST(ServiceWorkers, DISABLED_CacheStorageNetworkProcessCrash)
+#else
 TEST(ServiceWorkers, CacheStorageNetworkProcessCrash)
+#endif
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
