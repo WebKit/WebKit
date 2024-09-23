@@ -79,3 +79,6 @@ view-gestures/smart-magnify/double-tap-zoom-scroll-above-top.html [ Timeout Pass
 [ Release x86_64 ] imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties.html [ Skip ]
 [ Release x86_64 ] imported/w3c/web-platform-tests/css/css-images/tiled-radial-gradients.html [ Skip ]
 [ Release x86_64 ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-offscreen-old.html [ Skip ]
+
+# webkit.org/b/280186 [EWS] imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas.html is failing on Ventura Intel EWS
+[ Release x86_64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas.html [ Skip ]
