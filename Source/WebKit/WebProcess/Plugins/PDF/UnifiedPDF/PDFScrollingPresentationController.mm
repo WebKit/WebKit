@@ -301,7 +301,7 @@ void PDFScrollingPresentationController::updateDebugBorders(bool showDebugBorder
 
     if (m_pageBackgroundsContainerLayer)
         propagateSettingsToLayer(*m_pageBackgroundsContainerLayer);
-    
+
     if (m_contentsLayer)
         propagateSettingsToLayer(*m_contentsLayer);
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)

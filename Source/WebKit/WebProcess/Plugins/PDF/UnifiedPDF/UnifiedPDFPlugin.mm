@@ -615,10 +615,10 @@ void UnifiedPDFPlugin::didChangeSettings()
 
     if (m_scrollContainerLayer)
         propagateSettingsToLayer(*m_scrollContainerLayer);
-    
+
     if (m_scrolledContentsLayer)
         propagateSettingsToLayer(*m_scrolledContentsLayer);
-    
+
     if (m_layerForHorizontalScrollbar)
         propagateSettingsToLayer(*m_layerForHorizontalScrollbar);
 
