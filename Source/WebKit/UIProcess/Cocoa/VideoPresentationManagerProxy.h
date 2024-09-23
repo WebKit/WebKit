@@ -60,6 +60,7 @@ class WebPageProxy;
 class PlaybackSessionManagerProxy;
 class PlaybackSessionModelContext;
 class VideoPresentationManagerProxy;
+struct SharedPreferencesForWebProcess;
 
 class VideoPresentationModelContext final
     : public WebCore::VideoPresentationModel  {
@@ -203,6 +204,7 @@ public:
     PlatformLayerContainer createLayerWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);
 
     void willRemoveLayerForID(PlaybackSessionContextIdentifier);
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
 private:
     friend class VideoPresentationModelContext;

@@ -1039,6 +1039,11 @@ void PlaybackSessionManagerProxy::updateVideoControlsManager(PlaybackSessionCont
         page->videoControlsManagerDidChange();
 }
 
+const SharedPreferencesForWebProcess& PlaybackSessionManagerProxy::sharedPreferencesForWebProcess() const
+{
+    return m_page->legacyMainFrameProcess().sharedPreferencesForWebProcess();
+}
+
 #if !RELEASE_LOG_DISABLED
 void PlaybackSessionManagerProxy::setLogIdentifier(PlaybackSessionContextIdentifier identifier, uint64_t logIdentifier)
 {

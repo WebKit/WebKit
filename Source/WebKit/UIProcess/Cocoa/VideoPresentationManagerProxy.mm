@@ -888,6 +888,11 @@ void VideoPresentationManagerProxy::willRemoveLayerForID(PlaybackSessionContextI
     removeClientForContext(contextId);
 }
 
+const SharedPreferencesForWebProcess& VideoPresentationManagerProxy::sharedPreferencesForWebProcess() const
+{
+    return m_page->legacyMainFrameProcess().sharedPreferencesForWebProcess();
+}
+
 #pragma mark Messages from VideoPresentationManager
 
 void VideoPresentationManagerProxy::setupFullscreenWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatRect& screenRect, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& videoDimensions, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)

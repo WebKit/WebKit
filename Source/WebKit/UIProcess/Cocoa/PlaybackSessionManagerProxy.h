@@ -51,6 +51,7 @@ namespace WebKit {
 class WebPageProxy;
 class PlaybackSessionManagerProxy;
 class VideoReceiverEndpointMessage;
+struct SharedPreferencesForWebProcess;
 
 class PlaybackSessionModelContext final
     : public RefCounted<PlaybackSessionModelContext>
@@ -242,6 +243,7 @@ public:
     void requestControlledElementID();
 
     bool isPaused(PlaybackSessionContextIdentifier) const;
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
     // For testing.
     bool wirelessVideoPlaybackDisabled();
