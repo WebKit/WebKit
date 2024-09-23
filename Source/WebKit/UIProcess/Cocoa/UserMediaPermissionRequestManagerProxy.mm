@@ -193,7 +193,11 @@ void UserMediaPermissionRequestManagerProxy::requestSystemValidation(const WebPa
 #if ENABLE(MEDIA_STREAM) && HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
 void UserMediaPermissionRequestManagerProxy::startMonitoringCaptureDeviceRotation(const String& persistentId)
 {
-    auto webView = page().cocoaView();
+    RefPtr page = this->page();
+    if (!page)
+        return;
+
+    auto webView = page->cocoaView();
     auto *layer = [webView layer];
     if (!layer) {
         RELEASE_LOG_ERROR(WebRTC, "UserMediaPermissionRequestManagerProxy unable to start monitoring capture device rotation");
@@ -214,7 +218,8 @@ void UserMediaPermissionRequestManagerProxy::stopMonitoringCaptureDeviceRotation
 
 void UserMediaPermissionRequestManagerProxy::rotationAngleForCaptureDeviceChanged(const String& persistentId, WebCore::VideoFrameRotation rotation)
 {
-    page().rotationAngleForCaptureDeviceChanged(persistentId, rotation);
+    if (RefPtr page = this->page())
+        page->rotationAngleForCaptureDeviceChanged(persistentId, rotation);
 }
 #endif // HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
 

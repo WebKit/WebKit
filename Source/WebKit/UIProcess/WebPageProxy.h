@@ -3311,7 +3311,7 @@ private:
     RefPtr<WebOpenPanelResultListenerProxy> m_openPanelResultListener;
 
 #if ENABLE(MEDIA_STREAM)
-    std::unique_ptr<UserMediaPermissionRequestManagerProxy> m_userMediaPermissionRequestManager;
+    RefPtr<UserMediaPermissionRequestManagerProxy> m_userMediaPermissionRequestManager;
     bool m_shouldListenToVoiceActivity { false };
     OptionSet<WebCore::MediaProducerMediaCaptureKind> m_mutedCaptureKindsDesiredByWebApp;
 #endif

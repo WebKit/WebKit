@@ -10594,7 +10594,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
     updatePlayingMediaDidChange(MediaProducer::IsNotPlaying);
 #if ENABLE(MEDIA_STREAM)
-    m_userMediaPermissionRequestManager = nullptr;
+    if (RefPtr userMediaPermissionRequestManager = std::exchange(m_userMediaPermissionRequestManager, nullptr))
+        userMediaPermissionRequestManager->disconnectFromPage();
     m_shouldListenToVoiceActivity = false;
     m_mutedCaptureKindsDesiredByWebApp = { };
 #endif
@@ -11413,11 +11414,8 @@ void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const Permi
 #if ENABLE(MEDIA_STREAM)
 UserMediaPermissionRequestManagerProxy& WebPageProxy::userMediaPermissionRequestManager()
 {
-    if (m_userMediaPermissionRequestManager)
-        return *m_userMediaPermissionRequestManager;
-
-    m_userMediaPermissionRequestManager = makeUnique<UserMediaPermissionRequestManagerProxy>(*this);
-
+    if (!m_userMediaPermissionRequestManager)
+        m_userMediaPermissionRequestManager = UserMediaPermissionRequestManagerProxy::create(*this);
     return *m_userMediaPermissionRequestManager;
 }
 
