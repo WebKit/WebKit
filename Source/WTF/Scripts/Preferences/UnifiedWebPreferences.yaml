@@ -468,7 +468,7 @@ AlternateFullScreenControlDesignEnabled:
 
 AlternateWebMPlayerEnabled:
   type: bool
-  status: stable
+  status: mature
   category: media
   humanReadableName: "Alternate WebM Player"
   humanReadableDescription: "Enable Alternate WebM Player"
@@ -2104,7 +2104,7 @@ DNSPrefetchingEnabled:
 
 DOMAudioSessionEnabled:
   type: bool
-  status: stable
+  status: mature
   category: media
   humanReadableName: "AudioSession API"
   humanReadableDescription: "Enable AudioSession API"
@@ -4347,7 +4347,7 @@ ManageCaptureStatusBarInGPUProcessEnabled:
 
 ManagedMediaSourceEnabled:
   type: bool
-  status: stable
+  status: mature
   category: media
   humanReadableName: "Managed Media Source API"
   humanReadableDescription: "Managed Media Source API"
@@ -4383,7 +4383,7 @@ ManagedMediaSourceLowThreshold:
 
 ManagedMediaSourceNeedsAirPlay:
   type: bool
-  status: stable
+  status: mature
   category: media
   humanReadableName: "Managed Media Source Requires AirPlay source"
   humanReadableDescription: "Managed Media Source Requires AirPlay source"
@@ -4459,7 +4459,7 @@ MediaCapabilitiesEnabled:
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 MediaCapabilitiesExtensionsEnabled:
   type: bool
-  status: stable
+  status: mature
   category: media
   humanReadableName: "Media Capabilities Extensions"
   humanReadableDescription: "Media Capabilities Extensions"
@@ -4637,7 +4637,7 @@ MediaPreloadingEnabled:
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 MediaRecorderEnabled:
   type: bool
-  status: stable
+  status: mature
   category: media
   humanReadableName: "MediaRecorder"
   humanReadableDescription: "MediaRecorder"
@@ -4669,7 +4669,7 @@ MediaSessionCaptureToggleAPIEnabled:
 
 MediaSessionCoordinatorEnabled:
   type: bool
-  status: stable
+  status: mature
   category: media
   humanReadableName: "Experimental MediaSession coordinator API"
   humanReadableDescription: "Enable experimental MediaSession coordinator API"
@@ -4700,7 +4700,7 @@ MediaSessionEnabled:
 
 MediaSessionPlaylistEnabled:
   type: bool
-  status: stable
+  status: mature
   category: media
   humanReadableName: "Experimental MediaSession playlist API"
   humanReadableDescription: "Enable experimental MediaSession playlist API"
@@ -4735,7 +4735,7 @@ MediaSourceEnabled:
 
 MediaSourceInWorkerEnabled:
   type: bool
-  status: stable
+  status: mature
   category: media
   humanReadableName: "MediaSource in a Worker"
   humanReadableDescription: "MediaSource in a Worker"
@@ -4781,7 +4781,7 @@ MediaStreamEnabled:
 
 MediaStreamTrackProcessingEnabled:
   type: bool
-  status: stable
+  status: mature
   category: media
   humanReadableName: "MediaStreamTrack Processing"
   humanReadableDescription: "Enable MediaStreamTrack Processing"
@@ -5787,7 +5787,7 @@ RequestStorageAccessThrowsExceptionUntilReload:
 
 RequestVideoFrameCallbackEnabled:
   type: bool
-  status: stable
+  status: mature
   category: media
   humanReadableName: "RequestVideoFrameCallback"
   humanReadableDescription: "Enable RequestVideoFrameCallback API"
@@ -6010,7 +6010,7 @@ SansSerifFontFamily:
 # FIXME: This should have it's own ENABLE.
 ScreenCaptureEnabled:
   type: bool
-  status: stable
+  status: mature
   category: media
   condition: ENABLE(MEDIA_STREAM)
   humanReadableName: "ScreenCapture"
@@ -7382,7 +7382,7 @@ UseGPUProcessForDOMRenderingEnabled:
 
 UseGPUProcessForDisplayCapture:
   type: bool
-  status: stable
+  status: mature
   category: media
   humanReadableName: "GPU Process: Screen and Window capture"
   humanReadableDescription: "Display capture in GPU Process"
@@ -7973,7 +7973,7 @@ WebCodecsAudioEnabled:
 
 WebCodecsHEVCEnabled:
   type: bool
-  status: stable
+  status: mature
   category: media
   humanReadableName: "WebCodecs HEVC codec"
   humanReadableDescription: "Enable WebCodecs HEVC codec"
@@ -7992,7 +7992,7 @@ WebCodecsHEVCEnabled:
 
 WebCodecsVideoEnabled:
   type: bool
-  status: stable
+  status: mature
   category: media
   humanReadableName: "WebCodecs Video API"
   humanReadableDescription: "Enable WebCodecs Video API"
@@ -8227,7 +8227,7 @@ WebRTCDTMFEnabled:
 
 WebRTCEncodedTransformEnabled:
   type: bool
-  status: stable
+  status: mature
   category: media
   condition: ENABLE(WEB_RTC)
   humanReadableName: "WebRTC Encoded Transform API"
@@ -8263,7 +8263,7 @@ WebRTCH264HardwareEncoderEnabled:
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebRTCH265CodecEnabled:
   type: bool
-  status: stable
+  status: mature
   category: media
   condition: ENABLE(WEB_RTC)
   humanReadableName: "WebRTC HEVC codec"
@@ -8371,7 +8371,7 @@ WebRTCVP9Profile0CodecEnabled:
 
 WebRTCVP9Profile2CodecEnabled:
   type: bool
-  status: stable
+  status: mature
   category: media
   humanReadableName: "WebRTC VP9 profile 2 codec"
   humanReadableDescription: "Enable WebRTC VP9 profile 2 codec"
