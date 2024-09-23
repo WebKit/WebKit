@@ -824,7 +824,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
     if (m_preferences->mediaSessionCoordinatorEnabled())
-        GroupActivitiesSessionNotifier::sharedNotifier().addWebPage(*this);
+        GroupActivitiesSessionNotifier::singleton().addWebPage(*this);
 #endif
 
     m_pageToCloneSessionStorageFrom = m_configuration->pageToCloneSessionStorageFrom();
@@ -876,7 +876,7 @@ WebPageProxy::~WebPageProxy()
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
     if (preferences->mediaSessionCoordinatorEnabled())
-        GroupActivitiesSessionNotifier::sharedNotifier().removeWebPage(*this);
+        GroupActivitiesSessionNotifier::singleton().removeWebPage(*this);
 #endif
 }
 
@@ -6775,7 +6775,7 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
     if (frame->isMainFrame() && m_preferences->mediaSessionCoordinatorEnabled())
-        GroupActivitiesSessionNotifier::sharedNotifier().webPageURLChanged(*this);
+        GroupActivitiesSessionNotifier::singleton().webPageURLChanged(*this);
 #endif
 
 #if ENABLE(MEDIA_STREAM)

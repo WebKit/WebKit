@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import <wtf/Forward.h>
+#import <wtf/RefCountedAndCanMakeWeakPtr.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
@@ -40,15 +41,6 @@ OBJC_CLASS UIScene;
 OBJC_CLASS WKUIWindowSceneObserver;
 
 namespace WebKit {
-class ApplicationStateTracker;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ApplicationStateTracker> : std::true_type { };
-}
-
-namespace WebKit {
 
 enum class ApplicationType : uint8_t {
     Application,
@@ -56,10 +48,14 @@ enum class ApplicationType : uint8_t {
     Extension,
 };
 
-class ApplicationStateTracker : public CanMakeWeakPtr<ApplicationStateTracker> {
+class ApplicationStateTracker : public RefCountedAndCanMakeWeakPtr<ApplicationStateTracker> {
     WTF_MAKE_TZONE_ALLOCATED(ApplicationStateTracker);
 public:
-    ApplicationStateTracker(UIView *, SEL didEnterBackgroundSelector, SEL willEnterForegroundSelector, SEL willBeginSnapshotSequenceSelector, SEL didCompleteSnapshotSequenceSelector);
+    static RefPtr<ApplicationStateTracker> create(UIView *view, SEL didEnterBackgroundSelector, SEL willEnterForegroundSelector, SEL willBeginSnapshotSequenceSelector, SEL didCompleteSnapshotSequenceSelector)
+    {
+        return adoptRef(new ApplicationStateTracker(view, didEnterBackgroundSelector, willEnterForegroundSelector, willBeginSnapshotSequenceSelector, didCompleteSnapshotSequenceSelector));
+    }
+
     ~ApplicationStateTracker();
 
     bool isInBackground() const { return m_isInBackground; }
@@ -68,6 +64,8 @@ public:
     void setScene(UIScene *);
 
 private:
+    ApplicationStateTracker(UIView *, SEL didEnterBackgroundSelector, SEL willEnterForegroundSelector, SEL willBeginSnapshotSequenceSelector, SEL didCompleteSnapshotSequenceSelector);
+
     void setViewController(UIViewController *);
 
     void applicationDidEnterBackground();

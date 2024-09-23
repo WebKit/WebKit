@@ -29,29 +29,21 @@
 
 #include "GroupActivitiesSession.h"
 #include <wtf/HashMap.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
-#include <wtf/WeakPtr.h>
 
 OBJC_CLASS WKGroupSessionObserver;
-
-namespace WebKit {
-class GroupActivitiesSessionNotifier;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::GroupActivitiesSessionNotifier> : std::true_type { };
-}
 
 namespace WebKit {
 
 class WebPageProxy;
 
-class GroupActivitiesSessionNotifier : public CanMakeWeakPtr<GroupActivitiesSessionNotifier> {
+class GroupActivitiesSessionNotifier : public RefCountedAndCanMakeWeakPtr<GroupActivitiesSessionNotifier> {
     WTF_MAKE_TZONE_ALLOCATED(GroupActivitiesSessionNotifier);
 public:
-    static GroupActivitiesSessionNotifier& sharedNotifier();
+    static GroupActivitiesSessionNotifier& singleton();
+    static Ref<GroupActivitiesSessionNotifier> create();
 
     bool hasSessionForURL(const URL&);
     RefPtr<GroupActivitiesSession> takeSessionForURL(const URL&);
