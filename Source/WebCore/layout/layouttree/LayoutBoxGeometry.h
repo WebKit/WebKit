@@ -162,6 +162,8 @@ public:
     void setVerticalSpaceForScrollbar(LayoutUnit scrollbarHeight) { m_verticalSpaceForScrollbar = scrollbarHeight; }
     void setHorizontalSpaceForScrollbar(LayoutUnit scrollbarWidth) { m_horizontalSpaceForScrollbar = scrollbarWidth; }
 
+    void reset();
+
 private:
     LayoutUnit top() const;
     LayoutUnit left() const;

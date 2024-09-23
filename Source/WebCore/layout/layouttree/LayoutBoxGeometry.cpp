@@ -102,6 +102,21 @@ Rect BoxGeometry::contentBox() const
     return contentBox;
 }
 
+void BoxGeometry::reset()
+{
+    setTopLeft({ });
+
+    setHorizontalMargin({ });
+    setVerticalMargin({ });
+    setBorder({ });
+    setPadding({ });
+
+    setContentBoxSize({ });
+
+    setVerticalSpaceForScrollbar({ });
+    setHorizontalSpaceForScrollbar({ });
+}
+
 }
 }
 
