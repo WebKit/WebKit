@@ -46,23 +46,20 @@ PageLoadState::~PageLoadState()
 }
 
 PageLoadState::Transaction::Transaction(PageLoadState& pageLoadState)
-    : m_webPageProxy(pageLoadState.m_webPageProxy.ptr())
-    , m_pageLoadState(&pageLoadState)
+    : m_pageLoadState(&pageLoadState)
 {
-    m_pageLoadState->beginTransaction();
+    pageLoadState.beginTransaction();
 }
 
 PageLoadState::Transaction::Transaction(Transaction&& other)
-    : m_webPageProxy(WTFMove(other.m_webPageProxy))
-    , m_pageLoadState(other.m_pageLoadState)
+    : m_pageLoadState(std::exchange(other.m_pageLoadState, nullptr))
 {
-    other.m_pageLoadState = nullptr;
 }
 
 PageLoadState::Transaction::~Transaction()
 {
-    if (m_pageLoadState)
-        m_pageLoadState->endTransaction();
+    if (RefPtr pageLoadState = m_pageLoadState)
+        pageLoadState->endTransaction();
 }
 
 void PageLoadState::addObserver(Observer& observer)
@@ -89,6 +86,16 @@ void PageLoadState::endTransaction()
 Ref<WebPageProxy> PageLoadState::protectedPage() const
 {
     return m_webPageProxy.get();
+}
+
+void PageLoadState::ref() const
+{
+    m_webPageProxy->ref();
+}
+
+void PageLoadState::deref() const
+{
+    m_webPageProxy->deref();
 }
 
 void PageLoadState::commitChanges()

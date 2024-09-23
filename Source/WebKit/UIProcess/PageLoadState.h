@@ -123,14 +123,16 @@ public:
 #endif
         };
 
-        RefPtr<WebPageProxy> m_webPageProxy;
-        PageLoadState* m_pageLoadState;
+        RefPtr<PageLoadState> m_pageLoadState;
     };
 
     struct PendingAPIRequest {
         Markable<WebCore::NavigationIdentifier> navigationID;
         String url;
     };
+
+    void ref() const;
+    void deref() const;
 
     void addObserver(Observer&);
     void removeObserver(Observer&);
