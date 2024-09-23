@@ -539,7 +539,7 @@ ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection
                         if (server.credential.utf8().length() > MaxTurnUsernameLength || server.username.utf8().length() > MaxTurnUsernameLength)
                             return Exception { ExceptionCode::TypeError, "TURN/TURNS username and/or credential are too long"_s };
                     }
-                } else if (!serverURL.protocolIs("stun"_s))
+                } else if (!serverURL.protocolIs("stun"_s) && !serverURL.protocolIs("stuns"_s))
                     return Exception { ExceptionCode::SyntaxError, "ICE server protocol not supported"_s };
             }
             if (serverURLs.size())
