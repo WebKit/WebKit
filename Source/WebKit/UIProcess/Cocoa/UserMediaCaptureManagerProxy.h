@@ -45,11 +45,6 @@ namespace WebKit {
 class UserMediaCaptureManagerProxy;
 }
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::UserMediaCaptureManagerProxy> : std::true_type { };
-}
-
 namespace WebCore {
 class PlatformMediaSessionManager;
 class SharedMemory;
@@ -131,7 +126,7 @@ private:
     void queueAndProcessSerialAction(SerialAction&&);
 
     friend class UserMediaCaptureManagerProxySourceProxy;
-    HashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<UserMediaCaptureManagerProxySourceProxy>> m_proxies;
+    HashMap<WebCore::RealtimeMediaSourceIdentifier, Ref<UserMediaCaptureManagerProxySourceProxy>> m_proxies;
     UniqueRef<ConnectionProxy> m_connectionProxy;
     WebCore::OrientationNotifier m_orientationNotifier { 0 };
     Ref<GenericPromise> m_pendingAction { GenericPromise::createAndResolve() };
