@@ -118,6 +118,7 @@ public:
     using ArgumentList = Vector<ExpressionType, 8>;
     using CallType = CallLinkInfo::CallType;
     using CallPatchpointData = std::tuple<B3::PatchpointValue*, Box<PatchpointExceptionHandle>, RefPtr<B3::StackmapGenerator>>;
+    using WasmConstRefValue = Const64Value;
 
     static constexpr bool shouldFuseBranchCompare = false;
     static constexpr bool tierSupportsSIMD = true;
@@ -1528,7 +1529,7 @@ auto OMGIRGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
 
 auto OMGIRGenerator::addRefIsNull(ExpressionType value, ExpressionType& result) -> PartialResult
 {
-    result = push(m_currentBlock->appendNew<Value>(m_proc, B3::Equal, origin(), get(value), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
+    result = push(m_currentBlock->appendNew<Value>(m_proc, B3::Equal, origin(), get(value), m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()))));
     return { };
 }
 
@@ -1540,7 +1541,7 @@ auto OMGIRGenerator::addTableGet(unsigned tableIndex, ExpressionType index, Expr
     {
         result = push(resultValue);
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), 0)));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), 0)));
 
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTableAccess);
@@ -1581,7 +1582,7 @@ auto OMGIRGenerator::addRefAsNonNull(ExpressionType reference, ExpressionType& r
     result = push(get(reference));
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(reference), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(reference), m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::NullRefAsNonNull);
         });
@@ -2996,7 +2997,7 @@ auto OMGIRGenerator::addI31GetS(ExpressionType ref, ExpressionType& result) -> P
     // Trap on null reference.
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(ref), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(ref), m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::NullI31Get);
         });
@@ -3012,7 +3013,7 @@ auto OMGIRGenerator::addI31GetU(ExpressionType ref, ExpressionType& result) -> P
     // Trap on null reference.
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(ref), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(ref), m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::NullI31Get);
         });
@@ -3038,7 +3039,7 @@ Variable* OMGIRGenerator::pushArrayNew(uint32_t typeIndex, Value* initValue, Exp
 
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()))));
 
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::BadArrayNew);
@@ -3168,7 +3169,7 @@ auto OMGIRGenerator::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, E
     // Ensure arrayref is non-null.
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(arrayref), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(arrayref), m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::NullArrayGet);
         });
@@ -3230,7 +3231,7 @@ auto OMGIRGenerator::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, E
 void OMGIRGenerator::emitArrayNullCheck(Value* arrayref, ExceptionType exceptionType)
 {
     CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-        m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), arrayref, m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
+        m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), arrayref, m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()))));
     check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitExceptionCheck(jit, exceptionType);
     });
@@ -3301,7 +3302,7 @@ auto OMGIRGenerator::addArrayLen(ExpressionType arrayref, ExpressionType& result
     // Ensure arrayref is non-null.
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(arrayref), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(arrayref), m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::NullArrayLen);
         });
@@ -3415,7 +3416,7 @@ auto OMGIRGenerator::addStructNew(uint32_t typeIndex, ArgumentList& args, Expres
 
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), structValue, m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), structValue, m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::BadStructNew);
         });
@@ -3442,7 +3443,7 @@ auto OMGIRGenerator::addStructNewDefault(uint32_t typeIndex, ExpressionType& res
 
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), structValue, m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), structValue, m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::BadStructNew);
         });
@@ -3452,9 +3453,9 @@ auto OMGIRGenerator::addStructNewDefault(uint32_t typeIndex, ExpressionType& res
     for (StructFieldCount i = 0; i < structType.fieldCount(); ++i) {
         Value* initValue;
         if (Wasm::isRefType(structType.field(i).type))
-            initValue = m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()));
+            initValue = m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()));
         else
-            initValue = m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), 0);
+            initValue = m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), 0);
         emitStructSet(structValue, i, structType, initValue);
     }
 
@@ -3470,7 +3471,7 @@ auto OMGIRGenerator::addStructGet(ExtGCOpType structGetKind, ExpressionType stru
 
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(structReference), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(structReference), m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::NullStructGet);
         });
@@ -3517,7 +3518,7 @@ auto OMGIRGenerator::addStructSet(ExpressionType structReference, const StructTy
 {
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(structReference), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(structReference), m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::NullStructSet);
         });
@@ -3562,7 +3563,7 @@ void OMGIRGenerator::emitRefTestOrCast(CastKind castKind, ExpressionType referen
         BasicBlock* nonNullCase = m_proc.addBlock();
 
         Value* isNull = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
-            get(reference), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull())));
+            get(reference), m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull())));
         m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), isNull,
             FrequentedBlock(nullCase), FrequentedBlock(nonNullCase));
         nullCase->addPredecessor(m_currentBlock);
@@ -4790,7 +4791,7 @@ auto OMGIRGenerator::addBranch(ControlData& data, ExpressionType condition, cons
 
 auto OMGIRGenerator::addBranchNull(ControlData& data, ExpressionType reference, const Stack& returnValues, bool shouldNegate, ExpressionType& result) -> PartialResult
 {
-    auto condition = push(m_currentBlock->appendNew<Value>(m_proc, shouldNegate ? B3::NotEqual : B3::Equal, origin(), get(reference), m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
+    auto condition = push(m_currentBlock->appendNew<Value>(m_proc, shouldNegate ? B3::NotEqual : B3::Equal, origin(), get(reference), m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()))));
     // We should pop the condition here to keep stack size consistent.
     --m_stackSize;
 
@@ -5466,7 +5467,7 @@ auto OMGIRGenerator::addCallRef(const TypeDefinition& originalSignature, Argumen
     // Check the target reference for null.
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), callee, m_currentBlock->appendNew<ConstIntPtrValue>(m_proc, origin(), JSValue::encode(jsNull()))));
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), callee, m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), JSValue::encode(jsNull()))));
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::NullReference);
         });
