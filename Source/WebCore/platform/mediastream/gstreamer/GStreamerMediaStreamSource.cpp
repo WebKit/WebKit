@@ -58,34 +58,37 @@ static GstStaticPadTemplate audioSrcTemplate = GST_STATIC_PAD_TEMPLATE("audio_sr
 GST_DEBUG_CATEGORY_STATIC(webkitMediaStreamSrcDebug);
 #define GST_CAT_DEFAULT webkitMediaStreamSrcDebug
 
-WARN_UNUSED_RETURN GRefPtr<GstTagList> mediaStreamTrackPrivateGetTags(const MediaStreamTrackPrivate& track)
+WARN_UNUSED_RETURN GRefPtr<GstTagList> mediaStreamTrackPrivateGetTags(const RefPtr<MediaStreamTrackPrivate>& track)
 {
     auto tagList = adoptGRef(gst_tag_list_new_empty());
 
-    if (!track.label().isEmpty())
-        gst_tag_list_add(tagList.get(), GST_TAG_MERGE_APPEND, GST_TAG_TITLE, track.label().utf8().data(), nullptr);
+    if (!track->label().isEmpty())
+        gst_tag_list_add(tagList.get(), GST_TAG_MERGE_APPEND, GST_TAG_TITLE, track->label().utf8().data(), nullptr);
 
     GST_DEBUG("Track tags: %" GST_PTR_FORMAT, tagList.get());
     return tagList;
 }
 
-GstStream* webkitMediaStreamNew(const MediaStreamTrackPrivate& track)
+GstStream* webkitMediaStreamNew(const RefPtr<MediaStreamTrackPrivate>& track)
 {
+    if (!track)
+        return nullptr;
+
     GRefPtr<GstCaps> caps;
     GstStreamType type;
 
-    if (track.isAudio()) {
+    if (track->isAudio()) {
         caps = adoptGRef(gst_static_pad_template_get_caps(&audioSrcTemplate));
         type = GST_STREAM_TYPE_AUDIO;
     } else {
-        RELEASE_ASSERT((track.isVideo()));
+        RELEASE_ASSERT((track->isVideo()));
         caps = adoptGRef(gst_static_pad_template_get_caps(&videoSrcTemplate));
         type = GST_STREAM_TYPE_VIDEO;
     }
 
     StringBuilder builder;
-    builder.append(track.id());
-    if (!track.enabled())
+    builder.append(track->id());
+    if (!track->enabled())
         builder.append("-disabled"_s);
 
     auto trackId = builder.toString();
@@ -142,7 +145,8 @@ public:
         , m_padName(padName)
         , m_consumerIsVideoPlayer(consumerIsVideoPlayer)
     {
-        m_isIncomingVideoSource = m_track.source().isIncomingVideoSource();
+        m_isIncomingVideoSource = m_track->source().isIncomingVideoSource();
+        m_isVideoTrack = m_track->isVideo();
 
         static uint64_t audioCounter = 0;
         static uint64_t videoCounter = 0;
@@ -152,7 +156,7 @@ public:
             elementName = makeString("audiosrc"_s, audioCounter);
             audioCounter++;
         } else {
-            RELEASE_ASSERT(track.isVideo());
+            RELEASE_ASSERT(m_isVideoTrack);
             m_videoTrack = VideoTrackPrivateMediaStream::create(track);
             elementName = makeString("videosrc"_s, videoCounter);
             videoCounter++;
@@ -188,10 +192,25 @@ public:
 #endif
     }
 
+    void replaceTrack(RefPtr<MediaStreamTrackPrivate>&& newTrack)
+    {
+#ifndef NDEBUG
+        RefPtr currentTrack = m_track.get();
+        ASSERT(currentTrack);
+        ASSERT(currentTrack->type() == newTrack->type());
+#endif
+        stopObserving();
+        m_track = WTFMove(newTrack);
+        startObserving();
+    }
+
     void connectIncomingTrack()
     {
 #if USE(GSTREAMER_WEBRTC)
-        auto& trackSource = m_track.source();
+        RefPtr track = m_track.get();
+        if (!track)
+            return;
+        auto& trackSource = track->source();
         int clientId;
         auto client = GRefPtr<GstElement>(m_src);
         if (trackSource.isIncomingAudioSource()) {
@@ -266,7 +285,10 @@ public:
         if (!m_webrtcSourceClientId)
             return;
 
-        auto& trackSource = m_track.source();
+        RefPtr track = m_track.get();
+        if (!track)
+            return;
+        auto& trackSource = track->source();
         if (trackSource.isIncomingAudioSource()) {
             auto& source = static_cast<RealtimeIncomingAudioSourceGStreamer&>(trackSource);
             source.unregisterClient(*m_webrtcSourceClientId);
@@ -277,7 +299,7 @@ public:
 #endif
     }
 
-    const MediaStreamTrackPrivate& track() const { return m_track; }
+    WARN_UNUSED_RETURN RefPtr<MediaStreamTrackPrivate> track() const { return m_track.get(); }
     const String& padName() const { return m_padName; }
     GstElement* get() const { return m_src.get(); }
 
@@ -286,12 +308,16 @@ public:
         if (m_isObserving)
             return;
 
-        GST_DEBUG_OBJECT(m_src.get(), "Starting track/source observation");
-        m_track.addObserver(*this);
-        if (m_track.isAudio())
-            m_track.source().addAudioSampleObserver(*this);
-        else if (m_track.isVideo())
-            m_track.source().addVideoFrameObserver(*this);
+        RefPtr track = m_track.get();
+        if (!track)
+            return;
+
+        GST_DEBUG_OBJECT(m_src.get(), "Starting observation of track %s", track->id().ascii().data());
+        track->addObserver(*this);
+        if (track->isAudio())
+            track->source().addAudioSampleObserver(*this);
+        else if (track->isVideo())
+            track->source().addVideoFrameObserver(*this);
         m_isObserving = true;
     }
 
@@ -300,19 +326,26 @@ public:
         if (!m_isObserving)
             return;
 
-        GST_DEBUG_OBJECT(m_src.get(), "Stopping track/source observation");
+        RefPtr track = m_track.get();
+        if (!track)
+            return;
+
+        GST_DEBUG_OBJECT(m_src.get(), "Stopping observation of track %s", track->id().ascii().data());
         m_isObserving = false;
 
-        if (m_track.isAudio())
-            m_track.source().removeAudioSampleObserver(*this);
-        else if (m_track.isVideo())
-            m_track.source().removeVideoFrameObserver(*this);
-        m_track.removeObserver(*this);
+        if (track->isAudio())
+            track->source().removeAudioSampleObserver(*this);
+        else if (track->isVideo())
+            track->source().removeVideoFrameObserver(*this);
+        track->removeObserver(*this);
     }
 
     void configureAudioTrack(float volume, bool isMuted, bool isPlaying)
     {
-        ASSERT(m_track.isAudio());
+        RefPtr track = m_track.get();
+        if (!track)
+            return;
+        ASSERT(track->isAudio());
         m_audioTrack->setVolume(volume);
         m_audioTrack->setMuted(isMuted);
         m_audioTrack->setEnabled(m_audioTrack->streamTrack().enabled());
@@ -327,7 +360,10 @@ public:
         callOnMainThreadAndWait([&] {
             stopObserving();
         });
-        trackEnded(m_track);
+        RefPtr track = m_track.get();
+        if (!track)
+            return;
+        trackEnded(*track);
     }
 
     void pushSample(GRefPtr<GstSample>&& sample, [[maybe_unused]] const ASCIILiteral logMessage)
@@ -347,12 +383,12 @@ public:
             gst_pad_set_offset(pad.get(), -m_firstBufferPts);
         }
 
-        if (m_track.isVideo() && drop)
+        if (m_isVideoTrack && drop)
             drop = doCapsHaveType(caps, "video") || GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DELTA_UNIT);
 
         if (drop) {
             m_needsDiscont = true;
-            GST_TRACE_OBJECT(m_src.get(), "%s queue full already... not pushing", m_track.isVideo() ? "Video" : "Audio");
+            GST_TRACE_OBJECT(m_src.get(), "%s queue full already... not pushing", m_isVideoTrack ? "Video" : "Audio");
             return;
         }
 
@@ -399,17 +435,17 @@ public:
         }
     }
 
-    void trackEnabledChanged(MediaStreamTrackPrivate&) final
+    void trackEnabledChanged(MediaStreamTrackPrivate& track) final
     {
-        GST_INFO_OBJECT(m_src.get(), "Track enabled: %s, resetting stream", boolForPrinting(m_track.enabled()));
+        GST_INFO_OBJECT(m_src.get(), "Track enabled: %s, resetting stream", boolForPrinting(track.enabled()));
 
         createGstStream();
         webkitMediaStreamSrcEnsureStreamCollectionPosted(WEBKIT_MEDIA_STREAM_SRC(m_parent));
 
-        if (m_track.isVideo()) {
+        if (track.isVideo()) {
             m_enoughData = false;
             m_needsDiscont = true;
-            if (!m_track.enabled())
+            if (!track.enabled())
                 pushBlackFrame();
             else
                 flush();
@@ -434,7 +470,11 @@ public:
             sample = gstVideoFrame->resizedSample(captureSize);
         }
 
-        auto settings = m_track.settings();
+        RefPtr track = m_track.get();
+        if (!track)
+            return;
+
+        auto settings = track->settings();
         m_configuredSize.setWidth(settings.width());
         m_configuredSize.setHeight(settings.height());
 
@@ -460,7 +500,7 @@ public:
             m_lastKnownSize = m_configuredSize;
         }
 
-        if (m_track.enabled()) {
+        if (track->enabled()) {
             pushSample(WTFMove(sample), "Pushing video frame from enabled track"_s);
             return;
         }
@@ -473,8 +513,12 @@ public:
         if (!m_parent || !m_isObserving)
             return;
 
+        RefPtr track = m_track.get();
+        if (!track)
+            return;
+
         const auto& data = static_cast<const GStreamerAudioData&>(audioData);
-        if (m_track.enabled()) {
+        if (track->enabled()) {
             GRefPtr<GstSample> sample = data.getSample();
             pushSample(WTFMove(sample), "Pushing audio sample from enabled track"_s);
             return;
@@ -530,8 +574,12 @@ private:
         auto width = m_lastKnownSize.width() ? m_lastKnownSize.width() : 320;
         auto height = m_lastKnownSize.height() ? m_lastKnownSize.height() : 240;
 
+        RefPtr track = m_track.get();
+        if (!track)
+            return;
+
         int frameRateNumerator, frameRateDenominator;
-        gst_util_double_to_fraction(m_track.settings().frameRate(), &frameRateNumerator, &frameRateDenominator);
+        gst_util_double_to_fraction(track->settings().frameRate(), &frameRateNumerator, &frameRateDenominator);
 
         if (!m_blackFrameCaps)
             m_blackFrameCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420", "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr));
@@ -585,11 +633,11 @@ private:
 
     void createGstStream()
     {
-        m_stream = adoptGRef(webkitMediaStreamNew(m_track));
+        m_stream = adoptGRef(webkitMediaStreamNew(track()));
     }
 
     GstElement* m_parent { nullptr };
-    MediaStreamTrackPrivate& m_track;
+    WeakPtr<MediaStreamTrackPrivate> m_track;
     GRefPtr<GstElement> m_src;
     GstClockTime m_firstBufferPts { GST_CLOCK_TIME_NONE };
     bool m_enoughData { false };
@@ -612,6 +660,7 @@ private:
     bool m_consumerIsVideoPlayer { false };
     bool m_isIncomingVideoSource { false };
     GRefPtr<GstStream> m_stream;
+    bool m_isVideoTrack { false };
 };
 
 struct _WebKitMediaStreamSrcPrivate {
@@ -652,7 +701,10 @@ void WebKitMediaStreamObserver::didRemoveTrack(MediaStreamTrackPrivate& track)
 
     // Lookup the corresponding InternalSource and take it from the storage.
     auto index = priv->sources.findIf([&](auto& item) {
-        return item->track().id() == track.id();
+        auto itemTrack = item->track();
+        if (!itemTrack)
+            return true;
+        return itemTrack->id() == track.id();
     });
     std::unique_ptr<InternalSource> source = WTFMove(priv->sources[index]);
     priv->sources.remove(index);
@@ -1026,7 +1078,7 @@ void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc* self, MediaStreamTrackPr
 
     auto pad = adoptGRef(gst_element_get_static_pad(element, "src"));
     auto data = createProbeData();
-    data->tags = mediaStreamTrackPrivateGetTags(*track);
+    data->tags = mediaStreamTrackPrivateGetTags(RefPtr(track));
     data->element = GST_ELEMENT_CAST(self);
     data->sourceType = track->source().type();
     data->collection = webkitMediaStreamSrcCreateStreamCollection(self);
@@ -1070,6 +1122,13 @@ void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc* self, MediaStreamTrackPr
     gst_element_sync_state_with_parent(element);
 }
 
+void webkitMediaStreamSrcReplaceTrack(WebKitMediaStreamSrc* self, RefPtr<MediaStreamTrackPrivate>&& newTrack)
+{
+    ASSERT(newTrack);
+    ASSERT(self->priv->sources.size() == 1);
+    self->priv->sources[0]->replaceTrack(WTFMove(newTrack));
+}
+
 void webkitMediaStreamSrcSignalEndOfStream(WebKitMediaStreamSrc* self)
 {
     GST_DEBUG_OBJECT(self, "Signaling EOS");
@@ -1109,7 +1168,10 @@ void webkitMediaStreamSrcSetStream(WebKitMediaStreamSrc* self, MediaStreamPrivat
 void webkitMediaStreamSrcConfigureAudioTracks(WebKitMediaStreamSrc* self, float volume, bool isMuted, bool isPlaying)
 {
     for (auto& source : self->priv->sources) {
-        if (source->track().isAudio())
+        auto track = source->track();
+        if (UNLIKELY(!track))
+            continue;
+        if (track->isAudio())
             source->configureAudioTrack(volume, isMuted, isPlaying);
     }
 }

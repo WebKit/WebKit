@@ -164,55 +164,13 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
 
     auto preEncoderSinkPad = adoptGRef(gst_element_get_static_pad(m_preEncoderQueue.get(), "sink"));
     if (!gst_pad_is_linked(preEncoderSinkPad.get())) {
-        if (!gst_element_link_many(m_outgoingSource.get(), m_inputSelector.get(), m_liveSync.get(), m_audioconvert.get(), m_audioresample.get(), m_inputCapsFilter.get(), m_preEncoderQueue.get(), nullptr)) {
+        if (!gst_element_link_many(m_outgoingSource.get(), m_liveSync.get(), m_audioconvert.get(), m_audioresample.get(), m_inputCapsFilter.get(), m_preEncoderQueue.get(), nullptr)) {
             GST_ERROR_OBJECT(m_bin.get(), "Unable to link outgoing source to pre-encoder queue");
             return false;
         }
     }
 
     return gst_element_link_many(m_preEncoderQueue.get(), m_encoder.get(), m_payloader.get(), m_postEncoderQueue.get(), nullptr);
-}
-
-void RealtimeOutgoingAudioSourceGStreamer::connectFallbackSource()
-{
-    if (!m_fallbackPad) {
-        m_fallbackSource = makeGStreamerElement("audiotestsrc", nullptr);
-        if (!m_fallbackSource) {
-            WTFLogAlways("Unable to connect fallback audiotestsrc element, expect broken behavior. Please install gst-plugins-base.");
-            return;
-        }
-
-        gst_util_set_object_arg(G_OBJECT(m_fallbackSource.get()), "wave", "silence");
-
-        gst_bin_add(GST_BIN_CAST(m_bin.get()), m_fallbackSource.get());
-
-        m_fallbackPad = adoptGRef(gst_element_request_pad_simple(m_inputSelector.get(), "sink_%u"));
-
-        auto srcPad = adoptGRef(gst_element_get_static_pad(m_fallbackSource.get(), "src"));
-        gst_pad_link(srcPad.get(), m_fallbackPad.get());
-        gst_element_sync_state_with_parent(m_fallbackSource.get());
-    }
-
-    g_object_set(m_inputSelector.get(), "active-pad", m_fallbackPad.get(), nullptr);
-}
-
-void RealtimeOutgoingAudioSourceGStreamer::unlinkOutgoingSource()
-{
-    auto srcPad = adoptGRef(gst_element_get_static_pad(m_outgoingSource.get(), "audio_src0"));
-    auto peerPad = adoptGRef(gst_pad_get_peer(srcPad.get()));
-    if (!peerPad)
-        return;
-
-    gst_pad_unlink(srcPad.get(), peerPad.get());
-    gst_element_release_request_pad(m_inputSelector.get(), peerPad.get());
-}
-
-void RealtimeOutgoingAudioSourceGStreamer::linkOutgoingSource()
-{
-    auto srcPad = adoptGRef(gst_element_get_static_pad(m_outgoingSource.get(), "audio_src0"));
-    auto sinkPad = adoptGRef(gst_element_request_pad_simple(m_inputSelector.get(), "sink_%u"));
-    gst_pad_link(srcPad.get(), sinkPad.get());
-    g_object_set(m_inputSelector.get(), "active-pad", sinkPad.get(), nullptr);
 }
 
 void RealtimeOutgoingAudioSourceGStreamer::setParameters(GUniquePtr<GstStructure>&& parameters)
