@@ -118,6 +118,9 @@ public:
 
     static constexpr ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(BaselineJITData, m_globalObject); }
     static constexpr ptrdiff_t offsetOfStackOffset() { return OBJECT_OFFSETOF(BaselineJITData, m_stackOffset); }
+    static constexpr ptrdiff_t offsetOfJITExecuteCounter() { return OBJECT_OFFSETOF(BaselineJITData, m_executeCounter) + OBJECT_OFFSETOF(BaselineExecutionCounter, m_counter); }
+    static constexpr ptrdiff_t offsetOfJITExecutionActiveThreshold() { return OBJECT_OFFSETOF(BaselineJITData, m_executeCounter) + OBJECT_OFFSETOF(BaselineExecutionCounter, m_activeThreshold); }
+    static constexpr ptrdiff_t offsetOfJITExecutionTotalCount() { return OBJECT_OFFSETOF(BaselineJITData, m_executeCounter) + OBJECT_OFFSETOF(BaselineExecutionCounter, m_totalCount); }
 
     StructureStubInfo& stubInfo(unsigned index)
     {
@@ -130,8 +133,12 @@ public:
         return leadingSpan();
     }
 
+    BaselineExecutionCounter& executeCounter() { return m_executeCounter; }
+    const BaselineExecutionCounter& executeCounter() const { return m_executeCounter; }
+
     JSGlobalObject* m_globalObject { nullptr }; // This is not marked since owner CodeBlock will mark JSGlobalObject.
     intptr_t m_stackOffset { 0 };
+    BaselineExecutionCounter m_executeCounter;
 };
 
 } // namespace JSC

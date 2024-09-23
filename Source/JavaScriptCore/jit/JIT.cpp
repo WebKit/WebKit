@@ -103,26 +103,6 @@ BaselineUnlinkedCallLinkInfo* JIT::addUnlinkedCallLinkInfo()
     return &m_unlinkedCalls.alloc();
 }
 
-#if ENABLE(DFG_JIT)
-void JIT::emitEnterOptimizationCheck()
-{
-    if (!canBeOptimized())
-        return;
-
-    JumpList skipOptimize;
-    loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
-    skipOptimize.append(branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForEntry()), Address(regT0, CodeBlock::offsetOfJITExecuteCounter())));
-    ASSERT(!m_bytecodeIndex.offset());
-
-    copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
-
-    callOperationNoExceptionCheck(operationOptimize, TrustedImmPtr(&vm()), m_bytecodeIndex.asBits());
-    skipOptimize.append(branchTestPtr(Zero, returnValueGPR));
-    farJump(returnValueGPR, GPRInfo::callFrameRegister);
-    skipOptimize.link(this);
-}
-#endif
-
 void JIT::emitNotifyWriteWatchpoint(GPRReg pointerToSet)
 {
     auto ok = branchTestPtr(Zero, pointerToSet);

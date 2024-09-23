@@ -636,11 +636,7 @@ public:
 
     int32_t adjustedCounterValue(int32_t desiredThreshold);
 
-    static constexpr ptrdiff_t offsetOfJITExecuteCounter() { return OBJECT_OFFSETOF(CodeBlock, m_jitExecuteCounter) + OBJECT_OFFSETOF(BaselineExecutionCounter, m_counter); }
-    static constexpr ptrdiff_t offsetOfJITExecutionActiveThreshold() { return OBJECT_OFFSETOF(CodeBlock, m_jitExecuteCounter) + OBJECT_OFFSETOF(BaselineExecutionCounter, m_activeThreshold); }
-    static constexpr ptrdiff_t offsetOfJITExecutionTotalCount() { return OBJECT_OFFSETOF(CodeBlock, m_jitExecuteCounter) + OBJECT_OFFSETOF(BaselineExecutionCounter, m_totalCount); }
-
-    const BaselineExecutionCounter& jitExecuteCounter() const { return m_jitExecuteCounter; }
+    const BaselineExecutionCounter& baselineExecuteCounter();
 
     unsigned optimizationDelayCounter() const { return m_optimizationDelayCounter; }
 
@@ -950,6 +946,7 @@ private:
     SentinelLinkedList<CallLinkInfoBase, BasicRawSentinelNode<CallLinkInfoBase>> m_incomingCalls;
     uint16_t m_optimizationDelayCounter { 0 };
     uint16_t m_reoptimizationRetryCounter { 0 };
+    float m_previousCounter { 0 };
     StructureWatchpointMap m_llintGetByIdWatchpointMap;
     RefPtr<JSC::JITCode> m_jitCode;
 #if ENABLE(JIT)
@@ -975,10 +972,6 @@ private:
 
     WriteBarrier<CodeBlock> m_alternative;
 
-    BaselineExecutionCounter m_jitExecuteCounter;
-
-    float m_previousCounter { 0 };
-
     ApproximateTime m_creationTime;
 
     std::unique_ptr<RareData> m_rareData;
@@ -992,7 +985,7 @@ private:
 /* This check is for normal Release builds; ASSERT_ENABLED changes the size. */
 #if !ASSERT_ENABLED
 // TODO Figure out why this went up on my machine
-static_assert(sizeof(CodeBlock) <= 240, "Keep it small for memory saving");
+static_assert(sizeof(CodeBlock) <= 216, "Keep it small for memory saving");
 #endif
 
 template <typename ExecutableType>
