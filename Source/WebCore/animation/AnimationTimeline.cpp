@@ -85,7 +85,6 @@ std::optional<double> AnimationTimeline::bindingsCurrentTime()
 
 void AnimationTimeline::detachFromDocument()
 {
-    Ref<AnimationTimeline> protectedThis(*this);
     if (CheckedPtr controller = this->controller())
         controller->removeTimeline(*this);
 
