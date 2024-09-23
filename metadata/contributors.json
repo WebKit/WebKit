@@ -4129,6 +4129,16 @@
    },
    {
       "emails" : [
+         "jlee53@apple.com"
+      ],
+      "github" : "jelee53",
+      "name" : "Jessica Lee",
+      "nicks" : [
+         "jlee53"
+      ]
+   },
+   {
+      "emails" : [
          "jberlin@webkit.org",
          "jberlin@apple.com"
       ],
