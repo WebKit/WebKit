@@ -56,7 +56,7 @@ WebURLSchemeHandlerProxy::~WebURLSchemeHandlerProxy()
 
 void WebURLSchemeHandlerProxy::startNewTask(ResourceLoader& loader, WebFrame& webFrame)
 {
-    auto result = m_tasks.add(loader.identifier(), WebURLSchemeTaskProxy::create(*this, loader, webFrame));
+    auto result = m_tasks.add(*loader.identifier(), WebURLSchemeTaskProxy::create(*this, loader, webFrame));
     ASSERT(result.isNewEntry);
 
     WebProcess::singleton().webLoaderStrategy().addURLSchemeTaskProxy(*result.iterator->value);

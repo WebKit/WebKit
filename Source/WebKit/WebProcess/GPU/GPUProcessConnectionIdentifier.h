@@ -32,7 +32,7 @@
 namespace WebKit {
 
 enum class GPUProcessConnectionIdentifierType { };
-using GPUProcessConnectionIdentifier = LegacyNullableAtomicObjectIdentifier<GPUProcessConnectionIdentifierType>;
+using GPUProcessConnectionIdentifier = AtomicObjectIdentifier<GPUProcessConnectionIdentifierType>;
 
 } // namespace WebKit
 

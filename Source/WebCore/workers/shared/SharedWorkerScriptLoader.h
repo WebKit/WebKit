@@ -55,7 +55,7 @@ public:
     const WorkerOptions& options() const { return m_options; }
 
 private:
-    void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse&) final;
+    void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) final;
     void notifyFinished(ScriptExecutionContextIdentifier) final;
 
     const WorkerOptions m_options;

@@ -59,7 +59,7 @@ Ref<LocalFrame> ResourceLoadNotifier::protectedFrame() const
 
 void ResourceLoadNotifier::didReceiveAuthenticationChallenge(ResourceLoader* loader, const AuthenticationChallenge& currentWebChallenge)
 {
-    didReceiveAuthenticationChallenge(loader->identifier(), loader->documentLoader(), currentWebChallenge);
+    didReceiveAuthenticationChallenge(*loader->identifier(), loader->documentLoader(), currentWebChallenge);
 }
 
 void ResourceLoadNotifier::didReceiveAuthenticationChallenge(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const AuthenticationChallenge& currentWebChallenge)
@@ -71,7 +71,7 @@ void ResourceLoadNotifier::willSendRequest(ResourceLoader* loader, ResourceReque
 {
     protectedFrame()->checkedLoader()->applyUserAgentIfNeeded(clientRequest);
 
-    dispatchWillSendRequest(loader->protectedDocumentLoader().get(), loader->identifier(), clientRequest, redirectResponse, loader->protectedCachedResource().get(), loader);
+    dispatchWillSendRequest(loader->protectedDocumentLoader().get(), *loader->identifier(), clientRequest, redirectResponse, loader->protectedCachedResource().get(), loader);
 }
 
 void ResourceLoadNotifier::didReceiveResponse(ResourceLoader* loader, const ResourceResponse& r)
@@ -79,38 +79,38 @@ void ResourceLoadNotifier::didReceiveResponse(ResourceLoader* loader, const Reso
     loader->documentLoader()->addResponse(r);
 
     if (RefPtr page = m_frame->page())
-        page->checkedProgress()->incrementProgress(loader->identifier(), r);
+        page->checkedProgress()->incrementProgress(*loader->identifier(), r);
 
-    dispatchDidReceiveResponse(loader->protectedDocumentLoader().get(), loader->identifier(), r, loader);
+    dispatchDidReceiveResponse(loader->protectedDocumentLoader().get(), *loader->identifier(), r, loader);
 }
 
 void ResourceLoadNotifier::didReceiveData(ResourceLoader* loader, const SharedBuffer& buffer, int encodedDataLength)
 {
     if (RefPtr page = m_frame->page())
-        page->checkedProgress()->incrementProgress(loader->identifier(), buffer.size());
+        page->checkedProgress()->incrementProgress(*loader->identifier(), buffer.size());
 
-    dispatchDidReceiveData(loader->protectedDocumentLoader().get(), loader->identifier(), &buffer, buffer.size(), encodedDataLength);
+    dispatchDidReceiveData(loader->protectedDocumentLoader().get(), *loader->identifier(), &buffer, buffer.size(), encodedDataLength);
 }
 
 void ResourceLoadNotifier::didFinishLoad(ResourceLoader* loader, const NetworkLoadMetrics& networkLoadMetrics)
 {    
     if (RefPtr page = m_frame->page())
-        page->checkedProgress()->completeProgress(loader->identifier());
+        page->checkedProgress()->completeProgress(*loader->identifier());
 
-    dispatchDidFinishLoading(loader->protectedDocumentLoader().get(), loader->options().mode == FetchOptions::Mode::Navigate ? IsMainResourceLoad::Yes : loader->options().mode == FetchOptions::Mode::Navigate ? IsMainResourceLoad::Yes : IsMainResourceLoad::No, loader->identifier(), networkLoadMetrics, loader);
+    dispatchDidFinishLoading(loader->protectedDocumentLoader().get(), loader->options().mode == FetchOptions::Mode::Navigate ? IsMainResourceLoad::Yes : loader->options().mode == FetchOptions::Mode::Navigate ? IsMainResourceLoad::Yes : IsMainResourceLoad::No, *loader->identifier(), networkLoadMetrics, loader);
 }
 
 void ResourceLoadNotifier::didFailToLoad(ResourceLoader* loader, const ResourceError& error)
 {
     if (RefPtr page = m_frame->page())
-        page->checkedProgress()->completeProgress(loader->identifier());
+        page->checkedProgress()->completeProgress(*loader->identifier());
 
     // Notifying the LocalFrameLoaderClient may cause the frame to be destroyed.
     Ref frame = m_frame.get();
     if (!error.isNull())
-        frame->checkedLoader()->client().dispatchDidFailLoading(loader->protectedDocumentLoader().get(), loader->options().mode == FetchOptions::Mode::Navigate ? IsMainResourceLoad::Yes : IsMainResourceLoad::No, loader->identifier(), error);
+        frame->checkedLoader()->client().dispatchDidFailLoading(loader->protectedDocumentLoader().get(), loader->options().mode == FetchOptions::Mode::Navigate ? IsMainResourceLoad::Yes : IsMainResourceLoad::No, *loader->identifier(), error);
 
-    InspectorInstrumentation::didFailLoading(frame.ptr(), loader->protectedDocumentLoader().get(), loader->identifier(), error);
+    InspectorInstrumentation::didFailLoading(frame.ptr(), loader->protectedDocumentLoader().get(), *loader->identifier(), error);
 }
 
 void ResourceLoadNotifier::assignIdentifierToInitialRequest(ResourceLoaderIdentifier identifier, IsMainResourceLoad isMainResourceLoad, DocumentLoader* loader, const ResourceRequest& request)

@@ -775,7 +775,7 @@ private:
     uint64_t m_awaitedSharedPreferencesVersion { 0 };
     CompletionHandler<void(bool success)> m_sharedPreferencesForWebProcessCompletionHandler;
 #if ENABLE(GPU_PROCESS)
-    GPUProcessConnectionIdentifier m_gpuProcessConnectionIdentifier;
+    Markable<GPUProcessConnectionIdentifier> m_gpuProcessConnectionIdentifier;
 #endif
 
     ProcessThrottleState m_throttleStateForStatistics { ProcessThrottleState::Suspended };

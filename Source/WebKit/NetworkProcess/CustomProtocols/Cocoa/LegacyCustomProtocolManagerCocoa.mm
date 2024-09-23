@@ -66,10 +66,10 @@ void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkP
 
 @interface WKCustomProtocol : NSURLProtocol {
 @private
-    LegacyCustomProtocolID _customProtocolID;
+    Markable<LegacyCustomProtocolID> _customProtocolID;
     RetainPtr<CFRunLoopRef> _initializationRunLoop;
 }
-@property (nonatomic, readonly) LegacyCustomProtocolID customProtocolID;
+@property (nonatomic, readonly) Markable<LegacyCustomProtocolID> customProtocolID;
 @property (nonatomic, readonly) CFRunLoopRef initializationRunLoop;
 @end
 
@@ -114,7 +114,7 @@ void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkP
 
 - (void)startLoading
 {
-    ensureOnMainRunLoop([customProtocolID = self.customProtocolID, request = retainPtr([self request])] {
+    ensureOnMainRunLoop([customProtocolID = *self.customProtocolID, request = retainPtr([self request])] {
         if (auto* customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
             customProtocolManager->startLoading(customProtocolID, request.get());
     });
@@ -122,7 +122,7 @@ void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkP
 
 - (void)stopLoading
 {
-    ensureOnMainRunLoop([customProtocolID = self.customProtocolID] {
+    ensureOnMainRunLoop([customProtocolID = *self.customProtocolID] {
         if (auto* customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>()) {
             customProtocolManager->stopLoading(customProtocolID);
             customProtocolManager->removeCustomProtocol(customProtocolID);

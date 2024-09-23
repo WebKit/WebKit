@@ -76,7 +76,7 @@ public:
 
 private:
     // WorkerScriptLoaderClient
-    void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse&) final;
+    void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) final;
     void notifyFinished(ScriptExecutionContextIdentifier) final;
 
     ServiceWorkerJobClient& m_client;

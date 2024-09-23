@@ -70,7 +70,7 @@ WebURLSchemeTaskProxy::WebURLSchemeTaskProxy(WebURLSchemeHandlerProxy& handler, 
     , m_coreLoader(&loader)
     , m_frame(&frame)
     , m_request(loader.request())
-    , m_identifier(loader.identifier())
+    , m_identifier(*loader.identifier())
 {
 }
 
@@ -79,14 +79,14 @@ void WebURLSchemeTaskProxy::startLoading()
     ASSERT(m_coreLoader);
     ASSERT(m_frame);
     WEBURLSCHEMETASKPROXY_RELEASE_LOG("startLoading");
-    m_urlSchemeHandler.page().send(Messages::WebPageProxy::StartURLSchemeTask(URLSchemeTaskParameters { m_urlSchemeHandler.identifier(), m_coreLoader->identifier(), m_request, m_frame->info() }));
+    m_urlSchemeHandler.page().send(Messages::WebPageProxy::StartURLSchemeTask(URLSchemeTaskParameters { m_urlSchemeHandler.identifier(), *m_coreLoader->identifier(), m_request, m_frame->info() }));
 }
 
 void WebURLSchemeTaskProxy::stopLoading()
 {
     ASSERT(m_coreLoader);
     WEBURLSCHEMETASKPROXY_RELEASE_LOG("stopLoading");
-    m_urlSchemeHandler.page().send(Messages::WebPageProxy::StopURLSchemeTask(m_urlSchemeHandler.identifier(), m_coreLoader->identifier()));
+    m_urlSchemeHandler.page().send(Messages::WebPageProxy::StopURLSchemeTask(m_urlSchemeHandler.identifier(), *m_coreLoader->identifier()));
     m_coreLoader = nullptr;
     m_frame = nullptr;
 

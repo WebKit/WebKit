@@ -297,7 +297,7 @@ void DocumentLoader::mainReceivedError(const ResourceError& error, LoadWillConti
 
     if (m_identifierForLoadWithoutResourceLoader) {
         ASSERT(!mainResourceLoader());
-        checkedFrameLoader()->client().dispatchDidFailLoading(this, IsMainResourceLoad::Yes, m_identifierForLoadWithoutResourceLoader, error);
+        checkedFrameLoader()->client().dispatchDidFailLoading(this, IsMainResourceLoad::Yes, *m_identifierForLoadWithoutResourceLoader, error);
     }
 
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
@@ -483,8 +483,7 @@ void DocumentLoader::finishedLoading()
         // before calling dispatchDidFinishLoading so that we don't later try to
         // cancel the already-finished substitute load.
         NetworkLoadMetrics emptyMetrics;
-        ResourceLoaderIdentifier identifier = m_identifierForLoadWithoutResourceLoader;
-        m_identifierForLoadWithoutResourceLoader = { };
+        ResourceLoaderIdentifier identifier = *std::exchange(m_identifierForLoadWithoutResourceLoader, std::nullopt);
         checkedFrameLoader()->notifier().dispatchDidFinishLoading(this, IsMainResourceLoad::Yes, identifier, emptyMetrics, nullptr);
     }
 
@@ -837,8 +836,8 @@ bool DocumentLoader::tryLoadingSubstituteData()
 
     DOCUMENTLOADER_RELEASE_LOG("startLoadingMainResource: Returning substitute data");
     m_identifierForLoadWithoutResourceLoader = ResourceLoaderIdentifier::generate();
-    checkedFrameLoader()->notifier().assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, IsMainResourceLoad::No, this, m_request);
-    checkedFrameLoader()->notifier().dispatchWillSendRequest(this, m_identifierForLoadWithoutResourceLoader, m_request, ResourceResponse(), nullptr);
+    checkedFrameLoader()->notifier().assignIdentifierToInitialRequest(*m_identifierForLoadWithoutResourceLoader, IsMainResourceLoad::No, this, m_request);
+    checkedFrameLoader()->notifier().dispatchWillSendRequest(this, *m_identifierForLoadWithoutResourceLoader, m_request, ResourceResponse(), nullptr);
 
     if (!m_deferMainResourceDataLoad || checkedFrameLoader()->loadsSynchronously())
         handleSubstituteDataLoadNow();
@@ -983,8 +982,7 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
         return;
 
     ASSERT(m_identifierForLoadWithoutResourceLoader || m_mainResource);
-    ResourceLoaderIdentifier identifier = m_identifierForLoadWithoutResourceLoader ? m_identifierForLoadWithoutResourceLoader : m_mainResource->identifier();
-    ASSERT(identifier);
+    ResourceLoaderIdentifier identifier = m_identifierForLoadWithoutResourceLoader ? *m_identifierForLoadWithoutResourceLoader : *m_mainResource->identifier();
 
     if (m_substituteData.isValid() || !platformStrategies()->loaderStrategy()->havePerformedSecurityChecks(response)) {
         auto url = response.url();
@@ -1028,7 +1026,7 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
             checkedFrameLoader()->client().dispatchDidReceiveServerRedirectForProvisionalLoad();
         }
         addResponse(m_response);
-        checkedFrameLoader()->notifier().dispatchDidReceiveResponse(this, m_identifierForLoadWithoutResourceLoader, m_response, 0);
+        checkedFrameLoader()->notifier().dispatchDidReceiveResponse(this, *m_identifierForLoadWithoutResourceLoader, m_response, 0);
     }
 
     ASSERT(!m_waitingForContentPolicy);
@@ -1107,9 +1105,7 @@ bool DocumentLoader::disallowDataRequest() const
         return false;
 
     if (auto* currentDocument = frame()->document()) {
-        ResourceLoaderIdentifier identifier = m_identifierForLoadWithoutResourceLoader ? m_identifierForLoadWithoutResourceLoader : m_mainResource->identifier();
-        ASSERT(identifier);
-
+        ResourceLoaderIdentifier identifier = m_identifierForLoadWithoutResourceLoader ? *m_identifierForLoadWithoutResourceLoader : *m_mainResource->identifier();
         currentDocument->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Not allowed to navigate top frame to data URL '"_s, m_response.url().stringCenterEllipsizedToLength(), "'."_s), identifier.toUInt64());
     }
     DOCUMENTLOADER_RELEASE_LOG("continueAfterContentPolicy: cannot show URL");
@@ -1149,7 +1145,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
         }
 
         if (ResourceLoader* mainResourceLoader = this->mainResourceLoader())
-            InspectorInstrumentation::continueWithPolicyDownload(*m_frame, mainResourceLoader->identifier(), *this, m_response);
+            InspectorInstrumentation::continueWithPolicyDownload(*m_frame, *mainResourceLoader->identifier(), *this, m_response);
 
         if (!m_frame->effectiveSandboxFlags().contains(SandboxFlag::Downloads)) {
             // When starting the request, we didn't know that it would result in download and not navigation. Now we know that main document URL didn't change.
@@ -1182,7 +1178,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
 #endif
     case PolicyAction::Ignore:
         if (ResourceLoader* mainResourceLoader = this->mainResourceLoader())
-            InspectorInstrumentation::continueWithPolicyIgnore(*m_frame, mainResourceLoader->identifier(), *this, m_response);
+            InspectorInstrumentation::continueWithPolicyIgnore(*m_frame, *mainResourceLoader->identifier(), *this, m_response);
         stopLoadingForPolicyChange();
         return;
     }
@@ -1398,7 +1394,7 @@ void DocumentLoader::dataReceived(const SharedBuffer& buffer)
 #endif
 
     if (m_identifierForLoadWithoutResourceLoader)
-        checkedFrameLoader()->notifier().dispatchDidReceiveData(this, m_identifierForLoadWithoutResourceLoader, &buffer, buffer.size(), -1);
+        checkedFrameLoader()->notifier().dispatchDidReceiveData(this, *m_identifierForLoadWithoutResourceLoader, &buffer, buffer.size(), -1);
 
     m_applicationCacheHost->mainResourceDataReceived(buffer, -1, false);
 
@@ -1987,8 +1983,8 @@ void DocumentLoader::addSubresourceLoader(SubresourceLoader& loader)
     // if we are just starting the main resource load.
     if (!m_gotFirstByte)
         return;
-    ASSERT(loader.identifier());
-    ASSERT(!m_subresourceLoaders.contains(loader.identifier()));
+
+    ASSERT(!m_subresourceLoaders.contains(*loader.identifier()));
     ASSERT(!mainResourceLoader() || mainResourceLoader() != &loader);
 
     // Application Cache loaders are handled by their ApplicationCacheGroup directly.
@@ -2014,14 +2010,12 @@ void DocumentLoader::addSubresourceLoader(SubresourceLoader& loader)
     }
 #endif
 
-    m_subresourceLoaders.add(loader.identifier(), &loader);
+    m_subresourceLoaders.add(*loader.identifier(), &loader);
 }
 
 void DocumentLoader::removeSubresourceLoader(LoadCompletionType type, SubresourceLoader& loader)
 {
-    ASSERT(loader.identifier());
-
-    if (!m_subresourceLoaders.remove(loader.identifier()))
+    if (!m_subresourceLoaders.remove(*loader.identifier()))
         return;
     checkLoadComplete();
     if (RefPtr frame = m_frame.get())
@@ -2030,18 +2024,16 @@ void DocumentLoader::removeSubresourceLoader(LoadCompletionType type, Subresourc
 
 void DocumentLoader::addPlugInStreamLoader(ResourceLoader& loader)
 {
-    ASSERT(loader.identifier());
-    ASSERT(!m_plugInStreamLoaders.contains(loader.identifier()));
+    ASSERT(!m_plugInStreamLoaders.contains(*loader.identifier()));
 
-    m_plugInStreamLoaders.add(loader.identifier(), &loader);
+    m_plugInStreamLoaders.add(*loader.identifier(), &loader);
 }
 
 void DocumentLoader::removePlugInStreamLoader(ResourceLoader& loader)
 {
-    ASSERT(loader.identifier());
-    ASSERT(&loader == m_plugInStreamLoaders.get(loader.identifier()));
+    ASSERT(&loader == m_plugInStreamLoaders.get(*loader.identifier()));
 
-    m_plugInStreamLoaders.remove(loader.identifier());
+    m_plugInStreamLoaders.remove(*loader.identifier());
     checkLoadComplete();
 }
 
@@ -2321,8 +2313,8 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
 
     if (!mainResourceLoader()) {
         m_identifierForLoadWithoutResourceLoader = ResourceLoaderIdentifier::generate();
-        checkedFrameLoader()->notifier().assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, IsMainResourceLoad::Yes, this, mainResourceRequest.resourceRequest());
-        checkedFrameLoader()->notifier().dispatchWillSendRequest(this, m_identifierForLoadWithoutResourceLoader, mainResourceRequest.resourceRequest(), ResourceResponse(), nullptr);
+        checkedFrameLoader()->notifier().assignIdentifierToInitialRequest(*m_identifierForLoadWithoutResourceLoader, IsMainResourceLoad::Yes, this, mainResourceRequest.resourceRequest());
+        checkedFrameLoader()->notifier().dispatchWillSendRequest(this, *m_identifierForLoadWithoutResourceLoader, mainResourceRequest.resourceRequest(), ResourceResponse(), nullptr);
     }
 
     becomeMainResourceClient();
@@ -2388,8 +2380,7 @@ void DocumentLoader::clearMainResource()
 
 void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader& loader)
 {
-    ResourceLoaderIdentifier identifier = loader.identifier();
-    ASSERT(identifier);
+    auto identifier = *loader.identifier();
 
     if (!m_multipartSubresourceLoaders.add(identifier, &loader).isNewEntry) {
         ASSERT(m_multipartSubresourceLoaders.get(identifier) == &loader);

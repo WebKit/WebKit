@@ -58,7 +58,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/MakeString.h>
 
-#define WEBRESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", durationSeconds=%.3f] WebResourceLoader::" fmt, this, m_trackingParameters.pageID ? m_trackingParameters.pageID->toUInt64() : 0, m_trackingParameters.frameID ? m_trackingParameters.frameID->object().toUInt64() : 0, m_trackingParameters.resourceID.toUInt64(), timeSinceLoadStart().value(), ##__VA_ARGS__)
+#define WEBRESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", durationSeconds=%.3f] WebResourceLoader::" fmt, this, m_trackingParameters.pageID ? m_trackingParameters.pageID->toUInt64() : 0, m_trackingParameters.frameID ? m_trackingParameters.frameID->object().toUInt64() : 0, m_trackingParameters.resourceID ? m_trackingParameters.resourceID->toUInt64() : 0, timeSinceLoadStart().value(), ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
@@ -88,8 +88,7 @@ IPC::Connection* WebResourceLoader::messageSenderConnection() const
 uint64_t WebResourceLoader::messageSenderDestinationID() const
 {
     RELEASE_ASSERT(RunLoop::isMain());
-    RELEASE_ASSERT(m_coreLoader->identifier());
-    return m_coreLoader->identifier().toUInt64();
+    return m_coreLoader->identifier()->toUInt64();
 }
 
 void WebResourceLoader::detachFromCoreLoader()
@@ -108,7 +107,7 @@ MainFrameMainResource WebResourceLoader::mainFrameMainResource() const
     if (!frameLoader)
         return MainFrameMainResource::No;
 
-    if (!frameLoader->notifier().isInitialRequestIdentifier(m_coreLoader->identifier()))
+    if (!frameLoader->notifier().isInitialRequestIdentifier(*m_coreLoader->identifier()))
         return MainFrameMainResource::No;
 
     return MainFrameMainResource::Yes;
@@ -180,7 +179,7 @@ void WebResourceLoader::didReceiveResponse(ResourceResponse&& response, PrivateR
     }
 
     if (InspectorInstrumentationWebKit::shouldInterceptResponse(m_coreLoader->frame(), response)) {
-        auto interceptedRequestIdentifier = m_coreLoader->identifier();
+        auto interceptedRequestIdentifier = *m_coreLoader->identifier();
         m_interceptController.beginInterceptingResponse(interceptedRequestIdentifier);
         InspectorInstrumentationWebKit::interceptResponse(m_coreLoader->frame(), response, interceptedRequestIdentifier, [this, protectedThis = Ref { *this }, interceptedRequestIdentifier, policyDecisionCompletionHandler = WTFMove(policyDecisionCompletionHandler)](const ResourceResponse& inspectorResponse, RefPtr<FragmentedSharedBuffer> overrideData) mutable {
             if (!m_coreLoader || !m_coreLoader->identifier()) {
@@ -221,8 +220,8 @@ void WebResourceLoader::didReceiveData(IPC::SharedBufferReference&& data, uint64
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveData of size %lu for '%s'", data.size(), m_coreLoader->url().string().latin1().data());
     ASSERT_WITH_MESSAGE(!m_isProcessingNetworkResponse, "Network process should not send data until we've validated the response");
 
-    if (UNLIKELY(m_interceptController.isIntercepting(m_coreLoader->identifier()))) {
-        m_interceptController.defer(m_coreLoader->identifier(), [this, protectedThis = Ref { *this }, buffer = WTFMove(data), encodedDataLength]() mutable {
+    if (UNLIKELY(m_interceptController.isIntercepting(*m_coreLoader->identifier()))) {
+        m_interceptController.defer(*m_coreLoader->identifier(), [this, protectedThis = Ref { *this }, buffer = WTFMove(data), encodedDataLength]() mutable {
             if (m_coreLoader)
                 didReceiveData(WTFMove(buffer), encodedDataLength);
         });
@@ -241,8 +240,8 @@ void WebResourceLoader::didFinishResourceLoad(NetworkLoadMetrics&& networkLoadMe
     LOG(Network, "(WebProcess) WebResourceLoader::didFinishResourceLoad for '%s'", m_coreLoader->url().string().latin1().data());
     WEBRESOURCELOADER_RELEASE_LOG("didFinishResourceLoad: (length=%zd)", m_numBytesReceived);
 
-    if (UNLIKELY(m_interceptController.isIntercepting(m_coreLoader->identifier()))) {
-        m_interceptController.defer(m_coreLoader->identifier(), [this, protectedThis = Ref { *this }, networkLoadMetrics = WTFMove(networkLoadMetrics)]() mutable {
+    if (UNLIKELY(m_interceptController.isIntercepting(*m_coreLoader->identifier()))) {
+        m_interceptController.defer(*m_coreLoader->identifier(), [this, protectedThis = Ref { *this }, networkLoadMetrics = WTFMove(networkLoadMetrics)]() mutable {
             if (m_coreLoader)
                 didFinishResourceLoad(WTFMove(networkLoadMetrics));
         });
@@ -282,8 +281,8 @@ void WebResourceLoader::didFailResourceLoad(const ResourceError& error)
     LOG(Network, "(WebProcess) WebResourceLoader::didFailResourceLoad for '%s'", m_coreLoader->url().string().latin1().data());
     WEBRESOURCELOADER_RELEASE_LOG("didFailResourceLoad:");
 
-    if (UNLIKELY(m_interceptController.isIntercepting(m_coreLoader->identifier()))) {
-        m_interceptController.defer(m_coreLoader->identifier(), [this, protectedThis = Ref { *this }, error]() mutable {
+    if (UNLIKELY(m_interceptController.isIntercepting(*m_coreLoader->identifier()))) {
+        m_interceptController.defer(*m_coreLoader->identifier(), [this, protectedThis = Ref { *this }, error]() mutable {
             if (m_coreLoader)
                 didFailResourceLoad(error);
         });
@@ -308,7 +307,7 @@ void WebResourceLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDeni
     LOG(Network, "(WebProcess) WebResourceLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied for '%s'", m_coreLoader->url().string().latin1().data());
     WEBRESOURCELOADER_RELEASE_LOG("stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied:");
 
-    m_coreLoader->documentLoader()->stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(m_coreLoader->identifier(), response);
+    m_coreLoader->documentLoader()->stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(*m_coreLoader->identifier(), response);
 }
 
 #if ENABLE(SHAREABLE_RESOURCE)

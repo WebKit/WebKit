@@ -118,7 +118,7 @@ public:
     NetworkConnectionToWebProcess& connectionToWebProcess() const { return m_connection; }
     Ref<NetworkConnectionToWebProcess> protectedConnectionToWebProcess() const;
     PAL::SessionID sessionID() const { return m_connection->sessionID(); }
-    WebCore::ResourceLoaderIdentifier coreIdentifier() const { return m_parameters.identifier; }
+    WebCore::ResourceLoaderIdentifier coreIdentifier() const { return *m_parameters.identifier; }
     WebCore::FrameIdentifier frameID() const { return *m_parameters.webFrameID; }
     WebCore::PageIdentifier pageID() const { return *m_parameters.webPageID; }
     const NetworkResourceLoadParameters& parameters() const { return m_parameters; }
@@ -192,7 +192,7 @@ private:
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const override;
-    uint64_t messageSenderDestinationID() const override { return m_parameters.identifier.toUInt64(); }
+    uint64_t messageSenderDestinationID() const override { return m_parameters.identifier->toUInt64(); }
 
 #if ENABLE(CONTENT_FILTERING)
     // ContentFilterClient

@@ -174,7 +174,7 @@ bool FileReaderLoader::processResponse(const ResourceResponse& response)
     return true;
 }
 
-void FileReaderLoader::didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse& response)
+void FileReaderLoader::didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse& response)
 {
     if (!processResponse(response))
         return;
@@ -240,7 +240,7 @@ void FileReaderLoader::didReceiveData(const SharedBuffer& buffer)
         m_client->didReceiveData();
 }
 
-void FileReaderLoader::didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&)
+void FileReaderLoader::didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&)
 {
     if (m_variableLength && m_totalBytes > m_bytesLoaded) {
         m_rawData = m_rawData->slice(0, m_bytesLoaded);

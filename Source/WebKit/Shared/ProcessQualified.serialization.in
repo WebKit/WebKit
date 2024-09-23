@@ -28,7 +28,7 @@ additional_forward_declaration: namespace WebCore { using OpaqueOriginIdentifier
 additional_forward_declaration: namespace WebCore { using PlatformLayerIdentifierID = ObjectIdentifier<PlatformLayerIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using ScrollingNodeIdentifier = LegacyNullableObjectIdentifier<ScrollingNodeIDType>; }
 additional_forward_declaration: namespace WebCore { using SharedWorkerObjectIdentifierID = LegacyNullableObjectIdentifier<SharedWorkerObjectIdentifierType>; }
-additional_forward_declaration: namespace WebCore { using WebLockIdentifierID = LegacyNullableAtomicObjectIdentifier<WebLockIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using WebLockIdentifierID = AtomicObjectIdentifier<WebLockIdentifierType>; }
 
 header: <WebCore/ProcessQualified.h>
 [Alias=class ProcessQualified<BackForwardItemIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::BackForwardItemIdentifier {

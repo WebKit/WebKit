@@ -418,7 +418,7 @@ private:
         }
 
         WebCore::PageIdentifier pageID;
-        WebCore::ResourceLoaderIdentifier resourceID;
+        Markable<WebCore::ResourceLoaderIdentifier> resourceID;
         bool isRootActivity { false };
         NetworkActivityTracker networkActivity;
     };

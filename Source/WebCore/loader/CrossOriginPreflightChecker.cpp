@@ -107,10 +107,10 @@ void CrossOriginPreflightChecker::notifyFinished(CachedResource& resource, const
 
         if (!preflightError.isTimeout())
             loader->document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, "CORS-preflight request was blocked"_s);
-        loader->preflightFailure(m_resource->identifier(), preflightError);
+        loader->preflightFailure(*m_resource->identifier(), preflightError);
         return;
     }
-    validatePreflightResponse(loader, WTFMove(m_request), m_resource->identifier(), m_resource->response());
+    validatePreflightResponse(loader, WTFMove(m_request), *m_resource->identifier(), m_resource->response());
 }
 
 Ref<DocumentThreadableLoader> CrossOriginPreflightChecker::protectedLoader() const
@@ -121,7 +121,7 @@ Ref<DocumentThreadableLoader> CrossOriginPreflightChecker::protectedLoader() con
 void CrossOriginPreflightChecker::redirectReceived(CachedResource& resource, ResourceRequest&&, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
-    validatePreflightResponse(protectedLoader(), WTFMove(m_request), m_resource->identifier(), response);
+    validatePreflightResponse(protectedLoader(), WTFMove(m_request), *m_resource->identifier(), response);
     completionHandler(ResourceRequest { });
 }
 

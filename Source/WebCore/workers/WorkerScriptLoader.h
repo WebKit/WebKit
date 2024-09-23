@@ -87,14 +87,14 @@ public:
     const String& responseMIMEType() const { return m_responseMIMEType; }
     ResourceResponse::Tainting responseTainting() const { return m_responseTainting; }
     bool failed() const { return m_failed; }
-    ResourceLoaderIdentifier identifier() const { return m_identifier; }
+    ResourceLoaderIdentifier identifier() const { return *m_identifier; }
     const ResourceError& error() const { return m_error; }
 
     WorkerFetchResult fetchResult() const;
 
-    void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse&) override;
+    void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) override;
     void didReceiveData(const SharedBuffer&) override;
-    void didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics&) override;
+    void didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&) override;
     void didFail(ScriptExecutionContextIdentifier, const ResourceError&) override;
 
     void cancel();
@@ -150,7 +150,7 @@ private:
     ContentSecurityPolicyResponseHeaders m_contentSecurityPolicy;
     String m_referrerPolicy;
     CrossOriginEmbedderPolicy m_crossOriginEmbedderPolicy;
-    ResourceLoaderIdentifier m_identifier;
+    Markable<ResourceLoaderIdentifier> m_identifier;
     bool m_failed { false };
     bool m_finishing { false };
     bool m_isRedirected { false };

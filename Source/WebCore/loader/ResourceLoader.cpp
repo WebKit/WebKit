@@ -79,7 +79,7 @@
 #undef RESOURCELOADER_RELEASE_LOG
 #define PAGE_ID (frame() && frame()->pageID() ? frame()->pageID()->toUInt64() : 0)
 #define FRAME_ID (frame() ? frame()->frameID().object().toUInt64() : 0)
-#define RESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", frameLoader=%p, resourceID=%" PRIu64 "] ResourceLoader::" fmt, this, PAGE_ID, FRAME_ID, frameLoader(), identifier().toUInt64(), ##__VA_ARGS__)
+#define RESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", frameLoader=%p, resourceID=%" PRIu64 "] ResourceLoader::" fmt, this, PAGE_ID, FRAME_ID, frameLoader(), identifier() ? identifier()->toUInt64() : 0, ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -128,7 +128,7 @@ void ResourceLoader::releaseResources()
 
     finishNetworkLoad();
 
-    m_identifier = { };
+    m_identifier = std::nullopt;
 
     m_resourceData.reset();
     m_deferredRequest = ResourceRequest();
@@ -459,7 +459,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
 
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks) {
         if (createdResourceIdentifier)
-            checkedFrameLoader()->notifier().assignIdentifierToInitialRequest(m_identifier, options().mode == FetchOptions::Mode::Navigate ? IsMainResourceLoad::Yes : IsMainResourceLoad::No, protectedDocumentLoader().get(), request);
+            checkedFrameLoader()->notifier().assignIdentifierToInitialRequest(*m_identifier, options().mode == FetchOptions::Mode::Navigate ? IsMainResourceLoad::Yes : IsMainResourceLoad::No, protectedDocumentLoader().get(), request);
 
 #if PLATFORM(IOS_FAMILY)
         // If this ResourceLoader was stopped as a result of assignIdentifierToInitialRequest, bail out
@@ -473,7 +473,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
         checkedFrameLoader()->notifier().willSendRequest(this, request, redirectResponse);
     }
     else
-        InspectorInstrumentation::willSendRequest(protectedFrame().get(), m_identifier, m_frame->loader().protectedDocumentLoader().get(), request, redirectResponse, protectedCachedResource().get(), this);
+        InspectorInstrumentation::willSendRequest(protectedFrame().get(), *m_identifier, m_frame->loader().protectedDocumentLoader().get(), request, redirectResponse, protectedCachedResource().get(), this);
 
 #if USE(QUICK_LOOK)
     if (m_documentLoader) {
@@ -836,7 +836,7 @@ bool ResourceLoader::shouldUseCredentialStorage()
     }
 
     Ref protectedThis { *this };
-    return checkedFrameLoader()->client().shouldUseCredentialStorage(protectedDocumentLoader().get(), identifier());
+    return checkedFrameLoader()->client().shouldUseCredentialStorage(protectedDocumentLoader().get(), *identifier());
 }
 
 bool ResourceLoader::isAllowedToAskUserForCredentials() const
@@ -886,7 +886,7 @@ void ResourceLoader::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*,
 bool ResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {
     Ref protectedThis { *this };
-    return checkedFrameLoader()->client().canAuthenticateAgainstProtectionSpace(protectedDocumentLoader().get(), identifier(), protectionSpace);
+    return checkedFrameLoader()->client().canAuthenticateAgainstProtectionSpace(protectedDocumentLoader().get(), *identifier(), protectionSpace);
 }
 
 #endif
