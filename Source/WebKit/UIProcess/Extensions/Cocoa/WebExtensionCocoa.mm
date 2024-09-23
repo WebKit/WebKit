@@ -87,23 +87,11 @@ static NSString * const defaultLocaleManifestKey = @"default_locale";
 static NSString * const defaultTitleManifestKey = @"default_title";
 static NSString * const defaultPopupManifestKey = @"default_popup";
 
-static NSString * const backgroundManifestKey = @"background";
-static NSString * const backgroundPageManifestKey = @"page";
-static NSString * const backgroundServiceWorkerManifestKey = @"service_worker";
-static NSString * const backgroundScriptsManifestKey = @"scripts";
-static NSString * const backgroundPersistentManifestKey = @"persistent";
-static NSString * const backgroundPageTypeKey = @"type";
-static NSString * const backgroundPageTypeModuleValue = @"module";
-static NSString * const backgroundPreferredEnvironmentManifestKey = @"preferred_environment";
-static NSString * const backgroundDocumentManifestKey = @"document";
-
 static NSString * const optionsUIManifestKey = @"options_ui";
 static NSString * const browserURLOverridesManifestKey = @"browser_url_overrides";
 
 static NSString * const generatedBackgroundPageFilename = @"_generated_background_page.html";
 static NSString * const generatedBackgroundServiceWorkerFilename = @"_generated_service_worker.js";
-
-static NSString * const devtoolsPageManifestKey = @"devtools_page";
 
 static NSString * const permissionsManifestKey = @"permissions";
 static NSString * const optionalPermissionsManifestKey = @"optional_permissions";
@@ -478,11 +466,7 @@ NSString *WebExtension::resourceStringForPath(NSString *path, NSError **outError
     if (NSString *cachedString = objectForKey<NSString>(m_resources, path))
         return cachedString;
 
-    bool isServiceWorker = backgroundContentIsServiceWorker();
-    if (!isServiceWorker && [path isEqualToString:generatedBackgroundPageFilename])
-        return generatedBackgroundContent();
-
-    if (isServiceWorker && [path isEqualToString:generatedBackgroundServiceWorkerFilename])
+    if ([path isEqualToString:generatedBackgroundPageFilename] || [path isEqualToString:generatedBackgroundServiceWorkerFilename])
         return generatedBackgroundContent();
 
     NSData *data = resourceDataForPath(path, outError, CacheResult::No, suppressErrors);
@@ -548,12 +532,8 @@ NSData *WebExtension::resourceDataForPath(NSString *path, NSError **outError, Ca
         return result;
     }
 
-    bool isServiceWorker = backgroundContentIsServiceWorker();
-    if (!isServiceWorker && [path isEqualToString:generatedBackgroundPageFilename])
-        return [generatedBackgroundContent() dataUsingEncoding:NSUTF8StringEncoding];
-
-    if (isServiceWorker && [path isEqualToString:generatedBackgroundServiceWorkerFilename])
-        return [generatedBackgroundContent() dataUsingEncoding:NSUTF8StringEncoding];
+    if ([path isEqualToString:generatedBackgroundPageFilename] || [path isEqualToString:generatedBackgroundServiceWorkerFilename])
+        return [static_cast<NSString *>(generatedBackgroundContent()) dataUsingEncoding:NSUTF8StringEncoding];
 
     NSURL *resourceURL = resourceFileURLForPath(path);
     if (!resourceURL) {
@@ -586,11 +566,6 @@ NSData *WebExtension::resourceDataForPath(NSString *path, NSError **outError, Ca
     }
 
     return resultData;
-}
-
-bool WebExtension::hasRequestedPermission(NSString *permission) const
-{
-    return m_permissions.contains(permission);
 }
 
 static WKWebExtensionError toAPI(WebExtension::Error error)
@@ -1465,234 +1440,6 @@ CocoaImage *WebExtension::bestImageForIconVariantsManifestKey(NSDictionary *dict
     return result;
 }
 #endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
-
-bool WebExtension::hasBackgroundContent()
-{
-    populateBackgroundPropertiesIfNeeded();
-    return m_backgroundScriptPaths.get().count || m_backgroundPagePath || m_backgroundServiceWorkerPath;
-}
-
-bool WebExtension::backgroundContentIsPersistent()
-{
-    populateBackgroundPropertiesIfNeeded();
-    return hasBackgroundContent() && m_backgroundContentIsPersistent;
-}
-
-bool WebExtension::backgroundContentUsesModules()
-{
-    populateBackgroundPropertiesIfNeeded();
-    return hasBackgroundContent() && m_backgroundContentUsesModules;
-}
-
-bool WebExtension::backgroundContentIsServiceWorker()
-{
-    populateBackgroundPropertiesIfNeeded();
-    return m_backgroundContentEnvironment == Environment::ServiceWorker;
-}
-
-NSString *WebExtension::backgroundContentPath()
-{
-    populateBackgroundPropertiesIfNeeded();
-
-    if (m_backgroundServiceWorkerPath)
-        return m_backgroundServiceWorkerPath.get();
-
-    if (m_backgroundScriptPaths.get().count)
-        return backgroundContentIsServiceWorker() ? generatedBackgroundServiceWorkerFilename : generatedBackgroundPageFilename;
-
-    if (m_backgroundPagePath)
-        return m_backgroundPagePath.get();
-
-    ASSERT_NOT_REACHED();
-    return nil;
-}
-
-NSString *WebExtension::generatedBackgroundContent()
-{
-    if (m_generatedBackgroundContent)
-        return m_generatedBackgroundContent.get();
-
-    populateBackgroundPropertiesIfNeeded();
-
-    if (m_backgroundServiceWorkerPath || m_backgroundPagePath)
-        return nil;
-
-    if (!m_backgroundScriptPaths.get().count)
-        return nil;
-
-    bool isServiceWorker = backgroundContentIsServiceWorker();
-    bool usesModules = backgroundContentUsesModules();
-
-    auto *scriptsArray = mapObjects(m_backgroundScriptPaths, ^(NSNumber *index, NSString *scriptPath) {
-        if (isServiceWorker) {
-            if (usesModules)
-                return [NSString stringWithFormat:@"import \"./%@\";", scriptPath];
-            return [NSString stringWithFormat:@"importScripts(\"%@\");", scriptPath];
-        }
-
-        if (usesModules)
-            return [NSString stringWithFormat:@"<script type=\"module\" src=\"%@\"></script>", scriptPath];
-        return [NSString stringWithFormat:@"<script src=\"%@\"></script>", scriptPath];
-    });
-
-    if (isServiceWorker)
-        m_generatedBackgroundContent = [scriptsArray componentsJoinedByString:@"\n"];
-    else
-        m_generatedBackgroundContent = [NSString stringWithFormat:@"<!DOCTYPE html>\n<body>\n%@\n</body>", [scriptsArray componentsJoinedByString:@"\n"]];
-
-    return m_generatedBackgroundContent.get();
-}
-
-void WebExtension::populateBackgroundPropertiesIfNeeded()
-{
-    if (!manifestParsedSuccessfully())
-        return;
-
-    if (m_parsedManifestBackgroundProperties)
-        return;
-
-    m_parsedManifestBackgroundProperties = true;
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/background
-
-    auto *backgroundManifestDictionary = objectForKey<NSDictionary>(m_manifest, backgroundManifestKey);
-    if (!backgroundManifestDictionary.count) {
-        if ([m_manifest objectForKey:backgroundManifestKey])
-            recordError(createError(Error::InvalidBackgroundContent));
-        return;
-    }
-
-    m_backgroundScriptPaths = objectForKey<NSArray>(backgroundManifestDictionary, backgroundScriptsManifestKey, true, NSString.class);
-    m_backgroundPagePath = objectForKey<NSString>(backgroundManifestDictionary, backgroundPageManifestKey);
-    m_backgroundServiceWorkerPath = objectForKey<NSString>(backgroundManifestDictionary, backgroundServiceWorkerManifestKey);
-    m_backgroundContentUsesModules = [objectForKey<NSString>(backgroundManifestDictionary, backgroundPageTypeKey) isEqualToString:backgroundPageTypeModuleValue];
-
-    m_backgroundScriptPaths = filterObjects(m_backgroundScriptPaths, ^(NSNumber *index, NSString *scriptPath) {
-        return !!scriptPath.length;
-    });
-
-    static auto *supportedEnvironments = [NSOrderedSet orderedSetWithObjects:backgroundDocumentManifestKey, backgroundServiceWorkerManifestKey, nil];
-
-    NSOrderedSet *preferredEnvironments;
-    if (auto *environment = objectForKey<NSString>(backgroundManifestDictionary, backgroundPreferredEnvironmentManifestKey)) {
-        if ([supportedEnvironments containsObject:environment])
-            preferredEnvironments = [NSOrderedSet orderedSetWithObject:environment];
-    } else if (auto *environments = objectForKey<NSArray>(backgroundManifestDictionary, backgroundPreferredEnvironmentManifestKey, true, NSString.class)) {
-        auto *filteredEnvironments = filterObjects(environments, ^bool(NSNumber *, NSString *environment) {
-            return [supportedEnvironments containsObject:environment];
-        });
-
-        preferredEnvironments = [NSOrderedSet orderedSetWithArray:filteredEnvironments];
-    } else if (backgroundManifestDictionary[backgroundPreferredEnvironmentManifestKey])
-        recordError(createError(Error::InvalidBackgroundContent, WEB_UI_STRING("Manifest `background` entry has an empty or invalid `preferred_environment` key.", "WKWebExtensionErrorInvalidBackgroundContent description for empty or invalid preferred environment key")));
-
-    for (NSString *environment in preferredEnvironments) {
-        if ([environment isEqualToString:backgroundDocumentManifestKey]) {
-            m_backgroundContentEnvironment = Environment::Document;
-            m_backgroundServiceWorkerPath = nil;
-
-            if (m_backgroundPagePath) {
-                // Page takes precedence over scripts and service worker.
-                m_backgroundScriptPaths = nil;
-                break;
-            }
-
-            if (m_backgroundScriptPaths.get().count) {
-                // Scripts takes precedence over service worker.
-                break;
-            }
-
-            recordError(createError(Error::InvalidBackgroundContent, WEB_UI_STRING("Manifest `background` entry has missing or empty required `page` or `scripts` key for `preferred_environment` of `document`.", "WKWebExtensionErrorInvalidBackgroundContent description for missing background page or scripts keys")));
-            break;
-        }
-
-        if ([environment isEqualToString:backgroundServiceWorkerManifestKey]) {
-            m_backgroundContentEnvironment = Environment::ServiceWorker;
-            m_backgroundPagePath = nil;
-
-            if (m_backgroundServiceWorkerPath) {
-                // Service worker takes precedence over scripts and page.
-                m_backgroundScriptPaths = nil;
-                break;
-            }
-
-            if (m_backgroundScriptPaths.get().count) {
-                // Scripts takes precedence over page.
-                break;
-            }
-
-            recordError(createError(Error::InvalidBackgroundContent, WEB_UI_STRING("Manifest `background` entry has missing or empty required `service_worker` or `scripts` key for `preferred_environment` of `service_worker`.", "WKWebExtensionErrorInvalidBackgroundContent description for missing background service_worker or scripts keys")));
-            break;
-        }
-    }
-
-    if (!preferredEnvironments.count) {
-        // Page takes precedence over service worker.
-        if (m_backgroundPagePath)
-            m_backgroundServiceWorkerPath = nil;
-
-        // Scripts takes precedence over page and service worker.
-        if (m_backgroundScriptPaths.get().count) {
-            m_backgroundServiceWorkerPath = nil;
-            m_backgroundPagePath = nil;
-        }
-
-        m_backgroundContentEnvironment = m_backgroundServiceWorkerPath ? Environment::ServiceWorker : Environment::Document;
-
-        if (!m_backgroundScriptPaths.get().count && !m_backgroundPagePath && !m_backgroundServiceWorkerPath)
-            recordError(createError(Error::InvalidBackgroundContent, WEB_UI_STRING("Manifest `background` entry has missing or empty required `scripts`, `page`, or `service_worker` key.", "WKWebExtensionErrorInvalidBackgroundContent description for missing background required keys")));
-    }
-
-    auto *persistentBoolean = objectForKey<NSNumber>(backgroundManifestDictionary, backgroundPersistentManifestKey);
-    m_backgroundContentIsPersistent = persistentBoolean ? persistentBoolean.boolValue : !(supportsManifestVersion(3) || m_backgroundServiceWorkerPath);
-
-    if (m_backgroundContentIsPersistent && supportsManifestVersion(3)) {
-        recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Invalid `persistent` manifest entry. A `manifest_version` greater-than or equal to `3` must be non-persistent.", "WKWebExtensionErrorInvalidBackgroundPersistence description for manifest v3")));
-        m_backgroundContentIsPersistent = false;
-    }
-
-    if (m_backgroundContentIsPersistent && m_backgroundServiceWorkerPath) {
-        recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Invalid `persistent` manifest entry. A `service_worker` must be non-persistent.", "WKWebExtensionErrorInvalidBackgroundPersistence description for service worker")));
-        m_backgroundContentIsPersistent = false;
-    }
-
-    if (!m_backgroundContentIsPersistent && hasRequestedPermission(WKWebExtensionPermissionWebRequest))
-        recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Non-persistent background content cannot listen to `webRequest` events.", "WKWebExtensionErrorInvalidBackgroundPersistence description for webRequest events")));
-
-#if PLATFORM(VISION)
-    if (m_backgroundContentIsPersistent)
-        recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Invalid `persistent` manifest entry. A non-persistent background is required on visionOS.", "WKWebExtensionErrorInvalidBackgroundPersistence description for visionOS")));
-#elif PLATFORM(IOS)
-    if (m_backgroundContentIsPersistent)
-        recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS.", "WKWebExtensionErrorInvalidBackgroundPersistence description for iOS")));
-#endif
-}
-
-bool WebExtension::hasInspectorBackgroundPage()
-{
-    return !!inspectorBackgroundPagePath();
-}
-
-NSString *WebExtension::inspectorBackgroundPagePath()
-{
-    populateInspectorPropertiesIfNeeded();
-    return m_inspectorBackgroundPagePath.get();
-}
-
-void WebExtension::populateInspectorPropertiesIfNeeded()
-{
-    if (!manifestParsedSuccessfully())
-        return;
-
-    if (m_parsedManifestInspectorProperties)
-        return;
-
-    m_parsedManifestInspectorProperties = true;
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/devtools_page
-
-    m_inspectorBackgroundPagePath = objectForKey<NSString>(m_manifest, devtoolsPageManifestKey);
-}
 
 const WebExtension::CommandsVector& WebExtension::commands()
 {

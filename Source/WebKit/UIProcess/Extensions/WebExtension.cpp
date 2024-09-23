@@ -28,6 +28,8 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "WebExtensionUtilities.h"
+
 namespace WebKit {
 
 static constexpr auto manifestVersionManifestKey = "manifest_version"_s;
@@ -68,6 +70,21 @@ static constexpr auto chromeURLOverridesManifestKey = "chrome_url_overrides"_s;
 static constexpr auto browserURLOverridesManifestKey = "browser_url_overrides"_s;
 static constexpr auto newTabManifestKey = "newtab"_s;
 
+static constexpr auto backgroundManifestKey = "background"_s;
+static constexpr auto backgroundPageManifestKey = "page"_s;
+static constexpr auto backgroundServiceWorkerManifestKey = "service_worker"_s;
+static constexpr auto backgroundScriptsManifestKey = "scripts"_s;
+static constexpr auto backgroundPersistentManifestKey = "persistent"_s;
+static constexpr auto backgroundPageTypeKey = "type"_s;
+static constexpr auto backgroundPageTypeModuleValue = "module"_s;
+static constexpr auto backgroundPreferredEnvironmentManifestKey = "preferred_environment"_s;
+static constexpr auto backgroundDocumentManifestKey = "document"_s;
+
+static constexpr auto generatedBackgroundPageFilename = "_generated_background_page.html"_s;
+static constexpr auto generatedBackgroundServiceWorkerFilename = "_generated_service_worker.js"_s;
+
+static constexpr auto devtoolsPageManifestKey = "devtools_page"_s;
+
 bool WebExtension::manifestParsedSuccessfully()
 {
     if (m_parsedManifest)
@@ -88,6 +105,12 @@ double WebExtension::manifestVersion()
         return *value;
 
     return 0;
+}
+
+bool WebExtension::hasRequestedPermission(String permission) const
+{
+    // FIXME: <https://webkit.org/b/280101> hasRequestedPermission isn't populating permission properties
+    return m_permissions.contains(permission);
 }
 
 const String& WebExtension::displayName()
@@ -196,6 +219,267 @@ void WebExtension::populateContentSecurityPolicyStringsIfNeeded()
 
     if (!m_contentSecurityPolicy)
         m_contentSecurityPolicy = "script-src 'self'"_s;
+}
+
+bool WebExtension::hasBackgroundContent()
+{
+    populateBackgroundPropertiesIfNeeded();
+    return !m_backgroundScriptPaths.isEmpty() || !m_backgroundPagePath.isEmpty() || !m_backgroundServiceWorkerPath.isEmpty();
+}
+
+bool WebExtension::backgroundContentIsPersistent()
+{
+    populateBackgroundPropertiesIfNeeded();
+    return hasBackgroundContent() && m_backgroundContentIsPersistent;
+}
+
+bool WebExtension::backgroundContentUsesModules()
+{
+    populateBackgroundPropertiesIfNeeded();
+    return hasBackgroundContent() && m_backgroundContentUsesModules;
+}
+
+bool WebExtension::backgroundContentIsServiceWorker()
+{
+    populateBackgroundPropertiesIfNeeded();
+    return m_backgroundContentEnvironment == Environment::ServiceWorker;
+}
+
+const String& WebExtension::backgroundContentPath()
+{
+    populateBackgroundPropertiesIfNeeded();
+
+    if (!m_backgroundServiceWorkerPath.isEmpty())
+        return m_backgroundServiceWorkerPath;
+
+    if (!m_backgroundScriptPaths.isEmpty()) {
+        if (backgroundContentIsServiceWorker()) {
+            static const NeverDestroyed<String> backgroundContentString = generatedBackgroundServiceWorkerFilename;
+            return backgroundContentString;
+        }
+
+        static const NeverDestroyed<String> backgroundContentString = generatedBackgroundPageFilename;
+        return backgroundContentString;
+    }
+
+    if (!m_backgroundPagePath.isEmpty())
+        return m_backgroundPagePath;
+
+    ASSERT_NOT_REACHED();
+    return nullString();
+}
+
+const String& WebExtension::generatedBackgroundContent()
+{
+    if (!m_generatedBackgroundContent.isEmpty())
+        return m_generatedBackgroundContent;
+
+    populateBackgroundPropertiesIfNeeded();
+
+    if (!m_backgroundServiceWorkerPath.isEmpty() || !m_backgroundPagePath.isEmpty())
+        return nullString();
+
+    if (m_backgroundScriptPaths.isEmpty())
+        return nullString();
+
+    bool isServiceWorker = backgroundContentIsServiceWorker();
+    bool usesModules = backgroundContentUsesModules();
+
+    Vector<String> scripts;
+    for (auto& scriptPath : m_backgroundScriptPaths) {
+        StringBuilder format;
+        if (isServiceWorker) {
+            if (usesModules) {
+                format.append("import \"./"_s, scriptPath, "\";"_s);
+
+                scripts.append(format.toString());
+                continue;
+            }
+
+            format.append("importScripts(\""_s, scriptPath, "\");"_s);
+
+            scripts.append(format.toString());
+            continue;
+        }
+
+        format.append("<script"_s);
+        if (usesModules)
+            format.append(" type=\"module\""_s);
+        format.append(" src=\""_s, scriptPath, "\"></script>"_s);
+
+        scripts.append(format.toString());
+    }
+
+    StringBuilder generatedBackgroundContent;
+    if (!isServiceWorker)
+        generatedBackgroundContent.append("<!DOCTYPE html>\n<body>\n"_s);
+
+    for (auto& scriptPath : scripts)
+        generatedBackgroundContent.append(scriptPath, "\n"_s);
+
+    if (!isServiceWorker)
+        generatedBackgroundContent.append("\n</body>"_s);
+
+    m_generatedBackgroundContent = generatedBackgroundContent.toString();
+    return m_generatedBackgroundContent;
+}
+
+void WebExtension::populateBackgroundPropertiesIfNeeded()
+{
+    if (m_parsedManifestBackgroundProperties)
+        return;
+
+    m_parsedManifestBackgroundProperties = true;
+
+    RefPtr manifestObject = this->manifestObject();
+    if (!manifestObject)
+        return;
+
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/background
+
+    RefPtr backgroundManifestObject = manifestObject->getObject(backgroundManifestKey);
+    if (!backgroundManifestObject || !backgroundManifestObject->size()) {
+        if (manifestObject->getValue(backgroundManifestKey))
+            recordError(createError(Error::InvalidBackgroundContent));
+        return;
+    }
+
+    m_backgroundPagePath = backgroundManifestObject->getString(backgroundPageManifestKey);
+    m_backgroundServiceWorkerPath = backgroundManifestObject->getString(backgroundServiceWorkerManifestKey);
+    m_backgroundContentUsesModules = (backgroundManifestObject->getString(backgroundPageTypeKey) == backgroundPageTypeModuleValue);
+
+    if (RefPtr backgroundScriptPaths = backgroundManifestObject->getArray(backgroundScriptsManifestKey)) {
+        backgroundScriptPaths = filterObjects(*backgroundScriptPaths, [](auto& value) {
+            return !value.asString().isEmpty();
+        });
+
+        m_backgroundScriptPaths = makeStringVector(*backgroundScriptPaths);
+    }
+
+    Vector<String> supportedEnvironments = { backgroundDocumentManifestKey, backgroundServiceWorkerManifestKey };
+
+    Vector<String> preferredEnvironments;
+    if (auto environment = backgroundManifestObject->getString(backgroundPreferredEnvironmentManifestKey); !environment.isEmpty()) {
+        if (supportedEnvironments.contains(environment))
+            preferredEnvironments.append(environment);
+    } else if (RefPtr environments = backgroundManifestObject->getArray(backgroundPreferredEnvironmentManifestKey); environments && environments->length()) {
+        Ref filteredEnvironments = filterObjects(*environments, [supportedEnvironments](auto& value) {
+            return supportedEnvironments.contains(value.asString());
+        });
+
+        for (Ref environment : filteredEnvironments.get())
+            preferredEnvironments.append(environment->asString());
+    } else if (backgroundManifestObject->getValue(backgroundPreferredEnvironmentManifestKey))
+        recordError(createError(Error::InvalidBackgroundContent, WEB_UI_STRING("Manifest `background` entry has an empty or invalid `preferred_environment` key.", "WKWebExtensionErrorInvalidBackgroundContent description for empty or invalid preferred environment key")));
+
+    for (auto& environment : preferredEnvironments) {
+        if (environment == backgroundDocumentManifestKey) {
+            m_backgroundContentEnvironment = Environment::Document;
+            m_backgroundServiceWorkerPath = nullString();
+
+            if (!m_backgroundPagePath.isEmpty()) {
+                // Page takes precedence over scripts and service worker.
+                m_backgroundScriptPaths = { };
+                break;
+            }
+
+            if (!m_backgroundScriptPaths.isEmpty()) {
+                // Scripts takes precedence over service worker.
+                break;
+            }
+
+            recordError(createError(Error::InvalidBackgroundContent, WEB_UI_STRING("Manifest `background` entry has missing or empty required `page` or `scripts` key for `preferred_environment` of `document`.", "WKWebExtensionErrorInvalidBackgroundContent description for missing background page or scripts keys")));
+            break;
+        }
+
+        if (environment == backgroundServiceWorkerManifestKey) {
+            m_backgroundContentEnvironment = Environment::ServiceWorker;
+            m_backgroundPagePath = nullString();
+
+            if (!m_backgroundServiceWorkerPath.isEmpty()) {
+                // Page takes precedence over scripts and service worker.
+                m_backgroundScriptPaths = { };
+                break;
+            }
+
+            if (!m_backgroundScriptPaths.isEmpty()) {
+                // Scripts takes precedence over service worker.
+                break;
+            }
+
+            recordError(createError(Error::InvalidBackgroundContent, WEB_UI_STRING("Manifest `background` entry has missing or empty required `service_worker` or `scripts` key for `preferred_environment` of `service_worker`.", "WKWebExtensionErrorInvalidBackgroundContent description for missing background service_worker or scripts keys")));
+            break;
+        }
+    }
+
+    if (!preferredEnvironments.size()) {
+        // Page takes precedence over service worker.
+        if (!m_backgroundPagePath.isEmpty())
+            m_backgroundServiceWorkerPath = nullString();
+
+        // Scripts takes precedence over page and service worker.
+        if (!m_backgroundScriptPaths.isEmpty()) {
+            m_backgroundServiceWorkerPath = nullString();
+            m_backgroundPagePath = nullString();
+        }
+
+        m_backgroundContentEnvironment = !m_backgroundServiceWorkerPath.isEmpty() ? Environment::ServiceWorker : Environment::Document;
+
+        if (m_backgroundScriptPaths.isEmpty() && m_backgroundPagePath.isEmpty() && m_backgroundServiceWorkerPath.isEmpty())
+            recordError(createError(Error::InvalidBackgroundContent, WEB_UI_STRING("Manifest `background` entry has missing or empty required `scripts`, `page`, or `service_worker` key.", "WKWebExtensionErrorInvalidBackgroundContent description for missing background required keys")));
+    }
+
+    auto persistentBoolean = backgroundManifestObject->getBoolean(backgroundPersistentManifestKey);
+    m_backgroundContentIsPersistent = persistentBoolean ? *persistentBoolean : !(supportsManifestVersion(3) || !m_backgroundServiceWorkerPath.isEmpty());
+
+    if (m_backgroundContentIsPersistent && supportsManifestVersion(3)) {
+        recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Invalid `persistent` manifest entry. A `manifest_version` greater-than or equal to `3` must be non-persistent.", "WKWebExtensionErrorInvalidBackgroundPersistence description for manifest v3")));
+        m_backgroundContentIsPersistent = false;
+    }
+
+    if (m_backgroundContentIsPersistent && !m_backgroundServiceWorkerPath.isEmpty()) {
+        recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Invalid `persistent` manifest entry. A `service_worker` must be non-persistent.", "WKWebExtensionErrorInvalidBackgroundPersistence description for service worker")));
+        m_backgroundContentIsPersistent = false;
+    }
+
+    if (!m_backgroundContentIsPersistent && hasRequestedPermission("webRequest"_s))
+        recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Non-persistent background content cannot listen to `webRequest` events.", "WKWebExtensionErrorInvalidBackgroundPersistence description for webRequest events")));
+
+#if PLATFORM(VISION)
+    if (m_backgroundContentIsPersistent)
+        recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Invalid `persistent` manifest entry. A non-persistent background is required on visionOS.", "WKWebExtensionErrorInvalidBackgroundPersistence description for visionOS")));
+#elif PLATFORM(IOS)
+    if (m_backgroundContentIsPersistent)
+        recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS.", "WKWebExtensionErrorInvalidBackgroundPersistence description for iOS")));
+#endif
+}
+
+bool WebExtension::hasInspectorBackgroundPage()
+{
+    populateInspectorPropertiesIfNeeded();
+    return !m_inspectorBackgroundPagePath.isEmpty();
+}
+
+const String& WebExtension::inspectorBackgroundPagePath()
+{
+    populateInspectorPropertiesIfNeeded();
+    return m_inspectorBackgroundPagePath;
+}
+
+void WebExtension::populateInspectorPropertiesIfNeeded()
+{
+    if (m_parsedManifestInspectorProperties)
+        return;
+
+    m_parsedManifestInspectorProperties = true;
+
+    RefPtr manifestObject = this->manifestObject();
+    if (!manifestObject)
+        return;
+
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/devtools_page
+
+    m_inspectorBackgroundPagePath = manifestObject->getString(devtoolsPageManifestKey);
 }
 
 bool WebExtension::hasOptionsPage()
