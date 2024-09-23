@@ -34,7 +34,7 @@ namespace WebCore {
 class GStreamerQuirkRialto final : public GStreamerQuirk {
 public:
     GStreamerQuirkRialto();
-    const char* identifier() final { return "Rialto"; }
+    const ASCIILiteral identifier() const final { return "Rialto"_s; }
 
     void configureElement(GstElement*, const OptionSet<ElementRuntimeCharacteristics>&) final;
     GstElement* createAudioSink() final;

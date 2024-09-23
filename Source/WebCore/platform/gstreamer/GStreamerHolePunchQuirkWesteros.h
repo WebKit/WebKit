@@ -28,7 +28,7 @@ namespace WebCore {
 
 class GStreamerHolePunchQuirkWesteros final : public GStreamerHolePunchQuirk {
 public:
-    const char* identifier() final { return "WesterosHolePunch"; }
+    const ASCIILiteral identifier() const final { return "WesterosHolePunch"_s; }
 
     GstElement* createHolePunchVideoSink(bool, const MediaPlayer*) final;
     bool setHolePunchVideoRectangle(GstElement*, const IntRect&) final;

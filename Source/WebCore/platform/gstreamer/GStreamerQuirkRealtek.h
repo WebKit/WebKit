@@ -29,7 +29,7 @@ namespace WebCore {
 class GStreamerQuirkRealtek final : public GStreamerQuirk {
 public:
     GStreamerQuirkRealtek();
-    const char* identifier() final { return "Realtek"; }
+    const ASCIILiteral identifier() const final { return "Realtek"_s; }
 
     GstElement* createWebAudioSink() final;
     void configureElement(GstElement*, const OptionSet<ElementRuntimeCharacteristics>&) final;
