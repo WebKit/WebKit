@@ -32,6 +32,8 @@
 
 namespace WTF {
 
+class PrintStream;
+
 template<typename RawValue>
 struct ObjectIdentifierThreadSafeAccessTraits {
 };
@@ -229,6 +231,10 @@ template<typename T, typename U, typename V, SupportsObjectIdentifierNullState s
 WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const ObjectIdentifierGenericBase<uint64_t>&);
 
 WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const ObjectIdentifierGenericBase<UUID>&);
+
+WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const ObjectIdentifierGenericBase<uint64_t>&);
+
+WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const ObjectIdentifierGenericBase<UUID>&);
 
 template<typename RawValue>
 class ObjectIdentifierGenericBaseStringTypeAdapter {
