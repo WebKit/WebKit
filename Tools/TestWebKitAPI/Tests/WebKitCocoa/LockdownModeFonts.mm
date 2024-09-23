@@ -31,7 +31,12 @@
 
 namespace TestWebKitAPI {
 
+// rdar://136524076
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
+TEST(LockdownMode, DISABLED_SVGFonts)
+#else
 TEST(LockdownMode, SVGFonts)
+#endif
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;
@@ -47,7 +52,12 @@ TEST(LockdownMode, SVGFonts)
     EXPECT_EQ(target2Result, referenceResult);
 }
 
+// rdar://136524076
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
+TEST(LockdownMode, DISABLED_NotAllowedFontLoadingAPI)
+#else
 TEST(LockdownMode, NotAllowedFontLoadingAPI)
+#endif
 {
     @autoreleasepool {
         auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
@@ -141,7 +151,12 @@ TEST(LockdownMode, AllowedFont)
     }
 }
 
+// rdar://136524076
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
+TEST(LockdownMode, DISABLED_NotAllowedFont)
+#else
 TEST(LockdownMode, NotAllowedFont)
+#endif
 {
     @autoreleasepool {
         auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
