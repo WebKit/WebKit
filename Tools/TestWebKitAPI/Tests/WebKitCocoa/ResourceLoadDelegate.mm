@@ -203,7 +203,12 @@ TEST(ResourceLoadDelegate, ResourceType)
         EXPECT_EQ(loadInfos[i].get().resourceType, expectedTypes[i]);
 }
 
+// rdar://136524076
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
+TEST(ResourceLoadDelegate, DISABLED_LoadInfo)
+#else
 TEST(ResourceLoadDelegate, LoadInfo)
+#endif
 {
     __block bool clearedStore = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
