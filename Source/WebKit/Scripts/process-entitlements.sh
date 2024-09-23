@@ -560,6 +560,8 @@ function ios_family_process_webpushd_entitlements()
 
 function ios_family_process_network_entitlements()
 {
+    plistbuddy add :application-identifier string "${PRODUCT_BUNDLE_IDENTIFIER}"
+
     plistbuddy Add :com.apple.private.coreservices.canmaplsdatabase bool YES
     plistbuddy Add :com.apple.private.webkit.adattributiond bool YES
     plistbuddy Add :com.apple.private.webkit.webpush bool YES
