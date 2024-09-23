@@ -1792,8 +1792,10 @@ void GStreamerMediaEndpoint::gatherStatsForLogging()
             return;
 
         auto* holder = static_cast<GStreamerMediaEndpointHolder*>(userData);
-        auto stats = holder->endPoint->preprocessStats(nullptr, reply);
-        holder->endPoint->onStatsDelivered(WTFMove(stats));
+        callOnMainThreadAndWait([holder, reply] {
+            auto stats = holder->endPoint->preprocessStats(nullptr, reply);
+            holder->endPoint->onStatsDelivered(WTFMove(stats));
+        });
     }, holder, reinterpret_cast<GDestroyNotify>(destroyGStreamerMediaEndpointHolder)));
 }
 
@@ -1811,6 +1813,7 @@ private:
 
 GUniquePtr<GstStructure> GStreamerMediaEndpoint::preprocessStats(const GRefPtr<GstPad>& pad, const GstStructure* stats)
 {
+    ASSERT(isMainThread());
     GUniquePtr<GstStructure> additionalStats(gst_structure_new_empty("stats"));
     auto mergeStructureInAdditionalStats = [&](const GstStructure* stats) {
         gst_structure_foreach(stats, [](GQuark quark, const GValue* value, gpointer userData) -> gboolean {
