@@ -152,7 +152,7 @@ public:
 
 private:
     bool start() final;
-    void stop() final  { m_source->stop(); }
+    void stop() final;
     DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
     DisplaySurfaceType surfaceType() const final { return DisplaySurfaceType::Monitor; }
     void commitConfiguration(const RealtimeMediaSourceSettings&) final;
@@ -161,20 +161,58 @@ private:
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const final { return "MockDisplayCapturer"_s; }
 #endif
+    void whenReady(CompletionHandler<void(CaptureSourceError&&)>&&) final;
+
+    void readyTimerFired();
+
     Ref<MockRealtimeVideoSource> m_source;
     RealtimeMediaSourceSettings m_settings;
+    Timer m_readyTimer;
+    bool m_isRunning { false };
+    bool m_didReceiveVideoFrame { false };
+    CompletionHandler<void(CaptureSourceError&&)> m_whenReadyCallback;
 };
 
 MockDisplayCapturer::MockDisplayCapturer(const CaptureDevice& device, std::optional<PageIdentifier> pageIdentifier)
     : m_source(MockRealtimeVideoSourceMac::createForMockDisplayCapturer(String { device.persistentId() }, AtomString { device.label() }, MediaDeviceHashSalts { "persistent"_s, "ephemeral"_s }, pageIdentifier))
+    , m_readyTimer(*this, &MockDisplayCapturer::readyTimerFired)
 {
 }
 
 bool MockDisplayCapturer::start()
 {
     ASSERT(m_settings.frameRate());
+
+    ASSERT(!m_whenReadyCallback);
+    ASSERT(!m_isRunning);
+
+    m_isRunning = true;
     m_source->start();
     return true;
+}
+
+void MockDisplayCapturer::stop()
+{
+    ASSERT(!m_whenReadyCallback);
+
+    m_isRunning = false;
+    m_source->stop();
+}
+
+void MockDisplayCapturer::whenReady(CompletionHandler<void(CaptureSourceError&&)>&& callback)
+{
+    ASSERT(!m_isRunning);
+
+    m_whenReadyCallback = WTFMove(callback);
+    m_readyTimer.startOneShot(50_ms);
+}
+
+void MockDisplayCapturer::readyTimerFired()
+{
+    ASSERT(!m_isRunning);
+
+    configurationChanged();
+    m_whenReadyCallback({ });
 }
 
 void MockDisplayCapturer::commitConfiguration(const RealtimeMediaSourceSettings& settings)

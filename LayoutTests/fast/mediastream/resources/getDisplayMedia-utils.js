@@ -7,17 +7,7 @@ async function callGetDisplayMedia(options)
     window.internals.withUserGesture(() => {
         promise = navigator.mediaDevices.getDisplayMedia(options);
     });
-    const stream = await promise; 
-    const track = stream.getVideoTracks()[0];
-
-    // getSettings is not computing the correct parameters right away. We should probably fix this.
-    while (true) {
-        const settings = track.getSettings();
-        if (settings.width && settings.height)
-            break;
-        await new Promise(resolve => setTimeout(resolve, 50));
-    }
-    return stream;
+    return await promise;
 }
 
 async function waitForHeight(track, value) {

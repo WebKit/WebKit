@@ -203,6 +203,11 @@ void DisplayCaptureSourceCocoa::endProducingData()
     m_capturer->end();
 }
 
+void DisplayCaptureSourceCocoa::whenReady(CompletionHandler<void(CaptureSourceError&&)>&& callback)
+{
+    m_capturer->whenReady(WTFMove(callback));
+}
+
 Seconds DisplayCaptureSourceCocoa::elapsedTime()
 {
     if (m_startTime.isNaN())

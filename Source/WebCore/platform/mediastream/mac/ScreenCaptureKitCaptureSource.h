@@ -92,6 +92,7 @@ private:
     DisplaySurfaceType surfaceType() const final;
     void commitConfiguration(const RealtimeMediaSourceSettings&) final;
     IntSize intrinsicSize() const final;
+    void whenReady(CompletionHandler<void(CaptureSourceError&&)>&&) final;
 
     // LoggerHelper
     ASCIILiteral logClassName() const final { return "ScreenCaptureKitCaptureSource"_s; }
@@ -131,6 +132,8 @@ private:
     float m_frameRate { 0 };
     bool m_isRunning { false };
     bool m_isVideoEffectEnabled { false };
+    bool m_didReceiveVideoFrame { false };
+    CompletionHandler<void(CaptureSourceError&&)> m_whenReadyCallback;
 };
 
 } // namespace WebCore

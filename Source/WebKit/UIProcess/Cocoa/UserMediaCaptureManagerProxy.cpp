@@ -95,6 +95,18 @@ public:
         }
     }
 
+    void whenReady(UserMediaCaptureManagerProxy::CreateSourceCallback&& createCallback)
+    {
+        m_source->whenReady([weakThis = WeakPtr { *this }, createCallback = WTFMove(createCallback)] (auto&& sourceError) mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis) {
+                createCallback(CaptureSourceError { "Source is no longer needed"_s, MediaAccessDenialReason::InvalidAccess }, { }, { });
+                return;
+            }
+            createCallback(sourceError, protectedThis->settings(), protectedThis->protectedSource()->capabilities());
+        });
+    }
+
     Ref<RealtimeMediaSource> protectedSource() { return m_source; }
 
     void audioUnitWillStart() final
@@ -555,7 +567,7 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
     proxy->observeMedia();
 
     auto completeSetup = [](UserMediaCaptureManagerProxySourceProxy& proxy, CreateSourceCallback&& completionHandler) mutable {
-        completionHandler({ }, proxy.settings(), proxy.protectedSource()->capabilities());
+        proxy.whenReady(WTFMove(completionHandler));
     };
 
     if (!constraints || proxy->protectedSource()->type() != RealtimeMediaSource::Type::Video) {

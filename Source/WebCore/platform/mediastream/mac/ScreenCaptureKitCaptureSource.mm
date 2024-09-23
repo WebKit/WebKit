@@ -202,11 +202,37 @@ ScreenCaptureKitCaptureSource::~ScreenCaptureKitCaptureSource()
         ScreenCaptureKitSharingSessionManager::singleton().cancelPendingSessionForDevice(m_captureDevice);
 
     clearSharingSession();
+
+    if (m_whenReadyCallback)
+        std::exchange(m_whenReadyCallback, { })({ "Source no longer needed"_s , MediaAccessDenialReason::InvalidAccess });
+}
+
+void ScreenCaptureKitCaptureSource::whenReady(CompletionHandler<void(CaptureSourceError&&)>&& callback)
+{
+    if (m_didReceiveVideoFrame) {
+        callback({ });
+        return;
+    }
+
+    if (m_isRunning) {
+        m_whenReadyCallback = WTFMove(callback);
+        return;
+    }
+
+    // We start to get the first frame. The frame size allows to finalize initialization of the source settings.
+    m_whenReadyCallback = [weakThis = WeakPtr { *this }, callback = WTFMove(callback)] (auto&& result) mutable {
+        callback(WTFMove(result));
+        if (weakThis)
+            weakThis->stop();
+    };
+
+    start();
 }
 
 bool ScreenCaptureKitCaptureSource::start()
 {
     ASSERT(isAvailable());
+    ASSERT(!m_whenReadyCallback || !m_isRunning);
 
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
@@ -603,6 +629,12 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
     if (!m_intrinsicSize || *m_intrinsicSize != IntSize(intrinsicSize)) {
         m_intrinsicSize = IntSize(intrinsicSize);
         configurationChanged();
+    }
+
+    if (!m_didReceiveVideoFrame) {
+        m_didReceiveVideoFrame = true;
+        if (m_whenReadyCallback)
+            m_whenReadyCallback({ });
     }
 }
 

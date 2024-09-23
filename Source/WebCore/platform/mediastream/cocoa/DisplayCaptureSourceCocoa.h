@@ -94,6 +94,7 @@ public:
         virtual DisplaySurfaceType surfaceType() const = 0;
         virtual void commitConfiguration(const RealtimeMediaSourceSettings&) = 0;
         virtual IntSize intrinsicSize() const = 0;
+        virtual void whenReady(CompletionHandler<void(CaptureSourceError&&)>&& callback) { callback({ }); }
 
         virtual void setLogger(const Logger&, const void*);
         const Logger* loggerPtr() const { return m_logger.get(); }
@@ -153,6 +154,7 @@ private:
     IntSize computeResizedVideoFrameSize(IntSize desiredSize, IntSize actualSize) final;
     void setSizeFrameRateAndZoom(const VideoPresetConstraints&) final;
     double observedFrameRate() const final;
+    void whenReady(CompletionHandler<void(CaptureSourceError&&)>&&) final;
 
     ASCIILiteral logClassName() const final { return "DisplayCaptureSourceCocoa"_s; }
     void setLogger(const Logger&, const void*) final;
