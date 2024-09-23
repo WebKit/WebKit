@@ -403,6 +403,7 @@ JS_EXPORT_PRIVATE JSArray* constructArrayNegativeIndexed(JSGlobalObject*, Struct
 
 ALWAYS_INLINE uint64_t toLength(JSGlobalObject*, JSObject*);
 
+template<ArrayFillMode fillMode>
 JSArray* tryCloneArrayFromFast(JSGlobalObject*, JSValue arrayValue);
 
 } // namespace JSC

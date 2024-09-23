@@ -1508,6 +1508,7 @@ void clearElement(double& element)
     element = PNaN;
 }
 
+template<ArrayFillMode fillMode>
 JSArray* tryCloneArrayFromFast(JSGlobalObject* globalObject, JSValue arrayValue)
 {
     ASSERT(isJSArray(arrayValue));
@@ -1531,7 +1532,7 @@ JSArray* tryCloneArrayFromFast(JSGlobalObject* globalObject, JSValue arrayValue)
         RETURN_IF_EXCEPTION(scope, { });
 
         scope.release();
-        moveArrayElements<ArrayFillMode::Undefined>(globalObject, vm, result, 0, array, resultSize);
+        moveArrayElements<fillMode>(globalObject, vm, result, 0, array, resultSize);
         return result;
     }
 
@@ -1588,10 +1589,13 @@ JSArray* tryCloneArrayFromFast(JSGlobalObject* globalObject, JSValue arrayValue)
     ASSERT(resultType == ArrayWithContiguous);
     auto* buffer = result->butterfly()->contiguous().data();
     if (sourceType == ArrayWithDouble)
-        copyArrayElements<ArrayFillMode::Undefined>(buffer, 0, butterfly->contiguousDouble().data(), resultSize, ArrayWithDouble);
+        copyArrayElements<fillMode>(buffer, 0, butterfly->contiguousDouble().data(), resultSize, ArrayWithDouble);
     else
-        copyArrayElements<ArrayFillMode::Undefined>(buffer, 0, butterfly->contiguous().data(), resultSize, sourceType);
+        copyArrayElements<fillMode>(buffer, 0, butterfly->contiguous().data(), resultSize, sourceType);
     return result;
 }
+
+template JSArray* tryCloneArrayFromFast<ArrayFillMode::Undefined>(JSGlobalObject*, JSValue);
+template JSArray* tryCloneArrayFromFast<ArrayFillMode::Empty>(JSGlobalObject*, JSValue);
 
 } // namespace JSC

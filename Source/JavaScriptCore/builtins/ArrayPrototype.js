@@ -400,6 +400,15 @@ function concat(first)
             return result;
     }
 
+    if (@argumentCount() === 0
+        && @isJSArray(this)
+        && @tryGetByIdWithWellKnownSymbol(this, "isConcatSpreadable") === @undefined) {
+
+        var result = @arrayFromFastFillWithEmpty(@Array, this);
+        if (result)
+            return result;
+    }
+
     return @tailCallForwardArguments(@concatSlowPath, this);
 }
 
