@@ -772,51 +772,28 @@ void SVGSMILElement::addInstanceTime(BeginOrEnd beginOrEnd, SMILTime time, SMILT
         endListChanged(elapsed);
 }
 
-inline SMILTime extractTimeFromVector(const SMILTimeWithOrigin* position)
-{
-    return position->time();
-}
-
 SMILTime SVGSMILElement::findInstanceTime(BeginOrEnd beginOrEnd, SMILTime minimumTime, bool equalsMinimumOK) const
 {
     const Vector<SMILTimeWithOrigin>& list = beginOrEnd == Begin ? m_beginTimes : m_endTimes;
-    int sizeOfList = list.size();
 
-    if (!sizeOfList)
+    if (list.isEmpty())
         return beginOrEnd == Begin ? SMILTime::unresolved() : SMILTime::indefinite();
 
-    const SMILTimeWithOrigin* result = approximateBinarySearch<const SMILTimeWithOrigin, SMILTime>(list, sizeOfList, minimumTime, extractTimeFromVector);
-    int indexOfResult = result - list.begin();
-    ASSERT_WITH_SECURITY_IMPLICATION(indexOfResult < sizeOfList);
+    // If an equal value is not accepted, return the next bigger item in the list, if any.
+    auto predicate = [equalsMinimumOK](const SMILTimeWithOrigin& instanceTime, const SMILTime& time) {
+        return equalsMinimumOK ? instanceTime.time() < time : instanceTime.time() <= time;
+    };
 
-    if (list[indexOfResult].time() < minimumTime && indexOfResult < sizeOfList - 1)
-        ++indexOfResult;
+    auto* item = std::lower_bound(list.begin(), list.end(), minimumTime, predicate);
 
-    const SMILTime& currentTime = list[indexOfResult].time();
+    if (item == list.end())
+        return SMILTime::unresolved();
 
     // The special value "indefinite" does not yield an instance time in the begin list.
-    if (currentTime.isIndefinite() && beginOrEnd == Begin)
+    if (item->time().isIndefinite() && beginOrEnd == Begin)
         return SMILTime::unresolved();
 
-    if (currentTime < minimumTime)
-        return SMILTime::unresolved();
-    if (currentTime > minimumTime)
-        return currentTime;
-
-    ASSERT(currentTime == minimumTime);
-    if (equalsMinimumOK)
-        return currentTime;
-
-    // If the equals is not accepted, return the next bigger item in the list.
-    SMILTime nextTime = currentTime;
-    while (indexOfResult < sizeOfList - 1) {
-        nextTime = list[indexOfResult + 1].time();
-        if (nextTime > minimumTime)
-            return nextTime;
-        ++indexOfResult;
-    }
-
-    return beginOrEnd == Begin ? SMILTime::unresolved() : SMILTime::indefinite();
+    return item->time();
 }
 
 SMILTime SVGSMILElement::repeatingDuration() const
