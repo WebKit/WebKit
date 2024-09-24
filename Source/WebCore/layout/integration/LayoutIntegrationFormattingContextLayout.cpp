@@ -47,7 +47,16 @@ void layoutWithFormattingContextForBox(const Layout::ElementBox& box, std::optio
     if (widthConstraint)
         renderer.clearOverridingLogicalWidthLength();
 
-    auto updater = BoxGeometryUpdater { layoutState };
+    auto rootLayoutBox = [&]() -> const Layout::ElementBox& {
+        auto* ancestor = &box.parent();
+        while (!ancestor->isInitialContainingBlock()) {
+            if (ancestor->establishesInlineFormattingContext())
+                break;
+            ancestor = &ancestor->parent();
+        }
+        return *ancestor;
+    };
+    auto updater = BoxGeometryUpdater { layoutState, rootLayoutBox() };
     updater.updateGeometryAfterLayout(box, widthConstraint.value_or(renderer.containingBlock()->availableLogicalWidth()));
 }
 

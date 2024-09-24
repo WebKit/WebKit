@@ -119,14 +119,9 @@ static inline std::pair<LayoutUnit, LayoutUnit> intrinsicPaddingForTable(const R
     return { };
 }
 
-BoxGeometryUpdater::BoxGeometryUpdater(BoxTree& boxTree, Layout::LayoutState& layoutState)
-    : m_boxTree(boxTree)
-    , m_layoutState(layoutState)
-{
-}
-
-BoxGeometryUpdater::BoxGeometryUpdater(Layout::LayoutState& layoutState)
+BoxGeometryUpdater::BoxGeometryUpdater(Layout::LayoutState& layoutState, const Layout::ElementBox& rootLayoutBox)
     : m_layoutState(layoutState)
+    , m_rootLayoutBox(rootLayoutBox)
 {
 }
 
@@ -403,7 +398,7 @@ void BoxGeometryUpdater::updateInlineBoxDimensions(const RenderInline& renderInl
 
 void BoxGeometryUpdater::setGeometriesForLayout(LayoutUnit availableLogicalWidth)
 {
-    for (auto walker = InlineWalker(downcast<RenderBlockFlow>(boxTree().rootRenderer())); !walker.atEnd(); walker.advance()) {
+    for (auto walker = InlineWalker(downcast<RenderBlockFlow>(rootRenderer())); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
 
         if (is<RenderText>(renderer))
@@ -418,7 +413,7 @@ void BoxGeometryUpdater::setGeometriesForLayout(LayoutUnit availableLogicalWidth
 
 void BoxGeometryUpdater::setGeometriesForIntrinsicWidth(Layout::IntrinsicWidthMode intrinsicWidthMode)
 {
-    for (auto walker = InlineWalker(downcast<RenderBlockFlow>(boxTree().rootRenderer())); !walker.atEnd(); walker.advance()) {
+    for (auto walker = InlineWalker(downcast<RenderBlockFlow>(rootRenderer())); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
 
         if (is<RenderText>(renderer))
@@ -443,7 +438,7 @@ void BoxGeometryUpdater::setGeometriesForIntrinsicWidth(Layout::IntrinsicWidthMo
 
 Layout::ConstraintsForInlineContent BoxGeometryUpdater::updateInlineContentConstraints(LayoutUnit availableWidth)
 {
-    auto& rootRenderer = boxTree().rootRenderer();
+    auto& rootRenderer = this->rootRenderer();
     auto isLeftToRightInlineDirection = rootRenderer.style().isLeftToRightDirection();
     auto writingMode = rootRenderer.style().writingMode();
     auto blockFlowDirection = writingModeToBlockFlowDirection(writingMode);
@@ -499,12 +494,12 @@ void BoxGeometryUpdater::updateBoxGeometry(const RenderElement& renderer, Layout
 
 const Layout::ElementBox& BoxGeometryUpdater::rootLayoutBox() const
 {
-    return boxTree().rootLayoutBox();
+    return *m_rootLayoutBox;
 }
 
-Layout::ElementBox& BoxGeometryUpdater::rootLayoutBox()
+const RenderBlock& BoxGeometryUpdater::rootRenderer() const
 {
-    return boxTree().rootLayoutBox();
+    return downcast<RenderBlock>(*rootLayoutBox().rendererForIntegration());
 }
 
 }

@@ -133,7 +133,7 @@ LineLayout::LineLayout(RenderBlockFlow& flow)
     , m_layoutState(flow.view().layoutState())
     , m_blockFormattingState(layoutState().ensureBlockFormattingState(rootLayoutBox()))
     , m_inlineContentCache(layoutState().inlineContentCache(rootLayoutBox()))
-    , m_boxGeometryUpdater(m_boxTree, flow.view().layoutState())
+    , m_boxGeometryUpdater(flow.view().layoutState(), m_boxTree.rootLayoutBox())
 {
 }
 
