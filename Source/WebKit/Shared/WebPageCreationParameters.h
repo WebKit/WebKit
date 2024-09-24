@@ -323,8 +323,8 @@ struct WebPageCreationParameters {
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 
     std::optional<RemotePageParameters> remotePageParameters { };
-    std::optional<WebCore::FrameIdentifier> openerFrameIdentifier { };
     WebCore::FrameIdentifier mainFrameIdentifier;
+    std::optional<WebCore::FrameIdentifier> mainFrameOpenerIdentifier { };
     WebCore::SandboxFlags initialSandboxFlags;
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
