@@ -588,6 +588,13 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     pageConfiguration->preferences().setUsesSingleWebProcess(pool.usesSingleWebProcess());
 
     pageConfiguration->preferences().endBatchingUpdates();
+
+#if PLATFORM(APPLETV)
+    if (RefPtr dataStore = pageConfiguration->websiteDataStoreIfExists(); !dataStore || dataStore->isPersistent()) {
+        RELEASE_LOG_ERROR(API, "Created web view with persistent data store");
+        WTFReportBacktraceWithStackDepth(7);
+    }
+#endif
 }
 
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
