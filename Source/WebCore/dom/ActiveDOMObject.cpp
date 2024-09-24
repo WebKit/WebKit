@@ -80,7 +80,7 @@ ActiveDOMObject::~ActiveDOMObject()
     // inherit). Hence, we should ensure that this is not 0 before use it
     // here.
 
-    RefPtrAllowingPartiallyDestroyed<ScriptExecutionContext> context = scriptExecutionContext();
+    RefPtr<ScriptExecutionContext> context = scriptExecutionContext();
     if (!context)
         return;
 
@@ -95,7 +95,7 @@ void ActiveDOMObject::suspendIfNeeded()
     ASSERT(!m_suspendIfNeededWasCalled);
     m_suspendIfNeededWasCalled = true;
 #endif
-    if (RefPtrAllowingPartiallyDestroyed<ScriptExecutionContext> context = scriptExecutionContext())
+    if (RefPtr<ScriptExecutionContext> context = scriptExecutionContext())
         context->suspendActiveDOMObjectIfNeeded(*this);
 }
 
@@ -141,7 +141,7 @@ bool ActiveDOMObject::isAllowedToRunScript() const
 
 void ActiveDOMObject::queueTaskInEventLoop(TaskSource source, Function<void ()>&& function)
 {
-    RefPtrAllowingPartiallyDestroyed<ScriptExecutionContext> context = scriptExecutionContext();
+    RefPtr<ScriptExecutionContext> context = scriptExecutionContext();
     if (!context)
         return;
     context->eventLoop().queueTask(source, WTFMove(function));

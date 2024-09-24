@@ -87,7 +87,7 @@ WebSWServerConnection::~WebSWServerConnection()
 {
     if (CheckedPtr session = this->session())
         session->unregisterSWServerConnection(*this);
-    RefAllowingPartiallyDestroyed<SWServer> server = this->server();
+    Ref<SWServer> server = this->server();
     for (const auto& keyValue : m_clientOrigins)
         server->unregisterServiceWorkerClient(keyValue.value, keyValue.key);
     for (auto& completionHandler : m_unregisterJobs.values())

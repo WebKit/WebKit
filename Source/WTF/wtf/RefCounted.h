@@ -49,8 +49,7 @@ public:
     WTF_EXPORT_PRIVATE static void logRefDuringDestruction(const void*);
     WTF_EXPORT_PRIVATE static void printRefDuringDestructionLogAndCrash [[noreturn]] (const void*);
 
-    // Deprecated, and will be removed. Use ref() instead.
-    void refAllowingPartiallyDestroyed() const
+    void ref() const
     {
         applyRefDerefThreadingCheck();
         applyRefDuringDestructionCheck();
@@ -59,11 +58,6 @@ public:
         ASSERT(!m_adoptionIsRequired);
 #endif
         ++m_refCount;
-    }
-
-    void ref() const
-    {
-        refAllowingPartiallyDestroyed();
     }
 
     bool hasOneRef() const
@@ -136,8 +130,8 @@ protected:
 
     ~RefCountedBase();
 
-    // Deprecated, and will be removed. Use derefBase() instead.
-    bool derefAllowingPartiallyDestroyedBase() const
+    // Returns true if the pointer should be freed.
+    bool derefBase() const
     {
         applyRefDerefThreadingCheck();
 
@@ -155,12 +149,6 @@ protected:
         }
         m_refCount = tempRefCount;
         return false;
-    }
-
-    // Returns whether the pointer should be freed or not.
-    bool derefBase() const
-    {
-        return derefAllowingPartiallyDestroyedBase();
     }
 
 #if CHECK_REF_COUNTED_LIFECYCLE
@@ -193,10 +181,8 @@ inline void adopted(RefCountedBase* object)
 {
     if (!object)
         return;
-    ASSERT_WITH_SECURITY_IMPLICATION(!object->m_deletionHasBegun);
     object->m_adoptionIsRequired = false;
 }
-
 #endif
 
 inline RefCountedBase::~RefCountedBase()
@@ -217,12 +203,6 @@ public:
     void deref() const
     {
         if (derefBase())
-            delete const_cast<T*>(static_cast<const T*>(this));
-    }
-
-    void derefAllowingPartiallyDestroyed() const
-    {
-        if (derefAllowingPartiallyDestroyedBase())
             delete const_cast<T*>(static_cast<const T*>(this));
     }
 

@@ -303,7 +303,7 @@ public:
 
     ~PartiallyDestroyedRefTest()
     {
-        RefAllowingPartiallyDestroyed<PartiallyDestroyedRefTest> protectedThis { *this };
+        Ref<PartiallyDestroyedRefTest> protectedThis { *this };
         protectedThis->m_int = 0;
     }
 
@@ -332,7 +332,7 @@ public:
 
     ~PartiallyDestroyedRefTestThreadSafe()
     {
-        RefAllowingPartiallyDestroyed<PartiallyDestroyedRefTestThreadSafe> protectedThis { *this };
+        Ref<PartiallyDestroyedRefTestThreadSafe> protectedThis { *this };
         protectedThis->m_int = 0;
     }
 

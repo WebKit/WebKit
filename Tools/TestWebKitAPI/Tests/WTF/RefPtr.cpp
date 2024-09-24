@@ -559,7 +559,7 @@ public:
 
     ~PartiallyDestroyedRefPtrTest()
     {
-        RefPtrAllowingPartiallyDestroyed<PartiallyDestroyedRefPtrTest> protectedThis { this };
+        RefPtr<PartiallyDestroyedRefPtrTest> protectedThis { this };
         protectedThis->m_int = 0;
     }
 
@@ -628,7 +628,7 @@ public:
 
     ~PartiallyDestroyedRefPtrTestThreadSafe()
     {
-        RefPtrAllowingPartiallyDestroyed<PartiallyDestroyedRefPtrTestThreadSafe> protectedThis { this };
+        RefPtr<PartiallyDestroyedRefPtrTestThreadSafe> protectedThis { this };
         protectedThis->m_int = 0;
     }
 

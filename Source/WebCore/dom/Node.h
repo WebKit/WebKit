@@ -39,6 +39,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/OptionSet.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
@@ -542,25 +543,14 @@ public:
     virtual void defaultEventHandler(Event&);
 
     void ref() const;
-    void refAllowingPartiallyDestroyed() const;
     void deref() const;
-    void derefAllowingPartiallyDestroyed() const;
     bool hasOneRef() const;
     unsigned refCount() const;
+    void applyRefDuringDestructionCheck() const;
 
 #if ASSERT_ENABLED
-    enum class IsAllocatedMemory : unsigned {
-        Scribble = 0, // Do not check for this value, it is not guaranteed to exist.
-        Yes = 0xFEEDB0BA,
-    };
-    mutable IsAllocatedMemory m_isAllocatedMemory { IsAllocatedMemory::Yes };
     mutable bool m_inRemovedLastRefFunction { false };
     bool m_adoptionIsRequired { true };
-
-    bool deletionHasEnded() const
-    {
-        return m_isAllocatedMemory != IsAllocatedMemory::Yes;
-    }
 #endif
 
     void relaxAdoptionRequirement()
@@ -834,8 +824,6 @@ inline void adopted(Node* node)
 {
     if (!node)
         return;
-    ASSERT(!node->deletionHasBegun());
-    ASSERT(!node->m_inRemovedLastRefFunction);
     node->m_adoptionIsRequired = false;
 }
 
@@ -843,32 +831,24 @@ inline void adopted(Node* node)
 
 ALWAYS_INLINE void Node::ref() const
 {
-    ASSERT(!deletionHasBegun());
-    ASSERT(!m_inRemovedLastRefFunction);
-    refAllowingPartiallyDestroyed();
+    ASSERT(isMainThread());
+    ASSERT(!m_adoptionIsRequired);
+    applyRefDuringDestructionCheck();
+    m_refCountAndParentBit += s_refCountIncrement;
 }
 
-// Doesn't check deletionHasBegun().
-ALWAYS_INLINE void Node::refAllowingPartiallyDestroyed() const
+inline void Node::applyRefDuringDestructionCheck() const
 {
-    ASSERT(isMainThread());
-    ASSERT(!deletionHasEnded());
-    ASSERT(!m_adoptionIsRequired);
-    m_refCountAndParentBit += s_refCountIncrement;
+#if CHECK_REF_COUNTED_LIFECYCLE
+    if (!deletionHasBegun())
+        return;
+    WTF::RefCountedBase::logRefDuringDestruction(this);
+#endif
 }
 
 ALWAYS_INLINE void Node::deref() const
 {
-    ASSERT(!deletionHasBegun());
-    ASSERT(!m_inRemovedLastRefFunction);
-    derefAllowingPartiallyDestroyed();
-}
-
-// Doesn't check deletionHasBegun().
-ALWAYS_INLINE void Node::derefAllowingPartiallyDestroyed() const
-{
     ASSERT(isMainThread());
-    ASSERT(!deletionHasEnded());
     ASSERT(!m_adoptionIsRequired);
 
     ASSERT(refCount());
@@ -877,7 +857,6 @@ ALWAYS_INLINE void Node::derefAllowingPartiallyDestroyed() const
         if (deletionHasBegun())
             return;
         // Don't update m_refCountAndParentBit to avoid double destruction through use of Ref<T>/RefPtr<T>.
-        // (This is a security mitigation in case of programmer error. It will ASSERT in debug builds.)
 #if ASSERT_ENABLED
         m_inRemovedLastRefFunction = true;
 #endif

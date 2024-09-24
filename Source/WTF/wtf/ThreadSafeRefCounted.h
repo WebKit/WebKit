@@ -51,12 +51,6 @@ public:
 
     void ref() const
     {
-        refAllowingPartiallyDestroyed();
-    }
-
-    // Deprecated, and will be removed. Use ref() instead.
-    void refAllowingPartiallyDestroyed() const
-    {
         applyRefDuringDestructionCheck();
 
         ++m_refCount;
@@ -139,26 +133,6 @@ public:
     void deref() const
     {
         if (!derefBase())
-            return;
-
-        if constexpr (destructionThread == DestructionThread::Any) {
-            delete static_cast<const T*>(this);
-        } else if constexpr (destructionThread == DestructionThread::Main) {
-            ensureOnMainThread([this] {
-                delete static_cast<const T*>(this);
-            });
-        } else if constexpr (destructionThread == DestructionThread::MainRunLoop) {
-            ensureOnMainRunLoop([this] {
-                delete static_cast<const T*>(this);
-            });
-        } else {
-            STATIC_ASSERT_NOT_REACHED_FOR_VALUE(destructionThread, "Unexpected destructionThread enumerator value");
-        }
-    }
-
-    void derefAllowingPartiallyDestroyed() const
-    {
-        if (!derefBaseWithoutDeletionCheck())
             return;
 
         if constexpr (destructionThread == DestructionThread::Any) {

@@ -134,7 +134,7 @@ Ref<SVGElement> SVGTests::protectedContextElement() const
 
 SVGConditionalProcessingAttributes& SVGTests::conditionalProcessingAttributes()
 {
-    RefAllowingPartiallyDestroyed<SVGElement> contextElement = m_contextElement.get();
+    Ref<SVGElement> contextElement = m_contextElement.get();
     return contextElement->conditionalProcessingAttributes();
 }
 

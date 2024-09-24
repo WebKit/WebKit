@@ -113,7 +113,6 @@ struct SameSizeAsNode : EventTarget, CanMakeCheckedPtr<SameSizeAsNode> {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SameSizeAsNode);
 public:
 #if ASSERT_ENABLED
-    uint32_t m_isAllocatedMemory;
     bool inRemovedLastRefFunction;
     bool adoptionIsRequired;
 #endif
@@ -418,7 +417,6 @@ Node::~Node()
 {
     ASSERT(isMainThread());
     ASSERT(deletionHasBegun());
-    ASSERT(!deletionHasEnded());
     ASSERT(!m_adoptionIsRequired);
 
     InspectorInstrumentation::willDestroyDOMNode(*this);
@@ -456,9 +454,9 @@ Node::~Node()
     }
 #endif
 
-#if ASSERT_ENABLED
-    m_isAllocatedMemory = IsAllocatedMemory::Scribble;
-#endif
+    // FIXME: Test performance, then add a RELEASE_ASSERT for this too.
+    if (refCount() > 1)
+        WTF::RefCountedBase::printRefDuringDestructionLogAndCrash(this);
 }
 
 void Node::willBeDeletedFrom(Document& document)

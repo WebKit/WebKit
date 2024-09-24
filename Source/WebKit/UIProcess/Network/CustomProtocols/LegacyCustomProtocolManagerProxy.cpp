@@ -44,7 +44,7 @@ Ref<NetworkProcessProxy> LegacyCustomProtocolManagerProxy::protectedProcess()
 
 LegacyCustomProtocolManagerProxy::~LegacyCustomProtocolManagerProxy()
 {
-    RefAllowingPartiallyDestroyed<NetworkProcessProxy> networkProcessProxy = m_networkProcessProxy.get();
+    Ref<NetworkProcessProxy> networkProcessProxy = m_networkProcessProxy.get();
     networkProcessProxy->removeMessageReceiver(Messages::LegacyCustomProtocolManagerProxy::messageReceiverName());
     invalidate();
 }
@@ -61,7 +61,7 @@ void LegacyCustomProtocolManagerProxy::stopLoading(LegacyCustomProtocolID custom
 
 void LegacyCustomProtocolManagerProxy::invalidate()
 {
-    RefAllowingPartiallyDestroyed<NetworkProcessProxy> networkProcessProxy = m_networkProcessProxy.get();
+    Ref<NetworkProcessProxy> networkProcessProxy = m_networkProcessProxy.get();
     networkProcessProxy->customProtocolManagerClient().invalidate(*this);
 }
 

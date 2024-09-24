@@ -92,7 +92,7 @@ SVGElement::~SVGElement()
         m_svgRareData = nullptr;
     }
 
-    RefAllowingPartiallyDestroyed<Document> document = this->document();
+    Ref<Document> document = this->document();
     document->checkedSVGExtensions()->removeElementToRebuild(*this);
 
     if (hasPendingResources()) {
@@ -187,7 +187,7 @@ void SVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& old
         treeScopeForSVGReferences().removeElementFromPendingSVGResources(*this);
 
     if (removalType.disconnectedFromDocument) {
-        RefAllowingPartiallyDestroyed<Document> document = this->document();
+        Ref<Document> document = this->document();
         CheckedRef extensions = document->svgExtensions();
         if (m_svgRareData) {
             for (Ref element : m_svgRareData->takeReferencingElements()) {
@@ -1012,7 +1012,7 @@ void SVGElement::collectPresentationalHintsForAttribute(const QualifiedName& nam
 
 void SVGElement::updateSVGRendererForElementChange()
 {
-    RefAllowingPartiallyDestroyed<Document> document = this->document();
+    Ref<Document> document = this->document();
     document->updateSVGRenderer(*this);
 }
 

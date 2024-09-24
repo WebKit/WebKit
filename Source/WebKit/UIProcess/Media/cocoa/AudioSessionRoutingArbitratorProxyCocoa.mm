@@ -49,7 +49,7 @@ AudioSessionRoutingArbitratorProxy::AudioSessionRoutingArbitratorProxy(WebProces
 
 AudioSessionRoutingArbitratorProxy::~AudioSessionRoutingArbitratorProxy()
 {
-    RefAllowingPartiallyDestroyed<WebProcessProxy> process = m_process.get();
+    Ref<WebProcessProxy> process = m_process.get();
     process->removeMessageReceiver(Messages::AudioSessionRoutingArbitratorProxy::messageReceiverName(), destinationId());
 }
 

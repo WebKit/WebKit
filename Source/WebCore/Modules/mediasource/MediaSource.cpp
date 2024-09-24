@@ -1484,7 +1484,7 @@ void MediaSource::notifyElementUpdateMediaState() const
 void MediaSource::ensureWeakOnHTMLMediaElementContext(Function<void(HTMLMediaElement&)>&& task) const
 {
     ensureOnMainThread([weakMediaElement = m_mediaElement, task = WTFMove(task)]() mutable {
-        if (RefPtrAllowingPartiallyDestroyed<HTMLMediaElement> mediaElement = weakMediaElement.get())
+        if (RefPtr<HTMLMediaElement> mediaElement = weakMediaElement.get())
             task(*mediaElement);
     });
 }

@@ -75,8 +75,6 @@ public:
 
     using RefCounted::ref;
     using RefCounted::deref;
-    using RefCounted::refAllowingPartiallyDestroyed;
-    using RefCounted::derefAllowingPartiallyDestroyed;
 
     virtual void suspend() { }
     virtual void resume() { }

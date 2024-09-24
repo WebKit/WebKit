@@ -132,7 +132,7 @@ void SVGUseElement::removedFromAncestor(RemovalType removalType, ContainerNode& 
     // and SVGUseElement::updateExternalDocument which calls invalidateShadowTree().
     if (removalType.disconnectedFromDocument) {
         if (m_shadowTreeNeedsUpdate) {
-            RefAllowingPartiallyDestroyed<Document> document = this->document();
+            Ref<Document> document = this->document();
             document->removeElementWithPendingUserAgentShadowTreeUpdate(*this);
         }
     }
@@ -581,7 +581,7 @@ void SVGUseElement::invalidateShadowTree()
     invalidateStyleAndRenderersForSubtree();
     invalidateDependentShadowTrees();
     if (isConnected()) {
-        RefAllowingPartiallyDestroyed<Document> document = this->document();
+        Ref<Document> document = this->document();
         document->addElementWithPendingUserAgentShadowTreeUpdate(*this);
     }
 }
@@ -617,7 +617,7 @@ void SVGUseElement::notifyFinished(CachedResource& resource, const NetworkLoadMe
 void SVGUseElement::updateExternalDocument()
 {
     URL externalDocumentURL;
-    RefAllowingPartiallyDestroyed<Document> document = this->document();
+    Ref<Document> document = this->document();
     if (isConnected() && isExternalURIReference(href(), document)) {
         externalDocumentURL = document->completeURL(href());
         if (!externalDocumentURL.hasFragmentIdentifier())

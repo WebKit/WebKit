@@ -213,8 +213,6 @@ public:
 
     WEBCORE_EXPORT void ref();
     WEBCORE_EXPORT void deref();
-    WEBCORE_EXPORT void refAllowingPartiallyDestroyed();
-    WEBCORE_EXPORT void derefAllowingPartiallyDestroyed();
 
     WEBCORE_EXPORT bool requiresScriptExecutionTelemetry(ScriptTelemetryCategory);
 
