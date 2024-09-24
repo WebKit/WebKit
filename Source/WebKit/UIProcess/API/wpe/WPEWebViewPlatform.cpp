@@ -435,9 +435,9 @@ void ViewPlatform::handleGesture(WPEEvent* event)
     }
 }
 
-void ViewPlatform::synthesizeCompositionKeyPress(const String&, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&)
+void ViewPlatform::synthesizeCompositionKeyPress(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& underlines, std::optional<EditingRange>&& selectionRange)
 {
-    // FIXME: implement.
+    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(text, WTFMove(underlines), WTFMove(selectionRange)));
 }
 
 void ViewPlatform::setCursor(const WebCore::Cursor& cursor)
