@@ -42,8 +42,7 @@ static WorkQueue& gstDecoderWorkQueue()
     return queue.get();
 }
 
-class GStreamerInternalAudioDecoder : public ThreadSafeRefCounted<GStreamerInternalAudioDecoder>
-    , public CanMakeWeakPtr<GStreamerInternalAudioDecoder, WeakPtrFactoryInitialization::Eager> {
+class GStreamerInternalAudioDecoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerInternalAudioDecoder> {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
@@ -257,8 +256,9 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
     } else
         harnessedElement = WTFMove(element);
 
-    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = WeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
-        if (!weakThis)
+    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
         if (m_isClosed)
             return;
@@ -278,8 +278,8 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
         GST_TRACE_OBJECT(m_harness->element(), "Got frame with PTS: %" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(outputBuffer)));
 
         auto data = PlatformRawAudioDataGStreamer::create(WTFMove(outputSample));
-        m_postTaskCallback([weakThis = WeakPtr { *this }, this, data = WTFMove(data)]() mutable {
-            if (!weakThis)
+        m_postTaskCallback([weakThis = ThreadSafeWeakPtr { *this }, this, data = WTFMove(data)]() mutable {
+            if (!weakThis.get())
                 return;
             if (!m_isClosed)
                 m_outputCallback(AudioDecoder::DecodedData { WTFMove(data) });
@@ -293,8 +293,8 @@ void GStreamerInternalAudioDecoder::decode(std::span<const uint8_t> frameData, [
 
     auto encodedData = wrapSpanData(frameData);
     if (!encodedData) {
-        m_postTaskCallback([weakThis = WeakPtr { *this }, this, callback = WTFMove(callback)]() mutable {
-            if (!weakThis)
+        m_postTaskCallback([weakThis = ThreadSafeWeakPtr { *this }, this, callback = WTFMove(callback)]() mutable {
+            if (!weakThis.get())
                 return;
             if (m_isClosed)
                 return;
@@ -321,8 +321,8 @@ void GStreamerInternalAudioDecoder::decode(std::span<const uint8_t> frameData, [
         GST_BUFFER_DURATION(encodedData.get()) = *duration;
 
     auto result = m_harness->pushSample(adoptGRef(gst_sample_new(encodedData.get(), m_inputCaps.get(), &segment, nullptr)));
-    m_postTaskCallback([weakThis = WeakPtr { *this }, this, callback = WTFMove(callback), result]() mutable {
-        if (!weakThis)
+    m_postTaskCallback([weakThis = ThreadSafeWeakPtr { *this }, this, callback = WTFMove(callback), result]() mutable {
+        if (!weakThis.get())
             return;
         if (m_isClosed)
             return;

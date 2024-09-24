@@ -40,8 +40,7 @@ static WorkQueue& gstDecoderWorkQueue()
     return queue.get();
 }
 
-class GStreamerInternalVideoDecoder : public ThreadSafeRefCounted<GStreamerInternalVideoDecoder>
-    , public CanMakeWeakPtr<GStreamerInternalVideoDecoder, WeakPtrFactoryInitialization::Eager> {
+class GStreamerInternalVideoDecoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerInternalVideoDecoder> {                                                                                                                
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
@@ -213,10 +212,10 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
     } else
         harnessedElement = WTFMove(element);
 
-    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = WeakPtr { *this }, this](auto& stream, GRefPtr<GstSample>&& outputSample) {
-        if (!weakThis)
+    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto& stream, GRefPtr<GstSample>&& outputSample) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
-
         if (m_isClosed)
             return;
 
@@ -228,8 +227,8 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
         if (m_presentationSize.isEmpty())
             m_presentationSize = getVideoResolutionFromCaps(stream.outputCaps().get()).value_or(FloatSize { 0, 0 });
 
-        m_postTaskCallback([weakThis = WeakPtr { *this }, this, outputSample = WTFMove(outputSample)]() mutable {
-            if (!weakThis)
+        m_postTaskCallback([weakThis = ThreadSafeWeakPtr { *this }, this, outputSample = WTFMove(outputSample)]() mutable {
+            if (!weakThis.get())
                 return;
 
             if (m_isClosed)
@@ -253,8 +252,8 @@ void GStreamerInternalVideoDecoder::decode(std::span<const uint8_t> frameData, b
     GST_DEBUG_OBJECT(m_harness->element(), "Decoding%s frame", isKeyFrame ? " key" : "");
     auto buffer = wrapSpanData(frameData);
     if (!buffer) {
-        m_postTaskCallback([weakThis = WeakPtr { *this }, this, callback = WTFMove(callback)]() mutable {
-            if (!weakThis)
+        m_postTaskCallback([weakThis = ThreadSafeWeakPtr { *this }, this, callback = WTFMove(callback)]() mutable {
+            if (!weakThis.get())
                 return;
 
             if (m_isClosed)
@@ -280,11 +279,11 @@ void GStreamerInternalVideoDecoder::decode(std::span<const uint8_t> frameData, b
     auto result = m_harness->pushSample(adoptGRef(gst_sample_new(buffer.get(), m_inputCaps.get(), nullptr, nullptr)));
     if (result)
         m_harness->processOutputSamples();
-    m_postTaskCallback([weakThis = WeakPtr { *this }, this, callback = WTFMove(callback), result]() mutable {
-        if (!weakThis)
+    m_postTaskCallback([weakThis = ThreadSafeWeakPtr { *this }, this, callback = WTFMove(callback), result]() mutable {
+        if (!weakThis.get())
             return;
 
-        if (weakThis->m_isClosed)
+        if (m_isClosed)
             return;
 
         if (!result)
