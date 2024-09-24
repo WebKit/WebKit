@@ -51,6 +51,7 @@ class WebPageInspectorController {
     WTF_MAKE_NONCOPYABLE(WebPageInspectorController);
 public:
     WebPageInspectorController(WebPageProxy&);
+    ~WebPageInspectorController();
 
     void init();
     void pageClosed();
@@ -78,7 +79,7 @@ public:
     void willDestroyProvisionalPage(const ProvisionalPageProxy&);
     void didCommitProvisionalPage(WebCore::PageIdentifier oldWebPageID, WebCore::PageIdentifier newWebPageID);
 
-    InspectorBrowserAgent* enabledBrowserAgent() const { return m_enabledBrowserAgent; }
+    InspectorBrowserAgent* enabledBrowserAgent() const;
     void setEnabledBrowserAgent(InspectorBrowserAgent*);
 
     void browserExtensionsEnabled(HashMap<String, String>&&);
@@ -100,7 +101,7 @@ private:
     Inspector::InspectorTargetAgent* m_targetAgent { nullptr };
     HashMap<String, std::unique_ptr<InspectorTargetProxy>> m_targets;
 
-    InspectorBrowserAgent* m_enabledBrowserAgent { nullptr };
+    CheckedPtr<InspectorBrowserAgent> m_enabledBrowserAgent;
 
     bool m_didCreateLazyAgents { false };
 };
