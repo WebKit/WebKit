@@ -45,8 +45,7 @@ static WorkQueue& gstDecoderWorkQueue()
     return queue.get();
 }
 
-class GStreamerInternalAudioDecoder : public ThreadSafeRefCounted<GStreamerInternalAudioDecoder>
-    , public CanMakeWeakPtr<GStreamerInternalAudioDecoder, WeakPtrFactoryInitialization::Eager> {
+class GStreamerInternalAudioDecoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerInternalAudioDecoder> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(GStreamerInternalAudioDecoder);
 
 public:
@@ -250,7 +249,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
     } else
         harnessedElement = WTFMove(element);
 
-    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = WeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
+    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
