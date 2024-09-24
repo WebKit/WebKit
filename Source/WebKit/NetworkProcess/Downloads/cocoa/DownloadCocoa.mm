@@ -169,10 +169,8 @@ void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmark
 
 void Download::setPlaceholderURL(NSURL *placeholderURL, NSData *bookmarkData)
 {
-    if (!placeholderURL) {
-        didFail({ }, { });
+    if (!placeholderURL)
         return;
-    }
 
     m_placeholderURL = placeholderURL;
 
