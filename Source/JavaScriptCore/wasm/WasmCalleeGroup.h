@@ -99,6 +99,8 @@ public:
 #if ENABLE(WEBASSEMBLY_OMGJIT)
         if (!m_omgCallees.isEmpty() && m_omgCallees[calleeIndex])
             return *m_omgCallees[calleeIndex].get();
+#endif
+#if ENABLE(WEBASSEMBLY_BBQJIT)
         if (!m_bbqCallees.isEmpty() && m_bbqCallees[calleeIndex])
             return *m_bbqCallees[calleeIndex].get();
 #endif

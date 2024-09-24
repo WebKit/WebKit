@@ -3699,4 +3699,4 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& origin
 } } } // namespace JSC::Wasm::BBQJITImpl
 
 #endif // USE(JSVALUE32_64)
-#endif // ENABLE(WEBASSEMBLY_OMGJIT)
+#endif // ENABLE(WEBASSEMBLY_BBQJIT)

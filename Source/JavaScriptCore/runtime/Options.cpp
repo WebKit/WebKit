@@ -602,11 +602,6 @@ static void overrideDefaults()
     Options::useMachForExceptions() = false;
 #endif
 
-    if (Options::useWasmLLInt() && !Options::wasmLLIntTiersUpToBBQ()) {
-        Options::thresholdForOMGOptimizeAfterWarmUp() = 1500;
-        Options::thresholdForOMGOptimizeSoon() = 100;
-    }
-
 #if ASAN_ENABLED
     // This is a heuristic because ASAN builds are memory hogs in terms of stack frame usage.
     // So, we need a much larger ReservedZoneSize to allow stack overflow handlers to execute.
@@ -862,9 +857,6 @@ void Options::notifyOptionsChanged()
         ASSERT((static_cast<int64_t>(Options::thresholdForOptimizeAfterLongWarmUp()) << Options::reoptimizationRetryCounterMax()) > 0);
         ASSERT((static_cast<int64_t>(Options::thresholdForOptimizeAfterLongWarmUp()) << Options::reoptimizationRetryCounterMax()) <= static_cast<int64_t>(std::numeric_limits<int32_t>::max()));
 
-        if (!Options::useBBQJIT() && Options::useOMGJIT())
-            Options::wasmLLIntTiersUpToBBQ() = false;
-
         if (isX86_64() && !isX86_64_AVX())
             Options::useWasmSIMD() = false;
 
@@ -875,7 +867,6 @@ void Options::notifyOptionsChanged()
         if (Options::useWasmTailCalls()) {
             Options::useBBQJIT() = false;
             Options::useWasmLLInt() = true;
-            Options::wasmLLIntTiersUpToBBQ() = false;
         }
 #endif
 

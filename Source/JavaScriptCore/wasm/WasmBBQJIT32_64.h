@@ -401,4 +401,4 @@ void BBQJIT::emitCCall(Func function, const Vector<Value, N>& arguments, Value& 
 } } } // namespace JSC::Wasm::BBQJITImpl
 
 #endif // USE(JSVALUE32_64)
-#endif // ENABLE(WEBASSEMBLY_OMGJIT)
+#endif // ENABLE(WEBASSEMBLY_BBQJIT)
