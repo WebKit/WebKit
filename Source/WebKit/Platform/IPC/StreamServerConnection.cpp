@@ -279,7 +279,7 @@ void StreamServerConnection::sendDeserializationErrorSyncReply(Connection::SyncR
 {
     auto encoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID.toUInt64());
     encoder->setSyncMessageDeserializationFailure();
-    protectedConnection()->sendSyncReply(WTFMove(encoder));
+    m_connection->sendSyncReply(WTFMove(encoder));
 }
 #endif
 

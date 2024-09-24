@@ -434,6 +434,8 @@ public:
     UniqueRef<Encoder> createSyncMessageEncoder(MessageName, uint64_t destinationID, SyncRequestID&);
     DecoderOrError sendSyncMessage(SyncRequestID, UniqueRef<Encoder>&&, Timeout, OptionSet<SendSyncOption> sendSyncOptions);
     Error sendSyncReply(UniqueRef<Encoder>&&);
+    template<typename T, typename... Arguments>
+    void sendAsyncReply(AsyncReplyID, Arguments&&...);
 
     void wakeUpRunLoop();
 
@@ -798,6 +800,14 @@ template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& mess
         return { Error::FailedToDecodeReplyArguments };
 
     return SendSyncResult<T> { WTFMove(replyDecoderOrError.value()), WTFMove(*replyArguments) };
+}
+
+template<typename T, typename... Arguments>
+void Connection::sendAsyncReply(AsyncReplyID asyncReplyID, Arguments&&... arguments)
+{
+    auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), asyncReplyID.toUInt64());
+    (encoder.get() << ... << std::forward<Arguments>(arguments));
+    sendSyncReply(WTFMove(encoder));
 }
 
 template<typename T> Error Connection::waitForAndDispatchImmediately(uint64_t destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)

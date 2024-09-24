@@ -686,8 +686,6 @@ def async_message_statement(receiver, message):
         dispatch_function += 'WithoutUsingIPCConnection'
 
     connection = 'connection, '
-    if receiver.has_attribute(STREAM_ATTRIBUTE):
-        connection = 'connection.protectedConnection(), '
     if receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
         connection = ''
 
@@ -1389,7 +1387,7 @@ def generate_message_handler(receiver):
     if receiver.has_attribute(STREAM_ATTRIBUTE):
         result.append('void %s::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)\n' % (receiver.name))
         result.append('{\n')
-        result += generate_enabled_by_for_receiver(receiver, receiver.messages, 'connection.protectedConnection()->ignoreInvalidMessageForTesting()')
+        result += generate_enabled_by_for_receiver(receiver, receiver.messages, 'connection.ignoreInvalidMessageForTesting()')
         assert(receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE))
         assert(not receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE))
         assert(not receiver.has_attribute(WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE))
@@ -1401,7 +1399,7 @@ def generate_message_handler(receiver):
             result.append('    UNUSED_PARAM(decoder);\n')
             result.append('    UNUSED_PARAM(connection);\n')
             result.append('#if ENABLE(IPC_TESTING_API)\n')
-            result.append('    if (connection.protectedConnection()->ignoreInvalidMessageForTesting())\n')
+            result.append('    if (connection.ignoreInvalidMessageForTesting())\n')
             result.append('        return;\n')
             result.append('#endif // ENABLE(IPC_TESTING_API)\n')
             result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());\n')

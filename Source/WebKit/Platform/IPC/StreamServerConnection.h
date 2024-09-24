@@ -100,11 +100,13 @@ public:
     void sendSyncReply(Connection::SyncRequestID, Arguments&&...);
 
 #if ENABLE(IPC_TESTING_API)
+    void setIgnoreInvalidMessageForTesting() { m_connection->setIgnoreInvalidMessageForTesting(); }
+    bool ignoreInvalidMessageForTesting() const { return m_connection->ignoreInvalidMessageForTesting(); }
     void sendDeserializationErrorSyncReply(Connection::SyncRequestID);
 #endif
 
     template<typename T, typename... Arguments>
-    void sendAsyncReply(std::optional<AsyncReplyID>, Arguments&&...);
+    void sendAsyncReply(AsyncReplyID, Arguments&&...);
 
     Semaphore& clientWaitSemaphore() { return m_clientWaitSemaphore; }
 
@@ -179,11 +181,9 @@ void StreamServerConnection::sendSyncReply(Connection::SyncRequestID syncRequest
 }
 
 template<typename T, typename... Arguments>
-void StreamServerConnection::sendAsyncReply(std::optional<AsyncReplyID> asyncReplyID, Arguments&&... arguments)
+void StreamServerConnection::sendAsyncReply(AsyncReplyID asyncReplyID, Arguments&&... arguments)
 {
-    auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), asyncReplyID ? asyncReplyID->toUInt64() : 0);
-    (encoder.get() << ... << std::forward<Arguments>(arguments));
-    m_connection->sendSyncReply(WTFMove(encoder));
+    m_connection->sendAsyncReply<T>(asyncReplyID, std::forward<Arguments>(arguments)...);
 }
 
 }

@@ -331,9 +331,11 @@ public:
                 return false;
             using AsyncReplyID = IPC::StreamServerConnection::AsyncReplyID;
             auto contents = decoder.decode<uint64_t>();
+            ASSERT(contents);
             auto asyncReplyID = decoder.decode<AsyncReplyID>();
+            ASSERT(asyncReplyID);
             ASSERT(decoder.isValid());
-            m_serverConnection->sendAsyncReply<MockStreamTestMessageWithAsyncReply1>(asyncReplyID, contents.value_or(0));
+            m_serverConnection->sendAsyncReply<MockStreamTestMessageWithAsyncReply1>(*asyncReplyID, *contents);
             return true;
         });
         serverQueue().dispatch([this, serverConnection = WTFMove(serverConnection)] () mutable {
