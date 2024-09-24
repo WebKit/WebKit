@@ -54,7 +54,7 @@ class LLIntOffsetsExtractor;
 namespace Wasm {
 
 class Callee : public NativeCallee {
-    WTF_MAKE_TZONE_ALLOCATED(Callee);
+    WTF_MAKE_COMPACT_TZONE_ALLOCATED(Callee);
     friend class JSC::LLIntOffsetsExtractor;
 public:
     IndexOrName indexOrName() const { return m_indexOrName; }
@@ -93,7 +93,7 @@ protected:
 };
 
 class JITCallee : public Callee {
-    WTF_MAKE_TZONE_ALLOCATED(JITCallee);
+    WTF_MAKE_COMPACT_TZONE_ALLOCATED(JITCallee);
 public:
     friend class Callee;
     FixedVector<UnlinkedWasmToWasmCall>& wasmToWasmCallsites() { return m_wasmToWasmCallsites; }
@@ -130,7 +130,7 @@ protected:
 };
 
 class JSEntrypointCallee final : public Callee {
-    WTF_MAKE_TZONE_ALLOCATED(JSEntrypointCallee);
+    WTF_MAKE_COMPACT_TZONE_ALLOCATED(JSEntrypointCallee);
 public:
     friend class Callee;
     friend class JSC::LLIntOffsetsExtractor;
@@ -183,7 +183,7 @@ private:
 };
 
 class WasmToJSCallee final : public Callee {
-    WTF_MAKE_TZONE_ALLOCATED(WasmToJSCallee);
+    WTF_MAKE_COMPACT_TZONE_ALLOCATED(WasmToJSCallee);
 public:
     friend class Callee;
     friend class JSC::LLIntOffsetsExtractor;
@@ -201,7 +201,7 @@ private:
 #if ENABLE(JIT)
 
 class JSToWasmICCallee final : public Callee {
-    WTF_MAKE_TZONE_ALLOCATED(JSToWasmICCallee);
+    WTF_MAKE_COMPACT_TZONE_ALLOCATED(JSToWasmICCallee);
 public:
     static Ref<JSToWasmICCallee> create(RegisterAtOffsetList&& calleeSaves)
     {
@@ -240,7 +240,7 @@ struct WasmCodeOrigin {
 };
 
 class OptimizingJITCallee : public JITCallee {
-    WTF_MAKE_TZONE_ALLOCATED(OptimizingJITCallee);
+    WTF_MAKE_COMPACT_TZONE_ALLOCATED(OptimizingJITCallee);
 public:
     const StackMap& stackmap(CallSiteIndex) const;
 
@@ -274,7 +274,7 @@ constexpr int32_t stackCheckUnset = 0;
 constexpr int32_t stackCheckNotNeeded = -1;
 
 class OSREntryCallee final : public OptimizingJITCallee {
-    WTF_MAKE_TZONE_ALLOCATED(OSREntryCallee);
+    WTF_MAKE_COMPACT_TZONE_ALLOCATED(OSREntryCallee);
 public:
     static Ref<OSREntryCallee> create(CompilationMode compilationMode, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, uint32_t loopIndex)
     {
@@ -321,7 +321,7 @@ private:
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 
 class OMGCallee final : public OptimizingJITCallee {
-    WTF_MAKE_TZONE_ALLOCATED(OMGCallee);
+    WTF_MAKE_COMPACT_TZONE_ALLOCATED(OMGCallee);
 public:
     static Ref<OMGCallee> create(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     {
@@ -342,7 +342,7 @@ private:
 #if ENABLE(WEBASSEMBLY_BBQJIT)
 
 class BBQCallee final : public OptimizingJITCallee {
-    WTF_MAKE_TZONE_ALLOCATED(BBQCallee);
+    WTF_MAKE_COMPACT_TZONE_ALLOCATED(BBQCallee);
 public:
     static constexpr unsigned extraOSRValuesForLoopIndex = 1;
 
@@ -429,7 +429,7 @@ private:
 
 
 class IPIntCallee final : public Callee {
-    WTF_MAKE_TZONE_ALLOCATED(IPIntCallee);
+    WTF_MAKE_COMPACT_TZONE_ALLOCATED(IPIntCallee);
     friend class JSC::LLIntOffsetsExtractor;
     friend class Callee;
 public:
@@ -502,7 +502,7 @@ public:
 };
 
 class LLIntCallee final : public Callee {
-    WTF_MAKE_TZONE_ALLOCATED(LLIntCallee);
+    WTF_MAKE_COMPACT_TZONE_ALLOCATED(LLIntCallee);
     friend JSC::LLIntOffsetsExtractor;
     friend class Callee;
 public:
