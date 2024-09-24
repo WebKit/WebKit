@@ -59,7 +59,18 @@ public:
     AnimationTimeline::ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents() override;
     AnimationTimelinesController* controller() const override;
 
+    RenderBox* sourceRenderer() const;
+    Element* source() const override;
+
 private:
+    struct Data {
+        float scrollContainerSize { 0 };
+        float subjectOffset { 0 };
+        float currentScrollOffset { 0 };
+        float coverRangeEnd { 0 };
+    };
+    Data computeViewTimelineData() const;
+
     explicit ViewTimeline(ViewTimelineOptions&& = { });
     explicit ViewTimeline(const AtomString&, ScrollAxis, ViewTimelineInsets&&);
 

@@ -36,6 +36,8 @@
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "Element.h"
+#include "RenderBox.h"
+#include "ScrollAnchoringController.h"
 #include "StyleBuilderConverter.h"
 
 namespace WebCore {
@@ -138,6 +140,67 @@ AnimationTimeline::ShouldUpdateAnimationsAndSendEvents ViewTimeline::documentWil
     if (m_subject && m_subject->isConnected())
         return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::Yes;
     return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::No;
+}
+
+Element* ViewTimeline::source() const
+{
+    if (auto* sourceRender = sourceRenderer())
+        return sourceRender->element();
+    return nullptr;
+}
+
+RenderBox* ViewTimeline::sourceRenderer() const
+{
+    if (!m_subject)
+        return nullptr;
+
+    CheckedPtr subjectRenderer = m_subject->renderer();
+    if (!subjectRenderer)
+        return { };
+
+    // https://drafts.csswg.org/scroll-animations-1/#dom-scrolltimeline-source
+    // Determine source renderer by looking for the nearest ancestor that establishes a scroll container
+    return subjectRenderer->enclosingScrollableContainer();
+}
+
+ViewTimeline::Data ViewTimeline::computeViewTimelineData() const
+{
+    if (!m_subject)
+        return { };
+
+    Ref document = m_subject->document();
+
+    CheckedPtr subjectRenderBox = dynamicDowncast<RenderBox>(m_subject->renderer());
+    if (!subjectRenderBox)
+        return { };
+
+    auto* sourceScrollableArea = scrollableAreaForSourceRenderer(sourceRenderer(), document);
+    if (!sourceScrollableArea)
+        return { };
+
+    // https://drafts.csswg.org/scroll-animations-1/#view-timeline-progress
+    //
+    // Progress (the current time) in a view progress timeline is calculated as: distance ÷ range where:
+    //
+    // - distance is the current scroll offset minus the scroll offset corresponding to the start of the
+    //   cover range
+    // - range is the scroll offset corresponding to the start of the cover range minus the scroll offset
+    //   corresponding to the end of the cover range
+    // TODO: take into account view-timeline-inset: https://drafts.csswg.org/scroll-animations-1/#propdef-view-timeline-inset
+    // TODO: take into account animation-range: https://drafts.csswg.org/scroll-animations-1/#animation-range
+
+    float currentScrollOffset = axis() == ScrollAxis::Block ? sourceScrollableArea->scrollPosition().y() : sourceScrollableArea->scrollPosition().x();
+    float scrollContainerSize = axis() == ScrollAxis::Block ? sourceScrollableArea->visibleHeight() : sourceScrollableArea->visibleWidth();
+
+    auto offsetFromScroller = ScrollAnchoringController::computeOffsetFromScrollableArea(*subjectRenderBox, *sourceScrollableArea, ScrollAnchoringController::ShouldIncludeFrameViewLocation::No);
+    float subjectOffset = axis() == ScrollAxis::Block ? offsetFromScroller.y() : offsetFromScroller.x();
+
+    float subjectSize = axis() == ScrollAxis::Block ? subjectRenderBox->borderBoxRect().height() : subjectRenderBox->borderBoxRect().width();
+
+    auto coverRangeStart = subjectOffset - currentScrollOffset;
+    auto coverRangeEnd = coverRangeStart + subjectSize;
+
+    return { scrollContainerSize, subjectOffset, currentScrollOffset, coverRangeEnd };
 }
 
 } // namespace WebCore

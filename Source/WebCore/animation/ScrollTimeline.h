@@ -45,7 +45,7 @@ public:
     static Ref<ScrollTimeline> create(const AtomString&, ScrollAxis);
     static Ref<ScrollTimeline> createFromCSSValue(const CSSScrollValue&);
 
-    Element* source() const { return m_source.get(); }
+    virtual Element* source() const { return m_source.get(); }
 
     ScrollAxis axis() const { return m_axis; }
     void setAxis(ScrollAxis axis) { m_axis = axis; }
