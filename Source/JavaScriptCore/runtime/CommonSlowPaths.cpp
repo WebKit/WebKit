@@ -750,14 +750,20 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_typeof_is_function)
     RETURN(jsBoolean(jsTypeofIsFunction(globalObject, GET_C(bytecode.m_operand).jsValue())));
 }
 
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_instanceof_custom)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_throw_static_error_from_instanceof)
+{
+    BEGIN();
+    THROW(createTypeError(globalObject, "Right hand side of instanceof is not an object"_s));
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_instanceof_custom_from_instanceof)
 {
     BEGIN();
 
-    auto bytecode = pc->as<OpInstanceofCustom>();
+    auto bytecode = pc->as<OpInstanceof>();
     auto value = GET_C(bytecode.m_value).jsValue();
     auto constructor = GET_C(bytecode.m_constructor).jsValue();
-    auto hasInstanceValue = GET_C(bytecode.m_hasInstanceValue).jsValue();
+    auto hasInstanceValue = GET_C(bytecode.m_dst).jsValue();
 
     ASSERT(constructor.isObject());
     ASSERT(hasInstanceValue != globalObject->functionProtoHasInstanceSymbolFunction() || !constructor.getObject()->structure()->typeInfo().implementsDefaultHasInstance());

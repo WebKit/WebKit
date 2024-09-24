@@ -323,12 +323,13 @@ private:
     BytecodeIndex nextOpcodeIndex() const { return BytecodeIndex(m_currentIndex.offset() + m_currentInstruction->size()); }
     BytecodeIndex nextCheckpoint() const { return m_currentIndex.withCheckpoint(m_currentIndex.checkpoint() + 1); }
 
-    void progressToNextCheckpoint()
+    BytecodeIndex progressToNextCheckpoint()
     {
         m_currentIndex = nextCheckpoint();
         // At this point, it's again OK to OSR exit.
         m_exitOK = true;
         processSetLocalQueue();
+        return m_currentIndex;
     }
 
     VariableAccessData* newVariableAccessData(Operand operand)
@@ -7037,58 +7038,186 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_instanceof: {
             auto bytecode = currentInstruction->as<OpInstanceof>();
 
-            InstanceOfStatus status = InstanceOfStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_currentIndex);
+            BytecodeIndex startIndex = m_currentIndex;
+            BytecodeIndex itermediateIndex = m_currentIndex;
+            BasicBlock* constructorIsObjectBlock = allocateUntargetableBlock();
+            BasicBlock* constructorIsNotObjectBlock = allocateUntargetableBlock();
+            BasicBlock* valueIsObjectBlock = allocateUntargetableBlock();
+            BasicBlock* valueIsNotObjectBlock = allocateUntargetableBlock();
+            BasicBlock* isCustomBlock = allocateUntargetableBlock();
+            BasicBlock* isNotCustomBlock = allocateUntargetableBlock();
+            BasicBlock* continuation = allocateUntargetableBlock();
 
-            Node* value = get(bytecode.m_value);
-            Node* prototype = get(bytecode.m_prototype);
+            // 1. Get hasInstance
+            // 1.1 Check whether the constructor is an object.
+            BranchData* branchData = m_graph.m_branchData.add();
+            branchData->taken = BranchTarget(constructorIsObjectBlock);
+            branchData->notTaken = BranchTarget(constructorIsNotObjectBlock);
+            addToGraph(Branch, OpInfo(branchData), addToGraph(IsObject, get(bytecode.m_constructor)));
 
-            // Only inline it if it's Simple with a commonPrototype; bottom/top or variable
-            // prototypes both get handled by the IC. This makes sense for bottom (unprofiled)
-            // instanceof ICs because the profit of this optimization is fairly low. So, in the
-            // absence of any information, it's better to avoid making this be the cause of a
-            // recompilation.
-            JSObject* commonPrototype = status.commonPrototype();
-            if (commonPrototype && Options::useAccessInlining()) {
-                addToGraph(CheckIsConstant, OpInfo(m_graph.freeze(commonPrototype)), prototype);
-                
-                bool allOK = true;
-                MatchStructureData* data = m_graph.m_matchStructureData.add();
-                for (const InstanceOfVariant& variant : status.variants()) {
-                    if (!check(variant.conditionSet())) {
-                        allOK = false;
-                        break;
-                    }
-                    for (Structure* structure : variant.structureSet()) {
-                        MatchStructureVariant matchVariant;
-                        matchVariant.structure = m_graph.registerStructure(structure);
-                        matchVariant.result = variant.isHit();
-                        
-                        data->variants.append(WTFMove(matchVariant));
-                    }
-                }
-                
-                if (allOK) {
-                    Node* match = addToGraph(MatchStructure, OpInfo(data), value);
-                    set(bytecode.m_dst, match);
-                    NEXT_OPCODE(op_instanceof);
-                }
+            {
+                m_currentBlock = constructorIsNotObjectBlock;
+                clearCaches();
+                keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
+
+                LazyJSValue errorString = LazyJSValue::newString(m_graph, "Right hand side of instanceof is not an object"_s);
+                OpInfo info = OpInfo(m_graph.m_lazyJSValues.add(errorString));
+                Node* errorMessage = addToGraph(LazyJSConstant, info);
+                addToGraph(ThrowStaticError, OpInfo(ErrorType::TypeError), errorMessage);
+                flushForTerminal();
             }
 
-            NodeType op = status.isMegamorphic() ? InstanceOfMegamorphic : InstanceOf;
-            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
-                op = InstanceOf;
-            set(bytecode.m_dst, addToGraph(op, value, prototype));
+            {
+                m_currentBlock = constructorIsObjectBlock;
+                clearCaches();
+                keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
+
+                // 1.2 Get hasInstance from the constructor.
+                GetByStatus getByStatus = GetByStatus::computeFor(
+                    m_inlineStackTop->m_profiledBlock,
+                    m_inlineStackTop->m_baselineMap, m_icContextStack,
+                    currentCodeOrigin());
+
+                SpeculatedType prediction = getPrediction();
+                auto* hasInstanceImpl = m_vm->propertyNames->hasInstanceSymbol.impl();
+                unsigned identifierNumber = m_graph.identifiers().ensure(hasInstanceImpl);
+                AccessType type = AccessType::GetById;
+
+                handleGetById(bytecode.m_dst, prediction, get(bytecode.m_constructor), CacheableIdentifier::createFromImmortalIdentifier(hasInstanceImpl), identifierNumber, getByStatus, type, nextCheckpoint());
+                itermediateIndex = progressToNextCheckpoint();
+
+                // 2. Get Prototype
+                // 2.1 Check whether the constructor has a custom hasInstance.
+                BranchData* branchData = m_graph.m_branchData.add();
+                branchData->taken = BranchTarget(isCustomBlock);
+                branchData->notTaken = BranchTarget(isNotCustomBlock);
+                JSFunction* defaultHasInstanceSymbolFunction = m_inlineStackTop->m_codeBlock->globalObjectFor(currentCodeOrigin())->functionProtoHasInstanceSymbolFunction();
+                Node* overridesHasInstance = addToGraph(OverridesHasInstance, OpInfo(m_graph.freeze(defaultHasInstanceSymbolFunction)), get(bytecode.m_constructor), get(bytecode.m_dst));
+                addToGraph(Branch, OpInfo(branchData), overridesHasInstance);
+            }
+
+            {
+                m_currentBlock = isCustomBlock;
+                clearCaches();
+                keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
+
+                set(bytecode.m_dst, addToGraph(InstanceOfCustom, get(bytecode.m_value), get(bytecode.m_constructor), get(bytecode.m_dst)));
+
+                m_currentIndex = nextOpcodeIndex();
+                m_exitOK = true;
+                processSetLocalQueue();
+
+                addToGraph(Jump, OpInfo(continuation));
+            }
+
+            m_currentIndex = itermediateIndex;
+
+            {
+                m_currentBlock = isNotCustomBlock;
+                clearCaches();
+                keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
+
+                // 2.2 Check whether the value is an object.
+                BranchData* branchData = m_graph.m_branchData.add();
+                branchData->taken = BranchTarget(valueIsObjectBlock);
+                branchData->notTaken = BranchTarget(valueIsNotObjectBlock);
+                addToGraph(Branch, OpInfo(branchData), addToGraph(IsObject, get(bytecode.m_value)));
+            }
+
+            {
+                m_currentBlock = valueIsNotObjectBlock;
+                clearCaches();
+                keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
+
+                set(bytecode.m_dst, jsConstant(jsBoolean(false)));
+
+                m_currentIndex = nextOpcodeIndex();
+                m_exitOK = true;
+                processSetLocalQueue();
+
+                addToGraph(Jump, OpInfo(continuation));
+            }
+
+            m_currentIndex = itermediateIndex;
+
+            {
+                m_currentBlock = valueIsObjectBlock;
+                clearCaches();
+                keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
+
+                // 2.3 Get prototype from the constructor.
+                GetByStatus getByStatus = GetByStatus::computeFor(
+                    m_inlineStackTop->m_profiledBlock,
+                    m_inlineStackTop->m_baselineMap, m_icContextStack,
+                    currentCodeOrigin());
+
+                SpeculatedType prediction = getPrediction();
+                auto* prototypeImpl = m_vm->propertyNames->prototype.impl();
+                unsigned identifierNumber = m_graph.identifiers().ensure(prototypeImpl);
+                AccessType type = AccessType::GetById;
+
+                handleGetById(bytecode.m_dst, prediction, get(bytecode.m_constructor), CacheableIdentifier::createFromImmortalIdentifier(prototypeImpl), identifierNumber, getByStatus, type, nextCheckpoint());
+                progressToNextCheckpoint();
+
+                // 3. Do value instanceof prototype.
+                InstanceOfStatus status = InstanceOfStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_currentIndex);
+
+                Node* value = get(bytecode.m_value);
+                Node* prototype = get(bytecode.m_dst);
+
+                ([&]() ALWAYS_INLINE_LAMBDA {
+                    // Only inline it if it's Simple with a commonPrototype; bottom/top or variable
+                    // prototypes both get handled by the IC. This makes sense for bottom (unprofiled)
+                    // instanceof ICs because the profit of this optimization is fairly low. So, in the
+                    // absence of any information, it's better to avoid making this be the cause of a
+                    // recompilation.
+                    JSObject* commonPrototype = status.commonPrototype();
+                    if (commonPrototype && Options::useAccessInlining()) {
+                        addToGraph(CheckIsConstant, OpInfo(m_graph.freeze(commonPrototype)), get(bytecode.m_dst));
+
+                        bool allOK = true;
+                        MatchStructureData* data = m_graph.m_matchStructureData.add();
+                        for (const InstanceOfVariant& variant : status.variants()) {
+                            if (!check(variant.conditionSet())) {
+                                allOK = false;
+                                break;
+                            }
+                            for (Structure* structure : variant.structureSet()) {
+                                MatchStructureVariant matchVariant;
+                                matchVariant.structure = m_graph.registerStructure(structure);
+                                matchVariant.result = variant.isHit();
+
+                                data->variants.append(WTFMove(matchVariant));
+                            }
+                        }
+
+                        if (allOK) {
+                            Node* match = addToGraph(MatchStructure, OpInfo(data), value);
+                            set(bytecode.m_dst, match);
+                            return;
+                        }
+                    }
+
+                    NodeType op = status.isMegamorphic() ? InstanceOfMegamorphic : InstanceOf;
+                    if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                        op = InstanceOf;
+                    set(bytecode.m_dst, addToGraph(op, value, prototype));
+                })();
+
+                m_currentIndex = nextOpcodeIndex();
+                m_exitOK = true;
+                processSetLocalQueue();
+
+                addToGraph(Jump, OpInfo(continuation));
+            }
+
+            m_currentIndex = startIndex;
+            m_currentBlock = continuation;
+            clearCaches();
+
             NEXT_OPCODE(op_instanceof);
         }
 
-        case op_instanceof_custom: {
-            auto bytecode = currentInstruction->as<OpInstanceofCustom>();
-            Node* value = get(bytecode.m_value);
-            Node* constructor = get(bytecode.m_constructor);
-            Node* hasInstanceValue = get(bytecode.m_hasInstanceValue);
-            set(bytecode.m_dst, addToGraph(InstanceOfCustom, value, constructor, hasInstanceValue));
-            NEXT_OPCODE(op_instanceof_custom);
-        }
         case op_is_empty: {
             auto bytecode = currentInstruction->as<OpIsEmpty>();
             Node* value = get(bytecode.m_operand);

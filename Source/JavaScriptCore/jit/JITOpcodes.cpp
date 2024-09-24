@@ -145,57 +145,6 @@ void JIT::emit_op_overrides_has_instance(const JSInstruction* currentInstruction
     emitPutVirtualRegister(dst, jsRegT10);
 }
 
-
-void JIT::emit_op_instanceof(const JSInstruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpInstanceof>();
-    VirtualRegister dst = bytecode.m_dst;
-    VirtualRegister value = bytecode.m_value;
-    VirtualRegister proto = bytecode.m_prototype;
-
-    using BaselineJITRegisters::Instanceof::resultJSR;
-    using BaselineJITRegisters::Instanceof::valueJSR;
-    using BaselineJITRegisters::Instanceof::protoJSR;
-    using BaselineJITRegisters::Instanceof::stubInfoGPR;
-
-    emitGetVirtualRegister(value, valueJSR);
-    emitGetVirtualRegister(proto, protoJSR);
-
-    auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
-
-    // Check that proto are cells. baseVal must be a cell - this is checked by the get_by_id for Symbol.hasInstance.
-    emitJumpSlowCaseIfNotJSCell(valueJSR, value);
-    emitJumpSlowCaseIfNotJSCell(protoJSR, proto);
-
-    JITInstanceOfGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
-        RegisterSetBuilder::stubUnavailableRegisters(),
-        resultJSR.payloadGPR(),
-        valueJSR.payloadGPR(),
-        protoJSR.payloadGPR(),
-        stubInfoGPR);
-
-    gen.generateDataICFastPath(*this);
-#if USE(JSVALUE32_64)
-    boxBoolean(resultJSR.payloadGPR(), resultJSR);
-#endif
-    addSlowCase();
-    m_instanceOfs.append(gen);
-
-    setFastPathResumePoint();
-    emitPutVirtualRegister(dst, resultJSR);
-}
-
-void JIT::emitSlow_op_instanceof(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
-{
-    ASSERT(BytecodeIndex(m_bytecodeIndex.offset()) == m_bytecodeIndex);
-    JITInstanceOfGenerator& gen = m_instanceOfs[m_instanceOfIndex++];
-    linkAllSlowCases(iter);
-    gen.reportBaselineDataICSlowPathBegin(label());
-    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
-}
-
 void JIT::emit_op_is_empty(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpIsEmpty>();

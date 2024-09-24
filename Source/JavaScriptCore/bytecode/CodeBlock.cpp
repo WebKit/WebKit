@@ -1386,6 +1386,11 @@ void CodeBlock::finalizeLLIntInlineCaches()
             clearIfNeeded(metadata.m_valueModeMetadata, "iterator next"_s);
         });
 
+        m_metadata->forEach<OpInstanceof>([&] (auto& metadata) {
+            clearIfNeeded(metadata.m_hasInstanceModeMetadata, "instanceof"_s);
+            clearIfNeeded(metadata.m_prototypeModeMetadata, "instanceof"_s);
+        });
+
         m_metadata->forEach<OpGetById>([&] (auto& metadata) {
             clearIfNeeded(metadata.m_modeMetadata, "get by id"_s);
         });
@@ -1581,6 +1586,13 @@ void CodeBlock::finalizeLLIntInlineCaches()
                 auto& metadata = instruction->as<OpIteratorNext>().metadata(this);
                 LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(metadata.m_doneModeMetadata);
                 LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(metadata.m_valueModeMetadata);
+                break;
+            }
+            case op_instanceof: {
+                dataLogLnIf(Options::verboseOSR(), "Clearing LLInt instanceof property access.");
+                auto& metadata = instruction->as<OpInstanceof>().metadata(this);
+                LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(metadata.m_hasInstanceModeMetadata);
+                LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(metadata.m_prototypeModeMetadata);
                 break;
             }
             default:
@@ -3134,6 +3146,8 @@ ValueProfile* CodeBlock::tryGetValueProfileForBytecodeIndex(BytecodeIndex byteco
         return &m_metadata->valueProfilesEnd()[-static_cast<ptrdiff_t>(valueProfileOffsetFor(instruction->as<OpIteratorOpen>(), bytecodeIndex.checkpoint()))];
     case op_iterator_next:
         return &m_metadata->valueProfilesEnd()[-static_cast<ptrdiff_t>(valueProfileOffsetFor(instruction->as<OpIteratorNext>(), bytecodeIndex.checkpoint()))];
+    case op_instanceof:
+        return &m_metadata->valueProfilesEnd()[-static_cast<ptrdiff_t>(valueProfileOffsetFor(instruction->as<OpInstanceof>(), bytecodeIndex.checkpoint()))];
 
     default:
         return nullptr;
