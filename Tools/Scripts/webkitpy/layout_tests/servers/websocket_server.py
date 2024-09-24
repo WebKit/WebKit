@@ -125,7 +125,7 @@ class PyWebSocket(http_server_base.HttpServerBase):
         wpt_tools_base = self._filesystem.join(self._layout_tests, "imported", "w3c", "web-platform-tests", "tools")
         pywebsocket_base = self._filesystem.join(wpt_tools_base, "third_party", "pywebsocket3")
         pywebsocket_deps = [self._filesystem.join(wpt_tools_base, "third_party", "six")]
-        pywebsocket_script = self._filesystem.join(pywebsocket_base, 'mod_pywebsocket', 'standalone.py')
+        pywebsocket_script = self._filesystem.join(pywebsocket_base, 'pywebsocket3', 'standalone.py')
         start_cmd = [
             python_interp, '-u', pywebsocket_script,
             '--server-host', '0.0.0.0' if self._port_obj.get_option("http_all_interfaces") else 'localhost',
