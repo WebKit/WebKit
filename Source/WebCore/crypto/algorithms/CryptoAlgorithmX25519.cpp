@@ -24,6 +24,7 @@
 #include "CryptoAlgorithmX25519Params.h"
 #include "CryptoKeyOKP.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/CryptographicUtilities.h>
 
 namespace WebCore {
 
@@ -95,6 +96,15 @@ void CryptoAlgorithmX25519::deriveBits(const CryptoAlgorithmParameters& paramete
             callback(WTFMove(*derivedKey));
             return;
         }
+#if !HAVE(X25519_ZERO_CHECKS)
+        // https://datatracker.ietf.org/doc/html/rfc7748#section-6.1
+        constexpr auto expectedOutputSize = 32;
+        constexpr std::array<uint8_t, expectedOutputSize> zeros { };
+        if (derivedKey->size() != expectedOutputSize || !constantTimeMemcmp(derivedKey->data(), zeros.data(), expectedOutputSize)) {
+            exceptionCallback(ExceptionCode::OperationError);
+            return;
+        }
+#endif
         auto lengthInBytes = std::ceil(*length / 8.);
         if (lengthInBytes > (*derivedKey).size()) {
             exceptionCallback(ExceptionCode::OperationError);

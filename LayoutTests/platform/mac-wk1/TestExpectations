@@ -1611,11 +1611,6 @@ storage/indexeddb/modern/exceed-open-file-limit.html
 # Only fails in WK1
 imported/w3c/web-platform-tests/cookies/secure/set-from-ws.sub.html [ Failure ]
 
-webkit.org/b/276371 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits.https.any.html [ Failure ]
-webkit.org/b/276371 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits.https.any.worker.html [ Failure ]
-webkit.org/b/276371 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_keys.https.any.html [ Failure ]
-webkit.org/b/276371 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_keys.https.any.worker.html [ Failure ]
-
 webkit.org/b/244308 imported/w3c/web-platform-tests/cookies/attributes/attributes-ctl.sub.html [ Pass Failure ]
 
 # Only flakey in WK1
