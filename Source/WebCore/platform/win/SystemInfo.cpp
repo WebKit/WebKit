@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+IGNORE_CLANG_WARNINGS_BEGIN("deprecated-declarations")
+
 WindowsVersion windowsVersion(int* major, int* minor)
 {
     static bool initialized = false;
@@ -76,6 +78,8 @@ WindowsVersion windowsVersion(int* major, int* minor)
         *minor = minorVersion;
     return version;
 }
+
+IGNORE_CLANG_WARNINGS_END
 
 static String osVersionForUAString()
 {
