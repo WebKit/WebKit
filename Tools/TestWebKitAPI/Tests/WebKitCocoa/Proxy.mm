@@ -344,7 +344,11 @@ TEST(WebKit, HTTPProxyAuthentication)
 
 // rdar://136531022
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
+#if USE(APPLE_INTERNAL_SDK)
+TEST(WebKit, ProxyConfigurationAuthentication)
+#else
 TEST(WebKit, DISABLED_ProxyConfigurationAuthentication)
+#endif
 {
     auto server = proxyAuthenticationServer();
     auto webView = adoptNS([WKWebView new]);
