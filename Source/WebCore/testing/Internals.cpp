@@ -5157,6 +5157,11 @@ ExceptionOr<RefPtr<VTTCue>> Internals::mediaElementCurrentlySpokenCue(HTMLMediaE
 }
 #endif
 
+bool Internals::elementIsActiveNowPlayingSession(HTMLMediaElement& element) const
+{
+    return element.isActiveNowPlayingSession();
+}
+
 #endif // ENABLE(VIDEO)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

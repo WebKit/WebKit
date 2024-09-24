@@ -245,6 +245,7 @@ public:
 
     MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const final;
 
+    WEBCORE_EXPORT bool isActiveNowPlayingSession() const;
     void isActiveNowPlayingSessionChanged() final;
 
 // DOM API
