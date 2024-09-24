@@ -115,7 +115,8 @@ PingLoad::~PingLoad()
 void PingLoad::didFinish(const ResourceError& error, const ResourceResponse& response)
 {
     m_completionHandler(error, response);
-    delete this;
+
+    m_selfReference = nullptr;
 }
 
 void PingLoad::loadRequest(NetworkProcess& networkProcess, ResourceRequest&& request)

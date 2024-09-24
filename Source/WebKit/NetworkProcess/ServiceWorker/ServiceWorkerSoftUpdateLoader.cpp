@@ -124,7 +124,7 @@ void ServiceWorkerSoftUpdateLoader::loadFromNetwork(NetworkSession& session, Res
     parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
     parameters.needsCertificateInfo = true;
     parameters.request = WTFMove(request);
-    m_networkLoad = makeUnique<NetworkLoad>(*this, WTFMove(parameters), session);
+    m_networkLoad = NetworkLoad::create(*this, WTFMove(parameters), session);
     m_networkLoad->start();
 
 #if PLATFORM(COCOA)

@@ -61,7 +61,7 @@ private:
 
     void didFinish(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&);
 
-    std::unique_ptr<NetworkLoad> m_networkLoad;
+    Ref<NetworkLoad> m_networkLoad;
     CompletionHandler<void(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&)> m_completionHandler;
     Seconds m_timeout;
     WebCore::Timer m_timeoutTimer;

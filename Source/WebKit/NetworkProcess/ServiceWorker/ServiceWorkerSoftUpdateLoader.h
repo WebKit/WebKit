@@ -74,7 +74,7 @@ private:
 
     Handler m_completionHandler;
     WebCore::ServiceWorkerJobData m_jobData;
-    std::unique_ptr<NetworkLoad> m_networkLoad;
+    RefPtr<NetworkLoad> m_networkLoad;
     WeakPtr<NetworkSession> m_session;
 
     String m_responseEncoding;

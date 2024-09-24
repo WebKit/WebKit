@@ -177,7 +177,7 @@ private:
     std::optional<UserContentControllerIdentifier> m_userContentControllerIdentifier;
 #endif
 
-    std::unique_ptr<NetworkCORSPreflightChecker> m_corsPreflightChecker;
+    RefPtr<NetworkCORSPreflightChecker> m_corsPreflightChecker;
     bool m_isSameOriginRequest { true };
     bool m_isSimpleRequest { true };
     std::unique_ptr<WebCore::ContentSecurityPolicy> m_contentSecurityPolicy;

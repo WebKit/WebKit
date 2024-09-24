@@ -40,7 +40,7 @@ using namespace WebCore;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PendingDownload);
 
 PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, NetworkLoadParameters&& parameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName)
-    : m_networkLoad(makeUnique<NetworkLoad>(*this, WTFMove(parameters), networkSession))
+    : m_networkLoad(NetworkLoad::create(*this, WTFMove(parameters), networkSession))
     , m_parentProcessConnection(parentProcessConnection)
 {
     m_networkLoad->start();
@@ -53,7 +53,7 @@ PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, Netwo
     send(Messages::DownloadProxy::DidStart(m_networkLoad->currentRequest(), suggestedName));
 }
 
-PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, std::unique_ptr<NetworkLoad>&& networkLoad, ResponseCompletionHandler&& completionHandler, DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
+PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, Ref<NetworkLoad>&& networkLoad, ResponseCompletionHandler&& completionHandler, DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)
     : m_networkLoad(WTFMove(networkLoad))
     , m_parentProcessConnection(parentProcessConnection)
 {
@@ -74,7 +74,6 @@ void PendingDownload::willSendRedirectedRequest(WebCore::ResourceRequest&&, WebC
 
 void PendingDownload::cancel(CompletionHandler<void(std::span<const uint8_t>)>&& completionHandler)
 {
-    ASSERT(m_networkLoad);
     m_networkLoad->cancel();
     completionHandler({ });
 }

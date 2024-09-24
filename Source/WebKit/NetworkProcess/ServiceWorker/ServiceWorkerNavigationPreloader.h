@@ -86,7 +86,7 @@ private:
     void loadFromNetwork();
     void didComplete();
 
-    std::unique_ptr<NetworkLoad> m_networkLoad;
+    RefPtr<NetworkLoad> m_networkLoad;
     WeakPtr<NetworkSession> m_session;
 
     NetworkLoadParameters m_parameters;

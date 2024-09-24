@@ -812,9 +812,9 @@ std::unique_ptr<SWRegistrationStore> NetworkSession::createUniqueRegistrationSto
     return makeUnique<WebSWRegistrationStore>(server, m_storageManager.get());
 }
 
-std::unique_ptr<BackgroundFetchRecordLoader> NetworkSession::createBackgroundFetchRecordLoader(BackgroundFetchRecordLoaderClient& client, const WebCore::BackgroundFetchRequest& request, size_t responseDataSize, const ClientOrigin& clientOrigin)
+RefPtr<BackgroundFetchRecordLoader> NetworkSession::createBackgroundFetchRecordLoader(BackgroundFetchRecordLoaderClient& client, const WebCore::BackgroundFetchRequest& request, size_t responseDataSize, const ClientOrigin& clientOrigin)
 {
-    return makeUnique<BackgroundFetchLoad>(m_networkProcess.get(), m_sessionID, client, request, responseDataSize, clientOrigin);
+    return RefPtr { BackgroundFetchLoad::create(m_networkProcess.get(), m_sessionID, client, request, responseDataSize, clientOrigin) };
 }
 
 Ref<BackgroundFetchStore> NetworkSession::createBackgroundFetchStore()

@@ -77,7 +77,7 @@ private:
     RevalidationCompletionHandler m_completionHandler;
     WebCore::ResourceRequest m_originalRequest;
 
-    std::unique_ptr<NetworkLoad> m_networkLoad;
+    RefPtr<NetworkLoad> m_networkLoad;
 
     WebCore::ResourceResponse m_response;
 

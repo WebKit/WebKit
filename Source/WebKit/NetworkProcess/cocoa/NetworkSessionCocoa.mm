@@ -1957,9 +1957,19 @@ void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pag
 // NetworkSessionCocoa::dataTaskWithRequest and NetworkLoad's constructor are also kind of duplicate code.
 // Make NetworkLoad's redirection and challenge handling code pass everything to the NetworkLoadClient
 // and use NetworkLoad and a new NetworkLoadClient instead of BlobDataTaskClient and WKURLSessionTaskDelegate.
-class NetworkSessionCocoa::BlobDataTaskClient final : public NetworkDataTaskClient {
+class NetworkSessionCocoa::BlobDataTaskClient final : public RefCounted<NetworkSessionCocoa::BlobDataTaskClient>, public NetworkDataTaskClient {
     WTF_MAKE_TZONE_ALLOCATED(NetworkSessionCocoa::BlobDataTaskClient);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
+    static Ref<BlobDataTaskClient> create(WebCore::ResourceRequest&& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, NetworkSessionCocoa& session, IPC::Connection* connection, DataTaskIdentifier identifier)
+    {
+        return adoptRef(*new BlobDataTaskClient(WTFMove(request), topOrigin, session, connection, identifier));
+    }
+
+    void cancel() { m_task->cancel(); }
+
+private:
     BlobDataTaskClient(WebCore::ResourceRequest&& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, NetworkSessionCocoa& session, IPC::Connection* connection, DataTaskIdentifier identifier)
         : m_task(NetworkDataTaskBlob::create(session, *this, request, session.blobRegistry().filesInBlob(request.url(), topOrigin), topOrigin ? topOrigin->securityOrigin().ptr() : nullptr))
         , m_connection(connection)
@@ -1967,8 +1977,7 @@ public:
     {
         m_task->resume();
     }
-    void cancel() { m_task->cancel(); }
-private:
+
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final { ASSERT_NOT_REACHED(); }
     void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) final { ASSERT_NOT_REACHED(); }
     void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) final { ASSERT_NOT_REACHED(); }
@@ -2014,8 +2023,19 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(NetworkSessionCocoaBlobDataTaskClient, Netw
 
 void NetworkSessionCocoa::loadImageForDecoding(WebCore::ResourceRequest&& request, WebPageProxyIdentifier pageID, size_t maximumBytesFromNetwork, CompletionHandler<void(std::variant<WebCore::ResourceError, Ref<WebCore::FragmentedSharedBuffer>>&&)>&& completionHandler)
 {
-    class Client : public NetworkDataTaskClient {
+    class Client : public RefCounted<Client>, public NetworkDataTaskClient {
     public:
+        DEFINE_VIRTUAL_REFCOUNTED;
+
+        static void create(NetworkSession& networkSession, Ref<NetworkProcess>&& networkProcess, WebPageProxyIdentifier pageID, const NetworkLoadParameters& loadParameters, size_t maximumBytesFromNetwork, CompletionHandler<void(std::variant<WebCore::ResourceError, Ref<WebCore::FragmentedSharedBuffer>>&&)>&& completionHandler)
+        {
+            auto client = new Client(networkSession, WTFMove(networkProcess), pageID, loadParameters, maximumBytesFromNetwork, WTFMove(completionHandler));
+
+            // Keep the load alive until didCompleteWithError.
+            client->m_selfReference = adoptRef(client);
+        }
+
+    private:
         Client(NetworkSession& networkSession, Ref<NetworkProcess>&& networkProcess, WebPageProxyIdentifier pageID, const NetworkLoadParameters& loadParameters, size_t maximumBytesFromNetwork, CompletionHandler<void(std::variant<WebCore::ResourceError, Ref<WebCore::FragmentedSharedBuffer>>&&)>&& completionHandler)
             : m_networkProcess(WTFMove(networkProcess))
             , m_url(loadParameters.request.url())
@@ -2027,7 +2047,7 @@ void NetworkSessionCocoa::loadImageForDecoding(WebCore::ResourceRequest&& reques
         {
             m_dataTask->resume();
         }
-    private:
+
         void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&& request, RedirectCompletionHandler&& completionHandler) final { completionHandler(WTFMove(request)); }
         void didReceiveChallenge(WebCore::AuthenticationChallenge&& challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, ChallengeCompletionHandler&& completionHandler) final
         {
@@ -2049,7 +2069,7 @@ void NetworkSessionCocoa::loadImageForDecoding(WebCore::ResourceRequest&& reques
                 m_completionHandler(m_buffer.take());
             else
                 m_completionHandler(error);
-            delete this;
+            m_selfReference = nullptr;
         }
         void didSendData(uint64_t, uint64_t) final { }
         void wasBlocked() final { completeWithBlockedError(); }
@@ -2061,6 +2081,7 @@ void NetworkSessionCocoa::loadImageForDecoding(WebCore::ResourceRequest&& reques
             didCompleteWithError(blockedError({ m_url }), WebCore::NetworkLoadMetrics { });
         }
 
+        RefPtr<Client> m_selfReference;
         const Ref<NetworkProcess> m_networkProcess;
         const URL m_url;
         const PAL::SessionID m_sessionID;
@@ -2073,15 +2094,15 @@ void NetworkSessionCocoa::loadImageForDecoding(WebCore::ResourceRequest&& reques
 
     NetworkLoadParameters loadParameters;
     loadParameters.request = WTFMove(request);
-    // Client manages its own lifetime, deleting itself when its purpose has been fulfilled.
-    new Client(*this, networkProcess(), pageID, loadParameters, maximumBytesFromNetwork, WTFMove(completionHandler));
+    // Client manages its own lifetime, derefing itself when its purpose has been fulfilled.
+    Client::create(*this, networkProcess(), pageID, loadParameters, maximumBytesFromNetwork, WTFMove(completionHandler));
 }
 
 void NetworkSessionCocoa::dataTaskWithRequest(WebPageProxyIdentifier pageID, WebCore::ResourceRequest&& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, CompletionHandler<void(DataTaskIdentifier)>&& completionHandler)
 {
     auto identifier = DataTaskIdentifier::generate();
     if (request.url().protocolIsBlob()) {
-        m_blobDataTasksForAPI.add(identifier, makeUniqueRef<BlobDataTaskClient>(WTFMove(request), topOrigin, *this, networkProcess().parentProcessConnection(), identifier));
+        m_blobDataTasksForAPI.add(identifier, BlobDataTaskClient::create(WTFMove(request), topOrigin, *this, networkProcess().parentProcessConnection(), identifier));
         return completionHandler(identifier);
     }
 

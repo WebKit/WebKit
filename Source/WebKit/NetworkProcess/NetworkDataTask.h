@@ -39,15 +39,6 @@
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebKit {
-class NetworkDataTaskClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NetworkDataTaskClient> : std::true_type { };
-}
-
 namespace WebCore {
 class AuthenticationChallenge;
 class IPAddress;
@@ -71,6 +62,8 @@ using ResponseCompletionHandler = CompletionHandler<void(WebCore::PolicyAction)>
 
 class NetworkDataTaskClient : public CanMakeWeakPtr<NetworkDataTaskClient> {
 public:
+    DECLARE_VIRTUAL_REFCOUNTED;
+
     virtual void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) = 0;
     virtual void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) = 0;
     virtual void didReceiveInformationalResponse(WebCore::ResourceResponse&&) { };

@@ -437,7 +437,7 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
 
     parameters.request = WTFMove(request);
     parameters.isNavigatingToAppBoundDomain = m_parameters.isNavigatingToAppBoundDomain;
-    m_networkLoad = makeUnique<NetworkLoad>(*this, WTFMove(parameters), *networkSession);
+    m_networkLoad = NetworkLoad::create(*this, WTFMove(parameters), *networkSession);
     
     WeakPtr weakThis { *this };
     if (isSynchronous())
@@ -591,8 +591,10 @@ void NetworkResourceLoader::convertToDownload(DownloadID downloadID, const Resou
         return;
     }
 
+    auto networkLoad = std::exchange(m_networkLoad, nullptr);
+
     if (m_responseCompletionHandler)
-        protectedConnectionToWebProcess()->protectedNetworkProcess()->downloadManager().convertNetworkLoadToDownload(downloadID, std::exchange(m_networkLoad, nullptr), WTFMove(m_responseCompletionHandler), WTFMove(m_fileReferences), request, response);
+        protectedConnectionToWebProcess()->protectedNetworkProcess()->downloadManager().convertNetworkLoadToDownload(downloadID, networkLoad.releaseNonNull(), WTFMove(m_responseCompletionHandler), WTFMove(m_fileReferences), request, response);
 }
 
 void NetworkResourceLoader::abort()

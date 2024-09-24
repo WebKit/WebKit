@@ -570,7 +570,7 @@ bool ServiceWorkerFetchTask::convertToDownload(DownloadManager& manager, Downloa
 
     // FIXME: We might want to keep the service worker alive until the download ends.
     RefPtr<ServiceWorkerDownloadTask> serviceWorkerDownloadTask;
-    auto serviceWorkerDownloadLoad = makeUnique<NetworkLoad>(*protectedLoader(), *session, [&](auto& client) {
+    auto serviceWorkerDownloadLoad = NetworkLoad::create(*protectedLoader(), *session, [&](auto& client) {
         serviceWorkerDownloadTask =  ServiceWorkerDownloadTask::create(*session, client, *m_serviceWorkerConnection, m_serviceWorkerIdentifier, m_serverConnectionIdentifier, m_fetchIdentifier, request, response, downloadID);
         return serviceWorkerDownloadTask.copyRef();
     });

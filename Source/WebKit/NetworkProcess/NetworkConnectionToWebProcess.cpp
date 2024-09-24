@@ -611,8 +611,8 @@ void NetworkConnectionToWebProcess::loadPing(NetworkResourceLoadParameters&& loa
         connection->send(Messages::NetworkProcessConnection::DidFinishPingLoad(identifier, error, response), 0);
     };
 
-    // PingLoad manages its own lifetime, deleting itself when its purpose has been fulfilled.
-    new PingLoad(*this, WTFMove(loadParameters), WTFMove(completionHandler));
+    // PingLoad manages its own lifetime, derefing itself when its purpose has been fulfilled.
+    PingLoad::create(*this, WTFMove(loadParameters), WTFMove(completionHandler));
 }
 
 void NetworkConnectionToWebProcess::setOnLineState(bool isOnLine)

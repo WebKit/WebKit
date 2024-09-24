@@ -286,7 +286,7 @@ private:
 
     Ref<NetworkConnectionToWebProcess> m_connection;
 
-    std::unique_ptr<NetworkLoad> m_networkLoad;
+    RefPtr<NetworkLoad> m_networkLoad;
 
     WebCore::ResourceResponse m_response;
 

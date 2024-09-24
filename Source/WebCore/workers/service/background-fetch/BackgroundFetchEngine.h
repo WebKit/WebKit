@@ -30,24 +30,18 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
-class BackgroundFetchEngine;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::BackgroundFetchEngine> : std::true_type { };
-}
-
-namespace WebCore {
 
 class BackgroundFetchStore;
 class ResourceResponse;
 class SWServer;
 
-class BackgroundFetchEngine : public CanMakeWeakPtr<BackgroundFetchEngine> {
+class BackgroundFetchEngine : public RefCountedAndCanMakeWeakPtr<BackgroundFetchEngine> {
     WTF_MAKE_TZONE_ALLOCATED(BackgroundFetchEngine);
 public:
-    explicit BackgroundFetchEngine(SWServer&);
+    static Ref<BackgroundFetchEngine> create(SWServer& swServer)
+    {
+        return adoptRef(*new BackgroundFetchEngine(swServer));
+    }
 
     using ExceptionOrBackgroundFetchInformationCallback = CompletionHandler<void(Expected<std::optional<BackgroundFetchInformation>, ExceptionData>&&)>;
     void startBackgroundFetch(SWServerRegistration&, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&&);
@@ -74,12 +68,14 @@ public:
     WEBCORE_EXPORT void clickBackgroundFetch(const ServiceWorkerRegistrationKey&, const String&);
 
 private:
+    explicit BackgroundFetchEngine(SWServer&);
+
     void notifyBackgroundFetchUpdate(BackgroundFetch&);
 
     WeakPtr<SWServer> m_server;
     Ref<BackgroundFetchStore> m_store;
 
-    using FetchesMap = HashMap<String, std::unique_ptr<BackgroundFetch>>;
+    using FetchesMap = HashMap<String, Ref<BackgroundFetch>>;
     HashMap<ServiceWorkerRegistrationKey, FetchesMap> m_fetches;
 
     HashMap<BackgroundFetchRecordIdentifier, Ref<BackgroundFetch::Record>> m_records;

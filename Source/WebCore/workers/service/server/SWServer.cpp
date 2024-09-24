@@ -1792,7 +1792,7 @@ void SWServer::Connection::startBackgroundFetch(ServiceWorkerRegistrationIdentif
 BackgroundFetchEngine& SWServer::backgroundFetchEngine()
 {
     if (!m_backgroundFetchEngine)
-        m_backgroundFetchEngine = makeUnique<BackgroundFetchEngine>(*this);
+        m_backgroundFetchEngine = BackgroundFetchEngine::create(*this);
     return *m_backgroundFetchEngine;
 }
 
