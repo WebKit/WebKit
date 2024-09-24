@@ -83,8 +83,8 @@ public:
     AnimationTimeline* timeline() const { return m_timeline.get(); }
     virtual void setTimeline(RefPtr<AnimationTimeline>&&);
 
-    std::optional<Seconds> currentTime(std::optional<Seconds> = std::nullopt) const;
-    ExceptionOr<void> setCurrentTime(std::optional<Seconds>);
+    std::optional<CSSNumberishTime> currentTime(std::optional<CSSNumberishTime> = std::nullopt) const;
+    ExceptionOr<void> setCurrentTime(std::optional<CSSNumberishTime>);
 
     double playbackRate() const { return m_playbackRate + 0; }
     void setPlaybackRate(double);
@@ -115,12 +115,12 @@ public:
     void persist();
     ExceptionOr<void> commitStyles();
 
-    virtual std::optional<double> bindingsStartTime() const;
-    virtual ExceptionOr<void> setBindingsStartTime(const std::optional<CSSNumberish>&);
-    std::optional<Seconds> startTime() const { return m_startTime; }
-    void setStartTime(std::optional<Seconds>);
-    virtual std::optional<double> bindingsCurrentTime() const;
-    virtual ExceptionOr<void> setBindingsCurrentTime(const std::optional<CSSNumberish>&);
+    virtual std::optional<CSSNumberishTime> bindingsStartTime() const;
+    virtual ExceptionOr<void> setBindingsStartTime(const std::optional<CSSNumberishTime>&);
+    std::optional<CSSNumberishTime> startTime() const { return m_startTime; }
+    void setStartTime(std::optional<CSSNumberishTime>);
+    virtual std::optional<CSSNumberishTime> bindingsCurrentTime() const;
+    virtual ExceptionOr<void> setBindingsCurrentTime(const std::optional<CSSNumberishTime>&);
     virtual PlayState bindingsPlayState() const { return playState(); }
     virtual ReplaceState bindingsReplaceState() const { return replaceState(); }
     virtual bool bindingsPending() const { return pending(); }
@@ -128,7 +128,7 @@ public:
     virtual FinishedPromise& bindingsFinished() { return finished(); }
     virtual ExceptionOr<void> bindingsPlay() { return play(); }
     virtual ExceptionOr<void> bindingsPause() { return pause(); }
-    std::optional<Seconds> holdTime() const { return m_holdTime; }
+    std::optional<CSSNumberishTime> holdTime() const { return m_holdTime; }
 
     virtual std::variant<FramesPerSecond, AnimationFrameRatePreset> bindingsFrameRate() const { return m_bindingsFrameRate; }
     virtual void setBindingsFrameRate(std::variant<FramesPerSecond, AnimationFrameRatePreset>&&);
@@ -179,14 +179,13 @@ private:
     enum class AutoRewind : bool { No, Yes };
     enum class TimeToRunPendingTask : uint8_t { NotScheduled, ASAP, WhenReady };
 
-    ExceptionOr<std::optional<Seconds>> validateCSSNumberishValue(const std::optional<CSSNumberish>&) const;
     void timingDidChange(DidSeek, SynchronouslyNotify, Silently = Silently::No);
     void updateFinishedState(DidSeek, SynchronouslyNotify);
     Seconds effectEndTime() const;
     WebAnimation& readyPromiseResolve();
     WebAnimation& finishedPromiseResolve();
-    std::optional<Seconds> currentTime(RespectHoldTime, std::optional<Seconds> = std::nullopt) const;
-    ExceptionOr<void> silentlySetCurrentTime(std::optional<Seconds>);
+    std::optional<CSSNumberishTime> currentTime(RespectHoldTime, std::optional<CSSNumberishTime> = std::nullopt) const;
+    ExceptionOr<void> silentlySetCurrentTime(std::optional<CSSNumberishTime>);
     void finishNotificationSteps();
     bool hasPendingPauseTask() const { return m_timeToRunPendingPauseTask != TimeToRunPendingTask::NotScheduled; }
     bool hasPendingPlayTask() const { return m_timeToRunPendingPlayTask != TimeToRunPendingTask::NotScheduled; }
@@ -217,9 +216,9 @@ private:
     RefPtr<AnimationTimeline> m_timeline;
     UniqueRef<ReadyPromise> m_readyPromise;
     UniqueRef<FinishedPromise> m_finishedPromise;
-    Markable<Seconds, Seconds::MarkableTraits> m_previousCurrentTime;
-    Markable<Seconds, Seconds::MarkableTraits> m_startTime;
-    Markable<Seconds, Seconds::MarkableTraits> m_holdTime;
+    std::optional<CSSNumberishTime> m_previousCurrentTime;
+    std::optional<CSSNumberishTime> m_startTime;
+    std::optional<CSSNumberishTime> m_holdTime;
     MarkableDouble m_pendingPlaybackRate;
     double m_playbackRate { 1 };
     std::variant<FramesPerSecond, AnimationFrameRatePreset> m_bindingsFrameRate { AnimationFrameRatePreset::Auto };

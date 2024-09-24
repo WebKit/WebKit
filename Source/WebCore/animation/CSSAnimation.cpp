@@ -178,7 +178,7 @@ void CSSAnimation::setBindingsEffect(RefPtr<AnimationEffect>&& newEffect)
     }
 }
 
-ExceptionOr<void> CSSAnimation::setBindingsStartTime(const std::optional<CSSNumberish>& startTime)
+ExceptionOr<void> CSSAnimation::setBindingsStartTime(const std::optional<CSSNumberishTime>& startTime)
 {
     // https://drafts.csswg.org/css-animations-2/#animations
 

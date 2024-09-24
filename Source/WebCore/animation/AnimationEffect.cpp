@@ -75,7 +75,7 @@ EffectTiming AnimationEffect::getBindingsTiming() const
     return timing;
 }
 
-std::optional<Seconds> AnimationEffect::localTime(std::optional<Seconds> startTime) const
+std::optional<CSSNumberishTime> AnimationEffect::localTime(std::optional<CSSNumberishTime> startTime) const
 {
     // 4.5.4. Local time
     // https://drafts.csswg.org/web-animations-1/#local-time-section
@@ -93,7 +93,7 @@ double AnimationEffect::playbackRate() const
     return m_animation ? m_animation->playbackRate() : 1;
 }
 
-BasicEffectTiming AnimationEffect::getBasicTiming(std::optional<Seconds> startTime) const
+BasicEffectTiming AnimationEffect::getBasicTiming(std::optional<CSSNumberishTime> startTime) const
 {
     return m_timing.getBasicTiming(localTime(startTime), playbackRate());
 }
@@ -105,7 +105,7 @@ ComputedEffectTiming AnimationEffect::getBindingsComputedTiming() const
     return getComputedTiming();
 }
 
-ComputedEffectTiming AnimationEffect::getComputedTiming(std::optional<Seconds> startTime) const
+ComputedEffectTiming AnimationEffect::getComputedTiming(std::optional<CSSNumberishTime> startTime) const
 {
     auto localTime = this->localTime(startTime);
     auto resolvedTiming = m_timing.resolve(localTime, playbackRate());

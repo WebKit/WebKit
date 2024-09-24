@@ -39,6 +39,13 @@ CSSNumberishTime::CSSNumberishTime(double value)
 {
 }
 
+CSSNumberishTime::CSSNumberishTime(Seconds value)
+    : m_type(Type::Time)
+    , m_source(Source::Literal)
+    , m_value(value.seconds())
+{
+}
+
 CSSNumberishTime::CSSNumberishTime(Type type, Source source, double value)
     : m_type(type)
     , m_source(source)
@@ -94,7 +101,10 @@ std::optional<double> CSSNumberishTime::percentage() const
 
 bool CSSNumberishTime::isValid() const
 {
-    return m_type != Type::Unknown;
+    // FIXME: We should consider a number valid as long as it's not "Unknown"
+    // but currently only mark time values as valid until we can do per-timeline
+    // validation when processing a value through the JS APIs that consume them.
+    return m_type == Type::Time;
 }
 
 CSSNumberishTime CSSNumberishTime::operator+(CSSNumberishTime other) const
@@ -133,6 +143,70 @@ bool CSSNumberishTime::operator>=(CSSNumberishTime other) const
     return m_value >= other.m_value;
 }
 
+CSSNumberishTime CSSNumberishTime::operator+(Seconds other) const
+{
+    ASSERT(m_type == Type::Time);
+    return { m_type, m_source, m_value + other.seconds() };
+}
+
+CSSNumberishTime CSSNumberishTime::operator-(Seconds other) const
+{
+    ASSERT(m_type == Type::Time);
+    return { m_type, m_source, m_value - other.seconds() };
+}
+
+bool CSSNumberishTime::operator<(Seconds other) const
+{
+    ASSERT(m_type == Type::Time);
+    return m_value < other.seconds();
+}
+
+bool CSSNumberishTime::operator<=(Seconds other) const
+{
+    ASSERT(m_type == Type::Time);
+    return m_value <= other.seconds();
+}
+
+bool CSSNumberishTime::operator>(Seconds other) const
+{
+    ASSERT(m_type == Type::Time);
+    return m_value > other.seconds();
+}
+
+bool CSSNumberishTime::operator>=(Seconds other) const
+{
+    ASSERT(m_type == Type::Time);
+    return m_value >= other.seconds();
+}
+
+bool CSSNumberishTime::operator==(Seconds other) const
+{
+    return m_type == Type::Time && m_value == other.seconds();
+}
+
+CSSNumberishTime CSSNumberishTime::operator*(double scalar) const
+{
+    return { m_type, m_source, m_value * scalar };
+}
+
+CSSNumberishTime CSSNumberishTime::operator/(double scalar) const
+{
+    return { m_type, m_source, m_value / scalar };
+}
+
+CSSNumberishTime::operator double() const
+{
+    if (m_type == Type::Time)
+        return m_value * 1000;
+    return m_value;
+}
+
+CSSNumberishTime::operator Seconds() const
+{
+    ASSERT(m_type == Type::Time);
+    return Seconds(m_value);
+}
+
 CSSNumberishTime::operator CSSNumberish() const
 {
     switch (m_source) {
@@ -155,6 +229,37 @@ CSSNumberishTime::operator CSSNumberish() const
 
     ASSERT_NOT_REACHED();
     return m_value;
+}
+
+void CSSNumberishTime::dump(TextStream& ts) const
+{
+    switch (m_source) {
+    case Source::Literal:
+    case Source::Number:
+        ASSERT(m_type == Type::Time);
+        ts << m_value * 1000;
+        return;
+    case Source::Milliseconds:
+        ASSERT(m_type == Type::Time);
+        ts << m_value * 1000 << "ms";
+        return;
+    case Source::Seconds:
+        ASSERT(m_type == Type::Time);
+        ts << m_value << "s";
+        return;
+    case Source::Percentage:
+        ASSERT(m_type == Type::Percentage);
+        ts << m_value << "%";
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+TextStream& operator<<(TextStream& ts, CSSNumberishTime value)
+{
+    value.dump(ts);
+    return ts;
 }
 
 } // namespace WebCore

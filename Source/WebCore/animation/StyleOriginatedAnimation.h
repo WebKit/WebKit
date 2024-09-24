@@ -52,8 +52,8 @@ public:
     void setBackingAnimation(const Animation&);
     void cancelFromStyle(WebAnimation::Silently = WebAnimation::Silently::No);
 
-    std::optional<double> bindingsStartTime() const final;
-    std::optional<double> bindingsCurrentTime() const final;
+    std::optional<CSSNumberishTime> bindingsStartTime() const final;
+    std::optional<CSSNumberishTime> bindingsCurrentTime() const final;
     WebAnimation::PlayState bindingsPlayState() const final;
     WebAnimation::ReplaceState bindingsReplaceState() const final;
     bool bindingsPending() const final;

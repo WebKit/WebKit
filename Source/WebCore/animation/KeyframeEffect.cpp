@@ -2029,7 +2029,9 @@ void KeyframeEffect::applyPendingAcceleratedActions()
     m_pendingAcceleratedActions.clear();
 
     // To simplify the code we use a default of 0s for an unresolved current time since for a Stop action that is acceptable.
-    auto timeOffset = animation()->currentTime().value_or(0_s).seconds() - delay().seconds();
+    auto cssNumberishTimeOffset = animation()->currentTime().value_or(0_s) - delay();
+    ASSERT(cssNumberishTimeOffset.time());
+    auto timeOffset = cssNumberishTimeOffset.time()->seconds();
 
     auto startAnimation = [&]() -> RunningAccelerated {
         if (isRunningAccelerated())

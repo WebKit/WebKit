@@ -131,13 +131,13 @@ void StyleOriginatedAnimation::syncPropertiesWithBackingAnimation()
 {
 }
 
-std::optional<double> StyleOriginatedAnimation::bindingsStartTime() const
+std::optional<CSSNumberishTime> StyleOriginatedAnimation::bindingsStartTime() const
 {
     flushPendingStyleChanges();
     return WebAnimation::bindingsStartTime();
 }
 
-std::optional<double> StyleOriginatedAnimation::bindingsCurrentTime() const
+std::optional<CSSNumberishTime> StyleOriginatedAnimation::bindingsCurrentTime() const
 {
     flushPendingStyleChanges();
     return WebAnimation::bindingsCurrentTime();
