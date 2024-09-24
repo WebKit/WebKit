@@ -27,6 +27,7 @@
 #include "ScrollTimeline.h"
 
 #include "AnimationTimelinesController.h"
+#include "CSSNumericFactory.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSScrollValue.h"
 #include "CSSValuePool.h"
@@ -171,6 +172,12 @@ ScrollTimeline::Data ScrollTimeline::computeScrollTimelineData() const
     float scrollOffset = axis() == ScrollAxis::Block ? sourceScrollableArea->scrollOffset().y() : sourceScrollableArea->scrollOffset().x();
 
     return { maxScrollOffset, scrollOffset };
+}
+
+std::optional<CSSNumberishTime> ScrollTimeline::currentTime()
+{
+    auto data = computeScrollTimelineData();
+    return CSSNumberishTime(CSSNumericFactory::percent(data.scrollOffset / data.maxScrollOffset));
 }
 
 } // namespace WebCore

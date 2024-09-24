@@ -203,4 +203,10 @@ ViewTimeline::Data ViewTimeline::computeViewTimelineData() const
     return { scrollContainerSize, subjectOffset, currentScrollOffset, coverRangeEnd };
 }
 
+std::optional<CSSNumberishTime> ViewTimeline::currentTime()
+{
+    auto data = computeViewTimelineData();
+    return CSSNumberishTime(CSSNumericFactory::percent((data.scrollContainerSize - (data.subjectOffset - data.currentScrollOffset)) / data.coverRangeEnd));
+}
+
 } // namespace WebCore

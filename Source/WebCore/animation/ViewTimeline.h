@@ -62,6 +62,8 @@ public:
     RenderBox* sourceRenderer() const;
     Element* source() const override;
 
+    std::optional<CSSNumberishTime> currentTime() override;
+
 private:
     struct Data {
         float scrollContainerSize { 0 };
