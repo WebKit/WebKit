@@ -102,7 +102,7 @@ private:
     void addLEB128ConstantInt32AndLength(uint32_t value, size_t length);
     void addLEB128ConstantAndLengthForType(Type, uint64_t value, size_t length);
     void addLEB128V128Constant(v128_t value, size_t length);
-    void addReturnData(const Vector<Type, 16>& types);
+    void addReturnData(const FunctionSignature&);
 
     uint32_t m_functionIndex;
     bool m_tailCallClobbersInstance { false };
@@ -111,6 +111,7 @@ private:
     std::span<const uint8_t> m_bytecode;
     Vector<uint8_t> m_metadata { };
     Vector<uint8_t, 8> m_uINTBytecode { };
+    unsigned m_highestReturnStackOffset;
 
     uint32_t m_bytecodeOffset { 0 };
     unsigned m_maxFrameSizeInV128 { 0 };

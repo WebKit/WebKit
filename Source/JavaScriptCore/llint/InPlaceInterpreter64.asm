@@ -26,23 +26,29 @@
 macro saveIPIntRegisters()
     subp IPIntCalleeSaveSpaceStackAligned, sp
     if ARM64 or ARM64E
-        storepairq MC, PC, -16[cfr]
-        storeq wasmInstance, -24[cfr]
+        storepairq MC, PC, -0x10[cfr]
+        storepairq memoryBase, boundsCheckingSize, -0x20[cfr]
+        storeq wasmInstance, -0x28[cfr]
     elsif X86_64 or RISCV64
         storep PC, -0x8[cfr]
         storep MC, -0x10[cfr]
-        storep wasmInstance, -0x18[cfr]
+        storep memoryBase, -0x18[cfr]
+        storep boundsCheckingSize, -0x20[cfr]
+        storep wasmInstance, -0x28[cfr]
     end
 end
 
 macro restoreIPIntRegisters()
     if ARM64 or ARM64E
-        loadpairq -16[cfr], MC, PC
-        loadq -24[cfr], wasmInstance
+        loadpairq -0x10[cfr], MC, PC
+        loadpairq -0x20[cfr], memoryBase, boundsCheckingSize
+        loadq -0x28[cfr], wasmInstance
     elsif X86_64 or RISCV64
         loadp -0x8[cfr], PC
         loadp -0x10[cfr], MC
-        loadp -0x18[cfr], wasmInstance
+        loadp -0x18[cfr], memoryBase
+        loadp -0x20[cfr], boundsCheckingSize
+        loadp -0x28[cfr], wasmInstance
     end
     addp IPIntCalleeSaveSpaceStackAligned, sp
 end
@@ -207,6 +213,7 @@ end
 macro argumINTDispatch()
     loadb [MC], argumINTTmp
     addq 1, MC
+    bbgteq argumINTTmp, 0x12, .err
     lshiftq 6, argumINTTmp
 if ARM64 or ARM64E
     pcrtoaddr _argumINT_begin, argumINTDsp
@@ -219,6 +226,8 @@ elsif X86_64
 else
     break
 end
+.err:
+    break
 end
 
 macro argumINTEnd()
@@ -355,26 +364,26 @@ reservedOpcode(0xa)
 
 macro uintDispatch()
 if ARM64 or ARM64E
-    loadb [MC], ws2
+    loadb [MC], sc2
     addq 1, MC
-    bilt ws2, 5, .safe
+    bilt sc2, 0x12, .safe
     break
 .safe:
-    lshiftq 6, ws2
-    pcrtoaddr _uint_begin, ws3
-    addq ws2, ws3
+    lshiftq 6, sc2
+    pcrtoaddr _uint_begin, sc3
+    addq sc2, ws3
     # ws3 = x12
     emit "br x12"
 elsif X86_64
-    loadb [MC], r1
+    loadb [MC], sc2
     addq 1, MC
-    bilt r1, 5, .safe
+    bilt sc2, 0x12, .safe
     break
 .safe:
-    lshiftq 6, r1
-    leap (_uint_begin), t0
-    addq r1, t0
-    emit "jmp *(%rax)"
+    lshiftq 6, sc2
+    leap (_uint_begin), sc3
+    addq sc2, sc3
+    emit "jmp *(%r10)"
 end
 end
 
@@ -386,6 +395,8 @@ instructionLabel(_end)
 .ipint_end_ret:
     loadp Wasm::IPIntCallee::m_uINTBytecodePointer[ws0], MC
     ipintEpilogueOSR(10)
+    loadp Wasm::IPIntCallee::m_highestReturnStackOffset[ws0], sc0
+    addq cfr, sc0
     uintDispatch()
 
 instructionLabel(_br)
@@ -5293,19 +5304,84 @@ mintAlign(_end)
 
 uintAlign(_r0)
 _uint_begin:
-    popQuad(r0, t3)
+    popQuad(wa0, sc1)
     uintDispatch()
 
 uintAlign(_r1)
-    popQuad(r1, t3)
+    popQuad(wa1, sc1)
     uintDispatch()
+
+uintAlign(_r2)
+    popQuad(wa2, sc1)
+    uintDispatch()
+
+uintAlign(_r3)
+    popQuad(wa3, sc1)
+    uintDispatch()
+
+uintAlign(_r4)
+    popQuad(wa4, sc1)
+    uintDispatch()
+
+uintAlign(_r5)
+    popQuad(wa5, sc1)
+    uintDispatch()
+
+uintAlign(_r6)
+if ARM64 or ARM64E
+    popQuad(wa6, sc1)
+    uintDispatch()
+else
+    break
+end
+
+uintAlign(_r7)
+if ARM64 or ARM64E
+    popQuad(wa7, sc1)
+    uintDispatch()
+else
+    break
+end
 
 uintAlign(_fr0)
-    popFloat64(fr)
+    popFloat64(wfa0)
     uintDispatch()
 
+uintAlign(_fr1)
+    popFloat64(wfa1)
+    uintDispatch()
+
+uintAlign(_fr2)
+    popFloat64(wfa2)
+    uintDispatch()
+
+uintAlign(_fr3)
+    popFloat64(wfa3)
+    uintDispatch()
+
+uintAlign(_fr4)
+    popFloat64(wfa4)
+    uintDispatch()
+
+uintAlign(_fr5)
+    popFloat64(wfa5)
+    uintDispatch()
+
+uintAlign(_fr6)
+    popFloat64(wfa6)
+    uintDispatch()
+
+uintAlign(_fr7)
+    popFloat64(wfa7)
+    uintDispatch()
+
+# destination on stack is sc0
+
 uintAlign(_stack)
-    break
+    popInt64(sc1, sc2)
+    storeq sc1, [sc0]
+    subq 8, sc0
+    uintDispatch()
 
 uintAlign(_ret)
     jmp .ipint_exit
@@ -5322,28 +5398,28 @@ uintAlign(_ret)
 
 argumINTAlign(_a0)
 _argumINT_begin:
-    storeq a0, [argumINTDst]
+    storeq wa0, [argumINTDst]
     addq LocalSize, argumINTDst
     argumINTDispatch()
 
 argumINTAlign(_a1)
-    storeq a1, [argumINTDst]
+    storeq wa1, [argumINTDst]
     addq LocalSize, argumINTDst
     argumINTDispatch()
 
 argumINTAlign(_a2)
-    storeq a2, [argumINTDst]
+    storeq wa2, [argumINTDst]
     addq LocalSize, argumINTDst
     argumINTDispatch()
 
 argumINTAlign(_a3)
-    storeq a3, [argumINTDst]
+    storeq wa3, [argumINTDst]
     addq LocalSize, argumINTDst
     argumINTDispatch()
 
 argumINTAlign(_a4)
-if ARM64 or ARM64E
-    storeq a4, [argumINTDst]
+if ARM64 or ARM64E or X86_64
+    storeq wa4, [argumINTDst]
     addq LocalSize, argumINTDst
     argumINTDispatch()
 else
@@ -5351,8 +5427,8 @@ else
 end
 
 argumINTAlign(_a5)
-if ARM64 or ARM64E
-    storeq a5, [argumINTDst]
+if ARM64 or ARM64E or X86_64
+    storeq wa5, [argumINTDst]
     addq LocalSize, argumINTDst
     argumINTDispatch()
 else
@@ -5361,7 +5437,7 @@ end
 
 argumINTAlign(_a6)
 if ARM64 or ARM64E
-    storeq a6, [argumINTDst]
+    storeq wa6, [argumINTDst]
     addq LocalSize, argumINTDst
     argumINTDispatch()
 else
@@ -5370,7 +5446,7 @@ end
 
 argumINTAlign(_a7)
 if ARM64 or ARM64E
-    storeq a7, [argumINTDst]
+    storeq wa7, [argumINTDst]
     addq LocalSize, argumINTDst
     argumINTDispatch()
 else
@@ -5378,22 +5454,42 @@ else
 end
 
 argumINTAlign(_fa0)
-    stored fa0, [argumINTDst]
+    stored wfa0, [argumINTDst]
     addq LocalSize, argumINTDst
     argumINTDispatch()
 
 argumINTAlign(_fa1)
-    stored fa1, [argumINTDst]
+    stored wfa1, [argumINTDst]
     addq LocalSize, argumINTDst
     argumINTDispatch()
 
 argumINTAlign(_fa2)
-    stored fa2, [argumINTDst]
+    stored wfa2, [argumINTDst]
     addq LocalSize, argumINTDst
     argumINTDispatch()
 
 argumINTAlign(_fa3)
-    stored fa3, [argumINTDst]
+    stored wfa3, [argumINTDst]
+    addq LocalSize, argumINTDst
+    argumINTDispatch()
+
+argumINTAlign(_fa4)
+    stored wfa4, [argumINTDst]
+    addq LocalSize, argumINTDst
+    argumINTDispatch()
+
+argumINTAlign(_fa5)
+    stored wfa5, [argumINTDst]
+    addq LocalSize, argumINTDst
+    argumINTDispatch()
+
+argumINTAlign(_fa6)
+    stored wfa6, [argumINTDst]
+    addq LocalSize, argumINTDst
+    argumINTDispatch()
+
+argumINTAlign(_fa7)
+    stored wfa7, [argumINTDst]
     addq LocalSize, argumINTDst
     argumINTDispatch()
 

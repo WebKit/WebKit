@@ -667,8 +667,12 @@ extern "C" void ipint_catch_all_entry();
     m(0x09, argumINT_fa1) \
     m(0x0a, argumINT_fa2) \
     m(0x0b, argumINT_fa3) \
-    m(0x0c, argumINT_stack) \
-    m(0x0d, argumINT_end) \
+    m(0x0c, argumINT_fa4) \
+    m(0x0d, argumINT_fa5) \
+    m(0x0e, argumINT_fa6) \
+    m(0x0f, argumINT_fa7) \
+    m(0x10, argumINT_stack) \
+    m(0x11, argumINT_end) \
 
 #define FOR_EACH_IPINT_SLOW_PATH(m) \
     m(0x00, local_get_slow_path) \
@@ -712,9 +716,22 @@ extern "C" void ipint_catch_all_entry();
 #define FOR_EACH_IPINT_UINT_OPCODE(m) \
     m(0x00, uint_r0) \
     m(0x01, uint_r1) \
-    m(0x02, uint_fr0) \
-    m(0x03, uint_stack) \
-    m(0x04, uint_ret) \
+    m(0x02, uint_r2) \
+    m(0x03, uint_r3) \
+    m(0x04, uint_r4) \
+    m(0x05, uint_r5) \
+    m(0x06, uint_r6) \
+    m(0x07, uint_r7) \
+    m(0x08, uint_fr0) \
+    m(0x09, uint_fr1) \
+    m(0x0a, uint_fr2) \
+    m(0x0b, uint_fr3) \
+    m(0x0c, uint_fr4) \
+    m(0x0d, uint_fr5) \
+    m(0x0e, uint_fr6) \
+    m(0x0f, uint_fr7) \
+    m(0x10, uint_stack) \
+    m(0x11, uint_ret) \
 
 #if !ENABLE(C_LOOP) && (CPU(ADDRESS64) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))) || (CPU(ADDRESS32) && CPU(ARM_THUMB2)))
 FOR_EACH_IPINT_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);

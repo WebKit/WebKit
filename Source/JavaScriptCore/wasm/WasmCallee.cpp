@@ -221,6 +221,7 @@ IPIntCallee::IPIntCallee(FunctionIPIntMetadataGenerator& generator, size_t index
     , m_argumINTBytecodePointer(m_argumINTBytecode.data())
     , m_uINTBytecode(WTFMove(generator.m_uINTBytecode))
     , m_uINTBytecodePointer(m_uINTBytecode.data())
+    , m_highestReturnStackOffset(generator.m_highestReturnStackOffset)
     , m_localSizeToAlloc(roundUpToMultipleOf<2>(generator.m_numLocals))
     , m_numRethrowSlotsToAlloc(generator.m_numAlignedRethrowSlots)
     , m_numLocals(generator.m_numLocals)

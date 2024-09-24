@@ -162,7 +162,7 @@ WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint8_t* pc, IPIntLoc
         WASM_RETURN_TWO(nullptr, nullptr);
     }
 
-    unsigned loopOSREntryBytecodeOffset = pc - callee->m_bytecode;
+    unsigned loopOSREntryBytecodeOffset = pc - callee->bytecode();
     const auto& osrEntryData = tierUpCounter.osrEntryDataForLoop(loopOSREntryBytecodeOffset);
 
     if (Options::useBBQJIT()) {
@@ -177,7 +177,7 @@ WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint8_t* pc, IPIntLoc
         RELEASE_ASSERT(bbqCallee);
 
         size_t osrEntryScratchBufferSize = bbqCallee->osrEntryScratchBufferSize();
-        RELEASE_ASSERT(osrEntryScratchBufferSize >= callee->m_numLocals + osrEntryData.numberOfStackValues + osrEntryData.tryDepth);
+        RELEASE_ASSERT(osrEntryScratchBufferSize >= callee->numLocals() + osrEntryData.numberOfStackValues + osrEntryData.tryDepth);
 
         uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryScratchBufferSize);
         if (!buffer)
@@ -185,13 +185,13 @@ WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint8_t* pc, IPIntLoc
 
         uint32_t index = 0;
         buffer[index++] = osrEntryData.loopIndex;
-        for (uint32_t i = 0; i < callee->m_numLocals; ++i)
+        for (uint32_t i = 0; i < callee->numLocals(); ++i)
             buffer[index++] = pl[i].i64;
 
         // If there's no rethrow slots just 0 fill the buffer.
-        ASSERT(osrEntryData.tryDepth <= callee->m_numRethrowSlotsToAlloc || !callee->m_numRethrowSlotsToAlloc);
+        ASSERT(osrEntryData.tryDepth <= callee->rethrowSlots() || !callee->rethrowSlots());
         for (uint32_t i = 0; i < osrEntryData.tryDepth; ++i)
-            buffer[index++] = callee->m_numRethrowSlotsToAlloc ? pl[callee->m_localSizeToAlloc + i].i64 : 0;
+            buffer[index++] = callee->rethrowSlots() ? pl[callee->localSizeToAlloc() + i].i64 : 0;
 
         for (uint32_t i = 0; i < osrEntryData.numberOfStackValues; ++i) {
             pl -= 1;
@@ -230,9 +230,9 @@ WASM_IPINT_EXTERN_CPP_DECL(retrieve_and_clear_exception, CallFrame* callFrame, I
     RELEASE_ASSERT(!!throwScope.exception());
 
     Wasm::IPIntCallee* callee = IPINT_CALLEE(callFrame);
-    if (callee->m_numRethrowSlotsToAlloc) {
-        RELEASE_ASSERT(vm.targetTryDepthForThrow <= callee->m_numRethrowSlotsToAlloc);
-        pl[callee->m_localSizeToAlloc + vm.targetTryDepthForThrow - 1].i64 = bitwise_cast<uint64_t>(throwScope.exception()->value());
+    if (callee->rethrowSlots()) {
+        RELEASE_ASSERT(vm.targetTryDepthForThrow <= callee->rethrowSlots());
+        pl[callee->localSizeToAlloc() + vm.targetTryDepthForThrow - 1].i64 = bitwise_cast<uint64_t>(throwScope.exception()->value());
     }
 
     if (stackPointer) {
@@ -289,8 +289,8 @@ WASM_IPINT_EXTERN_CPP_DECL(rethrow_exception, CallFrame* callFrame, uint64_t* pl
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     Wasm::IPIntCallee* callee = IPINT_CALLEE(callFrame);
-    RELEASE_ASSERT(tryDepth <= callee->m_numRethrowSlotsToAlloc);
-    JSWebAssemblyException* exception = reinterpret_cast<JSWebAssemblyException**>(pl)[callee->m_localSizeToAlloc + tryDepth - 1];
+    RELEASE_ASSERT(tryDepth <= callee->rethrowSlots());
+    JSWebAssemblyException* exception = reinterpret_cast<JSWebAssemblyException**>(pl)[callee->localSizeToAlloc() + tryDepth - 1];
     RELEASE_ASSERT(exception);
     throwException(globalObject, throwScope, exception);
 

@@ -770,39 +770,50 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTableCopy(unsigned dstTableI
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArguments(const TypeDefinition &signature)
 {
+    auto fprToIndex = [&](FPRReg r) -> unsigned {
+        for (unsigned i = 0; i < FPRInfo::numberOfArgumentRegisters; ++i) {
+            if (FPRInfo::toArgumentRegister(i) == r)
+                return i;
+        }
+        RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+        return 0;
+    };
+
     auto sig = signature.as<FunctionSignature>();
+    CallInformation callCC = wasmCallingConvention().callInformationFor(*sig, CallRole::Callee);
+
     auto numArgs = sig->argumentCount();
     m_metadata->m_numLocals += numArgs;
     m_metadata->m_numArguments = numArgs;
-    m_metadata->m_argumINTBytecode.resize(numArgs + 1);
 
-    int numGPR = 0;
-    int numFPR = 0;
+    m_metadata->m_argumINTBytecode.reserveInitialCapacity(sig->argumentCount() + 1);
+
+    constexpr static int NUM_ARGUMINT_GPRS = 8;
+    constexpr static int NUM_ARGUMINT_FPRS = 8;
+
+    ASSERT_UNUSED(NUM_ARGUMINT_GPRS, wasmCallingConvention().jsrArgs.size() <= NUM_ARGUMINT_GPRS);
+    ASSERT_UNUSED(NUM_ARGUMINT_FPRS, wasmCallingConvention().fprArgs.size() <= NUM_ARGUMINT_FPRS);
 
     // 0x00 - 0x07: GPR 0-7
-    // 0x08 - 0x0b: FPR 0-3
-    // 0x0c: stack
-    // 0x0d: end
+    // 0x08 - 0x0f: FPR 0-3
+    // 0x10: stack
+    // 0x11: end
 
     for (size_t i = 0; i < numArgs; ++i) {
-        auto arg = sig->argumentType(i);
-        if (arg.isI32() || arg.isI64()) {
-            if (numGPR < 8)
-                m_metadata->m_argumINTBytecode[i] = numGPR++;
-            else {
-                m_metadata->m_numArgumentsOnStack++;
-                m_metadata->m_argumINTBytecode[i] = 0x0c;
-            }
-        } else {
-            if (numFPR < 8)
-                m_metadata->m_argumINTBytecode[i] = 8 + numFPR++;
-            else {
-                m_metadata->m_numArgumentsOnStack++;
-                m_metadata->m_argumINTBytecode[i] = 0x0c;
-            }
+        auto loc = callCC.params[i].location;
+        if (loc.isGPR()) {
+            ASSERT_UNUSED(NUM_ARGUMINT_GPRS, loc.jsr().payloadGPR() < NUM_ARGUMINT_GPRS);
+            m_metadata->m_argumINTBytecode.append(loc.jsr().payloadGPR());
+        } else if (loc.isFPR()) {
+            ASSERT_UNUSED(NUM_ARGUMINT_FPRS, fprToIndex(loc.fpr()) < NUM_ARGUMINT_FPRS);
+            m_metadata->m_argumINTBytecode.append(0x08 + fprToIndex(loc.fpr()));
+        } else if (loc.isStack()) {
+            m_metadata->m_argumINTBytecode.append(0x10);
         }
     }
-    m_metadata->m_argumINTBytecode.last() = 0x0d;
+    m_metadata->m_argumINTBytecode.append(0x11);
+
+    m_metadata->addReturnData(*sig);
     return { };
 }
 
@@ -2254,10 +2265,6 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addEndToUnreachable(ControlEntr
 
         // Metadata = round up 8 bytes, one for each
         m_metadata->m_bytecode = m_metadata->m_bytecode.first(m_parser->offset());
-        Vector<Type, 16> types(entry.controlData.branchTargetArity());
-        for (size_t i = 0; i < entry.controlData.branchTargetArity(); ++i)
-            types[i] = entry.controlData.branchTargetType(i);
-        m_metadata->addReturnData(types);
         return { };
     }
 

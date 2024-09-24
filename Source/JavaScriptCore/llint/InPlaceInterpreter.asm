@@ -573,15 +573,6 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
     nextIPIntInstruction()
 
 .ipint_exit:
-    # Clean up locals
-    # Don't overwrite the return registers
-    # Will use PM as a temp because we don't want to use the actual temps.
-    # move PL, sp
-    # loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], PM
-    # mulq LocalSize, PM
-    # addq PM, sp
-    ipintReloadMemory()
-
     restoreIPIntRegisters()
     restoreCallerPCAndCFR()
     ret

@@ -440,8 +440,12 @@ public:
 
     uint32_t functionIndex() const { return m_functionIndex; }
     void setEntrypoint(CodePtr<WasmEntryPtrTag>);
-    const uint8_t* getBytecode() const { return m_bytecode; }
-    const uint8_t* getMetadata() const { return m_metadata; }
+    const uint8_t* bytecode() const { return m_bytecode; }
+    const uint8_t* metadata() const { return m_metadata; }
+
+    unsigned numLocals() const { return m_numLocals; }
+    unsigned localSizeToAlloc() const { return m_localSizeToAlloc; }
+    unsigned rethrowSlots() const { return m_numRethrowSlotsToAlloc; }
 
     const TypeDefinition& signature(unsigned index) const
     {
@@ -480,9 +484,7 @@ private:
 #endif
     CodePtr<WasmEntryPtrTag> m_entrypoint;
     FixedVector<const TypeDefinition*> m_signatures;
-public:
-    // I couldn't figure out how to stop LLIntOffsetsExtractor.cpp from yelling at me.
-    // So just making these public.
+
     const uint8_t* m_bytecode;
     const uint8_t* m_bytecodeEnd;
     Vector<uint8_t> m_metadataVector;
@@ -491,6 +493,8 @@ public:
     const uint8_t* m_argumINTBytecodePointer;
     Vector<uint8_t> m_uINTBytecode;
     const uint8_t* m_uINTBytecodePointer;
+
+    unsigned m_highestReturnStackOffset;
 
     unsigned m_localSizeToAlloc;
     unsigned m_numRethrowSlotsToAlloc;
