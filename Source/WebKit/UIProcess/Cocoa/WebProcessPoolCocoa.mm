@@ -1291,7 +1291,7 @@ void WebProcessPool::registerHighDynamicRangeChangeCallback()
 ExtensionCapabilityGranter& WebProcessPool::extensionCapabilityGranter()
 {
     if (!m_extensionCapabilityGranter)
-        m_extensionCapabilityGranter = ExtensionCapabilityGranter::create(*this).moveToUniquePtr();
+        m_extensionCapabilityGranter = ExtensionCapabilityGranter::create(*this);
     return *m_extensionCapabilityGranter;
 }
 

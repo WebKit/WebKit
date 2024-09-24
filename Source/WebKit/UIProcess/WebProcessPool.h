@@ -583,6 +583,9 @@ public:
     ExtensionCapabilityGranter& extensionCapabilityGranter();
     RefPtr<GPUProcessProxy> gpuProcessForCapabilityGranter(const ExtensionCapabilityGranter&) final;
     RefPtr<WebProcessProxy> webProcessForCapabilityGranter(const ExtensionCapabilityGranter&, const String& environmentIdentifier) final;
+
+    void ref() const final { API::ObjectImpl<API::Object::Type::ProcessPool>::ref(); }
+    void deref() const final { API::ObjectImpl<API::Object::Type::ProcessPool>::deref(); }
 #endif
 
     bool usesSingleWebProcess() const { return m_configuration->usesSingleWebProcess(); }
@@ -909,7 +912,7 @@ private:
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    std::unique_ptr<ExtensionCapabilityGranter> m_extensionCapabilityGranter;
+    RefPtr<ExtensionCapabilityGranter> m_extensionCapabilityGranter;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
