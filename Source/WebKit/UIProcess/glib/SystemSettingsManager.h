@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Purism SPC
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,30 +26,25 @@
 
 #pragma once
 
-#include "GtkSettingsState.h"
-#include <gtk/gtk.h>
-#include <wtf/Function.h>
-#include <wtf/HashMap.h>
+#include <WebCore/SystemSettings.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
-class GtkSettingsManager {
-    WTF_MAKE_NONCOPYABLE(GtkSettingsManager);
-    friend NeverDestroyed<GtkSettingsManager>;
+class SystemSettingsManager {
+    WTF_MAKE_NONCOPYABLE(SystemSettingsManager);
+    friend NeverDestroyed<SystemSettingsManager>;
+
 public:
-    static GtkSettingsManager& singleton();
+    static void initialize();
 
-    const GtkSettingsState& settingsState() const { return m_settingsState; }
-
-    void addObserver(Function<void(const GtkSettingsState&)>&&, void* context);
-    void removeObserver(void* context);
 private:
-    GtkSettingsManager();
+    SystemSettingsManager();
 
     void settingsDidChange();
 
     String themeName() const;
+    bool darkMode() const;
     String fontName() const;
     int xftAntialias() const;
     int xftHinting() const;
@@ -61,9 +57,7 @@ private:
     bool overlayScrolling() const;
     bool enableAnimations() const;
 
-    GtkSettings* m_settings;
-    GtkSettingsState m_settingsState;
-    HashMap<void*, Function<void(const GtkSettingsState&)>> m_observers;
+    void* m_settings = nullptr;
 };
 
 } // namespace WebKit

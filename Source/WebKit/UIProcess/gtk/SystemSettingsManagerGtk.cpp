@@ -24,25 +24,19 @@
  */
 
 #include "config.h"
-#include "GtkSettingsManager.h"
+#include "SystemSettingsManager.h"
 
-#include "GtkSettingsManagerProxyMessages.h"
-#include "WebProcessPool.h"
+#include <gtk/gtk.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-GtkSettingsManager& GtkSettingsManager::singleton()
-{
-    static NeverDestroyed<GtkSettingsManager> manager;
-    return manager;
-}
-
-String GtkSettingsManager::themeName() const
+String SystemSettingsManager::themeName() const
 {
     if (auto* themeNameEnv = g_getenv("GTK_THEME")) {
         String name = String::fromUTF8(themeNameEnv);
-        if (name.endsWith("-dark"_s) || name.endsWith("-Dark"_s) || name.endsWith(":dark"_s))
+        if (name.endsWithIgnoringASCIICase("-dark"_s) || name.endsWith(":dark"_s))
             return name.left(name.length() - 5);
         return name;
     }
@@ -50,166 +44,114 @@ String GtkSettingsManager::themeName() const
     GUniqueOutPtr<char> themeNameSetting;
     g_object_get(m_settings, "gtk-theme-name", &themeNameSetting.outPtr(), nullptr);
     String name = String::fromUTF8(themeNameSetting.get());
-    if (name.endsWith("-dark"_s) || name.endsWith("-Dark"_s))
+    if (name.endsWithIgnoringASCIICase("-dark"_s))
         return name.left(name.length() - 5);
     return name;
 }
 
-String GtkSettingsManager::fontName() const
+bool SystemSettingsManager::darkMode() const
+{
+    gboolean preferDarkTheme;
+    g_object_get(m_settings, "gtk-application-prefer-dark-theme", &preferDarkTheme, nullptr);
+    if (preferDarkTheme)
+        return true;
+
+    // FIXME: These are just heuristics, we should get the dark mode from libhandy/libadwaita, falling back to the settings portal.
+
+    if (auto* themeNameEnv = g_getenv("GTK_THEME"))
+        return g_str_has_suffix(themeNameEnv, "-dark") || g_str_has_suffix(themeNameEnv, "-Dark") || g_str_has_suffix(themeNameEnv, ":dark");
+
+    GUniqueOutPtr<char> themeName;
+    g_object_get(m_settings, "gtk-theme-name", &themeName.outPtr(), nullptr);
+    if (g_str_has_suffix(themeName.get(), "-dark") || (g_str_has_suffix(themeName.get(), "-Dark")))
+        return true;
+
+    return false;
+}
+
+String SystemSettingsManager::fontName() const
 {
     GUniqueOutPtr<char> fontNameSetting;
     g_object_get(m_settings, "gtk-font-name", &fontNameSetting.outPtr(), nullptr);
     return String::fromUTF8(fontNameSetting.get());
 }
 
-int GtkSettingsManager::xftAntialias() const
+int SystemSettingsManager::xftAntialias() const
 {
     int antialiasSetting;
     g_object_get(m_settings, "gtk-xft-antialias", &antialiasSetting, nullptr);
     return antialiasSetting;
 }
 
-int GtkSettingsManager::xftHinting() const
+int SystemSettingsManager::xftHinting() const
 {
     int hintingSetting;
     g_object_get(m_settings, "gtk-xft-hinting", &hintingSetting, nullptr);
     return hintingSetting;
 }
 
-String GtkSettingsManager::xftHintStyle() const
+String SystemSettingsManager::xftHintStyle() const
 {
     GUniqueOutPtr<char> hintStyleSetting;
     g_object_get(m_settings, "gtk-xft-hintstyle", &hintStyleSetting.outPtr(), nullptr);
     return String::fromUTF8(hintStyleSetting.get());
 }
 
-String GtkSettingsManager::xftRGBA() const
+String SystemSettingsManager::xftRGBA() const
 {
     GUniqueOutPtr<char> rgbaSetting;
     g_object_get(m_settings, "gtk-xft-rgba", &rgbaSetting.outPtr(), nullptr);
     return String::fromUTF8(rgbaSetting.get());
 }
 
-int GtkSettingsManager::xftDPI() const
+int SystemSettingsManager::xftDPI() const
 {
     int dpiSetting;
     g_object_get(m_settings, "gtk-xft-dpi", &dpiSetting, nullptr);
     return dpiSetting;
 }
 
-bool GtkSettingsManager::cursorBlink() const
+bool SystemSettingsManager::cursorBlink() const
 {
     gboolean cursorBlinkSetting;
     g_object_get(m_settings, "gtk-cursor-blink", &cursorBlinkSetting, nullptr);
     return cursorBlinkSetting ? true : false;
 }
 
-int GtkSettingsManager::cursorBlinkTime() const
+int SystemSettingsManager::cursorBlinkTime() const
 {
     int cursorBlinkTimeSetting;
     g_object_get(m_settings, "gtk-cursor-blink-time", &cursorBlinkTimeSetting, nullptr);
     return cursorBlinkTimeSetting;
 }
 
-bool GtkSettingsManager::primaryButtonWarpsSlider() const
+bool SystemSettingsManager::primaryButtonWarpsSlider() const
 {
     gboolean buttonSetting;
     g_object_get(m_settings, "gtk-primary-button-warps-slider", &buttonSetting, nullptr);
     return buttonSetting ? true : false;
 }
 
-bool GtkSettingsManager::overlayScrolling() const
+bool SystemSettingsManager::overlayScrolling() const
 {
     gboolean overlayScrollingSetting;
     g_object_get(m_settings, "gtk-overlay-scrolling", &overlayScrollingSetting, nullptr);
     return overlayScrollingSetting ? true : false;
 }
 
-bool GtkSettingsManager::enableAnimations() const
+bool SystemSettingsManager::enableAnimations() const
 {
     gboolean enableAnimationsSetting;
     g_object_get(m_settings, "gtk-enable-animations", &enableAnimationsSetting, nullptr);
     return enableAnimationsSetting ? true : false;
 }
 
-void GtkSettingsManager::settingsDidChange()
-{
-    GtkSettingsState state;
-
-    auto themeName = this->themeName();
-    if (m_settingsState.themeName != themeName)
-        m_settingsState.themeName = state.themeName = themeName;
-
-    auto fontName = this->fontName();
-    if (m_settingsState.fontName != fontName)
-        m_settingsState.fontName = state.fontName = fontName;
-
-    auto xftAntialias = this->xftAntialias();
-    if (m_settingsState.xftAntialias != xftAntialias)
-        m_settingsState.xftAntialias = state.xftAntialias = xftAntialias;
-
-    auto xftHinting = this->xftHinting();
-    if (m_settingsState.xftHinting != xftHinting)
-        m_settingsState.xftHinting = state.xftHinting = xftHinting;
-
-    auto xftHintStyle = this->xftHintStyle();
-    if (m_settingsState.xftHintStyle != xftHintStyle)
-        m_settingsState.xftHintStyle = state.xftHintStyle = xftHintStyle;
-
-    auto xftRGBA = this->xftRGBA();
-    if (m_settingsState.xftRGBA != xftRGBA)
-        m_settingsState.xftRGBA = state.xftRGBA = xftRGBA;
-
-    auto xftDPI = this->xftDPI();
-    if (m_settingsState.xftDPI != xftDPI)
-        m_settingsState.xftDPI = state.xftDPI = xftDPI;
-
-    auto cursorBlink = this->cursorBlink();
-    if (m_settingsState.cursorBlink != cursorBlink)
-        m_settingsState.cursorBlink = state.cursorBlink = cursorBlink;
-
-    auto cursorBlinkTime = this->cursorBlinkTime();
-    if (m_settingsState.cursorBlinkTime != cursorBlinkTime)
-        m_settingsState.cursorBlinkTime = state.cursorBlinkTime = cursorBlinkTime;
-
-    auto primaryButtonWarpsSlider = this->primaryButtonWarpsSlider();
-    if (m_settingsState.primaryButtonWarpsSlider != primaryButtonWarpsSlider)
-        m_settingsState.primaryButtonWarpsSlider = state.primaryButtonWarpsSlider = primaryButtonWarpsSlider;
-
-    auto overlayScrolling = this->overlayScrolling();
-    if (m_settingsState.overlayScrolling != overlayScrolling)
-        m_settingsState.overlayScrolling = state.overlayScrolling = overlayScrolling;
-
-    auto enableAnimations = this->enableAnimations();
-    if (m_settingsState.enableAnimations != enableAnimations)
-        m_settingsState.enableAnimations = state.enableAnimations = enableAnimations;
-
-    for (const auto& observer : m_observers.values())
-        observer(state);
-
-    for (auto& processPool : WebProcessPool::allProcessPools())
-        processPool->sendToAllProcesses(Messages::GtkSettingsManagerProxy::SettingsDidChange(state));
-}
-
-GtkSettingsManager::GtkSettingsManager()
+SystemSettingsManager::SystemSettingsManager()
     : m_settings(gtk_settings_get_default())
 {
-    auto settingsChangedCallback = +[](GtkSettingsManager* settingsManager) {
+    auto settingsChangedCallback = +[](SystemSettingsManager* settingsManager) {
         settingsManager->settingsDidChange();
     };
-
-    m_settingsState.themeName = themeName();
-    m_settingsState.fontName = fontName();
-    m_settingsState.xftAntialias = xftAntialias();
-    m_settingsState.xftHinting = xftHinting();
-    m_settingsState.xftHintStyle = xftHintStyle();
-    m_settingsState.xftRGBA = xftRGBA();
-    m_settingsState.xftDPI = xftDPI();
-    m_settingsState.cursorBlink = cursorBlink();
-    m_settingsState.cursorBlinkTime = cursorBlinkTime();
-    m_settingsState.primaryButtonWarpsSlider = primaryButtonWarpsSlider();
-    m_settingsState.overlayScrolling = overlayScrolling();
-    m_settingsState.enableAnimations = enableAnimations();
 
     g_signal_connect_swapped(m_settings, "notify::gtk-theme-name", G_CALLBACK(settingsChangedCallback), this);
     g_signal_connect_swapped(m_settings, "notify::gtk-font-name", G_CALLBACK(settingsChangedCallback), this);
@@ -223,16 +165,9 @@ GtkSettingsManager::GtkSettingsManager()
     g_signal_connect_swapped(m_settings, "notify::gtk-primary-button-warps-slider", G_CALLBACK(settingsChangedCallback), this);
     g_signal_connect_swapped(m_settings, "notify::gtk-overlay-scrolling", G_CALLBACK(settingsChangedCallback), this);
     g_signal_connect_swapped(m_settings, "notify::gtk-enable-animations", G_CALLBACK(settingsChangedCallback), this);
-}
+    g_signal_connect_swapped(m_settings, "notify::gtk-application-prefer-dark-theme", G_CALLBACK(settingsChangedCallback), this);
 
-void GtkSettingsManager::addObserver(Function<void(const GtkSettingsState&)>&& handler, void* context)
-{
-    m_observers.add(context, WTFMove(handler));
-}
-
-void GtkSettingsManager::removeObserver(void* context)
-{
-    m_observers.remove(context);
+    settingsDidChange();
 }
 
 } // namespace WebKit

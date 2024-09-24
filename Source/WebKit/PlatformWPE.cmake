@@ -112,6 +112,7 @@ endif ()
 list(APPEND WebKit_SERIALIZATION_IN_FILES
     Shared/glib/DMABufRendererBufferMode.serialization.in
     Shared/glib/InputMethodState.serialization.in
+    Shared/glib/SystemSettings.serialization.in
     Shared/glib/UserMessage.serialization.in
 
     Shared/soup/WebCoreArgumentCodersSoup.serialization.in
@@ -485,6 +486,10 @@ else ()
         ${GSTREAMER_LIBRARIES}
     )
 endif ()
+
+list(APPEND WebKit_MESSAGES_IN_FILES
+    WebProcess/glib/SystemSettingsProxy
+)
 
 if (ENABLE_WPE_PLATFORM)
     list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES

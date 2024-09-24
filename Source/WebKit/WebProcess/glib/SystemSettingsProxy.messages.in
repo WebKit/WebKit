@@ -1,4 +1,4 @@
-# Copyright (C) 2024 Igalia, S.L. All rights reserved.
+# Copyright (C) 2021 Purism SPC
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,14 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-header: <WebCore/SelectionData.h>
-class WebCore::SelectionData {
-    String text()
-    String markup()
-    URL url()
-    String uriList()
-    RefPtr<WebCore::Image> image()
-    RefPtr<WebCore::SharedBuffer> customData()
-    bool canSmartReplace()
+messages -> SystemSettingsProxy NotRefCounted {
+    DidChange(struct WebCore::SystemSettings::State state)
 }
-

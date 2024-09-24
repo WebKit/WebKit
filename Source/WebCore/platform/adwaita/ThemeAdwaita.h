@@ -49,9 +49,9 @@ private:
     LengthSize minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize&, float) const final;
     LengthBox controlBorder(StyleAppearance, const FontCascade&, const LengthBox&, float) const final;
 
-#if PLATFORM(GTK)
-    void refreshGtkSettings();
-#endif // PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void refreshSettings();
+#endif
 
     Color m_accentColor { SRGBA<uint8_t> { 52, 132, 228 } };
 

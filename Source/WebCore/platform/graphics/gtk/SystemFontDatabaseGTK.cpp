@@ -23,6 +23,7 @@
 #include "SystemFontDatabase.h"
 
 #include "PlatformScreen.h"
+#include "SystemSettings.h"
 #include "WebKitFontFamilyNames.h"
 #include <gtk/gtk.h>
 #include <wtf/NeverDestroyed.h>
@@ -38,17 +39,12 @@ SystemFontDatabase& SystemFontDatabase::singleton()
 
 auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand) -> SystemFontShorthandInfo
 {
-    GtkSettings* settings = gtk_settings_get_default();
-    if (!settings)
-        return { WebKitFontFamilyNames::standardFamily, 16, normalWeightValue() };
-
     // This will be a font selection string like "Sans 10" so we cannot use it as the family name.
-    GUniqueOutPtr<gchar> fontName;
-    g_object_get(settings, "gtk-font-name", &fontName.outPtr(), nullptr);
-    if (!fontName || !fontName.get()[0])
+    auto fontName = SystemSettings::singleton().fontName();
+    if (!fontName || fontName->isEmpty())
         return { WebKitFontFamilyNames::standardFamily, 16, normalWeightValue() };
 
-    PangoFontDescription* pangoDescription = pango_font_description_from_string(fontName.get());
+    PangoFontDescription* pangoDescription = pango_font_description_from_string(fontName->utf8().data());
     if (!pangoDescription)
         return { WebKitFontFamilyNames::standardFamily, 16, normalWeightValue() };
 

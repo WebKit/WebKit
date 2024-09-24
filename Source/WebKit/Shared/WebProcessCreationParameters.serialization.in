@@ -181,11 +181,11 @@
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     OptionSet<WebKit::DMABufRendererBufferMode> dmaBufRendererBufferMode;
+    WebCore::SystemSettings::State systemSettings;
 #endif
 
 #if PLATFORM(GTK)
     bool useSystemAppearanceForScrollbars;
-    WebKit::GtkSettingsState gtkSettings;
 #endif
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)

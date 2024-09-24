@@ -23,34 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "SystemSettingsProxy.h"
 
-#include "GtkSettingsState.h"
-#include "MessageReceiver.h"
-#include <gtk/gtk.h>
-#include <wtf/NeverDestroyed.h>
+#if PLATFORM(GTK) || PLATFORM(WPE)
+
+#include "SystemSettingsProxyMessages.h"
+#include "WebProcess.h"
 
 namespace WebKit {
+using namespace WebCore;
 
-class GtkSettingsManagerProxy : private IPC::MessageReceiver {
-    WTF_MAKE_NONCOPYABLE(GtkSettingsManagerProxy);
-    friend NeverDestroyed<GtkSettingsManagerProxy>;
-public:
-    static GtkSettingsManagerProxy& singleton();
+void SystemSettingsProxy::initialize()
+{
+    static NeverDestroyed<SystemSettingsProxy> manager;
+}
 
-    void applySettings(GtkSettingsState&&);
-private:
-    GtkSettingsManagerProxy();
+SystemSettingsProxy::SystemSettingsProxy()
+{
+    WebProcess::singleton().addMessageReceiver(Messages::SystemSettingsProxy::messageReceiverName(), *this);
+}
 
-    // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-
-    void settingsDidChange(GtkSettingsState&&);
-
-    void applyHintingSettings();
-    void applyAntialiasSettings();
-
-    GtkSettings* m_settings;
-};
+void SystemSettingsProxy::didChange(WebCore::SystemSettings::State&& state)
+{
+    SystemSettings::singleton().updateSettings(WTFMove(state));
+}
 
 } // namespace WebKit
+
+#endif // PLATFORM(GTK) || PLATFORM(WPE)
+

@@ -34,6 +34,7 @@
 #include "WebMemoryPressureHandler.h"
 #include "WebProcessCreationParameters.h"
 #include <WebCore/PlatformDisplay.h>
+#include <WebCore/SystemSettings.h>
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/Application.h>
@@ -58,7 +59,6 @@
 #if PLATFORM(GTK)
 #include "AcceleratedBackingStoreDMABuf.h"
 #include "Display.h"
-#include "GtkSettingsManager.h"
 #endif
 
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
@@ -163,8 +163,9 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         parameters.accessibilityBusAddress = m_sandboxEnabled && shouldUseBubblewrap() ? sandboxedAccessibilityBusAddress() : accessibilityBusAddress();
 #endif
 
+    parameters.systemSettings = WebCore::SystemSettings::singleton().settingsState();
+
 #if PLATFORM(GTK)
-    parameters.gtkSettings = GtkSettingsManager::singleton().settingsState();
     parameters.screenProperties = ScreenManager::singleton().collectScreenProperties();
 #endif
 

@@ -25,28 +25,29 @@
 
 #pragma once
 
-#include <wtf/text/WTFString.h>
+#if PLATFORM(GTK) || PLATFORM(WPE)
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
+#include "MessageReceiver.h"
+#include <WebCore/SystemSettings.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
-struct GtkSettingsState {
-    std::optional<String> themeName;
-    std::optional<String> fontName;
-    std::optional<int> xftAntialias;
-    std::optional<int> xftHinting;
-    std::optional<String> xftHintStyle;
-    std::optional<String> xftRGBA;
-    std::optional<int> xftDPI;
-    std::optional<bool> cursorBlink;
-    std::optional<int> cursorBlinkTime;
-    std::optional<bool> primaryButtonWarpsSlider;
-    std::optional<bool> overlayScrolling;
-    std::optional<bool> enableAnimations;
+class SystemSettingsProxy : private IPC::MessageReceiver {
+    WTF_MAKE_NONCOPYABLE(SystemSettingsProxy);
+    friend NeverDestroyed<SystemSettingsProxy>;
+public:
+    static void initialize();
+
+private:
+    SystemSettingsProxy();
+
+    // IPC::MessageReceiver.
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+
+    void didChange(WebCore::SystemSettings::State&&);
 };
 
 } // namespace WebKit
+
+#endif // PLATFORM(GTK) || PLATFORM(WPE)

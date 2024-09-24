@@ -36,7 +36,6 @@
 #include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "DropTarget.h"
 #include "EditorState.h"
-#include "GtkSettingsManager.h"
 #include "InputMethodFilter.h"
 #include "KeyAutoRepeatHandler.h"
 #include "KeyBindingTranslator.h"
@@ -76,6 +75,7 @@
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/Region.h>
 #include <WebCore/Scrollbar.h>
+#include <WebCore/SystemSettings.h>
 #include <cmath>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
@@ -854,7 +854,7 @@ static void webkitWebViewBaseDispose(GObject* gobject)
         webkitWebViewAccessibleSetWebView(WEBKIT_WEB_VIEW_ACCESSIBLE(webView->priv->accessible.get()), nullptr);
 #endif
 
-    GtkSettingsManager::singleton().removeObserver(webView);
+    SystemSettings::singleton().removeObserver(webView);
     webkitWebViewBaseSetToplevelOnScreenWindow(webView, nullptr);
 #if GTK_CHECK_VERSION(3, 24, 0)
     webkitWebViewBaseCompleteEmojiChooserRequest(webView, emptyString());
@@ -2426,13 +2426,6 @@ static void webkitWebViewBaseConstructed(GObject* object)
     gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(gesture), TRUE);
     g_signal_connect_object(gesture, "swipe", G_CALLBACK(webkitWebViewBaseTouchSwipe), viewWidget, G_CONNECT_SWAPPED);
 
-    auto* settings = gtk_settings_get_default();
-    auto callback = +[](WebKitWebViewBase* webViewBase) {
-        webViewBase->priv->pageProxy->effectiveAppearanceDidChange();
-    };
-    g_signal_connect_object(settings, "notify::gtk-theme-name", G_CALLBACK(callback), viewWidget, G_CONNECT_SWAPPED);
-    g_signal_connect_object(settings, "notify::gtk-application-prefer-dark-theme", G_CALLBACK(callback), viewWidget, G_CONNECT_SWAPPED);
-
     priv->displayID = ScreenManager::singleton().primaryDisplayID();
 }
 
@@ -2557,11 +2550,12 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
     refreshInternalScaling(webkitWebViewBase);
     // We attach this here, because changes in scale factor are passed directly to the page proxy.
     g_signal_connect(webkitWebViewBase, "notify::scale-factor", G_CALLBACK(deviceScaleFactorChanged), nullptr);
-    // Also watch for changes to xft-dpi
-    GtkSettingsManager::singleton().addObserver([webkitWebViewBase](const GtkSettingsState& state) {
-        if (!state.xftDPI)
-            return;
-        refreshInternalScaling(webkitWebViewBase);
+
+    WebCore::SystemSettings::singleton().addObserver([&webkitWebViewBase](const SystemSettings::State& state) mutable {
+        if (state.xftDPI)
+            refreshInternalScaling(webkitWebViewBase);
+        if (state.themeName || state.darkMode)
+            webkitWebViewBase->priv->pageProxy->effectiveAppearanceDidChange();
     }, webkitWebViewBase);
 }
 

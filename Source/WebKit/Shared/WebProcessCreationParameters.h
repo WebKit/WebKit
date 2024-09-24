@@ -59,11 +59,8 @@
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
 #include "DMABufRendererBufferMode.h"
+#include <WebCore/SystemSettings.h>
 #include <wtf/MemoryPressureHandler.h>
-#endif
-
-#if PLATFORM(GTK)
-#include "GtkSettingsState.h"
 #endif
 
 namespace API {
@@ -234,11 +231,11 @@ struct WebProcessCreationParameters {
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     OptionSet<DMABufRendererBufferMode> dmaBufRendererBufferMode;
+    WebCore::SystemSettings::State systemSettings;
 #endif
 
 #if PLATFORM(GTK)
     bool useSystemAppearanceForScrollbars { false };
-    GtkSettingsState gtkSettings;
 #endif
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)

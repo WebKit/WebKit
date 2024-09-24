@@ -97,7 +97,7 @@ private:
     void adjustListButtonStyle(RenderStyle&, const Element*) const final;
 #endif
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<Seconds> caretBlinkInterval() const override;
 #endif
 };
