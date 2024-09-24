@@ -256,15 +256,15 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     // Do some value profiling.
     if (exit.m_descriptor->m_profileDataFormat != DataFormatNone) {
         Location::forValueRep(exit.m_valueReps[0]).restoreInto(jit, registerScratch, GPRInfo::regT0);
-        reboxAccordingToFormat(
-            exit.m_descriptor->m_profileDataFormat, jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
+        reboxAccordingToFormat(exit.m_descriptor->m_profileDataFormat, jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
         
         if (exit.m_kind == BadCache || exit.m_kind == BadIndexingType) {
             CodeOrigin codeOrigin = exit.m_codeOriginForExitProfile;
             CodeBlock* codeBlock = jit.baselineCodeBlockFor(codeOrigin);
             if (ArrayProfile* arrayProfile = codeBlock->getArrayProfile(ConcurrentJSLocker(codeBlock->m_lock), codeOrigin.bytecodeIndex())) {
+                jit.move(CCallHelpers::TrustedImmPtr(arrayProfile), GPRInfo::regT3);
                 jit.load32(MacroAssembler::Address(GPRInfo::regT0, JSCell::structureIDOffset()), GPRInfo::regT1);
-                jit.store32(GPRInfo::regT1, arrayProfile->addressOfLastSeenStructureID());
+                jit.store32(GPRInfo::regT1, CCallHelpers::Address(GPRInfo::regT3, ArrayProfile::offsetOfSpeculationFailureStructureID()));
 
                 jit.load8(MacroAssembler::Address(GPRInfo::regT0, JSCell::typeInfoTypeOffset()), GPRInfo::regT2);
                 jit.sub32(MacroAssembler::TrustedImm32(FirstTypedArrayType), GPRInfo::regT2);
@@ -279,7 +279,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
                 jit.move(MacroAssembler::TrustedImm32(1), GPRInfo::regT2);
                 jit.lshift32(GPRInfo::regT1, GPRInfo::regT2);
                 storeArrayModes.link(&jit);
-                jit.or32(GPRInfo::regT2, MacroAssembler::AbsoluteAddress(arrayProfile->addressOfArrayModes()));
+                jit.or32(GPRInfo::regT2, CCallHelpers::Address(GPRInfo::regT3, ArrayProfile::offsetOfArrayModes()));
             }
         }
 

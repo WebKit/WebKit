@@ -1162,6 +1162,13 @@ public:
         store32(dataTempRegister, address.m_ptr);
     }
 
+    void or32(RegisterID src, Address dest)
+    {
+        load32(dest, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.orr<32>(dataTempRegister, dataTempRegister, src);
+        store32(dataTempRegister, dest);
+    }
+
     void or32(TrustedImm32 imm, AbsoluteAddress address)
     {
         LogicalImmediate logicalImm = LogicalImmediate::create32(imm.m_value);

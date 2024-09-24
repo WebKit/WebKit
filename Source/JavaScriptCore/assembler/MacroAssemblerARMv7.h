@@ -489,6 +489,13 @@ public:
         store32(dataTempRegister, Address(addressTempRegister));
     }
 
+    void or32(RegisterID src, Address dest)
+    {
+        load32(dest, dataTempRegister);
+        or32(src, dataTempRegister);
+        store32(dataTempRegister, dest);
+    }
+
     void or32(TrustedImm32 imm, AbsoluteAddress address)
     {
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);

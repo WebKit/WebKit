@@ -125,11 +125,10 @@ void dumpArrayModes(PrintStream& out, ArrayModes arrayModes)
 
 void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock)
 {
-    auto lastSeenStructureID = std::exchange(m_lastSeenStructureID, StructureID());
-    if (!lastSeenStructureID)
-        return;
-
-    computeUpdatedPrediction(codeBlock, lastSeenStructureID.decode());
+    if (auto structureID = std::exchange(m_lastSeenStructureID, StructureID()))
+        computeUpdatedPrediction(codeBlock, structureID.decode());
+    if (auto structureID = std::exchange(m_speculationFailureStructureID, StructureID()))
+        computeUpdatedPrediction(codeBlock, structureID.decode());
 }
 
 void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock, Structure* lastSeenStructure)
