@@ -152,8 +152,7 @@ if (COMPILER_IS_GCC_OR_CLANG)
     # we do not add -fno-rtti or -fno-exceptions for clang-cl
     if (COMPILER_IS_CLANG_CL)
         # FIXME: These warnings should be addressed
-        WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-sign-compare
-                                             -Wno-deprecated-declarations)
+        WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-sign-compare)
     else ()
         WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-fno-exceptions)
         WEBKIT_APPEND_GLOBAL_CXX_FLAGS(-fno-rtti)
