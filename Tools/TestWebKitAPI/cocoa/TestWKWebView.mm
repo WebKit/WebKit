@@ -106,6 +106,12 @@ static NSString *overrideBundleIdentifier(id, SEL)
     [self _test_waitForDidFinishNavigationWithPreferences:preferences];
 }
 
+- (void)synchronouslyLoadSimulatedRequest:(NSURLRequest *)request responseHTMLString:(NSString *)htmlString
+{
+    [self loadSimulatedRequest:request responseHTMLString:htmlString];
+    [self _test_waitForDidFinishNavigation];
+}
+
 - (void)synchronouslyLoadRequestIgnoringSSLErrors:(NSURLRequest *)request
 {
     [self loadRequest:request];
