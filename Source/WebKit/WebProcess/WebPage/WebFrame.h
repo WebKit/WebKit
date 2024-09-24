@@ -48,15 +48,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebKit {
-class LoadListener;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::LoadListener> : std::true_type { };
-}
-
 namespace API {
 class Array;
 }
@@ -90,15 +81,6 @@ struct FrameInfoData;
 struct FrameTreeNodeData;
 struct ProvisionalFrameCreationParameters;
 struct WebsitePoliciesData;
-
-// Simple listener class used by plug-ins to know when frames finish or fail loading.
-class LoadListener : public CanMakeWeakPtr<LoadListener> {
-public:
-    virtual ~LoadListener() { }
-
-    virtual void didFinishLoad(WebFrame*) = 0;
-    virtual void didFailLoad(WebFrame*, bool wasCancelled) = 0;
-};
 
 class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public CanMakeWeakPtr<WebFrame> {
 public:
@@ -214,9 +196,6 @@ public:
 
     void setTextDirection(const String&);
     void updateRemoteFrameSize(WebCore::IntSize);
-
-    void setLoadListener(LoadListener* loadListener) { m_loadListener = loadListener; }
-    LoadListener* loadListener() const { return m_loadListener.get(); }
     
 #if PLATFORM(COCOA)
     typedef bool (*FrameFilterFunction)(WKBundleFrameRef, WKBundleFrameRef subframe, void* context);
@@ -271,8 +250,6 @@ private:
     HashMap<uint64_t, PolicyCheck> m_pendingPolicyChecks;
 
     std::optional<DownloadID> m_policyDownloadID;
-
-    WeakPtr<LoadListener> m_loadListener;
 
     const WebCore::FrameIdentifier m_frameID;
 

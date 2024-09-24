@@ -683,10 +683,6 @@ void WebLocalFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceErr
 
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->info(), request, navigationID, m_localFrame->loader().provisionalLoadErrorBeingHandledURL().string(), error, willContinueLoading, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()), willInternallyHandleFailure));
-
-    // If we have a load listener, notify it.
-    if (LoadListener* loadListener = m_frame->loadListener())
-        loadListener->didFailLoad(m_frame.ptr(), error.isCancellation());
 }
 
 void WebLocalFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
@@ -712,10 +708,6 @@ void WebLocalFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
 
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::DidFailLoadForFrame(m_frame->frameID(), m_frame->info(), documentLoader->request(), documentLoader->navigationID(), error, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
-
-    // If we have a load listener, notify it.
-    if (LoadListener* loadListener = m_frame->loadListener())
-        loadListener->didFailLoad(m_frame.ptr(), error.isCancellation());
 }
 
 void WebLocalFrameLoaderClient::dispatchDidFinishDocumentLoad()
@@ -759,10 +751,6 @@ void WebLocalFrameLoaderClient::dispatchDidFinishLoad()
 
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::DidFinishLoadForFrame(m_frame->frameID(), m_frame->info(), documentLoader->request(), documentLoader->navigationID(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
-
-    // If we have a load listener, notify it.
-    if (LoadListener* loadListener = m_frame->loadListener())
-        loadListener->didFinishLoad(m_frame.ptr());
 
     webPage->didFinishLoad(m_frame);
 }
@@ -1443,9 +1431,6 @@ void WebLocalFrameLoaderClient::provisionalLoadStarted()
 
 void WebLocalFrameLoaderClient::didFinishLoad()
 {
-    // If we have a load listener, notify it.
-    if (LoadListener* loadListener = m_frame->loadListener())
-        loadListener->didFinishLoad(m_frame.ptr());
 }
 
 void WebLocalFrameLoaderClient::prepareForDataSourceReplacement()
