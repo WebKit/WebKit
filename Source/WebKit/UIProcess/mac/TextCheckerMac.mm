@@ -97,7 +97,9 @@ static bool shouldGrammarCheckingBeEnabled()
 
 static TextCheckerState& mutableState()
 {
-    static NeverDestroyed state = [] {
+    static LazyNeverDestroyed<TextCheckerState> state;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
         TextCheckerState initialState;
         initialState.isContinuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled] && TextChecker::isContinuousSpellCheckingAllowed();
         initialState.isGrammarCheckingEnabled = shouldGrammarCheckingBeEnabled();
@@ -106,8 +108,8 @@ static TextCheckerState& mutableState()
         initialState.isAutomaticQuoteSubstitutionEnabled = shouldAutomaticQuoteSubstitutionBeEnabled();
         initialState.isAutomaticDashSubstitutionEnabled = shouldAutomaticDashSubstitutionBeEnabled();
         initialState.isAutomaticLinkDetectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticLinkDetectionEnabled];
-        return initialState;
-    }();
+        state.construct(WTFMove(initialState));
+    });
     return state;
 }
 
