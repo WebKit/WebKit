@@ -134,6 +134,16 @@ bool PlatformXRSystemProxy::webXREnabled() const
     return m_page.corePage() && m_page.corePage()->settings().webXREnabled();
 }
 
+void PlatformXRSystemProxy::ref() const
+{
+    m_page.ref();
+}
+
+void PlatformXRSystemProxy::deref() const
+{
+    m_page.deref();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WEBXR)

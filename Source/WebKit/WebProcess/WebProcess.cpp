@@ -1270,7 +1270,7 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     ASSERT_UNUSED(connection, m_networkProcessConnection == connection);
 
     for (auto key : copyToVector(m_storageAreaMaps.keys())) {
-        if (auto map = m_storageAreaMaps.get(key))
+        if (RefPtr map = m_storageAreaMaps.get(key).get())
             map->disconnect();
     }
 

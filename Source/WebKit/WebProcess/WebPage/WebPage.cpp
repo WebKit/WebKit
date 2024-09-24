@@ -8915,7 +8915,7 @@ void WebPage::textAutosizingUsesIdempotentModeChanged()
 PlatformXRSystemProxy& WebPage::xrSystemProxy()
 {
     if (!m_xrSystemProxy)
-        m_xrSystemProxy = std::unique_ptr<PlatformXRSystemProxy>(new PlatformXRSystemProxy(*this));
+        m_xrSystemProxy = makeUniqueWithoutRefCountedCheck<PlatformXRSystemProxy>(*this);
     return *m_xrSystemProxy;
 }
 #endif

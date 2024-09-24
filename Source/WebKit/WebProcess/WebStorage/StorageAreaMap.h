@@ -39,15 +39,6 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebKit {
-class StorageAreaMap;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::StorageAreaMap> : std::true_type { };
-}
-
 namespace WebCore {
 class SecurityOrigin;
 class StorageMap;
@@ -59,10 +50,14 @@ namespace WebKit {
 class StorageAreaImpl;
 class StorageNamespaceImpl;
 
-class StorageAreaMap final : public IPC::MessageReceiver, public Identified<StorageAreaMapIdentifier> {
+class StorageAreaMap final : public RefCounted<StorageAreaMap>, public IPC::MessageReceiver, public Identified<StorageAreaMapIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(StorageAreaMap);
 public:
-    StorageAreaMap(StorageNamespaceImpl&, Ref<const WebCore::SecurityOrigin>&&);
+    static Ref<StorageAreaMap> create(StorageNamespaceImpl& storageNamespace, Ref<const WebCore::SecurityOrigin>&& securityOrigin)
+    {
+        return adoptRef(*new StorageAreaMap(storageNamespace, WTFMove(securityOrigin)));
+    }
+
     ~StorageAreaMap();
 
     WebCore::StorageType type() const { return m_type; }
@@ -86,6 +81,8 @@ public:
     void decrementUseCount();
 
 private:
+    StorageAreaMap(StorageNamespaceImpl&, Ref<const WebCore::SecurityOrigin>&&);
+
     void didSetItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&&);
     void didRemoveItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&&);
     void didClear(uint64_t mapSeed);
