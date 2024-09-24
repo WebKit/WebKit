@@ -27,6 +27,7 @@
 #pragma once
 
 #include <algorithm>
+#include <concepts>
 #include <cstring>
 #include <functional>
 #include <memory>

@@ -133,6 +133,9 @@
 		3AE27DB528C1BA480043A8E0 /* ASTVariableStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */; };
 		664C92FD286A66090008D143 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 664C92FC286A66090008D143 /* IOSurface.framework */; };
 		66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 66DC575428627E0B0014CABD /* ParserPrivate.h */; };
+		9478714A2C98CECB003DB695 /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947871492C98CEC6003DB695 /* Buffer.swift */; };
+		9478714C2C98D31A003DB695 /* WebGPUSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 9478714B2C98D314003DB695 /* WebGPUSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		94CC0FE62CA203B300CB3264 /* WebGPUSwiftInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 94CC0FE52CA203AB00CB3264 /* WebGPUSwiftInternal.h */; };
 		97099AC12AA60D58003B41F8 /* ASTElaboratedTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099ABE2AA60D58003B41F8 /* ASTElaboratedTypeExpression.h */; };
 		97099AC22AA60D58003B41F8 /* ASTReferenceTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099ABF2AA60D58003B41F8 /* ASTReferenceTypeExpression.h */; };
 		97099AC32AA60D58003B41F8 /* ASTArrayTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099AC02AA60D58003B41F8 /* ASTArrayTypeExpression.h */; };
@@ -443,6 +446,9 @@
 		3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTVariableStatement.h; sourceTree = "<group>"; };
 		664C92FC286A66090008D143 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		66DC575428627E0B0014CABD /* ParserPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserPrivate.h; sourceTree = "<group>"; };
+		947871492C98CEC6003DB695 /* Buffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buffer.swift; sourceTree = "<group>"; };
+		9478714B2C98D314003DB695 /* WebGPUSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSwift.h; sourceTree = "<group>"; };
+		94CC0FE52CA203AB00CB3264 /* WebGPUSwiftInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSwiftInternal.h; sourceTree = "<group>"; };
 		97099ABE2AA60D58003B41F8 /* ASTElaboratedTypeExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTElaboratedTypeExpression.h; sourceTree = "<group>"; };
 		97099ABF2AA60D58003B41F8 /* ASTReferenceTypeExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTReferenceTypeExpression.h; sourceTree = "<group>"; };
 		97099AC02AA60D58003B41F8 /* ASTArrayTypeExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTArrayTypeExpression.h; sourceTree = "<group>"; };
@@ -593,6 +599,7 @@
 				1C5ACAE0273A55C10095F8D5 /* BindGroupLayout.mm */,
 				1C5ACAA5273A426D0095F8D5 /* Buffer.h */,
 				1C5ACA9D273A426D0095F8D5 /* Buffer.mm */,
+				947871492C98CEC6003DB695 /* Buffer.swift */,
 				1C5ACAD9273A4DE90095F8D5 /* CommandBuffer.h */,
 				1C5ACAE2273A55CD0095F8D5 /* CommandBuffer.mm */,
 				1C5ACA9E273A426D0095F8D5 /* CommandEncoder.h */,
@@ -650,6 +657,8 @@
 				1CC0C8C9273A7D8900D0B481 /* WebGPU.modulemap */,
 				1C5ACAD2273A4C860095F8D5 /* WebGPUExt.h */,
 				1CA7CDB12A2B284A0094071F /* WebGPUInternal.h */,
+				9478714B2C98D314003DB695 /* WebGPUSwift.h */,
+				94CC0FE52CA203AB00CB3264 /* WebGPUSwiftInternal.h */,
 				0D943C0D2C6571BC00D33BA5 /* XRBinding.h */,
 				0D943C0E2C6571BC00D33BA5 /* XRBinding.mm */,
 				0DD5FD332C66947B004AF552 /* XRProjectionLayer.h */,
@@ -878,6 +887,8 @@
 				973F784729C8A78200166C66 /* Pipeline.h in Headers */,
 				0DE2BFAD2C150DF700D04AEB /* ShaderStage.h in Headers */,
 				1C5ACAD3273A4C860095F8D5 /* WebGPUExt.h in Headers */,
+				9478714C2C98D31A003DB695 /* WebGPUSwift.h in Headers */,
+				94CC0FE62CA203B300CB3264 /* WebGPUSwiftInternal.h in Headers */,
 				0D943C0F2C6571BC00D33BA5 /* XRBinding.h in Headers */,
 				0DD5FD352C66947B004AF552 /* XRProjectionLayer.h in Headers */,
 				0D943C242C65E46400D33BA5 /* XRSubImage.h in Headers */,
@@ -1167,6 +1178,7 @@
 				1C5ACADF273A55AF0095F8D5 /* BindGroup.mm in Sources */,
 				1C5ACAE1273A55C10095F8D5 /* BindGroupLayout.mm in Sources */,
 				1C5ACABB273A426D0095F8D5 /* Buffer.mm in Sources */,
+				9478714A2C98CECB003DB695 /* Buffer.swift in Sources */,
 				1C5ACAE3273A55CD0095F8D5 /* CommandBuffer.mm in Sources */,
 				1C5ACAC9273A426E0095F8D5 /* CommandEncoder.mm in Sources */,
 				1C582FF927E04131009B40F0 /* CommandsMixin.mm in Sources */,

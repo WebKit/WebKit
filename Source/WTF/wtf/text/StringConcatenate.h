@@ -294,7 +294,9 @@ public:
     unsigned length() const { return m_characters.lengthUTF16; }
     bool is8Bit() const { return m_characters.isAllASCII; }
     void writeTo(LChar* destination) const { memcpy(destination, m_characters.characters.data(), m_characters.lengthUTF16); }
+#ifndef __swift__ // FIXME: This fails to compile because of rdar://136156228
     void writeTo(UChar* destination) const { Unicode::convert(m_characters.characters, std::span { destination, m_characters.lengthUTF16 }); }
+#endif
 
 private:
     Unicode::CheckedUTF8 m_characters;

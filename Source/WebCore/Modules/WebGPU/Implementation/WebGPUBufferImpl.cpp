@@ -96,10 +96,18 @@ std::span<uint8_t> BufferImpl::getBufferContents()
     return { static_cast<uint8_t*>(pointer), static_cast<size_t>(bufferSize) };
 }
 
+#if ENABLE(WEBGPU_SWIFT)
+void BufferImpl::copy(std::span<const uint8_t> data, size_t offset)
+{
+    RELEASE_ASSERT(backing());
+    return wgpuBufferCopy(backing(), data, offset);
+}
+#else
 void BufferImpl::copy(std::span<const uint8_t>, size_t)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
+#endif
 
 void BufferImpl::unmap()
 {

@@ -27,7 +27,10 @@
 #define WEBGPUEXT_H_
 
 #include <CoreGraphics/CGImage.h>
+#ifndef __swift__
+// Swift C++ Interop does not support extern C. This header has that.
 #include <CoreVideo/CoreVideo.h>
+#endif
 #include <IOSurface/IOSurfaceRef.h>
 
 #ifdef NDEBUG
@@ -41,6 +44,10 @@
 #include <wtf/MachSendRight.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+#endif
+
+#ifdef __swift__
+typedef struct __CVBuffer* CVPixelBufferRef;
 #endif
 
 typedef struct WGPUExternalTextureImpl* WGPUExternalTexture;
