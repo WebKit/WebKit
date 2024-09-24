@@ -642,10 +642,10 @@ bool RenderView::shouldPaintBaseBackground() const
     auto* ownerElement = document.ownerElement();
 
     // Fill with a base color if we're the root document.
-    if (!ownerElement)
+    if (frameView.frame().isMainFrame())
         return !frameView.isTransparent();
 
-    if (ownerElement->hasTagName(HTMLNames::frameTag))
+    if (ownerElement && ownerElement->hasTagName(HTMLNames::frameTag))
         return true;
 
     // Locate the <body> element using the DOM. This is easier than trying
@@ -662,7 +662,7 @@ bool RenderView::shouldPaintBaseBackground() const
     if (is<HTMLFrameSetElement>(*body))
         return true;
 
-    auto* frameRenderer = ownerElement->renderer();
+    auto* frameRenderer = ownerElement ? ownerElement->renderer() : nullptr;
     if (!frameRenderer)
         return false;
 

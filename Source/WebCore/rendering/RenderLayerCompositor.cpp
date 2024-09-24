@@ -1069,8 +1069,8 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         m_secondaryBackingStoreBytes = 0;
 
         auto& frame = m_renderView.frameView().frame();
-        bool isMainFrame = isRootFrameCompositor();
-        LOG_WITH_STREAM(Compositing, stream << "\nUpdate " << m_rootLayerUpdateCount << " of " << (isMainFrame ? "main frame"_s : makeString("frame "_s, frame.frameID().object().toUInt64())) << " - compositing policy is " << m_compositingPolicy);
+        bool isRootFrame = isRootFrameCompositor();
+        LOG_WITH_STREAM(Compositing, stream << "\nUpdate " << m_rootLayerUpdateCount << " of " << (isRootFrame ? "root frame"_s : makeString("frame "_s, frame.frameID().object().toUInt64())) << " - compositing policy is " << m_compositingPolicy);
     }
 #endif
 
@@ -4002,7 +4002,7 @@ bool RenderLayerCompositor::isAsyncScrollableStickyLayer(const RenderLayer& laye
 
 #if PLATFORM(IOS_FAMILY)
     // iOS WK1 has fixed/sticky support in the main frame via WebFixedPositionContent.
-    return isRootFrameCompositor();
+    return isMainFrameCompositor();
 #else
     return false;
 #endif
@@ -4226,7 +4226,7 @@ bool RenderLayerCompositor::requiresScrollLayer(RootLayerAttachment attachment) 
     auto& frameView = m_renderView.frameView();
 
     // This applies when the application UI handles scrolling, in which case RenderLayerCompositor doesn't need to manage it.
-    if (frameView.delegatedScrollingMode() == DelegatedScrollingMode::DelegatedToNativeScrollView && isRootFrameCompositor())
+    if (frameView.delegatedScrollingMode() == DelegatedScrollingMode::DelegatedToNativeScrollView && isMainFrameCompositor())
         return false;
 
     // We need to handle our own scrolling if we're:
@@ -4365,6 +4365,11 @@ bool RenderLayerCompositor::isRootFrameCompositor() const
     return m_renderView.frameView().frame().isRootFrame();
 }
 
+bool RenderLayerCompositor::isMainFrameCompositor() const
+{
+    return m_renderView.frameView().frame().isMainFrame();
+}
+
 bool RenderLayerCompositor::shouldCompositeOverflowControls() const
 {
     auto& frameView = m_renderView.frameView();
@@ -4375,7 +4380,7 @@ bool RenderLayerCompositor::shouldCompositeOverflowControls() const
     if (documentUsesTiledBacking())
         return true;
 
-    if (m_overflowControlsHostLayer && isRootFrameCompositor())
+    if (m_overflowControlsHostLayer && isMainFrameCompositor())
         return true;
 
 #if !USE(COORDINATED_GRAPHICS)
@@ -4404,7 +4409,7 @@ bool RenderLayerCompositor::requiresScrollCornerLayer() const
 #if HAVE(RUBBER_BANDING)
 bool RenderLayerCompositor::requiresOverhangAreasLayer() const
 {
-    if (!isRootFrameCompositor())
+    if (!isMainFrameCompositor())
         return false;
 
     // We do want a layer if we're using tiled drawing and can scroll.
@@ -4416,7 +4421,7 @@ bool RenderLayerCompositor::requiresOverhangAreasLayer() const
 
 bool RenderLayerCompositor::requiresContentShadowLayer() const
 {
-    if (!isRootFrameCompositor())
+    if (!isMainFrameCompositor())
         return false;
 
 #if PLATFORM(COCOA)
@@ -4437,7 +4442,7 @@ bool RenderLayerCompositor::requiresContentShadowLayer() const
 
 GraphicsLayer* RenderLayerCompositor::updateLayerForTopOverhangArea(bool wantsLayer)
 {
-    if (!isRootFrameCompositor())
+    if (!isMainFrameCompositor())
         return nullptr;
 
     if (!wantsLayer) {
@@ -4456,7 +4461,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForTopOverhangArea(bool wantsLa
 
 GraphicsLayer* RenderLayerCompositor::updateLayerForBottomOverhangArea(bool wantsLayer)
 {
-    if (!isRootFrameCompositor())
+    if (!isMainFrameCompositor())
         return nullptr;
 
     if (!wantsLayer) {
@@ -4477,7 +4482,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForBottomOverhangArea(bool want
 
 GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
 {
-    if (!isRootFrameCompositor())
+    if (!isMainFrameCompositor())
         return nullptr;
 
     if (!wantsLayer) {
@@ -4513,7 +4518,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
 
 GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
 {
-    if (!isRootFrameCompositor())
+    if (!isMainFrameCompositor())
         return nullptr;
 
     if (!wantsLayer) {
