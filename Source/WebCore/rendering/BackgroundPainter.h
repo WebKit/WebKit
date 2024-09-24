@@ -60,6 +60,7 @@ public:
     BackgroundPainter(RenderBoxModelObject&, const PaintInfo&);
 
     void setOverrideClip(FillBox overrideClip) { m_overrideClip = overrideClip; }
+    void setOverrideOrigin(FillBox overrideOrigin) { m_overrideOrigin = overrideOrigin; }
 
     void paintBackground(const LayoutRect&, BackgroundBleedAvoidance) const;
 
@@ -84,6 +85,7 @@ private:
     RenderBoxModelObject& m_renderer;
     const PaintInfo& m_paintInfo;
     std::optional<FillBox> m_overrideClip;
+    std::optional<FillBox> m_overrideOrigin;
 };
 
 }

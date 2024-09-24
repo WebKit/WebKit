@@ -1429,8 +1429,10 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, LayoutPoi
         fillRect = LayoutRect { adjustedPaintOffset, size() };
     auto compositeOp = document().compositeOperatorForBackgroundColor(color, *this);
     BackgroundPainter painter { *this, paintInfo };
-    if (backgroundObject != this)
+    if (backgroundObject != this) {
         painter.setOverrideClip(FillBox::BorderBox);
+        painter.setOverrideOrigin(FillBox::BorderBox);
+    }
     painter.paintFillLayers(color, bgLayer, fillRect, BackgroundBleedNone, compositeOp, backgroundObject);
 }
 
