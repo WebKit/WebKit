@@ -325,6 +325,9 @@ public:
 private:
     bool parseManifest(NSData *);
 
+    void parseWebAccessibleResourcesVersion3();
+    void parseWebAccessibleResourcesVersion2();
+
     void populateDisplayStringsIfNeeded();
     void populateActionPropertiesIfNeeded();
     void populateBackgroundPropertiesIfNeeded();

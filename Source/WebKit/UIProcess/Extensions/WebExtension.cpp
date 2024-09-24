@@ -85,6 +85,10 @@ static constexpr auto generatedBackgroundServiceWorkerFilename = "_generated_ser
 
 static constexpr auto devtoolsPageManifestKey = "devtools_page"_s;
 
+static constexpr auto webAccessibleResourcesManifestKey = "web_accessible_resources"_s;
+static constexpr auto webAccessibleResourcesResourcesManifestKey = "resources"_s;
+static constexpr auto webAccessibleResourcesMatchesManifestKey = "matches"_s;
+
 bool WebExtension::manifestParsedSuccessfully()
 {
     if (m_parsedManifest)
@@ -111,6 +115,126 @@ bool WebExtension::hasRequestedPermission(String permission) const
 {
     // FIXME: <https://webkit.org/b/280101> hasRequestedPermission isn't populating permission properties
     return m_permissions.contains(permission);
+}
+
+bool WebExtension::isWebAccessibleResource(const URL& resourceURL, const URL& pageURL)
+{
+    populateWebAccessibleResourcesIfNeeded();
+
+    auto resourcePath = resourceURL.path().toString();
+
+    // The path is expected to match without the prefix slash.
+    ASSERT(resourcePath.startsWith('/'));
+    resourcePath = resourcePath.substring(1);
+
+    for (auto& data : m_webAccessibleResources) {
+        // If matchPatterns is empty, these resources are allowed on any page.
+        bool allowed = data.matchPatterns.isEmpty();
+        for (Ref matchPattern : data.matchPatterns) {
+            if (matchPattern->matchesURL(pageURL)) {
+                allowed = true;
+                break;
+            }
+        }
+
+        if (!allowed)
+            continue;
+
+        for (auto& pathPattern : data.resourcePathPatterns) {
+            if (WebCore::matchesWildcardPattern(pathPattern, resourcePath))
+                return true;
+        }
+    }
+
+    return false;
+}
+
+void WebExtension::parseWebAccessibleResourcesVersion3()
+{
+    RefPtr manifestObject = this->manifestObject();
+    if (!manifestObject)
+        return;
+
+    if (RefPtr resourcesArray = manifestObject->getArray(webAccessibleResourcesManifestKey)) {
+        bool errorOccured = false;
+        for (Ref resource : *resourcesArray) {
+            if (RefPtr resourceObject = resource->asObject()) {
+                RefPtr pathsArray = resourceObject->getArray(webAccessibleResourcesResourcesManifestKey);
+                if (pathsArray) {
+                    pathsArray = filterObjects(*pathsArray, [](auto& value) {
+                        return !value.asString().isEmpty();
+                    });
+                } else {
+                    errorOccured = true;
+                    continue;
+                }
+
+                RefPtr matchesArray = resourceObject->getArray(webAccessibleResourcesMatchesManifestKey);
+                if (matchesArray) {
+                    matchesArray = filterObjects(*matchesArray, [](auto& value) {
+                        return !value.asString().isEmpty();
+                    });
+                } else {
+                    errorOccured = true;
+                    continue;
+                }
+
+                if (!pathsArray->length() || !matchesArray->length())
+                    continue;
+
+                MatchPatternSet matchPatterns;
+                for (Ref match : *matchesArray) {
+                    if (RefPtr matchPattern = WebExtensionMatchPattern::getOrCreate(match->asString())) {
+                        if (matchPattern->isSupported())
+                            matchPatterns.add(matchPattern.releaseNonNull());
+                        else
+                            errorOccured = true;
+                    }
+                }
+
+                if (matchPatterns.isEmpty()) {
+                    errorOccured = true;
+                    continue;
+                }
+
+                m_webAccessibleResources.append({ WTFMove(matchPatterns), makeStringVector(*pathsArray) });
+            }
+        }
+
+        if (errorOccured)
+            recordError(createError(Error::InvalidWebAccessibleResources));
+    } else if (manifestObject->getValue(webAccessibleResourcesManifestKey))
+        recordError(createError(Error::InvalidWebAccessibleResources));
+}
+
+void WebExtension::parseWebAccessibleResourcesVersion2()
+{
+    RefPtr manifestObject = this->manifestObject();
+    if (!manifestObject)
+        return;
+
+    if (RefPtr resourcesArray = manifestObject->getArray(webAccessibleResourcesManifestKey)) {
+        resourcesArray = filterObjects(*resourcesArray, [](auto& value) {
+            return !value.asString().isEmpty();
+        });
+
+        m_webAccessibleResources.append({ { }, makeStringVector(*resourcesArray) });
+    } else if (manifestObject->getValue(webAccessibleResourcesManifestKey))
+        recordError(createError(Error::InvalidWebAccessibleResources));
+}
+
+void WebExtension::populateWebAccessibleResourcesIfNeeded()
+{
+    if (m_parsedManifestWebAccessibleResources)
+        return;
+
+    m_parsedManifestWebAccessibleResources = true;
+
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/web_accessible_resources
+    if (supportsManifestVersion(3))
+        parseWebAccessibleResourcesVersion3();
+    else
+        parseWebAccessibleResourcesVersion2();
 }
 
 const String& WebExtension::displayName()

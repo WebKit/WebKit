@@ -102,10 +102,6 @@ static NSString * const commandsManifestKey = @"commands";
 static NSString * const commandsSuggestedKeyManifestKey = @"suggested_key";
 static NSString * const commandsDescriptionKeyManifestKey = @"description";
 
-static NSString * const webAccessibleResourcesManifestKey = @"web_accessible_resources";
-static NSString * const webAccessibleResourcesResourcesManifestKey = @"resources";
-static NSString * const webAccessibleResourcesMatchesManifestKey = @"matches";
-
 static NSString * const declarativeNetRequestManifestKey = @"declarative_net_request";
 static NSString * const declarativeNetRequestRulesManifestKey = @"rule_resources";
 static NSString * const declarativeNetRequestRulesetIDManifestKey = @"id";
@@ -313,108 +309,6 @@ bool WebExtension::validateResourceData(NSURL *resourceURL, NSData *resourceData
     return result == noErr;
 }
 #endif // PLATFORM(MAC)
-
-bool WebExtension::isWebAccessibleResource(const URL& resourceURL, const URL& pageURL)
-{
-    populateWebAccessibleResourcesIfNeeded();
-
-    auto resourcePath = resourceURL.path().toString();
-
-    // The path is expected to match without the prefix slash.
-    ASSERT(resourcePath.startsWith('/'));
-    resourcePath = resourcePath.substring(1);
-
-    for (auto& data : m_webAccessibleResources) {
-        // If matchPatterns is empty, these resources are allowed on any page.
-        bool allowed = data.matchPatterns.isEmpty();
-        for (auto& matchPattern : data.matchPatterns) {
-            if (matchPattern->matchesURL(pageURL)) {
-                allowed = true;
-                break;
-            }
-        }
-
-        if (!allowed)
-            continue;
-
-        for (auto& pathPattern : data.resourcePathPatterns) {
-            if (WebCore::matchesWildcardPattern(pathPattern, resourcePath))
-                return true;
-        }
-    }
-
-    return false;
-}
-
-void WebExtension::populateWebAccessibleResourcesIfNeeded()
-{
-    if (!manifestParsedSuccessfully())
-        return;
-
-    if (m_parsedManifestWebAccessibleResources)
-        return;
-
-    m_parsedManifestWebAccessibleResources = true;
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/web_accessible_resources
-
-    if (supportsManifestVersion(3)) {
-        if (auto *resourcesArray = objectForKey<NSArray>(m_manifest, webAccessibleResourcesManifestKey, false, NSDictionary.class)) {
-            bool errorOccurred = false;
-            for (NSDictionary *resourcesDictionary in resourcesArray) {
-                auto *pathsArray = objectForKey<NSArray>(resourcesDictionary, webAccessibleResourcesResourcesManifestKey, false, NSString.class);
-                auto *matchesArray = objectForKey<NSArray>(resourcesDictionary, webAccessibleResourcesMatchesManifestKey, false, NSString.class);
-
-                pathsArray = filterObjects(pathsArray, ^(id key, NSString *string) {
-                    return !!string.length;
-                });
-
-                matchesArray = filterObjects(matchesArray, ^(id key, NSString *string) {
-                    return !!string.length;
-                });
-
-                if (!pathsArray || !matchesArray) {
-                    errorOccurred = true;
-                    continue;
-                }
-
-                if (!pathsArray.count || !matchesArray.count)
-                    continue;
-
-                MatchPatternSet matchPatterns;
-                for (NSString *matchPatternString in matchesArray) {
-                    if (auto matchPattern = WebExtensionMatchPattern::getOrCreate(matchPatternString)) {
-                        if (matchPattern->isSupported())
-                            matchPatterns.add(matchPattern.releaseNonNull());
-                        else
-                            errorOccurred = true;
-                    }
-                }
-
-                if (matchPatterns.isEmpty()) {
-                    errorOccurred = true;
-                    continue;
-                }
-
-                m_webAccessibleResources.append({ WTFMove(matchPatterns), makeVector<String>(pathsArray) });
-            }
-
-            if (errorOccurred)
-                recordError(createError(Error::InvalidWebAccessibleResources));
-        } else if ([m_manifest objectForKey:webAccessibleResourcesManifestKey])
-            recordError(createError(Error::InvalidWebAccessibleResources));
-    } else {
-        if (auto *resourcesArray = objectForKey<NSArray>(m_manifest, webAccessibleResourcesManifestKey, false, NSString.class)) {
-            resourcesArray = filterObjects(resourcesArray, ^(id key, NSString *string) {
-                return !!string.length;
-            });
-
-            if (resourcesArray.count)
-                m_webAccessibleResources.append({ { }, makeVector<String>(resourcesArray) });
-        } else if ([m_manifest objectForKey:webAccessibleResourcesManifestKey])
-            recordError(createError(Error::InvalidWebAccessibleResources));
-    }
-}
 
 NSURL *WebExtension::resourceFileURLForPath(NSString *path)
 {
