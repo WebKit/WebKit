@@ -53,7 +53,7 @@ ProcessLauncher::~ProcessLauncher()
         tracePoint(ProcessLaunchEnd, m_launchOptions.processIdentifier.toUInt64(), static_cast<uint64_t>(m_launchOptions.processType));
 }
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !USE(GLIB)
 void ProcessLauncher::platformDestroy()
 {
 }
