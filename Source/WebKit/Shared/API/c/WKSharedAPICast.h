@@ -543,8 +543,8 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagAddHighlightToCurrentQuickNote;
     case WebCore::ContextMenuItemTagAddHighlightToNewQuickNote:
         return kWKContextMenuItemTagAddHighlightToNewQuickNote;
-    case WebCore::ContextMenuItemTagCopyLinkToHighlight:
-        return kWKContextMenuItemTagCopyLinkToHighlight;
+    case WebCore::ContextMenuItemTagCopyLinkWithHighlight:
+        return kWKContextMenuItemTagCopyLinkWithHighlight;
 #if PLATFORM(COCOA)
     case WebCore::ContextMenuItemTagCorrectSpellingAutomatically:
         return kWKContextMenuItemTagCorrectSpellingAutomatically;
@@ -763,8 +763,8 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagAddHighlightToCurrentQuickNote;
     case kWKContextMenuItemTagAddHighlightToNewQuickNote:
         return WebCore::ContextMenuItemTagAddHighlightToNewQuickNote;
-    case kWKContextMenuItemTagCopyLinkToHighlight:
-        return WebCore::ContextMenuItemTagCopyLinkToHighlight;
+    case kWKContextMenuItemTagCopyLinkWithHighlight:
+        return WebCore::ContextMenuItemTagCopyLinkWithHighlight;
 #if PLATFORM(COCOA)
     case kWKContextMenuItemTagCorrectSpellingAutomatically:
         return WebCore::ContextMenuItemTagCorrectSpellingAutomatically;

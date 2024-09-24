@@ -11993,9 +11993,9 @@ void WebPageProxy::sampledPageTopColorChanged(const Color& sampledPageTopColor)
         pageClient->sampledPageTopColorDidChange();
 }
 
-void WebPageProxy::copyLinkToHighlight()
+void WebPageProxy::copyLinkWithHighlight()
 {
-    send(Messages::WebPage::CopyLinkToHighlight());
+    send(Messages::WebPage::CopyLinkWithHighlight());
 }
 
 #if !PLATFORM(COCOA)

@@ -605,8 +605,8 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
     case ContextMenuItemTagAddHighlightToNewQuickNote:
         return _WKMenuItemIdentifierAddHighlightToNewQuickNote;
 
-    case ContextMenuItemTagCopyLinkToHighlight:
-        return _WKMenuItemIdentifierCopyLinkToHighlight;
+    case ContextMenuItemTagCopyLinkWithHighlight:
+        return _WKMenuItemIdentifierCopyLinkWithHighlight;
 
     case ContextMenuItemTagOpenFrameInNewWindow:
         return _WKMenuItemIdentifierOpenFrameInNewWindow;

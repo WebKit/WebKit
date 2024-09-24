@@ -1585,9 +1585,9 @@ String pdfPasswordFormInvalidPasswordSubtitle()
     return WEB_UI_STRING("Invalid Password", "Message when a PDF fails to unlock with the given password");
 }
 
-String contextMenuItemTagCopyLinkToHighlight()
+String contextMenuItemTagCopyLinkWithHighlight()
 {
-    return WEB_UI_STRING("Copy Link to Highlight", "Copy link to highlight context menu item");
+    return WEB_UI_STRING("Copy Link with Highlight", "Copy link with highlight context menu item");
 }
 
 } // namespace WebCore

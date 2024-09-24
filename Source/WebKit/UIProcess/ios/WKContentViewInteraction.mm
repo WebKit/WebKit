@@ -11457,8 +11457,8 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
     if (!_page->preferences().scrollToTextFragmentGenerationEnabled() || !self.shouldAllowHighlightLinkCreation)
         return nil;
 
-    return [self menuWithInlineAction:WebCore::contextMenuItemTagCopyLinkToHighlight() image:nil identifier:@"WKActionScrollToTextFragmentGeneration" handler:[](WKContentView *view) mutable {
-        view->_page->copyLinkToHighlight();
+    return [self menuWithInlineAction:WebCore::contextMenuItemTagCopyLinkWithHighlight() image:nil identifier:@"WKActionScrollToTextFragmentGeneration" handler:[](WKContentView *view) mutable {
+        view->_page->copyLinkWithHighlight();
     }];
 }
 
