@@ -31,7 +31,7 @@
     GenerateIsReachable=Impl,
     JSCustomMarkFunction,
 ] interface WorkerNavigator {
-    readonly attribute unsigned long long hardwareConcurrency;
+    [CallWith=CurrentScriptExecutionContext] readonly attribute unsigned long long hardwareConcurrency;
 };
 
 WorkerNavigator includes NavigatorBadge;

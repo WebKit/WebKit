@@ -69,7 +69,7 @@ public:
     StorageManager& storage();
     WebLockManager& locks();
 
-    static int hardwareConcurrency();
+    int hardwareConcurrency(ScriptExecutionContext&);
 
 protected:
     explicit NavigatorBase(ScriptExecutionContext*);
