@@ -98,7 +98,7 @@ public:
     const_iterator find(const U& value) const
     {
         increaseOperationCountSinceLastCleanup();
-        if (auto* impl = value.weakPtrFactory().impl(); impl && *impl)
+        if (auto* impl = value.weakImplIfExists(); impl && *impl)
             return WeakHashSetConstIterator(*this, m_set.find(impl));
         return end();
     }
@@ -107,7 +107,7 @@ public:
     AddResult add(const U& value)
     {
         amortizedCleanupIfNeeded();
-        return m_set.add(*static_cast<const T&>(value).weakPtrFactory().template createWeakPtr<T>(const_cast<U&>(value), assertionsPolicy).m_impl);
+        return m_set.add(WeakRef<T, WeakPtrImpl>(static_cast<const T&>(value)).releaseImpl());
     }
 
     T* takeAny()
@@ -122,7 +122,7 @@ public:
     bool remove(const U& value)
     {
         amortizedCleanupIfNeeded();
-        if (auto* impl = value.weakPtrFactory().impl(); impl && *impl)
+        if (auto* impl = value.weakImplIfExists(); impl && *impl)
             return m_set.remove(*impl);
         return false;
     }
@@ -144,7 +144,7 @@ public:
     bool contains(const U& value) const
     {
         increaseOperationCountSinceLastCleanup();
-        if (auto* impl = value.weakPtrFactory().impl(); impl && *impl)
+        if (auto* impl = value.weakImplIfExists(); impl && *impl)
             return m_set.contains(*impl);
         return false;
     }

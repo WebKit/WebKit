@@ -137,9 +137,8 @@ class NetworkConnectionToWebProcess final
     WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkConnectionToWebProcess);
 public:
-    using MessageReceiver::weakPtrFactory;
-    using MessageReceiver::WeakValueType;
-    using MessageReceiver::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(MessageReceiver);
+
     using RegistrableDomain = WebCore::RegistrableDomain;
 
     static Ref<NetworkConnectionToWebProcess> create(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier);

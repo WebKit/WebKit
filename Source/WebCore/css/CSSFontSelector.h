@@ -53,10 +53,7 @@ class StyleRuleFontPaletteValues;
 class CSSFontSelector final : public FontSelector, public CSSFontFaceClient, public ActiveDOMObject {
 public:
     DEFINE_VIRTUAL_REFCOUNTED;
-
-    using FontSelector::weakPtrFactory;
-    using FontSelector::WeakValueType;
-    using FontSelector::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(FontSelector);
 
     using FontSelector::ref;
     using FontSelector::deref;

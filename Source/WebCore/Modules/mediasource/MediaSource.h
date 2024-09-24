@@ -80,16 +80,13 @@ class MediaSource
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaSource);
 public:
     DEFINE_VIRTUAL_REFCOUNTED;
+    USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<MediaSource>);
 
     static void setRegistry(URLRegistry*);
     static MediaSource* lookup(const String& url) { return s_registry ? static_cast<MediaSource*>(s_registry->lookup(url)) : nullptr; }
 
     static Ref<MediaSource> create(ScriptExecutionContext&, MediaSourceInit&&);
     virtual ~MediaSource();
-
-    using CanMakeWeakPtr<MediaSource>::weakPtrFactory;
-    using CanMakeWeakPtr<MediaSource>::WeakValueType;
-    using CanMakeWeakPtr<MediaSource>::WeakPtrImplType;
 
     static bool enabledForContext(ScriptExecutionContext&);
 

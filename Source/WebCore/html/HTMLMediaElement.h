@@ -181,9 +181,7 @@ class HTMLMediaElement
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLMediaElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLMediaElement);
 public:
-    using CanMakeWeakPtr<HTMLMediaElement, WeakPtrFactoryInitialization::Eager>::weakPtrFactory;
-    using CanMakeWeakPtr<HTMLMediaElement, WeakPtrFactoryInitialization::Eager>::WeakValueType;
-    using CanMakeWeakPtr<HTMLMediaElement, WeakPtrFactoryInitialization::Eager>::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(SINGLE_ARG(CanMakeWeakPtr<HTMLMediaElement, WeakPtrFactoryInitialization::Eager>));
 
     // ActiveDOMObject.
     void ref() const final { HTMLElement::ref(); }

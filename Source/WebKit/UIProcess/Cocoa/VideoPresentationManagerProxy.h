@@ -162,9 +162,7 @@ class VideoPresentationManagerProxy
     , public CanMakeWeakPtr<VideoPresentationManagerProxy>
     , private IPC::MessageReceiver {
 public:
-    using CanMakeWeakPtr<VideoPresentationManagerProxy>::WeakPtrImplType;
-    using CanMakeWeakPtr<VideoPresentationManagerProxy>::WeakValueType;
-    using CanMakeWeakPtr<VideoPresentationManagerProxy>::weakPtrFactory;
+    USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<VideoPresentationManagerProxy>);
 
     static Ref<VideoPresentationManagerProxy> create(WebPageProxy&, PlaybackSessionManagerProxy&);
     virtual ~VideoPresentationManagerProxy();

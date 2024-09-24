@@ -91,9 +91,7 @@ public:
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
     WTFLogChannel& logChannel() const final;
 
-    using MediaStreamTrackPrivateObserver::weakPtrFactory;
-    using MediaStreamTrackPrivateObserver::WeakValueType;
-    using MediaStreamTrackPrivateObserver::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(MediaStreamTrackPrivateObserver);
 
 private:
     PlatformLayer* rootLayer() const;

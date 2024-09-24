@@ -59,9 +59,7 @@ class HTMLModelElement final : public HTMLElement, private CachedRawResourceClie
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLModelElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLModelElement);
 public:
-    using HTMLElement::weakPtrFactory;
-    using HTMLElement::WeakValueType;
-    using HTMLElement::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(HTMLElement);
 
     static Ref<HTMLModelElement> create(const QualifiedName&, Document&);
     virtual ~HTMLModelElement();

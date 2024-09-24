@@ -160,9 +160,7 @@ class WebProcessPool final
 #endif
 {
 public:
-    using IPC::MessageReceiver::weakPtrFactory;
-    using IPC::MessageReceiver::WeakValueType;
-    using IPC::MessageReceiver::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(IPC::MessageReceiver);
 
     static Ref<WebProcessPool> create(API::ProcessPoolConfiguration&);
 

@@ -106,9 +106,7 @@ private:
     void observeSource();
     void unobserveSource();
 
-    using MediaStreamTrackPrivateObserver::weakPtrFactory;
-    using MediaStreamTrackPrivateObserver::WeakValueType;
-    using MediaStreamTrackPrivateObserver::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(MediaStreamTrackPrivateObserver);
 
     // Notifier API
     void RegisterObserver(webrtc::ObserverInterface*) final { }

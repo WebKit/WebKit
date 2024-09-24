@@ -152,9 +152,7 @@ public:
     bool isDynamicContentScalingEnabled() const { return sharedPreferencesForWebProcess().useCGDisplayListsForDOMRendering; }
 #endif
 
-    using WebCore::NowPlayingManagerClient::weakPtrFactory;
-    using WebCore::NowPlayingManagerClient::WeakValueType;
-    using WebCore::NowPlayingManagerClient::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(WebCore::NowPlayingManagerClient);
 
     IPC::Connection& connection() { return m_connection.get(); }
     Ref<IPC::Connection> protectedConnection() { return m_connection; }

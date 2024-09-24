@@ -68,9 +68,7 @@ public:
 
     void setMediaSession(MediaSession*);
 
-    using MediaSessionCoordinatorClient::weakPtrFactory;
-    using MediaSessionCoordinatorClient::WeakValueType;
-    using MediaSessionCoordinatorClient::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(MediaSessionCoordinatorClient);
 
     struct PlaySessionCommand {
         std::optional<double> atTime;

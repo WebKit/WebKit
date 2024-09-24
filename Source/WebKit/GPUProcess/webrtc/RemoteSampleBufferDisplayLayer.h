@@ -56,9 +56,7 @@ public:
     static RefPtr<RemoteSampleBufferDisplayLayer> create(GPUConnectionToWebProcess&, SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);
     ~RemoteSampleBufferDisplayLayer();
 
-    using WebCore::SampleBufferDisplayLayerClient::weakPtrFactory;
-    using WebCore::SampleBufferDisplayLayerClient::WeakValueType;
-    using WebCore::SampleBufferDisplayLayerClient::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(WebCore::SampleBufferDisplayLayerClient);
 
     using LayerInitializationCallback = CompletionHandler<void(std::optional<LayerHostingContextID>)>;
     void initialize(bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, bool canShowWhileLocked, LayerInitializationCallback&&);

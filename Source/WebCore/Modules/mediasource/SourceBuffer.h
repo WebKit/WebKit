@@ -78,9 +78,7 @@ public:
     static Ref<SourceBuffer> create(Ref<SourceBufferPrivate>&&, MediaSource&);
     virtual ~SourceBuffer();
 
-    using CanMakeWeakPtr<SourceBuffer>::weakPtrFactory;
-    using CanMakeWeakPtr<SourceBuffer>::WeakValueType;
-    using CanMakeWeakPtr<SourceBuffer>::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<SourceBuffer>);
 
     static bool enabledForContext(ScriptExecutionContext&);
 

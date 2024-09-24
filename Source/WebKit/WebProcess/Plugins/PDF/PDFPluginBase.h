@@ -106,9 +106,7 @@ public:
     void incrementPtrCount() const final { CanMakeThreadSafeCheckedPtr::incrementPtrCount(); }
     void decrementPtrCount() const final { CanMakeThreadSafeCheckedPtr::decrementPtrCount(); }
 
-    using WebKit::PDFScriptEvaluatorClient::weakPtrFactory;
-    using WebKit::PDFScriptEvaluatorClient::WeakValueType;
-    using WebKit::PDFScriptEvaluatorClient::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(WebKit::PDFScriptEvaluatorClient);
 
     void startLoading();
     void destroy();

@@ -207,9 +207,7 @@ public:
         return adoptRef(*new DocumentLoader(request, data));
     }
 
-    using CachedRawResourceClient::weakPtrFactory;
-    using CachedRawResourceClient::WeakValueType;
-    using CachedRawResourceClient::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(CachedRawResourceClient);
 
     WEBCORE_EXPORT static DocumentLoader* fromScriptExecutionContextIdentifier(ScriptExecutionContextIdentifier);
 

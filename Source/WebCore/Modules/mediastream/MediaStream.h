@@ -80,9 +80,7 @@ public:
 
     RefPtr<MediaStream> clone();
 
-    using MediaStreamPrivateObserver::weakPtrFactory;
-    using MediaStreamPrivateObserver::WeakValueType;
-    using MediaStreamPrivateObserver::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(MediaStreamPrivateObserver);
 
     bool active() const { return m_isActive; }
     bool muted() const { return m_private->muted(); }

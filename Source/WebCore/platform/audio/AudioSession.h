@@ -213,6 +213,8 @@ enum class AudioSessionRoutingArbitrationError : uint8_t { None, Failed, Cancell
 
 class WEBCORE_EXPORT AudioSessionRoutingArbitrationClient : public CanMakeWeakPtr<AudioSessionRoutingArbitrationClient> {
 public:
+    USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<AudioSessionRoutingArbitrationClient>);
+
     virtual ~AudioSessionRoutingArbitrationClient() = default;
     using RoutingArbitrationError = AudioSessionRoutingArbitrationError;
 
@@ -225,8 +227,6 @@ public:
 
     virtual const void* logIdentifier() const = 0;
     virtual bool canLog() const = 0;
-
-    using WeakValueType = AudioSessionRoutingArbitrationClient;
 };
 
 WEBCORE_EXPORT String convertEnumerationToString(RouteSharingPolicy);

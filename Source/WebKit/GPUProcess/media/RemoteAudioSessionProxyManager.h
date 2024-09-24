@@ -68,9 +68,7 @@ public:
 
     void updatePresentingProcesses();
 
-    using WebCore::AudioSessionInterruptionObserver::weakPtrFactory;
-    using WebCore::AudioSessionInterruptionObserver::WeakValueType;
-    using WebCore::AudioSessionInterruptionObserver::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(WebCore::AudioSessionInterruptionObserver);
 
 private:
     RemoteAudioSessionProxyManager(GPUProcess&);

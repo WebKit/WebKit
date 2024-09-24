@@ -57,9 +57,7 @@ class MediaControlsHost final
     , public CanMakeWeakPtr<MediaControlsHost> {
     WTF_MAKE_FAST_ALLOCATED(MediaControlsHost);
 public:
-    using CanMakeWeakPtr<MediaControlsHost>::weakPtrFactory;
-    using CanMakeWeakPtr<MediaControlsHost>::WeakValueType;
-    using CanMakeWeakPtr<MediaControlsHost>::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<MediaControlsHost>);
 
     static Ref<MediaControlsHost> create(HTMLMediaElement&);
     ~MediaControlsHost();

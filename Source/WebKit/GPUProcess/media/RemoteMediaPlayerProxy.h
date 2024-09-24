@@ -112,9 +112,7 @@ class RemoteMediaPlayerProxy final
     , private IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaPlayerProxy);
 public:
-    using WebCore::MediaPlayerClient::WeakPtrImplType;
-    using WebCore::MediaPlayerClient::WeakValueType;
-    using WebCore::MediaPlayerClient::weakPtrFactory;
+    USING_CAN_MAKE_WEAKPTR(WebCore::MediaPlayerClient);
 
     static Ref<RemoteMediaPlayerProxy> create(RemoteMediaPlayerManagerProxy&, WebCore::MediaPlayerIdentifier, WebCore::MediaPlayerClientIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, RemoteVideoFrameObjectHeap&, const WebCore::ProcessIdentity&);
     ~RemoteMediaPlayerProxy();

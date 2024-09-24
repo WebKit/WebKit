@@ -61,9 +61,7 @@ class WebSWServerToContextConnection final: public WebCore::SWServerToContextCon
     WTF_MAKE_TZONE_ALLOCATED(WebSWServerToContextConnection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebSWServerToContextConnection);
 public:
-    using WebCore::SWServerToContextConnection::weakPtrFactory;
-    using WebCore::SWServerToContextConnection::WeakValueType;
-    using WebCore::SWServerToContextConnection::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(WebCore::SWServerToContextConnection);
 
     WebSWServerToContextConnection(NetworkConnectionToWebProcess&, WebPageProxyIdentifier, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, WebCore::SWServer&);
     ~WebSWServerToContextConnection();

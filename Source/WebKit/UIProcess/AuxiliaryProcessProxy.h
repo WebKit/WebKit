@@ -74,9 +74,7 @@ protected:
     AuxiliaryProcessProxy(ShouldTakeUIBackgroundAssertion, AlwaysRunsAtBackgroundPriority = AlwaysRunsAtBackgroundPriority::No, Seconds responsivenessTimeout = ResponsivenessTimer::defaultResponsivenessTimeout);
 
 public:
-    using ResponsivenessTimer::Client::weakPtrFactory;
-    using ResponsivenessTimer::Client::WeakValueType;
-    using ResponsivenessTimer::Client::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(ResponsivenessTimer::Client);
 
     virtual ~AuxiliaryProcessProxy();
 

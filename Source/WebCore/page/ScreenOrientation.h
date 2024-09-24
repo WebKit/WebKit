@@ -46,9 +46,7 @@ public:
     static Ref<ScreenOrientation> create(Document*);
     ~ScreenOrientation();
 
-    using ScreenOrientationManagerObserver::weakPtrFactory;
-    using ScreenOrientationManagerObserver::WeakValueType;
-    using ScreenOrientationManagerObserver::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(ScreenOrientationManagerObserver);
 
     using LockType = ScreenOrientationLockType;
     using Type = ScreenOrientationType;

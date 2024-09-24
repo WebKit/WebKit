@@ -46,9 +46,7 @@ public:
 
     virtual ~MediaElementAudioSourceNode();
 
-    using AudioNode::weakPtrFactory;
-    using AudioNode::WeakValueType;
-    using AudioNode::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(AudioNode);
 
     HTMLMediaElement& mediaElement() { return m_mediaElement; }
 

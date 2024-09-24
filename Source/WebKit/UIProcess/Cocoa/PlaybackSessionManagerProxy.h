@@ -229,9 +229,7 @@ class PlaybackSessionManagerProxy
     , public CanMakeWeakPtr<PlaybackSessionManagerProxy>
     , private IPC::MessageReceiver {
 public:
-    using CanMakeWeakPtr<PlaybackSessionManagerProxy>::WeakPtrImplType;
-    using CanMakeWeakPtr<PlaybackSessionManagerProxy>::WeakValueType;
-    using CanMakeWeakPtr<PlaybackSessionManagerProxy>::weakPtrFactory;
+    USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<PlaybackSessionManagerProxy>);
 
     static Ref<PlaybackSessionManagerProxy> create(WebPageProxy&);
     virtual ~PlaybackSessionManagerProxy();

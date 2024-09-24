@@ -41,12 +41,12 @@ class AudioSessionRoutingArbitrator final
     , public WebCore::AudioSessionRoutingArbitrationClient {
     WTF_MAKE_TZONE_ALLOCATED(AudioSessionRoutingArbitrator);
 public:
+    USING_CAN_MAKE_WEAKPTR(WebCore::AudioSessionRoutingArbitrationClient);
+
     explicit AudioSessionRoutingArbitrator(WebProcess&);
     virtual ~AudioSessionRoutingArbitrator();
 
     static ASCIILiteral supplementName();
-
-    using WeakValueType = WebCore::AudioSessionRoutingArbitrationClient;
 
     // AudioSessionRoutingAbritrator
     void beginRoutingArbitrationWithCategory(WebCore::AudioSession::CategoryType, CompletionHandler<void(RoutingArbitrationError, DefaultRouteChanged)>&&) final;

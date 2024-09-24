@@ -70,9 +70,7 @@ public:
 
     void setShouldRegisterAsSpeakerSamplesProducer(bool);
 
-    using WebCore::AudioSessionInterruptionObserver::weakPtrFactory;
-    using WebCore::AudioSessionInterruptionObserver::WeakValueType;
-    using WebCore::AudioSessionInterruptionObserver::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(WebCore::AudioSessionInterruptionObserver);
 
 private:
     RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier, Ref<IPC::Connection>&&, bool shouldRegisterAsSpeakerSamplesProducer, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, size_t)>&&);

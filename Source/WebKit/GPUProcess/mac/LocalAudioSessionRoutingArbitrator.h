@@ -46,10 +46,10 @@ class LocalAudioSessionRoutingArbitrator final
 
     friend UniqueRef<LocalAudioSessionRoutingArbitrator> WTF::makeUniqueRefWithoutFastMallocCheck<LocalAudioSessionRoutingArbitrator>(GPUConnectionToWebProcess&);
 public:
+    USING_CAN_MAKE_WEAKPTR(WebCore::AudioSessionRoutingArbitrationClient);
+
     static UniqueRef<LocalAudioSessionRoutingArbitrator> create(GPUConnectionToWebProcess&);
     virtual ~LocalAudioSessionRoutingArbitrator();
-
-    using WeakValueType = WebCore::AudioSessionRoutingArbitrationClient;
 
     void processDidTerminate();
 

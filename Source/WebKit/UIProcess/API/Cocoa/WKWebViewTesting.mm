@@ -685,9 +685,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
             return adoptRef(*new WKMediaSessionCoordinatorForTesting(privateCoordinator));
         }
 
-        using WebCore::MediaSessionCoordinatorClient::weakPtrFactory;
-        using WebCore::MediaSessionCoordinatorClient::WeakValueType;
-        using WebCore::MediaSessionCoordinatorClient::WeakPtrImplType;
+        USING_CAN_MAKE_WEAKPTR(WebCore::MediaSessionCoordinatorClient);
 
     private:
         explicit WKMediaSessionCoordinatorForTesting(id <_WKMediaSessionCoordinator> clientCoordinator)

@@ -92,9 +92,7 @@ public:
 
 class CDMInstanceFairPlayStreamingAVFObjC final : public CDMInstance, public AVContentKeySessionDelegateClient, public CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC> {
 public:
-    using CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC>::weakPtrFactory;
-    using CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC>::WeakValueType;
-    using CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC>::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC>);
 
     CDMInstanceFairPlayStreamingAVFObjC(const CDMPrivateFairPlayStreaming&);
     virtual ~CDMInstanceFairPlayStreamingAVFObjC() = default;
@@ -182,9 +180,7 @@ class CDMInstanceSessionFairPlayStreamingAVFObjC final
     , public AVContentKeySessionDelegateClient
     , private ContentKeyGroupDataSource {
 public:
-    using AVContentKeySessionDelegateClient::weakPtrFactory;
-    using AVContentKeySessionDelegateClient::WeakValueType;
-    using AVContentKeySessionDelegateClient::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(AVContentKeySessionDelegateClient);
 
     CDMInstanceSessionFairPlayStreamingAVFObjC(Ref<CDMInstanceFairPlayStreamingAVFObjC>&&);
     virtual ~CDMInstanceSessionFairPlayStreamingAVFObjC();

@@ -54,9 +54,7 @@ public:
     bool isMonitoringWirelessTargets() const override;
     static WEBCORE_EXPORT void providePresentingApplicationPID();
 
-    using MediaSessionHelperClient::weakPtrFactory;
-    using MediaSessionHelperClient::WeakValueType;
-    using MediaSessionHelperClient::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(MediaSessionHelperClient);
 
 private:
     friend class PlatformMediaSessionManager;

@@ -82,9 +82,7 @@ public:
     void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
     void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 
-    using Widget::weakPtrFactory;
-    using Widget::WeakValueType;
-    using Widget::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(Widget);
 
     // ScrollableArea functions.
     WEBCORE_EXPORT void setScrollOffset(const ScrollOffset&) final;

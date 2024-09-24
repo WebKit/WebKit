@@ -64,9 +64,7 @@ public:
 
     const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
-    using PlatformXRCoordinatorSessionEventClient::weakPtrFactory;
-    using PlatformXRCoordinatorSessionEventClient::WeakValueType;
-    using PlatformXRCoordinatorSessionEventClient::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(PlatformXRCoordinatorSessionEventClient);
 
     void invalidate();
 

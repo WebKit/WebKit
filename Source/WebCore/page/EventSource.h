@@ -58,9 +58,7 @@ public:
     static ExceptionOr<Ref<EventSource>> create(ScriptExecutionContext&, const String& url, const Init&);
     virtual ~EventSource();
 
-    using EventTarget::weakPtrFactory;
-    using EventTarget::WeakValueType;
-    using EventTarget::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     const String& url() const;
     bool withCredentials() const;
