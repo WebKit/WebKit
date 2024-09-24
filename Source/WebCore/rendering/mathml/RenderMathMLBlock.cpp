@@ -40,10 +40,6 @@
 #include "RenderView.h"
 #include <wtf/TZoneMallocInlines.h>
 
-#if ENABLE(DEBUG_MATH_LAYOUT)
-#include "PaintInfo.h"
-#endif
-
 namespace WebCore {
 
 using namespace MathMLNames;
@@ -104,41 +100,6 @@ LayoutUnit RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool f
 
     return firstLineBaseline().value_or(RenderBlock::baselinePosition(baselineType, firstLine, direction, linePositionMode));
 }
-
-#if ENABLE(DEBUG_MATH_LAYOUT)
-void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
-{
-    RenderBlock::paint(info, paintOffset);
-
-    if (info.context().paintingDisabled() || info.phase != PaintPhase::Foreground)
-        return;
-
-    IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location());
-
-    GraphicsContextStateSaver stateSaver(info.context());
-
-    info.context().setStrokeThickness(1.0f);
-    info.context().setStrokeStyle(StrokeStyle::SolidStroke);
-    info.context().setStrokeColor(Color::blue);
-
-    info.context().drawLine(adjustedPaintOffset, IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y()));
-    info.context().drawLine(IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y()), IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y() + pixelSnappedOffsetHeight()));
-    info.context().drawLine(IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + pixelSnappedOffsetHeight()), IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y() + pixelSnappedOffsetHeight()));
-    info.context().drawLine(adjustedPaintOffset, IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + pixelSnappedOffsetHeight()));
-
-    int topStart = paddingTop();
-
-    info.context().setStrokeColor(Color::green);
-
-    info.context().drawLine(IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + topStart), IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y() + topStart));
-
-    int baseline = roundToInt(baselinePosition(AlphabeticBaseline, true, HorizontalLine));
-
-    info.context().setStrokeColor(Color::red);
-
-    info.context().drawLine(IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + baseline), IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y() + baseline));
-}
-#endif // ENABLE(DEBUG_MATH_LAYOUT)
 
 LayoutUnit toUserUnits(const MathMLElement::Length& length, const RenderStyle& style, const LayoutUnit& referenceValue)
 {
