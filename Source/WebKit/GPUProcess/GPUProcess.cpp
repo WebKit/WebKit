@@ -433,6 +433,16 @@ void GPUProcess::setOrientationForMediaCapture(WebCore::IntDegrees orientation)
         connection->setOrientationForMediaCapture(orientation);
 }
 
+void GPUProcess::enableMicrophoneMuteStatusAPI()
+{
+#if PLATFORM(COCOA)
+    CoreAudioSharedUnit::unit().setMuteStatusChangedCallback([weakProcess = WeakPtr { *this }] (bool isMuting) {
+        if (RefPtr process = weakProcess.get())
+            process->protectedParentProcessConnection()->send(Messages::GPUProcessProxy::MicrophoneMuteStatusChanged(isMuting), 0);
+    });
+#endif
+}
+
 void GPUProcess::rotationAngleForCaptureDeviceChanged(const String& persistentId, WebCore::VideoFrameRotation rotation)
 {
     for (auto& connection : m_webProcessConnections.values())

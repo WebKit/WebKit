@@ -1079,6 +1079,8 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
 #if ENABLE(GPU_PROCESS)
     if (useSharingPicker)
         page->legacyMainFrameProcess().protectedProcessPool()->ensureProtectedGPUProcess()->setUseSCContentSharingPicker(useSharingPicker);
+    if (bool useMicrophoneMuteStatusAPI = page->preferences().useMicrophoneMuteStatusAPI())
+        page->legacyMainFrameProcess().protectedProcessPool()->ensureProtectedGPUProcess()->enableMicrophoneMuteStatusAPI();
 #endif
 
     PlatformMediaSessionManager::setUseSCContentSharingPicker(useSharingPicker);

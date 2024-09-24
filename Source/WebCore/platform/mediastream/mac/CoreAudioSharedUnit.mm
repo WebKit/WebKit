@@ -38,7 +38,99 @@
 #include <CoreAudio/AudioHardware.h>
 #endif
 
+#include <pal/cocoa/AVFAudioSoftLink.h>
+
+#if HAVE(AVAUDIOAPPLICATION)
+
+OBJC_CLASS WebCoreAudioInputMuteChangeListener;
+
 namespace WebCore {
+void registerAudioInputMuteChangeListener(WebCoreAudioInputMuteChangeListener*);
+void unregisterAudioInputMuteChangeListener(WebCoreAudioInputMuteChangeListener*);
+}
+
+@interface WebCoreAudioInputMuteChangeListener : NSObject {
+}
+
+- (void)start;
+- (void)stop;
+- (void)handleMuteStatusChangedNotification:(NSNotification*)notification;
+@end
+
+@implementation WebCoreAudioInputMuteChangeListener
+- (void)start
+{
+    WebCore::registerAudioInputMuteChangeListener(self);
+}
+
+- (void)stop
+{
+    WebCore::unregisterAudioInputMuteChangeListener(self);
+}
+
+- (void)handleMuteStatusChangedNotification:(NSNotification*)notification
+{
+    NSNumber* newMuteState = [notification.userInfo valueForKey:AVAudioApplicationMuteStateKey];
+    WebCore::CoreAudioSharedUnit::unit().handleMuteStatusChangedNotification(newMuteState.boolValue);
+}
+
+@end
+#endif // HAVE(AVAUDIOAPPLICATION)
+
+namespace WebCore {
+
+#if HAVE(AVAUDIOAPPLICATION)
+static AVAudioApplication *getSharedAVAudioApplication()
+{
+    return PAL::isAVFAudioFrameworkAvailable() ? (AVAudioApplication *)[PAL::getAVAudioApplicationClass() sharedInstance] : nil;
+}
+
+#if PLATFORM(MAC)
+static void setNoopInputMuteStateChangeHandler(AVAudioApplication *audioApplication, bool shouldAddHandler)
+{
+    @try {
+        NSError *error = nil;
+        if (shouldAddHandler) {
+            // We set the handler to enable receiving AVAudioApplicationInputMuteStateChangeNotification notifications.
+            [audioApplication setInputMuteStateChangeHandler:^(BOOL) {
+                return YES;
+            } error:&error];
+        } else
+            [audioApplication setInputMuteStateChangeHandler:nil error:&error];
+        RELEASE_LOG_ERROR_IF(error, WebRTC, "WebCoreAudioInputMuteChangeListener failed to set mute state change handler due to error: %@, shouldAddHandler: %d.", error.localizedDescription, shouldAddHandler);
+    } @catch (NSException *exception) {
+        RELEASE_LOG_ERROR(WebRTC, "WebCoreAudioInputMuteChangeListener failed to set mute state change handler due to exception: %@, shouldAddHandler: %d.", exception, shouldAddHandler);
+    }
+}
+#endif
+
+void registerAudioInputMuteChangeListener(WebCoreAudioInputMuteChangeListener *listener)
+{
+    auto *audioApplication = getSharedAVAudioApplication();
+    if (!audioApplication)
+        return;
+
+#if PLATFORM(MAC)
+    setNoopInputMuteStateChangeHandler(audioApplication, true);
+#endif
+
+    [[NSNotificationCenter defaultCenter] addObserver:listener selector:@selector(handleMuteStatusChangedNotification:) name:AVAudioApplicationInputMuteStateChangeNotification object:audioApplication];
+
+}
+
+void unregisterAudioInputMuteChangeListener(WebCoreAudioInputMuteChangeListener *listener)
+{
+    auto *audioApplication = getSharedAVAudioApplication();
+    if (!audioApplication)
+        return;
+
+#if PLATFORM(MAC)
+    setNoopInputMuteStateChangeHandler(audioApplication, false);
+#endif
+
+    [[NSNotificationCenter defaultCenter] removeObserver:listener];
+}
+#endif // HAVE(AVAUDIOAPPLICATION)
 
 #if PLATFORM(MAC) && HAVE(VOICEACTIVITYDETECTION)
 static int speechActivityListenerCallback(AudioObjectID deviceID, UInt32, const AudioObjectPropertyAddress*, void*)
@@ -129,6 +221,26 @@ bool CoreAudioSharedInternalUnit::setVoiceActivityDetection(bool shouldEnable)
     UNUSED_PARAM(shouldEnable);
     return false;
 #endif // HAVE(VOICEACTIVITYDETECTION)
+}
+
+void CoreAudioSharedUnit::setMuteStatusChangedCallback(Function<void(bool)>&& callback)
+{
+    if (!m_muteStatusChangedCallback && !callback)
+        return;
+
+    ASSERT(!!m_muteStatusChangedCallback != !!callback);
+    m_muteStatusChangedCallback = WTFMove(callback);
+
+#if HAVE(AVAUDIOAPPLICATION)
+    if (!m_muteStatusChangedCallback) {
+        [m_inputMuteChangeListener stop];
+        m_inputMuteChangeListener = nullptr;
+        return;
+    }
+
+    m_inputMuteChangeListener = adoptNS([[WebCoreAudioInputMuteChangeListener alloc] init]);
+    [m_inputMuteChangeListener start];
+#endif
 }
 
 } // namespace WebCore

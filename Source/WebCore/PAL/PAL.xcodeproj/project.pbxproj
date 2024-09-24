@@ -49,6 +49,8 @@
 		3CBEEDE928A1861D00221FAE /* BarcodeSupportSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C963637289DC1C600570DD6 /* BarcodeSupportSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		416E995323DAE6BE00E871CB /* AudioToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E995123DAE6BD00E871CB /* AudioToolboxSoftLink.cpp */; };
 		4177B3DA296CB8C3009711F0 /* CoreCryptoSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4177B3D9296CB8C3009711F0 /* CoreCryptoSPI.h */; };
+		41D99CC82C9C45590025844F /* AVFAudioSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D99CC22C9C45580025844F /* AVFAudioSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		41D99CC92C9C45590025844F /* AVFAudioSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41D99CC72C9C45580025844F /* AVFAudioSoftLink.mm */; };
 		41E1F344248A6A000022D5DE /* VideoToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E995523DAEFF700E871CB /* VideoToolboxSoftLink.cpp */; };
 		41E9EE2628BCA19E006A2298 /* SBSStatusBarSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E9EE2528BCA19E006A2298 /* SBSStatusBarSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44047A0B2C220D22004EF28D /* WritingToolsUISoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 44047A0A2C220D22004EF28D /* WritingToolsUISoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -594,6 +596,8 @@
 		416E995623DAEFF700E871CB /* VideoToolboxSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoToolboxSoftLink.h; sourceTree = "<group>"; };
 		4177B3D9296CB8C3009711F0 /* CoreCryptoSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreCryptoSPI.h; sourceTree = "<group>"; };
 		41B99E4525DD70150007829A /* AVStreamDataParserSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVStreamDataParserSPI.h; sourceTree = "<group>"; };
+		41D99CC22C9C45580025844F /* AVFAudioSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFAudioSoftLink.h; sourceTree = "<group>"; };
+		41D99CC72C9C45580025844F /* AVFAudioSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFAudioSoftLink.mm; sourceTree = "<group>"; };
 		41E9EE2528BCA19E006A2298 /* SBSStatusBarSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBSStatusBarSPI.h; sourceTree = "<group>"; };
 		44047A0A2C220D22004EF28D /* WritingToolsUISoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WritingToolsUISoftLink.h; sourceTree = "<group>"; };
 		44047A0E2C220D45004EF28D /* WritingToolsUISoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WritingToolsUISoftLink.mm; sourceTree = "<group>"; };
@@ -1081,6 +1085,8 @@
 				297CB481288B11D700BB7971 /* AccessibilitySoftLink.mm */,
 				57FD318822B3592F008D0E8B /* AppSSOSoftLink.h */,
 				57FD318922B3593E008D0E8B /* AppSSOSoftLink.mm */,
+				41D99CC22C9C45580025844F /* AVFAudioSoftLink.h */,
+				41D99CC72C9C45580025844F /* AVFAudioSoftLink.mm */,
 				077E87B0226A460200A2AFF0 /* AVFoundationSoftLink.h */,
 				077E87AF226A460200A2AFF0 /* AVFoundationSoftLink.mm */,
 				5157ADFB2B23B9F300C0E095 /* ContactsSoftLink.h */,
@@ -1358,6 +1364,7 @@
 				DD20DDD827BC90D70093D175 /* AudioToolboxSPI.h in Headers */,
 				DD20DDD927BC90D70093D175 /* AuthKitSPI.h in Headers */,
 				DD20DDDA27BC90D70093D175 /* AVAssetWriterSPI.h in Headers */,
+				41D99CC82C9C45590025844F /* AVFAudioSoftLink.h in Headers */,
 				DD20DD1B27BC90D60093D175 /* AVFoundationSoftLink.h in Headers */,
 				DD20DDDB27BC90D70093D175 /* AVFoundationSPI.h in Headers */,
 				DD20DDDC27BC90D70093D175 /* AVKitSPI.h in Headers */,
@@ -1685,6 +1692,7 @@
 				293EE4A824154F8F0047493D /* AccessibilitySupportSoftLink.cpp in Sources */,
 				57FD318A22B3593E008D0E8B /* AppSSOSoftLink.mm in Sources */,
 				416E995323DAE6BE00E871CB /* AudioToolboxSoftLink.cpp in Sources */,
+				41D99CC92C9C45590025844F /* AVFAudioSoftLink.mm in Sources */,
 				077E87B1226A460200A2AFF0 /* AVFoundationSoftLink.mm in Sources */,
 				1D2B413425F05E3500A3F70A /* ClockGeneric.cpp in Sources */,
 				5157ADFE2B23B9F300C0E095 /* ContactsSoftLink.mm in Sources */,

@@ -7477,6 +7477,19 @@ UseImageDocumentForSubframePDF:
       PLATFORM(IOS_FAMILY): true
       default: false
 
+UseMicrophoneMuteStatusAPI:
+  type: bool
+  status: preview
+  category: media
+  humanReadableName: "Use Microphone Mute Status API"
+  humanReadableDescription: "Use Microphone Mute Status API"
+  condition: ENABLE(MEDIA_STREAM)
+  defaultValue:
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 UsePreHTML5ParserQuirks:
   type: bool
   status: embedder

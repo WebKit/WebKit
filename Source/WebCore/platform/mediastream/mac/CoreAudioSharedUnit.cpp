@@ -231,6 +231,7 @@ CoreAudioSharedUnit::CoreAudioSharedUnit()
 CoreAudioSharedUnit::~CoreAudioSharedUnit()
 {
     updateVoiceActiveDetection();
+    setMuteStatusChangedCallback({ });
 }
 
 #if PLATFORM(MAC)
@@ -844,6 +845,12 @@ void CoreAudioSharedUnit::disableMutedSpeechActivityEventListener()
 {
     setVoiceActivityListenerCallback({ });
     updateVoiceActiveDetection();
+}
+
+void CoreAudioSharedUnit::handleMuteStatusChangedNotification(bool isMuting)
+{
+    if (m_muteStatusChangedCallback)
+        m_muteStatusChangedCallback(isMuting);
 }
 
 #if PLATFORM(IOS_FAMILY)

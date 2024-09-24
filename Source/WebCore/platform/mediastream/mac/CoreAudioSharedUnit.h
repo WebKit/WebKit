@@ -32,6 +32,8 @@
 #include "CAAudioStreamDescription.h"
 #include "Timer.h"
 
+OBJC_CLASS WebCoreAudioInputMuteChangeListener;
+
 namespace WebCore {
 class CoreAudioSharedUnit;
 }
@@ -123,6 +125,9 @@ public:
     static void processVoiceActivityEvent(uint32_t);
 #endif
 
+    WEBCORE_EXPORT void setMuteStatusChangedCallback(Function<void(bool)>&&);
+    void handleMuteStatusChangedNotification(bool);
+
 private:
     CoreAudioSharedUnit();
 
@@ -170,6 +175,7 @@ private:
 
     void updateVoiceActiveDetection();
     bool shouldEnableVoiceActivityDetection() const;
+    RetainPtr<WebCoreAudioInputMuteChangeListener> createAudioInputMuteChangeListener();
 
     CreationCallback m_creationCallback;
     GetSampleRateCallback m_getSampleRateCallback;
@@ -224,6 +230,10 @@ private:
     Timer m_storedVPIOUnitDeallocationTimer;
     RefPtr<GenericNonExclusivePromise> m_audioUnitCreationWarmupPromise;
 #endif
+#if HAVE(AVAUDIOAPPLICATION)
+    RetainPtr<WebCoreAudioInputMuteChangeListener> m_inputMuteChangeListener;
+#endif
+    Function<void(bool)> m_muteStatusChangedCallback;
 };
 
 } // namespace WebCore

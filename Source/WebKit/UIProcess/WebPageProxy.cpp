@@ -8532,6 +8532,11 @@ void WebPageProxy::setMuted(WebCore::MediaProducerMutedStateFlags state, FromApp
     if (!isAllowedToChangeMuteState())
         state.add(WebCore::MediaProducer::MediaStreamCaptureIsMuted);
 
+#if ENABLE(MEDIA_STREAM) && ENABLE(GPU_PROCESS)
+    if (preferences().captureAudioInGPUProcessEnabled() && internals().mutedState.contains(WebCore::MediaProducerMutedState::AudioCaptureIsMuted) && !state.contains(WebCore::MediaProducerMutedState::AudioCaptureIsMuted))
+        configuration().processPool().ensureProtectedGPUProcess()->setPageUsingMicrophone(identifier());
+#endif
+
     internals().mutedState = state;
 
     if (!hasRunningProcess())
@@ -8541,7 +8546,7 @@ void WebPageProxy::setMuted(WebCore::MediaProducerMutedStateFlags state, FromApp
     bool hasMutedCaptureStreams = internals().mediaState.containsAny(WebCore::MediaProducer::MutedCaptureMask);
     if (hasMutedCaptureStreams && !(state.containsAny(WebCore::MediaProducer::MediaStreamCaptureIsMuted)))
         WebProcessProxy::muteCaptureInPagesExcept(m_webPageID);
-#endif
+#endif // ENABLE(MEDIA_STREAM)
 
     protectedLegacyMainFrameProcess()->pageMutedStateChanged(m_webPageID, state);
 
@@ -11457,7 +11462,7 @@ void WebPageProxy::willStartCapture(UserMediaPermissionRequestProxy& request, Co
         return callback();
 
     Ref gpuProcess = configuration().processPool().ensureGPUProcess();
-    gpuProcess->updateCaptureAccess(request.requiresAudioCapture(), request.requiresVideoCapture(), request.requiresDisplayCapture(), m_legacyMainFrameProcess->coreProcessIdentifier(), WTFMove(callback));
+    gpuProcess->updateCaptureAccess(request.requiresAudioCapture(), request.requiresVideoCapture(), request.requiresDisplayCapture(), m_legacyMainFrameProcess->coreProcessIdentifier(), identifier(), WTFMove(callback));
     gpuProcess->updateCaptureOrigin(request.topLevelDocumentSecurityOrigin().data(), m_legacyMainFrameProcess->coreProcessIdentifier());
 #if PLATFORM(IOS_FAMILY)
     gpuProcess->setOrientationForMediaCapture(m_orientationForMediaCapture);
@@ -11467,9 +11472,17 @@ void WebPageProxy::willStartCapture(UserMediaPermissionRequestProxy& request, Co
 #endif
 }
 
-#endif
+void WebPageProxy::microphoneMuteStatusChanged(bool isMuting)
+{
+    auto mutedState = internals().mutedState;
+    if (isMuting)
+        mutedState.add(WebCore::MediaProducerMutedState::AudioCaptureIsMuted);
+    else
+        mutedState.remove(WebCore::MediaProducerMutedState::AudioCaptureIsMuted);
 
-#if ENABLE(MEDIA_STREAM)
+    setMuted(mutedState);
+}
+
 void WebPageProxy::requestUserMediaPermissionForFrame(IPC::Connection& connection, UserMediaRequestIdentifier userMediaID, FrameIdentifier frameID, const SecurityOriginData& userMediaDocumentOriginData, const SecurityOriginData& topLevelDocumentOriginData, MediaStreamRequest&& request)
 {
     MESSAGE_CHECK_BASE(WebFrameProxy::webFrame(frameID), connection);
@@ -14164,7 +14177,7 @@ void WebPageProxy::gpuProcessExited(ProcessTerminationReason)
     bool activeDisplayCapture = false;
     if (activeAudioCapture || activeVideoCapture) {
         auto& gpuProcess = configuration().processPool().ensureGPUProcess();
-        gpuProcess.updateCaptureAccess(activeAudioCapture, activeVideoCapture, activeDisplayCapture, m_legacyMainFrameProcess->coreProcessIdentifier(), [] { });
+        gpuProcess.updateCaptureAccess(activeAudioCapture, activeVideoCapture, activeDisplayCapture, m_legacyMainFrameProcess->coreProcessIdentifier(), identifier(), [] { });
 #if PLATFORM(IOS_FAMILY)
         gpuProcess.setOrientationForMediaCapture(m_orientationForMediaCapture);
 #endif

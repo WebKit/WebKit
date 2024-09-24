@@ -2105,6 +2105,7 @@ public:
     void startMonitoringCaptureDeviceRotation(const String&);
     void stopMonitoringCaptureDeviceRotation(const String&);
     void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
+    void microphoneMuteStatusChanged(bool isMuting);
 #endif
 
     void maybeInitializeSandboxExtensionHandle(WebProcessProxy&, const URL&, const URL& resourceDirectoryURL, bool checkAssumedReadAccessToResourceURL, CompletionHandler<void(std::optional<SandboxExtensionHandle>)>&&);
