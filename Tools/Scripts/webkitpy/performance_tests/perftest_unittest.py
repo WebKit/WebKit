@@ -149,6 +149,26 @@ Jan 22 14:09:24  WebKitTestRunner[1296] <Error>: CGContextFillRects: invalid con
 median= 1101.0 ms, stdev= 13.3140211016 ms, min= 1080.0 ms, max= 1120.0 ms
 """)
 
+    def test_parse_output_with_ignored_stderr_sequoia(self):
+        output = DriverOutput(":Time -> [1080, 1120, 1095, 1101, 1104] ms", image=None, image_hash=None, audio=None, error="""
+2024-09-19 18:02:28.602 WebKitTestRunner[4850:966605] +[IMKClient subclass]: chose IMKClient_Legacy
+2024-09-20 05:19:16.085 WebKitTestRunner[89065:4681480] +[IMKClient subclass]: chose IMKClient_Modern
+""")
+
+        class MockPortWithSequoiaName(MockPort):
+            def name(self):
+                return "mac-sequoia"
+
+        with OutputCapture(level=logging.INFO) as captured:
+            test = PerfTest(MockPortWithSequoiaName(), 'some-test', '/path/some-dir/some-test')
+            self._assert_results_are_correct(test, output)
+
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(captured.root.log.getvalue(), """RESULT some-test: Time= 1100.0 ms
+median= 1101.0 ms, stdev= 13.3140211016 ms, min= 1080.0 ms, max= 1120.0 ms
+""")
+
     def _assert_failed_on_line(self, output_text, expected_log):
         output = DriverOutput(output_text, image=None, image_hash=None, audio=None)
         with OutputCapture(level=logging.INFO) as captured:
