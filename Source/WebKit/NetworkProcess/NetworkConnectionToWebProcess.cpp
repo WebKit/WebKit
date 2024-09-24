@@ -257,14 +257,15 @@ bool NetworkConnectionToWebProcess::dispatchMessage(IPC::Connection& connection,
     }
 
     if (decoder.messageReceiverName() == Messages::NetworkResourceLoader::messageReceiverName()) {
-        MESSAGE_CHECK_WITH_RETURN_VALUE(decoder.destinationID(), false);
+        MESSAGE_CHECK_WITH_RETURN_VALUE(AtomicObjectIdentifier<WebCore::ResourceLoader>::isValidIdentifier(decoder.destinationID()), false);
         if (RefPtr loader = m_networkResourceLoaders.get(AtomicObjectIdentifier<WebCore::ResourceLoader>(decoder.destinationID())))
             loader->didReceiveMessage(connection, decoder);
         return true;
     }
 
     if (decoder.messageReceiverName() == Messages::NetworkSocketChannel::messageReceiverName()) {
-        if (auto* channel = m_networkSocketChannels.get(LegacyNullableAtomicObjectIdentifier<WebSocketIdentifierType>(decoder.destinationID())))
+        MESSAGE_CHECK_WITH_RETURN_VALUE(AtomicObjectIdentifier<WebSocketIdentifierType>::isValidIdentifier(decoder.destinationID()), false);
+        if (auto* channel = m_networkSocketChannels.get(AtomicObjectIdentifier<WebSocketIdentifierType>(decoder.destinationID())))
             channel->didReceiveMessage(connection, decoder);
         return true;
     }

@@ -60,7 +60,7 @@ class SocketStreamHandle;
 class SocketStreamError;
 class WebSocketChannelClient;
 class WebSocketChannel;
-using WebSocketChannelIdentifier = LegacyNullableAtomicObjectIdentifier<WebSocketChannel>;
+using WebSocketChannelIdentifier = AtomicObjectIdentifier<WebSocketChannel>;
 
 class WebSocketChannel final : public RefCounted<WebSocketChannel>, public SocketStreamHandleClient, public ThreadableWebSocketChannel, public FileReaderLoaderClient
 {

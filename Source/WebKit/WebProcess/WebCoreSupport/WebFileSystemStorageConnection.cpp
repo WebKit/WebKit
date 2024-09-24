@@ -83,9 +83,7 @@ void WebFileSystemStorageConnection::getFileHandle(WebCore::FileSystemHandleIden
         if (!result)
             return completionHandler(convertToException(result.error()));
 
-        auto identifier = result.value();
-        ASSERT(identifier.isValid());
-        completionHandler(WebCore::FileSystemHandleCloseScope::create(identifier, false, *this));
+        completionHandler(WebCore::FileSystemHandleCloseScope::create(result.value(), false, *this));
     });
 }
 
@@ -98,9 +96,7 @@ void WebFileSystemStorageConnection::getDirectoryHandle(WebCore::FileSystemHandl
         if (!result)
             return completionHandler(convertToException(result.error()));
 
-        auto identifier = result.value();
-        ASSERT(identifier.isValid());
-        completionHandler(WebCore::FileSystemHandleCloseScope::create(identifier, true, *this));
+        completionHandler(WebCore::FileSystemHandleCloseScope::create(result.value(), true, *this));
     });
 }
 
@@ -183,8 +179,7 @@ void WebFileSystemStorageConnection::getHandle(WebCore::FileSystemHandleIdentifi
         if (!result)
             return completionHandler(convertToException(result.error()));
         
-        auto [identifier, isDirectory] = result.value();
-        ASSERT(identifier.isValid());
+        auto [identifier, isDirectory] = *result.value();
         completionHandler(WebCore::FileSystemHandleCloseScope::create(identifier, isDirectory, *this));
     });
 }

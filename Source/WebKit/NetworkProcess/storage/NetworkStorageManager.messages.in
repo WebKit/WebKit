@@ -27,7 +27,7 @@
     Persisted(struct WebCore::ClientOrigin origin) -> (bool persisted)
     Persist(struct WebCore::ClientOrigin origin) -> (bool persisted)
     Estimate(struct WebCore::ClientOrigin origin) -> (std::optional<WebCore::StorageEstimate> result);
-    FileSystemGetDirectory(struct WebCore::ClientOrigin origin) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result)
+    FileSystemGetDirectory(struct WebCore::ClientOrigin origin) -> (Expected<std::optional<WebCore::FileSystemHandleIdentifier>, WebKit::FileSystemStorageError> result)
     CloseHandle(WebCore::FileSystemHandleIdentifier identifier)
     IsSameEntry(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier) -> (bool result)
     GetFileHandle(WebCore::FileSystemHandleIdentifier identifier, String name, bool createIfNecessary) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result)
@@ -40,7 +40,7 @@
     CloseSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier) -> ()
     RequestNewCapacityForSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, uint64_t newCapacity) -> (std::optional<uint64_t> result)
     GetHandleNames(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result)
-    GetHandle(WebCore::FileSystemHandleIdentifier identifier, String name) -> (Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, WebKit::FileSystemStorageError> result)
+    GetHandle(WebCore::FileSystemHandleIdentifier identifier, String name) -> (Expected<std::optional<std::pair<WebCore::FileSystemHandleIdentifier, bool>>, WebKit::FileSystemStorageError> result)
 
     ConnectToStorageArea(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, std::optional<WebKit::StorageNamespaceIdentifier> namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (std::optional<WebKit::StorageAreaIdentifier> identifier, HashMap<String, String> items, uint64_t messageIdentifier)
     ConnectToStorageAreaSync(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, std::optional<WebKit::StorageNamespaceIdentifier> namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (std::optional<WebKit::StorageAreaIdentifier> identifier, HashMap<String, String> items, uint64_t messageIdentifier) Synchronous

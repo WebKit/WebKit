@@ -53,7 +53,7 @@ class WebSocketChannel;
 class WebSocketChannelInspector;
 class WebSocketChannelClient;
 
-using WebSocketChannelIdentifier = LegacyNullableAtomicObjectIdentifier<WebSocketChannel>;
+using WebSocketChannelIdentifier = AtomicObjectIdentifier<WebSocketChannel>;
 
 class ThreadableWebSocketChannel : public Identified<WebSocketIdentifier> {
     WTF_MAKE_NONCOPYABLE(ThreadableWebSocketChannel);
