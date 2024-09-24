@@ -35,13 +35,13 @@ promise_test(async (t) => {
         return;
 
     await new Promise(resolve => setTimeout(resolve, 500));
-    assert_false(internals.nowPlayingState.haveEverRegisteredAsNowPlayingApplication);
+    assert_false(internals.elementIsActiveNowPlayingSession(localVideo), 'internals.elementIsActiveNowPlayingSession(localVideo) is false before muting');
 
     internals.setMediaStreamTrackMuted(localStream.getAudioTracks()[0], false); 
     internals.setMediaStreamTrackMuted(localStream.getVideoTracks()[0], false); 
 
     await new Promise(resolve => setTimeout(resolve, 500));
-    assert_false(internals.nowPlayingState.haveEverRegisteredAsNowPlayingApplication);
+    assert_false(internals.elementIsActiveNowPlayingSession(localVideo), 'internals.elementIsActiveNowPlayingSession(localVideo) is false after muting');
 }, "Check NowPlaying status on a VC page");
         </script>
     </body>

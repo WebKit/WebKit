@@ -1214,6 +1214,8 @@ public:
     ExceptionOr<RefPtr<VTTCue>> mediaElementCurrentlySpokenCue(HTMLMediaElement&);
 #endif
 
+    bool elementIsActiveNowPlayingSession(HTMLMediaElement&) const;
+
 #endif // ENABLE(VIDEO)
 
     void setCaptureExtraNetworkLoadMetricsEnabled(bool);

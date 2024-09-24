@@ -9734,6 +9734,11 @@ String HTMLMediaElement::localizedSourceType() const
     return { };
 }
 
+bool HTMLMediaElement::isActiveNowPlayingSession() const
+{
+    return m_mediaSession && m_mediaSession->isActiveNowPlayingSession();
+}
+
 void HTMLMediaElement::isActiveNowPlayingSessionChanged()
 {
     if (RefPtr page = protectedDocument()->protectedPage())
