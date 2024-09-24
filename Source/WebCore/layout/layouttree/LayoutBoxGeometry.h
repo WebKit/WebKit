@@ -161,6 +161,7 @@ public:
 
     void setVerticalSpaceForScrollbar(LayoutUnit scrollbarHeight) { m_verticalSpaceForScrollbar = scrollbarHeight; }
     void setHorizontalSpaceForScrollbar(LayoutUnit scrollbarWidth) { m_horizontalSpaceForScrollbar = scrollbarWidth; }
+    void setSpaceForScrollbar(LayoutSize);
 
     void reset();
 
@@ -460,6 +461,12 @@ inline LayoutUnit BoxGeometry::borderEnd() const
 {
     ASSERT(m_hasValidBorder);
     return m_border.horizontal.end;
+}
+
+inline void BoxGeometry::setSpaceForScrollbar(LayoutSize scrollbarSize)
+{
+    setVerticalSpaceForScrollbar(scrollbarSize.height());
+    setHorizontalSpaceForScrollbar(scrollbarSize.width());
 }
 
 }
