@@ -11490,14 +11490,8 @@ void SpeculativeJIT::speculateStringIdentAndLoadStorage(Edge edge, GPRReg string
     if (!needsTypeCheck(edge, SpecStringIdent | ~SpecString))
         return;
 
-    speculationCheck(
-        BadType, JSValueSource::unboxedCell(string), edge,
-        branchIfRopeStringImpl(storage));
-    speculationCheck(
-        BadType, JSValueSource::unboxedCell(string), edge, branchTest32(
-            Zero,
-            Address(storage, StringImpl::flagsOffset()),
-            TrustedImm32(StringImpl::flagIsAtom())));
+    speculationCheck(BadStringType, JSValueSource::unboxedCell(string), edge, branchIfRopeStringImpl(storage));
+    speculationCheck(BadStringType, JSValueSource::unboxedCell(string), edge, branchTest32(Zero, Address(storage, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIsAtom())));
     
     m_interpreter.filter(edge, SpecStringIdent | ~SpecString);
 }

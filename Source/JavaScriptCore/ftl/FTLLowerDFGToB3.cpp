@@ -22614,9 +22614,9 @@ IGNORE_CLANG_WARNINGS_END
         if (!m_interpreter.needsTypeCheck(edge, SpecStringIdent | ~SpecString))
             return;
 
-        speculate(BadType, jsValueValue(string), edge.node(), isRopeString(string));
+        speculate(BadStringType, jsValueValue(string), edge.node(), isRopeString(string));
         speculate(
-            BadType, jsValueValue(string), edge.node(),
+            BadStringType, jsValueValue(string), edge.node(),
             m_out.testIsZero32(
                 m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags),
                 m_out.constInt32(StringImpl::flagIsAtom())));
