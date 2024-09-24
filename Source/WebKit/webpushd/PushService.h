@@ -90,7 +90,7 @@ public:
 #endif
 
 private:
-    PushService(UniqueRef<PushServiceConnection>&&, UniqueRef<WebCore::PushDatabase>&&, IncomingPushMessageHandler&&);
+    PushService(Ref<PushServiceConnection>&&, UniqueRef<WebCore::PushDatabase>&&, IncomingPushMessageHandler&&);
 
     using PushServiceRequestMap = HashMap<String, Deque<std::unique_ptr<PushServiceRequest>>>;
     void enqueuePushServiceRequest(PushServiceRequestMap&, std::unique_ptr<PushServiceRequest>&&);
@@ -100,7 +100,7 @@ private:
 
     void updateTopicLists(CompletionHandler<void()>&&);
 
-    UniqueRef<PushServiceConnection> m_connection;
+    Ref<PushServiceConnection> m_connection;
     UniqueRef<WebCore::PushDatabase> m_database;
 
     IncomingPushMessageHandler m_incomingPushMessageHandler;

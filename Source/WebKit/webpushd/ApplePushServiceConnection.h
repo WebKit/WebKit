@@ -32,19 +32,14 @@
 #include <wtf/HashMap.h>
 
 namespace WebPushD {
-class ApplePushServiceConnection;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebPushD::ApplePushServiceConnection> : std::true_type { };
-}
-
-namespace WebPushD {
 
 class ApplePushServiceConnection final : public PushServiceConnection {
 public:
-    ApplePushServiceConnection(const String& incomingPushServiceName);
+    static Ref<ApplePushServiceConnection> create(const String& incomingPushServiceName)
+    {
+        return adoptRef(*new ApplePushServiceConnection(incomingPushServiceName));
+    }
+
     ~ApplePushServiceConnection();
 
     void subscribe(const String& topic, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&&) final;
@@ -63,6 +58,8 @@ public:
     void setTopicLists(TopicLists&&) override;
 
 private:
+    ApplePushServiceConnection(const String& incomingPushServiceName);
+
     RetainPtr<APSConnection> m_connection;
     RetainPtr<id<APSConnectionDelegate>> m_delegate;
     unsigned m_handlerIdentifier { 0 };

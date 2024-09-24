@@ -130,7 +130,7 @@ void PushService::create(const String& incomingPushServiceName, const String& da
     auto transaction = adoptOSObject(os_transaction_create("com.apple.webkit.webpushd.push-service-init"));
 
     // Create the connection ASAP so that we bootstrap_check_in to the service in a timely manner.
-    auto connection = makeUniqueRef<ApplePushServiceConnection>(incomingPushServiceName);
+    auto connection = ApplePushServiceConnection::create(incomingPushServiceName);
 
     performAfterFirstUnlock([databasePath, transaction = WTFMove(transaction), connection = WTFMove(connection), messageHandler = WTFMove(messageHandler), creationHandler = WTFMove(creationHandler)]() mutable {
         PushDatabase::create(databasePath, [transaction, connection = WTFMove(connection), messageHandler = WTFMove(messageHandler), creationHandler = WTFMove(creationHandler)](auto&& databaseResult) mutable {
@@ -172,13 +172,13 @@ void PushService::createMockService(IncomingPushMessageHandler&& messageHandler,
             return;
         }
 
-        auto connection = makeUniqueRef<MockPushServiceConnection>();
+        auto connection = MockPushServiceConnection::create();
         auto database = makeUniqueRefFromNonNullUniquePtr(WTFMove(databaseResult));
         creationHandler(std::unique_ptr<PushService>(new PushService(WTFMove(connection), WTFMove(database), WTFMove(messageHandler))));
     });
 }
 
-PushService::PushService(UniqueRef<PushServiceConnection>&& pushServiceConnection, UniqueRef<PushDatabase>&& pushDatabase, IncomingPushMessageHandler&& incomingPushMessageHandler)
+PushService::PushService(Ref<PushServiceConnection>&& pushServiceConnection, UniqueRef<PushDatabase>&& pushDatabase, IncomingPushMessageHandler&& incomingPushMessageHandler)
     : m_connection(WTFMove(pushServiceConnection))
     , m_database(WTFMove(pushDatabase))
     , m_incomingPushMessageHandler(WTFMove(incomingPushMessageHandler))

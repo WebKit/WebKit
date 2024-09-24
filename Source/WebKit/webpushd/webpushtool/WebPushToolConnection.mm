@@ -45,9 +45,9 @@ namespace WebPushTool {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Connection);
 
-std::unique_ptr<Connection> Connection::create(PreferTestService preferTestService, String bundleIdentifier, String pushPartition)
+Ref<Connection> Connection::create(PreferTestService preferTestService, String bundleIdentifier, String pushPartition)
 {
-    return makeUnique<Connection>(preferTestService, bundleIdentifier, pushPartition);
+    return adoptRef(*new Connection(preferTestService, bundleIdentifier, pushPartition));
 }
 
 static mach_port_t maybeConnectToService(const char* serviceName)
