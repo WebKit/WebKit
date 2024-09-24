@@ -125,7 +125,7 @@ unsigned DocumentTimeline::numberOfActiveAnimationsForTesting() const
     return count;
 }
 
-std::optional<Seconds> DocumentTimeline::currentTime()
+std::optional<CSSNumberishTime> DocumentTimeline::currentTime()
 {
     if (auto* controller = this->controller()) {
         if (auto currentTime = controller->currentTime())
@@ -300,12 +300,19 @@ void DocumentTimeline::removeReplacedAnimations()
         if (animation->hasEventListeners(eventNames.removeEvent)) {
             auto scheduledTime = [&]() -> std::optional<Seconds> {
                 if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(animation->timeline())) {
-                    if (auto currentTime = documentTimeline->currentTime())
-                        return documentTimeline->convertTimelineTimeToOriginRelativeTime(*currentTime);
+                    if (auto currentTime = documentTimeline->currentTime()) {
+                        ASSERT(currentTime->time());
+                        return documentTimeline->convertTimelineTimeToOriginRelativeTime(*currentTime->time());
+                    }
                 }
                 return std::nullopt;
             }();
-            animation->enqueueAnimationPlaybackEvent(eventNames.removeEvent, animation->currentTime(), scheduledTime);
+            auto animationCurrentTime = [&]() -> std::optional<Seconds> {
+                if (auto animationTime = animation->currentTime())
+                    return animationTime->time();
+                return std::nullopt;
+            }();
+            animation->enqueueAnimationPlaybackEvent(eventNames.removeEvent, animationCurrentTime, scheduledTime);
         }
 
         animationsToRemove.append(animation.get());

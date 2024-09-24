@@ -45,10 +45,13 @@ public:
 
     CSSNumberishTime operator+(CSSNumberishTime) const;
     CSSNumberishTime operator-(CSSNumberishTime) const;
+    CSSNumberishTime& operator+=(const CSSNumberishTime&);
+    CSSNumberishTime& operator-=(const CSSNumberishTime&);
     bool operator<(CSSNumberishTime) const;
     bool operator<=(CSSNumberishTime) const;
     bool operator>(CSSNumberishTime) const;
     bool operator>=(CSSNumberishTime) const;
+    bool operator==(CSSNumberishTime) const;
 
     CSSNumberishTime operator+(Seconds) const;
     CSSNumberishTime operator-(Seconds) const;
