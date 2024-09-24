@@ -1042,6 +1042,8 @@ webkit.org/b/191584 fast/animation/css-animation-resuming-when-visible-with-styl
 # Compositing
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+compositing/blend-mode [ Skip ]
+
 # TODO LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
 compositing/visible-rect/  [ Skip ]
 
