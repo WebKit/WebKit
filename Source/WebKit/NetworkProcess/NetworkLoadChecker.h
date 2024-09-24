@@ -112,6 +112,8 @@ public:
 
     void enableContentExtensionsCheck() { m_checkContentExtensions = true; }
 
+    bool isSameOriginRequest() const { return m_isSameOriginRequest; }
+
     RefPtr<WebCore::SecurityOrigin> origin() const { return m_origin; }
     RefPtr<WebCore::SecurityOrigin> topOrigin() const { return m_topOrigin; }
 
