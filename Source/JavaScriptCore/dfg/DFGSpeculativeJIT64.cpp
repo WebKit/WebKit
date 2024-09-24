@@ -6347,10 +6347,7 @@ void SpeculativeJIT::compile(Node* node)
 
 #if ENABLE(FTL_JIT)        
     case CheckTierUpInLoop: {
-        Jump callTierUp = branchAdd32(
-            PositiveOrZero,
-            TrustedImm32(Options::ftlTierUpCounterIncrementForLoop()),
-            AbsoluteAddress(&jitCode()->tierUpCounter.m_counter));
+        Jump callTierUp = branchAdd32(PositiveOrZero, TrustedImm32(Options::ftlTierUpCounterIncrementForLoop()), Address(GPRInfo::jitDataRegister, JITData::offsetOfTierUpCounter()));
 
         Label toNextOperation = label();
 
@@ -6371,10 +6368,7 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case CheckTierUpAtReturn: {
-        Jump done = branchAdd32(
-            Signed,
-            TrustedImm32(Options::ftlTierUpCounterIncrementForReturn()),
-            AbsoluteAddress(&jitCode()->tierUpCounter.m_counter));
+        Jump done = branchAdd32(Signed, TrustedImm32(Options::ftlTierUpCounterIncrementForReturn()), Address(GPRInfo::jitDataRegister, JITData::offsetOfTierUpCounter()));
         
         silentSpillAllRegisters(InvalidGPRReg);
         callOperationWithoutExceptionCheck(operationTriggerTierUpNow, TrustedImmPtr(&vm()));
@@ -6398,10 +6392,7 @@ void SpeculativeJIT::compile(Node* node)
         static_assert(sizeof(JITCode::TriggerReason) == 1, "branchTest8 assumes this size");
 
         Jump forceOSREntry = branchTest8(NonZero, AbsoluteAddress(forceEntryTrigger));
-        Jump overflowedCounter = branchAdd32(
-            PositiveOrZero,
-            TrustedImm32(Options::ftlTierUpCounterIncrementForLoop()),
-            AbsoluteAddress(&jitCode()->tierUpCounter.m_counter));
+        Jump overflowedCounter = branchAdd32(PositiveOrZero, TrustedImm32(Options::ftlTierUpCounterIncrementForLoop()), Address(GPRInfo::jitDataRegister, JITData::offsetOfTierUpCounter()));
         Label toNextOperation = label();
 
         Vector<SilentRegisterSavePlan> savePlans;

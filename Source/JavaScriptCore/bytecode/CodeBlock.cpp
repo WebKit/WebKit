@@ -1679,7 +1679,8 @@ void CodeBlock::finalizeUnconditionally(VM& vm, CollectionScope)
             break;
         case JITType::DFGJIT:
 #if ENABLE(FTL_JIT)
-            count = static_cast<DFG::JITCode*>(jitCode)->tierUpCounter.count();
+            if (auto* jitData = dfgJITData())
+                count = jitData->tierUpCounter().count();
 #else
             alwaysActive = true;
 #endif
