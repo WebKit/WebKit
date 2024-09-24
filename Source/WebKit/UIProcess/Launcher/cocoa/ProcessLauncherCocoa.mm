@@ -302,9 +302,9 @@ void ProcessLauncher::launchProcess()
         });
     };
 
-    launchWithExtensionKit(*this, m_launchOptions.processType, m_client, WTFMove(handler));
+    launchWithExtensionKit(*this, m_launchOptions.processType, m_client.get(), WTFMove(handler));
 #else
-    auto name = serviceName(m_launchOptions, m_client);
+    auto name = serviceName(m_launchOptions, m_client.get());
     m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
     finishLaunchingProcess(name);
 #endif
