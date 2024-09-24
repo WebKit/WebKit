@@ -51,7 +51,12 @@ TEST(InWindowFullscreen, EmptyDocument)
     [webView _close];
 }
 
+// rdar://136551692
+#if PLATFORM(MAC)
+TEST(InWindowFullscreen, DISABLED_CanToggleAfterPlaybackStarts)
+#else
 TEST(InWindowFullscreen, CanToggleAfterPlaybackStarts)
+#endif
 {
     auto webView = createInWindowFullscreenWebView();
     [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
@@ -71,7 +76,12 @@ TEST(InWindowFullscreen, CanToggleAfterPlaybackStarts)
     [webView _close];
 }
 
+// rdar://136551692
+#if PLATFORM(MAC)
+TEST(InWindowFullscreen, DISABLED_ToggleChangesIsActive)
+#else
 TEST(InWindowFullscreen, ToggleChangesIsActive)
+#endif
 {
     auto webView = createInWindowFullscreenWebView();
     [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
@@ -102,7 +112,12 @@ TEST(InWindowFullscreen, ToggleChangesIsActive)
     [webView _close];
 }
 
+// rdar://136551692
+#if PLATFORM(MAC)
+TEST(InWindowFullscreen, DISABLED_EnterAndExitChangeIsActive)
+#else
 TEST(InWindowFullscreen, EnterAndExitChangeIsActive)
+#endif
 {
     auto webView = createInWindowFullscreenWebView();
     [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
@@ -133,7 +148,12 @@ TEST(InWindowFullscreen, EnterAndExitChangeIsActive)
     [webView _close];
 }
 
+// rdar://136551692
+#if PLATFORM(MAC)
+TEST(InWindowFullscreen, DISABLED_EnterChangesIsActiveWithoutUserGesture)
+#else
 TEST(InWindowFullscreen, EnterChangesIsActiveWithoutUserGesture)
+#endif
 {
     auto webView = createInWindowFullscreenWebView();
     [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
