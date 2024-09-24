@@ -1216,8 +1216,8 @@ void FrameLoader::updateURLAndHistory(const URL& newURL, RefPtr<SerializedScript
 
     // https://html.spec.whatwg.org/multipage/browsing-the-web.html#restore-the-history-object-state
     // FIXME: Implement "restore the history object state" deserializing (step 2).
-    if (!stateObject)
-        stateObject = history->currentItem()->stateObject();
+    // Note: Implement "otherwise activeEntry's classic history API state" (step 3) if a caller needs that (so far
+    // callers always set stateObject explicitly).
 
     m_frame->protectedDocument()->updateURLForPushOrReplaceState(newURL);
 
