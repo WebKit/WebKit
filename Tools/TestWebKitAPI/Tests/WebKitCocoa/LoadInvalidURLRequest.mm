@@ -116,7 +116,11 @@ TEST(WebKit, LoadInvalidURLRequestNonASCII)
     delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
         EXPECT_WK_STREQ(error.domain, @"WebKitErrorDomain");
         EXPECT_EQ(error.code, WebKitErrorCannotShowURL);
+#if HAVE(WK_SECURE_CODING_NSURLREQUEST)
+        EXPECT_WK_STREQ([error.userInfo[@"NSErrorFailingURLKey"] absoluteString], "http://%C3%83%C2%A2%C3%82%C2%80%C3%82%C2%80");
+#else
         EXPECT_WK_STREQ([error.userInfo[@"NSErrorFailingURLKey"] absoluteString], "http://%C3%A2%C2%80%C2%80");
+#endif
         done = true;
     };
     auto webView = adoptNS([WKWebView new]);
