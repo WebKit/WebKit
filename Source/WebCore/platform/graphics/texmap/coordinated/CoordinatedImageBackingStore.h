@@ -26,31 +26,28 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS)
-#include "CoordinatedPlatformLayerBuffer.h"
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
+class CoordinatedPlatformLayerBuffer;
 class NativeImage;
 
-class CoordinatedPlatformLayerBufferNativeImage final : public CoordinatedPlatformLayerBuffer {
+class CoordinatedImageBackingStore final : public ThreadSafeRefCounted<CoordinatedImageBackingStore> {
 public:
-    static std::unique_ptr<CoordinatedPlatformLayerBufferNativeImage> create(Ref<NativeImage>&&, std::unique_ptr<GLFence>&&);
-    CoordinatedPlatformLayerBufferNativeImage(Ref<NativeImage>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
-    virtual ~CoordinatedPlatformLayerBufferNativeImage();
+    static Ref<CoordinatedImageBackingStore> create(Ref<NativeImage>&&);
+    ~CoordinatedImageBackingStore();
 
-    const NativeImage& image() const { return m_image.get(); }
+    static uint64_t uniqueIDForNativeImage(const NativeImage&);
+    bool isSameNativeImage(const NativeImage&);
+    CoordinatedPlatformLayerBuffer* buffer() const { return m_buffer.get(); }
 
 private:
-    void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
+    explicit CoordinatedImageBackingStore(Ref<NativeImage>&&);
 
-    bool tryEnsureBuffer(TextureMapper&);
-
-    Ref<NativeImage> m_image;
     std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_COORDINATED_PLATFORM_LAYER_BUFFER_TYPE(CoordinatedPlatformLayerBufferNativeImage, Type::NativeImage)
 
 #endif // USE(COORDINATED_GRAPHICS)

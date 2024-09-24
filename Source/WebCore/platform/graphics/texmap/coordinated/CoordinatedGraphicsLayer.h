@@ -53,6 +53,7 @@ class PaintingEngine;
 
 namespace WebCore {
 class CoordinatedGraphicsLayer;
+class CoordinatedImageBackingStore;
 class TextureMapperPlatformLayerProxy;
 
 class CoordinatedGraphicsLayerClient {
@@ -68,7 +69,7 @@ public:
     virtual WorkerPool* skiaUnacceleratedThreadedRenderingPool() const = 0;
 #endif
 
-    virtual RefPtr<Nicosia::ImageBackingStore> imageBackingStore(uint64_t, Function<RefPtr<Nicosia::Buffer>()>) = 0;
+    virtual Ref<CoordinatedImageBackingStore> imageBackingStore(Ref<NativeImage>&&) = 0;
 };
 
 class WEBCORE_EXPORT CoordinatedGraphicsLayer : public GraphicsLayer {
@@ -209,7 +210,6 @@ private:
     bool checkContentLayerUpdated();
 
     Ref<Nicosia::Buffer> paintTile(const IntRect&, const IntRect& mappedTileRect, float contentsScale);
-    Ref<Nicosia::Buffer> paintImage(Image&);
 
     void notifyFlushRequired();
 
@@ -252,9 +252,6 @@ private:
     } m_needsDisplay;
     bool m_damagedRectsAreUnreliable { false };
 
-    RefPtr<Image> m_compositedImage;
-    RefPtr<NativeImage> m_compositedNativeImage;
-
     Timer m_animationStartedTimer;
     RunLoop::Timer m_requestPendingTileCreationTimer;
     Nicosia::Animations m_animations;
@@ -268,9 +265,14 @@ private:
         bool performLayerSync { false };
 
         RefPtr<Nicosia::BackingStore> backingStore;
-        RefPtr<Nicosia::ImageBacking> imageBacking;
         RefPtr<Nicosia::AnimatedBackingStoreClient> animatedBackingStoreClient;
     } m_nicosia;
+
+    RefPtr<NativeImage> m_pendingContentsImage;
+    struct {
+        RefPtr<CoordinatedImageBackingStore> store;
+        bool isVisible { false };
+    } m_imageBacking;
 
     RefPtr<TextureMapperPlatformLayerProxy> m_contentsLayer;
     bool m_contentsLayerNeedsUpdate { false };

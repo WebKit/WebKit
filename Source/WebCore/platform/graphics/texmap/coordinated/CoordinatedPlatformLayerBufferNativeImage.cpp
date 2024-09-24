@@ -50,8 +50,11 @@ IGNORE_CLANG_WARNINGS_END
 
 namespace WebCore {
 
-std::unique_ptr<CoordinatedPlatformLayerBufferNativeImage> CoordinatedPlatformLayerBufferNativeImage::create(Ref<NativeImage>&& nativeImage, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
+std::unique_ptr<CoordinatedPlatformLayerBufferNativeImage> CoordinatedPlatformLayerBufferNativeImage::create(Ref<NativeImage>&& nativeImage, std::unique_ptr<GLFence>&& fence)
 {
+    OptionSet<TextureMapperFlags> flags;
+    if (nativeImage->hasAlpha())
+        flags.add(TextureMapperFlags::ShouldBlend);
     return makeUnique<CoordinatedPlatformLayerBufferNativeImage>(WTFMove(nativeImage), flags, WTFMove(fence));
 }
 

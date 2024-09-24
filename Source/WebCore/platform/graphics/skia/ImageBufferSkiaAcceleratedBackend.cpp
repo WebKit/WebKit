@@ -94,10 +94,7 @@ ImageBufferSkiaAcceleratedBackend::ImageBufferSkiaAcceleratedBackend(const Param
             if (!image)
                 return;
 
-            OptionSet<TextureMapperFlags> flags;
-            if (image->hasAlpha())
-                flags.add(TextureMapperFlags::ShouldBlend);
-            proxy.pushNextBuffer(CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(), flags, GLFence::create()));
+            proxy.pushNextBuffer(CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(), GLFence::create()));
         });
         m_layerContentsDisplayDelegate = GraphicsLayerContentsDisplayDelegateTextureMapper::create(WTFMove(proxy));
     }

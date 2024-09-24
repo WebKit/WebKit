@@ -147,26 +147,6 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect
     return buffer;
 }
 
-Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintImage(Image& image)
-{
-    // FIXME: can we just get the image texture if accelerated or upload the pixels if not acclerated instead of painting?.
-    // Always render unaccelerated here for now.
-    auto buffer = Nicosia::UnacceleratedBuffer::create(IntSize(image.size()), !image.currentFrameKnownToBeOpaque() ? Nicosia::Buffer::SupportsAlpha : Nicosia::Buffer::NoFlags);
-    buffer->beginPainting();
-    if (auto* canvas = buffer->canvas()) {
-        canvas->save();
-        canvas->clear(SkColors::kTransparent);
-
-        GraphicsContextSkia context(*canvas, RenderingMode::Unaccelerated, RenderingPurpose::LayerBacking);
-        IntRect rect { IntPoint::zero(), IntSize { image.size() } };
-        context.drawImage(image, rect, rect, ImagePaintingOptions(CompositeOperator::Copy));
-
-        canvas->restore();
-    }
-    buffer->completePainting();
-    return buffer;
-}
-
 } // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS) && USE(SKIA)

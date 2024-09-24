@@ -31,6 +31,7 @@
 
 #include "WebPage.h"
 #include "WebPageInlines.h"
+#include <WebCore/CoordinatedImageBackingStore.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
 #include <WebCore/GraphicsContext.h>
@@ -38,8 +39,7 @@
 #include <WebCore/LocalDOMWindow.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
-#include <WebCore/NicosiaBackingStore.h>
-#include <WebCore/NicosiaImageBacking.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformDisplay.h>
 #include <wtf/MemoryPressureHandler.h>
@@ -196,9 +196,6 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
                     compositionLayer->flushState([] (const Nicosia::CompositionLayer::LayerState& state) {
                         if (state.backingStore)
                             state.backingStore->flushUpdate();
-
-                        if (state.imageBacking)
-                            state.imageBacking->flushUpdate();
                     });
                 }
 
@@ -333,15 +330,13 @@ Nicosia::PaintingEngine& CompositingCoordinator::paintingEngine()
 }
 #endif
 
-RefPtr<Nicosia::ImageBackingStore> CompositingCoordinator::imageBackingStore(uint64_t nativeImageID, Function<RefPtr<Nicosia::Buffer>()> createBuffer)
+Ref<CoordinatedImageBackingStore> CompositingCoordinator::imageBackingStore(Ref<NativeImage>&& nativeImage)
 {
-    auto addResult = m_imageBackingStores.ensure(nativeImageID,
-        [&] {
-            auto store = adoptRef(*new Nicosia::ImageBackingStore);
-            store->backingStoreState().buffer = createBuffer();
-            return store;
-        });
-    return addResult.iterator->value.copyRef();
+    auto nativeImageID = CoordinatedImageBackingStore::uniqueIDForNativeImage(nativeImage.get());
+    auto addResult = m_imageBackingStores.ensure(nativeImageID, [&] {
+        return CoordinatedImageBackingStore::create(WTFMove(nativeImage));
+    });
+    return addResult.iterator->value;
 }
 
 void CompositingCoordinator::requestUpdate()

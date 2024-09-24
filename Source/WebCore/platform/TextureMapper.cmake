@@ -47,6 +47,7 @@ if (USE_COORDINATED_GRAPHICS)
 
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
+        platform/graphics/texmap/coordinated/CoordinatedImageBackingStore.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferExternalOES.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferHolePunch.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferNativeImage.cpp
@@ -58,6 +59,7 @@ if (USE_COORDINATED_GRAPHICS)
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.h
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h
+        platform/graphics/texmap/coordinated/CoordinatedImageBackingStore.h
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBuffer.h
         platform/graphics/texmap/coordinated/Tile.h
         platform/graphics/texmap/coordinated/TiledBackingStore.h
@@ -124,8 +126,6 @@ if (USE_NICOSIA)
         platform/graphics/nicosia/NicosiaBackingStore.h
         platform/graphics/nicosia/NicosiaBuffer.h
         platform/graphics/nicosia/NicosiaCompositionLayer.h
-        platform/graphics/nicosia/NicosiaImageBacking.h
-        platform/graphics/nicosia/NicosiaImageBackingStore.h
         platform/graphics/nicosia/NicosiaPlatformLayer.h
         platform/graphics/nicosia/NicosiaScene.h
         platform/graphics/nicosia/NicosiaSceneIntegration.h

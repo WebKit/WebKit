@@ -50,10 +50,7 @@ bool GraphicsLayerAsyncContentsDisplayDelegateTextureMapper::tryCopyToLayer(Imag
     if (!image)
         return false;
 
-    OptionSet<TextureMapperFlags> flags;
-    if (image->hasAlpha())
-        flags.add(TextureMapperFlags::ShouldBlend);
-    m_proxy->pushNextBuffer(CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(), flags, nullptr));
+    m_proxy->pushNextBuffer(CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(), nullptr));
     return true;
 }
 

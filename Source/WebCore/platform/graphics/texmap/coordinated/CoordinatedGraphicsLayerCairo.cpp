@@ -34,16 +34,6 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect
     return buffer;
 }
 
-Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintImage(Image& image)
-{
-    auto buffer = Nicosia::UnacceleratedBuffer::create(IntSize(image.size()), !image.currentFrameKnownToBeOpaque() ? Nicosia::Buffer::SupportsAlpha : Nicosia::Buffer::NoFlags);
-    Nicosia::PaintingContext::paint(buffer, [&image](GraphicsContext& context) {
-        IntRect rect { { }, IntSize { image.size() } };
-        context.drawImage(image, rect, rect, ImagePaintingOptions(CompositeOperator::Copy));
-    });
-    return buffer;
-}
-
 } // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS) && USE(CAIRO)

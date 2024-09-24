@@ -23,34 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CoordinatedImageBackingStore.h"
 
 #if USE(COORDINATED_GRAPHICS)
-#include "CoordinatedPlatformLayerBuffer.h"
+#include "CoordinatedPlatformLayerBufferNativeImage.h"
+#include "NativeImage.h"
+
+#if USE(CAIRO)
+#include "CairoUtilities.h"
+#endif
 
 namespace WebCore {
 
-class NativeImage;
+Ref<CoordinatedImageBackingStore> CoordinatedImageBackingStore::create(Ref<NativeImage>&& nativeImage)
+{
+    return adoptRef(*new CoordinatedImageBackingStore(WTFMove(nativeImage)));
+}
 
-class CoordinatedPlatformLayerBufferNativeImage final : public CoordinatedPlatformLayerBuffer {
-public:
-    static std::unique_ptr<CoordinatedPlatformLayerBufferNativeImage> create(Ref<NativeImage>&&, std::unique_ptr<GLFence>&&);
-    CoordinatedPlatformLayerBufferNativeImage(Ref<NativeImage>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
-    virtual ~CoordinatedPlatformLayerBufferNativeImage();
+CoordinatedImageBackingStore::CoordinatedImageBackingStore(Ref<NativeImage>&& nativeImage)
+    : m_buffer(CoordinatedPlatformLayerBufferNativeImage::create(WTFMove(nativeImage), nullptr))
+{
+}
 
-    const NativeImage& image() const { return m_image.get(); }
+CoordinatedImageBackingStore::~CoordinatedImageBackingStore() = default;
 
-private:
-    void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
+uint64_t CoordinatedImageBackingStore::uniqueIDForNativeImage(const NativeImage& nativeImage)
+{
+#if USE(CAIRO)
+    return getSurfaceUniqueID(nativeImage.platformImage().get());
+#elif USE(SKIA)
+    return nativeImage.platformImage()->uniqueID();
+#endif
+}
 
-    bool tryEnsureBuffer(TextureMapper&);
-
-    Ref<NativeImage> m_image;
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
-};
+bool CoordinatedImageBackingStore::isSameNativeImage(const NativeImage& nativeImage)
+{
+    return uniqueIDForNativeImage(nativeImage) == uniqueIDForNativeImage(downcast<CoordinatedPlatformLayerBufferNativeImage>(*m_buffer).image());
+}
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_COORDINATED_PLATFORM_LAYER_BUFFER_TYPE(CoordinatedPlatformLayerBufferNativeImage, Type::NativeImage)
 
 #endif // USE(COORDINATED_GRAPHICS)

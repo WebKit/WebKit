@@ -41,16 +41,17 @@
 #include <wtf/WorkerPool.h>
 
 namespace Nicosia {
-class ImageBackingStore;
 class PaintingEngine;
 class SceneIntegration;
 }
 
 namespace WebCore {
 class BitmapTexturePool;
+class CoordinatedImageBackingStore;
 class GraphicsContext;
 class GraphicsLayer;
 class Image;
+class NativeImage;
 }
 
 namespace WebKit {
@@ -101,7 +102,7 @@ private:
     WebCore::BitmapTexturePool* skiaAcceleratedBitmapTexturePool() const override { return m_skiaAcceleratedBitmapTexturePool.get(); }
     WorkerPool* skiaUnacceleratedThreadedRenderingPool() const override { return m_skiaUnacceleratedThreadedRenderingPool.get(); }
 #endif
-    RefPtr<Nicosia::ImageBackingStore> imageBackingStore(uint64_t, Function<RefPtr<Nicosia::Buffer>()>) override;
+    Ref<WebCore::CoordinatedImageBackingStore> imageBackingStore(Ref<WebCore::NativeImage>&&) override;
 
     // GraphicsLayerFactory
     Ref<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
@@ -136,7 +137,7 @@ private:
     std::unique_ptr<WebCore::BitmapTexturePool> m_skiaAcceleratedBitmapTexturePool;
     RefPtr<WorkerPool> m_skiaUnacceleratedThreadedRenderingPool;
 #endif
-    HashMap<uint64_t, Ref<Nicosia::ImageBackingStore>> m_imageBackingStores;
+    HashMap<uint64_t, Ref<CoordinatedImageBackingStore>> m_imageBackingStores;
 
     // We don't send the messages related to releasing resources to renderer during purging, because renderer already had removed all resources.
     bool m_isPurging { false };
