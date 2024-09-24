@@ -64,6 +64,7 @@ public:
     void optimizeAfterWarmUp()
     {
         setNewThreshold(Options::thresholdForBBQOptimizeAfterWarmUp());
+        ASSERT(Options::useWasmIPInt() || checkIfOptimizationThresholdReached());
     }
 
     bool checkIfOptimizationThresholdReached()

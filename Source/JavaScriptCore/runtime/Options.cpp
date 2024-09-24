@@ -775,6 +775,9 @@ void Options::notifyOptionsChanged()
     if (!Options::useWasm())
         disableAllWasmOptions();
 
+    if (!Options::useWasmLLInt() && !Options::useWasmIPInt())
+        Options::thresholdForBBQOptimizeAfterWarmUp() = 0; // Trigger immediate BBQ tier up.
+
     // At initialization time, we may decide that useJIT should be false for any
     // number of reasons (including failing to allocate JIT memory), and therefore,
     // will / should not be able to enable any JIT related services.

@@ -114,9 +114,9 @@ static inline bool jitCompileAndSetHeuristics(Wasm::IPIntCallee* callee, JSWebAs
     if (compile) {
         uint32_t functionIndex = callee->functionIndex();
         if (Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(functionIndex)) {
-            auto plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));
+            auto plan = Wasm::BBQPlan::create(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), Ref(*instance->calleeGroup()), Wasm::Plan::dontFinalize());
             Wasm::ensureWorklist().enqueue(plan.get());
-            if (UNLIKELY(!Options::useConcurrentJIT()))
+            if (UNLIKELY(!Options::useConcurrentJIT() || !Options::useWasmIPInt()))
                 plan->waitForCompletion();
             else
                 tierUpCounter.optimizeAfterWarmUp();
