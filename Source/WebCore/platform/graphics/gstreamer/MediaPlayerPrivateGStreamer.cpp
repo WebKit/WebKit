@@ -713,7 +713,10 @@ MediaTime MediaPlayerPrivateGStreamer::currentTime() const
         return MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value()) - m_startTime;
     }
 
-    if (!m_pipeline || m_didErrorOccur)
+    if (!m_pipeline)
+        return MediaTime::zeroTime();
+
+    if (m_didErrorOccur)
         return MediaTime::invalidTime();
 
     GST_TRACE_OBJECT(pipeline(), "seeking: %s, seekTarget: %s", boolForPrinting(m_isSeeking), m_seekTarget.toString().utf8().data());
