@@ -4612,6 +4612,7 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
         | FiltersChanged
         | BackdropFiltersChanged
         | BackdropRootChanged
+        | BlendModeChanged
         | MaskLayerChanged
         | OpacityChanged
         | EventRegionChanged
