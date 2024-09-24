@@ -554,10 +554,16 @@ void PlatformCAFilters::setBlendingFiltersOnLayer(PlatformLayer* layer, const Bl
         filter = [CAFilter filterWithType:kCAFilterPlusL];
         break;
     case BlendMode::Hue:
+        filter = [CAFilter filterWithType:kCAFilterHueBlendMode];
+        break;
     case BlendMode::Saturation:
+        filter = [CAFilter filterWithType:kCAFilterSaturationBlendMode];
+        break;
     case BlendMode::Color:
+        filter = [CAFilter filterWithType:kCAFilterColorBlendMode];
+        break;
     case BlendMode::Luminosity:
-        // FIXME: CA does't support non-separable blend modes on compositing filters.
+        filter = [CAFilter filterWithType:kCAFilterLuminosityBlendMode];
         break;
     default:
         ASSERT_NOT_REACHED();

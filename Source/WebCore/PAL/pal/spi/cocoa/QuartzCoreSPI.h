@@ -327,6 +327,10 @@ extern NSString * const kCAFilterSoftLightBlendMode;
 extern NSString * const kCAFilterHardLightBlendMode;
 extern NSString * const kCAFilterDifferenceBlendMode;
 extern NSString * const kCAFilterExclusionBlendMode;
+extern NSString * const kCAFilterHueBlendMode;
+extern NSString * const kCAFilterSaturationBlendMode;
+extern NSString * const kCAFilterColorBlendMode;
+extern NSString * const kCAFilterLuminosityBlendMode;
 
 extern NSString * const kCAContextCIFilterBehavior;
 extern NSString * const kCAContextDisplayName;

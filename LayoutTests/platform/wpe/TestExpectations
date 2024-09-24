@@ -1573,6 +1573,8 @@ compositing/visible-rect/nested-transform.html [ Failure ]
 compositing/visible-rect/scrolled.html [ Failure ]
 compositing/video/video-border-radius-clipping.html [ Pass ImageOnlyFailure ]
 
+# No support for blend modes on compositing layers
+compositing/blend-mode [ Skip ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-blended-element-overflow-scroll.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-element-overflow-scroll.html [ ImageOnlyFailure ]
 
