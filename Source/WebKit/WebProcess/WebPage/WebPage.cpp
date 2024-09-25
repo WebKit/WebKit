@@ -4646,7 +4646,7 @@ void WebPage::adjustSettingsForLockdownMode(Settings& settings, const WebPrefere
     if (settings.downloadableBinaryFontTrustedTypes() != DownloadableBinaryFontTrustedTypes::None) {
         settings.setDownloadableBinaryFontTrustedTypes(
             (settings.lockdownFontParserEnabled() && PAL::canLoad_CoreText_CTFontManagerCreateMemorySafeFontDescriptorFromData())
-                ? DownloadableBinaryFontTrustedTypes::FallbackParser
+                ? DownloadableBinaryFontTrustedTypes::SafeFontParser
                 : DownloadableBinaryFontTrustedTypes::Restricted);
     }
 #endif
