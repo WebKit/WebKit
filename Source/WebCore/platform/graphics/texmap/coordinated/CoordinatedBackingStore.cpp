@@ -75,7 +75,14 @@ void CoordinatedBackingStoreTile::swapBuffers(TextureMapper& textureMapper)
         if (update.buffer->isBackedByOpenGL()) {
             WTFBeginSignpost(this, CopyTextureGPUToGPU);
             auto& buffer = static_cast<Nicosia::AcceleratedBuffer&>(*update.buffer);
-            m_texture->copyFromExternalTexture(buffer.texture().id(), update.sourceRect, toIntSize(update.bufferOffset));
+
+            // Fast path: whole tile content changed -- take ownership of the incoming texture, replacing the existing tile buffer (avoiding texture copies).
+            if (update.sourceRect.size() == update.tileRect.size()) {
+                ASSERT(update.sourceRect.location().isZero());
+                m_texture->swapTexture(buffer.texture());
+            } else
+                m_texture->copyFromExternalTexture(buffer.texture().id(), update.sourceRect, toIntSize(update.bufferOffset));
+
             update.buffer = nullptr;
             WTFEndSignpost(this, CopyTextureGPUToGPU);
             WTFEndSignpost(this, CoordinatedSwapBuffer);

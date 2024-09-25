@@ -71,6 +71,7 @@ public:
     void updateContents(GraphicsLayer*, const IntRect& target, const IntPoint& offset, float scale = 1);
     void updateContents(const void* srcData, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine, PixelFormat);
 
+    void swapTexture(BitmapTexture&);
     void reset(const IntSize&, OptionSet<Flags> = { });
 
     int numberOfBytes() const { return size().width() * size().height() * 32 >> 3; }
@@ -102,7 +103,6 @@ private:
     bool m_shouldClear { true };
     ClipStack m_clipStack;
     RefPtr<const FilterOperation> m_filterOperation;
-    GLenum m_textureFormat { 0 };
     PixelFormat m_pixelFormat { PixelFormat::RGBA8 };
 };
 
