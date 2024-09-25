@@ -101,7 +101,7 @@ void RenderMathMLUnderOver::stretchHorizontalOperatorsAndLayoutChildren()
     bool isAllStretchyOperators = true;
     LayoutUnit stretchWidth;
 
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         if (auto* stretchyOperator = horizontalStretchyOperator(*child)) {
             embellishedOperators.append(child);
             stretchyOperators.append(stretchyOperator);
@@ -132,19 +132,19 @@ bool RenderMathMLUnderOver::isValid() const
     // <munder> base under </munder>
     // <mover> base over </mover>
     // <munderover> base under over </munderover>
-    auto* child = firstChildBox();
+    auto* child = firstInFlowChildBox();
     if (!child)
         return false;
-    child = child->nextSiblingBox();
+    child = child->nextInFlowSiblingBox();
     if (!child)
         return false;
-    child = child->nextSiblingBox();
+    child = child->nextInFlowSiblingBox();
     switch (scriptType()) {
     case MathMLScriptsElement::ScriptType::Over:
     case MathMLScriptsElement::ScriptType::Under:
         return !child;
     case MathMLScriptsElement::ScriptType::UnderOver:
-        return child && !child->nextSiblingBox();
+        return child && !child->nextInFlowSiblingBox();
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -163,22 +163,22 @@ bool RenderMathMLUnderOver::shouldMoveLimits() const
 RenderBox& RenderMathMLUnderOver::base() const
 {
     ASSERT(isValid());
-    return *firstChildBox();
+    return *firstInFlowChildBox();
 }
 
 RenderBox& RenderMathMLUnderOver::under() const
 {
     ASSERT(isValid());
     ASSERT(scriptType() == MathMLScriptsElement::ScriptType::Under || scriptType() == MathMLScriptsElement::ScriptType::UnderOver);
-    return *firstChildBox()->nextSiblingBox();
+    return *firstInFlowChildBox()->nextInFlowSiblingBox();
 }
 
 RenderBox& RenderMathMLUnderOver::over() const
 {
     ASSERT(isValid());
     ASSERT(scriptType() == MathMLScriptsElement::ScriptType::Over || scriptType() == MathMLScriptsElement::ScriptType::UnderOver);
-    auto* secondChild = firstChildBox()->nextSiblingBox();
-    return scriptType() == MathMLScriptsElement::ScriptType::Over ? *secondChild : *secondChild->nextSiblingBox();
+    auto* secondChild = firstInFlowChildBox()->nextInFlowSiblingBox();
+    return scriptType() == MathMLScriptsElement::ScriptType::Over ? *secondChild : *secondChild->nextInFlowSiblingBox();
 }
 
 
@@ -296,10 +296,7 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
 {
     ASSERT(needsLayout());
 
-    for (auto& box : childrenOfType<RenderBox>(*this)) {
-        if (box.isOutOfFlowPositioned())
-            box.containingBlock()->insertPositionedObject(box);
-    }
+    insertPositionedChildrenIntoContainingBlock();
 
     if (!relayoutChildren && simplifiedLayout())
         return;
@@ -313,6 +310,8 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
         RenderMathMLScripts::layoutBlock(relayoutChildren, pageLogicalHeight);
         return;
     }
+
+    layoutFloatingChildren();
 
     recomputeLogicalWidth();
     computeAndSetBlockDirectionMarginsOfChildren();

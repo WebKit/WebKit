@@ -59,7 +59,7 @@ MathMLRowElement& RenderMathMLRow::element() const
 
 std::optional<LayoutUnit> RenderMathMLRow::firstLineBaseline() const
 {
-    auto* baselineChild = firstChildBox();
+    auto* baselineChild = firstInFlowChildBox();
     if (!baselineChild)
         return std::optional<LayoutUnit>();
 
@@ -80,11 +80,7 @@ void RenderMathMLRow::stretchVerticalOperatorsAndLayoutChildren()
 {
     // First calculate stretch ascent and descent.
     LayoutUnit stretchAscent, stretchDescent;
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (child->isOutOfFlowPositioned()) {
-            child->containingBlock()->insertPositionedObject(*child);
-            continue;
-        }
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         if (toVerticalStretchyOperator(child))
             continue;
         child->layoutIfNeeded();
@@ -100,9 +96,7 @@ void RenderMathMLRow::stretchVerticalOperatorsAndLayoutChildren()
     }
 
     // Next, we stretch the vertical operators.
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (child->isOutOfFlowPositioned())
-            continue;
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         if (auto renderOperator = toVerticalStretchyOperator(child)) {
             renderOperator->stretchTo(stretchAscent, stretchDescent);
             renderOperator->layoutIfNeeded();
@@ -116,10 +110,7 @@ void RenderMathMLRow::getContentBoundingBox(LayoutUnit& width, LayoutUnit& ascen
     ascent = 0;
     descent = 0;
     width = 0;
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (child->isOutOfFlowPositioned())
-            continue;
-
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         width += child->marginStart() + child->logicalWidth() + child->marginEnd();
         LayoutUnit childAscent = ascentForChild(*child) + child->marginBefore();
         LayoutUnit childDescent = child->logicalHeight() + child->marginLogicalHeight() - childAscent;
@@ -131,9 +122,7 @@ void RenderMathMLRow::getContentBoundingBox(LayoutUnit& width, LayoutUnit& ascen
 LayoutUnit RenderMathMLRow::preferredLogicalWidthOfRowItems()
 {
     LayoutUnit preferredWidth = 0;
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (child->isOutOfFlowPositioned())
-            continue;
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         preferredWidth += child->maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(*child);
     }
     return preferredWidth;
@@ -151,9 +140,7 @@ void RenderMathMLRow::computePreferredLogicalWidths()
 void RenderMathMLRow::layoutRowItems(LayoutUnit width, LayoutUnit ascent)
 {
     LayoutUnit horizontalOffset = 0;
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (child->isOutOfFlowPositioned())
-            continue;
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         horizontalOffset += child->marginStart();
         LayoutUnit childVerticalOffset = ascent - ascentForChild(*child);
         LayoutUnit childWidth = child->logicalWidth();
@@ -171,7 +158,7 @@ void RenderMathMLRow::layoutRowItems(LayoutUnit width, LayoutUnit ascent)
 void RenderMathMLRow::shiftRowItems(LayoutUnit left, LayoutUnit top)
 {
     LayoutPoint shift(left, top);
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
         child->setLocation(child->location() + shift);
 }
 
@@ -179,8 +166,12 @@ void RenderMathMLRow::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
 
+    insertPositionedChildrenIntoContainingBlock();
+
     if (!relayoutChildren && simplifiedLayout())
         return;
+
+    layoutFloatingChildren();
 
     recomputeLogicalWidth();
     computeAndSetBlockDirectionMarginsOfChildren();

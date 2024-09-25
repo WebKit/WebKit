@@ -573,13 +573,12 @@ void RenderMathMLToken::layoutBlock(bool relayoutChildren, LayoutUnit pageLogica
 {
     ASSERT(needsLayout());
 
-    for (auto& box : childrenOfType<RenderBox>(*this)) {
-        if (box.isOutOfFlowPositioned())
-            box.containingBlock()->insertPositionedObject(box);
-    }
+    insertPositionedChildrenIntoContainingBlock();
 
     if (!relayoutChildren && simplifiedLayout())
         return;
+
+    layoutFloatingChildren();
 
     GlyphData mathVariantGlyph;
     if (m_mathVariantCodePoint)
@@ -591,7 +590,7 @@ void RenderMathMLToken::layoutBlock(bool relayoutChildren, LayoutUnit pageLogica
     }
 
     recomputeLogicalWidth();
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
         child->layoutIfNeeded();
     setLogicalWidth(LayoutUnit(mathVariantGlyph.font->widthForGlyph(mathVariantGlyph.glyph)) + borderAndPaddingLogicalWidth());
     setLogicalHeight(LayoutUnit(mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).height()) + borderAndPaddingLogicalHeight());

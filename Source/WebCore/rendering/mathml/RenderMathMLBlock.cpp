@@ -152,7 +152,7 @@ void RenderMathMLBlock::layoutItems(bool relayoutChildren)
     LayoutUnit horizontalOffset = borderStart() + paddingStart();
 
     LayoutUnit preferredHorizontalExtent;
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         LayoutUnit childHorizontalExtent = child->maxPreferredLogicalWidth() - child->horizontalBorderAndPaddingExtent();
         LayoutUnit childHorizontalMarginBoxExtent = child->horizontalBorderAndPaddingExtent() + childHorizontalExtent;
         childHorizontalMarginBoxExtent += child->horizontalMarginExtent();
@@ -161,7 +161,7 @@ void RenderMathMLBlock::layoutItems(bool relayoutChildren)
     }
 
     LayoutUnit currentHorizontalExtent = contentLogicalWidth();
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         auto everHadLayout = child->everHadLayout();
         LayoutUnit childSize = child->maxPreferredLogicalWidth() - child->horizontalBorderAndPaddingExtent();
 
@@ -198,8 +198,12 @@ void RenderMathMLBlock::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
 
+    insertPositionedChildrenIntoContainingBlock();
+
     if (!relayoutChildren && simplifiedLayout())
         return;
+
+    layoutFloatingChildren();
 
     LayoutRepainter repainter(*this);
 
@@ -223,7 +227,7 @@ void RenderMathMLBlock::layoutBlock(bool relayoutChildren, LayoutUnit)
 
 void RenderMathMLBlock::computeAndSetBlockDirectionMarginsOfChildren()
 {
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
         child->computeAndSetBlockDirectionMargins(*this);
 }
 
@@ -234,6 +238,28 @@ void RenderMathMLBlock::styleDidChange(StyleDifference diff, const RenderStyle* 
     // MathML displaystyle changes can affect layout.
     if (oldStyle && style().mathStyle() != oldStyle->mathStyle())
         setNeedsLayoutAndPrefWidthsRecalc();
+}
+
+void RenderMathMLBlock::insertPositionedChildrenIntoContainingBlock()
+{
+    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (child->isOutOfFlowPositioned())
+            child->containingBlock()->insertPositionedObject(*child);
+    }
+}
+
+void RenderMathMLBlock::layoutFloatingChildren()
+{
+    // According to the spec, https://w3c.github.io/mathml-core/#css-styling:
+    // > The float property does not create floating of elements whose parent's computed display value is block math or inline math,
+    // > and does not take them out-of-flow.
+    // However, WebKit does not currently do this since `display: math` is unimplemented. See webkit.org/b/278533.
+    // Since this leaves floats as neither positioned nor in-flow, perform dummy layout for floating children.
+    // FIXME: Per the spec, there should be no floating children inside MathML renderers.
+    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (child->isFloating())
+            child->layoutIfNeeded();
+    }
 }
 
 }

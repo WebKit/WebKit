@@ -74,6 +74,8 @@ protected:
 
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
     void computeAndSetBlockDirectionMarginsOfChildren();
+    void insertPositionedChildrenIntoContainingBlock();
+    void layoutFloatingChildren();
 
 private:
     bool isRenderMathMLBlock() const final { return true; }

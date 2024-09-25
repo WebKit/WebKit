@@ -221,15 +221,19 @@ void RenderMathMLOperator::layoutBlock(bool relayoutChildren, LayoutUnit pageLog
 {
     ASSERT(needsLayout());
 
+    insertPositionedChildrenIntoContainingBlock();
+
     if (!relayoutChildren && simplifiedLayout())
         return;
+
+    layoutFloatingChildren();
 
     LayoutUnit leadingSpaceValue = leadingSpace();
     LayoutUnit trailingSpaceValue = trailingSpace();
 
     if (useMathOperator()) {
         recomputeLogicalWidth();
-        for (auto child = firstChildBox(); child; child = child->nextSiblingBox())
+        for (auto child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
             child->layoutIfNeeded();
         setLogicalWidth(leadingSpaceValue + m_mathOperator.width() + trailingSpaceValue + borderAndPaddingLogicalWidth());
         setLogicalHeight(m_mathOperator.ascent() + m_mathOperator.descent() + borderAndPaddingLogicalHeight());
@@ -246,7 +250,7 @@ void RenderMathMLOperator::layoutBlock(bool relayoutChildren, LayoutUnit pageLog
 
         // We then move the children to take spacing into account.
         LayoutPoint horizontalShift(style().direction() == TextDirection::LTR ? leadingSpaceValue : -leadingSpaceValue, 0_lu);
-        for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
+        for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
             child->setLocation(child->location() + horizontalShift);
     }
 
