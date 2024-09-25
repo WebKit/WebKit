@@ -2235,8 +2235,6 @@ private:
 
     void setUserInterfaceLayoutDirection(uint32_t);
 
-    bool canPluginHandleResponse(const WebCore::ResourceResponse&);
-
     void simulateDeviceOrientationChange(double alpha, double beta, double gamma);
 
 #if USE(SYSTEM_PREVIEW)
