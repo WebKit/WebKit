@@ -78,8 +78,6 @@ Ref<ViewTimeline> ViewTimeline::createFromCSSValue(Style::BuilderState& builderS
 ViewTimeline::ViewTimeline(ViewTimelineOptions&& options)
     : ScrollTimeline(nullAtom(), options.axis)
     , m_subject(WTFMove(options.subject))
-    , m_startOffset(CSSNumericFactory::px(0))
-    , m_endOffset(CSSNumericFactory::px(0))
 {
     if (m_subject)
         m_subject->protectedDocument()->ensureTimelinesController().addTimeline(*this);
@@ -87,8 +85,6 @@ ViewTimeline::ViewTimeline(ViewTimelineOptions&& options)
 
 ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, ViewTimelineInsets&& insets)
     : ScrollTimeline(name, axis)
-    , m_startOffset(CSSNumericFactory::px(0))
-    , m_endOffset(CSSNumericFactory::px(0))
     , m_insets(WTFMove(insets))
 {
 }
@@ -201,6 +197,18 @@ ViewTimeline::Data ViewTimeline::computeViewTimelineData() const
     auto coverRangeEnd = coverRangeStart + subjectSize;
 
     return { scrollContainerSize, subjectOffset, currentScrollOffset, coverRangeEnd };
+}
+
+const CSSNumericValue& ViewTimeline::startOffset() const
+{
+    auto data = computeViewTimelineData();
+    return CSSNumericFactory::px(data.subjectOffset - data.scrollContainerSize);
+}
+
+const CSSNumericValue& ViewTimeline::endOffset() const
+{
+    auto data = computeViewTimelineData();
+    return CSSNumericFactory::px(data.subjectOffset + data.coverRangeEnd - data.scrollContainerSize);
 }
 
 } // namespace WebCore

@@ -53,8 +53,8 @@ public:
     static Ref<ViewTimeline> createFromCSSValue(Style::BuilderState&, const CSSViewValue&);
 
     Element* subject() const { return m_subject.get(); }
-    const CSSNumericValue& startOffset() const { return m_startOffset.get(); }
-    const CSSNumericValue& endOffset() const { return m_endOffset.get(); }
+    const CSSNumericValue& startOffset() const;
+    const CSSNumericValue& endOffset() const;
     const ViewTimelineInsets& insets() const { return m_insets; }
     AnimationTimeline::ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents() override;
     AnimationTimelinesController* controller() const override;
@@ -79,8 +79,6 @@ private:
     bool isViewTimeline() const final { return true; }
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_subject;
-    Ref<CSSNumericValue> m_startOffset;
-    Ref<CSSNumericValue> m_endOffset;
     ViewTimelineInsets m_insets;
 };
 
