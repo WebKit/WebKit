@@ -51,10 +51,14 @@ void TestWithEnabledIf::didReceiveMessage(IPC::Connection& connection, IPC::Deco
         return;
     }
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithEnabledIf::AlwaysEnabled::name())
-        return IPC::handleMessage<Messages::TestWithEnabledIf::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledIf::alwaysEnabled);
-    if (decoder.messageName() == Messages::TestWithEnabledIf::OnlyEnabledIfFeatureEnabled::name() && featureEnabled())
-        return IPC::handleMessage<Messages::TestWithEnabledIf::OnlyEnabledIfFeatureEnabled>(connection, decoder, this, &TestWithEnabledIf::onlyEnabledIfFeatureEnabled);
+    if (decoder.messageName() == Messages::TestWithEnabledIf::AlwaysEnabled::name()) {
+        IPC::handleMessage<Messages::TestWithEnabledIf::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledIf::alwaysEnabled);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithEnabledIf::OnlyEnabledIfFeatureEnabled::name() && featureEnabled()) {
+        IPC::handleMessage<Messages::TestWithEnabledIf::OnlyEnabledIfFeatureEnabled>(connection, decoder, this, &TestWithEnabledIf::onlyEnabledIfFeatureEnabled);
+        return;
+    }
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)

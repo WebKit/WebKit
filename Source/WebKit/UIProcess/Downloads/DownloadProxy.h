@@ -81,9 +81,6 @@ public:
     void invalidate();
     void processDidClose();
 
-    void didReceiveDownloadProxyMessage(IPC::Connection&, IPC::Decoder&);
-    bool didReceiveSyncDownloadProxyMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
-
     WebPageProxy* originatingPage() const;
 
     void setRedirectChain(Vector<URL>&& redirectChain) { m_redirectChain = WTFMove(redirectChain); }

@@ -29,9 +29,11 @@
 #pragma once
 
 #include "ConnectionHandle.h"
+#include "Encoder.h"
 #include "MessageReceiveQueueMap.h"
 #include "MessageReceiver.h"
 #include "ReceiverMatcher.h"
+#include "ReplyID.h"
 #include "Timeout.h"
 #include <wtf/Assertions.h>
 #include <wtf/CheckedPtr.h>
@@ -101,6 +103,7 @@ enum class Error : uint8_t {
     WaitingOnAlreadyDispatchedMessage,
     AttemptingToWaitInsideSyncMessageHandling,
     SyncMessageInterruptedWait,
+    SyncMessageCancelled,
     CantWaitForSyncReplies,
     FailedToEncodeMessageArguments,
     FailedToDecodeReplyArguments,
@@ -165,7 +168,6 @@ template<typename AsyncReplyResult> struct AsyncReplyError {
 };
 
 class Decoder;
-class Encoder;
 class MachMessage;
 class UnixMessage;
 class WorkQueueMessageReceiver;
@@ -222,13 +224,8 @@ struct ConnectionAsyncReplyHandler {
     Markable<AsyncReplyID> replyID;
 };
 
-enum class ConnectionSyncRequestIDType { };
-using ConnectionSyncRequestID = LegacyNullableAtomicObjectIdentifier<ConnectionSyncRequestIDType>;
-
 class Connection : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Connection, WTF::DestructionThread::MainRunLoop> {
 public:
-    enum class SyncRequestIDType { };
-    using SyncRequestID = ConnectionSyncRequestID;
     using AsyncReplyID = IPC::AsyncReplyID;
 
     class Client : public MessageReceiver, public CanMakeThreadSafeCheckedPtr<Client> {
@@ -431,11 +428,17 @@ public:
 
     using AsyncReplyHandler = ConnectionAsyncReplyHandler;
     Error sendMessageWithAsyncReply(UniqueRef<Encoder>&&, AsyncReplyHandler, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> = std::nullopt);
-    UniqueRef<Encoder> createSyncMessageEncoder(MessageName, uint64_t destinationID, SyncRequestID&);
-    DecoderOrError sendSyncMessage(SyncRequestID, UniqueRef<Encoder>&&, Timeout, OptionSet<SendSyncOption> sendSyncOptions);
-    Error sendSyncReply(UniqueRef<Encoder>&&);
+    struct EncoderAndReplyID {
+        UniqueRef<Encoder> encoder;
+        ReplyID replyID;
+    };
+    EncoderAndReplyID createSyncMessageEncoder(MessageName, uint64_t destinationID);
+    DecoderOrError sendSyncMessage(ReplyID, UniqueRef<Encoder>&&, Timeout, OptionSet<SendSyncOption> sendSyncOptions);
+
     template<typename T, typename... Arguments>
-    void sendAsyncReply(AsyncReplyID, Arguments&&...);
+    Error sendSyncReply(ReplyID, Arguments&&...);
+    template<typename T, typename... Arguments>
+    Error sendAsyncReply(AsyncReplyID, Arguments&&...);
 
     void wakeUpRunLoop();
 
@@ -517,10 +520,9 @@ private:
 
     DecoderOrError waitForMessage(MessageName, uint64_t destinationID, Timeout, OptionSet<WaitForOption>);
 
-    SyncRequestID makeSyncRequestID() { return SyncRequestID::generate(); }
-    bool pushPendingSyncRequestID(SyncRequestID);
-    void popPendingSyncRequestID(SyncRequestID);
-    DecoderOrError waitForSyncReply(SyncRequestID, MessageName, Timeout, OptionSet<SendSyncOption>);
+    bool pushPendingSyncRequestID(ReplyID);
+    void popPendingSyncRequestID(ReplyID);
+    DecoderOrError waitForSyncReply(ReplyID, MessageName, Timeout, OptionSet<SendSyncOption>);
 
     void enqueueMatchingMessagesToMessageReceiveQueue(MessageReceiveQueue&, const ReceiverMatcher&) WTF_REQUIRES_LOCK(m_incomingMessagesLock);
 
@@ -776,9 +778,7 @@ Ref<Promise> Connection::sendWithPromisedReply(T&& message, uint64_t destination
 template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& message, uint64_t destinationID, Timeout timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
     static_assert(T::isSync, "Sync message expected");
-    SyncRequestID syncRequestID;
-    auto encoder = createSyncMessageEncoder(T::name(), destinationID, syncRequestID);
-
+    auto [encoder, replyID] = createSyncMessageEncoder(T::name(), destinationID);
     if (sendSyncOptions.contains(SendSyncOption::UseFullySynchronousModeForTesting)) {
         encoder->setFullySynchronousModeForTesting();
         m_fullySynchronousModeIsAllowedForTesting = true;
@@ -788,26 +788,36 @@ template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& mess
     encoder.get() << message.arguments();
 
     // Now send the message and wait for a reply.
-    auto replyDecoderOrError = sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, sendSyncOptions);
+    auto replyDecoderOrError = sendSyncMessage(replyID, WTFMove(encoder), timeout, sendSyncOptions);
     if (!replyDecoderOrError.has_value()) {
         ASSERT(replyDecoderOrError.error() != Error::NoError);
         return { replyDecoderOrError.error() };
     }
 
+    UniqueRef decoder = WTFMove(replyDecoderOrError.value());
+    if (decoder->messageName() == MessageName::CancelSyncMessageReply)
+        return { Error::SyncMessageCancelled };
     std::optional<typename T::ReplyArguments> replyArguments;
-    *replyDecoderOrError.value() >> replyArguments;
+    *decoder >> replyArguments;
     if (!replyArguments)
         return { Error::FailedToDecodeReplyArguments };
-
-    return SendSyncResult<T> { WTFMove(replyDecoderOrError.value()), WTFMove(*replyArguments) };
+    return SendSyncResult<T> { WTFMove(decoder), WTFMove(*replyArguments) };
 }
 
 template<typename T, typename... Arguments>
-void Connection::sendAsyncReply(AsyncReplyID asyncReplyID, Arguments&&... arguments)
+Error Connection::sendSyncReply(ReplyID replyID, Arguments&&... arguments)
+{
+    auto encoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, replyID.toUInt64());
+    (encoder.get() << ... << std::forward<Arguments>(arguments));
+    return sendMessageImpl(WTFMove(encoder), { });
+}
+
+template<typename T, typename... Arguments>
+Error Connection::sendAsyncReply(AsyncReplyID asyncReplyID, Arguments&&... arguments)
 {
     auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), asyncReplyID.toUInt64());
     (encoder.get() << ... << std::forward<Arguments>(arguments));
-    sendSyncReply(WTFMove(encoder));
+    return sendMessageImpl(WTFMove(encoder), { });
 }
 
 template<typename T> Error Connection::waitForAndDispatchImmediately(uint64_t destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)

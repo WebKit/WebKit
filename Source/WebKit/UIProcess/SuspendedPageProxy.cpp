@@ -299,9 +299,8 @@ void SuspendedPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Dec
 #endif
 }
 
-bool SuspendedPageProxy::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&)
+void SuspendedPageProxy::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&)
 {
-    return false;
 }
 
 #if !LOG_DISABLED

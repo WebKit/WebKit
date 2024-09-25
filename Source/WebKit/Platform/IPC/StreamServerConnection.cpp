@@ -116,11 +116,10 @@ void StreamServerConnection::didReceiveMessage(Connection&, Decoder&)
     // All messages go to message queue.
     ASSERT_NOT_REACHED();
 }
-bool StreamServerConnection::didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&)
+void StreamServerConnection::didReceiveSyncMessage(Connection&, Decoder&)
 {
     // All messages go to message queue.
     ASSERT_NOT_REACHED();
-    return false;
 }
 
 void StreamServerConnection::didClose(Connection&)
@@ -224,7 +223,7 @@ bool StreamServerConnection::dispatchStreamMessage(Decoder&& decoder, StreamMess
     if (decoder.isSyncMessage()) {
         result = m_buffer.releaseAll();
         if (m_syncReplyToDispatch)
-            protectedConnection()->sendSyncReply(makeUniqueRefFromNonNullUniquePtr(WTFMove(m_syncReplyToDispatch)));
+            protectedConnection()->sendMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(m_syncReplyToDispatch)), { });
     } else
         result = m_buffer.release(decoder.currentBufferOffset());
     if (result == WakeUpClient::Yes)
@@ -273,15 +272,5 @@ RefPtr<StreamConnectionWorkQueue> StreamServerConnection::protectedWorkQueue() c
 {
     return m_workQueue;
 }
-
-#if ENABLE(IPC_TESTING_API)
-void StreamServerConnection::sendDeserializationErrorSyncReply(Connection::SyncRequestID syncRequestID)
-{
-    auto encoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID.toUInt64());
-    encoder->setSyncMessageDeserializationFailure();
-    m_connection->sendSyncReply(WTFMove(encoder));
-}
-#endif
-
 
 }

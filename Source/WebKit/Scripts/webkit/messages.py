@@ -693,10 +693,12 @@ def async_message_statement(receiver, message):
     result = []
     runtime_enablement = generate_runtime_enablement(receiver, message)
     if runtime_enablement:
-        result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s)\n' % (receiver.name, message.name, runtime_enablement))
+        result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s) {\n' % (receiver.name, message.name, runtime_enablement))
     else:
-        result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
-    result.append('        return IPC::%s<Messages::%s::%s>(%s%s);\n' % (dispatch_function, receiver.name, message.name, connection, ', '.join(dispatch_function_args)))
+        result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
+    result.append('        IPC::%s<Messages::%s::%s>(%s%s);\n' % (dispatch_function, receiver.name, message.name, connection, ', '.join(dispatch_function_args)))
+    result.append('        return;\n')
+    result.append('    }\n')
     return result
 
 
@@ -707,19 +709,15 @@ def sync_message_statement(receiver, message):
     elif message.reply_parameters is not None:
         dispatch_function += 'Async'
 
-    maybe_reply_encoder = ", *replyEncoder"
-    if receiver.has_attribute(STREAM_ATTRIBUTE):
-        maybe_reply_encoder = ''
-    elif message.reply_parameters is not None:
-        maybe_reply_encoder = ', replyEncoder'
-
     result = []
     runtime_enablement = generate_runtime_enablement(receiver, message)
     if runtime_enablement:
-        result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s)\n' % (receiver.name, message.name, runtime_enablement))
+        result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s) {\n' % (receiver.name, message.name, runtime_enablement))
     else:
-        result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
-    result.append('        return IPC::%s<Messages::%s::%s>(connection, decoder%s, this, &%s);\n' % (dispatch_function, receiver.name, message.name, maybe_reply_encoder, handler_function(receiver, message)))
+        result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
+    result.append('        IPC::%s<Messages::%s::%s>(connection, decoder, this, &%s);\n' % (dispatch_function, receiver.name, message.name, handler_function(receiver, message)))
+    result.append('        return;\n')
+    result.append('    }\n')
     return result
 
 
@@ -1434,30 +1432,28 @@ def generate_message_handler(receiver):
 
     if not receiver.has_attribute(STREAM_ATTRIBUTE) and (sync_messages or receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE)):
         result.append('\n')
-        result.append('bool %s::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)\n' % (receiver.name))
+        result.append('void %s::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder)\n' % (receiver.name))
         result.append('{\n')
-        result += generate_enabled_by_for_receiver(receiver, sync_messages, 'connection.ignoreInvalidMessageForTesting()', 'false')
+        result += generate_enabled_by_for_receiver(receiver, sync_messages, 'connection.ignoreInvalidMessageForTesting()')
         if not receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE):
             result.append('    Ref protectedThis { *this };\n')
         result += sync_message_statements
         if receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE):
-            result.append('    if (dispatchSyncMessage(connection, decoder, replyEncoder))\n')
-            result.append('        return true;\n')
+            result.append('    if (dispatchSyncMessage(connection, decoder))\n')
+            result.append('        return;\n')
         if (receiver.superclass):
-            result.append('    return %s::didReceiveSyncMessage(connection, decoder, replyEncoder);\n' % (receiver.superclass))
+            result.append('    %s::didReceiveSyncMessage(connection, decoder);\n' % (receiver.superclass))
         else:
             if not receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
                 result.append('    UNUSED_PARAM(connection);\n')
             result.append('    UNUSED_PARAM(decoder);\n')
-            result.append('    UNUSED_PARAM(replyEncoder);\n')
 
             if not receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
                 result.append('#if ENABLE(IPC_TESTING_API)\n')
                 result.append('    if (connection.ignoreInvalidMessageForTesting())\n')
-                result.append('        return false;\n')
+                result.append('        return;\n')
                 result.append('#endif // ENABLE(IPC_TESTING_API)\n')
             result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()).characters(), decoder.destinationID());\n')
-            result.append('    return false;\n')
         result.append('}\n')
 
     result.append('\n')

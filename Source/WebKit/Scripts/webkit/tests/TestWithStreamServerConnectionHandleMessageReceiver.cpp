@@ -39,8 +39,10 @@ namespace WebKit {
 void TestWithStreamServerConnectionHandle::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithStreamServerConnectionHandle::SendStreamServerConnection::name())
-        return IPC::handleMessage<Messages::TestWithStreamServerConnectionHandle::SendStreamServerConnection>(connection, decoder, this, &TestWithStreamServerConnectionHandle::sendStreamServerConnection);
+    if (decoder.messageName() == Messages::TestWithStreamServerConnectionHandle::SendStreamServerConnection::name()) {
+        IPC::handleMessage<Messages::TestWithStreamServerConnectionHandle::SendStreamServerConnection>(connection, decoder, this, &TestWithStreamServerConnectionHandle::sendStreamServerConnection);
+        return;
+    }
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)

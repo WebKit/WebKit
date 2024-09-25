@@ -137,7 +137,7 @@ public:
 #endif
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&);
 
     void getConfiguration(RemoteMediaPlayerConfiguration&);
 

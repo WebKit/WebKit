@@ -184,9 +184,8 @@ public:
         addMessage(decoder);
     }
 
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&) override
     {
-        return false;
     }
 
     void didClose(IPC::Connection&) final
@@ -203,9 +202,11 @@ public:
     void didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder) override
     {
         if (decoder.isSyncMessage()) {
-            if (m_syncMessageHandler && m_syncMessageHandler(connection, decoder))
-                return;
-        } else if (m_asyncMessageHandler && m_asyncMessageHandler(decoder))
+            if (m_syncMessageHandler)
+                m_syncMessageHandler(connection, decoder);
+            return;
+        }
+        if (m_asyncMessageHandler && m_asyncMessageHandler(decoder))
             return;
         addMessage(decoder);
     }
@@ -217,13 +218,13 @@ public:
     }
 
     // Handler returns false if the message should be just recorded.
-    void setSyncMessageHandler(Function<bool(IPC::StreamServerConnection&, IPC::Decoder&)>&& handler)
+    void setSyncMessageHandler(Function<void(IPC::StreamServerConnection&, IPC::Decoder&)>&& handler)
     {
         m_syncMessageHandler = WTFMove(handler);
     }
 private:
     Function<bool(IPC::Decoder&)> m_asyncMessageHandler;
-    Function<bool(IPC::StreamServerConnection&, IPC::Decoder&)> m_syncMessageHandler;
+    Function<void(IPC::StreamServerConnection&, IPC::Decoder&)> m_syncMessageHandler;
 };
 
 }
@@ -516,10 +517,10 @@ TEST_P(StreamMessageTest, SendSyncMessage)
     const uint32_t messageCount = 2004u;
     auto cleanup = localReferenceBarrier();
     m_mockServerReceiver->setSyncMessageHandler([](IPC::StreamServerConnection& connection, IPC::Decoder& decoder) {
-        auto listenerID = decoder.decode<IPC::Connection::SyncRequestID>();
+        auto replyID = decoder.markHandledSyncReply();
         auto value = decoder.decode<uint32_t>();
-        connection.sendSyncReply<MockSyncMessage>(*listenerID, *value);
-        return true;
+        ASSERT(value);
+        connection.sendSyncReply<MockSyncMessage>(replyID, *value);
     });
     for (uint32_t i = 0u; i < messageCount; ++i) {
         auto result = m_clientConnection->sendSync(MockSyncMessage { i }, defaultDestinationID());
@@ -537,10 +538,9 @@ TEST_P(StreamMessageTest, SendSyncMessageNotStreamEncodableReply)
     const uint32_t messageCount = 2004u;
     auto cleanup = localReferenceBarrier();
     m_mockServerReceiver->setSyncMessageHandler([](IPC::StreamServerConnection& connection, IPC::Decoder& decoder) {
-        auto listenerID = decoder.decode<IPC::Connection::SyncRequestID>();
+        auto replyID = decoder.markHandledSyncReply();
         auto value = decoder.decode<uint32_t>();
-        connection.sendSyncReply<MockSyncMessageNotStreamEncodableReply>(*listenerID, *value);
-        return true;
+        connection.sendSyncReply<MockSyncMessageNotStreamEncodableReply>(replyID, *value);
     });
     for (uint32_t i = 0u; i < messageCount; ++i) {
         auto result = m_clientConnection->sendSync(MockSyncMessageNotStreamEncodableReply { i }, defaultDestinationID());

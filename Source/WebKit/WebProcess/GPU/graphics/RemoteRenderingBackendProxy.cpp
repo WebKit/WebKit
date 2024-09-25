@@ -514,7 +514,7 @@ bool RemoteRenderingBackendProxy::dispatchMessage(IPC::Connection& connection, I
     return false;
 }
 
-bool RemoteRenderingBackendProxy::dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&)
+bool RemoteRenderingBackendProxy::dispatchSyncMessage(IPC::Connection&, IPC::Decoder&)
 {
     return false;
 }

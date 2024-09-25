@@ -51,8 +51,10 @@ void TestWithEnabledByOrConjunction::didReceiveMessage(IPC::Connection& connecti
         return;
     }
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithEnabledByOrConjunction::AlwaysEnabled::name())
-        return IPC::handleMessage<Messages::TestWithEnabledByOrConjunction::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledByOrConjunction::alwaysEnabled);
+    if (decoder.messageName() == Messages::TestWithEnabledByOrConjunction::AlwaysEnabled::name()) {
+        IPC::handleMessage<Messages::TestWithEnabledByOrConjunction::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledByOrConjunction::alwaysEnabled);
+        return;
+    }
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)

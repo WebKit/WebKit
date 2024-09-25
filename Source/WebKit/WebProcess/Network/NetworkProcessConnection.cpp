@@ -185,20 +185,20 @@ bool NetworkProcessConnection::dispatchMessage(IPC::Connection& connection, IPC:
     return false;
 }
 
-bool NetworkProcessConnection::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+bool NetworkProcessConnection::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::WebSWContextManagerConnection::messageReceiverName()) {
         ASSERT(SWContextManager::singleton().connection());
         if (auto* contextManagerConnection = SWContextManager::singleton().connection())
-            return static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveSyncMessage(connection, decoder, replyEncoder);
-        return false;
+            static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveSyncMessage(connection, decoder);
+        return decoder.isHandled();
     }
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinator::messageReceiverName()) {
         if (auto webPage = WebProcess::singleton().webPage(ObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
-            return webPage->paymentCoordinator()->didReceiveSyncMessage(connection, decoder, replyEncoder);
-        return false;
+            webPage->paymentCoordinator()->didReceiveSyncMessage(connection, decoder);
+        return decoder.isHandled();
     }
 #endif
     return false;

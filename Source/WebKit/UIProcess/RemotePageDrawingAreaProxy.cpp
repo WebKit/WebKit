@@ -65,12 +65,13 @@ void RemotePageDrawingAreaProxy::didReceiveMessage(IPC::Connection& connection, 
         m_drawingArea->didReceiveMessage(connection, decoder);
 }
 
-bool RemotePageDrawingAreaProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
+void RemotePageDrawingAreaProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (m_drawingArea)
-        return m_drawingArea->didReceiveSyncMessage(connection, decoder, encoder);
+    if (m_drawingArea) {
+        m_drawingArea->didReceiveSyncMessage(connection, decoder);
+        return;
+    }
     ASSERT_NOT_REACHED();
-    return false;
 }
 
 }

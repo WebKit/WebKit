@@ -211,15 +211,17 @@ void RemotePageProxy::didChangeProvisionalURLForFrame(WebCore::FrameIdentifier f
     m_page->didChangeProvisionalURLForFrameShared(m_process.copyRef(), frameID, navigationID, WTFMove(url));
 }
 
-bool RemotePageProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
+void RemotePageProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (decoder.messageName() == Messages::WebPageProxy::DecidePolicyForNavigationActionSync::name())
-        return IPC::handleMessageSynchronous<Messages::WebPageProxy::DecidePolicyForNavigationActionSync>(connection, decoder, encoder, this, &RemotePageProxy::decidePolicyForNavigationActionSync);
+    if (decoder.messageName() == Messages::WebPageProxy::DecidePolicyForNavigationActionSync::name()) {
+        IPC::handleMessageSynchronous<Messages::WebPageProxy::DecidePolicyForNavigationActionSync>(connection, decoder, this, &RemotePageProxy::decidePolicyForNavigationActionSync);
+        return;
+    }
 
-    if (m_page)
-        return m_page->didReceiveSyncMessage(connection, decoder, encoder);
-
-    return false;
+    if (m_page) {
+        m_page->didReceiveSyncMessage(connection, decoder);
+        return;
+    }
 }
 
 Ref<WebProcessProxy> RemotePageProxy::protectedProcess() const

@@ -133,15 +133,18 @@ bool MessageReceiverMap::dispatchMessage(Connection& connection, Decoder& decode
     return false;
 }
 
-bool MessageReceiverMap::dispatchSyncMessage(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder)
+bool MessageReceiverMap::dispatchSyncMessage(Connection& connection, Decoder& decoder)
 {
     if (auto messageReceiver = m_globalMessageReceivers.get(decoder.messageReceiverName())) {
         ASSERT(!decoder.destinationID());
-        return messageReceiver->didReceiveSyncMessage(connection, decoder, replyEncoder);
+        messageReceiver->didReceiveSyncMessage(connection, decoder);
+        return decoder.isHandled();
     }
 
-    if (auto messageReceiver = m_messageReceivers.get(std::make_pair(decoder.messageReceiverName(), decoder.destinationID())))
-        return messageReceiver->didReceiveSyncMessage(connection, decoder, replyEncoder);
+    if (auto messageReceiver = m_messageReceivers.get(std::make_pair(decoder.messageReceiverName(), decoder.destinationID()))) {
+        messageReceiver->didReceiveSyncMessage(connection, decoder);
+        return decoder.isHandled();
+    }
 
     return false;
 }
