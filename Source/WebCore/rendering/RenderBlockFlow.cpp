@@ -3880,8 +3880,7 @@ void RenderBlockFlow::layoutInlineContent(bool relayoutChildren, LayoutUnit& rep
     auto& layoutFormattingContextLineLayout = *this->inlineLayout();
 
     ASSERT(containingBlock() || is<RenderView>(*this));
-    layoutFormattingContextLineLayout.updateInlineContentConstraints(containingBlock() ? containingBlock()->availableLogicalWidth() : LayoutUnit());
-    layoutFormattingContextLineLayout.updateInlineContentDimensions(availableLogicalWidth());
+    layoutFormattingContextLineLayout.updateFormattingContexGeometries(containingBlock() ? containingBlock()->availableLogicalWidth() : LayoutUnit());
 
     auto contentBoxTop = borderAndPaddingBefore();
 

@@ -335,8 +335,7 @@ void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, s
         return;
     }
 
-    boxGeometry.setHorizontalSpaceForScrollbar(scrollbarSize.width());
-    boxGeometry.setVerticalSpaceForScrollbar(scrollbarSize.height());
+    boxGeometry.setSpaceForScrollbar(scrollbarSize);
 
     boxGeometry.setContentBoxWidth(contentLogicalWidthForRenderer(renderBox));
     boxGeometry.setContentBoxHeight(contentLogicalHeightForRenderer(renderBox));
@@ -379,52 +378,51 @@ void BoxGeometryUpdater::updateInlineBoxDimensions(const RenderInline& renderInl
     boxGeometry.setPadding(padding);
 }
 
-void BoxGeometryUpdater::setGeometriesForLayout(LayoutUnit availableLogicalWidth)
+void BoxGeometryUpdater::setFormattingContextContentGeometry(std::optional<LayoutUnit> availableLogicalWidth, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)
 {
+    ASSERT(availableLogicalWidth || intrinsicWidthMode);
+
     for (auto walker = InlineWalker(downcast<RenderBlockFlow>(rootRenderer())); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
 
         if (is<RenderText>(renderer))
             continue;
 
-        updateBoxGeometry(downcast<RenderElement>(renderer), availableLogicalWidth);
+        updateBoxGeometry(downcast<RenderElement>(renderer), availableLogicalWidth, intrinsicWidthMode);
     }
 }
 
-void BoxGeometryUpdater::setGeometriesForIntrinsicWidth(Layout::IntrinsicWidthMode intrinsicWidthMode)
+void BoxGeometryUpdater::setFormattingContextRootGeometry(LayoutUnit availableWidth)
 {
-    for (auto walker = InlineWalker(downcast<RenderBlockFlow>(rootRenderer())); !walker.atEnd(); walker.advance()) {
-        auto& renderer = *walker.current();
-
-        if (is<RenderText>(renderer))
-            continue;
-
-        if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer)) {
-            updateLineBreakBoxDimensions(*renderLineBreak);
-            continue;
-        }
-
-        if (auto* renderInline = dynamicDowncast<RenderInline>(renderer)) {
-            updateInlineBoxDimensions(*renderInline, { }, intrinsicWidthMode);
-            continue;
-        }
-
-        if (auto* renderBox = dynamicDowncast<RenderBox>(renderer)) {
-            ASSERT(renderBox->style().logicalWidth().isFixed() || is<RenderListMarker>(*renderBox));
-            updateLayoutBoxDimensions(*renderBox, { }, intrinsicWidthMode);
-        }
-    }
-}
-
-Layout::ConstraintsForInlineContent BoxGeometryUpdater::updateInlineContentConstraints(LayoutUnit availableWidth)
-{
+    // FIXME: BFC should be responsible for creating the box geometry for this block box (IFC root) as part of the block layout.
+    // This is really only required by float layout as IFC does not consult the root geometry directly.
     auto& rootRenderer = this->rootRenderer();
-    auto& style = rootRenderer.style();
-    auto isLeftToRightInlineDirection = style.isLeftToRightDirection();
+    auto isLeftToRightInlineDirection = rootLayoutBox().style().isLeftToRightDirection();
 
     auto padding = logicalPadding(rootRenderer, availableWidth, isLeftToRightInlineDirection);
     auto border = logicalBorder(rootRenderer, isLeftToRightInlineDirection);
-    if (!isHorizontalWritingMode() && !style.isFlippedBlocksWritingMode()) {
+    if (!isHorizontalWritingMode() && !rootLayoutBox().style().isFlippedBlocksWritingMode()) {
+        padding.vertical = { padding.vertical.after, padding.vertical.before };
+        border.vertical = { border.vertical.after, border.vertical.before };
+    }
+
+    auto& rootGeometry = layoutState().ensureGeometryForBox(rootLayoutBox());
+    rootGeometry.setContentBoxWidth(isHorizontalWritingMode() ? rootRenderer.contentWidth() : rootRenderer.contentHeight());
+    rootGeometry.setPadding(padding);
+    rootGeometry.setBorder(border);
+    rootGeometry.setSpaceForScrollbar(scrollbarLogicalSize(rootRenderer));
+    rootGeometry.setHorizontalMargin(horizontalLogicalMargin(rootRenderer, availableWidth, isLeftToRightInlineDirection));
+    rootGeometry.setVerticalMargin(verticalLogicalMargin(rootRenderer, availableWidth));
+}
+
+Layout::ConstraintsForInlineContent BoxGeometryUpdater::formattingContextConstraints(LayoutUnit availableWidth)
+{
+    auto& rootRenderer = this->rootRenderer();
+    auto isLeftToRightInlineDirection = rootLayoutBox().style().isLeftToRightDirection();
+
+    auto padding = logicalPadding(rootRenderer, availableWidth, isLeftToRightInlineDirection);
+    auto border = logicalBorder(rootRenderer, isLeftToRightInlineDirection);
+    if (!isHorizontalWritingMode() && !rootLayoutBox().style().isFlippedBlocksWritingMode()) {
         padding.vertical = { padding.vertical.after, padding.vertical.before };
         border.vertical = { border.vertical.after, border.vertical.before };
     }
@@ -440,24 +438,10 @@ Layout::ConstraintsForInlineContent BoxGeometryUpdater::updateInlineContentConst
     auto horizontalConstraints = Layout::HorizontalConstraints { contentBoxLeft, contentBoxWidth };
     auto visualLeft = !isLeftToRightInlineDirection || shouldPlaceVerticalScrollbarOnLeft ? border.horizontal.end + scrollbarSize.width() + padding.horizontal.end : contentBoxLeft;
 
-    auto createRootGeometryIfNeeded = [&] {
-        // FIXME: BFC should be responsible for creating the box geometry for this block box (IFC root) as part of the block layout.
-        // This is really only required by float layout as IFC does not consult the root geometry directly.
-        auto& rootGeometry = layoutState().ensureGeometryForBox(rootLayoutBox());
-        rootGeometry.setContentBoxWidth(contentBoxWidth);
-        rootGeometry.setPadding(padding);
-        rootGeometry.setBorder(border);
-        rootGeometry.setHorizontalSpaceForScrollbar(scrollbarSize.width());
-        rootGeometry.setVerticalSpaceForScrollbar(scrollbarSize.height());
-        rootGeometry.setHorizontalMargin(horizontalLogicalMargin(rootRenderer, availableWidth, isLeftToRightInlineDirection));
-        rootGeometry.setVerticalMargin(verticalLogicalMargin(rootRenderer, availableWidth));
-    };
-    createRootGeometryIfNeeded();
-
     return { { horizontalConstraints, contentBoxTop }, visualLeft };
 }
 
-void BoxGeometryUpdater::updateGeometryAfterLayout(const Layout::ElementBox& layoutBox, LayoutUnit availableWidth)
+void BoxGeometryUpdater::updateBoxGeometryAfterIntegrationLayout(const Layout::ElementBox& layoutBox, LayoutUnit availableWidth)
 {
     auto* renderBox = dynamicDowncast<RenderBox>(layoutBox.rendererForIntegration());
     if (!renderBox) {
@@ -509,10 +493,12 @@ void BoxGeometryUpdater::updateGeometryAfterLayout(const Layout::ElementBox& lay
     integrationAdjustments();
 }
 
-void BoxGeometryUpdater::updateBoxGeometry(const RenderElement& renderer, LayoutUnit availableWidth)
+void BoxGeometryUpdater::updateBoxGeometry(const RenderElement& renderer, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)
 {
+    ASSERT(availableWidth || intrinsicWidthMode);
+
     if (auto* renderBox = dynamicDowncast<RenderBox>(renderer)) {
-        updateLayoutBoxDimensions(*renderBox, availableWidth);
+        updateLayoutBoxDimensions(*renderBox, availableWidth, intrinsicWidthMode);
         if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderer); renderListMarker && !renderListMarker->isInside())
             setListMarkerOffsetForMarkerOutside(*renderListMarker);
         return;
@@ -522,7 +508,7 @@ void BoxGeometryUpdater::updateBoxGeometry(const RenderElement& renderer, Layout
         return updateLineBreakBoxDimensions(*renderLineBreak);
 
     if (auto* renderInline = dynamicDowncast<RenderInline>(renderer))
-        return updateInlineBoxDimensions(*renderInline, availableWidth);
+        return updateInlineBoxDimensions(*renderInline, availableWidth, intrinsicWidthMode);
 }
 
 const Layout::ElementBox& BoxGeometryUpdater::rootLayoutBox() const

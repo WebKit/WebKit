@@ -47,15 +47,16 @@ class BoxGeometryUpdater {
 public:
     BoxGeometryUpdater(Layout::LayoutState&, const Layout::ElementBox& rootLayoutBox);
 
-    void setGeometriesForLayout(LayoutUnit availableLogicalWidth);
-    void setGeometriesForIntrinsicWidth(Layout::IntrinsicWidthMode);
-    void updateGeometryAfterLayout(const Layout::ElementBox&, LayoutUnit availableWidth);
+    void setFormattingContextRootGeometry(LayoutUnit availableLogicalWidth);
+    void setFormattingContextContentGeometry(std::optional<LayoutUnit> availableLogicalWidth, std::optional<Layout::IntrinsicWidthMode>);
+    void updateBoxGeometryAfterIntegrationLayout(const Layout::ElementBox&, LayoutUnit availableWidth);
 
-    Layout::ConstraintsForInlineContent updateInlineContentConstraints(LayoutUnit availableWidth);
+    Layout::ConstraintsForInlineContent formattingContextConstraints(LayoutUnit availableWidth);
+
     HashMap<const Layout::ElementBox*, LayoutUnit> takeNestedListMarkerOffsets() { return WTFMove(m_nestedListMarkerOffsets); }
 
 private:
-    void updateBoxGeometry(const RenderElement&, LayoutUnit availableWidth);
+    void updateBoxGeometry(const RenderElement&, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode>);
 
     void updateLayoutBoxDimensions(const RenderBox&, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
     void updateLineBreakBoxDimensions(const RenderLineBreak&);

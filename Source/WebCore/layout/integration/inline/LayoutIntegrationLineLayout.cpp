@@ -241,9 +241,11 @@ bool LineLayout::shouldInvalidateLineLayoutPathAfterTreeMutation(const RenderBlo
     return shouldInvalidateLineLayoutPathAfterChangeFor(parent, renderer, lineLayout, isRemoval ? TypeOfChangeForInvalidation::NodeRemoval : TypeOfChangeForInvalidation::NodeInsertion);
 }
 
-void LineLayout::updateInlineContentDimensions(LayoutUnit availableLogicalWidth)
+void LineLayout::updateFormattingContexGeometries(LayoutUnit availableLogicalWidth)
 {
-    m_boxGeometryUpdater.setGeometriesForLayout(availableLogicalWidth);
+    m_boxGeometryUpdater.setFormattingContextRootGeometry(availableLogicalWidth);
+    m_inlineContentConstraints = m_boxGeometryUpdater.formattingContextConstraints(availableLogicalWidth);
+    m_boxGeometryUpdater.setFormattingContextContentGeometry(m_inlineContentConstraints->horizontal().logicalWidth, { });
 }
 
 void LineLayout::updateStyle(const RenderObject& renderer)
@@ -296,7 +298,7 @@ std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
         m_inlineContentCache.resetMinimumMaximumContentSizes();
     // FIXME: This is where we need to switch between minimum and maximum box geometries.
     // Currently we only support content where min == max.
-    m_boxGeometryUpdater.setGeometriesForIntrinsicWidth(Layout::IntrinsicWidthMode::Minimum);
+    m_boxGeometryUpdater.setFormattingContextContentGeometry({ }, Layout::IntrinsicWidthMode::Minimum);
     auto [minimumContentSize, maximumContentSize] = inlineFormattingContext.minimumMaximumContentSize(m_lineDamage.get());
     return { minimumContentSize, maximumContentSize };
 }
@@ -561,11 +563,6 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             continue;
         }
     }
-}
-
-void LineLayout::updateInlineContentConstraints(LayoutUnit availableLogicalWidth)
-{
-    m_inlineContentConstraints = m_boxGeometryUpdater.updateInlineContentConstraints(availableLogicalWidth);
 }
 
 void LineLayout::preparePlacedFloats()
