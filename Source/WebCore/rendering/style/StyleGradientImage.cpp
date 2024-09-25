@@ -803,16 +803,18 @@ template<typename GradientAdapter, typename Stops> GradientColorStops StyleGradi
         float midpoint = (offset - offset1) / (offset2 - offset1);
         ResolvedGradientStop newStops[9];
         if (midpoint > .5f) {
-            for (size_t y = 0; y < 7; ++y)
+            for (size_t y = 0; y < 6; ++y)
                 newStops[y].offset = offset1 + (offset - offset1) * (7 + y) / 13;
 
+            newStops[6].offset = offset;
             newStops[7].offset = offset + (offset2 - offset) / 3;
             newStops[8].offset = offset + (offset2 - offset) * 2 / 3;
         } else {
             newStops[0].offset = offset1 + (offset - offset1) / 3;
             newStops[1].offset = offset1 + (offset - offset1) * 2 / 3;
+            newStops[2].offset = offset;
 
-            for (size_t y = 0; y < 7; ++y)
+            for (size_t y = 1; y < 7; ++y)
                 newStops[y + 2].offset = offset + (offset2 - offset) * y / 13;
         }
         // calculate colors
