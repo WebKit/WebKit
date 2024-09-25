@@ -31,6 +31,7 @@
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
 #include "URLKeepingBlobAlive.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -47,7 +48,7 @@ class WEBCORE_EXPORT FetchLoader final : public ThreadableLoaderClient {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FetchLoader);
 public:
     FetchLoader(FetchLoaderClient&, FetchBodyConsumer*);
-    ~FetchLoader() = default;
+    ~FetchLoader();
 
     RefPtr<FragmentedSharedBuffer> startStreaming();
 
@@ -68,7 +69,7 @@ private:
 private:
     CheckedRef<FetchLoaderClient> m_client;
     RefPtr<ThreadableLoader> m_loader;
-    FetchBodyConsumer* m_consumer;
+    CheckedPtr<FetchBodyConsumer> m_consumer;
     bool m_isStarted { false };
     URLKeepingBlobAlive m_urlForReading;
 };

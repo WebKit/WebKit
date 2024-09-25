@@ -129,6 +129,8 @@ FetchLoader::FetchLoader(FetchLoaderClient& client, FetchBodyConsumer* consumer)
 {
 }
 
+FetchLoader::~FetchLoader() = default;
+
 void FetchLoader::stop()
 {
     if (m_consumer)
