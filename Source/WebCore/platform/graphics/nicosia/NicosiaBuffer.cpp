@@ -35,6 +35,7 @@
 #include "GLContext.h"
 #include "GLFence.h"
 #include "PlatformDisplay.h"
+#include "ProcessCapabilities.h"
 #include <skia/core/SkColorSpace.h>
 #include <skia/core/SkImage.h>
 #include <skia/core/SkStream.h>
@@ -106,10 +107,12 @@ UnacceleratedBuffer::UnacceleratedBuffer(const IntSize& size, Flags flags)
 PixelFormat UnacceleratedBuffer::pixelFormat() const
 {
 #if USE(SKIA)
-    return PixelFormat::RGBA8;
-#elif USE(CAIRO)
-    return PixelFormat::BGRA8;
+    // For GPU/hybrid rendering, prefer RGBA, otherwise use BGRA.
+    if (ProcessCapabilities::canUseAcceleratedBuffers())
+        return PixelFormat::RGBA8;
 #endif
+
+    return PixelFormat::BGRA8;
 }
 
 UnacceleratedBuffer::~UnacceleratedBuffer()
