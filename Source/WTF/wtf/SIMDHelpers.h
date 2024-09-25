@@ -315,7 +315,7 @@ ALWAYS_INLINE std::optional<uint8_t> findFirstNonZeroIndex(simde_uint16x8_t valu
         return std::nullopt;
     constexpr simde_uint16x8_t indexMask { 0, 1, 2, 3, 4, 5, 6, 7 };
     // Found elements are all-1 and the other elements are 0. But it is possible that this vector
-    // includes multiple found characters. We perform [0, 1, 2, 3, 4, 5, 6, 7] OR-NOT with this value,
+    // includes multiple found characters. We perform [0, 1, 2, 3, 4, 5, 6, 7] AND with this value,
     // to assign the index to found characters.
     // Find the smallest value. Because of [0, 1, 2, 3, 4, 5, 6, 7], the value should be index in this vector.
     // If the index less than length, it is within the requested pointer. Otherwise, nullptr.
@@ -356,10 +356,88 @@ ALWAYS_INLINE std::optional<uint8_t> findFirstNonZeroIndex(simde_uint64x2_t valu
     return std::countr_zero(mask) >> 3;
 #else
     simde_uint32x2_t reducedMask = simde_vmovn_u64(value);
-    if (!simde_vget_lane_u64(simde_vreinterpret_u64_u32(reducedMask), 0))
+    uint64_t reducedLane = simde_vget_lane_u64(simde_vreinterpret_u64_u32(reducedMask), 0);
+    if (!reducedLane)
         return std::nullopt;
-    constexpr simde_uint32x2_t indexMask { 0, 1 }; // It is intentionally uint32x2_t.
-    return simde_vminv_u32(simde_vorn_u32(indexMask, reducedMask));
+    return reducedLane & 1 ? 0 : 1;
+#endif
+}
+
+ALWAYS_INLINE std::optional<uint8_t> findLastNonZeroIndex(simde_uint8x16_t value)
+{
+#if CPU(X86_64)
+    auto raw = simde_uint8x16_to_m128i(value);
+    uint16_t mask = simde_mm_movemask_epi8(raw);
+    if (!mask)
+        return std::nullopt;
+    return 15 - std::countl_zero(mask);
+#else
+    if (!isNonZero(value))
+        return std::nullopt;
+    constexpr simde_uint8x16_t indexMask { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+    return simde_vmaxvq_u8(simde_vandq_u8(indexMask, value));
+#endif
+}
+
+ALWAYS_INLINE std::optional<uint8_t> findLastNonZeroIndex(simde_uint16x8_t value)
+{
+#if CPU(X86_64)
+    auto raw = simde_uint16x8_to_m128i(value);
+    uint16_t mask = simde_mm_movemask_epi8(raw);
+    if (!mask)
+        return std::nullopt;
+    return 7 - (std::countl_zero(mask) >> 1);
+#else
+    // Incoming value is a comparison result, where each vector element is either all 1s or 0s.
+    if (!isNonZero(value))
+        return std::nullopt;
+    constexpr simde_uint16x8_t indexMask { 0, 1, 2, 3, 4, 5, 6, 7 };
+    // Found elements are all-1 and the other elements are 0. But it is possible that this vector
+    // includes multiple found characters. We perform [0, 1, 2, 3, 4, 5, 6, 7] OR-NOT with this value,
+    // to assign the index to found characters.
+    // Find the smallest value. Because of [0, 1, 2, 3, 4, 5, 6, 7], the value should be index in this vector.
+    // If the index less than length, it is within the requested pointer. Otherwise, nullptr.
+    //
+    // Example
+    //     value       |0|0|0|X|0|X|0|0| (X is all-one)
+    //     index-value |0|1|2|3|4|5|6|7|
+    //     ranked      |0|0|0|3|0|5|0|0|
+    //     index       5, the largest number from this vector, and it is the same to the index.
+    // We already checked via isNonZero, so 0 index also works.
+    return simde_vmaxvq_u16(simde_vandq_u16(indexMask, value));
+#endif
+}
+
+ALWAYS_INLINE std::optional<uint8_t> findLastNonZeroIndex(simde_uint32x4_t value)
+{
+#if CPU(X86_64)
+    auto raw = simde_uint32x4_to_m128i(value);
+    uint16_t mask = simde_mm_movemask_epi8(raw);
+    if (!mask)
+        return std::nullopt;
+    return 3 - (std::countl_zero(mask) >> 2);
+#else
+    if (!isNonZero(value))
+        return std::nullopt;
+    constexpr simde_uint32x4_t indexMask { 0, 1, 2, 3 };
+    return simde_vmaxvq_u32(simde_vandq_u32(indexMask, value));
+#endif
+}
+
+ALWAYS_INLINE std::optional<uint8_t> findLastNonZeroIndex(simde_uint64x2_t value)
+{
+#if CPU(X86_64)
+    auto raw = simde_uint64x2_to_m128i(value);
+    uint16_t mask = simde_mm_movemask_epi8(raw);
+    if (!mask)
+        return std::nullopt;
+    return 1 - (std::countl_zero(mask) >> 3);
+#else
+    simde_uint32x2_t reducedMask = simde_vmovn_u64(value);
+    uint64_t reducedLane = simde_vget_lane_u64(simde_vreinterpret_u64_u32(reducedMask), 0);
+    if (!reducedLane)
+        return std::nullopt;
+    return reducedLane & (1ULL << 32) ? 1 : 0;
 #endif
 }
 
@@ -532,6 +610,37 @@ ALWAYS_INLINE const CharacterType* findInterleaved(std::span<const CharacterType
     }
 
     for (; cursor != end; ++cursor) {
+        auto character = *cursor;
+        if (scalarMatch(character))
+            return cursor;
+    }
+    return end;
+}
+
+template<typename CharacterType, size_t threshold = SIMD::stride<CharacterType>>
+ALWAYS_INLINE const CharacterType* reverseFind(std::span<const CharacterType> span, const auto& vectorMatch, const auto& scalarMatch)
+{
+    constexpr size_t stride = SIMD::stride<CharacterType>;
+    using UnsignedType = std::make_unsigned_t<CharacterType>;
+    static_assert(threshold >= stride);
+    const auto* begin = span.data();
+    const auto* end = span.data() + span.size();
+    const auto* cursor = end;
+    if (span.size() >= threshold) {
+        for (; (cursor - stride) >= begin;) {
+            cursor -= stride;
+            if (auto index = vectorMatch(SIMD::load(bitwise_cast<const UnsignedType*>(cursor))))
+                return cursor + index.value();
+        }
+        if (cursor > begin) {
+            if (auto index = vectorMatch(SIMD::load(bitwise_cast<const UnsignedType*>(begin))))
+                return begin + index.value();
+        }
+        return end;
+    }
+
+    for (; cursor != begin;) {
+        --cursor;
         auto character = *cursor;
         if (scalarMatch(character))
             return cursor;

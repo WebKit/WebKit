@@ -1382,21 +1382,16 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
         }
         auto& butterfly = *array->butterfly();
         auto data = butterfly.contiguous().data();
-        if (direction == IndexOfDirection::Forward) {
-            for (; index < length; ++index) {
-                // Array#indexOf uses `===` semantics (not HashMap isEqual semantics).
-                // And the hole never matches against Int32 value.
-                if (searchInt32 == data[index].get())
-                    return jsNumber(index);
-            }
+        if constexpr (direction == IndexOfDirection::Forward) {
+            auto* result = bitwise_cast<const WriteBarrier<Unknown>*>(WTF::find64(bitwise_cast<const uint64_t*>(data + index), JSValue::encode(searchInt32), length - index));
+            if (result)
+                return jsNumber(result - data);
+            return jsNumber(-1);
         } else {
-            do {
-                ASSERT(index < length);
-                // Array#lastIndexOf uses `===` semantics (not HashMap isEqual semantics).
-                // And the hole never matches against Int32 value.
-                if (searchInt32 == data[index].get())
-                    return jsNumber(index);
-            } while (index--);
+            auto* result = bitwise_cast<const WriteBarrier<Unknown>*>(WTF::reverseFind64(bitwise_cast<const uint64_t*>(data), JSValue::encode(searchInt32), index + 1));
+            if (result)
+                return jsNumber(result - data);
+            return jsNumber(-1);
         }
         return jsNumber(-1);
     }
@@ -1404,7 +1399,7 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
         auto& butterfly = *array->butterfly();
         auto data = butterfly.contiguous().data();
 
-        if (direction == IndexOfDirection::Forward) {
+        if constexpr (direction == IndexOfDirection::Forward) {
             if (searchElement.isObject()) {
                 auto* result = bitwise_cast<const WriteBarrier<Unknown>*>(WTF::find64(bitwise_cast<const uint64_t*>(data + index), JSValue::encode(searchElement), length - index));
                 if (result)
@@ -1422,6 +1417,13 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
                     return jsNumber(index);
             }
         } else {
+            if (searchElement.isObject()) {
+                auto* result = bitwise_cast<const WriteBarrier<Unknown>*>(WTF::reverseFind64(bitwise_cast<const uint64_t*>(data), JSValue::encode(searchElement), index + 1));
+                if (result)
+                    return jsNumber(result - data);
+                return jsNumber(-1);
+            }
+
             do {
                 ASSERT(index < length);
                 JSValue value = data[index].get();
@@ -1441,7 +1443,7 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
         double searchNumber = searchElement.asNumber();
         auto& butterfly = *array->butterfly();
         auto data = butterfly.contiguousDouble().data();
-        if (direction == IndexOfDirection::Forward) {
+        if constexpr (direction == IndexOfDirection::Forward) {
             for (; index < length; ++index) {
                 // Array#indexOf uses `===` semantics (not HashMap isEqual semantics).
                 // And the hole never matches since it is NaN.
