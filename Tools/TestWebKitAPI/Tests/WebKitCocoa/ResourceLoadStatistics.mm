@@ -1376,7 +1376,12 @@ TEST(ResourceLoadStatistics, DatabaseSchemeUpdate)
     EXPECT_WK_STREQ(columns.last(), "mostRecentWebPushInteractionTime");
 }
 
+// rdar://136525714
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
+TEST(ResourceLoadStatistics, DISABLED_ClientEvaluatedJavaScriptDoesNotLogUserInteraction)
+#else
 TEST(ResourceLoadStatistics, ClientEvaluatedJavaScriptDoesNotLogUserInteraction)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()]);
@@ -1406,7 +1411,12 @@ TEST(ResourceLoadStatistics, ClientEvaluatedJavaScriptDoesNotLogUserInteraction)
     TestWebKitAPI::Util::run(&done);
 }
 
+// rdar://136525714
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
+TEST(ResourceLoadStatistics, DISABLED_UserGestureLogsUserInteraction)
+#else
 TEST(ResourceLoadStatistics, UserGestureLogsUserInteraction)
+#endif
 {
     auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()]);
