@@ -3979,6 +3979,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     if ([_formInputSession customInputAccessoryView])
         return YES;
 
+    if ([_webView _isDisplayingPDF])
+        return NO;
+
     return [self _elementTypeRequiresAccessoryView:_focusedElementInformation.elementType];
 }
 
