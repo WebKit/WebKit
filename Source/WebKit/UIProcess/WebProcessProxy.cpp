@@ -1216,21 +1216,15 @@ bool WebProcessProxy::dispatchMessage(IPC::Connection& connection, IPC::Decoder&
     return true;
 }
 
-bool WebProcessProxy::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+bool WebProcessProxy::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     // If AuxiliaryProcessProxy gets .messages.in, use WantsDispatchMessages and remove this.
-    if (AuxiliaryProcessProxy::dispatchSyncMessage(connection, decoder, replyEncoder))
+    if (AuxiliaryProcessProxy::dispatchSyncMessage(connection, decoder))
         return true;
-    if (protectedProcessPool()->dispatchSyncMessage(connection, decoder, replyEncoder))
+    if (protectedProcessPool()->dispatchSyncMessage(connection, decoder))
         return true;
     // WebProcessProxy will receive messages to instances that were removed from
     // the message receiver map. Filter these out by sending the cancel reply.
-#if ENABLE(IPC_TESTING_API)
-    if (!decoder.isValid())
-        replyEncoder->setSyncMessageDeserializationFailure();
-#endif
-    connection.sendSyncReply(WTFMove(replyEncoder));
-
     return true;
 }
 

@@ -197,15 +197,15 @@ bool ModelConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, I
     return messageReceiverMap().dispatchMessage(connection, decoder);
 }
 
-bool ModelConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+bool ModelConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
 #if ENABLE(IPC_TESTING_API)
     if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName()) {
-        m_ipcTester.didReceiveSyncMessage(connection, decoder, replyEncoder);
-        return true;
+        m_ipcTester.didReceiveSyncMessage(connection, decoder);
+        return decoder.isHandled();
     }
 #endif
-    return messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
+    return messageReceiverMap().dispatchSyncMessage(connection, decoder);
 }
 
 } // namespace WebKit

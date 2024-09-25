@@ -310,9 +310,9 @@ bool AuxiliaryProcessProxy::dispatchMessage(IPC::Connection& connection, IPC::De
     return m_messageReceiverMap.dispatchMessage(connection, decoder);
 }
 
-bool AuxiliaryProcessProxy::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+bool AuxiliaryProcessProxy::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    return m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder);
+    return m_messageReceiverMap.dispatchSyncMessage(connection, decoder);
 }
 
 void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)

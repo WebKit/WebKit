@@ -126,7 +126,7 @@ private:
         DedicatedConnectionClient(Connection::Client&);
         // Connection::Client overrides.
         void didReceiveMessage(Connection&, Decoder&) final;
-        bool didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&) final;
+        void didReceiveSyncMessage(Connection&, Decoder&) final;
         void didClose(Connection&) final;
         void didReceiveInvalidMessage(Connection&, MessageName, int32_t indexOfObjectFailingDecoding) final;
     private:
@@ -287,7 +287,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
     Ref connection = m_connection;
     // In this function, SendSyncResult<T> { } means error happened and caller should stop processing.
     // std::nullopt means we couldn't send through the stream, so try sending out of stream.
-    auto syncRequestID = connection->makeSyncRequestID();
+    auto syncRequestID = ReplyID::generate();
     if (!connection->pushPendingSyncRequestID(syncRequestID))
         return { { Error::CantWaitForSyncReplies } };
 
@@ -305,7 +305,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
 
             auto decoder = makeUniqueRef<Decoder>(*replySpan, m_currentDestinationID);
             if (decoder->messageName() != MessageName::ProcessOutOfStreamMessage) {
-                ASSERT(decoder->messageName() == MessageName::SyncMessageReply);
+                ASSERT(decoder->messageName() == MessageName::SyncMessageReply || decoder->messageName() == MessageName::CancelSyncMessageReply);
                 return decoder;
             }
         } else
@@ -318,15 +318,17 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
     if (!decoderResult)
         return std::nullopt;
 
-    if (decoderResult->has_value()) {
-        std::optional<typename T::ReplyArguments> replyArguments;
-        auto& decoder = decoderResult->value();
-        *decoder >> replyArguments;
-        if (replyArguments)
-            return { { WTFMove(decoderResult->value()), WTFMove(*replyArguments) } };
+    if (!decoderResult->has_value())
+        return { decoderResult->error() };
+    UniqueRef decoder = WTFMove(decoderResult->value());
+
+    std::optional<typename T::ReplyArguments> replyArguments;
+    if (decoder->messageName() == MessageName::CancelSyncMessageReply)
+        return { Error::SyncMessageCancelled };
+    *decoder >> replyArguments;
+    if (!replyArguments)
         return { Error::FailedToDecodeReplyArguments };
-    }
-    return { decoderResult->error() };
+    return { { WTFMove(decoder), WTFMove(*replyArguments) } };
 }
 
 inline Error StreamClientConnection::trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout timeout)

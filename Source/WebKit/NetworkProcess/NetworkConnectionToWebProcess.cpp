@@ -383,34 +383,38 @@ void NetworkConnectionToWebProcess::unregisterToRTCDataChannelProxy()
 }
 #endif
 
-bool NetworkConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& reply)
+bool NetworkConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     // For security reasons, Messages::NetworkProcess IPC is only supposed to come from the UIProcess.
     MESSAGE_CHECK_WITH_RETURN_VALUE(decoder.messageReceiverName() != Messages::NetworkProcess::messageReceiverName(), false);
 
     if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
         if (m_swConnection)
-            return m_swConnection->didReceiveSyncMessage(connection, decoder, reply);
-        return false;
+            m_swConnection->didReceiveSyncMessage(connection, decoder);
+        return decoder.isHandled();
     }
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     if (decoder.messageReceiverName() == Messages::NotificationManagerMessageHandler::messageReceiverName()) {
         MESSAGE_CHECK_WITH_RETURN_VALUE(m_networkProcess->builtInNotificationsEnabled(), false);
         if (auto* networkSession = this->networkSession())
-            return networkSession->notificationManager().didReceiveSyncMessage(connection, decoder, reply);
-        return false;
+            networkSession->notificationManager().didReceiveSyncMessage(connection, decoder);
+        return decoder.isHandled();
     }
 #endif
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
-    if (decoder.messageReceiverName() == Messages::WebPaymentCoordinatorProxy::messageReceiverName())
-        return paymentCoordinator().didReceiveSyncMessage(connection, decoder, reply);
+    if (decoder.messageReceiverName() == Messages::WebPaymentCoordinatorProxy::messageReceiverName()) {
+        paymentCoordinator().didReceiveSyncMessage(connection, decoder);
+        return decoder.isHandled();
+    }
 #endif
 
 #if ENABLE(IPC_TESTING_API)
-    if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName())
-        return m_ipcTester.didReceiveSyncMessage(connection, decoder, reply);
+    if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName()) {
+        m_ipcTester.didReceiveSyncMessage(connection, decoder);
+        return decoder.isHandled();
+    }
 #endif
     return false;
 }

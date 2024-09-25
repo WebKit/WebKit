@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,67 +25,11 @@
 
 #pragma once
 
-#include <wtf/Assertions.h>
-#include <wtf/WeakPtr.h>
-
-namespace IPC {
-class MessageReceiver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<IPC::MessageReceiver> : std::true_type { };
-}
+#include <wtf/ObjectIdentifier.h>
 
 namespace IPC {
 
-class Connection;
-class Decoder;
-class Encoder;
+enum class ReplyIDType { };
+using ReplyID = AtomicObjectIdentifier<ReplyIDType>;
 
-class MessageReceiver : public CanMakeWeakPtr<MessageReceiver> {
-public:
-    virtual ~MessageReceiver()
-    {
-        ASSERT(!m_messageReceiverMapCount);
-    }
-
-    virtual void didReceiveMessage(Connection&, Decoder&)
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-    virtual void didReceiveMessageWithReplyHandler(Decoder&, Function<void(UniqueRef<IPC::Encoder>&&)>&&)
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-    virtual void didReceiveSyncMessage(Connection&, Decoder&)
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-private:
-    friend class MessageReceiverMap;
-
-    void willBeAddedToMessageReceiverMap()
-    {
-#if ASSERT_ENABLED
-        m_messageReceiverMapCount++;
-#endif
-    }
-
-    void willBeRemovedFromMessageReceiverMap()
-    {
-        ASSERT(m_messageReceiverMapCount);
-#if ASSERT_ENABLED
-        m_messageReceiverMapCount--;
-#endif
-    }
-
-#if ASSERT_ENABLED
-    unsigned m_messageReceiverMapCount { 0 };
-#endif
-};
-
-} // namespace IPC
+}

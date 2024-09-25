@@ -40,8 +40,10 @@ namespace WebKit {
 void TestWithWantsAsyncDispatch::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithWantsAsyncDispatch::TestMessage::name())
-        return IPC::handleMessage<Messages::TestWithWantsAsyncDispatch::TestMessage>(connection, decoder, this, &TestWithWantsAsyncDispatch::testMessage);
+    if (decoder.messageName() == Messages::TestWithWantsAsyncDispatch::TestMessage::name()) {
+        IPC::handleMessage<Messages::TestWithWantsAsyncDispatch::TestMessage>(connection, decoder, this, &TestWithWantsAsyncDispatch::testMessage);
+        return;
+    }
     if (dispatchMessage(connection, decoder))
         return;
     UNUSED_PARAM(connection);
@@ -53,20 +55,21 @@ void TestWithWantsAsyncDispatch::didReceiveMessage(IPC::Connection& connection, 
     ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
 }
 
-bool TestWithWantsAsyncDispatch::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+void TestWithWantsAsyncDispatch::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithWantsAsyncDispatch::TestSyncMessage::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithWantsAsyncDispatch::TestSyncMessage>(connection, decoder, replyEncoder, this, &TestWithWantsAsyncDispatch::testSyncMessage);
+    if (decoder.messageName() == Messages::TestWithWantsAsyncDispatch::TestSyncMessage::name()) {
+        IPC::handleMessageSynchronous<Messages::TestWithWantsAsyncDispatch::TestSyncMessage>(connection, decoder, this, &TestWithWantsAsyncDispatch::testSyncMessage);
+        return;
+    }
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
-    UNUSED_PARAM(replyEncoder);
 #if ENABLE(IPC_TESTING_API)
     if (connection.ignoreInvalidMessageForTesting())
-        return false;
+        return;
 #endif // ENABLE(IPC_TESTING_API)
     ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()).characters(), decoder.destinationID());
-    return false;
+    return;
 }
 
 } // namespace WebKit

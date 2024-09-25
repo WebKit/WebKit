@@ -256,7 +256,7 @@ protected:
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
-    bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&);
 
     void logInvalidMessage(IPC::Connection&, IPC::MessageName);
     virtual ASCIILiteral processName() const = 0;

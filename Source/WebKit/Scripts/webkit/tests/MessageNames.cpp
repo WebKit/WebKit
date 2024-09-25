@@ -142,6 +142,7 @@ const MessageDescription messageDescriptions[static_cast<size_t>(MessageName::Co
     { "TestWithoutUsingIPCConnection_MessageWithoutArgument"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
     { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
     { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
+    { "CancelSyncMessageReply"_s, ReceiverName::IPC, false, false },
 #if PLATFORM(COCOA)
     { "InitializeConnection"_s, ReceiverName::IPC, false, false },
 #endif

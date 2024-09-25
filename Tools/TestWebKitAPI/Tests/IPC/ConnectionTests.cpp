@@ -53,7 +53,7 @@ struct MockTestSyncMessage {
     static constexpr bool isSync = true;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
-    static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(124); }
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCTester_SyncPingEmptyReply; }
     using ReplyArguments = std::tuple<>;
     auto&& arguments()
     {
@@ -547,10 +547,10 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendAsync)
 {
     ASSERT_TRUE(openA());
     aClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
-        auto listenerID = decoder.decode<uint64_t>();
-        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
-        encoder.get() << decoder.destinationID();
-        a()->sendSyncReply(WTFMove(encoder));
+        auto replyID = decoder.decode<IPC::AsyncReplyID>();
+        ASSERT(replyID);
+        auto content = decoder.destinationID();
+        a()->sendAsyncReply<MockTestMessageWithAsyncReply1>(*replyID, content);
         return true;
     });
     HashSet<uint64_t> replies;
@@ -627,10 +627,10 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendAsyncOnTarget)
 
         ASSERT_TRUE(openA());
         aClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
-            auto listenerID = decoder.decode<uint64_t>();
-            auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
-            encoder.get() << decoder.destinationID();
-            a()->sendSyncReply(WTFMove(encoder));
+            auto replyID = decoder.decode<IPC::AsyncReplyID>();
+            ASSERT(replyID);
+            auto content = decoder.destinationID();
+            a()->sendAsyncReply<MockTestMessageWithAsyncReply1>(*replyID, content);
             return true;
         });
 
@@ -661,10 +661,10 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReply)
 {
     ASSERT_TRUE(openA());
     aClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
-        auto listenerID = decoder.decode<uint64_t>();
-        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
-        encoder.get() << decoder.destinationID();
-        a()->sendSyncReply(WTFMove(encoder));
+        auto replyID = decoder.decode<IPC::AsyncReplyID>();
+        ASSERT(replyID);
+        auto content = decoder.destinationID();
+        a()->sendAsyncReply<MockTestMessageWithAsyncReply1>(*replyID, content);
         return true;
     });
     HashSet<uint64_t> replies;
@@ -706,10 +706,10 @@ TEST_P(ConnectionRunLoopTest, SendWithConvertedPromisedReply)
 {
     ASSERT_TRUE(openA());
     aClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
-        auto listenerID = decoder.decode<uint64_t>();
-        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
-        encoder.get() << decoder.destinationID();
-        a()->sendSyncReply(WTFMove(encoder));
+        auto replyID = decoder.decode<IPC::AsyncReplyID>();
+        ASSERT(replyID);
+        auto content = decoder.destinationID();
+        a()->sendAsyncReply<MockTestMessageWithAsyncReply1>(*replyID, content);
         return true;
     });
     std::atomic<bool> isFinished = false;
@@ -740,10 +740,10 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReplyOnMixAndMatchDispatche
         AutoWorkQueue awq;
         ASSERT_TRUE(openA());
         aClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
-            auto listenerID = decoder.decode<uint64_t>();
-            auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
-            encoder.get() << decoder.destinationID();
-            a()->sendSyncReply(WTFMove(encoder));
+            auto replyID = decoder.decode<IPC::AsyncReplyID>();
+            ASSERT(replyID);
+            auto content = decoder.destinationID();
+            a()->sendAsyncReply<MockTestMessageWithAsyncReply1>(*replyID, content);
             return true;
         });
 
@@ -788,10 +788,10 @@ TEST_P(ConnectionRunLoopTest, SendAsyncAndInvalidateOnDispatcher)
         BinarySemaphore semaphore;
         runLoop->dispatch([&] {
             bClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
-                auto listenerID = decoder.decode<uint64_t>();
-                auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
-                encoder.get() << decoder.destinationID();
-                b()->sendSyncReply(WTFMove(encoder));
+                auto replyID = decoder.decode<IPC::AsyncReplyID>();
+                ASSERT(replyID);
+                auto content = decoder.destinationID();
+                b()->sendAsyncReply<MockTestMessageWithAsyncReply1>(*replyID, content);
                 messages.add(decoder.destinationID());
                 return true;
             });
@@ -867,10 +867,10 @@ TEST_P(ConnectionRunLoopTest, SendAsyncAndInvalidate)
     BinarySemaphore semaphore;
     runLoop->dispatch([&] {
         bClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
-            auto listenerID = decoder.decode<uint64_t>();
-            auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
-            encoder.get() << decoder.destinationID();
-            b()->sendSyncReply(WTFMove(encoder));
+            auto replyID = decoder.decode<IPC::AsyncReplyID>();
+            ASSERT(replyID);
+            auto content = decoder.destinationID();
+            b()->sendAsyncReply<MockTestMessageWithAsyncReply1>(*replyID, content);
             messages.add(decoder.destinationID());
             return true;
         });
@@ -904,12 +904,11 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReplyOrder)
     using Promise = MockTestMessageWithAsyncReply1::Promise;
 
     ASSERT_TRUE(openA());
-    uint64_t replyID = 0;
+    uint64_t replyPayload = 0;
     aClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
-        auto listenerID = decoder.decode<uint64_t>();
-        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
-        encoder.get() << replyID++;
-        a()->sendSyncReply(WTFMove(encoder));
+        auto replyID = decoder.decode<IPC::AsyncReplyID>();
+        ASSERT(replyID);
+        a()->sendAsyncReply<MockTestMessageWithAsyncReply1>(*replyID, replyPayload++);
         return true;
     });
     Vector<uint64_t> replies;
@@ -951,10 +950,10 @@ TEST_P(ConnectionRunLoopTest, DISABLED_RunLoopSendAsyncOnAnotherRunLoopDispatche
 {
     ASSERT_TRUE(openA());
     aClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
-        auto listenerID = decoder.decode<uint64_t>();
-        auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
-        encoder.get() << decoder.destinationID();
-        a()->sendSyncReply(WTFMove(encoder));
+        auto replyID = decoder.decode<IPC::AsyncReplyID>();
+        ASSERT(replyID);
+        auto content = decoder.destinationID();
+        a()->sendAsyncReply<MockTestMessageWithAsyncReply1>(*replyID, content);
         return true;
     });
     HashSet<uint64_t> replies;
@@ -1068,12 +1067,12 @@ TEST_P(ConnectionRunLoopTest, SendLocalSyncMessageWithDataReply)
     ASSERT_TRUE(openA());
     auto runLoop = createRunLoop(RUN_LOOP_NAME);
     runLoop->dispatch([&] {
-        bClient().setSyncMessageHandler([&](IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) -> bool {
+        bClient().setSyncMessageHandler([&](IPC::Connection& connection, IPC::Decoder& decoder) {
+            auto replyID = decoder.markHandledSyncReply();
             Vector<uint8_t> data(dataSize);
             for (size_t i = 0; i < dataSize; ++i)
                 data[i] = static_cast<uint8_t>(i);
-            encoder.get() << data;
-            return false;
+            connection.sendSyncReply<MockTestSyncMessageWithDataReply>(replyID, data);
         });
         ASSERT_TRUE(openB());
     });
@@ -1092,6 +1091,41 @@ TEST_P(ConnectionRunLoopTest, SendLocalSyncMessageWithDataReply)
         b()->invalidate();
     });
     localReferenceBarrier();
+}
+
+
+TEST_P(ConnectionRunLoopTest, SyncMessageToNonexistingDestinationIsCancelled)
+{
+    constexpr size_t iterations = 10;
+    ASSERT_TRUE(openA());
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    uint64_t gotDestination = 0;
+    runLoop->dispatch([&] {
+        bClient().setSyncMessageHandler([&](IPC::Connection& connection, IPC::Decoder& decoder) {
+            gotDestination = decoder.destinationID();
+            if (decoder.destinationID() == 88)
+                connection.sendSyncReply<MockTestSyncMessage>(decoder.markHandledSyncReply());
+        });
+        ASSERT_TRUE(openB());
+    });
+    for (size_t i = 0; i < iterations; ++i) {
+        {
+            gotDestination = 0;
+            auto result = a()->sendSync(MockTestSyncMessage(), 77, IPC::Timeout::infinity());
+            ASSERT_FALSE(result.succeeded());
+            EXPECT_EQ(IPC::Error::SyncMessageCancelled, result.error());
+            EXPECT_EQ(77u, gotDestination);
+        }
+        {
+            auto result = a()->sendSync(MockTestSyncMessage(), 88, IPC::Timeout::infinity());
+            EXPECT_TRUE(result.succeeded());
+        }
+    }
+    runLoop->dispatch([&] {
+        b()->invalidate();
+    });
+    localReferenceBarrier();
+
 }
 
 #undef RUN_LOOP_NAME

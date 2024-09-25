@@ -172,6 +172,7 @@ enum class MessageName : uint16_t {
     TestWithoutUsingIPCConnection_MessageWithoutArgument,
     TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply,
     TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument,
+    CancelSyncMessageReply,
 #if PLATFORM(COCOA)
     InitializeConnection,
 #endif

@@ -42,23 +42,37 @@ namespace WebKit {
 
 void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)
 {
-    if (decoder.messageName() == Messages::TestWithStream::SendString::name())
-        return IPC::handleMessage<Messages::TestWithStream::SendString>(connection, decoder, this, &TestWithStream::sendString);
-    if (decoder.messageName() == Messages::TestWithStream::SendStringAsync::name())
-        return IPC::handleMessageAsync<Messages::TestWithStream::SendStringAsync>(connection, decoder, this, &TestWithStream::sendStringAsync);
-    if (decoder.messageName() == Messages::TestWithStream::CallWithIdentifier::name())
-        return IPC::handleMessageAsyncWithReplyID<Messages::TestWithStream::CallWithIdentifier>(connection, decoder, this, &TestWithStream::callWithIdentifier);
+    if (decoder.messageName() == Messages::TestWithStream::SendString::name()) {
+        IPC::handleMessage<Messages::TestWithStream::SendString>(connection, decoder, this, &TestWithStream::sendString);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithStream::SendStringAsync::name()) {
+        IPC::handleMessageAsync<Messages::TestWithStream::SendStringAsync>(connection, decoder, this, &TestWithStream::sendStringAsync);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithStream::CallWithIdentifier::name()) {
+        IPC::handleMessageAsyncWithReplyID<Messages::TestWithStream::CallWithIdentifier>(connection, decoder, this, &TestWithStream::callWithIdentifier);
+        return;
+    }
 #if PLATFORM(COCOA)
-    if (decoder.messageName() == Messages::TestWithStream::SendMachSendRight::name())
-        return IPC::handleMessage<Messages::TestWithStream::SendMachSendRight>(connection, decoder, this, &TestWithStream::sendMachSendRight);
+    if (decoder.messageName() == Messages::TestWithStream::SendMachSendRight::name()) {
+        IPC::handleMessage<Messages::TestWithStream::SendMachSendRight>(connection, decoder, this, &TestWithStream::sendMachSendRight);
+        return;
+    }
 #endif
-    if (decoder.messageName() == Messages::TestWithStream::SendStringSync::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithStream::SendStringSync>(connection, decoder, this, &TestWithStream::sendStringSync);
+    if (decoder.messageName() == Messages::TestWithStream::SendStringSync::name()) {
+        IPC::handleMessageSynchronous<Messages::TestWithStream::SendStringSync>(connection, decoder, this, &TestWithStream::sendStringSync);
+        return;
+    }
 #if PLATFORM(COCOA)
-    if (decoder.messageName() == Messages::TestWithStream::ReceiveMachSendRight::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithStream::ReceiveMachSendRight>(connection, decoder, this, &TestWithStream::receiveMachSendRight);
-    if (decoder.messageName() == Messages::TestWithStream::SendAndReceiveMachSendRight::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithStream::SendAndReceiveMachSendRight>(connection, decoder, this, &TestWithStream::sendAndReceiveMachSendRight);
+    if (decoder.messageName() == Messages::TestWithStream::ReceiveMachSendRight::name()) {
+        IPC::handleMessageSynchronous<Messages::TestWithStream::ReceiveMachSendRight>(connection, decoder, this, &TestWithStream::receiveMachSendRight);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithStream::SendAndReceiveMachSendRight::name()) {
+        IPC::handleMessageSynchronous<Messages::TestWithStream::SendAndReceiveMachSendRight>(connection, decoder, this, &TestWithStream::sendAndReceiveMachSendRight);
+        return;
+    }
 #endif
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(connection);

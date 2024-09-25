@@ -28,6 +28,7 @@
 #include "Attachment.h"
 #include "MessageNames.h"
 #include "ReceiverMatcher.h"
+#include "ReplyID.h"
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -88,15 +89,14 @@ public:
     ReceiverName messageReceiverName() const { return receiverName(m_messageName); }
     MessageName messageName() const { return m_messageName; }
     uint64_t destinationID() const { return m_destinationID; }
+    Markable<ReplyID> syncReplyID() const { return m_syncReplyID; }
     bool matches(const ReceiverMatcher& matcher) const { return matcher.matches(messageReceiverName(), destinationID()); }
 
     bool isSyncMessage() const { return messageIsSync(messageName()); }
     ShouldDispatchWhenWaitingForSyncReply shouldDispatchMessageWhenWaitingForSyncReply() const;
     bool isAllowedWhenWaitingForSyncReply() const { return messageAllowedWhenWaitingForSyncReply(messageName()) || m_isAllowedWhenWaitingForSyncReplyOverride; }
     bool isAllowedWhenWaitingForUnboundedSyncReply() const { return messageAllowedWhenWaitingForUnboundedSyncReply(messageName()); }
-#if ENABLE(IPC_TESTING_API)
-    bool hasSyncMessageDeserializationFailure() const;
-#endif
+
     bool shouldUseFullySynchronousModeForTesting() const;
     bool shouldMaintainOrderingWithAsyncMessages() const;
     void setIsAllowedWhenWaitingForSyncReplyOverride(bool value) { m_isAllowedWhenWaitingForSyncReplyOverride = value; }
@@ -117,6 +117,9 @@ public:
         if (m_bufferDeallocator && !buffer.empty())
             m_bufferDeallocator(WTFMove(buffer));
     }
+
+    bool isHandled() const { return m_isHandled || !isValid(); }
+    ReplyID markHandledSyncReply() { ASSERT(!m_isHandled); ASSERT(m_syncReplyID); m_isHandled = true; return *m_syncReplyID; }
 
     template<typename T>
     WARN_UNUSED_RETURN std::span<const T> decodeSpan(size_t);
@@ -188,8 +191,10 @@ private:
 #endif
 
     uint64_t m_destinationID;
+    Markable<ReplyID> m_syncReplyID;
 
     int32_t m_indexOfObjectFailingDecoding { -1 };
+    bool m_isHandled { false };
 };
 
 template<>

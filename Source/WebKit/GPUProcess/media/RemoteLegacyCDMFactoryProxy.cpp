@@ -108,18 +108,16 @@ void RemoteLegacyCDMFactoryProxy::didReceiveCDMSessionMessage(IPC::Connection& c
         session->didReceiveMessage(connection, decoder);
 }
 
-bool RemoteLegacyCDMFactoryProxy::didReceiveSyncCDMMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
+void RemoteLegacyCDMFactoryProxy::didReceiveSyncCDMMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (auto* proxy = m_proxies.get(LegacyNullableObjectIdentifier<RemoteLegacyCDMIdentifierType>(decoder.destinationID())))
-        return proxy->didReceiveSyncMessage(connection, decoder, encoder);
-    return false;
+        proxy->didReceiveSyncMessage(connection, decoder);
 }
 
-bool RemoteLegacyCDMFactoryProxy::didReceiveSyncCDMSessionMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
+void RemoteLegacyCDMFactoryProxy::didReceiveSyncCDMSessionMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (auto* session = m_sessions.get(LegacyNullableObjectIdentifier<RemoteLegacyCDMSessionIdentifierType>(decoder.destinationID())))
-        return session->didReceiveSyncMessage(connection, decoder, encoder);
-    return false;
+        session->didReceiveSyncMessage(connection, decoder);
 }
 
 void RemoteLegacyCDMFactoryProxy::addProxy(RemoteLegacyCDMIdentifier identifier, std::unique_ptr<RemoteLegacyCDMProxy>&& proxy)

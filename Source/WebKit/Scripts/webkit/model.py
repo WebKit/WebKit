@@ -83,6 +83,7 @@ class Parameter(object):
 ipc_receiver = MessageReceiver(name="IPC", superclass=None, attributes=[BUILTIN_ATTRIBUTE], receiver_enabled_by=None, receiver_enabled_by_conjunction=None, shared_preferences_needs_connection=False, messages=[
     Message('WrappedAsyncMessageForTesting', [], [], attributes=[BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE], condition=None),
     Message('SyncMessageReply', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
+    Message('CancelSyncMessageReply', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
     Message('InitializeConnection', [], [], attributes=[BUILTIN_ATTRIBUTE], condition="PLATFORM(COCOA)"),
     Message('LegacySessionState', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),
     Message('SetStreamDestinationID', [], [], attributes=[BUILTIN_ATTRIBUTE], condition=None),

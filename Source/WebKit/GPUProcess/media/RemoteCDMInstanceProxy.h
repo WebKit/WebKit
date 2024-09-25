@@ -75,7 +75,7 @@ private:
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&) final;
 
     using SuccessValue = WebCore::CDMInstance::SuccessValue;
     using AllowDistinctiveIdentifiers = WebCore::CDMInstance::AllowDistinctiveIdentifiers;

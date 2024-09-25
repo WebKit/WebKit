@@ -43,14 +43,22 @@ void TestWithEnabledBy::didReceiveMessage(IPC::Connection& connection, IPC::Deco
     auto& sharedPreferences = sharedPreferencesForWebProcess(connection);
     UNUSED_VARIABLE(sharedPreferences);
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithEnabledBy::AlwaysEnabled::name())
-        return IPC::handleMessage<Messages::TestWithEnabledBy::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledBy::alwaysEnabled);
-    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabled::name() && sharedPreferences.someFeature)
-        return IPC::handleMessage<Messages::TestWithEnabledBy::ConditionallyEnabled>(connection, decoder, this, &TestWithEnabledBy::conditionallyEnabled);
-    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabledAnd::name() && (sharedPreferences.someFeature && sharedPreferences.otherFeature))
-        return IPC::handleMessage<Messages::TestWithEnabledBy::ConditionallyEnabledAnd>(connection, decoder, this, &TestWithEnabledBy::conditionallyEnabledAnd);
-    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabledOr::name() && (sharedPreferences.someFeature || sharedPreferences.otherFeature))
-        return IPC::handleMessage<Messages::TestWithEnabledBy::ConditionallyEnabledOr>(connection, decoder, this, &TestWithEnabledBy::conditionallyEnabledOr);
+    if (decoder.messageName() == Messages::TestWithEnabledBy::AlwaysEnabled::name()) {
+        IPC::handleMessage<Messages::TestWithEnabledBy::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledBy::alwaysEnabled);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabled::name() && sharedPreferences.someFeature) {
+        IPC::handleMessage<Messages::TestWithEnabledBy::ConditionallyEnabled>(connection, decoder, this, &TestWithEnabledBy::conditionallyEnabled);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabledAnd::name() && (sharedPreferences.someFeature && sharedPreferences.otherFeature)) {
+        IPC::handleMessage<Messages::TestWithEnabledBy::ConditionallyEnabledAnd>(connection, decoder, this, &TestWithEnabledBy::conditionallyEnabledAnd);
+        return;
+    }
+    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabledOr::name() && (sharedPreferences.someFeature || sharedPreferences.otherFeature)) {
+        IPC::handleMessage<Messages::TestWithEnabledBy::ConditionallyEnabledOr>(connection, decoder, this, &TestWithEnabledBy::conditionallyEnabledOr);
+        return;
+    }
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)

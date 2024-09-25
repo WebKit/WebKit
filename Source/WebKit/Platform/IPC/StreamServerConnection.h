@@ -96,15 +96,14 @@ public:
     void invalidate();
     template<typename T, typename RawValue> Error send(T&& message, const ObjectIdentifierGenericBase<RawValue>& destinationID);
 
-    template<typename T, typename... Arguments>
-    void sendSyncReply(Connection::SyncRequestID, Arguments&&...);
 
 #if ENABLE(IPC_TESTING_API)
     void setIgnoreInvalidMessageForTesting() { m_connection->setIgnoreInvalidMessageForTesting(); }
     bool ignoreInvalidMessageForTesting() const { return m_connection->ignoreInvalidMessageForTesting(); }
-    void sendDeserializationErrorSyncReply(Connection::SyncRequestID);
 #endif
 
+    template<typename T, typename... Arguments>
+    void sendSyncReply(ReplyID, Arguments&&...);
     template<typename T, typename... Arguments>
     void sendAsyncReply(AsyncReplyID, Arguments&&...);
 
@@ -118,7 +117,7 @@ private:
 
     // Connection::Client
     void didReceiveMessage(Connection&, Decoder&) final;
-    bool didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&) final;
+    void didReceiveSyncMessage(Connection&, Decoder&) final;
     void didClose(Connection&) final;
     void didReceiveInvalidMessage(Connection&, MessageName, int32_t indexOfObjectFailingDecoding) final;
 
@@ -154,7 +153,7 @@ Error StreamServerConnection::send(T&& message, const ObjectIdentifierGenericBas
 }
 
 template<typename T, typename... Arguments>
-void StreamServerConnection::sendSyncReply(Connection::SyncRequestID syncRequestID, Arguments&&... arguments)
+void StreamServerConnection::sendSyncReply(ReplyID syncRequestID, Arguments&&... arguments)
 {
     if constexpr(T::isReplyStreamEncodable) {
         if (m_isDispatchingStreamMessage) {
@@ -176,7 +175,7 @@ void StreamServerConnection::sendSyncReply(Connection::SyncRequestID syncRequest
     } else {
         // Asynchronously replying from the current thread is supported. Note: This is not thread safe,
         // as any other thread might execute before the buffer release.
-        m_connection->sendSyncReply(WTFMove(encoder));
+        m_connection->sendMessage(WTFMove(encoder), { });
     }
 }
 
