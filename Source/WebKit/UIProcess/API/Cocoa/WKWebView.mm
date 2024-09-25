@@ -77,6 +77,7 @@
 #import "WKNavigationDelegate.h"
 #import "WKNavigationInternal.h"
 #import "WKPDFConfiguration.h"
+#import "WKPDFView.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKSecurityOriginInternal.h"
@@ -4281,17 +4282,40 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (BOOL)_isDisplayingPDF
 {
-#if PLATFORM(MAC)
-    if (RefPtr mainFrame = _page->mainFrame())
-        return mainFrame->isDisplayingPDFDocument();
-#else
-    for (auto& type : WebCore::MIMETypeRegistry::pdfMIMETypes()) {
-        Class providerClass = [[self _contentProviderRegistry] providerForMIMEType:@(type.characters())];
-        if ([_customContentView isKindOfClass:providerClass])
-            return YES;
-    }
+    auto mainFrameIsDisplayingPDFDocument = [page = WeakPtr { _page.get() }] {
+        if (!page)
+            return false;
+        if (RefPtr mainFrame = page->mainFrame())
+            return mainFrame->isDisplayingPDFDocument();
+        return false;
+    };
+
+    bool unifiedPDFEnabled = false;
+#if ENABLE(UNIFIED_PDF)
+    unifiedPDFEnabled = _page->preferences().unifiedPDFEnabled();
 #endif
-    return NO;
+
+    bool hasCustomContentViewForPDFType = false;
+#if ENABLE(WKPDFVIEW)
+    hasCustomContentViewForPDFType = [weakSelf = WeakObjCPtr<WKWebView>(self)] {
+        if (![WKPDFView platformSupportsPDFView])
+            return false;
+
+        RetainPtr strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return false;
+
+        for (auto& type : WebCore::MIMETypeRegistry::pdfMIMETypes()) {
+            Class providerClass = [strongSelf->_contentProviderRegistry providerForMIMEType:@(type.characters())];
+            if ([strongSelf->_customContentView isKindOfClass:providerClass])
+                return true;
+        }
+
+        return false;
+    }();
+#endif
+
+    return static_cast<BOOL>(!unifiedPDFEnabled && hasCustomContentViewForPDFType ?: mainFrameIsDisplayingPDFDocument());
 }
 
 - (BOOL)_isDisplayingStandaloneImageDocument

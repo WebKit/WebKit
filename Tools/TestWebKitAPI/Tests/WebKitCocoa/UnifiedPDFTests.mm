@@ -30,10 +30,12 @@
 #import "CGImagePixelReader.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebCore/ColorSerialization.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFeature.h>
 #import <wtf/RetainPtr.h>
 
@@ -165,6 +167,20 @@ UNIFIED_PDF_TEST(SnapshotsPaintPageContent)
     }];
 
     Util::run(&done);
+}
+
+// FIXME: Combine this test with the WKWebView.IsDisplayingPDF test.
+UNIFIED_PDF_TEST(WKWebView_IsDisplayingPDF)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
+    RetainPtr pdfData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
+    [webView loadData:pdfData.get() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.apple.com/testPath"]];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_TRUE([webView _isDisplayingPDF]);
+
+    [webView loadHTMLString:@"<meta name='viewport' content='width=device-width'><h1>hello world</h1>" baseURL:[NSURL URLWithString:@"https://www.apple.com/1"]];
+    [webView _test_waitForDidFinishNavigationWithoutPresentationUpdate];
+    EXPECT_FALSE([webView _isDisplayingPDF]);
 }
 
 } // namespace TestWebKitAPI
