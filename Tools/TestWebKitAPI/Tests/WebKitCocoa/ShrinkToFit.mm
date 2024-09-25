@@ -36,7 +36,12 @@ static bool shrinkToFitDone;
 static bool shrinkToFitAfterNavigationDone;
 static bool shrinkToFitDisabledDone;
 
+// rdar://136702089
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+TEST(WebKit, DISABLED_ShrinkToFit)
+#else
 TEST(WebKit, ShrinkToFit)
+#endif
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
 
