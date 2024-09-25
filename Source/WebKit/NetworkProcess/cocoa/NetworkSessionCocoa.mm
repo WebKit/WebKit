@@ -1498,6 +1498,10 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const N
 
     cookieStorage.get()._overrideSessionCookieAcceptPolicy = YES;
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    configuration.TLSMinimumSupportedProtocolVersion = tls_protocol_version_TLSv10;
+ALLOW_DEPRECATED_DECLARATIONS_END
+
     initializeNSURLSessionsInSet(m_defaultSessionSet.get(), configuration);
 
     m_deviceManagementRestrictionsEnabled = parameters.deviceManagementRestrictionsEnabled;
@@ -1559,6 +1563,7 @@ SessionWrapper& SessionSet::initializeEphemeralStatelessSessionIfNeeded(Navigati
     configuration.URLCache = nil;
     configuration.allowsCellularAccess = existingConfiguration.allowsCellularAccess;
     configuration.connectionProxyDictionary = existingConfiguration.connectionProxyDictionary;
+    configuration.TLSMinimumSupportedProtocolVersion = existingConfiguration.TLSMinimumSupportedProtocolVersion;
 
     configuration._shouldSkipPreferredClientCertificateLookup = YES;
     configuration._sourceApplicationAuditTokenData = existingConfiguration._sourceApplicationAuditTokenData;

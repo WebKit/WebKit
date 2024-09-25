@@ -130,6 +130,17 @@ NSURLRequest *ResourceHandle::applySniffingPoliciesIfNeeded(NSURLRequest *reques
     return mutableRequest.autorelease();
 }
 
+NSURLRequest *ResourceHandle::applyTLSSettings(NSURLRequest *request)
+{
+    auto mutableRequest = adoptNS([request mutableCopy]);
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    CFURLRequestSetSSLProperties((__bridge CFMutableURLRequestRef)mutableRequest.get(), (__bridge CFDictionaryRef)@{@"_kCFStreamTLSMinimumVersion": @(kTLSProtocol1)});
+ALLOW_DEPRECATED_DECLARATIONS_END
+
+    return mutableRequest.autorelease();
+}
+
 #if !PLATFORM(IOS_FAMILY)
 void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, ContentEncodingSniffingPolicy contentEncodingSniffingPolicy, SchedulingBehavior schedulingBehavior)
 #else
@@ -166,6 +177,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
 
     auto nsRequest = retainPtr(firstRequest().nsURLRequest(HTTPBodyUpdatePolicy::UpdateHTTPBody));
     nsRequest = applySniffingPoliciesIfNeeded(nsRequest.get(), shouldContentSniff, contentEncodingSniffingPolicy);
+    nsRequest = applyTLSSettings(nsRequest.get());
 
     if (d->m_storageSession)
         nsRequest = copyRequestWithStorageSession(d->m_storageSession.get(), nsRequest.get());
