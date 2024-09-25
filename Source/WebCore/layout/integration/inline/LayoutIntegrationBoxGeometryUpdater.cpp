@@ -28,7 +28,6 @@
 
 #include "FormattingConstraints.h"
 #include "InlineWalker.h"
-#include "LayoutBoxGeometry.h"
 #include "RenderAttachment.h"
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
@@ -185,11 +184,11 @@ static inline LayoutUnit contentLogicalHeightForRenderer(const RenderBox& render
     return renderer.parent()->style().isHorizontalWritingMode() ? renderer.contentHeight() : renderer.contentWidth();
 }
 
-static inline Layout::BoxGeometry::HorizontalEdges horizontalLogicalMargin(const RenderBoxModelObject& renderer, std::optional<LayoutUnit> availableWidth, bool isLeftToRightInlineDirection, bool isHorizontalWritingMode, bool retainMarginStart = true, bool retainMarginEnd = true)
+Layout::BoxGeometry::HorizontalEdges BoxGeometryUpdater::horizontalLogicalMargin(const RenderBoxModelObject& renderer, std::optional<LayoutUnit> availableWidth, bool isLeftToRightInlineDirection, bool retainMarginStart, bool retainMarginEnd)
 {
     auto& style = renderer.style();
 
-    if (isHorizontalWritingMode) {
+    if (isHorizontalWritingMode()) {
         auto logicalLeftValue = retainMarginStart ? usedValueOrZero(isLeftToRightInlineDirection ? style.marginLeft() : style.marginRight(), availableWidth) : 0_lu;
         auto logicalRightValue = retainMarginEnd ? usedValueOrZero(isLeftToRightInlineDirection ? style.marginRight() : style.marginLeft(), availableWidth) : 0_lu;
 
@@ -202,10 +201,10 @@ static inline Layout::BoxGeometry::HorizontalEdges horizontalLogicalMargin(const
     return { logicalLeftValue, logicalRightValue };
 }
 
-static inline Layout::BoxGeometry::VerticalEdges verticalLogicalMargin(const RenderBoxModelObject& renderer, std::optional<LayoutUnit> availableWidth, FlowDirection blockFlowDirection)
+Layout::BoxGeometry::VerticalEdges BoxGeometryUpdater::verticalLogicalMargin(const RenderBoxModelObject& renderer, std::optional<LayoutUnit> availableWidth)
 {
     auto& style = renderer.style();
-    switch (blockFlowDirection) {
+    switch (blockFlowDirection()) {
     case FlowDirection::TopToBottom:
     case FlowDirection::BottomToTop:
         return { usedValueOrZero(style.marginTop(), availableWidth), usedValueOrZero(style.marginBottom(), availableWidth) };
@@ -218,7 +217,7 @@ static inline Layout::BoxGeometry::VerticalEdges verticalLogicalMargin(const Ren
     }
 }
 
-static inline Layout::BoxGeometry::Edges logicalBorder(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, FlowDirection blockFlowDirection, bool isIntrinsicWidthMode = false, bool retainBorderStart = true, bool retainBorderEnd = true)
+Layout::BoxGeometry::Edges BoxGeometryUpdater::logicalBorder(const RenderBoxModelObject& renderer, bool isLeftToRightInlineDirection, bool isIntrinsicWidthMode, bool retainBorderStart, bool retainBorderEnd)
 {
     auto& style = renderer.style();
 
@@ -230,7 +229,7 @@ static inline Layout::BoxGeometry::Edges logicalBorder(const RenderBoxModelObjec
     if (!isIntrinsicWidthMode)
         adjustBorderForTableAndFieldset(renderer, borderLeft, borderRight, borderTop, borderBottom);
 
-    if (blockFlowDirection == FlowDirection::TopToBottom || blockFlowDirection == FlowDirection::BottomToTop) {
+    if (blockFlowDirection() == FlowDirection::TopToBottom || blockFlowDirection() == FlowDirection::BottomToTop) {
         auto borderLogicalLeft = retainBorderStart ? isLeftToRightInlineDirection ? borderLeft : borderRight : 0_lu;
         auto borderLogicalRight = retainBorderEnd ? isLeftToRightInlineDirection ? borderRight : borderLeft : 0_lu;
         return { { borderLogicalLeft, borderLogicalRight }, { borderTop, borderBottom } };
@@ -241,7 +240,7 @@ static inline Layout::BoxGeometry::Edges logicalBorder(const RenderBoxModelObjec
     return { { borderLogicalLeft, borderLogicalRight }, { borderRight, borderLeft } };
 }
 
-static inline Layout::BoxGeometry::Edges logicalPadding(const RenderBoxModelObject& renderer, std::optional<LayoutUnit> availableWidth, bool isLeftToRightInlineDirection, FlowDirection blockFlowDirection, bool retainPaddingStart = true, bool retainPaddingEnd = true)
+Layout::BoxGeometry::Edges BoxGeometryUpdater::logicalPadding(const RenderBoxModelObject& renderer, std::optional<LayoutUnit> availableWidth, bool isLeftToRightInlineDirection, bool retainPaddingStart, bool retainPaddingEnd)
 {
     auto& style = renderer.style();
 
@@ -250,7 +249,7 @@ static inline Layout::BoxGeometry::Edges logicalPadding(const RenderBoxModelObje
     auto paddingTop = usedValueOrZero(style.paddingTop(), availableWidth);
     auto paddingBottom = usedValueOrZero(style.paddingBottom(), availableWidth);
 
-    if (blockFlowDirection == FlowDirection::TopToBottom || blockFlowDirection == FlowDirection::BottomToTop) {
+    if (blockFlowDirection() == FlowDirection::TopToBottom || blockFlowDirection() == FlowDirection::BottomToTop) {
         auto paddingLogicalLeft = retainPaddingStart ? isLeftToRightInlineDirection ? paddingLeft : paddingRight : 0_lu;
         auto paddingLogicalRight = retainPaddingEnd ? isLeftToRightInlineDirection ? paddingRight : paddingLeft : 0_lu;
         return { { paddingLogicalLeft, paddingLogicalRight }, { paddingTop, paddingBottom } };
@@ -271,7 +270,7 @@ static inline LayoutSize scrollbarLogicalSize(const RenderBox& renderer)
     return { horizontalSpaceReservedForScrollbar, verticalSpaceReservedForScrollbar };
 }
 
-static inline void setIntegrationBaseline(const RenderBox& renderBox)
+static inline void setIntegrationBaseline(const RenderBox& renderBox, FlowDirection blockFlowDirection)
 {
     auto hasNonSyntheticBaseline = [&] {
         if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderBox))
@@ -305,7 +304,6 @@ static inline void setIntegrationBaseline(const RenderBox& renderBox)
     if (!hasNonSyntheticBaseline())
         return;
 
-    auto blockFlowDirection = writingModeToBlockFlowDirection(renderBox.parent()->style().writingMode());
     auto baseline = renderBox.baselinePosition(AlphabeticBaseline, false /* firstLine */, blockFlowDirection == FlowDirection::TopToBottom || blockFlowDirection == FlowDirection::BottomToTop ? HorizontalLine : VerticalLine, PositionOnContainingLine);
     const_cast<Layout::ElementBox&>(*renderBox.layoutBox()).setBaselineForIntegration(baseline);
 }
@@ -313,14 +311,12 @@ static inline void setIntegrationBaseline(const RenderBox& renderBox)
 void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)
 {
     auto& layoutBox = const_cast<Layout::ElementBox&>(*renderBox.layoutBox());
-    auto isLeftToRightInlineDirection = renderBox.parent()->style().isLeftToRightDirection();
-    auto blockFlowDirection = writingModeToBlockFlowDirection(renderBox.parent()->style().writingMode());
-    auto isHorizontalWritingMode = blockFlowDirection == FlowDirection::TopToBottom || blockFlowDirection == FlowDirection::BottomToTop;
-
     auto& boxGeometry = layoutState().ensureGeometryForBox(layoutBox);
-    auto inlineMargin = horizontalLogicalMargin(renderBox, availableWidth, isLeftToRightInlineDirection, isHorizontalWritingMode);
-    auto border = logicalBorder(renderBox, isLeftToRightInlineDirection, blockFlowDirection, intrinsicWidthMode.has_value());
-    auto padding = logicalPadding(renderBox, availableWidth, isLeftToRightInlineDirection, blockFlowDirection);
+    auto isLeftToRightInlineDirection = renderBox.parent()->style().isLeftToRightDirection();
+
+    auto inlineMargin = horizontalLogicalMargin(renderBox, availableWidth, isLeftToRightInlineDirection);
+    auto border = logicalBorder(renderBox, isLeftToRightInlineDirection, intrinsicWidthMode.has_value());
+    auto padding = logicalPadding(renderBox, availableWidth, isLeftToRightInlineDirection);
     if (!intrinsicWidthMode)
         padding.vertical += intrinsicPaddingForTableCell(renderBox);
 
@@ -345,7 +341,7 @@ void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, s
     boxGeometry.setContentBoxWidth(contentLogicalWidthForRenderer(renderBox));
     boxGeometry.setContentBoxHeight(contentLogicalHeightForRenderer(renderBox));
 
-    boxGeometry.setVerticalMargin(verticalLogicalMargin(renderBox, availableWidth, blockFlowDirection));
+    boxGeometry.setVerticalMargin(verticalLogicalMargin(renderBox, availableWidth));
     boxGeometry.setHorizontalMargin(inlineMargin);
     boxGeometry.setBorder(border);
     boxGeometry.setPadding(padding);
@@ -364,14 +360,11 @@ void BoxGeometryUpdater::updateInlineBoxDimensions(const RenderInline& renderInl
     // Check if this renderer is part of a continuation and adjust horizontal margin/border/padding accordingly.
     auto shouldNotRetainBorderPaddingAndMarginStart = renderInline.isContinuation();
     auto shouldNotRetainBorderPaddingAndMarginEnd = !renderInline.isContinuation() && renderInline.inlineContinuation();
-
     auto isLeftToRightInlineDirection = renderInline.style().isLeftToRightDirection();
-    auto blockFlowDirection = writingModeToBlockFlowDirection(renderInline.style().writingMode());
-    auto isHorizontalWritingMode = blockFlowDirection == FlowDirection::TopToBottom || blockFlowDirection == FlowDirection::BottomToTop;
 
-    auto inlineMargin = horizontalLogicalMargin(renderInline, availableWidth, isLeftToRightInlineDirection, isHorizontalWritingMode, !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd);
-    auto border = logicalBorder(renderInline, isLeftToRightInlineDirection, blockFlowDirection, intrinsicWidthMode.has_value(), !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd);
-    auto padding = logicalPadding(renderInline, availableWidth, isLeftToRightInlineDirection, blockFlowDirection, !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd);
+    auto inlineMargin = horizontalLogicalMargin(renderInline, availableWidth, isLeftToRightInlineDirection, !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd);
+    auto border = logicalBorder(renderInline, isLeftToRightInlineDirection, intrinsicWidthMode.has_value(), !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd);
+    auto padding = logicalPadding(renderInline, availableWidth, isLeftToRightInlineDirection, !shouldNotRetainBorderPaddingAndMarginStart, !shouldNotRetainBorderPaddingAndMarginEnd);
 
     if (intrinsicWidthMode) {
         boxGeometry.setHorizontalMargin(inlineMargin);
@@ -381,7 +374,7 @@ void BoxGeometryUpdater::updateInlineBoxDimensions(const RenderInline& renderInl
     }
 
     boxGeometry.setHorizontalMargin(inlineMargin);
-    boxGeometry.setVerticalMargin(verticalLogicalMargin(renderInline, availableWidth, blockFlowDirection));
+    boxGeometry.setVerticalMargin(verticalLogicalMargin(renderInline, availableWidth));
     boxGeometry.setBorder(border);
     boxGeometry.setPadding(padding);
 }
@@ -428,12 +421,10 @@ Layout::ConstraintsForInlineContent BoxGeometryUpdater::updateInlineContentConst
     auto& rootRenderer = this->rootRenderer();
     auto& style = rootRenderer.style();
     auto isLeftToRightInlineDirection = style.isLeftToRightDirection();
-    auto isHorizontalWritingMode = style.isHorizontalWritingMode();
-    auto blockFlowDirection = style.blockFlowDirection();
 
-    auto padding = logicalPadding(rootRenderer, availableWidth, isLeftToRightInlineDirection, blockFlowDirection);
-    auto border = logicalBorder(rootRenderer, isLeftToRightInlineDirection, blockFlowDirection);
-    if (!isHorizontalWritingMode && !style.isFlippedBlocksWritingMode()) {
+    auto padding = logicalPadding(rootRenderer, availableWidth, isLeftToRightInlineDirection);
+    auto border = logicalBorder(rootRenderer, isLeftToRightInlineDirection);
+    if (!isHorizontalWritingMode() && !style.isFlippedBlocksWritingMode()) {
         padding.vertical = { padding.vertical.after, padding.vertical.before };
         border.vertical = { border.vertical.after, border.vertical.before };
     }
@@ -442,7 +433,7 @@ Layout::ConstraintsForInlineContent BoxGeometryUpdater::updateInlineContentConst
     auto scrollbarSize = scrollbarLogicalSize(rootRenderer);
     auto shouldPlaceVerticalScrollbarOnLeft = rootRenderer.shouldPlaceVerticalScrollbarOnLeft();
 
-    auto contentBoxWidth = isHorizontalWritingMode ? rootRenderer.contentWidth() : rootRenderer.contentHeight();
+    auto contentBoxWidth = isHorizontalWritingMode() ? rootRenderer.contentWidth() : rootRenderer.contentHeight();
     auto contentBoxLeft = border.horizontal.start + padding.horizontal.start + (isLeftToRightInlineDirection && shouldPlaceVerticalScrollbarOnLeft ? scrollbarSize.width() : 0_lu);
     auto contentBoxTop = border.vertical.before + padding.vertical.before;
 
@@ -458,8 +449,8 @@ Layout::ConstraintsForInlineContent BoxGeometryUpdater::updateInlineContentConst
         rootGeometry.setBorder(border);
         rootGeometry.setHorizontalSpaceForScrollbar(scrollbarSize.width());
         rootGeometry.setVerticalSpaceForScrollbar(scrollbarSize.height());
-        rootGeometry.setHorizontalMargin(horizontalLogicalMargin(rootRenderer, availableWidth, isLeftToRightInlineDirection, isHorizontalWritingMode));
-        rootGeometry.setVerticalMargin(verticalLogicalMargin(rootRenderer, availableWidth, blockFlowDirection));
+        rootGeometry.setHorizontalMargin(horizontalLogicalMargin(rootRenderer, availableWidth, isLeftToRightInlineDirection));
+        rootGeometry.setVerticalMargin(verticalLogicalMargin(rootRenderer, availableWidth));
     };
     createRootGeometryIfNeeded();
 
@@ -480,11 +471,11 @@ void BoxGeometryUpdater::updateGeometryAfterLayout(const Layout::ElementBox& lay
 
     auto integrationAdjustments = [&] {
         // FIXME: These should eventually be all absorbed by LFC layout.
-        setIntegrationBaseline(*renderBox);
+        setIntegrationBaseline(*renderBox, blockFlowDirection());
 
         if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(*renderBox)) {
             auto& style = layoutBox.parent().style();
-            boxGeometry.setHorizontalMargin(horizontalLogicalMargin(*renderListMarker, { }, style.isLeftToRightDirection(), style.isHorizontalWritingMode()));
+            boxGeometry.setHorizontalMargin(horizontalLogicalMargin(*renderListMarker, { }, style.isLeftToRightDirection()));
             if (!renderListMarker->isInside())
                 setListMarkerOffsetForMarkerOutside(*renderListMarker);
         }
@@ -492,7 +483,7 @@ void BoxGeometryUpdater::updateGeometryAfterLayout(const Layout::ElementBox& lay
         if (is<RenderTable>(*renderBox)) {
             // Tables have their special collapsed border values (updated at layout).
             auto& style = layoutBox.parent().style();
-            boxGeometry.setBorder(logicalBorder(*renderBox, style.isLeftToRightDirection(), style.blockFlowDirection(), false));
+            boxGeometry.setBorder(logicalBorder(*renderBox, style.isLeftToRightDirection()));
         }
 
         auto needsFullGeometryUpdate = [&] {
@@ -542,6 +533,16 @@ const Layout::ElementBox& BoxGeometryUpdater::rootLayoutBox() const
 const RenderBlock& BoxGeometryUpdater::rootRenderer() const
 {
     return downcast<RenderBlock>(*rootLayoutBox().rendererForIntegration());
+}
+
+bool BoxGeometryUpdater::isHorizontalWritingMode() const
+{
+    return rootRenderer().style().isHorizontalWritingMode();
+}
+
+FlowDirection BoxGeometryUpdater::blockFlowDirection() const
+{
+    return rootRenderer().style().blockFlowDirection();
 }
 
 }

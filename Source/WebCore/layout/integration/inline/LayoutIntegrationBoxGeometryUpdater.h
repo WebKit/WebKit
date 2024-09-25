@@ -27,6 +27,7 @@
 
 #include "FormattingConstraints.h"
 #include "InlineFormattingConstraints.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationBoxTree.h"
 #include "LayoutState.h"
 
@@ -60,6 +61,14 @@ private:
     void updateLineBreakBoxDimensions(const RenderLineBreak&);
     void updateInlineBoxDimensions(const RenderInline&, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
     void setListMarkerOffsetForMarkerOutside(const RenderListMarker&);
+
+    Layout::BoxGeometry::HorizontalEdges horizontalLogicalMargin(const RenderBoxModelObject&, std::optional<LayoutUnit> availableWidth, bool isLeftToRightInlineDirection, bool retainMarginStart = true, bool retainMarginEnd = true);
+    Layout::BoxGeometry::VerticalEdges verticalLogicalMargin(const RenderBoxModelObject&, std::optional<LayoutUnit> availableWidth);
+    Layout::BoxGeometry::Edges logicalBorder(const RenderBoxModelObject&, bool isLeftToRightInlineDirection, bool isIntrinsicWidthMode = false, bool retainBorderStart = true, bool retainBorderEnd = true);
+    Layout::BoxGeometry::Edges logicalPadding(const RenderBoxModelObject&, std::optional<LayoutUnit> availableWidth, bool isLeftToRightInlineDirection, bool retainPaddingStart = true, bool retainPaddingEnd = true);
+
+    FlowDirection blockFlowDirection() const;
+    bool isHorizontalWritingMode() const;
 
     Layout::LayoutState& layoutState() { return *m_layoutState; }
     const Layout::LayoutState& layoutState() const { return *m_layoutState; }
