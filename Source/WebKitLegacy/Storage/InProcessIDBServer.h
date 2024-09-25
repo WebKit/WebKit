@@ -54,8 +54,9 @@ class IDBServer;
 } // namespace WebCore
 
 class InProcessIDBServer final : public WebCore::IDBClient::IDBConnectionToServerDelegate, public WebCore::IDBServer::IDBConnectionToClientDelegate, public ThreadSafeRefCounted<InProcessIDBServer> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InProcessIDBServer);
 public:
-
     static Ref<InProcessIDBServer> create(PAL::SessionID);
     static Ref<InProcessIDBServer> create(PAL::SessionID, const String& databaseDirectoryPath);
 

@@ -177,7 +177,7 @@ protected:
     // Consider adding protected helper functions and making these private.
     RefPtr<IDBTransaction> m_transaction;
     RefPtr<DOMException> m_domError;
-    Event* m_openDatabaseSuccessEvent { nullptr };
+    WeakPtr<Event> m_openDatabaseSuccessEvent;
 
 private:
     IDBCursor* resultCursor();

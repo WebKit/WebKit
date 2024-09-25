@@ -100,6 +100,11 @@ SQLiteIDBCursor::~SQLiteIDBCursor()
         m_transaction->closeCursor(*this);
 }
 
+SQLiteIDBTransaction* SQLiteIDBCursor::transaction() const
+{
+    return m_transaction.get();
+}
+
 void SQLiteIDBCursor::currentData(IDBGetResult& result, const std::optional<IDBKeyPath>& keyPath, ShouldIncludePrefetchedRecords shouldIncludePrefetchedRecords)
 {
     ASSERT(!m_fetchedRecords.isEmpty());

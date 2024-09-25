@@ -85,7 +85,7 @@ public:
 private:
     IDBConnectionToClient(IDBConnectionToClientDelegate&);
     
-    IDBConnectionToClientDelegate* m_delegate;
+    CheckedPtr<IDBConnectionToClientDelegate> m_delegate;
     HashSet<UniqueIDBDatabaseConnection*> m_databaseConnections;
     bool m_isClosed { false };
 };

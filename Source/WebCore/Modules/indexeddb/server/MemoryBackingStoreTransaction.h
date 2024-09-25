@@ -44,8 +44,9 @@ class MemoryObjectStore;
 
 typedef HashMap<IDBKeyData, ThreadSafeDataBuffer, IDBKeyDataHash, IDBKeyDataHashTraits> KeyValueMap;
 
-class MemoryBackingStoreTransaction {
+class MemoryBackingStoreTransaction final : public CanMakeThreadSafeCheckedPtr<MemoryBackingStoreTransaction> {
     WTF_MAKE_TZONE_ALLOCATED(MemoryBackingStoreTransaction);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MemoryBackingStoreTransaction);
 public:
     static std::unique_ptr<MemoryBackingStoreTransaction> create(MemoryIDBBackingStore&, const IDBTransactionInfo&);
 

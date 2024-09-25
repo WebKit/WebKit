@@ -33,6 +33,7 @@
 #include "IDBResourceIdentifier.h"
 #include "IDBValue.h"
 #include "SQLiteStatement.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Deque.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -59,7 +60,7 @@ public:
     ~SQLiteIDBCursor();
 
     const IDBResourceIdentifier& identifier() const { return m_cursorIdentifier; }
-    SQLiteIDBTransaction* transaction() const { return m_transaction; }
+    SQLiteIDBTransaction* transaction() const;
 
     IDBObjectStoreIdentifier objectStoreID() const { return m_objectStoreID; }
     int64_t currentRecordRowID() const;
@@ -113,7 +114,7 @@ private:
 
     void increaseCountToPrefetch();
 
-    SQLiteIDBTransaction* m_transaction;
+    CheckedPtr<SQLiteIDBTransaction> m_transaction;
     IDBResourceIdentifier m_cursorIdentifier;
     IDBObjectStoreIdentifier m_objectStoreID;
     int64_t m_indexID { IDBIndexInfo::InvalidId };
