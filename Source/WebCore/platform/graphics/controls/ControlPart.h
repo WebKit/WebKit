@@ -29,7 +29,7 @@
 #include "ControlFactory.h"
 #include "PlatformControl.h"
 #include "StyleAppearance.h"
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
@@ -37,7 +37,7 @@ class FloatRect;
 class GraphicsContext;
 class ControlFactory;
 
-class ControlPart : public RefCounted<ControlPart> {
+class ControlPart : public ThreadSafeRefCounted<ControlPart> {
 public:
     virtual ~ControlPart() = default;
 
