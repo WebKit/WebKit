@@ -30,11 +30,19 @@
 #include "WPEExtensions.h"
 #include "WPEToplevelHeadless.h"
 #include "WPEViewHeadless.h"
+#include <epoxy/egl.h>
+#include <fcntl.h>
 #include <gio/gio.h>
 #include <optional>
+#include <unistd.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+#include <wtf/unix/UnixFileDescriptor.h>
+
+#if USE(GBM)
+#include <gbm.h>
+#endif
 
 #if USE(LIBDRM)
 #include <drm_fourcc.h>
@@ -46,6 +54,10 @@
  *
  */
 struct _WPEDisplayHeadlessPrivate {
+#if USE(GBM)
+    UnixFileDescriptor gbmDeviceFD;
+    struct gbm_device* gbmDevice;
+#endif
 #if USE(LIBDRM)
     std::optional<CString> drmDevice;
     std::optional<CString> drmRenderNode;
@@ -54,6 +66,17 @@ struct _WPEDisplayHeadlessPrivate {
 WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE(WPEDisplayHeadless, wpe_display_headless, WPE_TYPE_DISPLAY, WPEDisplay,
     wpeEnsureExtensionPointsRegistered();
     g_io_extension_point_implement(WPE_DISPLAY_EXTENSION_POINT_NAME, g_define_type_id, "wpe-display-headless", -100))
+
+static void wpeDisplayHeadlessDispose(GObject* object)
+{
+#if USE(GBM)
+    auto* priv = WPE_DISPLAY_HEADLESS(object)->priv;
+    g_clear_pointer(&priv->gbmDevice, gbm_device_destroy);
+    priv->gbmDeviceFD = { };
+#endif
+
+    G_OBJECT_CLASS(wpe_display_headless_parent_class)->dispose(object);
+}
 
 static gboolean wpeDisplayHeadlessConnect(WPEDisplay*, GError**)
 {
@@ -68,16 +91,63 @@ static WPEView* wpeDisplayHeadlessCreateView(WPEDisplay* display)
     return view;
 }
 
-#if USE(LIBDRM)
-static WPEBufferDMABufFormats* wpeDisplayHeadlessGetPreferredDMABufFormats(WPEDisplay*)
+static gpointer wpeDisplayHeadlessGetEGLDisplay(WPEDisplay* display, GError** error)
 {
-    // FIXME: we should get a DRM device in headless mode too when not forcing swrast.
-    auto* builder = wpe_buffer_dma_buf_formats_builder_new(nullptr);
-    wpe_buffer_dma_buf_formats_builder_append_group(builder, nullptr, WPE_BUFFER_DMA_BUF_FORMAT_USAGE_MAPPING);
-    wpe_buffer_dma_buf_formats_builder_append_format(builder, DRM_FORMAT_ARGB8888, DRM_FORMAT_MOD_LINEAR);
-    return wpe_buffer_dma_buf_formats_builder_end(builder);
+#if USE(GBM)
+    if (const char* filename = wpe_display_get_drm_render_node(display)) {
+        if (!epoxy_has_egl_extension(nullptr, "EGL_KHR_platform_gbm")) {
+            g_set_error_literal(error, WPE_EGL_ERROR, WPE_EGL_ERROR_NOT_AVAILABLE, "Can't get EGL display: GBM platform not supported");
+            return nullptr;
+        }
+
+        auto fd = UnixFileDescriptor { open(filename, O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
+        if (!fd) {
+            g_set_error(error, WPE_EGL_ERROR, WPE_EGL_ERROR_NOT_AVAILABLE, "Can't get EGL display: failed to open device %s", filename);
+            return nullptr;
+        }
+        auto* device = gbm_create_device(fd.value());
+        if (!device) {
+            g_set_error(error, WPE_EGL_ERROR, WPE_EGL_ERROR_NOT_AVAILABLE, "Can't get EGL display: failed to create GBM device for %s", filename);
+            return nullptr;
+        }
+
+        EGLDisplay eglDisplay = EGL_NO_DISPLAY;
+        if (epoxy_has_egl_extension(nullptr, "EGL_EXT_platform_base"))
+            eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, device, nullptr);
+        else if (epoxy_has_egl_extension(nullptr, "EGL_KHR_platform_base"))
+            eglDisplay = eglGetPlatformDisplay(EGL_PLATFORM_GBM_KHR, device, nullptr);
+
+        if (eglDisplay != EGL_NO_DISPLAY) {
+            auto* priv = WPE_DISPLAY_HEADLESS(display)->priv;
+            priv->gbmDeviceFD = WTFMove(fd);
+            priv->gbmDevice = device;
+            return eglDisplay;
+        }
+
+        gbm_device_destroy(device);
+        g_set_error(error, WPE_EGL_ERROR, WPE_EGL_ERROR_NOT_AVAILABLE, "Can't get EGL display: failed to create GBM EGL display for %s", filename);
+        return nullptr;
+    }
+#endif
+
+    if (!epoxy_has_egl_extension(nullptr, "EGL_MESA_platform_surfaceless")) {
+        g_set_error_literal(error, WPE_EGL_ERROR, WPE_EGL_ERROR_NOT_AVAILABLE, "Can't get EGL display: Surfaceless platform not supported");
+        return nullptr;
+    }
+
+    EGLDisplay eglDisplay = EGL_NO_DISPLAY;
+    if (epoxy_has_egl_extension(nullptr, "EGL_EXT_platform_base"))
+        eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY, nullptr);
+    else if (epoxy_has_egl_extension(nullptr, "EGL_KHR_platform_base"))
+        eglDisplay = eglGetPlatformDisplay(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY, nullptr);
+    if (eglDisplay != EGL_NO_DISPLAY)
+        return eglDisplay;
+
+    g_set_error_literal(error, WPE_EGL_ERROR, WPE_EGL_ERROR_NOT_AVAILABLE, "Can't get EGL display: failed to create surfaceless EGL display");
+    return nullptr;
 }
 
+#if USE(LIBDRM)
 static void wpeDisplayHeadlessInitializeDRMDevices(WPEDisplayHeadless* display)
 {
     auto* priv = display->priv;
@@ -125,11 +195,14 @@ static const char* wpeDisplayHeadlessGetDRMRenderNode(WPEDisplay* display)
 
 static void wpe_display_headless_class_init(WPEDisplayHeadlessClass* displayHeadlessClass)
 {
+    GObjectClass* objectClass = G_OBJECT_CLASS(displayHeadlessClass);
+    objectClass->dispose = wpeDisplayHeadlessDispose;
+
     WPEDisplayClass* displayClass = WPE_DISPLAY_CLASS(displayHeadlessClass);
     displayClass->connect = wpeDisplayHeadlessConnect;
     displayClass->create_view = wpeDisplayHeadlessCreateView;
+    displayClass->get_egl_display = wpeDisplayHeadlessGetEGLDisplay;
 #if USE(LIBDRM)
-    displayClass->get_preferred_dma_buf_formats = wpeDisplayHeadlessGetPreferredDMABufFormats;
     displayClass->get_drm_device = wpeDisplayHeadlessGetDRMDevice;
     displayClass->get_drm_render_node = wpeDisplayHeadlessGetDRMRenderNode;
 #endif
