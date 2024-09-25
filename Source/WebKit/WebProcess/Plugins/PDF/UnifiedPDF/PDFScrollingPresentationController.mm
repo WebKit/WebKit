@@ -299,16 +299,23 @@ void PDFScrollingPresentationController::updateDebugBorders(bool showDebugBorder
         layer.setShowRepaintCounter(showRepaintCounters);
     };
 
-    propagateSettingsToLayer(*m_pageBackgroundsContainerLayer);
-    propagateSettingsToLayer(*m_contentsLayer);
+    if (m_pageBackgroundsContainerLayer)
+        propagateSettingsToLayer(*m_pageBackgroundsContainerLayer);
+
+    if (m_contentsLayer)
+        propagateSettingsToLayer(*m_contentsLayer);
+
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
-    propagateSettingsToLayer(*m_selectionLayer);
+    if (m_selectionLayer)
+        propagateSettingsToLayer(*m_selectionLayer);
 #endif
 
-    for (auto& pageLayer : m_pageBackgroundsContainerLayer->children()) {
-        propagateSettingsToLayer(pageLayer);
-        if (pageLayer->children().size())
-            propagateSettingsToLayer(pageLayer->children()[0]);
+    if (m_pageBackgroundsContainerLayer) {
+        for (auto& pageLayer : m_pageBackgroundsContainerLayer->children()) {
+            propagateSettingsToLayer(pageLayer);
+            if (pageLayer->children().size())
+                propagateSettingsToLayer(pageLayer->children()[0]);
+        }
     }
 
     if (RefPtr asyncRenderer = asyncRendererIfExists())
