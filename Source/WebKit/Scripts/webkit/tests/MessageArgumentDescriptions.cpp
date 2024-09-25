@@ -44,6 +44,7 @@
 #include "JSIPCBinding.h"
 #include "LegacyCustomProtocolID.h"
 #include "LibWebRTCResolverIdentifier.h"
+#include "LogStreamIdentifier.h"
 #include "MarkSurfacesAsVolatileRequestIdentifier.h"
 #include "MediaRecorderIdentifier.h"
 #include "NetworkResourceLoadIdentifier.h"
@@ -588,6 +589,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::IPCStreamTesterIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::LegacyCustomProtocolID));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::LibWebRTCResolverIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::LogStreamIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::MarkSurfacesAsVolatileRequestIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::MediaRecorderIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::NetworkResourceLoadIdentifier));
@@ -733,6 +735,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::IPCStreamTesterIdentifier"_s,
         "WebKit::LegacyCustomProtocolID"_s,
         "WebKit::LibWebRTCResolverIdentifier"_s,
+        "WebKit::LogStreamIdentifier"_s,
         "WebKit::MarkSurfacesAsVolatileRequestIdentifier"_s,
         "WebKit::MediaRecorderIdentifier"_s,
         "WebKit::NetworkResourceLoadIdentifier"_s,
