@@ -132,6 +132,11 @@ void ModelProcessProxy::createModelProcessConnection(WebProcessProxy& webProcess
     }, 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
+void ModelProcessProxy::sharedPreferencesForWebProcessDidChange(WebProcessProxy& webProcessProxy, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::ModelProcess::SharedPreferencesForWebProcessDidChange { webProcessProxy.coreProcessIdentifier(), WTFMove(sharedPreferencesForWebProcess) }, WTFMove(completionHandler));
+}
+
 void ModelProcessProxy::modelProcessExited(ProcessTerminationReason reason)
 {
     Ref protectedThis { *this };

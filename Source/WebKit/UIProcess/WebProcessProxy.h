@@ -187,6 +187,9 @@ public:
 #if ENABLE(GPU_PROCESS)
     void didSyncSharedPreferencesForWebProcessWithGPUProcess(uint64_t syncedPreferencesVersion);
 #endif
+#if ENABLE(MODEL_PROCESS)
+    void didSyncSharedPreferencesForWebProcessWithModelProcess(uint64_t syncedPreferencesVersion);
+#endif
     void waitForSharedPreferencesForWebProcessToSync(uint64_t sharedPreferencesVersion, CompletionHandler<void(bool success)>&&);
 
     bool isMatchingRegistrableDomain(const WebCore::RegistrableDomain& domain) const { return m_registrableDomain ? *m_registrableDomain == domain : false; }
@@ -772,6 +775,9 @@ private:
     uint64_t m_sharedPreferencesVersionInNetworkProcess { 0 };
 #if ENABLE(GPU_PROCESS)
     uint64_t m_sharedPreferencesVersionInGPUProcess { 0 };
+#endif
+#if ENABLE(MODEL_PROCESS)
+    uint64_t m_sharedPreferencesVersionInModelProcess { 0 };
 #endif
     uint64_t m_awaitedSharedPreferencesVersion { 0 };
     CompletionHandler<void(bool success)> m_sharedPreferencesForWebProcessCompletionHandler;

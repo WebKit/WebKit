@@ -80,6 +80,13 @@ ModelProcessModelPlayerProxy::~ModelProcessModelPlayerProxy()
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy deallocated id=%" PRIu64, this, m_id.toUInt64());
 }
 
+const SharedPreferencesForWebProcess& ModelProcessModelPlayerProxy::sharedPreferencesForWebProcess() const
+{
+    RefPtr strongManager = m_manager.get();
+    RELEASE_ASSERT(strongManager);
+    return strongManager->sharedPreferencesForWebProcess();
+}
+
 bool ModelProcessModelPlayerProxy::transformSupported(const simd_float4x4& transform)
 {
     RESRT srt = REMakeSRTFromMatrix(transform);

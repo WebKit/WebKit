@@ -6089,6 +6089,14 @@ void WebPageProxy::preferencesDidChange()
                 });
             }
 #endif
+#if ENABLE(MODEL_PROCESS)
+            if (RefPtr modelProcess = webProcess.processPool().modelProcess()) {
+                modelProcess->sharedPreferencesForWebProcessDidChange(webProcess, WTFMove(*sharedPreferences), [weakWebProcess = WeakPtr { webProcess }, syncedVersion = sharedPreferences->version]() {
+                    if (RefPtr webProcess = weakWebProcess.get())
+                        webProcess->didSyncSharedPreferencesForWebProcessWithModelProcess(syncedVersion);
+                });
+            }
+#endif
         }
 
         if (m_isPerformingDOMPrintOperation) {

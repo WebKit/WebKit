@@ -26,6 +26,7 @@ messages -> ModelProcess : AuxiliaryProcess {
     InitializeModelProcess(struct WebKit::ModelProcessCreationParameters processCreationParameters) -> ()
 
     CreateModelConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, IPC::ConnectionHandle connectionHandle, struct WebKit::ModelProcessConnectionParameters parameters) -> () AllowedWhenWaitingForSyncReply
+    SharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier processIdentifier, struct WebKit::SharedPreferencesForWebProcess sharedPreferencesForWebProcess) -> ()
 
     PrepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime) -> ()
     ProcessDidResume()

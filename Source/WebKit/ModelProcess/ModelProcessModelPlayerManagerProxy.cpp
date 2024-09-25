@@ -47,6 +47,12 @@ ModelProcessModelPlayerManagerProxy::~ModelProcessModelPlayerManagerProxy()
     clear();
 }
 
+const SharedPreferencesForWebProcess& ModelProcessModelPlayerManagerProxy::sharedPreferencesForWebProcess() const
+{
+    ASSERT(m_modelConnectionToWebProcess);
+    return m_modelConnectionToWebProcess->sharedPreferencesForWebProcess();
+}
+
 void ModelProcessModelPlayerManagerProxy::clear()
 {
     auto proxies = std::exchange(m_proxies, { });

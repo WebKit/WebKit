@@ -71,6 +71,7 @@ ModelConnectionToWebProcess::ModelConnectionToWebProcess(ModelProcess& modelProc
 #if HAVE(AUDIT_TOKEN)
     , m_presentingApplicationAuditToken(parameters.presentingApplicationAuditToken ? std::optional(parameters.presentingApplicationAuditToken->auditToken()) : std::nullopt)
 #endif
+    , m_sharedPreferencesForWebProcess(WTFMove(parameters.sharedPreferencesForWebProcess))
 {
     RELEASE_ASSERT(RunLoop::isMain());
 

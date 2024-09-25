@@ -92,6 +92,13 @@ void ModelProcess::createModelConnectionToWebProcess(WebCore::ProcessIdentifier 
     m_webProcessConnections.add(identifier, WTFMove(newConnection));
 }
 
+void ModelProcess::sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier identifier, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, CompletionHandler<void()>&& completionHandler)
+{
+    if (RefPtr connection = m_webProcessConnections.get(identifier))
+        connection->updateSharedPreferencesForWebProcess(WTFMove(sharedPreferencesForWebProcess));
+    completionHandler();
+}
+
 void ModelProcess::removeModelConnectionToWebProcess(ModelConnectionToWebProcess& connection)
 {
     RELEASE_LOG(Process, "%p - ModelProcess::removeModelConnectionToWebProcess: processIdentifier=%" PRIu64, this, connection.webProcessIdentifier().toUInt64());
