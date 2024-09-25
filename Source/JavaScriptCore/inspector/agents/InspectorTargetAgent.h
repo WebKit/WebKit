@@ -37,12 +37,12 @@ namespace Inspector {
 
 class InspectorTarget;
 
-class JS_EXPORT_PRIVATE InspectorTargetAgent final : public InspectorAgentBase, public TargetBackendDispatcherHandler, public CanMakeCheckedPtr<InspectorTargetAgent> {
+class InspectorTargetAgent final : public InspectorAgentBase, public TargetBackendDispatcherHandler, public CanMakeCheckedPtr<InspectorTargetAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorTargetAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorTargetAgent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorTargetAgent);
 public:
-    InspectorTargetAgent(FrontendRouter&, BackendDispatcher&);
+    JS_EXPORT_PRIVATE InspectorTargetAgent(FrontendRouter&, BackendDispatcher&);
     ~InspectorTargetAgent() final;
 
     // InspectorAgentBase
@@ -55,12 +55,12 @@ public:
     Protocol::ErrorStringOr<void> sendMessageToTarget(const String& targetId, const String& message) final;
 
     // Target lifecycle.
-    void targetCreated(InspectorTarget&);
-    void targetDestroyed(InspectorTarget&);
-    void didCommitProvisionalTarget(const String& oldTargetID, const String& committedTargetID);
+    JS_EXPORT_PRIVATE void targetCreated(InspectorTarget&);
+    JS_EXPORT_PRIVATE void targetDestroyed(InspectorTarget&);
+    JS_EXPORT_PRIVATE void didCommitProvisionalTarget(const String& oldTargetID, const String& committedTargetID);
 
     // Target messages.
-    void sendMessageFromTargetToFrontend(const String& targetId, const String& message);
+    JS_EXPORT_PRIVATE void sendMessageFromTargetToFrontend(const String& targetId, const String& message);
 
 private:
     // FrontendChannel
