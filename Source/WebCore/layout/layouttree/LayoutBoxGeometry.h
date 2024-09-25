@@ -48,6 +48,8 @@ public:
     struct VerticalEdges {
         LayoutUnit before;
         LayoutUnit after;
+
+        VerticalEdges& operator+=(VerticalEdges other);
     };
 
     struct HorizontalEdges {
@@ -467,6 +469,14 @@ inline void BoxGeometry::setSpaceForScrollbar(LayoutSize scrollbarSize)
 {
     setVerticalSpaceForScrollbar(scrollbarSize.height());
     setHorizontalSpaceForScrollbar(scrollbarSize.width());
+}
+
+inline BoxGeometry::VerticalEdges& BoxGeometry::VerticalEdges::operator+=(VerticalEdges other)
+{
+    before += other.before;
+    after +=other.after;
+
+    return *this;
 }
 
 }
