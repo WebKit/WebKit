@@ -95,7 +95,7 @@ private:
 
     void remotePageProcessDidTerminate(WebCore::ProcessIdentifier) final;
     void sizeDidChange() final;
-    void deviceScaleFactorDidChange() final;
+    void deviceScaleFactorDidChange(CompletionHandler<void()>&&) final;
     void windowKindDidChange() final;
     void minimumSizeForAutoLayoutDidChange() final;
     void sizeToContentAutoSizeMaximumSizeDidChange() final;
@@ -166,6 +166,7 @@ private:
     };
 
     ProcessState& processStateForConnection(IPC::Connection&);
+    void forEachProcessState(Function<void(ProcessState&, WebProcessProxy&)>&&);
     void didRefreshDisplay(IPC::Connection*);
     void didRefreshDisplay(ProcessState&, IPC::Connection&);
     bool maybePauseDisplayRefreshCallbacks();

@@ -55,10 +55,10 @@ TiledCoreAnimationDrawingAreaProxy::~TiledCoreAnimationDrawingAreaProxy()
 {
 }
 
-void TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange()
+void TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange(CompletionHandler<void()>&& completionHandler)
 {
     Ref webPageProxy = m_webPageProxy.get();
-    send(Messages::DrawingArea::SetDeviceScaleFactor(webPageProxy->deviceScaleFactor()));
+    sendWithAsyncReply(Messages::DrawingArea::SetDeviceScaleFactor(webPageProxy->deviceScaleFactor()), WTFMove(completionHandler));
 }
 
 void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()

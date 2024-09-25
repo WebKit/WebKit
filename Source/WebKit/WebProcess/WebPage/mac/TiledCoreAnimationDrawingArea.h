@@ -110,7 +110,7 @@ private:
 
     // Message handlers.
     void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&&) override;
-    void setDeviceScaleFactor(float) override;
+    void setDeviceScaleFactor(float, CompletionHandler<void()>&&) override;
     void suspendPainting();
     void resumePainting();
     void setLayerHostingMode(LayerHostingMode) override;

@@ -1,0 +1,25 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-8534" />
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+    }
+
+    function startTest() {
+        if (window.testRunner) {
+            testRunner.setBackingScaleFactor(2, finishTest);
+        }
+    }
+
+    function finishTest() {
+        setTimeout(function() { testRunner.notifyDone() }, 0);
+    }
+</script>
+</head>
+<body onload="startTest();">
+<iframe src="http://localhost:8000/site-isolation/hidpi/resources/image-set.html" frameborder=0 style="width: 100%; height: 400px"></iframe>
+</div>
+</body>
+</html>

@@ -626,7 +626,15 @@ double WKPageGetBackingScaleFactor(WKPageRef pageRef)
 void WKPageSetCustomBackingScaleFactor(WKPageRef pageRef, double customScaleFactor)
 {
     CRASH_IF_SUSPENDED;
-    toImpl(pageRef)->setCustomDeviceScaleFactor(customScaleFactor);
+    toImpl(pageRef)->setCustomDeviceScaleFactor(customScaleFactor, [] { });
+}
+
+void WKPageSetCustomBackingScaleFactorWithCallback(WKPageRef pageRef, double customScaleFactor, void* context, WKPageSetCustomBackingScaleFactorFunction completionHandler)
+{
+    CRASH_IF_SUSPENDED;
+    toImpl(pageRef)->setCustomDeviceScaleFactor(customScaleFactor, [context, completionHandler] {
+        completionHandler(context);
+    });
 }
 
 bool WKPageSupportsTextZoom(WKPageRef pageRef)

@@ -132,9 +132,12 @@ void RemoteLayerTreeDrawingAreaProxy::viewWillEndLiveResize()
         scrollingCoordinator->viewWillEndLiveResize();
 }
 
-void RemoteLayerTreeDrawingAreaProxy::deviceScaleFactorDidChange()
+void RemoteLayerTreeDrawingAreaProxy::deviceScaleFactorDidChange(CompletionHandler<void()>&& completionHandler)
 {
-    send(Messages::DrawingArea::SetDeviceScaleFactor(protectedWebPageProxy()->deviceScaleFactor()));
+    Ref aggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    forEachProcessState([&](ProcessState& state, WebProcessProxy& webProcess) {
+        webProcess.sendWithAsyncReply(Messages::DrawingArea::SetDeviceScaleFactor(protectedWebPageProxy()->deviceScaleFactor()), [aggregator] { }, identifier());
+    });
 }
 
 void RemoteLayerTreeDrawingAreaProxy::didUpdateGeometry()
@@ -176,6 +179,13 @@ RemoteLayerTreeDrawingAreaProxy::ProcessState& RemoteLayerTreeDrawingAreaProxy::
 
     ASSERT(m_webProcessProxy->hasConnection() && &connection == &m_webProcessProxy->connection());
     return m_webPageProxyProcessState;
+}
+
+void RemoteLayerTreeDrawingAreaProxy::forEachProcessState(Function<void(ProcessState&, WebProcessProxy&)>&& callback)
+{
+    callback(m_webPageProxyProcessState, m_webProcessProxy);
+    for (auto [key, value] : m_remotePageProcessState)
+        callback(value, key.protectedProcess());
 }
 
 void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeNotTriggered(IPC::Connection& connection, TransactionID nextCommitTransactionID)
@@ -549,12 +559,10 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(IPC::Connection* connect
         ProcessState& state = processStateForConnection(*connection);
         didRefreshDisplay(state, *connection);
     } else {
-        if (m_webProcessProxy->hasConnection())
-            didRefreshDisplay(m_webPageProxyProcessState, protectedWebProcessProxy()->protectedConnection());
-        for (auto [key, value] : m_remotePageProcessState) {
-            if (key.process().hasConnection())
-                didRefreshDisplay(value, key.protectedProcess()->protectedConnection());
-        }
+        forEachProcessState([&](ProcessState& state, WebProcessProxy& webProcess) {
+            if (webProcess.hasConnection())
+                didRefreshDisplay(state, webProcess.protectedConnection());
+        });
     }
 
     if (maybePauseDisplayRefreshCallbacks())

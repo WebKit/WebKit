@@ -32,7 +32,7 @@ messages -> DrawingArea NotRefCounted {
 
 #if PLATFORM(COCOA)
     UpdateGeometry(WebCore::IntSize viewSize, bool flushSynchronously, MachSendRight fencePort) -> ()
-    SetDeviceScaleFactor(float deviceScaleFactor)
+    SetDeviceScaleFactor(float deviceScaleFactor) -> ()
     SetColorSpace(struct std::optional<WebCore::DestinationColorSpace> colorSpace)
     SetViewExposedRect(std::optional<WebCore::FloatRect> viewExposedRect)
 

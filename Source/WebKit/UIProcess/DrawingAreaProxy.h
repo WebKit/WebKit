@@ -80,7 +80,7 @@ public:
 
     virtual WebCore::DelegatedScrollingMode delegatedScrollingMode() const;
 
-    virtual void deviceScaleFactorDidChange() = 0;
+    virtual void deviceScaleFactorDidChange(CompletionHandler<void()>&&) = 0;
     virtual void colorSpaceDidChange() { }
     virtual void windowScreenDidChange(WebCore::PlatformDisplayID) { }
     virtual std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() { return std::nullopt; }

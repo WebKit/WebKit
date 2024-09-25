@@ -220,7 +220,7 @@ private:
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
 
 #if PLATFORM(COCOA)
-    virtual void setDeviceScaleFactor(float) { }
+    virtual void setDeviceScaleFactor(float, CompletionHandler<void()>&&) { }
     virtual void setColorSpace(std::optional<WebCore::DestinationColorSpace>) { }
 
     virtual void dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) = 0;

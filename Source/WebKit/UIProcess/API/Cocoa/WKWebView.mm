@@ -4661,7 +4661,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_setOverrideDeviceScaleFactor:(CGFloat)deviceScaleFactor
 {
-    _page->setCustomDeviceScaleFactor(deviceScaleFactor);
+    _page->setCustomDeviceScaleFactor(deviceScaleFactor, []() { });
 }
 
 - (CGFloat)_overrideDeviceScaleFactor

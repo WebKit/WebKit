@@ -48,7 +48,7 @@ public:
 
 private:
     // DrawingAreaProxy
-    void deviceScaleFactorDidChange() override;
+    void deviceScaleFactorDidChange(CompletionHandler<void()>&&) override;
     void sizeDidChange() override;
     bool shouldSendWheelEventsToEventDispatcher() const final { return true; }
 

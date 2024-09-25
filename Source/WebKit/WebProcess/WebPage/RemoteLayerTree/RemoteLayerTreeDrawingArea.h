@@ -120,7 +120,7 @@ private:
 
     void displayDidRefresh() final;
 
-    void setDeviceScaleFactor(float) final;
+    void setDeviceScaleFactor(float, CompletionHandler<void()>&&) final;
 
     void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) override;
 

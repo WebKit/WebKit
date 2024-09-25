@@ -2180,8 +2180,8 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
         return setAppBoundDomains(arrayValue(messageBody), WTFMove(completionHandler));
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetBackingScaleFactor")) {
-        WKPageSetCustomBackingScaleFactor(TestController::singleton().mainWebView()->page(), doubleValue(messageBody));
-        return completionHandler(nullptr);
+        WKPageSetCustomBackingScaleFactorWithCallback(TestController::singleton().mainWebView()->page(), doubleValue(messageBody), completionHandler.leak(), adoptAndCallCompletionHandler);
+        return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "RemoveAllSessionCredentials"))

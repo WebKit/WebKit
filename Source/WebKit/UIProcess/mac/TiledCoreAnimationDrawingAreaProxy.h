@@ -41,7 +41,7 @@ public:
 
 private:
     // DrawingAreaProxy
-    void deviceScaleFactorDidChange() override;
+    void deviceScaleFactorDidChange(CompletionHandler<void()>&&) override;
     void sizeDidChange() override;
     void colorSpaceDidChange() override;
     void minimumSizeForAutoLayoutDidChange() override;

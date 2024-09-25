@@ -215,9 +215,10 @@ void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore& pr
     DebugPageOverlays::settingsChanged(page);
 }
 
-void RemoteLayerTreeDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)
+void RemoteLayerTreeDrawingArea::setDeviceScaleFactor(float deviceScaleFactor, CompletionHandler<void()>&& completionHandler)
 {
     Ref { m_webPage.get() }->setDeviceScaleFactor(deviceScaleFactor);
+    completionHandler();
 }
 
 DelegatedScrollingMode RemoteLayerTreeDrawingArea::delegatedScrollingMode() const

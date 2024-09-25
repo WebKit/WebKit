@@ -62,7 +62,7 @@ public:
 private:
     // DrawingAreaProxy
     void sizeDidChange() override;
-    void deviceScaleFactorDidChange() override;
+    void deviceScaleFactorDidChange(CompletionHandler<void()>&&) override;
     void setBackingStoreIsDiscardable(bool) override;
 
 #if HAVE(DISPLAY_LINK)
