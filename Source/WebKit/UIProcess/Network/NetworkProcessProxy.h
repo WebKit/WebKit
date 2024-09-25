@@ -403,7 +403,7 @@ private:
     WebsiteDataStore* websiteDataStoreFromSessionID(PAL::SessionID);
 
     // ProcessLauncher::Client
-    void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
+    void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier&&) override;
 #if PLATFORM(COCOA)
     RefPtr<XPCEventHandler> xpcEventHandler() const override;
 #endif

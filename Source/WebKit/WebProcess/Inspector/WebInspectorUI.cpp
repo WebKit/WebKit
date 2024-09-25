@@ -94,7 +94,7 @@ void WebInspectorUI::updateConnection()
     if (!connectionIdentifiers)
         return;
 
-    m_backendConnection = IPC::Connection::createServerConnection(connectionIdentifiers->server);
+    m_backendConnection = IPC::Connection::createServerConnection(WTFMove(connectionIdentifiers->server));
     m_backendConnection->open(*this);
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::SetFrontendConnection(WTFMove(connectionIdentifiers->client)), m_inspectedPageIdentifier);

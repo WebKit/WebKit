@@ -336,14 +336,14 @@ struct Connection::PendingSyncReply {
     }
 };
 
-Ref<Connection> Connection::createServerConnection(Identifier identifier, Thread::QOS receiveQueueQOS)
+Ref<Connection> Connection::createServerConnection(Identifier&& identifier, Thread::QOS receiveQueueQOS)
 {
-    return adoptRef(*new Connection(identifier, true, receiveQueueQOS));
+    return adoptRef(*new Connection(WTFMove(identifier), true, receiveQueueQOS));
 }
 
-Ref<Connection> Connection::createClientConnection(Identifier identifier)
+Ref<Connection> Connection::createClientConnection(Identifier&& identifier)
 {
-    return adoptRef(*new Connection(identifier, false));
+    return adoptRef(*new Connection(WTFMove(identifier), false));
 }
 
 static HashMap<IPC::Connection::UniqueID, ThreadSafeWeakPtr<Connection>>& connectionMap() WTF_REQUIRES_LOCK(s_connectionMapLock)
@@ -352,7 +352,7 @@ static HashMap<IPC::Connection::UniqueID, ThreadSafeWeakPtr<Connection>>& connec
     return map;
 }
 
-Connection::Connection(Identifier identifier, bool isServer, Thread::QOS receiveQueueQOS)
+Connection::Connection(Identifier&& identifier, bool isServer, Thread::QOS receiveQueueQOS)
     : m_uniqueID(UniqueID::generate())
     , m_isServer(isServer)
     , m_connectionQueue(WorkQueue::create("com.apple.IPC.ReceiveQueue"_s, receiveQueueQOS))
@@ -362,7 +362,7 @@ Connection::Connection(Identifier identifier, bool isServer, Thread::QOS receive
         connectionMap().add(m_uniqueID, this);
     }
 
-    platformInitialize(identifier);
+    platformInitialize(WTFMove(identifier));
 }
 
 Connection::~Connection()

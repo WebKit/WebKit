@@ -55,16 +55,6 @@
 
 namespace WebKit {
 
-void ProcessLauncher::platformDestroy()
-{
-#if OS(LINUX)
-    if (m_pidServerSocket != -1) {
-        close(m_pidServerSocket);
-        m_pidServerSocket = -1;
-    }
-#endif
-}
-
 #if OS(LINUX)
 static bool isFlatpakSpawnUsable()
 {
@@ -111,7 +101,7 @@ void ProcessLauncher::launchProcess()
     GUniquePtr<gchar> processIdentifier(g_strdup_printf("%" PRIu64, m_launchOptions.processIdentifier.toUInt64()));
 
     IPC::SocketPair webkitSocketPair = IPC::createPlatformConnection(connectionOptions());
-    GUniquePtr<gchar> webkitSocket(g_strdup_printf("%d", webkitSocketPair.client));
+    GUniquePtr<gchar> webkitSocket(g_strdup_printf("%d", webkitSocketPair.client.value()));
 
 #if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
     if (ProcessProviderLibWPE::singleton().isEnabled()) {
@@ -122,13 +112,13 @@ void ProcessLauncher::launchProcess()
         argv[i++] = webkitSocket.get();
         argv[i++] = nullptr;
 
-        m_processID = ProcessProviderLibWPE::singleton().launchProcess(m_launchOptions, argv, webkitSocketPair.client);
+        m_processID = ProcessProviderLibWPE::singleton().launchProcess(m_launchOptions, argv, WTFMove(webkitSocketPair.client));
         if (m_processID <= -1)
             g_error("Unable to spawn a new child process");
 
         // We've finished launching the process, message back to the main run loop.
-        RunLoop::main().dispatch([protectedThis = Ref { *this }, this, serverSocket = webkitSocketPair.server] {
-            didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { serverSocket });
+        RunLoop::main().dispatch([protectedThis = Ref { *this }, this, serverSocket = WTFMove(webkitSocketPair.server)] {
+            didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { WTFMove(serverSocket) });
         });
 
         return;
@@ -137,7 +127,7 @@ void ProcessLauncher::launchProcess()
 
 #if OS(LINUX)
     IPC::SocketPair pidSocketPair = IPC::createPlatformConnection(IPC::PlatformConnectionOptions::SetCloexecOnClient | IPC::PlatformConnectionOptions::SetCloexecOnServer | IPC::PlatformConnectionOptions::SetPasscredOnServer);
-    GUniquePtr<gchar> pidSocketString(g_strdup_printf("%d", pidSocketPair.client));
+    GUniquePtr<gchar> pidSocketString(g_strdup_printf("%d", pidSocketPair.client.value()));
 #endif
 
     String executablePath;
@@ -204,9 +194,11 @@ void ProcessLauncher::launchProcess()
     //
     // Please keep this comment in sync with the duplicate comment in XDGDBusProxy::launch.
     GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_INHERIT_FDS));
-    g_subprocess_launcher_take_fd(launcher.get(), webkitSocketPair.client, webkitSocketPair.client);
+    int webkitClientSocketValue = webkitSocketPair.client.release();
+    g_subprocess_launcher_take_fd(launcher.get(), webkitClientSocketValue, webkitClientSocketValue);
 #if OS(LINUX)
-    g_subprocess_launcher_take_fd(launcher.get(), pidSocketPair.client, pidSocketPair.client);
+    int pidClientSocketValue = pidSocketPair.client.release();
+    g_subprocess_launcher_take_fd(launcher.get(), pidClientSocketValue, pidClientSocketValue);
 #endif
 
 #if USE(SYSPROF_CAPTURE)
@@ -230,7 +222,7 @@ void ProcessLauncher::launchProcess()
     bool sandboxEnabled = m_launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-sandbox"_s) == "true"_s;
 
     if (sandboxEnabled && isInsideFlatpak() && isFlatpakSpawnUsable())
-        process = flatpakSpawn(launcher.get(), m_launchOptions, argv, webkitSocketPair.client, pidSocketPair.client, &error.outPtr());
+        process = flatpakSpawn(launcher.get(), m_launchOptions, argv, webkitClientSocketValue, pidClientSocketValue, &error.outPtr());
 #if ENABLE(BUBBLEWRAP_SANDBOX)
     // You cannot use bubblewrap within Flatpak or some containers so lets ensure it never happens.
     // Snap can allow it but has its own limitations that require workarounds.
@@ -245,15 +237,16 @@ void ProcessLauncher::launchProcess()
         g_error("Unable to spawn a new child process: %s", error->message);
 
 #if OS(LINUX)
-    GRefPtr<GSocket> pidSocket = adoptGRef(g_socket_new_from_fd(pidSocketPair.server, &error.outPtr()));
+    GRefPtr<GSocket> pidSocket = adoptGRef(g_socket_new_from_fd(pidSocketPair.server.release(), &error.outPtr()));
     if (!pidSocket)
+        // Note: g_socket_new_from_fd() takes ownership of the fd only on success, so if this error
+        // were not fatal, we would need to close it here.
         g_error("Failed to create pid socket wrapper: %s", error->message);
 
     // We need to get the pid of the actual WebKit auxiliary process, not the bwrap or flatpak-spawn
     // intermediate process. And do it without blocking, because process launching is slow.
     g_socket_set_blocking(pidSocket.get(), FALSE);
-    m_pidServerSocket = webkitSocketPair.server;
-    m_socketMonitor.start(pidSocket.get(), G_IO_IN, RunLoop::main(), [protectedThis = Ref { *this }, this, pidSocket](GIOCondition condition) -> gboolean {
+    m_socketMonitor.start(pidSocket.get(), G_IO_IN, RunLoop::main(), [protectedThis = Ref { *this }, this, pidSocket, serverSocket = WTFMove(webkitSocketPair.server)](GIOCondition condition) mutable -> gboolean {
         if (!(condition & G_IO_IN))
             g_error("Failed to read pid from child process");
 
@@ -262,9 +255,7 @@ void ProcessLauncher::launchProcess()
 
         m_socketMonitor.stop();
 
-        didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { m_pidServerSocket });
-        m_pidServerSocket = -1;
-
+        didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { WTFMove(serverSocket) });
         return G_SOURCE_REMOVE;
     });
 #else
@@ -275,8 +266,8 @@ void ProcessLauncher::launchProcess()
     m_processID = g_ascii_strtoll(processIdStr, nullptr, 0);
     RELEASE_ASSERT(m_processID);
 
-    RunLoop::main().dispatch([protectedThis = Ref { *this }, this, serverSocket = webkitSocketPair.server] {
-        didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { serverSocket });
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, this, serverSocket = WTFMove(webkitSocketPair.server)] {
+        didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { WTFMove(serverSocket) });
     });
 #endif
 }

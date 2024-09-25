@@ -42,6 +42,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/NativePromise.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
@@ -58,6 +59,10 @@
 
 #if USE(GLIB)
 #include <wtf/glib/GSocketMonitor.h>
+#endif
+
+#if USE(UNIX_DOMAIN_SOCKETS)
+#include <wtf/unix/UnixFileDescriptor.h>
 #endif
 
 #if ENABLE(IPC_TESTING_API)
@@ -246,19 +251,30 @@ public:
     using Handle = ConnectionHandle;
 
     struct Identifier {
+        WTF_MAKE_NONCOPYABLE(Identifier);
+
         Identifier() = default;
 #if USE(UNIX_DOMAIN_SOCKETS)
+        Identifier(Identifier&& identifier)
+            : handle(WTFMove(identifier.handle))
+        {
+        }
         explicit Identifier(Handle&& handle)
-            : Identifier(handle.release())
+            : Identifier({ handle.release(), UnixFileDescriptor::Adopt })
         {
         }
-        explicit Identifier(int handle)
-            : handle(handle)
+        explicit Identifier(UnixFileDescriptor&& fd)
+            : handle(WTFMove(fd))
         {
         }
-        operator bool() const { return handle != -1; }
-        int handle { -1 };
+        Identifier& operator=(Identifier&&) = default;
+        operator bool() const { return !!handle; }
+        UnixFileDescriptor handle;
 #elif OS(WINDOWS)
+        Identifier(Identifier&& identifier)
+            : handle(WTFMove(identifier.handle))
+        {
+        }
         explicit Identifier(Handle&& handle)
             : Identifier(handle.leak())
         {
@@ -267,9 +283,15 @@ public:
             : handle(handle)
         {
         }
+        Identifier& operator=(Identifier&&) = default;
         operator bool() const { return !!handle; }
         HANDLE handle { 0 };
 #elif OS(DARWIN)
+        Identifier(Identifier&& identifier)
+            : port(WTFMove(identifier.port))
+            , xpcConnection(WTFMove(identifier.xpcConnection))
+        {
+        }
         explicit Identifier(Handle&& handle)
             : Identifier(handle.leakSendRight())
         {
@@ -283,6 +305,7 @@ public:
             , xpcConnection(WTFMove(xpcConnection))
         {
         }
+        Identifier& operator=(Identifier&&) = default;
         explicit operator bool() const { return MACH_PORT_VALID(port); }
         mach_port_t port { MACH_PORT_NULL };
         OSObjectPtr<xpc_connection_t> xpcConnection;
@@ -295,12 +318,18 @@ public:
     pid_t remoteProcessID() const;
 #endif
 
-    static Ref<Connection> createServerConnection(Identifier, Thread::QOS = Thread::QOS::Default);
-    static Ref<Connection> createClientConnection(Identifier);
+    static Ref<Connection> createServerConnection(Identifier&&, Thread::QOS = Thread::QOS::Default);
+    static Ref<Connection> createClientConnection(Identifier&&);
 
     struct ConnectionIdentifierPair {
         IPC::Connection::Identifier server;
         IPC::Connection::Handle client;
+
+        ConnectionIdentifierPair(Identifier&& server, Handle&& client)
+            : server(WTFMove(server))
+            , client(WTFMove(client))
+        {
+        }
     };
     static std::optional<ConnectionIdentifierPair> createConnectionIdentifierPair();
 
@@ -445,7 +474,9 @@ public:
     bool inSendSync() const { return m_inSendSyncCount; }
     unsigned inDispatchSyncMessageCount() const { return m_inDispatchSyncMessageCount; }
 
+#if PLATFORM(COCOA)
     Identifier identifier() const;
+#endif
 
 #if PLATFORM(COCOA) && !USE(EXTENSIONKIT_PROCESS_TERMINATION)
     bool kill();
@@ -492,8 +523,8 @@ public:
 #endif
 
 private:
-    Connection(Identifier, bool isServer, Thread::QOS = Thread::QOS::Default);
-    void platformInitialize(Identifier);
+    Connection(Identifier&&, bool isServer, Thread::QOS = Thread::QOS::Default);
+    void platformInitialize(Identifier&&);
     bool platformPrepareForOpen();
     void platformOpen();
     void platformInvalidate();
@@ -649,15 +680,17 @@ private:
     void readyReadHandler();
     bool processMessage();
     bool sendOutputMessage(UnixMessage&);
+    int socketDescriptor() const;
 
     Vector<uint8_t> m_readBuffer;
     Vector<int> m_fileDescriptors;
-    int m_socketDescriptor;
     std::unique_ptr<UnixMessage> m_pendingOutputMessage;
 #if USE(GLIB)
     GRefPtr<GSocket> m_socket;
     GSocketMonitor m_readSocketMonitor;
     GSocketMonitor m_writeSocketMonitor;
+#else
+    UnixFileDescriptor m_socketDescriptor;
 #endif
 #if PLATFORM(PLAYSTATION)
     RefPtr<WTF::Thread> m_socketMonitor;

@@ -73,7 +73,7 @@ std::optional<StreamClientConnection::StreamConnectionPair> StreamClientConnecti
     // For Connection, "client" means the connection which was established by receiving it through IPC and creating IPC::Connection out from the identifier.
     // The "Client" in StreamClientConnection means the party that mostly does sending, e.g. untrusted party.
     // The "Server" in StreamServerConnection means the party that mostly does receiving, e.g. the trusted party which holds the destination object to communicate with.
-    auto dedicatedConnection = Connection::createServerConnection(connectionIdentifiers->server);
+    auto dedicatedConnection = Connection::createServerConnection(WTFMove(connectionIdentifiers->server));
     auto clientConnection = adoptRef(*new StreamClientConnection(WTFMove(dedicatedConnection), WTFMove(*buffer), defaultTimeoutDuration));
     StreamServerConnection::Handle serverHandle {
         WTFMove(connectionIdentifiers->client),

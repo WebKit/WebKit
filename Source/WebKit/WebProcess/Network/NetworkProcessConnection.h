@@ -62,7 +62,7 @@ class NetworkProcessConnection final : public RefCounted<NetworkProcessConnectio
 public:
     static Ref<NetworkProcessConnection> create(IPC::Connection::Identifier&& connectionIdentifier, WebCore::HTTPCookieAcceptPolicy httpCookieAcceptPolicy)
     {
-        return adoptRef(*new NetworkProcessConnection(connectionIdentifier, httpCookieAcceptPolicy));
+        return adoptRef(*new NetworkProcessConnection(WTFMove(connectionIdentifier), httpCookieAcceptPolicy));
     }
     ~NetworkProcessConnection();
     
@@ -93,7 +93,7 @@ public:
     void updateCachedCookiesEnabled();
 
 private:
-    NetworkProcessConnection(IPC::Connection::Identifier, WebCore::HTTPCookieAcceptPolicy);
+    NetworkProcessConnection(IPC::Connection::Identifier&&, WebCore::HTTPCookieAcceptPolicy);
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

@@ -629,13 +629,15 @@ void GPUProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC:
     didClose(connection);
 }
 
-void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
+void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier&& connectionIdentifier)
 {
     RELEASE_LOG(Process, "%p - GPUProcessProxy::didFinishLaunching:", this);
 
-    AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
+    bool didTerminate = !connectionIdentifier;
 
-    if (!connectionIdentifier) {
+    AuxiliaryProcessProxy::didFinishLaunching(launcher, WTFMove(connectionIdentifier));
+
+    if (didTerminate) {
         gpuProcessExited(ProcessTerminationReason::Crash);
         return;
     }

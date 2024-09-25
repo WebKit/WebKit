@@ -1382,15 +1382,16 @@ void WebProcessProxy::setIgnoreInvalidMessageForTesting()
 }
 #endif
 
-void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
+void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier&& connectionIdentifier)
 {
     WEBPROCESSPROXY_RELEASE_LOG(Process, "didFinishLaunching:");
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
 
     Ref protectedThis { *this };
-    AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
+    bool didTerminate = !connectionIdentifier;
+    AuxiliaryProcessProxy::didFinishLaunching(launcher, WTFMove(connectionIdentifier));
 
-    if (!connectionIdentifier) {
+    if (didTerminate) {
         WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "didFinishLaunching: Invalid connection identifier (web process failed to launch)");
         processDidTerminateOrFailedToLaunch(ProcessTerminationReason::Crash);
         return;
@@ -2916,3 +2917,4 @@ const WebCore::ProcessIdentity& WebProcessProxy::processIdentity()
 #undef MESSAGE_CHECK_COMPLETION
 #undef WEBPROCESSPROXY_RELEASE_LOG
 #undef WEBPROCESSPROXY_RELEASE_LOG_ERROR
+
