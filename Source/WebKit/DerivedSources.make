@@ -127,6 +127,7 @@ else
 endif
 
 MESSAGE_RECEIVERS = \
+	NetworkProcess/LogStream \
 	NetworkProcess/NetworkBroadcastChannelRegistry \
 	NetworkProcess/NetworkConnectionToWebProcess \
 	NetworkProcess/NetworkContentRuleListManager \

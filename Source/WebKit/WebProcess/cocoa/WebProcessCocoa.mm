@@ -118,6 +118,7 @@
 #import <wtf/FileSystem.h>
 #import <wtf/Language.h>
 #import <wtf/LogInitialization.h>
+#import <wtf/MachSendRight.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SoftLinking.h>
@@ -174,6 +175,10 @@
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 #import "WebCaptionPreferencesDelegate.h"
 #import <WebCore/CaptionUserPreferencesMediaAF.h>
+#endif
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#import "LogStreamMessages.h"
 #endif
 
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
@@ -797,21 +802,8 @@ static void prewarmLogs()
 }
 #endif // PLATFORM(IOS_FAMILY)
 
-static Ref<WorkQueue> logQueue()
+void WebProcess::registerLogHook()
 {
-    static LazyNeverDestroyed<Ref<WorkQueue>> queue;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, [&] {
-        queue.construct(WorkQueue::create("Log Queue"_s, WorkQueue::QOS::Background));
-    });
-    return queue.get();
-}
-
-static void registerLogHook()
-{
-    if (os_trace_get_mode() != OS_TRACE_MODE_DISABLE && os_trace_get_mode() != OS_TRACE_MODE_OFF)
-        return;
-
     static os_log_hook_t prevHook = nullptr;
 
 #ifdef NDEBUG
@@ -822,7 +814,7 @@ static void registerLogHook()
     constexpr auto minimumType = OS_LOG_TYPE_DEBUG;
 #endif
 
-    prevHook = os_log_set_hook(minimumType, ^(os_log_type_t type, os_log_message_t msg) {
+    prevHook = os_log_set_hook(minimumType, makeBlockPtr([](os_log_type_t type, os_log_message_t msg) {
         if (prevHook)
             prevHook(type, msg);
 
@@ -836,60 +828,56 @@ static void registerLogHook()
             return;
 #endif
 
-        CString logFormat(msg->format);
-        CString logChannel(msg->subsystem);
-        CString logCategory(msg->category);
+        std::span logChannel(byteCast<uint8_t>(msg->subsystem), msg->subsystem ? strlen(msg->subsystem) + 1 : 0);
+        std::span logCategory(byteCast<uint8_t>(msg->category), msg->category ? strlen(msg->category) + 1 : 0);
 
-        auto qos = Thread::QOS::Background;
-
-        // Send fault logs with high priority. If the WebContent process is terminated, we might not be able to send the log in time.
-        if (type == OS_LOG_TYPE_FAULT) {
+        if (type == OS_LOG_TYPE_FAULT)
             type = OS_LOG_TYPE_ERROR;
-            qos = Thread::QOS::UserInteractive;
-        }
 
-        Vector<uint8_t> buffer(std::span { msg->buffer, msg->buffer_sz });
-        Vector<uint8_t> privdata(std::span { msg->privdata, msg->privdata_sz });
-
-        logQueue()->dispatchWithQOS([logFormat = WTFMove(logFormat), logChannel = WTFMove(logChannel), logCategory = WTFMove(logCategory), type = type, buffer = WTFMove(buffer), privdata = WTFMove(privdata), qos] {
-            os_log_message_s msg;
-            memset(&msg, 0, sizeof(msg));
-
-            msg.format = logFormat.data();
-            msg.buffer = buffer.data();
-            msg.buffer_sz = buffer.size();
-            msg.privdata = privdata.data();
-            msg.privdata_sz = privdata.size();
-
-            char* messageString = os_log_copy_message_string(&msg);
-            if (!messageString)
-                return;
-            std::span logStringIncludingNullTerminator(messageString, strlen(messageString) + 1);
-
-            auto connectionID = WebProcess::singleton().networkProcessConnectionID();
-            if (connectionID)
-                IPC::Connection::send(connectionID, Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(logChannel.spanIncludingNullTerminator(), logCategory.spanIncludingNullTerminator(), logStringIncludingNullTerminator, type, getpid()), 0, { }, qos);
-
+        if (char* messageString = os_log_copy_message_string(msg)) {
+            std::span logString(byteCast<uint8_t>(messageString), strlen(messageString) + 1);
+            WebProcess::singleton().sendLogOnStream(logChannel, logCategory, logString, type);
             free(messageString);
-        }, qos);
-    });
+        }
+    }).get());
 
     WTFSignpostIndirectLoggingEnabled = true;
+}
+
+void WebProcess::setupLogStream()
+{
+    if (os_trace_get_mode() != OS_TRACE_MODE_OFF)
+        return;
+
+    static constexpr auto connectionBufferSizeLog2 = 21;
+    auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2, 1_s);
+    if (!connectionPair)
+        CRASH();
+    auto [streamConnection, serverHandle] = WTFMove(*connectionPair);
+    m_logStreamConnection = WTFMove(streamConnection);
+    if (RefPtr logStreamConnection = m_logStreamConnection)
+        logStreamConnection->open(*this);
+
+    ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::SetupLogStream(getpid(), WTFMove(serverHandle), WebProcess::singleton().m_logStreamIdentifier), [] (IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore) {
+        if (RefPtr logStreamConnection = WebProcess::singleton().m_logStreamConnection)
+            logStreamConnection->setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
+#if PLATFORM(IOS_FAMILY)
+        prewarmLogs();
+#endif
+        WebProcess::singleton().registerLogHook();
+    });
+}
+
+void WebProcess::sendLogOnStream(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<uint8_t> logString, os_log_type_t type)
+{
+    if (RefPtr logStreamConnection = m_logStreamConnection)
+        logStreamConnection->send(Messages::LogStream::LogOnBehalfOfWebContent(logChannel, logCategory, logString, type), m_logStreamIdentifier);
 }
 #endif
 
 void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationParameters& parameters)
 {
     WebCore::PublicSuffixStore::singleton().enablePublicSuffixCache();
-
-#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    if (isLockdownModeEnabled()) {
-#if PLATFORM(IOS_FAMILY)
-        prewarmLogs();
-#endif
-        registerLogHook();
-    }
-#endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 
 #if PLATFORM(MAC)
     // Deny the WebContent process access to the WindowServer.

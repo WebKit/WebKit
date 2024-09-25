@@ -778,6 +778,7 @@ GPUProcessProxyMessageReceiver.cpp
 GPUProcessMessageReceiver.cpp
 LibWebRTCCodecsProxyMessageReceiver.cpp
 LibWebRTCCodecsMessageReceiver.cpp
+LogStreamMessageReceiver.cpp
 ModelConnectionToWebProcessMessageReceiver.cpp
 ModelProcessConnectionMessageReceiver.cpp
 ModelProcessProxyMessageReceiver.cpp

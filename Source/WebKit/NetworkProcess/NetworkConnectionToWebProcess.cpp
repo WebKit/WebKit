@@ -115,10 +115,6 @@
 #include <WebCore/MockContentFilterSettings.h>
 #endif
 
-#if HAVE(OS_SIGNPOST)
-#include <wtf/SystemTracing.h>
-#endif
-
 #define CONNECTION_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webProcessIdentifier=%" PRIu64 "] NetworkConnectionToWebProcess::" fmt, this, webProcessIdentifier().toUInt64(), ##__VA_ARGS__)
 #define CONNECTION_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [webProcessIdentifier=%" PRIu64 "] NetworkConnectionToWebProcess::" fmt, this, webProcessIdentifier().toUInt64(), ##__VA_ARGS__)
 
@@ -1545,36 +1541,11 @@ void NetworkConnectionToWebProcess::installMockContentFilter(WebCore::MockConten
 #endif
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(std::span<const char> logSubsystemIncludingNullTerminator, std::span<const char> logCategoryIncludingNullTerminator, std::span<const char> logStringIncludingNullTerminator, uint8_t logType, int32_t pid)
+void NetworkConnectionToWebProcess::setupLogStream(uint32_t pid, IPC::StreamServerConnectionHandle&& serverConnection, LogStreamIdentifier logStreamIdentifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&& completionHandler)
 {
-    auto isNullTerminated = [](std::span<const char> view) {
-        return view.data() && !view.empty() && view.back() == '\0';
-    };
-
-    bool isValidLogType = logType == OS_LOG_TYPE_DEFAULT || logType == OS_LOG_TYPE_INFO || logType == OS_LOG_TYPE_DEBUG || logType == OS_LOG_TYPE_ERROR || logType == OS_LOG_TYPE_FAULT;
-    MESSAGE_CHECK(isNullTerminated(logStringIncludingNullTerminator) && isValidLogType);
-
-    // os_log_hook on sender side sends a null category and subsystem when logging to OS_LOG_DEFAULT.
-    auto osLog = OSObjectPtr<os_log_t>();
-    if (isNullTerminated(logSubsystemIncludingNullTerminator) && isNullTerminated(logCategoryIncludingNullTerminator)) {
-        auto subsystem = logSubsystemIncludingNullTerminator.data();
-        auto category = logCategoryIncludingNullTerminator.data();
-        osLog = adoptOSObject(os_log_create(subsystem, category));
-    }
-
-    auto osLogPointer = osLog.get() ? osLog.get() : OS_LOG_DEFAULT;
-    auto* logData = logStringIncludingNullTerminator.data();
-
-#if HAVE(OS_SIGNPOST)
-    if (WTFSignpostHandleIndirectLog(osLogPointer, pid, logData))
-        return;
-#endif
-
-    // Use '%{public}s' in the format string for the preprocessed string from the WebContent process.
-    // This should not reveal any redacted information in the string, since it has already been composed in the WebContent process.
-    os_log_with_type(osLogPointer, static_cast<os_log_type_t>(logType), "WebContent[%d]: %{public}s", pid, logData);
+    m_logStream.setup(pid, WTFMove(serverConnection), logStreamIdentifier, WTFMove(completionHandler));
 }
-#endif
+#endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 
 void NetworkConnectionToWebProcess::useRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier identifier, WebCore::ResourceResponse&& response)
 {

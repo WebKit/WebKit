@@ -374,6 +374,7 @@ def serialized_identifiers():
         'WebKit::IPCStreamTesterIdentifier',
         'WebKit::LegacyCustomProtocolID',
         'WebKit::LibWebRTCResolverIdentifier',
+        'WebKit::LogStreamIdentifier',
         'WebKit::MarkSurfacesAsVolatileRequestIdentifier',
         'WebKit::MediaRecorderIdentifier',
         'WebKit::NetworkResourceLoadIdentifier',

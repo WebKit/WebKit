@@ -69,6 +69,11 @@
 #include "CocoaWindow.h"
 #endif
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#include "LogStream.h"
+#include "LogStreamIdentifier.h"
+#endif
+
 namespace PAL {
 class SessionID;
 }
@@ -94,6 +99,10 @@ struct SameSiteInfo;
 
 enum class HTTPCookieAcceptPolicy : uint8_t;
 enum class IncludeSecureCookies : bool;
+}
+
+namespace IPC {
+struct StreamServerConnectionHandle;
 }
 
 namespace WebKit {
@@ -236,7 +245,7 @@ public:
     void installMockContentFilter(WebCore::MockContentFilterSettings&&);
 #endif
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    void logOnBehalfOfWebContent(std::span<const char> logChannelIncludingNullTerminator, std::span<const char> logCategoryIncludingNullTerminator, std::span<const char> logStringIncludingNullTerminator, uint8_t logType, int32_t pid);
+    void setupLogStream(uint32_t pid, IPC::StreamServerConnectionHandle&&, LogStreamIdentifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&&);
 #endif
 
     void useRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier, WebCore::ResourceResponse&&);
@@ -507,6 +516,10 @@ private:
 #endif
 
     HashMap<WebTransportSessionIdentifier, Ref<NetworkTransportSession>> m_networkTransportSessions;
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    LogStream m_logStream;
+#endif
 };
 
 } // namespace WebKit

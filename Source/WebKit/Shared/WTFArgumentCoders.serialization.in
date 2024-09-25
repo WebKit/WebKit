@@ -205,6 +205,7 @@ template: enum class WebCore::WebLockIdentifierType
 template: enum class WebKit::GPUProcessConnectionIdentifierType
 template: enum class WebKit::LegacyCustomProtocolIDType
 template: enum class WebKit::LibWebRTCResolverIdentifierType
+template: enum class WebKit::LogStreamIdentifierType
 template: enum class WebKit::QuotaIncreaseRequestIdentifierType
 template: struct IPC::AsyncReplyIDType
 template: struct WebKit::StorageAreaIdentifierType

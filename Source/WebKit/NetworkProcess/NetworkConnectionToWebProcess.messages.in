@@ -121,8 +121,9 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
 #if ENABLE(CONTENT_FILTERING)
     InstallMockContentFilter(WebCore::MockContentFilterSettings settings)
 #endif
+
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    LogOnBehalfOfWebContent(std::span<const char> logChannelIncludingNullTerminator, std::span<const char> logCategoryIncludingNullTerminator, std::span<const char> logStringIncludingNullTerminator, uint8_t logType, int32_t pid)
+    SetupLogStream(uint32_t pid, IPC::StreamServerConnectionHandle serverConnection, WebKit::LogStreamIdentifier identifier) -> (IPC::Semaphore streamWakeUpSemaphore, IPC::Semaphore streamClientWaitSemaphore)
 #endif
 
     UseRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier, WebCore::ResourceResponse response)
