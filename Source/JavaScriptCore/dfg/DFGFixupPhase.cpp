@@ -1606,10 +1606,10 @@ private:
             break;
         }
 
-        case ArraySpliceExtract: {
-            fixEdge<ArrayUse>(node->child1());
-            fixEdge<Int32Use>(node->child2());
-            fixEdge<Int32Use>(node->child3());
+        case ArraySplice: {
+            fixEdge<ArrayUse>(m_graph.child(node, 0));
+            fixEdge<Int32Use>(m_graph.child(node, 1));
+            fixEdge<Int32Use>(m_graph.child(node, 2));
             break;
         }
 

@@ -1144,8 +1144,8 @@ private:
         case ArraySlice:
             compileArraySlice();
             break;
-        case ArraySpliceExtract:
-            compileArraySpliceExtract();
+        case ArraySplice:
+            compileArraySplice();
             break;
         case ArrayIndexOf:
             compileArrayIndexOf();
@@ -7534,7 +7534,7 @@ IGNORE_CLANG_WARNINGS_END
         setJSValue(arrayResult.array);
     }
 
-    void compileArraySpliceExtract()
+    void compileArraySplice()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
 
@@ -7543,9 +7543,26 @@ IGNORE_CLANG_WARNINGS_END
         if (mustGenerate)
             --refCount;
 
-        LValue base = lowCell(m_node->child1());
-        speculateArray(m_node->child1(), base);
-        setJSValue(vmCall(Int64, operationArraySpliceExtract, weakPointer(globalObject), base, lowInt32(m_node->child2()), lowInt32(m_node->child3()), m_out.constInt32(refCount)));
+        LValue base = lowCell(m_graph.child(m_node, 0));
+        speculateArray(m_graph.child(m_node, 0), base);
+        LValue index = lowInt32(m_graph.child(m_node, 1));
+        LValue deleteCount = lowInt32(m_graph.child(m_node, 2));
+
+        unsigned insertionCount = m_node->numChildren() - 3;
+        EncodedJSValue* buffer = nullptr;
+        if (insertionCount) {
+            size_t scratchSize = sizeof(EncodedJSValue) * insertionCount;
+            ASSERT(scratchSize);
+            ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
+            buffer = static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer());
+
+            for (unsigned i = 0; i < insertionCount; ++i) {
+                LValue value = lowJSValue(m_graph.child(m_node, i + 3));
+                m_out.store64(value, m_out.absolute(buffer + i));
+            }
+        }
+
+        setJSValue(vmCall(Int64, refCount ? operationArraySplice : operationArraySpliceIgnoreResult, weakPointer(globalObject), base, index, deleteCount, m_out.constIntPtr(buffer), m_out.constInt32(insertionCount)));
     }
 
     void compileArrayIndexOf()

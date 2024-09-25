@@ -2704,10 +2704,10 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
         }
 
         case ArraySpliceIntrinsic: {
-            // Currently we only handle extracting pattern `array.splice(x, y)` in a super fast manner.
-            if (argumentCountIncludingThis != 3)
+            if (argumentCountIncludingThis < 3)
                 return CallOptimizationResult::DidNothing;
 
+            // Currently we only handle extracting pattern `array.splice(x, y)` in a super fast manner.
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantCache)
                 || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
                 || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
@@ -2719,11 +2719,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
 
             insertChecks();
 
-            Node* result = addToGraph(ArraySpliceExtract, OpInfo(), OpInfo(prediction),
-                get(virtualRegisterForArgumentIncludingThis(0, registerOffset)),
-                get(virtualRegisterForArgumentIncludingThis(1, registerOffset)),
-                get(virtualRegisterForArgumentIncludingThis(2, registerOffset)));
-            setResult(result);
+            for (int i = 0; i < argumentCountIncludingThis; ++i)
+                addVarArgChild(get(virtualRegisterForArgumentIncludingThis(i, registerOffset)));
+            setResult(addToGraph(Node::VarArg, ArraySplice, OpInfo(), OpInfo(prediction)));
             return CallOptimizationResult::Inlined;
         }
 

@@ -1004,7 +1004,7 @@ private:
         case GetByValMegamorphic:
         case ArrayPop:
         case ArrayPush:
-        case ArraySpliceExtract:
+        case ArraySplice:
         case RegExpExec:
         case RegExpExecNonGlobalOrSticky:
         case RegExpTest:

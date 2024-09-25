@@ -2794,7 +2794,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case ArraySpliceExtract:
+    case ArraySplice:
         clobberWorld();
         makeBytecodeTopForNode(node);
         break;

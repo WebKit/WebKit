@@ -1230,12 +1230,21 @@ JSC_DEFINE_JIT_OPERATION(operationArrayPopAndRecoverLength, EncodedJSValue, (JSG
     OPERATION_RETURN(scope, JSValue::encode(array->pop(globalObject)));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationArraySpliceExtract, EncodedJSValue, (JSGlobalObject* globalObject, JSArray* base, int32_t start, int32_t deleteCount, unsigned refCount))
+template<bool ignoreResult>
+static ALWAYS_INLINE EncodedJSValue arraySpliceImpl(JSGlobalObject* globalObject, JSArray* base, int32_t start, int32_t deleteCount, EncodedJSValue* buffer, unsigned itemCount)
 {
     VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    MarkedArgumentBuffer insertions;
+    insertions.ensureCapacity(itemCount);
+    if (UNLIKELY(insertions.hasOverflowed())) {
+        throwOutOfMemoryError(globalObject, scope);
+        return { };
+    }
+
+    for (unsigned i = 0; i < itemCount; ++i)
+        insertions.appendWithCrashOnOverflow(JSValue::decode(buffer[i]));
 
     uint64_t length = base->length();
     uint64_t actualStart = 0;
@@ -1257,7 +1266,7 @@ JSC_DEFINE_JIT_OPERATION(operationArraySpliceExtract, EncodedJSValue, (JSGlobalO
     std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(globalObject, base, actualDeleteCount);
     EXCEPTION_ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
     if (speciesResult.first == SpeciesConstructResult::Exception)
-        OPERATION_RETURN(scope, encodedJSValue());
+        return { };
 
     JSValue result;
     if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath)) {
@@ -1295,11 +1304,11 @@ JSC_DEFINE_JIT_OPERATION(operationArraySpliceExtract, EncodedJSValue, (JSGlobalO
             }
         };
 
-        if (!refCount && canFastSliceWithoutSideEffect(globalObject, base, actualDeleteCount))
+        if (ignoreResult && canFastSliceWithoutSideEffect(globalObject, base, actualDeleteCount))
             result = jsUndefined();
         else {
             result = JSArray::fastSlice(globalObject, base, actualStart, actualDeleteCount);
-            OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
+            RETURN_IF_EXCEPTION(scope, { });
         }
     }
 
@@ -1310,35 +1319,65 @@ JSC_DEFINE_JIT_OPERATION(operationArraySpliceExtract, EncodedJSValue, (JSGlobalO
         else {
             if (UNLIKELY(actualDeleteCount > std::numeric_limits<uint32_t>::max())) {
                 throwRangeError(globalObject, scope, LengthExceededTheMaximumArrayLengthError);
-                OPERATION_RETURN(scope, encodedJSValue());
+                return { };
             }
             resultObject = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), static_cast<uint32_t>(actualDeleteCount));
             if (UNLIKELY(!resultObject)) {
                 throwOutOfMemoryError(globalObject, scope);
-                OPERATION_RETURN(scope, encodedJSValue());
+                return { };
             }
         }
         for (uint64_t k = 0; k < actualDeleteCount; ++k) {
             JSValue v = getProperty(globalObject, base, k + actualStart);
-            OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
+            RETURN_IF_EXCEPTION(scope, { });
             if (UNLIKELY(!v))
                 continue;
             resultObject->putDirectIndex(globalObject, k, v, 0, PutDirectIndexShouldThrow);
-            OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
+            RETURN_IF_EXCEPTION(scope, { });
         }
         setLength(globalObject, vm, resultObject, actualDeleteCount);
-        OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        RETURN_IF_EXCEPTION(scope, { });
         result = resultObject;
     }
 
-    if (actualDeleteCount) {
-        shift<JSArray::ShiftCountForSplice>(globalObject, base, actualStart, actualDeleteCount, 0, length);
-        OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (itemCount < actualDeleteCount) {
+        shift<JSArray::ShiftCountForSplice>(globalObject, base, actualStart, actualDeleteCount, itemCount, length);
+        RETURN_IF_EXCEPTION(scope, { });
+    } else if (itemCount > actualDeleteCount) {
+        unshift(globalObject, base, actualStart, actualDeleteCount, itemCount, length);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    for (unsigned i = 0; i < itemCount; ++i) {
+        base->putByIndexInline(globalObject, i + actualStart, insertions.at(i), true);
+        RETURN_IF_EXCEPTION(scope, { });
     }
 
     scope.release();
-    setLength(globalObject, vm, base, length - actualDeleteCount);
-    OPERATION_RETURN(scope, JSValue::encode(result));
+    setLength(globalObject, vm, base, length - actualDeleteCount + itemCount);
+    return JSValue::encode(result);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationArraySplice, EncodedJSValue, (JSGlobalObject* globalObject, JSArray* base, int32_t start, int32_t deleteCount, EncodedJSValue* buffer, unsigned itemCount))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    ActiveScratchBufferScope activeScratchBufferScope(buffer ? ScratchBuffer::fromData(buffer) : nullptr, itemCount);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    EncodedJSValue result = arraySpliceImpl</* ignore result */ false>(globalObject, base, start, deleteCount, buffer, itemCount);
+    OPERATION_RETURN(scope, result);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationArraySpliceIgnoreResult, EncodedJSValue, (JSGlobalObject* globalObject, JSArray* base, int32_t start, int32_t deleteCount, EncodedJSValue* buffer, unsigned itemCount))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    ActiveScratchBufferScope activeScratchBufferScope(buffer ? ScratchBuffer::fromData(buffer) : nullptr, itemCount);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    EncodedJSValue result = arraySpliceImpl</* ignore result */ true>(globalObject, base, start, deleteCount, buffer, itemCount);
+    OPERATION_RETURN(scope, result);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationRegExpExecString, EncodedJSValue, (JSGlobalObject* globalObject, RegExpObject* regExpObject, JSString* argument))
