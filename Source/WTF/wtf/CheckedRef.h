@@ -280,7 +280,7 @@ public:
 
     PtrCounterType ptrCount() const { return m_count; }
     void incrementPtrCount() const { ++m_count; }
-    void decrementPtrCount() const
+    ALWAYS_INLINE void decrementPtrCount() const
     {
         // In normal execution, a CheckedPtr always points to an object with a non-zero ptrCount().
         // When it detects a dangling pointer, WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR scribbles an object with zeroes and then leaks it.

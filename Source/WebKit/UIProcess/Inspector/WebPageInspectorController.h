@@ -98,7 +98,7 @@ private:
 
     WeakRef<WebPageProxy> m_inspectedPage;
 
-    Inspector::InspectorTargetAgent* m_targetAgent { nullptr };
+    CheckedPtr<Inspector::InspectorTargetAgent> m_targetAgent;
     HashMap<String, std::unique_ptr<InspectorTargetProxy>> m_targets;
 
     CheckedPtr<InspectorBrowserAgent> m_enabledBrowserAgent;

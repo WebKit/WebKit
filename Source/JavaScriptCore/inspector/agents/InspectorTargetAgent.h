@@ -29,6 +29,7 @@
 #include "InspectorBackendDispatchers.h"
 #include "InspectorFrontendChannel.h"
 #include "InspectorFrontendDispatchers.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -36,9 +37,10 @@ namespace Inspector {
 
 class InspectorTarget;
 
-class JS_EXPORT_PRIVATE InspectorTargetAgent final : public InspectorAgentBase, public TargetBackendDispatcherHandler {
+class JS_EXPORT_PRIVATE InspectorTargetAgent final : public InspectorAgentBase, public TargetBackendDispatcherHandler, public CanMakeCheckedPtr<InspectorTargetAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorTargetAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorTargetAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorTargetAgent);
 public:
     InspectorTargetAgent(FrontendRouter&, BackendDispatcher&);
     ~InspectorTargetAgent() final;
