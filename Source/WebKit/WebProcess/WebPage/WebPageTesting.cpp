@@ -117,13 +117,11 @@ void WebPageTesting::setTopContentInset(float contentInset, CompletionHandler<vo
     completionHandler();
 }
 
-void WebPageTesting::setPageScaleFactor(double scale, IntPoint origin, CompletionHandler<void()>&& completionHandler)
+void WebPageTesting::setPageScaleFactor(double scale, IntPoint origin)
 {
     RefPtr page = m_page->corePage();
-    if (!page)
-        return completionHandler();
-    page->setPageScaleFactor(scale, origin);
-    completionHandler();
+    if (page)
+        page->setPageScaleFactor(scale, origin);
 }
 
 Ref<WebPage> WebPageTesting::protectedPage() const

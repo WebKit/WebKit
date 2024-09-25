@@ -212,10 +212,10 @@ Ref<WebPageProxy> WebPageProxyTesting::protectedPage() const
 
 void WebPageProxyTesting::setPageScaleFactor(float scaleFactor, IntPoint point, CompletionHandler<void()>&& completionHandler)
 {
-    Ref callback = CallbackAggregator::create(WTFMove(completionHandler));
     protectedPage()->forEachWebContentProcess([&](auto& process, auto pageID) {
-        process.sendWithAsyncReply(Messages::WebPageTesting::SetPageScaleFactor(scaleFactor, point), [callback] { }, pageID);
+        process.send(Messages::WebPageTesting::SetPageScaleFactor(scaleFactor, point), pageID);
     });
+    protectedPage()->callAfterNextPresentationUpdate(WTFMove(completionHandler));
 }
 
 } // namespace WebKit

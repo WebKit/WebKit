@@ -64,7 +64,7 @@ private:
 
     void setTopContentInset(float, CompletionHandler<void()>&&);
 
-    void setPageScaleFactor(double scale, WebCore::IntPoint origin, CompletionHandler<void()>&&);
+    void setPageScaleFactor(double scale, WebCore::IntPoint origin);
 
     void clearWheelEventTestMonitor();
     Ref<WebPage> protectedPage() const;
