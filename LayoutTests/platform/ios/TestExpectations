@@ -7484,8 +7484,8 @@ imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-rel
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-repeated.html [ Failure ]
 
 # webkit.org/b/280296 [EWS] 5 tests in fast/events/iOS/activating are pre-existing failures in iOS
-[ Release arm64 ] fast/events/ios/activating-button-should-not-scroll-page.html [ Pass Timeout ]
-[ Release arm64 ] fast/events/ios/activating-checkbox-should-not-scroll-page.html [ Pass Timeout ]
-[ Release arm64 ] fast/events/ios/activating-radio-button-should-not-scroll-page.html [ Pass Timeout ]
-[ Release arm64 ] fast/events/ios/activating-reset-button-should-not-scroll-page.html [ Pass Timeout ]
-[ Release arm64 ] fast/events/ios/activating-submit-button-should-not-scroll-page.html [ Pass Timeout ]
+[ Release arm64 ] fast/events/ios/activating-button-should-not-scroll-page.html [ Skip ]
+[ Release arm64 ] fast/events/ios/activating-checkbox-should-not-scroll-page.html [ Skip ]
+[ Release arm64 ] fast/events/ios/activating-radio-button-should-not-scroll-page.html [ Skip ]
+[ Release arm64 ] fast/events/ios/activating-reset-button-should-not-scroll-page.html [ Skip ]
+[ Release arm64 ] fast/events/ios/activating-submit-button-should-not-scroll-page.html [ Skip ]
