@@ -910,6 +910,19 @@ BlockMediaLayerRehostingInWebContentProcess:
     WebCore:
       default: false
 
+BlockOpenDirectoryInWebContentSandbox:
+  type: bool
+  status: internal
+  category: networking
+  humanReadableName: "Block OpenDirectory service in the WebContent sandbox"
+  humanReadableDescription: "Block OpenDirectory service in the WebContent sandbox"
+  webcoreBinding: none
+  condition: HAVE(SANDBOX_STATE_FLAGS) && PLATFORM(MAC)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 # We would have to partition BroadcastChannel based on PageGroups if we wanted to enable this for WebKitLegacy.
 BroadcastChannelEnabled:
   type: bool
