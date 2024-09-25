@@ -7029,6 +7029,13 @@
    },
    {
       "emails" : [
+         "ryosei.otaka@sony.com"
+      ],
+      "github" : "r-otaka",
+      "name" : "Ryosei Otaka"
+   },
+   {
+      "emails" : [
          "rniwa@webkit.org"
       ],
       "expertise" : "HTML Editing, Core DOM, HTML DOM, Event Handling",
