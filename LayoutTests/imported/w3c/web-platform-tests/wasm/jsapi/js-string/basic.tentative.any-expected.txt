@@ -1,0 +1,4 @@
+
+Harness Error (FAIL), message = TypeError: import wasm:js-string:test must be an object (evaluating 'new WebAssembly.Instance(builtinModule, {})')
+
+
