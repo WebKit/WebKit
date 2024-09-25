@@ -140,7 +140,7 @@ class InternalSource final : public MediaStreamTrackPrivateObserver,
 public:
     InternalSource(GstElement* parent, MediaStreamTrackPrivate& track, const String& padName, bool consumerIsVideoPlayer)
         : m_parent(parent)
-        , m_track(track)
+        , m_track(&track)
         , m_padName(padName)
         , m_consumerIsVideoPlayer(consumerIsVideoPlayer)
     {
@@ -193,11 +193,8 @@ public:
 
     void replaceTrack(RefPtr<MediaStreamTrackPrivate>&& newTrack)
     {
-#ifndef NDEBUG
-        RefPtr currentTrack = m_track.get();
-        ASSERT(currentTrack);
-        ASSERT(currentTrack->type() == newTrack->type());
-#endif
+        ASSERT(m_track);
+        ASSERT(m_track->type() == newTrack->type());
         stopObserving();
         m_track = WTFMove(newTrack);
         startObserving();
@@ -206,10 +203,9 @@ public:
     void connectIncomingTrack()
     {
 #if USE(GSTREAMER_WEBRTC)
-        RefPtr track = m_track.get();
-        if (!track)
+        if (!m_track)
             return;
-        auto& trackSource = track->source();
+        auto& trackSource = m_track->source();
         int clientId;
         auto client = GRefPtr<GstElement>(m_src);
         if (trackSource.isIncomingAudioSource()) {
@@ -284,10 +280,9 @@ public:
         if (!m_webrtcSourceClientId)
             return;
 
-        RefPtr track = m_track.get();
-        if (!track)
+        if (!m_track)
             return;
-        auto& trackSource = track->source();
+        auto& trackSource = m_track->source();
         if (trackSource.isIncomingAudioSource()) {
             auto& source = static_cast<RealtimeIncomingAudioSourceGStreamer&>(trackSource);
             source.unregisterClient(*m_webrtcSourceClientId);
@@ -298,7 +293,7 @@ public:
 #endif
     }
 
-    WARN_UNUSED_RETURN RefPtr<MediaStreamTrackPrivate> track() const { return m_track.get(); }
+    WARN_UNUSED_RETURN RefPtr<MediaStreamTrackPrivate> track() const { return m_track; }
     const String& padName() const { return m_padName; }
     GstElement* get() const { return m_src.get(); }
 
@@ -307,16 +302,15 @@ public:
         if (m_isObserving)
             return;
 
-        RefPtr track = m_track.get();
-        if (!track)
+        if (!m_track)
             return;
 
-        GST_DEBUG_OBJECT(m_src.get(), "Starting observation of track %s", track->id().ascii().data());
-        track->addObserver(*this);
-        if (track->isAudio())
-            track->source().addAudioSampleObserver(*this);
-        else if (track->isVideo())
-            track->source().addVideoFrameObserver(*this);
+        GST_DEBUG_OBJECT(m_src.get(), "Starting observation of track %s", m_track->id().ascii().data());
+        m_track->addObserver(*this);
+        if (m_track->isAudio())
+            m_track->source().addAudioSampleObserver(*this);
+        else if (m_track->isVideo())
+            m_track->source().addVideoFrameObserver(*this);
         m_isObserving = true;
     }
 
@@ -325,26 +319,24 @@ public:
         if (!m_isObserving)
             return;
 
-        RefPtr track = m_track.get();
-        if (!track)
+        if (!m_track)
             return;
 
-        GST_DEBUG_OBJECT(m_src.get(), "Stopping observation of track %s", track->id().ascii().data());
+        GST_DEBUG_OBJECT(m_src.get(), "Stopping observation of track %s", m_track->id().ascii().data());
         m_isObserving = false;
 
-        if (track->isAudio())
-            track->source().removeAudioSampleObserver(*this);
-        else if (track->isVideo())
-            track->source().removeVideoFrameObserver(*this);
-        track->removeObserver(*this);
+        if (m_track->isAudio())
+            m_track->source().removeAudioSampleObserver(*this);
+        else if (m_track->isVideo())
+            m_track->source().removeVideoFrameObserver(*this);
+        m_track->removeObserver(*this);
     }
 
     void configureAudioTrack(float volume, bool isMuted, bool isPlaying)
     {
-        RefPtr track = m_track.get();
-        if (!track)
+        if (!m_track)
             return;
-        ASSERT(track->isAudio());
+        ASSERT(m_track->isAudio());
         m_audioTrack->setVolume(volume);
         m_audioTrack->setMuted(isMuted);
         m_audioTrack->setEnabled(m_audioTrack->streamTrack().enabled());
@@ -359,10 +351,10 @@ public:
         callOnMainThreadAndWait([&] {
             stopObserving();
         });
-        RefPtr track = m_track.get();
-        if (!track)
+
+        if (!m_track)
             return;
-        trackEnded(*track);
+        trackEnded(*m_track);
     }
 
     void pushSample(GRefPtr<GstSample>&& sample, [[maybe_unused]] const ASCIILiteral logMessage)
@@ -469,11 +461,10 @@ public:
             sample = gstVideoFrame->resizedSample(captureSize);
         }
 
-        RefPtr track = m_track.get();
-        if (!track)
+        if (!m_track)
             return;
 
-        auto settings = track->settings();
+        auto settings = m_track->settings();
         m_configuredSize.setWidth(settings.width());
         m_configuredSize.setHeight(settings.height());
 
@@ -499,7 +490,7 @@ public:
             m_lastKnownSize = m_configuredSize;
         }
 
-        if (track->enabled()) {
+        if (m_track->enabled()) {
             pushSample(WTFMove(sample), "Pushing video frame from enabled track"_s);
             return;
         }
@@ -512,12 +503,11 @@ public:
         if (!m_parent || !m_isObserving)
             return;
 
-        RefPtr track = m_track.get();
-        if (!track)
+        if (!m_track)
             return;
 
         const auto& data = static_cast<const GStreamerAudioData&>(audioData);
-        if (track->enabled()) {
+        if (m_track->enabled()) {
             GRefPtr<GstSample> sample = data.getSample();
             pushSample(WTFMove(sample), "Pushing audio sample from enabled track"_s);
             return;
@@ -573,12 +563,11 @@ private:
         auto width = m_lastKnownSize.width() ? m_lastKnownSize.width() : 320;
         auto height = m_lastKnownSize.height() ? m_lastKnownSize.height() : 240;
 
-        RefPtr track = m_track.get();
-        if (!track)
+        if (!m_track)
             return;
 
         int frameRateNumerator, frameRateDenominator;
-        gst_util_double_to_fraction(track->settings().frameRate(), &frameRateNumerator, &frameRateDenominator);
+        gst_util_double_to_fraction(m_track->settings().frameRate(), &frameRateNumerator, &frameRateDenominator);
 
         if (!m_blackFrameCaps)
             m_blackFrameCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420", "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr));
@@ -636,7 +625,7 @@ private:
     }
 
     GstElement* m_parent { nullptr };
-    WeakPtr<MediaStreamTrackPrivate> m_track;
+    RefPtr<MediaStreamTrackPrivate> m_track;
     GRefPtr<GstElement> m_src;
     GstClockTime m_firstBufferPts { GST_CLOCK_TIME_NONE };
     bool m_enoughData { false };
