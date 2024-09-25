@@ -154,6 +154,10 @@ static void collectComputedStyleDependencies(const Child& root, ComputedStyleDep
         [&](const Symbol& root) {
             collectComputedStyleDependencies(root.unit, dependencies);
         },
+        [&](const IndirectNode<Anchor>& anchor) {
+            if (anchor->fallback)
+                collectComputedStyleDependencies(*anchor->fallback, dependencies);
+        },
         [&](const auto& root) {
             forAllChildNodes(*root, [&](const auto& root) { collectComputedStyleDependencies(root, dependencies); });
         }

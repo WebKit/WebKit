@@ -75,6 +75,7 @@ static auto toCalculationValue(const CanonicalDimension&, const ToConversionOpti
 static auto toCalculationValue(const NonCanonicalDimension&, const ToConversionOptions&) -> Calculation::Child;
 static auto toCalculationValue(const Symbol&, const ToConversionOptions&) -> Calculation::Child;
 template<typename Op> auto toCalculationValue(const IndirectNode<Op>&, const ToConversionOptions&) -> Calculation::Child;
+static auto toCalculationValue(const IndirectNode<Anchor>&, const ToConversionOptions&) -> Calculation::Child;
 
 static CanonicalDimension::Dimension determineCanonicalDimension(Calculation::Category category)
 {
@@ -261,6 +262,12 @@ template<typename Op> Calculation::Child toCalculationValue(const IndirectNode<O
     using CalculationOp = typename Op::Base;
 
     return Calculation::makeChild(WTF::apply([&](const auto& ...x) { return CalculationOp { toCalculationValue(x, options)... }; } , *root));
+}
+
+Calculation::Child toCalculationValue(const IndirectNode<Anchor>&, const ToConversionOptions&)
+{
+    ASSERT_NOT_REACHED("Unevaluated anchor() functions are not supported in the Calculation::Tree");
+    return Calculation::number(0);
 }
 
 // MARK: - Exposed functions

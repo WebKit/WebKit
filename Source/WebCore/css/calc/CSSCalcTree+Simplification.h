@@ -97,6 +97,7 @@ std::optional<Child> simplify(Log&, const SimplificationOptions&);
 std::optional<Child> simplify(Exp&, const SimplificationOptions&);
 std::optional<Child> simplify(Abs&, const SimplificationOptions&);
 std::optional<Child> simplify(Sign&, const SimplificationOptions&);
+std::optional<Child> simplify(Anchor&, const SimplificationOptions&);
 
 // MARK: Unit Canonicalization
 

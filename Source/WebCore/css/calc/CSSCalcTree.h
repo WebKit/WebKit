@@ -33,6 +33,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -70,6 +71,7 @@ struct Log;
 struct Exp;
 struct Abs;
 struct Sign;
+struct Anchor;
 
 template<typename Op>
 concept Leaf = requires(Op) {
@@ -186,7 +188,8 @@ using Node = std::variant<
     IndirectNode<Log>,
     IndirectNode<Exp>,
     IndirectNode<Abs>,
-    IndirectNode<Sign>
+    IndirectNode<Sign>,
+    IndirectNode<Anchor>
 >;
 
 using Child = Node;
@@ -704,6 +707,23 @@ public:
     bool operator==(const Sign&) const = default;
 };
 
+
+struct Anchor {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Anchor);
+public:
+    static constexpr auto id = CSSValueAnchor;
+
+    // <anchor()> = anchor( <anchor-element>? && <anchor-side>, <length-percentage>? )
+
+    using Side = std::variant<CSSValueID, double>;
+
+    AtomString elementName;
+    Side side;
+    std::optional<Child> fallback;
+
+    bool operator==(const Anchor&) const = default;
+};
+
 // MARK: Size assertions
 
 static_assert(sizeof(Child) == 24);
@@ -1148,6 +1168,7 @@ OP_TUPLE_LIKE_CONFORMANCE(Log, 2);
 OP_TUPLE_LIKE_CONFORMANCE(Exp, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Abs, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Sign, 1);
+OP_TUPLE_LIKE_CONFORMANCE(Anchor, 0);
 
 #undef OP_TUPLE_LIKE_CONFORMANCE
 

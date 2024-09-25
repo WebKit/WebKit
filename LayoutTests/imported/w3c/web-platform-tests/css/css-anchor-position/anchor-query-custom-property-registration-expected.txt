@@ -1,5 +1,10 @@
 
-PASS anchor() cannot be used as <length> initial value
+FAIL anchor() cannot be used as <length> initial value assert_throws_dom: function "() => CSS.registerProperty({
+    name: '--x',
+    syntax: '<length>',
+    inherits: false,
+    initialValue: 'anchor(--foo top)',
+  })" did not throw
 PASS anchor-size() cannot be used as <length> initial value
 PASS anchor() cannot be used as <length-percentage> initial value
 PASS anchor-size() cannot be used as <length-percentage> initial value

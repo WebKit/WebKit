@@ -28,6 +28,7 @@
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcTree+Traversal.h"
 #include "CSSCalcTree.h"
+#include "CSSMarkup.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSUnits.h"
 #include <wtf/text/StringBuilder.h>
@@ -83,6 +84,7 @@ template<typename Op> static void serializeMathFunctionPrefix(StringBuilder&, co
 
 static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Sum>&, SerializationState&);
 static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Product>&, SerializationState&);
+static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Anchor>&, SerializationState&);
 template<typename Op> static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Op>&, SerializationState&);
 
 // https://drafts.csswg.org/css-values-4/#serialize-a-calculation-tree
@@ -361,6 +363,32 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<S
 void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<Product>& fn, SerializationState& state)
 {
     serializeCalculationTree(builder, fn, state);
+}
+
+void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<Anchor>& anchor, SerializationState&)
+{
+    if (!anchor->elementName.isNull()) {
+        serializeIdentifier(anchor->elementName, builder);
+        builder.append(' ');
+    }
+
+    WTF::switchOn(anchor->side,
+        [&](CSSValueID valueID) {
+            builder.append(nameLiteralForSerialization(valueID));
+        }, [&](double percentage) {
+            builder.append(percentage, '%');
+        }
+    );
+
+    if (anchor->fallback) {
+        builder.append(", "_s);
+
+        if (std::holds_alternative<IndirectNode<Sum>>(*anchor->fallback))
+            builder.append("calc"_s);
+
+        SerializationState state { };
+        serializeCalculationTree(builder, *anchor->fallback, state);
+    }
 }
 
 template<typename Op> void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<Op>& fn, SerializationState& state)

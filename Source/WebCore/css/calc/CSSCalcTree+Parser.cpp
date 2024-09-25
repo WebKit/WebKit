@@ -33,6 +33,7 @@
 #include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+Ident.h"
+#include "CSSPropertyParserConsumer+LengthPercentage.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSUnits.h"
 #include "CalculationCategory.h"
@@ -177,6 +178,7 @@ bool isCalcFunction(CSSValueID functionId, const CSSParserContext&)
     case CSSValueRound:
     case CSSValueMod:
     case CSSValueRem:
+    case CSSValueAnchor:
         return true;
     default:
         return false;
@@ -610,6 +612,62 @@ static std::optional<TypedChild> consumeRound(CSSParserTokenRange& tokens, int d
     return std::nullopt;
 }
 
+static std::optional<TypedChild> consumeAnchor(CSSParserTokenRange& tokens, int depth, ParserState& state)
+{
+    // <anchor()> = anchor( <anchor-element>? && <anchor-side>, <length-percentage>? )
+
+    if (!state.parserContext.propertySettings.cssAnchorPositioningEnabled)
+        return { };
+
+    auto anchorElement = CSSPropertyParserHelpers::consumeDashedIdentRaw(tokens);
+
+    auto anchorSide = [&]() -> std::optional<Anchor::Side> {
+        auto sideIdent = CSSPropertyParserHelpers::consumeIdentRaw<CSSValueInside, CSSValueOutside, CSSValueTop, CSSValueLeft, CSSValueRight, CSSValueBottom, CSSValueStart, CSSValueEnd, CSSValueSelfStart, CSSValueSelfEnd, CSSValueCenter>(tokens);
+        if (sideIdent)
+            return sideIdent;
+
+        if (tokens.peek().type() == PercentageToken)
+            return tokens.consumeIncludingWhitespace().numericValue();
+
+        return { };
+    }();
+
+    if (!anchorSide)
+        return { };
+
+    if (anchorElement.isNull())
+        anchorElement = CSSPropertyParserHelpers::consumeCustomIdentRaw(tokens);
+
+    std::optional<Child> fallback;
+
+    if (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(tokens)) {
+        auto consumeTypedFallback = [&]() -> std::optional<TypedChild> {
+            switch (tokens.peek().type()) {
+            case DimensionToken:
+            case PercentageToken:
+            case FunctionToken:
+                return parseCalcValue(tokens, depth, state);
+            default:
+                return { };
+            }
+        };
+
+        auto typedFallback = consumeTypedFallback();
+        if (!typedFallback)
+            return { };
+        if (typedFallback->type.length != 1 && typedFallback->type.percent != 1)
+            return { };
+
+        fallback = WTFMove(typedFallback->child);
+    }
+
+    state.requiresConversionData = true;
+
+    auto anchor = Anchor { .elementName = AtomString { anchorElement }, .side = *anchorSide, .fallback = WTFMove(fallback) };
+
+    return TypedChild { makeChild(WTFMove(anchor), Type::makeLength()), Type::makeLength() };
+}
+
 std::optional<TypedChild> parseCalcFunction(CSSParserTokenRange& tokens, CSSValueID functionID, int depth, ParserState& state)
 {
     if (checkDepthAndIndex(depth, tokens) != ParseStatus::OK)
@@ -740,6 +798,9 @@ std::optional<TypedChild> parseCalcFunction(CSSParserTokenRange& tokens, CSSValu
         //     - INPUT: any
         //     - OUTPUT: <number> "made consistent"
         return consumeExactlyOneArgument<Sign>(tokens, depth, state);
+
+    case CSSValueAnchor:
+        return consumeAnchor(tokens, depth, state);
 
     default:
         break;

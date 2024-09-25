@@ -2015,7 +2015,7 @@ PASS e.style['inset-inline-end'] = "anchor(--foo 50%, anchor(--bar left))" shoul
 PASS e.style['inset-inline-end'] = "anchor(50% --foo, anchor(--bar left))" should set the property value
 PASS e.style['inset-inline-end'] = "anchor(--foo 50%, anchor(--bar left, anchor(--baz right)))" should set the property value
 PASS e.style['inset-inline-end'] = "anchor(50% --foo, anchor(--bar left, anchor(--baz right)))" should set the property value
-FAIL e.style['top'] = "calc((anchor(--foo top) + anchor(--bar bottom)) / 2)" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['top'] = "anchor(--foo top, calc(anchor(--bar bottom) * 0.5))" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['top'] = "min(100px, 10%, anchor(--foo top), anchor(--bar bottom))" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['top'] = "calc((anchor(--foo top) + anchor(--bar bottom)) / 2)" should set the property value assert_equals: serialization should be canonical expected "calc((anchor(--foo top) + anchor(--bar bottom)) / 2)" but got "calc(0.5 * (anchor(--foo top) + anchor(--bar bottom)))"
+FAIL e.style['top'] = "anchor(--foo top, calc(anchor(--bar bottom) * 0.5))" should set the property value assert_equals: serialization should be canonical expected "anchor(--foo top, calc(anchor(--bar bottom) * 0.5))" but got "anchor(--foo top, calc(0.5 * anchor(--bar bottom)))"
+PASS e.style['top'] = "min(100px, 10%, anchor(--foo top), anchor(--bar bottom))" should set the property value
 

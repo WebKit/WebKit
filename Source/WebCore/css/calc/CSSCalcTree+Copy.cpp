@@ -37,6 +37,7 @@ static auto copy(const Children&) -> Children;
 static auto copy(const Child&) -> Child;
 template<Leaf Op> Child copy(const Op&);
 template<typename Op> static auto copy(const IndirectNode<Op>&) -> Child;
+static auto copy(const IndirectNode<Anchor>&) -> Child;
 
 // MARK: Copying
 
@@ -75,6 +76,11 @@ template<Leaf Op> Child copy(const Op& root)
 template<typename Op> Child copy(const IndirectNode<Op>& root)
 {
     return makeChild(WTF::apply([](const auto& ...x) { return Op { copy(x)... }; } , *root), root.type);
+}
+
+Child copy(const IndirectNode<Anchor>& anchor)
+{
+    return makeChild(Anchor { .elementName = anchor->elementName, .side = anchor->side, .fallback = copy(anchor->fallback) }, anchor.type);
 }
 
 // MARK: Exposed functions

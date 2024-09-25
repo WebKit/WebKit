@@ -109,6 +109,7 @@ RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange&, bool shouldLo
 // MARK: <dashed-ident>
 // https://drafts.csswg.org/css-values/#dashed-idents
 
+String consumeDashedIdentRaw(CSSParserTokenRange&, bool shouldLowercase = false);
 RefPtr<CSSPrimitiveValue> consumeDashedIdent(CSSParserTokenRange&, bool shouldLowercase = false);
 
 } // namespace CSSPropertyParserHelpers

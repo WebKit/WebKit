@@ -47,6 +47,7 @@ static auto evaluate(const IndirectNode<Product>&, const EvaluationOptions&) -> 
 static auto evaluate(const IndirectNode<Min>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const IndirectNode<Max>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const IndirectNode<Hypot>&, const EvaluationOptions&) -> std::optional<double>;
+static auto evaluate(const IndirectNode<Anchor>&, const EvaluationOptions&) -> std::optional<double>;
 template<typename Op>
 static auto evaluate(const IndirectNode<Op>&, const EvaluationOptions&) -> std::optional<double>;
 
@@ -163,6 +164,19 @@ std::optional<double> evaluate(const IndirectNode<Max>& root, const EvaluationOp
 std::optional<double> evaluate(const IndirectNode<Hypot>& root, const EvaluationOptions& options)
 {
     return executeVariadicMathOperationAfterUnwrapping(root, options);
+}
+
+std::optional<double> evaluate(const IndirectNode<Anchor>& anchor, const EvaluationOptions& options)
+{
+    if (!options.conversionData || !options.conversionData->style())
+        return { };
+
+    // FIXME: Evaluate the anchor.
+    bool isValid = !anchor->elementName.isNull() || !options.conversionData->style()->positionAnchor().isNull();
+    if (!isValid && anchor->fallback)
+        return evaluate(*anchor->fallback, options);
+
+    return { };
 }
 
 template<typename Op> std::optional<double> evaluate(const IndirectNode<Op>& root, const EvaluationOptions& options)
