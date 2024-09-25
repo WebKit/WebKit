@@ -139,7 +139,12 @@ static NSString *GetDocumentScrollTopJSExpression = @"document.body.scrollTop";
 
 @end
 
+// rdar://136705852
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
+TEST(WKWebViewCandidateTests, DISABLED_SoftSpaceReplacementAfterCandidateInsertionWithoutReplacement)
+#else
 TEST(WKWebViewCandidateTests, SoftSpaceReplacementAfterCandidateInsertionWithoutReplacement)
+#endif
 {
     auto wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
 
