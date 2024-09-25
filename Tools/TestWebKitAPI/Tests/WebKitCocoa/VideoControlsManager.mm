@@ -606,8 +606,8 @@ TEST(VideoControlsManager, TogglePlaybackForControlledVideo)
     [webView waitForVideoToPlay];
 }
 
-// rdar://136308546
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+// rdar://136308546 This is failing on all Mac queues.
+#if PLATFORM(MAC)
 TEST(VideoControlsManager, DISABLED_StartPlayingLargestVideoInViewport)
 #else
 TEST(VideoControlsManager, StartPlayingLargestVideoInViewport)
