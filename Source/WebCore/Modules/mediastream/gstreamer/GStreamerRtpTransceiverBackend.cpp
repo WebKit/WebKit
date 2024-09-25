@@ -127,14 +127,13 @@ static inline WARN_UNUSED_RETURN ExceptionOr<GRefPtr<GstCaps>> toRtpCodecCapabil
         gst_caps_set_simple(caps.get(), "channels", G_TYPE_INT, *codec.channels, nullptr);
 
     if (!codec.sdpFmtpLine.isEmpty()) {
-        // Forward each fmtp attribute as codec-<fmtp-name> in the caps so that the downstream
+        // Forward each fmtp attribute as <fmtp-name> in the caps so that the downstream
         // webkitvideoencoder can take those into account when configuring the encoder. For instance
         // VP9 profile 2 requires a 10bit pixel input format, so a conversion might be needed just
         // before encoding. This is taken care of in the webkitvideoencoder itself.
         for (auto& attribute : codec.sdpFmtpLine.split(';')) {
             auto components = attribute.split('=');
-            auto field = makeString(codecName.convertToASCIILowercase(), '-', components[0]);
-            gst_caps_set_simple(caps.get(), field.ascii().data(), G_TYPE_STRING, components[1].ascii().data(), nullptr);
+            gst_caps_set_simple(caps.get(), components[0].ascii().data(), G_TYPE_STRING, components[1].ascii().data(), nullptr);
         }
     }
 

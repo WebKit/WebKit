@@ -141,7 +141,7 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
 
         VPCodecConfigurationRecord record;
         record.codecName = "vp09"_s;
-        if (auto vp9Profile = gstStructureGetString(structure.get(), "vp9-profile-id"_s)) {
+        if (auto vp9Profile = gstStructureGetString(structure.get(), "profile-id"_s)) {
             if (auto profile = parseInteger<uint8_t>(vp9Profile))
                 record.profile = *profile;
         }
