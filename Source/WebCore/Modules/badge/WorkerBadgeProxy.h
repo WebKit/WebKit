@@ -34,6 +34,12 @@ public:
     virtual ~WorkerBadgeProxy() = default;
 
     virtual void setAppBadge(std::optional<uint64_t>) = 0;
+
+    // CanMakeCheckedPtr.
+    virtual uint32_t ptrCount() const = 0;
+    virtual uint32_t ptrCountWithoutThreadCheck() const = 0;
+    virtual void incrementPtrCount() const = 0;
+    virtual void decrementPtrCount() const = 0;
 };
 
 } // namespace WebCore
