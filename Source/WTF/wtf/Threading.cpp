@@ -113,9 +113,9 @@ static std::optional<size_t> stackSize(ThreadType threadType)
 #if PLATFORM(PLAYSTATION)
     if (threadType == ThreadType::JavaScript)
         return 512 * KB;
-#elif OS(DARWIN) && ASAN_ENABLED
+#elif OS(DARWIN) && (ASAN_ENABLED || ASSERT_ENABLED)
     if (threadType == ThreadType::Compiler)
-        return 1 * MB; // ASan needs more stack space (especially on Debug builds).
+        return 1 * MB; // ASan / Debug build needs more stack space.
 #elif OS(WINDOWS)
     // WebGL conformance tests need more stack space <https://webkit.org/b/261297>
     if (threadType == ThreadType::Graphics)
