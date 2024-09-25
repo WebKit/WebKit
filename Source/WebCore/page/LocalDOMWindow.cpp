@@ -2593,7 +2593,7 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
 
     bool noopener = windowFeatures.wantsNoOpener();
     if (!noopener) {
-        ASSERT(newFrame->opener() == &openerFrame);
+        ASSERT(!newFrame->opener() || newFrame->opener() == &openerFrame);
         newFrame->page()->setOpenedByDOMWithOpener(true);
     }
 
