@@ -74,6 +74,7 @@ private:
     RemoteBindGroupLayout& operator=(RemoteBindGroupLayout&&) = delete;
 
     WebCore::WebGPU::BindGroupLayout& backing() { return m_backing; }
+    Ref<WebGPU::ObjectHeap> protectedObjectHeap() const { return m_objectHeap.get(); }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

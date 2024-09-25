@@ -145,13 +145,13 @@ void RemoteAudioSessionProxyManager::updateSpatialExperience()
 {
     String sceneIdentifier;
     std::optional<AudioSession::SoundStageSize> maxSize;
-    for (auto& proxy : m_proxies) {
-        if (!proxy.isActive())
+    for (Ref proxy : m_proxies) {
+        if (!proxy->isActive())
             continue;
 
-        if (!maxSize || proxy.soundStageSize() > *maxSize) {
-            maxSize = proxy.soundStageSize();
-            sceneIdentifier = proxy.sceneIdentifier();
+        if (!maxSize || proxy->soundStageSize() > *maxSize) {
+            maxSize = proxy->soundStageSize();
+            sceneIdentifier = proxy->sceneIdentifier();
         }
     }
 

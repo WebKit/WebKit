@@ -189,7 +189,7 @@ void RemoteMediaSourceProxy::shutdown()
 
     disconnect();
 
-    if (auto* manager = m_manager.get())
+    if (RefPtr manager = m_manager.get())
         manager->invalidateMediaSource(m_identifier);
 }
 
@@ -197,7 +197,7 @@ RefPtr<GPUConnectionToWebProcess> RemoteMediaSourceProxy::connectionToWebProcess
 {
     ASSERT(RunLoop::isMain());
 
-    auto* manager = m_manager.get();
+    RefPtr manager = m_manager.get();
     return manager ? manager->gpuConnectionToWebProcess() : nullptr;
 }
 

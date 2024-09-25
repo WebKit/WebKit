@@ -139,7 +139,7 @@ void RemoteCDMInstanceSessionProxy::updateKeyStatuses(KeyStatusVector&& keyStatu
     if (!m_cdm)
         return;
 
-    auto* factory = m_cdm->factory();
+    RefPtr factory = m_cdm->factory();
     if (!factory)
         return;
 

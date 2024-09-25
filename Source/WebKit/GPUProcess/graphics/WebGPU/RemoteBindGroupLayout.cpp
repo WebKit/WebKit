@@ -52,7 +52,7 @@ RemoteBindGroupLayout::~RemoteBindGroupLayout() = default;
 
 void RemoteBindGroupLayout::destruct()
 {
-    Ref { m_objectHeap.get() }->removeObject(m_identifier);
+    protectedObjectHeap()->removeObject(m_identifier);
 }
 
 void RemoteBindGroupLayout::stopListeningForIPC()
