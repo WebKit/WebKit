@@ -610,9 +610,14 @@ void UnifiedPDFPlugin::didChangeSettings()
         layer.setShowDebugBorder(showDebugBorders);
         layer.setShowRepaintCounter(showRepaintCounter);
     };
-    propagateSettingsToLayer(*m_rootLayer);
-    propagateSettingsToLayer(*m_scrollContainerLayer);
-    propagateSettingsToLayer(*m_scrolledContentsLayer);
+    if (m_rootLayer)
+        propagateSettingsToLayer(*m_rootLayer);
+
+    if (m_scrollContainerLayer)
+        propagateSettingsToLayer(*m_scrollContainerLayer);
+
+    if (m_scrolledContentsLayer)
+        propagateSettingsToLayer(*m_scrolledContentsLayer);
 
     if (m_layerForHorizontalScrollbar)
         propagateSettingsToLayer(*m_layerForHorizontalScrollbar);
