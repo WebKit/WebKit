@@ -27,6 +27,7 @@
 #pragma once
 
 #include <algorithm>
+#include <climits>
 #include <concepts>
 #include <cstring>
 #include <functional>
