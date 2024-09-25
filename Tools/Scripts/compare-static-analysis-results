@@ -170,20 +170,22 @@ def compare_project_results_by_run(args, archive_path, new_path, project):
     project_results_failures = {}
 
     for checker in CHECKERS:
-        new_issues, fixed_issues = find_diff(args, f'{archive_path}/{checker}Issues', f'{new_path}/{project}/{checker}Issues')
+        _, fixed_issues = find_diff(args, f'{archive_path}/{checker}Issues', f'{new_path}/{project}/{checker}Issues')
         new_files, fixed_files = find_diff(args, f'{archive_path}/{checker}Files', f'{new_path}/{project}/{checker}Files')
         fixed_issues_total.update(fixed_issues)
         fixed_files_total.update(fixed_files)
-        new_issues_total.update(new_issues)
         new_files_total.update(new_files)
+        new_issues = set()
+        unexpected_result_paths = set()
 
         # Get unexpected issues per checker
-        unexpected_result_paths = set()
-        with open(f'{new_path}/issue_to_report.json') as f:
-            issue_to_report = json.load(f)
-        for issue in new_issues:
-            unexpected_result_paths.add(issue_to_report[checker][issue])
+        with open(f'{new_path}/issues_per_file.json') as f:
+            issues_per_file = json.load(f)
+        for file_name in new_files:
+            new_issues.update(list(issues_per_file[checker][file_name].keys()))
+            unexpected_result_paths.update(list(issues_per_file[checker][file_name].values()))
         unexpected_result_paths_total.update(unexpected_result_paths)
+        new_issues_total.update(new_issues)
 
         # JSON
         project_results_passes[checker] = list(fixed_files)
