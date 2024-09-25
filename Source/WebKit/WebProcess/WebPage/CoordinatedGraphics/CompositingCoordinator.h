@@ -30,6 +30,7 @@
 
 #include "WebPage.h"
 #include <WebCore/CoordinatedGraphicsLayer.h>
+#include <WebCore/CoordinatedImageBackingStore.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/GraphicsLayerFactory.h>
@@ -47,7 +48,6 @@ class SceneIntegration;
 
 namespace WebCore {
 class BitmapTexturePool;
-class CoordinatedImageBackingStore;
 class GraphicsContext;
 class GraphicsLayer;
 class Image;
@@ -137,7 +137,7 @@ private:
     std::unique_ptr<WebCore::BitmapTexturePool> m_skiaAcceleratedBitmapTexturePool;
     RefPtr<WorkerPool> m_skiaUnacceleratedThreadedRenderingPool;
 #endif
-    HashMap<uint64_t, Ref<CoordinatedImageBackingStore>> m_imageBackingStores;
+    HashMap<uint64_t, Ref<WebCore::CoordinatedImageBackingStore>> m_imageBackingStores;
 
     // We don't send the messages related to releasing resources to renderer during purging, because renderer already had removed all resources.
     bool m_isPurging { false };
