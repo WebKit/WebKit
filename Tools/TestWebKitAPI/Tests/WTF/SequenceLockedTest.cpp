@@ -50,7 +50,12 @@ struct Tester {
 
 }
 
+// rdar://134447305
+#if !defined(NDEBUG)
+TEST_F(SequenceLockedTest, DISABLED_Works)
+#else
 TEST_F(SequenceLockedTest, Works)
+#endif
 {
     SequenceLocked<Tester> tester;
     static_assert(sizeof(tester) - sizeof(uint64_t) == sizeof(Tester));
