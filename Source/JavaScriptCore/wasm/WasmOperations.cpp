@@ -380,7 +380,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, EncodedJSValue, 
                 else
                     *access.operator()<uint64_t>(calleeFrame, dst) = raw;
             } else {
-                auto raw = *access.operator()<uint64_t>(argumentRegisters, wasmParam.jsr().payloadGPR() * sizeof(UCPURegister));
+                auto raw = *access.operator()<uint64_t>(argumentRegisters, gprToIndex(wasmParam.jsr().payloadGPR()) * sizeof(UCPURegister));
 #if USE(JSVALUE64)
                 if (argType.isI32())
                     *access.operator()<uint64_t>(calleeFrame, dst) = static_cast<uint32_t>(raw) | JSValue::NumberTag;
@@ -670,7 +670,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, EncodedJSValu
 
             auto rep = wasmCC.results[index];
             if (rep.location.isGPR())
-                *access.operator()<uint64_t>(registerSpace, rep.location.jsr().payloadGPR() * sizeof(UCPURegister)) = unboxedValue;
+                *access.operator()<uint64_t>(registerSpace, gprToIndex(rep.location.jsr().payloadGPR()) * sizeof(UCPURegister)) = unboxedValue;
             else if (rep.location.isFPR())
                 *access.operator()<uint64_t>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + fprToIndex(rep.location.fpr()) * bytesForWidth(Width::Width64)) = unboxedValue;
             else
