@@ -2,28 +2,17 @@
 Tracing utils
 """
 
-from __future__ import annotations
-
-from typing import Any
-from typing import Callable
-from typing import Sequence
-from typing import Tuple
-
-
-_Writer = Callable[[str], object]
-_Processor = Callable[[Tuple[str, ...], Tuple[Any, ...]], object]
-
 
 class TagTracer:
-    def __init__(self) -> None:
-        self._tags2proc: dict[tuple[str, ...], _Processor] = {}
-        self._writer: _Writer | None = None
+    def __init__(self):
+        self._tags2proc = {}
+        self._writer = None
         self.indent = 0
 
-    def get(self, name: str) -> TagTracerSub:
+    def get(self, name):
         return TagTracerSub(self, (name,))
 
-    def _format_message(self, tags: Sequence[str], args: Sequence[object]) -> str:
+    def _format_message(self, tags, args):
         if isinstance(args[-1], dict):
             extra = args[-1]
             args = args[:-1]
@@ -40,7 +29,7 @@ class TagTracer:
 
         return "".join(lines)
 
-    def _processmessage(self, tags: tuple[str, ...], args: tuple[object, ...]) -> None:
+    def _processmessage(self, tags, args):
         if self._writer is not None and args:
             self._writer(self._format_message(tags, args))
         try:
@@ -50,10 +39,10 @@ class TagTracer:
         else:
             processor(tags, args)
 
-    def setwriter(self, writer: _Writer | None) -> None:
+    def setwriter(self, writer):
         self._writer = writer
 
-    def setprocessor(self, tags: str | tuple[str, ...], processor: _Processor) -> None:
+    def setprocessor(self, tags, processor):
         if isinstance(tags, str):
             tags = tuple(tags.split(":"))
         else:
@@ -62,12 +51,12 @@ class TagTracer:
 
 
 class TagTracerSub:
-    def __init__(self, root: TagTracer, tags: tuple[str, ...]) -> None:
+    def __init__(self, root, tags):
         self.root = root
         self.tags = tags
 
-    def __call__(self, *args: object) -> None:
+    def __call__(self, *args):
         self.root._processmessage(self.tags, args)
 
-    def get(self, name: str) -> TagTracerSub:
+    def get(self, name):
         return self.__class__(self.root, self.tags + (name,))

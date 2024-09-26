@@ -28,8 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import absolute_import
-
-from pywebsocket3 import handshake
+from mod_pywebsocket import handshake
 
 
 def web_socket_do_extra_handshake(request):

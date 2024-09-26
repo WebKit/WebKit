@@ -35,9 +35,7 @@ value. <count> must be an integer value.
 """
 
 from __future__ import absolute_import
-
 import time
-
 from six.moves import range
 
 

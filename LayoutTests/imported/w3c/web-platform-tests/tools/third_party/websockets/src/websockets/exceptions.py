@@ -34,7 +34,6 @@ import http
 from typing import Optional
 
 from . import datastructures, frames, http11
-from .typing import StatusLike
 
 
 __all__ = [
@@ -121,23 +120,19 @@ class ConnectionClosed(WebSocketException):
 
     @property
     def code(self) -> int:
-        if self.rcvd is None:
-            return frames.CloseCode.ABNORMAL_CLOSURE
-        return self.rcvd.code
+        return 1006 if self.rcvd is None else self.rcvd.code
 
     @property
     def reason(self) -> str:
-        if self.rcvd is None:
-            return ""
-        return self.rcvd.reason
+        return "" if self.rcvd is None else self.rcvd.reason
 
 
 class ConnectionClosedError(ConnectionClosed):
     """
     Like :exc:`ConnectionClosed`, when the connection terminated with an error.
 
-    A close frame with a code other than 1000 (OK) or 1001 (going away) was
-    received or sent, or the closing handshake didn't complete properly.
+    A close code other than 1000 (OK) or 1001 (going away) was received or
+    sent, or the closing handshake didn't complete properly.
 
     """
 
@@ -146,8 +141,7 @@ class ConnectionClosedOK(ConnectionClosed):
     """
     Like :exc:`ConnectionClosed`, when the connection terminated properly.
 
-    A close code with code 1000 (OK) or 1001 (going away) or without a code was
-    received and sent.
+    A close code 1000 (OK) or 1001 (going away) was received and sent.
 
     """
 
@@ -177,7 +171,7 @@ class InvalidMessage(InvalidHandshake):
 
 class InvalidHeader(InvalidHandshake):
     """
-    Raised when an HTTP header doesn't have a valid format or value.
+    Raised when a HTTP header doesn't have a valid format or value.
 
     """
 
@@ -196,7 +190,7 @@ class InvalidHeader(InvalidHandshake):
 
 class InvalidHeaderFormat(InvalidHeader):
     """
-    Raised when an HTTP header cannot be parsed.
+    Raised when a HTTP header cannot be parsed.
 
     The format of the header doesn't match the grammar for that header.
 
@@ -208,7 +202,7 @@ class InvalidHeaderFormat(InvalidHeader):
 
 class InvalidHeaderValue(InvalidHeader):
     """
-    Raised when an HTTP header has a wrong value.
+    Raised when a HTTP header has a wrong value.
 
     The format of the header is correct but a value isn't acceptable.
 
@@ -316,7 +310,7 @@ class InvalidParameterValue(NegotiationError):
 
 class AbortHandshake(InvalidHandshake):
     """
-    Raised to abort the handshake on purpose and return an HTTP response.
+    Raised to abort the handshake on purpose and return a HTTP response.
 
     This exception is an implementation detail.
 
@@ -331,12 +325,11 @@ class AbortHandshake(InvalidHandshake):
 
     def __init__(
         self,
-        status: StatusLike,
+        status: http.HTTPStatus,
         headers: datastructures.HeadersLike,
         body: bytes = b"",
     ) -> None:
-        # If a user passes an int instead of a HTTPStatus, fix it automatically.
-        self.status = http.HTTPStatus(status)
+        self.status = status
         self.headers = datastructures.Headers(headers)
         self.body = body
 
@@ -376,7 +369,7 @@ class InvalidState(WebSocketException, AssertionError):
 
 class InvalidURI(WebSocketException):
     """
-    Raised when connecting to a URI that isn't a valid WebSocket URI.
+    Raised when connecting to an URI that isn't a valid WebSocket URI.
 
     """
 

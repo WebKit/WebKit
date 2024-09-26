@@ -3,7 +3,6 @@ from typing import Any, Dict, List, Mapping, MutableMapping, Optional, Union
 
 from ..error import UnknownErrorException
 from ._module import BidiModule, command
-from ..undefined import UNDEFINED, Undefined
 
 
 class ScriptEvaluateResultException(Exception):
@@ -79,15 +78,15 @@ Target = Union[RealmTarget, ContextTarget]
 class SerializationOptions(Dict[str, Any]):
     def __init__(
             self,
-            max_dom_depth: Union[Optional[int], Undefined] = UNDEFINED,
-            max_object_depth: Union[Optional[int], Undefined] = UNDEFINED,
-            include_shadow_tree: Union[Optional[str], Undefined] = UNDEFINED
+            max_dom_depth: Optional[int] = None,
+            max_object_depth: Optional[int] = None,
+            include_shadow_tree: Optional[str] = None
     ):
-        if max_dom_depth is not UNDEFINED:
+        if max_dom_depth is not None:
             self["maxDomDepth"] = max_dom_depth
-        if max_object_depth is not UNDEFINED:
+        if max_object_depth is not None:
             self["maxObjectDepth"] = max_object_depth
-        if include_shadow_tree is not UNDEFINED and include_shadow_tree is not None:
+        if include_shadow_tree is not None:
             self["includeShadowTree"] = include_shadow_tree
 
 
@@ -97,7 +96,6 @@ class Script(BidiModule):
         self,
         function_declaration: str,
         arguments: Optional[List[Mapping[str, Any]]] = None,
-        contexts: Optional[List[str]] = None,
         sandbox: Optional[str] = None
     ) -> Mapping[str, Any]:
         params: MutableMapping[str, Any] = {
@@ -106,8 +104,6 @@ class Script(BidiModule):
 
         if arguments is not None:
             params["arguments"] = arguments
-        if contexts is not None:
-            params["contexts"] = contexts
         if sandbox is not None:
             params["sandbox"] = sandbox
 

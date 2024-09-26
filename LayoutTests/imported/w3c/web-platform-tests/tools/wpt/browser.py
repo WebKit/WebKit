@@ -9,7 +9,6 @@ import tempfile
 from abc import ABCMeta, abstractmethod
 from datetime import datetime, timedelta, timezone
 from shutil import which
-from typing import Optional
 from urllib.parse import urlsplit
 
 import html5lib
@@ -584,7 +583,7 @@ class ChromeChromiumBase(Browser):
     see https://web-platform-tests.org/running-tests/chrome-chromium-installation-detection.html
     """
 
-    requirements: Optional[str] = "requirements_chromium.txt"
+    requirements = "requirements_chromium.txt"
     platform = {
         "Linux": "Linux",
         "Windows": "Win",
@@ -704,12 +703,12 @@ class ChromeChromiumBase(Browser):
 
         try:
             # MojoJS version url must match the browser binary version exactly.
-            url = ("https://storage.googleapis.com/chrome-for-testing-public/"
-                   f"{chrome_version}/mojojs.zip")
+            url = ("https://storage.googleapis.com/chrome-wpt-mojom/"
+                   f"{chrome_version}/linux64/mojojs.zip")
             # Check the status without downloading the content (this is a streaming request).
             get(url)
         except requests.RequestException:
-            # If a valid matching version cannot be found in the CfT archive,
+            # If a valid matching version cannot be found in the wpt archive,
             # download from Chromium snapshots bucket. However,
             # MojoJS is only bundled with Linux from Chromium snapshots.
             if self.platform == "Linux":
@@ -1283,11 +1282,6 @@ class Chrome(ChromeChromiumBase):
 
         version = self.version(browser_binary)
         if version is None:
-            # Check if the user has given a Chromium binary.
-            chromium = Chromium(self.logger)
-            if chromium.version(browser_binary):
-                raise ValueError("Provided binary is a Chromium binary and should be run using "
-                                 "\"./wpt run chromium\" or similar.")
             raise ValueError(f"Unable to detect browser version from binary at {browser_binary}. "
                              " Cannot install ChromeDriver without a valid version to match.")
 
@@ -1393,17 +1387,14 @@ class Chrome(ChromeChromiumBase):
         return m.group(1)
 
 
-class HeadlessShell(ChromeChromiumBase):
-    """Interface for the Chromium headless shell [0].
-
-    [0]: https://chromium.googlesource.com/chromium/src/+/HEAD/headless/README.md
+class ContentShell(Browser):
+    """Interface for the Chromium content shell.
     """
 
-    product = "headless_shell"
+    product = "content_shell"
     requirements = None
 
     def download(self, dest=None, channel=None, rename=None):
-        # TODO(crbug.com/344669542): Download binaries via CfT.
         raise NotImplementedError
 
     def install(self, dest=None, channel=None):
@@ -1413,15 +1404,16 @@ class HeadlessShell(ChromeChromiumBase):
         raise NotImplementedError
 
     def find_binary(self, venv_path=None, channel=None):
-        # `which()` adds `.exe` extension automatically for Windows.
-        # Chromium builds an executable named `headless_shell`, whereas CfT
-        # ships under the name `chrome-headless-shell`.
-        return which("headless_shell") or which("chrome-headless-shell")
+        if uname[0] == "Darwin":
+            return which("Content Shell.app/Contents/MacOS/Content Shell")
+        return which("content_shell")  # .exe is added automatically for Windows
+
+    def find_webdriver(self, venv_path=None, channel=None):
+        return None
 
     def version(self, binary=None, webdriver_binary=None):
-        # TODO(crbug.com/327767951): Support `headless_shell --version`.
+        # content_shell does not return version information.
         return "N/A"
-
 
 class ChromeAndroidBase(Browser):
     """A base class for ChromeAndroid and AndroidWebView.
@@ -1455,7 +1447,7 @@ class ChromeAndroidBase(Browser):
         if browser_binary is None:
             browser_binary = self.find_binary(channel)
         chrome = Chrome(self.logger)
-        return chrome.install_webdriver_by_version(self.version(browser_binary), dest, channel)
+        return chrome.install_webdriver_by_version(self.version(browser_binary), dest)
 
     def version(self, binary=None, webdriver_binary=None):
         if not binary:
@@ -1490,6 +1482,20 @@ class ChromeAndroid(ChromeAndroidBase):
         if channel in ("beta", "dev", "canary"):
             return "com.chrome." + channel
         return "com.android.chrome"
+
+
+# TODO(aluo): This is largely copied from the AndroidWebView implementation.
+# Tests are not running for weblayer yet (crbug/1019521), this initial
+# implementation will help to reproduce and debug any issues.
+class AndroidWeblayer(ChromeAndroidBase):
+    """Weblayer-specific interface for Android."""
+
+    product = "android_weblayer"
+    # TODO(aluo): replace this with weblayer version after tests are working.
+    requirements = "requirements_chromium.txt"
+
+    def find_binary(self, venv_path=None, channel=None):
+        return "org.chromium.weblayer.shell"
 
 
 class AndroidWebview(ChromeAndroidBase):
@@ -1548,23 +1554,7 @@ class ChromeiOS(Browser):
         raise NotImplementedError
 
     def version(self, binary=None, webdriver_binary=None):
-        if webdriver_binary is None:
-            self.logger.warning(
-                "Cannot find ChromeiOS version without CWTChromeDriver")
-            return None
-        # Use `chrome iOS driver --version` to get the version. Example output:
-        # "125.0.6378.0"
-        try:
-            version_string = call(webdriver_binary, "--version").strip()
-        except subprocess.CalledProcessError as e:
-            self.logger.warning(f"Failed to call {webdriver_binary}: {e}")
-            return None
-        m = re.match(r"[\d][\d\.]*", version_string)
-        if not m:
-            self.logger.warning(
-                f"Failed to extract version from: {version_string}")
-            return None
-        return m.group(0)
+        return None
 
 
 class Opera(Browser):
@@ -1645,10 +1635,10 @@ class Opera(Browser):
             return m.group(0)
 
 
-class Edge(Browser):
+class EdgeChromium(Browser):
     """Microsoft Edge Chromium Browser class."""
 
-    product = "edge"
+    product = "edgechromium"
     requirements = "requirements_chromium.txt"
     platform = {
         "Linux": "linux",
@@ -1679,49 +1669,17 @@ class Edge(Browser):
         existing_driver_notes_path = os.path.join(path, "Driver_notes")
         if os.path.isdir(existing_driver_notes_path):
             self.logger.info(f"Removing existing MSEdgeDriver binary: {existing_driver_notes_path}")
+            print(f"Delete {existing_driver_notes_path} folder")
             rmtree(existing_driver_notes_path)
 
     def download(self, dest=None, channel=None, rename=None):
         raise NotImplementedError
 
     def install_mojojs(self, dest, browser_binary):
+        # TODO: Install MojoJS web framework.
         # MojoJS is platform agnostic, but the version number must be an
         # exact match of the Edge version to be compatible.
-        edge_version = self.version(binary=browser_binary)
-        if not edge_version:
-            return None
-
-        try:
-            # MojoJS version url must match the browser binary version exactly.
-            url = ("https://msedgedriver.azureedge.net/wpt-mojom/"
-                   f"{edge_version}/linux64/mojojs.zip")
-            # Check the status without downloading the content (this is a
-            # streaming request).
-            get(url)
-        except requests.RequestException:
-            self.logger.error("A valid MojoJS version cannot be found "
-                              f"for browser binary version {edge_version}.")
-            return None
-
-        extracted = os.path.join(dest, "mojojs", "gen")
-        last_url_file = os.path.join(extracted, "DOWNLOADED_FROM")
-        if os.path.exists(last_url_file):
-            with open(last_url_file, "rt") as f:
-                last_url = f.read().strip()
-            if last_url == url:
-                self.logger.info("Mojo bindings already up to date")
-                return extracted
-            rmtree(extracted)
-
-        try:
-            self.logger.info(f"Downloading Mojo bindings from {url}")
-            unzip(get(url).raw, os.path.join(dest, "mojojs"))
-            with open(last_url_file, "wt") as f:
-                f.write(url)
-            return extracted
-        except Exception as e:
-            self.logger.error(f"Cannot enable MojoJS: {e}")
-            return None
+        return None
 
     def find_binary(self, venv_path=None, channel=None):
         # TODO: Check for binary in virtual environment first
@@ -1864,6 +1822,65 @@ class Edge(Browser):
             self.logger.warning(f"Failed to extract version from: {version_string}")
             return None
         return m.group(1)
+
+
+class Edge(Browser):
+    """Edge-specific interface."""
+
+    product = "edge"
+    requirements = "requirements_edge.txt"
+
+    def download(self, dest=None, channel=None, rename=None):
+        raise NotImplementedError
+
+    def install(self, dest=None, channel=None):
+        raise NotImplementedError
+
+    def find_binary(self, venv_path=None, channel=None):
+        raise NotImplementedError
+
+    def find_webdriver(self, venv_path=None, channel=None):
+        return which("MicrosoftWebDriver")
+
+    def install_webdriver(self, dest=None, channel=None, browser_binary=None):
+        raise NotImplementedError
+
+    def version(self, binary=None, webdriver_binary=None):
+        command = "(Get-AppxPackage Microsoft.MicrosoftEdge).Version"
+        try:
+            return call("powershell.exe", command).strip()
+        except (subprocess.CalledProcessError, OSError):
+            self.logger.warning("Failed to call %s in PowerShell" % command)
+            return None
+
+
+class EdgeWebDriver(Edge):
+    product = "edge_webdriver"
+
+
+class InternetExplorer(Browser):
+    """Internet Explorer-specific interface."""
+
+    product = "ie"
+    requirements = "requirements_ie.txt"
+
+    def download(self, dest=None, channel=None, rename=None):
+        raise NotImplementedError
+
+    def install(self, dest=None, channel=None):
+        raise NotImplementedError
+
+    def find_binary(self, venv_path=None, channel=None):
+        raise NotImplementedError
+
+    def find_webdriver(self, venv_path=None, channel=None):
+        return which("IEDriverServer.exe")
+
+    def install_webdriver(self, dest=None, channel=None, browser_binary=None):
+        raise NotImplementedError
+
+    def version(self, binary=None, webdriver_binary=None):
+        return None
 
 
 class Safari(Browser):

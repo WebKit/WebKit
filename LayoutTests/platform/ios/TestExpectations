@@ -7381,10 +7381,6 @@ imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html [ Pass Failure
 # webkit.org/b/261919 NEW TEST(247465@main): [ macOS wk2 ] webanimations/frame-rate/animation-frame-rate-alignment-started-with-one-frame-separation.html is a flaky failure.
 webanimations/frame-rate/animation-frame-rate-alignment-started-with-one-frame-separation.html [ Pass Failure ]
 
-# webkit.org/b/276764 REGRESSION(280750@main) imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss regressed
-imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Pass Failure ]
-imported/w3c/web-platform-tests/websockets/basic-auth.any.serviceworker.html?wss [ Pass Failure ]
-
 # webkit.org/b/277905 [ iOS ] fast/scrolling/ios/scroll-anchoring-momentum-scroll.html is a flaky text failure
 fast/scrolling/ios/scroll-anchoring-momentum-scroll.html [ Pass Failure ]
 
@@ -7427,9 +7423,6 @@ imported/w3c/web-platform-tests/screen-orientation/lock-sandboxed-iframe.html [ 
 # webkit.org/b/278330 [ iOS ] imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html is a flaky text failure
 imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html [ Pass Failure ]
 
-# webkit.org/b/278332 [ iOS ] imported/w3c/web-platform-tests/websockets/basic-auth.any.worker.html?wss is a flaky text failure
-imported/w3c/web-platform-tests/websockets/basic-auth.any.worker.html?wss [ Pass Failure ]
-
 # webkit.org/b/278333 [ iOS ] media/remove-video-best-media-element-in-main-frame-crash.html is a flaky timeout
 media/remove-video-best-media-element-in-main-frame-crash.html [ Pass Timeout ]
 
@@ -7447,9 +7440,6 @@ imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-block
 
 # webkit.org/b/278352 [ iOS MacOS ] imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html is a flaky image failure
 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html [ Pass ImageOnlyFailure ]
-
-# webkit.org/b/278233 imported/w3c/web-platform-tests/websockets/basic-auth.any.sharedworker.html?wss is flakey failure on iOS Sim
-imported/w3c/web-platform-tests/websockets/basic-auth.any.sharedworker.html?wss [ Pass Failure ]
 
 # webkit.org/b/277841 REGRESSION (281870@main): [ macOS iOS wk2 ] imported/w3c/web-platform-tests/css/css-view-transitions/new-content-intrinsic-aspect-ratio.html is a flaky failure
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-intrinsic-aspect-ratio.html [ Pass ImageOnlyFailure ]

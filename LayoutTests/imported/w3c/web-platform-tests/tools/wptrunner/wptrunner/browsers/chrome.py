@@ -6,12 +6,12 @@ from .base import NullBrowser  # noqa: F401
 from .base import get_timeout_multiplier   # noqa: F401
 from .base import cmd_arg
 from ..executors import executor_kwargs as base_executor_kwargs
+from ..executors.executorwebdriver import WebDriverCrashtestExecutor  # noqa: F401
 from ..executors.base import WdspecExecutor  # noqa: F401
 from ..executors.executorchrome import (  # noqa: F401
     ChromeDriverPrintRefTestExecutor,
     ChromeDriverRefTestExecutor,
     ChromeDriverTestharnessExecutor,
-    ChromeDriverCrashTestExecutor
 )
 
 
@@ -22,7 +22,7 @@ __wptrunner__ = {"product": "chrome",
                               "reftest": "ChromeDriverRefTestExecutor",
                               "print-reftest": "ChromeDriverPrintRefTestExecutor",
                               "wdspec": "WdspecExecutor",
-                              "crashtest": "ChromeDriverCrashTestExecutor"},
+                              "crashtest": "WebDriverCrashtestExecutor"},
                  "browser_kwargs": "browser_kwargs",
                  "executor_kwargs": "executor_kwargs",
                  "env_extras": "env_extras",
@@ -53,13 +53,13 @@ def browser_kwargs(logger, test_type, run_info_data, config, **kwargs):
             "webdriver_args": kwargs.get("webdriver_args")}
 
 
-def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite,
+def executor_kwargs(logger, test_type, test_environment, run_info_data,
                     **kwargs):
     sanitizer_enabled = kwargs.get("sanitizer_enabled")
     if sanitizer_enabled:
         test_type = "crashtest"
     executor_kwargs = base_executor_kwargs(test_type, test_environment, run_info_data,
-                                           subsuite, **kwargs)
+                                           **kwargs)
     executor_kwargs["close_after_done"] = True
     executor_kwargs["sanitizer_enabled"] = sanitizer_enabled
     executor_kwargs["reuse_window"] = kwargs.get("reuse_window", False)
@@ -97,11 +97,6 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
     chrome_options["args"].append("--use-fake-ui-for-media-stream")
     # Use a fake UI for FedCM to allow testing it.
     chrome_options["args"].append("--use-fake-ui-for-fedcm")
-    # This is needed until https://github.com/web-platform-tests/wpt/pull/40709
-    # is merged.
-    chrome_options["args"].append("--enable-features=FedCmWithoutWellKnownEnforcement")
-    # Use a fake UI for digital identity to allow testing it.
-    chrome_options["args"].append("--use-fake-ui-for-digital-identity")
     # Shorten delay for Reporting <https://w3c.github.io/reporting/>.
     chrome_options["args"].append("--short-reporting-delay")
     # Point all .test domains to localhost for Chrome
@@ -115,12 +110,6 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
     # The GenericSensorExtraClasses flag enables the browser-side
     # implementation of sensors such as Ambient Light Sensor.
     chrome_options["args"].append("--enable-features=GenericSensorExtraClasses")
-    # Do not show Chrome for Testing infobar. For other Chromium build this
-    # flag is no-op. Required to avoid flakiness in tests, as the infobar
-    # changes the viewport, which can happen during the test run.
-    chrome_options["args"].append("--disable-infobars")
-    # For WebNN tests.
-    chrome_options["args"].append("--enable-features=WebMachineLearningNeuralNetwork")
 
     # Classify `http-private`, `http-public` and https variants in the
     # appropriate IP address spaces.
@@ -140,14 +129,8 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
         chrome_options["args"].append(
             "--ip-address-space-overrides=" + address_space_overrides_arg)
 
-    # Always disable antialiasing on the Ahem font.
-    blink_features = ['DisableAhemAntialias']
-
     if kwargs["enable_mojojs"]:
-        blink_features.append('MojoJS')
-        blink_features.append('MojoJSTest')
-
-    chrome_options["args"].append("--enable-blink-features=" + ','.join(blink_features))
+        chrome_options["args"].append("--enable-blink-features=MojoJS,MojoJSTest")
 
     if kwargs["enable_swiftshader"]:
         # https://chromium.googlesource.com/chromium/src/+/HEAD/docs/gpu/swiftshader.md
@@ -156,22 +139,16 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
     if kwargs["enable_experimental"]:
         chrome_options["args"].extend(["--enable-experimental-web-platform-features"])
 
+    # Pass the --headless flag to Chrome if WPT's own --headless flag was set
+    # or if we're running print reftests because of crbug.com/753118
+    if ((kwargs["headless"] or test_type == "print-reftest") and
+        "--headless" not in chrome_options["args"]):
+        chrome_options["args"].append("--headless")
+
     # Copy over any other flags that were passed in via `--binary-arg`
     for arg in kwargs.get("binary_args", []):
         if arg not in chrome_options["args"]:
             chrome_options["args"].append(arg)
-
-    for arg in subsuite.config.get("binary_args", []):
-        if arg not in chrome_options["args"]:
-            chrome_options["args"].append(arg)
-
-    # Pass the --headless=new flag to Chrome if WPT's own --headless flag was
-    # set. '--headless' should always mean the new headless mode, as the old
-    # headless mode is not used anyway.
-    if kwargs["headless"] and ("--headless=new" not in chrome_options["args"] and
-                               "--headless=old" not in chrome_options["args"] and
-                               "--headless" not in chrome_options["args"]):
-        chrome_options["args"].append("--headless=new")
 
     if test_type == "wdspec":
         executor_kwargs["binary_args"] = chrome_options["args"]
@@ -196,13 +173,6 @@ def update_properties():
 
 
 class ChromeBrowser(WebDriverBrowser):
-    def restart_on_test_type_change(self, new_test_type: str, old_test_type: str) -> bool:
-        # Restart the test runner when switch from/to wdspec tests. Wdspec test
-        # is using a different protocol class so a restart is always needed.
-        if "wdspec" in [old_test_type, new_test_type]:
-            return True
-        return False
-
     def make_command(self):
         return [self.webdriver_binary,
                 cmd_arg("port", str(self.port)),

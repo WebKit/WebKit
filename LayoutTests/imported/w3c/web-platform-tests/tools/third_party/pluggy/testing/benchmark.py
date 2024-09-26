@@ -1,14 +1,10 @@
 """
 Benchmarking and performance tests.
 """
-
 import pytest
-
-from pluggy import HookimplMarker
-from pluggy import HookspecMarker
-from pluggy import PluginManager
-from pluggy._callers import _multicall
+from pluggy import HookspecMarker, HookimplMarker, PluginManager
 from pluggy._hooks import HookImpl
+from pluggy._callers import _multicall
 
 
 hookspec = HookspecMarker("example")
@@ -20,9 +16,9 @@ def hook(arg1, arg2, arg3):
     return arg1, arg2, arg3
 
 
-@hookimpl(wrapper=True)
+@hookimpl(hookwrapper=True)
 def wrapper(arg1, arg2, arg3):
-    return (yield)
+    yield
 
 
 @pytest.fixture(params=[10, 100], ids="hooks={}".format)
@@ -46,7 +42,7 @@ def test_hook_and_wrappers_speed(benchmark, hooks, wrappers):
         firstresult = False
         return (hook_name, hook_impls, caller_kwargs, firstresult), {}
 
-    benchmark.pedantic(_multicall, setup=setup, rounds=10)
+    benchmark.pedantic(_multicall, setup=setup)
 
 
 @pytest.mark.parametrize(
@@ -71,30 +67,30 @@ def test_call_hook(benchmark, plugins, wrappers, nesting):
     class HookSpec:
         @hookspec
         def fun(self, hooks, nesting: int):
-            pass
+            yield
 
     class Plugin:
-        def __init__(self, num: int) -> None:
+        def __init__(self, num):
             self.num = num
 
-        def __repr__(self) -> str:
+        def __repr__(self):
             return f"<Plugin {self.num}>"
 
         @hookimpl
-        def fun(self, hooks, nesting: int) -> None:
+        def fun(self, hooks, nesting: int):
             if nesting:
                 hooks.fun(hooks=hooks, nesting=nesting - 1)
 
     class PluginWrap:
-        def __init__(self, num: int) -> None:
+        def __init__(self, num):
             self.num = num
 
-        def __repr__(self) -> str:
+        def __repr__(self):
             return f"<PluginWrap {self.num}>"
 
-        @hookimpl(wrapper=True)
+        @hookimpl(hookwrapper=True)
         def fun(self):
-            return (yield)
+            yield
 
     pm.add_hookspecs(HookSpec)
 

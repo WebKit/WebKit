@@ -1,4 +1,3 @@
-# mypy: allow-untyped-defs
 def test_doc():
     """
     >>> 10 > 5

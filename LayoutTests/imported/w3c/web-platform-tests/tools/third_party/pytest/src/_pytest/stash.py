@@ -19,8 +19,6 @@ class StashKey(Generic[T]):
     A ``StashKey`` is associated with the type ``T`` of the value of the key.
 
     A ``StashKey`` is unique and cannot conflict with another key.
-
-    .. versionadded:: 7.0
     """
 
     __slots__ = ()
@@ -63,8 +61,6 @@ class Stash:
         some_str = stash[some_str_key]
         # The static type of some_bool is bool.
         some_bool = stash[some_bool_key]
-
-    .. versionadded:: 7.0
     """
 
     __slots__ = ("_storage",)

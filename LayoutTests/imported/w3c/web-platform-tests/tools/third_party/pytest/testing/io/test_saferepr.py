@@ -1,8 +1,7 @@
-# mypy: allow-untyped-defs
+import pytest
+from _pytest._io.saferepr import _pformat_dispatch
 from _pytest._io.saferepr import DEFAULT_REPR_MAX_SIZE
 from _pytest._io.saferepr import saferepr
-from _pytest._io.saferepr import saferepr_unlimited
-import pytest
 
 
 def test_simple_repr():
@@ -59,7 +58,9 @@ def test_exceptions() -> None:
     obj = BrokenRepr(BrokenReprException("omg even worse"))
     s2 = saferepr(obj)
     assert s2 == (
-        f"<[unpresentable exception ({exp_exc!s}) raised in repr()] BrokenRepr object at 0x{id(obj):x}>"
+        "<[unpresentable exception ({!s}) raised in repr()] BrokenRepr object at 0x{:x}>".format(
+            exp_exc, id(obj)
+        )
     )
 
 
@@ -79,7 +80,7 @@ def test_baseexception():
                 raise self.exc_type(*args)
             raise self.exc_type
 
-        def __str__(self):  # noqa: PLE0307
+        def __str__(self):
             self.raise_exc("__str__")
 
         def __repr__(self):
@@ -97,12 +98,14 @@ def test_baseexception():
     baseexc_str = BaseException("__str__")
     obj = BrokenObj(RaisingOnStrRepr([BaseException]))
     assert saferepr(obj) == (
-        f"<[unpresentable exception ({baseexc_str!r}) "
-        f"raised in repr()] BrokenObj object at 0x{id(obj):x}>"
+        "<[unpresentable exception ({!r}) "
+        "raised in repr()] BrokenObj object at 0x{:x}>".format(baseexc_str, id(obj))
     )
     obj = BrokenObj(RaisingOnStrRepr([RaisingOnStrRepr([BaseException])]))
     assert saferepr(obj) == (
-        f"<[{baseexc_str!r} raised in repr()] BrokenObj object at 0x{id(obj):x}>"
+        "<[{!r} raised in repr()] BrokenObj object at 0x{:x}>".format(
+            baseexc_str, id(obj)
+        )
     )
 
     with pytest.raises(KeyboardInterrupt):
@@ -155,6 +158,12 @@ def test_unicode():
     assert saferepr(val) == reprval
 
 
+def test_pformat_dispatch():
+    assert _pformat_dispatch("a") == "'a'"
+    assert _pformat_dispatch("a" * 10, width=5) == "'aaaaaaaaaa'"
+    assert _pformat_dispatch("foo bar", width=5) == "('foo '\n 'bar')"
+
+
 def test_broken_getattribute():
     """saferepr() can create proper representations of classes with
     broken __getattribute__ (#7145)
@@ -169,24 +178,4 @@ def test_broken_getattribute():
 
     assert saferepr(SomeClass()).startswith(
         "<[RuntimeError() raised in repr()] SomeClass object at 0x"
-    )
-
-
-def test_saferepr_unlimited():
-    dict5 = {f"v{i}": i for i in range(5)}
-    assert saferepr_unlimited(dict5) == "{'v0': 0, 'v1': 1, 'v2': 2, 'v3': 3, 'v4': 4}"
-
-    dict_long = {f"v{i}": i for i in range(1_000)}
-    r = saferepr_unlimited(dict_long)
-    assert "..." not in r
-    assert "\n" not in r
-
-
-def test_saferepr_unlimited_exc():
-    class A:
-        def __repr__(self):
-            raise ValueError(42)
-
-    assert saferepr_unlimited(A()).startswith(
-        "<[ValueError(42) raised in repr()] A object at 0x"
     )

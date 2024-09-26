@@ -1,6 +1,5 @@
 import pluggy
 
-
 hookspec = pluggy.HookspecMarker("eggsample")
 
 

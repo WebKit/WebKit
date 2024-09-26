@@ -4,13 +4,14 @@
 Tests for `attr._config`.
 """
 
+from __future__ import absolute_import, division, print_function
 
 import pytest
 
 from attr import _config
 
 
-class TestConfig:
+class TestConfig(object):
     def test_default(self):
         """
         Run validators by default.

@@ -1,8 +1,7 @@
-# mypy: allow-untyped-defs
-from datetime import datetime
 import os
-from pathlib import Path
 import platform
+from datetime import datetime
+from pathlib import Path
 from typing import cast
 from typing import List
 from typing import Optional
@@ -13,6 +12,7 @@ from xml.dom import minidom
 
 import xmlschema
 
+import pytest
 from _pytest.config import Config
 from _pytest.junitxml import bin_xml_escape
 from _pytest.junitxml import LogXML
@@ -22,14 +22,13 @@ from _pytest.pytester import RunResult
 from _pytest.reports import BaseReport
 from _pytest.reports import TestReport
 from _pytest.stash import Stash
-import pytest
 
 
 @pytest.fixture(scope="session")
 def schema() -> xmlschema.XMLSchema:
     """Return an xmlschema.XMLSchema object for the junit-10.xsd file."""
     fn = Path(__file__).parent / "example_scripts/junit-10.xsd"
-    with fn.open(encoding="utf-8") as f:
+    with fn.open() as f:
         return xmlschema.XMLSchema(f)
 
 
@@ -42,11 +41,11 @@ class RunAndParse:
         self, *args: Union[str, "os.PathLike[str]"], family: Optional[str] = "xunit1"
     ) -> Tuple[RunResult, "DomNode"]:
         if family:
-            args = ("-o", "junit_family=" + family, *args)
+            args = ("-o", "junit_family=" + family) + args
         xml_path = self.pytester.path.joinpath("junit.xml")
         result = self.pytester.runpytest("--junitxml=%s" % xml_path, *args)
         if family == "xunit2":
-            with xml_path.open(encoding="utf-8") as f:
+            with xml_path.open() as f:
                 self.schema.validate(f)
         xmldoc = minidom.parse(str(xml_path))
         return result, DomNode(xmldoc)
@@ -254,6 +253,7 @@ class TestPython:
         duration_report: str,
         run_and_parse: RunAndParse,
     ) -> None:
+
         # mock LogXML.node_reporter so it always sets a known duration to each test report object
         original_node_reporter = LogXML.node_reporter
 
@@ -470,7 +470,7 @@ class TestPython:
         self, pytester: Pytester, run_and_parse: RunAndParse, xunit_family: str
     ) -> None:
         p = pytester.mkdir("sub").joinpath("test_hello.py")
-        p.write_text("def test_func(): 0/0", encoding="utf-8")
+        p.write_text("def test_func(): 0/0")
         result, dom = run_and_parse(family=xunit_family)
         assert result.ret
         node = dom.find_first_by_tag("testsuite")
@@ -603,6 +603,7 @@ class TestPython:
         node.assert_attr(failures=3, tests=3)
 
         for index, char in enumerate("<&'"):
+
             tnode = node.find_nth_by_tag("testcase", index)
             tnode.assert_attr(
                 classname="test_failure_escape", name="test_func[%s]" % char
@@ -988,7 +989,7 @@ class TestNonPython:
                     return "custom item runtest failed"
         """
         )
-        pytester.path.joinpath("myfile.xyz").write_text("hello", encoding="utf-8")
+        pytester.path.joinpath("myfile.xyz").write_text("hello")
         result, dom = run_and_parse(family=xunit_family)
         assert result.ret
         node = dom.find_first_by_tag("testsuite")
@@ -1002,7 +1003,7 @@ class TestNonPython:
 
 @pytest.mark.parametrize("junit_logging", ["no", "system-out"])
 def test_nullbyte(pytester: Pytester, junit_logging: str) -> None:
-    # A null byte cannot occur in XML (see section 2.2 of the spec)
+    # A null byte can not occur in XML (see section 2.2 of the spec)
     pytester.makepyfile(
         """
         import sys
@@ -1014,7 +1015,7 @@ def test_nullbyte(pytester: Pytester, junit_logging: str) -> None:
     )
     xmlf = pytester.path.joinpath("junit.xml")
     pytester.runpytest("--junitxml=%s" % xmlf, "-o", "junit_logging=%s" % junit_logging)
-    text = xmlf.read_text(encoding="utf-8")
+    text = xmlf.read_text()
     assert "\x00" not in text
     if junit_logging == "system-out":
         assert "#x00" in text
@@ -1036,7 +1037,7 @@ def test_nullbyte_replace(pytester: Pytester, junit_logging: str) -> None:
     )
     xmlf = pytester.path.joinpath("junit.xml")
     pytester.runpytest("--junitxml=%s" % xmlf, "-o", "junit_logging=%s" % junit_logging)
-    text = xmlf.read_text(encoding="utf-8")
+    text = xmlf.read_text()
     if junit_logging == "system-out":
         assert "#x0" in text
     if junit_logging == "no":
@@ -1202,7 +1203,7 @@ def test_unicode_issue368(pytester: Pytester) -> None:
     node_reporter.append_skipped(test_report)
     test_report.longrepr = "filename", 1, "Skipped: 卡嘣嘣"
     node_reporter.append_skipped(test_report)
-    test_report.wasxfail = ustr
+    test_report.wasxfail = ustr  # type: ignore[attr-defined]
     node_reporter.append_skipped(test_report)
     log.pytest_sessionfinish()
 
@@ -1229,36 +1230,6 @@ def test_record_property(pytester: Pytester, run_and_parse: RunAndParse) -> None
     result.stdout.fnmatch_lines(["*= 1 passed in *"])
 
 
-def test_record_property_on_test_and_teardown_failure(
-    pytester: Pytester, run_and_parse: RunAndParse
-) -> None:
-    pytester.makepyfile(
-        """
-        import pytest
-
-        @pytest.fixture
-        def other(record_property):
-            record_property("bar", 1)
-            yield
-            assert 0
-
-        def test_record(record_property, other):
-            record_property("foo", "<1")
-            assert 0
-    """
-    )
-    result, dom = run_and_parse()
-    node = dom.find_first_by_tag("testsuite")
-    tnodes = node.find_by_tag("testcase")
-    for tnode in tnodes:
-        psnode = tnode.find_first_by_tag("properties")
-        assert psnode, f"testcase didn't had expected properties:\n{tnode}"
-        pnodes = psnode.find_by_tag("property")
-        pnodes[0].assert_attr(name="bar", value="1")
-        pnodes[1].assert_attr(name="foo", value="<1")
-    result.stdout.fnmatch_lines(["*= 1 failed, 1 error *"])
-
-
 def test_record_property_same_name(
     pytester: Pytester, run_and_parse: RunAndParse
 ) -> None:
@@ -1283,10 +1254,12 @@ def test_record_fixtures_without_junitxml(
     pytester: Pytester, fixture_name: str
 ) -> None:
     pytester.makepyfile(
-        f"""
+        """
         def test_record({fixture_name}):
             {fixture_name}("foo", "bar")
-    """
+    """.format(
+            fixture_name=fixture_name
+        )
     )
     result = pytester.runpytest()
     assert result.ret == 0
@@ -1334,7 +1307,7 @@ def test_record_fixtures_xunit2(
     """
     )
     pytester.makepyfile(
-        f"""
+        """
         import pytest
 
         @pytest.fixture
@@ -1342,7 +1315,9 @@ def test_record_fixtures_xunit2(
             {fixture_name}("bar", 1)
         def test_record({fixture_name}, other):
             {fixture_name}("foo", "<1");
-    """
+    """.format(
+            fixture_name=fixture_name
+        )
     )
 
     result, dom = run_and_parse(family=None)
@@ -1352,8 +1327,10 @@ def test_record_fixtures_xunit2(
             "*test_record_fixtures_xunit2.py:6:*record_xml_attribute is an experimental feature"
         )
     expected_lines = [
-        f"*test_record_fixtures_xunit2.py:6:*{fixture_name} is incompatible "
-        "with junit_family 'xunit2' (use 'legacy' or 'xunit1')"
+        "*test_record_fixtures_xunit2.py:6:*{fixture_name} is incompatible "
+        "with junit_family 'xunit2' (use 'legacy' or 'xunit1')".format(
+            fixture_name=fixture_name
+        )
     ]
     result.stdout.fnmatch_lines(expected_lines)
 
@@ -1470,12 +1447,7 @@ def test_fancy_items_regression(pytester: Pytester, run_and_parse: RunAndParse) 
 
     result.stdout.no_fnmatch_line("*INTERNALERROR*")
 
-    items = sorted(
-        "%(classname)s %(name)s" % x  # noqa: UP031
-        # dom is a DomNode not a mapping, it's not possible to ** it.
-        for x in dom.find_by_tag("testcase")
-    )
-
+    items = sorted("%(classname)s %(name)s" % x for x in dom.find_by_tag("testcase"))
     import pprint
 
     pprint.pprint(items)
@@ -1610,11 +1582,13 @@ def test_set_suite_name(
 ) -> None:
     if suite_name:
         pytester.makeini(
-            f"""
+            """
             [pytest]
             junit_suite_name={suite_name}
-            junit_family={xunit_family}
-        """
+            junit_family={family}
+        """.format(
+                suite_name=suite_name, family=xunit_family
+            )
         )
         expected = suite_name
     else:
@@ -1651,56 +1625,19 @@ def test_escaped_skipreason_issue3533(
     snode.assert_attr(message="1 <> 2")
 
 
-def test_bin_escaped_skipreason(pytester: Pytester, run_and_parse: RunAndParse) -> None:
-    """Escape special characters from mark.skip reason (#11842)."""
-    pytester.makepyfile(
-        """
-        import pytest
-        @pytest.mark.skip("\33[31;1mred\33[0m")
-        def test_skip():
-            pass
-    """
-    )
-    _, dom = run_and_parse()
-    node = dom.find_first_by_tag("testcase")
-    snode = node.find_first_by_tag("skipped")
-    assert "#x1B[31;1mred#x1B[0m" in snode.text
-    snode.assert_attr(message="#x1B[31;1mred#x1B[0m")
-
-
-def test_escaped_setup_teardown_error(
-    pytester: Pytester, run_and_parse: RunAndParse
-) -> None:
-    pytester.makepyfile(
-        """
-        import pytest
-
-        @pytest.fixture()
-        def my_setup():
-            raise Exception("error: \033[31mred\033[m")
-
-        def test_esc(my_setup):
-            pass
-    """
-    )
-    _, dom = run_and_parse()
-    node = dom.find_first_by_tag("testcase")
-    snode = node.find_first_by_tag("error")
-    assert "#x1B[31mred#x1B[m" in snode["message"]
-    assert "#x1B[31mred#x1B[m" in snode.text
-
-
 @parametrize_families
 def test_logging_passing_tests_disabled_does_not_log_test_output(
     pytester: Pytester, run_and_parse: RunAndParse, xunit_family: str
 ) -> None:
     pytester.makeini(
-        f"""
+        """
         [pytest]
         junit_log_passing_tests=False
         junit_logging=system-out
-        junit_family={xunit_family}
-    """
+        junit_family={family}
+    """.format(
+            family=xunit_family
+        )
     )
     pytester.makepyfile(
         """
@@ -1730,11 +1667,13 @@ def test_logging_passing_tests_disabled_logs_output_for_failing_test_issue5430(
     xunit_family: str,
 ) -> None:
     pytester.makeini(
-        f"""
+        """
         [pytest]
         junit_log_passing_tests=False
-        junit_family={xunit_family}
-    """
+        junit_family={family}
+    """.format(
+            family=xunit_family
+        )
     )
     pytester.makepyfile(
         """

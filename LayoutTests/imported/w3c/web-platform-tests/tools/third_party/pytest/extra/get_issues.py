@@ -3,7 +3,6 @@ from pathlib import Path
 
 import requests
 
-
 issues_url = "https://api.github.com/repos/pytest-dev/pytest/issues"
 
 

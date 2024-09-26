@@ -65,9 +65,6 @@ view-gestures/smart-magnify/double-tap-zoom-scroll-above-top.html [ Timeout Pass
 [ Release x86_64 ] platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html [ Skip ]
 [ Release x86_64 ] media/media-source/media-managedmse-resume-after-remove.html [ Skip ]
 
-# webkit.org/b/278332 [ iOS macOS ] imported/w3c/web-platform-tests/websockets/basic-auth.any.worker.html?wss is a flaky text failure
-[ Release ] imported/w3c/web-platform-tests/websockets/basic-auth.any.worker.html?wss [ Pass Failure ]
-
 # webkit.org/b/280019 [EWS] fast/canvas/offscreen-giant.html is constant failure in Ventura Intel EWS
 [ Release x86_64 ] fast/canvas/offscreen-giant.html [ Skip ]
 

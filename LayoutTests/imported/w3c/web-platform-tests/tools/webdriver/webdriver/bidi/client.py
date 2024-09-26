@@ -94,10 +94,8 @@ class BidiSession:
         self.browsing_context = modules.BrowsingContext(self)
         self.input = modules.Input(self)
         self.network = modules.Network(self)
-        self.permissions = modules.Permissions(self)
         self.script = modules.Script(self)
         self.session = modules.Session(self)
-        self.storage = modules.Storage(self)
 
     @property
     def event_loop(self):
@@ -205,15 +203,15 @@ class BidiSession:
             if not listeners:
                 listeners = self.event_listeners.get(None, [])
             for listener in listeners:
-                asyncio.create_task(listener(data["method"], data["params"]))
+                await listener(data["method"], data["params"])
         else:
             raise ValueError(f"Unexpected message: {data!r}")
 
     async def end(self) -> None:
         """Close websocket connection."""
-        if self.transport is not None:
-            await self.transport.end()
-            self.transport = None
+        assert self.transport is not None
+        await self.transport.end()
+        self.transport = None
 
     def add_event_listener(
         self,

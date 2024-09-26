@@ -8,8 +8,8 @@ Reference guides
 .. toctree::
    :maxdepth: 1
 
-   reference
    fixtures
-   customize
-   exit-codes
    plugin_list
+   customize
+   reference
+   exit-codes

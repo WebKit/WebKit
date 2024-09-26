@@ -29,8 +29,7 @@ def executor_kwargs(test_type, test_environment, run_info_data, subsuite, **kwar
     executor_kwargs = {"server_config": test_environment.config,
                        "timeout_multiplier": timeout_multiplier,
                        "debug_info": kwargs["debug_info"],
-                       "subsuite": subsuite.name,
-                       "target_platform": run_info_data["os"]}
+                       "subsuite": subsuite.name}
 
     if test_type in ("reftest", "print-reftest"):
         executor_kwargs["screenshot_cache"] = test_environment.cache_manager.dict()
@@ -90,10 +89,11 @@ class TestharnessResultConverter:
     def __call__(self, test, result, extra=None):
         """Convert a JSON result into a (TestResult, [SubtestResult]) tuple"""
         result_url, status, message, stack, subtest_results = result
-        assert result_url == test.url, (f"Got results from {result_url}, expected {test.url}")
-        harness_result = test.make_result(self.harness_codes[status], message, extra=extra, stack=stack)
+        assert result_url == test.url, ("Got results from %s, expected %s" %
+                                        (result_url, test.url))
+        harness_result = test.result_cls(self.harness_codes[status], message, extra=extra, stack=stack)
         return (harness_result,
-                [test.make_subtest_result(st_name, self.test_codes[st_status], st_message, st_stack)
+                [test.subtest_result_cls(st_name, self.test_codes[st_status], st_message, st_stack)
                  for st_name, st_status, st_message, st_stack in subtest_results])
 
 
@@ -153,7 +153,7 @@ def get_pages(ranges_value, total_pages):
 def reftest_result_converter(self, test, result):
     extra = result.get("extra", {})
     _ensure_hash_in_reftest_screenshots(extra)
-    return (test.make_result(
+    return (test.result_cls(
         result["status"],
         result["message"],
         extra=extra,
@@ -166,14 +166,14 @@ def pytest_result_converter(self, test, data):
     if subtest_data is None:
         subtest_data = []
 
-    harness_result = test.make_result(*harness_data)
-    subtest_results = [test.make_subtest_result(*item) for item in subtest_data]
+    harness_result = test.result_cls(*harness_data)
+    subtest_results = [test.subtest_result_cls(*item) for item in subtest_data]
 
     return (harness_result, subtest_results)
 
 
 def crashtest_result_converter(self, test, result):
-    return test.make_result(**result), []
+    return test.result_cls(**result), []
 
 
 class ExecutorException(Exception):
@@ -216,10 +216,8 @@ class TimedRunner:
             else:
                 if self.protocol.is_alive():
                     message = "Executor hit external timeout (this may indicate a hang)\n"
-                    if executor.ident in sys._current_frames():
-                        # get a traceback for the current stack of the executor thread
-                        message += "".join(traceback.format_stack(
-                            sys._current_frames()[executor.ident]))
+                    # get a traceback for the current stack of the executor thread
+                    message += "".join(traceback.format_stack(sys._current_frames()[executor.ident]))
                     self.result = False, ("EXTERNAL-TIMEOUT", message)
                 else:
                     self.logger.info("Browser not responding, setting status to CRASH")
@@ -287,17 +285,13 @@ class TestExecutor:
                                  "prefs": {}}
         self.protocol = None  # This must be set in subclasses
 
-    def setup(self, runner, protocol=None):
+    def setup(self, runner):
         """Run steps needed before tests can be started e.g. connecting to
         browser instance
 
-        :param runner: TestRunner instance that is going to run the tests.
-        :param protocol: protocol connection to reuse if not None"""
+        :param runner: TestRunner instance that is going to run the tests"""
         self.runner = runner
-        if protocol is not None:
-            assert isinstance(protocol, self.protocol_cls)
-            self.protocol = protocol
-        elif self.protocol is not None:
+        if self.protocol is not None:
             self.protocol.setup(runner)
 
     def teardown(self):
@@ -320,7 +314,7 @@ class TestExecutor:
             result = self.do_test(test)
         except Exception as e:
             exception_string = traceback.format_exc()
-            message = f"Exception in TestExecutor.run:\n{exception_string}"
+            message = f"Exception in TextExecutor.run:\n{exception_string}"
             self.logger.warning(message)
             result = self.result_from_exception(test, e, exception_string)
 
@@ -359,7 +353,7 @@ class TestExecutor:
         if message:
             message += "\n"
         message += exception_string
-        return test.make_result(status, message), []
+        return test.result_cls(status, message), []
 
     def wait(self):
         return self.protocol.base.wait()
@@ -623,7 +617,7 @@ class WdspecExecutor(TestExecutor):
     protocol_cls: ClassVar[Type[Protocol]] = WdspecProtocol
 
     def __init__(self, logger, browser, server_config, webdriver_binary,
-                 webdriver_args, target_platform, timeout_multiplier=1, capabilities=None,
+                 webdriver_args, timeout_multiplier=1, capabilities=None,
                  debug_info=None, binary=None, binary_args=None, **kwargs):
         super().__init__(logger, browser, server_config,
                          timeout_multiplier=timeout_multiplier,
@@ -635,12 +629,7 @@ class WdspecExecutor(TestExecutor):
         self.binary = binary
         self.binary_args = binary_args
 
-        # Map OS to WebDriver specific platform names
-        os_map = {"win": "windows"}
-        self.target_platform = os_map.get(target_platform, target_platform)
-
-    def setup(self, runner, protocol=None):
-        assert protocol is None, "Switch executor not allowed for wdspec tests."
+    def setup(self, runner):
         self.protocol = self.protocol_cls(self, self.browser)
         super().setup(runner)
 
@@ -660,13 +649,12 @@ class WdspecExecutor(TestExecutor):
         if success:
             return self.convert_result(test, data)
 
-        return (test.make_result(*data), [])
+        return (test.result_cls(*data), [])
 
     def do_wdspec(self, path, timeout):
         session_config = {"host": self.browser.host,
                           "port": self.browser.port,
                           "capabilities": self.capabilities,
-                          "target_platform": self.target_platform,
                           "timeout_multiplier": self.timeout_multiplier,
                           "browser": {
                               "binary": self.binary,

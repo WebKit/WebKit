@@ -1796,9 +1796,6 @@ tiled-drawing/scrolling/overflow/overflow-scrolled-up-tile-coverage.html [ Pass 
 # webkit.org/b/278178  [macOS Debug] imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html is a flaky failure
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html [ Pass Failure ]
 
-# webkit.org/b/276764 REGRESSION(280750@main) imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss regressed
-imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Pass Failure ]
-
 # webkit.org/b/278124 REGRESSION (281461@main): [ Sonoma wk2 x86_64 ] 5x imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3* are a constant image only failure.
 [ Sonoma+ x86_64 ] imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3a.html [ ImageOnlyFailure ]
 [ Sonoma+ x86_64 ] imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3b.html [ ImageOnlyFailure ]
@@ -1813,17 +1810,11 @@ imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html
 # add test expectation as flaky because we have no VM modifier for VM only failures
 [ Sequoia+ ] http/tests/media/fairplay/fps-mse-unmuxed-key-rotation.html [ Pass Timeout Failure ]
 
-# webkit.org/b/278588 [macOS wk2] imported/w3c/web-platform-tests/websockets/basic-auth.any.serviceworker.html?wss is a flaky failure (failure in EWS)
-imported/w3c/web-platform-tests/websockets/basic-auth.any.serviceworker.html?wss [ Pass Failure ]
-
 # webkit.org/b/278659 [ Sonoma Debug arm64]: ASSERTION FAILED: m_clients.contains(client) in imported/w3c/web-platform-tests/media-source/URL-createObjectURL-null.html
 [ Sonoma Debug arm64 ] imported/w3c/web-platform-tests/media-source/URL-createObjectURL-null.html [ Pass Crash ]
 
 # webkit.org/b/278683 [macOS wk2] imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-window-stop-in-onnavigate.html is a flaky failure
 imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-window-stop-in-onnavigate.html [ Pass Failure ]
-
-# webkit.org/b/278233 imported/w3c/web-platform-tests/websockets/basic-auth.any.sharedworker.html?wss is flakey failure on iOS Sim and macOS
-[ Ventura ] imported/w3c/web-platform-tests/websockets/basic-auth.any.sharedworker.html?wss [ Pass Failure ]
 
 # webkit.org/b/278738 [ Sonoma wk2 x86_64]: fast/canvas/image-buffer-backend-variants.html is a flaky crash.
 [ Sonoma x86_64 ] fast/canvas/image-buffer-backend-variants.html [ Pass Crash ]

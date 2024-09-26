@@ -1,10 +1,8 @@
-# mypy: allow-untyped-defs
 """Test correct setup/teardowns at module, class, and instance level."""
-
 from typing import List
 
-from _pytest.pytester import Pytester
 import pytest
+from _pytest.pytester import Pytester
 
 
 def test_module_and_function_setup(pytester: Pytester) -> None:
@@ -256,7 +254,7 @@ def test_setup_teardown_function_level_with_optional_argument(
         sys, "trace_setups_teardowns", trace_setups_teardowns, raising=False
     )
     p = pytester.makepyfile(
-        f"""
+        """
         import pytest
         import sys
 
@@ -277,7 +275,9 @@ def test_setup_teardown_function_level_with_optional_argument(
 
             def test_method_1(self): pass
             def test_method_2(self): pass
-    """
+    """.format(
+            arg=arg
+        )
     )
     result = pytester.inline_run(p)
     result.assertoutcome(passed=4)
