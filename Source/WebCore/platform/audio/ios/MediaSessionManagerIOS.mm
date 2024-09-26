@@ -116,7 +116,7 @@ void MediaSessionManageriOS::configureWirelessTargetMonitoring()
 
 void MediaSessionManageriOS::providePresentingApplicationPIDIfNecessary()
 {
-#if HAVE(CELESTIAL)
+#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
     if (m_havePresentedApplicationPID)
         return;
     m_havePresentedApplicationPID = true;
