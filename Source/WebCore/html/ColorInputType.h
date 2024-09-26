@@ -36,11 +36,12 @@
 #include "BaseClickableWithKeyInputType.h"
 #include "ColorChooser.h"
 #include "ColorChooserClient.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ColorInputType final : public BaseClickableWithKeyInputType, private ColorChooserClient {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ColorInputType);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ColorInputType);
 public:
     static Ref<ColorInputType> create(HTMLInputElement& element)
