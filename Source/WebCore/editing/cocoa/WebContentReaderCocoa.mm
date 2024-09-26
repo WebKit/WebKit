@@ -554,7 +554,7 @@ bool WebContentReader::readWebArchive(SharedBuffer& buffer)
     Ref frameDocument = *frame->document();
     if (!DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
         m_fragment = createFragmentFromMarkup(frameDocument, result->markup, result->mainResource->url().string(), { });
-        if (DocumentLoader* loader = frame->loader().documentLoader())
+        if (RefPtr loader = frame->loader().documentLoader())
             loader->addAllArchiveResources(result->archive.get());
         return true;
     }

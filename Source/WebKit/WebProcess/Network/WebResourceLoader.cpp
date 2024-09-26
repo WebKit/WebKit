@@ -307,7 +307,7 @@ void WebResourceLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDeni
     LOG(Network, "(WebProcess) WebResourceLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied for '%s'", m_coreLoader->url().string().latin1().data());
     WEBRESOURCELOADER_RELEASE_LOG("stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied:");
 
-    m_coreLoader->documentLoader()->stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(*m_coreLoader->identifier(), response);
+    m_coreLoader->protectedDocumentLoader()->stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(*m_coreLoader->identifier(), response);
 }
 
 #if ENABLE(SHAREABLE_RESOURCE)
@@ -348,7 +348,7 @@ void WebResourceLoader::contentFilterDidBlockLoad(const WebCore::ContentFilterUn
 {
     if (!m_coreLoader || !m_coreLoader->documentLoader())
         return;
-    auto documentLoader = m_coreLoader->documentLoader();
+    RefPtr documentLoader = m_coreLoader->documentLoader();
     documentLoader->setBlockedPageURL(blockedPageURL);
     documentLoader->setSubstituteDataFromContentFilter(WTFMove(substituteData));
     documentLoader->handleContentFilterDidBlock(unblockHandler, WTFMove(unblockRequestDeniedScript));
