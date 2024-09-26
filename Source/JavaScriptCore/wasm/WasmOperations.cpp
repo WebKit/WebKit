@@ -71,26 +71,6 @@ namespace WasmOperationsInternal {
 static constexpr bool verbose = false;
 }
 
-static constexpr unsigned gprToIndex(GPRReg r)
-{
-    for (unsigned i = 0; i < GPRInfo::numberOfArgumentRegisters; ++i) {
-        if (GPRInfo::toArgumentRegister(i) == r)
-            return i;
-    }
-    RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return 0;
-}
-
-static constexpr unsigned fprToIndex(FPRReg r)
-{
-    for (unsigned i = 0; i < FPRInfo::numberOfArgumentRegisters; ++i) {
-        if (FPRInfo::toArgumentRegister(i) == r)
-            return i;
-    }
-    RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return 0;
-}
-
 JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, JSEntrypointCallee*, (void* sp, CallFrame* callFrame, WebAssemblyFunction* function))
 {
     dataLogLnIf(WasmOperationsInternal::verbose, "operationJSToWasmEntryWrapperBuildFrame sp: ", RawPointer(sp), " fp: ", RawPointer(callFrame));
@@ -143,9 +123,9 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, JSEntrypointCa
         } else {
             int dst = 0;
             if (wasmFrameConvention.params[i].location.isFPR())
-                dst = GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + fprToIndex(wasmFrameConvention.params[i].location.fpr()) * bytesForWidth(Width::Width64);
+                dst = GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + FPRInfo::toArgumentIndex(wasmFrameConvention.params[i].location.fpr()) * bytesForWidth(Width::Width64);
             else
-                dst = gprToIndex(wasmFrameConvention.params[i].location.jsr().payloadGPR()) * sizeof(UCPURegister);
+                dst = GPRInfo::toArgumentIndex(wasmFrameConvention.params[i].location.jsr().payloadGPR()) * sizeof(UCPURegister);
             ASSERT(dst >= 0);
 
             dataLogLnIf(WasmOperationsInternal::verbose, "* Register Arg ", i, " ", dst);
@@ -245,20 +225,20 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJ
             JSValue result;
             switch (type.kind) {
             case TypeKind::I32:
-                result = jsNumber(*access.operator()<int32_t>(registerSpace, gprToIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister)));
+                result = jsNumber(*access.operator()<int32_t>(registerSpace, GPRInfo::toArgumentIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister)));
                 break;
             case TypeKind::I64:
-                result = JSBigInt::makeHeapBigIntOrBigInt32(instance->globalObject(), *access.operator()<int64_t>(registerSpace, gprToIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister)));
+                result = JSBigInt::makeHeapBigIntOrBigInt32(instance->globalObject(), *access.operator()<int64_t>(registerSpace, GPRInfo::toArgumentIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister)));
                 OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
                 break;
             case TypeKind::F32:
-                result = jsNumber(purifyNaN(*access.operator()<float>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + fprToIndex(loc.fpr()) * bytesForWidth(Width::Width64))));
+                result = jsNumber(purifyNaN(*access.operator()<float>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + FPRInfo::toArgumentIndex(loc.fpr()) * bytesForWidth(Width::Width64))));
                 break;
             case TypeKind::F64:
-                result = jsNumber(purifyNaN(*access.operator()<double>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + fprToIndex(loc.fpr()) * bytesForWidth(Width::Width64))));
+                result = jsNumber(purifyNaN(*access.operator()<double>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + FPRInfo::toArgumentIndex(loc.fpr()) * bytesForWidth(Width::Width64))));
                 break;
             default:
-                result = *access.operator()<JSValue>(registerSpace, gprToIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister));
+                result = *access.operator()<JSValue>(registerSpace, GPRInfo::toArgumentIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister));
                 break;
             }
             resultArray->initializeIndex(initializationScope, i, result);
@@ -380,7 +360,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, EncodedJSValue, 
                 else
                     *access.operator()<uint64_t>(calleeFrame, dst) = raw;
             } else {
-                auto raw = *access.operator()<uint64_t>(argumentRegisters, gprToIndex(wasmParam.jsr().payloadGPR()) * sizeof(UCPURegister));
+                auto raw = *access.operator()<uint64_t>(argumentRegisters, GPRInfo::toArgumentIndex(wasmParam.jsr().payloadGPR()) * sizeof(UCPURegister));
 #if USE(JSVALUE64)
                 if (argType.isI32())
                     *access.operator()<uint64_t>(calleeFrame, dst) = static_cast<uint32_t>(raw) | JSValue::NumberTag;
@@ -398,7 +378,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, EncodedJSValue, 
                 OPERATION_RETURN_IF_EXCEPTION(scope, 0);
                 *access.operator()<uint64_t>(calleeFrame, dst) = JSValue::encode(result);
             } else {
-                auto result = JSBigInt::makeHeapBigIntOrBigInt32(instance->globalObject(), *access.operator()<int64_t>(argumentRegisters, gprToIndex(wasmParam.jsr().payloadGPR()) * bytesForWidth(Width::Width64)));
+                auto result = JSBigInt::makeHeapBigIntOrBigInt32(instance->globalObject(), *access.operator()<int64_t>(argumentRegisters, GPRInfo::toArgumentIndex(wasmParam.jsr().payloadGPR()) * bytesForWidth(Width::Width64)));
                 OPERATION_RETURN_IF_EXCEPTION(scope, 0);
                 *access.operator()<uint64_t>(calleeFrame, dst) = JSValue::encode(result);
             }
@@ -409,7 +389,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, EncodedJSValue, 
             if (wasmParam.isStackArgument())
                 val = *access.operator()<float>(cfr, wasmParam.offsetFromSP() + sizeof(CallerFrameAndPC));
             else
-                val = *access.operator()<float>(argumentRegisters, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + fprToIndex(wasmParam.fpr()) * bytesForWidth(Width::Width64));
+                val = *access.operator()<float>(argumentRegisters, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + FPRInfo::toArgumentIndex(wasmParam.fpr()) * bytesForWidth(Width::Width64));
 
             double marshalled = purifyNaN(val);
             uint64_t raw = bitwise_cast<uint64_t>(marshalled);
@@ -424,7 +404,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, EncodedJSValue, 
             if (wasmParam.isStackArgument())
                 val = *access.operator()<double>(cfr, wasmParam.offsetFromSP() + sizeof(CallerFrameAndPC));
             else
-                val = *access.operator()<double>(argumentRegisters, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + fprToIndex(wasmParam.fpr()) * bytesForWidth(Width::Width64));
+                val = *access.operator()<double>(argumentRegisters, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + FPRInfo::toArgumentIndex(wasmParam.fpr()) * bytesForWidth(Width::Width64));
 
             double marshalled = purifyNaN(val);
             uint64_t raw = bitwise_cast<uint64_t>(marshalled);
@@ -512,7 +492,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, EncodedJSValu
         }
         case TypeKind::F32: {
             FPRReg dest = wasmCC.results[0].location.fpr();
-            auto offset = GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + fprToIndex(dest) * bytesForWidth(Width::Width64);
+            auto offset = GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + FPRInfo::toArgumentIndex(dest) * bytesForWidth(Width::Width64);
             if (returned.isNumber()) {
                 if (returned.isInt32()) {
                     float result = static_cast<float>(*access.operator()<uint32_t>(registerSpace, 0));
@@ -534,7 +514,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, EncodedJSValu
         }
         case TypeKind::F64: {
             FPRReg dest = wasmCC.results[0].location.fpr();
-            auto offset = GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + fprToIndex(dest) * bytesForWidth(Width::Width64);
+            auto offset = GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + FPRInfo::toArgumentIndex(dest) * bytesForWidth(Width::Width64);
             if (returned.isNumber()) {
                 if (returned.isInt32()) {
                     double result = static_cast<float>(*access.operator()<uint32_t>(registerSpace, 0));
@@ -670,9 +650,9 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, EncodedJSValu
 
             auto rep = wasmCC.results[index];
             if (rep.location.isGPR())
-                *access.operator()<uint64_t>(registerSpace, gprToIndex(rep.location.jsr().payloadGPR()) * sizeof(UCPURegister)) = unboxedValue;
+                *access.operator()<uint64_t>(registerSpace, GPRInfo::toArgumentIndex(rep.location.jsr().payloadGPR()) * sizeof(UCPURegister)) = unboxedValue;
             else if (rep.location.isFPR())
-                *access.operator()<uint64_t>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + fprToIndex(rep.location.fpr()) * bytesForWidth(Width::Width64)) = unboxedValue;
+                *access.operator()<uint64_t>(registerSpace, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + FPRInfo::toArgumentIndex(rep.location.fpr()) * bytesForWidth(Width::Width64)) = unboxedValue;
             else
                 *access.operator()<uint64_t>(callerStackFrame, rep.location.offsetFromSP()) = unboxedValue;
         }

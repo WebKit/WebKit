@@ -429,6 +429,14 @@ public:
         return indexForRegister[reg];
     }
 
+    static unsigned toArgumentIndex(GPRReg reg)
+    {
+        ASSERT(reg != InvalidGPRReg);
+        ASSERT(static_cast<int>(reg) < 16);
+        static const unsigned indexForRegister[16] = { InvalidIndex, 3, 2, InvalidIndex, InvalidIndex, InvalidIndex, 1, 0, 4, 5, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
+        return indexForRegister[reg];
+    }
+
     static ASCIILiteral debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
@@ -531,6 +539,15 @@ public:
             { 0, 1, 2, 3, 4, 5, InvalidIndex, InvalidIndex, 6, 7, 8, 9, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
         unsigned result = indexForRegister[reg];
         return result;
+    }
+
+    static unsigned toArgumentIndex(GPRReg reg)
+    {
+        ASSERT(reg != InvalidGPRReg);
+        ASSERT(static_cast<int>(reg) < 16);
+        if (reg > argumentGPR3)
+            return InvalidIndex;
+        return static_cast<unsigned>(reg);
     }
 
     static ASCIILiteral debugName(GPRReg reg)
@@ -655,13 +672,19 @@ public:
     {
         if (reg > regT15)
             return InvalidIndex;
-        return (unsigned)reg;
+        return static_cast<unsigned>(reg);
     }
 
     static constexpr GPRReg toArgumentRegister(unsigned index)
     {
         ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfArgumentRegisters);
         return toRegister(index);
+    }
+    static unsigned toArgumentIndex(GPRReg reg)
+    {
+        if (reg > argumentGPR7)
+            return InvalidIndex;
+        return static_cast<unsigned>(reg);
     }
 
     static ASCIILiteral debugName(GPRReg reg)
@@ -800,6 +823,15 @@ public:
             InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, 11, 12, InvalidIndex, InvalidIndex,
         };
         return indexForRegister[reg];
+    }
+
+    static unsigned toArgumentIndex(GPRReg reg)
+    {
+        ASSERT(reg != InvalidGPRReg);
+        ASSERT(static_cast<int>(reg) < 32);
+        if (reg < argumentGPR0 || reg > argumentGPR7)
+            return InvalidIndex;
+        return static_cast<unsigned>(reg) - 10;
     }
 
     static ASCIILiteral debugName(GPRReg reg)
