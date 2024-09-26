@@ -64,12 +64,12 @@ void ProcessLauncher::launchProcess()
     IPC::SocketPair socketPair = IPC::createPlatformConnection(IPC::PlatformConnectionOptions::SetCloexecOnServer);
 
     int sendBufSize = 32 * 1024;
-    setsockopt(socketPair.server, SOL_SOCKET, SO_SNDBUF, &sendBufSize, 4);
-    setsockopt(socketPair.client, SOL_SOCKET, SO_SNDBUF, &sendBufSize, 4);
+    setsockopt(socketPair.server.value(), SOL_SOCKET, SO_SNDBUF, &sendBufSize, 4);
+    setsockopt(socketPair.client.value(), SOL_SOCKET, SO_SNDBUF, &sendBufSize, 4);
 
     int recvBufSize = 32 * 1024;
-    setsockopt(socketPair.server, SOL_SOCKET, SO_RCVBUF, &recvBufSize, 4);
-    setsockopt(socketPair.client, SOL_SOCKET, SO_RCVBUF, &recvBufSize, 4);
+    setsockopt(socketPair.server.value(), SOL_SOCKET, SO_RCVBUF, &recvBufSize, 4);
+    setsockopt(socketPair.client.value(), SOL_SOCKET, SO_RCVBUF, &recvBufSize, 4);
 
     char coreProcessIdentifierString[16];
     snprintf(coreProcessIdentifierString, sizeof coreProcessIdentifierString, "%ld", m_launchOptions.processIdentifier.toUInt64());
@@ -82,7 +82,7 @@ void ProcessLauncher::launchProcess()
 #if USE(WPE_BACKEND_PLAYSTATION)
     auto appLocalPid = ProcessProviderLibWPE::singleton().launchProcess(m_launchOptions, argv, socketPair.client);
 #else
-    PlayStation::LaunchParam param { socketPair.client, m_launchOptions.userId };
+    PlayStation::LaunchParam param { socketPair.client.value(), m_launchOptions.userId };
     int32_t appLocalPid = PlayStation::launchProcess(
         !m_launchOptions.processPath.isEmpty() ? m_launchOptions.processPath.utf8().data() : defaultProcessPath(m_launchOptions.processType),
         argv, param);
@@ -94,13 +94,12 @@ void ProcessLauncher::launchProcess()
 #endif
         return;
     }
-    close(socketPair.client);
-    IPC::Connection::Identifier serverIdentifier { socketPair.server };
+    IPC::Connection::Identifier serverIdentifier { WTFMove(socketPair.server) };
 
     // We've finished launching the process, message back to the main run loop.
     RefPtr<ProcessLauncher> protectedThis(this);
     RunLoop::main().dispatch([=] {
-        protectedThis->didFinishLaunchingProcess(appLocalPid, serverIdentifier);
+        protectedThis->didFinishLaunchingProcess(appLocalPid, WTFMove(serverIdentifier));
     });
 }
 

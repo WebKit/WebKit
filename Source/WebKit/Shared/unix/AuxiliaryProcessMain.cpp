@@ -74,11 +74,11 @@ bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
         return false;
 
     if (auto connectionIdentifier = parseInteger<int>(span(argv[2])))
-        m_parameters.connectionIdentifier = IPC::Connection::Identifier { *connectionIdentifier };
+        m_parameters.connectionIdentifier = IPC::Connection::Identifier { { *connectionIdentifier, UnixFileDescriptor::Adopt } };
     else
         return false;
 
-    if (!m_parameters.processIdentifier->toRawValue() || m_parameters.connectionIdentifier.handle <= 0)
+    if (!m_parameters.processIdentifier->toRawValue() || m_parameters.connectionIdentifier.handle.value() <= 0)
         return false;
 
 #if USE(GLIB) && OS(LINUX)

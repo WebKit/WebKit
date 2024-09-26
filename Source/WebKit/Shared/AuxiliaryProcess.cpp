@@ -76,7 +76,7 @@ void AuxiliaryProcess::didClose(IPC::Connection&)
 #endif
 }
 
-void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters& parameters)
+void AuxiliaryProcess::initialize(AuxiliaryProcessInitializationParameters&& parameters)
 {
     WTF::RefCountedBase::enableThreadingChecksGlobally();
 
@@ -105,7 +105,7 @@ void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters
     ContentWorldIdentifier::enableGenerationProtection();
     WebPageProxyIdentifier::enableGenerationProtection();
 
-    m_connection = IPC::Connection::createClientConnection(parameters.connectionIdentifier);
+    m_connection = IPC::Connection::createClientConnection(WTFMove(parameters.connectionIdentifier));
     initializeConnection(m_connection.get());
     m_connection->open(*this);
 }

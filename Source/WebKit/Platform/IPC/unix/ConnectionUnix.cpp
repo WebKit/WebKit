@@ -96,11 +96,27 @@ private:
 
 static_assert(sizeof(MessageInfo) + sizeof(AttachmentInfo) * attachmentMaxAmount <= messageMaxSize, "messageMaxSize is too small.");
 
-void Connection::platformInitialize(Identifier identifier)
+int Connection::socketDescriptor() const
 {
-    m_socketDescriptor = identifier.handle;
 #if USE(GLIB)
-    m_socket = adoptGRef(g_socket_new_from_fd(m_socketDescriptor, nullptr));
+    return g_socket_get_fd(m_socket.get());
+#else
+    return m_socketDescriptor.value();
+#endif
+}
+
+void Connection::platformInitialize(Identifier&& identifier)
+{
+#if USE(GLIB)
+    GUniqueOutPtr<GError> error;
+    m_socket = adoptGRef(g_socket_new_from_fd(identifier.handle.release(), &error.outPtr()));
+    if (!m_socket) {
+        // Note: g_socket_new_from_fd() takes ownership of the fd only on success, so if this error
+        // were not fatal, we would need to close it here.
+        g_error("Failed to adopt IPC::Connection socket: %s", error->message);
+    }
+#else
+    m_socketDescriptor = WTFMove(identifier.handle);
 #endif
     m_readBuffer.reserveInitialCapacity(messageMaxSize);
     m_fileDescriptors.reserveInitialCapacity(attachmentMaxAmount);
@@ -109,11 +125,11 @@ void Connection::platformInitialize(Identifier identifier)
 void Connection::platformInvalidate()
 {
 #if USE(GLIB)
-    // In the GLib platform the socket descriptor is owned by GSocket.
     m_socket = nullptr;
 #else
     if (m_socketDescriptor != -1)
         closeWithRetry(m_socketDescriptor);
+    m_socketDescriptor = -1;
 #endif
 
     if (!m_isConnected)
@@ -131,7 +147,6 @@ void Connection::platformInvalidate()
     }
 #endif
 
-    m_socketDescriptor = -1;
     m_isConnected = false;
 }
 
@@ -303,7 +318,7 @@ static ssize_t readBytesFromSocket(int socketDescriptor, Vector<uint8_t>& buffer
 void Connection::readyReadHandler()
 {
     while (true) {
-        ssize_t bytesRead = readBytesFromSocket(m_socketDescriptor, m_readBuffer, m_fileDescriptors);
+        ssize_t bytesRead = readBytesFromSocket(socketDescriptor(), m_readBuffer, m_fileDescriptors);
 
         if (bytesRead < 0) {
             // EINTR was already handled by readBytesFromSocket.
@@ -316,7 +331,7 @@ void Connection::readyReadHandler()
             }
 
             if (m_isConnected) {
-                WTFLogAlways("Error receiving IPC message on socket %d in process %d: %s", m_socketDescriptor, getpid(), safeStrerror(errno).data());
+                WTFLogAlways("Error receiving IPC message on socket %d in process %d: %s", socketDescriptor(), getpid(), safeStrerror(errno).data());
                 connectionDidClose();
             }
             return;
@@ -337,7 +352,7 @@ void Connection::readyReadHandler()
 
 bool Connection::platformPrepareForOpen()
 {
-    if (setNonBlock(m_socketDescriptor))
+    if (setNonBlock(socketDescriptor()))
         return true;
     ASSERT_NOT_REACHED();
     return false;
@@ -493,7 +508,7 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
 
     message.msg_iovlen = iovLength;
 
-    while (sendmsg(m_socketDescriptor, &message, MSG_NOSIGNAL) == -1) {
+    while (sendmsg(socketDescriptor(), &message, MSG_NOSIGNAL) == -1) {
         if (errno == EINTR)
             continue;
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -518,7 +533,7 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
 #else
             struct pollfd pollfd;
 
-            pollfd.fd = m_socketDescriptor;
+            pollfd.fd = socketDescriptor()
             pollfd.events = POLLOUT;
             pollfd.revents = 0;
             poll(&pollfd, 1, -1);
@@ -571,7 +586,7 @@ SocketPair createPlatformConnection(unsigned options)
 
         setPasscredIfNeeded();
 
-        return { sockets[0], sockets[1] };
+        return { { sockets[0], UnixFileDescriptor::Adopt }, { sockets[1], UnixFileDescriptor::Adopt } };
     }
 #endif
 
@@ -584,13 +599,13 @@ SocketPair createPlatformConnection(unsigned options)
 
     setPasscredIfNeeded();
 
-    return { sockets[0], sockets[1] };
+    return { { sockets[0], UnixFileDescriptor::Adopt }, { sockets[1], UnixFileDescriptor::Adopt } };
 }
 
 std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
 {
     SocketPair socketPair = createPlatformConnection();
-    return ConnectionIdentifierPair { Identifier { UnixFileDescriptor { socketPair.server,  UnixFileDescriptor::Adopt } }, UnixFileDescriptor { socketPair.client, UnixFileDescriptor::Adopt } };
+    return { { Identifier { WTFMove(socketPair.server) }, ConnectionHandle { WTFMove(socketPair.client) } } };
 }
 
 #if USE(GLIB) && OS(LINUX)
