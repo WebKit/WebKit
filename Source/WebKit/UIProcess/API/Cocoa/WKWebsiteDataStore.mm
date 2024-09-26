@@ -62,6 +62,7 @@
 #import <WebCore/ServiceWorkerClientData.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
@@ -81,6 +82,7 @@
 @end
 
 class WebsiteDataStoreClient final : public WebKit::WebsiteDataStoreClient {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebsiteDataStoreClient);
 public:
     WebsiteDataStoreClient(WKWebsiteDataStore *dataStore, id<_WKWebsiteDataStoreDelegate> delegate)
         : m_dataStore(dataStore)

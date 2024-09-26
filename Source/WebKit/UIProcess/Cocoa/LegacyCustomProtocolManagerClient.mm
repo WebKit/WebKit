@@ -31,6 +31,7 @@
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
 @interface WKCustomProtocolLoader : NSObject <NSURLConnectionDelegate> {
@@ -136,6 +137,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 @end
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyCustomProtocolManagerClient);
+
 using namespace WebCore;
 
 void LegacyCustomProtocolManagerClient::startLoading(LegacyCustomProtocolManagerProxy& manager, WebKit::LegacyCustomProtocolID customProtocolID, const ResourceRequest& coreRequest)

@@ -35,6 +35,7 @@
 #include "GeometryUtilities.h"
 #include <math.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -44,6 +45,7 @@ public:
     FloatPointGraph() = default;
 
     class Node : public FloatPoint {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(Node);
         WTF_MAKE_NONCOPYABLE(Node);
     public:
         Node(FloatPoint point)
