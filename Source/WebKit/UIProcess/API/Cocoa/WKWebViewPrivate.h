@@ -83,6 +83,15 @@ typedef NS_ENUM(NSInteger, _WKShouldOpenExternalURLsPolicy) {
     _WKShouldOpenExternalURLsPolicyAllowExternalSchemesButNotAppLinks,
 } WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
+typedef NS_ENUM(NSInteger, _WKWebProcessState) {
+    _WKWebProcessStateNotRunning,
+    _WKWebProcessStateForeground,
+    _WKWebProcessStateBackground,
+    _WKWebProcessStateSuspended,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA));
+
+#define HAVE_WK_WEB_PROCESS_STATE 1
+
 #if TARGET_OS_IPHONE
 
 typedef NS_ENUM(NSUInteger, _WKDragInteractionPolicy) {
@@ -570,6 +579,9 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 - (void)_simulateClickOverFirstMatchingTextInViewportWithUserInteraction:(NSString *)targetText completionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @property (nonatomic, setter=_setDontResetTransientActivationAfterRunJavaScript:) BOOL _dontResetTransientActivationAfterRunJavaScript WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+// This property is KVO compliant.
+@property (nonatomic, readonly) _WKWebProcessState _webProcessState WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @end
 

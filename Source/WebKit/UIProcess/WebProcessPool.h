@@ -594,6 +594,9 @@ public:
     HardwareKeyboardState cachedHardwareKeyboardState() const;
 #endif
 
+    bool webProcessStateUpdatesForPageClientEnabled() const { return m_webProcessStateUpdatesForPageClientEnabled; }
+    void setWebProcessStateUpdatesForPageClientEnabled(bool enabled) { m_webProcessStateUpdatesForPageClientEnabled = enabled; }
+
 private:
     enum class NeedsGlobalStaticInitialization : bool { No, Yes };
     void platformInitialize(NeedsGlobalStaticInitialization);
@@ -923,6 +926,8 @@ private:
     RefPtr<ListDataObserver> m_storageAccessPromptQuirksDataUpdateObserver;
     RefPtr<ListDataObserver> m_scriptTelemetryDataUpdateObserver;
 #endif
+
+    bool m_webProcessStateUpdatesForPageClientEnabled { false };
 };
 
 template<typename T>

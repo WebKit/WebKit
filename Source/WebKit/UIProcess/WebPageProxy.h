@@ -1534,6 +1534,8 @@ public:
     void processWillBecomeForeground();
 #endif
 
+    void processDidUpdateThrottleState();
+
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     void didCreateContextInWebProcessForVisibilityPropagation(LayerHostingContextID);
     LayerHostingContextID contextIDForVisibilityPropagationInWebProcess() const { return m_contextIDForVisibilityPropagationInWebProcess; }

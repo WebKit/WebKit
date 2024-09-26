@@ -500,6 +500,7 @@ public:
 
     void resetState();
 
+    ProcessThrottleState throttleStateForStatistics() const { return m_throttleStateForStatistics; }
     Seconds totalForegroundTime() const;
     Seconds totalBackgroundTime() const;
     Seconds totalSuspendedTime() const;

@@ -141,6 +141,8 @@ public:
 
     CocoaWindow *platformWindow() const final;
 
+    void processDidUpdateThrottleState() final;
+
 protected:
     RetainPtr<WKWebView> webView() const { return m_webView.get(); }
 

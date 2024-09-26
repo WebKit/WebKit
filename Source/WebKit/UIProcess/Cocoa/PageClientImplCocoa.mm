@@ -359,4 +359,10 @@ CocoaWindow *PageClientImplCocoa::platformWindow() const
     return [m_webView window];
 }
 
+void PageClientImplCocoa::processDidUpdateThrottleState()
+{
+    [m_webView willChangeValueForKey:@"_webProcessState"];
+    [m_webView didChangeValueForKey:@"_webProcessState"];
+}
+
 } // namespace WebKit

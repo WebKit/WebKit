@@ -698,6 +698,14 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     return [super valueForUndefinedKey:key];
 }
 
+- (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context
+{
+    if ([keyPath isEqualToString:@"_webProcessState"])
+        _page->configuration().processPool().setWebProcessStateUpdatesForPageClientEnabled(true);
+
+    [super addObserver:observer forKeyPath:keyPath options:options context:context];
+}
+
 #pragma mark - macOS/iOS API
 
 - (WKWebViewConfiguration *)configuration
@@ -4838,6 +4846,23 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
     _impl->removeTextAnimationForAnimationID(*uuid);
 #endif // PLATFORM(IOS_FAMILY)
 #endif // ENABLE(WRITING_TOOLS)
+}
+
+- (_WKWebProcessState)_webProcessState
+{
+    if (!_page || !_page->hasRunningProcess())
+        return _WKWebProcessStateNotRunning;
+
+    switch (_page->protectedLegacyMainFrameProcess()->throttleStateForStatistics()) {
+    case WebKit::ProcessThrottleState::Foreground:
+        return _WKWebProcessStateForeground;
+    case WebKit::ProcessThrottleState::Background:
+        return _WKWebProcessStateBackground;
+    case WebKit::ProcessThrottleState::Suspended:
+        return _WKWebProcessStateSuspended;
+    default:
+        return _WKWebProcessStateNotRunning;
+    }
 }
 
 @end

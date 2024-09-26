@@ -2857,6 +2857,13 @@ void WebProcessProxy::updateRuntimeStatistics()
 
     m_throttleStateForStatistics = newState;
     m_throttleStateForStatisticsTimestamp = newTimestamp;
+
+    if (RefPtr pool = m_processPool.get()) {
+        if (pool->webProcessStateUpdatesForPageClientEnabled()) {
+            for (Ref page : mainPages())
+                page->processDidUpdateThrottleState();
+        }
+    }
 }
 
 TextStream& operator<<(TextStream& ts, const WebProcessProxy& process)

@@ -7189,6 +7189,13 @@ void WebPageProxy::didReceiveTitleForFrame(IPC::Connection& connection, FrameIde
 #endif
 }
 
+void WebPageProxy::processDidUpdateThrottleState()
+{
+    if (RefPtr pageClient = this->pageClient())
+        pageClient->processDidUpdateThrottleState();
+}
+
+
 void WebPageProxy::didFirstLayoutForFrame(FrameIdentifier, const UserData& userData)
 {
 }
