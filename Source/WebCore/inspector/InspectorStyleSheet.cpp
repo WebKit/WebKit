@@ -94,7 +94,6 @@ static RuleFlatteningStrategy flatteningStrategyForStyleRuleType(StyleRuleType s
     case StyleRuleType::LayerBlock:
     case StyleRuleType::Container:
     case StyleRuleType::StartingStyle:
-    case StyleRuleType::InternalBaseAppearance:
         // These rules MUST be handled by the static `isValidRuleHeaderText`, `protocolGroupingTypeForStyleRuleType`,
         // and `asCSSRuleList` in order to provide functionality in Web Inspector. Additionally, they MUST have a CSSOM
         // representation created in `StyleRuleBase::createCSSOMWrapper`, otherwise we will end up with a mismatched

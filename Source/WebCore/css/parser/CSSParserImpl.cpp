@@ -484,8 +484,6 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
         return consumeStartingStyleRule(prelude, block);
     case CSSAtRuleViewTransition:
         return consumeViewTransitionRule(prelude, block);
-    case CSSAtRuleInternalBaseAppearance:
-        return consumeInternalBaseAppearanceRule(prelude, block);
     default:
         return nullptr; // Parse error, unrecognised at-rule with block
     }
@@ -1173,28 +1171,6 @@ RefPtr<StyleRuleStartingStyle> CSSParserImpl::consumeStartingStyleRule(CSSParser
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
 
     return StyleRuleStartingStyle::create(WTFMove(rules));
-}
-
-RefPtr<StyleRuleInternalBaseAppearance> CSSParserImpl::consumeInternalBaseAppearanceRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
-{
-    if (m_context.mode != UASheetMode)
-        return nullptr;
-
-    if (!prelude.atEnd())
-        return nullptr;
-
-    if (m_observerWrapper) {
-        m_observerWrapper->observer().startRuleHeader(StyleRuleType::InternalBaseAppearance, m_observerWrapper->startOffset(prelude));
-        m_observerWrapper->observer().endRuleHeader(m_observerWrapper->endOffset(prelude));
-        m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(block));
-    }
-
-    auto rules = consumeNestedGroupRules(block);
-
-    if (m_observerWrapper)
-        m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
-
-    return StyleRuleInternalBaseAppearance::create(WTFMove(rules));
 }
 
 RefPtr<StyleRuleLayer> CSSParserImpl::consumeLayerRule(CSSParserTokenRange prelude, std::optional<CSSParserTokenRange> block)

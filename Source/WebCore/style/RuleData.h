@@ -24,7 +24,6 @@
 #include "PropertyAllowlist.h"
 #include "SelectorFilter.h"
 #include "StyleRule.h"
-#include <wtf/OptionSet.h>
 
 namespace WebCore {
 namespace Style {
@@ -37,16 +36,13 @@ enum class MatchBasedOnRuleHash : unsigned {
     ClassC
 };
 
-enum class AtRuleType : uint8_t {
-    StartingStyle = 1 << 0,
-    BaseAppearance = 1 << 1
-};
+enum class IsStartingStyle : bool { No, Yes };
 
 class RuleData {
 public:
     static const unsigned maximumSelectorComponentCount = 8192;
 
-    RuleData(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex, unsigned position, OptionSet<AtRuleType>);
+    RuleData(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex, unsigned position, IsStartingStyle);
 
     unsigned position() const { return m_position; }
 
@@ -69,7 +65,7 @@ public:
     bool containsUncommonAttributeSelector() const { return m_containsUncommonAttributeSelector; }
     unsigned linkMatchType() const { return m_linkMatchType; }
     PropertyAllowlist propertyAllowlist() const { return static_cast<PropertyAllowlist>(m_propertyAllowlist); }
-    OptionSet<AtRuleType> atRuleTypes() const { return OptionSet<AtRuleType>::fromRaw(m_atRuleTypes); }
+    IsStartingStyle isStartingStyle() const { return static_cast<IsStartingStyle>(m_isStartingStyle); }
     bool isEnabled() const { return m_isEnabled; }
     void setEnabled(bool value) { m_isEnabled = value; }
 
@@ -89,7 +85,7 @@ private:
     unsigned m_containsUncommonAttributeSelector : 1;
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
     unsigned m_propertyAllowlist : 2;
-    unsigned m_atRuleTypes : 2;
+    unsigned m_isStartingStyle : 1;
     unsigned m_isEnabled : 1;
     SelectorFilter::Hashes m_descendantSelectorIdentifierHashes;
 };
@@ -103,3 +99,4 @@ namespace WTF {
 template<> struct VectorTraits<WebCore::Style::RuleData> : SimpleClassVectorTraits { };
 
 } // namespace WTF
+

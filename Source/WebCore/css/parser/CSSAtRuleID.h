@@ -46,7 +46,6 @@ enum CSSAtRuleID {
     CSSAtRuleSupports,
     CSSAtRuleViewTransition,
 
-    CSSAtRuleInternalBaseAppearance,
     CSSAtRuleWebkitKeyframes,
     CSSAtRuleCounterStyle,
     CSSAtRuleLayer,

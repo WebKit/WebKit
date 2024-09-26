@@ -43,7 +43,7 @@ struct MatchedProperties {
     ScopeOrdinal styleScopeOrdinal { ScopeOrdinal::Element };
     FromStyleAttribute fromStyleAttribute { FromStyleAttribute::No };
     CascadeLayerPriority cascadeLayerPriority { RuleSet::cascadeLayerPriorityForUnlayered };
-    OptionSet<AtRuleType> atRuleTypes { };
+    IsStartingStyle isStartingStyle { IsStartingStyle::No };
     IsCacheable isCacheable { IsCacheable::Yes };
 };
 
@@ -55,7 +55,7 @@ struct MatchResult {
 
     bool isForLink { false };
     bool isCompletelyNonCacheable { false };
-    OptionSet<AtRuleType> atRuleTypes { };
+    bool hasStartingStyle { false };
     Vector<MatchedProperties> userAgentDeclarations;
     Vector<MatchedProperties> userDeclarations;
     Vector<MatchedProperties> authorDeclarations;
@@ -75,13 +75,13 @@ inline bool operator==(const MatchedProperties& a, const MatchedProperties& b)
         && a.styleScopeOrdinal == b.styleScopeOrdinal
         && a.fromStyleAttribute == b.fromStyleAttribute
         && a.cascadeLayerPriority == b.cascadeLayerPriority
-        && a.atRuleTypes == b.atRuleTypes
+        && a.isStartingStyle == b.isStartingStyle
         && a.isCacheable == b.isCacheable;
 }
 
 inline bool MatchResult::cacheablePropertiesEqual(const MatchResult& other) const
 {
-    if (isForLink != other.isForLink || atRuleTypes != other.atRuleTypes)
+    if (isForLink != other.isForLink || hasStartingStyle != other.hasStartingStyle)
         return false;
 
     // Only author style can be non-cacheable.
@@ -123,7 +123,7 @@ inline void add(Hasher& hasher, const MatchedProperties& matchedProperties)
         matchedProperties.styleScopeOrdinal,
         matchedProperties.fromStyleAttribute,
         matchedProperties.cascadeLayerPriority,
-        matchedProperties.atRuleTypes
+        matchedProperties.isStartingStyle
     );
 }
 

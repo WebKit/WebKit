@@ -202,7 +202,7 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
     }
 
     case StyleRuleType::StartingStyle: {
-        SetForScope startingStyleScope { m_atRuleTypes, m_atRuleTypes | AtRuleType::StartingStyle };
+        SetForScope startingStyleScope { m_isStartingStyle, IsStartingStyle::Yes };
         auto startingStyleRule = uncheckedDowncast<StyleRuleStartingStyle>(WTFMove(rule));
         addChildRules(startingStyleRule->childRules());
         return;
@@ -224,13 +224,6 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
         auto supportsRule = uncheckedDowncast<StyleRuleSupports>(WTFMove(rule));
         if (supportsRule->conditionIsSupported())
             addChildRules(supportsRule->childRules());
-        return;
-    }
-
-    case StyleRuleType::InternalBaseAppearance: {
-        SetForScope scope { m_atRuleTypes, m_atRuleTypes | AtRuleType::BaseAppearance };
-        auto internalBaseAppearanceRule = uncheckedDowncast<StyleRuleInternalBaseAppearance>(WTFMove(rule));
-        addChildRules(internalBaseAppearanceRule->childRules());
         return;
     }
 
@@ -297,7 +290,7 @@ void RuleSetBuilder::addStyleRuleWithSelectorList(const CSSSelectorList& selecto
     if (!selectorList.isEmpty()) {
         unsigned selectorListIndex = 0;
         for (size_t selectorIndex = 0; selectorIndex != notFound; selectorIndex = selectorList.indexOfNextSelectorAfter(selectorIndex)) {
-            RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleSet->ruleCount(), m_atRuleTypes);
+            RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleSet->ruleCount(), m_isStartingStyle);
             m_mediaQueryCollector.addRuleIfNeeded(ruleData);
             m_ruleSet->addRule(WTFMove(ruleData), m_currentCascadeLayerIdentifier, m_currentContainerQueryIdentifier, m_currentScopeIdentifier);
             ++selectorListIndex;

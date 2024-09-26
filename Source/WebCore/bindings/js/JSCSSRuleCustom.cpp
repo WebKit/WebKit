@@ -127,7 +127,6 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
         return createWrapper<CSSStartingStyleRule>(globalObject, WTFMove(rule));
     case StyleRuleType::ViewTransition:
         return createWrapper<CSSViewTransitionRule>(globalObject, WTFMove(rule));
-    case StyleRuleType::InternalBaseAppearance:
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:
     case StyleRuleType::Margin:

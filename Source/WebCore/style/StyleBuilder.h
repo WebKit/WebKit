@@ -80,7 +80,7 @@ private:
     using RollbackCascadeKey = std::tuple<unsigned, unsigned, unsigned>;
     RollbackCascadeKey makeRollbackCascadeKey(CascadeLevel, ScopeOrdinal = ScopeOrdinal::Element, CascadeLayerPriority = 0);
 
-    PropertyCascade m_cascade;
+    const PropertyCascade m_cascade;
     // Rollback cascades are build on demand to resolve 'revert' and 'revert-layer' keywords.
     HashMap<RollbackCascadeKey, std::unique_ptr<const PropertyCascade>> m_rollbackCascades;
 

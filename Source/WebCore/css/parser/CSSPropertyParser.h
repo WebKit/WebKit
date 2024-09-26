@@ -93,9 +93,6 @@ private:
     // @view-transition descriptors.
     bool parseViewTransitionDescriptor(CSSPropertyID);
 
-    // @-internal-base-appearance descriptors.
-    bool parseInternalBaseAppearanceDescriptor(CSSPropertyID, bool important);
-
     void addProperty(CSSPropertyID longhand, CSSPropertyID shorthand, RefPtr<CSSValue>&&, bool important, bool implicit = false);
     void addExpandedProperty(CSSPropertyID shorthand, RefPtr<CSSValue>&&, bool important, bool implicit = false);
 

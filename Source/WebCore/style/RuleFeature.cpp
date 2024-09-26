@@ -408,7 +408,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData, const Vector<Ref<
         siblingRules.append({ ruleData });
     if (ruleData.containsUncommonAttributeSelector())
         uncommonAttributeRules.append({ ruleData });
-    if (ruleData.atRuleTypes().contains(AtRuleType::StartingStyle))
+    if (ruleData.isStartingStyle() == IsStartingStyle::Yes)
         hasStartingStyleRules = true;
 
     auto addToMap = [&]<typename HostAffectingNames>(auto& map, auto& entries, HostAffectingNames hostAffectingNames) {
