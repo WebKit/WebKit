@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class CSSParserTokenRange;
+struct CSSParserContext;
 struct ColorInterpolationMethod;
 
 namespace CSSPropertyParserHelpers {
