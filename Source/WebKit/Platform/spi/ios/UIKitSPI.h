@@ -1021,6 +1021,12 @@ typedef NS_ENUM(NSInteger, UIFocusItemDeferralMode) {
 };
 #endif
 
+#if HAVE(UI_FOCUS_ITEM_DEFERRAL_MODE)
+typedef NS_ENUM(NSInteger, UIFocusItemDeferralMode) {
+    UIFocusItemDeferralModeNever = 2
+};
+#endif
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
