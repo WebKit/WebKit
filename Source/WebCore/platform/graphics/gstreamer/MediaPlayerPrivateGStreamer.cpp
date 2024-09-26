@@ -432,7 +432,7 @@ bool MediaPlayerPrivateGStreamer::isPipelineWaitingPreroll() const
 void MediaPlayerPrivateGStreamer::play()
 {
     if (isMediaStreamPlayer()) {
-        m_pausedTime = MediaTime::invalidTime();
+        m_pausedTime.reset();
         if (m_startTime.isInvalid())
             m_startTime = MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value());
     }
@@ -708,16 +708,13 @@ MediaTime MediaPlayerPrivateGStreamer::currentTime() const
 {
     if (isMediaStreamPlayer()) {
         if (m_pausedTime)
-            return m_pausedTime;
+            return *m_pausedTime;
 
         return MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value()) - m_startTime;
     }
 
-    if (!m_pipeline)
+    if (!m_pipeline || m_didErrorOccur)
         return MediaTime::zeroTime();
-
-    if (m_didErrorOccur)
-        return MediaTime::invalidTime();
 
     GST_TRACE_OBJECT(pipeline(), "seeking: %s, seekTarget: %s", boolForPrinting(m_isSeeking), m_seekTarget.toString().utf8().data());
     if (m_isSeeking)
@@ -2004,7 +2001,6 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         // all. If that's the case, it's considered to be one of those spureous EOS and is ignored.
         // Live streams (infinite duration) are special and we still have to detect legitimate EOS there, so
         // this message bailout isn't done in those cases.
-        MediaTime playbackPosition = MediaTime::invalidTime();
         MediaTime duration = this->duration();
         GstClockTime gstreamerPosition = gstreamerPositionFromSinks();
         bool eosFlagIsSetInSink = false;
@@ -2018,9 +2014,8 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             eosFlagIsSetInSink = sinkPad && GST_PAD_IS_EOS(sinkPad.get());
         }
 
-        if (GST_CLOCK_TIME_IS_VALID(gstreamerPosition))
-            playbackPosition = MediaTime(gstreamerPosition, GST_SECOND);
-        if (!player->isLooping() && !eosFlagIsSetInSink && playbackPosition.isValid() && duration.isValid()
+        MediaTime playbackPosition = GST_CLOCK_TIME_IS_VALID(gstreamerPosition)? MediaTime(gstreamerPosition, GST_SECOND) : MediaTime::zeroTime();
+        if (!player->isLooping() && !eosFlagIsSetInSink && duration.isValid()
             && ((m_playbackRate >= 0 && playbackPosition < duration && duration.isFinite())
             || (m_playbackRate < 0 && playbackPosition > MediaTime::zeroTime()))) {
             GST_DEBUG_OBJECT(pipeline(), "EOS received but position %s is still in the finite playable limits [%s, %s], ignoring it",
@@ -3377,7 +3372,7 @@ bool MediaPlayerPrivateGStreamer::performTaskAtTime(Function<void()>&& task, con
 
     // Ignore the cases when the time isn't marching on or the position is unknown.
     MediaTime currentTime = playbackPosition();
-    if (!m_pipeline || m_didErrorOccur || m_isSeeking || m_isPaused || !m_playbackRate || !currentTime.isValid())
+    if (!m_pipeline || m_didErrorOccur || m_isSeeking || m_isPaused || !m_playbackRate)
         return false;
 
     std::optional<Function<void()>> taskToSchedule;

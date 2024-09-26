@@ -112,11 +112,11 @@ void ManagedMediaSource::monitorSourceBuffers()
         setStreaming(true);
         return;
     }
-    auto currentTime = this->currentTime();
-    if (!currentTime.isValid())
-        return;
 
     ensurePrefsRead();
+
+    auto currentTime = this->currentTime();
+    ASSERT(currentTime.isValid());
 
     auto limitAhead = [&] (double upper) {
         MediaTime aheadTime = currentTime + MediaTime::createWithDouble(upper);
