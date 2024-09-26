@@ -36,6 +36,9 @@ namespace JSC {
 
 bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, void*, void*, const char* prefix, PrintStream& out)
 {
+    constexpr int commentAlignment = 64;
+    constexpr auto* commentFormatStart = "\033[1;30m";
+    constexpr auto* commentFormatEnd = "\033[0m";
     ZydisDecoder decoder;
     ZydisDecoderInit(&decoder, ZYDIS_MACHINE_MODE_LONG_64, ZYDIS_ADDRESS_WIDTH_64);
 
@@ -53,14 +56,26 @@ bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, vo
     ZydisDecodedInstruction instruction;
     char formatted[1024];
     while (ZYAN_SUCCESS(ZydisDecoderDecodeBuffer(&decoder, data + offset, size - offset, &instruction))) {
+        if (auto str = AssemblyCommentRegistry::singleton().comment(reinterpret_cast<void*>(bitwise_cast<uintptr_t>(data + offset)))) {
+            for (auto s : str->split('\n')) {
+                out.print(prefix);
+                for (int i = 0; i < commentAlignment; ++i)
+                    out.print(" ");
+                out.print(commentFormatStart);
+                out.print(s);
+                out.print(commentFormatEnd);
+                out.print("\n");
+            }
+        }
+
+        out.print(prefix);
+        out.printf("%#16llx: ", static_cast<unsigned long long>(bitwise_cast<uintptr_t>(data + offset)));
+
         if (ZYAN_SUCCESS(ZydisFormatterFormatInstruction(&formatter, &instruction, formatted, sizeof(formatted), bitwise_cast<unsigned long long>(data + offset))))
-            out.printf("%s%#16llx: %s", prefix, static_cast<unsigned long long>(bitwise_cast<uintptr_t>(data + offset)), formatted);
+            out.print(formatted);
         else
-            out.printf("%s%#16llx: failed-to-format", prefix, static_cast<unsigned long long>(bitwise_cast<uintptr_t>(data + offset)));
-        if (auto str = AssemblyCommentRegistry::singleton().comment(reinterpret_cast<void*>(bitwise_cast<uintptr_t>(data + offset))))
-            out.printf("; %s\n", str->ascii().data());
-        else
-            out.printf("\n");
+            out.print("failed-to-format");
+        out.print("\n");
         offset += instruction.length;
     }
 

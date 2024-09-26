@@ -59,6 +59,15 @@ namespace DFG {
 struct OSRExit;
 }
 
+/*
+Consider:
+
+instr 1
+JIT_COMMENT
+instr 2
+
+JIT_COMMENT is associated with an imaginary label above instr 2.
+*/
 #define JIT_COMMENT(jit, ...) do { if (UNLIKELY(Options::needDisassemblySupport())) { (jit).comment(__VA_ARGS__); } else { (void) jit; } } while (0)
 
 class AbstractMacroAssemblerBase {

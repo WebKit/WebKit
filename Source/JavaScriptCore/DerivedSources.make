@@ -153,6 +153,14 @@ JSC_BUILTINS_FILES_PATTERNS = $(subst .,%,$(JSC_BUILTINS_FILES))
 $(JSC_BUILTINS_FILES_PATTERNS) : $(BUILTINS_GENERATOR_SCRIPTS) $(JavaScriptCore_BUILTINS_SOURCES) JavaScriptCore_BUILTINS_DEPENDENCIES_LIST
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py --combined --output-directory . --framework JavaScriptCore $(JavaScriptCore_BUILTINS_SOURCES)
 
+# Instrumented JIT compiler code that includes source info.
+INSTRUMENTED_JIT_OBJECTS = \
+    jit/JITCall.instrumented.cpp \
+#
+
+$(INSTRUMENTED_JIT_OBJECTS): %.instrumented.cpp : %.cpp $(JavaScriptCore)/create_jit_instrumentation
+	$(PYTHON) $(JavaScriptCore)/create_jit_instrumentation $< $@
+
 # Perfect hash lookup tables for JavaScript classes.
 
 OBJECT_LUT_HEADERS = \
@@ -398,4 +406,5 @@ WasmOMGIRGeneratorInlines.h: $(JavaScriptCore)/wasm/generateWasmOMGIRGeneratorIn
 
 all : \
     $(OBJECT_LUT_HEADERS) \
+    $(INSTRUMENTED_JIT_OBJECTS) \
 #

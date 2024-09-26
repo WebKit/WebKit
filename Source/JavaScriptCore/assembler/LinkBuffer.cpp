@@ -545,7 +545,7 @@ void LinkBuffer::linkComments(MacroAssembler& assembler)
             return string.isolatedCopy();
         });
         if (!addResult.isNewEntry)
-            addResult.iterator->value = makeString(addResult.iterator->value, "\n; "_s, string);
+            addResult.iterator->value = makeString(addResult.iterator->value, "\n"_s, string);
     }
 
     AssemblyCommentRegistry::singleton().registerCodeRange(m_executableMemory->start().untaggedPtr(), m_executableMemory->end().untaggedPtr(), WTFMove(map));

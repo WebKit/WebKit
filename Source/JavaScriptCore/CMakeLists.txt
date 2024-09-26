@@ -153,6 +153,10 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     wasm/js/WebAssemblyTagPrototype.cpp
 )
 
+set(JavaScriptCore_INSTRUMENTED_JIT_OBJECTS
+    jit/JITCall.cpp
+)
+
 list(APPEND JavaScriptCore_SOURCES
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBuiltins.cpp
 )
@@ -498,6 +502,30 @@ endmacro()
 foreach (_file ${JavaScriptCore_OBJECT_LUT_SOURCES})
     get_filename_component(_name ${_file} NAME_WE)
     GENERATE_HASH_LUT(${CMAKE_CURRENT_SOURCE_DIR}/${_file} ${JavaScriptCore_DERIVED_SOURCES_DIR}/${_name}.lut.h)
+endforeach ()
+
+add_custom_command(
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/YarrCanonicalizeUnicode.cpp
+    MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/yarr/generateYarrCanonicalizeUnicode
+    DEPENDS ${JAVASCRIPTCORE_DIR}/ucd/CaseFolding.txt
+    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/yarr/generateYarrCanonicalizeUnicode ${JAVASCRIPTCORE_DIR}/ucd/CaseFolding.txt ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/YarrCanonicalizeUnicode.cpp
+    VERBATIM)
+
+# JIT instrumentation generator
+set(JIT_INSTRUMENTATION_GENERATOR ${CMAKE_CURRENT_SOURCE_DIR}/create_jit_instrumentation)
+macro(GENERATE_JIT_INSTRUMENTATION _input _output)
+    add_custom_command(
+        OUTPUT ${_output}
+        MAIN_DEPENDENCY ${JIT_INSTRUMENTATION_GENERATOR}
+        DEPENDS ${_input}
+        COMMAND ${PYTHON_EXECUTABLE} ${JIT_INSTRUMENTATION_GENERATOR} ${_input} ${_output}
+        VERBATIM)
+    list(APPEND JavaScriptCore_SOURCES ${_output})
+endmacro()
+
+foreach (_file ${JavaScriptCore_INSTRUMENTED_JIT_OBJECTS})
+    get_filename_component(_name ${_file} NAME_WE)
+    GENERATE_JIT_INSTRUMENTATION(${CMAKE_CURRENT_SOURCE_DIR}/${_file} ${JavaScriptCore_DERIVED_SOURCES_DIR}/jit/${_name}.generated.cpp)
 endforeach ()
 
 set(JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS

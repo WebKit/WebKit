@@ -35,6 +35,9 @@ namespace JSC {
 
 bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, void*, void*, const char* prefix, PrintStream& out)
 {
+    constexpr int commentAlignment = 64;
+    constexpr auto* commentFormatStart = "\033[1;30m";
+    constexpr auto* commentFormatEnd = "\033[0m";
     csh handle;
     cs_insn* instructions;
 
@@ -64,11 +67,25 @@ bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, vo
     if (count > 0) {
         for (size_t i = 0; i < count; ++i) {
             auto& instruction = instructions[i];
-            out.printf("%s%#16llx: %s %s", prefix, static_cast<unsigned long long>(instruction.address), instruction.mnemonic, instruction.op_str);
-            if (auto str = AssemblyCommentRegistry::singleton().comment(reinterpret_cast<void *>(static_cast<uintptr_t>(instruction.address))))
-                out.printf("; %s\n", str->ascii().data());
-            else
-                out.printf("\n");
+
+            if (auto str = AssemblyCommentRegistry::singleton().comment(reinterpret_cast<void *>(static_cast<uintptr_t>(instruction.address)))) {
+                for (auto s : str->split('\n')) {
+                    out.print(prefix);
+                    for (int i = 0; i < commentAlignment; ++i)
+                        out.print(" ");
+                    out.print(commentFormatStart);
+                    out.print(s);
+                    out.print(commentFormatEnd);
+                    out.print("\n");
+                }
+            }
+
+            out.print(prefix);
+            out.printf("%#16llx: ", static_cast<unsigned long long>(instruction.address));
+            out.print(instruction.mnemonic);
+            out.print(" ");
+            out.print(instruction.op_str);
+            out.printf("\n");
         }
         cs_free(instructions, count);
     }
