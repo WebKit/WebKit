@@ -315,11 +315,13 @@ void ProcessThrottler::updateThrottleStateIfNeeded(ASCIILiteral lastAddedActivit
 
     if (shouldBeRunnable()) {
         if (m_state == ProcessThrottleState::Suspended || m_pendingRequestToSuspendID) {
+#if !RELEASE_LOG_DISABLED
             const char* probableWakeupReason = !lastAddedActivity.isNull() ? lastAddedActivity.characters() : "unknown";
             if (m_state == ProcessThrottleState::Suspended)
                 PROCESSTHROTTLER_RELEASE_LOG("updateThrottleStateIfNeeded: sending ProcessDidResume IPC because the process was suspended (probable wakeup reason: %" PUBLIC_LOG_STRING ")", probableWakeupReason);
             else
                 PROCESSTHROTTLER_RELEASE_LOG("updateThrottleStateIfNeeded: sending ProcessDidResume IPC because the WebProcess is still processing request to suspend=%" PRIu64 " (probable wakeup reason: %" PUBLIC_LOG_STRING ")", *m_pendingRequestToSuspendID, probableWakeupReason);
+#endif
             protectedProcess()->sendProcessDidResume(expectedThrottleState() == ProcessThrottleState::Foreground ? AuxiliaryProcessProxy::ResumeReason::ForegroundActivity : AuxiliaryProcessProxy::ResumeReason::BackgroundActivity);
             clearPendingRequestToSuspend();
         }
