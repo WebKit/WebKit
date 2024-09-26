@@ -680,6 +680,7 @@ private:
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
     std::atomic<bool> m_didRequestProcessTermination { false };
+    std::optional<audit_token_t> m_auditToken;
 #elif OS(WINDOWS)
     // Called on the connection queue.
     void readEventHandler();
