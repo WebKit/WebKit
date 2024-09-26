@@ -48,36 +48,35 @@ RemoteVideoTrackProxy::RemoteVideoTrackProxy(GPUConnectionToWebProcess& connecti
     m_clientRegistrationId = trackPrivate.addClient([](auto&& task) {
         ensureOnMainThread(WTFMove(task));
     }, *this);
-    connectionToWebProcess.connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteVideoTrack(configuration()), m_mediaPlayerIdentifier);
+    connectionToWebProcess.protectedConnection()->send(Messages::MediaPlayerPrivateRemote::AddRemoteVideoTrack(configuration()), m_mediaPlayerIdentifier);
 }
 
 RemoteVideoTrackProxy::~RemoteVideoTrackProxy()
 {
-    m_trackPrivate->removeClient(m_clientRegistrationId);
+    Ref { m_trackPrivate }->removeClient(m_clientRegistrationId);
 }
 
 VideoTrackPrivateRemoteConfiguration RemoteVideoTrackProxy::configuration()
 {
+    Ref trackPrivate = m_trackPrivate;
     return {
         {
-            m_trackPrivate->id(),
-            m_trackPrivate->label(),
-            m_trackPrivate->language(),
-            m_trackPrivate->startTimeVariance(),
-            m_trackPrivate->trackIndex(),
+            trackPrivate->id(),
+            trackPrivate->label(),
+            trackPrivate->language(),
+            trackPrivate->startTimeVariance(),
+            trackPrivate->trackIndex(),
         },
-        m_trackPrivate->selected(),
-        m_trackPrivate->kind(),
-        m_trackPrivate->configuration(),
+        trackPrivate->selected(),
+        trackPrivate->kind(),
+        trackPrivate->configuration(),
     };
 }
 
 void RemoteVideoTrackProxy::updateConfiguration()
 {
-    auto connection = m_connectionToWebProcess.get();
-    if (!connection)
-        return;
-    connection->connection().send(Messages::MediaPlayerPrivateRemote::RemoteVideoTrackConfigurationChanged(std::exchange(m_id, m_trackPrivate->id()), configuration()), m_mediaPlayerIdentifier);
+    if (RefPtr connection = m_connectionToWebProcess.get())
+        connection->protectedConnection()->send(Messages::MediaPlayerPrivateRemote::RemoteVideoTrackConfigurationChanged(std::exchange(m_id, m_trackPrivate->id()), configuration()), m_mediaPlayerIdentifier);
 }
 
 void RemoteVideoTrackProxy::willRemove()

@@ -132,7 +132,8 @@ void RemoteMediaPlayerProxy::invalidate()
 
 Ref<MediaPromise> RemoteMediaPlayerProxy::commitAllTransactions()
 {
-    if (!m_manager || !m_manager->gpuConnectionToWebProcess())
+    RefPtr manager = m_manager.get();
+    if (!manager || !manager->gpuConnectionToWebProcess())
         return MediaPromise::createAndReject(PlatformMediaError::ClientDisconnected);
 
     return m_webProcessConnection->sendWithPromisedReply<MediaPromiseConverter>(Messages::MediaPlayerPrivateRemote::CommitAllTransactions { }, m_id);
@@ -183,22 +184,25 @@ void RemoteMediaPlayerProxy::load(URL&& url, std::optional<SandboxExtension::Han
 #if ENABLE(MEDIA_SOURCE)
 void RemoteMediaPlayerProxy::loadMediaSource(URL&& url, const WebCore::ContentType& contentType, bool webMParserEnabled, RemoteMediaSourceIdentifier mediaSourceIdentifier, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&& completionHandler)
 {
-    ASSERT(m_manager && m_manager->gpuConnectionToWebProcess());
+    RefPtr manager = m_manager.get();
+    ASSERT(manager && manager->gpuConnectionToWebProcess());
 
     RemoteMediaPlayerConfiguration configuration;
-    if (!m_manager || !m_manager->gpuConnectionToWebProcess()) {
+    if (!manager || !manager->gpuConnectionToWebProcess()) {
         completionHandler(WTFMove(configuration));
         return;
     }
     bool reattached = false;
-    if (RefPtr mediaSourceProxy = m_manager->pendingMediaSource(mediaSourceIdentifier)) {
+    if (RefPtr mediaSourceProxy = manager->pendingMediaSource(mediaSourceIdentifier)) {
         m_mediaSourceProxy = WTFMove(mediaSourceProxy);
         reattached = true;
     } else
-        m_mediaSourceProxy = adoptRef(*new RemoteMediaSourceProxy(*m_manager, mediaSourceIdentifier, webMParserEnabled, *this));
-    m_player->load(url, contentType, *protectedMediaSourceProxy());
+        m_mediaSourceProxy = adoptRef(*new RemoteMediaSourceProxy(*manager, mediaSourceIdentifier, webMParserEnabled, *this));
+
+    RefPtr player = m_player;
+    player->load(url, contentType, *protectedMediaSourceProxy());
     if (reattached)
-        m_mediaSourceProxy->setMediaPlayers(*this, m_player->playerPrivate());
+        m_mediaSourceProxy->setMediaPlayers(*this, player->playerPrivate());
     getConfiguration(configuration);
     completionHandler(WTFMove(configuration));
 }
@@ -343,11 +347,12 @@ RefPtr<PlatformMediaResource> RemoteMediaPlayerProxy::requestResource(ResourceRe
 {
     ASSERT(isMainRunLoop());
 
-    ASSERT(m_manager && m_manager->gpuConnectionToWebProcess());
-    if (!m_manager || !m_manager->gpuConnectionToWebProcess())
+    RefPtr manager = m_manager.get();
+    ASSERT(manager && manager->gpuConnectionToWebProcess());
+    if (!manager || !manager->gpuConnectionToWebProcess())
         return nullptr;
 
-    Ref remoteMediaResourceManager = m_manager->gpuConnectionToWebProcess()->remoteMediaResourceManager();
+    Ref remoteMediaResourceManager = manager->gpuConnectionToWebProcess()->remoteMediaResourceManager();
     auto remoteMediaResourceIdentifier = RemoteMediaResourceIdentifier::generate();
     auto remoteMediaResource = RemoteMediaResource::create(remoteMediaResourceManager, *this, remoteMediaResourceIdentifier);
     remoteMediaResourceManager->addMediaResource(remoteMediaResourceIdentifier, remoteMediaResource);
@@ -500,11 +505,12 @@ void RemoteMediaPlayerProxy::mediaPlayerEngineFailedToLoad()
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
 String RemoteMediaPlayerProxy::mediaPlayerMediaKeysStorageDirectory() const
 {
-    ASSERT(m_manager && m_manager->gpuConnectionToWebProcess());
-    if (!m_manager || !m_manager->gpuConnectionToWebProcess())
+    RefPtr manager = m_manager.get();
+    ASSERT(manager && manager->gpuConnectionToWebProcess());
+    if (!manager || !manager->gpuConnectionToWebProcess())
         return emptyString();
 
-    return m_manager->gpuConnectionToWebProcess()->mediaKeysStorageDirectory();
+    return manager->gpuConnectionToWebProcess()->mediaKeysStorageDirectory();
 }
 #endif
 
@@ -537,11 +543,12 @@ void RemoteMediaPlayerProxy::mediaPlayerGetRawCookies(const URL& url, WebCore::M
 
 const String& RemoteMediaPlayerProxy::mediaPlayerMediaCacheDirectory() const
 {
-    ASSERT(m_manager && m_manager->gpuConnectionToWebProcess());
-    if (!m_manager || !m_manager->gpuConnectionToWebProcess())
+    RefPtr manager = m_manager.get();
+    ASSERT(manager && manager->gpuConnectionToWebProcess());
+    if (!manager || !manager->gpuConnectionToWebProcess())
         return emptyString();
 
-    return m_manager->gpuConnectionToWebProcess()->mediaCacheDirectory();
+    return manager->gpuConnectionToWebProcess()->mediaCacheDirectory();
 }
 
 LayoutRect RemoteMediaPlayerProxy::mediaPlayerContentBoxRect() const
@@ -626,8 +633,9 @@ void RemoteMediaPlayerProxy::requestHostingContextID(LayerHostingContextIDCallba
 
 void RemoteMediaPlayerProxy::addRemoteAudioTrackProxy(WebCore::AudioTrackPrivate& track)
 {
-    ASSERT(m_manager && m_manager->gpuConnectionToWebProcess());
-    if (!m_manager || !m_manager->gpuConnectionToWebProcess())
+    RefPtr manager = m_manager.get();
+    ASSERT(manager && manager->gpuConnectionToWebProcess());
+    if (!manager || !manager->gpuConnectionToWebProcess())
         return;
 
 #if !RELEASE_LOG_DISABLED
@@ -638,12 +646,12 @@ void RemoteMediaPlayerProxy::addRemoteAudioTrackProxy(WebCore::AudioTrackPrivate
         if (audioTrack.get() == track)
             return;
         if (audioTrack->id() == track.id()) {
-            audioTrack = RemoteAudioTrackProxy::create(*m_manager->gpuConnectionToWebProcess(), track, m_id);
+            audioTrack = RemoteAudioTrackProxy::create(*manager->gpuConnectionToWebProcess(), track, m_id);
             return;
         }
     }
 
-    m_audioTracks.append(RemoteAudioTrackProxy::create(*m_manager->gpuConnectionToWebProcess(), track, m_id));
+    m_audioTracks.append(RemoteAudioTrackProxy::create(*manager->gpuConnectionToWebProcess(), track, m_id));
 }
 
 void RemoteMediaPlayerProxy::audioTrackSetEnabled(TrackID trackId, bool enabled)
@@ -658,8 +666,9 @@ void RemoteMediaPlayerProxy::audioTrackSetEnabled(TrackID trackId, bool enabled)
 
 void RemoteMediaPlayerProxy::addRemoteVideoTrackProxy(WebCore::VideoTrackPrivate& track)
 {
-    ASSERT(m_manager && m_manager->gpuConnectionToWebProcess());
-    if (!m_manager || !m_manager->gpuConnectionToWebProcess())
+    RefPtr manager = m_manager.get();
+    ASSERT(manager && manager->gpuConnectionToWebProcess());
+    if (!manager || !manager->gpuConnectionToWebProcess())
         return;
 
 #if !RELEASE_LOG_DISABLED
@@ -670,12 +679,12 @@ void RemoteMediaPlayerProxy::addRemoteVideoTrackProxy(WebCore::VideoTrackPrivate
         if (videoTrack.get() == track)
             return;
         if (videoTrack->id() == track.id()) {
-            videoTrack = RemoteVideoTrackProxy::create(*m_manager->gpuConnectionToWebProcess(), track, m_id);
+            videoTrack = RemoteVideoTrackProxy::create(*manager->gpuConnectionToWebProcess(), track, m_id);
             return;
         }
     }
 
-    m_videoTracks.append(RemoteVideoTrackProxy::create(*m_manager->gpuConnectionToWebProcess(), track, m_id));
+    m_videoTracks.append(RemoteVideoTrackProxy::create(*manager->gpuConnectionToWebProcess(), track, m_id));
 }
 
 void RemoteMediaPlayerProxy::videoTrackSetSelected(TrackID trackId, bool selected)
@@ -690,8 +699,9 @@ void RemoteMediaPlayerProxy::videoTrackSetSelected(TrackID trackId, bool selecte
 
 void RemoteMediaPlayerProxy::addRemoteTextTrackProxy(WebCore::InbandTextTrackPrivate& track)
 {
-    ASSERT(m_manager && m_manager->gpuConnectionToWebProcess());
-    if (!m_manager || !m_manager->gpuConnectionToWebProcess())
+    RefPtr manager = m_manager.get();
+    ASSERT(manager && manager->gpuConnectionToWebProcess());
+    if (!manager || !manager->gpuConnectionToWebProcess())
         return;
 
 #if !RELEASE_LOG_DISABLED
@@ -702,12 +712,12 @@ void RemoteMediaPlayerProxy::addRemoteTextTrackProxy(WebCore::InbandTextTrackPri
         if (textTrack.get() == track)
             return;
         if (textTrack->id() == track.id()) {
-            textTrack = RemoteTextTrackProxy::create(*m_manager->gpuConnectionToWebProcess(), track, m_id);
+            textTrack = RemoteTextTrackProxy::create(*manager->gpuConnectionToWebProcess(), track, m_id);
             return;
         }
     }
 
-    m_textTracks.append(RemoteTextTrackProxy::create(*m_manager->gpuConnectionToWebProcess(), track, m_id));
+    m_textTracks.append(RemoteTextTrackProxy::create(*manager->gpuConnectionToWebProcess(), track, m_id));
 }
 
 void RemoteMediaPlayerProxy::textTrackSetMode(TrackID trackId, WebCore::InbandTextTrackPrivate::Mode mode)
@@ -783,14 +793,15 @@ void RemoteMediaPlayerProxy::mediaPlayerActiveSourceBuffersChanged()
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 RefPtr<ArrayBuffer> RemoteMediaPlayerProxy::mediaPlayerCachedKeyForKeyId(const String& keyId) const
 {
-    ASSERT(m_manager && m_manager->gpuConnectionToWebProcess());
-    if (!m_manager || !m_manager->gpuConnectionToWebProcess())
+    RefPtr manager = m_manager.get();
+    ASSERT(manager && manager->gpuConnectionToWebProcess());
+    if (!manager || !manager->gpuConnectionToWebProcess())
         return nullptr;
 
     if (!m_legacySession)
         return nullptr;
 
-    if (auto cdmSession = m_manager->gpuConnectionToWebProcess()->protectedLegacyCdmFactoryProxy()->getSession(*m_legacySession))
+    if (auto cdmSession = manager->gpuConnectionToWebProcess()->protectedLegacyCdmFactoryProxy()->getSession(*m_legacySession))
         return cdmSession->getCachedKeyForKeyId(keyId);
     return nullptr;
 }
@@ -1009,15 +1020,16 @@ void RemoteMediaPlayerProxy::sendCachedState()
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 void RemoteMediaPlayerProxy::setLegacyCDMSession(std::optional<RemoteLegacyCDMSessionIdentifier>&& instanceId)
 {
-    ASSERT(m_manager && m_manager->gpuConnectionToWebProcess());
-    if (!m_manager || !m_manager->gpuConnectionToWebProcess())
+    RefPtr manager = m_manager.get();
+    ASSERT(manager && manager->gpuConnectionToWebProcess());
+    if (!manager || !manager->gpuConnectionToWebProcess())
         return;
 
     if (m_legacySession == instanceId)
         return;
 
     if (m_legacySession) {
-        if (auto cdmSession = m_manager->gpuConnectionToWebProcess()->protectedLegacyCdmFactoryProxy()->getSession(*m_legacySession)) {
+        if (auto cdmSession = manager->gpuConnectionToWebProcess()->protectedLegacyCdmFactoryProxy()->getSession(*m_legacySession)) {
             m_player->setCDMSession(nullptr);
             cdmSession->setPlayer(nullptr);
         }
@@ -1026,7 +1038,7 @@ void RemoteMediaPlayerProxy::setLegacyCDMSession(std::optional<RemoteLegacyCDMSe
     m_legacySession = instanceId;
 
     if (m_legacySession) {
-        if (auto cdmSession = m_manager->gpuConnectionToWebProcess()->protectedLegacyCdmFactoryProxy()->getSession(*m_legacySession)) {
+        if (auto cdmSession = manager->gpuConnectionToWebProcess()->protectedLegacyCdmFactoryProxy()->getSession(*m_legacySession)) {
             m_player->setCDMSession(cdmSession->session());
             cdmSession->setPlayer(*this);
         }
@@ -1042,31 +1054,34 @@ void RemoteMediaPlayerProxy::keyAdded()
 #if ENABLE(ENCRYPTED_MEDIA)
 void RemoteMediaPlayerProxy::cdmInstanceAttached(RemoteCDMInstanceIdentifier&& instanceId)
 {
-    ASSERT(m_manager && m_manager->gpuConnectionToWebProcess());
-    if (!m_manager || !m_manager->gpuConnectionToWebProcess())
+    RefPtr manager = m_manager.get();
+    ASSERT(manager && manager->gpuConnectionToWebProcess());
+    if (!manager || !manager->gpuConnectionToWebProcess())
         return;
 
-    if (auto* instanceProxy = m_manager->gpuConnectionToWebProcess()->protectedCdmFactoryProxy()->getInstance(instanceId))
+    if (auto* instanceProxy = manager->gpuConnectionToWebProcess()->protectedCdmFactoryProxy()->getInstance(instanceId))
         m_player->cdmInstanceAttached(instanceProxy->protectedInstance());
 }
 
 void RemoteMediaPlayerProxy::cdmInstanceDetached(RemoteCDMInstanceIdentifier&& instanceId)
 {
-    ASSERT(m_manager && m_manager->gpuConnectionToWebProcess());
-    if (!m_manager || !m_manager->gpuConnectionToWebProcess())
+    RefPtr manager = m_manager.get();
+    ASSERT(manager && manager->gpuConnectionToWebProcess());
+    if (!manager || !manager->gpuConnectionToWebProcess())
         return;
 
-    if (auto* instanceProxy = m_manager->gpuConnectionToWebProcess()->protectedCdmFactoryProxy()->getInstance(instanceId))
+    if (auto* instanceProxy = manager->gpuConnectionToWebProcess()->protectedCdmFactoryProxy()->getInstance(instanceId))
         m_player->cdmInstanceDetached(instanceProxy->protectedInstance());
 }
 
 void RemoteMediaPlayerProxy::attemptToDecryptWithInstance(RemoteCDMInstanceIdentifier&& instanceId)
 {
-    ASSERT(m_manager && m_manager->gpuConnectionToWebProcess());
-    if (!m_manager || !m_manager->gpuConnectionToWebProcess())
+    RefPtr manager = m_manager.get();
+    ASSERT(manager && manager->gpuConnectionToWebProcess());
+    if (!manager || !manager->gpuConnectionToWebProcess())
         return;
 
-    if (auto* instanceProxy = m_manager->gpuConnectionToWebProcess()->protectedCdmFactoryProxy()->getInstance(instanceId))
+    if (auto* instanceProxy = manager->gpuConnectionToWebProcess()->protectedCdmFactoryProxy()->getInstance(instanceId))
         m_player->attemptToDecryptWithInstance(instanceProxy->protectedInstance());
 }
 #endif
@@ -1278,7 +1293,8 @@ WTFLogChannel& RemoteMediaPlayerProxy::logChannel() const
 
 const SharedPreferencesForWebProcess& RemoteMediaPlayerProxy::sharedPreferencesForWebProcess() const
 {
-    RefPtr<GPUConnectionToWebProcess> gpuProcessConnectionToWebProcess = m_manager ? m_manager->gpuConnectionToWebProcess() : nullptr;
+    RefPtr manager = m_manager.get();
+    RefPtr<GPUConnectionToWebProcess> gpuProcessConnectionToWebProcess = manager ? manager->gpuConnectionToWebProcess() : nullptr;
     RELEASE_ASSERT(gpuProcessConnectionToWebProcess);
 
     return gpuProcessConnectionToWebProcess->sharedPreferencesForWebProcess();

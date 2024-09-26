@@ -48,19 +48,21 @@ RemoteMediaResourceLoader::~RemoteMediaResourceLoader()
 RefPtr<PlatformMediaResource> RemoteMediaResourceLoader::requestResource(ResourceRequest&& request, LoadOptions options)
 {
     ASSERT(isMainRunLoop());
-    if (!m_remoteMediaPlayerProxy)
+    RefPtr remoteMediaPlayerProxy = m_remoteMediaPlayerProxy.get();
+    if (!remoteMediaPlayerProxy)
         return nullptr;
 
-    return m_remoteMediaPlayerProxy->requestResource(WTFMove(request), options);
+    return remoteMediaPlayerProxy->requestResource(WTFMove(request), options);
 }
 
 void RemoteMediaResourceLoader::sendH2Ping(const URL& url, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
-    if (!m_remoteMediaPlayerProxy)
+    RefPtr remoteMediaPlayerProxy = m_remoteMediaPlayerProxy.get();
+    if (!remoteMediaPlayerProxy)
         return completionHandler(makeUnexpected(internalError(url)));
     
-    m_remoteMediaPlayerProxy->sendH2Ping(url, WTFMove(completionHandler));
+    remoteMediaPlayerProxy->sendH2Ping(url, WTFMove(completionHandler));
 }
 
 } // namespace WebKit
