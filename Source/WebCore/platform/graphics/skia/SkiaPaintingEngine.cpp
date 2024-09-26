@@ -60,7 +60,9 @@ SkiaPaintingEngine::SkiaPaintingEngine(unsigned numberOfCPUThreads, unsigned num
 
         if (numberOfGPUThreads)
             m_gpuWorkerPool = WorkerPool::create("SkiaGPUWorker"_s, numberOfGPUThreads);
-    } else if (numberOfCPUThreads)
+    }
+
+    if (numberOfCPUThreads)
         m_cpuWorkerPool = WorkerPool::create("SkiaCPUWorker"_s, numberOfCPUThreads);
 }
 
@@ -138,17 +140,23 @@ static bool canPerformAcceleratedRendering()
     return ProcessCapabilities::canUseAcceleratedBuffers() && PlatformDisplay::sharedDisplay().skiaGLContext();
 }
 
-RenderingMode SkiaPaintingEngine::renderingMode() const
+bool SkiaPaintingEngine::shouldUseGPURenderingForDirtyRect(const IntRect& dirtyRect) const
 {
-    if (canPerformAcceleratedRendering())
+    // TODO: Eventually take into account additional conditions (queue utilization?).
+    return dirtyRect.area() >= minimumAreaForGPUPainting();
+}
+
+RenderingMode SkiaPaintingEngine::renderingMode(const IntRect& dirtyRect) const
+{
+    if (canPerformAcceleratedRendering() && shouldUseGPURenderingForDirtyRect(dirtyRect))
         return RenderingMode::Accelerated;
 
     return RenderingMode::Unaccelerated;
 }
 
-std::optional<RenderingMode> SkiaPaintingEngine::threadedRenderingMode() const
+std::optional<RenderingMode> SkiaPaintingEngine::threadedRenderingMode(const IntRect& dirtyRect) const
 {
-    if (m_gpuWorkerPool && canPerformAcceleratedRendering())
+    if (m_gpuWorkerPool && canPerformAcceleratedRendering() && shouldUseGPURenderingForDirtyRect(dirtyRect))
         return RenderingMode::Accelerated;
 
     if (m_cpuWorkerPool)
@@ -176,11 +184,11 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::createBuffer(RenderingMode render
 Ref<CoordinatedTileBuffer> SkiaPaintingEngine::paintLayer(const CoordinatedGraphicsLayer& layer, const IntRect& dirtyRect)
 {
     // ### Asynchronous rendering on worker threads ###
-    if (auto renderingMode = SkiaPaintingEngine::threadedRenderingMode())
+    if (auto renderingMode = SkiaPaintingEngine::threadedRenderingMode(dirtyRect))
         return postPaintingTask(renderingMode.value(), layer, dirtyRect);
 
     // ### Synchronous rendering on main thread ###
-    return performPaintingTask(renderingMode(), layer, dirtyRect);
+    return performPaintingTask(renderingMode(dirtyRect), layer, dirtyRect);
 }
 
 Ref<CoordinatedTileBuffer> SkiaPaintingEngine::postPaintingTask(RenderingMode renderingMode, const CoordinatedGraphicsLayer& layer, const IntRect& dirtyRect)
@@ -268,6 +276,23 @@ unsigned SkiaPaintingEngine::numberOfGPUPaintingThreads()
     });
 
     return numberOfThreads;
+}
+
+unsigned SkiaPaintingEngine::minimumAreaForGPUPainting()
+{
+    static std::once_flag onceFlag;
+    static unsigned areaThreshold = 0;
+
+    std::call_once(onceFlag, [] {
+        areaThreshold = 128 * 128; // Prefer GPU rendering above an area of 128x128px (by default).
+
+        if (const char* envString = getenv("WEBKIT_SKIA_GPU_PAINTING_MIN_AREA")) {
+            if (auto newValue = parseInteger<unsigned>(StringView::fromLatin1(envString)))
+                areaThreshold = *newValue;
+        }
+    });
+
+    return areaThreshold;
 }
 
 } // namespace WebCore

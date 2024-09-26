@@ -54,6 +54,7 @@ public:
 
     static unsigned numberOfCPUPaintingThreads();
     static unsigned numberOfGPUPaintingThreads();
+    static unsigned minimumAreaForGPUPainting();
 
     Ref<CoordinatedTileBuffer> paintLayer(const CoordinatedGraphicsLayer&, const IntRect& dirtyRect);
 
@@ -71,8 +72,9 @@ private:
     // Main thread rendering
     Ref<CoordinatedTileBuffer> performPaintingTask(RenderingMode, const CoordinatedGraphicsLayer&, const IntRect& dirtyRect);
 
-    RenderingMode renderingMode() const;
-    std::optional<RenderingMode> threadedRenderingMode() const;
+    RenderingMode renderingMode(const IntRect&) const;
+    std::optional<RenderingMode> threadedRenderingMode(const IntRect&) const;
+    bool shouldUseGPURenderingForDirtyRect(const IntRect&) const;
 
     RefPtr<WorkerPool> m_cpuWorkerPool;
     RefPtr<WorkerPool> m_gpuWorkerPool;
