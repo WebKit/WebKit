@@ -54,6 +54,7 @@ add_definitions(-DLIBDIR="${LIB_INSTALL_DIR}")
 add_definitions(-DPKGLIBDIR="${LIB_INSTALL_DIR}/wpe-webkit-${WPE_API_VERSION}")
 add_definitions(-DPKGLIBEXECDIR="${LIBEXEC_INSTALL_DIR}")
 add_definitions(-DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}")
+add_definitions(-DPKGDATADIR="${CMAKE_INSTALL_FULL_DATADIR}/wpe-webkit-${WPE_API_VERSION}")
 add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
 
 if (NOT DEVELOPER_MODE AND NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
@@ -533,24 +534,9 @@ if (ENABLE_BREAKPAD)
     )
 endif ()
 
-WEBKIT_BUILD_INSPECTOR_GRESOURCES(${WebInspectorUI_DERIVED_SOURCES_DIR})
-list(APPEND WPEWebInspectorResources_DERIVED_SOURCES
-    ${WebInspectorUI_DERIVED_SOURCES_DIR}/InspectorGResourceBundle.c
-)
+WEBKIT_BUILD_INSPECTOR_GRESOURCES(${WebInspectorUI_DERIVED_SOURCES_DIR} "inspector.gresource")
 
-list(APPEND WPEWebInspectorResources_LIBRARIES
-    ${GLIB_GIO_LIBRARIES}
-)
-
-list(APPEND WPEWebInspectorResources_SYSTEM_INCLUDE_DIRECTORIES
-    ${GLIB_INCLUDE_DIRS}
-)
-
-add_library(WPEWebInspectorResources SHARED ${WPEWebInspectorResources_DERIVED_SOURCES})
-add_dependencies(WPEWebInspectorResources WebKit)
-target_link_libraries(WPEWebInspectorResources ${WPEWebInspectorResources_LIBRARIES})
-target_include_directories(WPEWebInspectorResources SYSTEM PUBLIC ${WPEWebInspectorResources_SYSTEM_INCLUDE_DIRECTORIES})
-install(TARGETS WPEWebInspectorResources DESTINATION "${LIB_INSTALL_DIR}/wpe-webkit-${WPE_API_VERSION}")
+install(FILES ${WebInspectorUI_DERIVED_SOURCES_DIR}/inspector.gresource DESTINATION "${CMAKE_INSTALL_FULL_DATADIR}/wpe-webkit-${WPE_API_VERSION}")
 
 add_library(WPEInjectedBundle MODULE "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitInjectedBundleMain.cpp")
 ADD_WEBKIT_PREFIX_HEADER(WPEInjectedBundle)

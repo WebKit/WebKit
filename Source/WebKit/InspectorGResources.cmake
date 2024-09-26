@@ -1,4 +1,4 @@
-macro(WEBKIT_BUILD_INSPECTOR_GRESOURCES _derived_sources_dir)
+macro(WEBKIT_BUILD_INSPECTOR_GRESOURCES _derived_sources_dir _output_file)
     add_custom_command(
         OUTPUT ${_derived_sources_dir}/InspectorGResourceBundle.xml
         DEPENDS WebInspectorUI
@@ -9,7 +9,7 @@ macro(WEBKIT_BUILD_INSPECTOR_GRESOURCES _derived_sources_dir)
     )
 
     GLIB_COMPILE_RESOURCES(
-        OUTPUT        ${_derived_sources_dir}/InspectorGResourceBundle.c
+        OUTPUT        ${_derived_sources_dir}/${_output_file}
         SOURCE_XML    ${_derived_sources_dir}/InspectorGResourceBundle.xml
         RESOURCE_DIRS ${_derived_sources_dir}/InspectorResources/WebInspectorUI
     )

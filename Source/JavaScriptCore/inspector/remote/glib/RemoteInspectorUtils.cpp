@@ -42,22 +42,19 @@ GRefPtr<GBytes> backendCommands()
 #if PLATFORM(WPE)
     static std::once_flag flag;
     std::call_once(flag, [] {
-        const char* libDir = PKGLIBDIR;
+        const char* dataDir = PKGDATADIR;
+        GUniqueOutPtr<GError> error;
 
-        // Probably no need for a specific env var here. Assume the inspector resources.so file is
-        // in the same directory as the injected bundle lib, for developer builds.
-        const char* path = g_getenv("WEBKIT_INJECTED_BUNDLE_PATH");
+        const char* path = g_getenv("WEBKIT_INSPECTOR_RESOURCES_PATH");
         if (path && g_file_test(path, G_FILE_TEST_IS_DIR))
-            libDir = path;
+            dataDir = path;
 
-        GUniquePtr<char> bundleFilename(g_build_filename(libDir, "libWPEWebInspectorResources.so", nullptr));
-        GModule* resourcesModule = g_module_open(bundleFilename.get(), G_MODULE_BIND_LAZY);
-        if (!resourcesModule) {
-            WTFLogAlways("Error loading libWPEWebInspectorResources.so: %s", g_module_error());
-            return;
+        GUniquePtr<char> gResourceFilename(g_build_filename(dataDir, "inspector.gresource", nullptr));
+        GRefPtr<GResource> gresource = adoptGRef(g_resource_load(gResourceFilename.get(), &error.outPtr()));
+        if (!gresource) {
+            g_error("Error loading inspector.gresource: %s", error->message);
         }
-
-        g_module_make_resident(resourcesModule);
+        g_resources_register(gresource.get());
     });
 #endif
     GRefPtr<GBytes> bytes = adoptGRef(g_resources_lookup_data(INSPECTOR_BACKEND_COMMANDS_PATH, G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
