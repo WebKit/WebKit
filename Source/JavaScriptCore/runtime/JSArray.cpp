@@ -1188,33 +1188,76 @@ bool JSArray::unshiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsi
         if (newLength > MAX_STORAGE_VECTOR_LENGTH)
             return false;
 
-        // FIXME: If we create a new butterfly, we should move elements at the same time.
-        if (!ensureLength(vm, newLength)) {
-            throwOutOfMemoryError(globalObject, scope);
-            return true;
-        }
-        butterfly = this->butterfly();
-
-        // We have to check for holes before we start moving things around so that we don't get halfway 
-        // through shifting and then realize we should have been in ArrayStorage mode.
         if (moveCount) {
             if (UNLIKELY(holesMustForwardToPrototype())) {
                 if (UNLIKELY(WTF::find64(bitwise_cast<const uint64_t*>(butterfly->contiguous().data() + startIndex), JSValue::encode(JSValue()), moveCount)))
                     RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(globalObject, startIndex, count, ensureArrayStorage(vm)));
             }
-
-            gcSafeMemmove(butterfly->contiguous().data() + startIndex + count, butterfly->contiguous().data() + startIndex, moveCount * sizeof(EncodedJSValue));
         }
 
-        // Our memmoving of values around in the array could have concealed some of them from
-        // the collector. Let's make sure that the collector scans this object again.
-        vm.writeBarrier(this);
-        
-        // NOTE: we're leaving being garbage in the part of the array that we shifted out
-        // of. This is fine because the caller is required to store over that area, and
-        // in contiguous mode storing into a hole is guaranteed to behave exactly the same
-        // as storing over an existing element.
-        
+        unsigned oldVectorLength = butterfly->vectorLength();
+        if (oldVectorLength >= newLength) {
+            butterfly->setPublicLength(newLength);
+
+            // We have to check for holes before we start moving things around so that we don't get halfway
+            // through shifting and then realize we should have been in ArrayStorage mode.
+            if (moveCount)
+                gcSafeMemmove(butterfly->contiguous().data() + startIndex + count, butterfly->contiguous().data() + startIndex, moveCount * sizeof(EncodedJSValue));
+
+            // Our memmoving of values around in the array could have concealed some of them from
+            // the collector. Let's make sure that the collector scans this object again.
+            vm.writeBarrier(this);
+
+            // NOTE: we're leaving being garbage in the part of the array that we shifted out
+            // of. This is fine because the caller is required to store over that area, and
+            // in contiguous mode storing into a hole is guaranteed to behave exactly the same
+            // as storing over an existing element.
+
+            return true;
+        }
+
+        unsigned propertyCapacity = structure()->outOfLineCapacity();
+        unsigned newVectorLength = Butterfly::optimalContiguousVectorLength(propertyCapacity, std::min(newLength * 2, MAX_STORAGE_VECTOR_LENGTH));
+
+        size_t oldSize = Butterfly::totalSize(0, propertyCapacity, /* hadIndexingHeader */ true, oldVectorLength * sizeof(EncodedJSValue));
+        size_t newSize = Butterfly::totalSize(0, propertyCapacity, /* hadIndexingHeader */ true, newVectorLength * sizeof(EncodedJSValue));
+        ASSERT(newSize >= oldSize);
+        void* newBase = vm.auxiliarySpace().allocate(vm, newSize, nullptr, AllocationFailureMode::ReturnNull);
+        if (UNLIKELY(!newBase)) {
+            throwOutOfMemoryError(globalObject, scope);
+            return true;
+        }
+
+        void* theBase = butterfly->base(0, propertyCapacity);
+        Butterfly* newButterfly = Butterfly::fromBase(newBase, 0, propertyCapacity);
+        // Use memcpy since this butterfly is not tied to any object yet.
+        memcpy(static_cast<EncodedJSValue*>(newBase), static_cast<const EncodedJSValue*>(theBase), oldSize - oldVectorLength * sizeof(EncodedJSValue) + startIndex * sizeof(EncodedJSValue));
+        if (count) {
+#if USE(JSVALUE64)
+            memset(bitwise_cast<EncodedJSValue*>(newButterfly->contiguous().data()) + startIndex, 0, count * sizeof(EncodedJSValue));
+#else
+            for (unsigned i = 0; i < count; ++i)
+                newButterfly->contiguous().atUnsafe(i + startIndex).clear();
+#endif
+        }
+        // We have to check for holes before we start moving things around so that we don't get halfway
+        // through shifting and then realize we should have been in ArrayStorage mode.
+        if (moveCount) {
+            // Use memcpy since this butterfly is not tied to any object yet.
+            memcpy(bitwise_cast<EncodedJSValue*>(newButterfly->contiguous().data()) + startIndex + count, butterfly->contiguous().data() + startIndex, moveCount * sizeof(EncodedJSValue));
+        }
+        size_t filledCount = startIndex + count + moveCount;
+        if (size_t remainingCount = newVectorLength - filledCount) {
+#if USE(JSVALUE64)
+            memset(bitwise_cast<EncodedJSValue*>(newButterfly->contiguous().data()) + filledCount, 0, remainingCount * sizeof(EncodedJSValue));
+#else
+            for (unsigned i = 0; i < remainingCount; ++i)
+                newButterfly->contiguous().atUnsafe(i + filledCount).clear();
+#endif
+        }
+        newButterfly->setVectorLength(newVectorLength);
+        newButterfly->setPublicLength(newLength);
+        setButterfly(vm, newButterfly);
         return true;
     }
         
