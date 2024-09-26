@@ -156,7 +156,7 @@ private:
     friend WTF::TextStream& operator<<(WTF::TextStream&, const ProcessThrottler&);
 
     ProcessThrottleState expectedThrottleState();
-    void updateThrottleStateIfNeeded();
+    void updateThrottleStateIfNeeded(ASCIILiteral);
     void updateThrottleStateNow();
     void setAssertionType(ProcessAssertionType);
     void setThrottleState(ProcessThrottleState);

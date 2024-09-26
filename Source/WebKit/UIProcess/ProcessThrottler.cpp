@@ -151,7 +151,7 @@ bool ProcessThrottler::addActivity(Activity& activity)
         m_foregroundActivities.add(activity);
     else
         m_backgroundActivities.add(activity);
-    updateThrottleStateIfNeeded();
+    updateThrottleStateIfNeeded(activity.name());
     return true;
 }
 
@@ -173,7 +173,7 @@ void ProcessThrottler::removeActivity(Activity& activity)
     if (!wasRemoved)
         return;
 
-    updateThrottleStateIfNeeded();
+    updateThrottleStateIfNeeded({ });
 }
 
 void ProcessThrottler::invalidateAllActivities()
@@ -308,17 +308,18 @@ void ProcessThrottler::deref() const
     m_process->deref();
 }
 
-void ProcessThrottler::updateThrottleStateIfNeeded()
+void ProcessThrottler::updateThrottleStateIfNeeded(ASCIILiteral lastAddedActivity)
 {
     if (!m_isConnectedToProcess)
         return;
 
     if (shouldBeRunnable()) {
         if (m_state == ProcessThrottleState::Suspended || m_pendingRequestToSuspendID) {
+            const char* probableWakeupReason = !lastAddedActivity.isNull() ? lastAddedActivity.characters() : "unknown";
             if (m_state == ProcessThrottleState::Suspended)
-                PROCESSTHROTTLER_RELEASE_LOG("updateThrottleStateIfNeeded: sending ProcessDidResume IPC because the process was suspended");
+                PROCESSTHROTTLER_RELEASE_LOG("updateThrottleStateIfNeeded: sending ProcessDidResume IPC because the process was suspended (probable wakeup reason: %" PUBLIC_LOG_STRING ")", probableWakeupReason);
             else
-                PROCESSTHROTTLER_RELEASE_LOG("updateThrottleStateIfNeeded: sending ProcessDidResume IPC because the WebProcess is still processing request to suspend=%" PRIu64, *m_pendingRequestToSuspendID);
+                PROCESSTHROTTLER_RELEASE_LOG("updateThrottleStateIfNeeded: sending ProcessDidResume IPC because the WebProcess is still processing request to suspend=%" PRIu64 " (probable wakeup reason: %" PUBLIC_LOG_STRING ")", *m_pendingRequestToSuspendID, probableWakeupReason);
             protectedProcess()->sendProcessDidResume(expectedThrottleState() == ProcessThrottleState::Foreground ? AuxiliaryProcessProxy::ResumeReason::ForegroundActivity : AuxiliaryProcessProxy::ResumeReason::BackgroundActivity);
             clearPendingRequestToSuspend();
         }
