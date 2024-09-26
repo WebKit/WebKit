@@ -35,7 +35,7 @@ namespace WebCore {
 void UserActionElementSet::clear()
 {
     for (auto iterator = m_elements.begin(); iterator != m_elements.end(); ++iterator)
-        iterator->key->setUserActionElement(false);
+        iterator->key.setUserActionElement(false);
     m_elements.clear();
 }
 
@@ -44,7 +44,7 @@ bool UserActionElementSet::hasFlag(const Element& element, Flag flag) const
     // Caller has the responsibility to check isUserActionElement before calling this.
     ASSERT(element.isUserActionElement());
 
-    return m_elements.get(&const_cast<Element&>(element)).contains(flag);
+    return m_elements.get(element).contains(flag);
 }
 
 void UserActionElementSet::clearFlags(Element& element, OptionSet<Flag> flags)
@@ -54,7 +54,7 @@ void UserActionElementSet::clearFlags(Element& element, OptionSet<Flag> flags)
     if (!element.isUserActionElement())
         return;
 
-    auto iterator = m_elements.find(&element);
+    auto iterator = m_elements.find(element);
     ASSERT(iterator != m_elements.end());
     auto updatedFlags = iterator->value - flags;
     if (updatedFlags.isEmpty()) {
@@ -68,7 +68,7 @@ void UserActionElementSet::setFlags(Element& element, OptionSet<Flag> flags)
 {
     ASSERT(!flags.isEmpty());
 
-    m_elements.ensure(&element, [] {
+    m_elements.ensure(element, [] {
         return OptionSet<Flag>();
     }).iterator->value.add(flags);
 
