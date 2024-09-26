@@ -1,0 +1,5 @@
+
+PASS SVGGeometryElement.getTotalLength method (element detached) with SVGPathElement
+PASS SVGGeometryElement.getTotalLength method (element detached) with SVGRectElement
+PASS SVGGeometryElement.getTotalLength method (element detached) with SVGCircleElement
+
