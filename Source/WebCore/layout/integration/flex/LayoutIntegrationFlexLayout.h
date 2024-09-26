@@ -50,8 +50,7 @@ public:
     FlexLayout(RenderFlexibleBox&);
     ~FlexLayout();
 
-    void updateFormattingRootGeometryAndInvalidate();
-    void updateFlexItemDimensions(const RenderBlock& flexItem);
+    void updateFormattingContexGeometries(LayoutUnit availableLogicalWidth);
     void updateStyle(const RenderBlock&, const RenderStyle& oldStyle);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();

@@ -2668,12 +2668,8 @@ bool RenderFlexibleBox::layoutUsingFlexFormattingContext()
         return false;
 
     auto flexLayout = LayoutIntegration::FlexLayout { *this };
+    flexLayout.updateFormattingContexGeometries(containingBlock() ? containingBlock()->availableLogicalWidth() : LayoutUnit());
 
-    flexLayout.updateFormattingRootGeometryAndInvalidate();
-
-    resetHasDefiniteHeight();
-    for (auto& flexItem : childrenOfType<RenderBlock>(*this))
-        flexLayout.updateFlexItemDimensions(flexItem);
     flexLayout.layout();
     setLogicalHeight(std::max(logicalHeight(), borderBefore() + paddingBefore() + flexLayout.contentBoxLogicalHeight() + borderAfter() + paddingAfter()));
     updateLogicalHeight();

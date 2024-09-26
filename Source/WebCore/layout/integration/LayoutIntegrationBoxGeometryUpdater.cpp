@@ -382,14 +382,21 @@ void BoxGeometryUpdater::setFormattingContextContentGeometry(std::optional<Layou
 {
     ASSERT(availableLogicalWidth || intrinsicWidthMode);
 
-    for (auto walker = InlineWalker(downcast<RenderBlockFlow>(rootRenderer())); !walker.atEnd(); walker.advance()) {
-        auto& renderer = *walker.current();
-
-        if (is<RenderText>(renderer))
-            continue;
-
-        updateBoxGeometry(downcast<RenderElement>(renderer), availableLogicalWidth, intrinsicWidthMode);
+    if (rootLayoutBox().establishesInlineFormattingContext()) {
+        for (auto walker = InlineWalker(downcast<RenderBlockFlow>(rootRenderer())); !walker.atEnd(); walker.advance()) {
+            if (!is<RenderText>(walker.current()))
+                updateBoxGeometry(downcast<RenderElement>(*walker.current()), availableLogicalWidth, intrinsicWidthMode);
+        }
+        return;
     }
+
+    if (rootLayoutBox().establishesFlexFormattingContext()) {
+        for (auto* flexItem = rootLayoutBox().firstInFlowChild(); flexItem; flexItem = flexItem->nextInFlowSibling())
+            updateBoxGeometry(downcast<RenderElement>(*flexItem->rendererForIntegration()), availableLogicalWidth, intrinsicWidthMode);
+        return;
+    }
+
+    ASSERT_NOT_IMPLEMENTED_YET();
 }
 
 void BoxGeometryUpdater::setFormattingContextRootGeometry(LayoutUnit availableWidth)

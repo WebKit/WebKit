@@ -94,7 +94,8 @@ BoxTree::BoxTree(RenderBlock& rootRenderer)
         initialContainingBlock().appendChild(WTFMove(newRootBox));
     }
 
-    rootBox->setIsInlineIntegrationRoot();
+    if (is<RenderBlockFlow>(rootRenderer))
+        rootBox->setIsInlineIntegrationRoot();
     rootBox->setIsFirstChildForIntegration(!rootRenderer.parent() || rootRenderer.parent()->firstChild() == &rootRenderer);
 
     if (is<RenderBlockFlow>(rootRenderer))
