@@ -24,6 +24,7 @@
  */
 
 @_exported import WebKit
+@_spi(CTypeConversion) import Network
 
 @available(iOS 14.0, macOS 10.16, *)
 extension WKPDFConfiguration {
@@ -106,3 +107,13 @@ extension WKWebExtensionContext {
         __didMove(movedTab, from: index, in: oldWindow)
     }
 }
+
+#if canImport(Network, _version: "3623.0.0.0")
+@available(iOS 17.0, macOS 14.0, *)
+extension WKWebsiteDataStore {
+    public var proxyConfigurations: [ProxyConfiguration] {
+        get { __proxyConfigurations?.map(ProxyConfiguration.init(_:)) ?? [] }
+        set { __proxyConfigurations = newValue.map(\.nw) }
+    }
+}
+#endif
