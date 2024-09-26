@@ -56,6 +56,7 @@
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
+#include "RenderLineBreak.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include "ShapeOutsideInfo.h"
@@ -67,6 +68,110 @@ namespace WebCore {
 namespace LayoutIntegration {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LayoutIntegration_LineLayout);
+
+enum class TypeOfChangeForInvalidation : uint8_t {
+    NodeInsertion,
+    NodeRemoval,
+    NodeMutation
+};
+static bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlockContainer, const RenderObject& renderer, const LineLayout& lineLayout, TypeOfChangeForInvalidation typeOfChange)
+{
+    auto isSupportedRendererWithChange = [&](auto& renderer) {
+        if (is<RenderText>(renderer))
+            return true;
+        if (!renderer.isInFlow())
+            return false;
+        if (is<RenderLineBreak>(renderer))
+            return true;
+        if (auto* renderBox = dynamicDowncast<RenderBox>(renderer); renderBox && renderBox->hasRelativeDimensions())
+            return false;
+        if (is<RenderReplaced>(renderer))
+            return typeOfChange == TypeOfChangeForInvalidation::NodeInsertion;
+        if (auto* inlineRenderer = dynamicDowncast<RenderInline>(renderer))
+            return typeOfChange == TypeOfChangeForInvalidation::NodeInsertion && !inlineRenderer->firstChild();
+        return false;
+    };
+    if (!isSupportedRendererWithChange(renderer))
+        return true;
+
+    auto isSupportedParent = [&] {
+        auto* parent = renderer.parent();
+        // Content append under existing inline box is not yet supported.
+        return is<RenderBlockFlow>(parent) || (is<RenderInline>(parent) && !parent->everHadLayout());
+    };
+    if (!isSupportedParent())
+        return true;
+    if (rootBlockContainer.containsFloats())
+        return true;
+
+    auto isBidiContent = [&] {
+        if (lineLayout.contentNeedsVisualReordering())
+            return true;
+        if (auto* textRenderer = dynamicDowncast<RenderText>(renderer)) {
+            auto hasStrongDirectionalityContent = textRenderer->hasStrongDirectionalityContent();
+            if (!hasStrongDirectionalityContent) {
+                hasStrongDirectionalityContent = Layout::TextUtil::containsStrongDirectionalityText(textRenderer->text());
+                const_cast<RenderText*>(textRenderer)->setHasStrongDirectionalityContent(*hasStrongDirectionalityContent);
+            }
+            return *hasStrongDirectionalityContent;
+        }
+        if (is<RenderInline>(renderer)) {
+            auto& style = renderer.style();
+            return !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
+        }
+        return false;
+    };
+    if (isBidiContent()) {
+        // FIXME: InlineItemsBuilder needs some work to support paragraph level bidi handling.
+        return true;
+    }
+    auto hasFirstLetter = [&] {
+        // FIXME: RenderTreeUpdater::updateTextRenderer produces odd values for offset/length when first-letter is present webkit.org/b/263343
+        if (rootBlockContainer.style().hasPseudoStyle(PseudoId::FirstLetter))
+            return true;
+        if (rootBlockContainer.isAnonymous())
+            return rootBlockContainer.containingBlock() && rootBlockContainer.containingBlock()->style().hasPseudoStyle(PseudoId::FirstLetter);
+        return false;
+    };
+    if (hasFirstLetter())
+        return true;
+
+    if (auto* previousDamage = lineLayout.damage(); previousDamage && (previousDamage->reasons() != Layout::InlineDamage::Reason::Append || !previousDamage->layoutStartPosition())) {
+        // Only support subsequent append operations where we managed to invalidate the content for partial layout.
+        return true;
+    }
+
+    auto shouldBalance = rootBlockContainer.style().textWrapMode() == TextWrapMode::Wrap && rootBlockContainer.style().textWrapStyle() == TextWrapStyle::Balance;
+    auto shouldPrettify = rootBlockContainer.style().textWrapMode() == TextWrapMode::Wrap && rootBlockContainer.style().textWrapStyle() == TextWrapStyle::Pretty;
+    if (rootBlockContainer.style().direction() == TextDirection::RTL || shouldBalance || shouldPrettify)
+        return true;
+
+    auto rootHasNonSupportedRenderer = [&] (bool shouldOnlyCheckForRelativeDimension = false) {
+        for (auto* sibling = rootBlockContainer.firstChild(); sibling; sibling = sibling->nextSibling()) {
+            auto siblingHasRelativeDimensions = false;
+            if (auto* renderBox = dynamicDowncast<RenderBox>(*sibling); renderBox && renderBox->hasRelativeDimensions())
+                siblingHasRelativeDimensions = true;
+
+            if (shouldOnlyCheckForRelativeDimension && !siblingHasRelativeDimensions)
+                continue;
+
+            if (siblingHasRelativeDimensions || (!is<RenderText>(*sibling) && !is<RenderLineBreak>(*sibling) && !is<RenderReplaced>(*sibling)))
+                return true;
+        }
+        return !canUseForLineLayout(rootBlockContainer);
+    };
+    switch (typeOfChange) {
+    case TypeOfChangeForInvalidation::NodeRemoval:
+        return (!renderer.previousSibling() && !renderer.nextSibling()) || rootHasNonSupportedRenderer();
+    case TypeOfChangeForInvalidation::NodeInsertion:
+        return rootHasNonSupportedRenderer(!renderer.nextSibling());
+    case TypeOfChangeForInvalidation::NodeMutation:
+        return rootHasNonSupportedRenderer();
+    default:
+        ASSERT_NOT_REACHED();
+        return true;
+    }
+}
 
 static inline std::pair<LayoutRect, LayoutRect> toMarginAndBorderBoxVisualRect(const Layout::BoxGeometry& logicalGeometry, LayoutUnit containerLogicalWidth, WritingMode writingMode, bool isLeftToRightDirection)
 {
