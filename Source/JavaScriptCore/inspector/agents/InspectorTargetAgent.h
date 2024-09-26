@@ -43,7 +43,7 @@ class InspectorTargetAgent final : public InspectorAgentBase, public TargetBacke
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorTargetAgent);
 public:
     JS_EXPORT_PRIVATE InspectorTargetAgent(FrontendRouter&, BackendDispatcher&);
-    ~InspectorTargetAgent() final;
+    JS_EXPORT_PRIVATE ~InspectorTargetAgent() final;
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;
