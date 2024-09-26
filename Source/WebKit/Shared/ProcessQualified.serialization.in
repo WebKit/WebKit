@@ -22,10 +22,11 @@
 
 
 additional_forward_declaration: namespace WebCore { using BackForwardItemIdentifierID = LegacyNullableObjectIdentifier<BackForwardItemIdentifierType>; }
-additional_forward_declaration: namespace WebCore { using DOMCacheIdentifierID = LegacyNullableAtomicObjectIdentifier<DOMCacheIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using DOMCacheIdentifierID = AtomicObjectIdentifier<DOMCacheIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using FrameIdentifierID = ObjectIdentifier<FrameIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using OpaqueOriginIdentifier = AtomicObjectIdentifier<OpaqueOriginIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using PlatformLayerIdentifierID = ObjectIdentifier<PlatformLayerIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using RTCDataChannelLocalIdentifier =  AtomicObjectIdentifier<RTCDataChannelLocalIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using ScrollingNodeIdentifier = LegacyNullableObjectIdentifier<ScrollingNodeIDType>; }
 additional_forward_declaration: namespace WebCore { using SharedWorkerObjectIdentifierID = LegacyNullableObjectIdentifier<SharedWorkerObjectIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using WebLockIdentifierID = AtomicObjectIdentifier<WebLockIdentifierType>; }
@@ -53,6 +54,11 @@ header: <WebCore/ProcessQualified.h>
 
 [Alias=class ProcessQualified<PlatformLayerIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::PlatformLayerIdentifier {
     WebCore::PlatformLayerIdentifierID object();
+    WebCore::ProcessIdentifier processIdentifier();
+};
+
+[Alias=class ProcessQualified<RTCDataChannelLocalIdentifier>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::RTCDataChannelIdentifier {
+    WebCore::RTCDataChannelLocalIdentifier object();
     WebCore::ProcessIdentifier processIdentifier();
 };
 

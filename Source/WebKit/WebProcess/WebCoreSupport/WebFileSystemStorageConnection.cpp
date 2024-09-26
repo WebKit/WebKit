@@ -145,7 +145,7 @@ void WebFileSystemStorageConnection::createSyncAccessHandle(WebCore::FileSystemH
         if (!result)
             return completionHandler(convertToException(result.error()));
 
-        completionHandler(WebCore::FileSystemStorageConnection::SyncAccessHandleInfo { result->identifier, result->handle.release(), result->capacity });
+        completionHandler(WebCore::FileSystemStorageConnection::SyncAccessHandleInfo { *result->identifier, result->handle.release(), result->capacity });
     });
 }
 

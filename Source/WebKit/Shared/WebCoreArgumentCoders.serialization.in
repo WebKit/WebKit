@@ -5608,11 +5608,6 @@ header: <WebCore/RTCDataChannelHandler.h>
     WebCore::RTCPriorityType priority;
 };
 
-struct WebCore::RTCDataChannelIdentifier {
-    WebCore::ProcessIdentifier processIdentifier;
-    WebCore::RTCDataChannelLocalIdentifier channelIdentifier;
-};
-
 #endif // ENABLE(WEB_RTC)
 
 #if ENABLE(CONTENT_EXTENSIONS)

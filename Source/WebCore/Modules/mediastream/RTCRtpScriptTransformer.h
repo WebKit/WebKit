@@ -51,7 +51,7 @@ class WritableStream;
 struct MessageWithMessagePorts;
 
 enum class RTCRtpScriptTransformerIdentifierType { };
-using RTCRtpScriptTransformerIdentifier = LegacyNullableAtomicObjectIdentifier<RTCRtpScriptTransformerIdentifierType>;
+using RTCRtpScriptTransformerIdentifier = AtomicObjectIdentifier<RTCRtpScriptTransformerIdentifierType>;
 
 class RTCRtpScriptTransformer
     : public RefCounted<RTCRtpScriptTransformer>

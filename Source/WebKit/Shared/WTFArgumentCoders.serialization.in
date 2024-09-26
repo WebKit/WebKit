@@ -166,12 +166,6 @@ template: struct WebKit::WebExtensionWindowIdentifierType
 }
 
 header: <wtf/ObjectIdentifier.h>
-template: enum class IPC::ConnectionSyncRequestIDType
-template: enum class WebCore::DOMCacheIdentifierType
-template: enum class WebCore::FileSystemSyncAccessHandleIdentifierType
-template: enum class WebCore::LibWebRTCSocketIdentifierType
-template: enum class WebCore::RTCDataChannelLocalIdentifierType
-template: enum class WebCore::RTCRtpScriptTransformerIdentifierType
 template: enum class WebCore::RenderingResourceIdentifierType
 template: enum class WebCore::ServiceWorkerIdentifierType
 template: enum class WebCore::IDBDatabaseConnectionIdentifierType
@@ -191,14 +185,20 @@ template: enum class TestWebKitAPI::TestedObjectIdentifierType
 header: <wtf/ObjectIdentifier.h>
 template: class WebCore::ResourceLoader
 template: class WebCore::WebSocketChannel
+template: enum class IPC::ConnectionSyncRequestIDType
 template: enum class JSC::MicrotaskIdentifierType
+template: enum class WebCore::DOMCacheIdentifierType
 template: enum class WebCore::WebSocketIdentifierType
 template: enum class WebCore::BroadcastChannelIdentifierType
 template: enum class WebCore::FileSystemHandleIdentifierType
+template: enum class WebCore::FileSystemSyncAccessHandleIdentifierType
 template: enum class WebCore::IDBObjectStoreIdentifierType
+template: enum class WebCore::LibWebRTCSocketIdentifierType
 template: enum class WebCore::MainThreadPermissionObserverIdentifierType
 template: enum class WebCore::OpaqueOriginIdentifierType
 template: enum class WebCore::PortIdentifierType
+template: enum class WebCore::RTCDataChannelLocalIdentifierType
+template: enum class WebCore::RTCRtpScriptTransformerIdentifierType
 template: enum class WebCore::ServiceWorkerJobIdentifierType
 template: enum class WebCore::ServiceWorkerRegistrationIdentifierType
 template: enum class WebCore::WebLockIdentifierType

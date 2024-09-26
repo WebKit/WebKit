@@ -75,7 +75,7 @@ private:
     void close() final;
 
     RTCDataChannelIdentifier m_remoteIdentifier;
-    RTCDataChannelIdentifier m_localIdentifier;
+    Markable<RTCDataChannelIdentifier> m_localIdentifier;
 
     RTCDataChannelHandlerClient* m_client { nullptr };
     Ref<RTCDataChannelRemoteHandlerConnection> m_connection;
