@@ -1867,3 +1867,6 @@ editing/input/scroll-viewport-page-up-down.html [ Pass Failure ]
 
 # webkit.org/b/280418 [ Sequoia wk2 ] fast/speechsynthesis/mac/samantha-voice-available.html is a constant failure. 
 [ Sequoia+ ] fast/speechsynthesis/mac/samantha-voice-available.html [ Pass Failure ]
+
+# webkit.org/b/280425 [macOS EWS] ASSERTION FAILED in void WebCore::VideoTrack::clearClient(VideoTrackClient in imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html
+[ Sonoma+ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Skip ]
