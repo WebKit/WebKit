@@ -150,14 +150,26 @@ WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary
     return beginTestMessageBody;
 }
 
+static String addQueryParameter(const String& urlString, ASCIILiteral parameter)
+{
+    auto index = urlString.find('?');
+    if (index != notFound)
+        return makeString(urlString.left(index + 1), parameter, '&', urlString.substring(index + 1));
+    index = urlString.find('#');
+    if (index == notFound)
+        index = urlString.length();
+    return makeString(urlString.left(index), '?', parameter, urlString.substring(index));
+}
+
 void TestInvocation::loadTestInCrossOriginIframe()
 {
     WKRetainPtr<WKURLRef> baseURL = adoptWK(WKURLCreateWithUTF8CString("http://localhost:8000"));
+    auto url = addQueryParameter(m_urlString, "runInCrossOriginFrame=true"_s);
     WKRetainPtr<WKStringRef> htmlString = toWK(makeString(
         "<script>"
         "    testRunner.dumpChildFramesAsText()"
         "</script>"
-        "<iframe src=\""_s, m_urlString.utf8().span(), "?inCrossOriginFrame=true\" style=\"position:absolute; top:0; left:0; width:100%; height:100%; border:0\">"_s));
+        "<iframe src=\""_s, url.utf8().span(), "\" style=\"position:absolute; top:0; left:0; width:100%; height:100%; border:0\">"_s));
     WKPageLoadHTMLString(TestController::singleton().mainWebView()->page(), htmlString.get(), baseURL.get());
 }
 
@@ -226,13 +238,13 @@ void TestInvocation::dumpWebProcessUnresponsiveness(const char* errorMessage)
 #endif
 
     dump(errorMessage, buffer, true);
-    
+
     if (!TestController::singleton().usingServerMode())
         return;
-    
+
     if (isatty(fileno(stdin)) || isatty(fileno(stderr)))
         fputs("Grab an image of the stack, then hit enter...\n", stderr);
-    
+
     if (!fgets(buffer, sizeof(buffer), stdin) || strcmp(buffer, "#SAMPLE FINISHED\n"))
         fprintf(stderr, "Failed receive expected sample response, got:\n\t\"%s\"\nContinuing...\n", buffer);
 }
@@ -279,7 +291,7 @@ void TestInvocation::dumpResults()
 
     if (m_shouldDumpPrivateClickMeasurement)
         m_textOutput.append(TestController::singleton().dumpPrivateClickMeasurement());
-    
+
     if (m_textOutput.length() || !m_audioResult)
         dump(m_textOutput.toString().utf8().data());
     else
@@ -604,7 +616,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         TestController::singleton().setNavigationGesturesEnabled(booleanValue(messageBody));
         return;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetIgnoresViewportScaleLimits")) {
         TestController::singleton().setIgnoresViewportScaleLimits(booleanValue(messageBody));
         return;
@@ -820,7 +832,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setShouldSwapToEphemeralSessionOnNextNavigation(booleanValue(messageBody));
         return nullptr;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetShouldSwapToDefaultSessionOnNextNavigation")) {
         TestController::singleton().setShouldSwapToDefaultSessionOnNextNavigation(booleanValue(messageBody));
         return nullptr;
@@ -828,7 +840,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 
     if (WKStringIsEqualToUTF8CString(messageName, "ImageCountInGeneralPasteboard"))
         return adoptWK(WKUInt64Create(TestController::singleton().imageCountInGeneralPasteboard()));
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "DeleteAllIndexedDatabases")) {
         WKWebsiteDataStoreRemoveAllIndexedDatabases(TestController::singleton().websiteDataStore(), nullptr, { });
         return nullptr;
@@ -874,7 +886,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 
     if (WKStringIsEqualToUTF8CString(messageName, "IsMockRealtimeMediaSourceCenterEnabled"))
         return adoptWK(WKBooleanCreate(TestController::singleton().isMockRealtimeMediaSourceCenterEnabled()));
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetMockCaptureDevicesInterrupted")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         bool isCameraInterrupted = booleanValue(messageBodyDictionary, "camera");
@@ -882,7 +894,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setMockCaptureDevicesInterrupted(isCameraInterrupted, isMicrophoneInterrupted);
         return nullptr;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "TriggerMockCaptureConfigurationChange")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         bool forMicrophone = booleanValue(messageBodyDictionary, "microphone");
@@ -890,7 +902,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().triggerMockCaptureConfigurationChange(forMicrophone, forDisplay);
         return nullptr;
     }
- 
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetCaptureState")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         bool camera = booleanValue(messageBodyDictionary, "camera");
@@ -989,7 +1001,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     if (WKStringIsEqualToUTF8CString(messageName, "IsStatisticsEphemeral")) {
         return adoptWK(WKBooleanCreate(TestController::singleton().isStatisticsEphemeral()));
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "dumpResourceLoadStatistics")) {
         dumpResourceLoadStatistics();
         return nullptr;
@@ -1004,7 +1016,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         bool isPrevalent = TestController::singleton().isStatisticsVeryPrevalentResource(stringValue(messageBody));
         return adoptWK(WKBooleanCreate(isPrevalent));
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "IsStatisticsRegisteredAsSubresourceUnder")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto subresourceHost = stringValue(messageBodyDictionary, "SubresourceHost");
@@ -1012,7 +1024,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         bool isRegisteredAsSubresourceUnder = TestController::singleton().isStatisticsRegisteredAsSubresourceUnder(subresourceHost, topFrameHost);
         return adoptWK(WKBooleanCreate(isRegisteredAsSubresourceUnder));
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "IsStatisticsRegisteredAsSubFrameUnder")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto subFrameHost = stringValue(messageBodyDictionary, "SubFrameHost");
@@ -1020,7 +1032,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         bool isRegisteredAsSubFrameUnder = TestController::singleton().isStatisticsRegisteredAsSubFrameUnder(subFrameHost, topFrameHost);
         return adoptWK(WKBooleanCreate(isRegisteredAsSubFrameUnder));
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "IsStatisticsRegisteredAsRedirectingTo")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto hostRedirectedFrom = stringValue(messageBodyDictionary, "HostRedirectedFrom");
@@ -1033,7 +1045,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         bool hasHadUserInteraction = TestController::singleton().isStatisticsHasHadUserInteraction(stringValue(messageBody));
         return adoptWK(WKBooleanCreate(hasHadUserInteraction));
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "IsStatisticsOnlyInDatabaseOnce")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto subHost = stringValue(messageBodyDictionary, "SubHost");
@@ -1055,12 +1067,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setStatisticsGrandfathered(hostName, value);
         return nullptr;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "IsStatisticsGrandfathered")) {
         bool isGrandfathered = TestController::singleton().isStatisticsGrandfathered(stringValue(messageBody));
         return adoptWK(WKBooleanCreate(isGrandfathered));
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsSubframeUnderTopFrameOrigin")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto hostName = stringValue(messageBodyDictionary, "HostName");
@@ -1068,7 +1080,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setStatisticsSubframeUnderTopFrameOrigin(hostName, topFrameHostName);
         return nullptr;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsSubresourceUnderTopFrameOrigin")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto hostName = stringValue(messageBodyDictionary, "HostName");
@@ -1076,7 +1088,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setStatisticsSubresourceUnderTopFrameOrigin(hostName, topFrameHostName);
         return nullptr;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsSubresourceUniqueRedirectTo")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto hostName = stringValue(messageBodyDictionary, "HostName");
@@ -1092,7 +1104,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setStatisticsSubresourceUniqueRedirectFrom(hostName, hostNameRedirectedFrom);
         return nullptr;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsTopFrameUniqueRedirectTo")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto hostName = stringValue(messageBodyDictionary, "HostName");
@@ -1100,7 +1112,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setStatisticsTopFrameUniqueRedirectTo(hostName, hostNameRedirectedTo);
         return nullptr;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsTopFrameUniqueRedirectFrom")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto hostName = stringValue(messageBodyDictionary, "HostName");
@@ -1108,7 +1120,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setStatisticsTopFrameUniqueRedirectFrom(hostName, hostNameRedirectedFrom);
         return nullptr;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsCrossSiteLoadWithLinkDecoration")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto fromHost = stringValue(messageBodyDictionary, "FromHost");
@@ -1132,7 +1144,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setStatisticsIsRunningTest(booleanValue(messageBody));
         return nullptr;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsShouldClassifyResourcesBeforeDataRecordsRemoval")) {
         TestController::singleton().setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(booleanValue(messageBody));
         return nullptr;
@@ -1142,17 +1154,17 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setStatisticsMinimumTimeBetweenDataRecordsRemoval(doubleValue(messageBody));
         return nullptr;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsGrandfatheringTime")) {
         TestController::singleton().setStatisticsGrandfatheringTime(doubleValue(messageBody));
         return nullptr;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetMaxStatisticsEntries")) {
         TestController::singleton().setStatisticsMaxStatisticsEntries(uint64Value(messageBody));
         return nullptr;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetPruneEntriesDownTo")) {
         TestController::singleton().setStatisticsPruneEntriesDownTo(uint64Value(messageBody));
         return nullptr;
@@ -1204,7 +1216,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setAllowStorageQuotaIncrease(booleanValue(messageBody));
         return nullptr;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetQuota")) {
         TestController::singleton().setQuota(uint64Value(messageBody));
         return nullptr;
@@ -1306,7 +1318,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().clearPrivateClickMeasurementsThroughWebsiteDataRemoval();
         return nullptr;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "ClearAppBoundSession")) {
         TestController::singleton().clearAppBoundSession();
         return nullptr;
@@ -1316,17 +1328,17 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setPrivateClickMeasurementOverrideTimerForTesting(booleanValue(messageBody));
         return nullptr;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "MarkAttributedPrivateClickMeasurementsAsExpiredForTesting")) {
         TestController::singleton().markAttributedPrivateClickMeasurementsAsExpiredForTesting();
         return nullptr;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetPrivateClickMeasurementEphemeralMeasurementForTesting")) {
         TestController::singleton().setPrivateClickMeasurementEphemeralMeasurementForTesting(booleanValue(messageBody));
         return nullptr;
     }
-    
+
     if (WKStringIsEqualToUTF8CString(messageName, "SimulatePrivateClickMeasurementSessionRestart")) {
         TestController::singleton().simulatePrivateClickMeasurementSessionRestart();
         return nullptr;
@@ -1435,7 +1447,7 @@ void TestInvocation::runUISideScript(WKStringRef script, unsigned scriptCallback
 
     if (!m_UIScriptContext)
         m_UIScriptContext = makeUnique<UIScriptContext>(*this, UIScriptController::create);
-    
+
     m_UIScriptContext->runUIScript(toWTFString(script), scriptCallbackID);
 }
 
@@ -1503,7 +1515,7 @@ void TestInvocation::invalidateWaitToDumpWatchdogTimer()
 void TestInvocation::waitToDumpWatchdogTimerFired()
 {
     invalidateWaitToDumpWatchdogTimer();
-    
+
     outputText("FAIL: Timed out waiting for notifyDone to be called\n\n"_s);
 
     postPageMessage("ForceImmediateCompletion");
