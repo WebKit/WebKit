@@ -124,7 +124,7 @@ static std::optional<size_t> stackSize(ThreadType threadType)
 #else
         return 4 * MB;
 #endif
-#elif USE(BUN_JSC_ADDITIONS)
+#elif USE(BUN_JSC_ADDITIONS) && !ASSERT_ENABLED
     return 512 * KB;
 #else
     UNUSED_PARAM(threadType);
