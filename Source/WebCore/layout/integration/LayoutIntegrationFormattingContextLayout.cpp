@@ -50,7 +50,7 @@ void layoutWithFormattingContextForBox(const Layout::ElementBox& box, std::optio
     auto rootLayoutBox = [&]() -> const Layout::ElementBox& {
         auto* ancestor = &box.parent();
         while (!ancestor->isInitialContainingBlock()) {
-            if (ancestor->establishesInlineFormattingContext())
+            if (ancestor->establishesFormattingContext())
                 break;
             ancestor = &ancestor->parent();
         }
