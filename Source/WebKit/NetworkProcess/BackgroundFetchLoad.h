@@ -90,7 +90,7 @@ private:
     WeakPtr<WebCore::BackgroundFetchRecordLoaderClient> m_client;
     WebCore::ResourceRequest m_request;
     RefPtr<NetworkDataTask> m_task;
-    UniqueRef<NetworkLoadChecker> m_networkLoadChecker;
+    Ref<NetworkLoadChecker> m_networkLoadChecker;
     Vector<RefPtr<WebCore::BlobDataFileReference>> m_blobFiles;
 };
 

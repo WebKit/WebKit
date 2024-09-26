@@ -311,7 +311,7 @@ private:
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryForMaxAgeCapValidation;
     bool m_isWaitingContinueWillSendRequestForCachedRedirect { false };
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryWaitingForContinueDidReceiveResponse;
-    std::unique_ptr<NetworkLoadChecker> m_networkLoadChecker;
+    RefPtr<NetworkLoadChecker> m_networkLoadChecker;
     bool m_shouldRestartLoad { false };
     ResponseCompletionHandler m_responseCompletionHandler;
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };

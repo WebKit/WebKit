@@ -46,15 +46,6 @@ OBJC_CLASS NSProgress;
 OBJC_CLASS NSURLSessionDownloadTask;
 #endif
 
-namespace WebKit {
-class Download;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::Download> : std::true_type { };
-}
-
 namespace WebCore {
 class AuthenticationChallenge;
 class BlobDataFileReference;

@@ -618,7 +618,7 @@ void NetworkSession::unregisterNetworkDataTask(NetworkDataTask& task)
 NetworkLoadScheduler& NetworkSession::networkLoadScheduler()
 {
     if (!m_networkLoadScheduler)
-        m_networkLoadScheduler = makeUnique<NetworkLoadScheduler>();
+        m_networkLoadScheduler = NetworkLoadScheduler::create();
     return *m_networkLoadScheduler;
 }
 

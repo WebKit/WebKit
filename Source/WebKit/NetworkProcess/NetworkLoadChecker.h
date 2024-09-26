@@ -36,15 +36,6 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebKit {
-class NetworkLoadChecker;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NetworkLoadChecker> : std::true_type { };
-}
-
 namespace WebCore {
 class ContentSecurityPolicy;
 class OriginAccessPatterns;
@@ -66,12 +57,24 @@ class NetworkSchemeRegistry;
 
 using DocumentURL = URL;
 
-class NetworkLoadChecker : public CanMakeWeakPtr<NetworkLoadChecker> {
+class NetworkLoadChecker : public RefCountedAndCanMakeWeakPtr<NetworkLoadChecker> {
     WTF_MAKE_TZONE_ALLOCATED(NetworkLoadChecker);
 public:
     enum class LoadType : bool { MainFrame, Other };
 
-    NetworkLoadChecker(NetworkProcess&, NetworkResourceLoader*, NetworkSchemeRegistry*, WebCore::FetchOptions&&, PAL::SessionID, WebPageProxyIdentifier, WebCore::HTTPHeaderMap&&, URL&&, DocumentURL&&,  RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::SecurityOrigin>&& topOrigin, RefPtr<WebCore::SecurityOrigin>&& parentOrigin, WebCore::PreflightPolicy, String&& referrer, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other);
+    static Ref<NetworkLoadChecker> create(NetworkProcess& networkProcess, NetworkResourceLoader* networkResourceLoader, NetworkSchemeRegistry* schemeRegistry,
+        WebCore::FetchOptions&& options, PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, WebCore::HTTPHeaderMap&& originalRequestHeaders,
+        URL&& url, DocumentURL&& documentURL, RefPtr<WebCore::SecurityOrigin>&& sourceOrigin, RefPtr<WebCore::SecurityOrigin>&& topOrigin,
+        RefPtr<WebCore::SecurityOrigin>&& parentOrigin, WebCore::PreflightPolicy preflightPolicy, String&& referrer, bool allowPrivacyProxy,
+        OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other)
+    {
+        return adoptRef(*new NetworkLoadChecker(networkProcess, networkResourceLoader, schemeRegistry,
+            WTFMove(options), sessionID, webPageProxyID, WTFMove(originalRequestHeaders),
+            WTFMove(url), WTFMove(documentURL), WTFMove(sourceOrigin), WTFMove(topOrigin),
+            WTFMove(parentOrigin), preflightPolicy, WTFMove(referrer), allowPrivacyProxy,
+            advancedPrivacyProtections, shouldCaptureExtraNetworkLoadMetrics, requestLoadType));
+    }
+
     ~NetworkLoadChecker();
 
     struct RedirectionTriplet {
@@ -120,6 +123,8 @@ public:
     bool timingAllowFailedFlag() const { return m_timingAllowFailedFlag; }
 
 private:
+    NetworkLoadChecker(NetworkProcess&, NetworkResourceLoader*, NetworkSchemeRegistry*, WebCore::FetchOptions&&, PAL::SessionID, WebPageProxyIdentifier, WebCore::HTTPHeaderMap&&, URL&&, DocumentURL&&,  RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::SecurityOrigin>&& topOrigin, RefPtr<WebCore::SecurityOrigin>&& parentOrigin, WebCore::PreflightPolicy, String&& referrer, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType);
+
     WebCore::ContentSecurityPolicy* contentSecurityPolicy();
     const WebCore::OriginAccessPatterns& originAccessPatterns() const;
     bool isSameOrigin(const URL&, const WebCore::SecurityOrigin*) const;

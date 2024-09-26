@@ -92,7 +92,7 @@ private:
     CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)> m_completionHandler;
     RefPtr<NetworkDataTask> m_task;
     WebCore::Timer m_timeoutTimer;
-    UniqueRef<NetworkLoadChecker> m_networkLoadChecker;
+    Ref<NetworkLoadChecker> m_networkLoadChecker;
     Vector<RefPtr<WebCore::BlobDataFileReference>> m_blobFiles;
 };
 

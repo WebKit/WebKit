@@ -338,7 +338,7 @@ protected:
     bool m_isInvalidated { false };
 #endif
     RefPtr<NetworkCache::Cache> m_cache;
-    std::unique_ptr<NetworkLoadScheduler> m_networkLoadScheduler;
+    RefPtr<NetworkLoadScheduler> m_networkLoadScheduler;
     WebCore::BlobRegistryImpl m_blobRegistry;
     UniqueRef<NetworkBroadcastChannelRegistry> m_broadcastChannelRegistry;
     unsigned m_testSpeedMultiplier { 1 };
