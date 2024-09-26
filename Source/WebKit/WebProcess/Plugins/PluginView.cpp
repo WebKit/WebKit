@@ -543,7 +543,7 @@ void PluginView::paint(GraphicsContext& context, const IntRect& dirtyRect, Widge
         return;
 
     if (m_transientPaintingSnapshot) {
-        if (!context.platformContext()) {
+        if (!context.hasPlatformContext()) {
             RefPtr image = m_transientPaintingSnapshot->createImage();
             if (!image)
                 return;
