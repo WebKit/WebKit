@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Noncopyable.h>
+#include <swift/bridging>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
