@@ -176,9 +176,6 @@ AcceleratedBuffer::AcceleratedBuffer(Ref<BitmapTexture>&& texture, Flags flags)
 
 AcceleratedBuffer::~AcceleratedBuffer()
 {
-    // Owned by us, and the BitmapTexturePool from which it is allocated.
-    // If we could potentially destruct the BitmapTexture here, we'd have to
-    // assure this happens on the main thread - but we don't have to.
     ensureOnMainThread([fence = WTFMove(m_fence)]() mutable {
         PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent();
         fence = nullptr;
