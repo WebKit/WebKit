@@ -44,22 +44,22 @@ from . import send_email
 
 from .layout_test_failures import LayoutTestFailures
 from .steps import (AddReviewerToCommitMessage, AddMergeLabelsToPRs, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
-                    AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
+                    AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, ArchiveStaticAnalyzerResults, BugzillaMixin,
                     Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStatusOfPR, CheckStyle,
                     CleanBuild, CleanDerivedSources, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutChange,
                     CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, DetermineLabelOwner,
-                    DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
+                    DetermineLandedIdentifier, DisplaySmartPointerResults, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
                     EWS_BUILD_HOSTNAMES, ExtractBuiltProduct, ExtractTestResults,
-                    FetchBranches, FindModifiedLayoutTests, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub, GitHubMixin, GenerateS3URL,
+                    FetchBranches, FindModifiedLayoutTests, FindUnexpectedStaticAnalyzerResults, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub, GitHubMixin, GenerateS3URL,
                     InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, InstallHooks,
-                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, RemoveAndAddLabels, ReRunAPITests, ReRunWebKitPerlTests, RetrievePRDataFromLabel,
+                    KillOldProcesses, ParseStaticAnalyzerResults, PrintConfiguration, PrintClangVersion, PushCommitToWebKitRepo, PushPullRequestBranch, RemoveAndAddLabels, ReRunAPITests, ReRunWebKitPerlTests, RetrievePRDataFromLabel,
                     MapBranchAlias, ReRunWebKitTests, RevertAppliedChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                     RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
                     RunJavaScriptCoreTests, RunJSCTestsWithoutChange, RunWebKit1Tests, RunWebKitPerlTests,
                     RunWebKitPyTests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                     RunWebKitTestsWithoutChange, RunWebKitTestsRedTree, RunWebKitTestsRepeatFailuresRedTree,
                     RunWebKitTestsRepeatFailuresWithoutChangeRedTree, RunWebKitTestsWithoutChangeRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount,
-                    ShowIdentifier, Trigger, TransferToS3, TwistedAdditions, UpdatePullRequest, UpdateWorkingDirectory, UploadBuiltProduct,
+                    ScanBuildSmartPointer, ShowIdentifier, Trigger, TransferToS3, TwistedAdditions, UpdatePullRequest, UpdateWorkingDirectory, UploadBuiltProduct,
                     UploadFileToS3, UploadTestResults, ValidateCommitMessage, ValidateCommitterAndReviewer, ValidateChange, ValidateRemote, ValidateSquashed)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
@@ -70,6 +70,9 @@ FakeBuild._builderid = 1
 # Prevent unit-tests from talking to live bugzilla and github servers
 BugzillaMixin.fetch_data_from_url_with_authentication_bugzilla = lambda x, y: None
 GitHubMixin.fetch_data_from_url_with_authentication_github = lambda x, y: None
+
+SCAN_BUILD_OUTPUT_DIR = 'scan-build-output'
+LLVM_DIR = 'llvm-project'
 
 def mock_step(step, logs='', results=SUCCESS, stopped=False, properties=None):
     step.logs = logs
@@ -4103,6 +4106,27 @@ class TestRevertAppliedChanges(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Reverted applied changes')
         return self.runStep()
 
+    def test_success_exclude(self):
+        self.setupStep(RevertAppliedChanges(exclude=['directory*']))
+        self.setProperty('got_revision', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c')
+        self.setProperty('github.number', 1234)
+        self.expectHidden(False)
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                timeout=5 * 60,
+                command=['git', 'clean', '-f', '-d', '-e', 'directory*'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                timeout=5 * 60,
+                command=['git', 'checkout', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Reverted applied changes')
+        return self.runStep()
+
     def test_failure(self):
         self.setupStep(RevertAppliedChanges())
         self.setProperty('ews_revision', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c')
@@ -4570,6 +4594,44 @@ class TestArchiveBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Archived built product (failure)')
+        return self.runStep()
+
+
+class TestArchiveStaticAnalysis(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(ArchiveStaticAnalyzerResults())
+        self.setProperty('buildnumber', 123)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['Tools/Scripts/generate-static-analysis-archive', '--id-string', 'Build #123', '--output-root', 'scan-build-output', '--destination', '/tmp/static-analysis.zip'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='archived static analyzer results')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(ArchiveStaticAnalyzerResults())
+        self.setProperty('fullPlatform', 'mac-sierra')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('buildnumber', 123)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['Tools/Scripts/generate-static-analysis-archive', '--id-string', 'Build #123', '--output-root', 'scan-build-output', '--destination', '/tmp/static-analysis.zip'],
+                        )
+            + ExpectShell.log('stdio', stdout='Unexpected failure.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='archived static analyzer results (failure)')
         return self.runStep()
 
 
@@ -9066,6 +9128,264 @@ Date:   Tue Mar 29 16:04:35 2023 -0700
             self.assertEqual(self.getProperty('bug_id'), '248615')
             self.assertEqual(self.getProperty('is_test_gardening'), False)
             return rc
+
+
+class TestScanBuildSmartPointer(BuildStepMixinAdditions, unittest.TestCase):
+    WORK_DIR = 'wkdir'
+    EXPECTED_BUILD_COMMAND = ['/bin/sh', '-c', f'Tools/Scripts/build-and-analyze --output-dir wkdir/build/{SCAN_BUILD_OUTPUT_DIR} --configuration release --only-smart-pointers --analyzer-path=wkdir/llvm-project/build/bin/clang --scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot=macosx --preprocessor-additions=CLANG_WEBKIT_BRANCH=1 2>&1 | python3 Tools/Scripts/filter-test-logs scan-build --output build-log.txt']
+
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(ScanBuildSmartPointer())
+        self.setProperty('configuration', 'release')
+        self.setProperty('builddir', self.WORK_DIR)
+
+    def test_failure(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=['/bin/sh', '-c', f'/bin/rm -rf wkdir/build/{SCAN_BUILD_OUTPUT_DIR}'],
+                        logEnviron=False,
+                        timeout=2 * 60 * 60) + 0,
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=self.EXPECTED_BUILD_COMMAND,
+                        logEnviron=False,
+                        timeout=2 * 60 * 60)
+            + ExpectShell.log('stdio', stdout='scan-build-static-analyzer: No bugs found.\nTotal issue count: 123\n')
+            + 0
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to build and analyze WebKit')
+        return self.runStep()
+
+    def test_success(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=['/bin/sh', '-c', f'/bin/rm -rf wkdir/build/{SCAN_BUILD_OUTPUT_DIR}'],
+                        logEnviron=False,
+                        timeout=2 * 60 * 60)
+            + 0,
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=self.EXPECTED_BUILD_COMMAND,
+                        logEnviron=False,
+                        timeout=2 * 60 * 60)
+            + ExpectShell.log('stdio', stdout='ANALYZE SUCCEEDED No issues found.\n')
+            + 0
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Found 0 issues')
+        return self.runStep()
+
+    def test_success_with_issues(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=['/bin/sh', '-c', f'/bin/rm -rf wkdir/build/{SCAN_BUILD_OUTPUT_DIR}'],
+                        logEnviron=False,
+                        timeout=2 * 60 * 60)
+            + 0,
+            ExpectShell(workdir=self.WORK_DIR,
+                        command=self.EXPECTED_BUILD_COMMAND,
+                        logEnviron=False,
+                        timeout=2 * 60 * 60)
+            + ExpectShell.log('stdio', stdout='ANALYZE SUCCEEDED\n Total issue count: 300\n')
+            + 0
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Found 300 issues')
+        return self.runStep()
+
+
+class TestParseStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(ParseStaticAnalyzerResults())
+
+    def test_success(self):
+        self.configureStep()
+        self.setProperty('builddir', 'wkdir')
+        self.setProperty('buildnumber', 1234)
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/generate-dirty-files', f'wkdir/build/{SCAN_BUILD_OUTPUT_DIR}', '--output-dir', 'wkdir/build/new', '--build-dir', 'wkdir/build'])
+            + ExpectShell.log('stdio', stdout='Total (24247) WebKit (327) WebCore (23920)\n')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string=' Issues: Total (24247) WebKit (327) WebCore (23920)\n')
+        return self.runStep()
+
+
+class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(FindUnexpectedStaticAnalyzerResults())
+
+    def test_success_no_issues(self):
+        self.configureStep()
+        self.setProperty('builddir', 'wkdir')
+        self.setProperty('buildnumber', 2)
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--archived-dir', 'wkdir/build/baseline', '--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build', '--delete-results'])
+            + ExpectShell.log('stdio', stdout='')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Found no unexpected results')
+        return self.runStep()
+
+    def test_new_issues(self):
+        self.configureStep()
+        self.setProperty('builddir', 'wkdir')
+        self.setProperty('buildnumber', 1234)
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--archived-dir', 'wkdir/build/baseline', '--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build', '--delete-results'],)
+            + ExpectShell.log('stdio', stdout='Total new issues: 19\nTotal fixed files: 3\n')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='19 new issues 3 fixed files')
+        return self.runStep()
+
+
+class TestDisplaySmartPointerResults(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(DisplaySmartPointerResults())
+        self.setProperty('buildnumber', '123')
+        self.setProperty('github.number', '17')
+
+        def loadResultsData(self, path):
+            return {
+                "passes": {
+                    "WebCore": {
+                        "NoUncountedMemberChecker": ['File17.cpp'],
+                        "RefCntblBaseVirtualDtor": ['File123.cpp'],
+                        "UncountedCallArgsChecker": [],
+                        "UncountedLocalVarsChecker": []
+                    },
+                    "WebKit": {
+                        "NoUncountedMemberChecker": [],
+                        "RefCntblBaseVirtualDtor": [],
+                        "UncountedCallArgsChecker": [],
+                        "UncountedLocalVarsChecker": []
+                    }
+                },
+                "failures": {
+                    "WebCore": {
+                        "NoUncountedMemberChecker": ['File1.cpp'],
+                        "RefCntblBaseVirtualDtor": ['File2.cpp'],
+                        "UncountedCallArgsChecker": [],
+                        "UncountedLocalVarsChecker": []
+                    },
+                    "WebKit": {
+                        "NoUncountedMemberChecker": [],
+                        "RefCntblBaseVirtualDtor": [],
+                        "UncountedCallArgsChecker": [],
+                        "UncountedLocalVarsChecker": []
+                    }
+                }
+            }
+
+        DisplaySmartPointerResults.loadResultsData = loadResultsData
+
+    def test_success_preexisting_failures(self):
+        self.configureStep()
+        self.setProperty('unexpected_new_issues', 10)
+
+        self.expectOutcome(result=SUCCESS, state_string='Ignored 10 pre-existing failures')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Ignored 10 pre-existing failures')
+
+    def test_success_only_fixes(self):
+        self.configureStep()
+        self.setProperty('unexpected_passing_files', 2)
+
+        self.expectOutcome(result=SUCCESS, state_string='Found 2 fixed files: File17.cpp, File123.cpp')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('passes'), ['File17.cpp', 'File123.cpp'])
+        expected_comment = "Smart Pointer Build [#123](http://localhost:8080/#/builders/1/builds/13): Found 2 fixed files!\n"
+        expected_comment += "Please update expectations using `smart-pointer-tool --update-expectations` before landing."
+        self.assertEqual(self.getProperty('comment_text'), expected_comment)
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Found 2 fixed files: File17.cpp, File123.cpp')
+
+    def test_failure_new_failures(self):
+        self.configureStep()
+        self.setProperty('unexpected_new_issues', 10)
+        self.setProperty('unexpected_passing_files', 2)
+        self.setProperty('unexpected_failing_files', 2)
+
+        self.expectOutcome(result=FAILURE, state_string='Found 10 new failures in File1.cpp, File2.cpp and found 2 fixed files: File17.cpp, File123.cpp')
+        rc = self.runStep()
+        expected_comment = "Smart Pointer Build [#123](http://localhost:8080/#/builders/1/builds/13): Found [10 new failures](https://ews-build.s3-us-west-2.amazonaws.com/None/None-123/scan-build-output/new-results.html), blocking PR #17."
+        expected_comment += "\nPlease address these issues before landing. See [WebKit Guidelines for Safer C++ Programming](https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines).\n(cc @rniwa)"
+        self.assertEqual(self.getProperty('comment_text'), expected_comment)
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Found 10 new failures in File1.cpp, File2.cpp')
+
+
+class TestPrintClangVersion(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(PrintClangVersion())
+
+    def test_success(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir=LLVM_DIR,
+                        logEnviron=False,
+                        timeout=60,
+                        command=['./build/bin/clang', '--version'])
+            + ExpectShell.log('stdio', stdout='clang version 17.0.6 (https://github.com/rniwa/llvm-project.git 34715c1b2049d8aa738ade79f003ed4b82259a89) Target: arm64-apple-darwin23.5.0\nThread model: posix\nInstalledDir: /Volumes/Data/worker/macOS-Sonoma-Smart-Pointer-Build-EWS/llvm-project/./build/bin')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='clang version 17.0.6 (https://github.com/rniwa/llvm-project.git 34715c1b2049d8aa738ade79f003ed4b82259a89)')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('llvm_revision'), '34715c1b2049d8aa738ade79f003ed4b82259a89')
+        return rc
+
+    def test_failure(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir=LLVM_DIR,
+                        logEnviron=False,
+                        timeout=60,
+                        command=['./build/bin/clang', '--version'])
+            + ExpectShell.log('stdio', stdout='No such file or directory\n')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Clang executable does not exist')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('llvm_revision'), None)
+        return rc
 
 
 if __name__ == '__main__':

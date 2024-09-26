@@ -28,11 +28,11 @@ from .steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Cano
                     CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
                     CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CleanDerivedSources, CompileJSC, CompileWebKit, ConfigureBuild, DetermineLabelOwner,
                     DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub,
-                    InstallGtkDependencies, InstallHooks, InstallWpeDependencies, InstallWinDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
+                    InstallGtkDependencies, InstallHooks, InstallWpeDependencies, InstallWinDependencies, KillOldProcesses, PrintClangVersion, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
                     MapBranchAlias, RemoveAndAddLabels, RetrievePRDataFromLabel, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
                     RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests,
                     RunWebKitPyTests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
-                    SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory, UpdatePullRequest,
+                    ScanBuildSmartPointer, SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory, UpdatePullRequest,
                     ValidateCommitMessage, ValidateChange, ValidateCommitterAndReviewer, WaitForCrashCollection,
                     InstallBuiltProduct, ValidateRemote, ValidateSquashed, GITHUB_PROJECTS)
 
@@ -95,6 +95,26 @@ class WatchListFactory(factory.BuildFactory):
         self.addStep(ApplyPatch())
         self.addStep(CheckOutPullRequest())
         self.addStep(ApplyWatchList())
+
+
+class SmartPointerStaticAnalyzerFactory(factory.BuildFactory):
+    findModifiedLayoutTests = False
+
+    def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, triggered_by=None, remotes=None, additionalArguments=None, checkRelevance=False, **kwargs):
+        factory.BuildFactory.__init__(self)
+        self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=buildOnly, triggers=triggers, triggered_by=triggered_by, remotes=remotes, additionalArguments=additionalArguments))
+        if checkRelevance:
+            self.addStep(CheckChangeRelevance())
+        self.addStep(ValidateChange())
+        self.addStep(PrintConfiguration())
+        self.addStep(CleanGitRepo())
+        self.addStep(CheckOutSource())
+        self.addStep(FetchBranches())
+        self.addStep(ShowIdentifier())
+        self.addStep(PrintClangVersion())
+        self.addStep(CheckOutPullRequest())
+        self.addStep(KillOldProcesses())
+        self.addStep(ScanBuildSmartPointer())
 
 
 class BindingsFactory(Factory):
