@@ -154,17 +154,17 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
                     uint64_t chunk = *reinterpret_cast<const uint64_t*>(buffer + i);
                     if (!chunk) {
                         runLength += sizeof(chunk);
-                        RELEASE_ASSERT(runLength <= maxZeroByteRunLength, buffer);
+                        RELEASE_ASSERT(runLength <= maxZeroByteRunLength, buffer, n, i);
                     } else {
                         runLength += (std::countr_zero(chunk) / 8);
-                        RELEASE_ASSERT(runLength <= maxZeroByteRunLength, buffer);
+                        RELEASE_ASSERT(runLength <= maxZeroByteRunLength, buffer, n, i);
                         runLength = std::countl_zero(chunk) / 8;
                     }
                 }
                 for (; i < n; i++) {
                     if (!(buffer[i])) {
                         runLength++;
-                        RELEASE_ASSERT(runLength <= maxZeroByteRunLength, buffer);
+                        RELEASE_ASSERT(runLength <= maxZeroByteRunLength, buffer, n, i);
                     }
                 }
             }
