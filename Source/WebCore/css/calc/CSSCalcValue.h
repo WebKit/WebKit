@@ -42,8 +42,17 @@ namespace Calculation {
 enum class Category : uint8_t;
 }
 
-namespace CSSPropertyParserHelpers {
-struct CSSPropertyParserOptions;
+namespace Style {
+struct Angle;
+struct AnglePercentage;
+struct Flex;
+struct Frequency;
+struct Length;
+struct LengthPercentage;
+struct Number;
+struct Percentage;
+struct Resolution;
+struct Time;
 }
 
 class CSSCalcSymbolTable;
@@ -54,6 +63,7 @@ class CalculationValue;
 class RenderStyle;
 
 struct CSSParserContext;
+struct CSSPropertyParserOptions;
 struct Length;
 
 enum CSSValueID : uint16_t;
@@ -63,7 +73,7 @@ enum class ValueRange : uint8_t;
 
 class CSSCalcValue final : public CSSValue {
 public:
-    static RefPtr<CSSCalcValue> parse(CSSParserTokenRange&, const CSSParserContext&, Calculation::Category, CSSCalcSymbolsAllowed, CSSPropertyParserHelpers::CSSPropertyParserOptions);
+    static RefPtr<CSSCalcValue> parse(CSSParserTokenRange&, const CSSParserContext&, Calculation::Category, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 
     static Ref<CSSCalcValue> create(const CalculationValue&, const RenderStyle&);
     static Ref<CSSCalcValue> create(CSSCalc::Tree&&);
@@ -73,7 +83,7 @@ public:
     // Creates a copy of the CSSCalc::Tree with non-canonical dimensions and any symbols present in the provided symbol table resolved.
     Ref<CSSCalcValue> copySimplified(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
 
-    Calculation::Category category() const;
+    Calculation::Category category() const { return m_tree.category; }
     CSSUnitType primitiveType() const;
 
     // Returns whether the CSSCalc::Tree requires `CSSToLengthConversionData` to fully resolve.
@@ -88,21 +98,27 @@ public:
     Ref<CalculationValue> createCalculationValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
     Ref<CalculationValue> createCalculationValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
 
-    NumberRaw numberValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    NumberRaw numberValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-    PercentageRaw percentageValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    PercentageRaw percentageValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-    AngleRaw angleValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    AngleRaw angleValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-    LengthRaw lengthValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    LengthRaw lengthValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-    ResolutionRaw resolutionValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    ResolutionRaw resolutionValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-    TimeRaw timeValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    TimeRaw timeValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+    Style::Number numberValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
+    Style::Number numberValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+    Style::Percentage percentageValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
+    Style::Percentage percentageValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+    Style::Angle angleValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
+    Style::Angle angleValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+    Style::Length lengthValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
+    Style::Length lengthValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+    Style::Time timeValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
+    Style::Time timeValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+    Style::Frequency frequencyValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
+    Style::Frequency frequencyValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+    Style::Resolution resolutionValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
+    Style::Resolution resolutionValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+    Style::Flex flexValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
+    Style::Flex flexValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
 
-    Length lengthPercentageValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    Length lengthPercentageValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+    Style::LengthPercentage lengthPercentageValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
+    Style::LengthPercentage lengthPercentageValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
+    Style::AnglePercentage anglePercentageValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
+    Style::AnglePercentage anglePercentageValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
 
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
 

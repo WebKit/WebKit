@@ -40,6 +40,7 @@
 #include "FontCache.h"
 #include "FontSelectionValueInlines.h"
 #include "StyleBuilderConverter.h"
+#include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleProperties.h"
 
 namespace WebCore {
@@ -339,15 +340,11 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
                 return normalWeightValue();
             }
         },
-        [&](NumberRaw weight) {
-            return FontSelectionValue::clampFloat(weight.value);
-        },
-        [&](const UnevaluatedCalc<NumberRaw>& calc) {
+        [&](const CSS::Number& weight) {
             // FIXME: Figure out correct behavior when conversion data is required.
-            if (requiresConversionData(calc))
+            if (requiresConversionData(weight))
                 return normalWeightValue();
-
-            return FontSelectionValue(clampTo<float>(evaluateCalcNoConversionDataRequired(calc, { }).value, 1, 1000));
+            return FontSelectionValue(clampTo<float>(CSS::toStyleNoConversionDataRequired(weight, CSSCalcSymbolTable { }).value, 1, 1000));
         }
     );
 
@@ -355,15 +352,11 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
         [&](CSSValueID ident) -> FontSelectionValue {
             return *fontStretchValue(ident);
         },
-        [&](PercentageRaw percent) -> FontSelectionValue  {
-            return FontSelectionValue::clampFloat(percent.value);
-        },
-        [&](const UnevaluatedCalc<PercentageRaw>& calc) -> FontSelectionValue  {
+        [&](const CSS::Percentage& percent) -> FontSelectionValue  {
             // FIXME: Figure out correct behavior when conversion data is required.
-            if (requiresConversionData(calc))
+            if (requiresConversionData(percent))
                 return normalStretchValue();
-
-            return FontSelectionValue::clampFloat(evaluateCalcNoConversionDataRequired(calc, { }).value);
+            return FontSelectionValue::clampFloat(CSS::toStyleNoConversionDataRequired(percent, CSSCalcSymbolTable { }).value);
         }
     );
 
@@ -381,15 +374,11 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
                 return std::nullopt;
             }
         },
-        [&](AngleRaw angle) -> std::optional<FontSelectionValue> {
-            return FontSelectionValue::clampFloat(CSSPrimitiveValue::computeDegrees(angle.type, angle.value));
-        },
-        [&](const UnevaluatedCalc<AngleRaw>& calc) -> std::optional<FontSelectionValue> {
+        [&](const CSS::Angle& angle) -> std::optional<FontSelectionValue> {
             // FIXME: Figure out correct behavior when conversion data is required.
-            if (requiresConversionData(calc))
+            if (requiresConversionData(angle))
                 return std::nullopt;
-
-            return normalizedFontItalicValue(static_cast<float>(evaluateCalcNoConversionDataRequired(calc, { }).value));
+            return normalizedFontItalicValue(CSS::toStyleNoConversionDataRequired(angle, CSSCalcSymbolTable { }).value);
         }
     );
 

@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CSSPropertyParserConsumer+RawTypes.h"
 #include "ColorInterpolationMethod.h"
 #include "StyleColor.h"
+#include "StylePrimitiveNumericTypes.h"
 #include <optional>
 #include <wtf/UniqueRef.h>
 
@@ -39,7 +39,7 @@ struct StyleColorMix {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     struct Component {
-        using Percentage = PercentageRaw;
+        using Percentage = Style::Percentage;
 
         StyleColor color;
         std::optional<Percentage> percentage;

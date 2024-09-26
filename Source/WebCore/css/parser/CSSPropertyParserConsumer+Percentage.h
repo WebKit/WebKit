@@ -24,13 +24,12 @@
 
 #pragma once
 
-#include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSPropertyParserOptions.h"
 #include <optional>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class CSSCalcSymbolTable;
 class CSSPrimitiveValue;
 class CSSParserTokenRange;
 

@@ -38,14 +38,14 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-std::optional<TimeRaw> validatedRange(TimeRaw value, CSSPropertyParserOptions options)
+std::optional<CSS::TimeRaw> validatedRange(CSS::TimeRaw value, CSSPropertyParserOptions options)
 {
     if (options.valueRange == ValueRange::NonNegative && value.value < 0)
         return std::nullopt;
     return value;
 }
 
-std::optional<UnevaluatedCalc<TimeRaw>> TimeKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
+std::optional<CSS::UnevaluatedCalc<CSS::TimeRaw>> TimeKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == FunctionToken);
 
@@ -58,7 +58,7 @@ std::optional<UnevaluatedCalc<TimeRaw>> TimeKnownTokenTypeFunctionConsumer::cons
     return std::nullopt;
 }
 
-std::optional<TimeRaw> TimeKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
+std::optional<CSS::TimeRaw> TimeKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == DimensionToken);
 
@@ -74,14 +74,14 @@ std::optional<TimeRaw> TimeKnownTokenTypeDimensionConsumer::consume(CSSParserTok
         return std::nullopt;
     }
 
-    if (auto validatedValue = validatedRange(TimeRaw { unitType, token.numericValue() }, options)) {
+    if (auto validatedValue = validatedRange(CSS::TimeRaw { unitType, token.numericValue() }, options)) {
         range.consumeIncludingWhitespace();
         return validatedValue;
     }
     return std::nullopt;
 }
 
-std::optional<TimeRaw> TimeKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
+std::optional<CSS::TimeRaw> TimeKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == NumberToken);
 
@@ -95,7 +95,7 @@ std::optional<TimeRaw> TimeKnownTokenTypeNumberConsumer::consume(CSSParserTokenR
     if (!shouldAcceptUnitlessValue(numericValue, options))
         return std::nullopt;
 
-    if (auto validatedValue = validatedRange(TimeRaw { CSSUnitType::CSS_MS, numericValue }, options)) {
+    if (auto validatedValue = validatedRange(CSS::TimeRaw { CSSUnitType::CSS_MS, numericValue }, options)) {
         range.consumeIncludingWhitespace();
         return validatedValue;
     }
@@ -112,7 +112,7 @@ RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange& range, const CSSParse
         .valueRange = valueRange,
         .unitless = unitless
     };
-    return CSSPrimitiveValueResolver<TimeRaw>::consumeAndResolve(range, context, { }, { }, options);
+    return CSSPrimitiveValueResolver<CSS::Time>::consumeAndResolve(range, context, { }, { }, options);
 }
 
 } // namespace CSSPropertyParserHelpers

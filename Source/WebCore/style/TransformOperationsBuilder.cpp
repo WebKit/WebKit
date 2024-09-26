@@ -50,7 +50,7 @@
 namespace WebCore {
 namespace Style {
 
-static Length resolveAsFloatPercentOrCalculatedLength(const CSSPrimitiveValue& primitiveValue, const CSSToLengthConversionData& conversionData)
+static WebCore::Length resolveAsFloatPercentOrCalculatedLength(const CSSPrimitiveValue& primitiveValue, const CSSToLengthConversionData& conversionData)
 {
     return primitiveValue.convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion>(conversionData);
 }
@@ -278,8 +278,8 @@ static Ref<TransformOperation> createTranslateTransformOperation(const CSSFuncti
     // translate() = translate( <length-percentage> , <length-percentage>? )
 
     auto tx = resolveAsFloatPercentOrCalculatedLength(downcast<CSSPrimitiveValue>(value[0]), conversionData);
-    auto ty = value.length() > 1 ? resolveAsFloatPercentOrCalculatedLength(downcast<CSSPrimitiveValue>(value[1]), conversionData) : Length(0, LengthType::Fixed);
-    auto tz = Length(0, LengthType::Fixed);
+    auto ty = value.length() > 1 ? resolveAsFloatPercentOrCalculatedLength(downcast<CSSPrimitiveValue>(value[1]), conversionData) : WebCore::Length(0, LengthType::Fixed);
+    auto tz = WebCore::Length(0, LengthType::Fixed);
 
     return TranslateTransformOperation::create(WTFMove(tx), WTFMove(ty), WTFMove(tz), TransformOperation::Type::Translate);
 }
@@ -302,8 +302,8 @@ static Ref<TransformOperation> createTranslateXTransformOperation(const CSSFunct
     // translateX() = translateX( <length-percentage> )
 
     auto tx = resolveAsFloatPercentOrCalculatedLength(downcast<CSSPrimitiveValue>(value[0]), conversionData);
-    auto ty = Length(0, LengthType::Fixed);
-    auto tz = Length(0, LengthType::Fixed);
+    auto ty = WebCore::Length(0, LengthType::Fixed);
+    auto tz = WebCore::Length(0, LengthType::Fixed);
 
     return TranslateTransformOperation::create(WTFMove(tx), WTFMove(ty), WTFMove(tz), TransformOperation::Type::TranslateX);
 }
@@ -313,9 +313,9 @@ static Ref<TransformOperation> createTranslateYTransformOperation(const CSSFunct
     // https://drafts.csswg.org/css-transforms-1/#funcdef-transform-translatey
     // translateY() = translateY( <length-percentage> )
 
-    auto tx = Length(0, LengthType::Fixed);
+    auto tx = WebCore::Length(0, LengthType::Fixed);
     auto ty = resolveAsFloatPercentOrCalculatedLength(downcast<CSSPrimitiveValue>(value[0]), conversionData);
-    auto tz = Length(0, LengthType::Fixed);
+    auto tz = WebCore::Length(0, LengthType::Fixed);
 
     return TranslateTransformOperation::create(WTFMove(tx), WTFMove(ty), WTFMove(tz), TransformOperation::Type::TranslateY);
 }
@@ -325,8 +325,8 @@ static Ref<TransformOperation> createTranslateZTransformOperation(const CSSFunct
     // https://drafts.csswg.org/css-transforms-2/#funcdef-translatez
     // translateZ() = translateZ( <length> )
 
-    auto tx = Length(0, LengthType::Fixed);
-    auto ty = Length(0, LengthType::Fixed);
+    auto tx = WebCore::Length(0, LengthType::Fixed);
+    auto ty = WebCore::Length(0, LengthType::Fixed);
     auto tz = resolveAsFloatPercentOrCalculatedLength(downcast<CSSPrimitiveValue>(value[0]), conversionData);
 
     return TranslateTransformOperation::create(WTFMove(tx), WTFMove(ty), WTFMove(tz), TransformOperation::Type::TranslateZ);
@@ -349,7 +349,7 @@ static Ref<TransformOperation> createPerspectiveTransformOperation(const CSSFunc
         return PerspectiveTransformOperation::create(resolveAsFloatPercentOrCalculatedLength(parameter, conversionData));
 
     // FIXME: Support for <number> parameters for `perspective` is a quirk that should go away when 3d transforms are finalized.
-    return PerspectiveTransformOperation::create(Length(clampToPositiveInteger(parameter.resolveAsNumber<double>(conversionData)), LengthType::Fixed));
+    return PerspectiveTransformOperation::create(WebCore::Length(clampToPositiveInteger(parameter.resolveAsNumber<double>(conversionData)), LengthType::Fixed));
 }
 
 // MARK: <transform-operation>
@@ -436,8 +436,8 @@ RefPtr<TranslateTransformOperation> createTranslate(const CSSValue& value, const
 
     auto type = valueList.length() > 2 ? TransformOperation::Type::Translate3D : TransformOperation::Type::Translate;
     auto tx = resolveAsFloatPercentOrCalculatedLength(downcast<CSSPrimitiveValue>(valueList[0]), conversionData);
-    auto ty = valueList.length() > 1 ? resolveAsFloatPercentOrCalculatedLength(downcast<CSSPrimitiveValue>(valueList[1]), conversionData) : Length(0, LengthType::Fixed);
-    auto tz = valueList.length() > 2 ? resolveAsFloatPercentOrCalculatedLength(downcast<CSSPrimitiveValue>(valueList[2]), conversionData) : Length(0, LengthType::Fixed);
+    auto ty = valueList.length() > 1 ? resolveAsFloatPercentOrCalculatedLength(downcast<CSSPrimitiveValue>(valueList[1]), conversionData) : WebCore::Length(0, LengthType::Fixed);
+    auto tz = valueList.length() > 2 ? resolveAsFloatPercentOrCalculatedLength(downcast<CSSPrimitiveValue>(valueList[2]), conversionData) : WebCore::Length(0, LengthType::Fixed);
 
     return TranslateTransformOperation::create(WTFMove(tx), WTFMove(ty), WTFMove(tz), type);
 }

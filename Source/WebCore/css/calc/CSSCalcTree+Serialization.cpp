@@ -29,6 +29,7 @@
 #include "CSSCalcTree+Traversal.h"
 #include "CSSCalcTree.h"
 #include "CSSMarkup.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSUnits.h"
 #include <wtf/text/StringBuilder.h>
@@ -90,7 +91,7 @@ template<typename Op> static void serializeMathFunctionArguments(StringBuilder&,
 // https://drafts.csswg.org/css-values-4/#serialize-a-calculation-tree
 static void serializeCalculationTree(StringBuilder&, const Child&, SerializationState&);
 static void serializeCalculationTree(StringBuilder&, const ChildOrNone&, SerializationState&);
-static void serializeCalculationTree(StringBuilder&, const NoneRaw&, SerializationState&);
+static void serializeCalculationTree(StringBuilder&, const CSS::NoneRaw&, SerializationState&);
 static void serializeCalculationTree(StringBuilder&, const Symbol&, SerializationState&);
 static void serializeCalculationTree(StringBuilder&, const IndirectNode<Sum>&, SerializationState&);
 static void serializeCalculationTree(StringBuilder&, const IndirectNode<Product>&, SerializationState&);
@@ -180,8 +181,8 @@ static unsigned sortPriority(CSSUnitType unit)
     case CSSUnitType::CSS_ANCHOR:
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_CALC:
+    case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_ANGLE:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
-    case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
     case CSSUnitType::CSS_DIMENSION:
     case CSSUnitType::CSS_FONT_FAMILY:
     case CSSUnitType::CSS_IDENT:
@@ -421,7 +422,7 @@ void serializeCalculationTree(StringBuilder& builder, const ChildOrNone& root, S
     WTF::switchOn(root, [&builder, &state](const auto& root) { serializeCalculationTree(builder, root, state); });
 }
 
-void serializeCalculationTree(StringBuilder& builder, const NoneRaw& root, SerializationState&)
+void serializeCalculationTree(StringBuilder& builder, const CSS::NoneRaw& root, SerializationState&)
 {
     serializationForCSS(builder, root);
 }

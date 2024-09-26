@@ -35,6 +35,7 @@
 #include "CSSParserFastPaths.h"
 #include "CSSParserIdioms.h"
 #include "CSSParserTokenRange.h"
+#include "CSSPrimitiveNumericTypes+EvaluateCalc.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParserConsumer+AngleDefinitions.h"
 #include "CSSPropertyParserConsumer+ColorInterpolationMethod.h"
@@ -66,18 +67,14 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-template<typename T>
-static CSSUnresolvedColor makeCSSUnresolvedColor(T&& unresolvedColorKind)
+template<typename T> static CSSUnresolvedColor makeCSSUnresolvedColor(T&& unresolvedColorKind)
 {
     return CSSUnresolvedColor { std::forward<T>(unresolvedColorKind) };
 }
 
-template<typename T>
-static std::optional<CSSUnresolvedColor> makeCSSUnresolvedColor(std::optional<T>&& unresolvedColorKind)
+template<typename T> static std::optional<CSSUnresolvedColor> makeCSSUnresolvedColor(std::optional<T>&& unresolvedColorKind)
 {
-    if (!unresolvedColorKind)
-        return { };
-    return makeCSSUnresolvedColor(std::forward<T>(*unresolvedColorKind));
+    return unresolvedColorKind.transform([](auto&& v) { return makeCSSUnresolvedColor(std::forward<T>(v)); });
 }
 
 // State passed to internal color consumer functions. Used to pass information
@@ -124,29 +121,21 @@ template<typename... Ts> using MetaConsumerWrapper = MetaConsumer<Ts...>;
 template<typename Descriptor, unsigned Index>
 static std::optional<CSSUnresolvedAbsoluteColorComponent<Descriptor, Index>> consumeAbsoluteComponent(CSSParserTokenRange& range, ColorParserState& state)
 {
-    using TypeList = GetComponentResultTypeList<Descriptor, Index>;
+    using TypeList = GetCSSColorParseTypeWithCalcComponentTypeList<Descriptor, Index>;
     using Consumer = brigand::wrap<TypeList, MetaConsumerWrapper>;
 
-    auto result = Consumer::consume(range, state.context, { }, { .parserMode = state.context.mode });
-    if (!result)
-        return { };
-
-    return WTF::switchOn(*result, [](auto& v) -> CSSUnresolvedAbsoluteColorComponent<Descriptor, Index> { return v; });
+    return Consumer::consume(range, state.context, { }, { .parserMode = state.context.mode });
 }
 
 template<typename Descriptor, unsigned Index>
 static std::optional<CSSUnresolvedRelativeColorComponent<Descriptor, Index>> consumeRelativeComponent(CSSParserTokenRange& range, ColorParserState& state, CSSCalcSymbolsAllowed symbolsAllowed)
 {
-    // Append `SymbolRaw` to the TypeList to allow unadorned symbols from the symbol
+    // Append `CSS::Symbol` to the TypeList to allow unadorned symbols from the symbol
     // table to be consumed.
-    using TypeList = brigand::append<GetComponentResultTypeList<Descriptor, Index>, brigand::list<SymbolRaw>>;
+    using TypeList = GetCSSColorParseTypeWithCalcAndSymbolsComponentTypeList<Descriptor, Index>;
     using Consumer = brigand::wrap<TypeList, MetaConsumerWrapper>;
 
-    auto result = Consumer::consume(range, state.context, WTFMove(symbolsAllowed), { .parserMode = state.context.mode });
-    if (!result)
-        return { };
-
-    return WTF::switchOn(*result, [](auto& v) -> CSSUnresolvedRelativeColorComponent<Descriptor, Index> { return v; });
+    return Consumer::consume(range, state.context, WTFMove(symbolsAllowed), { .parserMode = state.context.mode });
 }
 
 template<typename Descriptor>
@@ -197,10 +186,10 @@ template<typename Descriptor> static CSSUnresolvedAbsoluteColor<typename Descrip
     // Evaluated any calc values that don't require conversion data.
     auto partiallyResolved = CSSUnresolvedAbsoluteColor<Descriptor> {
         CSSColorParseTypeWithCalc<Descriptor> {
-            evaluateCalcIfNoConversionDataRequired(std::get<0>(unresolved.components), CSSCalcSymbolTable { }),
-            evaluateCalcIfNoConversionDataRequired(std::get<1>(unresolved.components), CSSCalcSymbolTable { }),
-            evaluateCalcIfNoConversionDataRequired(std::get<2>(unresolved.components), CSSCalcSymbolTable { }),
-            evaluateCalcIfNoConversionDataRequired(std::get<3>(unresolved.components), CSSCalcSymbolTable { })
+            CSS::evaluateCalcIfNoConversionDataRequired(std::get<0>(unresolved.components), CSSCalcSymbolTable { }),
+            CSS::evaluateCalcIfNoConversionDataRequired(std::get<1>(unresolved.components), CSSCalcSymbolTable { }),
+            CSS::evaluateCalcIfNoConversionDataRequired(std::get<2>(unresolved.components), CSSCalcSymbolTable { }),
+            CSS::evaluateCalcIfNoConversionDataRequired(std::get<3>(unresolved.components), CSSCalcSymbolTable { })
         }
     };
 
@@ -390,12 +379,7 @@ static std::optional<CSSUnresolvedColor> consumeRGBFunction(CSSParserTokenRange&
 
                 return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTFMove(red));
             },
-            [&]<typename T>(UnevaluatedCalc<T> red) -> std::optional<CSSUnresolvedColor>  {
-                using Descriptor = RGBFunctionLegacy<T>;
-
-                return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTFMove(red));
-            },
-            [](NoneRaw) -> std::optional<CSSUnresolvedColor> {
+            [](CSS::None) -> std::optional<CSSUnresolvedColor> {
                 // `none` is invalid for the legacy syntax, but the initial parameter consumer didn't
                 // know we were using the legacy syntax yet, so we need to check for it now.
                 return { };
@@ -444,7 +428,7 @@ static std::optional<CSSUnresolvedColor> consumeHSLFunction(CSSParserTokenRange&
 
                 return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTFMove(hue));
             },
-            [](NoneRaw) -> std::optional<CSSUnresolvedColor> {
+            [](CSS::None) -> std::optional<CSSUnresolvedColor> {
                 // `none` is invalid for the legacy syntax, but the initial parameter consumer didn't
                 // know we were using the legacy syntax yet, so we need to check for it now.
                 return { };
@@ -562,8 +546,8 @@ static std::optional<CSSUnresolvedColorMix::Component> consumeColorMixComponent(
 
     std::optional<CSSUnresolvedColorMix::Component::Percentage> percentage;
 
-    if (auto percent = MetaConsumer<PercentageRaw>::consume(args, state.context, { }, { })) {
-        if (PercentageRaw* rawValue = std::get_if<PercentageRaw>(&(*percent))) {
+    if (auto percent = MetaConsumer<CSS::Percentage>::consume(args, state.context, { }, { })) {
+        if (CSS::PercentageRaw* rawValue = std::get_if<CSS::PercentageRaw>(&(percent->value))) {
             auto value = rawValue->value;
             if (value < 0.0 || value > 100.0)
                 return std::nullopt;
@@ -576,8 +560,8 @@ static std::optional<CSSUnresolvedColorMix::Component> consumeColorMixComponent(
         return std::nullopt;
 
     if (!percentage) {
-        if (auto percent = MetaConsumer<PercentageRaw>::consume(args, state.context, { }, { })) {
-            if (PercentageRaw* rawValue = std::get_if<PercentageRaw>(&(*percent))) {
+        if (auto percent = MetaConsumer<CSS::Percentage>::consume(args, state.context, { }, { })) {
+            if (CSS::PercentageRaw* rawValue = std::get_if<CSS::PercentageRaw>(&(percent->value))) {
                 auto value = rawValue->value;
                 if (value < 0.0 || value > 100.0)
                     return std::nullopt;
@@ -595,7 +579,7 @@ static std::optional<CSSUnresolvedColorMix::Component> consumeColorMixComponent(
 static bool hasNonCalculatedZeroPercentage(const CSSUnresolvedColorMix::Component& mixComponent)
 {
     if (auto percentage = mixComponent.percentage) {
-        if (PercentageRaw* rawValue = std::get_if<PercentageRaw>(&(*percentage)))
+        if (CSS::PercentageRaw* rawValue = std::get_if<CSS::PercentageRaw>(&(percentage->value)))
             return rawValue->value == 0.0;
     }
     return false;

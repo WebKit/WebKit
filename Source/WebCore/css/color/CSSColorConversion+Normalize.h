@@ -26,8 +26,8 @@
 #pragma once
 
 #include "CSSColorDescriptors.h"
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPrimitiveValue.h"
-#include "CSSPropertyParserConsumer+RawTypes.h"
 #include "ColorNormalization.h"
 #include <limits>
 #include <optional>
@@ -37,143 +37,136 @@ namespace WebCore {
 // MARK: - normalizeAndClampNumericComponents
 
 template<typename Descriptor, unsigned Index>
-NumberRaw normalizeAndClampNumericComponents(NumberRaw number)
+CSS::Number normalizeAndClampNumericComponents(CSS::NumberRaw number)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
 
     if constexpr (info.type == ColorComponentType::Angle)
-        return { normalizeHue(number.value) };
+        return CSS::NumberRaw { normalizeHue(number.value) };
     else if constexpr (info.min == -std::numeric_limits<double>::infinity() && info.max == std::numeric_limits<double>::infinity())
-        return { number.value };
+        return CSS::NumberRaw { number.value };
     else if constexpr (info.min == -std::numeric_limits<double>::infinity())
-        return { std::min(number.value, info.max) };
+        return CSS::NumberRaw { std::min(number.value, info.max) };
     else if constexpr (info.max == std::numeric_limits<double>::infinity())
-        return { std::max(number.value, info.min) };
+        return CSS::NumberRaw { std::max(number.value, info.min) };
     else
-        return { std::clamp(number.value, info.min, info.max) };
+        return CSS::NumberRaw { std::clamp(number.value, info.min, info.max) };
 }
 
 template<typename Descriptor, unsigned Index>
-NumberRaw normalizeAndClampNumericComponents(PercentageRaw percent)
+CSS::Number normalizeAndClampNumericComponents(CSS::PercentageRaw percent)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
 
     if constexpr (info.min == -std::numeric_limits<double>::infinity() && info.max == std::numeric_limits<double>::infinity())
-        return { percent.value * info.percentMultiplier };
+        return CSS::NumberRaw { percent.value * info.percentMultiplier };
     else if constexpr (info.min == -std::numeric_limits<double>::infinity())
-        return { std::min(percent.value * info.percentMultiplier, info.max) };
+        return CSS::NumberRaw { std::min(percent.value * info.percentMultiplier, info.max) };
     else if constexpr (info.max == std::numeric_limits<double>::infinity())
-        return { std::max(percent.value * info.percentMultiplier, info.min) };
+        return CSS::NumberRaw { std::max(percent.value * info.percentMultiplier, info.min) };
     else
-        return { std::clamp(percent.value * info.percentMultiplier, info.min, info.max) };
+        return CSS::NumberRaw { std::clamp(percent.value * info.percentMultiplier, info.min, info.max) };
 }
 
 template<typename Descriptor, unsigned Index>
-NumberRaw normalizeAndClampNumericComponents(AngleRaw angle)
+CSS::Number normalizeAndClampNumericComponents(CSS::AngleRaw angle)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
     static_assert(info.type == ColorComponentType::Angle);
 
-    return { normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)) };
+    return CSS::NumberRaw { normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)) };
 }
 
-template<typename Descriptor, unsigned Index, typename T>
-auto normalizeAndClampNumericComponents(const T& value) -> T
+template<typename Descriptor, unsigned Index>
+auto normalizeAndClampNumericComponentsIntoCanonicalRepresentation(const CSS::None& none) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index>
 {
-    return value;
+    return none;
+}
+
+template<typename Descriptor, unsigned Index, typename Raw>
+auto normalizeAndClampNumericComponentsIntoCanonicalRepresentation(const CSS::PrimitiveNumeric<Raw>& value) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index>
+{
+    return WTF::switchOn(value.value,
+        [](Raw value) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index> {
+            return normalizeAndClampNumericComponents<Descriptor, Index>(value);
+        },
+        [](const CSS::UnevaluatedCalc<Raw>& value) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index> {
+            return CSS::PrimitiveNumeric<Raw> { value };
+        }
+    );
 }
 
 template<typename Descriptor, unsigned Index, typename... Ts>
-auto normalizeAndClampNumericComponents(const std::variant<Ts...>& variant) -> std::variant<Ts...>
+auto normalizeAndClampNumericComponentsIntoCanonicalRepresentation(const std::variant<Ts...>& variant) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index>
 {
-    return WTF::switchOn(variant, [](auto value) -> std::variant<Ts...> { return normalizeAndClampNumericComponents<Descriptor, Index>(value); });
-}
-
-template<typename Descriptor, unsigned Index, typename T>
-auto normalizeAndClampNumericComponents(const std::optional<T>& optional) -> std::optional<T>
-{
-    if (!optional)
-        return std::nullopt;
-    return normalizeAndClampNumericComponents<Descriptor, Index>(*optional);
+    return WTF::switchOn(variant, [](auto value) { return normalizeAndClampNumericComponentsIntoCanonicalRepresentation<Descriptor, Index>(value); });
 }
 
 template<typename Descriptor, unsigned Index>
-auto normalizeAndClampNumericComponentsIntoCanonicalRepresentation(const GetComponentResultWithCalcResult<Descriptor, Index>& variant) -> GetComponentResultWithCalcResult<typename Descriptor::Canonical, Index>
+auto normalizeAndClampNumericComponentsIntoCanonicalRepresentation(const std::optional<GetCSSColorParseTypeWithCalcComponentResult<Descriptor, Index>>& optional) -> std::optional<GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index>>
 {
-    return WTF::switchOn(variant, [](auto value) -> GetComponentResultWithCalcResult<typename Descriptor::Canonical, Index> { return normalizeAndClampNumericComponents<Descriptor, Index>(value); });
-}
-
-template<typename Descriptor, unsigned Index>
-auto normalizeAndClampNumericComponentsIntoCanonicalRepresentation(const std::optional<GetComponentResultWithCalcResult<Descriptor, Index>>& optional) -> std::optional<GetComponentResultWithCalcResult<typename Descriptor::Canonical, Index>>
-{
-    if (!optional)
-        return std::nullopt;
-    return normalizeAndClampNumericComponentsIntoCanonicalRepresentation<Descriptor, Index>(*optional);
+    return optional.transform([&](auto&& v) { return normalizeAndClampNumericComponentsIntoCanonicalRepresentation<Descriptor, Index>(v); });
 }
 
 // MARK: - normalizeNumericComponents
 
 template<typename Descriptor, unsigned Index>
-NumberRaw normalizeNumericComponents(NumberRaw number)
+CSS::Number normalizeNumericComponents(CSS::NumberRaw number)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
 
     if constexpr (info.type == ColorComponentType::Angle)
-        return { normalizeHue(number.value) };
+        return CSS::NumberRaw { normalizeHue(number.value) };
     else
-        return { number.value };
+        return CSS::NumberRaw { number.value };
 }
 
 template<typename Descriptor, unsigned Index>
-NumberRaw normalizeNumericComponents(PercentageRaw percent)
+CSS::Number normalizeNumericComponents(CSS::PercentageRaw percent)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
 
-    return { percent.value * info.percentMultiplier };
+    return CSS::NumberRaw { percent.value * info.percentMultiplier };
 }
 
 template<typename Descriptor, unsigned Index>
-NumberRaw normalizeNumericComponents(AngleRaw angle)
+CSS::Number normalizeNumericComponents(CSS::AngleRaw angle)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
     static_assert(info.type == ColorComponentType::Angle);
 
-    return { normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)) };
+    return CSS::NumberRaw { normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)) };
 }
 
-template<typename Descriptor, unsigned Index, typename T>
-auto normalizeNumericComponents(const T& value) -> T
+template<typename Descriptor, unsigned Index>
+auto normalizeNumericComponentsIntoCanonicalRepresentation(const CSS::None& none) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index>
 {
-    // Passthrough any non-numeric types.
-    return value;
+    return none;
+}
+
+template<typename Descriptor, unsigned Index, typename Raw>
+auto normalizeNumericComponentsIntoCanonicalRepresentation(const CSS::PrimitiveNumeric<Raw>& value) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index>
+{
+    return WTF::switchOn(value.value,
+        [](Raw value) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index> {
+            return normalizeNumericComponents<Descriptor, Index>(value);
+        },
+        [](const CSS::UnevaluatedCalc<Raw>& value) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index> {
+            return CSS::PrimitiveNumeric<Raw> { value };
+        }
+    );
 }
 
 template<typename Descriptor, unsigned Index, typename... Ts>
-auto normalizeNumericComponents(const std::variant<Ts...>& variant) -> std::variant<Ts...>
+auto normalizeNumericComponentsIntoCanonicalRepresentation(const std::variant<Ts...>& variant) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index>
 {
-    return WTF::switchOn(variant, [](auto value) -> std::variant<Ts...> { return normalizeNumericComponents<Descriptor, Index>(value); });
-}
-
-template<typename Descriptor, unsigned Index, typename T>
-auto normalizeNumericComponents(const std::optional<T>& optional) -> std::optional<T>
-{
-    if (!optional)
-        return std::nullopt;
-    return normalizeNumericComponents<Descriptor, Index>(*optional);
+    return WTF::switchOn(variant, [](auto value) { return normalizeNumericComponentsIntoCanonicalRepresentation<Descriptor, Index>(value); });
 }
 
 template<typename Descriptor, unsigned Index>
-auto normalizeNumericComponentsIntoCanonicalRepresentation(const GetComponentResultWithCalcResult<Descriptor, Index>& variant) -> GetComponentResultWithCalcResult<typename Descriptor::Canonical, Index>
+auto normalizeNumericComponentsIntoCanonicalRepresentation(const std::optional<GetCSSColorParseTypeWithCalcComponentResult<Descriptor, Index>>& optional) -> std::optional<GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index>>
 {
-    return WTF::switchOn(variant, [](auto value) -> GetComponentResultWithCalcResult<typename Descriptor::Canonical, Index> { return normalizeNumericComponents<Descriptor, Index>(value); });
-}
-
-template<typename Descriptor, unsigned Index>
-auto normalizeNumericComponentsIntoCanonicalRepresentation(const std::optional<GetComponentResultWithCalcResult<Descriptor, Index>>& optional) -> std::optional<GetComponentResultWithCalcResult<typename Descriptor::Canonical, Index>>
-{
-    if (!optional)
-        return std::nullopt;
-    return normalizeNumericComponentsIntoCanonicalRepresentation<Descriptor, Index>(*optional);
+    return optional.transform([&](auto&& v) { return normalizeNumericComponentsIntoCanonicalRepresentation<Descriptor, Index>(v); });
 }
 
 } // namespace WebCore

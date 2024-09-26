@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,30 @@
  */
 
 #include "config.h"
-#include "CSSPropertyParserConsumer+RawTypes.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 
-#include "CSSCalcSymbolTable.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueKeywords.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+namespace CSS {
 
-void serializationForCSS(StringBuilder& builder, const AngleRaw& value)
+// MARK: - Serialization
+
+void serializationForCSS(StringBuilder& builder, const NumberRaw& value)
 {
     formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
 }
 
-void serializationForCSS(StringBuilder& builder, const NumberRaw& value)
-{
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(CSSUnitType::CSS_NUMBER));
-}
-
 void serializationForCSS(StringBuilder& builder, const PercentageRaw& value)
 {
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(CSSUnitType::CSS_PERCENTAGE));
+    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
+}
+
+void serializationForCSS(StringBuilder& builder, const AngleRaw& value)
+{
+    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
 }
 
 void serializationForCSS(StringBuilder& builder, const LengthRaw& value)
@@ -57,12 +59,27 @@ void serializationForCSS(StringBuilder& builder, const TimeRaw& value)
     formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
 }
 
-void serializationForCSS(StringBuilder& builder, const LengthPercentageRaw& value)
+void serializationForCSS(StringBuilder& builder, const FrequencyRaw& value)
 {
     formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
 }
 
 void serializationForCSS(StringBuilder& builder, const ResolutionRaw& value)
+{
+    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
+}
+
+void serializationForCSS(StringBuilder& builder, const FlexRaw& value)
+{
+    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
+}
+
+void serializationForCSS(StringBuilder& builder, const AnglePercentageRaw& value)
+{
+    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
+}
+
+void serializationForCSS(StringBuilder& builder, const LengthPercentageRaw& value)
 {
     formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
 }
@@ -77,13 +94,15 @@ void serializationForCSS(StringBuilder& builder, const SymbolRaw& value)
     builder.append(nameLiteralForSerialization(value.value));
 }
 
-NumberRaw replaceSymbol(SymbolRaw raw, const CSSCalcSymbolTable& symbolTable)
+void serializationForCSS(StringBuilder& builder, const None&)
 {
-    auto result = symbolTable.get(raw.value);
-
-    // We should only get here if the symbol was previously looked up in the symbol table.
-    ASSERT(result);
-    return { result->value };
+    builder.append("none"_s);
 }
 
+void serializationForCSS(StringBuilder& builder, const Symbol& value)
+{
+    builder.append(nameLiteralForSerialization(value.value));
+}
+
+} // namespace CSS
 } // namespace WebCore

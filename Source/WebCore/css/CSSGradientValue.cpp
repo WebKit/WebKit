@@ -28,22 +28,37 @@
 
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSValueKeywords.h"
 #include "CalculationValue.h"
 #include "ColorInterpolation.h"
 #include "StyleBuilderConverter.h"
-#include "StyleBuilderState.h"
 #include "StyleGradientImage.h"
+#include "StylePosition.h"
+#include "StylePrimitiveNumericTypes+Conversions.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-// FIXME: Can `styleImageIsUncacheable` be replaced via extending the `ComputedStyleDependencies` system?
+template<CSS::RawNumeric T> static inline bool styleImageIsUncacheable(const T&);
+template<typename T> static bool styleImageIsUncacheable(const std::optional<T>&);
+template<typename T> static bool styleImageIsUncacheable(const CSS::UnevaluatedCalc<T>&);
+template<typename T> static bool styleImageIsUncacheable(const CSS::PrimitiveNumeric<T>&);
+template<typename T1, typename T2> static bool styleImageIsUncacheable(const std::pair<T1, T2>&);
+template<typename... Ts> static inline bool styleImageIsUncacheable(const CSS::SpaceSeparatedTuple<Ts...>&);
+template<typename... Ts> static inline bool styleImageIsUncacheable(const std::variant<Ts...>&);
+
+static inline bool styleImageIsUncacheable(CSSUnitType unit)
+{
+    return conversionToCanonicalUnitRequiresConversionData(unit);
+}
 
 static inline bool styleImageIsUncacheable(const CSSPrimitiveValue& value)
 {
-    return value.isFontRelativeLength() || value.isContainerPercentageLength();
+    if (auto* calc = value.cssCalcValue())
+        return calc->requiresConversionData();
+    return styleImageIsUncacheable(value.primitiveType());
 }
 
 static inline bool styleImageIsUncacheable(const CSSValue& value)
@@ -53,10 +68,75 @@ static inline bool styleImageIsUncacheable(const CSSValue& value)
     return false;
 }
 
-static bool styleImageIsUncacheable(const CSSGradientColorStopList& stops)
+constexpr bool styleImageIsUncacheable(const CSS::Left&)
+{
+    return false;
+}
+
+constexpr bool styleImageIsUncacheable(const CSS::Right&)
+{
+    return false;
+}
+
+constexpr bool styleImageIsUncacheable(const CSS::Top&)
+{
+    return false;
+}
+
+constexpr bool styleImageIsUncacheable(const CSS::Bottom&)
+{
+    return false;
+}
+
+constexpr bool styleImageIsUncacheable(const CSS::Center&)
+{
+    return false;
+}
+
+static inline bool styleImageIsUncacheable(const CSS::Position& position)
+{
+    return styleImageIsUncacheable(position.value);
+}
+
+template<CSS::RawNumeric T> static inline bool styleImageIsUncacheable(const T& raw)
+{
+    return styleImageIsUncacheable(raw.type);
+}
+
+template<typename T> static bool styleImageIsUncacheable(const std::optional<T>& optional)
+{
+    return optional && styleImageIsUncacheable(*optional);
+}
+
+template<typename T> static bool styleImageIsUncacheable(const CSS::UnevaluatedCalc<T>& calc)
+{
+    return calc.calc->requiresConversionData();
+}
+
+template<typename T> static bool styleImageIsUncacheable(const CSS::PrimitiveNumeric<T>& numeric)
+{
+    return styleImageIsUncacheable(numeric.value);
+}
+
+template<typename T1, typename T2> static bool styleImageIsUncacheable(const std::pair<T1, T2>& pair)
+{
+    return styleImageIsUncacheable(pair.first) || styleImageIsUncacheable(pair.second);
+}
+
+template<typename... Ts> static inline bool styleImageIsUncacheable(const CSS::SpaceSeparatedTuple<Ts...>& tuple)
+{
+    return WTF::apply([&](const auto& ...x) { return (styleImageIsUncacheable(x) || ...); }, tuple);
+}
+
+template<typename... Ts> static inline bool styleImageIsUncacheable(const std::variant<Ts...>& variant)
+{
+    return WTF::switchOn(variant, [](const auto& value) { return styleImageIsUncacheable(value); });
+}
+
+template<typename Stop> static bool styleImageIsUncacheable(const CSSGradientColorStopList<Stop>& stops)
 {
     for (auto& stop : stops) {
-        if (stop.position && styleImageIsUncacheable(*stop.position))
+        if (styleImageIsUncacheable(stop.position))
             return true;
         if (stop.color && Style::BuilderState::isColorFromPrimitiveValueDerivedFromElement(*stop.color))
             return true;
@@ -64,160 +144,54 @@ static bool styleImageIsUncacheable(const CSSGradientColorStopList& stops)
     return false;
 }
 
-static bool styleImageIsUncacheable(const CSSGradientPosition& position)
-{
-    auto styleImageIsUncacheableForCoordinate = [](CSSValue& coordinate) -> bool {
-        if (coordinate.isPair())
-            return styleImageIsUncacheable(coordinate.second());
-        return styleImageIsUncacheable(coordinate);
-    };
-
-    return styleImageIsUncacheableForCoordinate(position.x) || styleImageIsUncacheableForCoordinate(position.y);
-}
-
-static bool styleImageIsUncacheable(const std::optional<CSSGradientPosition>& position)
-{
-    return position && styleImageIsUncacheable(*position);
-}
-
 static inline std::optional<StyleColor> computeStopColor(const RefPtr<CSSPrimitiveValue>& color, Style::BuilderState& state)
 {
     if (!color)
         return std::nullopt;
-
     return state.colorFromPrimitiveValue(*color);
 }
 
-enum class StopPositionResolution { Standard, Deprecated };
-
-template<StopPositionResolution resolution> static inline std::optional<Length> computeLengthStopPosition(const RefPtr<CSSPrimitiveValue>& position, Style::BuilderState& state)
+static inline std::optional<Style::LengthPercentage> computeStopPosition(const CSSGradientLinearColorStop::Position& position, Style::BuilderState& state)
 {
-    if (!position)
-        return std::nullopt;
-
-    if constexpr (resolution == StopPositionResolution::Deprecated)
-        return Length(position->valueDividingBy100IfPercentage<float>(state.cssToLengthConversionData()), LengthType::Fixed);
-    else
-        return Style::BuilderConverter::convertLength(state, *position);
+    return CSS::toStyle(position, state);
 }
 
-static inline std::variant<std::monostate, AngleRaw, PercentageRaw> computeAngularStopPosition(const RefPtr<CSSPrimitiveValue>& position, Style::BuilderState& state)
+static inline std::optional<Style::AnglePercentage> computeStopPosition(const CSSGradientAngularColorStop::Position& position, Style::BuilderState& state)
 {
-    if (!position)
-        return std::monostate { };
-
-    if (position->isPercentage())
-        return { PercentageRaw { position->resolveAsPercentage(state.cssToLengthConversionData()) } };
-
-    if (position->isAngle())
-        return { AngleRaw { CSSUnitType::CSS_DEG, position->resolveAsAngle<double, CSSPrimitiveValue::AngleUnit::Degrees>(state.cssToLengthConversionData()) } };
-
-    ASSERT_NOT_REACHED();
-    return std::monostate { };
+    return CSS::toStyle(position, state);
 }
 
-template<StopPositionResolution resolution> static decltype(auto) computeLengthStops(const CSSGradientColorStopList& stops, Style::BuilderState& state)
+static inline Style::Number computeStopPosition(const CSSGradientDeprecatedColorStop::Position& position, Style::BuilderState& state)
 {
-    return stops.map([&](auto& stop) -> StyleGradientImageLengthStop {
-        return { computeStopColor(stop.color, state), computeLengthStopPosition<resolution>(stop.position, state) };
+    return WTF::switchOn(position,
+        [&](const CSS::Number& number) {
+            return CSS::toStyle(number, state);
+        },
+        [&](const CSS::Percentage& percentage) {
+            return Style::Number { CSS::toStyle(percentage, state).value / 100.0f };
+        }
+    );
+}
+
+static decltype(auto) toStyle(const CSSGradientLinearColorStopList& stops, Style::BuilderState& state)
+{
+    return stops.map([&](auto& stop) -> StyleGradientImageLinearColorStop {
+        return { computeStopColor(stop.color, state), computeStopPosition(stop.position, state) };
     });
 }
 
-static decltype(auto) computeAngularStops(const CSSGradientColorStopList& stops, Style::BuilderState& state)
+static decltype(auto) toStyle(const CSSGradientAngularColorStopList& stops, Style::BuilderState& state)
 {
-    return stops.map([&](auto& stop) -> StyleGradientImageAngularStop {
-        return { computeStopColor(stop.color, state), computeAngularStopPosition(stop.position, state) };
+    return stops.map([&](auto& stop) -> StyleGradientImageAngularColorStop {
+        return { computeStopColor(stop.color, state), computeStopPosition(stop.position, state) };
     });
 }
 
-// MARK: StyleGradientDeprecatedPoint resolution.
-
-static StyleGradientDeprecatedPoint::Coordinate resolvePointCoordinate(const Ref<CSSPrimitiveValue>& coordinate, Style::BuilderState& state)
+static decltype(auto) toStyle(const CSSGradientDeprecatedColorStopList& stops, Style::BuilderState& state)
 {
-    if (coordinate->isPercentage())
-        return { PercentageRaw { coordinate->resolveAsPercentage(state.cssToLengthConversionData()) } };
-    return { NumberRaw { coordinate->resolveAsNumber(state.cssToLengthConversionData()) } };
-}
-
-static StyleGradientDeprecatedPoint resolvePoint(const CSSGradientDeprecatedPoint& point, Style::BuilderState& state)
-{
-    return {
-        resolvePointCoordinate(point.x, state),
-        resolvePointCoordinate(point.y, state)
-    };
-}
-
-// MARK: StyleGradientPosition resolution
-
-static StyleGradientPosition::Coordinate resolvePositionCoordinateX(const Ref<CSSValue>& coordinate, Style::BuilderState& state)
-{
-    if (coordinate->isPair()) {
-        if (coordinate->first().valueID() == CSSValueRight)
-            return { convertTo100PercentMinusLength(Style::BuilderConverter::convertLength(state, coordinate->second())) };
-        return { Style::BuilderConverter::convertLength(state, coordinate->second()) };
-    }
-
-    switch (coordinate->valueID()) {
-    case CSSValueLeft:
-        return { Length(0, LengthType::Percent) };
-    case CSSValueCenter:
-        return { Length(50, LengthType::Percent) };
-    case CSSValueRight:
-        return { Length(100, LengthType::Percent) };
-    default:
-        break;
-    }
-
-    return { Style::BuilderConverter::convertLength(state, coordinate) };
-}
-
-static StyleGradientPosition::Coordinate resolvePositionCoordinateY(const Ref<CSSValue>& coordinate, Style::BuilderState& state)
-{
-    if (coordinate->isPair()) {
-        if (coordinate->first().valueID() == CSSValueBottom)
-            return { convertTo100PercentMinusLength(Style::BuilderConverter::convertLength(state, coordinate->second())) };
-        return { Style::BuilderConverter::convertLength(state, coordinate->second()) };
-    }
-
-    switch (coordinate->valueID()) {
-    case CSSValueTop:
-        return { Length(0, LengthType::Percent) };
-    case CSSValueCenter:
-        return { Length(50, LengthType::Percent) };
-    case CSSValueBottom:
-        return { Length(100, LengthType::Percent) };
-    default:
-        break;
-    }
-
-    return { Style::BuilderConverter::convertLength(state, coordinate) };
-}
-
-static inline StyleGradientPosition resolvePosition(const CSSGradientPosition& position, Style::BuilderState& state)
-{
-    return {
-        resolvePositionCoordinateX(position.x, state),
-        resolvePositionCoordinateY(position.y, state)
-    };
-}
-
-static inline std::optional<StyleGradientPosition> resolvePosition(const std::optional<CSSGradientPosition>& position, Style::BuilderState& state)
-{
-    if (!position)
-        return std::nullopt;
-    return resolvePosition(*position, state);
-}
-
-// MARK: Serialization
-
-static void serializationForCSS(StringBuilder& builder, const CSSGradientPosition& position)
-{
-    builder.append(position.x->cssText(), ' ', position.y->cssText());
-}
-
-static void serializationForCSS(StringBuilder& builder, const CSSGradientDeprecatedPoint& position)
-{
-    builder.append(position.x->cssText(), ' ', position.y->cssText());
+    return stops.map([&](auto& stop) -> StyleGradientImageDeprecatedColorStop {
+        return { computeStopColor(stop.color, state), computeStopPosition(stop.position, state) };
+    });
 }
 
 // MARK: -
@@ -228,8 +202,11 @@ RefPtr<StyleImage> CSSLinearGradientValue::createStyleImage(Style::BuilderState&
         return m_cachedStyleImage;
 
     auto gradientLine = WTF::switchOn(m_data.gradientLine,
+        [&](const CSS::Angle& value) -> StyleGradientImage::LinearData::GradientLine {
+            return CSS::toStyle(value, state);
+        },
         [&](const auto& value) -> StyleGradientImage::LinearData::GradientLine {
-            return evaluateCalc(value, state.cssToLengthConversionData(), { });
+            return value;
         }
     );
 
@@ -237,7 +214,7 @@ RefPtr<StyleImage> CSSLinearGradientValue::createStyleImage(Style::BuilderState&
         StyleGradientImage::LinearData {
             WTFMove(gradientLine),
             m_repeating,
-            computeLengthStops<StopPositionResolution::Standard>(m_stops, state)
+            toStyle(m_stops, state)
         },
         m_colorInterpolationMethod
     );
@@ -253,8 +230,11 @@ RefPtr<StyleImage> CSSPrefixedLinearGradientValue::createStyleImage(Style::Build
         return m_cachedStyleImage;
 
     auto gradientLine = WTF::switchOn(m_data.gradientLine,
+        [&](const CSS::Angle& value) -> StyleGradientImage::PrefixedLinearData::GradientLine {
+            return CSS::toStyle(value, state);
+        },
         [&](const auto& value) -> StyleGradientImage::PrefixedLinearData::GradientLine {
-            return evaluateCalc(value, state.cssToLengthConversionData(), { });
+            return value;
         }
     );
 
@@ -262,7 +242,7 @@ RefPtr<StyleImage> CSSPrefixedLinearGradientValue::createStyleImage(Style::Build
         StyleGradientImage::PrefixedLinearData {
             WTFMove(gradientLine),
             m_repeating,
-            computeLengthStops<StopPositionResolution::Standard>(m_stops, state)
+            toStyle(m_stops, state)
         },
         m_colorInterpolationMethod
     );
@@ -279,9 +259,9 @@ RefPtr<StyleImage> CSSDeprecatedLinearGradientValue::createStyleImage(Style::Bui
 
     auto styleImage = StyleGradientImage::create(
         StyleGradientImage::DeprecatedLinearData {
-            resolvePoint(m_data.first, state),
-            resolvePoint(m_data.second, state),
-            computeLengthStops<StopPositionResolution::Deprecated>(m_stops, state)
+            CSS::toStyle(m_data.first, state),
+            CSS::toStyle(m_data.second, state),
+            toStyle(m_stops, state)
         },
         m_colorInterpolationMethod
     );
@@ -303,59 +283,53 @@ RefPtr<StyleImage> CSSRadialGradientValue::createStyleImage(Style::BuilderState&
         [&](const CSSRadialGradientValue::Shape& shape) -> StyleGradientImage::RadialData::GradientBox {
             return StyleGradientImage::RadialData::Shape {
                 shape.shape,
-                resolvePosition(shape.position, state)
+                CSS::toStyle(shape.position, state)
             };
         },
         [&](const CSSRadialGradientValue::Extent& extent) -> StyleGradientImage::RadialData::GradientBox {
             return StyleGradientImage::RadialData::Extent {
                 extent.extent,
-                resolvePosition(extent.position, state)
+                CSS::toStyle(extent.position, state)
             };
         },
         [&](const CSSRadialGradientValue::Length& length) -> StyleGradientImage::RadialData::GradientBox {
             return StyleGradientImage::RadialData::Length {
-                Style::BuilderConverter::convertLength(state, length.length),
-                resolvePosition(length.position, state)
+                CSS::toStyle(length.length, state),
+                CSS::toStyle(length.position, state)
             };
         },
         [&](const CSSRadialGradientValue::Size& size) -> StyleGradientImage::RadialData::GradientBox {
             return StyleGradientImage::RadialData::Size {
-                LengthSize {
-                    Style::BuilderConverter::convertLength(state, size.size.first),
-                    Style::BuilderConverter::convertLength(state, size.size.second)
-                },
-                resolvePosition(size.position, state)
+                CSS::toStyle(size.size, state),
+                CSS::toStyle(size.position, state)
             };
         },
         [&](const CSSRadialGradientValue::CircleOfLength& circleOfLength) -> StyleGradientImage::RadialData::GradientBox {
             return StyleGradientImage::RadialData::CircleOfLength {
-                Style::BuilderConverter::convertLength(state, circleOfLength.length),
-                resolvePosition(circleOfLength.position, state)
+                CSS::toStyle(circleOfLength.length, state),
+                CSS::toStyle(circleOfLength.position, state)
             };
         },
         [&](const CSSRadialGradientValue::CircleOfExtent& circleOfExtent) -> StyleGradientImage::RadialData::GradientBox {
             return StyleGradientImage::RadialData::CircleOfExtent {
                 circleOfExtent.extent,
-                resolvePosition(circleOfExtent.position, state)
+                CSS::toStyle(circleOfExtent.position, state)
             };
         },
         [&](const CSSRadialGradientValue::EllipseOfSize& ellipseOfSize) -> StyleGradientImage::RadialData::GradientBox {
             return StyleGradientImage::RadialData::EllipseOfSize {
-                LengthSize {
-                    Style::BuilderConverter::convertLength(state, ellipseOfSize.size.first),
-                    Style::BuilderConverter::convertLength(state, ellipseOfSize.size.second)
-                },
-                resolvePosition(ellipseOfSize.position, state)
+                CSS::toStyle(ellipseOfSize.size, state),
+                CSS::toStyle(ellipseOfSize.position, state)
             };
         },
         [&](const CSSRadialGradientValue::EllipseOfExtent& ellipseOfExtent) -> StyleGradientImage::RadialData::GradientBox {
             return StyleGradientImage::RadialData::EllipseOfExtent {
                 ellipseOfExtent.extent,
-                resolvePosition(ellipseOfExtent.position, state)
+                CSS::toStyle(ellipseOfExtent.position, state)
             };
         },
-        [&](const CSSGradientPosition& position) -> StyleGradientImage::RadialData::GradientBox {
-            return resolvePosition(position, state);
+        [&](const CSS::Position& position) -> StyleGradientImage::RadialData::GradientBox {
+            return CSS::toStyle(position, state);
         }
     );
 
@@ -363,7 +337,7 @@ RefPtr<StyleImage> CSSRadialGradientValue::createStyleImage(Style::BuilderState&
         StyleGradientImage::RadialData {
             WTFMove(gradientBox),
             m_repeating,
-            computeLengthStops<StopPositionResolution::Standard>(m_stops, state)
+            toStyle(m_stops, state)
         },
         m_colorInterpolationMethod
     );
@@ -393,10 +367,7 @@ RefPtr<StyleImage> CSSPrefixedRadialGradientValue::createStyleImage(Style::Build
         },
         [&](const CSSPrefixedRadialGradientValue::MeasuredSize& measuredSize) -> StyleGradientImage::PrefixedRadialData::GradientBox {
             return StyleGradientImage::PrefixedRadialData::MeasuredSize {
-                LengthSize {
-                    Style::BuilderConverter::convertLength(state, measuredSize.size.first),
-                    Style::BuilderConverter::convertLength(state, measuredSize.size.second)
-                }
+                CSS::toStyle(measuredSize.size, state)
             };
         }
     );
@@ -404,9 +375,9 @@ RefPtr<StyleImage> CSSPrefixedRadialGradientValue::createStyleImage(Style::Build
     auto styleImage = StyleGradientImage::create(
         StyleGradientImage::PrefixedRadialData {
             WTFMove(gradientBox),
-            resolvePosition(m_data.position, state),
+            CSS::toStyle(m_data.position, state),
             m_repeating,
-            computeLengthStops<StopPositionResolution::Standard>(m_stops, state)
+            toStyle(m_stops, state)
         },
         m_colorInterpolationMethod
     );
@@ -421,17 +392,17 @@ RefPtr<StyleImage> CSSDeprecatedRadialGradientValue::createStyleImage(Style::Bui
     if (m_cachedStyleImage)
         return m_cachedStyleImage;
 
-    auto resolveRadius = [](const std::variant<NumberRaw, UnevaluatedCalc<NumberRaw>>& radius, Style::BuilderState& state) -> float {
-        return evaluateCalc(radius, state.cssToLengthConversionData(), { }).value * state.cssToLengthConversionData().zoom();
+    auto toStyleRadius = [](const CSS::Number& radius, Style::BuilderState& state) -> Style::Number {
+        return { CSS::toStyle(radius, state).value * state.cssToLengthConversionData().zoom() };
     };
 
     auto styleImage = StyleGradientImage::create(
         StyleGradientImage::DeprecatedRadialData {
-            resolvePoint(m_data.first, state),
-            resolvePoint(m_data.second, state),
-            resolveRadius(m_data.firstRadius, state),
-            resolveRadius(m_data.secondRadius, state),
-            computeLengthStops<StopPositionResolution::Deprecated>(m_stops, state)
+            CSS::toStyle(m_data.first, state),
+            CSS::toStyle(m_data.second, state),
+            toStyleRadius(m_data.firstRadius, state),
+            toStyleRadius(m_data.secondRadius, state),
+            toStyle(m_stops, state)
         },
         m_colorInterpolationMethod
     );
@@ -446,23 +417,12 @@ RefPtr<StyleImage> CSSConicGradientValue::createStyleImage(Style::BuilderState& 
     if (m_cachedStyleImage)
         return m_cachedStyleImage;
 
-    auto resolveAngle = [](const CSSConicGradientValue::Angle& angle, Style::BuilderState& state) -> std::optional<AngleRaw> {
-        return WTF::switchOn(angle,
-            [](std::monostate) -> std::optional<AngleRaw> {
-                return std::nullopt;
-            },
-            [&](auto& value) -> std::optional<AngleRaw> {
-                return evaluateCalc(value, state.cssToLengthConversionData(), { });
-            }
-        );
-    };
-
     auto styleImage = StyleGradientImage::create(
         StyleGradientImage::ConicData {
-            resolveAngle(m_data.angle, state),
-            resolvePosition(m_data.position, state),
+            CSS::toStyle(m_data.angle, state),
+            CSS::toStyle(m_data.position, state),
             m_repeating,
-            computeAngularStops(m_stops, state)
+            toStyle(m_stops, state)
         },
         m_colorInterpolationMethod
     );
@@ -498,36 +458,57 @@ static bool appendColorInterpolationMethod(StringBuilder& builder, CSSGradientCo
     );
 }
 
-static void appendGradientStops(StringBuilder& builder, const Vector<CSSGradientColorStop, 2>& stops)
+static void appendColorStop(StringBuilder& builder, const CSSGradientDeprecatedColorStop& stop)
 {
-    for (auto& stop : stops) {
-        if (stop.position->isCalculated())
-            builder.append(", color-stop("_s, stop.position->cssText(), ", "_s, stop.color->cssText(), ')');
+    auto appendRaw = [&](const auto& color, CSS::NumberRaw raw) {
+        if (!raw.value)
+            builder.append("from("_s, color->cssText(), ')');
+        else if (raw.value == 1)
+            builder.append("to("_s, color->cssText(), ')');
         else {
-            auto position = stop.position->valueNoConversionDataRequired<double>();
-            if (!position)
-                builder.append(", from("_s, stop.color->cssText(), ')');
-            else if (position == 1)
-                builder.append(", to("_s, stop.color->cssText(), ')');
-            else
-                builder.append(", color-stop("_s, position, ", "_s, stop.color->cssText(), ')');
+            builder.append("color-stop("_s);
+            serializationForCSS(builder, raw);
+            builder.append(", "_s, color->cssText(), ')');
         }
-    }
+    };
+
+    auto appendCalc = [&](const auto& calc) {
+        builder.append("color-stop("_s, calc.calc->cssText(), ", "_s, stop.color->cssText(), ')');
+    };
+
+    WTF::switchOn(stop.position,
+        [&](const CSS::Number& number) {
+            return WTF::switchOn(number.value,
+                [&](CSS::NumberRaw raw) {
+                    appendRaw(stop.color, raw);
+                },
+                [&](const CSS::UnevaluatedCalc<CSS::NumberRaw>& calc) {
+                    appendCalc(calc);
+                }
+            );
+        },
+        [&](const CSS::Percentage& percentage) {
+            return WTF::switchOn(percentage.value,
+                [&](CSS::PercentageRaw raw) {
+                    appendRaw(stop.color, { raw.value / 100.0 });
+                },
+                [&](const CSS::UnevaluatedCalc<CSS::PercentageRaw>& calc) {
+                    appendCalc(calc);
+                }
+            );
+        }
+    );
 }
 
-template<typename T, typename U> static void appendSpaceSeparatedOptionalCSSPtrText(StringBuilder& builder, const T& a, const U& b)
+template<typename T> static void appendColorStop(StringBuilder& builder, const CSSGradientColorStop<T>& stop)
 {
-    if (a && b)
-        builder.append(a->cssText(), ' ', b->cssText());
-    else if (a)
-        builder.append(a->cssText());
-    else if (b)
-        builder.append(b->cssText());
-}
-
-static void writeColorStop(StringBuilder& builder, const CSSGradientColorStop& stop)
-{
-    appendSpaceSeparatedOptionalCSSPtrText(builder, stop.color, stop.position);
+    if (stop.color && stop.position) {
+        builder.append(stop.color->cssText(), ' ');
+        serializationForCSS(builder, *stop.position);
+    } else if (stop.color)
+        builder.append(stop.color->cssText());
+    else if (stop.position)
+        serializationForCSS(builder, *stop.position);
 }
 
 // MARK: - Linear.
@@ -563,16 +544,20 @@ String CSSLinearGradientValue::customCSSText() const
 
     WTF::switchOn(m_data.gradientLine,
         [&](std::monostate) { },
-        [&](const AngleRaw& angle) {
-            if (CSSPrimitiveValue::computeDegrees(angle.type, angle.value) == 180)
-                return;
+        [&](const CSS::Angle& angle) {
+            WTF::switchOn(angle.value,
+                [&](const CSS::AngleRaw& angleRaw) {
+                    if (CSSPrimitiveValue::computeDegrees(angleRaw.type, angleRaw.value) == 180)
+                        return;
 
-            serializationForCSS(result, angle);
-            wroteSomething = true;
-        },
-        [&](const UnevaluatedCalc<AngleRaw>& angleCalc) {
-            serializationForCSS(result, angleCalc);
-            wroteSomething = true;
+                    serializationForCSS(result, angleRaw);
+                    wroteSomething = true;
+                },
+                [&](const CSS::UnevaluatedCalc<CSS::AngleRaw>& angleCalc) {
+                    serializationForCSS(result, angleCalc);
+                    wroteSomething = true;
+                }
+            );
         },
         [&](Horizontal horizontal) {
             result.append("to "_s, WebCore::cssText(horizontal));
@@ -597,7 +582,7 @@ String CSSLinearGradientValue::customCSSText() const
     if (wroteSomething)
         result.append(", "_s);
 
-    result.append(interleave(m_stops, writeColorStop, ", "_s), ')');
+    result.append(interleave(m_stops, appendColorStop, ", "_s), ')');
 
     return result.toString();
 }
@@ -649,11 +634,8 @@ String CSSPrefixedLinearGradientValue::customCSSText() const
         [&](std::monostate) {
             result.append("top"_s);
         },
-        [&](const AngleRaw& angle) {
+        [&](const CSS::Angle& angle) {
             serializationForCSS(result, angle);
-        },
-        [&](const UnevaluatedCalc<AngleRaw>& angleCalc) {
-            serializationForCSS(result, angleCalc);
         },
         [&](Horizontal horizontal) {
             result.append(WebCore::cssText(horizontal));
@@ -666,12 +648,8 @@ String CSSPrefixedLinearGradientValue::customCSSText() const
         }
     );
 
-    for (auto& stop : m_stops) {
-        result.append(", "_s);
-        writeColorStop(result, stop);
-    }
+    result.append(", "_s, interleave(m_stops, appendColorStop, ", "_s), ')');
 
-    result.append(')');
     return result.toString();
 }
 
@@ -693,12 +671,16 @@ bool CSSPrefixedLinearGradientValue::styleImageIsUncacheable() const
 String CSSDeprecatedLinearGradientValue::customCSSText() const
 {
     StringBuilder result;
+
     result.append("-webkit-gradient(linear, "_s);
+
     serializationForCSS(result, m_data.first);
     result.append(", "_s);
     serializationForCSS(result, m_data.second);
-    appendGradientStops(result, m_stops);
+    if (!m_stops.isEmpty())
+        result.append(", "_s, interleave(m_stops, appendColorStop, ", "_s));
     result.append(')');
+
     return result.toString();
 }
 
@@ -731,20 +713,6 @@ static ASCIILiteral cssText(CSSRadialGradientValue::ExtentKeyword extent)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static bool isCenterPosition(const CSSValue& value)
-{
-    if (isValueID(value, CSSValueCenter))
-        return true;
-
-    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
-    return primitiveValue && primitiveValue->isPercentage() && primitiveValue->resolveAsPercentageIfNotCalculated() == 50;
-}
-
-static bool isCenterPosition(const CSSGradientPosition& position)
-{
-    return isCenterPosition(position.x) && isCenterPosition(position.y);
-}
-
 String CSSRadialGradientValue::customCSSText() const
 {
     StringBuilder result;
@@ -753,8 +721,8 @@ String CSSRadialGradientValue::customCSSText() const
 
     bool wroteSomething = false;
 
-    auto appendPosition = [&](const CSSGradientPosition& position) {
-        if (!isCenterPosition(position)) {
+    auto appendPosition = [&](const CSS::Position& position) {
+        if (!CSS::isCenterPosition(position)) {
             if (wroteSomething)
                 result.append(' ');
             result.append("at "_s);
@@ -763,7 +731,7 @@ String CSSRadialGradientValue::customCSSText() const
         }
     };
 
-    auto appendOptionalPosition = [&](const std::optional<CSSGradientPosition>& position) {
+    auto appendOptionalPosition = [&](const std::optional<CSS::Position>& position) {
         if (!position)
             return;
         appendPosition(*position);
@@ -787,13 +755,13 @@ String CSSRadialGradientValue::customCSSText() const
             appendOptionalPosition(data.position);
         },
         [&](const Length& data) {
-            result.append(data.length->cssText());
+            serializationForCSS(result, data.length);
             wroteSomething = true;
 
             appendOptionalPosition(data.position);
         },
         [&](const CircleOfLength& data) {
-            result.append(data.length->cssText());
+            serializationForCSS(result, data.length);
             wroteSomething = true;
 
             appendOptionalPosition(data.position);
@@ -804,16 +772,19 @@ String CSSRadialGradientValue::customCSSText() const
             else
                 result.append("circle"_s);
             wroteSomething = true;
+
             appendOptionalPosition(data.position);
         },
         [&](const Size& data) {
-            result.append(data.size.first->cssText(), ' ', data.size.second->cssText());
+            serializationForCSS(result, data.size);
             wroteSomething = true;
+
             appendOptionalPosition(data.position);
         },
         [&](const EllipseOfSize& data) {
-            result.append(data.size.first->cssText(), ' ', data.size.second->cssText());
+            serializationForCSS(result, data.size);
             wroteSomething = true;
+
             appendOptionalPosition(data.position);
         },
         [&](const EllipseOfExtent& data) {
@@ -821,9 +792,10 @@ String CSSRadialGradientValue::customCSSText() const
                 result.append(WebCore::cssText(data.extent));
                 wroteSomething = true;
             }
+
             appendOptionalPosition(data.position);
         },
-        [&](const CSSGradientPosition& data) {
+        [&](const CSS::Position& data) {
             appendPosition(data);
         }
     );
@@ -834,35 +806,9 @@ String CSSRadialGradientValue::customCSSText() const
     if (wroteSomething)
         result.append(", "_s);
 
-    result.append(interleave(m_stops, writeColorStop, ", "_s), ')');
+    result.append(interleave(m_stops, appendColorStop, ", "_s), ')');
 
     return result.toString();
-}
-
-bool CSSRadialGradientValue::Length::operator==(const CSSRadialGradientValue::Length& other) const
-{
-    return compareCSSValue(length, other.length)
-        && position == other.position;
-}
-
-bool CSSRadialGradientValue::CircleOfLength::operator==(const CSSRadialGradientValue::CircleOfLength& other) const
-{
-    return compareCSSValue(length, other.length)
-        && position == other.position;
-}
-
-bool CSSRadialGradientValue::Size::operator==(const CSSRadialGradientValue::Size& other) const
-{
-    return compareCSSValue(size.first, other.size.first)
-        && compareCSSValue(size.second, other.size.second)
-        && position == other.position;
-}
-
-bool CSSRadialGradientValue::EllipseOfSize::operator==(const CSSRadialGradientValue::EllipseOfSize& other) const
-{
-    return compareCSSValue(size.first, other.size.first)
-        && compareCSSValue(size.second, other.size.second)
-        && position == other.position;
 }
 
 bool CSSRadialGradientValue::equals(const CSSRadialGradientValue& other) const
@@ -898,16 +844,16 @@ bool CSSRadialGradientValue::styleImageIsUncacheable() const
             return WebCore::styleImageIsUncacheable(data.position);
         },
         [&](const Size& data) {
-            return WebCore::styleImageIsUncacheable(data.position) || WebCore::styleImageIsUncacheable(data.size.first) || WebCore::styleImageIsUncacheable(data.size.second);
+            return WebCore::styleImageIsUncacheable(data.position) || WebCore::styleImageIsUncacheable(data.size);
         },
         [&](const EllipseOfSize& data) {
-            return WebCore::styleImageIsUncacheable(data.position) || WebCore::styleImageIsUncacheable(data.size.first) || WebCore::styleImageIsUncacheable(data.size.second);
+            return WebCore::styleImageIsUncacheable(data.position) || WebCore::styleImageIsUncacheable(data.size);
         },
         [&](const EllipseOfExtent& data) {
             return WebCore::styleImageIsUncacheable(data.position);
         },
-        [&](const CSSGradientPosition& data) {
-            return WebCore::styleImageIsUncacheable(data);
+        [&](const CSS::Position& data) {
+            return WebCore::styleImageIsUncacheable(data.value);
         }
     );
 }
@@ -967,24 +913,14 @@ String CSSPrefixedRadialGradientValue::customCSSText() const
             result.append(", "_s, WebCore::cssText(shapeAndExtent.shape), ' ', WebCore::cssText(shapeAndExtent.extent));
         },
         [&](const MeasuredSize& measuredSize) {
-            result.append(", "_s, measuredSize.size.first->cssText(), ' ', measuredSize.size.second->cssText());
+            result.append(", "_s);
+            serializationForCSS(result, measuredSize.size);
         }
     );
 
-    for (auto& stop : m_stops) {
-        result.append(", "_s);
-        writeColorStop(result, stop);
-    }
-
-    result.append(')');
+    result.append(", "_s, interleave(m_stops, appendColorStop, ", "_s), ')');
 
     return result.toString();
-}
-
-bool CSSPrefixedRadialGradientValue::MeasuredSize::operator==(const CSSPrefixedRadialGradientValue::MeasuredSize& other) const
-{
-    return compareCSSValue(size.first, other.size.first)
-        && compareCSSValue(size.second, other.size.second);
 }
 
 bool CSSPrefixedRadialGradientValue::equals(const CSSPrefixedRadialGradientValue& other) const
@@ -1017,7 +953,7 @@ bool CSSPrefixedRadialGradientValue::styleImageIsUncacheable() const
             return false;
         },
         [&](const MeasuredSize& measuredSize) {
-            return WebCore::styleImageIsUncacheable(measuredSize.size.first) || WebCore::styleImageIsUncacheable(measuredSize.size.second);
+            return WebCore::styleImageIsUncacheable(measuredSize.size);
         }
     );
 }
@@ -1037,9 +973,8 @@ String CSSDeprecatedRadialGradientValue::customCSSText() const
     serializationForCSS(result, m_data.second);
     result.append(", "_s);
     serializationForCSS(result, m_data.secondRadius);
-
-    appendGradientStops(result, m_stops);
-
+    if (!m_stops.isEmpty())
+        result.append(", "_s, interleave(m_stops, appendColorStop, ", "_s));
     result.append(')');
 
     return result.toString();
@@ -1067,23 +1002,24 @@ String CSSConicGradientValue::customCSSText() const
 
     bool wroteSomething = false;
 
-    WTF::switchOn(m_data.angle,
-        [&](std::monostate) { },
-        [&](const AngleRaw& angle) {
-            if (CSSPrimitiveValue::computeDegrees(angle.type, angle.value)) {
+    if (m_data.angle) {
+        WTF::switchOn(m_data.angle->value,
+            [&](const CSS::AngleRaw& angleRaw) {
+                if (angleRaw.value) {
+                    result.append("from "_s);
+                    serializationForCSS(result, angleRaw);
+                    wroteSomething = true;
+                }
+            },
+            [&](const CSS::UnevaluatedCalc<CSS::AngleRaw>& angleCalc) {
                 result.append("from "_s);
-                serializationForCSS(result, angle);
+                serializationForCSS(result, angleCalc);
                 wroteSomething = true;
             }
-        },
-        [&](const UnevaluatedCalc<AngleRaw>& angleCalc) {
-            result.append("from "_s);
-            serializationForCSS(result, angleCalc);
-            wroteSomething = true;
-        }
-    );
+        );
+    }
 
-    if (m_data.position && !isCenterPosition(*m_data.position)) {
+    if (m_data.position && !CSS::isCenterPosition(*m_data.position)) {
         if (wroteSomething)
             result.append(' ');
         result.append("at "_s);
@@ -1097,7 +1033,7 @@ String CSSConicGradientValue::customCSSText() const
     if (wroteSomething)
         result.append(", "_s);
 
-    result.append(interleave(m_stops, writeColorStop, ", "_s), ')');
+    result.append(interleave(m_stops, appendColorStop, ", "_s), ')');
 
     return result.toString();
 }

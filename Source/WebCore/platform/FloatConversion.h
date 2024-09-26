@@ -35,21 +35,17 @@
 
 namespace WebCore {
 
-    template<typename T>
-    float narrowPrecisionToFloat(T);
+    template<typename T> constexpr float narrowPrecisionToFloat(T);
 
-    template<>
-    inline float narrowPrecisionToFloat(double number)
+    template<> constexpr float narrowPrecisionToFloat(double number)
     {
         return static_cast<float>(number);
     }
 
 #if USE(CG)
-    template<typename T>
-    CGFloat narrowPrecisionToCGFloat(T);
+    template<typename T> constexpr CGFloat narrowPrecisionToCGFloat(T);
 
-    template<>
-    inline CGFloat narrowPrecisionToCGFloat(double number)
+    template<> constexpr CGFloat narrowPrecisionToCGFloat(double number)
     {
         return static_cast<CGFloat>(number);
     }

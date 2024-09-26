@@ -107,16 +107,16 @@ static void addIntrinsicMargins(RenderStyle& style)
     // FIXME: Using "hasQuirk" to decide the margin wasn't set is kind of lame.
     if (style.width().isIntrinsicOrAuto()) {
         if (style.marginLeft().hasQuirk())
-            style.setMarginLeft(Length(intrinsicMargin, LengthType::Fixed));
+            style.setMarginLeft(WebCore::Length(intrinsicMargin, LengthType::Fixed));
         if (style.marginRight().hasQuirk())
-            style.setMarginRight(Length(intrinsicMargin, LengthType::Fixed));
+            style.setMarginRight(WebCore::Length(intrinsicMargin, LengthType::Fixed));
     }
 
     if (style.height().isAuto()) {
         if (style.marginTop().hasQuirk())
-            style.setMarginTop(Length(intrinsicMargin, LengthType::Fixed));
+            style.setMarginTop(WebCore::Length(intrinsicMargin, LengthType::Fixed));
         if (style.marginBottom().hasQuirk())
-            style.setMarginBottom(Length(intrinsicMargin, LengthType::Fixed));
+            style.setMarginBottom(WebCore::Length(intrinsicMargin, LengthType::Fixed));
     }
 }
 #endif
@@ -593,7 +593,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             }
             // Apparently this is the expected legacy behavior.
             if (isVertical && style.height().isAuto())
-                style.setHeight(Length(200, LengthType::Fixed));
+                style.setHeight(WebCore::Length(200, LengthType::Fixed));
         }
 
         if (UNLIKELY(m_element->visibilityAdjustment().contains(VisibilityAdjustment::Subtree) || m_parentStyle.isInVisibilityAdjustmentSubtree()))
@@ -904,15 +904,15 @@ void Adjuster::adjustThemeStyle(RenderStyle& style, const RenderStyle* userAgent
     if (style.containsSize()) {
         if (style.containIntrinsicWidthType() != ContainIntrinsicSizeType::None) {
             if (isOldWidthAuto)
-                style.setWidth(Length(LengthType::Auto));
+                style.setWidth(WebCore::Length(LengthType::Auto));
             if (isOldMinWidthAuto)
-                style.setMinWidth(Length(LengthType::Auto));
+                style.setMinWidth(WebCore::Length(LengthType::Auto));
         }
         if (style.containIntrinsicHeightType() != ContainIntrinsicSizeType::None) {
             if (isOldHeightAuto)
-                style.setHeight(Length(LengthType::Auto));
+                style.setHeight(WebCore::Length(LengthType::Auto));
             if (isOldMinHeightAuto)
-                style.setMinHeight(Length(LengthType::Auto));
+                style.setMinHeight(WebCore::Length(LengthType::Auto));
         }
     }
 }
@@ -959,7 +959,7 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
             && flexBasis.value() == 0
             && const_cast<Element*>(m_element)->classList().contains(class1)
             && const_cast<Element*>(m_element)->classList().contains(class2))
-            style.setMinHeight(Length(0, LengthType::Fixed));
+            style.setMinHeight(WebCore::Length(0, LengthType::Fixed));
     }
 #if ENABLE(VIDEO)
     if (m_document->quirks().needsFullscreenDisplayNoneQuirk()) {

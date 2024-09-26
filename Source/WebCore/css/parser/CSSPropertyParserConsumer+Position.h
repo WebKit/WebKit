@@ -24,10 +24,13 @@
 
 #pragma once
 
-#include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSPosition.h"
+#include "CSSPropertyParserOptions.h"
+#include <optional>
 
 namespace WebCore {
 
+class CSSParserTokenRange;
 class CSSValue;
 
 struct CSSParserContext;
@@ -55,6 +58,10 @@ RefPtr<CSSValue> consumePositionY(CSSParserTokenRange&, const CSSParserContext&)
 
 std::optional<PositionCoordinates> consumePositionCoordinates(CSSParserTokenRange&, const CSSParserContext&, UnitlessQuirk, PositionSyntax, NegativePercentagePolicy = NegativePercentagePolicy::Forbid);
 std::optional<PositionCoordinates> consumeOneOrTwoValuedPositionCoordinates(CSSParserTokenRange&, const CSSParserContext&, UnitlessQuirk);
+
+// MARK: <position> (unresolved)
+std::optional<CSS::Position> consumePositionUnresolved(CSSParserTokenRange&, const CSSParserContext&);
+std::optional<CSS::Position> consumeOneOrTwoComponentPositionUnresolved(CSSParserTokenRange&, const CSSParserContext&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

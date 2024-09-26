@@ -62,7 +62,7 @@ using AnchorPositionedStates = WeakHashMap<Element, std::unique_ptr<AnchorPositi
 
 class AnchorPositionEvaluator {
 public:
-    static Length resolveAnchorValue(const BuilderState&, const CSSAnchorValue&);
+    static WebCore::Length resolveAnchorValue(const BuilderState&, const CSSAnchorValue&);
     static void findAnchorsForAnchorPositionedElement(Ref<const Element> anchorPositionedElement);
 
     static std::optional<double> evaluate(const BuilderState&, const CSSCalc::Anchor&);

@@ -25,9 +25,9 @@
 #pragma once
 
 #include "CSSParserToken.h"
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSPropertyParserConsumer+Primitives.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
+#include "CSSUnevaluatedCalc.h"
 #include <optional>
 #include <wtf/Brigand.h>
 
@@ -35,29 +35,28 @@ namespace WebCore {
 
 class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
+struct CSSPropertyParserOptions;
 
 namespace CSSPropertyParserHelpers {
 
-std::optional<AngleRaw> validatedRange(AngleRaw, CSSPropertyParserOptions);
+std::optional<CSS::AngleRaw> validatedRange(CSS::AngleRaw, CSSPropertyParserOptions);
 
 struct AngleKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<AngleRaw>> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<CSS::UnevaluatedCalc<CSS::AngleRaw>> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct AngleKnownTokenTypeDimensionConsumer {
     static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static std::optional<AngleRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<CSS::AngleRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct AngleKnownTokenTypeNumberConsumer {
     static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<AngleRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<CSS::AngleRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
-template<> struct ConsumerDefinition<AngleRaw> {
-    using type = brigand::list<AngleRaw, UnevaluatedCalc<AngleRaw>>;
-
+template<> struct ConsumerDefinition<CSS::Angle> {
     using FunctionToken = AngleKnownTokenTypeFunctionConsumer;
     using DimensionToken = AngleKnownTokenTypeDimensionConsumer;
     using NumberToken = AngleKnownTokenTypeNumberConsumer;

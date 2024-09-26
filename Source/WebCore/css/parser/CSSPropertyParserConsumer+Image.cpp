@@ -38,14 +38,15 @@
 #include "CSSPaintImageValue.h"
 #include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
-#include "CSSPropertyParserConsumer+Angle.h"
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPropertyParserConsumer+AngleDefinitions.h"
+#include "CSSPropertyParserConsumer+AnglePercentageDefinitions.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+Color.h"
 #include "CSSPropertyParserConsumer+ColorInterpolationMethod.h"
 #include "CSSPropertyParserConsumer+Filter.h"
 #include "CSSPropertyParserConsumer+Ident.h"
-#include "CSSPropertyParserConsumer+LengthPercentage.h"
+#include "CSSPropertyParserConsumer+LengthDefinitions.h"
 #include "CSSPropertyParserConsumer+LengthPercentageDefinitions.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+MetaResolver.h"
@@ -54,12 +55,11 @@
 #include "CSSPropertyParserConsumer+Percentage.h"
 #include "CSSPropertyParserConsumer+PercentageDefinitions.h"
 #include "CSSPropertyParserConsumer+Position.h"
-#include "CSSPropertyParserConsumer+RawTypes.h"
-#include "CSSPropertyParserConsumer+Resolution.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+ResolutionDefinitions.h"
 #include "CSSPropertyParserConsumer+String.h"
 #include "CSSPropertyParserConsumer+URL.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
+#include "CSSPropertyParserOptions.h"
 #include "CSSValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
@@ -71,39 +71,33 @@ namespace CSSPropertyParserHelpers {
 
 // MARK: Deprecated <gradient> values
 
-enum class DeprecatedGradientPointAxis { Horizontal, Vertical };
-
-template<DeprecatedGradientPointAxis axis> static RefPtr<CSSPrimitiveValue> consumeDeprecatedGradientPointValue(CSSParserTokenRange& range, const CSSParserContext& context)
+template<CSSValueID zeroValue, CSSValueID oneHundredValue> static std::optional<CSS::PercentageOrNumber> consumeDeprecatedGradientPositionComponent(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().type() == IdentToken) {
-        if ((axis == DeprecatedGradientPointAxis::Horizontal && consumeIdent<CSSValueLeft>(range)) || (axis == DeprecatedGradientPointAxis::Vertical && consumeIdent<CSSValueTop>(range)))
-            return CSSPrimitiveValue::create(0, CSSUnitType::CSS_PERCENTAGE);
-        if ((axis == DeprecatedGradientPointAxis::Horizontal && consumeIdent<CSSValueRight>(range)) || (axis == DeprecatedGradientPointAxis::Vertical && consumeIdent<CSSValueBottom>(range)))
-            return CSSPrimitiveValue::create(100, CSSUnitType::CSS_PERCENTAGE);
+        if (consumeIdent<zeroValue>(range))
+            return CSS::PercentageOrNumber { CSS::Percentage { CSS::PercentageRaw { 0 } } };
+        if (consumeIdent<oneHundredValue>(range))
+            return CSS::PercentageOrNumber { CSS::Percentage { CSS::PercentageRaw { 100 } } };
         if (consumeIdent<CSSValueCenter>(range))
-            return CSSPrimitiveValue::create(50, CSSUnitType::CSS_PERCENTAGE);
-        return nullptr;
+            return CSS::PercentageOrNumber { CSS::Percentage { CSS::PercentageRaw { 50 } } };
+        return std::nullopt;
     }
-    RefPtr<CSSPrimitiveValue> result = consumePercentage(range, context);
-    if (!result)
-        result = consumeNumber(range, context);
-    return result;
+    return MetaConsumer<CSS::Percentage, CSS::Number>::consume(range, context, { }, { });
 }
 
-static std::optional<CSSGradientDeprecatedPoint> consumeDeprecatedGradientPoint(CSSParserTokenRange& range, const CSSParserContext& context)
+static std::optional<CSSDeprecatedGradientPosition> consumeDeprecatedGradientPosition(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    auto x = consumeDeprecatedGradientPointValue<DeprecatedGradientPointAxis::Horizontal>(range, context);
-    if (!x)
+    auto horizontal = consumeDeprecatedGradientPositionComponent<CSSValueLeft, CSSValueRight>(range, context);
+    if (!horizontal)
         return std::nullopt;
 
-    auto y = consumeDeprecatedGradientPointValue<DeprecatedGradientPointAxis::Vertical>(range, context);
-    if (!y)
+    auto vertical = consumeDeprecatedGradientPositionComponent<CSSValueTop, CSSValueBottom>(range, context);
+    if (!vertical)
         return std::nullopt;
 
-    return { { x.releaseNonNull(), y.releaseNonNull() } };
+    return { { WTFMove(*horizontal), WTFMove(*vertical) } };
 }
 
-// Used to parse colors for -webkit-gradient(...).
 static RefPtr<CSSPrimitiveValue> consumeDeprecatedGradientStopColor(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().id() == CSSValueCurrentcolor)
@@ -111,7 +105,7 @@ static RefPtr<CSSPrimitiveValue> consumeDeprecatedGradientStopColor(CSSParserTok
     return consumeColor(range, context);
 }
 
-static bool consumeDeprecatedGradientColorStop(CSSParserTokenRange& range, CSSGradientColorStop& stop, const CSSParserContext& context)
+static std::optional<CSSGradientDeprecatedColorStop> consumeDeprecatedGradientColorStop(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     auto id = range.peek().functionId();
     switch (id) {
@@ -121,43 +115,48 @@ static bool consumeDeprecatedGradientColorStop(CSSParserTokenRange& range, CSSGr
         break;
 
     default:
-        return false;
+        return std::nullopt;
     }
 
     auto args = consumeFunction(range);
-    RefPtr<CSSPrimitiveValue> position;
+    std::optional<CSSGradientDeprecatedColorStopPosition> position;
     switch (id) {
     case CSSValueFrom:
-        position = CSSPrimitiveValue::create(0);
+        position = CSS::NumberRaw { 0 };
         break;
     case CSSValueTo:
-        position = CSSPrimitiveValue::create(1);
+        position = CSS::NumberRaw { 1 };
         break;
     case CSSValueColorStop:
-        position = consumePercentageOrNumber(args, context);
+        position = MetaConsumer<CSS::Percentage, CSS::Number>::consume(args, context, { }, { });
         if (!position)
-            return false;
+            return std::nullopt;
         if (!consumeCommaIncludingWhitespace(args))
-            return false;
+            return std::nullopt;
         break;
     default:
         ASSERT_NOT_REACHED();
-        return false;
+        return std::nullopt;
     }
 
-    stop.position = WTFMove(position);
-    stop.color = consumeDeprecatedGradientStopColor(args, context);
-    return stop.color && args.atEnd();
+    auto color = consumeDeprecatedGradientStopColor(args, context);
+    if (!color || !args.atEnd())
+        return std::nullopt;
+
+    return CSSGradientDeprecatedColorStop {
+        .color = WTFMove(color),
+        .position = WTFMove(*position)
+    };
 }
 
-static std::optional<CSSGradientColorStopList> consumeDeprecatedGradientColorStops(CSSParserTokenRange& range, const CSSParserContext& context)
+static std::optional<CSSGradientDeprecatedColorStopList> consumeDeprecatedGradientColorStops(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    CSSGradientColorStopList stops;
+    CSSGradientDeprecatedColorStopList stops;
     while (consumeCommaIncludingWhitespace(range)) {
-        CSSGradientColorStop stop;
-        if (!consumeDeprecatedGradientColorStop(range, stop, context))
+        auto stop = consumeDeprecatedGradientColorStop(range, context);
+        if (!stop)
             return std::nullopt;
-        stops.append(WTFMove(stop));
+        stops.append(WTFMove(*stop));
     }
     stops.shrinkToFit();
 
@@ -169,14 +168,14 @@ static RefPtr<CSSValue> consumeDeprecatedLinearGradient(CSSParserTokenRange& ran
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
-    auto first = consumeDeprecatedGradientPoint(range, context);
+    auto first = consumeDeprecatedGradientPosition(range, context);
     if (!first)
         return nullptr;
 
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
-    auto second = consumeDeprecatedGradientPoint(range, context);
+    auto second = consumeDeprecatedGradientPosition(range, context);
     if (!second)
         return nullptr;
 
@@ -202,28 +201,28 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& ran
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
-    auto first = consumeDeprecatedGradientPoint(range, context);
+    auto first = consumeDeprecatedGradientPosition(range, context);
     if (!first)
         return nullptr;
 
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
-    auto firstRadius = MetaConsumer<NumberRaw>::consume(range, context, { }, radiusConsumeOptions);
+    auto firstRadius = MetaConsumer<CSS::Number>::consume(range, context, { }, radiusConsumeOptions);
     if (!firstRadius)
         return nullptr;
 
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
-    auto second = consumeDeprecatedGradientPoint(range, context);
+    auto second = consumeDeprecatedGradientPosition(range, context);
     if (!second)
         return nullptr;
 
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
-    auto secondRadius = MetaConsumer<NumberRaw>::consume(range, context, { }, radiusConsumeOptions);
+    auto secondRadius = MetaConsumer<CSS::Number>::consume(range, context, { }, radiusConsumeOptions);
     if (!secondRadius)
         return nullptr;
 
@@ -259,14 +258,14 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& range, co
 
 enum class SupportsColorHints : bool { No, Yes };
 
-template<typename Consumer> static std::optional<CSSGradientColorStopList> consumeColorStopList(CSSParserTokenRange& range, const CSSParserContext& context, SupportsColorHints supportsColorHints, Consumer&& consumeStopPosition)
+template<SupportsColorHints supportsColorHints, typename Stop, typename Consumer> static std::optional<CSSGradientColorStopList<Stop>> consumeColorStopList(CSSParserTokenRange& range, const CSSParserContext& context, Consumer&& consumeStopPosition)
 {
-    CSSGradientColorStopList stops;
+    CSSGradientColorStopList<Stop> stops;
 
     // The first color stop cannot be a color hint.
     bool previousStopWasColorHint = true;
     do {
-        CSSGradientColorStop stop { consumeColor(range, context), consumeStopPosition() };
+        Stop stop { consumeColor(range, context), consumeStopPosition(range) };
         if (!stop.color && !stop.position)
             return std::nullopt;
 
@@ -277,7 +276,7 @@ template<typename Consumer> static std::optional<CSSGradientColorStopList> consu
 
         // Stops with both a color and a position can have a second position, which shares the same color.
         if (stop.color && stop.position) {
-            if (auto secondPosition = consumeStopPosition()) {
+            if (auto secondPosition = consumeStopPosition(range)) {
                 stops.append(stop);
                 stop.position = WTFMove(secondPosition);
             }
@@ -298,17 +297,33 @@ template<typename Consumer> static std::optional<CSSGradientColorStopList> consu
     return { WTFMove(stops) };
 }
 
-static std::optional<CSSGradientColorStopList> consumeLengthColorStopList(CSSParserTokenRange& range, const CSSParserContext& context, SupportsColorHints supportsColorHints)
+template<SupportsColorHints supportsColorHints> static std::optional<CSSGradientLinearColorStopList> consumeLinearColorStopList(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeColorStopList(range, context, supportsColorHints, [&] { return consumeLengthPercentage(range, context.mode); });
+    const auto options = CSSPropertyParserOptions {
+        .parserMode = context.mode,
+        .unitless = UnitlessQuirk::Forbid,
+        .unitlessZero = UnitlessZeroQuirk::Allow
+    };
+
+    return consumeColorStopList<supportsColorHints, CSSGradientLinearColorStop>(range, context, [&](auto& range) {
+        return MetaConsumer<CSS::LengthPercentage>::consume(range, context, { }, options);
+    });
 }
 
-static std::optional<CSSGradientColorStopList> consumeAngularColorStopList(CSSParserTokenRange& range, const CSSParserContext& context, SupportsColorHints supportsColorHints)
+template<SupportsColorHints supportsColorHints> static std::optional<CSSGradientAngularColorStopList> consumeAngularColorStopList(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeColorStopList(range, context, supportsColorHints, [&] { return consumeAngleOrPercent(range, context); });
+    const auto options = CSSPropertyParserOptions {
+        .parserMode = context.mode,
+        .unitless = UnitlessQuirk::Forbid,
+        .unitlessZero = UnitlessZeroQuirk::Allow
+    };
+
+    return consumeColorStopList<supportsColorHints, CSSGradientAngularColorStop>(range, context, [&](auto& range) {
+        return MetaConsumer<CSS::AnglePercentage>::consume(range, context, { }, options);
+    });
 }
 
-static CSSGradientColorInterpolationMethod computeGradientColorInterpolationMethod(std::optional<ColorInterpolationMethod> parsedColorInterpolationMethod, const CSSGradientColorStopList& stops)
+template<typename Stop> static CSSGradientColorInterpolationMethod computeGradientColorInterpolationMethod(std::optional<ColorInterpolationMethod> parsedColorInterpolationMethod, const CSSGradientColorStopList<Stop>& stops)
 {
     // We detect whether stops use legacy vs. non-legacy CSS color syntax using the following rules:
     //  - A CSSValueID is always considered legacy since all keyword based colors are considered legacy by the spec.
@@ -412,8 +427,8 @@ static RefPtr<CSSValue> consumePrefixedLinearGradient(CSSParserTokenRange& range
         .unitlessZero = UnitlessZeroQuirk::Allow
     };
 
-    if (auto angle = MetaConsumer<AngleRaw>::consume(range, context, { }, angleConsumeOptions)) {
-        gradientLine = WTF::switchOn(WTFMove(*angle), [](auto&& value) -> CSSPrefixedLinearGradientValue::GradientLine { return value; });
+    if (auto angle = MetaConsumer<CSS::Angle>::consume(range, context, { }, angleConsumeOptions)) {
+        gradientLine = WTF::switchOn(WTFMove(angle->value), [](auto&& value) -> CSSPrefixedLinearGradientValue::GradientLine { return value; });
         if (!consumeCommaIncludingWhitespace(range))
             return nullptr;
     } else if (auto keywordGradientLine = consumeKeywordGradientLine(range)) {
@@ -422,7 +437,7 @@ static RefPtr<CSSValue> consumePrefixedLinearGradient(CSSParserTokenRange& range
             return nullptr;
     }
 
-    auto stops = consumeLengthColorStopList(range, context, SupportsColorHints::No);
+    auto stops = consumeLinearColorStopList<SupportsColorHints::No>(range, context);
     if (!stops)
         return nullptr;
 
@@ -467,11 +482,10 @@ static RefPtr<CSSValue> consumePrefixedRadialGradient(CSSParserTokenRange& range
     };
     static constexpr SortedArrayMap extentMap { extentMappings };
 
-    std::optional<CSSGradientPosition> position;
-    if (auto centerCoordinate = consumeOneOrTwoValuedPositionCoordinates(range, context.mode, UnitlessQuirk::Forbid)) {
+    auto position = consumeOneOrTwoComponentPositionUnresolved(range, context);
+    if (position) {
         if (!consumeCommaIncludingWhitespace(range))
             return nullptr;
-        position = CSSGradientPosition { WTFMove(centerCoordinate->x), WTFMove(centerCoordinate->y) };
     }
 
     std::optional<CSSPrefixedRadialGradientValue::ShapeKeyword> shapeKeyword;
@@ -496,17 +510,23 @@ static RefPtr<CSSValue> consumePrefixedRadialGradient(CSSParserTokenRange& range
     } else if (extentKeyword) {
         gradientBox = *extentKeyword;
     } else {
-        if (auto length1 = consumeLengthPercentage(range, context.mode, ValueRange::NonNegative)) {
-            auto length2 = consumeLengthPercentage(range, context.mode, ValueRange::NonNegative);
+        const auto options = CSSPropertyParserOptions {
+            .parserMode = context.mode,
+            .valueRange = ValueRange::NonNegative,
+            .unitlessZero = UnitlessZeroQuirk::Allow
+        };
+
+        if (auto length1 = MetaConsumer<CSS::LengthPercentage>::consume(range, context, { }, options)) {
+            auto length2 = MetaConsumer<CSS::LengthPercentage>::consume(range, context, { }, options);
             if (!length2)
                 return nullptr;
             if (!consumeCommaIncludingWhitespace(range))
                 return nullptr;
-            gradientBox = CSSPrefixedRadialGradientValue::MeasuredSize { { length1.releaseNonNull(), length2.releaseNonNull() } };
+            gradientBox = CSSPrefixedRadialGradientValue::MeasuredSize { { WTFMove(*length1), WTFMove(*length2) } };
         }
     }
 
-    auto stops = consumeLengthColorStopList(range, context, SupportsColorHints::No);
+    auto stops = consumeLinearColorStopList<SupportsColorHints::No>(range, context);
     if (!stops)
         return nullptr;
 
@@ -595,8 +615,8 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& range, const 
         .unitlessZero = UnitlessZeroQuirk::Allow
     };
 
-    if (auto angle = MetaConsumer<AngleRaw>::consume(range, context, { }, angleConsumeOptions))
-        gradientLine = WTF::switchOn(WTFMove(*angle), [](auto&& value) -> CSSLinearGradientValue::GradientLine { return value; });
+    if (auto angle = MetaConsumer<CSS::Angle>::consume(range, context, { }, angleConsumeOptions))
+        gradientLine = WTF::switchOn(WTFMove(angle->value), [](auto&& value) -> CSSLinearGradientValue::GradientLine { return value; });
     else if (range.peek().id() == CSSValueTo) {
         auto keywordGradientLine = consumeKeywordGradientLine(range);
         if (!keywordGradientLine)
@@ -615,7 +635,7 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& range, const 
             return nullptr;
     }
 
-    auto stops = consumeLengthColorStopList(range, context, SupportsColorHints::Yes);
+    auto stops = consumeLinearColorStopList<SupportsColorHints::Yes>(range, context);
     if (!stops)
         return nullptr;
 
@@ -663,7 +683,7 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
 
     std::optional<CSSRadialGradientValue::ShapeKeyword> shape;
 
-    using Size = std::variant<CSSRadialGradientValue::ExtentKeyword, Ref<CSSPrimitiveValue>, std::pair<Ref<CSSPrimitiveValue>, Ref<CSSPrimitiveValue>>>;
+    using Size = std::variant<CSSRadialGradientValue::ExtentKeyword, CSS::Length, CSS::SpaceSeparatedTuple<CSS::LengthPercentage, CSS::LengthPercentage>>;
     std::optional<Size> size;
 
     // First part of grammar, the size/shape clause:
@@ -690,31 +710,40 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
             if (!shape && !size)
                 break;
         } else {
-            auto length1 = consumeLengthPercentage(range, context.mode, ValueRange::NonNegative);
+            const auto options = CSSPropertyParserOptions {
+                .parserMode = context.mode,
+                .valueRange = ValueRange::NonNegative,
+                .unitlessZero = UnitlessZeroQuirk::Allow
+            };
+            auto rangeCopy = range;
+            auto length1 = MetaConsumer<CSS::LengthPercentage>::consume(rangeCopy, context, { }, options);
             if (!length1)
                 break;
             if (size)
                 return nullptr;
-            if (auto length2 = consumeLengthPercentage(range, context.mode, ValueRange::NonNegative)) {
-                size = std::make_pair(length1.releaseNonNull(), length2.releaseNonNull());
+            if (auto length2 = MetaConsumer<CSS::LengthPercentage>::consume(rangeCopy, context, { }, options)) {
+                size = CSS::SpaceSeparatedTuple(WTFMove(*length1), WTFMove(*length2));
+                range = rangeCopy;
 
                 // Additional increment is necessary since we consumed a second token.
                 ++i;
             } else {
-                // If there is only one, it has to be a Length, not a percentage.
-                if (length1->isPercentage())
+                // Reset to before the first length-percentage, and re-parse to make sure it is a valid <length [0,∞]> production.
+                rangeCopy = range;
+                auto length = MetaConsumer<CSS::Length>::consume(rangeCopy, context, { }, options);
+                if (!length)
                     return nullptr;
-                size = length1.releaseNonNull();
+                size = WTFMove(*length);
+                range = rangeCopy;
             }
         }
     }
 
-    std::optional<CSSGradientPosition> position;
+    std::optional<CSS::Position> position;
     if (consumeIdent<CSSValueAt>(range)) {
-        auto positionCoordinates = consumePositionCoordinates(range, context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position);
-        if (!positionCoordinates)
+        position = consumePositionUnresolved(range, context);
+        if (!position)
             return nullptr;
-        position = CSSGradientPosition { WTFMove(positionCoordinates->x), WTFMove(positionCoordinates->y) };
     }
 
     if ((shape || size || position) && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
@@ -726,7 +755,7 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
     if ((shape || size || position || colorInterpolationMethod) && !consumeCommaIncludingWhitespace(range))
         return nullptr;
 
-    auto stops = consumeLengthColorStopList(range, context, SupportsColorHints::Yes);
+    auto stops = consumeLinearColorStopList<SupportsColorHints::Yes>(range, context);
     if (!stops)
         return nullptr;
 
@@ -744,11 +773,11 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
                         data.gradientBox = CSSRadialGradientValue::CircleOfExtent { WTFMove(extent), WTFMove(position) };
                         return true;
                     },
-                    [&](Ref<CSSPrimitiveValue>&& length) -> bool {
+                    [&](CSS::Length&& length) -> bool {
                         data.gradientBox = CSSRadialGradientValue::CircleOfLength { WTFMove(length), WTFMove(position) };
                         return true;
                     },
-                    [&](std::pair<Ref<CSSPrimitiveValue>, Ref<CSSPrimitiveValue>>&&) -> bool {
+                    [&](CSS::SpaceSeparatedTuple<CSS::LengthPercentage, CSS::LengthPercentage>&&) -> bool {
                         return false;
                     }
                 );
@@ -766,11 +795,11 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
                         data.gradientBox = CSSRadialGradientValue::EllipseOfExtent { WTFMove(extent), WTFMove(position) };
                         return true;
                     },
-                    [&](Ref<CSSPrimitiveValue>&&) -> bool {
+                    [&](CSS::Length&&) -> bool {
                         // Ellipses must have two length-percentages specified.
                         return false;
                     },
-                    [&](std::pair<Ref<CSSPrimitiveValue>, Ref<CSSPrimitiveValue>>&& size) -> bool {
+                    [&](CSS::SpaceSeparatedTuple<CSS::LengthPercentage, CSS::LengthPercentage>&& size) -> bool {
                         data.gradientBox = CSSRadialGradientValue::EllipseOfSize { WTFMove(size), WTFMove(position) };
                         return true;
                     }
@@ -783,7 +812,7 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
     } else {
         if (!size) {
             if (position)
-                data.gradientBox = CSSRadialGradientValue::GradientBox { std::in_place_type<CSSGradientPosition>, WTFMove(*position) };
+                data.gradientBox = CSSRadialGradientValue::GradientBox { std::in_place_type<CSS::Position>, WTFMove(*position) };
             else
                 data.gradientBox = std::monostate { };
         } else {
@@ -791,10 +820,10 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
                 [&](CSSRadialGradientValue::ExtentKeyword&& extent) {
                     data.gradientBox = CSSRadialGradientValue::Extent { WTFMove(extent), WTFMove(position) };
                 },
-                [&](Ref<CSSPrimitiveValue>&& length) {
+                [&](CSS::Length&& length) {
                     data.gradientBox = CSSRadialGradientValue::Length { WTFMove(length), WTFMove(position) };
                 },
-                [&](std::pair<Ref<CSSPrimitiveValue>, Ref<CSSPrimitiveValue>>&& size) {
+                [&](CSS::SpaceSeparatedTuple<CSS::LengthPercentage, CSS::LengthPercentage>&& size) {
                     data.gradientBox = CSSRadialGradientValue::Size { WTFMove(size), WTFMove(position) };
                 }
             );
@@ -827,7 +856,7 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& range, const C
             return nullptr;
     }
 
-    CSSConicGradientValue::Angle angle = std::monostate { };
+    std::optional<CSS::Angle> angle;
 
     if (consumeIdent<CSSValueFrom>(range)) {
         // FIXME: Unlike linear-gradient, conic-gradients are not specified to allow unitless 0 angles - https://www.w3.org/TR/css-images-4/#valdef-conic-gradient-angle.
@@ -837,32 +866,31 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& range, const C
             .unitlessZero = UnitlessZeroQuirk::Allow
         };
 
-        auto angleValue = MetaConsumer<AngleRaw>::consume(range, context, { }, angleConsumeOptions);
+        auto angleValue = MetaConsumer<CSS::Angle>::consume(range, context, { }, angleConsumeOptions);
         if (!angleValue)
             return nullptr;
-        angle = WTF::switchOn(WTFMove(*angleValue), [](auto&& value) -> CSSConicGradientValue::Angle { return value; });
+        angle = WTF::switchOn(WTFMove(angleValue->value), [](auto&& value) -> CSS::Angle { return value; });
     }
 
-    std::optional<CSSGradientPosition> position;
+    std::optional<CSS::Position> position;
     if (consumeIdent<CSSValueAt>(range)) {
-        auto positionCoordinate = consumePositionCoordinates(range, context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position);
-        if (!positionCoordinate)
+        position = consumePositionUnresolved(range, context);
+        if (!position)
             return nullptr;
-        position = CSSGradientPosition { WTFMove(positionCoordinate->x), WTFMove(positionCoordinate->y) };
     }
 
-    if ((!std::holds_alternative<std::monostate>(angle) || position) && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
+    if ((angle || position) && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
         colorInterpolationMethod = consumeColorInterpolationMethod(range, context);
         if (!colorInterpolationMethod)
             return nullptr;
     }
 
-    if (!std::holds_alternative<std::monostate>(angle) || position || colorInterpolationMethod) {
+    if (angle || position || colorInterpolationMethod) {
         if (!consumeCommaIncludingWhitespace(range))
             return nullptr;
     }
 
-    auto stops = consumeAngularColorStopList(range, context, SupportsColorHints::Yes);
+    auto stops = consumeAngularColorStopList<SupportsColorHints::Yes>(range, context);
     if (!stops)
         return nullptr;
 
@@ -973,6 +1001,7 @@ struct ImageSetTypeFunctionRaw {
 
     bool operator==(const ImageSetTypeFunctionRaw&) const = default;
 };
+using ImageSetTypeFunction = ImageSetTypeFunctionRaw;
 
 struct ImageSetTypeFunctionRawKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
@@ -995,9 +1024,7 @@ struct ImageSetTypeFunctionRawKnownTokenTypeFunctionConsumer {
     }
 };
 
-template<> struct ConsumerDefinition<ImageSetTypeFunctionRaw> {
-    using type = brigand::list<ImageSetTypeFunctionRaw>;
-
+template<> struct ConsumerDefinition<ImageSetTypeFunction> {
     using FunctionToken = ImageSetTypeFunctionRawKnownTokenTypeFunctionConsumer;
 };
 
@@ -1018,12 +1045,12 @@ static RefPtr<CSSPrimitiveValue> consumeImageSetResolutionOrTypeFunction(CSSPars
         .unitlessZero = UnitlessZeroQuirk::Allow
     };
 
-    auto result = MetaConsumer<ResolutionRaw, ImageSetTypeFunctionRaw>::consume(range, context, { }, options);
+    auto result = MetaConsumer<CSS::Resolution, ImageSetTypeFunction>::consume(range, context, { }, options);
     if (!result)
         return { };
 
     return WTF::switchOn(*result,
-        [&](const ImageSetTypeFunctionRaw& typeFunction) -> RefPtr<CSSPrimitiveValue> {
+        [&](const ImageSetTypeFunction& typeFunction) -> RefPtr<CSSPrimitiveValue> {
             return CSSPrimitiveValue::create(typeFunction.value);
         },
         [&](const auto& resolution) -> RefPtr<CSSPrimitiveValue> {

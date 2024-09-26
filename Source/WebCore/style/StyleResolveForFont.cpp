@@ -39,8 +39,8 @@
 #include "CSSFontVariationValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParserConsumer+Font.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include "CSSPropertyParserHelpers.h"
+#include "CSSUnevaluatedCalc.h"
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
 #include "Document.h"
@@ -53,6 +53,7 @@
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
 #include "StyleFontSizeFunctions.h"
+#include "StylePrimitiveNumericTypes+Conversions.h"
 #include "WebKitFontFamilyNames.h"
 
 namespace WebCore {
@@ -131,15 +132,11 @@ static FontSelectionValue fontWeightFromUnresolvedFontWeight(const CSSPropertyPa
                 return normalWeightValue();
             }
         },
-        [&](NumberRaw weight) {
-            return FontSelectionValue::clampFloat(weight.value);
-        },
-        [&](const UnevaluatedCalc<NumberRaw>& calc) {
+        [&](const CSS::Number& weight) {
             // FIXME: Figure out correct behavior when conversion data is required.
-            if (requiresConversionData(calc))
+            if (requiresConversionData(weight))
                 return normalWeightValue();
-
-            return FontSelectionValue(clampTo<float>(evaluateCalcNoConversionDataRequired(calc, { }).value, 1, 1000));
+            return FontSelectionValue(clampTo<float>(CSS::toStyleNoConversionDataRequired(weight, CSSCalcSymbolTable { }).value, 1, 1000));
         }
     );
 }
@@ -250,23 +247,13 @@ static ResolvedFontStyle fontStyleFromUnresolvedFontStyle(const CSSPropertyParse
             ASSERT_NOT_REACHED();
             return { .italic = std::nullopt, .axis = FontStyleAxis::slnt };
         },
-        [](AngleRaw angle) -> ResolvedFontStyle {
-            return {
-                .italic = FontSelectionValue::clampFloat(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)),
-                .axis = FontStyleAxis::slnt
-            };
-        },
-        [](const UnevaluatedCalc<AngleRaw>& calc) -> ResolvedFontStyle {
+        [](const CSS::Angle& angle) -> ResolvedFontStyle {
             // FIXME: Figure out correct behavior when conversion data is required.
-            if (requiresConversionData(calc)) {
-                return {
-                    .italic = std::nullopt,
-                    .axis = FontStyleAxis::slnt
-                };
-            }
+            if (requiresConversionData(angle))
+                return { .italic = std::nullopt, .axis = FontStyleAxis::slnt };
 
             return {
-                .italic = normalizedFontItalicValue(static_cast<float>(evaluateCalcNoConversionDataRequired(calc, { }).value)),
+                .italic = normalizedFontItalicValue(CSS::toStyleNoConversionDataRequired(angle, CSSCalcSymbolTable { }).value),
                 .axis = FontStyleAxis::slnt
             };
         }
@@ -317,43 +304,43 @@ static ResolvedFontSize fontSizeFromUnresolvedFontSize(const CSSPropertyParserHe
             ASSERT_NOT_REACHED();
             return { .size = 0.0f, .keyword = CSSValueInvalid };
         },
-        [&](const LengthPercentageRaw& lengthPercentage) -> ResolvedFontSize {
-            if (lengthPercentage.type == CSSUnitType::CSS_PERCENTAGE) {
-                return {
-                    .size = static_cast<float>((parentSize * lengthPercentage.value) / 100.0),
-                    .keyword = CSSValueInvalid
-                };
-            }
+        [&](const CSS::LengthPercentage& lengthPercentage) -> ResolvedFontSize {
+            return WTF::switchOn(lengthPercentage.value,
+                [&](const CSS::LengthPercentageRaw& lengthPercentage) -> ResolvedFontSize {
+                    if (lengthPercentage.type == CSSUnitType::CSS_PERCENTAGE) {
+                        return {
+                            .size = Style::evaluate(Style::Percentage { narrowPrecisionToFloat(lengthPercentage.value) }, parentSize),
+                            .keyword = CSSValueInvalid
+                        };
+                    }
 
-            auto fontCascade = FontCascade(FontCascadeDescription(fontDescription));
-            fontCascade.update(context.cssFontSelector());
+                    auto fontCascade = FontCascade(FontCascadeDescription(fontDescription));
+                    fontCascade.update(context.cssFontSelector());
 
-            // FIXME: Passing null for the RenderView parameter means that vw and vh units will evaluate to
-            //        zero and vmin and vmax units will evaluate as if they were px units.
-            //        It's unclear in the specification if they're expected to work on OffscreenCanvas, given
-            //        that it's off-screen and therefore doesn't strictly have an associated viewport.
-            //        This needs clarification and possibly fixing.
-            // FIXME: How should root font units work in OffscreenCanvas?
+                    // FIXME: Passing null for the RenderView parameter means that vw and vh units will evaluate to
+                    //        zero and vmin and vmax units will evaluate as if they were px units.
+                    //        It's unclear in the specification if they're expected to work on OffscreenCanvas, given
+                    //        that it's off-screen and therefore doesn't strictly have an associated viewport.
+                    //        This needs clarification and possibly fixing.
+                    // FIXME: How should root font units work in OffscreenCanvas?
 
-            auto* document = dynamicDowncast<Document>(context);
-            return {
-                .size = static_cast<float>(CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(lengthPercentage.type, lengthPercentage.value, CSSPropertyFontSize, &fontCascade, document ? document->renderView() : nullptr)),
-                .keyword = CSSValueInvalid
-            };
-        },
-        [&](const UnevaluatedCalc<LengthPercentageRaw>& calc) -> ResolvedFontSize {
-            // FIXME: Figure out correct behavior when conversion data is required.
-            if (requiresConversionData(calc)) {
-                return {
-                    .size = 0.0f,
-                    .keyword = CSSValueInvalid
-                };
-            }
+                    auto* document = dynamicDowncast<Document>(context);
+                    return {
+                        .size = static_cast<float>(CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(lengthPercentage.type, lengthPercentage.value, CSSPropertyFontSize, &fontCascade, document ? document->renderView() : nullptr)),
+                        .keyword = CSSValueInvalid
+                    };
+                },
+                [&](const CSS::UnevaluatedCalc<CSS::LengthPercentageRaw>& calc) -> ResolvedFontSize {
+                    // FIXME: Figure out correct behavior when conversion data is required.
+                    if (requiresConversionData(calc))
+                        return { .size = 0.0f, .keyword = CSSValueInvalid };
 
-            return {
-                .size = floatValueForLength(calc.protectedCalc()->lengthPercentageValueNoConversionDataRequired({ }), parentSize),
-                .keyword = CSSValueInvalid
-            };
+                    return {
+                        .size = Style::evaluate(CSS::toStyleNoConversionDataRequired(calc, CSSCalcSymbolTable { }), parentSize),
+                        .keyword = CSSValueInvalid
+                    };
+                }
+            );
         }
     );
 }

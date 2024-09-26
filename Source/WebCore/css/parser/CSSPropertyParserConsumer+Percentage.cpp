@@ -37,7 +37,7 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-std::optional<PercentageRaw> validatedRange(PercentageRaw value, CSSPropertyParserOptions options)
+std::optional<CSS::PercentageRaw> validatedRange(CSS::PercentageRaw value, CSSPropertyParserOptions options)
 {
     if (options.valueRange == ValueRange::NonNegative && value.value < 0)
         return std::nullopt;
@@ -46,7 +46,7 @@ std::optional<PercentageRaw> validatedRange(PercentageRaw value, CSSPropertyPars
     return value;
 }
 
-std::optional<UnevaluatedCalc<PercentageRaw>> PercentageKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
+std::optional<CSS::UnevaluatedCalc<CSS::PercentageRaw>> PercentageKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == FunctionToken);
 
@@ -59,11 +59,11 @@ std::optional<UnevaluatedCalc<PercentageRaw>> PercentageKnownTokenTypeFunctionCo
     return std::nullopt;
 }
 
-std::optional<PercentageRaw> PercentageKnownTokenTypePercentConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
+std::optional<CSS::PercentageRaw> PercentageKnownTokenTypePercentConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == PercentageToken);
 
-    if (auto validatedValue = validatedRange(PercentageRaw { range.peek().numericValue() }, options)) {
+    if (auto validatedValue = validatedRange(CSS::PercentageRaw { range.peek().numericValue() }, options)) {
         range.consumeIncludingWhitespace();
         return validatedValue;
     }
@@ -77,7 +77,7 @@ RefPtr<CSSPrimitiveValue> consumePercentage(CSSParserTokenRange& range, const CS
     const auto options = CSSPropertyParserOptions {
         .valueRange = valueRange
     };
-    return CSSPrimitiveValueResolver<PercentageRaw>::consumeAndResolve(range, context, { }, { }, options);
+    return CSSPrimitiveValueResolver<CSS::Percentage>::consumeAndResolve(range, context, { }, { }, options);
 }
 
 RefPtr<CSSPrimitiveValue> consumePercentageOrNumber(CSSParserTokenRange& range, const CSSParserContext& context, ValueRange valueRange)
@@ -85,7 +85,7 @@ RefPtr<CSSPrimitiveValue> consumePercentageOrNumber(CSSParserTokenRange& range, 
     const auto options = CSSPropertyParserOptions {
         .valueRange = valueRange
     };
-    return CSSPrimitiveValueResolver<PercentageRaw, NumberRaw>::consumeAndResolve(range, context, { }, { }, options);
+    return CSSPrimitiveValueResolver<CSS::Percentage, CSS::Number>::consumeAndResolve(range, context, { }, { }, options);
 }
 
 RefPtr<CSSPrimitiveValue> consumePercentageDividedBy100OrNumber(CSSParserTokenRange& range, const CSSParserContext& context, ValueRange valueRange)
@@ -99,14 +99,14 @@ RefPtr<CSSPrimitiveValue> consumePercentageDividedBy100OrNumber(CSSParserTokenRa
     switch (token.type()) {
     case FunctionToken:
         if (auto value = NumberKnownTokenTypeFunctionConsumer::consume(range, context, { }, options))
-            return CSSPrimitiveValueResolver<NumberRaw>::resolve(*value, { }, options);
+            return CSSPrimitiveValueResolver<CSS::Number>::resolve(*value, { }, options);
         if (auto value = PercentageKnownTokenTypeFunctionConsumer::consume(range, context, { }, options))
-            return CSSPrimitiveValueResolver<PercentageRaw>::resolve(*value, { }, options);
+            return CSSPrimitiveValueResolver<CSS::Percentage>::resolve(*value, { }, options);
         break;
 
     case NumberToken:
         if (auto value = NumberKnownTokenTypeNumberConsumer::consume(range, context, { }, options))
-            return CSSPrimitiveValueResolver<NumberRaw>::resolve(*value, { }, options);
+            return CSSPrimitiveValueResolver<CSS::Number>::resolve(*value, { }, options);
         break;
 
     case PercentageToken:

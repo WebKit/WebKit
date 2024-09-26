@@ -53,7 +53,7 @@ struct ToConversionOptions {
     EvaluationOptions evaluation;
 };
 
-static auto fromCalculationValue(const Calculation::None&, const FromConversionOptions&) -> NoneRaw;
+static auto fromCalculationValue(const Calculation::None&, const FromConversionOptions&) -> CSS::NoneRaw;
 static auto fromCalculationValue(const Calculation::ChildOrNone&, const FromConversionOptions&) -> ChildOrNone;
 static auto fromCalculationValue(const Vector<Calculation::Child>&, const FromConversionOptions&) -> Children;
 static auto fromCalculationValue(const std::optional<Calculation::Child>&, const FromConversionOptions&) -> std::optional<Child>;
@@ -65,7 +65,7 @@ static auto fromCalculationValue(const Calculation::IndirectNode<Calculation::Bl
 template<typename CalculationOp> auto fromCalculationValue(const Calculation::IndirectNode<CalculationOp>&, const FromConversionOptions&) -> Child;
 
 static auto toCalculationValue(const std::optional<Child>&, const ToConversionOptions&) -> std::optional<Calculation::Child>;
-static auto toCalculationValue(const NoneRaw&, const ToConversionOptions&) -> Calculation::None;
+static auto toCalculationValue(const CSS::NoneRaw&, const ToConversionOptions&) -> Calculation::None;
 static auto toCalculationValue(const ChildOrNone&, const ToConversionOptions&) -> Calculation::ChildOrNone;
 static auto toCalculationValue(const Children&, const ToConversionOptions&) -> Calculation::Children;
 static auto toCalculationValue(const Child&, const ToConversionOptions&) -> Calculation::Child;
@@ -79,11 +79,12 @@ static auto toCalculationValue(const IndirectNode<Anchor>&, const ToConversionOp
 
 static CanonicalDimension::Dimension determineCanonicalDimension(Calculation::Category category)
 {
-    // FIXME: For now, Calculation::Dimension always means <length>, but could be used for any of percent-hint capable categories as they are added to `Calculation::Category`.
-
     switch (category) {
     case Calculation::Category::LengthPercentage:
         return CanonicalDimension::Dimension::Length;
+
+    case Calculation::Category::AnglePercentage:
+        return CanonicalDimension::Dimension::Angle;
 
     case Calculation::Category::Integer:
     case Calculation::Category::Number:
@@ -103,9 +104,9 @@ static CanonicalDimension::Dimension determineCanonicalDimension(Calculation::Ca
 
 // MARK: - From
 
-NoneRaw fromCalculationValue(const Calculation::None&, const FromConversionOptions&)
+CSS::NoneRaw fromCalculationValue(const Calculation::None&, const FromConversionOptions&)
 {
-    return NoneRaw { };
+    return CSS::NoneRaw { };
 }
 
 ChildOrNone fromCalculationValue(const Calculation::ChildOrNone& root, const FromConversionOptions& options)
@@ -142,7 +143,19 @@ Child fromCalculationValue(const Calculation::Percentage& percentage, const From
 
 Child fromCalculationValue(const Calculation::Dimension& root, const FromConversionOptions& options)
 {
-    return makeChild(CanonicalDimension { .value = adjustFloatForAbsoluteZoom(root.value, options.style), .dimension = options.canonicalDimension });
+    switch (options.canonicalDimension) {
+    case CanonicalDimension::Dimension::Length:
+        return makeChild(CanonicalDimension { .value = adjustFloatForAbsoluteZoom(root.value, options.style), .dimension = options.canonicalDimension });
+
+    case CanonicalDimension::Dimension::Angle:
+    case CanonicalDimension::Dimension::Time:
+    case CanonicalDimension::Dimension::Frequency:
+    case CanonicalDimension::Dimension::Resolution:
+    case CanonicalDimension::Dimension::Flex:
+        break;
+    }
+
+    return makeChild(CanonicalDimension { .value = root.value, .dimension = options.canonicalDimension });
 }
 
 Child fromCalculationValue(const Calculation::IndirectNode<Calculation::Blend>& root, const FromConversionOptions& options)
@@ -196,7 +209,7 @@ std::optional<Calculation::Child> toCalculationValue(const std::optional<Child>&
     return std::nullopt;
 }
 
-Calculation::None toCalculationValue(const NoneRaw&, const ToConversionOptions&)
+Calculation::None toCalculationValue(const CSS::NoneRaw&, const ToConversionOptions&)
 {
     return Calculation::None { };
 }
@@ -304,8 +317,7 @@ Tree fromCalculationValue(const CalculationValue& calculationValue, const Render
 
 Ref<CalculationValue> toCalculationValue(const Tree& tree, const EvaluationOptions& options)
 {
-    // We currently only ever need to create CalculationValues from calc() to implement late resolution of percentages to Length values, so we assert that we only call this with `LengthPercentage` trees. That said, the code is agnostic to this, and could work for any tree if needed.
-    ASSERT(tree.category == Calculation::Category::LengthPercentage);
+    ASSERT(tree.category == Calculation::Category::LengthPercentage || tree.category == Calculation::Category::AnglePercentage);
 
     auto category = tree.category;
     auto range = tree.range;

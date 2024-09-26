@@ -25,9 +25,9 @@
 #pragma once
 
 #include "CSSParserToken.h"
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSPropertyParserConsumer+Primitives.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
+#include "CSSUnevaluatedCalc.h"
 #include <optional>
 #include <wtf/Brigand.h>
 
@@ -37,24 +37,23 @@ class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
 
 struct CSSParserContext;
+struct CSSPropertyParserOptions;
 
 namespace CSSPropertyParserHelpers {
 
-std::optional<ResolutionRaw> validatedRange(ResolutionRaw, CSSPropertyParserOptions);
+std::optional<CSS::ResolutionRaw> validatedRange(CSS::ResolutionRaw, CSSPropertyParserOptions);
 
 struct ResolutionKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<ResolutionRaw>> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<CSS::UnevaluatedCalc<CSS::ResolutionRaw>> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct ResolutionKnownTokenTypeDimensionConsumer {
     static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static std::optional<ResolutionRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<CSS::ResolutionRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
-template<> struct ConsumerDefinition<ResolutionRaw> {
-    using type = brigand::list<ResolutionRaw, UnevaluatedCalc<ResolutionRaw>>;
-
+template<> struct ConsumerDefinition<CSS::Resolution> {
     using FunctionToken = ResolutionKnownTokenTypeFunctionConsumer;
     using DimensionToken = ResolutionKnownTokenTypeDimensionConsumer;
 };

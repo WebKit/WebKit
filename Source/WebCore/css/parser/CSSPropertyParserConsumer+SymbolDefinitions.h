@@ -25,8 +25,8 @@
 #pragma once
 
 #include "CSSParserToken.h"
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSPropertyParserConsumer+Primitives.h"
 #include <optional>
 #include <wtf/Brigand.h>
 
@@ -36,19 +36,18 @@ class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
 
 struct CSSParserContext;
+struct CSSPropertyParserOptions;
 
 namespace CSSPropertyParserHelpers {
 
-std::optional<SymbolRaw> validatedRange(SymbolRaw, CSSPropertyParserOptions);
+std::optional<CSS::SymbolRaw> validatedRange(CSS::SymbolRaw, CSSPropertyParserOptions);
 
 struct SymbolKnownTokenTypeIdentConsumer {
     static constexpr CSSParserTokenType tokenType = IdentToken;
-    static std::optional<SymbolRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<CSS::SymbolRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
-template<> struct ConsumerDefinition<SymbolRaw> {
-    using type = brigand::list<SymbolRaw>;
-
+template<> struct ConsumerDefinition<CSS::Symbol> {
     using IdentToken = SymbolKnownTokenTypeIdentConsumer;
 };
 

@@ -39,6 +39,7 @@ TextStream& operator<<(TextStream& ts, Category category)
     case Category::Percentage: ts << "percentage"; break;
     case Category::Length: ts << "length"; break;
     case Category::Angle: ts << "angle"; break;
+    case Category::AnglePercentage: ts << "angle-percentage"; break;
     case Category::Time: ts << "time"; break;
     case Category::Frequency: ts << "frequency"; break;
     case Category::Resolution: ts << "resolution"; break;

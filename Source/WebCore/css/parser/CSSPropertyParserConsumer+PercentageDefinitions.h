@@ -25,9 +25,9 @@
 #pragma once
 
 #include "CSSParserToken.h"
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSPropertyParserConsumer+Primitives.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
+#include "CSSUnevaluatedCalc.h"
 #include <optional>
 #include <wtf/Brigand.h>
 
@@ -37,24 +37,23 @@ class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
 
 struct CSSParserContext;
+struct CSSPropertyParserOptions;
 
 namespace CSSPropertyParserHelpers {
 
-std::optional<PercentageRaw> validatedRange(PercentageRaw, CSSPropertyParserOptions);
+std::optional<CSS::PercentageRaw> validatedRange(CSS::PercentageRaw, CSSPropertyParserOptions);
 
 struct PercentageKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<PercentageRaw>> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<CSS::UnevaluatedCalc<CSS::PercentageRaw>> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct PercentageKnownTokenTypePercentConsumer {
     static constexpr CSSParserTokenType tokenType = PercentageToken;
-    static std::optional<PercentageRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<CSS::PercentageRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
-template<> struct ConsumerDefinition<PercentageRaw> {
-    using type = brigand::list<PercentageRaw, UnevaluatedCalc<PercentageRaw>>;
-
+template<> struct ConsumerDefinition<CSS::Percentage> {
     using FunctionToken = PercentageKnownTokenTypeFunctionConsumer;
     using PercentageToken = PercentageKnownTokenTypePercentConsumer;
 };

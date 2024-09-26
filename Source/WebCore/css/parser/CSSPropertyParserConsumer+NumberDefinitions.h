@@ -25,9 +25,9 @@
 #pragma once
 
 #include "CSSParserToken.h"
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSPropertyParserConsumer+Primitives.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
+#include "CSSUnevaluatedCalc.h"
 #include <optional>
 #include <wtf/Brigand.h>
 
@@ -37,24 +37,23 @@ class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
 
 struct CSSParserContext;
+struct CSSPropertyParserOptions;
 
 namespace CSSPropertyParserHelpers {
 
-std::optional<NumberRaw> validatedRange(NumberRaw, CSSPropertyParserOptions);
+std::optional<CSS::NumberRaw> validatedRange(CSS::NumberRaw, CSSPropertyParserOptions);
 
 struct NumberKnownTokenTypeFunctionConsumer {
     static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<UnevaluatedCalc<NumberRaw>> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<CSS::UnevaluatedCalc<CSS::NumberRaw>> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
 struct NumberKnownTokenTypeNumberConsumer {
     static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<NumberRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static std::optional<CSS::NumberRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 };
 
-template<> struct ConsumerDefinition<NumberRaw> {
-    using type = brigand::list<NumberRaw, UnevaluatedCalc<NumberRaw>>;
-
+template<> struct ConsumerDefinition<CSS::Number> {
     using FunctionToken = NumberKnownTokenTypeFunctionConsumer;
     using NumberToken = NumberKnownTokenTypeNumberConsumer;
 };

@@ -40,7 +40,7 @@ namespace WebCore {
 class CSSUnresolvedColor;
 
 template<typename Descriptor, unsigned Index>
-using CSSUnresolvedRelativeColorComponent = GetComponentResultWithCalcAndSymbolsResult<Descriptor, Index>;
+using CSSUnresolvedRelativeColorComponent = GetCSSColorParseTypeWithCalcAndSymbolsComponentResult<Descriptor, Index>;
 
 bool relativeColorOriginsEqual(const UniqueRef<CSSUnresolvedColor>&, const UniqueRef<CSSUnresolvedColor>&);
 
@@ -73,13 +73,13 @@ String serializationForCSS(const CSSUnresolvedRelativeColor<Descriptor>& unresol
 }
 
 template<typename Descriptor>
-auto simplify(const CSSColorParseTypeWithCalcAndSymbols<Descriptor>& components, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> CSSColorParseTypeWithCalcAndSymbols<Descriptor>
+auto simplifyUnevaluatedCalc(const CSSColorParseTypeWithCalcAndSymbols<Descriptor>& components, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> CSSColorParseTypeWithCalcAndSymbols<Descriptor>
 {
     return CSSColorParseTypeWithCalcAndSymbols<Descriptor> {
-        simplify(std::get<0>(components), conversionData, symbolTable),
-        simplify(std::get<1>(components), conversionData, symbolTable),
-        simplify(std::get<2>(components), conversionData, symbolTable),
-        simplify(std::get<3>(components), conversionData, symbolTable)
+        CSS::simplifyUnevaluatedCalc(std::get<0>(components), conversionData, symbolTable),
+        CSS::simplifyUnevaluatedCalc(std::get<1>(components), conversionData, symbolTable),
+        CSS::simplifyUnevaluatedCalc(std::get<2>(components), conversionData, symbolTable),
+        CSS::simplifyUnevaluatedCalc(std::get<3>(components), conversionData, symbolTable)
     };
 }
 
@@ -94,7 +94,7 @@ StyleColor createStyleColor(const CSSUnresolvedRelativeColor<Descriptor>& unreso
         return StyleColor {
             StyleRelativeColor<Descriptor> {
                 .origin = WTFMove(origin),
-                .components = simplify(unresolved.components, state.conversionData, CSSCalcSymbolTable { })
+                .components = simplifyUnevaluatedCalc(unresolved.components, state.conversionData, CSSCalcSymbolTable { })
             }
         };
     }

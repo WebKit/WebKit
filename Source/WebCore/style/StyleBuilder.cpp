@@ -569,36 +569,36 @@ RefPtr<CSSCustomPropertyValue> Builder::resolveCustomPropertyValue(CSSCustomProp
     return CSSPropertyParser::parseTypedCustomPropertyValue(name, registered->syntax, resolvedData->tokens(), m_state, resolvedData->context());
 }
 
-static bool pageSizeFromName(const CSSPrimitiveValue& pageSizeName, const CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
+static bool pageSizeFromName(const CSSPrimitiveValue& pageSizeName, const CSSPrimitiveValue* pageOrientation, WebCore::Length& width, WebCore::Length& height)
 {
     auto mmLength = [](double mm) {
-        return Length(CSS::pixelsPerMm * mm, LengthType::Fixed);
+        return WebCore::Length(CSS::pixelsPerMm * mm, LengthType::Fixed);
     };
 
     auto inchLength = [](double inch) {
-        return Length(CSS::pixelsPerInch * inch, LengthType::Fixed);
+        return WebCore::Length(CSS::pixelsPerInch * inch, LengthType::Fixed);
     };
 
-    static NeverDestroyed<Length> a5Width(mmLength(148));
-    static NeverDestroyed<Length> a5Height(mmLength(210));
-    static NeverDestroyed<Length> a4Width(mmLength(210));
-    static NeverDestroyed<Length> a4Height(mmLength(297));
-    static NeverDestroyed<Length> a3Width(mmLength(297));
-    static NeverDestroyed<Length> a3Height(mmLength(420));
-    static NeverDestroyed<Length> b5Width(mmLength(176));
-    static NeverDestroyed<Length> b5Height(mmLength(250));
-    static NeverDestroyed<Length> b4Width(mmLength(250));
-    static NeverDestroyed<Length> b4Height(mmLength(353));
-    static NeverDestroyed<Length> jisB5Width(mmLength(182));
-    static NeverDestroyed<Length> jisB5Height(mmLength(257));
-    static NeverDestroyed<Length> jisB4Width(mmLength(257));
-    static NeverDestroyed<Length> jisB4Height(mmLength(364));
-    static NeverDestroyed<Length> letterWidth(inchLength(8.5));
-    static NeverDestroyed<Length> letterHeight(inchLength(11));
-    static NeverDestroyed<Length> legalWidth(inchLength(8.5));
-    static NeverDestroyed<Length> legalHeight(inchLength(14));
-    static NeverDestroyed<Length> ledgerWidth(inchLength(11));
-    static NeverDestroyed<Length> ledgerHeight(inchLength(17));
+    static NeverDestroyed<WebCore::Length> a5Width(mmLength(148));
+    static NeverDestroyed<WebCore::Length> a5Height(mmLength(210));
+    static NeverDestroyed<WebCore::Length> a4Width(mmLength(210));
+    static NeverDestroyed<WebCore::Length> a4Height(mmLength(297));
+    static NeverDestroyed<WebCore::Length> a3Width(mmLength(297));
+    static NeverDestroyed<WebCore::Length> a3Height(mmLength(420));
+    static NeverDestroyed<WebCore::Length> b5Width(mmLength(176));
+    static NeverDestroyed<WebCore::Length> b5Height(mmLength(250));
+    static NeverDestroyed<WebCore::Length> b4Width(mmLength(250));
+    static NeverDestroyed<WebCore::Length> b4Height(mmLength(353));
+    static NeverDestroyed<WebCore::Length> jisB5Width(mmLength(182));
+    static NeverDestroyed<WebCore::Length> jisB5Height(mmLength(257));
+    static NeverDestroyed<WebCore::Length> jisB4Width(mmLength(257));
+    static NeverDestroyed<WebCore::Length> jisB4Height(mmLength(364));
+    static NeverDestroyed<WebCore::Length> letterWidth(inchLength(8.5));
+    static NeverDestroyed<WebCore::Length> letterHeight(inchLength(11));
+    static NeverDestroyed<WebCore::Length> legalWidth(inchLength(8.5));
+    static NeverDestroyed<WebCore::Length> legalHeight(inchLength(14));
+    static NeverDestroyed<WebCore::Length> ledgerWidth(inchLength(11));
+    static NeverDestroyed<WebCore::Length> ledgerHeight(inchLength(17));
 
     switch (pageSizeName.valueID()) {
     case CSSValueA5:
@@ -664,8 +664,8 @@ void Builder::applyPageSizeDescriptor(CSSValue& value)
 {
     m_state.style().resetPageSizeType();
 
-    Length width;
-    Length height;
+    WebCore::Length width;
+    WebCore::Length height;
     auto pageSizeType = PageSizeType::Auto;
 
     if (auto* pair = dynamicDowncast<CSSValuePair>(value)) {
@@ -679,8 +679,8 @@ void Builder::applyPageSizeDescriptor(CSSValue& value)
             if (!second->isLength())
                 return;
             auto conversionData = m_state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f);
-            width = first->resolveAsLength<Length>(conversionData);
-            height = second->resolveAsLength<Length>(conversionData);
+            width = first->resolveAsLength<WebCore::Length>(conversionData);
+            height = second->resolveAsLength<WebCore::Length>(conversionData);
         } else {
             // <page-size> <orientation>
             // The value order is guaranteed. See CSSParser::parseSizeParameter.
@@ -693,7 +693,7 @@ void Builder::applyPageSizeDescriptor(CSSValue& value)
         if (primitiveValue->isLength()) {
             // <length>
             pageSizeType = PageSizeType::Resolved;
-            width = height = primitiveValue->resolveAsLength<Length>(m_state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+            width = height = primitiveValue->resolveAsLength<WebCore::Length>(m_state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
         } else {
             switch (primitiveValue->valueID()) {
             case CSSValueInvalid:

@@ -66,11 +66,11 @@ static Ref<FilterOperation> createFilterFunctionBlur(const CSSFunctionValue& fil
 
     constexpr CSSValueID function = CSSValueBlur;
 
-    Length stdDeviation;
+    WebCore::Length stdDeviation;
     if (auto* parameter = filter.item(0))
         stdDeviation = downcast<CSSPrimitiveValue>(*parameter).convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion>(conversionData);
     else
-        stdDeviation = Length(filterFunctionDefaultValue<function>().value, LengthType::Fixed);
+        stdDeviation = WebCore::Length(filterFunctionDefaultValue<function>().value, LengthType::Fixed);
 
     return BlurFilterOperation::create(stdDeviation);
 }

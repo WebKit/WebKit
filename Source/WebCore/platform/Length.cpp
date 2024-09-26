@@ -354,10 +354,8 @@ static Calculation::Child lengthCalculation(const Length& length)
     if (length.isPercent())
         return Calculation::percentage(length.value());
 
-    if (length.isCalculated()) {
-        auto tree = length.calculationValue().copyTree();
-        return { WTFMove(tree.root) };
-    }
+    if (length.isCalculated())
+        return length.calculationValue().copyRoot();
 
     ASSERT(length.isFixed());
     return Calculation::dimension(length.value());
@@ -367,7 +365,7 @@ static Length makeLength(Calculation::Child&& root)
 {
     // FIXME: Value range should be passed in.
 
-    // NOTE: category is always `PercentLength` as late resolved `Length` values defined by percentages is the only reason calculation value is needed by `Length`.
+    // NOTE: category is always `LengthPercentage` as late resolved `Length` values defined by percentages is the only reason calculation value is needed by `Length`.
     return Length(CalculationValue::create(Calculation::Tree { .root = WTFMove(root), .category = Calculation::Category::LengthPercentage, .range = ValueRange::All }));
 }
 

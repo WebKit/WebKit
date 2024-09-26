@@ -64,6 +64,12 @@ Calculation::Tree CalculationValue::copyTree() const
     return Calculation::copy(m_tree);
 }
 
+Calculation::Child CalculationValue::copyRoot() const
+{
+    auto tree = copyTree();
+    return { WTFMove(tree.root) };
+}
+
 bool CalculationValue::operator==(const CalculationValue& other) const
 {
     return m_tree == other.m_tree;

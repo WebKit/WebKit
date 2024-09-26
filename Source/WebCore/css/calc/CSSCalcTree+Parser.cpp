@@ -34,6 +34,7 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+LengthPercentage.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSUnits.h"
 #include "CalculationCategory.h"
@@ -421,7 +422,7 @@ static std::optional<TypedChild> consumeClamp(CSSParserTokenRange& tokens, int d
     auto parseCalcSumOrNone = [](auto& tokens, auto depth, auto& state) -> std::optional<TypedChildOrNone> {
         if (tokens.peek().id() == CSSValueNone) {
             tokens.consume();
-            return TypedChildOrNone { ChildOrNone { NoneRaw { } }, Type { } };
+            return TypedChildOrNone { ChildOrNone { CSS::NoneRaw { } }, Type { } };
         }
         auto sum = parseCalcSum(tokens, depth, state);
         if (!sum)
@@ -464,8 +465,8 @@ static std::optional<TypedChild> consumeClamp(CSSParserTokenRange& tokens, int d
     }
 
     auto computeType = [&] -> std::optional<Type> {
-        bool minIsNone = std::holds_alternative<NoneRaw>(min->child);
-        bool maxIsNone = std::holds_alternative<NoneRaw>(max->child);
+        bool minIsNone = std::holds_alternative<CSS::NoneRaw>(min->child);
+        bool maxIsNone = std::holds_alternative<CSS::NoneRaw>(max->child);
 
         if (minIsNone && maxIsNone)
             return val->type;

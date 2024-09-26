@@ -36,6 +36,9 @@
 
 namespace WebCore {
 
+template<typename Descriptor, unsigned Index>
+using CSSUnresolvedAbsoluteColorComponent = GetCSSColorParseTypeWithCalcComponentResult<Descriptor, Index>;
+
 template<typename D>
 struct CSSUnresolvedAbsoluteColor {
     using Descriptor = D;

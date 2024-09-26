@@ -25,7 +25,7 @@
 #pragma once
 
 #include "CSSCalcSymbolsAllowed.h"
-#include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSPropertyParserOptions.h"
 #include <optional>
 
 namespace WebCore {
@@ -52,7 +52,7 @@ struct ParserOptions {
     CSSCalcSymbolsAllowed allowedSymbols;
 
     // `propertyOptions` contains options about the specific property the calc() is intended to be used with.
-    CSSPropertyParserHelpers::CSSPropertyParserOptions propertyOptions;
+    CSSPropertyParserOptions propertyOptions;
 };
 
 // Parses and simplifies the provided `CSSParserTokenRange` into a CSSCalc::Tree. Returns `std::nullopt` on failure.

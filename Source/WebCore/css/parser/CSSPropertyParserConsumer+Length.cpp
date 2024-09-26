@@ -34,13 +34,14 @@
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+PercentageDefinitions.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CalculationCategory.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-std::optional<LengthRaw> validatedRange(LengthRaw value, CSSPropertyParserOptions options)
+std::optional<CSS::LengthRaw> validatedRange(CSS::LengthRaw value, CSSPropertyParserOptions options)
 {
     if (options.valueRange == ValueRange::NonNegative && value.value < 0)
         return std::nullopt;
@@ -49,7 +50,7 @@ std::optional<LengthRaw> validatedRange(LengthRaw value, CSSPropertyParserOption
     return value;
 }
 
-std::optional<UnevaluatedCalc<LengthRaw>> LengthKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
+std::optional<CSS::UnevaluatedCalc<CSS::LengthRaw>> LengthKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == FunctionToken);
 
@@ -61,7 +62,7 @@ std::optional<UnevaluatedCalc<LengthRaw>> LengthKnownTokenTypeFunctionConsumer::
     return std::nullopt;
 }
 
-std::optional<LengthRaw> LengthKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
+std::optional<CSS::LengthRaw> LengthKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == DimensionToken);
 
@@ -127,14 +128,14 @@ std::optional<LengthRaw> LengthKnownTokenTypeDimensionConsumer::consume(CSSParse
         return std::nullopt;
     }
 
-    if (auto validatedValue = validatedRange(LengthRaw { unitType, token.numericValue() }, options)) {
+    if (auto validatedValue = validatedRange(CSS::LengthRaw { unitType, token.numericValue() }, options)) {
         range.consumeIncludingWhitespace();
         return validatedValue;
     }
     return std::nullopt;
 }
 
-std::optional<LengthRaw> LengthKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
+std::optional<CSS::LengthRaw> LengthKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == NumberToken);
 
@@ -143,7 +144,7 @@ std::optional<LengthRaw> LengthKnownTokenTypeNumberConsumer::consume(CSSParserTo
     if (!shouldAcceptUnitlessValue(numericValue, options))
         return std::nullopt;
 
-    if (auto validatedValue = validatedRange(LengthRaw { CSSUnitType::CSS_PX, numericValue }, options)) {
+    if (auto validatedValue = validatedRange(CSS::LengthRaw { CSSUnitType::CSS_PX, numericValue }, options)) {
         range.consumeIncludingWhitespace();
         return validatedValue;
     }
@@ -160,7 +161,7 @@ RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange& range, const CSSPar
         .unitless = unitless,
         .unitlessZero = UnitlessZeroQuirk::Allow
     };
-    return CSSPrimitiveValueResolver<LengthRaw>::consumeAndResolve(range, context, { }, { }, options);
+    return CSSPrimitiveValueResolver<CSS::Length>::consumeAndResolve(range, context, { }, { }, options);
 }
 
 RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange& range, const CSSParserContext& context, CSSParserMode overrideParserMode, ValueRange valueRange, UnitlessQuirk unitless)
@@ -171,7 +172,7 @@ RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange& range, const CSSPar
         .unitless = unitless,
         .unitlessZero = UnitlessZeroQuirk::Allow
     };
-    return CSSPrimitiveValueResolver<LengthRaw>::consumeAndResolve(range, context, { }, { }, options);
+    return CSSPrimitiveValueResolver<CSS::Length>::consumeAndResolve(range, context, { }, { }, options);
 }
 
 } // namespace CSSPropertyParserHelpers

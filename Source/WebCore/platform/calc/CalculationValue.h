@@ -49,6 +49,7 @@ public:
 
     const Calculation::Tree& tree() const { return m_tree; }
     Calculation::Tree copyTree() const;
+    Calculation::Child copyRoot() const;
 
     bool operator==(const CalculationValue&) const;
 

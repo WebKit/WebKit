@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "CSSPropertyParserConsumer+RawTypes.h"
 #include "Color.h"
 #include "ColorInterpolationMethod.h"
+#include "StylePrimitiveNumericTypes.h"
 #include <optional>
 
 namespace WebCore {
@@ -35,7 +35,7 @@ namespace WebCore {
 struct CSSColorMixResolver {
     struct Component {
         Color color;
-        std::optional<PercentageRaw> percentage;
+        std::optional<Style::Percentage> percentage;
     };
 
     ColorInterpolationMethod colorInterpolationMethod;

@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace CSSCalc {
 
-static auto evaluate(const NoneRaw&, const EvaluationOptions&) -> std::optional<Calculation::None>;
+static auto evaluate(const CSS::NoneRaw&, const EvaluationOptions&) -> std::optional<Calculation::None>;
 static auto evaluate(const ChildOrNone&, const EvaluationOptions&) -> std::optional<std::variant<double, Calculation::None>>;
 static auto evaluate(const std::optional<Child>&, const EvaluationOptions&) -> std::optional<std::optional<double>>;
 static auto evaluate(const Child&, const EvaluationOptions&) -> std::optional<double>;
@@ -80,7 +80,7 @@ template<typename Op> static std::optional<double> executeVariadicMathOperationA
     return result;
 }
 
-std::optional<Calculation::None> evaluate(const NoneRaw&, const EvaluationOptions&)
+std::optional<Calculation::None> evaluate(const CSS::NoneRaw&, const EvaluationOptions&)
 {
     return Calculation::None { };
 }

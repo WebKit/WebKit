@@ -28,9 +28,10 @@
 #include "CSSCalcValue.h"
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSPropertyParserConsumer+Primitives.h"
-#include "CSSPropertyParserConsumer+RawTypes.h"
+#include "CSSPropertyParserOptions.h"
+#include "StylePrimitiveNumericTypes.h"
 #include <optional>
 #include <type_traits>
 #include <wtf/Brigand.h>
@@ -48,15 +49,21 @@ namespace CSSPropertyParserHelpers {
 template<typename... Ts>
 using MetaConsumerVariantWrapper = typename std::variant<Ts...>;
 
+template<typename TypeList>
+using MetaConsumerVariantOrSingle = std::conditional_t<
+    brigand::size<TypeList>::value == 1,
+    brigand::front<TypeList>,
+    brigand::wrap<TypeList, MetaConsumerVariantWrapper>
+>;
+
 /// The result of a meta consume.
-/// To be used with a list of `raw` types. e.g. `ConsumeResult<AngleRaw, PercentageRaw, NoneRaw>`, which will yield a
-/// result type of `std::variant<AngleRaw, UnevaluatedCalc<AngleRaw>, PercentageRaw, UnevaluatedCalc<PercentageRaw>, NoneRaw>`.
+/// To be used with a list of `CSS` types (e.g. `ConsumeResult<CSS::Angle, CSS::Percentage, CSS::None>`), which will yield a
+/// result type of either a std::variant of those types (e.g.`std::variant<CSS::Angle, CSS::Percentage, CSS::None>`) or the type
+/// itself if only a single type was specified.
 template<typename... Ts>
 struct MetaConsumeResult {
-    using TypeList = brigand::flatten<
-        brigand::transform<brigand::list<Ts...>, ConsumerDefinition<brigand::_1>>
-    >;
-    using type = brigand::wrap<TypeList, MetaConsumerVariantWrapper>;
+    using TypeList = brigand::list<Ts...>;
+    using type = MetaConsumerVariantOrSingle<TypeList>;
 };
 
 
@@ -141,7 +148,7 @@ struct MetaConsumerUnroller<tokenType, ResultType, T, Ts...> {
         using Consumer = MetaConsumerDispatcher<tokenType, ConsumerDefinition<T>>;
         if constexpr (Consumer::supported) {
             if (auto result = Consumer::consume(args...))
-                return {{ *result }};
+                return { T { *result } };
         }
         return MetaConsumerUnroller<tokenType, ResultType, Ts...>::consume(args...);
     }
@@ -152,7 +159,7 @@ struct MetaConsumerUnroller<tokenType, ResultType, T, Ts...> {
 // An example use that attempts to consumer either a <number> or <percentage>
 // looks like:
 //
-//    auto result = MetaConsumer<PercentageRaw, NumberRaw>::consume(range, ...);
+//    auto result = MetaConsumer<CSS::Percentage, CSS::Number>::consume(range, ...);
 //
 // (Argument list elided for brevity)
 template<typename... Ts>

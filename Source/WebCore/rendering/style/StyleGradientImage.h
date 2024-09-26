@@ -30,79 +30,66 @@
 #include "LengthSize.h"
 #include "StyleColor.h"
 #include "StyleGeneratedImage.h"
+#include "StylePosition.h"
+#include "StylePrimitiveNumericTypes.h"
+#include <utility>
 #include <variant>
 
 namespace WebCore {
 
-template<typename Position> struct StyleGradientImageStop {
+template<typename T> struct StyleGradientImageColorStop {
+    using Position = T;
+    using List = Vector<StyleGradientImageColorStop<T>>;
+
     std::optional<StyleColor> color;
     Position position;
 
-    bool operator==(const StyleGradientImageStop&) const = default;
+    bool operator==(const StyleGradientImageColorStop<T>&) const = default;
 };
 
-using StyleGradientImageLengthStop = StyleGradientImageStop<std::optional<Length>>;
-using StyleGradientImageAngularStop = StyleGradientImageStop<std::variant<std::monostate, AngleRaw, PercentageRaw>>;
+template<typename Stop> using StyleGradientImageColorStopList = Vector<Stop>;
 
+using StyleGradientImageAngularColorStop = StyleGradientImageColorStop<std::optional<Style::AnglePercentage>>;
+using StyleGradientImageAngularColorStopList = StyleGradientImageColorStopList<StyleGradientImageAngularColorStop>;
 
-// MARK: StyleGradientPosition
+using StyleGradientImageLinearColorStop = StyleGradientImageColorStop<std::optional<Style::LengthPercentage>>;
+using StyleGradientImageLinearColorStopList = StyleGradientImageColorStopList<StyleGradientImageLinearColorStop>;
 
-struct StyleGradientPosition {
-    struct Coordinate {
-        Length length;
+using StyleGradientImageDeprecatedColorStop = StyleGradientImageColorStop<Style::Number>;
+using StyleGradientImageDeprecatedColorStopList = StyleGradientImageColorStopList<StyleGradientImageDeprecatedColorStop>;
 
-        bool operator==(const Coordinate&) const = default;
-    };
+// MARK: StyleGradientImageDeprecatedPosition
 
-    Coordinate x;
-    Coordinate y;
-
-    bool operator==(const StyleGradientPosition&) const = default;
-};
-
-// MARK: StyleGradientDeprecatedPoint
-
-struct StyleGradientDeprecatedPoint {
-    struct Coordinate {
-        std::variant<NumberRaw, PercentageRaw> value;
-
-        bool operator==(const Coordinate&) const = default;
-    };
-
-    Coordinate x;
-    Coordinate y;
-
-    bool operator==(const StyleGradientDeprecatedPoint&) const = default;
-};
+using StyleGradientImageDeprecatedPosition = Style::SpaceSeparatedTuple<Style::PercentageOrNumber, Style::PercentageOrNumber>;
 
 class StyleGradientImage final : public StyleGeneratedImage {
 public:
     struct LinearData {
         using Horizontal = CSSLinearGradientValue::Horizontal;
         using Vertical = CSSLinearGradientValue::Vertical;
-        using GradientLine = std::variant<std::monostate, AngleRaw, Horizontal, Vertical, std::pair<Horizontal, Vertical>>;
+        using GradientLine = std::variant<std::monostate, Style::Angle, Horizontal, Vertical, std::pair<Horizontal, Vertical>>;
 
         GradientLine gradientLine;
         CSSGradientRepeat repeating;
-        Vector<StyleGradientImageLengthStop> stops;
+        StyleGradientImageLinearColorStopList stops;
 
         bool operator==(const LinearData&) const = default;
     };
     struct PrefixedLinearData {
         using Horizontal = CSSPrefixedLinearGradientValue::Horizontal;
         using Vertical = CSSPrefixedLinearGradientValue::Vertical;
-        using GradientLine = std::variant<std::monostate, AngleRaw, Horizontal, Vertical, std::pair<Horizontal, Vertical>>;
+        using GradientLine = std::variant<std::monostate, Style::Angle, Horizontal, Vertical, std::pair<Horizontal, Vertical>>;
 
         GradientLine gradientLine;
         CSSGradientRepeat repeating;
-        Vector<StyleGradientImageLengthStop> stops;
+        StyleGradientImageLinearColorStopList stops;
 
         bool operator==(const PrefixedLinearData&) const = default;
     };
     struct DeprecatedLinearData {
-        StyleGradientDeprecatedPoint first;
-        StyleGradientDeprecatedPoint second;
-        Vector<StyleGradientImageLengthStop> stops;
+        StyleGradientImageDeprecatedPosition first;
+        StyleGradientImageDeprecatedPosition second;
+        StyleGradientImageDeprecatedColorStopList stops;
 
         bool operator==(const DeprecatedLinearData&) const = default;
     };
@@ -112,49 +99,49 @@ public:
 
         struct Shape {
             ShapeKeyword shape;
-            std::optional<StyleGradientPosition> position;
+            std::optional<Style::Position> position;
             bool operator==(const Shape&) const = default;
         };
         struct Extent {
             ExtentKeyword extent;
-            std::optional<StyleGradientPosition> position;
+            std::optional<Style::Position> position;
             bool operator==(const Extent&) const = default;
         };
         struct Length {
-            WebCore::Length length; // <length [0,∞]>
-            std::optional<StyleGradientPosition> position;
+            Style::Length length; // <length [0,∞]>
+            std::optional<Style::Position> position;
             bool operator==(const Length&) const = default;
         };
         struct CircleOfLength {
-            WebCore::Length length; // <length [0,∞]>
-            std::optional<StyleGradientPosition> position;
+            Style::Length length; // <length [0,∞]>
+            std::optional<Style::Position> position;
             bool operator==(const CircleOfLength&) const = default;
         };
         struct CircleOfExtent {
             ExtentKeyword extent;
-            std::optional<StyleGradientPosition> position;
+            std::optional<Style::Position> position;
             bool operator==(const CircleOfExtent&) const = default;
         };
         struct Size {
-            LengthSize size; // <length-percentage [0,∞]>, <length-percentage [0,∞]>
-            std::optional<StyleGradientPosition> position;
+            Style::SpaceSeparatedTuple<Style::LengthPercentage, Style::LengthPercentage> size; // <length-percentage [0,∞]>, <length-percentage [0,∞]>
+            std::optional<Style::Position> position;
             bool operator==(const Size&) const = default;
         };
         struct EllipseOfSize {
-            LengthSize size; // <length-percentage [0,∞]>, <length-percentage [0,∞]>
-            std::optional<StyleGradientPosition> position;
+            Style::SpaceSeparatedTuple<Style::LengthPercentage, Style::LengthPercentage> size; // <length-percentage [0,∞]>, <length-percentage [0,∞]>
+            std::optional<Style::Position> position;
             bool operator==(const EllipseOfSize&) const = default;
         };
         struct EllipseOfExtent {
             ExtentKeyword extent;
-            std::optional<StyleGradientPosition> position;
+            std::optional<Style::Position> position;
             bool operator==(const EllipseOfExtent&) const = default;
         };
-        using GradientBox = std::variant<std::monostate, Shape, Extent, Length, Size, CircleOfLength, CircleOfExtent, EllipseOfSize, EllipseOfExtent, StyleGradientPosition>;
+        using GradientBox = std::variant<std::monostate, Shape, Extent, Length, Size, CircleOfLength, CircleOfExtent, EllipseOfSize, EllipseOfExtent, Style::Position>;
 
         GradientBox gradientBox;
         CSSGradientRepeat repeating;
-        Vector<StyleGradientImageLengthStop> stops;
+        StyleGradientImageLinearColorStopList stops;
 
         bool operator==(const RadialData&) const = default;
     };
@@ -163,32 +150,32 @@ public:
         using ExtentKeyword = CSSPrefixedRadialGradientValue::ExtentKeyword;
         using ShapeAndExtent = CSSPrefixedRadialGradientValue::ShapeAndExtent;
         struct MeasuredSize {
-            LengthSize size; // <length-percentage [0,∞]>, <length-percentage [0,∞]>
+            Style::SpaceSeparatedTuple<Style::LengthPercentage, Style::LengthPercentage> size; // <length-percentage [0,∞]>, <length-percentage [0,∞]>
             bool operator==(const MeasuredSize&) const = default;
         };
         using GradientBox = std::variant<std::monostate, ShapeKeyword, ExtentKeyword, ShapeAndExtent, MeasuredSize>;
 
         GradientBox gradientBox;
-        std::optional<StyleGradientPosition> position;
+        std::optional<Style::Position> position;
         CSSGradientRepeat repeating;
-        Vector<StyleGradientImageLengthStop> stops;
+        StyleGradientImageLinearColorStopList stops;
 
         bool operator==(const PrefixedRadialData&) const = default;
     };
     struct DeprecatedRadialData {
-        StyleGradientDeprecatedPoint first;
-        StyleGradientDeprecatedPoint second;
-        float firstRadius;
-        float secondRadius;
-        Vector<StyleGradientImageLengthStop> stops;
+        StyleGradientImageDeprecatedPosition first;
+        StyleGradientImageDeprecatedPosition second;
+        Style::Number firstRadius;
+        Style::Number secondRadius;
+        StyleGradientImageDeprecatedColorStopList stops;
 
         bool operator==(const DeprecatedRadialData&) const = default;
     };
     struct ConicData {
-        std::optional<AngleRaw> angle;
-        std::optional<StyleGradientPosition> position;
+        std::optional<Style::Angle> angle;
+        std::optional<Style::Position> position;
         CSSGradientRepeat repeating;
-        Vector<StyleGradientImageAngularStop> stops;
+        StyleGradientImageAngularColorStopList stops;
 
         bool operator==(const ConicData&) const = default;
     };

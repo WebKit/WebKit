@@ -26,8 +26,9 @@
 
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSPropertyParserConsumer+RawTypes.h"
+#include "CSSPropertyParserOptions.h"
 #include <optional>
 #include <type_traits>
 #include <wtf/Brigand.h>
@@ -36,27 +37,29 @@
 namespace WebCore {
 
 class CSSCalcSymbolTable;
-enum CSSParserMode : uint8_t;
-enum class ValueRange : uint8_t;
-
 struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {
 
-template<typename R, typename Base, typename... Ts>
+template<typename R, typename Base, typename T, typename... Ts>
 struct MetaResolver : Base {
     using ResultType = R;
 
-    static ResultType resolve(const typename MetaConsumeResult<Ts...>::type& consumeResult, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
+    static ResultType resolve(std::variant<T, Ts...>&& consumeResult, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options) requires (sizeof...(Ts) > 0)
     {
-        return WTF::switchOn(consumeResult, [&](auto& value) -> ResultType {
-            return Base::resolve(value, symbolTable, options);
+        return WTF::switchOn(WTFMove(consumeResult), [&](auto&& value) -> ResultType {
+            return Base::resolve(WTFMove(value), symbolTable, options);
         });
+    }
+
+    static ResultType resolve(T&& consumeResult, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options) requires (sizeof...(Ts) == 0)
+    {
+        return Base::resolve(WTFMove(consumeResult), symbolTable, options);
     }
 
     static ResultType consumeAndResolve(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
     {
-        auto result = MetaConsumer<Ts...>::consume(range, context, WTFMove(symbolsAllowed), options);
+        auto result = MetaConsumer<T, Ts...>::consume(range, context, WTFMove(symbolsAllowed), options);
         if (!result)
             return { };
         return resolve(WTFMove(*result), symbolTable, options);

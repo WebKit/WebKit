@@ -33,6 +33,7 @@
 #include "CSSPropertyParserConsumer+Integer.h"
 #include "CSSPropertyParserConsumer+Length.h"
 #include "CSSPropertyParserConsumer+Number.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+Resolution.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSValue.h"

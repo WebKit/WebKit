@@ -31,7 +31,7 @@ namespace WebCore {
 namespace CSSCalc {
 
 static auto copy(const std::optional<Child>& root) -> std::optional<Child>;
-static auto copy(const NoneRaw&) -> NoneRaw;
+static auto copy(const CSS::NoneRaw&) -> CSS::NoneRaw;
 static auto copy(const ChildOrNone&) -> ChildOrNone;
 static auto copy(const Children&) -> Children;
 static auto copy(const Child&) -> Child;
@@ -48,7 +48,7 @@ std::optional<Child> copy(const std::optional<Child>& root)
     return std::nullopt;
 }
 
-NoneRaw copy(const NoneRaw& none)
+CSS::NoneRaw copy(const CSS::NoneRaw& none)
 {
     return none;
 }

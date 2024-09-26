@@ -375,7 +375,7 @@ static LayoutUnit computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<co
     return removeBorderForInsetValue(insetValue, insetPropertySide, *containingBlock);
 }
 
-Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderState, const CSSAnchorValue& anchorValue)
+WebCore::Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderState, const CSSAnchorValue& anchorValue)
 {
     auto fallbackValue = [&] {
         // https://drafts.csswg.org/css-anchor-position-1/#anchor-valid
@@ -403,7 +403,7 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
     if (!result)
         return fallbackValue();
 
-    return Length { *result, LengthType::Fixed };
+    return WebCore::Length { *result, LengthType::Fixed };
 }
 
 std::optional<double> AnchorPositionEvaluator::evaluate(const BuilderState& builderState, const CSSCalc::Anchor& anchor)

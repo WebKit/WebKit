@@ -124,7 +124,6 @@ RefPtr<CSSPrimitiveValue> consumeAnchor(CSSParserTokenRange&, const CSSParserCon
 RefPtr<CSSValue> consumeWebKitRubyPosition(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange&, const CSSParserContext&);
 
-
 } // namespace CSSPropertyParserHelpers
 
 } // namespace WebCore

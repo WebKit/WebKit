@@ -25,8 +25,8 @@
 #pragma once
 
 #include "CSSCalcType.h"
-#include "CSSPropertyParserConsumer+RawTypes.h"
 #include "CSSUnits.h"
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSValueKeywords.h"
 #include "CalculationTree.h"
 #include <variant>
@@ -193,7 +193,7 @@ using Node = std::variant<
 >;
 
 using Child = Node;
-using ChildOrNone = std::variant<Child, NoneRaw>;
+using ChildOrNone = std::variant<Child, CSS::NoneRaw>;
 using Children = Vector<Child>;
 
 enum class Stage : bool { Specified, Computed };

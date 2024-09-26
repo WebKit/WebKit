@@ -24,11 +24,12 @@
 
 #pragma once
 
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+MetaResolver.h"
-#include "CSSPropertyParserConsumer+Primitives.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
+#include "CSSPropertyParserOptions.h"
+#include "CSSUnevaluatedCalc.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -38,32 +39,27 @@ namespace CSSPropertyParserHelpers {
 
 /// Non-template base type for code sharing.
 struct CSSPrimitiveValueResolverBase {
-    static RefPtr<CSSPrimitiveValue> resolve(AngleRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
-    static RefPtr<CSSPrimitiveValue> resolve(LengthRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
-    static RefPtr<CSSPrimitiveValue> resolve(NumberRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
-    static RefPtr<CSSPrimitiveValue> resolve(PercentageRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
-    static RefPtr<CSSPrimitiveValue> resolve(ResolutionRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
-    static RefPtr<CSSPrimitiveValue> resolve(TimeRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
-    static RefPtr<CSSPrimitiveValue> resolve(LengthPercentageRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
-    static RefPtr<CSSPrimitiveValue> resolve(NoneRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
-    static RefPtr<CSSPrimitiveValue> resolve(SymbolRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
+    static RefPtr<CSSPrimitiveValue> resolve(CSS::NoneRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
+    static RefPtr<CSSPrimitiveValue> resolve(CSS::SymbolRaw, const CSSCalcSymbolTable&, CSSPropertyParserOptions);
 
-    template<typename IntType, IntegerValueRange integerRange>
-    static RefPtr<CSSPrimitiveValue> resolve(IntegerRaw<IntType, integerRange> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
+    template<CSS::RawNumeric Raw> static RefPtr<CSSPrimitiveValue> resolve(Raw value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
+    {
+        return CSSPrimitiveValue::create(value.value, value.type);
+    }
+
+    template<typename IntType, CSS::IntegerValueRange integerRange> static RefPtr<CSSPrimitiveValue> resolve(CSS::IntegerRaw<IntType, integerRange> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
     {
         return CSSPrimitiveValue::createInteger(value.value);
     }
 
-    template<typename RawType>
-    static RefPtr<CSSPrimitiveValue> resolve(UnevaluatedCalc<RawType> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
+    template<typename T> static RefPtr<CSSPrimitiveValue> resolve(CSS::UnevaluatedCalc<T> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
     {
-        return CSSPrimitiveValue::create(value.calc);
+        return CSSPrimitiveValue::create(WTFMove(value.calc));
     }
 
-    template<typename IntType, IntegerValueRange integerRange>
-    static RefPtr<CSSPrimitiveValue> resolve(UnevaluatedCalc<IntegerRaw<IntType, integerRange>> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
+    template<typename T> static RefPtr<CSSPrimitiveValue> resolve(CSS::PrimitiveNumeric<T> value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
     {
-        return CSSPrimitiveValue::create(value.calc);
+        return WTF::switchOn(WTFMove(value.value), [&](auto&& value) { return resolve(WTFMove(value), symbolTable, options); });
     }
 };
 

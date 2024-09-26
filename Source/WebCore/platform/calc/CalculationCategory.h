@@ -36,6 +36,7 @@ enum class Category : uint8_t {
     Percentage,
     Length,
     Angle,
+    AnglePercentage,
     Time,
     Frequency,
     Resolution,
