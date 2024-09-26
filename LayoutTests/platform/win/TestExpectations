@@ -660,6 +660,9 @@ webkit.org/b/133151 js/cached-window-properties.html [ Skip ] # Slow
 # Needs JIT
 js/slow-stress [ Skip ]
 
+# "RangeError: Out of memory" only on Buildbot
+workers/wasm-hashset-many-2.html [ Skip ] # Timeout
+workers/wasm-hashset-many.html [ Skip ] # Timeout
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # http
