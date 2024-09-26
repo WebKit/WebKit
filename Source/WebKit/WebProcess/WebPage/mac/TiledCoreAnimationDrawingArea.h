@@ -39,15 +39,6 @@
 
 OBJC_CLASS CALayer;
 
-namespace WebKit {
-class TiledCoreAnimationDrawingArea;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::TiledCoreAnimationDrawingArea> : std::true_type { };
-}
-
 namespace WebCore {
 class LocalFrameView;
 class PlatformCALayer;
@@ -62,10 +53,16 @@ class LayerHostingContext;
 class TiledCoreAnimationDrawingArea final : public DrawingArea {
     WTF_MAKE_TZONE_ALLOCATED(TiledCoreAnimationDrawingArea);
 public:
-    TiledCoreAnimationDrawingArea(WebPage&, const WebPageCreationParameters&);
+    static Ref<TiledCoreAnimationDrawingArea> create(WebPage& webPage, const WebPageCreationParameters& parameters)
+    {
+        return adoptRef(*new TiledCoreAnimationDrawingArea(webPage, parameters));
+    }
+
     virtual ~TiledCoreAnimationDrawingArea();
 
 private:
+    TiledCoreAnimationDrawingArea(WebPage&, const WebPageCreationParameters&);
+
     // DrawingArea
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const WebCore::IntRect&) override;

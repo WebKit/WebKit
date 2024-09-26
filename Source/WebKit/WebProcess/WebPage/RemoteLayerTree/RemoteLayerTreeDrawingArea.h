@@ -38,15 +38,6 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebKit {
-class RemoteLayerTreeDrawingArea;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteLayerTreeDrawingArea> : std::true_type { };
-}
-
 namespace WebCore {
 class PlatformCALayer;
 class ThreadSafeImageBufferFlusher;
@@ -60,7 +51,11 @@ class RemoteLayerTreeContext;
 class RemoteLayerTreeDrawingArea : public DrawingArea, public WebCore::GraphicsLayerClient {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeDrawingArea);
 public:
-    RemoteLayerTreeDrawingArea(WebPage&, const WebPageCreationParameters&);
+    static RefPtr<RemoteLayerTreeDrawingArea> create(WebPage& webPage, const WebPageCreationParameters& parameters)
+    {
+        return adoptRef(*new RemoteLayerTreeDrawingArea(webPage, parameters));
+    }
+
     virtual ~RemoteLayerTreeDrawingArea();
 
     TransactionID nextTransactionID() const { return m_currentTransactionID.next(); }
@@ -71,6 +66,8 @@ public:
     void gpuProcessConnectionWasDestroyed();
 
 protected:
+    RemoteLayerTreeDrawingArea(WebPage&, const WebPageCreationParameters&);
+
     void updateRendering();
 
 private:

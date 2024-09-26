@@ -475,6 +475,7 @@ public:
     inline WebCore::IntRect bounds() const;
 
     DrawingArea* drawingArea() const { return m_drawingArea.get(); }
+    RefPtr<DrawingArea> protectedDrawingArea() const;
 
 #if ENABLE(ASYNC_SCROLLING)
     WebCore::ScrollingCoordinator* scrollingCoordinator() const;
@@ -2361,7 +2362,7 @@ private:
 
     WebCore::IntSize m_viewSize;
     LayerHostingMode m_layerHostingMode;
-    std::unique_ptr<DrawingArea> m_drawingArea;
+    RefPtr<DrawingArea> m_drawingArea;
 
     std::unique_ptr<WebPageTesting> m_webPageTesting;
 

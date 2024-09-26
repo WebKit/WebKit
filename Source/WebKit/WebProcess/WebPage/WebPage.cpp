@@ -840,18 +840,19 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     // to ensure it's created with the right size.
     m_page->setDeviceScaleFactor(parameters.deviceScaleFactor);
 
+    RefPtr drawingArea = m_drawingArea;
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    if (m_drawingArea->enterAcceleratedCompositingModeIfNeeded() && !parameters.isProcessSwap)
-        m_drawingArea->sendEnterAcceleratedCompositingModeIfNeeded();
+    if (drawingArea->enterAcceleratedCompositingModeIfNeeded() && !parameters.isProcessSwap)
+        drawingArea->sendEnterAcceleratedCompositingModeIfNeeded();
 #endif
-    m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
+    drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
 
     if (parameters.isProcessSwap)
         freezeLayerTree(LayerTreeFreezeReason::ProcessSwap);
 
 #if ENABLE(ASYNC_SCROLLING)
     m_useAsyncScrolling = parameters.store.getBoolValueForKey(WebPreferencesKey::threadedScrollingEnabledKey());
-    if (!m_drawingArea->supportsAsyncScrolling())
+    if (!drawingArea->supportsAsyncScrolling())
         m_useAsyncScrolling = false;
     m_page->settings().setScrollingCoordinatorEnabled(m_useAsyncScrolling);
 #endif
@@ -872,7 +873,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         }
     }
 
-    m_drawingArea->updatePreferences(parameters.store);
+    drawingArea->updatePreferences(parameters.store);
 
     setBackgroundExtendsBeyondPage(parameters.backgroundExtendsBeyondPage);
     setPageAndTextZoomFactors(parameters.pageZoomFactor, parameters.textZoomFactor);
@@ -991,7 +992,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
 #if ENABLE(SCROLLING_THREAD)
     if (m_useAsyncScrolling)
-        m_drawingArea->registerScrollingTree();
+        drawingArea->registerScrollingTree();
 #endif
 
     for (auto& mimeType : parameters.mimeTypesWithCustomContentProviders)
@@ -1099,11 +1100,11 @@ void WebPage::updateAfterDrawingAreaCreation(const WebPageCreationParameters& pa
 #if PLATFORM(MAC)
     if (parameters.drawingAreaType == DrawingAreaType::TiledCoreAnimation) {
         if (auto viewExposedRect = parameters.viewExposedRect)
-            m_drawingArea->setViewExposedRect(viewExposedRect);
+            protectedDrawingArea()->setViewExposedRect(viewExposedRect);
     }
 #endif
 #if USE(COORDINATED_GRAPHICS)
-    m_drawingArea->updatePreferences(parameters.store);
+    protectedDrawingArea()->updatePreferences(parameters.store);
 #endif
 }
 
@@ -1182,7 +1183,7 @@ void WebPage::gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection& gpuPr
 void WebPage::gpuProcessConnectionWasDestroyed()
 {
 #if PLATFORM(COCOA)
-    if (auto* remoteLayerTreeDrawingArea = dynamicDowncast<RemoteLayerTreeDrawingArea>(m_drawingArea.get()))
+    if (RefPtr remoteLayerTreeDrawingArea = dynamicDowncast<RemoteLayerTreeDrawingArea>(protectedDrawingArea()))
         remoteLayerTreeDrawingArea->gpuProcessConnectionWasDestroyed();
 #endif
 }
@@ -1260,22 +1261,23 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 
     // If the UIProcess created a new DrawingArea, then we need to do the same.
     if (m_drawingArea->identifier() != parameters.drawingAreaIdentifier) {
-        auto oldDrawingArea = std::exchange(m_drawingArea, nullptr);
+        RefPtr oldDrawingArea = std::exchange(m_drawingArea, nullptr);
         oldDrawingArea->removeMessageReceiverIfNeeded();
 
         m_drawingArea = DrawingArea::create(*this, parameters);
+        RefPtr drawingArea = m_drawingArea;
         updateAfterDrawingAreaCreation(parameters);
-        addRootFramesToNewDrawingArea(m_mainFrame.get(), *m_drawingArea);
+        addRootFramesToNewDrawingArea(m_mainFrame.get(), *drawingArea);
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-        if (m_drawingArea->enterAcceleratedCompositingModeIfNeeded() && !parameters.isProcessSwap)
-            m_drawingArea->sendEnterAcceleratedCompositingModeIfNeeded();
+        if (drawingArea->enterAcceleratedCompositingModeIfNeeded() && !parameters.isProcessSwap)
+            drawingArea->sendEnterAcceleratedCompositingModeIfNeeded();
 #endif
-        m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
-        m_drawingArea->updatePreferences(parameters.store);
+        drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
+        drawingArea->updatePreferences(parameters.store);
 
-        m_drawingArea->adoptLayersFromDrawingArea(*oldDrawingArea);
-        m_drawingArea->adoptDisplayRefreshMonitorsFromDrawingArea(*oldDrawingArea);
+        drawingArea->adoptLayersFromDrawingArea(*oldDrawingArea);
+        drawingArea->adoptDisplayRefreshMonitorsFromDrawingArea(*oldDrawingArea);
 
         unfreezeLayerTree(LayerTreeFreezeReason::PageSuspended);
     }
@@ -1814,12 +1816,12 @@ void WebPage::clearMainFrameName()
 
 void WebPage::enterAcceleratedCompositingMode(WebCore::Frame& frame, GraphicsLayer* layer)
 {
-    m_drawingArea->setRootCompositingLayer(frame, layer);
+    protectedDrawingArea()->setRootCompositingLayer(frame, layer);
 }
 
 void WebPage::exitAcceleratedCompositingMode(WebCore::Frame& frame)
 {
-    m_drawingArea->setRootCompositingLayer(frame, nullptr);
+    protectedDrawingArea()->setRootCompositingLayer(frame, nullptr);
 }
 
 void WebPage::close()
@@ -1903,7 +1905,7 @@ void WebPage::close()
 
 #if ENABLE(SCROLLING_THREAD)
     if (m_useAsyncScrolling)
-        m_drawingArea->unregisterScrollingTree();
+        protectedDrawingArea()->unregisterScrollingTree();
 #endif
 
     m_drawingArea = nullptr;
@@ -2337,7 +2339,7 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
     }
 
     view->resize(viewSize);
-    m_drawingArea->setNeedsDisplay();
+    protectedDrawingArea()->setNeedsDisplay();
 
 #if USE(COORDINATED_GRAPHICS)
     if (view->useFixedLayout())
@@ -2390,7 +2392,7 @@ void WebPage::sendViewportAttributesChanged(const ViewportArguments& viewportArg
     setFixedLayoutSize(roundedIntSize(attr.layoutSize));
 
 #if USE(COORDINATED_GRAPHICS)
-    m_drawingArea->didChangeViewportAttributes(WTFMove(attr));
+    protectedDrawingArea()->didChangeViewportAttributes(WTFMove(attr));
 #else
     send(Messages::WebPageProxy::DidChangeViewportProperties(attr));
 #endif
@@ -2608,7 +2610,7 @@ void WebPage::didScalePage(double scale, const IntPoint& origin)
 #endif
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    m_drawingArea->deviceOrPageScaleFactorChanged();
+    protectedDrawingArea()->deviceOrPageScaleFactorChanged();
 #endif
 
     platformDidScalePage();
@@ -2711,7 +2713,7 @@ void WebPage::setDeviceScaleFactor(float scaleFactor)
     }
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    m_drawingArea->deviceOrPageScaleFactorChanged();
+    protectedDrawingArea()->deviceOrPageScaleFactorChanged();
 #endif
 }
 
@@ -2871,7 +2873,7 @@ void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArgum
     if (view && view->useFixedLayout())
         sendViewportAttributesChanged(viewportArguments);
     else
-        m_drawingArea->didChangeViewportAttributes(ViewportAttributes());
+        protectedDrawingArea()->didChangeViewportAttributes(ViewportAttributes());
 #endif
 
 #if !PLATFORM(IOS_FAMILY) && !USE(COORDINATED_GRAPHICS)
@@ -3320,19 +3322,20 @@ void WebPage::unfreezeLayerTree(LayerTreeFreezeReason reason)
 
 void WebPage::updateDrawingAreaLayerTreeFreezeState()
 {
-    if (!m_drawingArea)
+    RefPtr drawingArea = m_drawingArea;
+    if (!drawingArea)
         return;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     // When the browser is in the background, we should not freeze the layer tree
     // if the page has a video playing in picture-in-picture.
     if (m_videoPresentationManager && m_videoPresentationManager->hasVideoPlayingInPictureInPicture() && m_layerTreeFreezeReasons.hasExactlyOneBitSet() && m_layerTreeFreezeReasons.contains(LayerTreeFreezeReason::BackgroundApplication)) {
-        m_drawingArea->setLayerTreeStateIsFrozen(false);
+        drawingArea->setLayerTreeStateIsFrozen(false);
         return;
     }
 #endif
 
-    m_drawingArea->setLayerTreeStateIsFrozen(!!m_layerTreeFreezeReasons);
+    drawingArea->setLayerTreeStateIsFrozen(!!m_layerTreeFreezeReasons);
 }
 
 void WebPage::updateFrameSize(WebCore::FrameIdentifier frameID, WebCore::IntSize newSize)
@@ -3364,20 +3367,21 @@ void WebPage::updateFrameSize(WebCore::FrameIdentifier frameID, WebCore::IntSize
     frameView->setUnobscuredContentSize(frameView->size());
 #endif
 
-    if (m_drawingArea) {
-        m_drawingArea->setNeedsDisplay();
-        m_drawingArea->triggerRenderingUpdate();
+    if (RefPtr drawingArea = m_drawingArea) {
+        drawingArea->setNeedsDisplay();
+        drawingArea->triggerRenderingUpdate();
     }
 }
 
 void WebPage::tryMarkLayersVolatile(CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!drawingArea()) {
+    RefPtr drawingArea = m_drawingArea;
+    if (!drawingArea) {
         completionHandler(false);
         return;
     }
     
-    drawingArea()->tryMarkLayersVolatile(WTFMove(completionHandler));
+    drawingArea->tryMarkLayersVolatile(WTFMove(completionHandler));
 }
 
 void WebPage::callVolatilityCompletionHandlers(bool succeeded)
@@ -3553,8 +3557,9 @@ void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEven
 
     revokeSandboxExtensions(mouseEventSandboxExtensions);
 
+    RefPtr drawingArea = m_drawingArea;
     bool shouldDeferDidReceiveEvent = [&] {
-        if (!m_drawingArea)
+        if (!drawingArea)
             return false;
 
         if (mouseEvent.type() != WebEventType::MouseMove)
@@ -3571,7 +3576,7 @@ void WebPage::mouseEvent(FrameIdentifier frameID, const WebMouseEvent& mouseEven
 
     flushDeferredDidReceiveMouseEvent();
 
-    if (shouldDeferDidReceiveEvent && m_drawingArea->scheduleRenderingUpdate()) {
+    if (shouldDeferDidReceiveEvent && drawingArea->scheduleRenderingUpdate()) {
         // For mousemove events where the user is only hovering (not clicking and dragging),
         // we defer sending the DidReceiveEvent() IPC message until the end of the rendering
         // update to throttle the rate of these events to the rendering update frequency.
@@ -3993,16 +3998,17 @@ void WebPage::setBackgroundColor(const std::optional<WebCore::Color>& background
     if (RefPtr frameView = localMainFrameView())
         frameView->updateBackgroundRecursively(backgroundColor);
 
+    RefPtr drawingArea = m_drawingArea;
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    m_drawingArea->backgroundColorDidChange();
+    drawingArea->backgroundColorDidChange();
 #endif
-    m_drawingArea->setNeedsDisplay();
+    drawingArea->setNeedsDisplay();
 }
 
 #if PLATFORM(COCOA)
 void WebPage::setTopContentInsetFenced(float contentInset, const WTF::MachSendRight& machSendRight)
 {
-    m_drawingArea->addFence(machSendRight);
+    protectedDrawingArea()->addFence(machSendRight);
     setTopContentInset(contentInset);
 }
 #endif
@@ -4144,7 +4150,7 @@ void WebPage::setActivityState(OptionSet<ActivityState> activityState, ActivityS
         m_page->setActivityState(activityState);
     }
     
-    m_drawingArea->activityStateDidChange(changed, activityStateChangeID, WTFMove(callback));
+    protectedDrawingArea()->activityStateDidChange(changed, activityStateChangeID, WTFMove(callback));
     WebProcess::singleton().pageActivityStateDidChange(m_identifier, changed);
 
     if (changed & ActivityState::IsInWindow)
@@ -4161,7 +4167,7 @@ void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
 {
     m_layerHostingMode = layerHostingMode;
 
-    m_drawingArea->setLayerHostingMode(m_layerHostingMode);
+    protectedDrawingArea()->setLayerHostingMode(m_layerHostingMode);
 }
 
 void WebPage::didStartPageTransition()
@@ -4603,12 +4609,12 @@ void WebPage::getAccessibilityTreeData(CompletionHandler<void(const std::optiona
 
 void WebPage::updateRenderingWithForcedRepaintWithoutCallback()
 {
-    m_drawingArea->updateRenderingWithForcedRepaint();
+    protectedDrawingArea()->updateRenderingWithForcedRepaint();
 }
 
 void WebPage::updateRenderingWithForcedRepaint(CompletionHandler<void()>&& completionHandler)
 {
-    m_drawingArea->updateRenderingWithForcedRepaintAsync(*this, WTFMove(completionHandler));
+    protectedDrawingArea()->updateRenderingWithForcedRepaintAsync(*this, WTFMove(completionHandler));
 }
 
 void WebPage::preferencesDidChange(const WebPreferencesStore& store, std::optional<uint64_t> sharedPreferencesVersion)
@@ -4736,8 +4742,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     settings.setPrivateClickMeasurementEnabled(store.getBoolValueForKey(WebPreferencesKey::privateClickMeasurementEnabledKey()));
 
-    if (m_drawingArea)
-        m_drawingArea->updatePreferences(store);
+    if (RefPtr drawingArea = m_drawingArea)
+        drawingArea->updatePreferences(store);
 
     WebProcess::singleton().setChildProcessDebuggabilityEnabled(store.getBoolValueForKey(WebPreferencesKey::childProcessDebuggabilityEnabledKey()));
 
@@ -5105,8 +5111,8 @@ void WebPage::willDestroyDecodedDataForAllImages()
         m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseAllImageResources();
 #endif
 
-    if (m_drawingArea)
-        m_drawingArea->setNextRenderingUpdateRequiresSynchronousImageDecoding();
+    if (RefPtr drawingArea = m_drawingArea)
+        drawingArea->setNextRenderingUpdateRequiresSynchronousImageDecoding();
 }
 
 unsigned WebPage::remoteImagesCountForTesting() const
@@ -6122,7 +6128,7 @@ void WebPage::windowAndViewFramesChanged(const ViewWindowCoordinates& coordinate
 void WebPage::setMainFrameIsScrollable(bool isScrollable)
 {
     m_mainFrameIsScrollable = isScrollable;
-    m_drawingArea->mainFrameScrollabilityChanged(isScrollable);
+    protectedDrawingArea()->mainFrameScrollabilityChanged(isScrollable);
 
     if (RefPtr frameView = m_mainFrame->coreLocalFrame()->view()) {
         frameView->setCanHaveScrollbars(isScrollable);
@@ -7598,7 +7604,7 @@ void WebPage::willReplaceMultipartContent(const WebFrame& frame)
     if (!frame.isMainFrame())
         return;
 
-    m_previousExposedContentRect = m_drawingArea->exposedContentRect();
+    m_previousExposedContentRect = protectedDrawingArea()->exposedContentRect();
 #endif
 }
 
@@ -7610,7 +7616,7 @@ void WebPage::didReplaceMultipartContent(const WebFrame& frame)
 
     // Restore the previous exposed content rect so that it remains fixed when replacing content
     // from multipart/x-mixed-replace streams.
-    m_drawingArea->setExposedContentRect(m_previousExposedContentRect);
+    protectedDrawingArea()->setExposedContentRect(m_previousExposedContentRect);
 #endif
 }
 
@@ -7625,7 +7631,7 @@ static void setCanIgnoreViewportArgumentsToAvoidExcessiveZoomIfNeeded(ViewportCo
 void WebPage::didCommitLoad(WebFrame* frame)
 {
 #if PLATFORM(IOS_FAMILY)
-    auto firstTransactionIDAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingArea>(*m_drawingArea).nextTransactionID();
+    auto firstTransactionIDAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingArea>(*protectedDrawingArea()).nextTransactionID();
     frame->setFirstLayerTreeTransactionIDAfterDidCommitLoad(firstTransactionIDAfterDidCommitLoad);
     cancelPotentialTapInFrame(*frame);
 #endif
@@ -7639,8 +7645,8 @@ void WebPage::didCommitLoad(WebFrame* frame)
     if (!frame->isRootFrame())
         return;
 
-    if (m_drawingArea)
-        m_drawingArea->sendEnterAcceleratedCompositingModeIfNeeded();
+    if (RefPtr drawingArea = m_drawingArea)
+        drawingArea->sendEnterAcceleratedCompositingModeIfNeeded();
 
     ASSERT(!frame->coreLocalFrame()->loader().stateMachine().creatingInitialEmptyDocument());
     unfreezeLayerTree(LayerTreeFreezeReason::ProcessSwap);
@@ -8130,10 +8136,8 @@ void WebPage::postSynchronousMessageForTesting(const String& messageName, API::O
 
 void WebPage::setShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocument)
 {
-    if (!m_drawingArea)
-        return;
-
-    m_drawingArea->setShouldScaleViewToFitDocument(shouldScaleViewToFitDocument);
+    if (RefPtr drawingArea = m_drawingArea)
+        drawingArea->setShouldScaleViewToFitDocument(shouldScaleViewToFitDocument);
 }
 
 void WebPage::imageOrMediaDocumentSizeChanged(const IntSize& newSize)
@@ -8199,10 +8203,10 @@ void WebPage::dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone
     ASSERT(!userData);
 
     // The drawing area might want to defer dispatch of didLayout to the UI process.
-    if (m_drawingArea) {
+    if (RefPtr drawingArea = m_drawingArea) {
         static auto paintMilestones = OptionSet<WebCore::LayoutMilestone> { WebCore::LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold, WebCore::LayoutMilestone::DidFirstPaintAfterSuppressedIncrementalRendering, WebCore::LayoutMilestone::DidRenderSignificantAmountOfText, WebCore::LayoutMilestone::DidFirstMeaningfulPaint };
         auto drawingAreaRelatedMilestones = milestones & paintMilestones;
-        if (drawingAreaRelatedMilestones && m_drawingArea->addMilestonesToDispatch(drawingAreaRelatedMilestones))
+        if (drawingAreaRelatedMilestones && drawingArea->addMilestonesToDispatch(drawingAreaRelatedMilestones))
             milestones.remove(drawingAreaRelatedMilestones);
     }
     if (milestones.contains(WebCore::LayoutMilestone::DidFirstLayout) && localMainFrameView()) {
@@ -10031,6 +10035,11 @@ void WebPage::updateCaptureState(const WebCore::Document& document, bool isActiv
     });
 }
 #endif
+
+RefPtr<DrawingArea> WebPage::protectedDrawingArea() const
+{
+    return m_drawingArea;
+}
 
 } // namespace WebKit
 

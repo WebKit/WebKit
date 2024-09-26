@@ -39,10 +39,16 @@ namespace WebKit {
 class RemoteLayerTreeDrawingAreaMac final : public RemoteLayerTreeDrawingArea {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeDrawingAreaMac);
 public:
-    RemoteLayerTreeDrawingAreaMac(WebPage&, const WebPageCreationParameters&);
+    static Ref<RemoteLayerTreeDrawingAreaMac> create(WebPage& webPage, const WebPageCreationParameters& parameters)
+    {
+        return adoptRef(*new RemoteLayerTreeDrawingAreaMac(webPage, parameters));
+    }
+
     virtual ~RemoteLayerTreeDrawingAreaMac();
 
 private:
+    RemoteLayerTreeDrawingAreaMac(WebPage&, const WebPageCreationParameters&);
+
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const final;
 
     void setColorSpace(std::optional<WebCore::DestinationColorSpace>) final;
