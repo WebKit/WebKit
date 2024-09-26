@@ -194,7 +194,7 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect& viewFrameInWindow
         if (!hasRunningProcess())
             return;
 
-        legacyMainFrameProcess().send(Messages::WebPage::WindowAndViewFramesChanged(*m_viewWindowCoordinates), webPageIDInMainFrameProcess());
+        protectedLegacyMainFrameProcess()->send(Messages::WebPage::WindowAndViewFramesChanged(*m_viewWindowCoordinates), webPageIDInMainFrameProcess());
     });
 }
 
@@ -203,7 +203,7 @@ void WebPageProxy::setMainFrameIsScrollable(bool isScrollable)
     if (!hasRunningProcess())
         return;
 
-    legacyMainFrameProcess().send(Messages::WebPage::SetMainFrameIsScrollable(isScrollable), webPageIDInMainFrameProcess());
+    protectedLegacyMainFrameProcess()->send(Messages::WebPage::SetMainFrameIsScrollable(isScrollable), webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange& range, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&& callbackFunction)
@@ -213,7 +213,7 @@ void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange&
         return;
     }
 
-    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::AttributedSubstringForCharacterRangeAsync(range), WTFMove(callbackFunction), webPageIDInMainFrameProcess());
+    protectedLegacyMainFrameProcess()->sendWithAsyncReply(Messages::WebPage::AttributedSubstringForCharacterRangeAsync(range), WTFMove(callbackFunction), webPageIDInMainFrameProcess());
 }
 
 String WebPageProxy::stringSelectionForPasteboard()
@@ -222,7 +222,7 @@ String WebPageProxy::stringSelectionForPasteboard()
         return { };
     
     const Seconds messageTimeout(20);
-    auto sendResult = legacyMainFrameProcess().sendSync(Messages::WebPage::GetStringSelectionForPasteboard(), webPageIDInMainFrameProcess(), messageTimeout);
+    auto sendResult = protectedLegacyMainFrameProcess()->sendSync(Messages::WebPage::GetStringSelectionForPasteboard(), webPageIDInMainFrameProcess(), messageTimeout);
     auto [value] = sendResult.takeReplyOr(String { });
     return value;
 }
@@ -233,7 +233,7 @@ RefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const Str
         return nullptr;
 
     const Seconds messageTimeout(20);
-    auto sendResult = legacyMainFrameProcess().sendSync(Messages::WebPage::GetDataSelectionForPasteboard(pasteboardType), webPageIDInMainFrameProcess(), messageTimeout);
+    auto sendResult = protectedLegacyMainFrameProcess()->sendSync(Messages::WebPage::GetDataSelectionForPasteboard(pasteboardType), webPageIDInMainFrameProcess(), messageTimeout);
     auto [buffer] = sendResult.takeReplyOr(nullptr);
     return buffer;
 }
@@ -244,10 +244,10 @@ bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
         return false;
 
     if (auto replyID = grantAccessToCurrentPasteboardData(pasteboardName, [] () { }))
-        websiteDataStore().protectedNetworkProcess()->connection().waitForAsyncReplyAndDispatchImmediately<Messages::NetworkProcess::AllowFilesAccessFromWebProcess>(*replyID, 100_ms);
+        protectedWebsiteDataStore()->protectedNetworkProcess()->protectedConnection()->waitForAsyncReplyAndDispatchImmediately<Messages::NetworkProcess::AllowFilesAccessFromWebProcess>(*replyID, 100_ms);
 
     const Seconds messageTimeout(20);
-    auto sendResult = legacyMainFrameProcess().sendSync(Messages::WebPage::ReadSelectionFromPasteboard(pasteboardName), webPageIDInMainFrameProcess(), messageTimeout);
+    auto sendResult = protectedLegacyMainFrameProcess()->sendSync(Messages::WebPage::ReadSelectionFromPasteboard(pasteboardName), webPageIDInMainFrameProcess(), messageTimeout);
     auto [result] = sendResult.takeReplyOr(false);
     return result;
 }
@@ -284,7 +284,7 @@ void WebPageProxy::setSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled)
 
     TextChecker::setSmartInsertDeleteEnabled(isSmartInsertDeleteEnabled);
     m_isSmartInsertDeleteEnabled = isSmartInsertDeleteEnabled;
-    legacyMainFrameProcess().send(Messages::WebPage::SetSmartInsertDeleteEnabled(isSmartInsertDeleteEnabled), webPageIDInMainFrameProcess());
+    protectedLegacyMainFrameProcess()->send(Messages::WebPage::SetSmartInsertDeleteEnabled(isSmartInsertDeleteEnabled), webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)
@@ -300,7 +300,7 @@ void WebPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t>
 
     // Note: The WebFrameProxy with this FrameIdentifier might not exist in the UI process. See rdar://130998804.
     if (RefPtr pageClient = this->pageClient())
-        pageClient->accessibilityWebProcessTokenReceived(data, legacyMainFrameProcess().connection().remoteProcessID());
+        pageClient->accessibilityWebProcessTokenReceived(data, protectedLegacyMainFrameProcess()->protectedConnection()->remoteProcessID());
 }
 
 void WebPageProxy::makeFirstResponder()
@@ -326,7 +326,7 @@ void WebPageProxy::semanticContextDidChange()
     if (!hasRunningProcess())
         return;
 
-    legacyMainFrameProcess().send(Messages::WebPage::SemanticContextDidChange(useFormSemanticContext()), webPageIDInMainFrameProcess());
+    protectedLegacyMainFrameProcess()->send(Messages::WebPage::SemanticContextDidChange(useFormSemanticContext()), webPageIDInMainFrameProcess());
 }
 
 WebCore::DestinationColorSpace WebPageProxy::colorSpace()
@@ -339,7 +339,7 @@ void WebPageProxy::registerUIProcessAccessibilityTokens(std::span<const uint8_t>
     if (!hasRunningProcess())
         return;
 
-    legacyMainFrameProcess().send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken), webPageIDInMainFrameProcess());
+    protectedLegacyMainFrameProcess()->send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken), webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::executeSavedCommandBySelector(IPC::Connection& connection, const String& selector, CompletionHandler<void(bool)>&& completionHandler)
@@ -354,11 +354,11 @@ void WebPageProxy::executeSavedCommandBySelector(IPC::Connection& connection, co
 
 bool WebPageProxy::shouldDelayWindowOrderingForEvent(const WebKit::WebMouseEvent& event)
 {
-    if (legacyMainFrameProcess().state() != WebProcessProxy::State::Running)
+    if (protectedLegacyMainFrameProcess()->state() != WebProcessProxy::State::Running)
         return false;
 
     const Seconds messageTimeout(3);
-    auto sendResult = legacyMainFrameProcess().sendSync(Messages::WebPage::ShouldDelayWindowOrderingEvent(event), webPageIDInMainFrameProcess(), messageTimeout);
+    auto sendResult = protectedLegacyMainFrameProcess()->sendSync(Messages::WebPage::ShouldDelayWindowOrderingEvent(event), webPageIDInMainFrameProcess(), messageTimeout);
     auto [result] = sendResult.takeReplyOr(false);
     return result;
 }
@@ -368,14 +368,15 @@ bool WebPageProxy::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEven
     if (!hasRunningProcess())
         return false;
 
-    if (!m_legacyMainFrameProcess->hasConnection())
+    Ref legacyMainFrameProcess = m_legacyMainFrameProcess;
+    if (!legacyMainFrameProcess->hasConnection())
         return false;
 
     if (shouldAvoidSynchronouslyWaitingToPreventDeadlock())
         return false;
 
-    legacyMainFrameProcess().send(Messages::WebPage::RequestAcceptsFirstMouse(eventNumber, event), webPageIDInMainFrameProcess(), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
-    bool receivedReply = m_legacyMainFrameProcess->connection().waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAcceptsFirstMouse>(webPageIDInMainFrameProcess(), 3_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) == IPC::Error::NoError;
+    legacyMainFrameProcess->send(Messages::WebPage::RequestAcceptsFirstMouse(eventNumber, event), webPageIDInMainFrameProcess(), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    bool receivedReply = legacyMainFrameProcess->protectedConnection()->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAcceptsFirstMouse>(webPageIDInMainFrameProcess(), 3_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) == IPC::Error::NoError;
 
     if (!receivedReply)
         return false;
@@ -601,7 +602,8 @@ void WebPageProxy::startWindowDrag()
 
 NSWindow *WebPageProxy::platformWindow()
 {
-    return m_pageClient ? m_pageClient->platformWindow() : nullptr;
+    RefPtr pageClient = m_pageClient.get();
+    return pageClient ? pageClient->platformWindow() : nullptr;
 }
 
 void WebPageProxy::rootViewToWindow(const WebCore::IntRect& viewRect, WebCore::IntRect& windowRect)
@@ -616,7 +618,7 @@ void WebPageProxy::showValidationMessage(const IntRect& anchorClientRect, const 
     if (!pageClient)
         return;
 
-    m_validationBubble = protectedPageClient()->createValidationBubble(message, { m_preferences->minimumFontSize() });
+    m_validationBubble = protectedPageClient()->createValidationBubble(message, { protectedPreferences()->minimumFontSize() });
     m_validationBubble->showRelativeTo(anchorClientRect);
 }
 
@@ -636,8 +638,8 @@ _WKRemoteObjectRegistry *WebPageProxy::remoteObjectRegistry()
 
 NSMenu *WebPageProxy::activeContextMenu() const
 {
-    if (m_activeContextMenu)
-        return m_activeContextMenu->platformMenu();
+    if (RefPtr activeContextMenu = m_activeContextMenu)
+        return activeContextMenu->platformMenu();
     return nil;
 }
 
@@ -668,7 +670,7 @@ std::optional<IPC::AsyncReplyID> WebPageProxy::willPerformPasteCommand(DOMPasteA
 
 RetainPtr<NSView> WebPageProxy::Internals::platformView() const
 {
-    RefPtr pageClient = page->pageClient();
+    RefPtr pageClient = protectedPage()->pageClient();
     return pageClient ? [pageClient->platformWindow() contentView] : nullptr;
 }
 
@@ -694,24 +696,24 @@ void WebPageProxy::updatePDFHUDLocation(PDFPluginIdentifier identifier, const We
 
 void WebPageProxy::pdfZoomIn(PDFPluginIdentifier identifier)
 {
-    legacyMainFrameProcess().send(Messages::WebPage::ZoomPDFIn(identifier), webPageIDInMainFrameProcess());
+    protectedLegacyMainFrameProcess()->send(Messages::WebPage::ZoomPDFIn(identifier), webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::pdfZoomOut(PDFPluginIdentifier identifier)
 {
-    legacyMainFrameProcess().send(Messages::WebPage::ZoomPDFOut(identifier), webPageIDInMainFrameProcess());
+    protectedLegacyMainFrameProcess()->send(Messages::WebPage::ZoomPDFOut(identifier), webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::pdfSaveToPDF(PDFPluginIdentifier identifier)
 {
-    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::SavePDF(identifier), [this, protectedThis = Ref { *this }] (String&& suggestedFilename, URL&& originatingURL, std::span<const uint8_t> dataReference) {
+    protectedLegacyMainFrameProcess()->sendWithAsyncReply(Messages::WebPage::SavePDF(identifier), [this, protectedThis = Ref { *this }] (String&& suggestedFilename, URL&& originatingURL, std::span<const uint8_t> dataReference) {
         savePDFToFileInDownloadsFolder(WTFMove(suggestedFilename), WTFMove(originatingURL), dataReference);
     }, webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::pdfOpenWithPreview(PDFPluginIdentifier identifier)
 {
-    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::OpenPDFWithPreview(identifier), [this, protectedThis = Ref { *this }] (String&& suggestedFilename, FrameInfoData&& frameInfo, std::span<const uint8_t> data, const String& pdfUUID) {
+    protectedLegacyMainFrameProcess()->sendWithAsyncReply(Messages::WebPage::OpenPDFWithPreview(identifier), [this, protectedThis = Ref { *this }] (String&& suggestedFilename, FrameInfoData&& frameInfo, std::span<const uint8_t> data, const String& pdfUUID) {
         savePDFToTemporaryFolderAndOpenWithNativeApplication(WTFMove(suggestedFilename), WTFMove(frameInfo), data, pdfUUID);
     }, webPageIDInMainFrameProcess());
 }
@@ -778,10 +780,11 @@ void WebPageProxy::closeSharedPreviewPanelIfNecessary()
 void WebPageProxy::handleContextMenuLookUpImage()
 {
     auto result = internals().activeContextMenuContextData.webHitTestResultData().value();
-    if (!result.imageBitmap)
+    RefPtr imageBitmap = result.imageBitmap;
+    if (!imageBitmap)
         return;
 
-    showImageInQuickLookPreviewPanel(*result.imageBitmap, result.toolTipText, URL { result.absoluteImageURL }, QuickLookPreviewActivity::VisualSearch);
+    showImageInQuickLookPreviewPanel(*imageBitmap, result.toolTipText, URL { result.absoluteImageURL }, QuickLookPreviewActivity::VisualSearch);
 }
 
 void WebPageProxy::showImageInQuickLookPreviewPanel(ShareableBitmap& imageBitmap, const String& tooltip, const URL& imageURL, QuickLookPreviewActivity activity)
@@ -827,10 +830,11 @@ void WebPageProxy::showImageInQuickLookPreviewPanel(ShareableBitmap& imageBitmap
 
 void WebPageProxy::handleContextMenuCopySubject(const String& preferredMIMEType)
 {
-    if (!m_activeContextMenu)
+    RefPtr activeContextMenu = m_activeContextMenu;
+    if (!activeContextMenu)
         return;
 
-    auto image = m_activeContextMenu->imageForCopySubject();
+    auto image = activeContextMenu->imageForCopySubject();
     if (!image)
         return;
 
