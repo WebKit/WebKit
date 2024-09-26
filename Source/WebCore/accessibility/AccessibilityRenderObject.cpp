@@ -1074,7 +1074,7 @@ static bool webAreaIsPresentational(RenderObject* renderer)
     if (!renderer || !is<RenderView>(*renderer))
         return false;
     
-    auto* ownerElement = renderer->document().ownerElement();
+    RefPtr ownerElement = renderer->document().ownerElement();
     return ownerElement && nodeHasPresentationRole(*ownerElement);
 }
 
