@@ -584,13 +584,18 @@ static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, 
         for (size_t i = 0; i < buffer.attributeCount; ++i) {
             auto& attribute = buffer.attributes[i];
             auto formatSize = vertexFormatSize(attribute.format);
-            lastStride = std::max<uint64_t>(lastStride, attribute.offset + formatSize);
+            auto offsetPlusFormatSize = checkedSum<uint64_t>(attribute.offset, formatSize);
+            if (offsetPlusFormatSize.hasOverflowed()) {
+                *error = @"attribute.offset + formatSize > uint64::max()";
+                return nil;
+            }
+            lastStride = std::max<uint64_t>(lastStride, offsetPlusFormatSize.value());
             if (!buffer.arrayStride) {
-                if (attribute.offset + formatSize > limits.maxVertexBufferArrayStride) {
+                if (offsetPlusFormatSize.value() > limits.maxVertexBufferArrayStride) {
                     *error = @"attribute.offset + formatSize > limits.maxVertexBufferArrayStride";
                     return nil;
                 }
-            } else if (attribute.offset + formatSize > buffer.arrayStride) {
+            } else if (offsetPlusFormatSize.value() > buffer.arrayStride) {
                 *error = @"attribute.offset + formatSize > buffer.arrayStride";
                 return nil;
             }
