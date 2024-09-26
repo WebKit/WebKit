@@ -29,12 +29,14 @@
 
 #include "AudioTrackPrivate.h"
 #include <webm/dom_types.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 struct AudioInfo;
 
 class AudioTrackPrivateWebM final : public AudioTrackPrivate {
+    WTF_MAKE_TZONE_ALLOCATED(AudioTrackPrivateWebM);
 public:
     static Ref<AudioTrackPrivateWebM> create(webm::TrackEntry&&);
     virtual ~AudioTrackPrivateWebM() = default;

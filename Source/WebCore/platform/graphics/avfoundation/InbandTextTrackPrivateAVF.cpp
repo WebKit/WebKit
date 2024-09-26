@@ -38,6 +38,7 @@
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <wtf/MediaTime.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
@@ -48,6 +49,8 @@
 #include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InbandTextTrackPrivateAVF);
 
 AVFInbandTrackParent::~AVFInbandTrackParent() = default;
 

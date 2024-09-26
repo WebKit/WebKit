@@ -33,6 +33,7 @@
 #include "TrackPrivateBase.h"
 #include "TrackPrivateBaseClient.h"
 #include <wtf/Language.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -40,6 +41,9 @@
 #if ENABLE(VIDEO)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TrackBase);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaTrackBase);
 
 static int s_uniqueId = 0;
 

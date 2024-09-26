@@ -30,6 +30,7 @@
 #include "ContextDestructionObserver.h"
 #include "WebCoreOpaqueRoot.h"
 #include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 
@@ -48,6 +49,7 @@ class TrackBase
     , private LoggerHelper
 #endif
 {
+    WTF_MAKE_TZONE_ALLOCATED(TrackBase);
 public:
     virtual ~TrackBase();
 
@@ -118,6 +120,7 @@ private:
 };
 
 class MediaTrackBase : public TrackBase {
+    WTF_MAKE_TZONE_ALLOCATED(MediaTrackBase);
 public:
     const AtomString& kind() const { return m_kind; }
     virtual void setKind(const AtomString&);

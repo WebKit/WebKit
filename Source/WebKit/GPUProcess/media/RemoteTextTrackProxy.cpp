@@ -37,8 +37,11 @@
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/ISOVTTCue.h>
 #include <WebCore/NotImplemented.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteTextTrackProxy);
 
 using namespace WebCore;
 

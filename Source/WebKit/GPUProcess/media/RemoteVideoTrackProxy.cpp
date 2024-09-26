@@ -34,8 +34,11 @@
 #include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteMediaPlayerProxy.h"
 #include "VideoTrackPrivateRemoteConfiguration.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteVideoTrackProxy);
 
 using namespace WebCore;
 

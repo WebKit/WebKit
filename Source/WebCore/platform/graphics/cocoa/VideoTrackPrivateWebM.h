@@ -29,12 +29,14 @@
 
 #include "VideoTrackPrivate.h"
 #include <webm/dom_types.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 struct VideoInfo;
 
 class VideoTrackPrivateWebM final : public VideoTrackPrivate {
+    WTF_MAKE_TZONE_ALLOCATED(VideoTrackPrivateWebM);
 public:
     static Ref<VideoTrackPrivateWebM> create(webm::TrackEntry&&);
     virtual ~VideoTrackPrivateWebM() = default;

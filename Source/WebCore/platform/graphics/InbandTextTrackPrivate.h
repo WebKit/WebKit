@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 
 #include "InbandTextTrackPrivateClient.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ enum class InbandTextTrackPrivateMode : uint8_t {
 };
 
 class InbandTextTrackPrivate : public TrackPrivateBase {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(InbandTextTrackPrivate);
 public:
     enum class CueFormat : uint8_t {
         Data,

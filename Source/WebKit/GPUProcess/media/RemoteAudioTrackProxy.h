@@ -33,6 +33,7 @@
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/TrackBase.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -49,6 +50,7 @@ struct AudioTrackPrivateRemoteConfiguration;
 class RemoteAudioTrackProxy final
     : public ThreadSafeRefCounted<RemoteAudioTrackProxy, WTF::DestructionThread::Main>
     , public WebCore::AudioTrackPrivateClient {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteAudioTrackProxy);
 public:
     static Ref<RemoteAudioTrackProxy> create(GPUConnectionToWebProcess& connectionToWebProcess, WebCore::AudioTrackPrivate& trackPrivate, WebCore::MediaPlayerIdentifier mediaPlayerIdentifier)
     {

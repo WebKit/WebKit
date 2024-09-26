@@ -39,6 +39,7 @@
 #import <AVFoundation/AVPlayerItem.h>
 #import <AVFoundation/AVPlayerItemOutput.h>
 #import <objc/runtime.h>
+#import <wtf/TZoneMallocInlines.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -48,6 +49,8 @@
 @end
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InbandTextTrackPrivateAVFObjC);
 
 InbandTextTrackPrivateAVFObjC::InbandTextTrackPrivateAVFObjC(AVFInbandTrackParent* player, AVMediaSelectionGroup *group, AVMediaSelectionOption *selection, TrackID trackID, InbandTextTrackPrivate::CueFormat format)
     : InbandTextTrackPrivateAVF(player, trackID, format)

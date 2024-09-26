@@ -33,8 +33,12 @@
 #include "MediaPlayerPrivateRemote.h"
 #include "RemoteMediaPlayerProxyMessages.h"
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextTrackPrivateRemote);
+
 using namespace WebCore;
 
 TextTrackPrivateRemote::TextTrackPrivateRemote(GPUProcessConnection& gpuProcessConnection, MediaPlayerIdentifier playerIdentifier, TextTrackPrivateRemoteConfiguration&& configuration)
