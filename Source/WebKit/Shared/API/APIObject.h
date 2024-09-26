@@ -35,6 +35,7 @@
 #include "WKObject.h"
 #include <wtf/RetainPtr.h>
 #endif
+#include <wtf/HashMap.h>
 #endif
 
 #define DELEGATE_REF_COUNTING_TO_COCOA PLATFORM(COCOA)
@@ -241,8 +242,11 @@ public:
     template<typename T, typename... Args>
     static void constructInWrapper(id <WKObject> wrapper, Args&&... args)
     {
-        Object* object = new (&wrapper._apiObject) T(std::forward<Args>(args)...);
-        object->m_wrapper = (__bridge CFTypeRef)wrapper;
+        Object& object = wrapper._apiObject;
+
+        apiObjectsUnderConstruction().add(&object, (__bridge CFTypeRef)wrapper);
+
+        new (&object) T(std::forward<Args>(args)...);
     }
 
     id <WKObject> wrapper() const { return (__bridge id <WKObject>)m_wrapper; }
@@ -269,6 +273,8 @@ protected:
     static void* newObject(size_t, Type);
 
 private:
+    static HashMap<Object*, CFTypeRef>& apiObjectsUnderConstruction();
+
     // Derived classes must override operator new and call newObject().
     void* operator new(size_t) = delete;
 
