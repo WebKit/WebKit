@@ -28,6 +28,7 @@
 
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
+#include "CSSParserContext.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+PercentageDefinitions.h"

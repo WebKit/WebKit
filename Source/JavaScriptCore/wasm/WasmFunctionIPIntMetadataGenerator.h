@@ -127,6 +127,11 @@ private:
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
 };
 
+void FunctionIPIntMetadataGenerator::addBlankSpace(size_t size)
+{
+    m_metadata.grow(m_metadata.size() + size);
+}
+
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

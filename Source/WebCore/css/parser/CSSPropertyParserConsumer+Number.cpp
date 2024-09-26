@@ -29,6 +29,7 @@
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcSymbolsAllowed.h"
 #include "CSSCalcValue.h"
+#include "CSSParserContext.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CalculationCategory.h"

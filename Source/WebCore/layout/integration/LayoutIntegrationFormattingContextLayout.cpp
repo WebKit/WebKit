@@ -28,7 +28,7 @@
 
 #include "LayoutIntegrationBoxGeometryUpdater.h"
 #include "RenderBlock.h"
-#include "RenderBox.h"
+#include "RenderBoxInlines.h"
 
 namespace WebCore {
 namespace LayoutIntegration {

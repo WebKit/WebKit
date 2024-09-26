@@ -30,6 +30,8 @@
 #include "CSSCalcTree+Simplification.h"
 #include "CSSCalcTree.h"
 #include "CalculationExecutor.h"
+#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 namespace CSSCalc {

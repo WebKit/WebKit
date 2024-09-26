@@ -62,6 +62,7 @@
 #include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include "CSSValue.h"
 #include "CSSValueList.h"
+#include "CSSValuePool.h"
 #include "StyleImage.h"
 #include <wtf/SortedArrayMap.h>
 

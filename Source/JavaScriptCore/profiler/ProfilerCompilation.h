@@ -36,6 +36,7 @@
 #include "ProfilerOriginStack.h"
 #include "ProfilerProfiledBytecodes.h"
 #include "ProfilerUID.h"
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/RefCounted.h>
 #include <wtf/SegmentedVector.h>
 

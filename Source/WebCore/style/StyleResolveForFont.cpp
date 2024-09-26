@@ -41,6 +41,7 @@
 #include "CSSPropertyParserConsumer+Font.h"
 #include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include "CSSPropertyParserHelpers.h"
+#include "CSSValueList.h"
 #include "CSSValuePair.h"
 #include "Document.h"
 #include "DocumentInlines.h"

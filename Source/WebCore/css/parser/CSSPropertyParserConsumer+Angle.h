@@ -34,6 +34,7 @@ namespace WebCore {
 class CSSCalcSymbolTable;
 class CSSPrimitiveValue;
 class CSSParserTokenRange;
+struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {
 

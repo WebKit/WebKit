@@ -26,6 +26,7 @@
 #pragma once
 
 #include <span>
+#include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {

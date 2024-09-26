@@ -45,11 +45,6 @@ unsigned FunctionIPIntMetadataGenerator::addSignature(const TypeDefinition& sign
     return index;
 }
 
-void FunctionIPIntMetadataGenerator::addBlankSpace(size_t size)
-{
-    m_metadata.grow(m_metadata.size() + size);
-}
-
 void FunctionIPIntMetadataGenerator::addLength(size_t length)
 {
     IPInt::InstructionLengthMetadata instructionLength {
