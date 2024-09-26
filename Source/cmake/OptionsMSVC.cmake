@@ -45,6 +45,9 @@ string(REGEX REPLACE "/W3" "" CMAKE_C_FLAGS ${CMAKE_C_FLAGS})
 string(REGEX REPLACE "/W3" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(/W4)
 
+# Not apply class-level dllexport and dllimport attributes to inline member functions
+WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(/Zc:dllexportInlines-)
+
 # Make sure incremental linking is turned off, as it creates unacceptably long link times.
 string(REPLACE "/INCREMENTAL[:A-Z]+" "" CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS})
 string(REPLACE "/INCREMENTAL[:A-Z]+" "" CMAKE_EXE_LINKER_FLAGS_DEBUG ${CMAKE_EXE_LINKER_FLAGS_DEBUG})
