@@ -69,6 +69,7 @@ enum class RuleMatchingBehavior: uint8_t {
 
 namespace Style {
 
+struct BuilderContext;
 struct ResolvedStyle;
 struct SelectorMatchingState;
 

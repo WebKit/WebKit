@@ -274,22 +274,20 @@ static LayoutRect computeAnchorRectRelativeToContainingBlock(CheckedRef<const Re
 // align the edge of the positioned elements' inset-modified containing block corresponding to the
 // property the function appears in with the specified border edge of the target anchor element..."
 // See: https://drafts.csswg.org/css-anchor-position-1/#anchor-pos
-static Length computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<const RenderBoxModelObject> anchorBox, CheckedRef<const RenderElement> anchorPositionedRenderer, const CSSAnchorValue& anchorValue)
+static LayoutUnit computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<const RenderBoxModelObject> anchorBox, CheckedRef<const RenderElement> anchorPositionedRenderer, CSSCalc::Anchor::Side anchorSide)
 {
     CheckedPtr containingBlock = anchorPositionedRenderer->containingBlock();
     ASSERT(containingBlock);
 
     auto insetPropertySide = mapInsetPropertyToPhysicalSide(insetPropertyID, anchorPositionedRenderer->style());
-    auto anchorSideID = anchorValue.anchorSide()->valueID();
+    auto anchorSideID = std::holds_alternative<CSSValueID>(anchorSide) ? std::get<CSSValueID>(anchorSide) : CSSValueInvalid;
     auto anchorRect = computeAnchorRectRelativeToContainingBlock(anchorBox, *containingBlock);
 
     // Explicitly deal with the center/percentage value here.
     // "Refers to a position a corresponding percentage between the start and end sides, with
     // 0% being equivalent to start and 100% being equivalent to end. center is equivalent to 50%."
     if (anchorSideID == CSSValueCenter || anchorSideID == CSSValueInvalid) {
-        double percentage = 0.5;
-        if (anchorSideID != CSSValueCenter)
-            percentage = dynamicDowncast<CSSPrimitiveValue>(anchorValue.anchorSide())->valueDividingBy100IfPercentageDeprecated<double>();
+        double percentage = anchorSideID == CSSValueCenter ? 0.5 : std::get<double>(anchorSide);
 
         // We assume that the "start" side always is either the top or left side of the anchor element.
         // However, if that is not the case, we should take the complement of the percentage.
@@ -308,52 +306,51 @@ static Length computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<const 
             if (insetPropertySide == BoxSide::Right)
                 insetValue = containingBlock->width() - insetValue;
         }
-        insetValue = removeBorderForInsetValue(insetValue, insetPropertySide, *containingBlock);
-        return Length(insetValue, LengthType::Fixed);
+        return removeBorderForInsetValue(insetValue, insetPropertySide, *containingBlock);
     }
 
     // Normalize the anchor side to a physical side
-    BoxSide anchorSide;
+    BoxSide boxSide;
     switch (anchorSideID) {
     case CSSValueID::CSSValueTop:
-        anchorSide = BoxSide::Top;
+        boxSide = BoxSide::Top;
         break;
     case CSSValueID::CSSValueBottom:
-        anchorSide = BoxSide::Bottom;
+        boxSide = BoxSide::Bottom;
         break;
     case CSSValueID::CSSValueLeft:
-        anchorSide = BoxSide::Left;
+        boxSide = BoxSide::Left;
         break;
     case CSSValueID::CSSValueRight:
-        anchorSide = BoxSide::Right;
+        boxSide = BoxSide::Right;
         break;
     case CSSValueID::CSSValueInside:
-        anchorSide = insetPropertySide;
+        boxSide = insetPropertySide;
         break;
     case CSSValueID::CSSValueOutside:
-        anchorSide = flipBoxSide(insetPropertySide);
+        boxSide = flipBoxSide(insetPropertySide);
         break;
     case CSSValueID::CSSValueStart:
-        anchorSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, true, true);
+        boxSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, true, true);
         break;
     case CSSValueID::CSSValueEnd:
-        anchorSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, false, true);
+        boxSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, false, true);
         break;
     case CSSValueID::CSSValueSelfStart:
-        anchorSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, true, false);
+        boxSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, true, false);
         break;
     case CSSValueID::CSSValueSelfEnd:
-        anchorSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, false, false);
+        boxSide = computeStartEndBoxSide(insetPropertyID, anchorPositionedRenderer, false, false);
         break;
     default:
         ASSERT_NOT_REACHED();
-        anchorSide = BoxSide::Top;
+        boxSide = BoxSide::Top;
         break;
     }
 
     // Compute inset from the containing block
     LayoutUnit insetValue;
-    switch (anchorSide) {
+    switch (boxSide) {
     case BoxSide::Top:
         insetValue = anchorRect.location().y();
         if (insetPropertySide == BoxSide::Bottom)
@@ -375,8 +372,7 @@ static Length computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<const 
             insetValue = containingBlock->width() - insetValue;
         break;
     }
-    insetValue = removeBorderForInsetValue(insetValue, insetPropertySide, *containingBlock);
-    return Length(insetValue, LengthType::Fixed);
+    return removeBorderForInsetValue(insetValue, insetPropertySide, *containingBlock);
 }
 
 Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderState, const CSSAnchorValue& anchorValue)
@@ -397,6 +393,26 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
         return insetPropertyUnsetValue;
     };
 
+    auto side = [&]() -> CSSCalc::Anchor::Side {
+        if (anchorValue.anchorSide()->valueID() == CSSValueInvalid)
+            return downcast<CSSPrimitiveValue>(anchorValue.anchorSide())->valueDividingBy100IfPercentageNoConversionDataRequired<double>();
+        return anchorValue.anchorSide()->valueID();
+    }();
+
+    auto result = resolveAnchorValue(builderState, AtomString { anchorValue.anchorElementString() }, side);
+    if (!result)
+        return fallbackValue();
+
+    return Length { *result, LengthType::Fixed };
+}
+
+std::optional<double> AnchorPositionEvaluator::evaluate(const BuilderState& builderState, const CSSCalc::Anchor& anchor)
+{
+    return resolveAnchorValue(builderState, anchor.elementName, anchor.side);
+}
+
+std::optional<LayoutUnit> AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderState, AtomString elementName, CSSCalc::Anchor::Side side)
+{
     auto propertyID = builderState.cssPropertyID();
     const auto& style = builderState.style();
 
@@ -423,14 +439,14 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
 
         // If its <anchor-side> specifies a physical keyword, it’s being used in an inset property in that axis.
         // (For example, left can only be used in left, right, or a logical inset property in the horizontal axis.)
-        if (!anchorSideMatchesInsetProperty(anchorValue.anchorSide()->valueID(), propertyID, style))
+        if (auto* sideID = std::get_if<CSSValueID>(&side); sideID && !anchorSideMatchesInsetProperty(*sideID, propertyID, style))
             return false;
 
         return true;
     };
 
     if (!isValidAnchor())
-        return fallbackValue();
+        return { };
 
     Ref anchorPositionedElement = *builderState.element();
 
@@ -442,8 +458,8 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
     // If we are encountering this anchor() instance for the first time, then we need to collect
     // all the relevant anchor-name strings that are referenced in this anchor function,
     // including the references in the fallback value.
-    if (anchorPositionedState.stage < AnchorPositionResolutionStage::FinishedCollectingAnchorNames)
-        anchorValue.collectAnchorNames(anchorPositionedState.anchorNames);
+    if (anchorPositionedState.stage < AnchorPositionResolutionStage::FinishedCollectingAnchorNames && !elementName.isNull())
+        anchorPositionedState.anchorNames.add(elementName);
 
     // An anchor() instance will be ready to be resolved when all referenced anchor-names
     // have been mapped to an actual anchor element in the DOM tree. At that point, we
@@ -451,29 +467,28 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
     // the anchors referenced by the anchor-positioned element. Until then, we cannot
     // resolve this anchor() instance.
     if (anchorPositionedState.stage < AnchorPositionResolutionStage::FoundAnchors)
-        return fallbackValue();
+        return { };
 
     // Anchor value may now be resolved using layout information
     CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
     ASSERT(anchorPositionedRenderer);
 
     // Attempt to find the element associated with the target anchor
-    String anchorString = anchorValue.anchorElementString();
-    if (anchorString.isNull())
-        anchorString = builderState.style().positionAnchor();
+    if (elementName.isNull())
+        elementName = builderState.style().positionAnchor();
 
-    RefPtr anchorElement = anchorString.isNull() ? nullptr : anchorPositionedState.anchorElements.get(anchorString);
+    RefPtr anchorElement = elementName.isNull() ? nullptr : anchorPositionedState.anchorElements.get(elementName);
     if (!anchorElement) {
         // See: https://drafts.csswg.org/css-anchor-position-1/#valid-anchor-function
         anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
 
-        return fallbackValue();
+        return { };
     }
 
     if (auto* state = anchorPositionedStates.get(*anchorElement)) {
         // Check if the anchor is itself anchor-positioned but hasn't been positioned yet.
         if (state->stage != AnchorPositionResolutionStage::Positioned)
-            return fallbackValue();
+            return { };
     }
 
     anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
@@ -483,7 +498,7 @@ Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderSt
 
     // Proceed with computing the inset value for the specified inset property.
     CheckedRef anchorBox = downcast<RenderBoxModelObject>(*anchorRenderer);
-    return computeInsetValue(propertyID, anchorBox, *anchorPositionedRenderer, anchorValue);
+    return computeInsetValue(propertyID, anchorBox, *anchorPositionedRenderer, side);
 }
 
 static const RenderElement* penultimateContainingBlockChainElement(const RenderElement* descendant, const RenderElement* ancestor)

@@ -10,9 +10,7 @@ PASS .target 6
 PASS .target 7
 PASS .target 8
 PASS .target 9
-FAIL .target 10 assert_equals:
-<div class="target" style="top: anchor(--a1 left, calc((anchor(--a1 bottom) + anchor(--a2 top)) / 2))" data-offset-y="75"></div>
-offsetTop expected 75 but got 0
+PASS .target 10
 FAIL .target 11 assert_equals:
 <div class="target" style="width: anchor-size(--inexist-anchor width, 50%)" data-expected-width="150"></div>
 width expected 150 but got 0

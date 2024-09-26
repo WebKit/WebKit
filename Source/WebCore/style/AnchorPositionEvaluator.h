@@ -25,6 +25,7 @@
 #pragma once
 
 #include "CSSAnchorValue.h"
+#include "CSSCalcTree.h"
 #include "EventTarget.h"
 #include <memory>
 #include <wtf/HashMap.h>
@@ -63,6 +64,11 @@ class AnchorPositionEvaluator {
 public:
     static Length resolveAnchorValue(const BuilderState&, const CSSAnchorValue&);
     static void findAnchorsForAnchorPositionedElement(Ref<const Element> anchorPositionedElement);
+
+    static std::optional<double> evaluate(const BuilderState&, const CSSCalc::Anchor&);
+
+private:
+    static std::optional<LayoutUnit> resolveAnchorValue(const BuilderState&, AtomString, CSSCalc::Anchor::Side);
 };
 
 } // namespace Style

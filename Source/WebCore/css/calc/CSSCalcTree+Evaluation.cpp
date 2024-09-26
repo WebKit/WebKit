@@ -25,6 +25,7 @@
 #include "config.h"
 #include "CSSCalcTree+Evaluation.h"
 
+#include "AnchorPositionEvaluator.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcTree+Simplification.h"
 #include "CSSCalcTree.h"
@@ -168,15 +169,18 @@ std::optional<double> evaluate(const IndirectNode<Hypot>& root, const Evaluation
 
 std::optional<double> evaluate(const IndirectNode<Anchor>& anchor, const EvaluationOptions& options)
 {
-    if (!options.conversionData || !options.conversionData->style())
+    if (!options.conversionData || !options.conversionData->styleBuilderState())
         return { };
 
-    // FIXME: Evaluate the anchor.
-    bool isValid = !anchor->elementName.isNull() || !options.conversionData->style()->positionAnchor().isNull();
-    if (!isValid && anchor->fallback)
+    auto result = Style::AnchorPositionEvaluator::evaluate(*options.conversionData->styleBuilderState(), *anchor);
+    if (!result) {
+        // FIXME: Invalid anchor without a valid fallback should make the declaration invalid at computed-value time.
+        if (!anchor->fallback)
+            return { };
         return evaluate(*anchor->fallback, options);
+    }
 
-    return { };
+    return *result;
 }
 
 template<typename Op> std::optional<double> evaluate(const IndirectNode<Op>& root, const EvaluationOptions& options)

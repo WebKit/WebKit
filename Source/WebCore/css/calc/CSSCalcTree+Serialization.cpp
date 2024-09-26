@@ -375,8 +375,8 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<A
     WTF::switchOn(anchor->side,
         [&](CSSValueID valueID) {
             builder.append(nameLiteralForSerialization(valueID));
-        }, [&](double percentage) {
-            builder.append(percentage, '%');
+        }, [&](double value) {
+            formatCSSNumberValue(builder, value * 100, CSSPrimitiveValue::unitTypeString(CSSUnitType::CSS_PERCENTAGE));
         }
     );
 

@@ -76,7 +76,7 @@ BuilderState::BuilderState(Builder& builder, RenderStyle& style, BuilderContext&
     , m_styleMap(*this)
     , m_style(style)
     , m_context(WTFMove(context))
-    , m_cssToLengthConversionData(style, m_context)
+    , m_cssToLengthConversionData(style, *this)
 {
 }
 
@@ -278,8 +278,7 @@ void BuilderState::setFontSize(FontCascadeDescription& fontDescription, float si
 
 CSSPropertyID BuilderState::cssPropertyID() const
 {
-    ASSERT(m_currentProperty);
-    return m_currentProperty->id;
+    return m_currentProperty ? m_currentProperty->id : CSSPropertyInvalid;
 }
 
 }

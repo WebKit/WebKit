@@ -626,8 +626,9 @@ static std::optional<TypedChild> consumeAnchor(CSSParserTokenRange& tokens, int 
         if (sideIdent)
             return sideIdent;
 
+        // FIXME: Parse as <percentage> instead of <percentage-token>.
         if (tokens.peek().type() == PercentageToken)
-            return tokens.consumeIncludingWhitespace().numericValue();
+            return tokens.consumeIncludingWhitespace().numericValue() / 100;
 
         return { };
     }();

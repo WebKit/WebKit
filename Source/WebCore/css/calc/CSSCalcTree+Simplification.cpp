@@ -25,6 +25,7 @@
 #include "config.h"
 #include "CSSCalcTree+Simplification.h"
 
+#include "AnchorPositionEvaluator.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcTree+NumericIdentity.h"
 #include "CSSCalcTree+Traversal.h"
@@ -1281,16 +1282,16 @@ std::optional<Child> simplify(Sign& root, const SimplificationOptions& options)
 
 std::optional<Child> simplify(Anchor& anchor, const SimplificationOptions& options)
 {
-    if (!options.conversionData || !options.conversionData->style())
+    if (!options.conversionData || !options.conversionData->styleBuilderState())
         return { };
 
-    // FIXME: Evaluate the anchor.
-    bool isValid = !anchor.elementName.isNull() || !options.conversionData->style()->positionAnchor().isNull();
-    if (!isValid && anchor.fallback) {
+    auto result = Style::AnchorPositionEvaluator::evaluate(*options.conversionData->styleBuilderState(), anchor);
+    if (!result) {
+        // FIXME: Invalid anchor without valid fallback should make the declaration invalid at computed-value time.
         // Replace the anchor node with the fallback node.
         return std::exchange(anchor.fallback, { });
     }
-    return CanonicalDimension { .value = 0, .dimension = CanonicalDimension::Dimension::Length };
+    return CanonicalDimension { .value = *result, .dimension = CanonicalDimension::Dimension::Length };
 }
 
 // MARK: Copy & Simplify.
