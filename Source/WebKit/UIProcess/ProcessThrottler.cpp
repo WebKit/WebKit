@@ -605,12 +605,10 @@ static void logActivityNames(WTF::TextStream& ts, ASCIILiteral description, cons
 
     bool isFirstItem = true;
     for (const auto& activity : activities) {
-        if (!activity.isQuietActivity()) {
-            if (!isFirstItem)
-                ts << ", "_s;
-            ts << activity.name();
-            isFirstItem = false;
-        }
+        if (!isFirstItem)
+            ts << ", "_s;
+        ts << activity.name();
+        isFirstItem = false;
     }
 }
 
