@@ -1864,3 +1864,6 @@ editing/input/scroll-viewport-page-up-down.html [ Pass Failure ]
 # webkit.org/b/280415 [ Sequoia wk2 release arm64 ] 2x fast/selectors/* are flaky image only failures. 
 [ Sequoia+ arm64 release ] fast/selectors/selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
 [ Sequoia+ arm64 release ] fast/selectors/text-field-selection-stroke-color.html [ Pass ImageOnlyFailure ]
+
+# webkit.org/b/280418 [ Sequoia wk2 ] fast/speechsynthesis/mac/samantha-voice-available.html is a constant failure. 
+[ Sequoia+ ] fast/speechsynthesis/mac/samantha-voice-available.html [ Pass Failure ]
