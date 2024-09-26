@@ -233,6 +233,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _valid = NO;
 
+    [self _pauseIfNeeded];
+
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideBanner) object:nil];
@@ -903,6 +905,30 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return nullptr;
 
     return playbackSessionManager->controlsManagerInterface();
+}
+
+- (void)_pauseIfNeeded
+{
+    RefPtr page = self._webView._page.get();
+    if (!page)
+        return;
+
+    if (page->preferences().fullScreenEnabled())
+        return;
+
+    // When only VideoFullscreenRequiresElementFullscreen is enabled,
+    // mimic AVPlayerViewController's behavior by pausing playback when exiting fullscreen.
+    ASSERT(page->preferences().videoFullscreenRequiresElementFullscreen());
+
+    RefPtr interface = [self _playbackSessionInterface];
+    if (!interface)
+        return;
+
+    auto model = interface->playbackSessionModel();
+    if (!model)
+        return;
+
+    model->pause();
 }
 
 - (void)_cancelAction:(id)sender
