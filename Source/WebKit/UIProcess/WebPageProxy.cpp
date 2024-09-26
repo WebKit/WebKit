@@ -10824,7 +10824,7 @@ static bool shouldBlockIOKit(const WebPreferences& preferences, DrawingAreaType 
 #if !PLATFORM(COCOA)
 bool WebPageProxy::useGPUProcessForDOMRenderingEnabled() const
 {
-    return preferences().useGPUProcessForDOMRenderingEnabled();
+    return protectedPreferences()->useGPUProcessForDOMRenderingEnabled();
 }
 #endif
 

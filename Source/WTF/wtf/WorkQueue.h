@@ -89,6 +89,7 @@ private:
 class WTF_CAPABILITY("is current") WTF_EXPORT_PRIVATE WorkQueue : public WorkQueueBase, public RefCountedSerialFunctionDispatcher {
 public:
     static WorkQueue& main();
+    static Ref<WorkQueue> protectedMain() { return main(); }
     static Ref<WorkQueue> create(ASCIILiteral name, QOS = QOS::Default);
     void dispatch(Function<void()>&&) override;
     bool isCurrent() const override;
