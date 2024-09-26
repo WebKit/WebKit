@@ -634,7 +634,12 @@ pid_t readPIDFromPeer(int socket)
     message.msg_control = controlMessage.buffer;
     message.msg_controllen = controlLength;
 
-    if (recvmsg(socket, &message, 0) == -1)
+    int ret = 0;
+    do {
+        ret = recvmsg(socket, &message, 0);
+    } while (ret == -1 && errno == EINTR);
+
+    if (ret == -1)
         g_error("readPIDFromPeer: Failed to read pid from PID socket: %s", g_strerror(errno));
 
     if (message.msg_controllen <= 0)
