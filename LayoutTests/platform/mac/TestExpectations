@@ -2409,7 +2409,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 [ Sequoia ] fast/inline/justify-emphasis-inline-box.html [ Failure ]
 
 # webkit.org/b/280304 [ Sequoia ] fast/ruby/ruby-expansion-cjk-4.html is a constant image only failure.
-[ Sequoia ] fast/ruby/ruby-expansion-cjk-4.html [ Failure ]
+[ Sequoia ] fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
 
 # webkit.org/b/280378 [ Sequoia arm64 ] 14x http/tests/media/fairplay/* are constant failures
 [ Sequoia arm64 Release ] http/tests/media/fairplay/fps-hls-key-rotation.html [ Failure ]
