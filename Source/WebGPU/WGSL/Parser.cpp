@@ -1277,6 +1277,7 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseIfStatementWithAttributes(AST::A
         // The syntax following an 'else' keyword can be either an 'if'
         // statement or a brace-delimited compound statement.
         if (current().type == TokenType::KeywordIf) {
+            CHECK_RECURSION();
             PARSE(elseStmt, IfStatementWithAttributes, { }, _startOfElementPosition);
             maybeElseStmt = &elseStmt.get();
         } else {
