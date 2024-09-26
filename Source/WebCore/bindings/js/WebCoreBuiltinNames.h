@@ -459,6 +459,7 @@ namespace WebCore {
     macro(TrustedTypePolicy) \
     macro(TrustedTypePolicyFactory) \
     macro(TrustedTypePolicyOptions) \
+    macro(URLPattern) \
     macro(UndoItem) \
     macro(UndoManager) \
     macro(VideoDecoder) \
