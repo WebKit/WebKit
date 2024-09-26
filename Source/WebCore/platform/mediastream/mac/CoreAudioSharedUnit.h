@@ -87,8 +87,7 @@ public:
         virtual bool setVoiceActivityDetection(bool) = 0;
     };
 
-    WEBCORE_EXPORT static CoreAudioSharedUnit& unit();
-    static BaseAudioSharedUnit& singleton()  { return unit(); }
+    WEBCORE_EXPORT static CoreAudioSharedUnit& singleton();
     ~CoreAudioSharedUnit();
 
     using CreationCallback = Function<Expected<UniqueRef<InternalUnit>, OSStatus>(bool enableEchoCancellation)>;
@@ -123,6 +122,7 @@ public:
 
 #if PLATFORM(MAC)
     static void processVoiceActivityEvent(uint32_t);
+    WEBCORE_EXPORT void prewarmAudioUnitCreation(CompletionHandler<void()>&&) final;
 #endif
 
     WEBCORE_EXPORT void setMuteStatusChangedCallback(Function<void(bool)>&&);
@@ -154,7 +154,6 @@ private:
     void validateOutputDevice(uint32_t deviceID) final;
 #if PLATFORM(MAC)
     bool migrateToNewDefaultDevice(const CaptureDevice&) final;
-    void prewarmAudioUnitCreation(CompletionHandler<void()>&&) final;
     void deallocateStoredVPIOUnit();
 #endif
     int actualSampleRate() const final;

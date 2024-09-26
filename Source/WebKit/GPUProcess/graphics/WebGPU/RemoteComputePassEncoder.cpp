@@ -55,7 +55,7 @@ RemoteComputePassEncoder::~RemoteComputePassEncoder() = default;
 
 void RemoteComputePassEncoder::destruct()
 {
-    m_objectHeap->removeObject(m_identifier);
+    protectedObjectHeap()->removeObject(m_identifier);
 }
 
 void RemoteComputePassEncoder::stopListeningForIPC()

@@ -178,37 +178,37 @@ const Vector<CaptureDevice>& CoreAudioCaptureSourceFactory::speakerDevices() con
 
 void CoreAudioCaptureSourceFactory::enableMutedSpeechActivityEventListener(Function<void()>&& callback)
 {
-    CoreAudioSharedUnit::unit().enableMutedSpeechActivityEventListener(WTFMove(callback));
+    CoreAudioSharedUnit::singleton().enableMutedSpeechActivityEventListener(WTFMove(callback));
 }
 
 void CoreAudioCaptureSourceFactory::disableMutedSpeechActivityEventListener()
 {
-    CoreAudioSharedUnit::unit().disableMutedSpeechActivityEventListener();
+    CoreAudioSharedUnit::singleton().disableMutedSpeechActivityEventListener();
 }
 
 void CoreAudioCaptureSourceFactory::registerSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer& producer)
 {
-    CoreAudioSharedUnit::unit().registerSpeakerSamplesProducer(producer);
+    CoreAudioSharedUnit::singleton().registerSpeakerSamplesProducer(producer);
 }
 
 void CoreAudioCaptureSourceFactory::unregisterSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer& producer)
 {
-    CoreAudioSharedUnit::unit().unregisterSpeakerSamplesProducer(producer);
+    CoreAudioSharedUnit::singleton().unregisterSpeakerSamplesProducer(producer);
 }
 
 bool CoreAudioCaptureSourceFactory::isAudioCaptureUnitRunning()
 {
-    return CoreAudioSharedUnit::unit().isRunning();
+    return CoreAudioSharedUnit::singleton().isRunning();
 }
 
 void CoreAudioCaptureSourceFactory::whenAudioCaptureUnitIsNotRunning(Function<void()>&& callback)
 {
-    return CoreAudioSharedUnit::unit().whenAudioCaptureUnitIsNotRunning(WTFMove(callback));
+    return CoreAudioSharedUnit::singleton().whenAudioCaptureUnitIsNotRunning(WTFMove(callback));
 }
 
 bool CoreAudioCaptureSourceFactory::shouldAudioCaptureUnitRenderAudio()
 {
-    auto& unit = CoreAudioSharedUnit::unit();
+    auto& unit = CoreAudioSharedUnit::singleton();
 #if PLATFORM(IOS_FAMILY)
     return unit.isRunning();
 #else
@@ -349,7 +349,7 @@ void CoreAudioCaptureSource::delaySamples(Seconds seconds)
 void CoreAudioCaptureSource::setIsInBackground(bool value)
 {
     if (isProducingData())
-        CoreAudioSharedUnit::unit().setIsInBackground(value);
+        CoreAudioSharedUnit::singleton().setIsInBackground(value);
 }
 #endif
 

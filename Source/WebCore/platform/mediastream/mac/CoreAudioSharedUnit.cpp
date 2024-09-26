@@ -115,7 +115,7 @@ Expected<UniqueRef<CoreAudioSharedUnit::InternalUnit>, OSStatus> CoreAudioShared
 {
 #if PLATFORM(MAC)
     if (shouldUseVPIO) {
-        if (auto ioUnit = CoreAudioSharedUnit::unit().takeStoredVPIOUnit()) {
+        if (auto ioUnit = CoreAudioSharedUnit::singleton().takeStoredVPIOUnit()) {
             RELEASE_LOG(WebRTC, "Creating a CoreAudioSharedInternalUnit with a stored VPIO unit");
             UniqueRef<CoreAudioSharedUnit::InternalUnit> result = makeUniqueRef<CoreAudioSharedInternalUnit>(WTFMove(ioUnit), shouldUseVPIO);
             return result;
@@ -142,7 +142,7 @@ CoreAudioSharedInternalUnit::~CoreAudioSharedInternalUnit()
 {
 #if PLATFORM(MAC)
     if (m_shouldUseVPIO)
-        CoreAudioSharedUnit::unit().setStoredVPIOUnit(std::exchange(m_audioUnit, { }));
+        CoreAudioSharedUnit::singleton().setStoredVPIOUnit(std::exchange(m_audioUnit, { }));
 #endif
 }
 
@@ -213,7 +213,7 @@ OSStatus CoreAudioSharedInternalUnit::defaultOutputDevice(uint32_t* deviceID)
     return -1;
 }
 
-CoreAudioSharedUnit& CoreAudioSharedUnit::unit()
+CoreAudioSharedUnit& CoreAudioSharedUnit::singleton()
 {
     static NeverDestroyed<Ref<CoreAudioSharedUnit>> singleton(adoptRef(*new CoreAudioSharedUnit));
     return singleton.get();
