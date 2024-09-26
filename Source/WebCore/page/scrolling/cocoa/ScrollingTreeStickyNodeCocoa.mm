@@ -33,9 +33,12 @@
 #import "ScrollingThread.h"
 #import "ScrollingTree.h"
 #import "WebCoreCALayerExtras.h"
+#import <wtf/TZoneMalloc.h>
 #import <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingTreeStickyNodeCocoa);
 
 Ref<ScrollingTreeStickyNodeCocoa> ScrollingTreeStickyNodeCocoa::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
 {

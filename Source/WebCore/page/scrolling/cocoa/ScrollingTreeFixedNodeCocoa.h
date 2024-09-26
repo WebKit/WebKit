@@ -29,12 +29,14 @@
 
 #include "ScrollingTreeFixedNode.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS CALayer;
 
 namespace WebCore {
 
 class ScrollingTreeFixedNodeCocoa : public ScrollingTreeFixedNode {
+    WTF_MAKE_TZONE_ALLOCATED(ScrollingTreeFixedNodeCocoa);
 public:
     WEBCORE_EXPORT static Ref<ScrollingTreeFixedNodeCocoa> create(ScrollingTree&, ScrollingNodeID);
 

@@ -31,8 +31,11 @@
 #import "Logging.h"
 #import "ScrollingStatePositionedNode.h"
 #import "WebCoreCALayerExtras.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingTreePositionedNodeCocoa);
 
 Ref<ScrollingTreePositionedNodeCocoa> ScrollingTreePositionedNodeCocoa::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
 {
