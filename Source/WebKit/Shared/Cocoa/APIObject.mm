@@ -520,8 +520,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     Object& object = wrapper._apiObject;
-
-    apiObjectsUnderConstruction().add(&object, (__bridge CFTypeRef)wrapper);
+    object.m_wrapper = (__bridge CFTypeRef)wrapper;
 
     return &object;
 }
