@@ -115,7 +115,6 @@ void Download::platformDestroyDownload()
 #if HAVE(MODERN_DOWNLOADPROGRESS)
     m_bookmarkURL = nil;
     [m_progress cancel];
-    [m_progress unpublish];
 #else
     if (m_progress)
 #if HAVE(NSPROGRESS_PUBLISHING_SPI)
@@ -155,8 +154,6 @@ void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmark
         // This is to make sure the placeholder has not been moved to the final download URL before the client received the placeholder URL.
         if (!isUsingPlaceholder)
             startUpdatingProgress();
-
-        [m_progress publish];
     } else {
         m_progress = adoptNS([[WKDownloadProgress alloc] initWithDownloadTask:m_downloadTask.get() download:*this URL:(NSURL *)url sandboxExtension:nullptr]);
 #if HAVE(NSPROGRESS_PUBLISHING_SPI)
