@@ -53,8 +53,9 @@ struct ComputedStyleDependencies {
     Vector<CSSPropertyID> rootProperties;
     bool containerDimensions { false };
     bool viewportDimensions { false };
+    bool anchors { false };
 
-    bool isComputationallyIndependent() const { return properties.isEmpty() && rootProperties.isEmpty() && !containerDimensions; }
+    bool isComputationallyIndependent() const { return properties.isEmpty() && rootProperties.isEmpty() && !containerDimensions && !anchors; }
 };
 
 DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValue);
