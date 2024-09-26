@@ -47,6 +47,7 @@ class Object
     : public ThreadSafeRefCounted<Object>
 #endif
 {
+    WTF_MAKE_NONCOPYABLE(Object);
 public:
     enum class Type {
         // Base types
