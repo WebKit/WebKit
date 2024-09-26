@@ -2410,3 +2410,17 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 
 # webkit.org/b/280304 [ Sequoia ] fast/ruby/ruby-expansion-cjk-4.html is a constant image only failure.
 [ Sequoia ] fast/ruby/ruby-expansion-cjk-4.html [ Failure ]
+
+# webkit.org/b/280378 [ Sequoia arm64 ] 14x http/tests/media/fairplay/* are constant failures
+[ Sequoia arm64 Release ] http/tests/media/fairplay/fps-hls-key-rotation.html [ Failure ]
+[ Sequoia arm64 Release ] http/tests/media/fairplay/fps-hls-update-reject.html [ Failure ]
+[ Sequoia arm64 Release ] http/tests/media/fairplay/fps-hls.html [ Failure ]
+[ Sequoia arm64 Release ] http/tests/media/fairplay/fps-init-data-cenc.html [ Failure ]
+[ Sequoia arm64 Release ] http/tests/media/fairplay/fps-init-data-sinf.html [ Failure ]
+[ Sequoia arm64 Release ] http/tests/media/fairplay/fps-init-data-skd.html [ Failure ]
+[ Sequoia arm64 Release ] http/tests/media/fairplay/fps-mse-play-while-not-in-dom.html [ Failure ]
+[ Sequoia arm64 Release ] http/tests/media/fairplay/fps-mse-unmuxed-audio-only.html [ Failure ]
+[ Sequoia arm64 Release ] http/tests/media/fairplay/fps-mse-unmuxed-key-renewal.html [ Failure ]
+[ Sequoia arm64 Release ] http/tests/media/fairplay/fps-mse-unmuxed-multiple-keys.html [ Failure ]
+[ Sequoia arm64 Release ] http/tests/media/fairplay/fps-mse-unmuxed-same-key.html [ Failure ]
+http/tests/media/fairplay/fps-mse-multi-key-renewal.html [ Pass Failure ] 
