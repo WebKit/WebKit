@@ -1,8 +1,27 @@
 {
     "timeout": 600,
     "count": 4,
-    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/StyleBench/@r227863",
+    "local_git_archive": "PerformanceTests/StyleBench@b5b511804c67cfbf67f8390bd8564448aee45d6f",
+    "github_source": "https://github.com/WebKit/WebKit/tree/b5b511804c67cfbf67f8390bd8564448aee45d6f/PerformanceTests/StyleBench",
     "webserver_benchmark_patch": "data/patches/webserver/StyleBench.patch",
     "entry_point": "index.html",
-    "output_file": "stylebench.result"
+    "output_file": "stylebench.result",
+    "github_subtree": {
+        "url": "https://api.github.com/repos/WebKit/WebKit/git/trees/b5b511804c67cfbf67f8390bd8564448aee45d6f",
+        "tree": [
+            {"path": "resources", "mode": "040000", "type": "tree"},
+            {"path": "resources/benchmark-report.js", "mode": "100644", "type": "blob"},
+            {"path": "resources/main.js", "mode": "100644", "type": "blob"},
+            {"path": "resources/benchmark-runner.js", "mode": "100644", "type": "blob"},
+            {"path": "resources/main.css", "mode": "100644", "type": "blob"},
+            {"path": "resources/gauge@2x.png", "mode": "100644", "type": "blob"},
+            {"path": "resources/gauge.png", "mode": "100644", "type": "blob"},
+            {"path": "resources/tests.js", "mode": "100644", "type": "blob"},
+            {"path": "resources/style-bench.js", "mode": "100644", "type": "blob"},
+            {"path": "resources/style-bench.html", "mode": "100644", "type": "blob"},
+            {"path": "index.html", "mode": "100644", "type": "blob"},
+            {"path": "InteractiveRunner.html", "mode": "100644", "type": "blob"}
+        ],
+        "truncated": false
+    }
 }
