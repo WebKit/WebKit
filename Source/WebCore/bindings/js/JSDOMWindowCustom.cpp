@@ -308,7 +308,7 @@ bool JSDOMWindow::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, 
 
     if (allowsLegacyExpandoIndexedProperties()) {
         RefPtr localDOMWindow = dynamicDowncast<LocalDOMWindow>(thisObject->wrapped());
-        if (auto* document = localDOMWindow ? localDOMWindow->document() : nullptr)
+        if (RefPtr document = localDOMWindow ? localDOMWindow->document() : nullptr)
             document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Adding expando indexed properties to 'window' was a non-standard behavior that is now removed."_s);
         RELEASE_AND_RETURN(scope, Base::putByIndex(thisObject, lexicalGlobalObject, index, value, shouldThrow));
     }
@@ -536,7 +536,7 @@ JSC_DEFINE_CUSTOM_GETTER(showModalDialogGetter, (JSGlobalObject* lexicalGlobalOb
         return throwVMDOMAttributeGetterTypeError(lexicalGlobalObject, scope, JSDOMWindow::info(), propertyName);
 
     RefPtr localDOMWindow = dynamicDowncast<LocalDOMWindow>(thisObject->wrapped());
-    if (auto* document = localDOMWindow ? localDOMWindow->document() : nullptr)
+    if (RefPtr document = localDOMWindow ? localDOMWindow->document() : nullptr)
         document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Window 'showModalDialog' function is deprecated and will be removed soon."_s);
 
     if (RefPtr frame = thisObject->wrapped().frame()) {

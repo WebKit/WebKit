@@ -1498,7 +1498,7 @@ bool LocalFrameView::mockScrollbarsControllerEnabled() const
 
 void LocalFrameView::logMockScrollbarsControllerMessage(const String& message) const
 {
-    auto document = m_frame->document();
+    RefPtr document = m_frame->document();
     if (!document)
         return;
     document->addConsoleMessage(MessageSource::Other, MessageLevel::Debug,
@@ -3946,7 +3946,7 @@ void LocalFrameView::scheduleResizeEventIfNeeded()
     }
 #endif
 
-    auto* document = m_frame->document();
+    RefPtr document = m_frame->document();
     if (document->quirks().shouldSilenceWindowResizeEvents()) {
         document->addConsoleMessage(MessageSource::Other, MessageLevel::Info, "Window resize events silenced due to: http://webkit.org/b/258597"_s);
         FRAMEVIEW_RELEASE_LOG(Events, "scheduleResizeEventIfNeeded: Not firing resize events because they are temporarily disabled for this page");

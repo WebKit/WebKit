@@ -326,7 +326,7 @@ void NetworkProcessConnection::broadcastConsoleMessage(MessageSource source, Mes
 
     Page::forEachPage([&] (auto& page) {
         if (auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame()))
-            if (auto* document = localMainFrame->document())
+            if (RefPtr document = localMainFrame->document())
                 document->addConsoleMessage(source, level, message);
     });
 }

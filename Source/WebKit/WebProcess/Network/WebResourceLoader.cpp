@@ -256,7 +256,7 @@ void WebResourceLoader::didFinishResourceLoad(NetworkLoadMetrics&& networkLoadMe
 
 void WebResourceLoader::didFailServiceWorkerLoad(const ResourceError& error)
 {
-    if (auto* document = m_coreLoader->frame() ? m_coreLoader->frame()->document() : nullptr) {
+    if (RefPtr document = m_coreLoader->frame() ? m_coreLoader->frame()->document() : nullptr) {
         if (m_coreLoader->options().destination != FetchOptions::Destination::EmptyString || error.isGeneral())
             document->addConsoleMessage(MessageSource::JS, MessageLevel::Error, error.localizedDescription());
         if (m_coreLoader->options().destination != FetchOptions::Destination::EmptyString)

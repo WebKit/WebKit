@@ -34,7 +34,7 @@ StyleMedia::StyleMedia(LocalDOMWindow& window)
     : LocalDOMWindowProperty(&window)
 {
     if (window.document()) {
-        window.document()->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Warning,
+        window.protectedDocument()->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Warning,
             "window.styleMedia is a deprecated draft version of window.matchMedia API, and it will be removed in the future."_s));
     }
 }
