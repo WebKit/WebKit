@@ -1093,11 +1093,11 @@
 (deny mach-lookup (with no-report)
     (global-name "com.apple.tccd.system"))
 
-(allow mach-lookup
-    (require-all
-        (extension "com.apple.webkit.extension.mach")
-        (global-name "com.apple.mobileassetd.v2")
-))
+(with-filter (require-not (state-flag "BlockMobileAssetInWebContentSandbox"))
+    (allow mach-lookup
+        (require-all
+            (extension "com.apple.webkit.extension.mach")
+            (global-name "com.apple.mobileassetd.v2"))))
 
 #if !ENABLE(TRUSTD_BLOCKING_IN_WEBCONTENT)
 (allow mach-lookup

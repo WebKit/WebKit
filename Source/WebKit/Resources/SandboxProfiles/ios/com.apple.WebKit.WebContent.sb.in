@@ -889,20 +889,11 @@
         (global-name "com.apple.analyticsd")
         (global-name "com.apple.osanalytics.osanalyticshelper")))
 
-(define (mach-extension-list)
-    (global-name
-        "com.apple.mobileassetd.v2"))
-
-(allow mach-lookup (with telemetry-backtrace)
-    (require-all
-        (extension "com.apple.webkit.extension.mach")
-        (mach-extension-list)))
-
-(with-filter (state-flag "EnableExperimentalSandbox")
-    (deny mach-lookup
+(with-filter (require-not (state-flag "BlockMobileAssetInWebContentSandbox"))
+    (allow mach-lookup
         (require-all
             (extension "com.apple.webkit.extension.mach")
-            (mach-extension-list))))
+            (global-name "com.apple.mobileassetd.v2"))))
 
 (allow mach-lookup
     (require-all

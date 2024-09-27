@@ -910,6 +910,19 @@ BlockMediaLayerRehostingInWebContentProcess:
     WebCore:
       default: false
 
+BlockMobileAssetInWebContentSandbox:
+  type: bool
+  status: internal
+  category: networking
+  humanReadableName: "Block MobileAsset service in the WebContent sandbox"
+  humanReadableDescription: "Block MobileAsset service in the WebContent sandbox"
+  webcoreBinding: none
+  condition: HAVE(SANDBOX_STATE_FLAGS)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 BlockOpenDirectoryInWebContentSandbox:
   type: bool
   status: internal
