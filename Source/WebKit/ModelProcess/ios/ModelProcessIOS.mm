@@ -39,7 +39,9 @@ using namespace WebCore;
 
 void ModelProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)
 {
+#if PLATFORM(IOS_FAMILY)
     InitWebCoreThreadSystemInterface();
+#endif
 }
 
 void ModelProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters&)

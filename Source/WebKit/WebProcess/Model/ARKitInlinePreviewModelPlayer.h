@@ -47,6 +47,9 @@ protected:
     WebCore::ModelPlayerClient* client() { return m_client.get(); }
 
     virtual std::optional<ModelIdentifier> modelIdentifier() = 0;
+#if ENABLE(MODEL_PROCESS)
+    WebCore::ModelPlayerIdentifier identifier() const final;
+#endif
 
 private:
     // WebCore::ModelPlayer overrides.
@@ -71,6 +74,9 @@ private:
 
     WeakPtr<WebPage> m_page;
     WeakPtr<WebCore::ModelPlayerClient> m_client;
+#if ENABLE(MODEL_PROCESS)
+    WebCore::ModelPlayerIdentifier m_id;
+#endif
 };
 
 }

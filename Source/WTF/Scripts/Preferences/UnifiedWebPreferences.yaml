@@ -5021,17 +5021,20 @@ ModelElementEnabled:
 
 ModelProcessEnabled:
   type: bool
-  status: unstable
+  status: Modelprocess_feature_status
   condition: ENABLE(MODEL_PROCESS)
   humanReadableName: "Enable Model Process"
   humanReadableDescription: "Load <model> content in a separate process"
   defaultValue:
     WebKitLegacy:
-      default: true
+      "ENABLE(MODEL_PROCESS)": true
+      default: false
     WebKit:
-      default: true
+      "ENABLE(MODEL_PROCESS)": true
+      default: false
     WebCore:
-      default: true
+      "ENABLE(MODEL_PROCESS)": true
+      default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
 

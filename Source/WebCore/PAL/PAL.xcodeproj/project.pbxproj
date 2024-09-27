@@ -16,6 +16,8 @@
 		079D1D9826950DD700883577 /* SystemStatusSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 079D1D9626950DD700883577 /* SystemStatusSoftLink.mm */; };
 		0CF99CA41F736375007EE793 /* MediaTimeAVFoundation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C00CFD11F68CE4600AAC26D /* MediaTimeAVFoundation.cpp */; };
 		0CF99CA81F738437007EE793 /* CoreMediaSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */; };
+		0DF376472CAF42F200306520 /* CoreRESoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DF376452CAF42F200306520 /* CoreRESoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0DF376482CAF42F200306520 /* CoreRESoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0DF376462CAF42F200306520 /* CoreRESoftLink.mm */; };
 		1C022EFE22CFE8E1006DF01B /* Gunzip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C022EFC22CFE8E0006DF01B /* Gunzip.cpp */; };
 		1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */; };
 		1C4876D81F8D7F4E00CCEEBD /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4876D61F8D7F4E00CCEEBD /* Logging.cpp */; };
@@ -519,6 +521,8 @@
 		0C7785881F45130F00F4EBB6 /* TelephonyUtilitiesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TelephonyUtilitiesSPI.h; sourceTree = "<group>"; };
 		0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoreMediaSoftLink.cpp; sourceTree = "<group>"; };
 		0CF99CA71F738437007EE793 /* CoreMediaSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreMediaSoftLink.h; sourceTree = "<group>"; };
+		0DF376452CAF42F200306520 /* CoreRESoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreRESoftLink.h; sourceTree = "<group>"; };
+		0DF376462CAF42F200306520 /* CoreRESoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreRESoftLink.mm; sourceTree = "<group>"; };
 		1C022EFC22CFE8E0006DF01B /* Gunzip.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Gunzip.cpp; sourceTree = "<group>"; };
 		1C022EFD22CFE8E1006DF01B /* Gunzip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gunzip.h; sourceTree = "<group>"; };
 		1C09D03D1E31C32800725F18 /* libPAL.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPAL.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1081,6 +1085,8 @@
 		1C4876DE1F8D831300CCEEBD /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				0DF376452CAF42F200306520 /* CoreRESoftLink.h */,
+				0DF376462CAF42F200306520 /* CoreRESoftLink.mm */,
 				297CB480288B11D700BB7971 /* AccessibilitySoftLink.h */,
 				297CB481288B11D700BB7971 /* AccessibilitySoftLink.mm */,
 				57FD318822B3592F008D0E8B /* AppSSOSoftLink.h */,
@@ -1564,6 +1570,7 @@
 				DD20DE5D27BC90D80093D175 /* UnencodableHandling.h in Headers */,
 				DD20DE0C27BC90D80093D175 /* URLFormattingSPI.h in Headers */,
 				DD20DD2527BC90D60093D175 /* UsageTrackingSoftLink.h in Headers */,
+				0DF376472CAF42F200306520 /* CoreRESoftLink.h in Headers */,
 				44B1A8692A7C606000DC80A6 /* UserInterfaceIdiom.h in Headers */,
 				DD20DD1927BC90D60093D175 /* VideoToolboxSoftLink.h in Headers */,
 				1CDE179A2A3BC3F9004E646F /* VideoToolboxSPI.h in Headers */,
@@ -1747,6 +1754,7 @@
 				079D1D9826950DD700883577 /* SystemStatusSoftLink.mm in Sources */,
 				1C5C57CF27571531003B540D /* TextCodec.cpp in Sources */,
 				1C5C57CC27571531003B540D /* TextCodecCJK.cpp in Sources */,
+				0DF376482CAF42F200306520 /* CoreRESoftLink.mm in Sources */,
 				1C5C57C927571531003B540D /* TextCodecICU.cpp in Sources */,
 				1C5C57D127571531003B540D /* TextCodecLatin1.cpp in Sources */,
 				1C5C57D027571531003B540D /* TextCodecReplacement.cpp in Sources */,

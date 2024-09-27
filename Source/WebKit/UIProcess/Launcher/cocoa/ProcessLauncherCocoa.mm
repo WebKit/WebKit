@@ -89,6 +89,10 @@ static std::pair<ASCIILiteral, RetainPtr<NSString>> serviceNameAndIdentifier(Pro
     case ProcessLauncher::ProcessType::GPU:
         return { "com.apple.WebKit.GPU"_s, @"com.apple.WebKit.GPU" };
 #endif
+#if ENABLE(MODEL_PROCESS)
+    case ProcessLauncher::ProcessType::Model:
+        return { "com.apple.WebKit.Model"_s, @"com.apple.WebKit.Model" };
+#endif
     }
 }
 
@@ -122,6 +126,16 @@ static void launchWithExtensionKitFallback(ProcessLauncher& processLauncher, Pro
         [manager performSelector:@selector(gpuProcessWithConfiguration:completion:) withObject:configuration.get() withObject:block.get()];
         break;
     }
+#if ENABLE(MODEL_PROCESS)
+    case ProcessLauncher::ProcessType::Model: {
+        auto block = makeBlockPtr([handler = WTFMove(handler), weakProcessLauncher = ThreadSafeWeakPtr { processLauncher }, name = name](_SEExtensionProcess *_Nullable process, NSError *_Nullable error) {
+            handler(WTFMove(weakProcessLauncher), process, name, error);
+        });
+        // FIXME: this should be modelProcessWithConfiguration - https://bugs.webkit.org/show_bug.cgi?id=280097
+        [manager performSelector:@selector(contentProcessWithConfiguration:completion:) withObject:configuration.get() withObject:block.get()];
+        break;
+    }
+#endif
     }
 }
 #endif // USE(LEGACY_EXTENSIONKIT_SPI)
@@ -183,6 +197,18 @@ static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLaun
             [BERenderingProcess renderingProcessWithBundleID:identifier.get() interruptionHandler:^{ } completion:block.get()];
         break;
     }
+#if ENABLE(MODEL_PROCESS)
+    case ProcessLauncher::ProcessType::Model: {
+        auto block = makeBlockPtr([handler = WTFMove(handler), weakProcessLauncher = ThreadSafeWeakPtr { processLauncher }, name = name](BERenderingProcess *_Nullable process, NSError *_Nullable error) {
+            handler(WTFMove(weakProcessLauncher), process, name, error);
+        });
+        if (ProcessLauncher::hasExtensionsInAppBundle())
+            [BERenderingProcess renderingProcessWithInterruptionHandler:^{ } completion:block.get()];
+        else
+            [BERenderingProcess renderingProcessWithBundleID:identifier.get() interruptionHandler:^{ } completion:block.get()];
+        break;
+    }
+#endif
     }
 }
 #endif // USE(EXTENSIONKIT)

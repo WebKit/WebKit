@@ -221,6 +221,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if USE(EXTENSIONKIT)
     RetainPtr<UIView> _visibilityPropagationViewForWebProcess;
     RetainPtr<UIView> _visibilityPropagationViewForGPUProcess;
+#if ENABLE(MODEL_PROCESS)
+    RetainPtr<UIView> _visibilityPropagationViewForModelProcess;
+#endif
     RetainPtr<NSHashTable<WKVisibilityPropagationView *>> _visibilityPropagationViews;
 #else
 #if HAVE(NON_HOSTING_VISIBILITY_PROPAGATION_VIEW)
@@ -997,7 +1000,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     [self _setupVisibilityPropagationForGPUProcess];
 #endif
 #if ENABLE(MODEL_PROCESS)
-    [self _setupVisibilityPropagationViewForModelProcess];
+    [self _setupVisibilityPropagationForModelProcess];
 #endif
 
     return visibilityPropagationView.autorelease();

@@ -25,7 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-#if defined(TARGET_OS_VISION) && TARGET_OS_VISION
+#if __has_include(<CoreRE/CoreRE.h>)
 
 #import <simd/simd.h>
 

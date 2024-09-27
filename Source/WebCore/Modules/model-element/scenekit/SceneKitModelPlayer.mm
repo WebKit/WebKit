@@ -197,6 +197,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return makeVector<RetainPtr<id>>(children);
 }
 
+#if ENABLE(MODEL_PROCESS)
+WebCore::ModelPlayerIdentifier SceneKitModelPlayer::identifier() const
+{
+    return m_id;
+}
+#endif
+
 }
 
 #endif
