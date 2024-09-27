@@ -2433,3 +2433,5 @@ imported/w3c/web-platform-tests/mathml/presentation-markup/operators/size-and-po
 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/stretchy-largeop-with-default-font-2.html [ Failure ]
 
 webkit.org/b/257011 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphenate-character-002.html [ ImageOnlyFailure ]
+
+webkit.org/b/280528 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/document-timelines.html [ Pass Failure ]
