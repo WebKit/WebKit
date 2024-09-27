@@ -48,6 +48,7 @@ enum class ScriptTelemetryCategory : uint8_t {
     Speech,
 };
 
+String makeLogMessage(const URL&, ScriptTelemetryCategory);
 ASCIILiteral description(ScriptTelemetryCategory);
 
 } // namespace WebCore

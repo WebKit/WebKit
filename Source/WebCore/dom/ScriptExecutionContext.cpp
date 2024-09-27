@@ -959,7 +959,7 @@ bool ScriptExecutionContext::requiresScriptExecutionTelemetry(ScriptTelemetryCat
     if (!page->reportScriptTelemetry(taintedURL, category))
         return true;
 
-    addConsoleMessage(MessageSource::JS, MessageLevel::Info, makeString(taintedURL.string(), " tried to access "_s, description(category)));
+    addConsoleMessage(MessageSource::JS, MessageLevel::Info, makeLogMessage(taintedURL, category));
     return true;
 }
 

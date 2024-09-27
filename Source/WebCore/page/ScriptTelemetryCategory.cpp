@@ -67,4 +67,13 @@ ASCIILiteral description(ScriptTelemetryCategory category)
     return { };
 }
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ScriptTelemetryCategoryAdditions.cpp>)
+#import <WebKitAdditions/ScriptTelemetryCategoryAdditions.cpp>
+#else
+String makeLogMessage(const URL& url, ScriptTelemetryCategory category)
+{
+    return makeString(url.string(), " tried to access "_s, description(category));
+}
+#endif
+
 } // namespace WebCore
