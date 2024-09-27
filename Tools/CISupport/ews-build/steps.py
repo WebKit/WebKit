@@ -7160,19 +7160,19 @@ class DisplaySmartPointerResults(buildstep.BuildStep, AddToLogMixin):
 
     @defer.inlineCallbacks
     def getFilesPerProject(self, unexpected_results_data, type):
-        total_file_list = []
+        total_file_list = set()
         is_log = 0
         for project, data in unexpected_results_data[type].items():
             log_content = ''
             for checker, files in data.items():
                 if files:
-                    total_file_list.extend(files)
+                    total_file_list.update(files)
                     file_str = '\n'.join(files)
                     log_content += f'=> {checker}\n\n{file_str}\n\n'
             if log_content:
                 yield self._addToLog(f'{project}-unexpected-{type}', log_content)
                 is_log += 1
-        self.setProperty(f'{type}', total_file_list)
+        self.setProperty(f'{type}', list(total_file_list))
         return defer.returnValue(is_log)
 
     def doStepIf(self, step):
@@ -7205,10 +7205,12 @@ class DisplaySmartPointerResults(buildstep.BuildStep, AddToLogMixin):
             results_summary = f'Found {num_issues} new failure{pluralSuffix} in {failing_files}'
             if num_failures > self.NUM_TO_DISPLAY:
                 results_summary += ' ...'
+            self.setProperty('build_finish_summary', results_summary)
         elif num_issues:
             pluralSuffix = 's' if num_issues > 1 else ''
             # FIXME: Display which files are being ignored
             results_summary = f'Ignored {num_issues} pre-existing failure{pluralSuffix}'
+            self.setProperty('build_summary', results_summary)
         elif num_passes:
             # FIXME: Add link to unexpected passes file
             pluralSuffix = 's' if num_passes > 1 else ''
@@ -7216,13 +7218,14 @@ class DisplaySmartPointerResults(buildstep.BuildStep, AddToLogMixin):
             comment += 'Please update expectations using `smart-pointer-tool --update-expectations` before landing.'
             self.setProperty('comment_text', comment)
             self.build.addStepsAfterCurrentStep([LeaveComment()])
-            results_summary = f'Found {num_passes} fixed files: {passing_files}'
+            results_summary = f'Found {num_passes} fixed file{pluralSuffix}: {passing_files}'
             if num_passes > self.NUM_TO_DISPLAY:
                 results_summary += ' ...'
+            self.setProperty('build_summary', results_summary)
 
-        self.setProperty('build_finish_summary', results_summary)
         if num_passes and num_failures:
-            results_summary += f' and found {num_passes} fixed files: {passing_files}'
+            pluralSuffix = 's' if num_passes > 1 else ''
+            results_summary += f' and found {num_passes} fixed file{pluralSuffix}: {passing_files}'
             if num_passes > self.NUM_TO_DISPLAY:
                 results_summary += ' ...'
 

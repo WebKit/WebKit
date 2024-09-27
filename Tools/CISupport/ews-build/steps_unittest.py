@@ -9283,7 +9283,7 @@ class TestDisplaySmartPointerResults(BuildStepMixinAdditions, unittest.TestCase)
                 "passes": {
                     "WebCore": {
                         "NoUncountedMemberChecker": ['File17.cpp'],
-                        "RefCntblBaseVirtualDtor": ['File123.cpp'],
+                        "RefCntblBaseVirtualDtor": ['File17.cpp'],
                         "UncountedCallArgsChecker": [],
                         "UncountedLocalVarsChecker": []
                     },
@@ -9297,7 +9297,7 @@ class TestDisplaySmartPointerResults(BuildStepMixinAdditions, unittest.TestCase)
                 "failures": {
                     "WebCore": {
                         "NoUncountedMemberChecker": ['File1.cpp'],
-                        "RefCntblBaseVirtualDtor": ['File2.cpp'],
+                        "RefCntblBaseVirtualDtor": [],
                         "UncountedCallArgsChecker": [],
                         "UncountedLocalVarsChecker": []
                     },
@@ -9318,32 +9318,32 @@ class TestDisplaySmartPointerResults(BuildStepMixinAdditions, unittest.TestCase)
 
         self.expectOutcome(result=SUCCESS, state_string='Ignored 10 pre-existing failures')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('build_finish_summary'), 'Ignored 10 pre-existing failures')
+        self.assertEqual(self.getProperty('build_summary'), 'Ignored 10 pre-existing failures')
 
     def test_success_only_fixes(self):
         self.configureStep()
-        self.setProperty('unexpected_passing_files', 2)
+        self.setProperty('unexpected_passing_files', 1)
 
-        self.expectOutcome(result=SUCCESS, state_string='Found 2 fixed files: File17.cpp, File123.cpp')
+        self.expectOutcome(result=SUCCESS, state_string='Found 1 fixed file: File17.cpp')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('passes'), ['File17.cpp', 'File123.cpp'])
-        expected_comment = "Smart Pointer Build [#123](http://localhost:8080/#/builders/1/builds/13): Found 2 fixed files!\n"
+        self.assertEqual(self.getProperty('passes'), ['File17.cpp'])
+        expected_comment = "Smart Pointer Build [#123](http://localhost:8080/#/builders/1/builds/13): Found 1 fixed file!\n"
         expected_comment += "Please update expectations using `smart-pointer-tool --update-expectations` before landing."
         self.assertEqual(self.getProperty('comment_text'), expected_comment)
-        self.assertEqual(self.getProperty('build_finish_summary'), 'Found 2 fixed files: File17.cpp, File123.cpp')
+        self.assertEqual(self.getProperty('build_summary'), 'Found 1 fixed file: File17.cpp')
 
     def test_failure_new_failures(self):
         self.configureStep()
         self.setProperty('unexpected_new_issues', 10)
-        self.setProperty('unexpected_passing_files', 2)
-        self.setProperty('unexpected_failing_files', 2)
+        self.setProperty('unexpected_passing_files', 1)
+        self.setProperty('unexpected_failing_files', 1)
 
-        self.expectOutcome(result=FAILURE, state_string='Found 10 new failures in File1.cpp, File2.cpp and found 2 fixed files: File17.cpp, File123.cpp')
+        self.expectOutcome(result=FAILURE, state_string='Found 10 new failures in File1.cpp and found 1 fixed file: File17.cpp')
         rc = self.runStep()
         expected_comment = "Smart Pointer Build [#123](http://localhost:8080/#/builders/1/builds/13): Found [10 new failures](https://ews-build.s3-us-west-2.amazonaws.com/None/None-123/scan-build-output/new-results.html), blocking PR #17."
         expected_comment += "\nPlease address these issues before landing. See [WebKit Guidelines for Safer C++ Programming](https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines).\n(cc @rniwa)"
         self.assertEqual(self.getProperty('comment_text'), expected_comment)
-        self.assertEqual(self.getProperty('build_finish_summary'), 'Found 10 new failures in File1.cpp, File2.cpp')
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Found 10 new failures in File1.cpp')
 
 
 class TestPrintClangVersion(BuildStepMixinAdditions, unittest.TestCase):
