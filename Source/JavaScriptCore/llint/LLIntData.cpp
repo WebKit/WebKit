@@ -55,7 +55,7 @@ extern "C" void vmEntryToJavaScriptTrampoline(void);
 extern "C" void tailCallJSEntryTrampoline(void);
 extern "C" void tailCallJSEntrySlowPathTrampoline(void);
 extern "C" void tailCallWithoutUntagJSEntryTrampoline(void);
-extern "C" void wasmTailCallJSEntrySlowPathTrampoline(void);
+extern "C" void wasmTailCallTrampoline(void);
 extern "C" void exceptionHandlerTrampoline(void);
 extern "C" void returnFromLLIntTrampoline(void);
 #endif
@@ -204,10 +204,10 @@ void initialize()
     {
         static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef;
         if (Options::useJIT())
-            codeRef.construct(createWasmTailCallGate(JSEntrySlowPathPtrTag));
+            codeRef.construct(createWasmTailCallGate(WasmEntryPtrTag));
         else
-            codeRef.construct(MacroAssemblerCodeRef<NativeToJITGatePtrTag>::createSelfManagedCodeRef(CodePtr<NativeToJITGatePtrTag>::fromTaggedPtr(retagCodePtr<void*, CFunctionPtrTag, NativeToJITGatePtrTag>(&wasmTailCallJSEntrySlowPathTrampoline))));
-        g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::wasmTailCallJSEntrySlowPathPtrTag)]= codeRef.get().code().taggedPtr();
+            codeRef.construct(MacroAssemblerCodeRef<NativeToJITGatePtrTag>::createSelfManagedCodeRef(CodePtr<NativeToJITGatePtrTag>::fromTaggedPtr(retagCodePtr<void*, CFunctionPtrTag, NativeToJITGatePtrTag>(&wasmTailCallTrampoline))));
+        g_jscConfig.llint.gateMap[static_cast<unsigned>(Gate::wasmTailCallWasmEntryPtrTag)]= codeRef.get().code().taggedPtr();
     }
     {
         static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef;

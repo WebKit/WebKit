@@ -5201,7 +5201,7 @@ mintAlign(_call)
     pop t3, t2
 
     # Make the call
-    call targetEntrypoint, JSEntrySlowPathPtrTag
+    call targetEntrypoint, WasmEntryPtrTag
 
     # Restore the stack pointer
     addp FirstArgumentOffset - CallerFrameAndPCSize, sp

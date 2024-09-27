@@ -73,8 +73,10 @@ namespace JSC { namespace LLInt {
         WASM_END_IMPL(); \
     } while (false)
 
-#define WASM_CALL_RETURN(targetInstance, callTarget, callTargetTag) do { \
-        WASM_RETURN_TWO((retagCodePtr<callTargetTag, JSEntrySlowPathPtrTag>(callTarget)), targetInstance); \
+#define WASM_CALL_RETURN(targetInstance, callTarget) do { \
+        static_assert(callTarget.getTag() == WasmEntryPtrTag); \
+        callTarget.validate(); \
+        WASM_RETURN_TWO(callTarget.taggedPtr(), targetInstance); \
     } while (false)
 
 #define CALLEE() \
@@ -600,7 +602,7 @@ static inline UGPRPair doWasmCall(Register* partiallyConstructedCalleeFrame, JSW
         calleeStackSlot = boxedCallee;
     }
 
-    WASM_CALL_RETURN(instance, codePtr.taggedPtr(), WasmEntryPtrTag);
+    WASM_CALL_RETURN(instance, codePtr);
 }
 
 WASM_SLOW_PATH_DECL(call)
@@ -634,7 +636,8 @@ static inline UGPRPair doWasmCallIndirect(Register* partiallyConstructedCalleeFr
     else
         calleeStackSlot = CalleeBits::encodeNullCallee();
 
-    WASM_CALL_RETURN(function.m_instance, function.m_function.entrypointLoadLocation->taggedPtr(), WasmEntryPtrTag);
+    auto callTarget = *function.m_function.entrypointLoadLocation;
+    WASM_CALL_RETURN(function.m_instance, callTarget);
 }
 
 WASM_SLOW_PATH_DECL(call_indirect)
@@ -672,7 +675,8 @@ static inline UGPRPair doWasmCallRef(Register* partiallyConstructedCalleeFrame, 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=260820
     ASSERT(function.typeIndex == CALLEE()->signature(typeIndex).index());
     UNUSED_PARAM(typeIndex);
-    WASM_CALL_RETURN(calleeInstance, function.entrypointLoadLocation->taggedPtr(), WasmEntryPtrTag);
+    auto callTarget = *function.entrypointLoadLocation;
+    WASM_CALL_RETURN(calleeInstance, callTarget);
 }
 
 WASM_SLOW_PATH_DECL(call_ref)
