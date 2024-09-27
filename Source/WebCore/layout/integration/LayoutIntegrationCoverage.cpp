@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutIntegrationCoverage.h"
 
+#include "Document.h"
 #include "GapLength.h"
 #include "InlineWalker.h"
 #include "RenderBlockFlow.h"
@@ -40,11 +41,312 @@
 #include "RenderStyleInlines.h"
 #include "RenderTable.h"
 #include "RenderTextControl.h"
+#include "RenderView.h"
 #include "StyleContentAlignmentData.h"
 #include "StyleSelfAlignmentData.h"
+#include <pal/Logging.h>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 namespace LayoutIntegration {
+
+enum class AvoidanceReason : uint32_t {
+    FeatureIsDisabled                   = 1U << 0,
+    FlexBoxHasNoFlexItem                = 1U << 1,
+    FlexBoxNeedsBaseline                = 1U << 2,
+    FlexBoxIsVertical                   = 1U << 3,
+    FlexBoxIsRTL                        = 1U << 4,
+    FlexBoxHasColumnDirection           = 1U << 5,
+    FlexBoxHeightIsPercent              = 1U << 6,
+    FlexBoxHasUnsupportedOverflow       = 1U << 7,
+    FlexBoxHasUnsupportedAlignItems     = 1U << 8,
+    FlexBoxHasUnsupportedAlignContent   = 1U << 9,
+    FlexBoxHasUnsupportedRowGap         = 1U << 10,
+    FlexBoxHasUnsupportedColumnGap      = 1U << 11,
+    FlexBoxHasUnsupportedTypeOfRenderer = 1U << 12,
+    FlexBoxHasFloatChild                = 1U << 13,
+    FlexBoxHasOutOfFlowChild            = 1U << 14,
+    FlexBoxHasSVGChild                  = 1U << 15,
+    FlexBoxHasNestedFlex                = 1U << 16,
+    FlexItemIsVertical                  = 1U << 17,
+    FlexItemIsRTL                       = 1U << 18,
+    FlexItemHasNonFixedHeight           = 1U << 19,
+    FlexItemHasUnsupportedFlexBasis     = 1U << 20,
+    FlexItemHasUnsupportedFlexShrink    = 1U << 21,
+    FlexItemHasUnsupportedFlexGrow      = 1U << 22,
+    FlexItemHasContainsSize             = 1U << 23,
+    FlexItemHasUnsupportedOverflow      = 1U << 24,
+    FlexItemHasAspectRatio              = 1U << 25,
+    FlexItemHasUnsupportedAlignSelf     = 1U << 26,
+    EndOfReasons                        = 1U << 27
+};
+
+enum class IncludeReasons : bool {
+    First,
+    All
+};
+
+#ifndef NDEBUG
+#define ADD_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
+        reasons.add(AvoidanceReason::reason); \
+        if (includeReasons == IncludeReasons::First) \
+            return reasons; \
+    }
+#else
+#define ADD_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
+        ASSERT_UNUSED(includeReasons, includeReasons == IncludeReasons::First); \
+        reasons.add(AvoidanceReason::reason); \
+        return reasons; \
+    }
+#endif
+
+static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlexibleBox& flexBox, IncludeReasons includeReasons)
+{
+    auto reasons = OptionSet<AvoidanceReason> { };
+
+    if (!flexBox.document().settings().flexFormattingContextIntegrationEnabled())
+        ADD_REASON_AND_RETURN_IF_NEEDED(FeatureIsDisabled, reasons, includeReasons);
+
+    if (!flexBox.firstInFlowChild())
+        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasNoFlexItem, reasons, includeReasons);
+
+    auto& flexBoxStyle = flexBox.style();
+    if (flexBoxStyle.display() == DisplayType::InlineFlex)
+        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxNeedsBaseline, reasons, includeReasons);
+
+    if (!flexBoxStyle.isHorizontalWritingMode())
+        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxIsVertical, reasons, includeReasons);
+
+    if (!flexBoxStyle.isLeftToRightDirection())
+        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxIsRTL, reasons, includeReasons);
+
+    if (flexBoxStyle.flexDirection() == FlexDirection::Column || flexBoxStyle.flexDirection() == FlexDirection::ColumnReverse)
+        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasColumnDirection, reasons, includeReasons);
+
+    if (flexBoxStyle.logicalHeight().isPercent())
+        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHeightIsPercent, reasons, includeReasons);
+
+    if (flexBoxStyle.overflowY() == Overflow::Scroll || flexBoxStyle.overflowY() == Overflow::Auto)
+        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedOverflow, reasons, includeReasons);
+
+    auto alignItemValue = flexBoxStyle.alignItems().position();
+    if (alignItemValue == ItemPosition::Baseline || alignItemValue == ItemPosition::LastBaseline || alignItemValue == ItemPosition::SelfStart || alignItemValue == ItemPosition::SelfEnd)
+        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedAlignItems, reasons, includeReasons);
+
+    if (flexBoxStyle.alignContent().position() != ContentPosition::Normal || flexBoxStyle.alignContent().distribution() != ContentDistribution::Default || flexBoxStyle.alignContent().overflow() != OverflowAlignment::Default)
+        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedAlignContent, reasons, includeReasons);
+
+    if (!flexBoxStyle.rowGap().isNormal())
+        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedRowGap, reasons, includeReasons);
+
+    if (!flexBoxStyle.columnGap().isNormal())
+        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedColumnGap, reasons, includeReasons);
+
+    for (auto& flexItem : childrenOfType<RenderElement>(flexBox)) {
+        if (!is<RenderBlock>(flexItem) || flexItem.isFieldset() || flexItem.isRenderTextControl() || flexItem.isRenderTable())
+            ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedTypeOfRenderer, reasons, includeReasons);
+
+        if (flexItem.isFloating())
+            ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasFloatChild, reasons, includeReasons);
+
+        if (flexItem.isOutOfFlowPositioned())
+            ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasOutOfFlowChild, reasons, includeReasons);
+
+        if (flexItem.isRenderOrLegacyRenderSVGRoot())
+            ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasSVGChild, reasons, includeReasons);
+
+        if (flexItem.isFlexibleBoxIncludingDeprecated())
+            ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasNestedFlex, reasons, includeReasons);
+
+        auto& flexItemStyle = flexItem.style();
+        if (!flexItemStyle.isHorizontalWritingMode())
+            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemIsVertical, reasons, includeReasons);
+
+        if (!flexItemStyle.isLeftToRightDirection())
+            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemIsRTL, reasons, includeReasons);
+
+        if (!flexItemStyle.height().isFixed())
+            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasNonFixedHeight, reasons, includeReasons);
+
+        if (!flexItemStyle.flexBasis().isAuto() && !flexItemStyle.flexBasis().isFixed())
+            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasUnsupportedFlexBasis, reasons, includeReasons);
+
+        if (flexItemStyle.flexShrink() > 0 && flexItemStyle.flexShrink() < 1)
+            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasUnsupportedFlexShrink, reasons, includeReasons);
+
+        if (flexItemStyle.flexGrow() > 0 && flexItemStyle.flexGrow() < 1)
+            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasUnsupportedFlexGrow, reasons, includeReasons);
+
+        if (flexItemStyle.containsSize())
+            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasContainsSize, reasons, includeReasons);
+
+        if (flexItemStyle.overflowX() == Overflow::Scroll || flexItemStyle.overflowY() == Overflow::Scroll)
+            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasUnsupportedOverflow, reasons, includeReasons);
+
+        if (flexItem.hasIntrinsicAspectRatio() || flexItemStyle.hasAspectRatio())
+            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasAspectRatio, reasons, includeReasons);
+
+        auto alignSelfValue = flexItemStyle.alignSelf().position();
+        if (alignSelfValue == ItemPosition::Baseline || alignSelfValue == ItemPosition::LastBaseline || alignSelfValue == ItemPosition::SelfStart || alignSelfValue == ItemPosition::SelfEnd)
+            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasUnsupportedAlignSelf, reasons, includeReasons);
+    }
+    return reasons;
+}
+
+#ifndef NDEBUG
+static void printTextForSubtree(const RenderElement& renderer, size_t& charactersLeft, TextStream& stream)
+{
+    for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(renderer))) {
+        if (is<RenderText>(child)) {
+            auto text = downcast<RenderText>(child).text();
+            auto textView = StringView { text }.trim(isASCIIWhitespace<UChar>);
+            auto length = std::min<size_t>(charactersLeft, textView.length());
+            stream << textView.left(length);
+            charactersLeft -= length;
+            continue;
+        }
+        printTextForSubtree(downcast<RenderElement>(child), charactersLeft, stream);
+    }
+}
+
+static Vector<const RenderFlexibleBox*> collectFlexBoxesForCurrentPage()
+{
+    Vector<const RenderFlexibleBox*> flexBoxes;
+    for (auto document : Document::allDocuments()) {
+        if (!document->renderView() || document->backForwardCacheState() != Document::NotInBackForwardCache)
+            continue;
+        if (!document->isHTMLDocument() && !document->isXHTMLDocument())
+            continue;
+        for (auto& descendant : descendantsOfType<RenderFlexibleBox>(*document->renderView()))
+            flexBoxes.append(&descendant);
+    }
+    return flexBoxes;
+}
+
+static void printReason(AvoidanceReason reason, TextStream& stream)
+{
+    switch (reason) {
+    case AvoidanceReason::FeatureIsDisabled:
+        stream << "modern flex layout is disabled";
+        break;
+    case AvoidanceReason::FlexBoxHasNoFlexItem:
+        stream << "flex box has no flex item";
+        break;
+    case AvoidanceReason::FlexBoxNeedsBaseline:
+        stream << "inline flex box needs baseline";
+        break;
+    case AvoidanceReason::FlexBoxIsVertical:
+        stream << "flex box has vertical writing mode";
+        break;
+    case AvoidanceReason::FlexBoxIsRTL:
+        stream << "flex box is has right to left inline direction";
+        break;
+    case AvoidanceReason::FlexBoxHasColumnDirection:
+        stream << "flex box has column direction";
+        break;
+    case AvoidanceReason::FlexBoxHeightIsPercent:
+        stream << "flex box's height is percent";
+        break;
+    case AvoidanceReason::FlexBoxHasUnsupportedOverflow:
+        stream << "flex box has non-hidden overflow";
+        break;
+    case AvoidanceReason::FlexBoxHasUnsupportedAlignItems:
+        stream << "flex box has unsupported align-items value";
+        break;
+    case AvoidanceReason::FlexBoxHasUnsupportedAlignContent:
+        stream << "flex box has unsupported align-content value";
+        break;
+    case AvoidanceReason::FlexBoxHasUnsupportedRowGap:
+        stream << "flex box has unsupported row-gap value";
+        break;
+    case AvoidanceReason::FlexBoxHasUnsupportedColumnGap:
+        stream << "flex box has unsupported column-gap value";
+        break;
+    case AvoidanceReason::FlexBoxHasUnsupportedTypeOfRenderer:
+        stream << "flex box has unsupported flex item renderer e.g. fieldset";
+        break;
+    case AvoidanceReason::FlexBoxHasFloatChild:
+        stream << "flex box has floating child";
+        break;
+    case AvoidanceReason::FlexBoxHasOutOfFlowChild:
+        stream << "flex box has out-of-flow child";
+        break;
+    case AvoidanceReason::FlexBoxHasSVGChild:
+        stream << "flex box has svg child";
+        break;
+    case AvoidanceReason::FlexBoxHasNestedFlex:
+        stream << "flex box has nested flex";
+        break;
+    case AvoidanceReason::FlexItemIsVertical:
+        stream << "flex item has vertical writing mode";
+        break;
+    case AvoidanceReason::FlexItemIsRTL:
+        stream << "flex item has RTL inline direction";
+        break;
+    case AvoidanceReason::FlexItemHasNonFixedHeight:
+        stream << "flex item has non-fixed height value";
+        break;
+    case AvoidanceReason::FlexItemHasUnsupportedFlexBasis:
+        stream << "flex item has unsupported flex-basis value";
+        break;
+    case AvoidanceReason::FlexItemHasUnsupportedFlexShrink:
+        stream << "flex item has unsupported flex-shrink value";
+        break;
+    case AvoidanceReason::FlexItemHasUnsupportedFlexGrow:
+        stream << "flex item has unsupported flex-grow value";
+        break;
+    case AvoidanceReason::FlexItemHasContainsSize:
+        stream << "flex item has contains: size";
+        break;
+    case AvoidanceReason::FlexItemHasUnsupportedOverflow:
+        stream << "flex item has non-hidden overflow";
+        break;
+    case AvoidanceReason::FlexItemHasAspectRatio:
+        stream << "flex item has aspect-ratio ";
+        break;
+    case AvoidanceReason::FlexItemHasUnsupportedAlignSelf:
+        stream << "flex item has unsupported align-self value";
+        break;
+    default:
+        break;
+    }
+}
+
+static void printReasons(OptionSet<AvoidanceReason> reasons, TextStream& stream)
+{
+    stream << " ";
+    for (auto reason : reasons) {
+        printReason(reason, stream);
+        stream << ", ";
+    }
+}
+
+static void printLegacyFlexReasons()
+{
+    auto flexBoxes = collectFlexBoxesForCurrentPage();
+    if (!flexBoxes.size()) {
+        WTFLogAlways("No flex box found in this document\n");
+        return;
+    }
+    TextStream stream;
+    stream << "---------------------------------------------------\n";
+    for (auto* flexBox : flexBoxes) {
+        auto reasons = canUseForFlexLayoutWithReason(*flexBox, IncludeReasons::All);
+        if (reasons.isEmpty())
+            continue;
+        size_t printedLength = 30;
+        stream << "\"";
+        printTextForSubtree(*flexBox, printedLength, stream);
+        stream << "...\"";
+        for (;printedLength > 0; --printedLength)
+            stream << " ";
+        printReasons(reasons, stream);
+        stream << "\n";
+    }
+    stream << "---------------------------------------------------\n";
+    WTFLogAlways("%s", stream.release().utf8().data());
+}
+#endif
 
 bool canUseForLineLayout(const RenderBlockFlow& rootContainer)
 {
@@ -82,77 +384,13 @@ bool canUseForPreferredWidthComputation(const RenderBlockFlow& blockContainer)
 
 bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
 {
-    if (!flexBox.document().settings().flexFormattingContextIntegrationEnabled())
-        return false;
-
-    if (!flexBox.firstInFlowChild())
-        return false;
-
-    auto& flexBoxStyle = flexBox.style();
-    // FIXME: Needs baseline support.
-    if (flexBoxStyle.display() == DisplayType::InlineFlex)
-        return false;
-
-    // FIXME: Flex subclasses are not supported yet.
-    if (flexBoxStyle.display() != DisplayType::Flex)
-        return false;
-
-    if (!flexBoxStyle.isHorizontalWritingMode() || !flexBoxStyle.isLeftToRightDirection())
-        return false;
-
-    if (flexBoxStyle.flexDirection() == FlexDirection::Column || flexBoxStyle.flexDirection() == FlexDirection::ColumnReverse)
-        return false;
-
-    if (flexBoxStyle.logicalHeight().isPercent())
-        return false;
-
-    if (flexBoxStyle.overflowY() == Overflow::Scroll || flexBoxStyle.overflowY() == Overflow::Auto)
-        return false;
-
-    auto alignItemValue = flexBoxStyle.alignItems().position();
-    if (alignItemValue == ItemPosition::Baseline || alignItemValue == ItemPosition::LastBaseline || alignItemValue == ItemPosition::SelfStart || alignItemValue == ItemPosition::SelfEnd)
-        return false;
-    if (flexBoxStyle.alignContent().position() != ContentPosition::Normal || flexBoxStyle.alignContent().distribution() != ContentDistribution::Default || flexBoxStyle.alignContent().overflow() != OverflowAlignment::Default)
-        return false;
-    if (!flexBoxStyle.rowGap().isNormal() || !flexBoxStyle.columnGap().isNormal())
-        return false;
-
-    for (auto& flexItem : childrenOfType<RenderElement>(flexBox)) {
-        if (!is<RenderBlock>(flexItem))
-            return false;
-        if (flexItem.isFloating() || flexItem.isOutOfFlowPositioned())
-            return false;
-        if (flexItem.isRenderOrLegacyRenderSVGRoot())
-            return false;
-        // FIXME: No nested flexbox support.
-        if (flexItem.isFlexibleBoxIncludingDeprecated())
-            return false;
-        if (flexItem.isFieldset() || flexItem.isRenderTextControl())
-            return false;
-        if (flexItem.isRenderTable())
-            return false;
-        auto& flexItemStyle = flexItem.style();
-        if (!flexItemStyle.isHorizontalWritingMode() || !flexItemStyle.isLeftToRightDirection())
-            return false;
-        if (!flexItemStyle.height().isFixed())
-            return false;
-        if (!flexItemStyle.flexBasis().isAuto() && !flexItemStyle.flexBasis().isFixed())
-            return false;
-        if (flexItemStyle.flexShrink() > 0 && flexItemStyle.flexShrink() < 1)
-            return false;
-        if (flexItemStyle.flexGrow() > 0 && flexItemStyle.flexGrow() < 1)
-            return false;
-        if (flexItemStyle.containsSize())
-            return false;
-        if (flexItemStyle.overflowX() == Overflow::Scroll || flexItemStyle.overflowY() == Overflow::Scroll)
-            return false;
-        if (flexItem.hasIntrinsicAspectRatio() || flexItemStyle.hasAspectRatio())
-            return false;
-        auto alignSelfValue = flexItemStyle.alignSelf().position();
-        if (alignSelfValue == ItemPosition::Baseline || alignSelfValue == ItemPosition::LastBaseline || alignSelfValue == ItemPosition::SelfStart || alignSelfValue == ItemPosition::SelfEnd)
-            return false;
-    }
-    return true;
+#ifndef NDEBUG
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PAL::registerNotifyCallback("com.apple.WebKit.showLegacyFlexReasons"_s, Function<void()> { printLegacyFlexReasons });
+    });
+#endif
+    return canUseForFlexLayoutWithReason(flexBox, IncludeReasons::First).isEmpty();
 }
 
 }
