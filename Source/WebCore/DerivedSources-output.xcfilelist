@@ -2971,6 +2971,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextTrackList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextTrackList.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTimeRanges.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTimeRanges.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTimelineRangeOffset.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTimelineRangeOffset.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSToggleEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSToggleEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTrackEvent.cpp

@@ -4537,6 +4537,7 @@ JSTextTrackCueGeneric.cpp
 JSTextTrackCueList.cpp
 JSTextTrackList.cpp
 JSTimeRanges.cpp
+JSTimelineRangeOffset.cpp
 JSToggleEvent.cpp
 JSTrackEvent.cpp
 JSTransferFunction.cpp

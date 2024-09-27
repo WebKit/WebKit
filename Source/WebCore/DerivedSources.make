@@ -921,6 +921,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/animation/ScrollAxis.idl \
     $(WebCore)/animation/ScrollTimeline.idl \
     $(WebCore)/animation/ScrollTimelineOptions.idl \
+    $(WebCore)/animation/TimelineRangeOffset.idl \
     $(WebCore)/animation/ViewTimeline.idl \
     $(WebCore)/animation/ViewTimelineOptions.idl \
     $(WebCore)/animation/WebAnimation.idl \

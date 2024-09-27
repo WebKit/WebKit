@@ -5653,6 +5653,8 @@ ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlob
     std::optional<RefPtr<AnimationTimeline>> timeline;
     std::variant<FramesPerSecond, AnimationFrameRatePreset> frameRate = AnimationFrameRatePreset::Auto;
     std::optional<std::variant<double, KeyframeEffectOptions>> keyframeEffectOptions;
+    TimelineRangeValue animationRangeStart;
+    TimelineRangeValue animationRangeEnd;
     if (options) {
         auto optionsValue = options.value();
         std::variant<double, KeyframeEffectOptions> keyframeEffectOptionsVariant;
@@ -5663,6 +5665,8 @@ ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlob
             id = keyframeEffectOptions.id;
             frameRate = keyframeEffectOptions.frameRate;
             timeline = keyframeEffectOptions.timeline;
+            animationRangeStart = keyframeEffectOptions.rangeStart;
+            animationRangeEnd = keyframeEffectOptions.rangeEnd;
             keyframeEffectOptionsVariant = WTFMove(keyframeEffectOptions);
         }
         keyframeEffectOptions = keyframeEffectOptionsVariant;
@@ -5678,6 +5682,8 @@ ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlob
     if (timeline)
         animation->setTimeline(timeline->get());
     animation->setBindingsFrameRate(WTFMove(frameRate));
+    animation->setRangeStart(WTFMove(animationRangeStart));
+    animation->setRangeEnd(WTFMove(animationRangeEnd));
 
     auto animationPlayResult = animation->play();
     if (animationPlayResult.hasException())

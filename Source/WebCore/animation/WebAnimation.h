@@ -28,12 +28,14 @@
 #include "ActiveDOMObject.h"
 #include "AnimationFrameRate.h"
 #include "AnimationFrameRatePreset.h"
+#include "CSSKeywordValue.h"
 #include "CSSNumericValue.h"
 #include "ContextDestructionObserverInlines.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
 #include "Styleable.h"
+#include "TimelineRangeOffset.h"
 #include "WebAnimationTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
@@ -133,6 +135,11 @@ public:
     virtual std::variant<FramesPerSecond, AnimationFrameRatePreset> bindingsFrameRate() const { return m_bindingsFrameRate; }
     virtual void setBindingsFrameRate(std::variant<FramesPerSecond, AnimationFrameRatePreset>&&);
     std::optional<FramesPerSecond> frameRate() const { return m_effectiveFrameRate; }
+
+    TimelineRangeValue rangeStart() const { return m_rangeStart; }
+    TimelineRangeValue rangeEnd() const { return m_rangeEnd; }
+    void setRangeStart(TimelineRangeValue&& rangeStart) { m_rangeStart = WTFMove(rangeStart); }
+    void setRangeEnd(TimelineRangeValue&& rangeEnd) { m_rangeEnd = WTFMove(rangeEnd); }
 
     bool needsTick() const;
     virtual void tick();
@@ -236,6 +243,8 @@ private:
     TimeToRunPendingTask m_timeToRunPendingPauseTask { TimeToRunPendingTask::NotScheduled };
     ReplaceState m_replaceState { ReplaceState::Active };
     uint64_t m_globalPosition { 0 };
+    TimelineRangeValue m_rangeStart { "normal"_s };
+    TimelineRangeValue m_rangeEnd { "normal"_s };
 };
 
 } // namespace WebCore

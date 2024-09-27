@@ -43,9 +43,12 @@ namespace WebCore {
 class AnimationEventBase;
 class AnimationList;
 class CSSAnimation;
+class CSSKeywordValue;
 class CSSTransition;
 class StyleOriginatedAnimation;
 class WebAnimation;
+
+struct TimelineRangeOffset;
 
 struct WebAnimationsMarkableDoubleTraits {
     static bool isEmptyValue(double value)
@@ -109,6 +112,8 @@ constexpr OptionSet<AcceleratedEffectProperty> transformRelatedAcceleratedProper
 struct CSSPropertiesBitSet {
     WTF::BitSet<numCSSProperties> m_properties { };
 };
+
+using TimelineRangeValue = std::variant<TimelineRangeOffset, RefPtr<CSSNumericValue>, RefPtr<CSSKeywordValue>, String>;
 
 } // namespace WebCore
 
