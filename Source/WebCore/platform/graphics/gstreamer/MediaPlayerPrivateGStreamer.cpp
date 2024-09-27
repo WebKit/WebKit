@@ -1355,9 +1355,12 @@ std::optional<int> MediaPlayerPrivateGStreamer::queryBufferingPercentage()
         elementName = "<undefined>"_s;
     GST_TRACE_OBJECT(pipeline(), "[Buffering] %s reports %d buffering", elementName.characters(), percentage);
 
-    if (mode != GST_BUFFERING_DOWNLOAD) {
-        GST_WARNING_OBJECT(pipeline(), "[Buffering] mode isn't GST_BUFFERING_DOWNLOAD, but it should be!");
-        ASSERT_NOT_REACHED();
+    // Normally, the fillTimer only works with buffering download (GstDownloadBuffer present), but for some
+    // protocols, such as mediastream or file, that element isn't present and que query works in buffering
+    // stream mode. When buffering has reached 100%, we stop the fillTimer because it won't ever go down.
+    if (mode != GST_BUFFERING_DOWNLOAD && percentage >= 100.0) {
+        m_fillTimer.stop();
+        GST_DEBUG_OBJECT(pipeline(), "[Buffering] fillTimer not in GST_BUFFERING_DOWNLOAD mode and buffer level 100%%, disabling fillTimer.");
         return percentage;
     }
 
