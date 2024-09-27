@@ -272,7 +272,7 @@ static void updateEffectiveTextDirectionOfElementAndShadowTree(Element& element,
         element.invalidateStyleForSubtree();
 }
 
-void updateEffectiveTextDirectionState(Element& element, TextDirectionState textDirectionState, Element* initiator)
+static std::optional<TextDirection> updateEffectiveTextDirectionOfElementAndDescendants(Element& element, TextDirectionState textDirectionState, Element* initiator = nullptr)
 {
     updateElementHasDirAutoFlag(element, textDirectionState);
 
@@ -281,10 +281,36 @@ void updateEffectiveTextDirectionState(Element& element, TextDirectionState text
     updateEffectiveTextDirectionOfElementAndShadowTree(element, direction, initiator);
     updateEffectiveTextDirectionOfDescendants(element, direction, initiator);
 
-    if (RefPtr parent = element.parentOrShadowHostElement()) {
-        if (parent->selfOrPrecedingNodesAffectDirAuto())
-            updateEffectiveTextDirectionOfAncestors(*parent, &element);
-    }
+    return direction;
+}
+
+void textDirectionStateChanged(Element& element, TextDirectionState textDirectionState)
+{
+    updateEffectiveTextDirectionOfElementAndDescendants(element, textDirectionState);
+
+    RefPtr parent = element.parentOrShadowHostElement();
+    if (!parent)
+        return;
+
+    if (parent->selfOrPrecedingNodesAffectDirAuto())
+        updateEffectiveTextDirectionOfAncestors(*parent, &element);
+}
+
+void updateEffectiveTextDirectionState(Element& element, TextDirectionState textDirectionState, Element* initiator)
+{
+    auto direction = updateEffectiveTextDirectionOfElementAndDescendants(element, textDirectionState, initiator);
+
+    RefPtr parent = element.parentOrShadowHostElement();
+    if (!parent)
+        return;
+
+    // This element won't affect its ancestors if its effective direction
+    // is the same as its parent's effective direction.
+    if (direction && parent->usesEffectiveTextDirection() && *direction == parent->effectiveTextDirection())
+        return;
+
+    if (parent->selfOrPrecedingNodesAffectDirAuto())
+        updateEffectiveTextDirectionOfAncestors(*parent, &element);
 }
 
 void updateEffectiveTextDirectionOfDescendants(Element& element, std::optional<TextDirection> direction, Element* initiator)

@@ -2756,7 +2756,7 @@ void Element::updateEffectiveTextDirection()
 void Element::dirAttributeChanged(const AtomString& newValue)
 {
     auto textDirectionState = parseTextDirectionState(newValue);
-    updateEffectiveTextDirectionState(*this, textDirectionState);
+    textDirectionStateChanged(*this, textDirectionState);
 }
 
 void Element::updateEffectiveLangStateFromParent()
