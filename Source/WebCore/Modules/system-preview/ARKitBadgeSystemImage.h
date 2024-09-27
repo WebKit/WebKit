@@ -80,7 +80,7 @@ private:
     }
 
     RefPtr<Image> m_image;
-    RenderingResourceIdentifier m_renderingResourceIdentifier;
+    Markable<RenderingResourceIdentifier> m_renderingResourceIdentifier;
     FloatSize m_imageSize;
 };
 

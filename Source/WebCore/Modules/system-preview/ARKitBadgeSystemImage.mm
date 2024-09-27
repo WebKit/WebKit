@@ -86,7 +86,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ARKitBadgeSystemImage);
 
 RenderingResourceIdentifier ARKitBadgeSystemImage::imageIdentifier() const
 {
-    return m_image ? m_image->nativeImage()->renderingResourceIdentifier() : m_renderingResourceIdentifier;
+    return m_image ? m_image->nativeImage()->renderingResourceIdentifier() : *m_renderingResourceIdentifier;
 }
 
 void ARKitBadgeSystemImage::draw(GraphicsContext& graphicsContext, const FloatRect& rect) const

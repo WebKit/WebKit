@@ -8252,7 +8252,7 @@ using WebCore::TrackID = uint64_t
 #endif
 using WebCore::EpochTimeStamp = uint64_t
 using WebCore::SharedMemory::Handle = WebCore::SharedMemoryHandle
-using WebCore::ServiceWorkerOrClientIdentifier = std::variant<WebCore::ServiceWorkerIdentifier, WebCore::ScriptExecutionContextIdentifier>
+using WebCore::ServiceWorkerOrClientIdentifier = std::variant<WebCore::ScriptExecutionContextIdentifier, WebCore::ServiceWorkerIdentifier>
 
 [Nested] enum class WebCore::GraphicsContext::RequiresClipToRect : bool
 
