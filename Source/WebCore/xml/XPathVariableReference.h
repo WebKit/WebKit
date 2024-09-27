@@ -27,12 +27,14 @@
 #pragma once
 
 #include "XPathExpressionNode.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace XPath {
 
 // Variable references are not used with XPathEvaluator.
 class VariableReference : public Expression {
+    WTF_MAKE_TZONE_ALLOCATED(VariableReference);
 public:
     explicit VariableReference(const String& name);
 private:

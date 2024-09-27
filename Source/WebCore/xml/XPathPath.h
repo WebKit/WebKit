@@ -27,6 +27,7 @@
 #pragma once
 
 #include "XPathExpressionNode.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace XPath {
@@ -34,6 +35,7 @@ namespace XPath {
 class Step;
 
 class Filter final : public Expression {
+    WTF_MAKE_TZONE_ALLOCATED(Filter);
 public:
     Filter(std::unique_ptr<Expression>, Vector<std::unique_ptr<Expression>> predicates);
 
@@ -46,6 +48,7 @@ private:
 };
 
 class LocationPath final : public Expression {
+    WTF_MAKE_TZONE_ALLOCATED(LocationPath);
 public:
     LocationPath();
 
@@ -65,6 +68,7 @@ private:
 };
 
 class Path final : public Expression {
+    WTF_MAKE_TZONE_ALLOCATED(Path);
 public:
     Path(std::unique_ptr<Expression> filter, std::unique_ptr<LocationPath>);
 
