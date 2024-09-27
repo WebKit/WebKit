@@ -180,35 +180,36 @@ ViewTimeline::Data ViewTimeline::computeViewTimelineData() const
     //
     // - distance is the current scroll offset minus the scroll offset corresponding to the start of the
     //   cover range
-    // - range is the scroll offset corresponding to the start of the cover range minus the scroll offset
-    //   corresponding to the end of the cover range
+    // - range is the scroll offset corresponding to the end of the cover range minus the scroll offset
+    //   corresponding to the start of the cover range
     // TODO: take into account view-timeline-inset: https://drafts.csswg.org/scroll-animations-1/#propdef-view-timeline-inset
     // TODO: take into account animation-range: https://drafts.csswg.org/scroll-animations-1/#animation-range
+    // TODO: investigate best way to compute subjectOffset, as offsetTop uses offsetParent(), not the containing scroller
+    // TODO: view timeline progress calculation: (currentScrollOffset - coverRangeStart) / (coverRangeEnd - coverRangeStart)
 
     float currentScrollOffset = axis() == ScrollAxis::Block ? sourceScrollableArea->scrollPosition().y() : sourceScrollableArea->scrollPosition().x();
     float scrollContainerSize = axis() == ScrollAxis::Block ? sourceScrollableArea->visibleHeight() : sourceScrollableArea->visibleWidth();
 
-    auto offsetFromScroller = ScrollAnchoringController::computeOffsetFromScrollableArea(*subjectRenderBox, *sourceScrollableArea, ScrollAnchoringController::ShouldIncludeFrameViewLocation::No);
-    float subjectOffset = axis() == ScrollAxis::Block ? offsetFromScroller.y() : offsetFromScroller.x();
+    float subjectOffset = axis() == ScrollAxis::Block ? subjectRenderBox->offsetTop() : subjectRenderBox->offsetLeft();
 
     float subjectSize = axis() == ScrollAxis::Block ? subjectRenderBox->borderBoxRect().height() : subjectRenderBox->borderBoxRect().width();
 
-    auto coverRangeStart = subjectOffset - currentScrollOffset;
-    auto coverRangeEnd = coverRangeStart + subjectSize;
+    auto coverRangeStart = subjectOffset - scrollContainerSize;
+    auto coverRangeEnd = subjectOffset + subjectSize;
 
-    return { scrollContainerSize, subjectOffset, currentScrollOffset, coverRangeEnd };
+    return { currentScrollOffset, coverRangeStart, coverRangeEnd };
 }
 
 const CSSNumericValue& ViewTimeline::startOffset() const
 {
     auto data = computeViewTimelineData();
-    return CSSNumericFactory::px(data.subjectOffset - data.scrollContainerSize);
+    return CSSNumericFactory::px(data.coverRangeStart);
 }
 
 const CSSNumericValue& ViewTimeline::endOffset() const
 {
     auto data = computeViewTimelineData();
-    return CSSNumericFactory::px(data.subjectOffset + data.coverRangeEnd - data.scrollContainerSize);
+    return CSSNumericFactory::px(data.coverRangeEnd);
 }
 
 } // namespace WebCore

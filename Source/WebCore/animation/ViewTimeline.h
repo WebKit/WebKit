@@ -64,9 +64,8 @@ public:
 
 private:
     struct Data {
-        float scrollContainerSize { 0 };
-        float subjectOffset { 0 };
         float currentScrollOffset { 0 };
+        float coverRangeStart { 0 };
         float coverRangeEnd { 0 };
     };
     Data computeViewTimelineData() const;

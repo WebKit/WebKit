@@ -66,12 +66,11 @@ public:
 
     Element* anchorElement() const { return m_anchorElement.get(); }
 
-    enum class ShouldIncludeFrameViewLocation { Yes, No };
-    static FloatPoint computeOffsetFromScrollableArea(RenderObject&, ScrollableArea&, ShouldIncludeFrameViewLocation = ShouldIncludeFrameViewLocation::Yes);
 
 private:
     Element* findAnchorElementRecursive(Element*);
     bool didFindPriorityCandidate(Document&);
+    FloatPoint computeOffsetFromOwningScroller(RenderObject&);
     LocalFrameView& frameView();
 
     ScrollableArea& m_owningScrollableArea;

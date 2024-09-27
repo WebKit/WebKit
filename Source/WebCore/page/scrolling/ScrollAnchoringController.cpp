@@ -100,10 +100,10 @@ static IntRect boundingRectForScrollableArea(ScrollableArea& scrollableArea)
     return IntRect(downcast<LocalFrameView>(downcast<ScrollView>(scrollableArea)).layoutViewportRect());
 }
 
-FloatPoint ScrollAnchoringController::computeOffsetFromScrollableArea(RenderObject& candidate, ScrollableArea& area, ShouldIncludeFrameViewLocation shouldIncludeFrameViewLocation)
+FloatPoint ScrollAnchoringController::computeOffsetFromOwningScroller(RenderObject& candidate)
 {
     // TODO: investigate this for zoom/rtl
-    return FloatPoint(candidate.absoluteBoundingBoxRect().location() - ((shouldIncludeFrameViewLocation == ShouldIncludeFrameViewLocation::No && is<ScrollView>(area)) ? FloatPoint() : boundingRectForScrollableArea(area).location()));
+    return FloatPoint(candidate.absoluteBoundingBoxRect().location() - boundingRectForScrollableArea(m_owningScrollableArea).location());
 }
 
 void ScrollAnchoringController::notifyChildHadSuppressingStyleChange()
@@ -188,7 +188,7 @@ bool ScrollAnchoringController::didFindPriorityCandidate(Document& document)
     // TODO: need to figure out how to get element that is the current find-in-page element (look into FindController)
     if (RefPtr priorityCandidate = viablePriorityCandidateForElement(document.focusedElement())) {
         m_anchorElement = priorityCandidate;
-        m_lastOffsetForAnchorElement = computeOffsetFromScrollableArea(*m_anchorElement->renderer(), m_owningScrollableArea);
+        m_lastOffsetForAnchorElement = computeOffsetFromOwningScroller(*m_anchorElement->renderer());
         LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::viablePriorityCandidateForElement() found priority candidate: " << *priorityCandidate << " for element: " << ValueOrNull(elementForScrollableArea(m_owningScrollableArea)));
         return true;
     }
@@ -320,8 +320,8 @@ void ScrollAnchoringController::chooseAnchorElement(Document& document)
     }
 
     m_anchorElement = anchorElement;
-    m_lastOffsetForAnchorElement = computeOffsetFromScrollableArea(*m_anchorElement->renderer(), m_owningScrollableArea);
-    LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::chooseAnchorElement() found anchor node: " << *anchorElement << " offset: " << computeOffsetFromScrollableArea(*m_anchorElement->renderer(), m_owningScrollableArea));
+    m_lastOffsetForAnchorElement = computeOffsetFromOwningScroller(*m_anchorElement->renderer());
+    LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::chooseAnchorElement() found anchor node: " << *anchorElement << " offset: " << computeOffsetFromOwningScroller(*m_anchorElement->renderer()));
 }
 
 void ScrollAnchoringController::updateAnchorElement()
@@ -361,7 +361,7 @@ void ScrollAnchoringController::adjustScrollPositionForAnchoring()
     }
     SetForScope midUpdatingScrollPositionForAnchorElement(m_midUpdatingScrollPositionForAnchorElement, true);
 
-    FloatSize adjustment = computeOffsetFromScrollableArea(*renderer, m_owningScrollableArea) - m_lastOffsetForAnchorElement;
+    FloatSize adjustment = computeOffsetFromOwningScroller(*renderer) - m_lastOffsetForAnchorElement;
     if (!adjustment.isZero()) {
         if (m_owningScrollableArea.isUserScrollInProgress()) {
             invalidateAnchorElement();
