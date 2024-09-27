@@ -20,9 +20,20 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-struct WebKit::WebFoundTextRange {
+[Nested] struct WebKit::WebFoundTextRange::DOMData {
     uint64_t location;
     uint64_t length;
+};
+
+[Nested] struct WebKit::WebFoundTextRange::PDFData {
+    uint64_t startPage;
+    uint64_t startOffset;
+    uint64_t endPage;
+    uint64_t endOffset;
+};
+
+struct WebKit::WebFoundTextRange {
+    std::variant<WebKit::WebFoundTextRange::DOMData, WebKit::WebFoundTextRange::PDFData> data;
     AtomString frameIdentifier;
     uint64_t order;
 }

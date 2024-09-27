@@ -163,6 +163,7 @@
 #import <wtf/CallbackAggregator.h>
 #import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/SystemFree.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/NSURLExtras.h>
@@ -551,8 +552,6 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 
 @interface WKFoundTextRange : UITextRange
 
-@property (nonatomic) NSUInteger location;
-@property (nonatomic) NSUInteger length;
 @property (nonatomic, copy) NSString *frameIdentifier;
 @property (nonatomic) NSUInteger order;
 
@@ -564,10 +563,40 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 
 @interface WKFoundTextPosition : UITextPosition
 
-@property (nonatomic) NSUInteger offset;
 @property (nonatomic) NSUInteger order;
 
-+ (WKFoundTextPosition *)textPositionWithOffset:(NSUInteger)offset order:(NSUInteger)order;
+@end
+
+@interface WKFoundDOMTextRange : WKFoundTextRange
+
+@property (nonatomic) NSUInteger location;
+@property (nonatomic) NSUInteger length;
+
+@end
+
+@interface WKFoundDOMTextPosition : WKFoundTextPosition
+
+@property (nonatomic) NSUInteger offset;
+
++ (WKFoundDOMTextPosition *)textPositionWithOffset:(NSUInteger)offset order:(NSUInteger)order;
+
+@end
+
+@interface WKFoundPDFTextRange : WKFoundTextRange
+
+@property (nonatomic) NSUInteger startPage;
+@property (nonatomic) NSUInteger startPageOffset;
+@property (nonatomic) NSUInteger endPage;
+@property (nonatomic) NSUInteger endPageOffset;
+
+@end
+
+@interface WKFoundPDFTextPosition : WKFoundTextPosition
+
+@property (nonatomic) NSUInteger page;
+@property (nonatomic) NSUInteger offset;
+
++ (WKFoundPDFTextPosition *)textPositionWithPage:(NSUInteger)page offset:(NSUInteger)offset;
 
 @end
 
@@ -6489,12 +6518,28 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
 - (NSInteger)offsetFromPosition:(UITextPosition *)from toPosition:(UITextPosition *)to
 {
 #if HAVE(UIFINDINTERACTION)
-    if ([from isKindOfClass:[WKFoundTextPosition class]] && [to isKindOfClass:[WKFoundTextPosition class]]) {
-        WKFoundTextPosition *fromPosition = (WKFoundTextPosition *)from;
-        WKFoundTextPosition *toPosition = (WKFoundTextPosition *)to;
+    if ([from isKindOfClass:[WKFoundDOMTextPosition class]] && [to isKindOfClass:[WKFoundDOMTextPosition class]]) {
+        WKFoundDOMTextPosition *fromPosition = (WKFoundDOMTextPosition *)from;
+        WKFoundDOMTextPosition *toPosition = (WKFoundDOMTextPosition *)to;
 
         if (fromPosition.order == toPosition.order)
             return fromPosition.offset - toPosition.offset;
+    }
+
+    if ([from isKindOfClass:[WKFoundPDFTextPosition class]] && [to isKindOfClass:[WKFoundPDFTextPosition class]]) {
+        WKFoundPDFTextPosition *fromPosition = (WKFoundPDFTextPosition *)from;
+        WKFoundPDFTextPosition *toPosition = (WKFoundPDFTextPosition *)to;
+
+        if (fromPosition.order == toPosition.order) {
+            if (fromPosition.page == toPosition.page)
+                return fromPosition.offset - toPosition.offset;
+            return fromPosition.page - toPosition.page;
+        }
+    }
+
+    if ([from isKindOfClass:[WKFoundTextPosition class]] && [to isKindOfClass:[WKFoundTextPosition class]]) {
+        WKFoundTextPosition *fromPosition = (WKFoundTextPosition *)from;
+        WKFoundTextPosition *toPosition = (WKFoundTextPosition *)to;
 
         return fromPosition.order - toPosition.order;
     }
@@ -15048,9 +15093,23 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 + (WKFoundTextRange *)foundTextRangeWithWebFoundTextRange:(WebKit::WebFoundTextRange)webRange
 {
-    auto range = adoptNS([[WKFoundTextRange alloc] init]);
-    [range setLocation:webRange.location];
-    [range setLength:webRange.length];
+    RetainPtr range = WTF::switchOn(webRange.data,
+        [] (const WebKit::WebFoundTextRange::DOMData& domData) -> RetainPtr<WKFoundTextRange> {
+            RetainPtr foundDOMTextRange = adoptNS([[WKFoundDOMTextRange alloc] init]);
+            [foundDOMTextRange setLocation:domData.location];
+            [foundDOMTextRange setLength:domData.length];
+            return foundDOMTextRange;
+        },
+        [] (const WebKit::WebFoundTextRange::PDFData& pdfData) -> RetainPtr<WKFoundTextRange> {
+            RetainPtr foundPDFTextRange = adoptNS([[WKFoundPDFTextRange alloc] init]);
+            [foundPDFTextRange setStartPage:pdfData.startPage];
+            [foundPDFTextRange setStartPageOffset:pdfData.startOffset];
+            [foundPDFTextRange setEndPage:pdfData.endPage];
+            [foundPDFTextRange setEndPageOffset:pdfData.endOffset];
+            return foundPDFTextRange;
+        }
+    );
+
     [range setFrameIdentifier:webRange.frameIdentifier];
     [range setOrder:webRange.order];
     return range.autorelease();
@@ -15062,18 +15121,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [super dealloc];
 }
 
-- (WKFoundTextPosition *)start
-{
-    WKFoundTextPosition *position = [WKFoundTextPosition textPositionWithOffset:self.location order:self.order];
-    return position;
-}
-
-- (UITextPosition *)end
-{
-    WKFoundTextPosition *position = [WKFoundTextPosition textPositionWithOffset:(self.location + self.length) order:self.order];
-    return position;
-}
-
 - (BOOL)isEmpty
 {
     return NO;
@@ -15081,18 +15128,77 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (WebKit::WebFoundTextRange)webFoundTextRange
 {
-    return { self.location, self.length, self.frameIdentifier, self.order };
+    return { };
 }
 
 @end
 
 @implementation WKFoundTextPosition
+@end
 
-+ (WKFoundTextPosition *)textPositionWithOffset:(NSUInteger)offset order:(NSUInteger)order
+@implementation WKFoundDOMTextRange
+
+- (WKFoundDOMTextPosition *)start
 {
-    auto pos = adoptNS([[WKFoundTextPosition alloc] init]);
+    WKFoundDOMTextPosition *position = [WKFoundDOMTextPosition textPositionWithOffset:self.location order:self.order];
+    return position;
+}
+
+- (WKFoundDOMTextPosition *)end
+{
+    WKFoundDOMTextPosition *position = [WKFoundDOMTextPosition textPositionWithOffset:(self.location + self.length) order:self.order];
+    return position;
+}
+
+- (WebKit::WebFoundTextRange)webFoundTextRange
+{
+    WebKit::WebFoundTextRange::DOMData data { self.location, self.length };
+    return { data, self.frameIdentifier, self.order };
+}
+
+@end
+
+@implementation WKFoundDOMTextPosition
+
++ (WKFoundDOMTextPosition *)textPositionWithOffset:(NSUInteger)offset order:(NSUInteger)order
+{
+    RetainPtr pos = adoptNS([[WKFoundDOMTextPosition alloc] init]);
     [pos setOffset:offset];
     [pos setOrder:order];
+    return pos.autorelease();
+}
+
+@end
+
+@implementation WKFoundPDFTextRange
+
+- (WKFoundPDFTextPosition *)start
+{
+    WKFoundPDFTextPosition *position = [WKFoundPDFTextPosition textPositionWithPage:self.startPage offset:self.startPageOffset];
+    return position;
+}
+
+- (WKFoundPDFTextPosition *)end
+{
+    WKFoundPDFTextPosition *position = [WKFoundPDFTextPosition textPositionWithPage:self.endPage offset:self.endPageOffset];
+    return position;
+}
+
+- (WebKit::WebFoundTextRange)webFoundTextRange
+{
+    WebKit::WebFoundTextRange::PDFData data { self.startPage, self.startPageOffset, self.endPage, self.endPageOffset };
+    return { data, self.frameIdentifier, self.order };
+}
+
+@end
+
+@implementation WKFoundPDFTextPosition
+
++ (WKFoundPDFTextPosition *)textPositionWithPage:(NSUInteger)page offset:(NSUInteger)offset
+{
+    RetainPtr pos = adoptNS([[WKFoundPDFTextPosition alloc] init]);
+    [pos setPage:page];
+    [pos setOffset:offset];
     return pos.autorelease();
 }
 

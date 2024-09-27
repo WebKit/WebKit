@@ -47,6 +47,7 @@
 #include <WebCore/SimpleRange.h>
 #include <WebCore/TextIterator.h>
 #include <wtf/Scope.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -85,7 +86,8 @@ void WebFoundTextRangeController::findTextRangesForStringMatches(const String& s
 
         // FIXME: We should get the character ranges at the same time as the SimpleRanges to avoid additional traversals.
         auto range = characterRange(makeBoundaryPointBeforeNodeContents(*element), simpleRange, WebCore::findIteratorOptions());
-        auto foundTextRange = WebFoundTextRange { range.location, range.length, frameName.length() ? frameName : emptyAtom(), order };
+        auto domData = WebFoundTextRange::DOMData { range.location, range.length };
+        auto foundTextRange = WebFoundTextRange { domData, frameName.length() ? frameName : emptyAtom(), order };
 
         m_cachedFoundRanges.add(foundTextRange, simpleRange);
         foundTextRanges.append(foundTextRange);
@@ -233,7 +235,7 @@ void WebFoundTextRangeController::redraw()
         findPageOverlay->setNeedsDisplay();
     });
 
-    if (!m_highlightedRange.length)
+    if (!std::get<WebFoundTextRange::DOMData>(m_highlightedRange.data).length)
         return;
 
     auto simpleRange = simpleRangeFromFoundTextRange(m_highlightedRange);
@@ -405,7 +407,8 @@ std::optional<WebCore::SimpleRange> WebFoundTextRangeController::simpleRangeFrom
             return std::nullopt;
 
         Ref documentElement = *document->documentElement();
-        return resolveCharacterRange(makeRangeSelectingNodeContents(documentElement), { range.location, range.length }, WebCore::findIteratorOptions());
+        auto domData = std::get<WebFoundTextRange::DOMData>(range.data);
+        return resolveCharacterRange(makeRangeSelectingNodeContents(documentElement), { domData.location, domData.length }, WebCore::findIteratorOptions());
     }).iterator->value;
 }
 
