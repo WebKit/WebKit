@@ -40,7 +40,7 @@ namespace WebKit {
 
 void TestWithEnabledByAndConjunction::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    auto& sharedPreferences = sharedPreferencesForWebProcess();
+    auto sharedPreferences = sharedPreferencesForWebProcess();
     UNUSED_VARIABLE(sharedPreferences);
     if (!(sharedPreferences.someFeature && sharedPreferences.otherFeature)) {
 #if ENABLE(IPC_TESTING_API)

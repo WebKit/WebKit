@@ -175,6 +175,7 @@ public:
     using SoundStageSize = AudioSessionSoundStageSize;
     virtual void setSoundStageSize(SoundStageSize) { }
     virtual SoundStageSize soundStageSize() const { return SoundStageSize::Automatic; }
+    virtual void setEnabled(bool);
 
 protected:
     friend class NeverDestroyed<AudioSession>;

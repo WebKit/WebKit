@@ -31,6 +31,7 @@
 #include "WebPreferencesDefinitions.h"
 #include "WebPreferencesKeys.h"
 #include "WebPreferencesStore.h"
+#include <WebCore/AudioSession.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
@@ -69,6 +70,11 @@ void WebPage::updatePreferencesGenerated(const WebPreferencesStore& store)
 #endif
 <%- end -%>
 <%- end -%>
+
+#if USE(AUDIO_SESSION)
+    if (store.getBoolValueForKey(WebPreferencesKey::mediaPlaybackEnabledKey()))
+        WebCore::AudioSession::sharedSession().setEnabled(true);
+#endif
 }
 
 }

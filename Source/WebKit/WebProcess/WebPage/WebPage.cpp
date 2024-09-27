@@ -4801,6 +4801,11 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     PlatformMediaSessionManager::setSWVPDecodersAlwaysEnabled(store.getBoolValueForKey(WebPreferencesKey::sWVPDecodersAlwaysEnabledKey()));
 #endif
 
+#if USE(AUDIO_SESSION)
+    if (store.getBoolValueForKey(WebPreferencesKey::mediaPlaybackEnabledKey()))
+        AudioSession::sharedSession().setEnabled(true);
+#endif
+
     // FIXME: This should be automated by adding a new field in WebPreferences*.yaml
     // that indicates override state for Lockdown mode. https://webkit.org/b/233100.
     if (WebProcess::singleton().isLockdownModeEnabled())

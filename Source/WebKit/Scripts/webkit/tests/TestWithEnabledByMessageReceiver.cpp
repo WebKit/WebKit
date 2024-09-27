@@ -40,7 +40,7 @@ namespace WebKit {
 
 void TestWithEnabledBy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    auto& sharedPreferences = sharedPreferencesForWebProcess(connection);
+    auto sharedPreferences = sharedPreferencesForWebProcess(connection);
     UNUSED_VARIABLE(sharedPreferences);
     Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithEnabledBy::AlwaysEnabled::name())

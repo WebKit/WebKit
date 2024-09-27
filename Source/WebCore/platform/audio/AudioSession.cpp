@@ -269,6 +269,11 @@ void AudioSession::setIsPlayingToBluetoothOverride(std::optional<bool>)
     notImplemented();
 }
 
+void AudioSession::setEnabled(bool)
+{
+    notImplemented();
+}
+
 Logger& AudioSession::logger()
 {
     if (!m_logger)
