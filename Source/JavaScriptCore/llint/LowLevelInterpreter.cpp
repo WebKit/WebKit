@@ -487,8 +487,6 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 // Define the opcode dispatch mechanism when using an ASM loop:
 //
 
-#if COMPILER(CLANG)
-
 // We need an OFFLINE_ASM_BEGIN_SPACER because we'll be declaring every OFFLINE_ASM_GLOBAL_LABEL
 // as an alt entry. However, Clang will error out if the first global label is also an alt entry.
 // To work around this, we'll make OFFLINE_ASM_BEGIN emit an unused global label (which will now
@@ -509,21 +507,18 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 #define OFFLINE_ASM_BEGIN_SPACER ".int 0xbadbeef0\n"
 #endif
 
-#else
-#define OFFLINE_ASM_BEGIN_SPACER
-#endif // COMPILER(CLANG)
-
 // These are for building an interpreter from generated assembly code:
+// the jsc_llint_begin and jsc_llint_end labels help lldb_webkit.py find the
+// start and end of the llint instruction range quickly.
 
-#if ENABLE(OFFLINE_ASM_ALT_ENTRY)
 #define OFFLINE_ASM_BEGIN   asm ( \
     OFFLINE_ASM_GLOBAL_LABEL_IMPL(jsc_llint_begin, OFFLINE_ASM_NO_ALT_ENTRY_DIRECTIVE, OFFLINE_ASM_ALIGN4B, HIDE_SYMBOL) \
     OFFLINE_ASM_BEGIN_SPACER
-#else
-#define OFFLINE_ASM_BEGIN   asm (
-#endif
 
-#define OFFLINE_ASM_END     );
+#define OFFLINE_ASM_END \
+    OFFLINE_ASM_BEGIN_SPACER \
+    OFFLINE_ASM_GLOBAL_LABEL_IMPL(jsc_llint_end, OFFLINE_ASM_NO_ALT_ENTRY_DIRECTIVE, OFFLINE_ASM_ALIGN4B, HIDE_SYMBOL) \
+);
 
 #if ENABLE(LLINT_EMBEDDED_OPCODE_ID)
 #define EMBED_OPCODE_ID_IF_NEEDED(__opcode) ".int " __opcode##_value_string "\n"

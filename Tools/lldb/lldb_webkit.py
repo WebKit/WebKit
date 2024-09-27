@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2012-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -308,8 +308,9 @@ def btjs(debugger, command, result, internal_dict):
     addressFormat = '#0{width}x'.format(width=target.GetAddressByteSize() * 2 + 2)
     process = target.GetProcess()
     thread = process.GetSelectedThread()
+    jscModule = target.module["JavaScriptCore"]
 
-    if target.FindFunctions("JSC::CallFrame::describeFrame").GetSize() or target.FindFunctions("_ZN3JSC9CallFrame13describeFrameEv").GetSize():
+    if jscModule.FindSymbol("JSC::CallFrame::describeFrame").GetSize() or jscModule.FindSymbol("_ZN3JSC9CallFrame13describeFrameEv").GetSize():
         annotateJSFrames = True
     else:
         annotateJSFrames = False
@@ -329,13 +330,16 @@ def btjs(debugger, command, result, internal_dict):
     # FIXME: GetStopDescription needs to be pass a stupidly large length because lldb has weird utf-8 encoding errors if it's too small. See: rdar://problem/57980599
     print(threadFormat.format(num=thread.GetIndexID(), tid=thread.GetThreadID(), pcAddr=thread.GetFrameAtIndex(0).GetPC(), queueName=thread.GetQueueName(), stopReason=thread.GetStopDescription(300)))
 
+    llintStart = jscModule.FindSymbol("jsc_llint_begin").addr.GetLoadAddress(target)
+    llintEnd = jscModule.FindSymbol("jsc_llint_end").addr.GetLoadAddress(target)
+
     for frame in thread:
         if backtraceDepth < 1:
             break
 
         backtraceDepth = backtraceDepth - 1
 
-        if annotateJSFrames and not frame or not frame.GetSymbol() or frame.GetSymbol().GetName() == "llint_entry":
+        if annotateJSFrames and (not frame.GetSymbol() or (llintStart < frame.pc and frame.pc < llintEnd)):
             callFrame = frame.GetSP()
             JSFrameDescription = frame.EvaluateExpression("((JSC::CallFrame*)0x%x)->describeFrame()" % frame.GetFP()).GetSummary()
             if not JSFrameDescription:
