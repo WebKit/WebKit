@@ -12464,11 +12464,14 @@ void WebPageProxy::getWebCryptoMasterKey(CompletionHandler<void(std::optional<Ve
 void WebPageProxy::wrapCryptoKey(Vector<uint8_t>&& key, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
     getWebCryptoMasterKey([key = WTFMove(key), completionHandler = WTFMove(completionHandler)](std::optional<Vector<uint8_t>> && masterKey) mutable {
-        if (masterKey) {
-            Vector<uint8_t> wrappedKey;
-            if (wrapSerializedCryptoKey(*masterKey, key, wrappedKey))
-                return completionHandler(WTFMove(wrappedKey));
-        }
+#if PLATFORM(COCOA)
+        if (!masterKey)
+            return completionHandler(std::nullopt);
+#endif
+        Vector<uint8_t> wrappedKey;
+        const Vector<uint8_t> blankMasterKey;
+        if (wrapSerializedCryptoKey(masterKey.value_or(blankMasterKey), key, wrappedKey))
+            return completionHandler(WTFMove(wrappedKey));
         completionHandler(std::nullopt);
     });
 }
@@ -12476,10 +12479,13 @@ void WebPageProxy::wrapCryptoKey(Vector<uint8_t>&& key, CompletionHandler<void(s
 void WebPageProxy::unwrapCryptoKey(WrappedCryptoKey&& wrappedKey, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
     getWebCryptoMasterKey([wrappedKey = WTFMove(wrappedKey), completionHandler = WTFMove(completionHandler)](std::optional<Vector<uint8_t>> && masterKey) mutable {
-        if (masterKey) {
-            if (auto key = WebCore::unwrapCryptoKey(*masterKey, wrappedKey))
-                return completionHandler(WTFMove(key));
-        }
+#if PLATFORM(COCOA)
+        if (!masterKey)
+            return completionHandler(std::nullopt);
+#endif
+        const Vector<uint8_t> blankMasterKey;
+        if (auto key = WebCore::unwrapCryptoKey(masterKey.value_or(blankMasterKey), wrappedKey))
+            return completionHandler(WTFMove(key));
         completionHandler(std::nullopt);
     });
 
