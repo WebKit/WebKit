@@ -29,7 +29,7 @@
 
 #include <windows.h>
 
-#elif OS(UNIX)
+#elif OS(UNIX) || OS(HAIKU)
 
 #include <pthread.h>
 #if HAVE(PTHREAD_NP_H)
@@ -77,7 +77,7 @@ StackBounds StackBounds::currentThreadStackBoundsInternal()
     return newThreadStackBounds(pthread_self());
 }
 
-#elif OS(UNIX)
+#elif OS(UNIX) || OS(HAIKU)
 
 #if OS(OPENBSD)
 
