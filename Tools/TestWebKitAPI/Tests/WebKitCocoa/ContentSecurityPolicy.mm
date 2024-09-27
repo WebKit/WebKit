@@ -25,6 +25,8 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
+#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -117,4 +119,15 @@ TEST(WKWebView, CheckViolationReportDocumentURIForAboutProtocol)
         [webView loadHTMLString:content baseURL:nil];
         [webView waitForMessage:@"document-uri: about"];
     }
+}
+
+TEST(ContentSecurityPolicy, InvalidRequireTrustedTypesFor)
+{
+    using namespace TestWebKitAPI;
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "content-security-policy"_s, "require-trusted-types-for 'script html'"_s } }, "hi"_s } }
+    });
+    auto webView = adoptNS([WKWebView new]);
+    [webView loadRequest:server.request()];
+    [webView _test_waitForDidFinishNavigation];
 }
