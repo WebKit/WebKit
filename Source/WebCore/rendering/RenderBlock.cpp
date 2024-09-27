@@ -3244,16 +3244,16 @@ void RenderBlock::layoutExcludedChildren(bool relayoutChildren)
             logicalLeft = (logicalWidth() - logicalWidthForChild(legend)) / 2;
             break;
         case TextAlignMode::Right:
-            logicalLeft = logicalWidth() - borderEnd() - paddingEnd() - logicalWidthForChild(legend);
+            logicalLeft = logicalWidth() - borderAndPaddingEnd() - logicalWidthForChild(legend);
             break;
         default:
-            logicalLeft = borderStart() + paddingStart() + marginStartForChild(legend);
+            logicalLeft = borderAndPaddingStart() + marginStartForChild(legend);
             break;
         }
     } else {
         switch (legend.style().textAlign()) {
         case TextAlignMode::Left:
-            logicalLeft = borderStart() + paddingStart();
+            logicalLeft = borderAndPaddingStart();
             break;
         case TextAlignMode::Center: {
             // Make sure that the extra pixel goes to the end side in RTL (since it went to the end side
@@ -3263,7 +3263,7 @@ void RenderBlock::layoutExcludedChildren(bool relayoutChildren)
             break;
         }
         default:
-            logicalLeft = logicalWidth() - borderStart() - paddingStart() - marginStartForChild(legend) - logicalWidthForChild(legend);
+            logicalLeft = logicalWidth() - borderAndPaddingStart() - marginStartForChild(legend) - logicalWidthForChild(legend);
             break;
         }
     }
@@ -3290,7 +3290,7 @@ void RenderBlock::layoutExcludedChildren(bool relayoutChildren)
     // Now that the legend is included in the border extent, we can set our logical height
     // to the borderBefore (which includes the legend and its after margin if they were bigger
     // than the actual fieldset border) and then add in our padding before.
-    setLogicalHeight(borderBefore() + paddingBefore());
+    setLogicalHeight(borderAndPaddingBefore());
 }
 
 RenderBox* RenderBlock::findFieldsetLegend(FieldsetFindLegendOption option) const

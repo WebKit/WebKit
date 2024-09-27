@@ -148,8 +148,8 @@ std::optional<LayoutUnit> RenderMathMLTable::firstLineBaseline() const
 
 void RenderMathMLBlock::layoutItems(bool relayoutChildren)
 {
-    LayoutUnit verticalOffset = borderBefore() + paddingBefore();
-    LayoutUnit horizontalOffset = borderStart() + paddingStart();
+    LayoutUnit verticalOffset = borderAndPaddingBefore();
+    LayoutUnit horizontalOffset = borderAndPaddingStart();
 
     LayoutUnit preferredHorizontalExtent;
     for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
@@ -179,7 +179,7 @@ void RenderMathMLBlock::layoutItems(bool relayoutChildren)
         LayoutUnit childVerticalMarginBoxExtent;
         childVerticalMarginBoxExtent = child->height() + child->verticalMarginExtent();
 
-        setLogicalHeight(std::max(logicalHeight(), verticalOffset + borderAfter() + paddingAfter() + childVerticalMarginBoxExtent + horizontalScrollbarHeight()));
+        setLogicalHeight(std::max(logicalHeight(), verticalOffset + borderAndPaddingAfter() + childVerticalMarginBoxExtent + horizontalScrollbarHeight()));
 
         horizontalOffset += child->marginStart();
 

@@ -731,7 +731,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             if (child->isOutOfFlowPositioned()) {
                 child->containingBlock()->insertPositionedObject(*child);
                 RenderLayer* childLayer = child->layer();
-                childLayer->setStaticInlinePosition(borderStart() + paddingStart()); // FIXME: Not right for regions.
+                childLayer->setStaticInlinePosition(borderAndPaddingStart()); // FIXME: Not right for regions.
                 if (childLayer->staticBlockPosition() != height()) {
                     childLayer->setStaticBlockPosition(height());
                     if (child->style().hasStaticBlockPosition(style().isHorizontalWritingMode()))
