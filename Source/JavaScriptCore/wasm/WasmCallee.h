@@ -143,7 +143,9 @@ public:
     CodePtr<WasmEntryPtrTag> entrypointImpl() const;
     static JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegistersImpl();
     std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; }
+#if ASSERT_ENABLED
     static constexpr ptrdiff_t offsetOfIdent() { return OBJECT_OFFSETOF(JSEntrypointCallee, m_ident); }
+#endif
     static constexpr ptrdiff_t offsetOfWasmCallee() { return OBJECT_OFFSETOF(JSEntrypointCallee, m_wasmCallee); }
     static constexpr ptrdiff_t offsetOfWasmFunctionPrologue() { return OBJECT_OFFSETOF(JSEntrypointCallee, m_wasmFunctionPrologue); }
     static constexpr ptrdiff_t offsetOfFrameSize() { return OBJECT_OFFSETOF(JSEntrypointCallee, m_frameSize); }
@@ -154,7 +156,9 @@ public:
     static constexpr unsigned RegisterStackSpaceAligned = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(
         FPRInfo::numberOfArgumentRegisters * bytesForWidth(Width::Width64) + GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister));
 
+#if ASSERT_ENABLED
     unsigned ident() const { return m_ident; }
+#endif
     unsigned frameSize() const { return m_frameSize; }
     EncodedJSValue wasmCallee() const { return m_wasmCallee; }
     TypeIndex typeIndex() const { return m_typeIndex; }
@@ -172,7 +176,9 @@ public:
 private:
     JSEntrypointCallee(TypeIndex, bool);
 
+#if ASSERT_ENABLED
     const unsigned m_ident { 0xBF };
+#endif
     unsigned m_frameSize { };
     // This must be initialized after the callee is created unfortunately.
     EncodedJSValue m_wasmCallee;

@@ -54,8 +54,8 @@ typedef int64_t EncodedWasmValue;
 JSC_DECLARE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, JSEntrypointCallee*, (void*, CallFrame*, WebAssemblyFunction*));
 JSC_DECLARE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJSValue, (void*, CallFrame*));
 JSC_DECLARE_JIT_OPERATION(operationGetWasmCalleeStackSize, EncodedJSValue, (JSWebAssemblyInstance*, Wasm::Callee*));
-JSC_DECLARE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, EncodedJSValue, (void*, CallFrame*, void*, JSWebAssemblyInstance*));
-JSC_DECLARE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, EncodedJSValue, (void* sp, CallFrame* cfr, JSWebAssemblyInstance*));
+JSC_DECLARE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, bool, (void*, CallFrame*, void*, JSWebAssemblyInstance*));
+JSC_DECLARE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* sp, CallFrame* cfr, JSWebAssemblyInstance*));
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 void loadValuesIntoBuffer(Probe::Context&, const StackMap&, uint64_t* buffer, SavedFPWidth);

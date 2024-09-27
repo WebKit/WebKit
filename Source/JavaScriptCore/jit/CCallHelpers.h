@@ -763,21 +763,38 @@ public:
         farJump(GPRInfo::regT1, ExceptionHandlerPtrTag);
     }
 
+#if USE(JSVALUE64)
     template<typename T>
     requires (isExceptionOperationResult<T>)
     static constexpr GPRReg operationExceptionRegister()
     {
+        static_assert(assertNotOperationSignature<T>);
         if (std::is_floating_point_v<typename T::ResultType> || std::is_same_v<typename T::ResultType, void>)
             return GPRInfo::returnValueGPR;
         return GPRInfo::returnValueGPR2;
     }
+#else
+    template<typename T>
+    requires (isExceptionOperationResult<T>)
+    static constexpr GPRReg operationExceptionRegister()
+    {
+        static_assert(assertNotOperationSignature<T>);
+        if (std::is_same_v<T, ExceptionOperationResult<void>>)
+            return GPRInfo::returnValueGPR;
+        return GPRInfo::returnValueGPR2;
+    }
+#endif
 
     template<typename T>
     requires (!isExceptionOperationResult<T>)
-    static constexpr GPRReg operationExceptionRegister() { return InvalidGPRReg; }
+    static constexpr GPRReg operationExceptionRegister()
+    {
+        static_assert(assertNotOperationSignature<T>);
+        return InvalidGPRReg;
+    }
 
     template<auto operation>
-    static constexpr GPRReg operationExceptionRegister() { return operationExceptionRegister<OperationReturnType<decltype(operation)>>(); }
+    static constexpr GPRReg operationExceptionRegister() { return operationExceptionRegister<OperationReturnType<typename FunctionTraits<decltype(operation)>::ResultType>>(); }
 
     void prepareForTailCallSlow(RegisterSet preserved = { })
     {

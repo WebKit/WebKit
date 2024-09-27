@@ -212,12 +212,8 @@ static void marshallJSResult(CCallHelpers& jit, const FunctionSignature& signatu
         jit.setupArguments<decltype(operationAllocateResultsArray)>(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImmPtr(&signature), indexingType, savedResultsGPR);
         JIT_COMMENT(jit, "operationAllocateResultsArray");
         jit.callOperation<OperationPtrTag>(operationAllocateResultsArray);
-#if USE(JSVALUE64)
         static_assert(CCallHelpers::operationExceptionRegister<operationAllocateResultsArray>() != InvalidGPRReg, "We don't have a VM readily available so we rely on exception being returned");
         exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::operationExceptionRegister<operationAllocateResultsArray>()));
-#else
-        exceptionChecks.append(jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::returnValueGPR2));
-#endif
         if constexpr (!!maxFrameExtentForSlowPathCall)
             jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
 
@@ -279,12 +275,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> createJSToWasmJITShared()
         // Prepare frame
         jit.setupArguments<decltype(operationJSToWasmEntryWrapperBuildFrame)>(CCallHelpers::stackPointerRegister, GPRInfo::callFrameRegister, GPRInfo::regWS0);
         jit.callOperation<OperationPtrTag>(operationJSToWasmEntryWrapperBuildFrame);
-#if USE(JSVALUE64)
         static_assert(CCallHelpers::operationExceptionRegister<operationJSToWasmEntryWrapperBuildFrame>() != InvalidGPRReg, "We don't have a VM readily available so we rely on exception being returned");
+        JIT_COMMENT(jit, "Exception check: ", CCallHelpers::operationExceptionRegister<operationJSToWasmEntryWrapperBuildFrame>());
         exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::operationExceptionRegister<operationJSToWasmEntryWrapperBuildFrame>()));
-#else
-        exceptionChecks.append(jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::returnValueGPR2));
-#endif
         jit.move(GPRInfo::returnValueGPR, GPRInfo::regWS0);
 
 #if CPU(ARM64)
@@ -416,11 +409,14 @@ MacroAssemblerCodeRef<JITThunkPtrTag> createJSToWasmJITShared()
         jit.callOperation<OperationPtrTag>(operationJSToWasmEntryWrapperBuildReturnFrame);
 #if USE(JSVALUE64)
         static_assert(CCallHelpers::operationExceptionRegister<operationJSToWasmEntryWrapperBuildReturnFrame>() != InvalidGPRReg, "We don't have a VM readily available so we rely on exception being returned");
+        JIT_COMMENT(jit, "Exception check: ", CCallHelpers::operationExceptionRegister<operationJSToWasmEntryWrapperBuildReturnFrame>());
         exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::operationExceptionRegister<operationJSToWasmEntryWrapperBuildReturnFrame>()));
 #else
-        exceptionChecks.append(jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::returnValueGPR2));
+        static_assert(CCallHelpers::operationExceptionRegister<operationJSToWasmEntryWrapperBuildReturnFrame>() == InvalidGPRReg);
+        jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::codeBlock), GPRInfo::regWA2);
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::regWA2, JSWebAssemblyInstance::offsetOfVM()), GPRInfo::regWA2);
+        exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::Address(GPRInfo::regWA2, VM::exceptionOffset())));
 #endif
-
         jit.emitRestoreCalleeSavesFor(Wasm::JSEntrypointCallee::calleeSaveRegistersImpl());
         jit.addPtr(CCallHelpers::TrustedImmPtr(Wasm::JSEntrypointCallee::SpillStackSpaceAligned), CCallHelpers::stackPointerRegister);
         jit.emitFunctionEpilogue();

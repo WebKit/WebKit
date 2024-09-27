@@ -547,6 +547,13 @@ end
     break
 end
 
+macro branchIfWasmException(exceptionTarget)
+    loadp JSWebAssemblyInstance::m_vm[cfr], t3
+    btpz VM::m_exception[t3], .noException
+    jmp exceptionTarget
+.noException:
+end
+
 macro zeroExtend32ToWord(r)
     if JSVALUE64
         andq 0xffffffff, r
@@ -713,6 +720,7 @@ end
     cCall3(_operationJSToWasmEntryWrapperBuildFrame)
 
 if ARMv7
+    # CodeBlock slot is not an instance yet, so use JS version.
     branchIfException(_wasm_throw_from_slow_path_trampoline)
 else
     btpnz r1, _wasm_throw_from_slow_path_trampoline
@@ -860,7 +868,7 @@ end
     cCall2(_operationJSToWasmEntryWrapperBuildReturnFrame)
 
 if ARMv7
-    branchIfException(_wasm_throw_from_slow_path_trampoline)
+    branchIfWasmException(_wasm_throw_from_slow_path_trampoline)
 else
     btpnz r1, _wasm_throw_from_slow_path_trampoline
 end
