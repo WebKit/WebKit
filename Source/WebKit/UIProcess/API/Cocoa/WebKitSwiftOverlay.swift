@@ -80,30 +80,30 @@ extension WKWebView {
 
 @available(iOS 18.4, macOS 15.4, visionOS 2.4, *)
 extension WKWebExtensionController {
-    func didCloseTab(_ closedTab: WKWebExtensionTab, windowIsClosing: Bool = false) {
+    public func didCloseTab(_ closedTab: WKWebExtensionTab, windowIsClosing: Bool = false) {
         __didClose(closedTab, windowIsClosing: windowIsClosing)
     }
 
-    func didActivateTab(_ activatedTab: any WKWebExtensionTab, previousActiveTab previousTab: (any WKWebExtensionTab)? = nil) {
+    public func didActivateTab(_ activatedTab: any WKWebExtensionTab, previousActiveTab previousTab: (any WKWebExtensionTab)? = nil) {
         __didActivate(activatedTab, previousActiveTab: previousTab)
     }
 
-    func didMoveTab(_ movedTab: any WKWebExtensionTab, from index: Int, in oldWindow: (any WKWebExtensionWindow)? = nil) {
+    public func didMoveTab(_ movedTab: any WKWebExtensionTab, from index: Int, in oldWindow: (any WKWebExtensionWindow)? = nil) {
         __didMove(movedTab, from: index, in: oldWindow)
     }
 }
 
 @available(iOS 18.4, macOS 15.4, visionOS 2.4, *)
 extension WKWebExtensionContext {
-    func didCloseTab(_ closedTab: WKWebExtensionTab, windowIsClosing: Bool = false) {
+    public func didCloseTab(_ closedTab: WKWebExtensionTab, windowIsClosing: Bool = false) {
         __didClose(closedTab, windowIsClosing: windowIsClosing)
     }
 
-    func didActivateTab(_ activatedTab: any WKWebExtensionTab, previousActiveTab previousTab: (any WKWebExtensionTab)? = nil) {
+    public func didActivateTab(_ activatedTab: any WKWebExtensionTab, previousActiveTab previousTab: (any WKWebExtensionTab)? = nil) {
         __didActivate(activatedTab, previousActiveTab: previousTab)
     }
 
-    func didMoveTab(_ movedTab: any WKWebExtensionTab, from index: Int, in oldWindow: (any WKWebExtensionWindow)? = nil) {
+    public func didMoveTab(_ movedTab: any WKWebExtensionTab, from index: Int, in oldWindow: (any WKWebExtensionWindow)? = nil) {
         __didMove(movedTab, from: index, in: oldWindow)
     }
 }
