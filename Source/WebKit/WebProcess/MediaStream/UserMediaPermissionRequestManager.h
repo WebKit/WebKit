@@ -34,15 +34,6 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
-class UserMediaPermissionRequestManager;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::UserMediaPermissionRequestManager> : std::true_type { };
-}
-
-namespace WebKit {
 
 class WebPage;
 
@@ -70,6 +61,9 @@ public:
     void updateCaptureState(const WebCore::Document&, bool isActive, WebCore::MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
 
     void captureDevicesChanged();
+
+    void ref() const;
+    void deref() const;
 
 private:
 #if USE(GSTREAMER)

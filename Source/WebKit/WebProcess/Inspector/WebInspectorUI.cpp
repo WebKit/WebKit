@@ -72,7 +72,7 @@ void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIde
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     if (!m_extensionController)
-        m_extensionController = makeUnique<WebInspectorUIExtensionController>(*this, m_page->identifier());
+        m_extensionController = WebInspectorUIExtensionController::create(*this, m_page->identifier());
 #endif
 
     m_frontendAPIDispatcher->reset();
@@ -354,34 +354,26 @@ bool WebInspectorUI::supportsWebExtensions()
 
 void WebInspectorUI::didShowExtensionTab(const String& extensionID, const String& extensionTabID, const WebCore::FrameIdentifier& frameID)
 {
-    if (!m_extensionController)
-        return;
-
-    m_extensionController->didShowExtensionTab(extensionID, extensionTabID, frameID);
+    if (RefPtr extensionController = m_extensionController)
+        extensionController->didShowExtensionTab(extensionID, extensionTabID, frameID);
 }
 
 void WebInspectorUI::didHideExtensionTab(const String& extensionID, const String& extensionTabID)
 {
-    if (!m_extensionController)
-        return;
-
-    m_extensionController->didHideExtensionTab(extensionID, extensionTabID);
+    if (RefPtr extensionController = m_extensionController)
+        extensionController->didHideExtensionTab(extensionID, extensionTabID);
 }
 
 void WebInspectorUI::didNavigateExtensionTab(const String& extensionID, const String& extensionTabID, const URL& newURL)
 {
-    if (!m_extensionController)
-        return;
-
-    m_extensionController->didNavigateExtensionTab(extensionID, extensionTabID, newURL);
+    if (RefPtr extensionController = m_extensionController)
+        extensionController->didNavigateExtensionTab(extensionID, extensionTabID, newURL);
 }
 
 void WebInspectorUI::inspectedPageDidNavigate(const URL& newURL)
 {
-    if (!m_extensionController)
-        return;
-
-    m_extensionController->inspectedPageDidNavigate(newURL);
+    if (RefPtr extensionController = m_extensionController)
+        extensionController->inspectedPageDidNavigate(newURL);
 }
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 

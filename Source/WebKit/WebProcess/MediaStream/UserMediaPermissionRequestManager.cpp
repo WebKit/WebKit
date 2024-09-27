@@ -220,6 +220,16 @@ void UserMediaPermissionRequestManager::captureDevicesChanged()
     }
 }
 
+void UserMediaPermissionRequestManager::ref() const
+{
+    m_page.ref();
+}
+
+void UserMediaPermissionRequestManager::deref() const
+{
+    m_page.deref();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(MEDIA_STREAM)

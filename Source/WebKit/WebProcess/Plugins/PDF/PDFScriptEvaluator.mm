@@ -210,9 +210,8 @@ void PDFScriptEvaluator::runScripts(CGPDFDocumentRef document, PDFScriptEvaluato
 
 void PDFScriptEvaluator::print()
 {
-    if (!m_client)
-        return;
-    m_client->print();
+    if (RefPtr client = m_client.get())
+        client->print();
 }
 
 } // namespace WebKit
