@@ -602,20 +602,6 @@ WebExtensionContext* WebExtensionAction::extensionContext() const
     return m_extensionContext.get();
 }
 
-RefPtr<WebExtensionTab> WebExtensionAction::tab() const
-{
-    return m_tab.and_then([](auto const& maybeTab) {
-        return std::optional(RefPtr(maybeTab.get()));
-    }).value_or(nullptr);
-}
-
-RefPtr<WebExtensionWindow> WebExtensionAction::window() const
-{
-    return m_window.and_then([](auto const& maybeWindow) {
-        return std::optional(RefPtr(maybeWindow.get()));
-    }).value_or(nullptr);
-}
-
 void WebExtensionAction::clearCustomizations()
 {
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)

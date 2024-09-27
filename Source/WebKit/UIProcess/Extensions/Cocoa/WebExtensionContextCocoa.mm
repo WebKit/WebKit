@@ -2002,9 +2002,8 @@ RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifie
         if (includeExtensionViews == IncludeExtensionViews::No)
             return nullptr;
 
-        Ref webExtensionAction = entry.value;
-        RefPtr tab = webExtensionAction->tab();
-        RefPtr window = tab ? tab->window() : webExtensionAction->window();
+        RefPtr tab = entry.value->tab();
+        RefPtr window = tab ? tab->window() : entry.value->window();
         if (!tab && window)
             tab = window->activeTab();
 
@@ -2682,7 +2681,7 @@ Ref<WebExtensionAction> WebExtensionContext::getAction(WebExtensionWindow* windo
     if (!window)
         return defaultAction();
 
-    if (auto *windowAction = m_actionWindowMap.get(*window))
+    if (RefPtr windowAction = m_actionWindowMap.get(*window))
         return *windowAction;
 
     return defaultAction();
@@ -2693,7 +2692,7 @@ Ref<WebExtensionAction> WebExtensionContext::getAction(WebExtensionTab* tab)
     if (!tab)
         return defaultAction();
 
-    if (auto *tabAction = m_actionTabMap.get(*tab))
+    if (RefPtr tabAction = m_actionTabMap.get(*tab))
         return *tabAction;
 
     return getAction(tab->window().get());
@@ -3183,7 +3182,7 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::inspectorP
         auto tabIdentifier = tab ? std::optional(tab->identifier()) : std::nullopt;
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-        result.append({ inspector->protectedInspectorPage()->webPageIDInMainFrameProcess(), tabIdentifier, windowIdentifier });
+        result.append({ Ref { inspector }->protectedInspectorPage()->webPageIDInMainFrameProcess(), tabIdentifier, windowIdentifier });
     }
 
     return result;
@@ -3246,7 +3245,7 @@ void WebExtensionContext::addExtensionTabPage(WebPageProxy& page, WebExtensionTa
     RefPtr window = tab.window();
     auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-    page.legacyMainFrameProcess().send(Messages::WebExtensionContextProxy::AddTabPageIdentifier(page.webPageIDInMainFrameProcess(), tab.identifier(), windowIdentifier), identifier());
+    page.protectedLegacyMainFrameProcess()->send(Messages::WebExtensionContextProxy::AddTabPageIdentifier(page.webPageIDInMainFrameProcess(), tab.identifier(), windowIdentifier), identifier());
 }
 
 void WebExtensionContext::enumerateExtensionPages(Function<void(WebPageProxy&, bool&)>&& action)

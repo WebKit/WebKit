@@ -5837,6 +5837,11 @@ void WebPage::didReceiveGeolocationPermissionDecision(GeolocationIdentifier geol
 {
     geolocationPermissionRequestManager().didReceiveGeolocationPermissionDecision(geolocationID, authorizationToken);
 }
+
+Ref<GeolocationPermissionRequestManager> WebPage::protectedGeolocationPermissionRequestManager()
+{
+    return m_geolocationPermissionRequestManager.get();
+}
 #endif
 
 #if ENABLE(MEDIA_STREAM)

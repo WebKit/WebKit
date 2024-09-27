@@ -97,6 +97,16 @@ void GeolocationPermissionRequestManager::didReceiveGeolocationPermissionDecisio
     geolocation->setIsAllowed(!authorizationToken.isNull(), authorizationToken);
 }
 
+void GeolocationPermissionRequestManager::ref() const
+{
+    m_page.ref();
+}
+
+void GeolocationPermissionRequestManager::deref() const
+{
+    m_page.deref();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GEOLOCATION)

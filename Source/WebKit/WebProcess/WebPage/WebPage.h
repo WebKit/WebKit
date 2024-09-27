@@ -852,6 +852,7 @@ public:
 
 #if ENABLE(GEOLOCATION)
     GeolocationPermissionRequestManager& geolocationPermissionRequestManager() { return m_geolocationPermissionRequestManager.get(); }
+    Ref<GeolocationPermissionRequestManager> protectedGeolocationPermissionRequestManager();
 #endif
 
 #if PLATFORM(IOS_FAMILY)

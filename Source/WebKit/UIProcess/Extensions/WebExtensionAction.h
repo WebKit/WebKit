@@ -29,6 +29,8 @@
 
 #include "APIObject.h"
 #include "CocoaImage.h"
+#include "WebExtensionTab.h"
+#include "WebExtensionWindow.h"
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -51,8 +53,6 @@ OBJC_CLASS _WKWebExtensionActionPopover;
 
 namespace WebKit {
 
-class WebExtensionContext;
-class WebExtensionTab;
 class WebExtensionWindow;
 
 class WebExtensionAction : public API::ObjectImpl<API::Object::Type::WebExtensionAction>, public CanMakeWeakPtr<WebExtensionAction> {
@@ -78,8 +78,8 @@ public:
     bool operator==(const WebExtensionAction&) const;
 
     WebExtensionContext* extensionContext() const;
-    RefPtr<WebExtensionTab> tab() const;
-    RefPtr<WebExtensionWindow> window() const;
+    RefPtr<WebExtensionTab> tab() const { return m_tab.value_or(nullptr).get(); }
+    RefPtr<WebExtensionWindow> window() const { return m_window.value_or(nullptr).get(); }
 
     void clearCustomizations();
     void clearBlockedResourceCount();
