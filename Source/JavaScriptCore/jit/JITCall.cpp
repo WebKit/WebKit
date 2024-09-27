@@ -610,11 +610,7 @@ void JIT::emit_op_instanceof(const JSInstruction* instruction)
         shuffleRegisters<GPRReg, 1>({ GetById::resultJSR.payloadGPR() }, { Instanceof::Custom::hasInstanceJSR.payloadGPR() });
         loadGlobalObject(Instanceof::Custom::globalObjectGPR);
         emitGetVirtualRegister(bytecode.m_value, Instanceof::Custom::valueJSR);
-#if USE(JSVALUE64)
-        emitGetVirtualRegister(bytecode.m_constructor, Instanceof::Custom::constructorGPR);
-#elif USE(JSVALUE32_64)
-        emitGetVirtualRegisterTag(bytecode.m_constructor, Instanceof::Custom::constructorGPR);
-#endif
+        emitGetVirtualRegisterPayload(bytecode.m_constructor, Instanceof::Custom::constructorGPR);
 
         addSlowCase(branchPtr(NotEqual,
             Instanceof::Custom::hasInstanceJSR.payloadGPR(),
