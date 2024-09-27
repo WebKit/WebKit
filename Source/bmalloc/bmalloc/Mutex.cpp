@@ -40,6 +40,8 @@ static inline void yield()
 #if BOS(DARWIN)
     constexpr mach_msg_timeout_t timeoutInMS = 1;
     thread_switch(MACH_PORT_NULL, SWITCH_OPTION_DEPRESS, timeoutInMS);
+#elif BPLATFORM(WPE) && defined(WEBKIT_WPE_BMALLOC_MICROSECONDS_SLEEP)
+    usleep(WEBKIT_WPE_BMALLOC_MICROSECONDS_SLEEP);
 #else
     sched_yield();
 #endif
