@@ -734,7 +734,7 @@ public:
     inline bool preservesNewline() const;
 
     RenderView& view() const { return *document().renderView(); }
-    CheckedRef<RenderView> checkedView() const;
+    WEBCORE_EXPORT CheckedRef<RenderView> checkedView() const;
 
     HostWindow* hostWindow() const;
 
@@ -767,7 +767,7 @@ public:
     // Returns the object containing this one. Can be different from parent for positioned elements.
     // If repaintContainer and repaintContainerSkipped are not null, on return *repaintContainerSkipped
     // is true if the renderer returned is an ancestor of repaintContainer.
-    RenderElement* container() const;
+    WEBCORE_EXPORT RenderElement* container() const;
     RenderElement* container(const RenderLayerModelObject* repaintContainer, bool& repaintContainerSkipped) const;
 
     RenderBoxModelObject* offsetParent() const;

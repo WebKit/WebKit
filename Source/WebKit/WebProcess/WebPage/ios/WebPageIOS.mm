@@ -142,6 +142,7 @@
 #import <WebCore/RenderBoxInlines.h>
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderLayer.h>
+#import <WebCore/RenderObjectInlines.h>
 #import <WebCore/RenderThemeIOS.h>
 #import <WebCore/RenderVideo.h>
 #import <WebCore/RenderView.h>
@@ -5546,6 +5547,70 @@ void WebPage::shouldDismissKeyboardAfterTapAtPoint(FloatPoint point, CompletionH
     bool isReplaced;
     FloatSize targetSize = target->absoluteBoundingRect(&isReplaced).size();
     completion(targetSize.width() >= minimumSizeForDismissal.width() && targetSize.height() >= minimumSizeForDismissal.height());
+}
+
+static CheckedPtr<RenderBox> enclosingScroller(const VisibleSelection& selection)
+{
+    RefPtr ancestor = commonInclusiveAncestor(selection.start(), selection.end());
+    if (!ancestor)
+        return { };
+
+    CheckedPtr selectionRenderer = ancestor->renderer();
+    if (!selectionRenderer)
+        return { };
+
+    auto containingRenderer = [](const RenderObject& renderer) -> CheckedPtr<RenderElement> {
+        if (CheckedPtr container = renderer.container())
+            return container;
+
+        if (RefPtr owner = renderer.protectedDocument()->ownerElement())
+            return owner->renderer();
+
+        return { };
+    };
+
+    CheckedPtr candidate = dynamicDowncast<RenderElement>(selectionRenderer.get()) ?: selectionRenderer->container();
+    for (; candidate; candidate = containingRenderer(*candidate)) {
+        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*candidate); renderBox && renderBox->canBeScrolledAndHasScrollableArea())
+            return renderBox;
+    }
+
+    return { };
+}
+
+void WebPage::computeSelectionClipRect(EditorState& state, const VisibleSelection& selection, const Element* editableRootOrFormControl) const
+{
+    if (editableRootOrFormControl)
+        state.visualData->selectionClipRect = rootViewInteractionBounds(Ref { *editableRootOrFormControl });
+
+    if (selection.isNoneOrOrphaned())
+        return;
+
+    if (!state.isContentEditable && selection.isCaret())
+        return;
+
+    CheckedPtr scroller = enclosingScroller(selection);
+    if (!scroller)
+        return;
+
+    Ref view = scroller->checkedView()->frameView();
+    IntRect scrollerClipRectInContent;
+    if (CheckedPtr renderView = dynamicDowncast<RenderView>(*scroller)) {
+        if (renderView->protectedDocument()->isTopDocument())
+            return;
+
+        scrollerClipRectInContent = view->visibleContentRect();
+    } else
+        scrollerClipRectInContent = scroller->absoluteBoundingBoxRect();
+
+    if (scrollerClipRectInContent.isEmpty())
+        return;
+
+    auto scrollerClipRectInRootView = view->contentsToRootView(scrollerClipRectInContent);
+    if (state.visualData->selectionClipRect.isEmpty())
+        state.visualData->selectionClipRect = scrollerClipRectInRootView;
+    else
+        state.visualData->selectionClipRect.intersect(scrollerClipRectInRootView);
 }
 
 } // namespace WebKit

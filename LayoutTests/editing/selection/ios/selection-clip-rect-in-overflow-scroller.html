@@ -1,0 +1,70 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 16px;
+    font-family: system-ui;
+}
+
+#target {
+    border: 1px solid tomato;
+    padding: 3px;
+    font-size: 24px;
+}
+
+.container {
+    width: 300px;
+    height: 350px;
+    border: solid 1px black;
+    border-radius: 4px;
+    box-sizing: border-box;
+    overflow-y: scroll;
+    line-height: 1.5em;
+    outline: none;
+    padding: 1em;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the selection highlight is clipped to overflow scrolling container. Select the first word in the container below and scroll down");
+
+    let scroller = document.querySelector(".container");
+    await UIHelper.longPressElement(document.getElementById("target"));
+    await shouldBecomeEqual("getSelection().toString()", "'Here’s'");
+    await UIHelper.waitForSelectionToAppear();
+
+    let {x, y} = UIHelper.midPointOfRect(scroller.getBoundingClientRect());
+    while (scroller.scrollTop < 80) {
+        await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+            .begin(x, y + 60)
+            .move(x, y - 60, 0.25)
+            .end()
+            .takeResult());
+    }
+
+    await UIHelper.waitForZoomingOrScrollingToEnd();
+
+    selectionRects = await UIHelper.getUISelectionViewRects();
+    shouldBe("selectionRects[0]?.width || 0", "0");
+    shouldBe("selectionRects[0]?.height || 0", "0");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div id="description"></div>
+    <div class="container">
+        <p><span id="target">Here’s</span> to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They’re not fond of rules. And they have no respect for the status quo.</p>
+        <p>You can quote them, disagree with them, glorify or vilify them. About the only thing you can’t do is ignore them.</p>
+        <p>Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.</p>
+    </div>
+    <div id="console"></div>
+</body>
+</html>
