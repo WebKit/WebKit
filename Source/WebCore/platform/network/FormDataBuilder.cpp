@@ -105,8 +105,9 @@ static void appendFormURLEncoded(Vector<uint8_t>& buffer, std::span<const uint8_
         else if (character != '\r') {
             append(buffer, '%');
             auto hexBuffer = hex(character, 2);
-            append(buffer, hexBuffer.characters()[0]);
-            append(buffer, hexBuffer.characters()[1]);
+            auto hexSpan = hexBuffer.span();
+            append(buffer, hexSpan[0]);
+            append(buffer, hexSpan[1]);
         }
     }
 }

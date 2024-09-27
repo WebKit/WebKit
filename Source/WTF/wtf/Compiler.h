@@ -238,6 +238,20 @@
 #define FALLTHROUGH
 #endif
 
+/* LIFETIME_BOUND */
+
+#if !defined(LIFETIME_BOUND) && defined(__cplusplus)
+#if defined(__has_cpp_attribute) && __has_cpp_attribute(clang::lifetimebound)
+#define LIFETIME_BOUND [[clang::lifetimebound]]
+#elif COMPILER_HAS_ATTRIBUTE(lifetimebound)
+#define LIFETIME_BOUND __attribute__((lifetimebound))
+#endif
+#endif
+
+#if !defined(LIFETIME_BOUND)
+#define LIFETIME_BOUND
+#endif
+
 /* LIKELY */
 
 #if !defined(LIKELY)
