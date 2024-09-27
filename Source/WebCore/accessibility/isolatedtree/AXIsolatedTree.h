@@ -356,6 +356,7 @@ public:
     constexpr AXGeometryManager* geometryManager() const { return m_geometryManager.get(); }
 
     RefPtr<AXIsolatedObject> rootNode();
+    RefPtr<AXIsolatedObject> rootWebArea();
     AXID focusedNodeID();
     WEBCORE_EXPORT RefPtr<AXIsolatedObject> focusedNode();
 

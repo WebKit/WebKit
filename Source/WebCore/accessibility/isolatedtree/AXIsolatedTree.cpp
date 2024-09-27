@@ -987,6 +987,17 @@ RefPtr<AXIsolatedObject> AXIsolatedTree::rootNode()
     return m_rootNode;
 }
 
+RefPtr<AXIsolatedObject> AXIsolatedTree::rootWebArea()
+{
+    AXTRACE("AXIsolatedTree::rootWebArea"_s);
+    ASSERT(!isMainThread());
+
+    RefPtr root = rootNode();
+    return root ? Accessibility::findChild(*root, [] (auto& object) {
+        return object->isWebArea();
+    }) : nullptr;
+}
+
 void AXIsolatedTree::setRootNode(AXIsolatedObject* root)
 {
     AXTRACE("AXIsolatedTree::setRootNode"_s);
@@ -1352,8 +1363,12 @@ void AXIsolatedTree::processQueuedNodeUpdates()
 #if ENABLE(AX_THREAD_TEXT_APIS)
 AXTextMarker AXIsolatedTree::firstMarker()
 {
-    RefPtr root = rootNode();
-    return root ? AXTextMarker { root->treeID(), root->objectID(), 0 } : AXTextMarker();
+    ASSERT(!isMainThread());
+    // The first marker should be constructed from the root WebArea, not the true root of the tree
+    // which is the ScrollView, so that when we convert the marker to a CharacterPosition, there
+    // is an associated node. Otherwise, the CharacterPosition will be null.
+    RefPtr webArea = rootWebArea();
+    return webArea ? AXTextMarker { webArea->treeID(), webArea->objectID(), 0 } : AXTextMarker();
 }
 
 AXTextMarker AXIsolatedTree::lastMarker()
