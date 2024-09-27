@@ -604,7 +604,12 @@ void sendPIDToPeer(int socket)
     message.msg_iov = &iov;
     message.msg_iovlen = 1;
 
-    if (sendmsg(socket, &message, 0) == -1) {
+    int ret;
+    do {
+        ret = sendmsg(socket, &message, 0);
+    } while (ret == -1 && errno == EINTR);
+
+    if (ret == -1) {
         // Don't crash if the parent process merely closed its pid socket.
         // That's equivalent to canceling the process launch.
         if (errno == EPIPE)
@@ -634,7 +639,7 @@ pid_t readPIDFromPeer(int socket)
     message.msg_control = controlMessage.buffer;
     message.msg_controllen = controlLength;
 
-    int ret = 0;
+    int ret;
     do {
         ret = recvmsg(socket, &message, 0);
     } while (ret == -1 && errno == EINTR);
