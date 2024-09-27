@@ -445,8 +445,10 @@
     (global-name "com.apple.lsd.mapdb")) 
 
 ;; <rdar://problem/12413942>
-(allow file-read*
-       (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"))
+(with-filter (require-not (state-flag "BlockMobileGestaltInWebContentSandbox"))
+    (allow file-read*
+       (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist")))
+
 (allow iokit-get-properties
        (iokit-property "IORegistryEntryPropertyKeys"))
 
@@ -834,11 +836,12 @@
 (deny mach-lookup
     (global-name "com.apple.mobilegestalt.xpc"))
 
-(allow mach-lookup (with telemetry)
-    (require-all
-        (require-not (webcontent-process-launched))
-        (extension "com.apple.webkit.extension.mach")
-        (global-name "com.apple.mobilegestalt.xpc")))
+(with-filter (require-not (state-flag "BlockMobileGestaltInWebContentSandbox"))
+    (allow mach-lookup (with telemetry)
+        (require-all
+            (require-not (webcontent-process-launched))
+            (extension "com.apple.webkit.extension.mach")
+            (global-name "com.apple.mobilegestalt.xpc"))))
 
 (deny mach-lookup (with no-report)
     (xpc-service-name "com.apple.audio.toolbox.reporting.service"))
