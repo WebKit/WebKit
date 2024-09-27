@@ -150,6 +150,16 @@ NavigationState::~NavigationState()
     }
 }
 
+void NavigationState::ref() const
+{
+    [m_webView.get() retain];
+}
+
+void NavigationState::deref() const
+{
+    [m_webView.get() release];
+}
+
 NavigationState* NavigationState::fromWebPage(WebPageProxy& webPageProxy)
 {
     ASSERT(navigationStates().contains(webPageProxy));

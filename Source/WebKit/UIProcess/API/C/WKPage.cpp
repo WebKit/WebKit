@@ -2440,14 +2440,22 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
     webPageProxy->setNavigationClient(makeUniqueRef<NavigationClient>(wkClient));
 }
 
-class StateClient final : public API::Client<WKPageStateClientBase>, public PageLoadState::Observer {
+class StateClient final : public RefCounted<StateClient>, public API::Client<WKPageStateClientBase>, public PageLoadState::Observer {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(StateClient);
 public:
+    static Ref<StateClient> create(const WKPageStateClientBase* client)
+    {
+        return adoptRef(*new StateClient(client));
+    }
+
+    DEFINE_VIRTUAL_REFCOUNTED;
+
+private:
     explicit StateClient(const WKPageStateClientBase* client)
     {
         initialize(client);
     }
-private:
+
     void willChangeIsLoading() override
     {
         if (!m_client.willChangeIsLoading)
@@ -2600,7 +2608,7 @@ void WKPageSetPageStateClient(WKPageRef pageRef, WKPageStateClientBase* client)
 {
     CRASH_IF_SUSPENDED;
     if (client)
-        toImpl(pageRef)->setPageLoadStateObserver(makeUnique<StateClient>(client));
+        toImpl(pageRef)->setPageLoadStateObserver(StateClient::create(client));
     else
         toImpl(pageRef)->setPageLoadStateObserver(nullptr);
 }

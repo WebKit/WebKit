@@ -243,15 +243,22 @@ enum {
 
 static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
-class PageLoadStateObserver final : public PageLoadState::Observer {
+class PageLoadStateObserver final : public RefCounted<PageLoadStateObserver>, public PageLoadState::Observer {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(PageLoadStateObserver);
 public:
+    static Ref<PageLoadStateObserver> create(WebKitWebView* webView)
+    {
+        return adoptRef(*new PageLoadStateObserver(webView));
+    }
+
+    DEFINE_VIRTUAL_REFCOUNTED;
+
+private:
     PageLoadStateObserver(WebKitWebView* webView)
         : m_webView(webView)
     {
     }
 
-private:
     void willChangeIsLoading() override
     {
         g_object_freeze_notify(G_OBJECT(m_webView));
@@ -358,7 +365,7 @@ struct _WebKitWebViewPrivate {
     bool isControlledByAutomation;
     WebKitAutomationBrowsingContextPresentation automationPresentationType;
 
-    std::unique_ptr<PageLoadStateObserver> loadObserver;
+    RefPtr<PageLoadStateObserver> loadObserver;
 
     GRefPtr<WebKitBackForwardList> backForwardList;
     GRefPtr<WebKitSettings> settings;
@@ -932,7 +939,7 @@ static void webkitWebViewConstructed(GObject* object)
     webkitWebViewCreatePage(webView, WTFMove(configuration));
     webkitWebContextWebViewCreated(priv->context.get(), webView);
 
-    priv->loadObserver = makeUnique<PageLoadStateObserver>(webView);
+    priv->loadObserver = PageLoadStateObserver::create(webView);
     getPage(webView).pageLoadState().addObserver(*priv->loadObserver);
 
     priv->resourceLoadManager = makeUnique<WebKitWebResourceLoadManager>(webView);
@@ -1176,9 +1183,9 @@ static void webkitWebViewDispose(GObject* object)
 
     webkitWebViewDisconnectSettingsSignalHandlers(webView);
 
-    if (webView->priv->loadObserver) {
-        getPage(webView).pageLoadState().removeObserver(*webView->priv->loadObserver);
-        webView->priv->loadObserver.reset();
+    if (RefPtr loadObserver = webView->priv->loadObserver) {
+        getPage(webView).pageLoadState().removeObserver(*loadObserver);
+        webView->priv->loadObserver = nullptr;
 
         // We notify the context here to ensure it's called only once. Ideally we should
         // call this in finalize, not dispose, but finalize is used internally and we don't

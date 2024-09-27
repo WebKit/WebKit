@@ -612,7 +612,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _page = WebKit::toImpl(pageRef);
 
-    _pageLoadStateObserver = makeUnique<WebKit::PageLoadStateObserver>(self);
+    _pageLoadStateObserver = makeUniqueWithoutRefCountedCheck<WebKit::PageLoadStateObserver>(self);
     _page->pageLoadState().addObserver(*_pageLoadStateObserver);
 
     ASSERT(!browsingContextControllerMap().contains(*_page));
@@ -753,3 +753,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 @end
 ALLOW_DEPRECATED_DECLARATIONS_END
+
+namespace WebKit {
+
+void PageLoadStateObserver::ref() const
+{
+    [m_object.get() retain];
+}
+
+void PageLoadStateObserver::deref() const
+{
+    [m_object.get() release];
+}
+
+}
