@@ -151,7 +151,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const override { return "UserMediaPermissionRequestManagerProxy"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
@@ -216,7 +216,7 @@ private:
     Seconds m_currentWatchdogInterval;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
     bool m_hasFilteredDeviceList { false };
 #if PLATFORM(COCOA)

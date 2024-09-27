@@ -74,7 +74,7 @@ private:
     String mediaKeysStorageDirectory() const final;
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "RemoteLegacyCDMSessionProxy"_s; }
     WTFLogChannel& logChannel() const;
 #endif
@@ -92,7 +92,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 
     RemoteLegacyCDMSessionIdentifier m_identifier;

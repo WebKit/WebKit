@@ -110,7 +110,7 @@ Ref<MediaPromise> RemoteMediaSourceProxy::seekToTime(const MediaTime& time)
 }
 
 #if !RELEASE_LOG_DISABLED
-void RemoteMediaSourceProxy::setLogIdentifier(const void*)
+void RemoteMediaSourceProxy::setLogIdentifier(uint64_t)
 {
     notImplemented();
 }

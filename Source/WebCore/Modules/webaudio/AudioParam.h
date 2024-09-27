@@ -125,7 +125,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "AudioParam"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
@@ -146,7 +146,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     mutable Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

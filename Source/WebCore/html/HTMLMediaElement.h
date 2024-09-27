@@ -611,7 +611,7 @@ public:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return *m_logger.get(); }
     Ref<Logger> protectedLogger() const;
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "HTMLMediaElement"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
@@ -1101,7 +1101,7 @@ private:
     bool videoUsesElementFullscreen() const;
 
 #if !RELEASE_LOG_DISABLED
-    const void* mediaPlayerLogIdentifier() final { return logIdentifier(); }
+    uint64_t mediaPlayerLogIdentifier() final { return logIdentifier(); }
     const Logger& mediaPlayerLogger() final { return logger(); }
 #endif
 
@@ -1406,7 +1406,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

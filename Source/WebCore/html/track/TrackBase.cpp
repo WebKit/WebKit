@@ -185,7 +185,7 @@ void TrackBase::setLanguage(const AtomString& language)
 }
 
 #if !RELEASE_LOG_DISABLED
-void TrackBase::setLogger(const Logger& logger, const void* logIdentifier)
+void TrackBase::setLogger(const Logger& logger, uint64_t logIdentifier)
 {
     m_logger = &logger;
     m_logIdentifier = childLogIdentifier(logIdentifier, m_uniqueId);

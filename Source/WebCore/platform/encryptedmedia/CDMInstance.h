@@ -67,7 +67,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& logger() const = 0;
-    virtual const void* logIdentifier() const = 0;
+    virtual uint64_t logIdentifier() const = 0;
 #endif
 };
 
@@ -81,7 +81,7 @@ public:
     virtual void clearClient() { }
 
 #if !RELEASE_LOG_DISABLED
-    virtual void setLogIdentifier(const void*) { }
+    virtual void setLogIdentifier(uint64_t) { }
 #endif
 
     enum class ImplementationType {

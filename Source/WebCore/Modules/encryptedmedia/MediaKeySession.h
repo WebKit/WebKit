@@ -123,10 +123,10 @@ private:
     const Logger& logger() const { return m_logger; }
     ASCIILiteral logClassName() const { return "MediaKeySession"_s; }
     WTFLogChannel& logChannel() const;
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
 
     Ref<Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 
     WeakPtr<MediaKeys> m_keys;

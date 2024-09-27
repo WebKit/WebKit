@@ -329,7 +329,7 @@ bool AudioSampleDataSource::pullAvailableSamplesAsChunks(AudioBufferList& buffer
 }
 
 #if !RELEASE_LOG_DISABLED
-void AudioSampleDataSource::setLogger(Ref<const Logger>&& logger, const void* logIdentifier)
+void AudioSampleDataSource::setLogger(Ref<const Logger>&& logger, uint64_t logIdentifier)
 {
     m_logger = WTFMove(logger);
     m_logIdentifier = logIdentifier;

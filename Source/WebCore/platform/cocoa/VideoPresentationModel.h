@@ -104,8 +104,8 @@ public:
 #endif
 
 #if !RELEASE_LOG_DISABLED
-    virtual const void* logIdentifier() const { return nullptr; }
-    virtual const void* nextChildIdentifier() const { return logIdentifier(); }
+    virtual uint64_t logIdentifier() const { return 0; }
+    virtual uint64_t nextChildIdentifier() const { return logIdentifier(); }
     virtual const Logger* loggerPtr() const { return nullptr; }
 #endif
 };

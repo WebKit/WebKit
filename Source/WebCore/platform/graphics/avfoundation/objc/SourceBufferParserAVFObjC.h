@@ -63,7 +63,7 @@ public:
     void resetParserState() final;
     void invalidate() final;
 #if !RELEASE_LOG_DISABLED
-    void setLogger(const Logger&, const void* identifier) final;
+    void setLogger(const Logger&, uint64_t identifier) final;
 #endif
 
     void didParseStreamDataAsAsset(AVAsset*);
@@ -77,7 +77,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Logger* loggerPtr() const { return m_logger.get(); }
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "SourceBufferParserAVFObjC"_s; }
     WTFLogChannel& logChannel() const final { return LogMedia; }
 #endif
@@ -89,7 +89,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier { nullptr };
+    uint64_t m_logIdentifier { 0 };
 #endif
 };
 }

@@ -88,7 +88,7 @@ public:
 
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const override { return "MediaPlayerPrivateMediaStreamAVFObjC"_s; }
-    const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 
     USING_CAN_MAKE_WEAKPTR(MediaStreamTrackPrivateObserver);
@@ -283,7 +283,7 @@ private:
     bool m_videoMirrored { false };
 
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
     std::unique_ptr<VideoLayerManagerObjC> m_videoLayerManager;
 
     // SampleBufferDisplayLayerClient

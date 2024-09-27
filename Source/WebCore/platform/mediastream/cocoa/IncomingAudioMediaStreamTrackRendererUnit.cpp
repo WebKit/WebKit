@@ -195,7 +195,7 @@ WTFLogChannel& IncomingAudioMediaStreamTrackRendererUnit::logChannel() const
     return LogWebRTC;
 }
 
-const void* IncomingAudioMediaStreamTrackRendererUnit::logIdentifier() const
+uint64_t IncomingAudioMediaStreamTrackRendererUnit::logIdentifier() const
 {
     return m_logIdentifier;
 }

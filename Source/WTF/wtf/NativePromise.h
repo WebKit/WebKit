@@ -281,7 +281,7 @@ public:
 #define PROMISE_LOG(...) NativePromiseBase::log(__VA_ARGS__)
 
 // Ideally we would use C++20 source_location, but it's currently broken in XCode see rdar://116228776
-#define DEFAULT_LOGSITEIDENTIFIER Logger::LogSiteIdentifier(__builtin_FUNCTION(), nullptr)
+#define DEFAULT_LOGSITEIDENTIFIER Logger::LogSiteIdentifier(__builtin_FUNCTION(), 0)
 
 class ConvertibleToNativePromise { };
 
@@ -822,11 +822,11 @@ private:
             if constexpr (IsChaining) {
                 auto p = m_settleFunction(maybeMove(result));
                 if (completionProducer)
-                    p->chainTo(WTFMove(*completionProducer), { "<chained completion promise>", nullptr });
+                    p->chainTo(WTFMove(*completionProducer), { "<chained completion promise>", 0 });
             } else {
                 m_settleFunction(maybeMove(result));
                 if (completionProducer)
-                    completionProducer->resolve({ "<chained completion promise>", nullptr });
+                    completionProducer->resolve({ "<chained completion promise>", 0 });
             }
 
             m_settleFunction = nullptr;
@@ -960,7 +960,7 @@ private:
             ASSERT(m_thenCallback, "Conversion can only be done once");
             // We create a completion promise producer which will be resolved or rejected when the ThenCallback will be run
             // with the value returned by the callbacks provided to then().
-            auto producer = makeUnique<typename PromiseType::Producer>(PromiseDispatchMode::Default, Logger::LogSiteIdentifier { "<completion promise>", nullptr });
+            auto producer = makeUnique<typename PromiseType::Producer>(PromiseDispatchMode::Default, Logger::LogSiteIdentifier { "<completion promise>", 0 });
             auto promise = producer->promise();
             m_thenCallback->setCompletionPromise(WTFMove(producer));
             m_promise->maybeSettle(m_thenCallback.releaseNonNull(), m_logSiteIdentifier);
@@ -1221,7 +1221,7 @@ private:
         assertIsHeld(m_lock);
         ASSERT(!isNothing());
         auto producer = WTFMove(other);
-        producer.promise()->settleAsChainedPromise(maybeMove(m_result), { "<chained promise>", nullptr });
+        producer.promise()->settleAsChainedPromise(maybeMove(m_result), { "<chained promise>", 0 });
     }
 
     // Replicate either std::optional<Result> if Exclusive or Ref<std::optional<Result>> otherwise.
@@ -1558,7 +1558,7 @@ static auto invokeAsync(SerialFunctionDispatcher& targetQueue, Function&& functi
         typename ReturnTypeNoRef::PromiseType::Producer proxyPromiseProducer(PromiseDispatchMode::Default, callerName);
         auto promise = proxyPromiseProducer.promise();
         targetQueue.dispatch([producer = WTFMove(proxyPromiseProducer), function = WTFMove(function)] () mutable {
-            static_cast<Ref<typename ReturnTypeNoRef::PromiseType>>(function())->chainTo(WTFMove(producer), { "invokeAsync proxy", nullptr });
+            static_cast<Ref<typename ReturnTypeNoRef::PromiseType>>(function())->chainTo(WTFMove(producer), { "invokeAsync proxy", 0 });
         });
         return promise;
     } else if constexpr (std::is_void_v<ReturnType>) {
@@ -1566,14 +1566,14 @@ static auto invokeAsync(SerialFunctionDispatcher& targetQueue, Function&& functi
         auto promise = proxyPromiseProducer.promise();
         targetQueue.dispatch([producer = WTFMove(proxyPromiseProducer), function = WTFMove(function)] () mutable {
             function();
-            producer.resolve({ "invokeAsync proxy", nullptr });
+            producer.resolve({ "invokeAsync proxy", 0 });
         });
         return promise;
     } else {
         NativePromiseProducer<typename ReturnType::value_type, typename ReturnType::error_type> proxyPromiseProducer(PromiseDispatchMode::Default, callerName);
         auto promise = proxyPromiseProducer.promise();
         targetQueue.dispatch([producer = WTFMove(proxyPromiseProducer), function = WTFMove(function)] () mutable {
-            createSettledPromise(function())->chainTo(WTFMove(producer), { "invokeAsync proxy", nullptr });
+            createSettledPromise(function())->chainTo(WTFMove(producer), { "invokeAsync proxy", 0 });
         });
         return promise;
     }

@@ -68,7 +68,7 @@ public:
     AudioTrackConfiguration& configuration() const { return m_configuration; }
 
 #if !RELEASE_LOG_DISABLED
-    void setLogger(const Logger&, const void*) final;
+    void setLogger(const Logger&, uint64_t) final;
 #endif
 
 private:

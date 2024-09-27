@@ -157,7 +157,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& sourceBufferLogger() const = 0;
-    virtual const void* sourceBufferLogIdentifier() = 0;
+    virtual uint64_t sourceBufferLogIdentifier() = 0;
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)

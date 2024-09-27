@@ -71,7 +71,7 @@ public:
     RefPtr<WebCore::MediaSourcePrivate> mediaSourcePrivate() const final { return m_private; }
 
 #if !RELEASE_LOG_DISABLED
-    void setLogIdentifier(const void*) final;
+    void setLogIdentifier(uint64_t) final;
 #endif
 
     void failedToCreateRenderer(RendererType) final;

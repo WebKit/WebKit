@@ -117,9 +117,9 @@ void PlaybackSessionInterfaceIOS::stopObservingNowPlayingMetadata()
 }
 
 #if !RELEASE_LOG_DISABLED
-const void* PlaybackSessionInterfaceIOS::logIdentifier() const
+uint64_t PlaybackSessionInterfaceIOS::logIdentifier() const
 {
-    return m_playbackSessionModel ? m_playbackSessionModel->logIdentifier() : nullptr;
+    return m_playbackSessionModel ? m_playbackSessionModel->logIdentifier() : 0;
 }
 
 const Logger* PlaybackSessionInterfaceIOS::loggerPtr() const

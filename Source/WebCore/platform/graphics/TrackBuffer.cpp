@@ -398,7 +398,7 @@ void TrackBuffer::setRoundedTimestampOffset(const MediaTime& time, uint32_t time
 }
 
 #if !RELEASE_LOG_DISABLED
-void TrackBuffer::setLogger(const Logger& newLogger, const void* newLogIdentifier)
+void TrackBuffer::setLogger(const Logger& newLogger, uint64_t newLogIdentifier)
 {
     m_logger = &newLogger;
     m_logIdentifier = childLogIdentifier(newLogIdentifier, cryptographicallyRandomNumber<uint32_t>());

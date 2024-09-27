@@ -51,7 +51,7 @@ public:
 
     void setPrivate(InbandTextTrackPrivate&);
 #if !RELEASE_LOG_DISABLED
-    void setLogger(const Logger&, const void*) final;
+    void setLogger(const Logger&, uint64_t) final;
 #endif
 
 protected:

@@ -171,7 +171,7 @@ public:
 #endif
 
 #if !RELEASE_LOG_DISABLED
-    WEBCORE_EXPORT const void* logIdentifier() const;
+    WEBCORE_EXPORT uint64_t logIdentifier() const;
     WEBCORE_EXPORT const Logger* loggerPtr() const;
     ASCIILiteral logClassName() const { return "VideoPresentationInterfaceIOS"_s; };
     WEBCORE_EXPORT WTFLogChannel& logChannel() const;

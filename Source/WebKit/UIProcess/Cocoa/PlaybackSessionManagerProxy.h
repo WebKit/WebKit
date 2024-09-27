@@ -175,8 +175,8 @@ private:
     void setSoundStageSize(WebCore::AudioSessionSoundStageSize) final;
 
 #if !RELEASE_LOG_DISABLED
-    void setLogIdentifier(const void* identifier) { m_logIdentifier = identifier; }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    void setLogIdentifier(uint64_t identifier) { m_logIdentifier = identifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     const Logger* loggerPtr() const;
 
     ASCIILiteral logClassName() const { return "PlaybackSessionModelContext"_s; };
@@ -220,7 +220,7 @@ private:
 #endif
 
 #if !RELEASE_LOG_DISABLED
-    const void* m_logIdentifier { nullptr };
+    uint64_t m_logIdentifier { 0 };
 #endif
 };
 
@@ -329,7 +329,7 @@ private:
     void setLogIdentifier(PlaybackSessionContextIdentifier, uint64_t);
 
     const Logger& logger() const { return m_logger; }
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "VideoPresentationManagerProxy"_s; }
     WTFLogChannel& logChannel() const;
 #endif
@@ -342,7 +342,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

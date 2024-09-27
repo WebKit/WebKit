@@ -51,7 +51,7 @@ private:
     RemoteCDMInstanceSession(WeakPtr<RemoteCDMFactory>&&, RemoteCDMInstanceSessionIdentifier&&);
 
 #if !RELEASE_LOG_DISABLED
-    void setLogIdentifier(const void*) final;
+    void setLogIdentifier(uint64_t) final;
 #endif
 
     // IPC::MessageReceiver

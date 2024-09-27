@@ -96,10 +96,10 @@ public:
         virtual IntSize intrinsicSize() const = 0;
         virtual void whenReady(CompletionHandler<void(CaptureSourceError&&)>&& callback) { callback({ }); }
 
-        virtual void setLogger(const Logger&, const void*);
+        virtual void setLogger(const Logger&, uint64_t);
         const Logger* loggerPtr() const { return m_logger.get(); }
         const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
-        const void* logIdentifier() const final { return m_logIdentifier; }
+        uint64_t logIdentifier() const final { return m_logIdentifier; }
         WTFLogChannel& logChannel() const final;
 
         void setObserver(CapturerObserver&);
@@ -125,7 +125,7 @@ public:
     private:
         WeakPtr<CapturerObserver> m_observer;
         RefPtr<const Logger> m_logger;
-        const void* m_logIdentifier;
+        uint64_t m_logIdentifier { 0 };
     };
 
     static CaptureSourceOrError create(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
@@ -157,7 +157,7 @@ private:
     void whenReady(CompletionHandler<void(CaptureSourceError&&)>&&) final;
 
     ASCIILiteral logClassName() const final { return "DisplayCaptureSourceCocoa"_s; }
-    void setLogger(const Logger&, const void*) final;
+    void setLogger(const Logger&, uint64_t) final;
 
     // CapturerObserver
     void capturerIsRunningChanged(bool isRunning) final { notifyMutedChange(!isRunning); }

@@ -164,7 +164,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_private->logger(); }
-    const void* logIdentifier() const final { return m_private->logIdentifier(); }
+    uint64_t logIdentifier() const final { return m_private->logIdentifier(); }
 #endif
 
     void setShouldFireMuteEventImmediately(bool value) { m_shouldFireMuteEventImmediately = value; }

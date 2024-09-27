@@ -129,8 +129,8 @@ private:
     void setTextTrackRepresentationBounds(const WebCore::IntRect&) final;
 
 #if !RELEASE_LOG_DISABLED
-    const void* logIdentifier() const final;
-    const void* nextChildIdentifier() const final;
+    uint64_t logIdentifier() const final;
+    uint64_t nextChildIdentifier() const final;
     const Logger* loggerPtr() const final;
 
     ASCIILiteral logClassName() const { return "VideoPresentationModelContext"_s; };
@@ -269,7 +269,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const;
-    const void* logIdentifier() const;
+    uint64_t logIdentifier() const;
     ASCIILiteral logClassName() const;
     WTFLogChannel& logChannel() const;
 #endif

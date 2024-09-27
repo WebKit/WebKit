@@ -343,13 +343,13 @@ void DisplayCaptureSourceCocoa::capturerConfigurationChanged()
     });
 }
 
-void DisplayCaptureSourceCocoa::setLogger(const Logger& logger, const void* identifier)
+void DisplayCaptureSourceCocoa::setLogger(const Logger& logger, uint64_t identifier)
 {
     RealtimeMediaSource::setLogger(logger, identifier);
     m_capturer->setLogger(logger, identifier);
 }
 
-void DisplayCaptureSourceCocoa::Capturer::setLogger(const Logger& newLogger, const void* newLogIdentifier)
+void DisplayCaptureSourceCocoa::Capturer::setLogger(const Logger& newLogger, uint64_t newLogIdentifier)
 {
     m_logger = &newLogger;
     m_logIdentifier = newLogIdentifier;

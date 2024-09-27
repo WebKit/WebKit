@@ -192,7 +192,7 @@ Ref<CDMInstance> MediaKeys::protectedCDMInstance() const
 }
 
 #if !RELEASE_LOG_DISABLED
-const void* MediaKeys::nextChildIdentifier() const
+uint64_t MediaKeys::nextChildIdentifier() const
 {
     return LoggerHelper::childLogIdentifier(m_logIdentifier, ++m_childIdentifierSeed);
 }

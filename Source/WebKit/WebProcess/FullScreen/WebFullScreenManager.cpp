@@ -144,7 +144,7 @@ void WebFullScreenManager::setPIPStandbyElement(WebCore::HTMLVideoElement* pipSt
         return;
 
 #if !RELEASE_LOG_DISABLED
-    auto logIdentifierForElement = [] (auto* element) { return element ? element->logIdentifier() : nullptr; };
+    auto logIdentifierForElement = [] (auto* element) { return element ? element->logIdentifier() : 0; };
 #endif
     ALWAYS_LOG(LOGIDENTIFIER, "old element ", logIdentifierForElement(m_pipStandbyElement.get()), ", new element ", logIdentifierForElement(pipStandbyElement));
 

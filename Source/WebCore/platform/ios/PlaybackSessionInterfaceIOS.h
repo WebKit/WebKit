@@ -86,7 +86,7 @@ public:
     virtual void stopObservingNowPlayingMetadata();
 
 #if !RELEASE_LOG_DISABLED
-    const void* logIdentifier() const;
+    uint64_t logIdentifier() const;
     const Logger* loggerPtr() const;
     virtual ASCIILiteral logClassName() const = 0;
     WTFLogChannel& logChannel() const;

@@ -1048,7 +1048,7 @@ const SharedPreferencesForWebProcess& PlaybackSessionManagerProxy::sharedPrefere
 void PlaybackSessionManagerProxy::setLogIdentifier(PlaybackSessionContextIdentifier identifier, uint64_t logIdentifier)
 {
     Ref model = ensureModel(identifier);
-    model->setLogIdentifier(reinterpret_cast<const void*>(logIdentifier));
+    model->setLogIdentifier(logIdentifier);
 }
 
 WTFLogChannel& PlaybackSessionManagerProxy::logChannel() const

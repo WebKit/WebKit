@@ -37,7 +37,7 @@ public:
     virtual const Logger& logger() const = 0;
     virtual ASCIILiteral logClassName() const = 0;
     virtual WTFLogChannel& logChannel() const = 0;
-    virtual const void* logIdentifier() const = 0;
+    virtual uint64_t logIdentifier() const = 0;
 
 #if !RELEASE_LOG_DISABLED
 
@@ -81,16 +81,16 @@ public:
 #define OBJC_DEBUG_LOG(...)      if (self.loggerPtr && self.logChannel) self.loggerPtr->debug(*self.logChannel, __VA_ARGS__)
 #endif
 
-    static const void* childLogIdentifier(const void* parentIdentifier, uint64_t childIdentifier)
+    static uint64_t childLogIdentifier(uint64_t parentIdentifier, uint64_t childIdentifier)
     {
         static constexpr uint64_t parentMask = 0xffffffffffff0000ull;
         static constexpr uint64_t maskLowerWord = 0xffffull;
-        return reinterpret_cast<const void*>((bitwise_cast<uintptr_t>(parentIdentifier) & parentMask) | (childIdentifier & maskLowerWord));
+        return reinterpret_cast<uint64_t>((parentIdentifier & parentMask) | (childIdentifier & maskLowerWord));
     }
 
-    static const void* uniqueLogIdentifier()
+    static uint64_t uniqueLogIdentifier()
     {
-        return reinterpret_cast<const void*>(cryptographicallyRandomNumber<uint64_t>());
+        return cryptographicallyRandomNumber<uint64_t>();
     }
 
 #else // RELEASE_LOG_DISABLED

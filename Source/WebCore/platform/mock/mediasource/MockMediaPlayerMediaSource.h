@@ -68,7 +68,7 @@ public:
     void setNetworkState(MediaPlayer::NetworkState);
 
 #if !RELEASE_LOG_DISABLED
-    const void* mediaPlayerLogIdentifier() { return m_player.get()->mediaPlayerLogIdentifier(); }
+    uint64_t mediaPlayerLogIdentifier() { return m_player.get()->mediaPlayerLogIdentifier(); }
     const Logger& mediaPlayerLogger() { return m_player.get()->mediaPlayerLogger(); }
 #endif
 

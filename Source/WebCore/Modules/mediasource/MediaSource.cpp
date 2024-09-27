@@ -187,7 +187,7 @@ private:
     }
 
 #if !RELEASE_LOG_DISABLED
-    void setLogIdentifier(const void* identifier)
+    void setLogIdentifier(uint64_t identifier)
     {
         ensureWeakOnDispatcher([identifier](MediaSource& parent) {
             parent.setLogIdentifier(identifier);
@@ -1552,7 +1552,7 @@ void MediaSource::updateBufferedIfNeeded(bool force)
 }
 
 #if !RELEASE_LOG_DISABLED
-void MediaSource::setLogIdentifier(const void* identifier)
+void MediaSource::setLogIdentifier(uint64_t identifier)
 {
     m_logIdentifier = identifier;
     ALWAYS_LOG(LOGIDENTIFIER);

@@ -70,7 +70,7 @@ private:
     void unrequestedInitializationDataReceived(const String&, Ref<WebCore::SharedBuffer>&&) final;
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
 #endif
 
     // IPC::MessageReceiver
@@ -97,7 +97,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

@@ -81,7 +81,7 @@ const Logger& AudioMediaStreamTrackRenderer::logger() const
 
 }
 
-const void* AudioMediaStreamTrackRenderer::logIdentifier() const
+uint64_t AudioMediaStreamTrackRenderer::logIdentifier() const
 {
     return m_logIdentifier;
 }

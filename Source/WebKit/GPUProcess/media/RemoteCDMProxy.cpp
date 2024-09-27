@@ -108,7 +108,7 @@ void RemoteCDMProxy::loadAndInitialize()
 void RemoteCDMProxy::setLogIdentifier(uint64_t logIdentifier)
 {
 #if !RELEASE_LOG_DISABLED
-    m_logIdentifier = reinterpret_cast<const void*>(logIdentifier);
+    m_logIdentifier = logIdentifier;
     if (m_factory)
         m_private->setLogIdentifier(m_logIdentifier);
 #else

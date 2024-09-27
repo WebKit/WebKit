@@ -140,10 +140,10 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "MediaSource"_s; }
     WTFLogChannel& logChannel() const final;
-    void setLogIdentifier(const void*);
+    void setLogIdentifier(uint64_t);
 
     Ref<Logger> logger(ScriptExecutionContext&);
     void didLogMessage(const WTFLogChannel&, WTFLogLevel, Vector<JSONLogValue>&&) final;
@@ -244,7 +244,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier { nullptr };
+    uint64_t m_logIdentifier { 0 };
 #endif
     std::atomic<uint64_t> m_associatedRegistryCount { 0 };
     Ref<MediaSourceClientImpl> m_client;

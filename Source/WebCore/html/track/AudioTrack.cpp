@@ -229,7 +229,7 @@ void AudioTrack::updateConfigurationFromPrivate()
 }
 
 #if !RELEASE_LOG_DISABLED
-void AudioTrack::setLogger(const Logger& logger, const void* logIdentifier)
+void AudioTrack::setLogger(const Logger& logger, uint64_t logIdentifier)
 {
     TrackBase::setLogger(logger, logIdentifier);
     m_private->setLogger(logger, this->logIdentifier());

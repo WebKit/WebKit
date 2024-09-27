@@ -326,9 +326,9 @@ void PlaybackSessionInterfaceMac::decrementPtrCount() const
 #endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
 #if !RELEASE_LOG_DISABLED
-const void* PlaybackSessionInterfaceMac::logIdentifier() const
+uint64_t PlaybackSessionInterfaceMac::logIdentifier() const
 {
-    return m_playbackSessionModel ? m_playbackSessionModel->logIdentifier() : nullptr;
+    return m_playbackSessionModel ? m_playbackSessionModel->logIdentifier() : 0;
 }
 
 const Logger* PlaybackSessionInterfaceMac::loggerPtr() const

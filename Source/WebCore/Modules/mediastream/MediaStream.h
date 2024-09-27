@@ -100,7 +100,7 @@ public:
     void addTrackFromPlatform(Ref<MediaStreamTrack>&&);
 
 #if !RELEASE_LOG_DISABLED
-    const void* logIdentifier() const final { return m_private->logIdentifier(); }
+    uint64_t logIdentifier() const final { return m_private->logIdentifier(); }
 #endif
 
 protected:

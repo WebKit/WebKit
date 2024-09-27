@@ -549,14 +549,14 @@ WTFLogChannel& AudioSessionMac::logChannel() const
     return LogMedia;
 }
 
-const void* AudioSessionMac::logIdentifier() const
+uint64_t AudioSessionMac::logIdentifier() const
 {
 #if ENABLE(ROUTING_ARBITRATION)
     if (m_routingArbitrationClient)
         return m_routingArbitrationClient->logIdentifier();
 #endif
 
-    return nullptr;
+    return 0;
 }
 
 }

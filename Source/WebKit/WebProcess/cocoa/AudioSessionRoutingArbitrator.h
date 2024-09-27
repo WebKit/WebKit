@@ -53,11 +53,11 @@ public:
     void leaveRoutingAbritration() final;
 
 private:
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     bool canLog() const final;
 
     WebCore::AudioSession::ChangedObserver m_observer;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 };
 
 }

@@ -246,7 +246,7 @@ void VideoTrack::updateConfigurationFromPrivate()
 }
 
 #if !RELEASE_LOG_DISABLED
-void VideoTrack::setLogger(const Logger& logger, const void* logIdentifier)
+void VideoTrack::setLogger(const Logger& logger, uint64_t logIdentifier)
 {
     TrackBase::setLogger(logger, logIdentifier);
     m_private->setLogger(logger, this->logIdentifier());

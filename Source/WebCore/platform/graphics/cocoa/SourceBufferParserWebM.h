@@ -86,7 +86,7 @@ public:
 
     void provideMediaData(MediaSamplesBlock&&);
 
-    WEBCORE_EXPORT void setLogger(const Logger&, const void* identifier);
+    WEBCORE_EXPORT void setLogger(const Logger&, uint64_t identifier);
     WTFLogChannel& logChannel() const final;
 
     enum class ErrorCode : int32_t {
@@ -289,7 +289,7 @@ private:
 
     const Logger* loggerPtr() const { return m_logger.get(); }
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "WebMParser"_s; }
 
     std::unique_ptr<SourceBufferParser::InitializationSegment> m_initializationSegment;
@@ -312,7 +312,7 @@ private:
     std::optional<uint64_t> m_rewindToPosition;
 
     RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier { nullptr };
+    uint64_t m_logIdentifier { 0 };
     uint64_t m_nextChildIdentifier { 0 };
     Callback& m_callback;
     bool m_createByteRangeSamples { false };
@@ -347,7 +347,7 @@ public:
     void flushPendingAudioSamples();
     void setMinimumAudioSampleDuration(float);
 
-    WEBCORE_EXPORT void setLogger(const Logger&, const void* identifier) final;
+    WEBCORE_EXPORT void setLogger(const Logger&, uint64_t identifier) final;
 
 private:
     SourceBufferParserWebM();
@@ -363,7 +363,7 @@ private:
 
     const Logger* loggerPtr() const { return m_logger.get(); }
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "SourceBufferParserWebM"_s; }
     WTFLogChannel& logChannel() const final;
 
@@ -378,7 +378,7 @@ private:
     MediaTime m_queuedAudioDuration;
     bool m_audioDiscontinuity { true };
     RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier { nullptr };
+    uint64_t m_logIdentifier { 0 };
 };
 
 }

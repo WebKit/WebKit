@@ -51,7 +51,7 @@ public:
 #endif
 #if !RELEASE_LOG_DISABLED
         const Logger& logger;
-        const void* logIdentifier;
+        uint64_t logIdentifier;
 #endif
     };
     static std::unique_ptr<AudioMediaStreamTrackRenderer> create(Init&&);
@@ -73,7 +73,7 @@ protected:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;
-    const void* logIdentifier() const final;
+    uint64_t logIdentifier() const final;
 
     ASCIILiteral logClassName() const final;
     WTFLogChannel& logChannel() const final;
@@ -96,7 +96,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

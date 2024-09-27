@@ -80,20 +80,20 @@ public:
     virtual void playbackStateChanged(MediaSessionPlaybackState) = 0;
     virtual void trackIdentifierChanged(const String&) = 0;
 
-    void setLogger(const Logger&, const void*);
+    void setLogger(const Logger&, uint64_t);
     virtual void setClient(WeakPtr<MediaSessionCoordinatorClient> client) { m_client = client;}
 
 protected:
     explicit MediaSessionCoordinatorPrivate() = default;
 
     const Logger* loggerPtr() const { return m_logger.get(); }
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
 
     WeakPtr<MediaSessionCoordinatorClient> client() const { return m_client; }
 
 private:
     RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier;
+    uint64_t m_logIdentifier { 0 };
     WeakPtr<MediaSessionCoordinatorClient> m_client;
 };
 

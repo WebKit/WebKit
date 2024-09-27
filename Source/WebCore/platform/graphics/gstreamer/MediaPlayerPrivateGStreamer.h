@@ -210,10 +210,10 @@ public:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
     ASCIILiteral logClassName() const override { return "MediaPlayerPrivateGStreamer"_s; }
-    const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const override;
 
-    const void* mediaPlayerLogIdentifier() { return logIdentifier(); }
+    uint64_t mediaPlayerLogIdentifier() { return logIdentifier(); }
     const Logger& mediaPlayerLogger() { return logger(); }
 #endif
 
@@ -610,7 +610,7 @@ private:
     mutable PlatformTimeRanges m_buffered;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 
     String m_errorMessage;

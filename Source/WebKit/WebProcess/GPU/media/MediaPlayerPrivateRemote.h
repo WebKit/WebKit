@@ -197,7 +197,7 @@ public:
     WebCore::FloatSize naturalSize() const final;
 
 #if !RELEASE_LOG_DISABLED
-    const void* mediaPlayerLogIdentifier() const { return logIdentifier(); }
+    uint64_t mediaPlayerLogIdentifier() const { return logIdentifier(); }
     const Logger& mediaPlayerLogger() const { return logger(); }
 #endif
 
@@ -237,11 +237,11 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
     ASCIILiteral logClassName() const override { return "MediaPlayerPrivateRemote"_s; }
-    const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 
     void load(const URL&, const WebCore::ContentType&, const String&) final;

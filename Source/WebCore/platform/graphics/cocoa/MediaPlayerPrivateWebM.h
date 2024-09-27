@@ -308,7 +308,7 @@ private:
 
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const final { return "MediaPlayerPrivateWebM"_s; }
-    const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 
     friend class MediaPlayerFactoryWebM;
@@ -356,7 +356,7 @@ private:
     bool m_shouldPlayToTarget { false };
 #endif
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
     std::unique_ptr<VideoLayerManagerObjC> m_videoLayerManager;
     RetainPtr<id> m_videoFrameMetadataGatheringObserver;
     bool m_isGatheringVideoFrameMetadata { false };

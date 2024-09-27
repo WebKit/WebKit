@@ -145,7 +145,7 @@ public:
 #endif
 
 #if !RELEASE_LOG_DISABLED
-    virtual const void* logIdentifier() const { return nullptr; }
+    virtual uint64_t logIdentifier() const { return 0; }
     virtual const Logger* loggerPtr() const { return nullptr; }
 #endif
 };

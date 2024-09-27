@@ -70,7 +70,7 @@ MediaKeySession::MediaKeySession(Document& document, WeakPtr<MediaKeys>&& keys, 
     : ActiveDOMObject(&document)
 #if !RELEASE_LOG_DISABLED
     , m_logger(document.logger())
-    , m_logIdentifier(keys ? keys->nextChildIdentifier() : nullptr)
+    , m_logIdentifier(keys ? keys->nextChildIdentifier() : 0)
 #endif
     , m_keys(WTFMove(keys))
     , m_expiration(std::numeric_limits<double>::quiet_NaN())

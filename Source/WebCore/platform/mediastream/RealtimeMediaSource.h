@@ -276,10 +276,10 @@ public:
     virtual bool isIncomingVideoSource() const { return false; }
 
 #if !RELEASE_LOG_DISABLED
-    virtual void setLogger(const Logger&, const void*);
+    virtual void setLogger(const Logger&, uint64_t);
     const Logger* loggerPtr() const { return m_logger.get(); }
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const override { return "RealtimeMediaSource"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
@@ -368,7 +368,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier;
+    uint64_t m_logIdentifier { 0 };
     MonotonicTime m_lastFrameLogTime;
     unsigned m_frameCount { 0 };
 #endif

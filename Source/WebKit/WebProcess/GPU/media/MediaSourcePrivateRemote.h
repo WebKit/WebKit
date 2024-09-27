@@ -83,7 +83,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    const void* nextSourceBufferLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextSourceBufferID); }
+    uint64_t nextSourceBufferLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextSourceBufferID); }
 #endif
 
     class MessageReceiver : public IPC::WorkQueueMessageReceiver {
@@ -122,11 +122,11 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const override { return "MediaSourcePrivateRemote"_s; }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
     uint64_t m_nextSourceBufferID { 0 };
 #endif
 };

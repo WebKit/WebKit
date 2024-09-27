@@ -63,11 +63,11 @@ private:
     Logger& logger();
     ASCIILiteral logClassName() const { return "LocalAudioSessionRoutingArbitrator"_s; }
     WTFLogChannel& logChannel() const;
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     bool canLog() const final;
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 };
 
 }

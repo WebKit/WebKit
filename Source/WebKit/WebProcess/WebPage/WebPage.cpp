@@ -9563,9 +9563,9 @@ const Logger& WebPage::logger() const
     return *m_logger;
 }
 
-const void* WebPage::logIdentifier() const
+uint64_t WebPage::logIdentifier() const
 {
-    return reinterpret_cast<const void*>(intHash(m_identifier.toUInt64()));
+    return intHash(m_identifier.toUInt64());
 }
 
 void WebPage::useRedirectionForCurrentNavigation(WebCore::ResourceResponse&& response)

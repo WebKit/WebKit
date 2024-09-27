@@ -48,7 +48,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoLayerManagerObjC);
 
 #if !RELEASE_LOG_DISABLED
-VideoLayerManagerObjC::VideoLayerManagerObjC(const Logger& logger, const void* logIdentifier)
+VideoLayerManagerObjC::VideoLayerManagerObjC(const Logger& logger, uint64_t logIdentifier)
     : m_logger(logger)
     , m_logIdentifier(logIdentifier)
 {

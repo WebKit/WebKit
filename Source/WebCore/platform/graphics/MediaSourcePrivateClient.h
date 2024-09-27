@@ -49,7 +49,7 @@ public:
     virtual RefPtr<MediaSourcePrivate> mediaSourcePrivate() const = 0;
 
 #if !RELEASE_LOG_DISABLED
-    virtual void setLogIdentifier(const void*) = 0;
+    virtual void setLogIdentifier(uint64_t) = 0;
     virtual const Logger* logger() const { return nullptr; }
 #endif
 

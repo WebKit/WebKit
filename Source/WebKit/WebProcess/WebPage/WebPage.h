@@ -1769,7 +1769,7 @@ public:
     WebCore::FloatSize screenSizeForFingerprintingProtections(const WebCore::LocalFrame&, WebCore::FloatSize defaultSize) const;
 
     const Logger& logger() const;
-    const void* logIdentifier() const;
+    uint64_t logIdentifier() const;
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
 #if USE(GBM)

@@ -867,7 +867,7 @@ const Logger& VideoPresentationManager::logger() const
     return m_playbackSessionManager->logger();
 }
 
-const void* VideoPresentationManager::logIdentifier() const
+uint64_t VideoPresentationManager::logIdentifier() const
 {
     return m_playbackSessionManager->logIdentifier();
 }

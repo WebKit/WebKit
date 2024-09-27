@@ -383,9 +383,9 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final { return m_logger; }
     Ref<const Logger> protectedMediaPlayerLogger() const { return m_logger; }
-    const void* mediaPlayerLogIdentifier() { return reinterpret_cast<const void*>(m_configuration.logIdentifier); }
+    uint64_t mediaPlayerLogIdentifier() { return m_configuration.logIdentifier; }
     const Logger& logger() { return mediaPlayerLogger(); }
-    const void* logIdentifier() { return mediaPlayerLogIdentifier(); }
+    uint64_t logIdentifier() { return mediaPlayerLogIdentifier(); }
     ASCIILiteral logClassName() const { return "RemoteMediaPlayerProxy"_s; }
     WTFLogChannel& logChannel() const;
 #endif

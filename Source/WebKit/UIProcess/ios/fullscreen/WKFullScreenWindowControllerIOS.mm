@@ -740,7 +740,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
 #if !RELEASE_LOG_DISABLED
 @interface WKFullScreenWindowController (Logging)
-@property (readonly, nonatomic) const void* logIdentifier;
+@property (readonly, nonatomic) uint64_t logIdentifier;
 @property (readonly, nonatomic) const Logger* loggerPtr;
 @property (readonly, nonatomic) WTFLogChannel* logChannel;
 @end
@@ -792,7 +792,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     RetainPtr<id> _notificationListener;
 #if !RELEASE_LOG_DISABLED
     RefPtr<Logger> _logger;
-    const void* _logIdentifier;
+    uint64_t _logIdentifier;
 #endif
 }
 
@@ -2064,7 +2064,7 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
 #if !RELEASE_LOG_DISABLED
 @implementation WKFullScreenWindowController (Logging)
-- (const void*)logIdentifier
+- (uint64_t)logIdentifier
 {
     return _logIdentifier;
 }

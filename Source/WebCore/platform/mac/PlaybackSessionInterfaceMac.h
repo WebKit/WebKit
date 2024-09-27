@@ -83,7 +83,7 @@ public:
     void invalidate();
 
 #if !RELEASE_LOG_DISABLED
-    const void* logIdentifier() const;
+    uint64_t logIdentifier() const;
     const Logger* loggerPtr() const;
     ASCIILiteral logClassName() const { return "PlaybackSessionInterfaceMac"_s; };
     WTFLogChannel& logChannel() const;

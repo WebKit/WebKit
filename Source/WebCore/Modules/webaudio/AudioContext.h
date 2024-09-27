@@ -104,7 +104,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;
-    const void* logIdentifier() const final { return BaseAudioContext::logIdentifier(); }
+    uint64_t logIdentifier() const final { return BaseAudioContext::logIdentifier(); }
 #endif
 
     void constructCommon();

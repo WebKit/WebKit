@@ -51,7 +51,7 @@ RemoteLegacyCDMSessionProxy::RemoteLegacyCDMSessionProxy(RemoteLegacyCDMFactoryP
     : m_factory(factory)
 #if !RELEASE_LOG_DISABLED
     , m_logger(factory.logger())
-    , m_logIdentifier(reinterpret_cast<const void*>(parentLogIdentifier))
+    , m_logIdentifier(parentLogIdentifier)
 #endif
     , m_identifier(sessionIdentifier)
     , m_session(cdm.createSession(*this))

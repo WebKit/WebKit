@@ -59,9 +59,9 @@ public:
     virtual ~CDMPrivateFairPlayStreaming();
 
 #if !RELEASE_LOG_DISABLED
-    void setLogIdentifier(const void* logIdentifier) final { m_logIdentifier = logIdentifier; }
+    void setLogIdentifier(uint64_t logIdentifier) final { m_logIdentifier = logIdentifier; }
     const Logger& logger() const { return m_logger; };
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "CDMPrivateFairPlayStreaming"_s; }
 #endif
 
@@ -105,7 +105,7 @@ public:
 private:
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier { nullptr };
+    uint64_t m_logIdentifier { 0 };
 #endif
 };
 

@@ -163,14 +163,14 @@ private:
 #endif
 
     Logger& logger() const { return m_logger; }
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "RemoteAudioDestination"_s; }
     WTFLogChannel& logChannel() const { return WebKit2LogMedia; }
 
     IPC::Semaphore m_renderSemaphore;
     bool m_isPlaying { false };
     Ref<Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 
 #if PLATFORM(COCOA)
     WebCore::AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;

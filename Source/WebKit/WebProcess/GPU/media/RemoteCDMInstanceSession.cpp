@@ -54,7 +54,7 @@ RemoteCDMInstanceSession::~RemoteCDMInstanceSession()
 }
 
 #if !RELEASE_LOG_DISABLED
-void RemoteCDMInstanceSession::setLogIdentifier(const void* logIdentifier)
+void RemoteCDMInstanceSession::setLogIdentifier(uint64_t logIdentifier)
 {
     m_factory->gpuProcessConnection().connection().send(Messages::RemoteCDMInstanceSessionProxy::SetLogIdentifier(reinterpret_cast<uint64_t>(logIdentifier)), m_identifier);
 }
