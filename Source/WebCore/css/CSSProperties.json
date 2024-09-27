@@ -11283,14 +11283,6 @@
                 "category": "scroll-animations",
                 "url": "https://drafts.csswg.org/scroll-animations-1/#propdef-view-timeline-inset"
             }
-        },
-        "<anchor-side>": {
-            "grammar": "inside | outside | top | left | right | bottom | start | end | self-start | self-end | <percentage> | center",
-            "exported": true,
-            "specification": {
-                "category": "css-anchor-position",
-                "url": "https://drafts.csswg.org/css-anchor-position-1/#typedef-anchor-side"
-            }
         }
     }
 }

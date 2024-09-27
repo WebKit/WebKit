@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "CSSAnchorValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSUnits.h"
 #include "CSSValue.h"
@@ -110,7 +109,6 @@ public:
     bool isViewportPercentageLength() const { return isViewportPercentageLength(primitiveUnitType()); }
     bool isContainerPercentageLength() const { return isContainerPercentageLength(primitiveUnitType()); }
     bool isFlex() const { return primitiveType() == CSSUnitType::CSS_FR; }
-    bool isAnchor() const { return primitiveType() == CSSUnitType::CSS_ANCHOR; }
 
     bool conversionToCanonicalUnitRequiresConversionData() const;
 
@@ -120,7 +118,6 @@ public:
     static Ref<CSSPrimitiveValue> create(const Length&);
     static Ref<CSSPrimitiveValue> create(const Length&, const RenderStyle&);
     static Ref<CSSPrimitiveValue> create(Ref<CSSCalcValue>);
-    static Ref<CSSPrimitiveValue> create(Ref<CSSAnchorValue>);
 
     static inline Ref<CSSPrimitiveValue> create(CSSValueID);
     bool isValueID() const { return primitiveUnitType() == CSSUnitType::CSS_VALUE_ID; }
@@ -226,7 +223,6 @@ public:
 
     WEBCORE_EXPORT String stringValue() const;
     const CSSCalcValue* cssCalcValue() const { return isCalculated() ? m_value.calc : nullptr; }
-    const CSSAnchorValue* cssAnchorValue() const { return isAnchor() ? m_value.anchor : nullptr; }
 
     String customCSSText() const;
 
@@ -258,7 +254,6 @@ private:
     CSSPrimitiveValue(double, CSSUnitType);
     explicit CSSPrimitiveValue(Ref<CSSCalcValue>);
     explicit CSSPrimitiveValue(CSSUnresolvedColor);
-    explicit CSSPrimitiveValue(Ref<CSSAnchorValue>);
 
     CSSPrimitiveValue(StaticCSSValueTag, CSSValueID);
     CSSPrimitiveValue(StaticCSSValueTag, Color);
@@ -312,7 +307,6 @@ private:
         uint64_t colorAsInteger;
         const CSSUnresolvedColor* unresolvedColor;
         const CSSCalcValue* calc;
-        const CSSAnchorValue* anchor;
     } m_value;
 };
 

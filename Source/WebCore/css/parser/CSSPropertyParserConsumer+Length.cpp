@@ -26,7 +26,6 @@
 #include "CSSPropertyParserConsumer+Length.h"
 #include "CSSPropertyParserConsumer+LengthDefinitions.h"
 
-#include "CSSAnchorValue.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcSymbolsAllowed.h"
 #include "CSSCalcValue.h"

@@ -375,37 +375,6 @@ static LayoutUnit computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<co
     return removeBorderForInsetValue(insetValue, insetPropertySide, *containingBlock);
 }
 
-WebCore::Length AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderState, const CSSAnchorValue& anchorValue)
-{
-    auto fallbackValue = [&] {
-        // https://drafts.csswg.org/css-anchor-position-1/#anchor-valid
-        // If any of these conditions are false, the anchor() function resolves to its specified fallback value
-        if (RefPtr fallback = anchorValue.fallback())
-            return BuilderConverter::convertLength(builderState, *fallback);
-
-        // If no fallback value is specified, it makes the declaration referencing it invalid at computed-value time.
-
-        // https://drafts.csswg.org/css-variables-2/#invalid-variables
-        // Either the property’s inherited value or its initial value depending on whether the property is inherited or not,
-        // respectively, as if the property’s value had been specified as the unset keyword.
-        // FIXME: This does not implement unset corretly for non-inset properties.
-        const auto insetPropertyUnsetValue = RenderStyle::initialOffset();
-        return insetPropertyUnsetValue;
-    };
-
-    auto side = [&]() -> CSSCalc::Anchor::Side {
-        if (anchorValue.anchorSide()->valueID() == CSSValueInvalid)
-            return downcast<CSSPrimitiveValue>(anchorValue.anchorSide())->valueDividingBy100IfPercentageNoConversionDataRequired<double>();
-        return anchorValue.anchorSide()->valueID();
-    }();
-
-    auto result = resolveAnchorValue(builderState, AtomString { anchorValue.anchorElementString() }, side);
-    if (!result)
-        return fallbackValue();
-
-    return WebCore::Length { *result, LengthType::Fixed };
-}
-
 std::optional<double> AnchorPositionEvaluator::evaluate(const BuilderState& builderState, const CSSCalc::Anchor& anchor)
 {
     return resolveAnchorValue(builderState, anchor.elementName, anchor.side);

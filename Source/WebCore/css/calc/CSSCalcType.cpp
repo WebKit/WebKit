@@ -293,7 +293,6 @@ Type Type::determineType(CSSUnitType unitType)
         // the type is «[ "percent" → 1 ]».
         return Type { .percent = 1 };
 
-    case CSSUnitType::CSS_ANCHOR:
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_CALC:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_ANGLE:

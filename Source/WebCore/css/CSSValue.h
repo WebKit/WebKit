@@ -73,7 +73,6 @@ public:
 
     WEBCORE_EXPORT String cssText() const;
 
-    bool isAnchorValue() const { return m_classType == ClassType::Anchor; }
     bool isAspectRatioValue() const { return m_classType == ClassType::AspectRatio; }
     bool isBackgroundRepeatValue() const { return m_classType == ClassType::BackgroundRepeat; }
     bool isBorderImageSliceValue() const { return m_classType == ClassType::BorderImageSlice; }
@@ -247,7 +246,6 @@ protected:
         StepsTimingFunction,
 
         // Other non-list classes.
-        Anchor,
         AspectRatio,
         BackgroundRepeat,
         BorderImageSlice,

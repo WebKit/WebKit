@@ -2431,44 +2431,5 @@ RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange& range, const CSSParse
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-RefPtr<CSSPrimitiveValue> consumeAnchor(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    // https://drafts.csswg.org/css-anchor-position-1/#anchor-pos
-    // <anchor()> = anchor( <anchor-element>? && <anchor-side>, <length-percentage>? )
-    if (range.peek().type() != FunctionToken || range.peek().functionId() != CSSValueAnchor)
-        return nullptr;
-
-    auto rangeCopy = range;
-    auto args = consumeFunction(rangeCopy);
-    if (!args.size())
-        return nullptr;
-
-    auto anchorElement = consumeDashedIdent(args);
-    auto anchorSidePtr = CSSPropertyParsing::consumeAnchorSide(args, context);
-    if (!anchorSidePtr)
-        return nullptr;
-    auto anchorSide = anchorSidePtr.releaseNonNull();
-
-    if (!anchorElement)
-        anchorElement = consumeDashedIdent(args);
-
-    if (!args.size()) {
-        range = rangeCopy;
-        auto anchor = CSSAnchorValue::create(WTFMove(anchorElement), WTFMove(anchorSide), nullptr);
-        return CSSPrimitiveValue::create(anchor);
-    }
-
-    if (!consumeCommaIncludingWhitespace(args))
-        return nullptr;
-
-    auto fallback = consumeLengthPercentage(args, context, ValueRange::All, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid, NegativePercentagePolicy::Allow, AnchorPolicy::Allow);
-    if (!fallback || args.size())
-        return nullptr;
-
-    range = rangeCopy;
-    auto anchor = CSSAnchorValue::create(WTFMove(anchorElement), WTFMove(anchorSide), WTFMove(fallback));
-    return CSSPrimitiveValue::create(anchor);
-}
-
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

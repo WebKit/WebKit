@@ -179,7 +179,6 @@ static unsigned sortPriority(CSSUnitType unit)
     case CSSUnitType::CSS_X:            return 63;
 
     // Non-numeric types are not supported.
-    case CSSUnitType::CSS_ANCHOR:
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_CALC:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_ANGLE:

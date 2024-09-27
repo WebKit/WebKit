@@ -200,7 +200,6 @@ constexpr NumericIdentity toNumericIdentity(const NonCanonicalDimension& dimensi
     case CSSUnitType::CSS_HZ:
     case CSSUnitType::CSS_DPPX:
     case CSSUnitType::CSS_FR:
-    case CSSUnitType::CSS_ANCHOR:
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_CALC:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_ANGLE:

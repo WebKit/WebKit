@@ -103,8 +103,6 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
 {
     using enum CSSValue::ClassType;
     switch (m_classType) {
-    case Anchor:
-        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSAnchorValue>(*this));
     case AspectRatio:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSAspectRatioValue>(*this));
     case BackgroundRepeat:

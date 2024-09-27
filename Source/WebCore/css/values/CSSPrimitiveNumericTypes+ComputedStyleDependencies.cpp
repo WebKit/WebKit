@@ -130,7 +130,6 @@ void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies, C
     case CSSUnitType::CSS_PROPERTY_ID:
     case CSSUnitType::CSS_VALUE_ID:
     case CSSUnitType::CSS_CALC:
-    case CSSUnitType::CSS_ANCHOR:
         break;
     }
 }

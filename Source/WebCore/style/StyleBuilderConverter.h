@@ -280,9 +280,6 @@ inline WebCore::Length BuilderConverter::convertLength(const BuilderState& build
     if (primitiveValue.isCalculatedPercentageWithLength())
         return WebCore::Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }));
 
-    if (primitiveValue.isAnchor())
-        return AnchorPositionEvaluator::resolveAnchorValue(builderState, *primitiveValue.cssAnchorValue());
-
     ASSERT_NOT_REACHED();
     return WebCore::Length(0, LengthType::Fixed);
 }

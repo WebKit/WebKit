@@ -32,6 +32,7 @@
 #include "CSSParserContext.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include "CalculationCategory.h"
 #include "Length.h"
 
