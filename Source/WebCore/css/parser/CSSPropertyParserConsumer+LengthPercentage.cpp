@@ -177,18 +177,6 @@ RefPtr<CSSPrimitiveValue> consumeLengthPercentage(CSSParserTokenRange& range, co
         .unitlessZero = unitlessZero
     };
 
-    // FIXME: 'anchor' should be handled and exposed as a calc() function type.
-    auto rangeCopy = range;
-    if (rangeCopy.peek().functionId() == CSSValueAnchor) {
-        if (options.anchorPolicy == AnchorPolicy::Allow) {
-            if (auto anchor = consumeAnchor(rangeCopy, context)) {
-                range = rangeCopy;
-                return anchor.releaseNonNull();
-            }
-        }
-        return nullptr;
-    }
-
     return CSSPrimitiveValueResolver<CSS::LengthPercentage>::consumeAndResolve(range, context, { }, { }, options);
 }
 
@@ -202,18 +190,6 @@ RefPtr<CSSPrimitiveValue> consumeLengthPercentage(CSSParserTokenRange& range, co
         .unitless = unitless,
         .unitlessZero = unitlessZero
     };
-
-    // FIXME: 'anchor' should be handled and exposed as a calc() function type.
-    auto rangeCopy = range;
-    if (rangeCopy.peek().functionId() == CSSValueAnchor) {
-        if (options.anchorPolicy == AnchorPolicy::Allow) {
-            if (auto anchor = consumeAnchor(rangeCopy, context)) {
-                range = rangeCopy;
-                return anchor.releaseNonNull();
-            }
-        }
-        return nullptr;
-    }
 
     return CSSPrimitiveValueResolver<CSS::LengthPercentage>::consumeAndResolve(range, context, { }, { }, options);
 }

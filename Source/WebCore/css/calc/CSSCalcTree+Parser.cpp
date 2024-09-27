@@ -706,7 +706,7 @@ static std::optional<TypedChild> consumeAnchor(CSSParserTokenRange& tokens, int 
 {
     // <anchor()> = anchor( <anchor-element>? && <anchor-side>, <length-percentage>? )
 
-    if (!state.parserContext.propertySettings.cssAnchorPositioningEnabled)
+    if (state.parserOptions.propertyOptions.anchorPolicy != AnchorPolicy::Allow)
         return { };
 
     auto anchorElement = CSSPropertyParserHelpers::consumeDashedIdentRaw(tokens);
@@ -727,8 +727,9 @@ static std::optional<TypedChild> consumeAnchor(CSSParserTokenRange& tokens, int 
         return { };
 
     if (anchorElement.isNull())
-        anchorElement = CSSPropertyParserHelpers::consumeCustomIdentRaw(tokens);
+        anchorElement = CSSPropertyParserHelpers::consumeDashedIdentRaw(tokens);
 
+    auto type = Type::makeLength();
     std::optional<Child> fallback;
 
     if (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(tokens)) {
@@ -746,17 +747,25 @@ static std::optional<TypedChild> consumeAnchor(CSSParserTokenRange& tokens, int 
         auto typedFallback = consumeTypedFallback();
         if (!typedFallback)
             return { };
-        if (typedFallback->type.length != 1 && typedFallback->type.percent != 1)
+
+        auto category = typedFallback->type.calculationCategory();
+        if (!category)
+            return { };
+        if (*category != Calculation::Category::Length && *category != Calculation::Category::LengthPercentage)
             return { };
 
         fallback = WTFMove(typedFallback->child);
+        type.percentHint = Type::determinePercentHint(*category);
     }
 
     state.requiresConversionData = true;
 
-    auto anchor = Anchor { .elementName = AtomString { anchorElement }, .side = *anchorSide, .fallback = WTFMove(fallback) };
-
-    return TypedChild { makeChild(WTFMove(anchor), Type::makeLength()), Type::makeLength() };
+    auto anchor = Anchor {
+        .elementName = AtomString { anchorElement },
+        .side = *anchorSide,
+        .fallback = WTFMove(fallback)
+    };
+    return TypedChild { makeChild(WTFMove(anchor), type), type };
 }
 
 std::optional<TypedChild> parseCalcFunction(CSSParserTokenRange& tokens, CSSValueID functionID, int depth, ParserState& state)

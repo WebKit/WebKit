@@ -376,7 +376,7 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<P
     serializeCalculationTree(builder, fn->to, state);
 }
 
-void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<Anchor>& anchor, SerializationState&)
+void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<Anchor>& anchor, SerializationState& state)
 {
     if (!anchor->elementName.isNull()) {
         serializeIdentifier(anchor->elementName, builder);
@@ -394,11 +394,13 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<A
     if (anchor->fallback) {
         builder.append(", "_s);
 
-        if (std::holds_alternative<IndirectNode<Sum>>(*anchor->fallback))
-            builder.append("calc"_s);
-
-        SerializationState state { };
-        serializeCalculationTree(builder, *anchor->fallback, state);
+        WTF::switchOn(*anchor->fallback,
+            [&](Leaf auto& op) {
+                serializeCalculationTree(builder, op, state);
+            }, [&](auto& op) {
+                serializeMathFunction(builder, op, state);
+            }
+        );
     }
 }
 
