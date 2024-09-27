@@ -1767,4 +1767,17 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncFromFastFillWithEmpty, (JSGlobalOb
     return JSValue::encode(jsUndefined());
 }
 
+JSC_DEFINE_HOST_FUNCTION(arrayPrototPrivateFuncArraySpeciesWatchpointIsValid, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    ASSERT(callFrame->argumentCount() == 1);
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    bool isValidSpecies = arraySpeciesWatchpointIsValid(vm, jsCast<JSArray*>(callFrame->uncheckedArgument(0)));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    return JSValue::encode(jsBoolean(isValidSpecies));
+}
+
 } // namespace JSC

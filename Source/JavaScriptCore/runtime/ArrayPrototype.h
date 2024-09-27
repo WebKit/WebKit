@@ -52,5 +52,6 @@ JSC_DECLARE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy);
 JSC_DECLARE_HOST_FUNCTION(arrayProtoPrivateFuncAppendMemcpy);
 JSC_DECLARE_HOST_FUNCTION(arrayProtoPrivateFuncFromFastFillWithUndefined);
 JSC_DECLARE_HOST_FUNCTION(arrayProtoPrivateFuncFromFastFillWithEmpty);
+JSC_DECLARE_HOST_FUNCTION(arrayPrototPrivateFuncArraySpeciesWatchpointIsValid);
 
 } // namespace JSC

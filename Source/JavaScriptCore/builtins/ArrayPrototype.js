@@ -402,7 +402,8 @@ function concat(first)
 
     if (@argumentCount() === 0
         && @isJSArray(this)
-        && @tryGetByIdWithWellKnownSymbol(this, "isConcatSpreadable") === @undefined) {
+        && @tryGetByIdWithWellKnownSymbol(this, "isConcatSpreadable") === @undefined
+        && @arraySpeciesWatchpointIsValid(this)) {
 
         var result = @arrayFromFastFillWithEmpty(@Array, this);
         if (result)
