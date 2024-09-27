@@ -1708,6 +1708,9 @@
 /* Validation message for input form controls with value higher than allowed maximum */
 "Value must be less than or equal to %s" = "Value must be less than or equal to %s";
 
+/* Title for View Spatial action button while in fullscreen */
+"View Spatial" = "View Spatial";
+
 /* Title for View Spatial Photo action button */
 "View Spatial Photo" = "View Spatial Photo";
 

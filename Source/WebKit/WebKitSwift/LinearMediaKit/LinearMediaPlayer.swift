@@ -49,6 +49,9 @@ private class SwiftOnlyData: NSObject {
     @Published var presentationMode: PresentationMode = .inline
     @Published var presentationState: WKSLinearMediaPresentationState = .inline
 
+    // Will be set to true if we entered via Docking Environment button (inline) or false otherwise.
+    var enteredFromInline: Bool = false
+
     var spatialVideoMetadata: WKSLinearMediaSpatialVideoMetadata?
     var videoReceiverEndpointObserver: Cancellable?
 }
@@ -237,7 +240,7 @@ extension WKSLinearMediaPlayer {
 
     private func maybeCreateSpatialEntity() {
 #if canImport(LinearMediaKit, _version: 211.60.3)
-        if swiftOnlyData.peculiarEntity != nil { return }
+        if swiftOnlyData.enteredFromInline || swiftOnlyData.peculiarEntity != nil { return }
         guard let metadata = swiftOnlyData.spatialVideoMetadata else { return }
         swiftOnlyData.peculiarEntity = ContentType.makeSpatialEntity(videoMetadata: metadata.metadata, extruded: true)
         swiftOnlyData.peculiarEntity?.screenMode = spatialImmersive ? .immersive : .portal;
@@ -633,6 +636,7 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
 
         switch presentationState {
         case .inline:
+            swiftOnlyData.enteredFromInline = true
             swiftOnlyData.presentationState = .enteringFullscreen
         case .enteringFullscreen, .exitingFullscreen, .fullscreen:
             break
@@ -671,8 +675,8 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     public func didCompleteExitFullscreen(result: Result<Void, any Error>) {
         let completionHandler = exitFullscreenCompletionHandler
         exitFullscreenCompletionHandler = nil
-
-        maybeClearSpatialEntity();
+        maybeClearSpatialEntity()
+        swiftOnlyData.enteredFromInline = false
 
         switch result {
         case .success():
@@ -688,8 +692,12 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
         Logger.linearMediaPlayer.log("\(#function)")
 
 #if canImport(LinearMediaKit, _version: 211.60.3)
-        if swiftOnlyData.spatialVideoMetadata != nil {
-            return swiftOnlyData.peculiarEntity;
+        // This gets called from maybeCreateSpatialEntity through the KVO when setting
+        // peculiarEntity. As such, we can't check if the peculiarEntity is set or not.
+        // We will return nil here on the first call and will get call back again once
+        // peculiarEntity is set.
+        if swiftOnlyData.spatialVideoMetadata != nil && !swiftOnlyData.enteredFromInline {
+            return swiftOnlyData.peculiarEntity
         }
 #endif
         if let captionLayer {

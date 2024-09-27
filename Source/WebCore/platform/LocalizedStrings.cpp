@@ -1590,4 +1590,11 @@ String contextMenuItemTagCopyLinkWithHighlight()
     return WEB_UI_STRING("Copy Link with Highlight", "Copy link with highlight context menu item");
 }
 
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+String fullscreenControllerViewSpatial()
+{
+    return WEB_UI_STRING("View Spatial", "Title for View Spatial action button while in fullscreen");
+}
+#endif
+
 } // namespace WebCore
