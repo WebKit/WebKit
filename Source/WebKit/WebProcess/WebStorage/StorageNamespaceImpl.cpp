@@ -100,10 +100,4 @@ void StorageNamespaceImpl::setSessionIDForTesting(PAL::SessionID)
     ASSERT_NOT_REACHED();
 }
 
-PageIdentifier StorageNamespaceImpl::sessionStoragePageID() const
-{
-    ASSERT(m_storageType == StorageType::Session);
-    return *m_sessionPageID;
-}
-
 } // namespace WebKit
