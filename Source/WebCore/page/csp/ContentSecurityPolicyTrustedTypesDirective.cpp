@@ -123,6 +123,7 @@ void ContentSecurityPolicyTrustedTypesDirective::parse(const String& value)
             } else {
                 auto policy = String({ beginPolicy, buffer.position() });
                 directiveList().policy().reportInvalidTrustedTypesPolicy(policy);
+                return;
             }
 
             ASSERT(buffer.atEnd() || isASCIIWhitespace(*buffer));
