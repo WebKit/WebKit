@@ -1,0 +1,5 @@
+
+PASS Setting duration greater than zero is ignored on a model with empty source
+PASS Setting duration greater than zero is ignored on a model that has no animation
+PASS Checking <model> source's currentTime value after updating
+

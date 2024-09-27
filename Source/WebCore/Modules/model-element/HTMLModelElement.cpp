@@ -309,6 +309,12 @@ void HTMLModelElement::createModelPlayer()
         return;
     }
 
+#if ENABLE(MODEL_PROCESS)
+    m_modelPlayer->setAutoplay(autoplay());
+    m_modelPlayer->setLoop(loop());
+    m_modelPlayer->setPlaybackRate(m_playbackRate, [&](double) { });
+#endif
+
     // FIXME: We need to tell the player if the size changes as well, so passing this
     // in with load probably doesn't make sense.
     m_modelPlayer->load(*m_model, size);
@@ -484,7 +490,14 @@ void HTMLModelElement::attributeChanged(const QualifiedName& name, const AtomStr
     else if (name == interactiveAttr) {
         if (m_modelPlayer)
             m_modelPlayer->setInteractionEnabled(isInteractive());
-    } else
+    }
+#if ENABLE(MODEL_PROCESS)
+    else if (name == autoplayAttr)
+        updateAutoplay();
+    else if (name == loopAttr)
+        updateLoop();
+#endif
+    else
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
@@ -595,6 +608,87 @@ void HTMLModelElement::setCamera(HTMLModelElementCamera camera, DOMPromiseDeferr
 }
 
 // MARK: - Animations support.
+
+#if ENABLE(MODEL_PROCESS)
+void HTMLModelElement::setPlaybackRate(double playbackRate)
+{
+    if (m_playbackRate == playbackRate)
+        return;
+
+    m_playbackRate = playbackRate;
+
+    if (m_modelPlayer)
+        m_modelPlayer->setPlaybackRate(playbackRate, [&](double) { });
+}
+
+double HTMLModelElement::duration() const
+{
+    return m_modelPlayer ? m_modelPlayer->duration() : 0;
+}
+
+bool HTMLModelElement::paused() const
+{
+    return m_modelPlayer ? m_modelPlayer->paused() : true;
+}
+
+void HTMLModelElement::play(DOMPromiseDeferred<void>&& promise)
+{
+    setPaused(false, WTFMove(promise));
+}
+
+void HTMLModelElement::pause(DOMPromiseDeferred<void>&& promise)
+{
+    setPaused(true, WTFMove(promise));
+}
+
+void HTMLModelElement::setPaused(bool paused, DOMPromiseDeferred<void>&& promise)
+{
+    if (!m_modelPlayer) {
+        promise.reject();
+        return;
+    }
+
+    m_modelPlayer->setPaused(paused, [promise = WTFMove(promise)] (bool succeeded) mutable {
+        if (succeeded)
+            promise.resolve();
+        else
+            promise.reject();
+    });
+}
+
+bool HTMLModelElement::autoplay() const
+{
+    return hasAttributeWithoutSynchronization(HTMLNames::autoplayAttr);
+}
+
+void HTMLModelElement::updateAutoplay()
+{
+    if (m_modelPlayer)
+        m_modelPlayer->setAutoplay(autoplay());
+}
+
+bool HTMLModelElement::loop() const
+{
+    return hasAttributeWithoutSynchronization(HTMLNames::loopAttr);
+}
+
+void HTMLModelElement::updateLoop()
+{
+    if (m_modelPlayer)
+        m_modelPlayer->setLoop(loop());
+}
+
+double HTMLModelElement::currentTime() const
+{
+    return m_modelPlayer ? m_modelPlayer->currentTime().seconds() : 0;
+}
+
+void HTMLModelElement::setCurrentTime(double currentTime)
+{
+    if (m_modelPlayer)
+        m_modelPlayer->setCurrentTime(Seconds(currentTime), [&]() { });
+}
+#endif // ENABLE(MODEL_PROCESS)
 
 void HTMLModelElement::isPlayingAnimation(IsPlayingAnimationPromise&& promise)
 {

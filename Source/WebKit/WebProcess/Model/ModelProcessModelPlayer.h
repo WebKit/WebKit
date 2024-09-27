@@ -55,11 +55,13 @@ private:
     WebCore::ModelPlayerClient* client() { return m_client.get(); }
 
     template<typename T> void send(T&& message);
+    template<typename T, typename C> void sendWithAsyncReply(T&& message, C&& completionHandler);
 
     // Messages
     void didCreateLayer(WebCore::LayerHostingContextIdentifier);
     void didFinishLoading(const WebCore::FloatPoint3D&, const WebCore::FloatPoint3D&);
     void didUpdateEntityTransform(const WebCore::TransformationMatrix&);
+    void didUpdateAnimationPlaybackState(bool isPaused, double playbackRate, Seconds duration, Seconds currentTime, MonotonicTime clockTimestamp);
 
     // WebCore::ModelPlayer overrides.
     WebCore::ModelPlayerIdentifier identifier() const final { return m_id; }
@@ -86,12 +88,31 @@ private:
     void isMuted(CompletionHandler<void(std::optional<bool>&&)>&&) final;
     void setIsMuted(bool, CompletionHandler<void(bool success)>&&) final;
     Vector<RetainPtr<id>> accessibilityChildren() final;
+    void setAutoplay(bool) final;
+    void setLoop(bool) final;
+    void setPlaybackRate(double, CompletionHandler<void(double effectivePlaybackRate)>&&) final;
+    double duration() const final;
+    bool paused() const final;
+    void setPaused(bool, CompletionHandler<void(bool succeeded)>&&) final;
+    Seconds currentTime() const final;
+    void setCurrentTime(Seconds, CompletionHandler<void()>&&) final;
 
     WebCore::ModelPlayerIdentifier m_id;
     WeakPtr<WebPage> m_page;
     WeakPtr<WebCore::ModelPlayerClient> m_client;
 
     std::optional<WebCore::LayerHostingContextIdentifier> m_layerHostingContextIdentifier;
+
+    bool m_autoplay { false };
+    bool m_loop { false };
+    double m_requestedPlaybackRate { 1.0 };
+    std::optional<double> m_effectivePlaybackRate;
+    Seconds m_duration { 0_s };
+    bool m_paused { true };
+    std::optional<Seconds> m_pendingCurrentTime;
+    std::optional<MonotonicTime> m_clockTimestampOfLastCurrentTimeSet;
+    std::optional<Seconds> m_lastCachedCurrentTime;
+    std::optional<MonotonicTime> m_lastCachedClockTimestamp;
 };
 
 }

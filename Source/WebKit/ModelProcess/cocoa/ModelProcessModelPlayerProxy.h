@@ -46,6 +46,7 @@
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS WKModelProcessModelLayer;
+OBJC_CLASS WKModelProcessModelPlayerProxyObjCAdapter;
 OBJC_CLASS WKSRKEntity;
 
 namespace WebCore {
@@ -79,6 +80,7 @@ public:
     void updateTransform();
     void updateOpacity();
     void startAnimating();
+    void animationPlaybackStateDidUpdate();
 
     // Messages
     void createLayer();
@@ -116,6 +118,14 @@ public:
     void isMuted(CompletionHandler<void(std::optional<bool>&&)>&&) final;
     void setIsMuted(bool, CompletionHandler<void(bool success)>&&) final;
     Vector<RetainPtr<id>> accessibilityChildren() final;
+    void setAutoplay(bool) final;
+    void setLoop(bool) final;
+    void setPlaybackRate(double, CompletionHandler<void(double effectivePlaybackRate)>&&) final;
+    double duration() const final;
+    bool paused() const final;
+    void setPaused(bool, CompletionHandler<void(bool succeeded)>&&) final;
+    Seconds currentTime() const final;
+    void setCurrentTime(Seconds, CompletionHandler<void()>&&) final;
 
 private:
     ModelProcessModelPlayerProxy(ModelProcessModelPlayerManagerProxy&, WebCore::ModelPlayerIdentifier, Ref<IPC::Connection>&&);
@@ -132,6 +142,7 @@ private:
     RefPtr<WebCore::REModel> m_model;
     RetainPtr<WKSRKEntity> m_modelRKEntity;
     REPtr<RESceneRef> m_scene;
+    RetainPtr<WKModelProcessModelPlayerProxyObjCAdapter> m_objCAdapter;
 
     WebCore::Color m_backgroundColor;
     simd_float3 m_originalBoundingBoxCenter { simd_make_float3(0, 0, 0) };
@@ -140,6 +151,10 @@ private:
     float m_yaw { 0 };
 
     RESRT m_transformSRT; // SRT=Scaling/Rotation/Translation. This is stricter than a WebCore::TransformationMatrix.
+
+    bool m_autoplay { false };
+    bool m_loop { false };
+    double m_playbackRate { 1.0 };
 };
 
 } // namespace WebKit

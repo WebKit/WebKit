@@ -126,6 +126,18 @@ public:
 
     bool isInteractive() const;
 
+#if ENABLE(MODEL_PROCESS)
+    double playbackRate() const { return m_playbackRate; }
+    void setPlaybackRate(double);
+    double duration() const;
+    bool paused() const;
+    void play(DOMPromiseDeferred<void>&&);
+    void pause(DOMPromiseDeferred<void>&&);
+    void setPaused(bool, DOMPromiseDeferred<void>&&);
+    double currentTime() const;
+    void setCurrentTime(double);
+#endif
+
 #if PLATFORM(COCOA)
     Vector<RetainPtr<id>> accessibilityChildren();
 #endif
@@ -188,6 +200,13 @@ private:
 
     LayoutSize contentSize() const;
 
+#if ENABLE(MODEL_PROCESS)
+    bool autoplay() const;
+    void updateAutoplay();
+    bool loop() const;
+    void updateLoop();
+#endif
+
     URL m_sourceURL;
     CachedResourceHandle<CachedRawResource> m_resource;
     SharedBufferBuilder m_data;
@@ -202,6 +221,7 @@ private:
     Ref<DOMMatrixReadOnly> m_entityTransform;
     Ref<DOMPointReadOnly> m_boundingBoxCenter;
     Ref<DOMPointReadOnly> m_boundingBoxExtents;
+    double m_playbackRate { 1.0 };
 #endif
 };
 

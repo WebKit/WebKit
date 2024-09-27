@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> animations playback</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<script src="resources/model-utils.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t);
+
+    await model.play().then(t.unreached_func("Should have rejected play action")).catch(error => {
+        assert_not_equals(error, null, "Model with empty source cannot play");
+    });
+}, `<model> with empty source should fail play action`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/heart.usdz");
+    await model.ready;
+
+    await model.play().then(t.unreached_func("Should have rejected play action")).catch(error => {
+        assert_not_equals(error, null, "Model with no animation cannot play");
+    });
+}, `<model> source with no animation should fail play action`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/stopwatch-60s.usdz");
+    await model.ready;
+
+    assert_true(model.paused, "Model animation is initially paused");
+    await model.play();
+    assert_false(model.paused, "model.paused should be false after playing");
+    await model.pause();
+    assert_true(model.paused, "model.paused should be true after pausing");
+}, `<model> source with animation should be able to play/pause with expected paused states afterwards`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t);
+    model.autoplay = true;
+    source.src = "resources/stopwatch-60s.usdz";
+    await model.ready;
+
+    assert_false(model.paused);
+}, `<model> source with autoplay=true should play on load`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t);
+    source.src = "resources/stopwatch-60s.usdz";
+    await model.ready;
+
+    assert_true(model.paused);
+    model.autoplay = true;
+    assert_true(model.paused);
+}, `Paused <model> should stay paused after changing autoplay=true`);
+
+</script>
+</body>

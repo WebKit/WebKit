@@ -35,7 +35,6 @@
 #import "ModelProcessModelPlayerMessages.h"
 #import "RealityKitBridging.h"
 #import "WKModelProcessModelLayer.h"
-#import "WebKitSwiftSoftLink.h"
 #import <RealitySystemSupport/RealitySystemSupport.h>
 #import <SurfBoardServices/SurfBoardServices.h>
 #import <WebCore/Color.h>
@@ -51,9 +50,37 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MathExtras.h>
+#import <wtf/NakedPtr.h>
+#import <wtf/NakedRef.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/TextStream.h>
+
+#import "WebKitSwiftSoftLink.h"
+
+@interface WKModelProcessModelPlayerProxyObjCAdapter : NSObject<WKSRKEntityDelegate>
+- (instancetype)initWithModelProcessModelPlayerProxy:(NakedRef<WebKit::ModelProcessModelPlayerProxy>)modelProcessModelPlayerProxy;
+@end
+
+@implementation WKModelProcessModelPlayerProxyObjCAdapter {
+    NakedPtr<WebKit::ModelProcessModelPlayerProxy> _modelProcessModelPlayerProxy;
+}
+
+- (instancetype)initWithModelProcessModelPlayerProxy:(NakedRef<WebKit::ModelProcessModelPlayerProxy>)modelProcessModelPlayerProxy
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _modelProcessModelPlayerProxy = modelProcessModelPlayerProxy.ptr();
+    return self;
+}
+
+- (void)entityAnimationPlaybackStateDidUpdate:(id)entity
+{
+    _modelProcessModelPlayerProxy->animationPlaybackStateDidUpdate();
+}
+
+@end
 
 namespace WebKit {
 
@@ -70,6 +97,7 @@ ModelProcessModelPlayerProxy::ModelProcessModelPlayerProxy(ModelProcessModelPlay
     , m_manager(manager)
 {
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy initialized id=%" PRIu64, this, identifier.toUInt64());
+    m_objCAdapter = adoptNS([[WKModelProcessModelPlayerProxyObjCAdapter alloc] initWithModelProcessModelPlayerProxy:*this]);
 }
 
 ModelProcessModelPlayerProxy::~ModelProcessModelPlayerProxy()
@@ -264,9 +292,20 @@ void ModelProcessModelPlayerProxy::startAnimating()
     if (!m_model || !m_layer)
         return;
 
-    [m_modelRKEntity startAnimating];
+    [m_modelRKEntity setUpAnimationWithAutoPlay:m_autoplay];
+    [m_modelRKEntity setLoop:m_loop];
+    [m_modelRKEntity setPlaybackRate:m_playbackRate];
 }
 
+void ModelProcessModelPlayerProxy::animationPlaybackStateDidUpdate()
+{
+    bool isPaused = paused();
+    float playbackRate = [m_modelRKEntity playbackRate];
+    NSTimeInterval duration = this->duration();
+    NSTimeInterval currentTime = this->currentTime().seconds();
+    RELEASE_LOG_DEBUG(ModelElement, "%p - ModelProcessModelPlayerProxy: did update animation playback state: paused: %d, playbackRate: %f, duration: %f, currentTime: %f", this, isPaused, playbackRate, duration, currentTime);
+    send(Messages::ModelProcessModelPlayer::DidUpdateAnimationPlaybackState(isPaused, playbackRate, Seconds(duration), Seconds(currentTime), MonotonicTime::now()));
+}
 // MARK: - WebCore::RELoaderClient
 
 static RECALayerService *webDefaultLayerService(void)
@@ -283,6 +322,7 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
     m_model = WTFMove(model);
     if (m_model->rootEntity())
         m_modelRKEntity = adoptNS([allocWKSRKEntityInstance() initWithCoreEntity:m_model->rootEntity()]);
+    [m_modelRKEntity setDelegate:m_objCAdapter.get()];
 
     m_originalBoundingBoxExtents = [m_modelRKEntity boundingBoxExtents];
     m_originalBoundingBoxCenter = [m_modelRKEntity boundingBoxCenter];
@@ -483,6 +523,51 @@ void ModelProcessModelPlayerProxy::setIsMuted(bool isMuted, CompletionHandler<vo
 Vector<RetainPtr<id>> ModelProcessModelPlayerProxy::accessibilityChildren()
 {
     return { };
+}
+
+void ModelProcessModelPlayerProxy::setAutoplay(bool autoplay)
+{
+    m_autoplay = autoplay;
+}
+
+void ModelProcessModelPlayerProxy::setLoop(bool loop)
+{
+    m_loop = loop;
+    [m_modelRKEntity setLoop:m_loop];
+}
+
+void ModelProcessModelPlayerProxy::setPlaybackRate(double playbackRate, CompletionHandler<void(double effectivePlaybackRate)>&& completionHandler)
+{
+    m_playbackRate = playbackRate;
+    [m_modelRKEntity setPlaybackRate:m_playbackRate];
+    completionHandler(m_modelRKEntity ? [m_modelRKEntity playbackRate] : 1.0);
+}
+
+double ModelProcessModelPlayerProxy::duration() const
+{
+    return [m_modelRKEntity duration];
+}
+
+bool ModelProcessModelPlayerProxy::paused() const
+{
+    return [m_modelRKEntity paused];
+}
+
+void ModelProcessModelPlayerProxy::setPaused(bool paused, CompletionHandler<void(bool succeeded)>&& completionHandler)
+{
+    [m_modelRKEntity setPaused:paused];
+    completionHandler(paused == [m_modelRKEntity paused]);
+}
+
+Seconds ModelProcessModelPlayerProxy::currentTime() const
+{
+    return Seconds([m_modelRKEntity currentTime]);
+}
+
+void ModelProcessModelPlayerProxy::setCurrentTime(Seconds currentTime, CompletionHandler<void()>&& completionHandler)
+{
+    [m_modelRKEntity setCurrentTime:currentTime.seconds()];
+    completionHandler();
 }
 
 } // namespace WebKit
