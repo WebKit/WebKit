@@ -71,6 +71,7 @@ namespace WebKit {
 class BrowsingContextGroup;
 class DrawingAreaProxy;
 class FrameProcess;
+class FrameState;
 class RemotePageProxy;
 class SuspendedPageProxy;
 class UserData;
@@ -80,7 +81,6 @@ class WebPageProxy;
 class WebProcessProxy;
 class WebsiteDataStore;
 
-struct BackForwardListItemState;
 struct FrameInfoData;
 struct NavigationActionData;
 struct URLSchemeTaskParameters;
@@ -181,7 +181,7 @@ private:
     void startURLSchemeTask(IPC::Connection&, URLSchemeTaskParameters&&);
     void backForwardGoToItem(const WebCore::BackForwardItemIdentifier&, CompletionHandler<void(const WebBackForwardListCounts&)>&&);
     void decidePolicyForNavigationActionSync(NavigationActionData&&, CompletionHandler<void(PolicyDecision&&)>&&);
-    void backForwardAddItem(WebCore::FrameIdentifier, BackForwardListItemState&&);
+    void backForwardAddItem(WebCore::FrameIdentifier, FrameState&&);
     void didDestroyNavigation(WebCore::NavigationIdentifier);
 #if USE(QUICK_LOOK)
     void requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&&);

@@ -55,6 +55,13 @@ header: "SessionState.h"
 
     std::optional<WebKit::HTTPBody> httpBody;
 
+    WebCore::BackForwardItemIdentifier identifier;
+    bool hasCachedPage;
+    String title;
+    WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy;
+    RefPtr<WebCore::SerializedScriptValue> sessionStateObject;
+    bool wasCreatedByJSWithoutUserInteraction;
+
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatRect exposedContentRect;
     WebCore::IntRect unobscuredContentRect;
@@ -68,25 +75,7 @@ header: "SessionState.h"
     [Validator='WebKit::FrameState::validateDocumentState(*m_documentState)'] Vector<AtomString> m_documentState;
 };
 
-[CustomHeader] struct WebKit::PageState {
-    String title;
-    WebKit::FrameState mainFrameState;
-    WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy;
-    RefPtr<WebCore::SerializedScriptValue> sessionStateObject;
-    bool wasCreatedByJSWithoutUserInteraction;
-};
-
-[CustomHeader] struct WebKit::BackForwardListItemState {
-    WebCore::BackForwardItemIdentifier identifier;
-
-    WebKit::PageState pageState;
-    bool hasCachedPage;
-#if PLATFORM(COCOA) || PLATFORM(GTK)
-    [NotSerialized] RefPtr<WebKit::ViewSnapshot> snapshot;
-#endif
-};
-
 [CustomHeader] struct WebKit::BackForwardListState {
-    Vector<WebKit::BackForwardListItemState> items;
+    Vector<WebKit::FrameState> items;
     std::optional<uint32_t> currentIndex;
 };

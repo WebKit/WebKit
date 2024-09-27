@@ -39,26 +39,26 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<WebBackForwardListItem> WebBackForwardListItem::create(BackForwardListItemState&& backForwardListItemState, WebPageProxyIdentifier pageID)
+Ref<WebBackForwardListItem> WebBackForwardListItem::create(FrameState&& mainFrameState, WebPageProxyIdentifier pageID)
 {
     RELEASE_ASSERT(RunLoop::isMain());
-    return adoptRef(*new WebBackForwardListItem(WTFMove(backForwardListItemState), pageID));
+    return adoptRef(*new WebBackForwardListItem(WTFMove(mainFrameState), pageID));
 }
 
-WebBackForwardListItem::WebBackForwardListItem(BackForwardListItemState&& backForwardListItemState, WebPageProxyIdentifier pageID)
-    : m_itemState(WTFMove(backForwardListItemState))
+WebBackForwardListItem::WebBackForwardListItem(FrameState&& mainFrameState, WebPageProxyIdentifier pageID)
+    : m_mainFrameState(WTFMove(mainFrameState))
     , m_pageID(pageID)
-    , m_lastProcessIdentifier(m_itemState.identifier.processIdentifier())
+    , m_lastProcessIdentifier(m_mainFrameState.identifier.processIdentifier())
 {
-    auto result = allItems().add(m_itemState.identifier, *this);
+    auto result = allItems().add(m_mainFrameState.identifier, *this);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 WebBackForwardListItem::~WebBackForwardListItem()
 {
     RELEASE_ASSERT(RunLoop::isMain());
-    ASSERT(allItems().get(m_itemState.identifier) == this);
-    allItems().remove(m_itemState.identifier);
+    ASSERT(allItems().get(m_mainFrameState.identifier) == this);
+    allItems().remove(m_mainFrameState.identifier);
     removeFromBackForwardCache();
 }
 
@@ -118,8 +118,8 @@ bool WebBackForwardListItem::itemIsInSameDocument(const WebBackForwardListItem& 
 
     // The following logic must be kept in sync with WebCore::HistoryItem::shouldDoSameDocumentNavigationTo().
 
-    const FrameState& mainFrameState = m_itemState.pageState.mainFrameState;
-    const FrameState& otherMainFrameState = other.m_itemState.pageState.mainFrameState;
+    const auto& mainFrameState = m_mainFrameState;
+    const auto& otherMainFrameState = other.m_mainFrameState;
 
     if (mainFrameState.stateObjectData || otherMainFrameState.stateObjectData)
         return mainFrameState.documentSequenceNumber == otherMainFrameState.documentSequenceNumber;
@@ -156,8 +156,8 @@ bool WebBackForwardListItem::itemIsClone(const WebBackForwardListItem& other)
     if (this == &other)
         return false;
 
-    const FrameState& mainFrameState = m_itemState.pageState.mainFrameState;
-    const FrameState& otherMainFrameState = other.m_itemState.pageState.mainFrameState;
+    const auto& mainFrameState = m_mainFrameState;
+    const auto& otherMainFrameState = other.m_mainFrameState;
 
     if (mainFrameState.itemSequenceNumber != otherMainFrameState.itemSequenceNumber)
         return false;

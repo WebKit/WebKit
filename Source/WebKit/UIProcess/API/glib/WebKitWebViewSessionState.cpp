@@ -207,19 +207,19 @@ static inline void encodeFrameState(GVariantBuilder* sessionBuilder, const Frame
     g_variant_builder_close(sessionBuilder);
 }
 
-static inline void encodePageState(GVariantBuilder* sessionBuilder, const PageState& pageState)
+static inline void encodeMainFrameState(GVariantBuilder* sessionBuilder, const FrameState& mainFrameState)
 {
-    g_variant_builder_add(sessionBuilder, "s", pageState.title.utf8().data());
+    g_variant_builder_add(sessionBuilder, "s", mainFrameState.title.utf8().data());
     g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE(FRAME_STATE_TYPE_STRING_V1));
-    encodeFrameState(sessionBuilder, pageState.mainFrameState);
+    encodeFrameState(sessionBuilder, mainFrameState);
     g_variant_builder_close(sessionBuilder);
-    g_variant_builder_add(sessionBuilder, "u", toExternalURLsPolicy(pageState.shouldOpenExternalURLsPolicy));
+    g_variant_builder_add(sessionBuilder, "u", toExternalURLsPolicy(mainFrameState.shouldOpenExternalURLsPolicy));
 }
 
-static inline void encodeBackForwardListItemState(GVariantBuilder* sessionBuilder, const BackForwardListItemState& item)
+static inline void encodeBackForwardListItemState(GVariantBuilder* sessionBuilder, const FrameState& mainFrameState)
 {
     g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE(BACK_FORWARD_LIST_ITEM_TYPE_STRING_V2));
-    encodePageState(sessionBuilder, item.pageState);
+    encodeMainFrameState(sessionBuilder, mainFrameState);
     g_variant_builder_close(sessionBuilder);
 }
 
@@ -367,11 +367,11 @@ static inline void decodeBackForwardListItemStateV1(GVariantIter* backForwardLis
     GVariant* frameStateVariant;
     unsigned shouldOpenExternalURLsPolicy;
     while (g_variant_iter_loop(backForwardListStateIter, BACK_FORWARD_LIST_ITEM_FORMAT_STRING_V1, &identifier, &title, &frameStateVariant, &shouldOpenExternalURLsPolicy)) {
-        BackForwardListItemState state;
-        state.pageState.title = String::fromUTF8(title);
-        decodeFrameState(frameStateVariant, state.pageState.mainFrameState);
-        state.pageState.shouldOpenExternalURLsPolicy = toWebCoreExternalURLsPolicy(shouldOpenExternalURLsPolicy);
-        backForwardListState.items.append(WTFMove(state));
+        FrameState mainFrameState;
+        mainFrameState.title = String::fromUTF8(title);
+        decodeFrameState(frameStateVariant, mainFrameState);
+        mainFrameState.shouldOpenExternalURLsPolicy = toWebCoreExternalURLsPolicy(shouldOpenExternalURLsPolicy);
+        backForwardListState.items.append(WTFMove(mainFrameState));
     }
 }
 
@@ -391,11 +391,11 @@ static inline void decodeBackForwardListItemState(GVariantIter* backForwardListS
     GVariant* frameStateVariant;
     unsigned shouldOpenExternalURLsPolicy;
     while (g_variant_iter_loop(backForwardListStateIter, BACK_FORWARD_LIST_ITEM_FORMAT_STRING_V2, &title, &frameStateVariant, &shouldOpenExternalURLsPolicy)) {
-        BackForwardListItemState state;
-        state.pageState.title = String::fromUTF8(title);
-        decodeFrameState(frameStateVariant, state.pageState.mainFrameState);
-        state.pageState.shouldOpenExternalURLsPolicy = toWebCoreExternalURLsPolicy(shouldOpenExternalURLsPolicy);
-        backForwardListState.items.append(WTFMove(state));
+        FrameState mainFrameState;
+        mainFrameState.title = String::fromUTF8(title);
+        decodeFrameState(frameStateVariant, mainFrameState);
+        mainFrameState.shouldOpenExternalURLsPolicy = toWebCoreExternalURLsPolicy(shouldOpenExternalURLsPolicy);
+        backForwardListState.items.append(WTFMove(mainFrameState));
     }
 }
 

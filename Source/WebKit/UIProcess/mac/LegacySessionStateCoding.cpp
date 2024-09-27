@@ -432,19 +432,19 @@ static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListStat
     size_t totalDataSize = 0;
 
     for (const auto& item : backForwardListState.items) {
-        auto url = item.pageState.mainFrameState.urlString.createCFString();
-        auto title = item.pageState.title.createCFString();
-        auto originalURL = item.pageState.mainFrameState.originalURLString.createCFString();
+        auto url = item.urlString.createCFString();
+        auto title = item.title.createCFString();
+        auto originalURL = item.originalURLString.createCFString();
 
         // We allow the first item to be unlimited in size. We refrain from serializing the data for subsequent items if they would cause us to trip over the maximumSessionStateDataSize limit.
-        auto data = totalDataSize <= maximumSessionStateDataSize ? encodeSessionHistoryEntryData(item.pageState.mainFrameState) : nullptr;
+        auto data = totalDataSize <= maximumSessionStateDataSize ? encodeSessionHistoryEntryData(item) : nullptr;
         if (data) {
             totalDataSize += CFDataGetLength(data.get());
             if (totalDataSize > maximumSessionStateDataSize && CFArrayGetCount(entries.get()) > 0)
                 data = nullptr;
         }
 
-        auto shouldOpenExternalURLsPolicyValue = static_cast<uint64_t>(item.pageState.shouldOpenExternalURLsPolicy);
+        auto shouldOpenExternalURLsPolicyValue = static_cast<uint64_t>(item.shouldOpenExternalURLsPolicy);
         auto shouldOpenExternalURLsPolicy = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &shouldOpenExternalURLsPolicyValue));
 
         RetainPtr<CFDictionaryRef> entryDictionary;
@@ -1002,7 +1002,7 @@ static WARN_UNUSED_RETURN bool decodeSessionHistoryEntryData(CFDataRef historyEn
     return decodeSessionHistoryEntryData(span(historyEntryData), mainFrameState);
 }
 
-static WARN_UNUSED_RETURN bool decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, BackForwardListItemState& backForwardListItemState)
+static WARN_UNUSED_RETURN bool decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, FrameState& backForwardListItemState)
 {
     auto title = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryTitleKey));
     if (!title)
@@ -1026,25 +1026,25 @@ static WARN_UNUSED_RETURN bool decodeSessionHistoryEntry(CFDictionaryRef entryDi
         shouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks;
 
     auto historyEntryData = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(entryDictionary, sessionHistoryEntryDataKey));
-    if (historyEntryData && !decodeSessionHistoryEntryData(historyEntryData, backForwardListItemState.pageState.mainFrameState))
+    if (historyEntryData && !decodeSessionHistoryEntryData(historyEntryData, backForwardListItemState))
         return false;
 
-    backForwardListItemState.pageState.title = title;
-    backForwardListItemState.pageState.shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy;
-    backForwardListItemState.pageState.mainFrameState.urlString = urlString;
-    backForwardListItemState.pageState.mainFrameState.originalURLString = originalURLString;
+    backForwardListItemState.title = title;
+    backForwardListItemState.shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy;
+    backForwardListItemState.urlString = urlString;
+    backForwardListItemState.originalURLString = originalURLString;
 
     return true;
 }
 
-static WARN_UNUSED_RETURN bool decodeSessionHistoryEntries(CFArrayRef entriesArray, Vector<BackForwardListItemState>& entries)
+static WARN_UNUSED_RETURN bool decodeSessionHistoryEntries(CFArrayRef entriesArray, Vector<FrameState>& entries)
 {
     for (CFIndex i = 0, size = CFArrayGetCount(entriesArray); i < size; ++i) {
         auto entryDictionary = dynamic_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(entriesArray, i));
         if (!entryDictionary)
             return false;
 
-        BackForwardListItemState entry;
+        FrameState entry;
         if (!decodeSessionHistoryEntry(entryDictionary, entry))
             return false;
 

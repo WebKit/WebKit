@@ -100,6 +100,7 @@ class TextStream;
 namespace WebKit {
 
 class AudioSessionRoutingArbitratorProxy;
+class FrameState;
 class ModelProcessProxy;
 class PageClient;
 class ProvisionalPageProxy;
@@ -118,7 +119,6 @@ class WebPreferences;
 class WebProcessPool;
 class WebUserContentControllerProxy;
 class WebsiteDataStore;
-struct BackForwardListItemState;
 struct CoreIPCAuditToken;
 struct GPUProcessConnectionParameters;
 struct ModelProcessConnectionParameters;
@@ -555,7 +555,7 @@ private:
     void platformDestroy();
 
     // IPC message handlers.
-    void updateBackForwardItem(const BackForwardListItemState&);
+    void updateBackForwardItem(FrameState&&);
     void didDestroyFrame(IPC::Connection&, WebCore::FrameIdentifier, WebPageProxyIdentifier);
     void didDestroyUserGestureToken(WebCore::PageIdentifier, uint64_t);
 

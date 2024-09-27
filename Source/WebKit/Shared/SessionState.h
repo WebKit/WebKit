@@ -96,6 +96,13 @@ public:
 
     std::optional<HTTPBody> httpBody;
 
+    WebCore::BackForwardItemIdentifier identifier;
+    bool hasCachedPage { false };
+    String title;
+    WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy { WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow };
+    RefPtr<WebCore::SerializedScriptValue> sessionStateObject;
+    bool wasCreatedByJSWithoutUserInteraction { false };
+
     // FIXME: These should not be per frame.
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatRect exposedContentRect;
@@ -113,26 +120,8 @@ private:
     Vector<AtomString> m_documentState;
 };
 
-struct PageState {
-    String title;
-    FrameState mainFrameState;
-    WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy { WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow };
-    RefPtr<WebCore::SerializedScriptValue> sessionStateObject;
-    bool wasCreatedByJSWithoutUserInteraction { false };
-};
-
-struct BackForwardListItemState {
-    WebCore::BackForwardItemIdentifier identifier;
-
-    PageState pageState;
-    bool hasCachedPage { false };
-#if PLATFORM(COCOA) || PLATFORM(GTK)
-    RefPtr<ViewSnapshot> snapshot { };
-#endif
-};
-
 struct BackForwardListState {
-    Vector<BackForwardListItemState> items;
+    Vector<FrameState> items;
     std::optional<uint32_t> currentIndex;
 };
 

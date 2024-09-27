@@ -1089,20 +1089,20 @@ bool WebProcessProxy::isAllowedToUpdateBackForwardItem(WebBackForwardListItem& i
     return false;
 }
 
-void WebProcessProxy::updateBackForwardItem(const BackForwardListItemState& itemState)
+void WebProcessProxy::updateBackForwardItem(FrameState&& mainFrameState)
 {
-    RefPtr item = WebBackForwardListItem::itemForID(itemState.identifier);
+    RefPtr item = WebBackForwardListItem::itemForID(mainFrameState.identifier);
     if (!item || !isAllowedToUpdateBackForwardItem(*item))
         return;
 
-    item->setPageState(PageState { itemState.pageState });
-
-    if (!!item->backForwardCacheEntry() != itemState.hasCachedPage) {
-        if (itemState.hasCachedPage)
+    if (!!item->backForwardCacheEntry() != mainFrameState.hasCachedPage) {
+        if (mainFrameState.hasCachedPage)
             protectedProcessPool()->checkedBackForwardCache()->addEntry(*item, coreProcessIdentifier());
         else if (!item->suspendedPage())
             protectedProcessPool()->checkedBackForwardCache()->removeEntry(*item);
     }
+
+    item->setMainFrameState(WTFMove(mainFrameState));
 }
 
 void WebProcessProxy::getNetworkProcessConnection(CompletionHandler<void(NetworkProcessConnectionInfo&&)>&& reply)

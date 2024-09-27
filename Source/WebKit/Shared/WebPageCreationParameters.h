@@ -137,7 +137,7 @@ struct WebPageCreationParameters {
     String userAgent { };
 
     bool itemStatesWereRestoredByAPIRequest { false };
-    Vector<BackForwardListItemState> itemStates { };
+    Vector<FrameState> itemStates { };
 
     VisitedLinkTableIdentifier visitedLinkTableID;
     bool canRunBeforeUnloadConfirmPanel { false };

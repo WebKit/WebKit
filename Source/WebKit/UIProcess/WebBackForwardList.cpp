@@ -438,7 +438,7 @@ BackForwardListState WebBackForwardList::backForwardListState(WTF::Function<bool
             continue;
         }
 
-        backForwardListState.items.append(entry->itemState());
+        backForwardListState.items.append(entry->mainFrameState());
     }
 
     if (backForwardListState.items.isEmpty())
@@ -449,6 +449,13 @@ BackForwardListState WebBackForwardList::backForwardListState(WTF::Function<bool
     return backForwardListState;
 }
 
+static inline void setBackForwardItemIdentifiers(FrameState& frameState)
+{
+    frameState.identifier = BackForwardItemIdentifier::generate();
+    for (auto& child : frameState.children)
+        setBackForwardItemIdentifiers(child);
+}
+
 void WebBackForwardList::restoreFromState(BackForwardListState backForwardListState)
 {
     if (!m_page)
@@ -456,7 +463,7 @@ void WebBackForwardList::restoreFromState(BackForwardListState backForwardListSt
 
     // FIXME: Enable restoring resourceDirectoryURL.
     m_entries = WTF::map(WTFMove(backForwardListState.items), [this](auto&& state) {
-        state.identifier = BackForwardItemIdentifier::generate();
+        setBackForwardItemIdentifiers(state);
         return WebBackForwardListItem::create(WTFMove(state), m_page->identifier());
     });
     m_currentIndex = backForwardListState.currentIndex ? std::optional<size_t>(*backForwardListState.currentIndex) : std::nullopt;
@@ -464,16 +471,16 @@ void WebBackForwardList::restoreFromState(BackForwardListState backForwardListSt
     LOG(BackForward, "(Back/Forward) WebBackForwardList %p restored from state (has %zu entries)", this, m_entries.size());
 }
 
-Vector<BackForwardListItemState> WebBackForwardList::filteredItemStates(Function<bool(WebBackForwardListItem&)>&& functor) const
+Vector<FrameState> WebBackForwardList::filteredItemStates(Function<bool(WebBackForwardListItem&)>&& functor) const
 {
-    return WTF::compactMap(m_entries, [&](auto& entry) -> std::optional<BackForwardListItemState> {
+    return WTF::compactMap(m_entries, [&](auto& entry) -> std::optional<FrameState> {
         if (functor(entry))
-            return entry->itemState();
+            return entry->mainFrameState();
         return std::nullopt;
     });
 }
 
-Vector<BackForwardListItemState> WebBackForwardList::itemStates() const
+Vector<FrameState> WebBackForwardList::itemStates() const
 {
     return filteredItemStates([](WebBackForwardListItem&) {
         return true;
