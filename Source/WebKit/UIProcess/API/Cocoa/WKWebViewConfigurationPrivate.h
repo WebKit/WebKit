@@ -181,6 +181,10 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 @property (nonatomic, setter=_setOverlayRegionsEnabled:) BOOL _overlayRegionsEnabled WK_API_AVAILABLE(visionos(WK_XROS_TBA));
 #endif
 
+#if defined(TARGET_OS_OSX) && TARGET_OS_OSX
+@property (nonatomic, setter=_setWebProcessSuspensionDelay:) NSTimeInterval _webProcessSuspensionDelay;
+#endif
+
 @end
 
 #if TARGET_OS_IPHONE

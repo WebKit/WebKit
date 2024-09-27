@@ -449,6 +449,13 @@ public:
 
 #endif // PLATFORM(VISION)
 
+#if PLATFORM(MAC)
+    static constexpr Seconds defaultWebProcessSuspensionDelay { 8_min };
+
+    Seconds webProcessSuspensionDelay() const { return m_data.webProcessSuspensionDelay; }
+    void setWebProcessSuspensionDelay(Seconds delay) { m_data.webProcessSuspensionDelay = delay; }
+#endif
+
 private:
     struct Data {
         template<typename T, Ref<T>(*initializer)()> class LazyInitializedRef {
@@ -635,6 +642,10 @@ private:
 #endif
 
         WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
+
+#if PLATFORM(MAC)
+        Seconds webProcessSuspensionDelay { defaultWebProcessSuspensionDelay };
+#endif
     };
 
     // All data members should be added to the Data structure to avoid breaking PageConfiguration::copy().

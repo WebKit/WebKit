@@ -26,16 +26,26 @@
 #include "config.h"
 #include "WebProcessActivityState.h"
 
+#include "APIPageConfiguration.h"
 #include "RemotePageProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 
 namespace WebKit {
 
+#if PLATFORM(MAC)
+static Seconds webProcessSuspensionDelay(WebPageProxy* page)
+{
+    if (!page)
+        return API::PageConfiguration::defaultWebProcessSuspensionDelay;
+    return page->configuration().webProcessSuspensionDelay();
+}
+#endif
+
 WebProcessActivityState::WebProcessActivityState(WebPageProxy& page)
     : m_page(page)
 #if PLATFORM(MAC)
-    , m_wasRecentlyVisibleActivity(makeUniqueRef<ProcessThrottlerTimedActivity>(8_min))
+    , m_wasRecentlyVisibleActivity(makeUniqueRef<ProcessThrottlerTimedActivity>(webProcessSuspensionDelay(&page)))
 #endif
 {
 }
@@ -43,7 +53,7 @@ WebProcessActivityState::WebProcessActivityState(WebPageProxy& page)
 WebProcessActivityState::WebProcessActivityState(RemotePageProxy& page)
     : m_page(page)
 #if PLATFORM(MAC)
-    , m_wasRecentlyVisibleActivity(makeUniqueRef<ProcessThrottlerTimedActivity>(8_min))
+    , m_wasRecentlyVisibleActivity(makeUniqueRef<ProcessThrottlerTimedActivity>(webProcessSuspensionDelay(page.protectedPage().get())))
 #endif
 {
 }
