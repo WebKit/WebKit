@@ -36,6 +36,7 @@ class DeviceMotionData;
 class Page;
 
 class DeviceMotionClient : public DeviceClient {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DeviceMotionClient);
     WTF_MAKE_NONCOPYABLE(DeviceMotionClient);
 public:
     DeviceMotionClient() = default;

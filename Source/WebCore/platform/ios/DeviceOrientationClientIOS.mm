@@ -28,10 +28,13 @@
 #import "DeviceOrientationClientIOS.h"
 
 #import "WebCoreMotionManager.h"
+#import <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DeviceOrientationClientIOS);
 
 DeviceOrientationClientIOS::DeviceOrientationClientIOS(RefPtr<DeviceOrientationUpdateProvider>&& deviceOrientationUpdateProvider)
     : DeviceOrientationClient()
