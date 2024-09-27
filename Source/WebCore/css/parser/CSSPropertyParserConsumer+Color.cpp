@@ -74,7 +74,7 @@ template<typename T> static CSSUnresolvedColor makeCSSUnresolvedColor(T&& unreso
 
 template<typename T> static std::optional<CSSUnresolvedColor> makeCSSUnresolvedColor(std::optional<T>&& unresolvedColorKind)
 {
-    return unresolvedColorKind.transform([](auto&& v) { return makeCSSUnresolvedColor(std::forward<T>(v)); });
+    return unresolvedColorKind ? std::make_optional(makeCSSUnresolvedColor(std::forward<T>(*unresolvedColorKind))) : std::nullopt;
 }
 
 // State passed to internal color consumer functions. Used to pass information

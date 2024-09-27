@@ -60,7 +60,7 @@ template<typename T> auto evaluateCalcIfNoConversionDataRequired(const Primitive
 
 template<typename T> decltype(auto) evaluateCalcIfNoConversionDataRequired(const std::optional<T>& component, const CSSCalcSymbolTable& symbolTable)
 {
-    return component.transform([&](auto&& v) { return evaluateCalcIfNoConversionDataRequired(v, symbolTable); });
+    return component ? std::make_optional(evaluateCalcIfNoConversionDataRequired(*component, symbolTable)) : std::nullopt;
 }
 
 } // namespace CSS

@@ -150,7 +150,7 @@ template<typename... Ts> auto simplifyUnevaluatedCalc(const std::variant<Ts...>&
 
 template<typename T> decltype(auto) simplifyUnevaluatedCalc(const std::optional<T>& component, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
 {
-    return component.transform([&](auto&& v) { return simplifyUnevaluatedCalc(v, conversionData, symbolTable); });
+    return component ? std::make_optional(simplifyUnevaluatedCalc(*component, conversionData, symbolTable)) : std::nullopt;
 }
 
 // MARK: - Serialization

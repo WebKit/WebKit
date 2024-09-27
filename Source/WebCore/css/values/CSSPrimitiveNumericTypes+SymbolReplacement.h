@@ -50,7 +50,7 @@ template<typename... Ts> constexpr auto replaceSymbol(const std::variant<Ts...>&
 
 template<typename T> constexpr decltype(auto) replaceSymbol(const std::optional<T>& component, const CSSCalcSymbolTable& symbolTable)
 {
-    return component.transform([&](auto&& v) { return replaceSymbol(v, symbolTable); });
+    return component ? std::make_optional(replaceSymbol(*component, symbolTable)) : std::nullopt;
 }
 
 } // namespace CSS

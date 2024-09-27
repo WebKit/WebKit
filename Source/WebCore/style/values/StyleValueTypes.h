@@ -65,7 +65,7 @@ template<typename... Ts> struct SpaceSeparatedTuple {
 
 template<typename StyleType> decltype(auto) toCSS(const std::optional<StyleType>& value, const RenderStyle& style)
 {
-    return value.transform([&](auto&& v) { return toCSS(v, style); });
+    return value ? std::make_optional(toCSS(*value, style)) : std::nullopt;
 }
 
 template<typename... StyleTypes> decltype(auto) toCSS(const SpaceSeparatedTuple<StyleTypes...>& value, const RenderStyle& style)
@@ -101,12 +101,12 @@ template<typename... CSSTypes> decltype(auto) toStyle(const std::variant<CSSType
 
 template<typename CSSType> decltype(auto) toStyle(const std::optional<CSSType>& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
 {
-    return value.transform([&](auto&& v) { return toStyle(v, conversionData, symbolTable); });
+    return value ? std::make_optional(toStyle(*value, conversionData, symbolTable)) : std::nullopt;
 }
 
 template<typename CSSType> decltype(auto) toStyle(const std::optional<CSSType>& value, Style::BuilderState& state, const CSSCalcSymbolTable& symbolTable)
 {
-    return value.transform([&](auto&& v) { return toStyle(v, state, symbolTable); });
+    return value ? std::make_optional(toStyle(*value, state, symbolTable)) : std::nullopt;
 }
 
 template<typename... CSSTypes> decltype(auto) toStyle(const SpaceSeparatedTuple<CSSTypes...>& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
@@ -143,7 +143,7 @@ template<typename... CSSTypes> decltype(auto) toStyleNoConversionDataRequired(co
 
 template<typename CSSType> decltype(auto) toStyleNoConversionDataRequired(const std::optional<CSSType>& value, const CSSCalcSymbolTable& symbolTable)
 {
-    return value.transform([&](auto&& v) { return toStyleNoConversionDataRequired(v, symbolTable); });
+    return value ? std::make_optional(toStyleNoConversionDataRequired(*value, symbolTable)) : std::nullopt;
 }
 
 template<typename... CSSTypes> decltype(auto) toStyleNoConversionDataRequired(const SpaceSeparatedTuple<CSSTypes...>& value, const CSSCalcSymbolTable& symbolTable)

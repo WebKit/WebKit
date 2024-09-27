@@ -105,7 +105,7 @@ auto normalizeAndClampNumericComponentsIntoCanonicalRepresentation(const std::va
 template<typename Descriptor, unsigned Index>
 auto normalizeAndClampNumericComponentsIntoCanonicalRepresentation(const std::optional<GetCSSColorParseTypeWithCalcComponentResult<Descriptor, Index>>& optional) -> std::optional<GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index>>
 {
-    return optional.transform([&](auto&& v) { return normalizeAndClampNumericComponentsIntoCanonicalRepresentation<Descriptor, Index>(v); });
+    return optional ? std::make_optional(normalizeAndClampNumericComponentsIntoCanonicalRepresentation<Descriptor, Index>(*optional)) : std::nullopt;
 }
 
 // MARK: - normalizeNumericComponents
@@ -166,7 +166,7 @@ auto normalizeNumericComponentsIntoCanonicalRepresentation(const std::variant<Ts
 template<typename Descriptor, unsigned Index>
 auto normalizeNumericComponentsIntoCanonicalRepresentation(const std::optional<GetCSSColorParseTypeWithCalcComponentResult<Descriptor, Index>>& optional) -> std::optional<GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index>>
 {
-    return optional.transform([&](auto&& v) { return normalizeNumericComponentsIntoCanonicalRepresentation<Descriptor, Index>(v); });
+    return optional ? std::make_optional(normalizeNumericComponentsIntoCanonicalRepresentation<Descriptor, Index>(*optional)) : std::nullopt;
 }
 
 } // namespace WebCore
