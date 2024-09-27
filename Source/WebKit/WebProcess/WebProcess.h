@@ -570,6 +570,8 @@ private:
     void stopRunLoop() override;
 #endif
 
+    bool filterUnhandledMessage(IPC::Connection&, IPC::Decoder&) override;
+
 #if ENABLE(MEDIA_STREAM)
     void addMockMediaDevice(const WebCore::MockMediaDevice&);
     void clearMockMediaDevices();

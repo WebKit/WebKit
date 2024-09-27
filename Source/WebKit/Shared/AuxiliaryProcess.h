@@ -127,6 +127,7 @@ protected:
     virtual void terminate();
 
     virtual void stopRunLoop();
+    virtual bool filterUnhandledMessage(IPC::Connection&, IPC::Decoder&);
 
 #if USE(OS_STATE)
     void registerWithStateDumper(ASCIILiteral title);

@@ -132,7 +132,16 @@ void AuxiliaryProcess::initializeConnection(IPC::Connection*)
 
 bool AuxiliaryProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    return m_messageReceiverMap.dispatchMessage(connection, decoder);
+    if (m_messageReceiverMap.dispatchMessage(connection, decoder))
+        return true;
+    // Note: because WebProcess receives messages to non-existing IDs, we have to filter the messages there to avoid asserts.
+    // Once these stop, this should be removed.
+    return filterUnhandledMessage(connection, decoder);
+}
+
+bool AuxiliaryProcess::filterUnhandledMessage(IPC::Connection&, IPC::Decoder&)
+{
+    return false;
 }
 
 bool AuxiliaryProcess::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
