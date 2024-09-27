@@ -225,7 +225,7 @@ void ThreadedCompositor::forceRepaint()
 void ThreadedCompositor::renderLayerTree()
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    TraceScope traceScope(FrameCompositionStart, FrameCompositionEnd);
+    TraceScope traceScope(RenderLayerTreeStart, RenderLayerTreeEnd);
 #endif
 
     if (!m_scene || !m_scene->isActive())
@@ -375,6 +375,8 @@ WebCore::DisplayRefreshMonitor& ThreadedCompositor::displayRefreshMonitor() cons
 
 void ThreadedCompositor::frameComplete()
 {
+    WTFEmitSignpost(this, FrameComplete);
+
     ASSERT(m_compositingRunLoop->isCurrent());
 #if !HAVE(DISPLAY_LINK)
     displayUpdateFired();
