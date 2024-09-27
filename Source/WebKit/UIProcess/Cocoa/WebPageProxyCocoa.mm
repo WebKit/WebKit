@@ -486,6 +486,11 @@ WebPageProxy::Internals::~Internals() = default;
 
 #if ENABLE(APPLE_PAY)
 
+const SharedPreferencesForWebProcess& WebPageProxy::Internals::sharedPreferencesForWebPaymentMessages() const
+{
+    return page->legacyMainFrameProcess().sharedPreferencesForWebProcess();
+}
+
 IPC::Connection* WebPageProxy::Internals::paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&)
 {
     return &page->legacyMainFrameProcess().connection();

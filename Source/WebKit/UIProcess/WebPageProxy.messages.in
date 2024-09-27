@@ -607,8 +607,8 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(APPLE_PAY_AMS_UI)
-    StartApplePayAMSUISession(URL originatingURL, struct WebCore::ApplePayAMSUIRequest request) -> (std::optional<bool> result)
-    AbortApplePayAMSUISession()
+    [EnabledBy=ApplePayEnabled] StartApplePayAMSUISession(URL originatingURL, struct WebCore::ApplePayAMSUIRequest request) -> (std::optional<bool> result)
+    [EnabledBy=ApplePayEnabled] AbortApplePayAMSUISession()
 #endif
 
 #if USE(SYSTEM_PREVIEW)

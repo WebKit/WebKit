@@ -461,6 +461,7 @@ private:
     void paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName) final;
     void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) final;
     CocoaWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const final;
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebPaymentMessages() const final;
 #endif // ENABLE(APPLE_PAY_REMOTE_UI)
 
     Ref<IPC::Connection> m_connection;

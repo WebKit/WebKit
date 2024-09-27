@@ -605,6 +605,7 @@ ApplePayEnabled:
     WebCore:
       "ENABLE(APPLE_PAY_REMOTE_UI)": true
       default: false
+  sharedPreferenceForWebProcess: true
 
 # FIXME: This is on by default in WebKit2 PLATFORM(COCOA). Perhaps we should consider turning it on for WebKitLegacy as well.
 AsyncClipboardAPIEnabled:
