@@ -185,9 +185,9 @@ static bool takeSnapshots(TextIndicatorData& data, LocalFrame& frame, IntRect sn
 
     if (data.options.contains(TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection)) {
         float snapshotScaleFactor;
-        auto snapshotRect = frame.view()->visibleContentRect();
+        auto snapshotRect = frame.protectedView()->visibleContentRect();
         data.contentImageWithoutSelection = takeSnapshot(frame, snapshotRect, { { SnapshotFlags::PaintEverythingExcludingSelection }, ImageBufferPixelFormat::BGRA8, DestinationColorSpace::SRGB() }, snapshotScaleFactor, { });
-        data.contentImageWithoutSelectionRectInRootViewCoordinates = frame.view()->contentsToRootView(snapshotRect);
+        data.contentImageWithoutSelectionRectInRootViewCoordinates = frame.protectedView()->contentsToRootView(snapshotRect);
     }
     
     return true;
@@ -295,7 +295,7 @@ static bool initializeIndicator(TextIndicatorData& data, LocalFrame& frame, cons
     if (textRects.isEmpty())
         textRects.append(absoluteBoundingRectForRange(range));
 
-    auto frameView = frame.view();
+    RefPtr frameView = frame.view();
 
     // Use the exposedContentRect/viewExposedRect instead of visibleContentRect to avoid creating a huge indicator for a large view inside a scroll view.
     IntRect contentsClipRect;
@@ -333,7 +333,7 @@ static bool initializeIndicator(TextIndicatorData& data, LocalFrame& frame, cons
         textRectInDocumentCoordinatesIncludingMargin.inflateY(margin.height());
         textBoundingRectInDocumentCoordinates.unite(textRectInDocumentCoordinatesIncludingMargin);
 
-        FloatRect textRectInRootViewCoordinates = frame.view()->contentsToRootView(enclosingIntRect(textRectInDocumentCoordinatesIncludingMargin));
+        FloatRect textRectInRootViewCoordinates = frame.protectedView()->contentsToRootView(enclosingIntRect(textRectInDocumentCoordinatesIncludingMargin));
         textRectsInRootViewCoordinates.append(textRectInRootViewCoordinates);
         textBoundingRectInRootViewCoordinates.unite(textRectInRootViewCoordinates);
     }
@@ -345,7 +345,7 @@ static bool initializeIndicator(TextIndicatorData& data, LocalFrame& frame, cons
 
     // Store the selection rect in window coordinates, to be used subsequently
     // to determine if the indicator and selection still precisely overlap.
-    data.selectionRectInRootViewCoordinates = frame.view()->contentsToRootView(enclosingIntRect(frame.selection().selectionBounds(FrameSelection::ClipToVisibleContent::No)));
+    data.selectionRectInRootViewCoordinates = frame.protectedView()->contentsToRootView(enclosingIntRect(frame.selection().selectionBounds(FrameSelection::ClipToVisibleContent::No)));
     data.textBoundingRectInRootViewCoordinates = textBoundingRectInRootViewCoordinates;
     data.textRectsInBoundingRectCoordinates = WTFMove(textRectsInBoundingRectCoordinates);
 
