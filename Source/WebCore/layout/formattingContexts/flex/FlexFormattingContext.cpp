@@ -177,7 +177,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
     auto& flexBoxStyle = root().style();
     auto flexDirection = flexBoxStyle.flexDirection();
     auto isMainAxisParallelWithInlineAxis = FlexFormattingUtils::isMainAxisParallelWithInlineAxis(root());
-    auto flexBoxLogicalHeightForWarpReserve = [&]() -> std::optional<LayoutUnit> {
+    auto flexBoxLogicalHeightForWarpReverse = [&]() -> std::optional<LayoutUnit> {
         if (flexBoxStyle.flexWrap() != FlexWrap::Reverse)
             return { };
         if (!isMainAxisParallelWithInlineAxis) {
@@ -192,29 +192,37 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
     for (size_t index = 0; index < logicalFlexItemList.size(); ++index) {
         auto& logicalFlexItem = logicalFlexItemList[index];
         auto& flexItemGeometry = geometryForFlexItem(logicalFlexItem.layoutBox());
-        auto borderBoxTopLeft = LayoutPoint { };
-        // Note that flex rects are inner size based.
-        auto logicalRect = logicalRects[index];
-        auto adjustedLogicalTop = !flexBoxLogicalHeightForWarpReserve ? logicalRect.top() : *flexBoxLogicalHeightForWarpReserve - logicalRect.bottom();
+        auto logicalRect = [&] {
+            // Note that flex rects are inner size based.
+            if (!flexBoxLogicalHeightForWarpReverse)
+                return logicalRects[index];
+            auto rect = logicalRects[index];
+            auto adjustedLogicalTop =  *flexBoxLogicalHeightForWarpReverse - rect.bottom();
+            if (logicalFlexItem.isContentBoxBased())
+                adjustedLogicalTop -= flexItemGeometry.verticalBorderAndPadding();
+            rect.setTop(adjustedLogicalTop);
+            return rect;
+        }();
 
+        auto borderBoxTopLeft = LayoutPoint { };
         switch (flexDirection) {
         case FlexDirection::Row: {
-            borderBoxTopLeft = { constraints.horizontal().logicalLeft + logicalRect.left(), constraints.logicalTop() + adjustedLogicalTop };
+            borderBoxTopLeft = { constraints.horizontal().logicalLeft + logicalRect.left(), constraints.logicalTop() + logicalRect.top() };
             break;
         }
         case FlexDirection::RowReverse:
-            borderBoxTopLeft = { constraints.horizontal().logicalRight() - logicalRect.right(), constraints.logicalTop() + adjustedLogicalTop };
+            borderBoxTopLeft = { constraints.horizontal().logicalRight() - logicalRect.right(), constraints.logicalTop() + logicalRect.top() };
             if (logicalFlexItem.isContentBoxBased())
                 borderBoxTopLeft.move({ -flexItemGeometry.horizontalBorderAndPadding(), 0_lu });
             break;
         case FlexDirection::Column: {
-            auto flippedTopLeft = FloatPoint { adjustedLogicalTop, logicalRect.left() };
+            auto flippedTopLeft = FloatPoint { logicalRect.top(), logicalRect.left() };
             borderBoxTopLeft = { constraints.horizontal().logicalLeft + flippedTopLeft.x(), constraints.logicalTop() + flippedTopLeft.y() };
             break;
         }
         case FlexDirection::ColumnReverse: {
             auto visualBottom = constraints.logicalTop() + constraints.availableVerticalSpace().value_or(logicalWidth);
-            borderBoxTopLeft = { constraints.horizontal().logicalLeft + adjustedLogicalTop, visualBottom - logicalRect.right() };
+            borderBoxTopLeft = { constraints.horizontal().logicalLeft + logicalRect.top(), visualBottom - logicalRect.right() };
             break;
         }
         default:
