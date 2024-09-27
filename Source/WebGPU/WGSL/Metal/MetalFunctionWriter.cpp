@@ -123,7 +123,6 @@ public:
 
 private:
     void emitNecessaryHelpers();
-    void visitGlobal(AST::Variable&);
     void serializeVariable(AST::Variable&);
     void generatePackingHelpers(AST::Structure&);
     bool emitPackedVector(const Types::Vector&);
@@ -145,7 +144,6 @@ private:
     HashSet<AST::Function*> m_visitedFunctions;
     PrepareResult& m_prepareResult;
     const HashMap<String, ConstantValue>& m_constantValues;
-    HashMap<String, ConstantValue> m_overrides;
 };
 
 static ASCIILiteral serializeAddressSpace(AddressSpace addressSpace)
@@ -172,8 +170,6 @@ void FunctionDefinitionWriter::write()
     for (auto& declaration : m_shaderModule.declarations()) {
         if (auto* structure = dynamicDowncast<AST::Structure>(declaration))
             visit(*structure);
-        else if (auto* variable = dynamicDowncast<AST::Variable>(declaration))
-            visitGlobal(*variable);
     }
 
     for (auto& declaration : m_shaderModule.declarations()) {
@@ -757,26 +753,6 @@ void FunctionDefinitionWriter::visit(AST::Variable& variable)
 void FunctionDefinitionWriter::visit(AST::ConstAssert&)
 {
     // const_assert should not generate any code
-}
-
-void FunctionDefinitionWriter::visitGlobal(AST::Variable& variable)
-{
-    if (variable.flavor() != AST::VariableFlavor::Override)
-        return;
-
-    String entryName = variable.originalName();
-    if (variable.id())
-        entryName = String::number(*variable.id());
-    auto it = m_constantValues.find(entryName);
-    if (it != m_constantValues.end()) {
-        m_overrides.add(variable.name(), it->value);
-        return;
-    }
-    auto* initializer = variable.maybeInitializer();
-    if (!initializer)
-        return;
-    if (auto& maybeConstant = initializer->constantValue())
-        m_overrides.add(variable.name(), *maybeConstant);
 }
 
 void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
@@ -2199,8 +2175,8 @@ void FunctionDefinitionWriter::visit(AST::IndexAccessExpression& access)
 
 void FunctionDefinitionWriter::visit(AST::IdentifierExpression& identifier)
 {
-    auto it = m_overrides.find(identifier.identifier());
-    if (UNLIKELY(it != m_overrides.end())) {
+    auto it = m_constantValues.find(identifier.identifier());
+    if (UNLIKELY(it != m_constantValues.end())) {
         m_stringBuilder.append('(');
         serializeConstant(identifier.inferredType(), it->value);
         m_stringBuilder.append(')');

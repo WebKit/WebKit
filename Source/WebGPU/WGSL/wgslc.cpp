@@ -145,6 +145,21 @@ static int runWGSL(const CommandLine& options)
     }
 
     HashMap<String, WGSL::ConstantValue> constantValues;
+    const auto& entryPointInformation = result.entryPoints.get(entrypointName);
+    for (const auto& [originalName, constant] : entryPointInformation.specializationConstants) {
+        if (!constant.defaultValue) {
+            dataLogLn("Cannot use override without default value in wgslc: '", originalName, "'");
+            return EXIT_FAILURE;
+        }
+
+        auto defaultValue = WGSL::evaluate(*constant.defaultValue, constantValues);
+        if (!defaultValue) {
+            dataLogLn("Failed to evaluate override's default value: '", originalName, "'");
+            return EXIT_FAILURE;
+        }
+
+        constantValues.add(constant.mangledName, *defaultValue);
+    }
     auto msl = WGSL::generate(shaderModule, result, constantValues);
 
     if (options.dumpASTAtEnd())

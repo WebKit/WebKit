@@ -151,9 +151,11 @@ std::optional<ConstantValue> evaluate(const AST::Expression& expression, const H
     auto* maybeIdentifierExpression = dynamicDowncast<const AST::IdentifierExpression>(expression);
     if (!maybeIdentifierExpression)
         return std::nullopt;
-    auto constantValue = constants.get(maybeIdentifierExpression->identifier());
-    const_cast<AST::Expression&>(expression).setConstantValue(constantValue);
-    return constantValue;
+    auto it = constants.find(maybeIdentifierExpression->identifier());
+    if (it == constants.end())
+        return std::nullopt;
+    const_cast<AST::Expression&>(expression).setConstantValue(it->value);
+    return it->value;
 }
 
 }
