@@ -30,6 +30,7 @@
 #include "GPUProcessConnection.h"
 #include "RemoteRealtimeMediaSourceProxy.h"
 #include <WebCore/RealtimeMediaSource.h>
+#include <wtf/CheckedRef.h>
 
 namespace WebKit {
 
@@ -42,6 +43,8 @@ class RemoteRealtimeMediaSource : public WebCore::RealtimeMediaSource
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteRealtimeMediaSource, WTF::DestructionThread::MainRunLoop>
 {
 public:
+    ~RemoteRealtimeMediaSource();
+
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_proxy.identifier(); }
     IPC::Connection& connection() { return m_proxy.connection(); }
 
@@ -67,7 +70,7 @@ protected:
     void createRemoteMediaSource();
 
     RemoteRealtimeMediaSourceProxy& proxy() { return m_proxy; }
-    UserMediaCaptureManager& manager() { return m_manager; }
+    UserMediaCaptureManager& manager();
 
     void setCapabilities(WebCore::RealtimeMediaSourceCapabilities&&);
 
@@ -96,7 +99,7 @@ private:
 #endif
 
     RemoteRealtimeMediaSourceProxy m_proxy;
-    UserMediaCaptureManager& m_manager;
+    CheckedRef<UserMediaCaptureManager> m_manager;
     std::optional<WebCore::MediaConstraints> m_constraints;
     WebCore::RealtimeMediaSourceCapabilities m_capabilities;
     std::optional<WebCore::PhotoCapabilities> m_photoCapabilities;
