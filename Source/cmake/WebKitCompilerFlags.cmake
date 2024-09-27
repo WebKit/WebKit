@@ -230,6 +230,9 @@ if (COMPILER_IS_GCC_OR_CLANG)
     # Makes builds faster. The GCC manual warns about the possibility that the assembler being
     # used may not support input from a pipe, but in practice the toolchains we support all do.
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-pipe)
+
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Werror=undefined-inline
+                                         -Werror=undefined-internal)
 endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG AND NOT MSVC)
