@@ -477,5 +477,13 @@ template<> struct OperatorExecutor<Sign> {
     }
 };
 
+template<> struct OperatorExecutor<Progress> {
+    double operator()(double progress, double from, double to)
+    {
+        // (progress value - start value) / (end value - start value)
+        return (progress - from) / (to - from);
+    }
+};
+
 } // namespace Calculation
 } // namespace WebCore

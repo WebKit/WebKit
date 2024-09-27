@@ -1284,6 +1284,27 @@ std::optional<Child> simplify(Sign& root, const SimplificationOptions& options)
     );
 }
 
+std::optional<Child> simplify(Progress& root, const SimplificationOptions& options)
+{
+    if (root.progress.index() != root.from.index() || root.from.index() != root.to.index())
+        return std::nullopt;
+
+    return WTF::switchOn(root.progress,
+        [&]<Numeric T>(T& numericProgress) -> std::optional<Child> {
+            auto& numericFrom = std::get<T>(root.from);
+            auto& numericTo = std::get<T>(root.to);
+
+            if (!unitsMatch(numericProgress, numericFrom, options) || !unitsMatch(numericFrom, numericTo, options) || !fullyResolved(numericProgress, options))
+                return std::nullopt;
+
+            return makeChild(Number { .value = executeMathOperation<Progress>(numericProgress.value, numericFrom.value, numericTo.value) });
+        },
+        [](auto&) -> std::optional<Child> {
+            return std::nullopt;
+        }
+    );
+}
+
 std::optional<Child> simplify(Anchor& anchor, const SimplificationOptions& options)
 {
     if (!options.conversionData || !options.conversionData->styleBuilderState())

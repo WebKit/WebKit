@@ -179,6 +179,7 @@ bool isCalcFunction(CSSValueID functionId, const CSSParserContext&)
     case CSSValueRound:
     case CSSValueMod:
     case CSSValueRem:
+    case CSSValueProgress:
     case CSSValueAnchor:
         return true;
     default:
@@ -613,6 +614,94 @@ static std::optional<TypedChild> consumeRound(CSSParserTokenRange& tokens, int d
     return std::nullopt;
 }
 
+static std::optional<TypedChild> consumeProgress(CSSParserTokenRange& tokens, int depth, ParserState& state)
+{
+    // <progress()> = progress( <calc-sum> from <calc-sum> to <calc-sum> )
+
+    if (!state.parserContext.cssProgressFunctionEnabled)
+        return { };
+
+    using Op = Progress;
+
+    auto progression = parseCalcSum(tokens, depth, state);
+    if (!progression) {
+        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - failed parse of argument #1");
+        return std::nullopt;
+    }
+
+    if (!CSSPropertyParserHelpers::consumeIdentRaw<CSSValueFrom>(tokens)) {
+        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - missing literal 'from'");
+        return std::nullopt;
+    }
+
+    auto from = parseCalcSum(tokens, depth, state);
+    if (!from) {
+        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - failed parse of argument #2");
+        return std::nullopt;
+    }
+
+    if (!CSSPropertyParserHelpers::consumeIdentRaw<CSSValueTo>(tokens)) {
+        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - missing literal 'to'");
+        return std::nullopt;
+    }
+
+    auto to = parseCalcSum(tokens, depth, state);
+    if (!to) {
+        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - failed parse of argument #3");
+        return std::nullopt;
+    }
+
+    if (!tokens.atEnd()) {
+        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - extraneous tokens found");
+        return std::nullopt;
+    }
+
+    // - Validate arguments
+
+    if (!validateType<Op::input>(progression->type)) {
+        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - argument #1 has invalid type: " << progression->type);
+        return std::nullopt;
+    }
+
+    if (!validateType<Op::input>(from->type)) {
+        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - argument #2 has invalid type: " << progression->type);
+        return std::nullopt;
+    }
+
+    if (!validateType<Op::input>(to->type)) {
+        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - argument #3 has invalid type: " << progression->type);
+        return std::nullopt;
+    }
+
+    // - Merge arguments
+
+    auto mergedType = mergeTypes<Op::merge>(progression->type, from->type);
+    if (!mergedType) {
+        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - failed to merge types: argument #1 type " << progression->type << ", argument #2 type" << from->type << ", argument #3 type" << to->type);
+        return std::nullopt;
+    }
+
+    mergedType = mergeTypes<Op::merge>(*mergedType, to->type);
+    if (!mergedType) {
+        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - failed to merge types: argument #1 type " << progression->type << ", argument #2 type" << from->type << ", argument #3 type" << to->type);
+        return std::nullopt;
+    }
+
+    auto outputType = transformType<Op::output>(*mergedType);
+    if (!outputType) {
+        LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - output transform failed for type: " << *mergedType);
+        return std::nullopt;
+    }
+
+    Op op { WTFMove(progression->child), WTFMove(from->child), WTFMove(to->child) };
+
+    if (auto* simplificationOptions = state.simplificationOptions) {
+        if (auto replacement = simplify(op, *simplificationOptions))
+            return TypedChild { WTFMove(*replacement), *outputType };
+    }
+    return TypedChild { makeChild(WTFMove(op), *outputType), *outputType };
+}
+
 static std::optional<TypedChild> consumeAnchor(CSSParserTokenRange& tokens, int depth, ParserState& state)
 {
     // <anchor()> = anchor( <anchor-element>? && <anchor-side>, <length-percentage>? )
@@ -800,6 +889,12 @@ std::optional<TypedChild> parseCalcFunction(CSSParserTokenRange& tokens, CSSValu
         //     - INPUT: any
         //     - OUTPUT: <number> "made consistent"
         return consumeExactlyOneArgument<Sign>(tokens, depth, state);
+
+    case CSSValueProgress:
+        // <progress()> = progress( <calc-sum> from <calc-sum> to <calc-sum> )
+        //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
+        //     - OUTPUT: <number> "made consistent"
+        return consumeProgress(tokens, depth, state);
 
     case CSSValueAnchor:
         return consumeAnchor(tokens, depth, state);

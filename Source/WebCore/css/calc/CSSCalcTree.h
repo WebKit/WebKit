@@ -71,6 +71,7 @@ struct Log;
 struct Exp;
 struct Abs;
 struct Sign;
+struct Progress;
 struct Anchor;
 
 template<typename Op>
@@ -189,6 +190,7 @@ using Node = std::variant<
     IndirectNode<Exp>,
     IndirectNode<Abs>,
     IndirectNode<Sign>,
+    IndirectNode<Progress>,
     IndirectNode<Anchor>
 >;
 
@@ -707,6 +709,26 @@ public:
     bool operator==(const Sign&) const = default;
 };
 
+// Progress-Related Functions - https://drafts.csswg.org/css-values-5/#progress
+struct Progress {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Progress);
+public:
+    using Base = Calculation::Progress;
+    static constexpr auto id = CSSValueProgress;
+
+    // <progress()> = progress( <calc-sum> from <calc-sum> to <calc-sum> )
+    //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
+    //     - OUTPUT: <number> "made consistent"
+    static constexpr auto input = AllowedTypes::Any;
+    static constexpr auto merge = MergePolicy::Consistent;
+    static constexpr auto output = OutputTransform::NumberMadeConsistent;
+
+    Child progress;
+    Child from;
+    Child to;
+
+    bool operator==(const Progress&) const = default;
+};
 
 struct Anchor {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(Anchor);
@@ -758,6 +780,7 @@ template<> struct ReverseMapping<Calculation::Log> { using Op = Log; };
 template<> struct ReverseMapping<Calculation::Exp> { using Op = Exp; };
 template<> struct ReverseMapping<Calculation::Abs> { using Op = Abs; };
 template<> struct ReverseMapping<Calculation::Sign> { using Op = Sign; };
+template<> struct ReverseMapping<Calculation::Progress> { using Op = Progress; };
 
 // MARK: TextStream
 
@@ -859,6 +882,7 @@ std::optional<Type> toType(const Log&);
 std::optional<Type> toType(const Exp&);
 std::optional<Type> toType(const Abs&);
 std::optional<Type> toType(const Sign&);
+std::optional<Type> toType(const Progress&);
 
 // MARK: CSSUnitType Evaluation
 
@@ -1128,6 +1152,16 @@ template<size_t I> const auto& get(const Sign& root)
     return root.a;
 }
 
+template<size_t I> const auto& get(const Progress& root)
+{
+    if constexpr (!I)
+        return root.progress;
+    else if constexpr (I == 1)
+        return root.from;
+    else if constexpr (I == 2)
+        return root.to;
+}
+
 } // namespace CSSCalc
 } // namespace WebCore
 
@@ -1168,6 +1202,7 @@ OP_TUPLE_LIKE_CONFORMANCE(Log, 2);
 OP_TUPLE_LIKE_CONFORMANCE(Exp, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Abs, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Sign, 1);
+OP_TUPLE_LIKE_CONFORMANCE(Progress, 3);
 OP_TUPLE_LIKE_CONFORMANCE(Anchor, 0);
 
 #undef OP_TUPLE_LIKE_CONFORMANCE

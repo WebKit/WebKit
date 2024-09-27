@@ -1497,6 +1497,9 @@ mod
 rem
 to-zero
 // nearest
+// progress
+// from
+// to
 infinity
 -infinity id=NegativeInfinity
 NaN

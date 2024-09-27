@@ -85,6 +85,7 @@ template<typename Op> static void serializeMathFunctionPrefix(StringBuilder&, co
 
 static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Sum>&, SerializationState&);
 static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Product>&, SerializationState&);
+static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Progress>&, SerializationState&);
 static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Anchor>&, SerializationState&);
 template<typename Op> static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Op>&, SerializationState&);
 
@@ -364,6 +365,15 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<S
 void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<Product>& fn, SerializationState& state)
 {
     serializeCalculationTree(builder, fn, state);
+}
+
+void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<Progress>& fn, SerializationState& state)
+{
+    serializeCalculationTree(builder, fn->progress, state);
+    builder.append(" from "_s);
+    serializeCalculationTree(builder, fn->from, state);
+    builder.append(" to "_s);
+    serializeCalculationTree(builder, fn->to, state);
 }
 
 void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<Anchor>& anchor, SerializationState&)

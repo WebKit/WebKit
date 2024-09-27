@@ -384,6 +384,14 @@ std::optional<Type> toType(const Sign& root)
     return transformTypeFor(root, getValidatedTypeFor(root, root.a));
 }
 
+std::optional<Type> toType(const Progress& root)
+{
+    auto type = getValidatedTypeFor(root, root.progress);
+    type = mergeTypesFor(root, type, getValidatedTypeFor(root, root.from));
+    type = mergeTypesFor(root, type, getValidatedTypeFor(root, root.to));
+    return transformTypeFor(root, type);
+}
+
 TextStream& operator<<(TextStream& ts, Tree tree)
 {
     return ts << "CSSCalc::Tree [ " << serializationForCSS(tree) << " ]";
