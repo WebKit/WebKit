@@ -394,6 +394,13 @@ void AttributeValidator::visit(AST::StructureMember& member)
                 error(attribute.span(), "@align value must be positive"_s);
             else if (!isPowerOf2)
                 error(attribute.span(), "@align value must be a power of two"_s);
+
+            if (UNLIKELY(!m_errors.isEmpty())) {
+                // It's not safe to access Type::alignment below if errors have
+                // already occurred
+                continue;
+            }
+
             // FIXME: validate that alignment is a multiple of RequiredAlignOf(T,C)
             auto* type = member.type().inferredType();
             update(attribute.span(), member.m_alignment, std::max<unsigned>(alignmentValue, type ? type->alignment() : 1u));
