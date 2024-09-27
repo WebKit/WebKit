@@ -148,7 +148,9 @@ public:
     
     MarkedBlock::Handle* findBlockToSweep() { return findBlockToSweep(m_unsweptCursor); }
     MarkedBlock::Handle* findBlockToSweep(unsigned& unsweptCursor);
-    
+
+    MarkedBlock::Handle* findMarkedBlockHandleDebug(MarkedBlock*);
+
     void didFinishUsingBlock(MarkedBlock::Handle*);
     void didFinishUsingBlock(AbstractLocker&, MarkedBlock::Handle*) WTF_REQUIRES_LOCK(m_bitvectorLock);
 

@@ -54,7 +54,7 @@ ALWAYS_INLINE void SlotVisitor::appendUnbarriered(JSCell* cell)
         }
     } else {
         MarkedBlock& block = cell->markedBlock();
-        dependency = block.aboutToMark(m_markingVersion);
+        dependency = block.aboutToMark(m_markingVersion, cell);
         if (LIKELY(block.isMarked(cell, dependency))) {
             if (LIKELY(!m_heapAnalyzer))
                 return;
@@ -90,7 +90,7 @@ ALWAYS_INLINE void SlotVisitor::appendHiddenUnbarriered(JSCell* cell)
             return;
     } else {
         MarkedBlock& block = cell->markedBlock();
-        dependency = block.aboutToMark(m_markingVersion);
+        dependency = block.aboutToMark(m_markingVersion, cell);
         if (LIKELY(block.isMarked(cell, dependency)))
             return;
     }
