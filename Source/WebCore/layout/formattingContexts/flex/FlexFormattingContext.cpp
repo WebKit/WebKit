@@ -193,6 +193,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
         auto& logicalFlexItem = logicalFlexItemList[index];
         auto& flexItemGeometry = geometryForFlexItem(logicalFlexItem.layoutBox());
         auto borderBoxTopLeft = LayoutPoint { };
+        // Note that flex rects are inner size based.
         auto logicalRect = logicalRects[index];
         auto adjustedLogicalTop = !flexBoxLogicalHeightForWarpReserve ? logicalRect.top() : *flexBoxLogicalHeightForWarpReserve - logicalRect.bottom();
 
@@ -203,6 +204,8 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
         }
         case FlexDirection::RowReverse:
             borderBoxTopLeft = { constraints.horizontal().logicalRight() - logicalRect.right(), constraints.logicalTop() + adjustedLogicalTop };
+            if (logicalFlexItem.isContentBoxBased())
+                borderBoxTopLeft.move({ -flexItemGeometry.horizontalBorderAndPadding(), 0_lu });
             break;
         case FlexDirection::Column: {
             auto flippedTopLeft = FloatPoint { adjustedLogicalTop, logicalRect.left() };
