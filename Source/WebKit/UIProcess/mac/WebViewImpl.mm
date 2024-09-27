@@ -2291,6 +2291,8 @@ void WebViewImpl::viewDidMoveToWindow()
             cancelImmediateActionAnimation();
             [m_view removeGestureRecognizer:m_immediateActionGestureRecognizer.get()];
         }
+
+        removeFlagsChangedEventMonitor();
     }
 
     m_page->setIntrinsicDeviceScaleFactor(intrinsicDeviceScaleFactor());
@@ -5695,6 +5697,11 @@ void WebViewImpl::removeFlagsChangedEventMonitor()
 
     [NSEvent removeMonitor:m_flagsChangedEventMonitor];
     m_flagsChangedEventMonitor = nil;
+}
+
+bool WebViewImpl::hasFlagsChangedEventMonitor()
+{
+    return m_flagsChangedEventMonitor;
 }
 
 void WebViewImpl::mouseEntered(NSEvent *event)

@@ -620,6 +620,7 @@ public:
 
     void createFlagsChangedEventMonitor();
     void removeFlagsChangedEventMonitor();
+    bool hasFlagsChangedEventMonitor();
 
     void mouseMoved(NSEvent *);
     void mouseDown(NSEvent *);

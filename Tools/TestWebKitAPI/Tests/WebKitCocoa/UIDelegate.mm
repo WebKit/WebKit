@@ -1085,7 +1085,7 @@ TEST(WebKit, MouseMoveOverElementWithClosedWebView)
         gEventMonitorHandler([NSEvent mouseEventWithType:NSEventTypeMouseMoved location:linkLocation modifierFlags:0 timestamp:0 windowNumber:[[webView hostWindow] windowNumber] context:nil eventNumber:0 clickCount:0 pressure:0]);
         [webView removeFromSuperview];
 
-        [webView _removeFlagsChangedEventMonitorForTesting];
+        EXPECT_FALSE([webView _hasFlagsChangedEventMonitorForTesting]);
     }
 
     TestWebKitAPI::Util::runFor(10_ms);
