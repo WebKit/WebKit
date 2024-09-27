@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-CSSToLengthConversionData::CSSToLengthConversionData(const RenderStyle& style, const Style::BuilderState& builderState)
+CSSToLengthConversionData::CSSToLengthConversionData(const RenderStyle& style, Style::BuilderState& builderState)
     : m_style(&style)
     , m_rootStyle(builderState.rootElementStyle())
     , m_parentStyle(&builderState.parentStyle())

@@ -19,8 +19,8 @@ PASS Invalid anchor function,  cross-axis query (horizontal)
 PASS Invalid anchor function, anchor-size() in inset
 PASS Invalid anchor function, anchor() in sizing property
 PASS Invalid anchor function, nested left
-FAIL Invalid anchor function, nested right assert_equals: left expected "0px" but got "188.4375px"
-FAIL Invalid anchor function, nested bottom assert_equals: top expected "0px" but got "182px"
+PASS Invalid anchor function, nested right
+PASS Invalid anchor function, nested bottom
 PASS Invalid anchor function, nested top
 PASS Invalid anchor function, nested min-width
 PASS Invalid anchor function, nested min-height

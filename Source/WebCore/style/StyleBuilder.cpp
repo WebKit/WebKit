@@ -358,11 +358,14 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         return registeredCustomProperty ? registeredCustomProperty->inherits : CSSProperty::isInheritedProperty(id);
     };
 
-    if (isUnset) {
+    auto unsetValueType = [&] {
         // https://drafts.csswg.org/css-cascade-4/#inherit-initial
         // The unset CSS-wide keyword acts as either inherit or initial, depending on whether the property is inherited or not.
-        valueType = isInheritedProperty() ? ApplyValueType::Inherit : ApplyValueType::Initial;
-    }
+        return isInheritedProperty() ? ApplyValueType::Inherit : ApplyValueType::Initial;
+    };
+
+    if (isUnset)
+        valueType = unsetValueType();
 
     if (!m_state.applyPropertyToRegularStyle() && !isValidVisitedLinkProperty(id)) {
         // Limit the properties that can be applied to only the ones honored by :visited.
@@ -395,6 +398,15 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     }
 
     BuilderGenerated::applyProperty(id, m_state, valueToApply.get(), valueType);
+
+    if (!isUnset && m_state.isCurrentPropertyInvalidAtComputedValueTime()) {
+        // https://drafts.csswg.org/css-variables-2/#invalid-variables
+        // A declaration can be invalid at computed-value time if...
+        // When this happens, the computed value is one of the following...
+        // Otherwise: Either the property’s inherited value or its initial value depending on whether the property
+        // is inherited or not, respectively, as if the property’s value had been specified as the unset keyword
+        BuilderGenerated::applyProperty(id, m_state, valueToApply.get(), unsetValueType());
+    }
 }
 
 void Builder::applyCustomPropertyValue(const CSSCustomPropertyValue& value, ApplyValueType valueType, const CSSRegisteredCustomProperty* registered)
@@ -456,7 +468,7 @@ Ref<CSSValue> Builder::resolveVariableReferences(CSSPropertyID propertyID, CSSVa
 
     // https://drafts.csswg.org/css-variables-2/#invalid-variables
     // ...as if the property’s value had been specified as the unset keyword.
-    if (!variableValue || m_state.m_inUnitCycleProperties.get(propertyID))
+    if (!variableValue || m_state.m_invalidAtComputedValueTimeProperties.get(propertyID))
         return CSSPrimitiveValue::create(CSSValueUnset);
 
     return *variableValue;
@@ -547,7 +559,7 @@ RefPtr<CSSCustomPropertyValue> Builder::resolveCustomPropertyValue(CSSCustomProp
     auto checkDependencies = [&](auto& propertyDependencies) {
         for (auto property : propertyDependencies) {
             if (m_state.m_inProgressProperties.get(property)) {
-                m_state.m_inUnitCycleProperties.set(property);
+                m_state.m_invalidAtComputedValueTimeProperties.set(property);
                 hasCycles = true;
             }
             if (property == CSSPropertyFontSize)

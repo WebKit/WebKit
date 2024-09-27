@@ -35,6 +35,7 @@
 #include "CalculationExecutor.h"
 #include "RenderStyle.h"
 #include "RenderStyleInlines.h"
+#include "StyleBuilderState.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -1288,9 +1289,16 @@ std::optional<Child> simplify(Anchor& anchor, const SimplificationOptions& optio
     if (!options.conversionData || !options.conversionData->styleBuilderState())
         return { };
 
-    auto result = Style::AnchorPositionEvaluator::evaluate(*options.conversionData->styleBuilderState(), anchor);
+    auto& builderState = *options.conversionData->styleBuilderState();
+
+    auto result = Style::AnchorPositionEvaluator::evaluate(builderState, anchor);
     if (!result) {
-        // FIXME: Invalid anchor without valid fallback should make the declaration invalid at computed-value time.
+        // https://drafts.csswg.org/css-anchor-position-1/#anchor-valid
+        // "If any of these conditions are false, the anchor() function resolves to its specified fallback value.
+        // If no fallback value is specified, it makes the declaration referencing it invalid at computed-value time."
+        if (!anchor.fallback)
+            builderState.setCurrentPropertyInvalidAtComputedValueTime();
+
         // Replace the anchor node with the fallback node.
         return std::exchange(anchor.fallback, { });
     }

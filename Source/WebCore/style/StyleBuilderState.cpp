@@ -281,5 +281,15 @@ CSSPropertyID BuilderState::cssPropertyID() const
     return m_currentProperty ? m_currentProperty->id : CSSPropertyInvalid;
 }
 
+bool BuilderState::isCurrentPropertyInvalidAtComputedValueTime() const
+{
+    return m_invalidAtComputedValueTimeProperties.get(cssPropertyID());
+}
+
+void BuilderState::setCurrentPropertyInvalidAtComputedValueTime()
+{
+    m_invalidAtComputedValueTimeProperties.set(cssPropertyID());
+}
+
 }
 }
