@@ -275,6 +275,7 @@ auto PDFDocumentLayout::pageIndexAndPagePointForDocumentYOffset(float documentYO
             // Handle side by side pages with different sizes.
             std::optional<PageIndex> targetPageIndex = [&](PageIndex index) -> std::optional<PageIndex> {
                 auto leftPageBounds = layoutBoundsForPageAtIndex(index);
+                leftPageBounds.inflate(PDFDocumentLayout::documentMargin);
                 if (documentYOffset >= leftPageBounds.y() && documentYOffset < leftPageBounds.maxY())
                     return index;
 
@@ -283,6 +284,7 @@ auto PDFDocumentLayout::pageIndexAndPagePointForDocumentYOffset(float documentYO
                     return { };
 
                 auto rightPageBounds = layoutBoundsForPageAtIndex(rightPageIndex);
+                rightPageBounds.inflate(PDFDocumentLayout::documentMargin);
                 if (documentYOffset >= rightPageBounds.y() && documentYOffset < rightPageBounds.maxY())
                     return rightPageIndex;
 
