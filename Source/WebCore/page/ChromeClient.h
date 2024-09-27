@@ -345,16 +345,16 @@ public:
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient&, const Color&) = 0;
+    virtual RefPtr<ColorChooser> createColorChooser(ColorChooserClient&, const Color&) = 0;
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
-    virtual std::unique_ptr<DataListSuggestionPicker> createDataListSuggestionPicker(DataListSuggestionsClient&) = 0;
+    virtual RefPtr<DataListSuggestionPicker> createDataListSuggestionPicker(DataListSuggestionsClient&) = 0;
     virtual bool canShowDataListSuggestionLabels() const = 0;
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-    virtual std::unique_ptr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&) = 0;
+    virtual RefPtr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&) = 0;
 #endif
 
     virtual void setTextIndicator(const TextIndicatorData&) const = 0;

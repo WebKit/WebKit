@@ -180,7 +180,7 @@ public:
     std::unique_ptr<DiagnosticLoggingClient> diagnosticLoggingClient;
     std::unique_ptr<PerformanceLoggingClient> performanceLoggingClient;
 #if ENABLE(SPEECH_SYNTHESIS)
-    std::unique_ptr<SpeechSynthesisClient> speechSynthesisClient;
+    RefPtr<SpeechSynthesisClient> speechSynthesisClient;
 #endif
 
     RefPtr<ApplicationCacheStorage> applicationCacheStorage;

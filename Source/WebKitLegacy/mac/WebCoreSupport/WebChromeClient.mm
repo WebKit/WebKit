@@ -693,7 +693,7 @@ void WebChromeClient::exceededDatabaseQuota(LocalFrame& frame, const String& dat
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
-std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)
+RefPtr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)
 {
     // FIXME: Implement <input type='color'> for WK1 (Bug 119094).
     ASSERT_NOT_REACHED();
@@ -703,7 +703,7 @@ std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserCl
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
-std::unique_ptr<DataListSuggestionPicker> WebChromeClient::createDataListSuggestionPicker(DataListSuggestionsClient& client)
+RefPtr<DataListSuggestionPicker> WebChromeClient::createDataListSuggestionPicker(DataListSuggestionsClient& client)
 {
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -711,7 +711,7 @@ std::unique_ptr<DataListSuggestionPicker> WebChromeClient::createDataListSuggest
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-std::unique_ptr<DateTimeChooser> WebChromeClient::createDateTimeChooser(DateTimeChooserClient&)
+RefPtr<DateTimeChooser> WebChromeClient::createDateTimeChooser(DateTimeChooserClient&)
 {
     ASSERT_NOT_REACHED();
     return nullptr;

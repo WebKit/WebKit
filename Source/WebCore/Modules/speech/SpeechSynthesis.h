@@ -45,10 +45,11 @@ class SpeechSynthesisVoice;
 class SpeechSynthesis : public PlatformSpeechSynthesizerClient, public SpeechSynthesisClientObserver, public RefCounted<SpeechSynthesis>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(SpeechSynthesis);
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
-
     static Ref<SpeechSynthesis> create(ScriptExecutionContext&);
     virtual ~SpeechSynthesis();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     bool pending() const;
     bool speaking() const;
@@ -109,9 +110,9 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
     void eventListenersDidChange() final;
-    
+
     PlatformSpeechSynthesizer& ensurePlatformSpeechSynthesizer();
-    
+
     RefPtr<PlatformSpeechSynthesizer> m_platformSpeechSynthesizer;
     std::optional<Vector<Ref<SpeechSynthesisVoice>>> m_voiceList;
     std::unique_ptr<SpeechSynthesisUtteranceActivity> m_currentSpeechUtterance;

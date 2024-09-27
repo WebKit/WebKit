@@ -740,7 +740,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.screenOrientationManager = m_screenOrientationManager.get();
 
 #if ENABLE(SPEECH_SYNTHESIS) && !USE(GSTREAMER)
-    pageConfiguration.speechSynthesisClient = makeUnique<WebSpeechSynthesisClient>(*this);
+    pageConfiguration.speechSynthesisClient = WebSpeechSynthesisClient::create(*this);
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
@@ -1867,8 +1867,8 @@ void WebPage::close()
     }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    if (m_activeColorChooser) {
-        m_activeColorChooser->disconnectFromPage();
+    if (RefPtr activeColorChooser = m_activeColorChooser.get()) {
+        activeColorChooser->disconnectFromPage();
         m_activeColorChooser = nullptr;
     }
 #endif
@@ -5584,14 +5584,14 @@ void WebPage::setActiveColorChooser(WebColorChooser* colorChooser)
 
 void WebPage::didEndColorPicker()
 {
-    if (m_activeColorChooser)
-        m_activeColorChooser->didEndChooser();
+    if (RefPtr activeColorChooser = m_activeColorChooser.get())
+        activeColorChooser->didEndChooser();
 }
 
 void WebPage::didChooseColor(const WebCore::Color& color)
 {
-    if (m_activeColorChooser)
-        m_activeColorChooser->didChooseColor(color);
+    if (RefPtr activeColorChooser = m_activeColorChooser.get())
+        activeColorChooser->didChooseColor(color);
 }
 
 #endif
@@ -5605,14 +5605,14 @@ void WebPage::setActiveDataListSuggestionPicker(WebDataListSuggestionPicker& dat
 
 void WebPage::didSelectDataListOption(const String& selectedOption)
 {
-    if (m_activeDataListSuggestionPicker)
-        m_activeDataListSuggestionPicker->didSelectOption(selectedOption);
+    if (RefPtr activeDataListSuggestionPicker = m_activeDataListSuggestionPicker.get())
+        activeDataListSuggestionPicker->didSelectOption(selectedOption);
 }
 
 void WebPage::didCloseSuggestions()
 {
     if (auto picker = std::exchange(m_activeDataListSuggestionPicker, nullptr))
-        picker->didCloseSuggestions();
+        RefPtr { picker.get() }->didCloseSuggestions();
 }
 
 #endif
@@ -5626,14 +5626,14 @@ void WebPage::setActiveDateTimeChooser(WebDateTimeChooser& dateTimeChooser)
 
 void WebPage::didChooseDate(const String& date)
 {
-    if (m_activeDateTimeChooser)
-        m_activeDateTimeChooser->didChooseDate(date);
+    if (RefPtr activeDateTimeChooser = m_activeDateTimeChooser.get())
+        activeDateTimeChooser->didChooseDate(date);
 }
 
 void WebPage::didEndDateTimePicker()
 {
     if (auto chooser = std::exchange(m_activeDateTimeChooser, nullptr))
-        chooser->didEndChooser();
+        RefPtr { chooser.get() }->didEndChooser();
 }
 
 #endif

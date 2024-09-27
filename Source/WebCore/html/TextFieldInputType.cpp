@@ -207,8 +207,10 @@ auto TextFieldInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallB
         return ShouldCallBaseEventHandler::Yes;
 #if ENABLE(DATALIST_ELEMENT)
     const String& key = event.keyIdentifier();
-    if (m_suggestionPicker && (key == "Enter"_s || key == "Up"_s || key == "Down"_s)) {
-        m_suggestionPicker->handleKeydownWithIdentifier(key);
+    RefPtr suggestionPicker = m_suggestionPicker;
+
+    if (suggestionPicker && (key == "Enter"_s || key == "Up"_s || key == "Down"_s)) {
+        suggestionPicker->handleKeydownWithIdentifier(key);
         event.setDefaultHandled();
     }
 #endif
@@ -1016,16 +1018,14 @@ void TextFieldInputType::displaySuggestions(DataListSuggestionActivationType typ
     if (!m_suggestionPicker && suggestions().size() > 0)
         m_suggestionPicker = chrome()->createDataListSuggestionPicker(*this);
 
-    if (!m_suggestionPicker)
-        return;
-
-    m_suggestionPicker->displayWithActivationType(type);
+    if (RefPtr suggestionPicker = m_suggestionPicker)
+        suggestionPicker->displayWithActivationType(type);
 }
 
 void TextFieldInputType::closeSuggestions()
 {
-    if (m_suggestionPicker)
-        m_suggestionPicker->close();
+    if (RefPtr suggestionPicker = m_suggestionPicker)
+        suggestionPicker->close();
 }
 
 bool TextFieldInputType::isPresentingAttachedView() const

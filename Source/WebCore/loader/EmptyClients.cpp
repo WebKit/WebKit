@@ -544,7 +544,7 @@ RefPtr<SearchPopupMenu> EmptyChromeClient::createSearchPopupMenu(PopupMenuClient
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
-std::unique_ptr<ColorChooser> EmptyChromeClient::createColorChooser(ColorChooserClient&, const Color&)
+RefPtr<ColorChooser> EmptyChromeClient::createColorChooser(ColorChooserClient&, const Color&)
 {
     return nullptr;
 }
@@ -553,7 +553,7 @@ std::unique_ptr<ColorChooser> EmptyChromeClient::createColorChooser(ColorChooser
 
 #if ENABLE(DATALIST_ELEMENT)
 
-std::unique_ptr<DataListSuggestionPicker> EmptyChromeClient::createDataListSuggestionPicker(DataListSuggestionsClient&)
+RefPtr<DataListSuggestionPicker> EmptyChromeClient::createDataListSuggestionPicker(DataListSuggestionsClient&)
 {
     return nullptr;
 }
@@ -562,7 +562,7 @@ std::unique_ptr<DataListSuggestionPicker> EmptyChromeClient::createDataListSugge
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
-std::unique_ptr<DateTimeChooser> EmptyChromeClient::createDateTimeChooser(DateTimeChooserClient&)
+RefPtr<DateTimeChooser> EmptyChromeClient::createDateTimeChooser(DateTimeChooserClient&)
 {
     return nullptr;
 }

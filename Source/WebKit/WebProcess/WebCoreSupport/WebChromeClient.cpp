@@ -839,18 +839,18 @@ void WebChromeClient::print(LocalFrame& frame, const StringWithDirection& title)
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
-std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)
+RefPtr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)
 {
-    return makeUnique<WebColorChooser>(protectedPage().ptr(), &client, initialColor);
+    return WebColorChooser::create(protectedPage().ptr(), &client, initialColor);
 }
 
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
 
-std::unique_ptr<DataListSuggestionPicker> WebChromeClient::createDataListSuggestionPicker(DataListSuggestionsClient& client)
+RefPtr<DataListSuggestionPicker> WebChromeClient::createDataListSuggestionPicker(DataListSuggestionsClient& client)
 {
-    return makeUnique<WebDataListSuggestionPicker>(protectedPage(), client);
+    return WebDataListSuggestionPicker::create(protectedPage(), client);
 }
 
 bool WebChromeClient::canShowDataListSuggestionLabels() const
@@ -866,9 +866,9 @@ bool WebChromeClient::canShowDataListSuggestionLabels() const
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
-std::unique_ptr<DateTimeChooser> WebChromeClient::createDateTimeChooser(DateTimeChooserClient& client)
+RefPtr<DateTimeChooser> WebChromeClient::createDateTimeChooser(DateTimeChooserClient& client)
 {
-    return makeUnique<WebDateTimeChooser>(protectedPage(), client);
+    return WebDateTimeChooser::create(protectedPage(), client);
 }
 
 #endif

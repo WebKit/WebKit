@@ -27,32 +27,24 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
-#include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class SpeechSynthesisClientObserver;
-class SpeechSynthesisClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SpeechSynthesisClientObserver> : std::true_type { };
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SpeechSynthesisClient> : std::true_type { };
-}
+#include <wtf/CanMakeWeakPtr.h>
 
 namespace WebCore {
 
 class PlatformSpeechSynthesisUtterance;
 class SpeechSynthesisClientObserver;
 class PlatformSpeechSynthesisVoice;
-    
+
 class SpeechSynthesisClient : public CanMakeWeakPtr<SpeechSynthesisClient> {
 public:
     virtual ~SpeechSynthesisClient() = default;
 
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
+
     virtual void setObserver(WeakPtr<SpeechSynthesisClientObserver>) = 0;
     virtual WeakPtr<SpeechSynthesisClientObserver> observer() const = 0;
-    
+
     virtual const Vector<RefPtr<PlatformSpeechSynthesisVoice>>& voiceList() = 0;
     virtual void speak(RefPtr<PlatformSpeechSynthesisUtterance>) = 0;
     virtual void cancel() = 0;
@@ -65,6 +57,9 @@ public:
 class SpeechSynthesisClientObserver : public CanMakeWeakPtr<SpeechSynthesisClientObserver>  {
 public:
     virtual ~SpeechSynthesisClientObserver() = default;
+
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
 
     virtual void didStartSpeaking() = 0;
     virtual void didFinishSpeaking() = 0;

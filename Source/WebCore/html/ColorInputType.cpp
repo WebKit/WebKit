@@ -170,8 +170,8 @@ void ColorInputType::setValue(const String& value, bool valueChanged, TextFieldE
         return;
 
     updateColorSwatch();
-    if (m_chooser)
-        m_chooser->setSelectedColor(valueAsColor());
+    if (RefPtr chooser = m_chooser)
+        chooser->setSelectedColor(valueAsColor());
 }
 
 void ColorInputType::attributeChanged(const QualifiedName& name)
@@ -205,7 +205,7 @@ void ColorInputType::showPicker()
         if (!m_chooser)
             m_chooser = chrome->createColorChooser(*this, valueAsColor());
         else
-            m_chooser->reattachColorChooser(valueAsColor());
+            RefPtr { m_chooser }->reattachColorChooser(valueAsColor());
     }
 }
 
@@ -269,8 +269,8 @@ void ColorInputType::didEndChooser()
 
 void ColorInputType::endColorChooser()
 {
-    if (m_chooser)
-        m_chooser->endChooser();
+    if (RefPtr chooser = m_chooser)
+        chooser->endChooser();
 }
 
 void ColorInputType::updateColorSwatch()

@@ -89,7 +89,7 @@ private:
     void updateColorSwatch();
     HTMLElement* shadowColorSwatch() const;
 
-    std::unique_ptr<ColorChooser> m_chooser;
+    RefPtr<ColorChooser> m_chooser;
 };
 
 } // namespace WebCore

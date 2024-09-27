@@ -28,25 +28,17 @@
 #if ENABLE(DATALIST_ELEMENT)
 
 #include "DataListSuggestionInformation.h"
-#include <wtf/TZoneMallocInlines.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/CanMakeWeakPtr.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebCore {
-class DataListSuggestionPicker;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::DataListSuggestionPicker> : std::true_type { };
-}
 
 namespace WebCore {
 
 class DataListSuggestionPicker : public CanMakeWeakPtr<DataListSuggestionPicker> {
-    WTF_MAKE_TZONE_ALLOCATED_INLINE(DataListSuggestionPicker);
 public:
     virtual ~DataListSuggestionPicker() = default;
+
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
 
     virtual void close() { }
     virtual void handleKeydownWithIdentifier(const String&) { }

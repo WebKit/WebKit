@@ -193,15 +193,15 @@ public:
     WEBCORE_EXPORT void disableSuddenTermination();
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient&, const Color& initialColor);
+    RefPtr<ColorChooser> createColorChooser(ColorChooserClient&, const Color& initialColor);
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
-    std::unique_ptr<DataListSuggestionPicker> createDataListSuggestionPicker(DataListSuggestionsClient&);
+    RefPtr<DataListSuggestionPicker> createDataListSuggestionPicker(DataListSuggestionsClient&);
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-    std::unique_ptr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&);
+    RefPtr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&);
 #endif
 
     std::unique_ptr<WorkerClient> createWorkerClient(SerialFunctionDispatcher&);

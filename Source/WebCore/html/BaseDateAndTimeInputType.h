@@ -151,7 +151,7 @@ private:
 
     void showPicker() override;
 
-    std::unique_ptr<DateTimeChooser> m_dateTimeChooser;
+    RefPtr<DateTimeChooser> m_dateTimeChooser;
     RefPtr<DateTimeEditElement> m_dateTimeEditElement;
 };
 

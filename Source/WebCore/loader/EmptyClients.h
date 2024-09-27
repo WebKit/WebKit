@@ -140,16 +140,16 @@ class EmptyChromeClient : public ChromeClient {
     void reachedApplicationCacheOriginQuota(SecurityOrigin&, int64_t) final { }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient&, const Color&) final;
+    RefPtr<ColorChooser> createColorChooser(ColorChooserClient&, const Color&) final;
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
-    std::unique_ptr<DataListSuggestionPicker> createDataListSuggestionPicker(DataListSuggestionsClient&) final;
+    RefPtr<DataListSuggestionPicker> createDataListSuggestionPicker(DataListSuggestionsClient&) final;
     bool canShowDataListSuggestionLabels() const final { return false; }
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-    std::unique_ptr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&) final;
+    RefPtr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&) final;
 #endif
 
     void setTextIndicator(const TextIndicatorData&) const final;
