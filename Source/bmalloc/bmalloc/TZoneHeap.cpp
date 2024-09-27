@@ -79,7 +79,7 @@ void* tzoneAllocateCompact(pas_heap_ref& heapRef)
         }
     }
 
-    return bmalloc_iso_allocate_inline(&heapRef, pas_compact_allocation_mode);
+    return bmalloc_iso_allocate_inline(&heapRef, pas_maybe_compact_allocation_mode);
 }
 
 void* tzoneTryAllocateCompact(pas_heap_ref& heapRef)
@@ -92,7 +92,7 @@ void* tzoneTryAllocateCompact(pas_heap_ref& heapRef)
             return result.ptr;
     }
 
-    return bmalloc_try_iso_allocate_inline(&heapRef, pas_compact_allocation_mode);
+    return bmalloc_try_iso_allocate_inline(&heapRef, pas_maybe_compact_allocation_mode);
 }
 
 void tzoneDeallocate(void* ptr)
