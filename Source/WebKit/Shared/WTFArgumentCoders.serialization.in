@@ -166,29 +166,16 @@ template: struct WebKit::WebExtensionWindowIdentifierType
 }
 
 header: <wtf/ObjectIdentifier.h>
-template: enum class WebCore::IDBDatabaseConnectionIdentifierType
-template: enum class WebCore::WorkerFileSystemStorageConnectionCallbackIdentifierType
-template: enum class WebKit::GraphicsContextGLIdentifierType
-template: enum class WebKit::RemoteVideoFrameIdentifierType
-template: enum class WebKit::RenderingBackendIdentifierType
-template: enum class WebKit::VideoDecoderIdentifierType
-template: enum class WebKit::VideoEncoderIdentifierType
-template: enum class WebKit::WCContentBufferIdentifierType
-template: enum class WebKit::WebGPUIdentifierType
-template: enum class TestWebKitAPI::TestedObjectIdentifierType
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::LegacyNullableAtomicObjectIdentifier {
-    [Validator='WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
-}
-
-header: <wtf/ObjectIdentifier.h>
 template: class WebCore::ResourceLoader
 template: class WebCore::WebSocketChannel
 template: enum class IPC::ConnectionSyncRequestIDType
 template: enum class JSC::MicrotaskIdentifierType
+template: enum class TestWebKitAPI::TestedObjectIdentifierType
 template: enum class WebCore::DOMCacheIdentifierType
 template: enum class WebCore::BroadcastChannelIdentifierType
 template: enum class WebCore::FileSystemHandleIdentifierType
 template: enum class WebCore::FileSystemSyncAccessHandleIdentifierType
+template: enum class WebCore::IDBDatabaseConnectionIdentifierType
 template: enum class WebCore::IDBObjectStoreIdentifierType
 template: enum class WebCore::LibWebRTCSocketIdentifierType
 template: enum class WebCore::MainThreadPermissionObserverIdentifierType
@@ -202,11 +189,19 @@ template: enum class WebCore::ServiceWorkerJobIdentifierType
 template: enum class WebCore::ServiceWorkerRegistrationIdentifierType
 template: enum class WebCore::WebLockIdentifierType
 template: enum class WebCore::WebSocketIdentifierType
+template: enum class WebCore::WorkerFileSystemStorageConnectionCallbackIdentifierType
 template: enum class WebKit::GPUProcessConnectionIdentifierType
+template: enum class WebKit::GraphicsContextGLIdentifierType
 template: enum class WebKit::LegacyCustomProtocolIDType
 template: enum class WebKit::LibWebRTCResolverIdentifierType
 template: enum class WebKit::LogStreamIdentifierType
 template: enum class WebKit::QuotaIncreaseRequestIdentifierType
+template: enum class WebKit::RemoteVideoFrameIdentifierType
+template: enum class WebKit::RenderingBackendIdentifierType
+template: enum class WebKit::VideoDecoderIdentifierType
+template: enum class WebKit::VideoEncoderIdentifierType
+template: enum class WebKit::WCContentBufferIdentifierType
+template: enum class WebKit::WebGPUIdentifierType
 template: struct IPC::AsyncReplyIDType
 template: struct WebKit::StorageAreaIdentifierType
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::AtomicObjectIdentifier {

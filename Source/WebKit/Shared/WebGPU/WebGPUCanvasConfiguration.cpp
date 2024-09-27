@@ -38,8 +38,6 @@ namespace WebKit::WebGPU {
 std::optional<CanvasConfiguration> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::CanvasConfiguration& canvasConfiguration)
 {
     auto device = convertToBacking(canvasConfiguration.device);
-    if (!device)
-        return std::nullopt;
 
     return { { device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.viewFormats, canvasConfiguration.colorSpace, canvasConfiguration.toneMappingMode, canvasConfiguration.compositingAlphaMode, canvasConfiguration.reportValidationErrors } };
 }

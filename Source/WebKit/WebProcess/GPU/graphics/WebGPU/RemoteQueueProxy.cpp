@@ -53,9 +53,6 @@ void RemoteQueueProxy::submit(Vector<std::reference_wrapper<WebCore::WebGPU::Com
 {
     auto convertedCommandBuffers = WTF::compactMap(commandBuffers, [&](auto& commandBuffer) -> std::optional<WebGPUIdentifier> {
         auto convertedCommandBuffer = m_convertToBackingContext->convertToBacking(commandBuffer);
-        ASSERT(convertedCommandBuffer);
-        if (!convertedCommandBuffer)
-            return std::nullopt;
         return convertedCommandBuffer;
     });
 
@@ -79,9 +76,6 @@ void RemoteQueueProxy::writeBuffer(
     std::optional<WebCore::WebGPU::Size64> size)
 {
     auto convertedBuffer = m_convertToBackingContext->convertToBacking(buffer);
-    ASSERT(convertedBuffer);
-    if (!convertedBuffer)
-        return;
 
     auto sharedMemory = WebCore::SharedMemory::copySpan(source.subspan(dataOffset, static_cast<size_t>(size.value_or(source.size() - dataOffset))));
     std::optional<WebCore::SharedMemoryHandle> handle;

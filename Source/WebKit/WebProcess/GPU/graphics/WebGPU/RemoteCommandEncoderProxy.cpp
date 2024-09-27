@@ -95,11 +95,7 @@ void RemoteCommandEncoderProxy::copyBufferToBuffer(
     WebCore::WebGPU::Size64 size)
 {
     auto convertedSource = m_convertToBackingContext->convertToBacking(source);
-    ASSERT(convertedSource);
     auto convertedDestination = m_convertToBackingContext->convertToBacking(destination);
-    ASSERT(convertedDestination);
-    if (!convertedSource || !convertedDestination)
-        return;
 
     auto sendResult = send(Messages::RemoteCommandEncoder::CopyBufferToBuffer(convertedSource, sourceOffset, convertedDestination, destinationOffset, size));
     UNUSED_VARIABLE(sendResult);
@@ -165,9 +161,6 @@ void RemoteCommandEncoderProxy::clearBuffer(
     std::optional<WebCore::WebGPU::Size64> size)
 {
     auto convertedBuffer = m_convertToBackingContext->convertToBacking(buffer);
-    ASSERT(convertedBuffer);
-    if (!convertedBuffer)
-        return;
 
     auto sendResult = send(Messages::RemoteCommandEncoder::ClearBuffer(convertedBuffer, offset, size));
     UNUSED_VARIABLE(sendResult);
@@ -194,9 +187,6 @@ void RemoteCommandEncoderProxy::insertDebugMarker(String&& markerLabel)
 void RemoteCommandEncoderProxy::writeTimestamp(const WebCore::WebGPU::QuerySet& querySet, WebCore::WebGPU::Size32 queryIndex)
 {
     auto convertedQuerySet = m_convertToBackingContext->convertToBacking(querySet);
-    ASSERT(convertedQuerySet);
-    if (!convertedQuerySet)
-        return;
 
     auto sendResult = send(Messages::RemoteCommandEncoder::WriteTimestamp(convertedQuerySet, queryIndex));
     UNUSED_VARIABLE(sendResult);
@@ -210,11 +200,7 @@ void RemoteCommandEncoderProxy::resolveQuerySet(
     WebCore::WebGPU::Size64 destinationOffset)
 {
     auto convertedQuerySet = m_convertToBackingContext->convertToBacking(querySet);
-    ASSERT(convertedQuerySet);
     auto convertedDestination = m_convertToBackingContext->convertToBacking(destination);
-    ASSERT(convertedDestination);
-    if (!convertedQuerySet || !convertedDestination)
-        return;
 
     auto sendResult = send(Messages::RemoteCommandEncoder::ResolveQuerySet(convertedQuerySet, firstQuery, queryCount, convertedDestination, destinationOffset));
     UNUSED_VARIABLE(sendResult);

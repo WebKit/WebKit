@@ -115,7 +115,6 @@ private:
     void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&) final;
 
     WebGPUIdentifier m_backing;
-    WebGPUIdentifier m_queueBacking;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteAdapterProxy> m_parent;
     Ref<RemoteQueueProxy> m_queue;

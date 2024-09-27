@@ -343,9 +343,8 @@ void LibWebRTCCodecs::createDecoderAndWaitUntilReady(WebCore::VideoCodecType typ
 
 LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoderInternal(WebCore::VideoCodecType type, const String& codec, Function<void(Decoder*)>&& callback)
 {
-    auto decoder = makeUnique<Decoder>();
+    auto decoder = makeUnique<Decoder>(VideoDecoderIdentifier::generate());
     auto* result = decoder.get();
-    decoder->identifier = VideoDecoderIdentifier::generate();
     decoder->type = type;
     decoder->codec = codec.isolatedCopy();
 
@@ -594,9 +593,8 @@ static void createRemoteEncoder(LibWebRTCCodecs::Encoder& encoder, IPC::Connecti
 
 LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoderInternal(WebCore::VideoCodecType type, const String& codec, const std::map<std::string, std::string>& formatParameters, bool isRealtime, bool useAnnexB, VideoEncoderScalabilityMode scalabilityMode, Function<void(Encoder*)>&& callback)
 {
-    auto encoder = makeUnique<Encoder>();
+    auto encoder = makeUnique<Encoder>(VideoEncoderIdentifier::generate());
     auto* result = encoder.get();
-    encoder->identifier = VideoEncoderIdentifier::generate();
     encoder->type = type;
     encoder->useAnnexB = useAnnexB;
     encoder->isRealtime = isRealtime;

@@ -22,6 +22,6 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::PipelineDescriptorBase : WebKit::WebGPU::ObjectDescriptorBase {
-    WebKit::WebGPUIdentifier layout;
+    Markable<WebKit::WebGPUIdentifier> layout;
 };
 #endif

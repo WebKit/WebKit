@@ -38,8 +38,6 @@ namespace WebKit::WebGPU {
 std::optional<ShaderModuleCompilationHint> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ShaderModuleCompilationHint& shaderModuleCompilationHint)
 {
     WebGPUIdentifier pipelineLayout = convertToBacking(shaderModuleCompilationHint.protectedPipelineLayout());
-    if (!pipelineLayout)
-        return std::nullopt;
 
     return { { pipelineLayout } };
 }

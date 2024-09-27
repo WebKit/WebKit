@@ -52,9 +52,6 @@ RemoteRenderPassEncoderProxy::~RemoteRenderPassEncoderProxy()
 void RemoteRenderPassEncoderProxy::setPipeline(const WebCore::WebGPU::RenderPipeline& renderPipeline)
 {
     auto convertedRenderPipeline = m_convertToBackingContext->convertToBacking(renderPipeline);
-    ASSERT(convertedRenderPipeline);
-    if (!convertedRenderPipeline)
-        return;
 
     auto sendResult = send(Messages::RemoteRenderPassEncoder::SetPipeline(convertedRenderPipeline));
     UNUSED_VARIABLE(sendResult);
@@ -63,9 +60,6 @@ void RemoteRenderPassEncoderProxy::setPipeline(const WebCore::WebGPU::RenderPipe
 void RemoteRenderPassEncoderProxy::setIndexBuffer(const WebCore::WebGPU::Buffer& buffer, WebCore::WebGPU::IndexFormat indexFormat, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
 {
     auto convertedBuffer = m_convertToBackingContext->convertToBacking(buffer);
-    ASSERT(convertedBuffer);
-    if (!convertedBuffer)
-        return;
 
     auto sendResult = send(Messages::RemoteRenderPassEncoder::SetIndexBuffer(convertedBuffer, indexFormat, offset, size));
     UNUSED_VARIABLE(sendResult);
@@ -80,9 +74,6 @@ void RemoteRenderPassEncoderProxy::setVertexBuffer(WebCore::WebGPU::Index32 slot
     }
 
     auto convertedBuffer = m_convertToBackingContext->convertToBacking(*buffer);
-    ASSERT(convertedBuffer);
-    if (!convertedBuffer)
-        return;
 
     auto sendResult = send(Messages::RemoteRenderPassEncoder::SetVertexBuffer(slot, convertedBuffer, offset, size));
     UNUSED_VARIABLE(sendResult);
@@ -107,9 +98,6 @@ void RemoteRenderPassEncoderProxy::drawIndexed(WebCore::WebGPU::Size32 indexCoun
 void RemoteRenderPassEncoderProxy::drawIndirect(const WebCore::WebGPU::Buffer& indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
 {
     auto convertedIndirectBuffer = m_convertToBackingContext->convertToBacking(indirectBuffer);
-    ASSERT(convertedIndirectBuffer);
-    if (!convertedIndirectBuffer)
-        return;
 
     auto sendResult = send(Messages::RemoteRenderPassEncoder::DrawIndirect(convertedIndirectBuffer, indirectOffset));
     UNUSED_VARIABLE(sendResult);
@@ -118,9 +106,6 @@ void RemoteRenderPassEncoderProxy::drawIndirect(const WebCore::WebGPU::Buffer& i
 void RemoteRenderPassEncoderProxy::drawIndexedIndirect(const WebCore::WebGPU::Buffer& indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
 {
     auto convertedIndirectBuffer = m_convertToBackingContext->convertToBacking(indirectBuffer);
-    ASSERT(convertedIndirectBuffer);
-    if (!convertedIndirectBuffer)
-        return;
 
     auto sendResult = send(Messages::RemoteRenderPassEncoder::DrawIndexedIndirect(convertedIndirectBuffer, indirectOffset));
     UNUSED_VARIABLE(sendResult);
@@ -130,9 +115,6 @@ void RemoteRenderPassEncoderProxy::setBindGroup(WebCore::WebGPU::Index32 index, 
     std::optional<Vector<WebCore::WebGPU::BufferDynamicOffset>>&& dynamicOffsets)
 {
     auto convertedBindGroup = m_convertToBackingContext->convertToBacking(bindGroup);
-    ASSERT(convertedBindGroup);
-    if (!convertedBindGroup)
-        return;
 
     auto sendResult = send(Messages::RemoteRenderPassEncoder::SetBindGroup(index, convertedBindGroup, dynamicOffsets));
     UNUSED_VARIABLE(sendResult);
@@ -145,9 +127,6 @@ void RemoteRenderPassEncoderProxy::setBindGroup(WebCore::WebGPU::Index32 index, 
     WebCore::WebGPU::Size32 dynamicOffsetsDataLength)
 {
     auto convertedBindGroup = m_convertToBackingContext->convertToBacking(bindGroup);
-    ASSERT(convertedBindGroup);
-    if (!convertedBindGroup)
-        return;
 
     auto sendResult = send(Messages::RemoteRenderPassEncoder::SetBindGroup(index, convertedBindGroup, Vector<WebCore::WebGPU::BufferDynamicOffset>(std::span { dynamicOffsetsArrayBuffer + dynamicOffsetsDataStart, dynamicOffsetsDataLength })));
     UNUSED_VARIABLE(sendResult);
@@ -218,11 +197,7 @@ void RemoteRenderPassEncoderProxy::endOcclusionQuery()
 void RemoteRenderPassEncoderProxy::executeBundles(Vector<std::reference_wrapper<WebCore::WebGPU::RenderBundle>>&& renderBundles)
 {
     auto convertedRenderBundles = WTF::compactMap(renderBundles, [&](auto& renderBundle) -> std::optional<WebGPUIdentifier> {
-        auto convertedRenderBundle = m_convertToBackingContext->convertToBacking(renderBundle);
-        ASSERT(convertedRenderBundle);
-        if (!convertedRenderBundle)
-            return std::nullopt;
-        return convertedRenderBundle;
+        return m_convertToBackingContext->convertToBacking(renderBundle);
     });
 
     auto sendResult = send(Messages::RemoteRenderPassEncoder::ExecuteBundles(WTFMove(convertedRenderBundles)));

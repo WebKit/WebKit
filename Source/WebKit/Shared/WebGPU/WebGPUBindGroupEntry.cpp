@@ -41,14 +41,10 @@ std::optional<BindGroupEntry> ConvertToBackingContext::convertToBacking(const We
 {
     return WTF::switchOn(bindGroupEntry.resource, [&] (std::reference_wrapper<WebCore::WebGPU::Sampler> sampler) -> std::optional<BindGroupEntry> {
         auto identifier = convertToBacking(sampler);
-        if (!identifier)
-            return std::nullopt;
 
         return { { bindGroupEntry.binding, { identifier }, identifier, BindingResourceType::Sampler } };
     }, [&] (std::reference_wrapper<WebCore::WebGPU::TextureView> textureView) -> std::optional<BindGroupEntry> {
         auto identifier = convertToBacking(textureView);
-        if (!identifier)
-            return std::nullopt;
 
         return { { bindGroupEntry.binding, { identifier }, identifier, BindingResourceType::TextureView } };
     }, [&] (const auto& bufferBinding) -> std::optional<BindGroupEntry> {
@@ -59,8 +55,6 @@ std::optional<BindGroupEntry> ConvertToBackingContext::convertToBacking(const We
         return { { bindGroupEntry.binding, WTFMove(*convertedBufferBinding), convertedBufferBinding->buffer, BindingResourceType::BufferBinding } };
     }, [&] (std::reference_wrapper<WebCore::WebGPU::ExternalTexture> externalTexture) -> std::optional<BindGroupEntry> {
         auto identifier = convertToBacking(externalTexture);
-        if (!identifier)
-            return std::nullopt;
 
         return { { bindGroupEntry.binding, { identifier }, identifier, BindingResourceType::ExternalTexture } };
     });
