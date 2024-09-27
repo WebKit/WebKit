@@ -136,7 +136,8 @@ public:
         case BackingStoreFlushStart:
         case BuildTransactionStart:
         case WaitForCompositionCompletionStart:
-        case FrameCompositionStart:
+        case RenderLayerTreeStart:
+        case FlushPendingLayerChangesStart:
         case LayerFlushStart:
         case SyncMessageStart:
         case SyncTouchEventStart:
@@ -194,7 +195,8 @@ public:
         case WebHTMLViewPaintEnd:
         case BackingStoreFlushEnd:
         case WaitForCompositionCompletionEnd:
-        case FrameCompositionEnd:
+        case RenderLayerTreeEnd:
+        case FlushPendingLayerChangesEnd:
         case LayerFlushEnd:
         case BuildTransactionEnd:
         case SyncMessageEnd:
@@ -438,12 +440,15 @@ private:
         case WakeUpAndApplyDisplayListEnd:
             return "WakeUpAndApplyDisplayList"_s;
 
+        case FlushPendingLayerChangesStart:
+        case FlushPendingLayerChangesEnd:
+            return "FlushPendingLayerChanges"_s;
         case WaitForCompositionCompletionStart:
         case WaitForCompositionCompletionEnd:
             return "WaitForCompositionCompletion"_s;
-        case FrameCompositionStart:
-        case FrameCompositionEnd:
-            return "FrameComposition"_s;
+        case RenderLayerTreeStart:
+        case RenderLayerTreeEnd:
+            return "RenderLayerTree"_s;
         case LayerFlushStart:
         case LayerFlushEnd:
             return "LayerFlush"_s;
