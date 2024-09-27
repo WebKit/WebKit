@@ -63,6 +63,8 @@ private:
     RefPtr<XRDeviceProxy> deviceByIdentifier(XRDeviceIdentifier);
     bool webXREnabled() const;
 
+    Ref<WebPage> protectedPage() const;
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
@@ -71,7 +73,7 @@ private:
     void sessionDidUpdateVisibilityState(XRDeviceIdentifier, PlatformXR::VisibilityState);
 
     PlatformXR::Instance::DeviceList m_devices;
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
 };
 
 }
