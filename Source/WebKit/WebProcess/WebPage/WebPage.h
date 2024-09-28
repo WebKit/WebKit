@@ -702,10 +702,9 @@ public:
     void sendSetWindowFrame(const WebCore::FloatRect&);
 
     double textZoomFactor() const;
-    void setTextZoomFactor(double);
+    void didSetTextZoomFactor(double);
     double pageZoomFactor() const;
-    void setPageZoomFactor(double);
-    void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
+    void didSetPageZoomFactor(double);
     void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<unsigned> nominalFramesPerSecond);
     String dumpHistoryForTesting(const String& directory);
     void clearHistory();

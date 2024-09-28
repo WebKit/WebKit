@@ -882,7 +882,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     drawingArea->updatePreferences(parameters.store);
 
     setBackgroundExtendsBeyondPage(parameters.backgroundExtendsBeyondPage);
-    setPageAndTextZoomFactors(parameters.pageZoomFactor, parameters.textZoomFactor);
+    didSetPageZoomFactor(parameters.pageZoomFactor);
+    didSetTextZoomFactor(parameters.textZoomFactor);
 
     // FIXME: These should use makeUnique and makeUniqueRef instead of new.
 #if ENABLE(GEOLOCATION)
@@ -2440,7 +2441,7 @@ double WebPage::textZoomFactor() const
     return frame->textZoomFactor();
 }
 
-void WebPage::setTextZoomFactor(double zoomFactor)
+void WebPage::didSetTextZoomFactor(double zoomFactor)
 {
 #if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = mainFramePlugIn()) {
@@ -2449,10 +2450,11 @@ void WebPage::setTextZoomFactor(double zoomFactor)
     }
 #endif
 
-    RefPtr frame = m_mainFrame->coreLocalFrame();
-    if (!frame)
+    if (!m_page)
         return;
-    frame->setTextZoomFactor(static_cast<float>(zoomFactor));
+
+    for (WeakRef frame : m_page->rootFrames())
+        frame->setTextZoomFactor(static_cast<float>(zoomFactor));
 }
 
 double WebPage::pageZoomFactor() const
@@ -2470,7 +2472,7 @@ double WebPage::pageZoomFactor() const
     return frame->pageZoomFactor();
 }
 
-void WebPage::setPageZoomFactor(double zoomFactor)
+void WebPage::didSetPageZoomFactor(double zoomFactor)
 {
 #if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = mainFramePlugIn()) {
@@ -2551,22 +2553,6 @@ void WebPage::clearHistory()
         return;
 
     static_cast<WebBackForwardListProxy&>(m_page->backForward().client()).clear();
-}
-
-void WebPage::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
-{
-#if ENABLE(PDF_PLUGIN)
-    if (auto* pluginView = mainFramePlugIn()) {
-        // FIXME: Shouldn't this multiply the two scales, given we send both as "page scale" above?
-        pluginView->setPageScaleFactor(pageZoomFactor, std::nullopt);
-        return;
-    }
-#endif
-
-    RefPtr frame = m_mainFrame->coreLocalFrame();
-    if (!frame)
-        return;
-    return frame->setPageAndTextZoomFactors(static_cast<float>(pageZoomFactor), static_cast<float>(textZoomFactor));
 }
 
 void WebPage::windowScreenDidChange(PlatformDisplayID displayID, std::optional<unsigned> nominalFramesPerSecond)

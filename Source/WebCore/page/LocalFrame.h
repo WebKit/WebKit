@@ -210,11 +210,14 @@ public:
 
     void setDocument(RefPtr<Document>&&);
 
+    // These recursively set zoom on all LocalFrame descendants,
+    // use WebPageProxy instead to zoom the entire frame tree.
     WEBCORE_EXPORT void setPageZoomFactor(float);
-    float pageZoomFactor() const { return m_pageZoomFactor; }
     WEBCORE_EXPORT void setTextZoomFactor(float);
-    float textZoomFactor() const { return m_textZoomFactor; }
     WEBCORE_EXPORT void setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor);
+
+    float pageZoomFactor() const { return m_pageZoomFactor; }
+    float textZoomFactor() const { return m_textZoomFactor; }
 
     // Scale factor of this frame with respect to the container.
     WEBCORE_EXPORT float frameScaleFactor() const;

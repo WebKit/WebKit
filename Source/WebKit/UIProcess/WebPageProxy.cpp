@@ -5165,7 +5165,9 @@ void WebPageProxy::setTextZoomFactor(double zoomFactor)
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::SetTextZoomFactor(m_textZoomFactor));
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPage::DidSetTextZoomFactor(m_textZoomFactor), pageID);
+    });
 }
 
 void WebPageProxy::setPageZoomFactor(double zoomFactor)
@@ -5181,24 +5183,14 @@ void WebPageProxy::setPageZoomFactor(double zoomFactor)
         return;
 
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-        webProcess.send(Messages::WebPage::SetPageZoomFactor(m_pageZoomFactor), pageID);
+        webProcess.send(Messages::WebPage::DidSetPageZoomFactor(m_pageZoomFactor), pageID);
     });
 }
 
 void WebPageProxy::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
 {
-    if (!m_mainFramePluginHandlesPageScaleGesture && m_pageZoomFactor == pageZoomFactor && m_textZoomFactor == textZoomFactor)
-        return;
-
-    closeOverlayedViews();
-
-    m_pageZoomFactor = pageZoomFactor;
-    m_textZoomFactor = textZoomFactor;
-
-    if (!hasRunningProcess())
-        return;
-
-    send(Messages::WebPage::SetPageAndTextZoomFactors(m_pageZoomFactor, m_textZoomFactor));
+    setPageZoomFactor(pageZoomFactor);
+    setTextZoomFactor(textZoomFactor);
 }
 
 double WebPageProxy::pageZoomFactor() const

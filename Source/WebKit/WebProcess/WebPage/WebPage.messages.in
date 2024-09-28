@@ -292,9 +292,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ReapplyEditCommand(uint64_t commandID) AllowedWhenWaitingForSyncReply
     UnapplyEditCommand(uint64_t commandID) AllowedWhenWaitingForSyncReply
 
-    SetPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
-    SetPageZoomFactor(double zoomFactor)
-    SetTextZoomFactor(double zoomFactor)
+    DidSetPageZoomFactor(double zoomFactor)
+    DidSetTextZoomFactor(double zoomFactor)
     WindowScreenDidChange(uint32_t displayID, std::optional<unsigned> nominalFramesPerSecond)
 
     AccessibilitySettingsDidChange()
