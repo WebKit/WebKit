@@ -32,6 +32,7 @@
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKFindDelegate.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -349,6 +350,22 @@ TEST(WebKit, FindTextInImageOverlay)
 #endif // !PLATFORM(IOS_FAMILY)
 
 #if HAVE(UIFINDINTERACTION)
+
+#if ENABLE(UNIFIED_PDF)
+static RetainPtr<WKWebViewConfiguration> configurationForWebViewTestingFindInUnifiedPDF()
+{
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"UnifiedPDFEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+        if ([feature.key isEqualToString:@"PDFPluginHUDEnabled"])
+            [[configuration preferences] _setEnabled:NO forFeature:feature];
+    }
+
+    return configuration;
+}
+#endif
 
 // FIXME: (rdar://95125552) Remove conformance to _UITextSearching.
 @interface WKWebView () <UITextSearching>
@@ -1045,6 +1062,73 @@ TEST(WebKit, FindInPDFAfterFindInPage)
     [findInteraction dismissFindNavigator];
     [webView waitForNextPresentationUpdate];
 }
+
+#if ENABLE(UNIFIED_PDF)
+
+TEST(WebKit, FindInUnifiedPDF)
+{
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationForWebViewTestingFindInUnifiedPDF().get()]);
+
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
+    [webView loadRequest:request.get()];
+    [webView _test_waitForDidFinishNavigation];
+
+    RetainPtr searchOptions = adoptNS([[UITextSearchOptions alloc] init]);
+    testPerformTextSearchWithQueryStringInWebView(webView.get(), @"555", searchOptions.get(), 2UL);
+
+    hasPerformedTextSearchWithQueryString = false;
+}
+
+TEST(WebKit, FindInUnifiedPDFAfterReload)
+{
+    RetainPtr webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationForWebViewTestingFindInUnifiedPDF().get()]);
+
+    auto searchForText = [&] {
+        RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
+        [webView loadRequest:request.get()];
+        [webView _test_waitForDidFinishNavigation];
+
+        RetainPtr findInteraction = [webView findInteraction];
+        [findInteraction presentFindNavigatorShowingReplace:NO];
+        [webView waitForNextPresentationUpdate];
+
+        RetainPtr searchOptions = adoptNS([[UITextSearchOptions alloc] init]);
+        testPerformTextSearchWithQueryStringInWebView(webView.get(), @"555", searchOptions.get(), 2UL);
+
+        [findInteraction dismissFindNavigator];
+        [webView waitForNextPresentationUpdate];
+
+        hasPerformedTextSearchWithQueryString = false;
+    };
+
+    searchForText();
+    searchForText();
+}
+
+TEST(WebKit, FindInUnifiedPDFAfterFindInPage)
+{
+    RetainPtr webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200) configuration:configurationForWebViewTestingFindInUnifiedPDF().get()]);
+    [webView synchronouslyLoadTestPageNamed:@"lots-of-text"];
+
+    RetainPtr findInteraction = [webView findInteraction];
+    [findInteraction presentFindNavigatorShowingReplace:NO];
+    [webView waitForNextPresentationUpdate];
+
+    [findInteraction dismissFindNavigator];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
+    [webView loadRequest:request.get()];
+    [webView _test_waitForDidFinishNavigation];
+
+    [findInteraction presentFindNavigatorShowingReplace:NO];
+    [webView waitForNextPresentationUpdate];
+
+    [findInteraction dismissFindNavigator];
+    [webView waitForNextPresentationUpdate];
+}
+
+#endif
 
 TEST(WebKit, FindInteractionSupportsTextReplacement)
 {

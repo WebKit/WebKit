@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebFoundTextRangeController.h"
 
+#include "PluginView.h"
 #include "WebPage.h"
 #include <WebCore/CharacterRange.h>
 #include <WebCore/Document.h>
@@ -93,6 +94,23 @@ void WebFoundTextRangeController::findTextRangesForStringMatches(const String& s
         foundTextRanges.append(foundTextRange);
     }
 
+#if ENABLE(PDF_PLUGIN)
+    for (RefPtr frame = &m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        if (!localFrame)
+            continue;
+
+        if (RefPtr pluginView = WebPage::pluginViewForFrame(localFrame.get())) {
+            auto currentFrameName = frame->tree().uniqueName();
+            order++;
+
+            Vector<WebFoundTextRange::PDFData> pdfMatches = pluginView->findTextMatches(string, core(options));
+            for (auto& pdfMatch : pdfMatches)
+                foundTextRanges.append(WebFoundTextRange { pdfMatch, frameName.length() ? frameName : emptyAtom(), order });
+        }
+    }
+#endif
+
     completionHandler(WTFMove(foundTextRanges));
 }
 
@@ -119,10 +137,6 @@ void WebFoundTextRangeController::replaceFoundTextRangeWithString(const WebFound
 
 void WebFoundTextRangeController::decorateTextRangeWithStyle(const WebFoundTextRange& range, FindDecorationStyle style)
 {
-    auto simpleRange = simpleRangeFromFoundTextRange(range);
-    if (!simpleRange)
-        return;
-
     auto currentStyleForRange = m_decoratedRanges.get(range);
     if (style == currentStyleForRange)
         return;
@@ -134,17 +148,25 @@ void WebFoundTextRangeController::decorateTextRangeWithStyle(const WebFoundTextR
         m_highlightedRange = { };
     }
 
-    if (style == FindDecorationStyle::Normal)
-        simpleRange->start.document().markers().removeMarkers(*simpleRange, WebCore::DocumentMarker::Type::TextMatch);
-    else if (style == FindDecorationStyle::Found)
-        simpleRange->start.document().markers().addMarker(*simpleRange, WebCore::DocumentMarker::Type::TextMatch);
-    else if (style == FindDecorationStyle::Highlighted) {
-        m_highlightedRange = range;
+    if (auto simpleRange = simpleRangeFromFoundTextRange(range)) {
+        switch (style) {
+        case FindDecorationStyle::Normal:
+            simpleRange->start.document().markers().removeMarkers(*simpleRange, WebCore::DocumentMarker::Type::TextMatch);
+            break;
+        case FindDecorationStyle::Found:
+            simpleRange->start.document().markers().addMarker(*simpleRange, WebCore::DocumentMarker::Type::TextMatch);
+            break;
+        case FindDecorationStyle::Highlighted: {
+            m_highlightedRange = range;
 
-        if (m_findPageOverlay)
-            setTextIndicatorWithRange(*simpleRange);
-        else
-            flashTextIndicatorAndUpdateSelectionWithRange(*simpleRange);
+            if (m_findPageOverlay)
+                setTextIndicatorWithRange(*simpleRange);
+            else
+                flashTextIndicatorAndUpdateSelectionWithRange(*simpleRange);
+
+            break;
+        }
+        }
     }
 
     if (m_findPageOverlay)
@@ -362,9 +384,33 @@ Vector<WebCore::FloatRect> WebFoundTextRangeController::rectsForTextMatchesInRec
     Ref mainFrame = m_webPage->corePage()->mainFrame();
     RefPtr mainFrameView = mainFrame->virtualView();
     for (RefPtr<Frame> frame = mainFrame.ptr(); frame; frame = frame->tree().traverseNext()) {
-        auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(*frame);
+        RefPtr localFrame = dynamicDowncast<WebCore::LocalFrame>(*frame);
         if (!localFrame)
             continue;
+
+#if ENABLE(PDF_PLUGIN)
+        if (RefPtr pluginView = WebPage::pluginViewForFrame(localFrame.get())) {
+            auto frameName = frame->tree().uniqueName();
+            if (!frameName.length())
+                frameName = emptyAtom();
+
+            for (auto& [range, style] : m_decoratedRanges) {
+                if (style == FindDecorationStyle::Normal)
+                    continue;
+
+                if (range.frameIdentifier != frameName)
+                    continue;
+
+                if (auto* pdfData = std::get_if<WebFoundTextRange::PDFData>(&range.data)) {
+                    for (auto& rect : pluginView->rectsForTextMatch(*pdfData))
+                        rects.append(rect);
+                }
+            }
+
+            continue;
+        }
+#endif
+
         RefPtr document = localFrame->document();
         if (!document)
             continue;
@@ -402,6 +448,9 @@ WebCore::Document* WebFoundTextRangeController::documentForFoundTextRange(const 
 std::optional<WebCore::SimpleRange> WebFoundTextRangeController::simpleRangeFromFoundTextRange(WebFoundTextRange range)
 {
     return m_cachedFoundRanges.ensure(range, [&] () -> std::optional<WebCore::SimpleRange> {
+        if (!std::holds_alternative<WebFoundTextRange::DOMData>(range.data))
+            return std::nullopt;
+
         RefPtr document = documentForFoundTextRange(range);
         if (!document)
             return std::nullopt;

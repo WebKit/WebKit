@@ -28,6 +28,7 @@
 #if ENABLE(PDF_PLUGIN)
 
 #include "PDFPluginIdentifier.h"
+#include "WebFoundTextRange.h"
 #include <WebCore/FindOptions.h>
 #include <WebCore/PluginViewBase.h>
 #include <WebCore/ResourceResponse.h>
@@ -102,6 +103,9 @@ public:
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(const WebCore::IntRect&) const;
     bool drawsFindOverlay() const;
     RefPtr<WebCore::TextIndicator> textIndicatorForCurrentSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition);
+
+    Vector<WebFoundTextRange::PDFData> findTextMatches(const String& target, WebCore::FindOptions);
+    Vector<WebCore::FloatRect> rectsForTextMatch(WebFoundTextRange::PDFData);
 
     String selectionString() const;
 

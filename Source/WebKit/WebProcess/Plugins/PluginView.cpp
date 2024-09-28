@@ -640,6 +640,22 @@ RefPtr<TextIndicator> PluginView::textIndicatorForCurrentSelection(OptionSet<Web
     return protectedPlugin()->textIndicatorForCurrentSelection(options, transition);
 }
 
+Vector<WebFoundTextRange::PDFData> PluginView::findTextMatches(const String& target, WebCore::FindOptions options)
+{
+    if (!m_isInitialized)
+        return { };
+
+    return protectedPlugin()->findTextMatches(target, options);
+}
+
+Vector<FloatRect> PluginView::rectsForTextMatch(WebFoundTextRange::PDFData match)
+{
+    if (!m_isInitialized)
+        return { };
+
+    return protectedPlugin()->rectsForTextMatch(match);
+}
+
 String PluginView::selectionString() const
 {
     if (!m_isInitialized)
