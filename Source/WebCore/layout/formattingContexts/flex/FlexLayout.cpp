@@ -596,37 +596,48 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
         };
         resolveMarginAuto();
 
+        auto justifyContentValue = flexContainerStyle().justifyContent().distribution();
+        auto positionalAlignmentValue = flexContainerStyle().justifyContent().position();
+
+        auto setFallbackValuesIfApplicable = [&] {
+            auto itemCount = lineRange.distance();
+            auto hasOverflow = lineContentOuterMainSize > availableMainSpace;
+            if (!hasOverflow && itemCount > 1)
+                return;
+            switch (justifyContentValue) {
+            case ContentDistribution::SpaceBetween:
+                positionalAlignmentValue = hasOverflow ? ContentPosition::Start : ContentPosition::FlexStart;
+                break;
+            case ContentDistribution::SpaceEvenly:
+            case ContentDistribution::SpaceAround:
+                positionalAlignmentValue = hasOverflow ? ContentPosition::Start : ContentPosition::Center;
+                break;
+            default:
+                break;
+            }
+            justifyContentValue = ContentDistribution::Default;
+        };
+        setFallbackValuesIfApplicable();
+
         auto justifyContent = [&] {
             // 2. Align the items along the main-axis per justify-content.
-            auto justifyContentValue = flexContainerStyle().justifyContent();
             auto initialOffset = [&] {
-                switch (justifyContentValue.distribution()) {
-                case ContentDistribution::Default:
-                    // Fall back to justifyContentValue.position()
-                    break;
-                case ContentDistribution::SpaceBetween:
-                    return LayoutUnit { };
-                case ContentDistribution::SpaceAround: {
-                    auto itemCount = availableMainSpace > lineContentOuterMainSize ? lineRange.distance() : 1;
-                    return (availableMainSpace - lineContentOuterMainSize) / itemCount / 2;
-                }
-                case ContentDistribution::SpaceEvenly: {
-                    auto gapCount = availableMainSpace > lineContentOuterMainSize ? lineRange.distance() + 1 : 2;
-                    return (availableMainSpace - lineContentOuterMainSize) / gapCount;
-                }
-                default:
-                    ASSERT_NOT_IMPLEMENTED_YET();
-                    break;
+                // ContentDistribution::Default handles fallback to justifyContentValue.position()
+                if (justifyContentValue != ContentDistribution::Default) {
+                    switch (justifyContentValue) {
+                    case ContentDistribution::SpaceBetween:
+                        return LayoutUnit { };
+                    case ContentDistribution::SpaceAround:
+                        return (availableMainSpace - lineContentOuterMainSize) / lineRange.distance() / 2;
+                    case ContentDistribution::SpaceEvenly:
+                        return (availableMainSpace - lineContentOuterMainSize) / (lineRange.distance() + 1);
+                    default:
+                        ASSERT_NOT_IMPLEMENTED_YET();
+                        break;
+                    }
                 }
 
-                auto positionalAlignment = [&] {
-                    auto positionalAlignmentValue = justifyContentValue.position();
-                    if (!FlexFormattingUtils::isMainAxisParallelWithInlineAxis(flexContainer()) && (positionalAlignmentValue == ContentPosition::Left || positionalAlignmentValue == ContentPosition::Right))
-                        positionalAlignmentValue = ContentPosition::Start;
-                    return positionalAlignmentValue;
-                };
-
-                switch (positionalAlignment()) {
+                switch (positionalAlignmentValue) {
                 // logical alignments
                 case ContentPosition::Normal:
                 case ContentPosition::FlexStart:
@@ -655,12 +666,10 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
             };
 
             auto gapBetweenItems = [&] {
-                switch (justifyContentValue.distribution()) {
+                switch (justifyContentValue) {
                 case ContentDistribution::Default:
                     return LayoutUnit { };
                 case ContentDistribution::SpaceBetween:
-                    if (lineRange.distance() == 1)
-                        return LayoutUnit { };
                     return std::max(0_lu, availableMainSpace - lineContentOuterMainSize) / (lineRange.distance() - 1);
                 case ContentDistribution::SpaceAround:
                     return std::max(0_lu, availableMainSpace - lineContentOuterMainSize) / lineRange.distance();
