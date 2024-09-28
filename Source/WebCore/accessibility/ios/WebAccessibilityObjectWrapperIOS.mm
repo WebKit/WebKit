@@ -393,7 +393,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     }
 
     auto array = adoptNS([[NSMutableArray alloc] init]);
-    for (const auto& child : self.axBackingObject->children()) {
+    for (const auto& child : self.axBackingObject->unignoredChildren()) {
         auto* wrapper = child->wrapper();
         if (child->isAttachment()) {
             if (id attachmentView = [wrapper attachmentView])
@@ -422,7 +422,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
             return [attachmentView accessibilityElementCount];
     }
 
-    return self.axBackingObject->children().size();
+    return self.axBackingObject->unignoredChildren().size();
 }
 
 - (id)accessibilityElementAtIndex:(NSInteger)index
@@ -435,7 +435,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
             return [attachmentView accessibilityElementAtIndex:index];
     }
     
-    const auto& children = self.axBackingObject->children();
+    const auto& children = self.axBackingObject->unignoredChildren();
     size_t elementIndex = static_cast<size_t>(index);
     if (elementIndex >= children.size())
         return nil;
@@ -459,7 +459,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
             return [attachmentView indexOfAccessibilityElement:element];
     }
     
-    const auto& children = self.axBackingObject->children();
+    const auto& children = self.axBackingObject->unignoredChildren();
     unsigned count = children.size();
     for (unsigned k = 0; k < count; ++k) {
         AccessibilityObjectWrapper* wrapper = children[k]->wrapper();
@@ -1736,7 +1736,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (role != AccessibilityRole::Link && role != AccessibilityRole::WebCoreLink)
         return NO;
     
-    const auto& children = self.axBackingObject->children();
+    const auto& children = self.axBackingObject->unignoredChildren();
     unsigned childrenSize = children.size();
 
     // If there's only one child, then it doesn't have segmented children. 
@@ -1910,7 +1910,7 @@ static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityCh
         if (!object)
             continue;
 
-        Accessibility::enumerateDescendants<AXCoreObject>(*object, true, [&accessibleElements] (AXCoreObject& descendant) {
+        Accessibility::enumerateUnignoredDescendants<AXCoreObject>(*object, true, [&accessibleElements] (AXCoreObject& descendant) {
             auto* wrapper = descendant.wrapper();
             if (wrapper && wrapper.isAccessibilityElement)
                 accessibleElements.append(&descendant);
@@ -2807,7 +2807,8 @@ static RenderObject* rendererForView(WAKView* view)
     auto* parent = object->parentObjectUnignored();
     
     while (parent) {
-        if (!parent->children().size() || parent->children()[0] != object)
+        const auto& children = parent->unignoredChildren();
+        if (children.isEmpty() || children[0] != object)
             return NO;
         if (parent->roleValue() == AccessibilityRole::Suggestion)
             return YES;
@@ -2826,7 +2827,8 @@ static RenderObject* rendererForView(WAKView* view)
     auto* parent = object->parentObjectUnignored();
     
     while (parent) {
-        if (!parent->children().size() || parent->children()[parent->children().size() - 1] != object)
+        const auto& children = parent->unignoredChildren();
+        if (children.isEmpty() || children.last() != object)
             return NO;
         if (parent->roleValue() == AccessibilityRole::Suggestion)
             return YES;

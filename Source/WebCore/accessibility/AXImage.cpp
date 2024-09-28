@@ -58,7 +58,7 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AXImage::imageOverlayEl
 {
     AXTRACE("AXImage::imageOverlayElements"_s);
 
-    auto& children = this->children();
+    const auto& children = this->unignoredChildren();
     if (children.size())
         return children;
 

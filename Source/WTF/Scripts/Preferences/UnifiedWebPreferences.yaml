@@ -3452,6 +3452,20 @@ InactiveMediaCaptureStreamRepromptIntervalInMinutes:
       "PLATFORM(IOS_FAMILY)": 1
       default: 10
 
+IncludeIgnoredInCoreAXTree:
+  type: bool
+  status: internal
+  condition: ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+  humanReadableName: "Include ignored elements in core accessibility tree"
+  humanReadableDescription: "When true, accessibility-is-ignored is not used to build the core, platform-agnostic accessibility tree, and instead is expected to be applied at any platform-exposed layer."
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 IncompleteImageBorderEnabled:
   type: bool
   status: embedder

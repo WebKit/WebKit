@@ -1037,7 +1037,7 @@ public:
     virtual RemoteAXObjectRef remoteParentObject() const = 0;
 #endif
     virtual AXCoreObject* parentObject() const = 0;
-    virtual AXCoreObject* parentObjectUnignored() const = 0;
+    virtual AXCoreObject* parentObjectUnignored() const;
 
     virtual AccessibilityChildrenVector findMatchingObjects(AccessibilitySearchCriteria&&) = 0;
     virtual bool isDescendantOfRole(AccessibilityRole) const = 0;
@@ -1188,9 +1188,36 @@ public:
     virtual void increment() = 0;
     virtual void decrement() = 0;
 
+    // When ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE) is true, this returns ignored children.
+    // When it is not, it returns unignored children. After ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    // is the default, we should rename this function to childrenIncludingIgnored, and all callers
+    // should be audited to either use that, or unignoredChildren.
     virtual const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) = 0;
-    Vector<AXID> childrenIDs(bool updateChildrenIfNecessary = true);
+
+    const AccessibilityChildrenVector& childrenIncludingIgnored(bool updateChildrenIfNeeded = true)
+    {
+        return children(updateChildrenIfNeeded);
+    };
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    // FIXME: Tables returning true here is a problem for ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE), as we need ignored table rows for text marker APIs.
+    bool onlyAddsUnignoredChildren() const { return isTable() || isTableColumn() || roleValue() == AccessibilityRole::TableHeaderContainer; }
+    virtual AccessibilityChildrenVector unignoredChildren(bool updateChildrenIfNeeded = true);
+#else
+    const AccessibilityChildrenVector& unignoredChildren(bool updateChildrenIfNeeded = true) { return children(updateChildrenIfNeeded); }
+#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+
+    // When ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE) is true, this returns IDs of ignored children.
+    // When it is not, it returns IDs of unignored children. After ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    // is the default, we should rename this function to childrenIDsIncludingIgnored, as that is what all
+    // callers will expect at the time this comment was written.
+    Vector<AXID> childrenIDs(bool updateChildrenIfNeeded = true);
     virtual void updateChildrenIfNecessary() = 0;
+    AXCoreObject* nextInPreOrder(bool updateChildrenIfNeeded, AXCoreObject& stayWithin);
+    AXCoreObject* nextSiblingIncludingIgnored(bool updateChildrenIfNeeded) const;
+    // In some contexts, we may have already computed the unignored parent for `this`, so take that as an optional
+    // parameter. If nullptr, we will compute it inside the function.
+    AXCoreObject* nextUnignoredSibling(bool updateChildrenIfNeeded, AXCoreObject* unignoredParent = nullptr) const;
+    AXCoreObject* nextUnignoredSiblingOrParent(bool updateChildrenIfNeeded) const;
     virtual void detachFromParent() = 0;
     virtual bool isDetachedFromParent() = 0;
 
@@ -1458,9 +1485,9 @@ inline void AXCoreObject::detachWrapper(AccessibilityDetachmentType detachmentTy
     m_wrapper = nullptr;
 }
 
-inline Vector<AXID> AXCoreObject::childrenIDs(bool updateChildrenIfNecessary)
+inline Vector<AXID> AXCoreObject::childrenIDs(bool updateChildrenIfNeeded)
 {
-    return axIDs(children(updateChildrenIfNecessary));
+    return axIDs(children(updateChildrenIfNeeded));
 }
 
 namespace Accessibility {
@@ -1552,9 +1579,9 @@ T* exposedTableAncestor(const T& object, bool includeSelf = false)
 }
 
 template<typename T, typename F>
-T* findChild(T& object, F&& matches)
+T* findUnignoredChild(T& object, F&& matches)
 {
-    for (auto child : object.children()) {
+    for (auto child : object.unignoredChildren()) {
         if (matches(child))
             return downcast<T>(child.get());
     }
@@ -1572,14 +1599,14 @@ void enumerateAncestors(const T& object, bool includeSelf, const F& lambda)
 }
 
 template<typename T, typename F>
-void enumerateDescendants(T& object, bool includeSelf, const F& lambda)
+void enumerateUnignoredDescendants(T& object, bool includeSelf, const F& lambda)
 {
     if (includeSelf)
         lambda(object);
 
-    for (const auto& child : object.children()) {
+    for (const auto& child : object.unignoredChildren()) {
         if (child)
-            enumerateDescendants(*child, true, lambda);
+            enumerateUnignoredDescendants(*child, true, lambda);
     }
 }
 

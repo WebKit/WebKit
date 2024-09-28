@@ -67,21 +67,22 @@ enum class AXPropertyFlag : uint32_t {
     IsEnabled                                     = 1 << 7,
     IsExposedTableCell                            = 1 << 8,
     IsGrabbed                                     = 1 << 9,
-    IsInlineText                                  = 1 << 10,
-    IsKeyboardFocusable                           = 1 << 11,
-    IsLink                                        = 1 << 12,
-    IsList                                        = 1 << 13,
-    IsNonLayerSVGObject                           = 1 << 14,
-    IsTableColumn                                 = 1 << 15,
-    IsTableRow                                    = 1 << 16,
-    SupportsCheckedState                          = 1 << 17,
-    SupportsDragging                              = 1 << 18,
-    SupportsExpanded                              = 1 << 19,
-    SupportsPath                                  = 1 << 20,
-    SupportsPosInSet                              = 1 << 21,
-    SupportsPressAction                           = 1 << 22,
-    SupportsRequiredAttribute                     = 1 << 23,
-    SupportsSetSize                               = 1 << 24
+    IsIgnored                                     = 1 << 10,
+    IsInlineText                                  = 1 << 11,
+    IsKeyboardFocusable                           = 1 << 12,
+    IsLink                                        = 1 << 13,
+    IsList                                        = 1 << 14,
+    IsNonLayerSVGObject                           = 1 << 15,
+    IsTableColumn                                 = 1 << 16,
+    IsTableRow                                    = 1 << 17,
+    SupportsCheckedState                          = 1 << 18,
+    SupportsDragging                              = 1 << 19,
+    SupportsExpanded                              = 1 << 20,
+    SupportsPath                                  = 1 << 21,
+    SupportsPosInSet                              = 1 << 22,
+    SupportsPressAction                           = 1 << 23,
+    SupportsRequiredAttribute                     = 1 << 24,
+    SupportsSetSize                               = 1 << 25
 };
 
 enum class AXPropertyName : uint16_t {
@@ -162,6 +163,7 @@ enum class AXPropertyName : uint16_t {
     IsExposedTableCell,
     IsFieldset,
     IsFileUploadButton,
+    IsIgnored,
     IsIndeterminate,
     IsInlineText,
     IsRadioInput,
@@ -381,6 +383,7 @@ public:
     void updateLoadingProgress(double);
 
     void addUnconnectedNode(Ref<AccessibilityObject>);
+    bool isUnconnectedNode(AXID axID) const { return m_unconnectedNodes.contains(axID); }
     // Removes the corresponding isolated object and all descendants from the m_nodeMap and queues their removal from the tree.
     void removeNode(const AccessibilityObject&);
     // Removes the given node and all its descendants from m_nodeMap.
@@ -447,7 +450,7 @@ private:
     };
 
     std::optional<NodeChange> nodeChangeForObject(Ref<AccessibilityObject>, AttachWrapper = AttachWrapper::OnMainThread);
-    void collectNodeChangesForSubtree(AXCoreObject&);
+    void collectNodeChangesForSubtree(AccessibilityObject&);
     bool isCollectingNodeChanges() const { return m_collectingNodeChangesAtTreeLevel > 0; }
     void queueChange(const NodeChange&) WTF_REQUIRES_LOCK(m_changeLogLock);
     void queueRemovals(Vector<AXID>&&);

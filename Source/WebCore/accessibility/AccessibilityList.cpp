@@ -111,7 +111,7 @@ bool AccessibilityList::childHasPseudoVisibleListItemMarkers(Node* node)
     if (!axBeforePseudo->isIgnored())
         return true;
     
-    for (const auto& child : axBeforePseudo->children()) {
+    for (const auto& child : axBeforePseudo->unignoredChildren()) {
         if (!child->isIgnored())
             return true;
     }
@@ -151,7 +151,7 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
     unsigned listItemCount = 0;
     bool hasVisibleMarkers = false;
 
-    const auto& children = this->children();
+    const auto& children = this->unignoredChildren();
     // DescriptionLists are always semantically a description list, so do not apply heuristics.
     if (isDescriptionList() && children.size())
         return AccessibilityRole::DescriptionList;

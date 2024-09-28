@@ -812,7 +812,7 @@ String AccessibilityRenderObject::stringValue() const
 
         // As fallback, gather the static text under this.
         String value;
-        Accessibility::enumerateDescendants(*const_cast<AccessibilityRenderObject*>(this), false, [&value] (const auto& object) {
+        Accessibility::enumerateUnignoredDescendants(*const_cast<AccessibilityRenderObject*>(this), false, [&value] (const auto& object) {
             if (object.isStaticText())
                 value = makeString(value, object.stringValue());
         });
@@ -1666,7 +1666,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
                 RefPtr parentImage = parentMap->imageElement();
                 auto* parentImageRenderer = parentImage ? parentImage->renderer() : nullptr;
                 if (auto* parentImageAxObject = document.axObjectCache()->getOrCreate(parentImageRenderer)) {
-                    for (const auto& child : parentImageAxObject->children()) {
+                    for (const auto& child : parentImageAxObject->unignoredChildren()) {
                         if (is<AccessibilityImageMapLink>(child) && !result.contains(child))
                             result.append(child);
                     }
@@ -1973,7 +1973,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTM
     if (!associatedImage)
         return nullptr;
 
-    for (const auto& child : associatedImage->children()) {
+    for (const auto& child : associatedImage->unignoredChildren()) {
         if (child->elementRect().contains(point))
             return dynamicDowncast<AccessibilityObject>(child.get());
     }
@@ -2394,7 +2394,7 @@ void AccessibilityRenderObject::updateAttachmentViewParents()
     if (isIgnored())
         return;
     
-    for (const auto& child : m_children) {
+    for (const auto& child : unignoredChildren(/* updateChildrenIfNeeded */ false)) {
         if (child->isAttachment()) {
             if (auto* liveChild = dynamicDowncast<AccessibilityObject>(child.get()))
                 liveChild->overrideAttachmentParent(this);
@@ -2435,15 +2435,16 @@ void AccessibilityRenderObject::addNodeOnlyChildren()
     WeakPtr cache = axObjectCache();
     if (!cache)
         return;
+    // FIXME: This algorithm does not work correctly when ENABLE(INCLUDE_IGNORED_IN_CORE_TREE) due to use of m_children, as this algorithm is written assuming m_children only every contains unignored objects.
     // Iterate through all of the children, including those that may have already been added, and
     // try to insert the nodes in the correct place in the DOM order.
     unsigned insertionIndex = 0;
     for (Node* child = node->firstChild(); child; child = child->nextSibling()) {
         if (child->renderer()) {
             // Find out where the last render sibling is located within m_children.
-            AXCoreObject* childObject = axObjectCache()->get(child->renderer());
+            AXCoreObject* childObject = cache->get(child->renderer());
             if (childObject && childObject->isIgnored()) {
-                auto& children = childObject->children();
+                const auto& children = childObject->unignoredChildren();
                 if (children.size())
                     childObject = children.last().get();
                 else
@@ -2490,7 +2491,7 @@ void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
     if (role == AccessibilityRole::Menu) {
         // Elements marked as menus must have at least one menu item child.
         bool hasMenuItemDescendant = false;
-        for (const auto& child : children()) {
+        for (const auto& child : unignoredChildren()) {
             if (child->isMenuItem()) {
                 hasMenuItemDescendant = true;
                 break;
@@ -2499,7 +2500,7 @@ void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
             // Per the ARIA spec, groups with menuitem children are allowed as children of menus.
             // https://w3c.github.io/aria/#menu
             if (child->isGroup()) {
-                for (const auto& grandchild : child->children()) {
+                for (const auto& grandchild : child->unignoredChildren()) {
                     if (grandchild->isMenuItem()) {
                         hasMenuItemDescendant = true;
                         break;
@@ -2511,7 +2512,7 @@ void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
         if (!hasMenuItemDescendant)
             m_role = AccessibilityRole::Generic;
     }
-    if (role == AccessibilityRole::SVGRoot && !children().size())
+    if (role == AccessibilityRole::SVGRoot && unignoredChildren().isEmpty())
         m_role = AccessibilityRole::Image;
 
     if (role != m_role) {

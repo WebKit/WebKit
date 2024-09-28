@@ -81,7 +81,7 @@ void AccessibilityListBox::setSelectedChildren(const AccessibilityChildrenVector
         return;
 
     // Unselect any selected option.
-    for (const auto& child : m_children) {
+    for (const auto& child : unignoredChildren(/* updateChildrenIfNeeded */ false)) {
         if (child->isSelected())
             child->setSelected(false);
     }
@@ -98,7 +98,7 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityListBox::s
         addChildren();
 
     AccessibilityChildrenVector result;
-    for (const auto& child : m_children) {
+    for (const auto& child : unignoredChildren(/* updateChildrenIfNeeded */ false)) {
         if (child->isSelected())
             result.append(child.get());
     }
@@ -115,10 +115,12 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityListBox::visibleChildren(
     if (!childrenInitialized())
         addChildren();
     
+    const auto& children = const_cast<AccessibilityListBox*>(this)->unignoredChildren(/* updateChildrenIfNeeded */ false);
     AccessibilityChildrenVector result;
-    for (unsigned i = 0; i < m_children.size(); i++) {
+    size_t size = children.size();
+    for (size_t i = 0; i < size; i++) {
         if (listBox->listIndexIsVisible(i))
-            result.append(m_children[i]);
+            result.append(children[i]);
     }
     return result;
 }
@@ -145,13 +147,14 @@ AccessibilityObject* AccessibilityListBox::elementAccessibilityHitTest(const Int
     LayoutRect parentRect = boundingBoxRect();
     
     AccessibilityObject* listBoxOption = nullptr;
-    unsigned length = m_children.size();
+    const auto& children = const_cast<AccessibilityListBox*>(this)->unignoredChildren();
+    unsigned length = children.size();
     for (unsigned i = 0; i < length; ++i) {
         LayoutRect rect = downcast<RenderListBox>(*m_renderer).itemBoundingBoxRect(parentRect.location(), i);
         // The cast to HTMLElement below is safe because the only other possible listItem type
         // would be a WMLElement, but WML builds don't use accessibility features at all.
         if (rect.contains(point)) {
-            listBoxOption = dynamicDowncast<AccessibilityObject>(m_children[i].get());
+            listBoxOption = downcast<AccessibilityObject>(children[i].get());
             break;
         }
     }

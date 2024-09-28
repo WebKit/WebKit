@@ -135,7 +135,9 @@ String AccessibilityObject::dbg() const
     return makeString(
         "{role: "_s, accessibilityRoleToString(roleValue()),
         ", ID "_s, objectID().loggingString(),
-        backingEntityDescription, '}'
+        isIgnored() ? ", ignored"_s : emptyString(),
+        backingEntityDescription,
+        '}'
     );
 }
 
@@ -495,13 +497,6 @@ unsigned AccessibilityObject::blockquoteLevel() const
     return level;
 }
 
-AccessibilityObject* AccessibilityObject::parentObjectUnignored() const
-{
-    return Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (const AccessibilityObject& object) {
-        return !object.isIgnored();
-    });
-}
-
 AccessibilityObject* AccessibilityObject::displayContentsParent() const
 {
     auto* parentNode = node() ? node()->parentNode() : nullptr;
@@ -638,7 +633,7 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
     } else {
         // For some reason the grand children might be detached so that we need to regenerate the
         // children list of this child.
-        for (const auto& grandChild : child->children(false)) {
+        for (const auto& grandChild : child->unignoredChildren(/* updateChildrenIfNeeded */ false)) {
             if (grandChild->isDetachedFromParent()) {
                 child->clearChildren();
                 break;
@@ -666,7 +661,7 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
     auto thisAncestorFlags = computeAncestorFlags();
     child->initializeAncestorFlags(thisAncestorFlags);
     setIsIgnoredFromParentDataForChild(child);
-    if (child->isIgnored()) {
+    if (!includeIgnoredInCoreTree() && child->isIgnored()) {
         if (descendIfIgnored == DescendIfIgnored::Yes) {
             unsigned insertionIndex = index;
             auto childAncestorFlags = child->computeAncestorFlags();
@@ -1240,8 +1235,11 @@ IntPoint AccessibilityObject::linkClickPoint()
 IntPoint AccessibilityObject::clickPoint()
 {
     // Headings are usually much wider than their textual content. If the mid point is used, often it can be wrong.
-    if (isHeading() && children().size() == 1)
-        return children().first()->clickPoint();
+    if (isHeading()) {
+        const auto& children = unignoredChildren();
+        if (children.size() == 1)
+            return children.first()->clickPoint();
+    }
 
     if (isLink())
         return linkClickPoint();
@@ -2176,7 +2174,7 @@ void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& rows, Access
 
     // The ordering of rows is first DOM children *not* in aria-owns, followed by all specified
     // in aria-owns.
-    for (const auto& child : children()) {
+    for (const auto& child : unignoredChildren()) {
         // Add tree items as the rows.
         if (child->roleValue() == AccessibilityRole::TreeItem) {
             // Child appears both as a direct child and aria-owns, we should use the ordering as
@@ -2236,7 +2234,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::disclosedRows()
 {
     AccessibilityChildrenVector result;
 
-    for (const auto& obj : children()) {
+    for (const auto& obj : unignoredChildren()) {
         // Add tree items as the rows.
         if (obj->roleValue() == AccessibilityRole::TreeItem)
             result.append(obj);
@@ -2922,7 +2920,7 @@ bool AccessibilityObject::supportsPressAction() const
     unsigned matches = 0;
 
     Vector<RefPtr<AXCoreObject>> candidates;
-    candidates.reserveInitialCapacity(std::min(static_cast<size_t>(searchLimit), axObject->children().size() + 1));
+    candidates.reserveInitialCapacity(static_cast<size_t>(halfSearchLimit));
     candidates.append(axObject);
 
     while (!candidates.isEmpty()) {
@@ -2944,8 +2942,8 @@ bool AccessibilityObject::supportsPressAction() const
 
         size_t candidateCount = candidatesChecked + candidates.size();
         size_t candidatesLeftUntilLimit = searchLimit > candidateCount ? searchLimit - candidateCount : 0;
-        // Limit the amount of children we take. Some objects can have tens of thousands of children, so we don't want to unconditionally append `children()` to the candidate pool.
-        const auto& children = candidate->children();
+        // Limit the amount of children we take. Some objects can have tens of thousands of children, so we don't want to unconditionally append `unignoredChildren()` to the candidate pool.
+        const auto& children = candidate->unignoredChildren();
         if (size_t maxChildrenToTake = std::min(static_cast<size_t>(halfSearchLimit), candidatesLeftUntilLimit))
             candidates.append(children.subspan(0, std::min(children.size(), maxChildrenToTake)));
 
@@ -3155,7 +3153,7 @@ AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const IntP
     }
     
     // Check if there are any mock elements that need to be handled.
-    for (const auto& child : m_children) {
+    for (const auto& child : const_cast<AccessibilityObject*>(this)->unignoredChildren(/* updateChildrenIfNeeded */ false)) {
         if (auto* mockChild = dynamicDowncast<AccessibilityMockObject>(child.get()); mockChild && mockChild->elementRect().contains(point))
             return mockChild->elementAccessibilityHitTest(point);
     }
@@ -3883,6 +3881,16 @@ bool AccessibilityObject::ignoredFromPresentationalRole() const
     return roleValue() == AccessibilityRole::Presentational || inheritsPresentationalRole();
 }
 
+bool AccessibilityObject::includeIgnoredInCoreTree() const
+{
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    RefPtr document = protectedDocument();
+    return document ? document->settings().includeIgnoredInCoreAXTree() : false;
+#else
+    return false;
+#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+}
+
 bool AccessibilityObject::pressedIsPresent() const
 {
     return !getAttribute(aria_pressedAttr).isEmpty();
@@ -4235,7 +4243,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::ariaListboxSelect
 {
     AccessibilityChildrenVector result;
     bool isMulti = isMultiSelectable();
-    for (const auto& child : children()) {
+    for (const auto& child : unignoredChildren()) {
         if (!child->isListBoxOption() || !child->isSelected())
             continue;
 
@@ -4317,7 +4325,7 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityObject::se
 AXCoreObject::AccessibilityChildrenVector AccessibilityObject::selectedListItems()
 {
     AccessibilityChildrenVector selectedListItems;
-    for (const auto& child : children()) {
+    for (const auto& child : unignoredChildren()) {
         if (child->isListItem() && child->isSelected())
             selectedListItems.append(child);
     }

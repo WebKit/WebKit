@@ -66,10 +66,13 @@ public:
     bool isExposable() const final { return boolAttributeValue(AXPropertyName::IsExposable); }
 
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) final;
-    AXCoreObject* sibling(AXDirection) const;
-    AXCoreObject* siblingOrParent(AXDirection) const;
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    AXIsolatedObject* parentObject() const final { return tree()->objectForID(parent()).get(); }
+    AXIsolatedObject* parentObjectUnignored() const final { return downcast<AXIsolatedObject>(AXCoreObject::parentObjectUnignored()); }
+#else
     AXIsolatedObject* parentObject() const final { return parentObjectUnignored(); }
-    AXIsolatedObject* parentObjectUnignored() const final;
+    AXIsolatedObject* parentObjectUnignored() const final { return tree()->objectForID(parent()).get(); }
+#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     AXIsolatedObject* editableAncestor() final { return Accessibility::editableAncestor(*this); };
     bool canSetFocusAttribute() const final { return boolAttributeValue(AXPropertyName::CanSetFocusAttribute); }
 
@@ -238,8 +241,13 @@ private:
     bool canSetValueAttribute() const final { return boolAttributeValue(AXPropertyName::CanSetValueAttribute); }
     bool canSetSelectedAttribute() const final { return boolAttributeValue(AXPropertyName::CanSetSelectedAttribute); }
     bool canSetSelectedChildren() const final { return boolAttributeValue(AXPropertyName::CanSetSelectedChildren); }
-    // We should never create an isolated object from an ignored live object, so we can hardcode this to false.
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    bool isIgnored() const final { return boolAttributeValue(AXPropertyName::IsIgnored); }
+#else
+    // When not including ignored objects in the core tree, we should never create an isolated object from
+    // an ignored live object, so we can hardcode this to false.
     bool isIgnored() const final { return false; }
+#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     unsigned blockquoteLevel() const final { return unsignedAttributeValue(AXPropertyName::BlockquoteLevel); }
     unsigned headingLevel() const final { return unsignedAttributeValue(AXPropertyName::HeadingLevel); }
     AccessibilityButtonState checkboxOrRadioValue() const final { return propertyValue<AccessibilityButtonState>(AXPropertyName::ButtonState); }

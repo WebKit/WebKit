@@ -435,7 +435,7 @@ void AccessibilityTable::updateChildrenRoles()
 {
     for (const auto& row : m_rows) {
         downcast<AccessibilityObject>(*row).updateRole();
-        for (const auto& cell : row->children())
+        for (const auto& cell : row->unignoredChildren())
             downcast<AccessibilityObject>(*cell).updateRole();
     }
 }
@@ -533,7 +533,7 @@ void AccessibilityTable::addChildren()
         growDownwardsCells();
 
         // Step 4: If the tr element being processed has no td or th element children, then increase ycurrent by 1, abort this set of steps, and return to the algorithm above.
-        for (const auto& child : row->children()) {
+        for (const auto& child : row->unignoredChildren()) {
             RefPtr currentCell = dynamicDowncast<AccessibilityTableCell>(child.get());
             if (!currentCell)
                 continue;
@@ -619,7 +619,7 @@ void AccessibilityTable::addChildren()
             return;
         // Descend past anonymous renderers and non-rows.
         if (needsToDescend(*axObject)) {
-            for (const auto& child : axObject->children())
+            for (const auto& child : axObject->unignoredChildren())
                 processRowDescendingIfNeeded(child.get());
         } else
             processRow(dynamicDowncast<AccessibilityTableRow>(axObject));
@@ -649,7 +649,7 @@ void AccessibilityTable::addChildren()
             }
         } else if (RefPtr sectionAxObject = cache->getOrCreate(sectionElement)) {
             ASSERT_WITH_MESSAGE(nodeHasRole(&sectionElement, "rowgroup"_s), "processRowGroup should only be called with native table section elements, or role=rowgroup elements");
-            for (const auto& child : sectionAxObject->children())
+            for (const auto& child : sectionAxObject->unignoredChildren())
                 processRowDescendingIfNeeded(child.get());
         }
         // Step 3: If yheight > ystart, then let all the last rows in the table from y=ystart to y=yheight-1
@@ -703,7 +703,7 @@ void AccessibilityTable::addChildren()
             if (isAriaTable()) {
                 // We are forgiving with ARIA grid markup, descending past disallowed elements to build the grid structure (this is not specified, but consistent with other browsers).
                 if (RefPtr axObject = cache->getOrCreate(node); axObject && needsToDescend(*axObject)) {
-                    for (const auto& child : axObject->children())
+                    for (const auto& child : axObject->unignoredChildren())
                         processTableDescendant(child ? child->node() : nullptr);
                 }
             }
@@ -839,7 +839,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTable::cells()
 
     AccessibilityChildrenVector cells;
     for (const auto& row : m_rows)
-        cells.appendVector(row->children());
+        cells.appendVector(row->unignoredChildren());
     return cells;
 }
     

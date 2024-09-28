@@ -68,7 +68,7 @@ static bool childrenContainOnlyStaticText(const AccessibilityObject::Accessibili
         if (child->roleValue() == AccessibilityRole::StaticText)
             continue;
         if (child->isGroup()) {
-            if (!childrenContainOnlyStaticText(child->children()))
+            if (!childrenContainOnlyStaticText(child->unignoredChildren()))
                 return false;
         } else
             return false;
@@ -79,7 +79,7 @@ static bool childrenContainOnlyStaticText(const AccessibilityObject::Accessibili
 bool AccessibilityLabel::containsOnlyStaticText() const
 {
     if (m_containsOnlyStaticTextDirty)
-        return childrenContainOnlyStaticText(m_children);
+        return childrenContainOnlyStaticText(const_cast<AccessibilityLabel*>(this)->unignoredChildren(/* updateChildrenIfNeeded */ false));
     return m_containsOnlyStaticText;
 }
 
@@ -87,7 +87,7 @@ void AccessibilityLabel::updateChildrenIfNecessary()
 {
     AccessibilityRenderObject::updateChildrenIfNecessary();
     if (m_containsOnlyStaticTextDirty)
-        m_containsOnlyStaticText = childrenContainOnlyStaticText(m_children);
+        m_containsOnlyStaticText = childrenContainOnlyStaticText(unignoredChildren(/* updateChildrenIfNeeded */ false));
     m_containsOnlyStaticTextDirty = false;
 }
 
