@@ -972,13 +972,14 @@ http/tests/workers/service/service-worker-download-stream.https.html [ Failure ]
 
 http/wpt/service-workers/fetch-service-worker-preload-download.https.html [ Failure ]
 http/wpt/service-workers/fetch-service-worker-preload-download-through-direct-preload.https.html [ Failure ]
-http/wpt/service-workers/fetch-service-worker-preload-use-download-and-clone.https.html [ Failure ]
 http/wpt/service-workers/fetch-service-worker-preload-use-download.https.html [ Failure ]
 http/wpt/service-workers/navigate-iframes-window-client.https.html [ Failure ]
 
 http/wpt/service-workers/fetch-service-worker-preload-changing-request.https.html [ Failure Pass ]
 
 webkit.org/b/212532 http/wpt/service-workers/service-worker-crashing-while-fetching.https.html [ Pass Failure ]
+
+webkit.org/b/280563 http/wpt/service-workers/fetch-service-worker-preload-use-download-and-clone.https.html [ Skip ] # Makes the subsequent test crash
 
 http/wpt/push-api [ Skip ]
 
