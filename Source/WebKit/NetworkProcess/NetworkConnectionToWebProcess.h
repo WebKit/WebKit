@@ -69,11 +69,6 @@
 #include "CocoaWindow.h"
 #endif
 
-#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-#include "LogStream.h"
-#include "LogStreamIdentifier.h"
-#endif
-
 namespace PAL {
 class SessionID;
 }
@@ -243,9 +238,6 @@ public:
 
 #if ENABLE(CONTENT_FILTERING)
     void installMockContentFilter(WebCore::MockContentFilterSettings&&);
-#endif
-#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    void setupLogStream(uint32_t pid, IPC::StreamServerConnectionHandle&&, LogStreamIdentifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&&);
 #endif
 
     void useRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier, WebCore::ResourceResponse&&);
@@ -517,10 +509,6 @@ private:
 #endif
 
     HashMap<WebTransportSessionIdentifier, Ref<NetworkTransportSession>> m_networkTransportSessions;
-
-#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    LogStream m_logStream;
-#endif
 };
 
 } // namespace WebKit

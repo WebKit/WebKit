@@ -339,6 +339,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 {
     WEBPROCESS_RELEASE_LOG(Process, "WebProcess::platformInitializeWebProcess");
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    setupLogStream();
+#endif
+
 #if USE(EXTENSIONKIT)
     // Workaround for crash seen when running tests. See rdar://118186487.
     unsetenv("BSServiceDomains");
@@ -862,7 +866,7 @@ void WebProcess::setupLogStream()
     if (RefPtr logStreamConnection = m_logStreamConnection)
         logStreamConnection->open(*this);
 
-    ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::SetupLogStream(getpid(), WTFMove(serverHandle), WebProcess::singleton().m_logStreamIdentifier), [] (IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore) {
+    parentProcessConnection()->sendWithAsyncReply(Messages::WebProcessProxy::SetupLogStream(getpid(), WTFMove(serverHandle), WebProcess::singleton().m_logStreamIdentifier), [] (IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore) {
         if (RefPtr logStreamConnection = WebProcess::singleton().m_logStreamConnection)
             logStreamConnection->setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
 #if PLATFORM(IOS_FAMILY)

@@ -133,7 +133,6 @@ $(PROJECT_DIR)/NetworkProcess/Classifier/ITPThirdPartyDataForSpecificFirstParty.
 $(PROJECT_DIR)/NetworkProcess/Classifier/StorageAccessStatus.serialization.in
 $(PROJECT_DIR)/NetworkProcess/Cookies/WebCookieManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
-$(PROJECT_DIR)/NetworkProcess/LogStream.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkBroadcastChannelRegistry.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkConnectionToWebProcess.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkContentRuleListManager.messages.in
@@ -321,6 +320,7 @@ $(PROJECT_DIR)/Shared/InspectorExtensionTypes.serialization.in
 $(PROJECT_DIR)/Shared/JavaScriptCore.serialization.in
 $(PROJECT_DIR)/Shared/LayerTreeContext.serialization.in
 $(PROJECT_DIR)/Shared/LoadParameters.serialization.in
+$(PROJECT_DIR)/Shared/LogStream.messages.in
 $(PROJECT_DIR)/Shared/MediaPlaybackState.serialization.in
 $(PROJECT_DIR)/Shared/Model.serialization.in
 $(PROJECT_DIR)/Shared/ModelProcessConnectionParameters.serialization.in

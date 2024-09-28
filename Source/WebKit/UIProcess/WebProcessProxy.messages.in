@@ -91,4 +91,8 @@ messages -> WebProcessProxy WantsDispatchMessage {
 
     WrapCryptoKey(Vector<uint8_t> key) -> (std::optional<Vector<uint8_t>> wrappedKey) Synchronous
     UnwrapCryptoKey(struct WebCore::WrappedCryptoKey wrappedKey) -> (std::optional<Vector<uint8_t>> key) Synchronous
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    SetupLogStream(uint32_t pid, IPC::StreamServerConnectionHandle serverConnection, WebKit::LogStreamIdentifier identifier) -> (IPC::Semaphore streamWakeUpSemaphore, IPC::Semaphore streamClientWaitSemaphore)
+#endif
 }

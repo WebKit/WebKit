@@ -72,6 +72,11 @@
 #include "DisplayLinkProcessProxyClient.h"
 #endif
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#include "LogStream.h"
+#include "LogStreamIdentifier.h"
+#endif
+
 namespace API {
 class Navigation;
 class PageConfiguration;
@@ -630,6 +635,10 @@ private:
 
     void updateRuntimeStatistics();
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    void setupLogStream(uint32_t pid, IPC::StreamServerConnectionHandle&&, LogStreamIdentifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&&);
+#endif
+
     enum class IsWeak : bool { No, Yes };
     template<typename T> class WeakOrStrongPtr {
     public:
@@ -792,6 +801,10 @@ private:
     Seconds m_totalBackgroundTime;
     Seconds m_totalSuspendedTime;
     WebCore::ProcessIdentity m_processIdentity;
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    LogStream m_logStream;
+#endif
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const WebProcessProxy&);

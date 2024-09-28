@@ -53,6 +53,8 @@ LogStream::~LogStream()
 
 void LogStream::logOnBehalfOfWebContent(std::span<const uint8_t> logSubsystem, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, uint8_t logType)
 {
+    ASSERT(!isMainRunLoop());
+
     auto isNullTerminated = [](std::span<const uint8_t> view) {
         return view.data() && !view.empty() && view.back() == '\0';
     };

@@ -1227,10 +1227,6 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
         setNetworkProcessConnectionID(m_networkProcessConnection->connection().uniqueID());
         m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::RegisterURLSchemesAsCORSEnabled(WebCore::LegacySchemeRegistry::allURLSchemesRegisteredAsCORSEnabled()), 0);
 
-#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-        WebProcess::singleton().setupLogStream();
-#endif
-
         if (!Document::allDocuments().isEmpty() || SharedWorkerThreadProxy::hasInstances())
             m_networkProcessConnection->serviceWorkerConnection().registerServiceWorkerClients();
 

@@ -127,7 +127,6 @@ else
 endif
 
 MESSAGE_RECEIVERS = \
-	NetworkProcess/LogStream \
 	NetworkProcess/NetworkBroadcastChannelRegistry \
 	NetworkProcess/NetworkConnectionToWebProcess \
 	NetworkProcess/NetworkContentRuleListManager \
@@ -158,6 +157,7 @@ MESSAGE_RECEIVERS = \
 	Shared/IPCStreamTesterProxy \
 	Shared/IPCTester \
 	Shared/IPCTesterReceiver \
+	Shared/LogStream \
 	UIProcess/WebFullScreenManagerProxy \
 	UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy \
 	UIProcess/GPU/GPUProcessProxy \

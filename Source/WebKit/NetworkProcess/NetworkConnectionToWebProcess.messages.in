@@ -122,10 +122,6 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     InstallMockContentFilter(WebCore::MockContentFilterSettings settings)
 #endif
 
-#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    SetupLogStream(uint32_t pid, IPC::StreamServerConnectionHandle serverConnection, WebKit::LogStreamIdentifier identifier) -> (IPC::Semaphore streamWakeUpSemaphore, IPC::Semaphore streamClientWaitSemaphore)
-#endif
-
     UseRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier, WebCore::ResourceResponse response)
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
