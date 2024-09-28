@@ -243,6 +243,21 @@ void CoreAudioSharedUnit::setMuteStatusChangedCallback(Function<void(bool)>&& ca
 #endif
 }
 
+void CoreAudioSharedUnit::setMutedState(bool isMuted)
+{
+#if HAVE(AVAUDIOAPPLICATION)
+    auto *audioApplication = getSharedAVAudioApplication();
+    if (!audioApplication)
+        return;
+
+    NSError *error = nil;
+    [audioApplication setInputMuted:isMuted error:&error];
+    RELEASE_LOG_ERROR_IF(error, WebRTC, "CoreAudioSharedUnit::setMutedState failed due to error: %@.", error.localizedDescription);
+#else
+    UNUSED_PARAM(isMuted);
+#endif
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

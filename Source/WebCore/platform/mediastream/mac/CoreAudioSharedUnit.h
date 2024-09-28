@@ -175,6 +175,7 @@ private:
     void updateVoiceActiveDetection();
     bool shouldEnableVoiceActivityDetection() const;
     RetainPtr<WebCoreAudioInputMuteChangeListener> createAudioInputMuteChangeListener();
+    void setMutedState(bool isMuted);
 
     CreationCallback m_creationCallback;
     GetSampleRateCallback m_getSampleRateCallback;

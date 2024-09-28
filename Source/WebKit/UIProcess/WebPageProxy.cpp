@@ -11501,7 +11501,7 @@ void WebPageProxy::microphoneMuteStatusChanged(bool isMuting)
     else
         mutedState.remove(WebCore::MediaProducerMutedState::AudioCaptureIsMuted);
 
-    setMuted(mutedState);
+    setMuted(mutedState, FromApplication::Yes);
 }
 
 void WebPageProxy::requestUserMediaPermissionForFrame(IPC::Connection& connection, UserMediaRequestIdentifier userMediaID, FrameIdentifier frameID, const SecurityOriginData& userMediaDocumentOriginData, const SecurityOriginData& topLevelDocumentOriginData, MediaStreamRequest&& request)
