@@ -3144,8 +3144,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     }
 
 #if !RELEASE_LOG_DISABLED
-    auto logIdentifier = makeString(hex(reinterpret_cast<uintptr_t>(mediaPlayerLogIdentifier())));
-    GST_INFO_OBJECT(m_pipeline.get(), "WebCore logs identifier for this pipeline is: %s", logIdentifier.ascii().data());
+    GST_INFO_OBJECT(m_pipeline.get(), "WebCore logs identifier for this pipeline is: %" PRIx64, mediaPlayerLogIdentifier());
 #endif
     registerActivePipeline(m_pipeline);
 
