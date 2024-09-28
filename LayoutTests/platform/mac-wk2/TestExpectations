@@ -1873,3 +1873,6 @@ editing/input/scroll-viewport-page-up-down.html [ Pass Failure ]
 # webkit.org/b/280553 [ Sequoia+ iOS wk2 release ] 2x http/tests/resourceLoadStatistics/* are flaky failures.
 [ Sequoia+ arm64 Release ] http/tests/resourceLoadStatistics/prune-statistics.html [ Pass Failure ] 
 [ Sequoia+ arm64 Release ] http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration.html [ Pass Failure ]
+
+# webkit.org/b/280556 [ macOS iOS wk2 release ] webrtc/stats-timestamp-increases.html is a flaky failure.
+[ Release ] webrtc/stats-timestamp-increases.html  [ Pass Failure ]

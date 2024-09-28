@@ -7486,3 +7486,6 @@ webkit.org/b/257011 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphena
 # webkit.org/b/280553 [ Sequoia+ iOS wk2 release ] 2x http/tests/resourceLoadStatistics/* are flaky failures.
 [ Release ] http/tests/resourceLoadStatistics/prune-statistics.html [ Pass Failure ] 
 [ Release ] http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration.html [ Pass Failure ]
+
+# webkit.org/b/280556 [ macOS iOS wk2 release ] webrtc/stats-timestamp-increases.html is a flaky failure.
+[ Release ] webrtc/stats-timestamp-increases.html  [ Pass Failure ]
