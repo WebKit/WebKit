@@ -103,7 +103,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-query-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scope-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scope-dynamic.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scope-shadow.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scope-shadow-all.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scope-shadow-flat-tree.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scope-shadow-names.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-002.html
@@ -211,6 +213,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/chrome-1512373-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/chrome-336164421-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/chrome-336322507-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/chrome-365594098-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/chrome-40286059-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/grid-anchor-center-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/idlharness.html
