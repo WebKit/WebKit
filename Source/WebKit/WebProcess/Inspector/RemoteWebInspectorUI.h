@@ -33,6 +33,7 @@
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/InspectorFrontendHost.h>
 #include <wtf/Deque.h>
+#include <wtf/WeakRef.h>
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 #include "InspectorExtensionTypes.h"
@@ -141,7 +142,7 @@ public:
 private:
     explicit RemoteWebInspectorUI(WebPage&);
 
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
     Ref<WebCore::InspectorFrontendAPIDispatcher> m_frontendAPIDispatcher;
     RefPtr<WebCore::InspectorFrontendHost> m_frontendHost;
 #if ENABLE(INSPECTOR_EXTENSIONS)

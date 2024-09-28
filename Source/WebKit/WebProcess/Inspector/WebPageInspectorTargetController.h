@@ -29,6 +29,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -53,7 +54,9 @@ public:
     void sendMessageToTargetBackend(const String& targetId, const String& message);
 
 private:
-    WebPage& m_page;
+    Ref<WebPage> protectedPage() const;
+
+    WeakRef<WebPage> m_page;
     WebPageInspectorTarget m_pageTarget;
     HashMap<String, WeakPtr<Inspector::InspectorTarget>> m_targets;
 };

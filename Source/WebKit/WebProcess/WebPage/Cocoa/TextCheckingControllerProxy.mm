@@ -61,12 +61,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCheckingControllerProxy);
 TextCheckingControllerProxy::TextCheckingControllerProxy(WebPage& page)
     : m_page(page)
 {
-    WebProcess::singleton().addMessageReceiver(Messages::TextCheckingControllerProxy::messageReceiverName(), m_page.identifier(), *this);
+    WebProcess::singleton().addMessageReceiver(Messages::TextCheckingControllerProxy::messageReceiverName(), m_page->identifier(), *this);
 }
 
 TextCheckingControllerProxy::~TextCheckingControllerProxy()
 {
-    WebProcess::singleton().removeMessageReceiver(Messages::TextCheckingControllerProxy::messageReceiverName(), m_page.identifier());
+    WebProcess::singleton().removeMessageReceiver(Messages::TextCheckingControllerProxy::messageReceiverName(), m_page->identifier());
 }
 
 static OptionSet<DocumentMarker::Type> relevantMarkerTypes()
@@ -76,7 +76,7 @@ static OptionSet<DocumentMarker::Type> relevantMarkerTypes()
 
 std::optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControllerProxy::rangeAndOffsetRelativeToSelection(int64_t offset, uint64_t length)
 {
-    RefPtr focusedOrMainFrame = m_page.corePage()->checkedFocusController()->focusedOrMainFrame();
+    RefPtr focusedOrMainFrame = m_page->corePage()->checkedFocusController()->focusedOrMainFrame();
     if (!focusedOrMainFrame)
         return std::nullopt;
     auto& frameSelection = focusedOrMainFrame->selection();
@@ -102,7 +102,7 @@ std::optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControlle
 
 void TextCheckingControllerProxy::replaceRelativeToSelection(const WebCore::AttributedString& annotatedString, int64_t selectionOffset, uint64_t length, uint64_t relativeReplacementLocation, uint64_t relativeReplacementLength)
 {
-    RefPtr frame = m_page.corePage()->checkedFocusController()->focusedOrMainFrame();
+    RefPtr frame = m_page->corePage()->checkedFocusController()->focusedOrMainFrame();
     if (!frame)
         return;
     auto& frameSelection = frame->selection();
@@ -166,7 +166,7 @@ void TextCheckingControllerProxy::removeAnnotationRelativeToSelection(const Stri
 
     auto removeCoreSpellingMarkers = annotation == "NSSpellingState"_s;
     auto types = removeCoreSpellingMarkers ? relevantMarkerTypes() : WebCore::DocumentMarker::Type::PlatformTextChecking;
-    RefPtr focusedOrMainFrame = m_page.corePage()->checkedFocusController()->focusedOrMainFrame();
+    RefPtr focusedOrMainFrame = m_page->corePage()->checkedFocusController()->focusedOrMainFrame();
     if (!focusedOrMainFrame)
         return;
     RefPtr document = focusedOrMainFrame->document();

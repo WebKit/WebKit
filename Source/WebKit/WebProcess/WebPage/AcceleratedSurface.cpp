@@ -73,13 +73,13 @@ AcceleratedSurface::AcceleratedSurface(WebPage& webPage, Client& client)
     , m_size(webPage.size())
     , m_isOpaque(!webPage.backgroundColor().has_value() || webPage.backgroundColor()->isOpaque())
 {
-    m_size.scale(m_webPage.deviceScaleFactor());
+    m_size.scale(m_webPage->deviceScaleFactor());
 }
 
 bool AcceleratedSurface::hostResize(const IntSize& size)
 {
     IntSize scaledSize(size);
-    scaledSize.scale(m_webPage.deviceScaleFactor());
+    scaledSize.scale(m_webPage->deviceScaleFactor());
     if (scaledSize == m_size)
         return false;
 
@@ -89,7 +89,7 @@ bool AcceleratedSurface::hostResize(const IntSize& size)
 
 bool AcceleratedSurface::backgroundColorDidChange()
 {
-    const auto& color = m_webPage.backgroundColor();
+    const auto& color = m_webPage->backgroundColor();
     auto isOpaque = !color.has_value() || color->isOpaque();
     if (m_isOpaque == isOpaque)
         return false;

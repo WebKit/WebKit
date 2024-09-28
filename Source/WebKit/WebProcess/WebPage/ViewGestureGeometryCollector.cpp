@@ -66,55 +66,61 @@ ViewGestureGeometryCollector::ViewGestureGeometryCollector(WebPage& webPage)
     , m_renderTreeSizeNotificationThreshold(0)
 #endif
 {
-    WebProcess::singleton().addMessageReceiver(Messages::ViewGestureGeometryCollector::messageReceiverName(), m_webPage.identifier(), *this);
+    WebProcess::singleton().addMessageReceiver(Messages::ViewGestureGeometryCollector::messageReceiverName(), m_webPage->identifier(), *this);
 }
 
 ViewGestureGeometryCollector::~ViewGestureGeometryCollector()
 {
-    WebProcess::singleton().removeMessageReceiver(Messages::ViewGestureGeometryCollector::messageReceiverName(), m_webPage.identifier());
+    WebProcess::singleton().removeMessageReceiver(Messages::ViewGestureGeometryCollector::messageReceiverName(), m_webPage->identifier());
 }
 
 void ViewGestureGeometryCollector::dispatchDidCollectGeometryForSmartMagnificationGesture(FloatPoint origin, FloatRect absoluteTargetRect, FloatRect visibleContentRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale)
 {
 #if PLATFORM(MAC)
-    m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForSmartMagnificationGesture(origin, absoluteTargetRect, visibleContentRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale));
+    protectedWebPage()->send(Messages::ViewGestureController::DidCollectGeometryForSmartMagnificationGesture(origin, absoluteTargetRect, visibleContentRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale));
 #endif
 #if PLATFORM(IOS_FAMILY)
-    m_webPage.send(Messages::SmartMagnificationController::DidCollectGeometryForSmartMagnificationGesture(origin, absoluteTargetRect, visibleContentRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale));
+    protectedWebPage()->send(Messages::SmartMagnificationController::DidCollectGeometryForSmartMagnificationGesture(origin, absoluteTargetRect, visibleContentRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale));
 #endif
+}
+
+Ref<WebPage> ViewGestureGeometryCollector::protectedWebPage() const
+{
+    return m_webPage.get();
 }
 
 void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(FloatPoint gestureLocationInViewCoordinates)
 {
-    RefPtr frameView = m_webPage.localMainFrameView();
+    Ref webPage = m_webPage.get();
+    RefPtr frameView = webPage->localMainFrameView();
     if (!frameView)
         return;
 
     FloatRect visibleContentRect = frameView->unobscuredContentRectIncludingScrollbars();
 
-    if (m_webPage.handlesPageScaleGesture())
+    if (webPage->handlesPageScaleGesture())
         return;
 
     double viewportMinimumScale;
     double viewportMaximumScale;
 
 #if PLATFORM(IOS_FAMILY)
-    if (m_webPage.platformPrefersTextLegibilityBasedZoomScaling()) {
+    if (webPage->platformPrefersTextLegibilityBasedZoomScaling()) {
         auto textLegibilityScales = computeTextLegibilityScales(viewportMinimumScale, viewportMaximumScale);
         if (!textLegibilityScales) {
             dispatchDidCollectGeometryForSmartMagnificationGesture({ }, { }, { }, false, 0, 0);
             return;
         }
 
-        float targetScale = m_webPage.viewportConfiguration().initialScale();
-        float currentScale = m_webPage.pageScaleFactor();
+        float targetScale = webPage->viewportConfiguration().initialScale();
+        float currentScale = webPage->pageScaleFactor();
         if (currentScale < textLegibilityScales->first - minimumScaleDifferenceForZooming)
             targetScale = textLegibilityScales->first;
         else if (currentScale < textLegibilityScales->second - minimumScaleDifferenceForZooming)
             targetScale = textLegibilityScales->second;
 
         FloatRect targetRectInContentCoordinates { gestureLocationInViewCoordinates, FloatSize() };
-        targetRectInContentCoordinates.inflate(m_webPage.viewportConfiguration().viewLayoutSize() / (2 * targetScale));
+        targetRectInContentCoordinates.inflate(webPage->viewportConfiguration().viewLayoutSize() / (2 * targetScale));
 
         dispatchDidCollectGeometryForSmartMagnificationGesture(gestureLocationInViewCoordinates, targetRectInContentCoordinates, visibleContentRect, true, viewportMinimumScale, viewportMaximumScale);
         return;
@@ -124,8 +130,8 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
     IntPoint originInContentsSpace = frameView->windowToContents(roundedIntPoint(gestureLocationInViewCoordinates));
     HitTestResult hitTestResult = HitTestResult(originInContentsSpace);
 
-    if (auto* mainFrame = dynamicDowncast<WebCore::LocalFrame>(m_webPage.mainFrame()))
-        mainFrame->document()->hitTest(HitTestRequest(), hitTestResult);
+    if (RefPtr mainFrame = dynamicDowncast<WebCore::LocalFrame>(webPage->mainFrame()))
+        mainFrame->protectedDocument()->hitTest(HitTestRequest(), hitTestResult);
 
     RefPtr node = hitTestResult.innerNode();
     if (!node) {
@@ -160,7 +166,7 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
     if (m_cachedTextLegibilityScales)
         return m_cachedTextLegibilityScales;
 
-    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_webPage.mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_webPage->mainFrame());
     if (!localMainFrame)
         return std::nullopt;
     RefPtr document = localMainFrame->document();
@@ -248,8 +254,8 @@ void ViewGestureGeometryCollector::computeZoomInformationForNode(Node& node, Flo
 void ViewGestureGeometryCollector::computeMinimumAndMaximumViewportScales(double& viewportMinimumScale, double& viewportMaximumScale) const
 {
 #if PLATFORM(IOS_FAMILY)
-    viewportMinimumScale = m_webPage.minimumPageScaleFactor();
-    viewportMaximumScale = m_webPage.maximumPageScaleFactor();
+    viewportMinimumScale = m_webPage->minimumPageScaleFactor();
+    viewportMaximumScale = m_webPage->maximumPageScaleFactor();
 #else
     viewportMinimumScale = 0;
     viewportMaximumScale = std::numeric_limits<double>::max();
@@ -259,13 +265,14 @@ void ViewGestureGeometryCollector::computeMinimumAndMaximumViewportScales(double
 #if !PLATFORM(IOS_FAMILY)
 void ViewGestureGeometryCollector::collectGeometryForMagnificationGesture()
 {
-    RefPtr frameView = m_webPage.localMainFrameView();
+    Ref webPage = m_webPage.get();
+    RefPtr frameView = webPage->localMainFrameView();
     if (!frameView)
         return;
 
     FloatRect visibleContentRect = frameView->unobscuredContentRectIncludingScrollbars();
-    bool frameHandlesMagnificationGesture = m_webPage.handlesPageScaleGesture();
-    m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForMagnificationGesture(visibleContentRect, frameHandlesMagnificationGesture));
+    bool frameHandlesMagnificationGesture = webPage->handlesPageScaleGesture();
+    webPage->send(Messages::ViewGestureController::DidCollectGeometryForMagnificationGesture(visibleContentRect, frameHandlesMagnificationGesture));
 }
 
 void ViewGestureGeometryCollector::setRenderTreeSizeNotificationThreshold(uint64_t size)
@@ -276,8 +283,9 @@ void ViewGestureGeometryCollector::setRenderTreeSizeNotificationThreshold(uint64
 
 void ViewGestureGeometryCollector::sendDidHitRenderTreeSizeThresholdIfNeeded()
 {
-    if (m_renderTreeSizeNotificationThreshold && m_webPage.renderTreeSize() >= m_renderTreeSizeNotificationThreshold) {
-        m_webPage.send(Messages::ViewGestureController::DidHitRenderTreeSizeThreshold());
+    Ref webPage = m_webPage.get();
+    if (m_renderTreeSizeNotificationThreshold && webPage->renderTreeSize() >= m_renderTreeSizeNotificationThreshold) {
+        webPage->send(Messages::ViewGestureController::DidHitRenderTreeSizeThreshold());
         m_renderTreeSizeNotificationThreshold = 0;
     }
 }

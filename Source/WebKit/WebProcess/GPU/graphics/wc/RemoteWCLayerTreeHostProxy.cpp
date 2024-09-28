@@ -64,7 +64,7 @@ GPUProcessConnection& RemoteWCLayerTreeHostProxy::ensureGPUProcessConnection()
         m_gpuProcessConnection = gpuProcessConnection;
         gpuProcessConnection->addClient(*this);
         gpuProcessConnection->connection().send(
-            Messages::GPUConnectionToWebProcess::CreateWCLayerTreeHost(wcLayerTreeHostIdentifier(), m_page.nativeWindowHandle(), m_usesOffscreenRendering),
+            Messages::GPUConnectionToWebProcess::CreateWCLayerTreeHost(wcLayerTreeHostIdentifier(), m_page->nativeWindowHandle(), m_usesOffscreenRendering),
             0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     }
     return *gpuProcessConnection;

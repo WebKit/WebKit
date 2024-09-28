@@ -30,6 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 class Geolocation;
@@ -60,7 +61,9 @@ private:
     IDToGeolocationMap m_idToGeolocationMap;
     GeolocationToIDMap m_geolocationToIDMap;
 
-    WebPage& m_page;
+    Ref<WebPage> protectedPage() const;
+
+    WeakRef<WebPage> m_page;
 };
 
 } // namespace WebKit

@@ -29,6 +29,7 @@
 
 #include <WebCore/AttachmentElementClient.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -42,7 +43,7 @@ public:
     void requestAttachmentIcon(const String& identifier, const WebCore::FloatSize&) final;
 
 private:
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
 };
 
 } // namespace WebKit

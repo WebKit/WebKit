@@ -5168,6 +5168,11 @@ VideoPresentationManager& WebPage::videoPresentationManager()
     return *m_videoPresentationManager;
 }
 
+Ref<VideoPresentationManager> WebPage::protectedVideoPresentationManager()
+{
+    return videoPresentationManager();
+}
+
 void WebPage::videoControlsManagerDidChange()
 {
 #if ENABLE(FULLSCREEN_API)

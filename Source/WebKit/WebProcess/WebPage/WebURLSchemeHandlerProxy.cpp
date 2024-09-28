@@ -63,10 +63,15 @@ void WebURLSchemeHandlerProxy::startNewTask(ResourceLoader& loader, WebFrame& we
     result.iterator->value->startLoading();
 }
 
+Ref<WebPage> WebURLSchemeHandlerProxy::protectedPage()
+{
+    return m_webPage.get();
+}
+
 void WebURLSchemeHandlerProxy::loadSynchronously(WebCore::ResourceLoaderIdentifier loadIdentifier, WebFrame& webFrame, const ResourceRequest& request, ResourceResponse& response, ResourceError& error, Vector<uint8_t>& data)
 {
     data.shrink(0);
-    auto sendResult = m_webPage.sendSync(Messages::WebPageProxy::LoadSynchronousURLSchemeTask(URLSchemeTaskParameters { m_identifier, loadIdentifier, request, webFrame.info() }));
+    auto sendResult = protectedPage()->sendSync(Messages::WebPageProxy::LoadSynchronousURLSchemeTask(URLSchemeTaskParameters { m_identifier, loadIdentifier, request, webFrame.info() }));
     if (sendResult.succeeded())
         std::tie(response, error, data) = sendResult.takeReply();
     else

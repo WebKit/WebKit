@@ -42,7 +42,7 @@ WebAttachmentElementClient::WebAttachmentElementClient(WebPage& page)
 
 void WebAttachmentElementClient::requestAttachmentIcon(const String& identifier, const WebCore::FloatSize& size)
 {
-    m_page.requestAttachmentIcon(identifier, size);
+    Ref { m_page.get() }->requestAttachmentIcon(identifier, size);
 }
 
 } // namespace WebKit

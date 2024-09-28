@@ -116,7 +116,7 @@ private:
 
     double timestamp() const;
 
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
     CompositingCoordinator::Client& m_client;
 
     RefPtr<WebCore::GraphicsLayer> m_rootLayer;

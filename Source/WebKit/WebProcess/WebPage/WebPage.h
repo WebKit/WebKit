@@ -538,6 +538,7 @@ public:
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     VideoPresentationManager& videoPresentationManager();
+    Ref<VideoPresentationManager> protectedVideoPresentationManager();
 
     void startPlayingPredominantVideo(CompletionHandler<void(bool)>&&);
 #endif

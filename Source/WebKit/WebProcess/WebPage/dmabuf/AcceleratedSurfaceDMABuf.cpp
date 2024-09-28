@@ -83,7 +83,7 @@ AcceleratedSurfaceDMABuf::AcceleratedSurfaceDMABuf(WebPage& webPage, Client& cli
 {
 #if USE(GBM)
     if (m_swapChain.type() == SwapChain::Type::EGLImage)
-        m_swapChain.setupBufferFormat(m_webPage.preferredBufferFormats(), m_isOpaque);
+        m_swapChain.setupBufferFormat(m_webPage->preferredBufferFormats(), m_isOpaque);
 #endif
 }
 
@@ -545,7 +545,7 @@ void AcceleratedSurfaceDMABuf::preferredBufferFormatsDidChange()
     if (m_swapChain.type() != SwapChain::Type::EGLImage)
         return;
 
-    m_swapChain.setupBufferFormat(m_webPage.preferredBufferFormats(), m_isOpaque);
+    m_swapChain.setupBufferFormat(m_webPage->preferredBufferFormats(), m_isOpaque);
 }
 #endif
 
@@ -573,7 +573,7 @@ bool AcceleratedSurfaceDMABuf::backgroundColorDidChange()
 
 #if USE(GBM)
     if (m_swapChain.type() == SwapChain::Type::EGLImage)
-        m_swapChain.setupBufferFormat(m_webPage.preferredBufferFormats(), m_isOpaque);
+        m_swapChain.setupBufferFormat(m_webPage->preferredBufferFormats(), m_isOpaque);
 #endif
 
     return true;

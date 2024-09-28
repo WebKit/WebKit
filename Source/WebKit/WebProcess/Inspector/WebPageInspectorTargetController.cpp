@@ -44,8 +44,11 @@ WebPageInspectorTargetController::WebPageInspectorTargetController(WebPage& page
     m_targets.set(m_pageTarget.identifier(), &m_pageTarget);
 }
 
-WebPageInspectorTargetController::~WebPageInspectorTargetController()
+WebPageInspectorTargetController::~WebPageInspectorTargetController() = default;
+
+Ref<WebPage> WebPageInspectorTargetController::protectedPage() const
 {
+    return m_page.get();
 }
 
 void WebPageInspectorTargetController::addTarget(Inspector::InspectorTarget& target)
@@ -53,14 +56,14 @@ void WebPageInspectorTargetController::addTarget(Inspector::InspectorTarget& tar
     auto addResult = m_targets.set(target.identifier(), &target);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
-    m_page.send(Messages::WebPageProxy::CreateInspectorTarget(target.identifier(), target.type()));
+    protectedPage()->send(Messages::WebPageProxy::CreateInspectorTarget(target.identifier(), target.type()));
 }
 
 void WebPageInspectorTargetController::removeTarget(Inspector::InspectorTarget& target)
 {
     ASSERT_WITH_MESSAGE(target.identifier() != m_pageTarget.identifier(), "Should never remove the main target.");
 
-    m_page.send(Messages::WebPageProxy::DestroyInspectorTarget(target.identifier()));
+    protectedPage()->send(Messages::WebPageProxy::DestroyInspectorTarget(target.identifier()));
 
     m_targets.remove(target.identifier());
 }

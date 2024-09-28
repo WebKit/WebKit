@@ -28,6 +28,7 @@
 #include <WebCore/IntSize.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WTF {
 class RunLoop;
@@ -82,7 +83,7 @@ public:
 protected:
     AcceleratedSurface(WebPage&, Client&);
 
-    WebPage& m_webPage;
+    WeakRef<WebPage> m_webPage;
     Client& m_client;
     WebCore::IntSize m_size;
     std::atomic<bool> m_isOpaque { true };

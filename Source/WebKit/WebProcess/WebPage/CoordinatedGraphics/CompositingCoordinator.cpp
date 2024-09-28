@@ -103,7 +103,7 @@ CompositingCoordinator::CompositingCoordinator(WebPage& page, CompositingCoordin
     m_rootLayer->setName(MAKE_STATIC_STRING_IMPL("CompositingCoordinator root layer"));
 #endif
     m_rootLayer->setDrawsContent(false);
-    m_rootLayer->setSize(m_page.size());
+    m_rootLayer->setSize(m_page->size());
 }
 
 CompositingCoordinator::~CompositingCoordinator()
@@ -165,8 +165,9 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
 
     bool shouldSyncFrame = initializeRootCompositingLayerIfNeeded();
 
-    m_page.updateRendering();
-    m_page.flushPendingEditorStateUpdate();
+    Ref page = m_page.get();
+    page->updateRendering();
+    page->flushPendingEditorStateUpdate();
 
     WTFBeginSignpost(this, FlushRootCompositingLayer);
     m_rootLayer->flushCompositingStateForThisLayerOnly();
@@ -176,7 +177,7 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
     if (m_overlayCompositingLayer)
         m_overlayCompositingLayer->flushCompositingState(FloatRect(FloatPoint(), m_rootLayer->size()));
 
-    m_page.finalizeRenderingUpdate(flags);
+    page->finalizeRenderingUpdate(flags);
 
     WTFBeginSignpost(this, FinalizeCompositingStateFlush);
     auto& coordinatedLayer = downcast<CoordinatedGraphicsLayer>(*m_rootLayer);
@@ -213,7 +214,7 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
         m_client.commitSceneState(nullptr);
 #endif
 
-    m_page.didUpdateRendering();
+    page->didUpdateRendering();
 
     // Eject any backing stores whose only reference is held in the HashMap cache.
     m_imageBackingStores.removeIf(
@@ -226,7 +227,7 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
 
 double CompositingCoordinator::timestamp() const
 {
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_page.corePage()->mainFrame());
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_page->corePage()->mainFrame());
     auto* document = localMainFrame ? localMainFrame->document() : nullptr;
     if (!document)
         return 0;
@@ -235,7 +236,7 @@ double CompositingCoordinator::timestamp() const
 
 void CompositingCoordinator::syncDisplayState()
 {
-    if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_page.corePage()->mainFrame()))
+    if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_page->corePage()->mainFrame()))
         localMainFrame->view()->updateLayoutAndStyleIfNeededRecursive();
 }
 
@@ -279,7 +280,7 @@ void CompositingCoordinator::setVisibleContentsRect(const FloatRect& rect)
             registeredLayer->setNeedsVisibleRectAdjustment();
     }
 
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_page.corePage()->mainFrame());
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_page->corePage()->mainFrame());
     auto* view = localMainFrame ? localMainFrame->view() : nullptr;
     if (view->useFixedLayout() && contentsRectDidChange) {
         // Round the rect instead of enclosing it to make sure that its size stays
