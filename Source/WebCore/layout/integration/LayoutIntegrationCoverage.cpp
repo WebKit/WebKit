@@ -64,7 +64,7 @@ enum class AvoidanceReason : uint32_t {
     FlexBoxHasUnsupportedRowGap         = 1U << 10,
     FlexBoxHasUnsupportedColumnGap      = 1U << 11,
     FlexBoxHasUnsupportedTypeOfRenderer = 1U << 12,
-    FlexBoxHasFloatChild                = 1U << 13,
+    // Unused                           = 1U << 13,
     FlexBoxHasOutOfFlowChild            = 1U << 14,
     FlexBoxHasSVGChild                  = 1U << 15,
     FlexBoxHasNestedFlex                = 1U << 16,
@@ -145,9 +145,6 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
     for (auto& flexItem : childrenOfType<RenderElement>(flexBox)) {
         if (!is<RenderBlock>(flexItem) || flexItem.isFieldset() || flexItem.isRenderTextControl() || flexItem.isRenderTable())
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedTypeOfRenderer, reasons, includeReasons);
-
-        if (flexItem.isFloating())
-            ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasFloatChild, reasons, includeReasons);
 
         if (flexItem.isOutOfFlowPositioned())
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasOutOfFlowChild, reasons, includeReasons);
@@ -264,9 +261,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlexBoxHasUnsupportedTypeOfRenderer:
         stream << "flex box has unsupported flex item renderer e.g. fieldset";
-        break;
-    case AvoidanceReason::FlexBoxHasFloatChild:
-        stream << "flex box has floating child";
         break;
     case AvoidanceReason::FlexBoxHasOutOfFlowChild:
         stream << "flex box has out-of-flow child";
