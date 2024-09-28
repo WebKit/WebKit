@@ -44,5 +44,7 @@ class VisionOSTest(darwin_testcase.DarwinTest):
 
     def test_baseline_searchpath(self):
         search_path = self.make_port().default_baseline_search_path()
+        print(search_path)
         self.assertEqual(search_path[-1], '/mock-checkout/LayoutTests/platform/wk2')
-        self.assertEqual(search_path[-2], '/mock-checkout/LayoutTests/platform/visionos')
+        self.assertEqual(search_path[-2], '/mock-checkout/LayoutTests/platform/ios')
+        self.assertEqual(search_path[-10], '/mock-checkout/LayoutTests/platform/visionos')
