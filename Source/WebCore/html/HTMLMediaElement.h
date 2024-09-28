@@ -70,6 +70,7 @@
 
 namespace WTF {
 class MachSendRight;
+class Stopwatch;
 }
 
 namespace JSC {
@@ -1106,11 +1107,15 @@ private:
 #endif
 
     bool shouldDisableHDR() const;
+
+    bool shouldLogWatchtimeEvent() const;
     bool isWatchtimeTimerActive() const;
     void startWatchtimeTimer();
     void pauseWatchtimeTimer();
     void invalidateWatchtimeTimer();
     void watchtimeTimerFired();
+    void startBufferingStopwatch();
+    void invalidateBufferingStopwatch();
 
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;
@@ -1417,6 +1422,7 @@ private:
     Atomic<unsigned> m_remainingReadyStateChangedAttempts;
 
     std::unique_ptr<PausableIntervalTimer> m_watchtimeTimer;
+    RefPtr<WTF::Stopwatch> m_bufferingStopwatch;
 };
 
 String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState);

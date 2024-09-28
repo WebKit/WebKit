@@ -771,6 +771,11 @@ String DiagnosticLoggingKeys::mediaAudioCodecWatchTimeKey()
     return "watchtimeByAudioCodec"_s;
 }
 
+String DiagnosticLoggingKeys::mediaBufferingWatchTimeKey()
+{
+    return "watchtimeBuffering"_s;
+}
+
 String DiagnosticLoggingKeys::secondsKey()
 {
     return "seconds"_s;
