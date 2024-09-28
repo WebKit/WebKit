@@ -7482,3 +7482,7 @@ imported/w3c/web-platform-tests/mathml/presentation-markup/operators/size-and-po
 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/stretchy-largeop-with-default-font-2.html [ Failure ]
 
 webkit.org/b/257011 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphenate-character-002.html [ ImageOnlyFailure ]
+
+# webkit.org/b/280553 [ Sequoia+ iOS wk2 release ] 2x http/tests/resourceLoadStatistics/* are flaky failures.
+[ Release ] http/tests/resourceLoadStatistics/prune-statistics.html [ Pass Failure ] 
+[ Release ] http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration.html [ Pass Failure ]

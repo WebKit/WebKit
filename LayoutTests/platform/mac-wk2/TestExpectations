@@ -1861,11 +1861,15 @@ editing/input/scroll-viewport-page-up-down.html [ Pass Failure ]
 [ arm64 ] fast/forms/password-scrolled-after-caps-lock-toggled.html  [ Pass Failure ]
 
 # webkit.org/b/280415 [ Sequoia wk2 release arm64 ] 2x fast/selectors/* are flaky image only failures. 
-[ Sequoia+ arm64 release ] fast/selectors/selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
-[ Sequoia+ arm64 release ] fast/selectors/text-field-selection-stroke-color.html [ Pass ImageOnlyFailure ]
+[ Sequoia+ arm64 Release ] fast/selectors/selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
+[ Sequoia+ arm64 Release ] fast/selectors/text-field-selection-stroke-color.html [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/280418 [ Sequoia wk2 ] fast/speechsynthesis/mac/samantha-voice-available.html is a constant failure. 
 [ Sequoia+ ] fast/speechsynthesis/mac/samantha-voice-available.html [ Pass Failure ]
 
 # webkit.org/b/280425 [macOS EWS] ASSERTION FAILED in void WebCore::VideoTrack::clearClient(VideoTrackClient in imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html
 [ Sonoma+ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Skip ]
+
+# webkit.org/b/280553 [ Sequoia+ iOS wk2 release ] 2x http/tests/resourceLoadStatistics/* are flaky failures.
+[ Sequoia+ arm64 Release ] http/tests/resourceLoadStatistics/prune-statistics.html [ Pass Failure ] 
+[ Sequoia+ arm64 Release ] http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration.html [ Pass Failure ]
