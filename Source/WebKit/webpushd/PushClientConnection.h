@@ -68,7 +68,7 @@ using WebKit::WebPushD::WebPushDaemonConnectionConfiguration;
 namespace WebPushD {
 
 enum class PushClientConnectionIdentifierType { };
-using PushClientConnectionIdentifier = LegacyNullableAtomicObjectIdentifier<PushClientConnectionIdentifierType>;
+using PushClientConnectionIdentifier = AtomicObjectIdentifier<PushClientConnectionIdentifierType>;
 
 class PushClientConnection : public RefCounted<PushClientConnection>, public Identified<PushClientConnectionIdentifier>, public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(PushClientConnection);

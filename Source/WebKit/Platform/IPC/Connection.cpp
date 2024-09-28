@@ -71,7 +71,7 @@ constexpr Seconds largeOutgoingMessageQueueTimeThreshold { 20_s };
 std::atomic<unsigned> UnboundedSynchronousIPCScope::unboundedSynchronousIPCCount = 0;
 
 enum class MessageIdentifierType { };
-using MessageIdentifier = LegacyNullableAtomicObjectIdentifier<MessageIdentifierType>;
+using MessageIdentifier = AtomicObjectIdentifier<MessageIdentifierType>;
 
 #if ENABLE(UNFAIR_LOCK)
 static UnfairLock s_connectionMapLock;

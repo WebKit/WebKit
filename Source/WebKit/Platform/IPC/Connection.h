@@ -309,7 +309,7 @@ public:
     Client* client() const { return m_client.get(); }
 
     enum UniqueIDType { };
-    using UniqueID = LegacyNullableAtomicObjectIdentifier<UniqueIDType>;
+    using UniqueID = AtomicObjectIdentifier<UniqueIDType>;
     using DecoderOrError = Expected<UniqueRef<Decoder>, Error>;
 
     static RefPtr<Connection> connection(UniqueID);

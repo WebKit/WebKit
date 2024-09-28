@@ -58,38 +58,38 @@ void RTCDataChannelRemoteManagerProxy::unregisterConnectionToWebProcess(NetworkC
 
 void RTCDataChannelRemoteManagerProxy::sendData(WebCore::RTCDataChannelIdentifier identifier, bool isRaw, std::span<const uint8_t> data)
 {
-    if (auto connectionID = m_webProcessConnections.get(identifier.processIdentifier()))
-        IPC::Connection::send(connectionID, Messages::RTCDataChannelRemoteManager::SendData { identifier, isRaw, data }, 0);
+    if (auto connectionID = m_webProcessConnections.getOptional(identifier.processIdentifier()))
+        IPC::Connection::send(*connectionID, Messages::RTCDataChannelRemoteManager::SendData { identifier, isRaw, data }, 0);
 }
 
 void RTCDataChannelRemoteManagerProxy::close(WebCore::RTCDataChannelIdentifier identifier)
 {
-    if (auto connectionID = m_webProcessConnections.get(identifier.processIdentifier()))
-        IPC::Connection::send(connectionID, Messages::RTCDataChannelRemoteManager::Close { identifier }, 0);
+    if (auto connectionID = m_webProcessConnections.getOptional(identifier.processIdentifier()))
+        IPC::Connection::send(*connectionID, Messages::RTCDataChannelRemoteManager::Close { identifier }, 0);
 }
 
 void RTCDataChannelRemoteManagerProxy::changeReadyState(WebCore::RTCDataChannelIdentifier identifier, WebCore::RTCDataChannelState state)
 {
-    if (auto connectionID = m_webProcessConnections.get(identifier.processIdentifier()))
-        IPC::Connection::send(connectionID, Messages::RTCDataChannelRemoteManager::ChangeReadyState { identifier, state }, 0);
+    if (auto connectionID = m_webProcessConnections.getOptional(identifier.processIdentifier()))
+        IPC::Connection::send(*connectionID, Messages::RTCDataChannelRemoteManager::ChangeReadyState { identifier, state }, 0);
 }
 
 void RTCDataChannelRemoteManagerProxy::receiveData(WebCore::RTCDataChannelIdentifier identifier, bool isRaw, std::span<const uint8_t> data)
 {
-    if (auto connectionID = m_webProcessConnections.get(identifier.processIdentifier()))
-        IPC::Connection::send(connectionID, Messages::RTCDataChannelRemoteManager::ReceiveData { identifier, isRaw, data }, 0);
+    if (auto connectionID = m_webProcessConnections.getOptional(identifier.processIdentifier()))
+        IPC::Connection::send(*connectionID, Messages::RTCDataChannelRemoteManager::ReceiveData { identifier, isRaw, data }, 0);
 }
 
 void RTCDataChannelRemoteManagerProxy::detectError(WebCore::RTCDataChannelIdentifier identifier, WebCore::RTCErrorDetailType detail, const String& message)
 {
-    if (auto connectionID = m_webProcessConnections.get(identifier.processIdentifier()))
-        IPC::Connection::send(connectionID, Messages::RTCDataChannelRemoteManager::DetectError { identifier, detail, message }, 0);
+    if (auto connectionID = m_webProcessConnections.getOptional(identifier.processIdentifier()))
+        IPC::Connection::send(*connectionID, Messages::RTCDataChannelRemoteManager::DetectError { identifier, detail, message }, 0);
 }
 
 void RTCDataChannelRemoteManagerProxy::bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier identifier, size_t amount)
 {
-    if (auto connectionID = m_webProcessConnections.get(identifier.processIdentifier()))
-        IPC::Connection::send(connectionID, Messages::RTCDataChannelRemoteManager::BufferedAmountIsDecreasing { identifier, amount }, 0);
+    if (auto connectionID = m_webProcessConnections.getOptional(identifier.processIdentifier()))
+        IPC::Connection::send(*connectionID, Messages::RTCDataChannelRemoteManager::BufferedAmountIsDecreasing { identifier, amount }, 0);
 }
 
 }

@@ -119,7 +119,7 @@ static Ref<NetworkStorageManager> createNetworkStorageManager(NetworkProcess& ne
     SandboxExtension::consumePermanently(parameters.indexedDBDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.cacheStorageDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.generalStorageDirectoryHandle);
-    IPC::Connection::UniqueID connectionID;
+    std::optional<IPC::Connection::UniqueID> connectionID;
     if (auto* connection = networkProcess.parentProcessConnection())
         connectionID = connection->uniqueID();
     String serviceWorkerStorageDirectory;

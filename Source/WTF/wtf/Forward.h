@@ -93,7 +93,6 @@ template<typename, typename, typename, SupportsObjectIdentifierNullState> class 
 template<typename T, typename RawValue = uint64_t> using ObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierMainThreadAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::No>;
 template<typename T, typename RawValue = uint64_t> using AtomicObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierThreadSafeAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::No>;
 template<typename T, typename RawValue = uint64_t> using LegacyNullableObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierMainThreadAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::Yes>;
-template<typename T, typename RawValue = uint64_t> using LegacyNullableAtomicObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierThreadSafeAccessTraits<RawValue>, RawValue, SupportsObjectIdentifierNullState::Yes>;
 template<typename> class Observer;
 template<typename> class OptionSet;
 template<typename> class Packed;
@@ -173,7 +172,6 @@ using WTF::HashMap;
 using WTF::HashSet;
 using WTF::Hasher;
 using WTF::LazyNeverDestroyed;
-using WTF::LegacyNullableAtomicObjectIdentifier;
 using WTF::LegacyNullableObjectIdentifier;
 using WTF::Lock;
 using WTF::Logger;

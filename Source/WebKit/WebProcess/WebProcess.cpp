@@ -1224,7 +1224,6 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
 #if HAVE(AUDIT_TOKEN)
         m_networkProcessConnection->setNetworkProcessAuditToken(connectionInfo.auditToken ? std::optional(connectionInfo.auditToken->auditToken()) : std::nullopt);
 #endif
-        setNetworkProcessConnectionID(m_networkProcessConnection->connection().uniqueID());
         m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::RegisterURLSchemesAsCORSEnabled(WebCore::LegacySchemeRegistry::allURLSchemesRegisteredAsCORSEnabled()), 0);
 
         if (!Document::allDocuments().isEmpty() || SharedWorkerThreadProxy::hasInstances())
@@ -1297,7 +1296,6 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
         SWContextManager::singleton().stopAllServiceWorkers();
 
     m_networkProcessConnection = nullptr;
-    setNetworkProcessConnectionID({ });
 
     logDiagnosticMessageForNetworkProcessCrash();
 
@@ -2376,19 +2374,6 @@ RemoteMediaEngineConfigurationFactory& WebProcess::mediaEngineConfigurationFacto
     return *supplement<RemoteMediaEngineConfigurationFactory>();
 }
 #endif
-
-IPC::Connection::UniqueID WebProcess::networkProcessConnectionID()
-{
-    Locker lock { m_lockNetworkProcessConnectionID };
-    return m_networkProcessConnectionID;
-}
-
-void WebProcess::setNetworkProcessConnectionID(IPC::Connection::UniqueID uniqueID)
-{
-    Locker lock { m_lockNetworkProcessConnectionID };
-    m_networkProcessConnectionID = uniqueID;
-
-}
 
 WebTransportSession* WebProcess::webTransportSession(WebTransportSessionIdentifier identifier)
 {
