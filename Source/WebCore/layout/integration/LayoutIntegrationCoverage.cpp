@@ -126,7 +126,7 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
     if (flexBoxStyle.logicalHeight().isPercent())
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHeightIsPercent, reasons, includeReasons);
 
-    if (flexBoxStyle.overflowY() == Overflow::Scroll || flexBoxStyle.overflowY() == Overflow::Auto)
+    if (flexBoxStyle.overflowX() == Overflow::Scroll || flexBoxStyle.overflowY() == Overflow::Scroll || flexBoxStyle.overflowX() == Overflow::Auto || flexBoxStyle.overflowY() == Overflow::Auto)
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedOverflow, reasons, includeReasons);
 
     auto alignItemValue = flexBoxStyle.alignItems().position();
@@ -180,7 +180,7 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
         if (flexItemStyle.containsSize())
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasContainsSize, reasons, includeReasons);
 
-        if (flexItemStyle.overflowX() == Overflow::Scroll || flexItemStyle.overflowY() == Overflow::Scroll)
+        if (flexItemStyle.overflowX() == Overflow::Scroll || flexItemStyle.overflowY() == Overflow::Scroll || flexItemStyle.overflowX() == Overflow::Auto || flexItemStyle.overflowY() == Overflow::Auto)
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasUnsupportedOverflow, reasons, includeReasons);
 
         if (flexItem.hasIntrinsicAspectRatio() || flexItemStyle.hasAspectRatio())
