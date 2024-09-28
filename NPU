@@ -1,0 +1,75 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+
+export default function Component() {
+  return (
+    <Card className="w-full max-w-3xl mx-auto">
+      <CardHeader>
+        <CardTitle>Google Workspace SAML IdP Configuration for Stripe</CardTitle>
+        <CardDescription>SAML Identity Provider details for Stripe integration</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-1/3">Setting</TableHead>
+              <TableHead>Value</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell className="font-medium">Entity ID</TableCell>
+              <TableCell>https://accounts.google.com/o/saml2?idpid=C01gvmdbx</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="font-medium">Single Sign-On URL</TableCell>
+              <TableCell>https://accounts.google.com/o/saml2/idp?idpid=C01gvmdbx</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="font-medium">Binding for Single Sign-On</TableCell>
+              <TableCell>
+                <ul className="list-disc list-inside">
+                  <li>HTTP-Redirect</li>
+                  <li>HTTP-POST</li>
+                </ul>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="font-medium">X.509 Certificate</TableCell>
+              <TableCell>
+                <div className="max-h-40 overflow-y-auto bg-muted p-2 rounded-md">
+                  <code className="text-xs whitespace-pre-wrap break-all">
+                    {`MIIDdDCCAlygAwIBAgIGAY7bAtmnMA0GCSqGSIb3DQEBCwUAMHsxFDASBgNVBAoTC0dvb2dsZSBJ
+bmMuMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MQ8wDQYDVQQDEwZHb29nbGUxGDAWBgNVBAsTD0dv
+b2dsZSBGb3IgV29yazELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWEwHhcNMjQwNDE0
+MDUwOTQwWhcNMjkwNDEzMDUwOTQwWjB7MRQwEgYDVQQKEwtHb29nbGUgSW5jLjEWMBQGA1UEBxMN
+TW91bnRhaW4gVmlldzEPMA0GA1UEAxMGR29vZ2xlMRgwFgYDVQQLEw9Hb29nbGUgRm9yIFdvcmsx
+CzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A
+MIIBCgKCAQEAvY+Q+N1QTf6l3GunL03A8W/XTIN4klnLYj2NUF2g0M3pKI1uAry0Z/MxFuKYHnfN
+1Xu+w8WnBRlbqCRBCTHDshJ4cwms1O2cHFFVzGB/rMfNo2Jl/rrsNErjJfOILZq9L2lc7nJXa+pb
+ZnqCktACWTN358LVSO/icdNg1x0BJTXBOVckjOESUowDQ6uAPShrSFtBTdAZ7n4yAAJxzEYlQstj
+6j5rBh77q2IDt7c9SLkFIIDAxf1pLAXTZwhZaSCwZH99HqEJPsESU5QasPuYmj7TbZmQVs/3fWi9
+XWRvtOcvCGi+jh/zM3VdIi5AR0esFSbyqrUYiSgmG1thBf1iewIDAQABMA0GCSqGSIb3DQEBCwUA
+A4IBAQBBeWYRlL2H2NN0Qc6QXc5gGQavC9MbWVVBLfRQ0viVKiQXjAe+HwHCylB4tKQLCIsgURG7
+IqRAQhCJhFvDc3dnepFSMebVCSOTBHKMGT3WG5633QpHk9tvwknVLf+NZVgGAzA1KHIAUfTfHCMN
+mHFgXgBOqO7ObLNqYjl7JoEBJLrg62t7B9A8t9WugTdzyqR++64zGMSfyHjxuzUry8zaMKL+SIcp
+g9OHY1ADc+OjhMN0zZYcPNtixW/dB2oanb/HWcEKKTShzHXGck4YWGBwkd7oBFgQnbtHzbvrFkfT
+Q8g1BIhZvjysULctQ/FVFWJx722orzi0p67SIkWJKlSI`}
+                  </code>
+                </div>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="font-medium">NameID Format</TableCell>
+              <TableCell>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="font-medium">Valid Until</TableCell>
+              <TableCell>2029-04-13T05:09:40.000Z</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  )
+}
