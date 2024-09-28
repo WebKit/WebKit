@@ -74,16 +74,18 @@ def make_analyzer_flags(output_dir, args):
             'webkit.NoUncountedMemberChecker',
             'webkit.RefCntblBaseVirtualDtor',
             'webkit.UncountedLambdaCapturesChecker',
+            'alpha.webkit.NoUncheckedPtrMemberChecker',
             'alpha.webkit.UncountedCallArgsChecker',
-            'alpha.webkit.UncountedLocalVarsChecker',
+            'alpha.webkit.UncountedLocalVarsChecker'
         ])
 
     if args.only_smart_pointers:
         additional_checkers.extend([
+            'alpha.webkit.NoUncheckedPtrMemberChecker',
             'alpha.webkit.UncountedCallArgsChecker',
             'alpha.webkit.UncountedLocalVarsChecker',
             'webkit.NoUncountedMemberChecker',
-            'webkit.RefCntblBaseVirtualDtor',
+            'webkit.RefCntblBaseVirtualDtor'
         ])
 
     if additional_checkers:

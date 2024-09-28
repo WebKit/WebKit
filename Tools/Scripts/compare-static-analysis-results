@@ -26,7 +26,7 @@ import subprocess
 import argparse
 import json
 
-CHECKERS = ['NoUncountedMemberChecker', 'RefCntblBaseVirtualDtor', 'UncountedCallArgsChecker', 'UncountedLocalVarsChecker']
+CHECKERS = ['NoUncountedMemberChecker', 'NoUncheckedPtrMemberChecker', 'RefCntblBaseVirtualDtor', 'UncountedCallArgsChecker', 'UncountedLocalVarsChecker']
 PROJECTS = ['WebCore', 'WebKit']
 STATIC_ANALYZER_UNEXPECTED = 'StaticAnalyzerUnexpectedRegressions'
 

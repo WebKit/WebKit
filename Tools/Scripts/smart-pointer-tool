@@ -25,7 +25,7 @@ import os
 import argparse
 
 EXPECTATIONS_PATH = '../../Source/{project}/SmartPointerExpectations/{checker_type}Expectations'
-CHECKERS = ['NoUncountedMemberChecker', 'RefCntblBaseVirtualDtor', 'UncountedCallArgsChecker', 'UncountedLocalVarsChecker']
+CHECKERS = ['NoUncountedMemberChecker', 'NoUncheckedPtrMemberChecker', 'RefCntblBaseVirtualDtor', 'UncountedCallArgsChecker', 'UncountedLocalVarsChecker']
 PROJECTS = ['WebCore', 'WebKit']
 
 
