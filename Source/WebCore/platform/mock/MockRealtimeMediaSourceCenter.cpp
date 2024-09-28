@@ -58,15 +58,6 @@
 #endif
 
 namespace WebCore {
-class MockDisplayCapturer;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MockDisplayCapturer> : std::true_type { };
-}
-
-namespace WebCore {
 
 static inline Vector<MockMediaDevice> defaultDevices()
 {
@@ -146,7 +137,7 @@ class MockDisplayCapturer final
     : public DisplayCaptureSourceCocoa::Capturer
     , public CanMakeWeakPtr<MockDisplayCapturer> {
 public:
-    MockDisplayCapturer(const CaptureDevice&, std::optional<PageIdentifier>);
+    MockDisplayCapturer(CapturerObserver&, const CaptureDevice&, std::optional<PageIdentifier>);
 
     void triggerMockCaptureConfigurationChange();
 
@@ -173,8 +164,9 @@ private:
     CompletionHandler<void(CaptureSourceError&&)> m_whenReadyCallback;
 };
 
-MockDisplayCapturer::MockDisplayCapturer(const CaptureDevice& device, std::optional<PageIdentifier> pageIdentifier)
-    : m_source(MockRealtimeVideoSourceMac::createForMockDisplayCapturer(String { device.persistentId() }, AtomString { device.label() }, MediaDeviceHashSalts { "persistent"_s, "ephemeral"_s }, pageIdentifier))
+MockDisplayCapturer::MockDisplayCapturer(CapturerObserver& observer, const CaptureDevice& device, std::optional<PageIdentifier> pageIdentifier)
+    : DisplayCaptureSourceCocoa::Capturer(observer)
+    , m_source(MockRealtimeVideoSourceMac::createForMockDisplayCapturer(String { device.persistentId() }, AtomString { device.label() }, MediaDeviceHashSalts { "persistent"_s, "ephemeral"_s }, pageIdentifier))
     , m_readyTimer(*this, &MockDisplayCapturer::readyTimerFired)
 {
 }
@@ -274,9 +266,11 @@ public:
         case CaptureDevice::DeviceType::Screen:
         case CaptureDevice::DeviceType::Window: {
 #if PLATFORM(COCOA)
-            auto capturer = makeUniqueRef<MockDisplayCapturer>(device, pageIdentifier);
-            m_capturer = capturer.get();
-            return DisplayCaptureSourceCocoa::create(UniqueRef<DisplayCaptureSourceCocoa::Capturer>(WTFMove(capturer)), device, WTFMove(hashSalts), constraints, pageIdentifier);
+            return DisplayCaptureSourceCocoa::create([this, &device, pageIdentifier] (auto& observer) {
+                auto capturer = makeUniqueRef<MockDisplayCapturer>(observer, device, pageIdentifier);
+                m_capturer = capturer.get();
+                return capturer;
+            }, device, WTFMove(hashSalts), constraints, pageIdentifier);
 #elif USE(GSTREAMER)
             return MockDisplayCaptureSourceGStreamer::create(device, WTFMove(hashSalts), constraints, pageIdentifier);
 #else

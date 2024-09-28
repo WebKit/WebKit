@@ -49,11 +49,6 @@ class CapturerObserver;
 }
 
 namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CapturerObserver> : std::true_type { };
-}
-
-namespace WTF {
 class MediaTime;
 }
 
@@ -70,6 +65,8 @@ public:
     virtual void capturerIsRunningChanged(bool) { }
     virtual void capturerFailed() { };
     virtual void capturerConfigurationChanged() { };
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
 };
 
 class DisplayCaptureSourceCocoa final
@@ -102,10 +99,15 @@ public:
         uint64_t logIdentifier() const final { return m_logIdentifier; }
         WTFLogChannel& logChannel() const final;
 
-        void setObserver(CapturerObserver&);
+        void ref() { m_observer->ref(); }
+        void deref() { m_observer->deref(); }
 
     protected:
-        Capturer() = default;
+        explicit Capturer(CapturerObserver& observer)
+            : m_observer(observer)
+        {
+        }
+
         void isRunningChanged(bool running)
         {
             if (m_observer)
@@ -129,7 +131,7 @@ public:
     };
 
     static CaptureSourceOrError create(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
-    static CaptureSourceOrError create(Expected<UniqueRef<Capturer>, CaptureSourceError>&&, const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
+    static CaptureSourceOrError create(const std::function<UniqueRef<Capturer>(CapturerObserver&)>&, const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
 
     Seconds elapsedTime();
 
@@ -139,7 +141,7 @@ public:
     virtual ~DisplayCaptureSourceCocoa();
 
 private:
-    DisplayCaptureSourceCocoa(UniqueRef<Capturer>&&, const CaptureDevice&, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
+    DisplayCaptureSourceCocoa(const std::function<UniqueRef<Capturer>(CapturerObserver&)>&, const CaptureDevice&, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
 
     // RealtimeMediaSource
     void startProducingData() final;
