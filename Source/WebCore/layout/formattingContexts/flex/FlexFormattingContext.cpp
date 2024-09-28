@@ -110,10 +110,19 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
                     mainAxis.minimumSize = valueForLength(style.minWidth(), constraints.horizontal().logicalWidth);
                 if (style.maxWidth().isSpecified())
                     mainAxis.maximumSize = valueForLength(style.maxWidth(), constraints.horizontal().logicalWidth);
-                if (!style.marginStart().isAuto())
-                    mainAxis.marginStart = flexItemGeometry.marginStart();
-                if (!style.marginEnd().isAuto())
-                    mainAxis.marginEnd = flexItemGeometry.marginEnd();
+
+                auto marginStart = [&] {
+                    if (direction == FlexDirection::Row)
+                        return style.marginStart().isAuto() ? std::nullopt : std::make_optional(flexItemGeometry.marginStart());
+                    return style.marginEnd().isAuto() ? std::nullopt : std::make_optional(flexItemGeometry.marginEnd());
+                };
+                auto marginEnd = [&] {
+                    if (direction == FlexDirection::Row)
+                        return style.marginEnd().isAuto() ? std::nullopt : std::make_optional(flexItemGeometry.marginEnd());
+                    return style.marginStart().isAuto() ? std::nullopt : std::make_optional(flexItemGeometry.marginStart());
+                };
+                mainAxis.marginStart = marginStart();
+                mainAxis.marginEnd = marginEnd();
                 mainAxis.borderAndPadding = flexItemGeometry.horizontalBorderAndPadding();
 
                 if (!style.marginBefore().isAuto())
