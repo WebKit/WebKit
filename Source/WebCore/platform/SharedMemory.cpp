@@ -84,11 +84,8 @@ Ref<SharedBuffer> SharedMemory::createSharedBuffer(size_t dataSize) const
 {
     ASSERT(dataSize <= size());
     return SharedBuffer::create(DataSegment::Provider {
-        [protectedThis = Ref { *this }] () -> const uint8_t* {
-            return protectedThis->span().data();
-        },
-        [dataSize] () -> size_t {
-            return dataSize;
+        [protectedThis = Ref { *this }, dataSize]() {
+            return protectedThis->span().first(dataSize);
         }
     });
 }

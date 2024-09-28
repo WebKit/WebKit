@@ -173,8 +173,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL
 {
-    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-    _page->loadAlternateHTML(WebCore::DataSegment::create((__bridge CFDataRef)data), "UTF-8"_s, baseURL, unreachableURL);
+    RetainPtr data = bridge_cast([string dataUsingEncoding:NSUTF8StringEncoding]);
+    _page->loadAlternateHTML(WebCore::DataSegment::create(WTFMove(data)), "UTF-8"_s, baseURL, unreachableURL);
 }
 
 - (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL

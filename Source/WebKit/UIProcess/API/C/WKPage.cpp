@@ -275,7 +275,9 @@ static std::span<const uint8_t> dataFrom(const String& string)
 
 static Ref<WebCore::DataSegment> dataReferenceFrom(const String& string)
 {
-    return WebCore::DataSegment::create(dataFrom(string));
+    return WebCore::DataSegment::create(WebCore::DataSegment::Provider { [span = dataFrom(string)]() {
+        return span;
+    } });
 }
 
 static void loadString(WKPageRef pageRef, WKStringRef stringRef, const String& mimeType, const String& baseURL, WKTypeRef userDataRef)

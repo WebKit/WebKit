@@ -98,13 +98,12 @@ Data concatenate(const Data& a, const Data& b)
 
 Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::PlatformFileHandle fd)
 {
-    size_t size = mappedFile.size();
-    void* map = mappedFile.leakHandle();
-    ASSERT(map);
-    ASSERT(map != MAP_FAILED);
+    auto span = mappedFile.leakHandle();
+    ASSERT(span.data());
+    ASSERT(span.data() != MAP_FAILED);
     FileSystem::closeFile(fd);
-    auto bodyMap = adoptOSObject(dispatch_data_create(map, size, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [map, size] {
-        munmap(map, size);
+    auto bodyMap = adoptOSObject(dispatch_data_create(span.data(), span.size(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [span] {
+        munmap(span.data(), span.size());
     }));
     return { WTFMove(bodyMap), Data::Backing::Map };
 }

@@ -243,7 +243,7 @@ WTF_EXPORT_PRIVATE WARN_UNUSED_RETURN bool makeSafeToUseMemoryMapForPath(const S
 class MappedFileData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MappedFileData() { }
+    MappedFileData() = default;
     MappedFileData(MappedFileData&&);
     static std::optional<MappedFileData> create(const String& filePath, MappedFileMode);
     static std::optional<MappedFileData> create(PlatformFileHandle, MappedFileMode);
@@ -254,13 +254,13 @@ public:
     WTF_EXPORT_PRIVATE ~MappedFileData();
     MappedFileData& operator=(MappedFileData&&);
 
-    explicit operator bool() const { return !!m_fileData; }
-    unsigned size() const { return m_fileSize; }
-    std::span<const uint8_t> span() const { return { static_cast<const uint8_t*>(m_fileData), size() }; }
-    std::span<uint8_t> mutableSpan() { return { static_cast<uint8_t*>(m_fileData), size() }; }
+    explicit operator bool() const { return !!m_fileData.data(); }
+    size_t size() const { return m_fileData.size(); }
+    std::span<const uint8_t> span() const { return m_fileData; }
+    std::span<uint8_t> mutableSpan() { return m_fileData; }
 
 #if PLATFORM(COCOA)
-    void* leakHandle() { return std::exchange(m_fileData, nullptr); }
+    std::span<uint8_t> leakHandle() { return std::exchange(m_fileData, { }); }
 #endif
 #if OS(WINDOWS)
     const Win32Handle& fileMapping() const { return m_fileMapping; }
@@ -269,8 +269,7 @@ public:
 private:
     WTF_EXPORT_PRIVATE bool mapFileHandle(PlatformFileHandle, FileOpenMode, MappedFileMode);
 
-    void* m_fileData { nullptr };
-    unsigned m_fileSize { 0 };
+    std::span<uint8_t> m_fileData;
 #if OS(WINDOWS)
     Win32Handle m_fileMapping;
 #endif
@@ -317,8 +316,7 @@ inline MappedFileData::MappedFileData(PlatformFileHandle handle, FileOpenMode op
 }
 
 inline MappedFileData::MappedFileData(MappedFileData&& other)
-    : m_fileData(std::exchange(other.m_fileData, nullptr))
-    , m_fileSize(std::exchange(other.m_fileSize, 0))
+    : m_fileData(std::exchange(other.m_fileData, { }))
 #if OS(WINDOWS)
     , m_fileMapping(WTFMove(other.m_fileMapping))
 #endif
@@ -327,8 +325,7 @@ inline MappedFileData::MappedFileData(MappedFileData&& other)
 
 inline MappedFileData& MappedFileData::operator=(MappedFileData&& other)
 {
-    m_fileData = std::exchange(other.m_fileData, nullptr);
-    m_fileSize = std::exchange(other.m_fileSize, 0);
+    m_fileData = std::exchange(other.m_fileData, { });
 #if OS(WINDOWS)
     m_fileMapping = WTFMove(other.m_fileMapping);
 #endif

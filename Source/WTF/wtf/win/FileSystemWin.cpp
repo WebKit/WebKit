@@ -346,8 +346,8 @@ std::optional<uint32_t> volumeFileBlockSize(const String& path)
 
 MappedFileData::~MappedFileData()
 {
-    if (m_fileData)
-        UnmapViewOfFile(m_fileData);
+    if (m_fileData.data())
+        UnmapViewOfFile(m_fileData.data());
 }
 
 bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openMode, MappedFileMode)
@@ -356,13 +356,11 @@ bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openM
         return false;
 
     auto size = fileSize(handle);
-    if (!size || *size > std::numeric_limits<size_t>::max() || *size > std::numeric_limits<decltype(m_fileSize)>::max()) {
+    if (!size || *size > std::numeric_limits<size_t>::max())
         return false;
-    }
 
-    if (!*size) {
+    if (!*size)
         return true;
-    }
 
     DWORD pageProtection = PAGE_READONLY;
     DWORD desiredAccess = FILE_MAP_READ;
@@ -385,10 +383,11 @@ bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openM
     if (!m_fileMapping)
         return false;
 
-    m_fileData = MapViewOfFile(m_fileMapping.get(), desiredAccess, 0, 0, *size);
-    if (!m_fileData)
+    auto* data = MapViewOfFile(m_fileMapping.get(), desiredAccess, 0, 0, *size);
+    if (!data)
         return false;
-    m_fileSize = *size;
+
+    m_fileData = { static_cast<uint8_t*>(data), static_cast<size_t>(*size) };
     return true;
 }
 
