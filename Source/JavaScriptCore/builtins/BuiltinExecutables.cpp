@@ -257,6 +257,12 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
             }
         } else {
             RELEASE_ASSERT(error.isValid());
+#if ASSERT_ENABLED
+            if (error.type() != ParserError::StackOverflow) {
+                WTFLogAlways("Error parsing builtin: %s\n", error.message().utf8().data());
+                CRASH();
+            }
+#endif
             RELEASE_ASSERT(error.type() == ParserError::StackOverflow);
         }
     }

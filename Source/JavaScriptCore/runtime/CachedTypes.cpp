@@ -2526,6 +2526,12 @@ private:
         return true;
     }
 
+    bool decode(Decoder& decoder, SourceCodeKey& key) const
+    {
+        m_key.decode(decoder, key);
+        return true;
+    }
+
     CachedSourceCodeKey m_key;
     CachedPtr<CachedCodeBlockType<UnlinkedCodeBlockType>> m_codeBlock;
 };
@@ -2548,6 +2554,24 @@ bool GenericCacheEntry::decode(Decoder& decoder, std::pair<SourceCodeKey, Unlink
         RELEASE_ASSERT_NOT_REACHED();
     }
     RELEASE_ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool GenericCacheEntry::decode(Decoder& decoder, SourceCodeKey& key) const
+{
+    if (!isUpToDate(decoder))
+        return false;
+
+    switch (m_tag) {
+    case CachedProgramCodeBlockTag:
+        return bitwise_cast<const CacheEntry<UnlinkedProgramCodeBlock>*>(this)->decode(decoder, key);
+    case CachedModuleCodeBlockTag:
+        return bitwise_cast<const CacheEntry<UnlinkedModuleProgramCodeBlock>*>(this)->decode(decoder, key);
+    case CachedEvalCodeBlockTag:
+        // We do not cache eval code blocks
+        return false;
+    }
+
     return false;
 }
 
@@ -2604,6 +2628,16 @@ RefPtr<CachedBytecode> encodeFunctionCodeBlock(VM& vm, const UnlinkedFunctionCod
     return encoder.release(error);
 }
 
+std::optional<SourceCodeKey> decodeSourceCodeKey(VM& vm, Ref<CachedBytecode> cachedBytecode)
+{
+    const auto* cachedEntry = bitwise_cast<const GenericCacheEntry*>(cachedBytecode->span().data());
+    Ref<Decoder> decoder = Decoder::create(vm, WTFMove(cachedBytecode));
+
+    SourceCodeKey key;
+    if (!cachedEntry->decode(decoder.get(), key))
+        return std::nullopt;
+    return key;
+}
 UnlinkedCodeBlock* decodeCodeBlockImpl(VM& vm, const SourceCodeKey& key, Ref<CachedBytecode> cachedBytecode)
 {
     const auto* cachedEntry = bitwise_cast<const GenericCacheEntry*>(cachedBytecode->span().data());

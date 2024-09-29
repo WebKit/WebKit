@@ -652,12 +652,20 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/SuperSampler.h
     bytecode/ToThisStatus.h
     bytecode/TypeLocation.h
-    bytecode/UnlinkedCodeBlock.h
-    bytecode/UnlinkedEvalCodeBlock.h
-    bytecode/UnlinkedFunctionExecutable.h
-    bytecode/UnlinkedFunctionCodeBlock.h
-    bytecode/UnlinkedGlobalCodeBlock.h
+    bytecode/UnlinkedModuleProgramCodeBlockInlines.h
+    bytecode/UnlinkedModuleProgramCodeBlock.h
+    bytecode/UnlinkedProgramCodeBlock.h
+    bytecode/UnlinkedProgramCodeBlockInlines.h
     bytecode/UnlinkedMetadataTable.h
+    bytecode/UnlinkedFunctionExecutable.h
+    bytecode/UnlinkedFunctionExecutableInlines.h
+    bytecode/UnlinkedFunctionCodeBlockInlines.h
+    bytecode/UnlinkedFunctionCodeBlock.h
+    bytecode/UnlinkedEvalCodeBlockInlines.h
+    bytecode/UnlinkedEvalCodeBlock.h
+    bytecode/UnlinkedCodeBlockGenerator.h
+    bytecode/UnlinkedCodeBlock.h
+    bytecode/UnlinkedGlobalCodeBlock.h
     bytecode/ValueProfile.h
     bytecode/ValueRecovery.h
     bytecode/VariableWriteFireDetail.h
@@ -888,18 +896,24 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     llint/LLIntThunks.h
 
     parser/Lexer.h
+    parser/Nodes.h
     parser/ParserArena.h
     parser/ParserError.h
+    parser/ParserFunctionInfo.h
     parser/ParserModes.h
     parser/ParserTokens.h
     parser/ResultType.h
     parser/SourceCode.h
+    parser/SourceCodeKey.h
     parser/SourceProvider.h
     parser/SourceProviderCache.h
     parser/SourceProviderCacheItem.h
     parser/SourceTaintedOrigin.h
     parser/UnlinkedSourceCode.h
     parser/VariableEnvironment.h
+
+    bytecode/ParseHash.h
+    bytecompiler/Label.h
 
     profiler/ProfilerBytecode.h
     profiler/ProfilerBytecodeSequence.h

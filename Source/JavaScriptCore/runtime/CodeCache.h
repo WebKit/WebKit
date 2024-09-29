@@ -170,6 +170,8 @@ private:
                 if (isMainThread())
                     RELEASE_ASSERT(codeBlock);
             }
+            dataLogLnIf(codeBlock && Options::verboseDiskCache(), "[Disk Cache] Cache hit for sourceCode");
+            dataLogLnIf(!codeBlock && Options::verboseDiskCache(), "[Disk Cache] Cache miss for sourceCode");
             return codeBlock;
         } else {
             UNUSED_PARAM(vm);

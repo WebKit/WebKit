@@ -47,7 +47,7 @@ static constexpr bool verbose = false;
 
 uint32_t computeJSCBytecodeCacheVersion()
 {
-#if OS(DARWIN)
+#if OS(DARWIN) && !USE(BUN_JSC_ADDITIONS)
     static LazyNeverDestroyed<uint32_t> cacheVersion;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {

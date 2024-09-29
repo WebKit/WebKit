@@ -542,6 +542,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, traceBaselineJITExecution, false, Normal, nullptr) \
     v(Unsigned, thresholdForGlobalLexicalBindingEpoch, UINT_MAX, Normal, "Threshold for global lexical binding epoch. If the epoch reaches to this value, CodeBlock metadata for scope operations will be revised globally. It needs to be greater than 1."_s) \
     v(OptionString, diskCachePath, nullptr, Restricted, nullptr) \
+    v(Bool, verboseDiskCache, false, Normal, "If true, we will log cache hits and misses."_s) \
     v(Bool, forceDiskCache, false, Restricted, nullptr) \
     v(Bool, validateAbstractInterpreterState, false, Restricted, nullptr) \
     v(Double, validateAbstractInterpreterStateProbability, 0.5, Normal, nullptr) \
