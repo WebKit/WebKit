@@ -3223,11 +3223,11 @@ void Document::willBeRemovedFromFrame()
     commonTeardown();
 
 #if ENABLE(TOUCH_EVENTS)
-    if (m_touchEventTargets && m_touchEventTargets->computeSize() && parentDocument())
+    if (m_touchEventTargets && m_touchEventTargets->size() && parentDocument())
         protectedParentDocument()->didRemoveEventTargetNode(*this);
 #endif
 
-    if (m_wheelEventTargets && m_wheelEventTargets->computeSize() && parentDocument())
+    if (m_wheelEventTargets && m_wheelEventTargets->size() && parentDocument())
         protectedParentDocument()->didRemoveEventTargetNode(*this);
 
     if (RefPtr mediaQueryMatcher = m_mediaQueryMatcher)
@@ -8405,7 +8405,7 @@ void Document::wheelEventHandlersChanged(Node* node)
     UNUSED_PARAM(node);
 #endif
 
-    bool haveHandlers = m_wheelEventTargets && !m_wheelEventTargets->isEmptyIgnoringNullReferences();
+    bool haveHandlers = m_wheelEventTargets && !m_wheelEventTargets->isEmpty();
     page->chrome().client().wheelEventHandlersChanged(haveHandlers);
 }
 
@@ -8414,7 +8414,7 @@ void Document::didAddWheelEventHandler(Node& node)
     if (!m_wheelEventTargets)
         m_wheelEventTargets = makeUnique<EventTargetSet>();
 
-    m_wheelEventTargets->add(node);
+    m_wheelEventTargets->add(&node);
     wheelEventHandlersChanged(&node);
 
     if (RefPtr frame = this->frame())
@@ -8425,9 +8425,9 @@ static bool removeHandlerFromSet(EventTargetSet& handlerSet, Node& node, EventHa
 {
     switch (removal) {
     case EventHandlerRemoval::One:
-        return handlerSet.remove(node);
+        return handlerSet.remove(&node);
     case EventHandlerRemoval::All:
-        return handlerSet.removeAll(node);
+        return handlerSet.removeAll(&node);
     }
     return false;
 }
@@ -8464,7 +8464,7 @@ void Document::didAddTouchEventHandler(Node& handler)
     if (!m_touchEventTargets)
         m_touchEventTargets = makeUnique<EventTargetSet>();
 
-    m_touchEventTargets->add(handler);
+    m_touchEventTargets->add(&handler);
 
     if (RefPtr parent = parentDocument()) {
         parent->didAddTouchEventHandler(*this);
@@ -8495,15 +8495,15 @@ void Document::didRemoveEventTargetNode(Node& handler)
 {
 #if ENABLE(TOUCH_EVENTS)
     if (m_touchEventTargets) {
-        m_touchEventTargets->removeAll(handler);
-        if ((&handler == this || m_touchEventTargets->isEmptyIgnoringNullReferences()) && parentDocument())
+        m_touchEventTargets->removeAll(&handler);
+        if ((&handler == this || m_touchEventTargets->isEmpty()) && parentDocument())
             protectedParentDocument()->didRemoveEventTargetNode(*this);
     }
 #endif
 
     if (m_wheelEventTargets) {
-        m_wheelEventTargets->removeAll(handler);
-        if ((&handler == this || m_wheelEventTargets->isEmptyIgnoringNullReferences()) && parentDocument())
+        m_wheelEventTargets->removeAll(&handler);
+        if ((&handler == this || m_wheelEventTargets->isEmpty()) && parentDocument())
             protectedParentDocument()->didRemoveEventTargetNode(*this);
     }
 }
@@ -8588,7 +8588,7 @@ Document::RegionFixedPair Document::absoluteRegionForEventTargets(const EventTar
     bool insideFixedPosition = false;
 
     for (auto keyValuePair : *targets) {
-        Ref node = keyValuePair.key;
+        Ref node = *keyValuePair.key;
         auto targetRegionFixedPair = absoluteEventRegionForNode(node);
         targetRegion.unite(targetRegionFixedPair.first);
         insideFixedPosition |= targetRegionFixedPair.second;
