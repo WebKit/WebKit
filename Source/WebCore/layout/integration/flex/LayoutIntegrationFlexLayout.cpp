@@ -161,6 +161,9 @@ void FlexLayout::updateRenderers()
         renderer.setMarginEnd(flexItemGeometry.marginEnd());
         renderer.setMarginBefore(flexItemGeometry.marginBefore());
         renderer.setMarginAfter(flexItemGeometry.marginAfter());
+
+        if (!renderer.everHadLayout() || renderer.checkForRepaintDuringLayout())
+            renderer.repaint();
     }
 }
 
