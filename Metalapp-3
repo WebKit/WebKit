@@ -1,0 +1,113 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { Button } from "@/components/ui/button"
+import { Slider } from "@/components/ui/slider"
+import { Play, Pause, RotateCcw, Layers, Cpu } from 'lucide-react'
+
+export default function MetalAppSimulator() {
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [complexity, setComplexity] = useState(50)
+  const [fps, setFps] = useState(60)
+  const [frame, setFrame] = useState(0)
+
+  useEffect(() => {
+    let animationFrame: number
+
+    const animate = () => {
+      setFrame((prevFrame) => (prevFrame + 1) % 360)
+      setFps(Math.floor(60 + Math.random() * 10)) // Simulated FPS fluctuation
+      animationFrame = requestAnimationFrame(animate)
+    }
+
+    if (isPlaying) {
+      animate()
+    }
+
+    return () => {
+      cancelAnimationFrame(animationFrame)
+    }
+  }, [isPlaying])
+
+  const handleComplexityChange = (value: number[]) => {
+    setComplexity(value[0])
+  }
+
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying)
+  }
+
+  const resetSimulation = () => {
+    setIsPlaying(false)
+    setFrame(0)
+    setComplexity(50)
+  }
+
+  return (
+    <div className="w-full max-w-4xl mx-auto p-6 bg-gray-900 rounded-lg shadow-xl text-white">
+      <h1 className="text-3xl font-bold mb-6 flex items-center">
+        <Cpu className="mr-2" /> Metal Graphics Simulator
+      </h1>
+      
+      <div className="mb-8 relative overflow-hidden rounded-lg bg-black aspect-video">
+        <div 
+          className="absolute inset-0 flex items-center justify-center"
+          style={{
+            transform: `rotate(${frame}deg)`,
+            transition: 'transform 0.1s linear'
+          }}
+        >
+          <div className="w-64 h-64 border-4 border-blue-500 rounded-full"></div>
+          <div className="absolute w-64 h-64 border-4 border-green-500 rounded-full" style={{ transform: 'rotate(45deg)' }}></div>
+          <div className="absolute w-64 h-64 border-4 border-red-500 rounded-full" style={{ transform: 'rotate(90deg)' }}></div>
+        </div>
+        {Array.from({ length: complexity }).map((_, index) => (
+          <div 
+            key={index}
+            className="absolute w-2 h-2 bg-white rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              opacity: Math.random(),
+            }}
+          ></div>
+        ))}
+      </div>
+
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center space-x-2">
+          <Button onClick={togglePlayPause} variant="outline">
+            {isPlaying ? <Pause className="mr-2" /> : <Play className="mr-2" />}
+            {isPlaying ? 'Pause' : 'Play'}
+          </Button>
+          <Button onClick={resetSimulation} variant="outline">
+            <RotateCcw className="mr-2" /> Reset
+          </Button>
+        </div>
+        <div className="text-xl font-bold">
+          {fps} FPS
+        </div>
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-2 flex items-center">
+          <Layers className="mr-2" /> Complexity: {complexity}
+        </label>
+        <Slider
+          value={[complexity]}
+          onValueChange={handleComplexityChange}
+          max={100}
+          step={1}
+        />
+      </div>
+
+      <div className="bg-gray-800 p-4 rounded-lg">
+        <h2 className="text-xl font-bold mb-2">Metal API Simulation</h2>
+        <p className="text-sm text-gray-400">
+          This simulator demonstrates a conceptual use of Apple's Metal framework for high-performance graphics. 
+          In a real Metal app, complex 3D rendering, particle systems, or compute operations would be offloaded to the GPU for optimal performance.
+        </p>
+      </div>
+    </div>
+  )
+}
