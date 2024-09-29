@@ -160,6 +160,7 @@ void HistoryController::restoreScrollPositionAndViewState()
         RefPtr page = frame->page();
         auto desiredScrollPosition = currentItem->shouldRestoreScrollPosition() ? currentItem->scrollPosition() : view->scrollPosition();
         LOG(Scrolling, "HistoryController::restoreScrollPositionAndViewState scrolling to %d,%d", desiredScrollPosition.x(), desiredScrollPosition.y());
+        // FIXME: Page scale should be set in the UI process using WebPageProxy.
         if (page && frame->isMainFrame() && currentItem->pageScaleFactor())
             page->setPageScaleFactor(currentItem->pageScaleFactor() * page->viewScaleFactor(), desiredScrollPosition);
         else

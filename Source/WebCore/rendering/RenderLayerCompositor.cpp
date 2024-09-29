@@ -4785,7 +4785,7 @@ void RenderLayerCompositor::ensureRootLayer()
 
 #if PLATFORM(IOS_FAMILY)
         // Page scale is applied above this on iOS, so we'll just say that our root layer applies it.
-        if (m_renderView.frameView().frame().isMainFrame())
+        if (m_renderView.frameView().frame().isRootFrame())
             m_rootContentsLayer->setAppliesPageScale();
 #endif
 

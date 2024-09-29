@@ -5227,7 +5227,7 @@ double WebPageProxy::pageScaleFactor() const
     return m_pageScaleFactor;
 }
 
-void WebPageProxy::scalePage(double scale, const IntPoint& origin)
+void WebPageProxy::scalePage(double scale, const IntPoint& origin, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(scale > 0);
 
@@ -5237,6 +5237,12 @@ void WebPageProxy::scalePage(double scale, const IntPoint& origin)
         return;
 
     send(Messages::WebPage::DidScalePage(scale, origin));
+    forEachWebContentProcess([&] (auto& process, auto pageID) {
+        if (&process == &legacyMainFrameProcess())
+            return;
+        process.send(Messages::WebPage::DidScalePage(scale, IntPoint { }), pageID);
+    });
+    callAfterNextPresentationUpdate(WTFMove(completionHandler));
 }
 
 void WebPageProxy::scalePageInViewCoordinates(double scale, const IntPoint& centerInViewCoordinates)
@@ -5249,6 +5255,11 @@ void WebPageProxy::scalePageInViewCoordinates(double scale, const IntPoint& cent
         return;
 
     send(Messages::WebPage::DidScalePageInViewCoordinates(scale, centerInViewCoordinates));
+    forEachWebContentProcess([&] (auto& process, auto pageID) {
+        if (&process == &legacyMainFrameProcess())
+            return;
+        process.send(Messages::WebPage::DidScalePage(scale, IntPoint { }), pageID);
+    });
 }
 
 void WebPageProxy::scalePageRelativeToScrollPosition(double scale, const IntPoint& origin)
@@ -5261,6 +5272,11 @@ void WebPageProxy::scalePageRelativeToScrollPosition(double scale, const IntPoin
         return;
 
     send(Messages::WebPage::DidScalePageRelativeToScrollPosition(scale, origin));
+    forEachWebContentProcess([&] (auto& process, auto pageID) {
+        if (&process == &legacyMainFrameProcess())
+            return;
+        process.send(Messages::WebPage::DidScalePage(scale, IntPoint { }), pageID);
+    });
 }
 
 void WebPageProxy::scaleView(double scale)
@@ -5272,7 +5288,9 @@ void WebPageProxy::scaleView(double scale)
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::ScaleView(scale));
+    forEachWebContentProcess([&] (auto& process, auto pageID) {
+        process.send(Messages::WebPage::DidScaleView(scale), pageID);
+    });
 }
 
 void WebPageProxy::setIntrinsicDeviceScaleFactor(float scaleFactor)
@@ -5668,7 +5686,28 @@ static bool scaleFactorIsValid(double scaleFactor)
 void WebPageProxy::pageScaleFactorDidChange(IPC::Connection& connection, double scaleFactor)
 {
     MESSAGE_CHECK_BASE(scaleFactorIsValid(scaleFactor), connection);
+    if (!legacyMainFrameProcess().hasConnection(connection))
+        return;
     m_pageScaleFactor = scaleFactor;
+
+    forEachWebContentProcess([&] (auto& process, auto pageID) {
+        if (&process == &legacyMainFrameProcess())
+            return;
+        process.send(Messages::WebPage::DidScalePage(scaleFactor, { }), pageID);
+    });
+}
+
+void WebPageProxy::viewScaleFactorDidChange(IPC::Connection& connection, double scaleFactor)
+{
+    MESSAGE_CHECK_BASE(scaleFactorIsValid(scaleFactor), connection);
+    if (!legacyMainFrameProcess().hasConnection(connection))
+        return;
+
+    forEachWebContentProcess([&] (auto& process, auto pageID) {
+        if (&process == &legacyMainFrameProcess())
+            return;
+        process.send(Messages::WebPage::DidScaleView(scaleFactor), pageID);
+    });
 }
 
 void WebPageProxy::pluginScaleFactorDidChange(IPC::Connection& connection, double pluginScaleFactor)

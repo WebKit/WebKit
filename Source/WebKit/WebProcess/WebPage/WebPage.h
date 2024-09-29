@@ -717,16 +717,18 @@ public:
 
     void screenPropertiesDidChange();
 
-    // FIXME(site-isolation): Calls to this should be removed in favour of setting via WebPageProxy.
+    // FIXME(site-isolation): Calls to these should be removed in favour of setting via WebPageProxy.
     void scalePage(double scale, const WebCore::IntPoint& origin);
+    void scaleView(double scale);
+
     double pageScaleFactor() const;
     double totalScaleFactor() const;
     double viewScaleFactor() const;
-    void scaleView(double scale);
 
     void didScalePage(double scale, const WebCore::IntPoint& origin);
     void didScalePageInViewCoordinates(double scale, const WebCore::IntPoint& origin);
     void didScalePageRelativeToScrollPosition(double scale, const WebCore::IntPoint& origin);
+    void didScaleView(double scale);
 
     void setUseFixedLayout(bool);
     bool useFixedLayout() const { return m_useFixedLayout; }

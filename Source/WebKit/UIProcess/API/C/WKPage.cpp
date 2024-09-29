@@ -672,7 +672,7 @@ void WKPageSetPageAndTextZoomFactors(WKPageRef pageRef, double pageZoomFactor, d
 void WKPageSetScaleFactor(WKPageRef pageRef, double scale, WKPoint origin)
 {
     CRASH_IF_SUSPENDED;
-    toImpl(pageRef)->scalePage(scale, toIntPoint(origin));
+    toImpl(pageRef)->scalePage(scale, toIntPoint(origin), [] { });
 }
 
 double WKPageGetScaleFactor(WKPageRef pageRef)
@@ -3326,11 +3326,7 @@ void WKPageSetTopContentInsetForTesting(WKPageRef pageRef, float contentInset, v
 
 void WKPageSetPageScaleFactorForTesting(WKPageRef pageRef, float scaleFactor, WKPoint point, void* context, WKPageSetPageScaleFactorForTestingFunction completionHandler)
 {
-    auto* pageForTesting = toImpl(pageRef)->pageForTesting();
-    if (!pageForTesting)
-        return completionHandler(context);
-
-    pageForTesting->setPageScaleFactor(scaleFactor, toIntPoint(point), [context, completionHandler] {
+    toImpl(pageRef)->scalePage(scaleFactor, toIntPoint(point), [context, completionHandler] {
         completionHandler(context);
     });
 }

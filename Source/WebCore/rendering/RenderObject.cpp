@@ -2828,8 +2828,8 @@ void printPaintOrderTreeForLiveDocuments()
     for (auto& document : Document::allDocuments()) {
         if (!document->renderView())
             continue;
-        if (document->frame() && document->frame()->isMainFrame())
-            WTFLogAlways("----------------------main frame--------------------------\n");
+        if (document->frame() && document->frame()->isRootFrame())
+            WTFLogAlways("----------------------root frame--------------------------\n");
         WTFLogAlways("%s", document->url().string().utf8().data());
         showPaintOrderTree(document->renderView());
     }
@@ -2840,8 +2840,8 @@ void printRenderTreeForLiveDocuments()
     for (auto& document : Document::allDocuments()) {
         if (!document->renderView())
             continue;
-        if (document->frame() && document->frame()->isMainFrame())
-            WTFLogAlways("----------------------main frame--------------------------\n");
+        if (document->frame() && document->frame()->isRootFrame())
+            WTFLogAlways("----------------------root frame--------------------------\n");
         WTFLogAlways("%s", document->url().string().utf8().data());
         showRenderTree(document->renderView());
     }
@@ -2852,8 +2852,8 @@ void printLayerTreeForLiveDocuments()
     for (auto& document : Document::allDocuments()) {
         if (!document->renderView())
             continue;
-        if (document->frame() && document->frame()->isMainFrame())
-            WTFLogAlways("----------------------main frame--------------------------\n");
+        if (document->frame() && document->frame()->isRootFrame())
+            WTFLogAlways("----------------------root frame--------------------------\n");
         WTFLogAlways("%s", document->url().string().utf8().data());
         showLayerTree(document->renderView());
     }
@@ -2864,7 +2864,7 @@ void printGraphicsLayerTreeForLiveDocuments()
     for (auto& document : Document::allDocuments()) {
         if (!document->renderView())
             continue;
-        if (document->frame() && document->frame()->isMainFrame()) {
+        if (document->frame() && document->frame()->isRootFrame()) {
             WTFLogAlways("Graphics layer tree for root document %p %s", document.ptr(), document->url().string().utf8().data());
             showGraphicsLayerTreeForCompositor(document->renderView()->compositor());
         }

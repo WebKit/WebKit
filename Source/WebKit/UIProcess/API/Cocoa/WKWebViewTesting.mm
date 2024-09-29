@@ -174,7 +174,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_setPageScale:(CGFloat)scale withOrigin:(CGPoint)origin
 {
-    _page->scalePage(scale, WebCore::roundedIntPoint(origin));
+    _page->scalePage(scale, WebCore::roundedIntPoint(origin), [] { });
 }
 
 - (CGFloat)_pageScale

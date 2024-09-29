@@ -1430,45 +1430,51 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
 {
     LOG_WITH_STREAM(Viewports, stream << "Page " << this << " setPageScaleFactor " << scale << " at " << origin << " - stable " << inStableState);
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    if (!localMainFrame)
-        return;
-    RefPtr document = localMainFrame->document();
-    RefPtr view = document->view();
+    RefPtr mainDocument = localMainFrame ? localMainFrame->document() : nullptr;
+    RefPtr mainFrameView = mainDocument ? mainDocument->view() : nullptr;
 
     if (scale == m_pageScaleFactor) {
-        if (view && view->scrollPosition() != origin && !delegatesScaling())
-            document->updateLayoutIgnorePendingStylesheets({ WebCore::LayoutOptions::UpdateCompositingLayers });
+        if (mainFrameView && mainFrameView->scrollPosition() != origin && !delegatesScaling())
+            mainDocument->updateLayoutIgnorePendingStylesheets({ WebCore::LayoutOptions::UpdateCompositingLayers });
     } else {
         m_pageScaleFactor = scale;
 
-        if (view && !delegatesScaling()) {
-            view->setNeedsLayoutAfterViewConfigurationChange();
-            view->setNeedsCompositingGeometryUpdate();
-            view->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
+        for (auto& rootFrame : m_rootFrames) {
+            ASSERT(rootFrame->isRootFrame());
+            RefPtr view = rootFrame->view();
+            if (!view)
+                continue;
 
-            document->resolveStyle(Document::ResolveStyleType::Rebuild);
+            if (!delegatesScaling()) {
+                view->setNeedsLayoutAfterViewConfigurationChange();
+                view->setNeedsCompositingGeometryUpdate();
+                view->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
 
-            // Transform change on RenderView doesn't trigger repaint on non-composited contents.
-            localMainFrame->protectedView()->invalidateRect(IntRect(LayoutRect::infiniteRect()));
+                if (RefPtr doc = rootFrame->document())
+                    doc->resolveStyle(Document::ResolveStyleType::Rebuild);
+
+                // Transform change on RenderView doesn't trigger repaint on non-composited contents.
+                view->invalidateRect(IntRect(LayoutRect::infiniteRect()));
+            }
+
+            rootFrame->deviceOrPageScaleFactorChanged();
+
+            if (view->fixedElementsLayoutRelativeToFrame())
+                view->setViewportConstrainedObjectsNeedLayout();
         }
 
-        localMainFrame->deviceOrPageScaleFactorChanged();
-
-        if (view && view->fixedElementsLayoutRelativeToFrame())
-            view->setViewportConstrainedObjectsNeedLayout();
-
-        if (view && view->scrollPosition() != origin && !delegatesScaling() && document->renderView() && document->renderView()->needsLayout() && view->didFirstLayout()) {
-            view->layoutContext().layout();
-            view->updateCompositingLayersAfterLayoutIfNeeded();
+        if (mainFrameView && mainFrameView->scrollPosition() != origin && !delegatesScaling() && mainDocument->renderView() && mainDocument->renderView()->needsLayout() && mainFrameView->didFirstLayout()) {
+            mainFrameView->layoutContext().layout();
+            mainFrameView->updateCompositingLayersAfterLayoutIfNeeded();
         }
     }
 
-    if (view && view->scrollPosition() != origin) {
-        if (view->delegatedScrollingMode() != DelegatedScrollingMode::DelegatedToNativeScrollView)
-            view->setScrollPosition(origin);
+    if (mainFrameView && mainFrameView->scrollPosition() != origin) {
+        if (mainFrameView->delegatedScrollingMode() != DelegatedScrollingMode::DelegatedToNativeScrollView)
+            mainFrameView->setScrollPosition(origin);
 #if USE(COORDINATED_GRAPHICS)
         else
-            view->requestScrollToPosition(origin);
+            mainFrameView->requestScrollToPosition(origin);
 #endif
     }
 

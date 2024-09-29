@@ -273,7 +273,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _webView.frame = NSInsetRect(contentView.bounds, 0, -_page->topContentInset());
 
     _savedScale = _page->pageScaleFactor();
-    _page->scalePage(1, WebCore::IntPoint());
+    _page->scalePage(1, WebCore::IntPoint(), [] { });
     [self _manager]->setAnimatingFullScreen(true);
     [self _manager]->willEnterFullScreen();
 }
@@ -364,7 +364,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         makeResponderFirstResponderIfDescendantOfView(_webView.window, firstResponder, _webView);
         [[_webView window] makeKeyAndOrderFront:self];
 
-        _page->scalePage(_savedScale, WebCore::IntPoint());
+        _page->scalePage(_savedScale, WebCore::IntPoint(), [] { });
         [self _manager]->restoreScrollPosition();
         _page->setTopContentInset(_savedTopContentInset);
         [self _manager]->setAnimatingFullScreen(false);
@@ -536,7 +536,7 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     // These messages must be sent after the swap or flashing will occur during forceRepaint:
     [self _manager]->setAnimatingFullScreen(false);
     [self _manager]->didExitFullScreen();
-    _page->scalePage(_savedScale, WebCore::IntPoint());
+    _page->scalePage(_savedScale, WebCore::IntPoint(), [] { });
     [self _manager]->restoreScrollPosition();
     _page->setTopContentInset(_savedTopContentInset);
 

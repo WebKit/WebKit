@@ -1310,7 +1310,7 @@ public:
     double minPageZoomFactor() const;
     double maxPageZoomFactor() const;
 
-    void scalePage(double scale, const WebCore::IntPoint& origin);
+    void scalePage(double scale, const WebCore::IntPoint& origin, CompletionHandler<void()>&&);
     void scalePageInViewCoordinates(double scale, const WebCore::IntPoint& centerInViewCoordinates);
     void scalePageRelativeToScrollPosition(double scale, const WebCore::IntPoint& origin);
     double pageScaleFactor() const;
@@ -1427,6 +1427,7 @@ public:
 #endif
 
     void pageScaleFactorDidChange(IPC::Connection&, double);
+    void viewScaleFactorDidChange(IPC::Connection&, double);
     void pluginScaleFactorDidChange(IPC::Connection&, double);
     void pluginZoomFactorDidChange(IPC::Connection&, double);
 

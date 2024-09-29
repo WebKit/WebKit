@@ -2663,7 +2663,7 @@ double WebPage::viewScaleFactor() const
     return m_page->viewScaleFactor();
 }
 
-void WebPage::scaleView(double scale)
+void WebPage::didScaleView(double scale)
 {
     if (viewScaleFactor() == scale)
         return;
@@ -2678,7 +2678,15 @@ void WebPage::scaleView(double scale)
     }
 
     m_page->setViewScaleFactor(scale);
-    scalePage(pageScale, scrollPositionAtNewScale);
+    didScalePage(pageScale, scrollPositionAtNewScale);
+}
+
+void WebPage::scaleView(double scale)
+{
+    if (scale == viewScaleFactor())
+        return;
+    didScaleView(scale);
+    send(Messages::WebPageProxy::ViewScaleFactorDidChange(scale));
 }
 
 void WebPage::setDeviceScaleFactor(float scaleFactor)

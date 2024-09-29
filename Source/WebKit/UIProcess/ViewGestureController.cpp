@@ -740,7 +740,7 @@ void ViewGestureController::applyMagnification()
         return;
 
     if (m_frameHandlesMagnificationGesture)
-        protectedWebPageProxy()->scalePage(m_magnification, roundedIntPoint(m_magnificationOrigin));
+        protectedWebPageProxy()->scalePage(m_magnification, roundedIntPoint(m_magnificationOrigin), [] { });
     else if (auto* drawingArea = m_webPageProxy->drawingArea())
         drawingArea->adjustTransientZoom(m_magnification, scaledMagnificationOrigin(m_magnificationOrigin, m_magnification));
 }
@@ -756,7 +756,7 @@ void ViewGestureController::endMagnificationGesture()
     double newMagnification = clampTo<double>(m_magnification, minMagnification, maxMagnification);
 
     if (m_frameHandlesMagnificationGesture)
-        webPageProxy->scalePage(newMagnification, roundedIntPoint(m_magnificationOrigin));
+        webPageProxy->scalePage(newMagnification, roundedIntPoint(m_magnificationOrigin), [] { });
     else {
         if (auto drawingArea = webPageProxy->drawingArea())
             drawingArea->commitTransientZoom(newMagnification, scaledMagnificationOrigin(m_magnificationOrigin, newMagnification));
