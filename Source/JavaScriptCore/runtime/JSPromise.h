@@ -81,6 +81,8 @@ public:
     JS_EXPORT_PRIVATE static JSPromise* rejectedPromiseWithCaughtException(JSGlobalObject*, ThrowScope&);
 
     JS_EXPORT_PRIVATE void resolve(JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE void fulfill(JSGlobalObject*, JSValue value);
+    JS_EXPORT_PRIVATE void fulfillWithNonPromise(JSGlobalObject*, JSValue value);
     JS_EXPORT_PRIVATE void reject(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE void rejectAsHandled(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE void reject(JSGlobalObject*, Exception*);

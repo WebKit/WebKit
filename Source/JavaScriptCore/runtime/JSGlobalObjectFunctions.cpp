@@ -859,8 +859,14 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncImportModule, (JSGlobalObject* globalObject, 
     RETURN_IF_EXCEPTION(scope, JSValue::encode(JSPromise::rejectedPromiseWithCaughtException(globalObject, scope)));
 
     scope.release();
+
+    auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
+
     if (internalPromise->status(vm) == JSPromise::Status::Fulfilled) {
-        return JSValue::encode(JSPromise::resolvedPromise(globalObject, internalPromise->result(vm)));
+        auto result = internalPromise->result(vm);
+        promise->fulfill(globalObject, result);
+    } else {
+        promise->resolve(globalObject, internalPromise);
     }
 
     auto* promise = JSPromise::create(vm, globalObject->promiseStructure());    

@@ -358,7 +358,6 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderParseModule, (JSGlobalObject* globalObject,
             auto* moduleRecord = SyntheticModuleRecord::parseJSONModule(globalObject, moduleKey, WTFMove(sourceCode));
             RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
             scope.release();
-            promise->resolve(globalObject, moduleRecord);
             return JSValue::encode(promise);
         }
         case SourceProviderSourceType::Synthetic: {
@@ -372,12 +371,13 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderParseModule, (JSGlobalObject* globalObject,
             RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(globalObject, scope)));
 
             scope.release();
-            promise->resolve(globalObject, moduleRecord);
             return JSValue::encode(promise);
         }
         default: {
             break;
         }
+        promise->fulfillWithNonPromise(globalObject, moduleRecord);
+        promise->fulfillWithNonPromise(globalObject, moduleRecord);
     }
 
     ParserError error;
@@ -398,7 +398,7 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderParseModule, (JSGlobalObject* globalObject,
     }
 
     scope.release();
-    promise->resolve(globalObject, result.value());
+    promise->fulfillWithNonPromise(globalObject, result.value());
     return JSValue::encode(promise);
 }
 
