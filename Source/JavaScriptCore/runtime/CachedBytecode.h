@@ -56,6 +56,11 @@ public:
         return adoptRef(*new CachedBytecode(CachePayload::makeMallocPayload(WTFMove(data), size), WTFMove(leafExecutables)));
     }
 
+    static Ref<CachedBytecode> create(std::span<uint8_t> data, CachePayload::Destructor&& destructor, LeafExecutableMap&& leafExecutables)
+    {
+        return adoptRef(*new CachedBytecode(CachePayload::makePayloadWithDestructor(data, WTFMove(destructor)), WTFMove(leafExecutables)));
+    }
+
     LeafExecutableMap& leafExecutables() { return m_leafExecutables; }
 
     JS_EXPORT_PRIVATE void addGlobalUpdate(Ref<CachedBytecode>);

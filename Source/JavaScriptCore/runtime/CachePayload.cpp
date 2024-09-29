@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "CachePayload.h"
+#include <span>
 
 namespace JSC {
 
@@ -43,18 +44,28 @@ CachePayload CachePayload::makeEmptyPayload()
     return CachePayload(std::pair { nullptr, 0 });
 }
 
+CachePayload CachePayload::makePayloadWithDestructor(std::span<uint8_t> data, Destructor&& destructor)
+{
+    return CachePayload(data, WTFMove(destructor));
+}
+
 CachePayload::CachePayload(CachePayload&& other)
 {
     m_data = WTFMove(other.m_data);
+    m_destructor = WTFMove(other.m_destructor);
     other.m_data = std::pair { nullptr, 0 };
+    other.m_destructor = nullptr;
 }
 
-CachePayload::CachePayload(std::variant<FileSystem::MappedFileData, std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>>&& data)
-    : m_data(WTFMove(data))
+CachePayload::CachePayload(std::variant<FileSystem::MappedFileData, std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>, std::span<uint8_t>> && data, Destructor&& destructor)
+    : m_data(WTFMove(data)), m_destructor(WTFMove(destructor))
 {
 }
 
-CachePayload::~CachePayload() = default;
+CachePayload::~CachePayload() {
+    if (m_destructor)
+        m_destructor(data());
+}
 
 const uint8_t* CachePayload::data() const
 {
@@ -63,6 +74,8 @@ const uint8_t* CachePayload::data() const
             return data.span().data();
         }, [](const std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>& data) -> const uint8_t* {
             return data.first.get();
+        }, [](const std::span<uint8_t>& data) -> const uint8_t* {
+            return data.data();
         }
     );
 }
@@ -74,6 +87,8 @@ size_t CachePayload::size() const
             return data.size();
         }, [](const std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>& data) -> size_t {
             return data.second;
+        }, [](const std::span<uint8_t>& data) -> size_t {
+            return data.size();
         }
     );
 }
