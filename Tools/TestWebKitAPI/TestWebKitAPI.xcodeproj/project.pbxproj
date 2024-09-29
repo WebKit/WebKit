@@ -2115,6 +2115,8 @@
 		07EDEFAC1EB9400C00D43292 /* UserMediaDisabled.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserMediaDisabled.mm; sourceTree = "<group>"; };
 		07EF76D42540FC060053ED53 /* MediaMutedState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaMutedState.mm; sourceTree = "<group>"; };
 		07F4E92D20AF58D3002E3803 /* UserMediaSimulateFailedSandbox.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserMediaSimulateFailedSandbox.mm; sourceTree = "<group>"; };
+		07F7696C2CA8BAC500FF004B /* IOSMouseEventTestHarness.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOSMouseEventTestHarness.h; sourceTree = "<group>"; };
+		07F7696D2CA8BAC500FF004B /* IOSMouseEventTestHarness.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = IOSMouseEventTestHarness.mm; sourceTree = "<group>"; };
 		0BCD833414857CE400EA2003 /* HashMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HashMap.cpp; sourceTree = "<group>"; };
 		0BCD85691485C98B00EA2003 /* SetForScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetForScope.cpp; sourceTree = "<group>"; };
 		0DE559E52A6B0AAF009AA320 /* WKWebViewResize.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewResize.mm; sourceTree = "<group>"; };
@@ -4518,6 +4520,8 @@
 			children = (
 				A17C58032C9AA12F009DD0B5 /* app */,
 				F4D4F3B41E4E2BCB00BB2767 /* DragAndDropSimulatorIOS.mm */,
+				07F7696C2CA8BAC500FF004B /* IOSMouseEventTestHarness.h */,
+				07F7696D2CA8BAC500FF004B /* IOSMouseEventTestHarness.mm */,
 				2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */,
 				F48D6C0F224B377000E3E2FB /* PreferredContentMode.mm */,
 				F4CB8A7B2856447F0017ECD3 /* TestPDFHostViewController.h */,

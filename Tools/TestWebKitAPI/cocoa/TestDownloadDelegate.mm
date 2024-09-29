@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "TestDownloadDelegate.h"
+#import "Utilities.h"
 
 #import <WebKit/WKNavigationDelegatePrivate.h>
 

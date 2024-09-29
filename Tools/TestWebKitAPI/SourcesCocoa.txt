@@ -45,6 +45,7 @@ cocoa/TestWebExtensionsDelegate.mm
 cocoa/TestWKWebView.mm
 cocoa/TestWKWebViewConfiguration.mm
 cocoa/UserMediaCaptureUIDelegate.mm
+ios/IOSMouseEventTestHarness.mm
 
 Tests/WebKitCocoa/AVFoundationPreference.mm
 Tests/WebKitCocoa/AdaptiveImageGlyph.mm
