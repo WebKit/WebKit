@@ -607,7 +607,7 @@ void JIT::emit_op_instanceof(const JSInstruction* instruction)
     // 2. Get prototype.
     // 2.1 Check whether the constructor has a custom hasInstance.
     {
-        shuffleRegisters<GPRReg, 1>({ GetById::resultJSR.payloadGPR() }, { Instanceof::Custom::hasInstanceJSR.payloadGPR() });
+        shuffleJSRs<1>({ GetById::resultJSR }, { Instanceof::Custom::hasInstanceJSR });
         loadGlobalObject(Instanceof::Custom::globalObjectGPR);
         emitGetVirtualRegister(bytecode.m_value, Instanceof::Custom::valueJSR);
         emitGetVirtualRegisterPayload(bytecode.m_constructor, Instanceof::Custom::constructorGPR);
@@ -651,7 +651,7 @@ void JIT::emit_op_instanceof(const JSInstruction* instruction)
 
     // 3. Do value instanceof prototype.
     {
-        shuffleRegisters<GPRReg, 1>({ GetById::resultJSR.payloadGPR() }, { Instanceof::protoJSR.payloadGPR() });
+        shuffleJSRs<1>({ GetById::resultJSR }, { Instanceof::protoJSR });
         emitGetVirtualRegister(bytecode.m_value, Instanceof::valueJSR);
 
         auto [stubInfo, stubInfoIndex] = addUnlinkedStructureStubInfo();

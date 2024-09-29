@@ -193,6 +193,28 @@ public:
         }
     }
 
+    template<unsigned NumberOfJSRs>
+    ALWAYS_INLINE void shuffleJSRs(std::array<JSValueRegs, NumberOfJSRs> sources, std::array<JSValueRegs, NumberOfJSRs> destinations)
+    {
+#if USE(JSVALUE64)
+        constexpr unsigned NumberOfRegisters = NumberOfJSRs;
+#else
+        constexpr unsigned NumberOfRegisters = NumberOfJSRs * 2;
+#endif
+        std::array<GPRReg, NumberOfRegisters> sourceRegs;
+        std::array<GPRReg, NumberOfRegisters> destinationRegs;
+
+        for (unsigned i = 0; i < NumberOfJSRs; ++i) {
+            sourceRegs[i] = sources[i].payloadGPR();
+            destinationRegs[i] = destinations[i].payloadGPR();
+#if !USE(JSVALUE64)
+            sourceRegs[i + NumberOfJSRs] = sources[i].tagGPR();
+            destinationRegs[i + NumberOfJSRs] = destinations[i].tagGPR();
+#endif
+        }
+        shuffleRegisters<GPRReg, NumberOfRegisters>(sourceRegs, destinationRegs);
+    }
+
 private:
     template<typename RegType>
     using InfoTypeForReg = decltype(toInfoFromReg(RegType(-1)));
