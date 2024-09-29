@@ -2464,6 +2464,7 @@ private:
 class GenericCacheEntry {
 public:
     bool decode(Decoder&, std::pair<SourceCodeKey, UnlinkedCodeBlock*>&) const;
+    bool decode(Decoder&, SourceCodeKey&) const;
     bool isStillValid(Decoder&, const SourceCodeKey&, CachedCodeBlockTag) const;
 
 protected:

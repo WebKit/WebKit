@@ -45,6 +45,13 @@ static constexpr bool verbose = false;
 }
 #endif
 
+static uint32_t byteCodeCacheVersion = 0;
+
+void dangerouslyOverrideJSCBytecodeCacheVersion(uint32_t version)
+{
+    byteCodeCacheVersion = version;
+}
+
 uint32_t computeJSCBytecodeCacheVersion()
 {
 #if OS(DARWIN) && !USE(BUN_JSC_ADDITIONS)
@@ -55,7 +62,7 @@ uint32_t computeJSCBytecodeCacheVersion()
 
         uuid_t uuid;
         if (const mach_header* header = dyld_image_header_containing_address(jsFunctionAddr); header && _dyld_get_image_uuid(header, uuid)) {
-            uuid_string_t uuidString = { };
+            uuid_string_t uuidString = {};
             uuid_unparse(uuid, uuidString);
             cacheVersion.construct(SuperFastHash::computeHash(uuidString));
             dataLogLnIf(JSCBytecodeCacheVersionInternal::verbose, "UUID of JavaScriptCore.framework:", uuidString);
@@ -67,10 +74,13 @@ uint32_t computeJSCBytecodeCacheVersion()
     });
     return cacheVersion.get();
 #else
+    if (byteCodeCacheVersion != 0) {
+        return byteCodeCacheVersion;
+    }
     static constexpr uint32_t precomputedCacheVersion = SuperFastHash::computeHash(__TIMESTAMP__);
+    byteCodeCacheVersion = precomputedCacheVersion;
     return precomputedCacheVersion;
 #endif
 }
 
 } // namespace JSC
-

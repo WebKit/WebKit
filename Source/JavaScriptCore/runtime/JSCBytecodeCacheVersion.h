@@ -30,5 +30,6 @@
 namespace JSC {
 
 JS_EXPORT_PRIVATE NEVER_INLINE uint32_t computeJSCBytecodeCacheVersion();
+JS_EXPORT_PRIVATE NEVER_INLINE void dangerouslyOverrideJSCBytecodeCacheVersion(uint32_t version);
 
 }
