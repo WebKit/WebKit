@@ -757,6 +757,13 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexIt
 
                 auto& flexItemAlignSelf = flexItem.style().alignSelf();
                 auto alignValue = flexItemAlignSelf.position() != ItemPosition::Auto ? flexItemAlignSelf : flexContainerStyle().alignItems();
+                auto setFallbackValuesIfApplicable = [&] {
+                    if (flexItemOuterCrossSize <= flexLinesCrossSizeList[lineIndex] || flexItemAlignSelf.overflow() != OverflowAlignment::Safe)
+                        return;
+                    alignValue.setPosition(ItemPosition::FlexStart);
+                };
+                setFallbackValuesIfApplicable();
+
                 switch (alignValue.position()) {
                 case ItemPosition::Stretch:
                 case ItemPosition::Normal:
