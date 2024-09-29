@@ -53,15 +53,6 @@ skip:
     - test/built-ins/Function/prototype/restricted-property-arguments.js
     - test/built-ins/Function/prototype/restricted-property-caller.js
 
-    # Slightly different formatting. We should update test262 side.
-    - test/intl402/DateTimeFormat/prototype/formatRangeToParts/en-US.js
-    - test/intl402/DateTimeFormat/prototype/formatRangeToParts/fractionalSecondDigits.js
-    - test/intl402/NumberFormat/prototype/format/unit-ja-JP.js
-    - test/intl402/NumberFormat/prototype/format/unit-zh-TW.js
-    - test/intl402/NumberFormat/prototype/formatToParts/unit-ja-JP.js
-    - test/intl402/NumberFormat/prototype/formatToParts/unit-zh-TW.js
-    - test/intl402/DurationFormat/prototype/format/style-narrow-en.js
-
     # New ICU (66~) raises a different failure
     - test/intl402/Locale/constructor-apply-options-canonicalizes-twice.js
     - test/intl402/Locale/constructor-non-iana-canon.js
@@ -88,10 +79,6 @@ skip:
     - test/intl402/Intl/getCanonicalLocales/transformed-ext-canonical.js
     - test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-region.js
     - test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-subdivision.js
-
-    # Test is obsolete. microseconds and nanoseconds are added in the spec.
-    - test/intl402/Intl/supportedValuesOf/units.js
-    - test/intl402/NumberFormat/prototype/format/units-invalid.js
 
     # Approximately sign is only supported after ICU 71.
     - test/intl402/NumberFormat/prototype/formatRangeToParts/en-US.js
