@@ -100,6 +100,11 @@ enum class IncludeReasons : bool {
     }
 #endif
 
+static inline bool mayHaveScrollbarOrScrollableOverflow(const RenderStyle& style)
+{
+    return !style.isOverflowVisible() || style.scrollbarGutter() != RenderStyle::initialScrollbarGutter();
+}
+
 static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlexibleBox& flexBox, IncludeReasons includeReasons)
 {
     auto reasons = OptionSet<AvoidanceReason> { };
@@ -126,7 +131,7 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
     if (flexBoxStyle.logicalHeight().isPercent())
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHeightIsPercent, reasons, includeReasons);
 
-    if (flexBoxStyle.overflowX() == Overflow::Scroll || flexBoxStyle.overflowY() == Overflow::Scroll || flexBoxStyle.overflowX() == Overflow::Auto || flexBoxStyle.overflowY() == Overflow::Auto)
+    if (mayHaveScrollbarOrScrollableOverflow(flexBoxStyle))
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedOverflow, reasons, includeReasons);
 
     auto alignItemValue = flexBoxStyle.alignItems().position();
@@ -180,7 +185,7 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
         if (flexItemStyle.containsSize())
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasContainsSize, reasons, includeReasons);
 
-        if (flexItemStyle.overflowX() == Overflow::Scroll || flexItemStyle.overflowY() == Overflow::Scroll || flexItemStyle.overflowX() == Overflow::Auto || flexItemStyle.overflowY() == Overflow::Auto)
+        if (mayHaveScrollbarOrScrollableOverflow(flexItemStyle))
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasUnsupportedOverflow, reasons, includeReasons);
 
         if (flexItem.hasIntrinsicAspectRatio() || flexItemStyle.hasAspectRatio())
