@@ -44,17 +44,18 @@ WebSpeechSynthesisClient::WebSpeechSynthesisClient(WebPage& page)
 {
 }
 
-Ref<WebPage> WebSpeechSynthesisClient::protectedPage() const
-{
-    return m_page.get();
-}
-
 const Vector<RefPtr<WebCore::PlatformSpeechSynthesisVoice>>& WebSpeechSynthesisClient::voiceList()
 {
+    RefPtr page = m_page.get();
+    if (!page) {
+        m_voices = { };
+        return m_voices;
+    }
+
     // FIXME: this message should not be sent synchronously. Instead, the UI process should
     // get the list of voices and pass it on to the WebContent processes, see
     // https://bugs.webkit.org/show_bug.cgi?id=195723
-    auto sendResult = protectedPage()->sendSync(Messages::WebPageProxy::SpeechSynthesisVoiceList());
+    auto sendResult = page->sendSync(Messages::WebPageProxy::SpeechSynthesisVoiceList());
     auto [voiceList] = sendResult.takeReplyOr(Vector<WebSpeechSynthesisVoice> { });
 
     m_voices = voiceList.map([](auto& voice) -> RefPtr<WebCore::PlatformSpeechSynthesisVoice> {
@@ -65,7 +66,11 @@ const Vector<RefPtr<WebCore::PlatformSpeechSynthesisVoice>>& WebSpeechSynthesisC
 
 WebCore::SpeechSynthesisClientObserver* WebSpeechSynthesisClient::corePageObserver() const
 {
-    RefPtr corePage = m_page->corePage();
+    RefPtr page = m_page.get();
+    if (!page)
+        return nullptr;
+
+    RefPtr corePage = page->corePage();
     if (corePage && corePage->speechSynthesisClient() && corePage->speechSynthesisClient()->observer())
         return corePage->speechSynthesisClient()->observer().get();
     return nullptr;
@@ -73,7 +78,8 @@ WebCore::SpeechSynthesisClientObserver* WebSpeechSynthesisClient::corePageObserv
 
 void WebSpeechSynthesisClient::resetState()
 {
-    protectedPage()->send(Messages::WebPageProxy::SpeechSynthesisResetState());
+    if (RefPtr page = m_page.get())
+        page->send(Messages::WebPageProxy::SpeechSynthesisResetState());
 }
 
 void WebSpeechSynthesisClient::speak(RefPtr<WebCore::PlatformSpeechSynthesisUtterance> utterance)
@@ -99,18 +105,26 @@ void WebSpeechSynthesisClient::speak(RefPtr<WebCore::PlatformSpeechSynthesisUtte
     auto localService = voice ? voice->localService() : false;
     auto isDefault = voice ? voice->isDefault() : false;
 
-    Ref page = m_page.get();
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
     page->sendWithAsyncReply(Messages::WebPageProxy::SpeechSynthesisSetFinishedCallback(), WTFMove(finishedCompletionHandler));
     page->sendWithAsyncReply(Messages::WebPageProxy::SpeechSynthesisSpeak(utterance->text(), utterance->lang(), utterance->volume(), utterance->rate(), utterance->pitch(), utterance->startTime(), voiceURI, name, lang, localService, isDefault), WTFMove(startedCompletionHandler));
 }
 
 void WebSpeechSynthesisClient::cancel()
 {
-    protectedPage()->send(Messages::WebPageProxy::SpeechSynthesisCancel());
+    if (RefPtr page = m_page.get())
+        page->send(Messages::WebPageProxy::SpeechSynthesisCancel());
 }
 
 void WebSpeechSynthesisClient::pause()
 {
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
     WTF::CompletionHandler<void()> completionHandler = [this, weakThis = WeakPtr { *this }]() mutable {
         if (!weakThis)
             return;
@@ -118,11 +132,15 @@ void WebSpeechSynthesisClient::pause()
             observer->didPauseSpeaking();
     };
 
-    protectedPage()->sendWithAsyncReply(Messages::WebPageProxy::SpeechSynthesisPause(), WTFMove(completionHandler));
+    page->sendWithAsyncReply(Messages::WebPageProxy::SpeechSynthesisPause(), WTFMove(completionHandler));
 }
 
 void WebSpeechSynthesisClient::resume()
 {
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
     WTF::CompletionHandler<void()> completionHandler = [this, weakThis = WeakPtr { *this }]() mutable {
         if (!weakThis)
             return;
@@ -130,7 +148,7 @@ void WebSpeechSynthesisClient::resume()
             observer->didResumeSpeaking();
     };
 
-    protectedPage()->sendWithAsyncReply(Messages::WebPageProxy::SpeechSynthesisResume(), WTFMove(completionHandler));
+    page->sendWithAsyncReply(Messages::WebPageProxy::SpeechSynthesisResume(), WTFMove(completionHandler));
 }
 
 } // namespace WebKit

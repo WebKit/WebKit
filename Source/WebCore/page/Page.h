@@ -1322,7 +1322,7 @@ private:
     std::unique_ptr<PerformanceLoggingClient> m_performanceLoggingClient;
 
 #if ENABLE(SPEECH_SYNTHESIS)
-    std::unique_ptr<SpeechSynthesisClient> m_speechSynthesisClient;
+    RefPtr<SpeechSynthesisClient> m_speechSynthesisClient;
 #endif
 
     UniqueRef<SpeechRecognitionProvider> m_speechRecognitionProvider;

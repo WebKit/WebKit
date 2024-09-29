@@ -746,7 +746,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.screenOrientationManager = m_screenOrientationManager.get();
 
 #if ENABLE(SPEECH_SYNTHESIS) && !USE(GSTREAMER)
-    pageConfiguration.speechSynthesisClient = makeUnique<WebSpeechSynthesisClient>(*this);
+    pageConfiguration.speechSynthesisClient = WebSpeechSynthesisClient::create(*this);
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
