@@ -356,7 +356,7 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
                 usedTotalFactor += shouldUseFlexGrowFactor ? flexItems[nonFrozenIndex].growFactor() : flexItems[nonFrozenIndex].shrinkFactor() * flexBaseAndHypotheticalMainSizeList[nonFrozenIndex].flexBase;
 
             for (auto nonFrozenIndex : nonFrozenSet) {
-                if (!usedTotalFactor) {
+                if (!usedTotalFactor || std::isinf(usedTotalFactor)) {
                     mainSizeList[nonFrozenIndex] = flexBaseAndHypotheticalMainSizeList[nonFrozenIndex].flexBase;
                     continue;
                 }
