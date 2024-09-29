@@ -67,13 +67,28 @@ static void generateUnlinkedCodeBlockForFunctions(VM& vm, UnlinkedCodeBlock* unl
 
     // FIXME: We should also generate CodeBlocks for CodeForConstruct
     // https://bugs.webkit.org/show_bug.cgi?id=193823
-    for (unsigned i = 0; i < unlinkedCodeBlock->numberOfFunctionDecls(); i++)
-        generate(unlinkedCodeBlock->functionDecl(i), CodeForCall);
-    for (unsigned i = 0; i < unlinkedCodeBlock->numberOfFunctionExprs(); i++)
-        generate(unlinkedCodeBlock->functionExpr(i), CodeForCall);
+    //
+    // NOTE: We changed this in Bun. We check if the function is a constructor
+    // and if it is, we generate a CodeForConstruct block.
+    for (unsigned i = 0; i < unlinkedCodeBlock->numberOfFunctionDecls(); i++) {
+        auto* functionDecl = unlinkedCodeBlock->functionDecl(i);
+        if (functionDecl->isConstructor()) {
+            generate(functionDecl, CodeForConstruct);
+        } else {
+            generate(functionDecl, CodeForCall);
+        }
+    }
+    for (unsigned i = 0; i < unlinkedCodeBlock->numberOfFunctionExprs(); i++) {
+        auto* functionExpr = unlinkedCodeBlock->functionExpr(i);
+        if (functionExpr->isConstructor()) {
+            generate(functionExpr, CodeForConstruct);
+        } else {
+            generate(functionExpr, CodeForCall);
+        }
+    }
 }
 
-template <class UnlinkedCodeBlockType, class ExecutableType = ScriptExecutable>
+template<class UnlinkedCodeBlockType, class ExecutableType = ScriptExecutable>
 UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& source, LexicallyScopedFeatures lexicallyScopedFeatures, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, EvalContextType evalContextType, DerivedContextType derivedContextType, bool isArrowFunctionContext, const TDZEnvironment* variablesUnderTDZ = nullptr, const PrivateNameEnvironment* privateNameEnvironment = nullptr, ExecutableType* executable = nullptr)
 {
     typedef typename CacheTypes<UnlinkedCodeBlockType>::RootNode RootNode;
@@ -119,7 +134,7 @@ UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& s
     return unlinkedCodeBlock;
 }
 
-template <class UnlinkedCodeBlockType, class ExecutableType>
+template<class UnlinkedCodeBlockType, class ExecutableType>
 UnlinkedCodeBlockType* generateUnlinkedCodeBlock(VM& vm, ExecutableType* executable, const SourceCode& source, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, EvalContextType evalContextType, const TDZEnvironment* variablesUnderTDZ = nullptr, const PrivateNameEnvironment* privateNameEnvironment = nullptr)
 {
     return generateUnlinkedCodeBlockImpl<UnlinkedCodeBlockType, ExecutableType>(vm, source, executable->lexicallyScopedFeatures(), scriptMode, codeGenerationMode, error, evalContextType, executable->derivedContextType(), executable->isArrowFunctionContext(), variablesUnderTDZ, privateNameEnvironment, executable);
@@ -130,7 +145,7 @@ UnlinkedEvalCodeBlock* generateUnlinkedCodeBlockForDirectEval(VM& vm, DirectEval
     return generateUnlinkedCodeBlock<UnlinkedEvalCodeBlock>(vm, executable, source, scriptMode, codeGenerationMode, error, evalContextType, variablesUnderTDZ, privateNameEnvironment);
 }
 
-template <class UnlinkedCodeBlockType>
+template<class UnlinkedCodeBlockType>
 std::enable_if_t<!std::is_same<UnlinkedCodeBlockType, UnlinkedEvalCodeBlock>::value, UnlinkedCodeBlockType*>
 recursivelyGenerateUnlinkedCodeBlock(VM& vm, const SourceCode& source, LexicallyScopedFeatures lexicallyScopedFeatures, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, EvalContextType evalContextType)
 {
@@ -153,7 +168,7 @@ UnlinkedModuleProgramCodeBlock* recursivelyGenerateUnlinkedCodeBlockForModulePro
     return recursivelyGenerateUnlinkedCodeBlock<UnlinkedModuleProgramCodeBlock>(vm, source, lexicallyScopedFeatures, scriptMode, codeGenerationMode, error, evalContextType);
 }
 
-template <class UnlinkedCodeBlockType, class ExecutableType>
+template<class UnlinkedCodeBlockType, class ExecutableType>
 UnlinkedCodeBlockType* CodeCache::getUnlinkedGlobalCodeBlock(VM& vm, ExecutableType* executable, const SourceCode& source, JSParserScriptMode scriptMode, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error, EvalContextType evalContextType)
 {
     DerivedContextType derivedContextType = executable->derivedContextType();
@@ -245,7 +260,7 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
     ASSERT(metadata);
     if (!metadata)
         return nullptr;
-    
+
     metadata->overrideName(name);
     metadata->setEndPosition(positionBeforeLastNewline);
     // The Function constructor only has access to global variables, so no variables will be under TDZ unless they're
@@ -294,13 +309,13 @@ static SourceCodeKey sourceCodeKeyForSerializedBytecode(VM&, const SourceCode& s
 SourceCodeKey sourceCodeKeyForSerializedProgram(VM& vm, const SourceCode& sourceCode)
 {
     JSParserScriptMode scriptMode = JSParserScriptMode::Classic;
-    return sourceCodeKeyForSerializedBytecode(vm, sourceCode, SourceCodeType::ProgramType, NoLexicallyScopedFeatures, scriptMode, { });
+    return sourceCodeKeyForSerializedBytecode(vm, sourceCode, SourceCodeType::ProgramType, NoLexicallyScopedFeatures, scriptMode, {});
 }
 
 SourceCodeKey sourceCodeKeyForSerializedModule(VM& vm, const SourceCode& sourceCode)
 {
     JSParserScriptMode scriptMode = JSParserScriptMode::Module;
-    return sourceCodeKeyForSerializedBytecode(vm, sourceCode, SourceCodeType::ModuleType, StrictModeLexicallyScopedFeature, scriptMode, { });
+    return sourceCodeKeyForSerializedBytecode(vm, sourceCode, SourceCodeType::ModuleType, StrictModeLexicallyScopedFeature, scriptMode, {});
 }
 
 RefPtr<CachedBytecode> serializeBytecode(VM& vm, UnlinkedCodeBlock* codeBlock, const SourceCode& source, SourceCodeType codeType, LexicallyScopedFeatures lexicallyScopedFeatures, JSParserScriptMode scriptMode, FileSystem::PlatformFileHandle fd, BytecodeCacheError& error, OptionSet<CodeGenerationMode> codeGenerationMode)
