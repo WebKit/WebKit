@@ -1302,18 +1302,16 @@
         },
         "zoom": {
             "values": [
-                "normal",
-                "reset",
-                "document"
+                "normal"
             ],
             "codegen-properties": {
                 "custom": "All",
                 "high-priority": true,
-                "parser-grammar": "normal | reset | document | <percentage [0,inf]> | <number [0,inf]>"
+                "parser-grammar": "normal | <percentage [0,inf]> | <number [0,inf]>"
             },
-            "status": "non-standard",
             "specification": {
-                "url": "https://msdn.microsoft.com/en-us/library/ms531189(v=vs.85).aspx"
+                "category": "css-viewport",
+                "url": "https://drafts.csswg.org/css-viewport/#zoom-property"
             }
         },
         "ruby-position": {
@@ -10272,6 +10270,11 @@
             "shortname": "CSS Basic User Interface",
             "longname": "CSS Basic User Interface Module",
             "url": "https://www.w3.org/TR/css-ui-3/"
+        },
+        "css-viewport": {
+            "shortname": "CSS Viewport",
+            "longname": "CSS Viewport Module",
+            "url": "https://drafts.csswg.org/css-viewport/"
         },
         "css-view-transitions": {
             "shortname": "CSS View Transitions",
