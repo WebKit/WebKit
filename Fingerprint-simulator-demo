@@ -1,0 +1,93 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Fingerprint, Lock, Unlock, Wifi, Battery, Signal } from 'lucide-react'
+
+export default function FingerprintDisplay() {
+  const [isScanning, setIsScanning] = useState(false)
+  const [isUnlocked, setIsUnlocked] = useState(false)
+  const [time, setTime] = useState(new Date())
+  const [notifications, setNotifications] = useState([
+    { id: 1, app: 'Messages', content: 'New message from John' },
+    { id: 2, app: 'Email', content: 'Meeting reminder: 2 PM' },
+  ])
+
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const handleScan = () => {
+    setIsScanning(true)
+    setTimeout(() => {
+      setIsScanning(false)
+      setIsUnlocked(true)
+    }, 2000)
+  }
+
+  const handleLock = () => {
+    setIsUnlocked(false)
+  }
+
+  return (
+    <Card className="w-[375px] h-[812px] bg-black text-white rounded-[60px] overflow-hidden shadow-xl relative">
+      <CardContent className="h-full flex flex-col items-center justify-between p-6">
+        <div className="w-40 h-8 bg-black absolute top-0 left-1/2 transform -translate-x-1/2 rounded-b-3xl"></div>
+        <div className="w-full flex justify-between items-center mt-2">
+          <p className="text-sm font-semibold">
+            {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </p>
+          <div className="flex items-center space-x-2">
+            <Signal size={16} />
+            <Wifi size={16} />
+            <Battery size={16} />
+          </div>
+        </div>
+        {isUnlocked ? (
+          <div className="flex-1 w-full mt-4">
+            <h2 className="text-2xl font-bold mb-4">Notifications</h2>
+            {notifications.map((notification) => (
+              <div key={notification.id} className="bg-gray-800 rounded-lg p-3 mb-3">
+                <h3 className="font-semibold">{notification.app}</h3>
+                <p className="text-sm text-gray-300">{notification.content}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center">
+            <p className="text-6xl font-light mb-4">
+              {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </p>
+            <p className="text-xl mb-8">
+              {time.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' })}
+            </p>
+            <div className="relative">
+              <Button
+                variant="outline"
+                size="icon"
+                className={`w-20 h-20 rounded-full ${isScanning ? 'animate-pulse' : ''}`}
+                onClick={handleScan}
+              >
+                <Fingerprint className="h-10 w-10" />
+              </Button>
+              {isScanning && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-28 h-28 border-4 border-blue-500 rounded-full animate-ping"></div>
+                </div>
+              )}
+            </div>
+            <p className="mt-4 text-sm text-gray-400">Touch to unlock</p>
+          </div>
+        )}
+        {isUnlocked && (
+          <Button variant="outline" onClick={handleLock} className="mt-4">
+            <Lock className="mr-2 h-4 w-4" /> Lock iPhone
+          </Button>
+        )}
+        <div className="w-32 h-1 bg-gray-600 rounded-full mt-4"></div>
+      </CardContent>
+    </Card>
+  )
+}
