@@ -912,13 +912,13 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
 
             dispatchEvent(Event::create(eventNames().navigatesuccessEvent, { }));
 
+            if (apiMethodTracker)
+                resolveFinishedPromise(apiMethodTracker.get());
+
             if (RefPtr transition = std::exchange(m_transition, nullptr))
                 transition->resolvePromise();
 
             m_ongoingNavigateEvent = nullptr;
-
-            if (apiMethodTracker)
-                resolveFinishedPromise(apiMethodTracker.get());
 
         }, [this, abortController, document, apiMethodTracker, weakThis = WeakPtr { *this }](JSC::JSValue result) mutable {
             if (!weakThis || abortController->signal().aborted() || !document->isFullyActive() || !m_ongoingNavigateEvent)
@@ -941,11 +941,11 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
 
             dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, errorMessage, errorInformation.sourceURL, errorInformation.line, errorInformation.column, { protectedScriptExecutionContext()->globalObject()->vm(), result }));
 
-            if (RefPtr transition = std::exchange(m_transition, nullptr))
-                transition->rejectPromise(exception);
-
             if (apiMethodTracker)
                 apiMethodTracker->finishedPromise->reject<IDLAny>(result, RejectAsHandled::Yes);
+
+            if (RefPtr transition = std::exchange(m_transition, nullptr))
+                transition->rejectPromise(exception);
         });
 
         // If a new event has been dispatched in our event handler then we were aborted above.
