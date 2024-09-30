@@ -58,8 +58,10 @@ class RemoteAudioDestination final
 public:
     RemoteAudioDestination(GPUConnectionToWebProcess& connection, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore)
         : m_renderSemaphore(WTFMove(renderSemaphore))
+#if !RELEASE_LOG_DISABLED
         , m_logger(connection.logger())
         , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
+#endif
 #if PLATFORM(COCOA)
         , m_audioOutputUnitAdaptor(*this)
         , m_numOutputChannels(numberOfOutputChannels)
@@ -162,15 +164,18 @@ private:
     }
 #endif
 
-    Logger& logger() const { return m_logger; }
-    uint64_t logIdentifier() const { return m_logIdentifier; }
-    ASCIILiteral logClassName() const { return "RemoteAudioDestination"_s; }
-    WTFLogChannel& logChannel() const { return WebKit2LogMedia; }
-
     IPC::Semaphore m_renderSemaphore;
     bool m_isPlaying { false };
+
+#if !RELEASE_LOG_DISABLED
+    ASCIILiteral logClassName() const { return "RemoteAudioDestination"_s; }
+    WTFLogChannel& logChannel() const { return WebKit2LogMedia; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
+    Logger& logger() const { return m_logger; }
+
     Ref<Logger> m_logger;
     const uint64_t m_logIdentifier;
+#endif
 
 #if PLATFORM(COCOA)
     WebCore::AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
