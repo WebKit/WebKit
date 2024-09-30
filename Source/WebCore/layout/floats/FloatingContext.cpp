@@ -154,7 +154,7 @@ static bool areFloatsHorizontallySorted(const PlacedFloats& placedFloats)
 }
 #endif
 
-static FloatPair::LeftRightIndex findAvailablePosition(FloatAvoider& floatAvoider, const PlacedFloats::List& floats, BoxGeometry::HorizontalEdges containingBlockContentBoxEdges)
+static FloatPair::LeftRightIndex findAvailablePosition(FloatAvoider& floatAvoider, const PlacedFloats::List& floats)
 {
     std::optional<PositionInContextRoot> bottomMost;
     std::optional<FloatPair::LeftRightIndex> innerMostLeftAndRight;
@@ -165,30 +165,22 @@ static FloatPair::LeftRightIndex findAvailablePosition(FloatAvoider& floatAvoide
         innerMostLeftAndRight = innerMostLeftAndRight.value_or(*leftRightFloatPair);
 
         // Move the box horizontally so that it either
-        // 1. aligns with the current floating pair (always constrained by containing block e.g. when current float on this position is outside of containing block i.e. not intrusive).
+        // 1. aligns with the current floating pair
         // 2. or with the containing block's content box if there's no float to align with at this vertical position.
         auto leftRightEdge = leftRightFloatPair.horizontalConstraints();
-
-        // Ensure that the float avoider
-        // 1. avoids floats on both sides
-        // 2. does not overflow its containing block if the horizontal position is constrained by other floats
-        // (i.e. a float avoider may overflow its containing block just fine unless this overflow is the result of getting it pushed by other floats on this vertical position -out of available space)
-        // 3. Move to the next floating pair if this vertical position is over-constrained.
-        if ((!leftRightEdge.left || *leftRightEdge.left <= containingBlockContentBoxEdges.start)
-            && (!leftRightEdge.right || *leftRightEdge.right >= containingBlockContentBoxEdges.end)) {
-            // Surprisingly floats may overlap each other on the non-floating side (e.g. float: left may overlap a float: right)
-            // when they are not considered intrusive (i.e. they are outside of our containing block's content box).
-            // FIXME: Should we check if placed floats come from outside of this formatting context.
-            return *innerMostLeftAndRight;
-        }
-
-        if (auto horizontalConstraint = floatAvoider.isLeftAligned() ? leftRightEdge.left : leftRightEdge.right)
+        if (auto horizontalConstraint = floatAvoider.isLeftAligned() ? leftRightEdge.left : leftRightEdge.right)  
             floatAvoider.setHorizontalPosition(*horizontalConstraint);
         else
             floatAvoider.resetHorizontalPosition();
         floatAvoider.setVerticalPosition(leftRightFloatPair.verticalConstraint());
 
-        if (!leftRightFloatPair.intersects(floatAvoider) && !floatAvoider.overflowsContainingBlock())
+        // Ensure that the float avoider
+        // 1. avoids floats on both sides
+        // 2. does not overflow its containing block if the horizontal position is constrained by other floats
+        // (i.e. a float avoider may overflow its containing block just fine unless this overflow is the result of getting it pushed by other floats on this vertical position -out of available space)
+        auto isConstrainedByOtherFloats = (floatAvoider.isLeftAligned() && leftRightEdge.left) || (!floatAvoider.isLeftAligned() && leftRightEdge.right);
+        auto overflowsContainingBlockWithConstraints = isConstrainedByOtherFloats && floatAvoider.overflowsContainingBlock();
+        if (!overflowsContainingBlockWithConstraints && !leftRightFloatPair.intersects(floatAvoider))
             return *innerMostLeftAndRight;
 
         bottomMost = leftRightFloatPair.bottom();
@@ -268,7 +260,7 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const BoxGeo
     absoluteTopLeft.setY(verticalPositionCandidate);
     auto margins = BoxGeometry::Edges { { boxGeometry.marginStart(), boxGeometry.marginEnd() }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
     auto floatBox = FloatAvoider { absoluteTopLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, true, isFloatingCandidateLeftPositionedInPlacedFloats(layoutBox) };
-    findAvailablePosition(floatBox, m_placedFloats.list(), absoluteCoordinates.containingBlockContentBox);
+    findAvailablePosition(floatBox, m_placedFloats.list());
     // Convert box coordinates from formatting root back to containing block.
     auto containingBlockTopLeft = absoluteCoordinates.containingBlockTopLeft;
     return { floatBox.left() + margins.horizontal.start - containingBlockTopLeft.x(), floatBox.top() + margins.vertical.before - containingBlockTopLeft.y() };
@@ -288,7 +280,7 @@ LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layou
     auto absoluteCoordinates = this->absoluteCoordinates(layoutBox, borderBoxTopLeft);
     auto margins = BoxGeometry::Edges { { boxGeometry.marginStart(), boxGeometry.marginEnd() }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
     auto floatAvoider = FloatAvoider { absoluteCoordinates.topLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, false, layoutBox.style().isLeftToRightDirection() };
-    findPositionForFormattingContextRoot(floatAvoider, absoluteCoordinates.containingBlockContentBox);
+    findPositionForFormattingContextRoot(floatAvoider);
     auto containingBlockTopLeft = absoluteCoordinates.containingBlockTopLeft;
     return { floatAvoider.left() - containingBlockTopLeft.x(), floatAvoider.top() - containingBlockTopLeft.y() };
 }
@@ -504,7 +496,7 @@ PlacedFloats::Item FloatingContext::makeFloatItem(const Box& floatBox, const Box
     return { floatBox, position, absoluteBoxGeometry, borderBoxTopLeft, line };
 }
 
-void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAvoider, BoxGeometry::HorizontalEdges containingBlockContentBoxEdges) const
+void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAvoider) const
 {
     // A non-floating formatting root's initial vertical position is its static position.
     // It means that such boxes can end up vertically placed in-between existing floats (which is
@@ -522,7 +514,7 @@ void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAv
     // 3. Align the box with the intersected float and probe for placement again (#1). 
     auto& floats = m_placedFloats.list();
     while (true) {
-        auto innerMostLeftAndRight = findAvailablePosition(floatAvoider, floats, containingBlockContentBoxEdges);
+        auto innerMostLeftAndRight = findAvailablePosition(floatAvoider, floats);
         if (innerMostLeftAndRight.isEmpty())
             return;
 
