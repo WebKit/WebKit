@@ -648,12 +648,28 @@ Vector<WebFoundTextRange::PDFData> PluginView::findTextMatches(const String& tar
     return protectedPlugin()->findTextMatches(target, options);
 }
 
-Vector<FloatRect> PluginView::rectsForTextMatch(WebFoundTextRange::PDFData match)
+Vector<FloatRect> PluginView::rectsForTextMatch(const WebFoundTextRange::PDFData& match)
 {
     if (!m_isInitialized)
         return { };
 
     return protectedPlugin()->rectsForTextMatch(match);
+}
+
+RefPtr<WebCore::TextIndicator> PluginView::textIndicatorForTextMatch(const WebFoundTextRange::PDFData& match, WebCore::TextIndicatorPresentationTransition transition)
+{
+    if (!m_isInitialized)
+        return { };
+
+    return protectedPlugin()->textIndicatorForTextMatch(match, transition);
+}
+
+void PluginView::scrollToRevealTextMatch(const WebFoundTextRange::PDFData& match)
+{
+    if (!m_isInitialized)
+        return;
+
+    return protectedPlugin()->scrollToRevealTextMatch(match);
 }
 
 String PluginView::selectionString() const

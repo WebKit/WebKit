@@ -3107,7 +3107,7 @@ Vector<WebFoundTextRange::PDFData> UnifiedPDFPlugin::findTextMatches(const Strin
     return matches;
 }
 
-Vector<FloatRect> UnifiedPDFPlugin::rectsForTextMatch(WebFoundTextRange::PDFData data)
+Vector<FloatRect> UnifiedPDFPlugin::rectsForTextMatch(const WebFoundTextRange::PDFData& data)
 {
     RetainPtr selection = selectionFromWebFoundTextRangePDFData(data);
     if (!selection)
@@ -3145,7 +3145,7 @@ Vector<WebCore::FloatRect> UnifiedPDFPlugin::visibleRectsForFindMatchRects(PDFPa
     return rectsInPluginCoordinates;
 }
 
-PDFSelection *UnifiedPDFPlugin::selectionFromWebFoundTextRangePDFData(WebFoundTextRange::PDFData data) const
+PDFSelection *UnifiedPDFPlugin::selectionFromWebFoundTextRangePDFData(const WebFoundTextRange::PDFData& data) const
 {
     RetainPtr startPage = [m_pdfDocument pageAtIndex:data.startPage];
     if (!startPage)
@@ -3156,6 +3156,39 @@ PDFSelection *UnifiedPDFPlugin::selectionFromWebFoundTextRangePDFData(WebFoundTe
         return nil;
 
     return [m_pdfDocument selectionFromPage:startPage.get() atCharacterIndex:data.startOffset toPage:endPage.get() atCharacterIndex:(data.endOffset - 1)];
+}
+
+void UnifiedPDFPlugin::scrollToRevealTextMatch(const WebFoundTextRange::PDFData& data)
+{
+    RetainPtr selection = selectionFromWebFoundTextRangePDFData(data);
+    if (!selection)
+        return;
+
+    RetainPtr firstPageForSelection = [[selection pages] firstObject];
+    if (!firstPageForSelection)
+        return;
+
+    auto firstPageIndex = m_documentLayout.indexForPage(firstPageForSelection);
+    if (!firstPageIndex)
+        return;
+
+    if (scrollingMode() == DelegatedScrollingMode::DelegatedToNativeScrollView) {
+        auto rect = rectForSelectionInMainFrameContentsSpace(selection.get());
+        if (RefPtr page = this->page())
+            page->chrome().scrollMainFrameToRevealRect(enclosingIntRect(rect));
+    } else
+        revealRectInPage([selection boundsForPage:firstPageForSelection.get()], *firstPageIndex);
+
+    setCurrentSelection(WTFMove(selection));
+}
+
+RefPtr<WebCore::TextIndicator> UnifiedPDFPlugin::textIndicatorForTextMatch(const WebFoundTextRange::PDFData& data, WebCore::TextIndicatorPresentationTransition transition)
+{
+    RetainPtr selection = selectionFromWebFoundTextRangePDFData(data);
+    if (!selection)
+        return { };
+
+    return textIndicatorForSelection(selection.get(), { WebCore::TextIndicatorOption::IncludeMarginIfRangeMatchesSelection }, transition);
 }
 
 RefPtr<TextIndicator> UnifiedPDFPlugin::textIndicatorForCurrentSelection(OptionSet<WebCore::TextIndicatorOption> options, WebCore::TextIndicatorPresentationTransition transition)

@@ -174,7 +174,7 @@ private:
     bool drawsFindOverlay() const final { return true; }
 
     Vector<WebFoundTextRange::PDFData> findTextMatches(const String&, WebCore::FindOptions) final { return { }; }
-    Vector<WebCore::FloatRect> rectsForTextMatch(WebFoundTextRange::PDFData) final { return { }; }
+    Vector<WebCore::FloatRect> rectsForTextMatch(const WebFoundTextRange::PDFData&) final { return { }; }
 
     WebCore::DictionaryPopupInfo dictionaryPopupInfoForSelection(PDFSelection *, WebCore::TextIndicatorPresentationTransition) override;
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override;

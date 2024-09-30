@@ -105,7 +105,9 @@ public:
     RefPtr<WebCore::TextIndicator> textIndicatorForCurrentSelection(OptionSet<WebCore::TextIndicatorOption>, WebCore::TextIndicatorPresentationTransition);
 
     Vector<WebFoundTextRange::PDFData> findTextMatches(const String& target, WebCore::FindOptions);
-    Vector<WebCore::FloatRect> rectsForTextMatch(WebFoundTextRange::PDFData);
+    Vector<WebCore::FloatRect> rectsForTextMatch(const WebFoundTextRange::PDFData&);
+    RefPtr<WebCore::TextIndicator> textIndicatorForTextMatch(const WebFoundTextRange::PDFData&, WebCore::TextIndicatorPresentationTransition);
+    void scrollToRevealTextMatch(const WebFoundTextRange::PDFData&);
 
     String selectionString() const;
 
