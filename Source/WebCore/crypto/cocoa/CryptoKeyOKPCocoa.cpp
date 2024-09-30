@@ -379,11 +379,25 @@ String CryptoKeyOKP::generateJwkX() const
         return base64URLEncodeToString(m_data);
 
     ASSERT(type() == CryptoKeyType::Private);
-
-    auto* di = ccsha512_di();
     ccec25519pubkey publicKey;
-    cced25519_make_pub(di, publicKey, m_data.data());
-
+    switch (namedCurve()) {
+    case NamedCurve::Ed25519: {
+        auto* di = ccsha512_di();
+        RELEASE_ASSERT_WITH_MESSAGE(!cced25519_make_pub(di, publicKey, m_data.data()), "cced25519_make_pub failed");
+        break;
+    }
+    case NamedCurve::X25519: {
+#if HAVE(CORE_CRYPTO_SIGNATURES_INT_RETURN_VALUE)
+        RELEASE_ASSERT_WITH_MESSAGE(!cccurve25519_make_pub(publicKey, m_data.data()), "cccurve25519_make_pub failed.");
+#else
+        cccurve25519_make_pub(publicKey, m_data.data());
+#endif
+        break;
+    }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return String(""_s);
+    }
     return base64URLEncodeToString(std::span { publicKey, sizeof(publicKey) });
 }
 
