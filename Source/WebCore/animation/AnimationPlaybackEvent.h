@@ -50,9 +50,6 @@ public:
     bool isAnimationPlaybackEvent() const final { return true; }
 
     std::optional<CSSNumberishTime> timelineTime() const { return m_timelineTime; }
-    std::optional<CSSNumberishTime> bindingsTimelineTime() const;
-
-    std::optional<CSSNumberishTime> bindingsCurrentTime() const;
     std::optional<CSSNumberishTime> currentTime() const { return m_currentTime; }
 
 private:

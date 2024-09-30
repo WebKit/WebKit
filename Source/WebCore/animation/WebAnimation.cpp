@@ -306,15 +306,6 @@ void WebAnimation::effectTargetDidChange(const std::optional<const Styleable>& p
     InspectorInstrumentation::didChangeWebAnimationEffectTarget(*this);
 }
 
-std::optional<CSSNumberishTime> WebAnimation::bindingsStartTime() const
-{
-    if (m_startTime) {
-        ASSERT(m_startTime->time());
-        return secondsToWebAnimationsAPITime(*m_startTime->time());
-    }
-    return std::nullopt;
-}
-
 ExceptionOr<void> WebAnimation::setBindingsStartTime(const std::optional<CSSNumberishTime>& startTime)
 {
     if (startTime && !startTime->isValid())
@@ -369,15 +360,6 @@ void WebAnimation::setStartTime(std::optional<CSSNumberishTime> newStartTime)
     timingDidChange(DidSeek::Yes, SynchronouslyNotify::No);
 
     invalidateEffect();
-}
-
-std::optional<CSSNumberishTime> WebAnimation::bindingsCurrentTime() const
-{
-    if (auto currentTime = this->currentTime()) {
-        ASSERT(currentTime->time());
-        return secondsToWebAnimationsAPITime(*currentTime->time());
-    }
-    return std::nullopt;
 }
 
 ExceptionOr<void> WebAnimation::setBindingsCurrentTime(const std::optional<CSSNumberishTime>& currentTime)

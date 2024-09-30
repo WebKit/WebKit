@@ -51,22 +51,4 @@ AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, WebAnimat
 
 AnimationPlaybackEvent::~AnimationPlaybackEvent() = default;
 
-std::optional<CSSNumberishTime> AnimationPlaybackEvent::bindingsCurrentTime() const
-{
-    if (m_currentTime) {
-        ASSERT(m_currentTime->time());
-        return secondsToWebAnimationsAPITime(*m_currentTime->time());
-    }
-    return std::nullopt;
-}
-
-std::optional<CSSNumberishTime> AnimationPlaybackEvent::bindingsTimelineTime() const
-{
-    if (m_timelineTime) {
-        ASSERT(m_timelineTime->time());
-        return secondsToWebAnimationsAPITime(*m_timelineTime->time());
-    }
-    return std::nullopt;
-}
-
 } // namespace WebCore

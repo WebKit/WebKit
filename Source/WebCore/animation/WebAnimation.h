@@ -117,11 +117,11 @@ public:
     void persist();
     ExceptionOr<void> commitStyles();
 
-    virtual std::optional<CSSNumberishTime> bindingsStartTime() const;
+    virtual std::optional<CSSNumberishTime> bindingsStartTime() const { return startTime(); }
     virtual ExceptionOr<void> setBindingsStartTime(const std::optional<CSSNumberishTime>&);
     std::optional<CSSNumberishTime> startTime() const { return m_startTime; }
     void setStartTime(std::optional<CSSNumberishTime>);
-    virtual std::optional<CSSNumberishTime> bindingsCurrentTime() const;
+    virtual std::optional<CSSNumberishTime> bindingsCurrentTime() const { return currentTime(); };
     virtual ExceptionOr<void> setBindingsCurrentTime(const std::optional<CSSNumberishTime>&);
     virtual PlayState bindingsPlayState() const { return playState(); }
     virtual ReplaceState bindingsReplaceState() const { return replaceState(); }

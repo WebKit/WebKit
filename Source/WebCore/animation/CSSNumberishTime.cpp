@@ -216,7 +216,7 @@ CSSNumberishTime CSSNumberishTime::operator/(double scalar) const
 CSSNumberishTime::operator double() const
 {
     if (m_type == Type::Time)
-        return m_value * 1000;
+        return secondsToWebAnimationsAPITime(*this);
     return m_value;
 }
 
@@ -231,16 +231,16 @@ CSSNumberishTime::operator CSSNumberish() const
     switch (m_source) {
     case Source::Literal:
         ASSERT(m_type == Type::Time);
-        return m_value * 1000;
+        return secondsToWebAnimationsAPITime(*this);
     case Source::Number:
         ASSERT(m_type == Type::Time);
-        return CSSNumericFactory::number(m_value * 1000);
+        return CSSNumericFactory::number(secondsToWebAnimationsAPITime(*this));
     case Source::Milliseconds:
         ASSERT(m_type == Type::Time);
-        return CSSNumericFactory::ms(m_value * 1000);
+        return CSSNumericFactory::ms(secondsToWebAnimationsAPITime(*this));
     case Source::Seconds:
         ASSERT(m_type == Type::Time);
-        return CSSNumericFactory::s(m_value);
+        return CSSNumericFactory::s(secondsToWebAnimationsAPITime(*this) / 1000);
     case Source::Percentage:
         ASSERT(m_type == Type::Percentage);
         return CSSNumericFactory::percent(m_value);
