@@ -142,6 +142,7 @@
 #import <WebCore/RenderBoxInlines.h>
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderLayer.h>
+#import <WebCore/RenderLayerScrollableArea.h>
 #import <WebCore/RenderObjectInlines.h>
 #import <WebCore/RenderThemeIOS.h>
 #import <WebCore/RenderVideo.h>
@@ -5595,13 +5596,27 @@ void WebPage::computeSelectionClipRect(EditorState& state, const VisibleSelectio
 
     Ref view = scroller->checkedView()->frameView();
     IntRect scrollerClipRectInContent;
+    ScrollingNodeID enclosingScrollingNodeID;
     if (CheckedPtr renderView = dynamicDowncast<RenderView>(*scroller)) {
         if (renderView->protectedDocument()->isTopDocument())
             return;
 
         scrollerClipRectInContent = view->visibleContentRect();
-    } else
+        enclosingScrollingNodeID = view->scrollingNodeID();
+    } else if (CheckedPtr scrollingLayer = scroller->layer()) {
+        CheckedPtr scrollableArea = scrollingLayer->scrollableArea();
+        if (!scrollableArea)
+            return;
+
         scrollerClipRectInContent = scroller->absoluteBoundingBoxRect();
+        enclosingScrollingNodeID = scrollableArea->scrollingNodeID();
+    }
+
+    if (enclosingScrollingNodeID)
+        state.visualData->enclosingScrollingNodeID = { WTFMove(enclosingScrollingNodeID) };
+
+    if (m_selectionHonorsOverflowScrolling)
+        return;
 
     if (scrollerClipRectInContent.isEmpty())
         return;

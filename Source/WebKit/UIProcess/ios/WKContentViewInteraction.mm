@@ -1188,6 +1188,11 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     return _page->preferences().useAsyncUIKitInteractions();
 }
 
+- (BOOL)selectionHonorsOverflowScrolling
+{
+    return _page->preferences().selectionHonorsOverflowScrolling();
+}
+
 - (BOOL)_shouldUseUIContextMenuAsyncConfiguration
 {
 #if USE(BROWSERENGINEKIT)
@@ -8958,11 +8963,11 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         _cachedSelectedTextRange = nil;
         _lastSelectionDrawingInfo = selectionDrawingInfo;
 
-        // FIXME: We need to figure out what to do if the selection is changed by Javascript.
         if (_textInteractionWrapper) {
             _markedText = editorState.hasComposition ? postLayoutData.markedText : String { };
             if (![_markedText length])
                 _isDeferringKeyEventsToInputMethod = NO;
+            [_textInteractionWrapper prepareToMoveSelectionContainer:self._selectionContainerViewInternal];
             [_textInteractionWrapper selectionChanged];
         }
 
@@ -13596,6 +13601,41 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
         return;
 
     _page->closeCurrentTypingCommand();
+}
+
+- (UIView *)_selectionContainerViewAboveText
+{
+    // FIXME (280624): Once -selectionContainerView (or an equivalent) is available as API, we
+    // should adopt that and make this invoke RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED().
+    return self._selectionContainerViewInternal;
+}
+
+- (UIView *)selectionContainerView
+{
+    return self._selectionContainerViewInternal;
+}
+
+- (UIView *)_selectionContainerViewInternal
+{
+    if (!self.selectionHonorsOverflowScrolling)
+        return self;
+
+    if (!_page->editorState().hasVisualData())
+        return self;
+
+    auto scrollingNodeID = _page->editorState().visualData->enclosingScrollingNodeID;
+    if (!scrollingNodeID)
+        return self;
+
+    WeakPtr coordinator = _page->scrollingCoordinatorProxy();
+    if (UNLIKELY(!coordinator))
+        return self;
+
+    RetainPtr scrollView = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(*coordinator).scrollViewForScrollingNodeID(*scrollingNodeID);
+    if (scrollView == self._scroller)
+        return self;
+
+    return dynamic_objc_cast<WKBaseScrollView>(scrollView.get()).scrolledContentView ?: self;
 }
 
 @end

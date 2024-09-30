@@ -86,21 +86,57 @@
     return _textInteractionAssistant.get();
 }
 
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+
+- (UITextSelectionDisplayInteraction *)textSelectionDisplayInteraction
+{
+#if USE(BROWSERENGINEKIT)
+    return [_asyncTextInteraction textSelectionDisplayInteraction];
+#else
+    for (id<UIInteraction> interaction in _view.interactions) {
+        if (RetainPtr selectionInteraction = dynamic_objc_cast<UITextSelectionDisplayInteraction>(interaction))
+            return selectionInteraction.get();
+    }
+    return nil;
+#endif
+}
+
+#endif // HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+
+- (void)prepareToMoveSelectionContainer:(UIView *)newContainer
+{
+    if (!_view.selectionHonorsOverflowScrolling)
+        return;
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    RetainPtr displayInteraction = [self textSelectionDisplayInteraction];
+    if ([displayInteraction highlightView].superview == newContainer)
+        return;
+
+    // Calling these delegate methods tells the display interaction to remove and reparent all internally
+    // managed views (e.g. selection highlight views, selection handles) in the new selection container.
+    [displayInteraction willMoveToView:_view];
+    [displayInteraction didMoveToView:_view];
+#endif
+}
+
 - (void)activateSelection
 {
-    [_textInteractionAssistant activateSelection];
 #if USE(BROWSERENGINEKIT)
-    [_asyncTextInteraction textSelectionDisplayInteraction].activated = YES;
+    self.textSelectionDisplayInteraction.activated = YES;
+#else
+    [_textInteractionAssistant activateSelection];
 #endif
 }
 
 - (void)deactivateSelection
 {
-    [_textInteractionAssistant deactivateSelection];
 #if USE(BROWSERENGINEKIT)
-    [_asyncTextInteraction textSelectionDisplayInteraction].activated = NO;
+    self.textSelectionDisplayInteraction.activated = NO;
     _showEditMenuAfterNextSelectionChange = NO;
     [self stopShowEditMenuTimer];
+#else
+    [_textInteractionAssistant deactivateSelection];
 #endif
 }
 
@@ -130,7 +166,11 @@
 #if USE(BROWSERENGINEKIT)
     _shouldRestoreEditMenuAfterOverflowScrolling = _view.isPresentingEditMenu;
     [_asyncTextInteraction dismissEditMenuForSelection];
-    [_asyncTextInteraction textSelectionDisplayInteraction].activated = NO;
+#endif
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    if (!_view.selectionHonorsOverflowScrolling)
+        self.textSelectionDisplayInteraction.activated = NO;
 #endif
 }
 
@@ -140,7 +180,11 @@
 #if USE(BROWSERENGINEKIT)
     if (std::exchange(_shouldRestoreEditMenuAfterOverflowScrolling, NO))
         [_asyncTextInteraction presentEditMenuForSelection];
-    [_asyncTextInteraction textSelectionDisplayInteraction].activated = YES;
+#endif
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    if (!_view.selectionHonorsOverflowScrolling)
+        self.textSelectionDisplayInteraction.activated = YES;
 #endif
 }
 

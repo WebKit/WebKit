@@ -28,7 +28,9 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "RemoteLayerTreeViews.h"
 #import "UIKitSPI.h"
+#import "WKContentView.h"
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
@@ -212,6 +214,24 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return YES;
 
     return [super gestureRecognizerShouldBegin:gestureRecognizer];
+}
+
+- (UIView *)scrolledContentView
+{
+    auto firstNonEmptyWebKitChildView = [](UIView *view) -> UIView * {
+        for (UIView *subview in view.subviews) {
+            if (![subview isKindOfClass:WKCompositingView.class] && ![subview isKindOfClass:WKContentView.class])
+                continue;
+
+            if (CGRectIsEmpty(subview.bounds))
+                continue;
+
+            return subview;
+        }
+
+        return nil;
+    };
+    return firstNonEmptyWebKitChildView(self) ?: firstNonEmptyWebKitChildView(self.subviews.firstObject);
 }
 
 @end

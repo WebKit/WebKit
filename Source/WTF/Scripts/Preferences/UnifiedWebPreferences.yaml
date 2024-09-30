@@ -6369,6 +6369,18 @@ SelectionFlippingEnabled:
       "PLATFORM(VISION)" : false
       default: true
 
+SelectionHonorsOverflowScrolling:
+  type: bool
+  status: internal
+  humanReadableName: "Selection Honors Overflow Scrolling"
+  humanReadableDescription: "Selection honors overflow scrolling"
+  webcoreBinding: none
+  condition: PLATFORM(IOS_FAMILY)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 SendMouseEventsToDisabledFormControlsEnabled:
   type: bool
   status: stable

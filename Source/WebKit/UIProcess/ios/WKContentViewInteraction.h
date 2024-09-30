@@ -907,6 +907,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_closeCurrentTypingCommand;
 
 @property (nonatomic, readonly) BOOL shouldUseAsyncInteractions;
+@property (nonatomic, readonly) BOOL selectionHonorsOverflowScrolling;
 
 @end
 
