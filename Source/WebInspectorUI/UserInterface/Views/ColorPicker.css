@@ -114,18 +114,21 @@
 
 .color-picker > .variable-color-swatches > ul{
     list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 2px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 1em);
+    grid-template-row: repeat(5, 1em);
+    gap: 0.25em;
+    margin: 4px 0 0 ;
     padding: 0;
-    margin: 2px 0 0;
-    max-height: 45px;
-    overflow-y: auto;
+    width: 100%;
+    max-height: calc(1em * 5);
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
 }
 
 .color-picker > .variable-color-swatches > ul > li {
     height: 1em;
+    scroll-snap-align: start;
 }
 
 .color-picker > .variable-color-swatches > ul > li > .inline-swatch {
