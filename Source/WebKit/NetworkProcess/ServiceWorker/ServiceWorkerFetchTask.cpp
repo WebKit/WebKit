@@ -410,6 +410,11 @@ void ServiceWorkerFetchTask::cancelFromClient()
     if (m_isDone)
         return;
 
+    if (m_isLoadingFromPreloader) {
+        cancelPreloadIfNecessary();
+        return;
+    }
+
     sendToServiceWorker(Messages::WebSWContextManagerConnection::CancelFetch { m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier });
 }
 
