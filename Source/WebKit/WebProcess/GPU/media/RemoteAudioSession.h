@@ -107,7 +107,6 @@ private:
 
     void setSoundStageSize(SoundStageSize) final;
     SoundStageSize soundStageSize() const final { return configuration().soundStageSize; }
-    void setEnabled(bool);
 
     const RemoteAudioSessionConfiguration& configuration() const;
     RemoteAudioSessionConfiguration& configuration();
@@ -128,7 +127,6 @@ private:
     std::optional<RemoteAudioSessionConfiguration> m_configuration;
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     bool m_isInterruptedForTesting { false };
-    bool m_enabled { false };
 };
 
 }

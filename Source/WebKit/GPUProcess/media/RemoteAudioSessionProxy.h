@@ -44,7 +44,6 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 class RemoteAudioSessionProxyManager;
-struct SharedPreferencesForWebProcess;
 
 class RemoteAudioSessionProxy
     : public RefCounted<RemoteAudioSessionProxy>, public IPC::MessageReceiver {
@@ -82,7 +81,6 @@ public:
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     RefPtr<GPUConnectionToWebProcess> gpuConnectionToWebProcess() const;
-    SharedPreferencesForWebProcess sharedPreferencesForWebProcess() const;
 
 private:
     explicit RemoteAudioSessionProxy(GPUConnectionToWebProcess&);

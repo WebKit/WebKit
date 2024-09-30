@@ -69,8 +69,6 @@ void RemoteAudioSession::gpuProcessConnectionDidClose(GPUProcessConnection& conn
 
 IPC::Connection& RemoteAudioSession::ensureConnection()
 {
-    RELEASE_ASSERT(m_enabled);
-
     auto gpuProcessConnection = m_gpuProcessConnection.get();
     if (!gpuProcessConnection) {
         gpuProcessConnection = &WebProcess::singleton().ensureGPUProcessConnection();
@@ -93,20 +91,13 @@ const RemoteAudioSessionConfiguration& RemoteAudioSession::configuration() const
 
 RemoteAudioSessionConfiguration& RemoteAudioSession::configuration()
 {
-    if (!m_configuration) {
-        if (m_enabled)
-            ensureConnection();
-        else
-            m_configuration = RemoteAudioSessionConfiguration { };
-    }
+    if (!m_configuration)
+        ensureConnection();
     return *m_configuration;
 }
 
 void RemoteAudioSession::setCategory(CategoryType type, Mode mode, RouteSharingPolicy policy)
 {
-    if (!m_enabled)
-        return;
-
 #if PLATFORM(COCOA)
     if (type == m_category && mode == m_mode && policy == m_routeSharingPolicy && !m_isPlayingToBluetoothOverrideChanged)
         return;
@@ -125,9 +116,6 @@ void RemoteAudioSession::setCategory(CategoryType type, Mode mode, RouteSharingP
 
 void RemoteAudioSession::setPreferredBufferSize(size_t size)
 {
-    if (!m_enabled)
-        return;
-
     configuration().preferredBufferSize = size;
     ensureConnection().send(Messages::RemoteAudioSessionProxy::SetPreferredBufferSize(size), { });
 }
@@ -156,9 +144,6 @@ void RemoteAudioSession::removeConfigurationChangeObserver(AudioSessionConfigura
 
 void RemoteAudioSession::setIsPlayingToBluetoothOverride(std::optional<bool> value)
 {
-    if (!m_enabled)
-        return;
-
     m_isPlayingToBluetoothOverrideChanged = true;
     ensureConnection().send(Messages::RemoteAudioSessionProxy::SetIsPlayingToBluetoothOverride(value), { });
 }
@@ -212,34 +197,22 @@ void RemoteAudioSession::endInterruptionRemote(MayResume mayResume)
 
 void RemoteAudioSession::beginAudioSessionInterruption()
 {
-    if (!m_enabled)
-        return;
-
     ensureConnection().send(Messages::RemoteAudioSessionProxy::BeginInterruptionRemote(), { });
 }
 
 void RemoteAudioSession::endAudioSessionInterruption(MayResume mayResume)
 {
-    if (!m_enabled)
-        return;
-
     ensureConnection().send(Messages::RemoteAudioSessionProxy::EndInterruptionRemote(mayResume), { });
 }
 
 void RemoteAudioSession::beginInterruptionForTesting()
 {
-    if (!m_enabled)
-        return;
-
     m_isInterruptedForTesting = true;
     ensureConnection().send(Messages::RemoteAudioSessionProxy::TriggerBeginInterruptionForTesting(), { });
 }
 
 void RemoteAudioSession::endInterruptionForTesting()
 {
-    if (!m_enabled)
-        return;
-
     if (!m_isInterruptedForTesting)
         return;
 
@@ -249,32 +222,14 @@ void RemoteAudioSession::endInterruptionForTesting()
 
 void RemoteAudioSession::setSceneIdentifier(const String& sceneIdentifier)
 {
-    if (!m_enabled)
-        return;
-
     configuration().sceneIdentifier = sceneIdentifier;
     ensureConnection().send(Messages::RemoteAudioSessionProxy::SetSceneIdentifier(sceneIdentifier), { });
 }
 
 void RemoteAudioSession::setSoundStageSize(AudioSession::SoundStageSize size)
 {
-    if (!m_enabled)
-        return;
-
     configuration().soundStageSize = size;
     ensureConnection().send(Messages::RemoteAudioSessionProxy::SetSoundStageSize(size), { });
-}
-
-void RemoteAudioSession::setEnabled(bool enabled)
-{
-    if (m_enabled == enabled)
-        return;
-
-    m_enabled = enabled;
-
-    // Sync configuration when session is enabled.
-    if (m_enabled && m_configuration)
-        m_configuration = std::nullopt;
 }
 
 }
