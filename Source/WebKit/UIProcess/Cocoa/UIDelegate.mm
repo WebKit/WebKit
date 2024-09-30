@@ -131,6 +131,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewTakeFocus = [delegate respondsToSelector:@selector(_webView:takeFocus:)];
     m_delegateMethods.webViewHandleAutoplayEventWithFlags = [delegate respondsToSelector:@selector(_webView:handleAutoplayEvent:withFlags:)];
     m_delegateMethods.focusWebViewFromServiceWorker = [delegate respondsToSelector:@selector(_focusWebViewFromServiceWorker:)];
+    m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:)];
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     m_delegateMethods.webViewMouseDidMoveOverElementWithFlagsUserInfo = [delegate respondsToSelector:@selector(_webView:mouseDidMoveOverElement:withFlags:userInfo:)];
 #endif
@@ -153,7 +154,6 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewHeaderHeight = [delegate respondsToSelector:@selector(_webViewHeaderHeight:)];
     m_delegateMethods.webViewFooterHeight = [delegate respondsToSelector:@selector(_webViewFooterHeight:)];
     m_delegateMethods.webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL = [delegate respondsToSelector:@selector(_webView:saveDataToFile:suggestedFilename:mimeType:originatingURL:)];
-    m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewConfigurationForLocalInspector = [delegate respondsToSelector:@selector(_webView:configurationForLocalInspector:)];
     m_delegateMethods.webViewDidAttachLocalInspector = [delegate respondsToSelector:@selector(_webView:didAttachLocalInspector:)];
     m_delegateMethods.webViewWillCloseLocalInspector = [delegate respondsToSelector:@selector(_webView:willCloseLocalInspector:)];
@@ -844,6 +844,50 @@ bool UIDelegate::UIClient::focusFromServiceWorker(WebKit::WebPageProxy& proxy)
     return [(id<WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get() _focusWebViewFromServiceWorker:m_uiDelegate->m_webView.get().get()];
 }
 
+bool UIDelegate::UIClient::runOpenPanel(WebPageProxy& page, WebFrameProxy* webFrameProxy, FrameInfoData&& frameInfo, API::OpenPanelParameters* openPanelParameters, WebOpenPanelResultListenerProxy* listener)
+{
+    if (!m_uiDelegate)
+        return false;
+
+    if (!m_uiDelegate->m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler)
+        return false;
+
+    auto delegate = m_uiDelegate->m_delegate.get();
+    if (!delegate)
+        return false;
+
+    Ref frame = API::FrameInfo::create(WTFMove(frameInfo), &page);
+
+    Ref checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:));
+
+    [delegate webView:m_uiDelegate->m_webView.get().get() runOpenPanelWithParameters:wrapper(*openPanelParameters) initiatedByFrame:wrapper(frame) completionHandler:makeBlockPtr([checker = WTFMove(checker), openPanelParameters = Ref { *openPanelParameters }, listener = RefPtr { listener }] (NSArray *URLs) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+
+        if (!URLs) {
+            listener->cancel();
+            return;
+        }
+
+        Vector<String> filenames;
+#if PLATFORM(IOS)
+        RetainPtr<NSFileCoordinator> uploadFileCoordinator = adoptNS([[NSFileCoordinator alloc] init]);
+        RetainPtr<NSFileManager> uploadFileManager = adoptNS([[NSFileManager alloc] init]);
+        for (NSURL *url in URLs) {
+            auto [maybeMovedURL, temporaryURL] = [WKFileUploadPanel _copyToNewTemporaryDirectory:url fileCoordinator:uploadFileCoordinator.get() fileManager:uploadFileManager.get()];
+            filenames.append(maybeMovedURL.get().path);
+        }
+#else
+        for (NSURL *url in URLs)
+            filenames.append(url.path);
+#endif
+        listener->chooseFiles(filenames, openPanelParameters->allowedMIMETypes()->toStringVector());
+    }).get()];
+
+    return true;
+}
+
 #if PLATFORM(MAC)
 bool UIDelegate::UIClient::canRunModal() const
 {
@@ -1148,41 +1192,6 @@ void UIDelegate::UIClient::willCloseLocalInspector(WebPageProxy&, WebInspectorUI
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() willCloseLocalInspector:wrapper(inspector)];
 }
 
-bool UIDelegate::UIClient::runOpenPanel(WebPageProxy& page, WebFrameProxy* webFrameProxy, FrameInfoData&& frameInfo, API::OpenPanelParameters* openPanelParameters, WebOpenPanelResultListenerProxy* listener)
-{
-    if (!m_uiDelegate)
-        return false;
-
-    if (!m_uiDelegate->m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler)
-        return false;
-
-    auto delegate = m_uiDelegate->m_delegate.get();
-    if (!delegate)
-        return false;
-
-    auto frame = API::FrameInfo::create(WTFMove(frameInfo), &page);
-
-    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:));
-
-    [delegate webView:m_uiDelegate->m_webView.get().get() runOpenPanelWithParameters:wrapper(*openPanelParameters) initiatedByFrame:wrapper(frame) completionHandler:makeBlockPtr([checker = WTFMove(checker), openPanelParameters = Ref { *openPanelParameters }, listener = RefPtr { listener }] (NSArray *URLs) mutable {
-        if (checker->completionHandlerHasBeenCalled())
-            return;
-        checker->didCallCompletionHandler();
-
-        if (!URLs) {
-            listener->cancel();
-            return;
-        }
-
-        Vector<String> filenames;
-        for (NSURL *url in URLs)
-            filenames.append(url.path);
-
-        listener->chooseFiles(filenames, openPanelParameters->allowedMIMETypes()->toStringVector());
-    }).get()];
-
-    return true;
-}
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)

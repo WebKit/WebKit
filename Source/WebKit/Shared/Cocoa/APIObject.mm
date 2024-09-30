@@ -307,11 +307,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         wrapper = [WKNavigationResponse alloc];
         break;
 
-#if PLATFORM(MAC)
     case Type::OpenPanelParameters:
         wrapper = [WKOpenPanelParameters alloc];
         break;
-#endif
 
     case Type::SecurityOrigin:
         wrapper = [WKSecurityOrigin alloc];

@@ -120,6 +120,7 @@ private:
         void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool allowed)>&&) final;
         void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&) final;
         bool focusFromServiceWorker(WebKit::WebPageProxy&) final;
+        bool runOpenPanel(WebPageProxy&, WebFrameProxy*, FrameInfoData&&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) final;
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         void mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData&, OptionSet<WebEventModifier>, API::Object*);
 #endif
@@ -145,7 +146,6 @@ private:
 
         void didClickAutoFillButton(WebPageProxy&, API::Object*) final;
         void toolbarsAreVisible(WebPageProxy&, Function<void(bool)>&&) final;
-        bool runOpenPanel(WebPageProxy&, WebFrameProxy*, FrameInfoData&&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) final;
         void saveDataToFileInDownloadsFolder(WebPageProxy*, const WTF::String&, const WTF::String&, const URL&, API::Data&) final;
         Ref<API::InspectorConfiguration> configurationForLocalInspector(WebPageProxy&, WebInspectorUIProxy&) final;
         void didAttachLocalInspector(WebPageProxy&, WebInspectorUIProxy&) final;
@@ -231,6 +231,7 @@ private:
         bool webViewDidResignInputElementStrongPasswordAppearanceWithUserInfo : 1;
         bool webViewTakeFocus : 1;
         bool webViewHandleAutoplayEventWithFlags : 1;
+        bool webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler : 1;
         bool focusWebViewFromServiceWorker : 1;
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         bool webViewMouseDidMoveOverElementWithFlagsUserInfo : 1;
@@ -253,7 +254,6 @@ private:
         bool webViewGetWindowFrameWithCompletionHandler : 1;
         bool webViewGetToolbarsAreVisibleWithCompletionHandler : 1;
         bool webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL : 1;
-        bool webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler : 1;
         bool webViewConfigurationForLocalInspector : 1;
         bool webViewDidAttachLocalInspector : 1;
         bool webViewWillCloseLocalInspector : 1;

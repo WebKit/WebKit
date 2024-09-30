@@ -25,13 +25,10 @@
 
 #import "config.h"
 
-#if PLATFORM(MAC)
-
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
-#import <AppKit/AppKit.h>
 #import <WebKit/WKOpenPanelParametersPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WebKit.h>
@@ -73,16 +70,12 @@ namespace TestWebKitAPI {
 
 TEST(WebKit, RunOpenPanelNonLatin1)
 {
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
     auto uiDelegate = adoptNS([[RunOpenPanelUIDelegate alloc] init]);
     [webView setUIDelegate:uiDelegate.get()];
-    [webView loadHTMLString:@"<!DOCTYPE html><input style='width: 100vw; height: 100vh;' type='file'>" baseURL:nil];
+    [webView loadHTMLString:@"<!DOCTYPE html><input style='width: 100vw; height: 100vh;' id='file' type='file'>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
-    
-    NSPoint clickPoint = NSMakePoint(50, 50);
-    NSInteger windowNumber = [webView window].windowNumber;
-    [webView mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:windowNumber context:nil eventNumber:0 clickCount:1 pressure:1]];
-    [webView mouseUp:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:windowNumber context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [webView clickOnElementID:@"file"];
     Util::run(&fileSelected);
     Util::runFor(50_ms);
     
@@ -124,12 +117,9 @@ TEST(WebKit, FileInputTypeCancelEvent)
         done = true;
     }];
 
-    NSPoint clickPoint = NSMakePoint(50, 50);
-    [webView sendClickAtPoint:clickPoint];
+    [webView clickOnElementID:@"file"];
 
     Util::run(&done);
 }
     
 } // namespace TestWebKitAPI
-
-#endif // PLATFORM(MAC)

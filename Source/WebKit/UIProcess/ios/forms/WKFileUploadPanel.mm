@@ -955,7 +955,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([retainedSelf = retainPtr(self), urlsFromUIKit = retainPtr(urlsFromUIKit)] () mutable {
         RetainPtr<NSMutableArray<NSURL *>> maybeMovedURLs = adoptNS([[NSMutableArray alloc] initWithCapacity:urlsFromUIKit.get().count]);
         for (NSURL *originalURL in urlsFromUIKit.get()) {
-            auto [maybeMovedURL, temporaryURL] = [retainedSelf _copyToNewTemporaryDirectory:originalURL];
+            auto [maybeMovedURL, temporaryURL] = [WKFileUploadPanel _copyToNewTemporaryDirectory:originalURL fileCoordinator:retainedSelf->_uploadFileCoordinator.get() fileManager:retainedSelf->_uploadFileManager.get()];
 
             if (maybeMovedURL)
                 [maybeMovedURLs addObject:maybeMovedURL.get()];
@@ -1117,7 +1117,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
                 return;
             }
 
-            auto [maybeMovedURL, temporaryURL] = [self _copyToNewTemporaryDirectory:url];
+            auto [maybeMovedURL, temporaryURL] = [WKFileUploadPanel _copyToNewTemporaryDirectory:url fileCoordinator:_uploadFileCoordinator.get() fileManager:_uploadFileManager.get()];
             self->_temporaryUploadedFileURLs.append(WTFMove(temporaryURL));
 
             successBlock(adoptNS([[_WKVideoFileUploadItem alloc] initWithFileURL:maybeMovedURL.get()]).get());
@@ -1148,7 +1148,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
             return;
         }
 
-        auto [maybeMovedURL, temporaryURL] = [self _copyToNewTemporaryDirectory:url];
+        auto [maybeMovedURL, temporaryURL] = [WKFileUploadPanel _copyToNewTemporaryDirectory:url fileCoordinator:_uploadFileCoordinator.get() fileManager:_uploadFileManager.get()];
         self->_temporaryUploadedFileURLs.append(WTFMove(temporaryURL));
 
         successBlock(adoptNS([[_WKImageFileUploadItem alloc] initWithFileURL:maybeMovedURL.get()]).get());
@@ -1307,7 +1307,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
 
 #endif
 
-- (std::pair<RetainPtr<NSURL>, RetainPtr<NSURL>>)_copyToNewTemporaryDirectory:(NSURL *)originalURL
++ (std::pair<RetainPtr<NSURL>, RetainPtr<NSURL>>)_copyToNewTemporaryDirectory:(NSURL *)originalURL fileCoordinator:(NSFileCoordinator *)fileCoordinator fileManager:(NSFileManager *)fileManager
 {
     NSError *error = nil;
     NSString *temporaryDirectory = FileSystem::createTemporaryDirectory(@"WKFileUploadPanel");
@@ -1319,9 +1319,9 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
     auto destinationFileURL = adoptNS([[NSURL alloc] initFileURLWithPath:filePath isDirectory:NO]);
 
     __block std::pair<RetainPtr<NSURL>, RetainPtr<NSURL>> result;
-    [_uploadFileCoordinator coordinateWritingItemAtURL:originalURL options:NSFileCoordinatorWritingForMoving error:&error byAccessor:^(NSURL *coordinatedOriginalURL) {
+    [fileCoordinator coordinateWritingItemAtURL:originalURL options:NSFileCoordinatorWritingForMoving error:&error byAccessor:^(NSURL *coordinatedOriginalURL) {
         NSError *error = nil;
-        if (![_uploadFileManager moveItemAtURL:coordinatedOriginalURL toURL:destinationFileURL.get() error:&error] || error) {
+        if (![fileManager moveItemAtURL:coordinatedOriginalURL toURL:destinationFileURL.get() error:&error] || error) {
             // If moving fails, keep the original URL and our 60 second time limit before it is deleted. We tried our best to extend it.
             result = { coordinatedOriginalURL, adoptNS([[NSURL alloc] initFileURLWithPath:temporaryDirectory isDirectory:YES]) };
         } else

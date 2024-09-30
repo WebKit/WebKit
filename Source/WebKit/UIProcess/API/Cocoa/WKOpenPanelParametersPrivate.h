@@ -25,14 +25,10 @@
 
 #import <WebKit/WKOpenPanelParameters.h>
 
-#if !TARGET_OS_IPHONE
-
 @interface WKOpenPanelParameters (WKPrivate)
 
-@property (nonatomic, readonly, copy) NSArray<NSString *> *_acceptedMIMETypes WK_API_AVAILABLE(macos(10.13.4));
-@property (nonatomic, readonly, copy) NSArray<NSString *> *_acceptedFileExtensions WK_API_AVAILABLE(macos(10.13.4));
-@property (nonatomic, readonly, copy) NSArray<NSString *> *_allowedFileExtensions WK_API_AVAILABLE(macos(11.0));
+@property (nonatomic, readonly, copy) NSArray<NSString *> *_acceptedMIMETypes WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
+@property (nonatomic, readonly, copy) NSArray<NSString *> *_acceptedFileExtensions WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
+@property (nonatomic, readonly, copy) NSArray<NSString *> *_allowedFileExtensions WK_API_AVAILABLE(macos(11.0), ios(WK_IOS_TBA));
 
 @end
-
-#endif
