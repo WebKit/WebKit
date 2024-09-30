@@ -1,47 +1,37 @@
-@font-face {
-    font-family: 'ahem';
-    src: url('/fonts/Ahem.ttf');
-}
+/* 7.4. Applying CSS properties to WebVTT Node Objects */
 
-.test-diff {
-    container-type: inline-size;
-    width: 200px;
-    height: 200px;
+video-reference, .video {
     display: inline-block;
-    isolation: isolate;
     position: relative;
-    border: 1px solid black;
+    container-type: size;
 }
 
-video-reference, cue { display: inline-block; }
-cue-background { display: inline; }
-
-video, video-reference {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    mix-blend-mode: difference;
-}
-
-::cue, cue {
-    font: 5cqmin/1 Ahem;
-}
-
-::cue, cue-background {
-    color: rgb(128, 0, 0);
-    background-color: rgb(255, 0, 0);
-}
-
-cue {
-    position: absolute;
+cue, .cue {
     display: inline-block;
-    text-align: center;
+    position: absolute;
+    unicode-bidi: plaintext;
+    writing-mode: writing-mode;
+    overflow-wrap: break-word;
+    text-wrap: balance;
+    font: 5cqmin sans-serif;
+    color: rgba(255,255,255,1);
     white-space: pre-line;
+
+    /* "By default, the text alignment is set to center." */
+    text-align: center;
+
+    /* "By default, the writing direction is set to to horizontal." */
+    writing-mode: horizontal-tb;
+
+    /* "By default, the WebVTT cue size is set to 100%." */
+    width: 100cqw;
+    height: auto;
 }
 
-video-reference[expected] > cue > cue-background {
-    color: rgb(128, 128, 0);
-    background-color: rgb(255, 255, 0);
+cue-background, .cue > span, .cueText {
+    /* The children of the nodes must be wrapped in an anonymous box whose display
+       property has the value inline. This is the WebVTT cue background box. */
+    display: inline;
+
+    background: rgba(0,0,0,0.8);
 }

@@ -596,6 +596,10 @@ imported/w3c/web-platform-tests/cookie-store/cookieStore_event_basic.https.windo
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video [ ImageOnlyFailure ]
 
 # These are the WebVTT rendering WPT we are already passing.
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/2_cues_overlapping_completely_move_up.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/basic-cue-rendering.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/decode_escaped_entities.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/dom_override_cue_line.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/dom_override_remove_cue_while_paused.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/embedded_style_cascade_priority.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/embedded_style_cascade_priority_layer.html [ Pass ]
@@ -604,6 +608,12 @@ imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-mode
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/embedded_style_selectors.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/embedded_style_urls.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/media_404_omit_subtitles.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/line_0_is_top.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/line_1_wrapped_cue_grow_downwards.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/line_integer_and_percent_mixed_overlap.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/one_line_cue_plus_wrapped_cue.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/size_50.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/white-space-pre-line.html [ Pass ]
 
 # These WebVTT rendering WPT are flaky.
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/non-standard-pseudo-elements.html [ ImageOnlyFailure Pass Failure ]

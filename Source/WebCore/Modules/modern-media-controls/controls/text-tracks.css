@@ -65,7 +65,7 @@ video[controls]::-webkit-media-text-track-container.visible-controls-bar {
 [useragentpart="cue"] ruby > rt { display: ruby-text; }
 
 ::cue {
-    font: 5cqmin/1 sans-serif;
+    font: 5cqmin sans-serif;
     color: rgba(255, 255, 255, 1);
     background: rgba(0, 0, 0, 0.8);
     white-space: pre-line;
