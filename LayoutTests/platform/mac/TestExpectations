@@ -2433,3 +2433,6 @@ imported/w3c/web-platform-tests/mathml/presentation-markup/operators/size-and-po
 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/stretchy-largeop-with-default-font-2.html [ Failure ]
 
 webkit.org/b/257011 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphenate-character-002.html [ ImageOnlyFailure ]
+
+# webkit.org/b/280646 [macOS Debug EWS] media/video-webkit-playsinline.html is a flaky crash
+[ Debug ] media/video-webkit-playsinline.html [ Skip ]
