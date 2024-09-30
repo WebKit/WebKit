@@ -459,7 +459,7 @@ _NEVER_SKIPPED_FILES = _NEVER_SKIPPED_JS_FILES + [
     re.compile('.*TestExpectations$'),
     re.compile('.*TestExpectations.json$'),
     # Avoid imported WebDriverTests python machinery
-    re.compile('(?!WebDriverTests).{0,14}.*.py$'),
+    re.compile('^LayoutTests.(?!imported).*\\.py$'),
     re.compile('^' + re.escape(os.path.join('LayoutTests', 'imported', 'w3c', 'resources', 'import-expectations.json')) + r'$'),
 ]
 
