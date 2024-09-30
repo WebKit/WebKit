@@ -523,7 +523,7 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
 } while (false)
 #endif
 
-#if CPU(ARM64)
+#if CPU(ARM64) && !COMPILER(GCC)
 #define DEFINE_SAVED_VALUE(name, reg, value) \
     volatile register decltype(value) name asm(reg) = value; \
     WTF::opaque(name); \
@@ -531,7 +531,7 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
 #else
 #define DEFINE_SAVED_VALUE(name, reg, value) \
     decltype(value) name = value; \
-    UNUSED_VARIABLE(name);
+    UNUSED_VARIABLE(reg);
 #endif
 
 #define SAVE_TO_REG(name, value) do { \
