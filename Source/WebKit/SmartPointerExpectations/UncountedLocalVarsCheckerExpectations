@@ -1,5 +1,11 @@
 GPUProcess/graphics/WebGPU/RemoteGPU.cpp
+GPUProcess/media/RemoteAudioSessionProxyManager.cpp
+GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp
+GPUProcess/media/RemoteMediaSourceProxy.cpp
+NetworkProcess/NetworkLoadScheduler.cpp
 NetworkProcess/NetworkProcess.cpp
+NetworkProcess/NetworkSession.cpp
+NetworkProcess/PingLoad.h
 NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp
 NetworkProcess/cocoa/NetworkProcessCocoa.mm
 NetworkProcess/cocoa/NetworkSessionCocoa.mm
@@ -38,10 +44,7 @@ UIProcess/Cocoa/GroupActivities/GroupActivitiesSessionNotifier.mm
 UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.mm
 UIProcess/Cocoa/UIDelegate.mm
 UIProcess/Cocoa/WebPageProxyCocoa.mm
-UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIPortCocoa.mm
-UIProcess/Extensions/Cocoa/WebExtensionContextCocoa.mm
 UIProcess/Gamepad/UIGamepadProvider.cpp
-UIProcess/Network/NetworkProcessProxy.cpp
 UIProcess/Notifications/ServiceWorkerNotificationHandler.cpp
 UIProcess/Notifications/WebNotificationManagerProxy.cpp
 UIProcess/ProvisionalPageProxy.cpp
@@ -49,7 +52,6 @@ UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm
 UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp
 UIProcess/RemoteLayerTree/mac/RemoteScrollingCoordinatorProxyMac.mm
 UIProcess/RemoteLayerTree/mac/RemoteScrollingTreeMac.mm
-UIProcess/UserContent/WebUserContentControllerProxy.cpp
 UIProcess/UserMediaPermissionRequestManagerProxy.cpp
 UIProcess/VisitedLinkStore.cpp
 UIProcess/WebAuthentication/AuthenticatorManager.cpp
@@ -62,6 +64,7 @@ UIProcess/WebProcessCache.cpp
 UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
 UIProcess/WebsiteData/WebsiteDataStore.cpp
 UIProcess/mac/DisplayCaptureSessionManager.mm
+UIProcess/mac/PageClientImplMac.mm
 UIProcess/mac/WKImmediateActionController.mm
 UIProcess/mac/WebContextMenuProxyMac.mm
 UIProcess/mac/WebViewImpl.mm
@@ -138,7 +141,6 @@ WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm
 WebProcess/WebPage/ViewGestureGeometryCollector.cpp
 WebProcess/WebPage/ViewUpdateDispatcher.cpp
 WebProcess/WebPage/WebCookieJar.cpp
-WebProcess/WebPage/WebFoundTextRangeController.cpp
 WebProcess/WebPage/WebFrame.cpp
 WebProcess/WebPage/WebPage.cpp
 WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp

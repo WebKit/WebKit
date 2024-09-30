@@ -1,0 +1,15 @@
+Modules/webaudio/AudioWorkletThread.h
+Modules/websockets/WorkerThreadableWebSocketChannel.h
+html/parser/HTMLParserScheduler.h
+html/parser/HTMLTreeBuilder.h
+loader/WorkerThreadableLoader.h
+page/LocalFrameViewLayoutContext.cpp
+page/scrolling/ScrollAnchoringController.h
+platform/ScrollAnimator.h
+platform/Scrollbar.h
+platform/ScrollbarsController.h
+platform/ios/PlaybackSessionInterfaceIOS.h
+rendering/RenderAncestorIterator.h
+workers/DedicatedWorkerThread.h
+workers/service/context/ServiceWorkerDebuggable.h
+workers/service/context/ServiceWorkerThread.h
