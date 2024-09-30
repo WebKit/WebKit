@@ -1,4 +1,16 @@
 ================
+WebKitGTK 2.46.1
+================
+
+What's new in WebKitGTK 2.46.1?
+
+  - Fix login QR code not shown in WhatsApp web.
+  - Disable PSON by default again in GTK 3 API versions.
+  - Disable DMABuf video sink by default to prevent file descriptor leaks.
+  - Fix the build with GCC 13.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.46.0
 ================
 
