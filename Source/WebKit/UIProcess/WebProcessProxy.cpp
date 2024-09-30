@@ -1169,6 +1169,8 @@ void WebProcessProxy::createModelProcessConnection(IPC::Connection::Handle&& con
     MESSAGE_CHECK(anyPageHasModelProcessEnabled);
 
     parameters.sharedPreferencesForWebProcess = sharedPreferencesForWebProcess();
+    MESSAGE_CHECK(parameters.sharedPreferencesForWebProcess.modelElementEnabled);
+    MESSAGE_CHECK(parameters.sharedPreferencesForWebProcess.modelProcessEnabled);
 
 #if ENABLE(IPC_TESTING_API)
     parameters.ignoreInvalidMessageForTesting = ignoreInvalidMessageForTesting();

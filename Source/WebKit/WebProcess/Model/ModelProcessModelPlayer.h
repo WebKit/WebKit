@@ -57,6 +57,8 @@ private:
     template<typename T> void send(T&& message);
     template<typename T, typename C> void sendWithAsyncReply(T&& message, C&& completionHandler);
 
+    bool modelProcessEnabled() const;
+
     // Messages
     void didCreateLayer(WebCore::LayerHostingContextIdentifier);
     void didFinishLoading(const WebCore::FloatPoint3D&, const WebCore::FloatPoint3D&);

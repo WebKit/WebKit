@@ -69,6 +69,12 @@ ALWAYS_INLINE void ModelProcessModelPlayer::sendWithAsyncReply(T&& message, C&& 
     WebProcess::singleton().modelProcessModelPlayerManager().modelProcessConnection().connection().sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), m_id);
 }
 
+bool ModelProcessModelPlayer::modelProcessEnabled() const
+{
+    RefPtr strongPage = m_page.get();
+    return strongPage && strongPage->corePage() && strongPage->corePage()->settings().modelElementEnabled() && strongPage->corePage()->settings().modelProcessEnabled();
+}
+
 // MARK: - Messages
 
 void ModelProcessModelPlayer::didCreateLayer(WebCore::LayerHostingContextIdentifier identifier)

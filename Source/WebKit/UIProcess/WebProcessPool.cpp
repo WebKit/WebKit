@@ -586,8 +586,11 @@ ModelProcessProxy& WebProcessPool::ensureModelProcess()
     return *m_modelProcess;
 }
 
-Ref<ModelProcessProxy> WebProcessPool::ensureProtectedModelProcess()
+Ref<ModelProcessProxy> WebProcessPool::ensureProtectedModelProcess(WebProcessProxy& requestingWebProcess)
 {
+    RELEASE_ASSERT(requestingWebProcess.sharedPreferencesForWebProcess().modelElementEnabled);
+    RELEASE_ASSERT(requestingWebProcess.sharedPreferencesForWebProcess().modelProcessEnabled);
+
     return ensureModelProcess();
 }
 
@@ -630,7 +633,7 @@ void WebProcessPool::createModelProcessConnection(WebProcessProxy& webProcessPro
     parameters.presentingApplicationAuditToken = configuration().presentingApplicationProcessToken();
 #endif
 
-    ensureProtectedModelProcess()->createModelProcessConnection(webProcessProxy, WTFMove(connectionIdentifier), WTFMove(parameters));
+    ensureProtectedModelProcess(webProcessProxy)->createModelProcessConnection(webProcessProxy, WTFMove(connectionIdentifier), WTFMove(parameters));
 }
 #endif // ENABLE(MODEL_PROCESS)
 
