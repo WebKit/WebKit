@@ -245,7 +245,7 @@ private:
 
     PartialResult WARN_UNUSED_RETURN parseIndexForLocal(uint32_t&);
     PartialResult WARN_UNUSED_RETURN parseIndexForGlobal(uint32_t&);
-    PartialResult WARN_UNUSED_RETURN parseFunctionIndex(uint32_t&);
+    PartialResult WARN_UNUSED_RETURN parseFunctionIndex(FunctionSpaceIndex&);
     PartialResult WARN_UNUSED_RETURN parseExceptionIndex(uint32_t&);
     PartialResult WARN_UNUSED_RETURN parseBranchTarget(uint32_t&, uint32_t = 0);
     PartialResult WARN_UNUSED_RETURN parseDelegateTarget(uint32_t&, uint32_t);
@@ -1513,12 +1513,12 @@ auto FunctionParser<Context>::parseIndexForGlobal(uint32_t& resultIndex) -> Part
 }
 
 template<typename Context>
-auto FunctionParser<Context>::parseFunctionIndex(uint32_t& resultIndex) -> PartialResult
+auto FunctionParser<Context>::parseFunctionIndex(FunctionSpaceIndex& resultIndex) -> PartialResult
 {
     uint32_t functionIndex;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(functionIndex), "can't parse function index"_s);
     WASM_PARSER_FAIL_IF(functionIndex >= m_info.functionIndexSpaceSize(), "function index "_s, functionIndex, " exceeds function index space "_s, m_info.functionIndexSpaceSize());
-    resultIndex = functionIndex;
+    resultIndex = FunctionSpaceIndex(functionIndex);
     return { };
 }
 
@@ -1786,7 +1786,7 @@ void FunctionParser<Context>::addReferencedFunctions(const Element& segment)
     // wrappers will be created for GC.
     for (uint32_t i = 0; i < segment.length(); i++) {
         if (segment.initTypes[i] == Element::InitializationType::FromRefFunc)
-            m_info.addReferencedFunction(segment.initialBitsOrIndices[i]);
+            m_info.addReferencedFunction(FunctionSpaceIndex(segment.initialBitsOrIndices[i]));
     }
 }
 
@@ -2875,9 +2875,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     }
 
     case RefFunc: {
-        uint32_t index;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get index for ref.func"_s);
-        WASM_VALIDATOR_FAIL_IF(index >= m_info.functionIndexSpaceSize(), "ref.func index "_s, index, " is too large, max is "_s, m_info.functionIndexSpaceSize());
+        FunctionSpaceIndex index;
+        WASM_PARSER_FAIL_IF(!parseFunctionIndex(index), "can't get index for ref.func"_s);
         // Function references don't need to be declared in constant expression contexts.
         if constexpr (!std::is_same<Context, ConstExprGenerator>())
             WASM_VALIDATOR_FAIL_IF(!m_info.isDeclaredFunction(index), "ref.func index "_s, index, " isn't declared"_s);
@@ -3048,7 +3047,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!Options::useWasmTailCalls(), "wasm tail calls are not enabled"_s);
         FALLTHROUGH;
     case Call: {
-        uint32_t functionIndex;
+        FunctionSpaceIndex functionIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseFunctionIndex(functionIndex));
 
         TypeIndex calleeTypeIndex = m_info.typeIndexFromFunctionIndexSpace(functionIndex);
@@ -3954,7 +3953,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         WASM_PARSER_FAIL_IF(!Options::useWasmTailCalls(), "wasm tail calls are not enabled"_s);
         FALLTHROUGH;
     case Call: {
-        uint32_t functionIndex;
+        FunctionSpaceIndex functionIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseFunctionIndex(functionIndex));
         return { };
     }

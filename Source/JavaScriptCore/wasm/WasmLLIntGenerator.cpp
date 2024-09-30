@@ -254,7 +254,7 @@ public:
         return UnexpectedResult(makeString("WebAssembly.Module failed compiling: "_s, makeString(args)...));
     }
 
-    LLIntGenerator(ModuleInformation&, unsigned functionIndex, const TypeDefinition&);
+    LLIntGenerator(ModuleInformation&, FunctionCodeIndex functionIndex, const TypeDefinition&);
 
     std::unique_ptr<FunctionCodeBlockGenerator> finalize();
 
@@ -297,7 +297,7 @@ public:
 
     // References
     PartialResult WARN_UNUSED_RETURN addRefIsNull(ExpressionType value, ExpressionType& result);
-    PartialResult WARN_UNUSED_RETURN addRefFunc(uint32_t index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addRefFunc(FunctionSpaceIndex index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefAsNonNull(ExpressionType, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addRefEq(ExpressionType, ExpressionType, ExpressionType&);
 
@@ -415,7 +415,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
 
     // Calls
-    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCall(FunctionSpaceIndex calleeIndex, const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
@@ -611,7 +611,7 @@ private:
 
     FunctionParser<LLIntGenerator>* m_parser { nullptr };
     ModuleInformation& m_info;
-    const unsigned m_functionIndex { UINT_MAX };
+    const FunctionCodeIndex m_functionIndex;
     Vector<VirtualRegister> m_normalizedArguments;
     HashMap<Label*, Vector<SwitchEntry>> m_switches;
     ExpressionType m_jsNullConstant;
@@ -627,7 +627,7 @@ private:
     bool m_usesSIMD { false };
 };
 
-Expected<std::unique_ptr<FunctionCodeBlockGenerator>, String> parseAndCompileBytecode(std::span<const uint8_t> function, const TypeDefinition& signature, ModuleInformation& info, uint32_t functionIndex)
+Expected<std::unique_ptr<FunctionCodeBlockGenerator>, String> parseAndCompileBytecode(std::span<const uint8_t> function, const TypeDefinition& signature, ModuleInformation& info, FunctionCodeIndex functionIndex)
 {
     LLIntGenerator llintGenerator(info, functionIndex, signature);
     FunctionParser<LLIntGenerator> parser(llintGenerator, function, signature, info);
@@ -651,7 +651,7 @@ static ThreadSpecific<Buffer>& threadSpecificBuffer()
     return *threadSpecificBufferPtr;
 }
 
-LLIntGenerator::LLIntGenerator(ModuleInformation& info, unsigned functionIndex, const TypeDefinition&)
+LLIntGenerator::LLIntGenerator(ModuleInformation& info, FunctionCodeIndex functionIndex, const TypeDefinition&)
     : BytecodeGeneratorBase(makeUnique<FunctionCodeBlockGenerator>(functionIndex), 0)
     , m_info(info)
     , m_functionIndex(functionIndex)
@@ -1646,7 +1646,7 @@ auto LLIntGenerator::endTopLevel(BlockSignature signature, const Stack& expressi
     return { };
 }
 
-auto LLIntGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signature, ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
+auto LLIntGenerator::addCall(FunctionSpaceIndex functionIndex, const TypeDefinition& signature, ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
 {
     bool isTailCall = callType == CallType::TailCall;
     ASSERT(callType == CallType::Call || isTailCall);
@@ -1738,7 +1738,7 @@ auto LLIntGenerator::addRefIsNull(ExpressionType value, ExpressionType& result) 
     return { };
 }
 
-auto LLIntGenerator::addRefFunc(uint32_t index, ExpressionType& result) -> PartialResult
+auto LLIntGenerator::addRefFunc(FunctionSpaceIndex index, ExpressionType& result) -> PartialResult
 {
     result = push();
     WasmRefFunc::emit(this, result, index);

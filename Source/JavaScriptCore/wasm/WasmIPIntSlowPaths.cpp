@@ -114,7 +114,7 @@ static inline bool jitCompileAndSetHeuristics(Wasm::IPIntCallee* callee, JSWebAs
     }
 
     if (compile) {
-        uint32_t functionIndex = callee->functionIndex();
+        Wasm::FunctionCodeIndex functionIndex = callee->functionIndex();
         if (Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(functionIndex)) {
             auto plan = Wasm::BBQPlan::create(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), Ref(*instance->calleeGroup()), Wasm::Plan::dontFinalize());
             Wasm::ensureWorklist().enqueue(plan.get());
@@ -489,7 +489,7 @@ WASM_IPINT_EXTERN_CPP_DECL(table_size, int32_t tableIndex)
 #endif
 }
 
-static inline UGPRPair doWasmCall(JSWebAssemblyInstance* instance, unsigned functionIndex, EncodedJSValue* callee)
+static inline UGPRPair doWasmCall(JSWebAssemblyInstance* instance, Wasm::FunctionSpaceIndex functionIndex, EncodedJSValue* callee)
 {
     uint32_t importFunctionCount = instance->module().moduleInformation().importFunctionCount();
 
@@ -517,10 +517,10 @@ static inline UGPRPair doWasmCall(JSWebAssemblyInstance* instance, unsigned func
 
 WASM_IPINT_EXTERN_CPP_DECL(call, unsigned functionIndex, EncodedJSValue* callee)
 {
-    return doWasmCall(instance, functionIndex, callee);
+    return doWasmCall(instance, Wasm::FunctionSpaceIndex(functionIndex), callee);
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(call_indirect, CallFrame* callFrame, unsigned* functionIndex, CallIndirectMetadata* call)
+WASM_IPINT_EXTERN_CPP_DECL(call_indirect, CallFrame* callFrame, Wasm::FunctionSpaceIndex* functionIndex, CallIndirectMetadata* call)
 {
     unsigned tableIndex = call->tableIndex;
     unsigned typeIndex = call->typeIndex;

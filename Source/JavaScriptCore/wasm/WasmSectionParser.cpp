@@ -437,7 +437,7 @@ auto SectionParser::parseGlobal() -> PartialResult
 
         if (initOpcode == RefFunc) {
             ASSERT(global.initializationType != GlobalInformation::FromVector);
-            m_info->addDeclaredFunction(global.initialBits.initialBitsOrImportNumber);
+            m_info->addDeclaredFunction(FunctionSpaceIndex(global.initialBits.initialBitsOrImportNumber));
         }
 
         m_info->globals.append(WTFMove(global));
@@ -472,7 +472,7 @@ auto SectionParser::parseExport() -> PartialResult
         switch (kind) {
         case ExternalKind::Function: {
             WASM_PARSER_FAIL_IF(kindIndex >= m_info->functionIndexSpaceSize(), exportNumber, "th Export has invalid function number "_s, kindIndex, " it exceeds the function index space "_s, m_info->functionIndexSpaceSize(), ", named '"_s, fieldString, "'"_s);
-            m_info->addDeclaredFunction(kindIndex);
+            m_info->addDeclaredFunction(FunctionSpaceIndex(kindIndex));
             break;
         }
         case ExternalKind::Table: {
@@ -510,7 +510,7 @@ auto SectionParser::parseStart() -> PartialResult
     uint32_t startFunctionIndex;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(startFunctionIndex), "can't get Start index"_s);
     WASM_PARSER_FAIL_IF(startFunctionIndex >= m_info->functionIndexSpaceSize(), "Start index "_s, startFunctionIndex, " exceeds function index space "_s, m_info->functionIndexSpaceSize());
-    TypeIndex typeIndex = m_info->typeIndexFromFunctionIndexSpace(startFunctionIndex);
+    TypeIndex typeIndex = m_info->typeIndexFromFunctionIndexSpace(FunctionSpaceIndex(startFunctionIndex));
     const auto& signature = TypeInformation::getFunctionSignature(typeIndex);
     WASM_PARSER_FAIL_IF(signature.argumentCount(), "Start function can't have arguments"_s);
     WASM_PARSER_FAIL_IF(!signature.returnsVoid(), "Start function can't return a value"_s);
@@ -776,8 +776,9 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
         uint32_t index;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get ref.func index"_s);
         WASM_PARSER_FAIL_IF(index >= m_info->functionIndexSpaceSize(), "ref.func index "_s, index, " exceeds the number of functions "_s, m_info->functionIndexSpaceSize());
-        m_info->addReferencedFunction(index);
-        TypeIndex typeIndex = m_info->typeIndexFromFunctionIndexSpace(index);
+        auto spaceIndex = FunctionSpaceIndex(index);
+        m_info->addReferencedFunction(spaceIndex);
+        TypeIndex typeIndex = m_info->typeIndexFromFunctionIndexSpace(spaceIndex);
         resultType = { TypeKind::Ref, typeIndex };
         bitsOrImportNumber = index;
         break;
@@ -1210,7 +1211,7 @@ auto SectionParser::parseElementSegmentVectorOfExpressions(Type elementType, Vec
             initType = Element::InitializationType::FromGlobal;
         else if (initOpcode == RefFunc) {
             initType = Element::InitializationType::FromRefFunc;
-            m_info->addDeclaredFunction(initialBitsOrIndex);
+            m_info->addDeclaredFunction(FunctionSpaceIndex(initialBitsOrIndex));
         } else if (initOpcode == RefNull)
             initType = Element::InitializationType::FromRefNull;
         else
@@ -1230,7 +1231,7 @@ auto SectionParser::parseElementSegmentVectorOfIndexes(Vector<Element::Initializ
         WASM_PARSER_FAIL_IF(!parseVarUInt32(functionIndex), "can't get Element section's "_s, elementNum, "th element's "_s, index, "th index"_s);
         WASM_PARSER_FAIL_IF(functionIndex >= m_info->functionIndexSpaceSize(), "Element section's "_s, elementNum, "th element's "_s, index, "th index is "_s, functionIndex, " which exceeds the function index space size of "_s, m_info->functionIndexSpaceSize());
 
-        m_info->addDeclaredFunction(functionIndex);
+        m_info->addDeclaredFunction(FunctionSpaceIndex(functionIndex));
         initTypes.append(Element::InitializationType::FromRefFunc);
         initialBitsOrIndices.append(functionIndex);
     }

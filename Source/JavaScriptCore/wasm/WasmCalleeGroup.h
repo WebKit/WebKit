@@ -77,13 +77,24 @@ public:
     }
 
     unsigned functionImportCount() const { return m_wasmToWasmExitStubs.size(); }
+    FunctionSpaceIndex toSpaceIndex(FunctionCodeIndex codeIndex) const
+    {
+        ASSERT(codeIndex < m_calleeCount);
+        return FunctionSpaceIndex(codeIndex + functionImportCount());
+    }
+    FunctionCodeIndex toCodeIndex(FunctionSpaceIndex spaceIndex) const
+    {
+        ASSERT(functionImportCount() <= spaceIndex);
+        ASSERT(spaceIndex < m_calleeCount + functionImportCount());
+        return FunctionCodeIndex(spaceIndex - functionImportCount());
+    }
 
     // These two callee getters are only valid once the callees have been populated.
 
-    JSEntrypointCallee& jsEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    JSEntrypointCallee& jsEntrypointCalleeFromFunctionIndexSpace(FunctionSpaceIndex functionIndexSpace)
     {
         ASSERT(runnable());
-        RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
+        ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
 
         auto callee = m_jsEntrypointCallees.get(calleeIndex);
@@ -91,10 +102,10 @@ public:
         return *callee;
     }
 
-    Callee& wasmEntrypointCalleeFromFunctionIndexSpace(const AbstractLocker&, unsigned functionIndexSpace) WTF_REQUIRES_LOCK(m_lock)
+    Callee& wasmEntrypointCalleeFromFunctionIndexSpace(const AbstractLocker&, FunctionSpaceIndex functionIndexSpace) WTF_REQUIRES_LOCK(m_lock)
     {
         ASSERT(runnable());
-        RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
+        ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
 #if ENABLE(WEBASSEMBLY_OMGJIT)
         if (!m_omgCallees.isEmpty() && m_omgCallees[calleeIndex])
@@ -110,11 +121,11 @@ public:
     }
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
-    BBQCallee& wasmBBQCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    BBQCallee& wasmBBQCalleeFromFunctionIndexSpace(FunctionSpaceIndex functionIndexSpace)
     {
         // We do not look up without locking because this function is called from this BBQCallee itself.
         ASSERT(runnable());
-        RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
+        ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
         ASSERT(m_bbqCallees[calleeIndex]);
         return *m_bbqCallees[calleeIndex].get();
@@ -152,7 +163,7 @@ public:
     }
 #endif
 
-    CodePtr<WasmEntryPtrTag>* entrypointLoadLocationFromFunctionIndexSpace(unsigned functionIndexSpace)
+    CodePtr<WasmEntryPtrTag>* entrypointLoadLocationFromFunctionIndexSpace(FunctionSpaceIndex functionIndexSpace)
     {
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
@@ -160,7 +171,7 @@ public:
     }
 
     // This is the callee used by LLInt/IPInt, not by the JS->Wasm entrypoint
-    Wasm::Callee* wasmCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    Wasm::Callee* wasmCalleeFromFunctionIndexSpace(FunctionSpaceIndex functionIndexSpace)
     {
         RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();

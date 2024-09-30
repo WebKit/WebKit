@@ -179,7 +179,7 @@ private:
 
 class IPIntGenerator {
 public:
-    IPIntGenerator(ModuleInformation&, unsigned, const TypeDefinition&, std::span<const uint8_t>);
+    IPIntGenerator(ModuleInformation&, FunctionCodeIndex, const TypeDefinition&, std::span<const uint8_t>);
 
     static constexpr bool shouldFuseBranchCompare = false;
 
@@ -250,7 +250,7 @@ public:
     // References
 
     PartialResult WARN_UNUSED_RETURN addRefIsNull(ExpressionType, ExpressionType&);
-    PartialResult WARN_UNUSED_RETURN addRefFunc(uint32_t, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addRefFunc(FunctionSpaceIndex, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addRefAsNonNull(ExpressionType, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addRefEq(ExpressionType, ExpressionType, ExpressionType&);
 
@@ -499,7 +499,7 @@ public:
 
     // Calls
 
-    PartialResult WARN_UNUSED_RETURN addCall(uint32_t, const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCall(FunctionSpaceIndex, const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned, const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
@@ -612,7 +612,7 @@ private:
 // use if (true) to avoid warnings.
 #define IPINT_UNIMPLEMENTED { if (true) { CRASH(); } return { }; }
 
-IPIntGenerator::IPIntGenerator(ModuleInformation& info, unsigned functionIndex, const TypeDefinition&, std::span<const uint8_t> bytecode)
+IPIntGenerator::IPIntGenerator(ModuleInformation& info, FunctionCodeIndex functionIndex, const TypeDefinition&, std::span<const uint8_t> bytecode)
     : m_info(info)
     , m_metadata(WTF::makeUnique<FunctionIPIntMetadataGenerator>(functionIndex, bytecode))
 {
@@ -674,7 +674,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefIsNull(ExpressionType, Ex
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefFunc(uint32_t index, ExpressionType&)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefFunc(FunctionSpaceIndex index, ExpressionType&)
 {
     changeStackSize(1);
     m_metadata->addLEB128ConstantInt32AndLength(index, getCurrentInstructionLength());
@@ -2377,7 +2377,7 @@ void IPIntGenerator::addCallCommonData(const FunctionSignature& signature)
     memcpy(data, mINTBytecode.data(), mINTBytecode.size());
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(uint32_t index, const TypeDefinition& type, ArgumentList&, ResultList& results, CallType)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(FunctionSpaceIndex index, const TypeDefinition& type, ArgumentList&, ResultList& results, CallType)
 {
     const FunctionSignature& signature = *type.as<FunctionSignature>();
     for (unsigned i = 0; i < signature.returnCount(); i ++)
@@ -2453,7 +2453,7 @@ std::unique_ptr<FunctionIPIntMetadataGenerator> IPIntGenerator::finalize()
     return WTFMove(m_metadata);
 }
 
-Expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(std::span<const uint8_t> function, const TypeDefinition& signature, ModuleInformation& info, uint32_t functionIndex)
+Expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(std::span<const uint8_t> function, const TypeDefinition& signature, ModuleInformation& info, FunctionCodeIndex functionIndex)
 {
     IPIntGenerator generator(info, functionIndex, signature, function);
     FunctionParser<IPIntGenerator> parser(generator, function, signature, info);

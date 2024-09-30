@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ namespace WasmOSREntryPlanInternal {
 static constexpr bool verbose = false;
 }
 
-OSREntryPlan::OSREntryPlan(VM& vm, Ref<Module>&& module, Ref<Callee>&& callee, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, uint32_t loopIndex, MemoryMode mode, CompletionTask&& task)
+OSREntryPlan::OSREntryPlan(VM& vm, Ref<Module>&& module, Ref<Callee>&& callee, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, uint32_t loopIndex, MemoryMode mode, CompletionTask&& task)
     : Base(vm, const_cast<ModuleInformation&>(module->moduleInformation()), WTFMove(task))
     , m_module(WTFMove(module))
     , m_calleeGroup(*m_module->calleeGroupFor(mode))
@@ -63,7 +63,7 @@ OSREntryPlan::OSREntryPlan(VM& vm, Ref<Module>&& module, Ref<Callee>&& callee, u
     dataLogLnIf(WasmOSREntryPlanInternal::verbose, "Starting OMGForOSREntry plan for ", functionIndex, " of module: ", RawPointer(&m_module.get()));
 }
 
-void OSREntryPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, unsigned functionIndex, const TypeDefinition& signature, unsigned functionIndexSpace)
+void OSREntryPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, FunctionCodeIndex functionIndex, const TypeDefinition& signature, FunctionSpaceIndex functionIndexSpace)
 {
     CompilationMode targetCompilationMode = m_callee->compilationMode() == CompilationMode::LLIntMode ? CompilationMode::BBQForOSREntryMode : CompilationMode::OMGForOSREntryMode;
     dataLogLnIf(context.procedure->shouldDumpIR() || shouldDumpDisassemblyFor(targetCompilationMode), "Generated OMG code for WebAssembly OMGforOSREntry function[", functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
@@ -97,7 +97,7 @@ void OSREntryPlan::work(CompilationEffort)
     ASSERT(m_calleeGroup.ptr() == m_module->calleeGroupFor(mode()));
     const FunctionData& function = m_moduleInformation->functions[m_functionIndex];
 
-    const uint32_t functionIndexSpace = m_functionIndex + m_module->moduleInformation().importFunctionCount();
+    const FunctionSpaceIndex functionIndexSpace = m_module->moduleInformation().toSpaceIndex(m_functionIndex);
     ASSERT(functionIndexSpace < m_module->moduleInformation().functionIndexSpaceSize());
 
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
@@ -114,7 +114,7 @@ void OSREntryPlan::work(CompilationEffort)
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };
-        fail(makeString(parseAndCompileResult.error(), "when trying to tier up "_s, m_functionIndex));
+        fail(makeString(parseAndCompileResult.error(), "when trying to tier up "_s, m_functionIndex.rawIndex()));
         return;
     }
 
@@ -122,7 +122,7 @@ void OSREntryPlan::work(CompilationEffort)
     LinkBuffer linkBuffer(*context.wasmEntrypointJIT, callee.ptr(), LinkBuffer::Profile::WasmOMG, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
         Locker locker { m_lock };
-        Base::fail(makeString("Out of executable memory while tiering up function at index "_s, m_functionIndex));
+        Base::fail(makeString("Out of executable memory while tiering up function at index "_s, m_functionIndex.rawIndex()));
         return;
     }
 

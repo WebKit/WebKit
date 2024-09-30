@@ -212,7 +212,7 @@ public:
     }
 
     ExpressionType result() const { return m_result; }
-    const Vector<uint32_t>& declaredFunctions() const { return m_declaredFunctions; }
+    const Vector<FunctionSpaceIndex>& declaredFunctions() const { return m_declaredFunctions; }
     void setParser(FunctionParser<ConstExprGenerator>* parser) { m_parser = parser; };
 
     bool addArguments(const TypeDefinition&) { RELEASE_ASSERT_NOT_REACHED(); }
@@ -623,7 +623,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addRefAsNonNull(ExpressionType, ExpressionType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addRefEq(ExpressionType, ExpressionType, ExpressionType&) CONST_EXPR_STUB
 
-    PartialResult WARN_UNUSED_RETURN addRefFunc(uint32_t index, ExpressionType& result)
+    PartialResult WARN_UNUSED_RETURN addRefFunc(FunctionSpaceIndex index, ExpressionType& result)
     {
         if (m_mode == Mode::Evaluate) {
             VM& vm = m_instance->vm();
@@ -740,7 +740,7 @@ private:
     const ModuleInformation& m_info;
     JSWebAssemblyInstance* m_instance { nullptr };
     bool m_shouldError = false;
-    Vector<uint32_t> m_declaredFunctions;
+    Vector<FunctionSpaceIndex> m_declaredFunctions;
 };
 
 Expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> source, size_t offsetInSource, size_t& offset, ModuleInformation& info, Type expectedType)

@@ -58,7 +58,7 @@ class Callee : public NativeCallee {
     friend class JSC::LLIntOffsetsExtractor;
 public:
     IndexOrName indexOrName() const { return m_indexOrName; }
-    uint32_t index() const { return m_index; }
+    FunctionSpaceIndex index() const { return m_index; }
     CompilationMode compilationMode() const { return m_compilationMode; }
 
     CodePtr<WasmEntryPtrTag> entrypoint() const;
@@ -76,7 +76,7 @@ public:
 
 protected:
     JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode);
-    JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode, size_t, std::pair<const Name*, RefPtr<NameSection>>&&);
+    JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode, FunctionSpaceIndex, std::pair<const Name*, RefPtr<NameSection>>&&);
 
     template<typename Func>
     void runWithDowncast(const Func&);
@@ -86,7 +86,7 @@ protected:
 private:
     const CompilationMode m_compilationMode;
     const IndexOrName m_indexOrName;
-    const uint32_t m_index;
+    const FunctionSpaceIndex m_index;
 
 protected:
     FixedVector<HandlerInfo> m_exceptionHandlers;
@@ -104,7 +104,7 @@ public:
 
 protected:
     JS_EXPORT_PRIVATE JITCallee(Wasm::CompilationMode);
-    JS_EXPORT_PRIVATE JITCallee(Wasm::CompilationMode, size_t, std::pair<const Name*, RefPtr<NameSection>>&&);
+    JS_EXPORT_PRIVATE JITCallee(Wasm::CompilationMode, FunctionSpaceIndex, std::pair<const Name*, RefPtr<NameSection>>&&);
 
 #if ENABLE(JIT)
     std::tuple<void*, void*> rangeImpl() const
@@ -194,7 +194,7 @@ public:
     friend class Callee;
     friend class JSC::LLIntOffsetsExtractor;
 
-    WasmToJSCallee(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name) : Callee(Wasm::CompilationMode::WasmToJSMode, index, WTFMove(name)) { };
+    WasmToJSCallee(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name) : Callee(Wasm::CompilationMode::WasmToJSMode, index, WTFMove(name)) { };
     static WasmToJSCallee& singleton();
 
 private:
@@ -254,7 +254,7 @@ public:
     IndexOrName getOrigin(unsigned csi, unsigned depth, bool& isInlined) const;
 
 protected:
-    OptimizingJITCallee(Wasm::CompilationMode mode, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    OptimizingJITCallee(Wasm::CompilationMode mode, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
         : JITCallee(mode, index, WTFMove(name))
     {
     }
@@ -282,7 +282,7 @@ constexpr int32_t stackCheckNotNeeded = -1;
 class OSREntryCallee final : public OptimizingJITCallee {
     WTF_MAKE_COMPACT_TZONE_ALLOCATED(OSREntryCallee);
 public:
-    static Ref<OSREntryCallee> create(CompilationMode compilationMode, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, uint32_t loopIndex)
+    static Ref<OSREntryCallee> create(CompilationMode compilationMode, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, uint32_t loopIndex)
     {
         return adoptRef(*new OSREntryCallee(compilationMode, index, WTFMove(name), loopIndex));
     }
@@ -311,7 +311,7 @@ public:
     }
 
 private:
-    OSREntryCallee(CompilationMode compilationMode, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, uint32_t loopIndex)
+    OSREntryCallee(CompilationMode compilationMode, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, uint32_t loopIndex)
         : OptimizingJITCallee(compilationMode, index, WTFMove(name))
         , m_loopIndex(loopIndex)
     {
@@ -329,7 +329,7 @@ private:
 class OMGCallee final : public OptimizingJITCallee {
     WTF_MAKE_COMPACT_TZONE_ALLOCATED(OMGCallee);
 public:
-    static Ref<OMGCallee> create(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    static Ref<OMGCallee> create(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     {
         return adoptRef(*new OMGCallee(index, WTFMove(name)));
     }
@@ -337,7 +337,7 @@ public:
     using OptimizingJITCallee::setEntrypoint;
 
 private:
-    OMGCallee(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    OMGCallee(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
         : OptimizingJITCallee(Wasm::CompilationMode::OMGMode, index, WTFMove(name))
     {
     }
@@ -352,7 +352,7 @@ class BBQCallee final : public OptimizingJITCallee {
 public:
     static constexpr unsigned extraOSRValuesForLoopIndex = 1;
 
-    static Ref<BBQCallee> create(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, SavedFPWidth savedFPWidth)
+    static Ref<BBQCallee> create(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, SavedFPWidth savedFPWidth)
     {
         return adoptRef(*new BBQCallee(index, WTFMove(name), savedFPWidth));
     }
@@ -412,7 +412,7 @@ public:
     }
 
 private:
-    BBQCallee(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, SavedFPWidth savedFPWidth)
+    BBQCallee(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, SavedFPWidth savedFPWidth)
         : OptimizingJITCallee(Wasm::CompilationMode::BBQMode, index, WTFMove(name))
         , m_savedFPWidth(savedFPWidth)
     {
@@ -439,12 +439,12 @@ class IPIntCallee final : public Callee {
     friend class JSC::LLIntOffsetsExtractor;
     friend class Callee;
 public:
-    static Ref<IPIntCallee> create(FunctionIPIntMetadataGenerator& generator, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    static Ref<IPIntCallee> create(FunctionIPIntMetadataGenerator& generator, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     {
         return adoptRef(*new IPIntCallee(generator, index, WTFMove(name)));
     }
 
-    uint32_t functionIndex() const { return m_functionIndex; }
+    FunctionCodeIndex functionIndex() const { return m_functionIndex; }
     void setEntrypoint(CodePtr<WasmEntryPtrTag>);
     const uint8_t* bytecode() const { return m_bytecode; }
     const uint8_t* metadata() const { return m_metadata; }
@@ -477,13 +477,13 @@ public:
     using OutOfLineJumpTargets = HashMap<WasmInstructionStream::Offset, int>;
 
 private:
-    IPIntCallee(FunctionIPIntMetadataGenerator&, size_t index, std::pair<const Name*, RefPtr<NameSection>>&&);
+    IPIntCallee(FunctionIPIntMetadataGenerator&, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&&);
 
     CodePtr<WasmEntryPtrTag> entrypointImpl() const { return m_entrypoint; }
     std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; };
     JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegistersImpl();
 
-    uint32_t m_functionIndex { 0 };
+    FunctionCodeIndex m_functionIndex;
 #if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
     RefPtr<OptimizingJITCallee> m_replacements[numberOfMemoryModes];
     RefPtr<OSREntryCallee> m_osrEntryCallees[numberOfMemoryModes];
@@ -516,14 +516,14 @@ class LLIntCallee final : public Callee {
     friend JSC::LLIntOffsetsExtractor;
     friend class Callee;
 public:
-    static Ref<LLIntCallee> create(FunctionCodeBlockGenerator& generator, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    static Ref<LLIntCallee> create(FunctionCodeBlockGenerator& generator, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     {
         return adoptRef(*new LLIntCallee(generator, index, WTFMove(name)));
     }
 
     void setEntrypoint(CodePtr<WasmEntryPtrTag>);
 
-    uint32_t functionIndex() const { return m_functionIndex; }
+    FunctionCodeIndex functionIndex() const { return m_functionIndex; }
     unsigned numVars() const { return m_numVars; }
     unsigned numCalleeLocals() const { return m_numCalleeLocals; }
     uint32_t numArguments() const { return m_numArguments; }
@@ -583,13 +583,13 @@ public:
     using OutOfLineJumpTargets = HashMap<WasmInstructionStream::Offset, int>;
 
 private:
-    LLIntCallee(FunctionCodeBlockGenerator&, size_t index, std::pair<const Name*, RefPtr<NameSection>>&&);
+    LLIntCallee(FunctionCodeBlockGenerator&, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&&);
 
     CodePtr<WasmEntryPtrTag> entrypointImpl() const { return m_entrypoint; }
     std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; };
     JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegistersImpl();
 
-    uint32_t m_functionIndex { 0 };
+    FunctionCodeIndex m_functionIndex;
 
     // Used for the number of WebAssembly locals, as in https://webassembly.github.io/spec/core/syntax/modules.html#syntax-local
     unsigned m_numVars { 0 };

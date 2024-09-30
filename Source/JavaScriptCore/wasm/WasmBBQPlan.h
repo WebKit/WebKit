@@ -52,7 +52,7 @@ class BBQPlan final : public Plan {
 public:
     using Base = Plan;
 
-    static Ref<BBQPlan> create(VM& vm, Ref<ModuleInformation>&& info, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, Ref<CalleeGroup>&& calleeGroup, CompletionTask&& completionTask)
+    static Ref<BBQPlan> create(VM& vm, Ref<ModuleInformation>&& info, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, Ref<CalleeGroup>&& calleeGroup, CompletionTask&& completionTask)
     {
         return adoptRef(*new BBQPlan(vm, WTFMove(info), functionIndex, hasExceptionHandlers, WTFMove(calleeGroup), WTFMove(completionTask)));
     }
@@ -65,11 +65,11 @@ public:
 
 
 private:
-    BBQPlan(VM&, Ref<ModuleInformation>&&, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, Ref<CalleeGroup>&&, CompletionTask&&);
+    BBQPlan(VM&, Ref<ModuleInformation>&&, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, Ref<CalleeGroup>&&, CompletionTask&&);
 
-    bool dumpDisassembly(CompilationContext&, LinkBuffer&, unsigned functionIndex, const TypeDefinition&, unsigned functionIndexSpace);
+    bool dumpDisassembly(CompilationContext&, LinkBuffer&, FunctionCodeIndex functionIndex, const TypeDefinition&, FunctionSpaceIndex functionIndexSpace);
 
-    std::unique_ptr<InternalFunction> compileFunction(uint32_t functionIndex, BBQCallee&, CompilationContext&, Vector<UnlinkedWasmToWasmCall>&);
+    std::unique_ptr<InternalFunction> compileFunction(FunctionCodeIndex functionIndex, BBQCallee&, CompilationContext&, Vector<UnlinkedWasmToWasmCall>&);
     bool isComplete() const final { return m_completed; }
     void complete() WTF_REQUIRES_LOCK(m_lock) final
     {
@@ -78,7 +78,7 @@ private:
     }
 
     Ref<CalleeGroup> m_calleeGroup;
-    uint32_t m_functionIndex;
+    FunctionCodeIndex m_functionIndex;
     bool m_completed { false };
     std::optional<bool> m_hasExceptionHandlers;
 };

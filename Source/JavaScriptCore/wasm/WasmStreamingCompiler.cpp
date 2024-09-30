@@ -70,7 +70,7 @@ Ref<StreamingCompiler> StreamingCompiler::create(VM& vm, CompilerMode compilerMo
     return adoptRef(*new StreamingCompiler(vm, compilerMode, globalObject, promise, importObject));
 }
 
-bool StreamingCompiler::didReceiveFunctionData(unsigned functionIndex, const Wasm::FunctionData&)
+bool StreamingCompiler::didReceiveFunctionData(FunctionCodeIndex functionIndex, const Wasm::FunctionData&)
 {
     if (!m_plan) {
         m_plan = adoptRef(*new LLIntPlan(m_vm, m_info.copyRef(), m_compilerMode, Plan::dontFinalize()));

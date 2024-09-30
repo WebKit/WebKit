@@ -215,7 +215,7 @@ void EntryPlan::compileFunctions(CompilationEffort effort)
         }
 
         for (uint32_t index = functionIndex; index < functionIndexEnd; ++index)
-            compileFunction(index);
+            compileFunction(FunctionCodeIndex(index));
 
         if (!areWasmToWasmStubsCompiled) {
             if (UNLIKELY(!generateWasmToWasmStubs())) {

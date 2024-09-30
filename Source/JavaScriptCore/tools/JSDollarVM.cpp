@@ -1951,7 +1951,7 @@ public:
         }
 
         bool didReceiveSectionData(Wasm::Section) final { return true; }
-        bool didReceiveFunctionData(unsigned, const Wasm::FunctionData&) final { return true; }
+        bool didReceiveFunctionData(Wasm::FunctionCodeIndex, const Wasm::FunctionData&) final { return true; }
         void didFinishParsing() final { }
 
         WasmStreamingParser* m_parser;

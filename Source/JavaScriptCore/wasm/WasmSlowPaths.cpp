@@ -141,7 +141,7 @@ static inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, JSWebAs
     }
 
     if (compile) {
-        uint32_t functionIndex = callee->functionIndex();
+        Wasm::FunctionCodeIndex functionIndex = callee->functionIndex();
         if (Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(functionIndex)) {
             auto plan = Wasm::BBQPlan::create(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), Ref(*instance->calleeGroup()), Wasm::Plan::dontFinalize());
             Wasm::ensureWorklist().enqueue(plan.get());
@@ -182,7 +182,7 @@ static inline std::optional<Wasm::Plan::Error> jitCompileSIMDFunction(Wasm::LLIn
         }
     }
 
-    uint32_t functionIndex = callee->functionIndex();
+    Wasm::FunctionCodeIndex functionIndex = callee->functionIndex();
     ASSERT(instance->module().moduleInformation().usesSIMD(functionIndex));
     auto plan = Wasm::BBQPlan::create(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), Ref(*instance->calleeGroup()), Wasm::Plan::dontFinalize());
     Wasm::ensureWorklist().enqueue(plan.get());
@@ -576,7 +576,7 @@ WASM_SLOW_PATH_DECL(grow_memory)
     WASM_RETURN(Wasm::growMemory(instance, delta));
 }
 
-static inline UGPRPair doWasmCall(Register* partiallyConstructedCalleeFrame, JSWebAssemblyInstance* instance, unsigned functionIndex)
+static inline UGPRPair doWasmCall(Register* partiallyConstructedCalleeFrame, JSWebAssemblyInstance* instance, Wasm::FunctionSpaceIndex functionIndex)
 {
     uint32_t importFunctionCount = instance->module().moduleInformation().importFunctionCount();
 
@@ -609,10 +609,10 @@ WASM_SLOW_PATH_DECL(call)
 {
     auto instruction = pc->as<WasmCall>();
     Register* partiallyConstructedCalleeFrame = &callFrame->registers()[-safeCast<int>(instruction.m_stackOffset)];
-    return doWasmCall(partiallyConstructedCalleeFrame, instance, instruction.m_functionIndex);
+    return doWasmCall(partiallyConstructedCalleeFrame, instance, Wasm::FunctionSpaceIndex(instruction.m_functionIndex));
 }
 
-static inline UGPRPair doWasmCallIndirect(Register* partiallyConstructedCalleeFrame, CallFrame* callFrame, JSWebAssemblyInstance* instance, unsigned functionIndex, unsigned tableIndex, unsigned typeIndex)
+static inline UGPRPair doWasmCallIndirect(Register* partiallyConstructedCalleeFrame, CallFrame* callFrame, JSWebAssemblyInstance* instance, Wasm::FunctionSpaceIndex functionIndex, unsigned tableIndex, unsigned typeIndex)
 {
     Wasm::FuncRefTable* table = instance->table(tableIndex)->asFuncrefTable();
 
@@ -643,7 +643,7 @@ static inline UGPRPair doWasmCallIndirect(Register* partiallyConstructedCalleeFr
 WASM_SLOW_PATH_DECL(call_indirect)
 {
     auto instruction = pc->as<WasmCallIndirect>();
-    unsigned functionIndex = READ(instruction.m_functionIndex).unboxedInt32();
+    auto functionIndex = Wasm::FunctionSpaceIndex(READ(instruction.m_functionIndex).unboxedInt32());
     Register* partiallyConstructedCalleeFrame = &callFrame->registers()[-safeCast<int>(instruction.m_stackOffset)];
     return doWasmCallIndirect(partiallyConstructedCalleeFrame, callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_typeIndex);
 }
@@ -691,13 +691,13 @@ WASM_SLOW_PATH_DECL(tail_call)
 {
     auto instruction = pc->as<WasmTailCall>();
     Register* partiallyConstructedCalleeFrame = &callFrame->registers()[-safeCast<int>(instruction.m_stackOffset)];
-    return doWasmCall(partiallyConstructedCalleeFrame, instance, instruction.m_functionIndex);
+    return doWasmCall(partiallyConstructedCalleeFrame, instance, Wasm::FunctionSpaceIndex(instruction.m_functionIndex));
 }
 
 WASM_SLOW_PATH_DECL(tail_call_indirect)
 {
     auto instruction = pc->as<WasmTailCallIndirect>();
-    unsigned functionIndex = READ(instruction.m_functionIndex).unboxedInt32();
+    auto functionIndex = Wasm::FunctionSpaceIndex(READ(instruction.m_functionIndex).unboxedInt32());
     Register* partiallyConstructedCalleeFrame = &callFrame->registers()[-safeCast<int>(instruction.m_stackOffset)];
     return doWasmCallIndirect(partiallyConstructedCalleeFrame, callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_signatureIndex);
 }

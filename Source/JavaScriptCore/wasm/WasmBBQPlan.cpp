@@ -50,7 +50,7 @@ namespace WasmBBQPlanInternal {
 static constexpr bool verbose = false;
 }
 
-BBQPlan::BBQPlan(VM& vm, Ref<ModuleInformation>&& moduleInformation, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, Ref<CalleeGroup>&& calleeGroup, CompletionTask&& completionTask)
+BBQPlan::BBQPlan(VM& vm, Ref<ModuleInformation>&& moduleInformation, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, Ref<CalleeGroup>&& calleeGroup, CompletionTask&& completionTask)
     : Plan(vm, WTFMove(moduleInformation), WTFMove(completionTask))
     , m_calleeGroup(WTFMove(calleeGroup))
     , m_functionIndex(functionIndex)
@@ -72,10 +72,10 @@ FunctionAllowlist& BBQPlan::ensureGlobalBBQAllowlist()
     return bbqAllowlist;
 }
 
-bool BBQPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, unsigned functionIndex, const TypeDefinition& signature, unsigned functionIndexSpace)
+bool BBQPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, FunctionCodeIndex functionIndex, const TypeDefinition& signature, FunctionSpaceIndex functionIndexSpace)
 {
     if (UNLIKELY(shouldDumpDisassemblyFor(CompilationMode::BBQMode))) {
-        dataLogF("Generated BBQ code for WebAssembly BBQ function[%i] %s name %s\n", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
+        dataLogF("Generated BBQ code for WebAssembly BBQ function[%zu] %s name %s\n", functionIndex.rawIndex(), signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
         if (context.bbqDisassembler)
             context.bbqDisassembler->dump(linkBuffer);
         linkBuffer.didAlreadyDisassemble();
@@ -89,7 +89,7 @@ void BBQPlan::work(CompilationEffort)
     ASSERT(m_calleeGroup->runnable());
     CompilationContext context;
     Vector<UnlinkedWasmToWasmCall> unlinkedWasmToWasmCalls;
-    size_t functionIndexSpace = m_functionIndex + m_moduleInformation->importFunctionCount();
+    FunctionSpaceIndex functionIndexSpace = m_moduleInformation->toSpaceIndex(m_functionIndex);
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
 
@@ -101,7 +101,7 @@ void BBQPlan::work(CompilationEffort)
     LinkBuffer linkBuffer(*context.wasmEntrypointJIT, callee.ptr(), LinkBuffer::Profile::WasmBBQ, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
         Locker locker { m_lock };
-        Base::fail(makeString("Out of executable memory while tiering up function at index "_s, m_functionIndex), Plan::Error::OutOfMemory);
+        Base::fail(makeString("Out of executable memory while tiering up function at index "_s, m_functionIndex.rawIndex()), Plan::Error::OutOfMemory);
         return;
     }
 
@@ -174,12 +174,12 @@ void BBQPlan::work(CompilationEffort)
     complete();
 }
 
-std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionIndex, BBQCallee& callee, CompilationContext& context, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls)
+std::unique_ptr<InternalFunction> BBQPlan::compileFunction(FunctionCodeIndex functionIndex, BBQCallee& callee, CompilationContext& context, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls)
 {
     const auto& function = m_moduleInformation->functions[functionIndex];
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
-    unsigned functionIndexSpace = m_moduleInformation->importFunctionCount() + functionIndex;
+    FunctionSpaceIndex functionIndexSpace = m_moduleInformation->toSpaceIndex(functionIndex);
     ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace) == typeIndex);
     Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileResult;
 
@@ -193,7 +193,7 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
         Locker locker { m_lock };
         if (!m_errorMessage) {
             // Multiple compiles could fail simultaneously. We arbitrarily choose the first.
-            fail(makeString(parseAndCompileResult.error(), ", in function at index "_s, functionIndex)); // FIXME make this an Expected.
+            fail(makeString(parseAndCompileResult.error(), ", in function at index "_s, functionIndex.rawIndex())); // FIXME: make this an Expected.
         }
         return nullptr;
     }

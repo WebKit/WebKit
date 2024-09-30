@@ -716,10 +716,47 @@ inline bool isValidNameType(Int val)
     return false;
 }
 
+// A code index is an index in the code section of the module, thus does not include imports. This is also sometimes called an internal function.
+// A space index is an index into the total function space of a module and includes imports. It's broken down into [ imports..., code section... ].
+// These are **NOT** convertable without knowing how many imports there are e.g. via ModuleInformation/CalleeGroup's toCodeIndex/toSpaceIndex
+
+class FunctionSpaceIndex;
+class TRIVIAL_ABI FunctionCodeIndex {
+public:
+    FunctionCodeIndex() = default;
+    FunctionCodeIndex(FunctionSpaceIndex) = delete;
+    explicit constexpr FunctionCodeIndex(uint32_t index)
+        : m_index(index)
+    { }
+
+    size_t rawIndex() const { return m_index; }
+    operator size_t() const { return m_index; }
+    void dump(PrintStream& out) const { out.print(m_index); }
+
+private:
+    uint32_t m_index { UINT_MAX };
+};
+
+class TRIVIAL_ABI FunctionSpaceIndex {
+public:
+    FunctionSpaceIndex() = default;
+    FunctionSpaceIndex(FunctionCodeIndex) = delete;
+    explicit constexpr FunctionSpaceIndex(uint32_t index)
+        : m_index(index)
+    { }
+
+    size_t rawIndex() const { return m_index; }
+    operator size_t() const { return m_index; }
+    void dump(PrintStream& out) const { out.print(m_index); }
+
+private:
+    uint32_t m_index { UINT_MAX };
+};
+
 struct UnlinkedWasmToWasmCall {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     CodeLocationNearCall<WasmEntryPtrTag> callLocation;
-    size_t functionIndexSpace;
+    FunctionSpaceIndex functionIndexSpace;
     CodeLocationDataLabelPtr<WasmEntryPtrTag> calleeLocation;
 
 };

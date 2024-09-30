@@ -665,7 +665,7 @@ void ControlData::fillLabels(CCallHelpers::Label label)
         *box = label;
 }
 
-BBQJIT::BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, BBQCallee& callee, const FunctionData& function, uint32_t functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry)
+BBQJIT::BBQJIT(CCallHelpers& jit, const TypeDefinition& signature, BBQCallee& callee, const FunctionData& function, FunctionCodeIndex functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry)
     : m_jit(jit)
     , m_callee(callee)
     , m_function(function)
@@ -2936,7 +2936,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addRefEq(Value ref0, Value ref1, Value&
     return addI64Eq(ref0, ref1, result);
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addRefFunc(uint32_t index, Value& result)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addRefFunc(FunctionSpaceIndex index, Value& result)
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
     TypeKind returnType = TypeKind::Ref;
@@ -2978,8 +2978,7 @@ ControlData WARN_UNUSED_RETURN BBQJIT::addTopLevel(BlockSignature signature)
 {
     if (UNLIKELY(Options::verboseBBQJITInstructions())) {
         auto nameSection = m_info.nameSection;
-        auto functionIndexSpace = m_info.isImportedFunctionFromFunctionIndexSpace(m_functionIndex) ? m_functionIndex : m_functionIndex + m_info.importFunctionCount();
-        std::pair<const Name*, RefPtr<NameSection>> name = nameSection->get(functionIndexSpace);
+        std::pair<const Name*, RefPtr<NameSection>> name = nameSection->get(m_functionIndex);
         dataLog("BBQ\tFunction ");
         if (name.first)
             dataLog(makeString(*name.first));
@@ -4111,7 +4110,7 @@ void BBQJIT::returnValuesFromCall(Vector<Value, N>& results, const FunctionSigna
     }
 }
 
-void BBQJIT::emitTailCall(unsigned functionIndex, const TypeDefinition& signature, ArgumentList& arguments)
+void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndex, const TypeDefinition& signature, ArgumentList& arguments)
 {
     const auto& callingConvention = wasmCallingConvention();
     CallInformation callInfo = callingConvention.callInformationFor(signature, CallRole::Callee);
@@ -4215,7 +4214,7 @@ void BBQJIT::emitTailCall(unsigned functionIndex, const TypeDefinition& signatur
 }
 
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addCall(unsigned functionIndex, const TypeDefinition& signature, ArgumentList& arguments, ResultList& results, CallType callType)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addCall(FunctionSpaceIndex functionIndex, const TypeDefinition& signature, ArgumentList& arguments, ResultList& results, CallType callType)
 {
     if (callType == CallType::TailCall) {
         emitTailCall(functionIndex, signature, arguments);
@@ -5064,7 +5063,7 @@ Location BBQJIT::allocateStack(Value value)
 
 } // namespace JSC::Wasm::BBQJITImpl
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext& compilationContext, BBQCallee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext& compilationContext, BBQCallee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry)
 {
     CompilerTimingScope totalTime("BBQ"_s, "Total BBQ"_s);
 

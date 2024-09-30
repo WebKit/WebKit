@@ -69,13 +69,13 @@ class FunctionIPIntMetadataGenerator {
     friend class IPIntCallee;
 
 public:
-    FunctionIPIntMetadataGenerator(uint32_t functionIndex, std::span<const uint8_t> bytecode)
+    FunctionIPIntMetadataGenerator(FunctionCodeIndex functionIndex, std::span<const uint8_t> bytecode)
         : m_functionIndex(functionIndex)
         , m_bytecode(bytecode)
     {
     }
 
-    uint32_t functionIndex() const { return m_functionIndex; }
+    FunctionCodeIndex functionIndex() const { return m_functionIndex; }
     const BitVector& tailCallSuccessors() const { return m_tailCallSuccessors; }
     bool tailCallClobbersInstance() const { return m_tailCallClobbersInstance ; }
 
@@ -104,7 +104,7 @@ private:
     void addLEB128V128Constant(v128_t value, size_t length);
     void addReturnData(const FunctionSignature&);
 
-    uint32_t m_functionIndex;
+    FunctionCodeIndex m_functionIndex;
     bool m_tailCallClobbersInstance { false };
     BitVector m_tailCallSuccessors;
 

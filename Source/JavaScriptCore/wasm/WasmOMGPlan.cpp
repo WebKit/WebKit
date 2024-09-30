@@ -48,7 +48,7 @@ namespace WasmOMGPlanInternal {
 static constexpr bool verbose = false;
 }
 
-OMGPlan::OMGPlan(VM& vm, Ref<Module>&& module, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, MemoryMode mode, CompletionTask&& task)
+OMGPlan::OMGPlan(VM& vm, Ref<Module>&& module, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, MemoryMode mode, CompletionTask&& task)
     : Base(vm, const_cast<ModuleInformation&>(module->moduleInformation()), WTFMove(task))
     , m_module(WTFMove(module))
     , m_calleeGroup(*m_module->calleeGroupFor(mode))
@@ -73,7 +73,7 @@ FunctionAllowlist& OMGPlan::ensureGlobalOMGAllowlist()
     return omgAllowlist;
 }
 
-void OMGPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, unsigned functionIndex, const TypeDefinition& signature, unsigned functionIndexSpace)
+void OMGPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, FunctionCodeIndex functionIndex, const TypeDefinition& signature, FunctionSpaceIndex functionIndexSpace)
 {
     dataLogLnIf(context.procedure->shouldDumpIR() || shouldDumpDisassemblyFor(CompilationMode::OMGMode), "Generated OMG code for WebAssembly OMG function[", functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
     if (UNLIKELY(shouldDumpDisassemblyFor(CompilationMode::OMGMode))) {
@@ -106,9 +106,7 @@ void OMGPlan::work(CompilationEffort)
     ASSERT(m_calleeGroup.ptr() == m_module->calleeGroupFor(mode()));
     const FunctionData& function = m_moduleInformation->functions[m_functionIndex];
 
-    const uint32_t functionIndexSpace = m_functionIndex + m_module->moduleInformation().importFunctionCount();
-    ASSERT(functionIndexSpace < m_module->moduleInformation().functionIndexSpaceSize());
-
+    const FunctionSpaceIndex functionIndexSpace = m_moduleInformation->toSpaceIndex(m_functionIndex);
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
 
@@ -122,7 +120,7 @@ void OMGPlan::work(CompilationEffort)
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };
-        fail(makeString(parseAndCompileResult.error(), "when trying to tier up "_s, m_functionIndex), Plan::Error::Parse);
+        fail(makeString(parseAndCompileResult.error(), "when trying to tier up "_s, m_functionIndex.rawIndex()), Plan::Error::Parse);
         return;
     }
 
@@ -130,7 +128,7 @@ void OMGPlan::work(CompilationEffort)
     LinkBuffer linkBuffer(*context.wasmEntrypointJIT, callee.ptr(), LinkBuffer::Profile::WasmOMG, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
         Locker locker { m_lock };
-        Base::fail(makeString("Out of executable memory while tiering up function at index "_s, m_functionIndex), Plan::Error::OutOfMemory);
+        Base::fail(makeString("Out of executable memory while tiering up function at index "_s, m_functionIndex.rawIndex()), Plan::Error::OutOfMemory);
         return;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@ class FunctionIPIntMetadataGenerator;
 class TypeDefinition;
 struct ModuleInformation;
 
-Expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(std::span<const uint8_t>, const TypeDefinition&, ModuleInformation&, uint32_t functionIndex);
+Expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(std::span<const uint8_t>, const TypeDefinition&, ModuleInformation&, FunctionCodeIndex functionIndex);
 
 } // namespace JSC::Wasm
 
@@ -178,7 +178,7 @@ enum class CallArgumentBytecode : uint8_t { // (mINT)
 
 struct CallMetadata {
     uint8_t length; // 1B for instruction length
-    uint32_t functionIndex; // 4B for decoded index
+    Wasm::FunctionSpaceIndex functionIndex; // 4B for decoded index
     CallArgumentBytecode argumentBytecode[0];
 };
 

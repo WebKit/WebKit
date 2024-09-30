@@ -90,6 +90,7 @@ public:
         Completed // We should only move to Completed if we are holding the lock.
     };
 
+    // FIXME: This seems like it should be `m_state == State::Prepared`?
     bool multiThreaded() const override { return m_state >= State::Prepared; }
 
     bool completeSyncIfPossible();
@@ -110,7 +111,7 @@ protected:
     void complete() WTF_REQUIRES_LOCK(m_lock) override;
 
     virtual bool prepareImpl() = 0;
-    virtual void compileFunction(uint32_t functionIndex) = 0;
+    virtual void compileFunction(FunctionCodeIndex functionIndex) = 0;
     virtual void didCompleteCompilation() WTF_REQUIRES_LOCK(m_lock) = 0;
 
     template<typename T>

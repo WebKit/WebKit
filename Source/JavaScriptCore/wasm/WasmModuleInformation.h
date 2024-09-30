@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,12 +51,12 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     JS_EXPORT_PRIVATE ~ModuleInformation();
     
     size_t functionIndexSpaceSize() const { return importFunctionTypeIndices.size() + internalFunctionTypeIndices.size(); }
-    bool isImportedFunctionFromFunctionIndexSpace(size_t functionIndex) const
+    bool isImportedFunctionFromFunctionIndexSpace(FunctionSpaceIndex functionIndex) const
     {
         ASSERT(functionIndex < functionIndexSpaceSize());
         return functionIndex < importFunctionTypeIndices.size();
     }
-    TypeIndex typeIndexFromFunctionIndexSpace(size_t functionIndex) const
+    TypeIndex typeIndexFromFunctionIndexSpace(FunctionSpaceIndex functionIndex) const
     {
         return isImportedFunctionFromFunctionIndexSpace(functionIndex)
             ? importFunctionTypeIndices[functionIndex]
@@ -81,6 +81,9 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     uint32_t importExceptionCount() const { return importExceptionTypeIndices.size(); }
     uint32_t internalExceptionCount() const { return internalExceptionTypeIndices.size(); }
 
+    FunctionCodeIndex toCodeIndex(FunctionSpaceIndex index) const { ASSERT(importFunctionCount() <= index && index < functionIndexSpaceSize()); return FunctionCodeIndex(index - importFunctionCount()); }
+    FunctionSpaceIndex toSpaceIndex(FunctionCodeIndex index) const { ASSERT(index < internalFunctionCount()); return FunctionSpaceIndex(index + importFunctionCount()); }
+
     // Currently, our wasm implementation allows only one memory.
     // If we need to remove this limitation, we would have MemoryInformation in the Vectors.
     uint32_t memoryCount() const { return memory ? 1 : 0; }
@@ -100,22 +103,18 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     }
 
     const FixedBitVector& referencedFunctions() const { return m_referencedFunctions; }
-    bool hasReferencedFunction(unsigned functionIndexSpace) const { return m_referencedFunctions.test(functionIndexSpace); }
-    void addReferencedFunction(unsigned functionIndexSpace) const { m_referencedFunctions.concurrentTestAndSet(functionIndexSpace); }
+    bool hasReferencedFunction(FunctionSpaceIndex functionIndexSpace) const { return m_referencedFunctions.test(functionIndexSpace); }
+    void addReferencedFunction(FunctionSpaceIndex functionIndexSpace) const { m_referencedFunctions.concurrentTestAndSet(functionIndexSpace); }
 
-    bool isDeclaredFunction(uint32_t index) const { return m_declaredFunctions.contains(index); }
-    void addDeclaredFunction(uint32_t index) { m_declaredFunctions.set(index); }
+    bool isDeclaredFunction(FunctionSpaceIndex index) const { return m_declaredFunctions.contains(index); }
+    void addDeclaredFunction(FunctionSpaceIndex index) { m_declaredFunctions.set(index); }
 
     bool isDeclaredException(uint32_t index) const { return m_declaredExceptions.contains(index); }
     void addDeclaredException(uint32_t index) { m_declaredExceptions.set(index); }
 
-    size_t functionWasmSizeImportSpace(uint32_t index) const
-    {
-        ASSERT(index >= importFunctionCount());
-        return functionWasmSize(index - importFunctionCount());
-    }
+    size_t functionWasmSizeImportSpace(FunctionSpaceIndex index) const { return functionWasmSize(toCodeIndex(index)); }
 
-    size_t functionWasmSize(uint32_t index) const
+    size_t functionWasmSize(FunctionCodeIndex index) const
     {
         ASSERT(index < internalFunctionCount());
         ASSERT(functions[index].finishedValidating);
@@ -124,13 +123,8 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
         return size;
     }
 
-    bool usesSIMDImportSpace(uint32_t index) const
-    {
-        ASSERT(index >= importFunctionCount());
-        return usesSIMD(index - importFunctionCount());
-    }
-
-    bool usesSIMD(uint32_t index) const
+    bool usesSIMDImportSpace(FunctionSpaceIndex index) const { return usesSIMD(toCodeIndex(index)); }
+    bool usesSIMD(FunctionCodeIndex index) const
     {
         ASSERT(index < internalFunctionCount());
         ASSERT(functions[index].finishedValidating);
@@ -145,14 +139,14 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
 
         return functions[index].usesSIMD;
     }
-    void markUsesSIMD(uint32_t index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesSIMD = true; }
+    void markUsesSIMD(FunctionCodeIndex index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesSIMD = true; }
 
-    bool usesExceptions(uint32_t index) const { ASSERT(index < internalFunctionCount()); ASSERT(functions[index].finishedValidating); return functions[index].usesExceptions; }
-    void markUsesExceptions(uint32_t index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesExceptions = true; }
-    bool usesAtomics(uint32_t index) const { ASSERT(index < internalFunctionCount()); ASSERT(functions[index].finishedValidating); return functions[index].usesAtomics; }
-    void markUsesAtomics(uint32_t index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesAtomics = true; }
+    bool usesExceptions(FunctionCodeIndex index) const { ASSERT(index < internalFunctionCount()); ASSERT(functions[index].finishedValidating); return functions[index].usesExceptions; }
+    void markUsesExceptions(FunctionCodeIndex index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesExceptions = true; }
+    bool usesAtomics(FunctionCodeIndex index) const { ASSERT(index < internalFunctionCount()); ASSERT(functions[index].finishedValidating); return functions[index].usesAtomics; }
+    void markUsesAtomics(FunctionCodeIndex index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesAtomics = true; }
 
-    void doneSeeingFunction(uint32_t index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].finishedValidating = true; }
+    void doneSeeingFunction(FunctionCodeIndex index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].finishedValidating = true; }
 
     uint32_t typeCount() const { return typeSignatures.size(); }
 
@@ -166,9 +160,10 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
             : it->value.getBranchHint(branchOffset);
     }
 
+    // FIXME: This should probably be FunctionCodeIndex as calling an import always clobbers the instance.
     const FixedBitVector& clobberingTailCalls() const { return m_clobberingTailCalls; }
-    bool callCanClobberInstance(uint32_t functionIndexSpace) const { return m_clobberingTailCalls.test(functionIndexSpace); }
-    void addClobberingTailCall(uint32_t functionIndexSpace) { m_clobberingTailCalls.concurrentTestAndSet(functionIndexSpace); }
+    bool callCanClobberInstance(FunctionSpaceIndex functionIndexSpace) const { return m_clobberingTailCalls.test(functionIndexSpace); }
+    void addClobberingTailCall(FunctionSpaceIndex functionIndexSpace) { m_clobberingTailCalls.concurrentTestAndSet(functionIndexSpace); }
 
     Vector<Import> imports;
     Vector<TypeIndex> importFunctionTypeIndices;

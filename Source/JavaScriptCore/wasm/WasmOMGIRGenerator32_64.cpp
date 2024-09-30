@@ -375,8 +375,8 @@ public:
         return m_callSiteIndex;
     }
 
-    OMGIRGenerator(CalleeGroup&, const ModuleInformation&, OptimizingJITCallee&, Procedure&, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, MemoryMode, CompilationMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry);
-    OMGIRGenerator(OMGIRGenerator& inlineCaller, OMGIRGenerator& inlineRoot, CalleeGroup&, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, BasicBlock* returnContinuation, Vector<Value*> args);
+    OMGIRGenerator(CalleeGroup&, const ModuleInformation&, OptimizingJITCallee&, Procedure&, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, MemoryMode, CompilationMode, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry);
+    OMGIRGenerator(OMGIRGenerator& inlineCaller, OMGIRGenerator& inlineRoot, CalleeGroup&, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, BasicBlock* returnContinuation, Vector<Value*> args);
 
     void computeStackCheckSize(bool& needsOverflowCheck, int32_t& checkSize);
 
@@ -735,7 +735,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
 
     // Calls
-    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCall(FunctionSpaceIndex calleeIndex, const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
@@ -744,7 +744,7 @@ public:
     auto createCallPatchpoint(BasicBlock*, Value* jsCalleeAnchor, const TypeDefinition&, const CallInformation&, const ArgumentList& tmpArgs) -> CallPatchpointData;
     auto createTailCallPatchpoint(BasicBlock*, CallInformation wasmCallerInfoAsCallee, CallInformation wasmCalleeInfoAsCallee, const ArgumentList& tmpArgSourceLocations, Vector<B3::ConstrainedValue> patchArgs) -> CallPatchpointData;
 
-    PartialResult WARN_UNUSED_RETURN emitInlineDirectCall(uint32_t calleeIndex, const TypeDefinition&, ArgumentList& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN emitInlineDirectCall(FunctionCodeIndex calleeIndex, const TypeDefinition&, ArgumentList& args, ResultList& results);
 
     void dump(const ControlStack&, const Stack* expressionStack);
     void setParser(FunctionParser<OMGIRGenerator>* parser) { m_parser = parser; };
@@ -943,7 +943,7 @@ private:
     OptimizingJITCallee* m_callee;
     const MemoryMode m_mode { MemoryMode::BoundsChecking };
     const CompilationMode m_compilationMode;
-    const unsigned m_functionIndex { UINT_MAX };
+    const FunctionCodeIndex m_functionIndex;
     const unsigned m_loopIndexForOSREntry { UINT_MAX };
 
     Procedure& m_proc;
@@ -1081,7 +1081,7 @@ void OMGIRGenerator::computeStackCheckSize(bool& needsOverflowCheck, int32_t& ch
     needsOverflowCheck = needsOverflowCheck || needUnderflowCheck;
 }
 
-OMGIRGenerator::OMGIRGenerator(OMGIRGenerator& parentCaller, OMGIRGenerator& rootCaller, CalleeGroup& calleeGroup, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, BasicBlock* returnContinuation, Vector<Value*> args)
+OMGIRGenerator::OMGIRGenerator(OMGIRGenerator& parentCaller, OMGIRGenerator& rootCaller, CalleeGroup& calleeGroup, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, BasicBlock* returnContinuation, Vector<Value*> args)
     : m_calleeGroup(calleeGroup)
     , m_info(rootCaller.m_info)
     , m_callee(parentCaller.m_callee)
@@ -1113,7 +1113,7 @@ OMGIRGenerator::OMGIRGenerator(OMGIRGenerator& parentCaller, OMGIRGenerator& roo
         m_hasExceptionHandlers = { true };
 }
 
-OMGIRGenerator::OMGIRGenerator(CalleeGroup& calleeGroup, const ModuleInformation& info, OptimizingJITCallee& callee, Procedure& procedure, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, unsigned& osrEntryScratchBufferSize, MemoryMode mode, CompilationMode compilationMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry)
+OMGIRGenerator::OMGIRGenerator(CalleeGroup& calleeGroup, const ModuleInformation& info, OptimizingJITCallee& callee, Procedure& procedure, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, unsigned& osrEntryScratchBufferSize, MemoryMode mode, CompilationMode compilationMode, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry)
     : m_calleeGroup(calleeGroup)
     , m_info(info)
     , m_callee(&callee)
@@ -4923,7 +4923,7 @@ bool OMGIRGenerator::canInline() const
         && (m_inlineDepth <= 1 || StackCheck().isSafeToRecurse());
 }
 
-auto OMGIRGenerator::emitInlineDirectCall(uint32_t calleeFunctionIndex, const TypeDefinition& calleeSignature, ArgumentList& args, ResultList& resultList) -> PartialResult
+auto OMGIRGenerator::emitInlineDirectCall(FunctionCodeIndex calleeFunctionIndex, const TypeDefinition& calleeSignature, ArgumentList& args, ResultList& resultList) -> PartialResult
 {
     Vector<Value*> getArgs;
 
@@ -4940,8 +4940,7 @@ auto OMGIRGenerator::emitInlineDirectCall(uint32_t calleeFunctionIndex, const Ty
     std::optional<bool> inlineeHasExceptionHandlers;
     {
         Locker locker { m_calleeGroup.m_lock };
-        unsigned calleeFunctionIndexSpace = calleeFunctionIndex + m_numImportFunctions;
-        auto& inlineCallee = m_calleeGroup.wasmEntrypointCalleeFromFunctionIndexSpace(locker, calleeFunctionIndexSpace);
+        auto& inlineCallee = m_calleeGroup.wasmEntrypointCalleeFromFunctionIndexSpace(locker, m_calleeGroup.toSpaceIndex(calleeFunctionIndex));
         inlineeHasExceptionHandlers = inlineCallee.hasExceptionHandlers();
     }
     m_protectedInlineeGenerators.append(makeUnique<OMGIRGenerator>(*this, *m_inlineRoot, m_calleeGroup, calleeFunctionIndex, inlineeHasExceptionHandlers, continuation, WTFMove(getArgs)));
@@ -4990,7 +4989,7 @@ auto OMGIRGenerator::emitInlineDirectCall(uint32_t calleeFunctionIndex, const Ty
     return { };
 }
 
-auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signature, ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
+auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndex, const TypeDefinition& signature, ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
 {
     bool isTailCall = callType == CallType::TailCall;
     ASSERT(callType == CallType::Call || isTailCall);
@@ -5145,7 +5144,8 @@ auto OMGIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
         dataLogLnIf(WasmOMGIRGeneratorInternal::verboseInlining, " inlining call to ", functionIndex - m_numImportFunctions, " from ", m_functionIndex, " depth ", m_inlineDepth);
         m_inlineRoot->m_inlinedBytes += m_info.functionWasmSizeImportSpace(functionIndex);
 
-        return emitInlineDirectCall(functionIndex - m_numImportFunctions, signature, args, results);
+        auto functionCodeIndex = m_info.toCodeIndex(functionIndex);
+        return emitInlineDirectCall(functionCodeIndex, signature, args, results);
     }
 
     // We do not need to store |this| with JS instance since,
@@ -5392,7 +5392,7 @@ static bool shouldDumpIRFor(uint32_t functionIndex)
     return dumpAllowlist->shouldDumpWasmFunction(functionIndex);
 }
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileOMG(CompilationContext& compilationContext, OptimizingJITCallee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, CalleeGroup& calleeGroup, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, uint32_t loopIndexForOSREntry)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileOMG(CompilationContext& compilationContext, OptimizingJITCallee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, CalleeGroup& calleeGroup, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, uint32_t loopIndexForOSREntry)
 {
     CompilerTimingScope totalScope("B3"_s, "Total OMG compilation"_s);
 

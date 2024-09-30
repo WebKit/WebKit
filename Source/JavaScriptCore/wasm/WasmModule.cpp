@@ -53,7 +53,7 @@ Module::Module(IPIntPlan& plan)
 
 Module::~Module() = default;
 
-Wasm::TypeIndex Module::typeIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const
+Wasm::TypeIndex Module::typeIndexFromFunctionIndexSpace(FunctionSpaceIndex functionIndexSpace) const
 {
     return m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace);
 }

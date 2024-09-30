@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,9 +31,9 @@
 #include "HandlerInfo.h"
 #include "InstructionStream.h"
 #include "MacroAssemblerCodeRef.h"
+#include "WasmFormat.h"
 #include "WasmHandlerInfo.h"
 #include "WasmLLIntTierUpCounter.h"
-#include "WasmOps.h"
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -71,12 +71,12 @@ class FunctionCodeBlockGenerator {
     friend class LLIntCallee;
 
 public:
-    FunctionCodeBlockGenerator(uint32_t functionIndex)
+    FunctionCodeBlockGenerator(FunctionCodeIndex functionIndex)
         : m_functionIndex(functionIndex)
     {
     }
 
-    uint32_t functionIndex() const { return m_functionIndex; }
+    FunctionCodeIndex functionIndex() const { return m_functionIndex; }
     unsigned numVars() const { return m_numVars; }
     unsigned numCalleeLocals() const { return m_numCalleeLocals; }
     uint32_t numArguments() const { return m_numArguments; }
@@ -133,7 +133,7 @@ public:
 private:
     using OutOfLineJumpTargets = HashMap<WasmInstructionStream::Offset, int>;
 
-    uint32_t m_functionIndex;
+    FunctionCodeIndex m_functionIndex;
 
     // Used for the number of WebAssembly locals, as in https://webassembly.github.io/spec/core/syntax/modules.html#syntax-local
     unsigned m_numVars { 0 };

@@ -60,7 +60,7 @@ Callee::Callee(Wasm::CompilationMode compilationMode)
 {
 }
 
-Callee::Callee(Wasm::CompilationMode compilationMode, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+Callee::Callee(Wasm::CompilationMode compilationMode, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     : NativeCallee(NativeCallee::Category::Wasm, ImplementationVisibility::Public)
     , m_compilationMode(compilationMode)
     , m_indexOrName(index, WTFMove(name))
@@ -173,7 +173,7 @@ JITCallee::JITCallee(Wasm::CompilationMode compilationMode)
 {
 }
 
-JITCallee::JITCallee(Wasm::CompilationMode compilationMode, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+JITCallee::JITCallee(Wasm::CompilationMode compilationMode, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     : Callee(compilationMode, index, WTFMove(name))
 {
 }
@@ -209,7 +209,7 @@ WasmToJSCallee& WasmToJSCallee::singleton()
     return callee.get().get();
 }
 
-IPIntCallee::IPIntCallee(FunctionIPIntMetadataGenerator& generator, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+IPIntCallee::IPIntCallee(FunctionIPIntMetadataGenerator& generator, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     : Callee(Wasm::CompilationMode::IPIntMode, index, WTFMove(name))
     , m_functionIndex(generator.m_functionIndex)
     , m_signatures(WTFMove(generator.m_signatures))
@@ -285,7 +285,7 @@ RegisterAtOffsetList* IPIntCallee::calleeSaveRegistersImpl()
     return &calleeSaveRegisters.get();
 }
 
-LLIntCallee::LLIntCallee(FunctionCodeBlockGenerator& generator, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+LLIntCallee::LLIntCallee(FunctionCodeBlockGenerator& generator, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     : Callee(Wasm::CompilationMode::LLIntMode, index, WTFMove(name))
     , m_functionIndex(generator.m_functionIndex)
     , m_numVars(generator.m_numVars)

@@ -187,14 +187,15 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObjec
         module().copyInitialCalleeGroupToAllMemoryModes(memoryMode());
 
     for (unsigned importFunctionNum = 0; importFunctionNum < numImportFunctions(); ++importFunctionNum) {
+        auto functionSpaceIndex = FunctionSpaceIndex(importFunctionNum);
         auto* info = importFunctionInfo(importFunctionNum);
         if (!info->targetInstance) {
-            info->importFunctionStub = module().importFunctionStub(importFunctionNum);
-            importCallees.append(adoptRef(*new WasmToJSCallee(importFunctionNum, { nullptr, nullptr })));
+            info->importFunctionStub = module().importFunctionStub(functionSpaceIndex);
+            importCallees.append(adoptRef(*new WasmToJSCallee(functionSpaceIndex, { nullptr, nullptr })));
             info->boxedTargetCalleeLoadLocation = reinterpret_cast<const uintptr_t*>(importCallees.last().ptr());
         }
         else
-            info->importFunctionStub = wasmCalleeGroup->wasmToWasmExitStub(importFunctionNum);
+            info->importFunctionStub = wasmCalleeGroup->wasmToWasmExitStub(functionSpaceIndex);
     }
 
     if (creationMode == CreationMode::FromJS) {
@@ -447,16 +448,15 @@ void JSWebAssemblyInstance::initElementSegment(uint32_t tableIndex, const Elemen
             // We need a story here. We need to create a WebAssemblyFunction
             // for the import.
             // https://bugs.webkit.org/show_bug.cgi?id=165510
-            uint32_t functionIndex = static_cast<uint32_t>(initialBitsOrIndex);
+            auto functionIndex = Wasm::FunctionSpaceIndex(initialBitsOrIndex);
             TypeIndex typeIndex = m_module->typeIndexFromFunctionIndexSpace(functionIndex);
             if (isImportFunction(functionIndex)) {
                 JSObject* functionImport = importFunction(functionIndex).get();
                 if (isWebAssemblyHostFunction(functionImport)) {
-                    WebAssemblyFunction* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(functionImport);
                     // If we ever import a WebAssemblyWrapperFunction, we set the import as the unwrapped value.
                     // Because a WebAssemblyWrapperFunction can never wrap another WebAssemblyWrapperFunction,
                     // the only type this could be is WebAssemblyFunction.
-                    RELEASE_ASSERT(wasmFunction);
+                    WebAssemblyFunction* wasmFunction = jsSecureCast<WebAssemblyFunction*>(functionImport);
                     jsTable->set(dstIndex, wasmFunction);
                     continue;
                 }
@@ -486,7 +486,7 @@ void JSWebAssemblyInstance::initElementSegment(uint32_t tableIndex, const Elemen
                 globalObject,
                 globalObject->webAssemblyFunctionStructure(),
                 signature.argumentCount(),
-                WTF::makeString(functionIndex),
+                WTF::makeString(functionIndex.rawIndex()),
                 this,
                 jsEntrypointCallee,
                 wasmCallee,

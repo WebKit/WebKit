@@ -357,6 +357,16 @@
 #define UNUSED_MEMBER_VARIABLE __attribute__((unused))
 #endif
 
+/* TRIVIAL_ABI */
+
+#if !defined(TRIVIAL_ABI)
+#if COMPILER(CLANG)
+#define TRIVIAL_ABI __attribute__((trivial_abi))
+#else
+#define TRIVIAL_ABI
+#endif
+#endif
+
 /* UNUSED_TYPE_ALIAS */
 
 #if !defined(UNUSED_TYPE_ALIAS)

@@ -658,7 +658,7 @@ static bool shouldTriggerOMGCompile(TierUpCount& tierUp, OMGCallee* replacement,
     return true;
 }
 
-static void triggerOMGReplacementCompile(TierUpCount& tierUp, OMGCallee* replacement, JSWebAssemblyInstance* instance, Wasm::CalleeGroup& calleeGroup, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers)
+static void triggerOMGReplacementCompile(TierUpCount& tierUp, OMGCallee* replacement, JSWebAssemblyInstance* instance, Wasm::CalleeGroup& calleeGroup, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers)
 {
     if (replacement) {
         tierUp.optimizeSoon(functionIndex);
@@ -851,12 +851,13 @@ inline bool shouldOMGJIT(JSWebAssemblyInstance* instance, unsigned functionIndex
     return true;
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (JSWebAssemblyInstance* instance, uint32_t functionIndex))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (JSWebAssemblyInstance* instance, uint32_t functionCodeIndex))
 {
     Wasm::CalleeGroup& calleeGroup = *instance->calleeGroup();
     ASSERT(instance->memory()->mode() == calleeGroup.mode());
 
-    uint32_t functionIndexInSpace = functionIndex + calleeGroup.functionImportCount();
+    FunctionCodeIndex functionIndex = FunctionCodeIndex(functionCodeIndex);
+    FunctionSpaceIndex functionIndexInSpace = calleeGroup.toSpaceIndex(functionIndex);
     ASSERT(calleeGroup.wasmBBQCalleeFromFunctionIndexSpace(functionIndexInSpace).compilationMode() == Wasm::CompilationMode::BBQMode);
     BBQCallee& callee = static_cast<BBQCallee&>(calleeGroup.wasmBBQCalleeFromFunctionIndexSpace(functionIndexInSpace));
     TierUpCount& tierUp = callee.tierUpCounter();
@@ -895,7 +896,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (JSWebAss
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context& context))
 {
     OSREntryData& osrEntryData = *context.arg<OSREntryData*>();
-    uint32_t functionIndex = osrEntryData.functionIndex();
+    auto functionIndex = FunctionCodeIndex(osrEntryData.functionIndex());
     uint32_t loopIndex = osrEntryData.loopIndex();
     JSWebAssemblyInstance* instance = context.gpr<JSWebAssemblyInstance*>(GPRInfo::wasmContextInstancePointer);
 
@@ -921,7 +922,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
     MemoryMode memoryMode = instance->memory()->mode();
     ASSERT(memoryMode == calleeGroup.mode());
 
-    uint32_t functionIndexInSpace = functionIndex + calleeGroup.functionImportCount();
+    FunctionSpaceIndex functionIndexInSpace = calleeGroup.toSpaceIndex(functionIndex);
     ASSERT(calleeGroup.wasmBBQCalleeFromFunctionIndexSpace(functionIndexInSpace).compilationMode() == Wasm::CompilationMode::BBQMode);
     BBQCallee& callee = static_cast<BBQCallee&>(calleeGroup.wasmBBQCalleeFromFunctionIndexSpace(functionIndexInSpace));
     TierUpCount& tierUp = callee.tierUpCounter();
