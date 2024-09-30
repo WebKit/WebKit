@@ -1732,7 +1732,11 @@ bool RenderPipeline::colorDepthStencilTargetsMatch(const WGPURenderPassDescripto
         auto& texture = *depthStencilView.get();
         if (texture.format() != m_descriptor.depthStencil->format)
             return false;
-        if (texture.texture().pixelFormat == MTLPixelFormatX32_Stencil8 && m_descriptor.depthStencil->format == WGPUTextureFormat_Stencil8)
+        auto mtlPixelFormat = texture.texture().pixelFormat;
+        auto descriptorFormat = m_descriptor.depthStencil->format;
+        if (mtlPixelFormat == MTLPixelFormatX32_Stencil8 && descriptorFormat == WGPUTextureFormat_Stencil8)
+            return false;
+        if (mtlPixelFormat == MTLPixelFormatDepth32Float_Stencil8 && (descriptorFormat == WGPUTextureFormat_Depth32Float || descriptorFormat == WGPUTextureFormat_Depth24Plus))
             return false;
         if (texture.sampleCount() != m_descriptor.multisample.count)
             return false;
