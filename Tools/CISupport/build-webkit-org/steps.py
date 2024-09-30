@@ -1788,7 +1788,7 @@ class DisplaySmartPointerResults(buildstep.BuildStep, AddToLogMixin):
         is_log = yield self.getFilesPerProject(unexpected_results_data, 'passes')
         is_log += yield self.getFilesPerProject(unexpected_results_data, 'failures')
         if not is_log:
-            yield self.addToLog('stdio', 'No unexpected results.\n')
+            yield self._addToLog('stdio', 'No unexpected results.\n')
 
         self.addURL("View full static analyzer results", self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/results.html")
         self.addURL("Download full static analyzer results", self.resultDownloadURL())
