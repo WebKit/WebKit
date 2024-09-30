@@ -56,7 +56,7 @@ AcceleratedSurfaceLibWPE::~AcceleratedSurfaceLibWPE()
 
 void AcceleratedSurfaceLibWPE::initialize()
 {
-    m_backend = wpe_renderer_backend_egl_target_create(dupCloseOnExec(m_webPage->hostFileDescriptor()));
+    m_backend = wpe_renderer_backend_egl_target_create(dupCloseOnExec(Ref { m_webPage.get() }->hostFileDescriptor()));
     static struct wpe_renderer_backend_egl_target_client s_client = {
         // frame_complete
         [](void* data)
