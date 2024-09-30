@@ -1,0 +1,124 @@
+'use client'
+
+import { useState } from 'react'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Github, Key, Link, FolderGit2, Check } from 'lucide-react'
+
+const steps = [
+  {
+    title: "Create a personal access token",
+    icon: <Key className="w-6 h-6" />,
+    content: (
+      <>
+        <p>1. Go to GitHub &gt; Settings &gt; Developer Settings &gt; Personal access tokens &gt; Generate new token</p>
+        <p>2. Give the token a name, like "XCode"</p>
+        <p>3. Select the required scopes</p>
+        <p>4. Save the token in a safe place</p>
+      </>
+    )
+  },
+  {
+    title: "Link your GitHub account to Xcode",
+    icon: <Link className="w-6 h-6" />,
+    content: (
+      <>
+        <p>1. Open Xcode, go to Preferences or Settings</p>
+        <p>2. Navigate to Accounts → + → GitHub</p>
+        <p>3. Paste in the token you created</p>
+        <p>4. Use your email or username to access your repositories</p>
+      </>
+    )
+  },
+  {
+    title: "Configure your project to use source control",
+    icon: <Github className="w-6 h-6" />,
+    content: (
+      <>
+        <p>1. Go to Xcode &gt; Preferences &gt; Accounts</p>
+        <p>2. Click Add, select GitHub, and click Continue</p>
+        <p>3. If you don't have a token, you can create one at this step</p>
+      </>
+    )
+  },
+  {
+    title: "Clone a remote repository",
+    icon: <FolderGit2 className="w-6 h-6" />,
+    content: (
+      <>
+        <p>1. Select Source Control &gt; Clone</p>
+        <p>2. Choose a branch</p>
+        <p>3. Specify a location to save the project</p>
+      </>
+    )
+  }
+]
+
+export default function XcodeGitHubSetup() {
+  const [currentStep, setCurrentStep] = useState(0)
+
+  const nextStep = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1)
+    }
+  }
+
+  const prevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1)
+    }
+  }
+
+  return (
+    <Card className="w-full max-w-2xl mx-auto">
+      <CardHeader>
+        <CardTitle className="text-2xl flex items-center gap-2">
+          <Github className="w-6 h-6" />
+          Configure Xcode to use GitHub
+        </CardTitle>
+        <CardDescription>Follow these steps to set up GitHub integration with Xcode</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="mb-6">
+          <div className="flex justify-between items-center mb-2">
+            {steps.map((step, index) => (
+              <div
+                key={index}
+                className={`flex flex-col items-center ${
+                  index <= currentStep ? 'text-blue-500' : 'text-gray-300'
+                }`}
+              >
+                <div className="w-10 h-10 rounded-full border-2 flex items-center justify-center mb-1">
+                  {index < currentStep ? (
+                    <Check className="w-6 h-6" />
+                  ) : (
+                    step.icon
+                  )}
+                </div>
+                <div className="text-xs text-center w-20">{step.title}</div>
+              </div>
+            ))}
+          </div>
+          <div className="h-2 bg-gray-200 rounded-full">
+            <div
+              className="h-full bg-blue-500 rounded-full transition-all duration-300 ease-in-out"
+              style={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
+            ></div>
+          </div>
+        </div>
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-2">{steps[currentStep].title}</h3>
+          <div className="space-y-2">{steps[currentStep].content}</div>
+        </div>
+        <div className="flex justify-between">
+          <Button onClick={prevStep} disabled={currentStep === 0} variant="outline">
+            Previous
+          </Button>
+          <Button onClick={nextStep} disabled={currentStep === steps.length - 1}>
+            {currentStep === steps.length - 1 ? 'Finish' : 'Next'}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
