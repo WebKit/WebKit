@@ -283,7 +283,7 @@ void PushDatabase::create(const String& path, CreationHandler&& completionHandle
                 return;
             }
 
-            completionHandler(std::unique_ptr<PushDatabase>(new PushDatabase(WTFMove(queue), makeUniqueRefFromNonNullUniquePtr(WTFMove(database)))));
+            completionHandler(adoptRef(*new PushDatabase(WTFMove(queue), makeUniqueRefFromNonNullUniquePtr(WTFMove(database)))));
         });
     });
 }

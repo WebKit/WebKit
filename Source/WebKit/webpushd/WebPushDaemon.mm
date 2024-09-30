@@ -237,7 +237,7 @@ WebClipCache& WebPushDaemon::ensureWebClipCache()
 
 #endif
 
-void WebPushDaemon::setPushService(std::unique_ptr<PushService>&& pushService)
+void WebPushDaemon::setPushService(RefPtr<PushService>&& pushService)
 {
     m_pushService = WTFMove(pushService);
     m_pushServiceStarted = true;
