@@ -29,6 +29,7 @@
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA)
 #include "CoordinatedGraphicsLayer.h"
 #include "DisplayListRecorderImpl.h"
+#include "GraphicsContextSkia.h"
 #include "TiledBackingStore.h"
 #include <wtf/NumberOfCores.h>
 #include <wtf/SystemTracing.h>
