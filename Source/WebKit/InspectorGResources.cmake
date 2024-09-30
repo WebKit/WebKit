@@ -13,4 +13,9 @@ macro(WEBKIT_BUILD_INSPECTOR_GRESOURCES _derived_sources_dir _output_file)
         SOURCE_XML    ${_derived_sources_dir}/InspectorGResourceBundle.xml
         RESOURCE_DIRS ${_derived_sources_dir}/InspectorResources/WebInspectorUI
     )
+
+    add_custom_target(${_output_file}
+        ALL
+        DEPENDS ${_derived_sources_dir}/${_output_file}
+    )
 endmacro()
