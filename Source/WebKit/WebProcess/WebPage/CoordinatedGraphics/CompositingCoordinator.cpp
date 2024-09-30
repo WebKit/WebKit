@@ -160,7 +160,9 @@ void CompositingCoordinator::sizeDidChange(const IntSize& newSize)
 
 bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderingUpdateFlags> flags)
 {
+#if PLATFORM(GTK) || PLATFORM(WPE)
     TraceScope traceScope(FlushPendingLayerChangesStart, FlushPendingLayerChangesEnd);
+#endif
     SetForScope protector(m_isFlushingLayerChanges, true);
 
     bool shouldSyncFrame = initializeRootCompositingLayerIfNeeded();
