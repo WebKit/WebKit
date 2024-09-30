@@ -52,6 +52,7 @@ class GraphicsContext;
 class GraphicsLayer;
 class Image;
 class NativeImage;
+class SkiaThreadedPaintingPool;
 }
 
 namespace WebKit {
@@ -100,7 +101,7 @@ private:
     Nicosia::PaintingEngine& paintingEngine() override;
 #elif USE(SKIA)
     WebCore::BitmapTexturePool* skiaAcceleratedBitmapTexturePool() const override { return m_skiaAcceleratedBitmapTexturePool.get(); }
-    WorkerPool* skiaUnacceleratedThreadedRenderingPool() const override { return m_skiaUnacceleratedThreadedRenderingPool.get(); }
+    WebCore::SkiaThreadedPaintingPool* skiaThreadedPaintingPool() const override { return m_skiaThreadedPaintingPool.get(); }
 #endif
     Ref<WebCore::CoordinatedImageBackingStore> imageBackingStore(Ref<WebCore::NativeImage>&&) override;
 
@@ -135,7 +136,7 @@ private:
     std::unique_ptr<Nicosia::PaintingEngine> m_paintingEngine;
 #elif USE(SKIA)
     std::unique_ptr<WebCore::BitmapTexturePool> m_skiaAcceleratedBitmapTexturePool;
-    RefPtr<WorkerPool> m_skiaUnacceleratedThreadedRenderingPool;
+    std::unique_ptr<WebCore::SkiaThreadedPaintingPool> m_skiaThreadedPaintingPool;
 #endif
     HashMap<uint64_t, Ref<WebCore::CoordinatedImageBackingStore>> m_imageBackingStores;
 

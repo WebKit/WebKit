@@ -27,10 +27,11 @@
 
 namespace WebCore {
 
-Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& tileRect, const IntRect& mappedTileRect, float contentsScale)
+Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const TiledBackingStore& tiledBackingStore, const IntRect& dirtyRect)
 {
-    auto buffer = Nicosia::UnacceleratedBuffer::create(tileRect.size(), contentsOpaque() ? Nicosia::Buffer::NoFlags : Nicosia::Buffer::SupportsAlpha);
-    m_coordinator->paintingEngine().paint(*this, buffer.get(), tileRect, mappedTileRect, IntRect { { 0, 0 }, tileRect.size() }, contentsScale);
+    auto mappedDirtyRect = tiledBackingStore.mapToContents(dirtyRect);
+    auto buffer = Nicosia::UnacceleratedBuffer::create(dirtyRect.size(), contentsOpaque() ? Nicosia::Buffer::NoFlags : Nicosia::Buffer::SupportsAlpha);
+    m_coordinator->paintingEngine().paint(*this, buffer.get(), dirtyRect, mappedDirtyRect, IntRect { { 0, 0 }, dirtyRect.size() }, tiledBackingStore.contentsScale());
     return buffer;
 }
 

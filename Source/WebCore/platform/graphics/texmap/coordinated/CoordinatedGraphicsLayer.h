@@ -42,6 +42,7 @@
 namespace WebCore {
 class BitmapTexture;
 class BitmapTexturePool;
+class SkiaThreadedPaintingPool;
 }
 #endif
 
@@ -66,7 +67,7 @@ public:
     virtual Nicosia::PaintingEngine& paintingEngine() = 0;
 #elif USE(SKIA)
     virtual BitmapTexturePool* skiaAcceleratedBitmapTexturePool() const = 0;
-    virtual WorkerPool* skiaUnacceleratedThreadedRenderingPool() const = 0;
+    virtual SkiaThreadedPaintingPool* skiaThreadedPaintingPool() const = 0;
 #endif
 
     virtual Ref<CoordinatedImageBackingStore> imageBackingStore(Ref<NativeImage>&&) = 0;
@@ -185,6 +186,8 @@ public:
 
     Vector<std::pair<String, double>> acceleratedAnimationsForTesting(const Settings&) const final;
 
+    void paintIntoGraphicsContext(GraphicsContext&, const TiledBackingStore&, const IntRect& dirtyRect) const;
+
 private:
     enum class FlushNotification {
         Required,
@@ -209,7 +212,7 @@ private:
     bool checkPendingStateChanges();
     bool checkContentLayerUpdated();
 
-    Ref<Nicosia::Buffer> paintTile(const IntRect&, const IntRect& mappedTileRect, float contentsScale);
+    Ref<Nicosia::Buffer> paintTile(const TiledBackingStore&, const IntRect& dirtyRect);
 
     void notifyFlushRequired();
 
