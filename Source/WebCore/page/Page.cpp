@@ -4349,7 +4349,7 @@ void Page::configureLoggingChannel(const String& channelName, WTFLogChannelState
 
 #if USE(LIBWEBRTC)
         RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
-        if (channel == &LogWebRTC && localMainFrame && localMainFrame->document() && !sessionID().isEphemeral())
+        if (channel == &LogWebRTC && localMainFrame && localMainFrame->document() && !sessionID().isEphemeral() && (m_settings->webCodecsVideoEnabled() || m_settings->peerConnectionEnabled()))
             webRTCProvider().setLoggingLevel(LogWebRTC.level);
 #endif
     }

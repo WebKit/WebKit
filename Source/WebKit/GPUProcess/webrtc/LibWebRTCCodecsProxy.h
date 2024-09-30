@@ -29,6 +29,7 @@
 
 #include "Connection.h"
 #include "RemoteVideoFrameIdentifier.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "SharedVideoFrame.h"
 #include "VideoDecoderIdentifier.h"
 #include "VideoEncoderIdentifier.h"
@@ -67,14 +68,14 @@ class SharedVideoFrameReader;
 class LibWebRTCCodecsProxy final : public IPC::WorkQueueMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCCodecsProxy);
 public:
-    static Ref<LibWebRTCCodecsProxy> create(GPUConnectionToWebProcess&);
+    static Ref<LibWebRTCCodecsProxy> create(GPUConnectionToWebProcess&, SharedPreferencesForWebProcess&);
     ~LibWebRTCCodecsProxy();
     void stopListeningForIPC(Ref<LibWebRTCCodecsProxy>&& refFromConnection);
     bool allowsExitUnderMemoryPressure() const;
-
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
+    void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess);
 private:
-private:
-    explicit LibWebRTCCodecsProxy(GPUConnectionToWebProcess&);
+    explicit LibWebRTCCodecsProxy(GPUConnectionToWebProcess&, SharedPreferencesForWebProcess&);
     void initialize();
     auto createDecoderCallback(VideoDecoderIdentifier, bool useRemoteFrames, bool enableAdditionalLogging);
     std::unique_ptr<WebCore::WebRTCVideoDecoder> createLocalDecoder(VideoDecoderIdentifier, WebCore::VideoCodecType, bool useRemoteFrames, bool enableAdditionalLogging);
@@ -122,6 +123,7 @@ private:
     Ref<WorkQueue> m_queue;
     Ref<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
     WebCore::ProcessIdentity m_resourceOwner;
+    SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
     HashMap<VideoDecoderIdentifier, Decoder> m_decoders WTF_GUARDED_BY_CAPABILITY(workQueue());
     HashMap<VideoEncoderIdentifier, Encoder> m_encoders WTF_GUARDED_BY_CAPABILITY(workQueue());
     std::atomic<bool> m_hasEncodersOrDecoders { false };

@@ -5491,6 +5491,7 @@ PeerConnectionEnabled:
     WebCore:
       default: true
   disableInLockdownMode: true
+  sharedPreferenceForWebProcess: true
 
 PeerConnectionVideoScalingAdaptationDisabled:
   type: bool
@@ -8143,6 +8144,7 @@ WebCodecsVideoEnabled:
       "USE(GSTREAMER)": true
       default: false
   disableInLockdownMode: true
+  sharedPreferenceForWebProcess: true
 
 WebCryptoSafeCurvesEnabled:
   type: bool

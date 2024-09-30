@@ -64,19 +64,23 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCCodecsProxy);
 
-Ref<LibWebRTCCodecsProxy> LibWebRTCCodecsProxy::create(GPUConnectionToWebProcess& webProcessConnection)
+Ref<LibWebRTCCodecsProxy> LibWebRTCCodecsProxy::create(GPUConnectionToWebProcess& webProcessConnection, SharedPreferencesForWebProcess& sharedPreferencesForWebProcess)
 {
-    auto instance = adoptRef(*new LibWebRTCCodecsProxy(webProcessConnection));
+    auto instance = adoptRef(*new LibWebRTCCodecsProxy(webProcessConnection, sharedPreferencesForWebProcess));
     instance->initialize();
     return instance;
 }
 
-LibWebRTCCodecsProxy::LibWebRTCCodecsProxy(GPUConnectionToWebProcess& webProcessConnection)
+LibWebRTCCodecsProxy::LibWebRTCCodecsProxy(GPUConnectionToWebProcess& webProcessConnection, SharedPreferencesForWebProcess& sharedPreferencesForWebProcess)
     : m_connection(webProcessConnection.connection())
     , m_queue(webProcessConnection.gpuProcess().libWebRTCCodecsQueue())
     , m_videoFrameObjectHeap(webProcessConnection.videoFrameObjectHeap())
     , m_resourceOwner(webProcessConnection.webProcessIdentity())
+    , m_sharedPreferencesForWebProcess(sharedPreferencesForWebProcess)
 {
+    m_queue->dispatch([this, sharedPreferencesForWebProcess] {
+        m_sharedPreferencesForWebProcess = sharedPreferencesForWebProcess;
+    });
 }
 
 LibWebRTCCodecsProxy::~LibWebRTCCodecsProxy() = default;
@@ -545,6 +549,13 @@ bool LibWebRTCCodecsProxy::allowsExitUnderMemoryPressure() const
 void LibWebRTCCodecsProxy::setRTCLoggingLevel(WTFLogLevel level)
 {
     WebCore::LibWebRTCProvider::setRTCLogging(level);
+}
+
+void LibWebRTCCodecsProxy::updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess sharedPreferencesForWebProcess)
+{
+    m_queue->dispatch([this, sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess)] {
+        m_sharedPreferencesForWebProcess = sharedPreferencesForWebProcess;
+    });
 }
 
 }

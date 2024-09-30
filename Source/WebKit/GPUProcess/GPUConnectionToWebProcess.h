@@ -140,7 +140,7 @@ public:
     virtual ~GPUConnectionToWebProcess();
 
     const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
-    void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess) { m_sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess); }
+    void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&&);
 
 #if ENABLE(WEBXR)
     bool isWebXREnabled() const { return sharedPreferencesForWebProcess().webXREnabled; }

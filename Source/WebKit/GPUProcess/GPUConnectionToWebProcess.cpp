@@ -303,7 +303,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     , m_videoFrameObjectHeap(RemoteVideoFrameObjectHeap::create(m_connection.get()))
 #endif
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
-    , m_libWebRTCCodecsProxy(LibWebRTCCodecsProxy::create(*this))
+    , m_libWebRTCCodecsProxy(LibWebRTCCodecsProxy::create(*this, parameters.sharedPreferencesForWebProcess))
 #endif
 #if HAVE(AUDIT_TOKEN)
     , m_presentingApplicationAuditToken(parameters.presentingApplicationAuditToken ? std::optional(parameters.presentingApplicationAuditToken->auditToken()) : std::nullopt)
@@ -1249,6 +1249,14 @@ void GPUConnectionToWebProcess::updateSampleBufferDisplayLayerBoundsAndPosition(
     protectedSampleBufferDisplayLayerManager()->updateSampleBufferDisplayLayerBoundsAndPosition(identifier, bounds, WTFMove(fence));
 }
 #endif
+
+void GPUConnectionToWebProcess::updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess)
+{
+    m_sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess);
+#if PLATFORM(COCOA) && USE(LIBWEBRTC)
+    m_libWebRTCCodecsProxy->updateSharedPreferencesForWebProcess(m_sharedPreferencesForWebProcess);
+#endif
+}
 
 } // namespace WebKit
 
