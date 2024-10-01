@@ -65,7 +65,7 @@ RemoteMediaRecorder::RemoteMediaRecorder(GPUConnectionToWebProcess& gpuConnectio
 
 RemoteMediaRecorder::~RemoteMediaRecorder()
 {
-    m_writer->close();
+    protectedWriter()->close();
 }
 
 RefPtr<IPC::Connection> RemoteMediaRecorder::connection() const
@@ -96,37 +96,37 @@ void RemoteMediaRecorder::audioSamplesAvailable(MediaTime time, uint64_t numberO
     m_audioBufferList->setSampleCount(numberOfFrames);
     m_ringBuffer->fetch(m_audioBufferList->list(), numberOfFrames, time.timeValue());
 
-    m_writer->appendAudioSampleBuffer(*m_audioBufferList, *m_description, time, numberOfFrames);
+    protectedWriter()->appendAudioSampleBuffer(*m_audioBufferList, *m_description, time, numberOfFrames);
 }
 
 void RemoteMediaRecorder::videoFrameAvailable(SharedVideoFrame&& sharedVideoFrame)
 {
     if (auto frame = m_sharedVideoFrameReader.read(WTFMove(sharedVideoFrame)))
-        m_writer->appendVideoFrame(*frame);
+        protectedWriter()->appendVideoFrame(*frame);
 }
 
 void RemoteMediaRecorder::fetchData(CompletionHandler<void(std::span<const uint8_t>, double)>&& completionHandler)
 {
-    m_writer->fetchData([completionHandler = WTFMove(completionHandler)](auto&& data, auto timeCode) mutable {
+    protectedWriter()->fetchData([completionHandler = WTFMove(completionHandler)](auto&& data, auto timeCode) mutable {
         completionHandler(data ? data->makeContiguous()->span() : std::span<const uint8_t> { }, timeCode);
     });
 }
 
 void RemoteMediaRecorder::stopRecording(CompletionHandler<void()>&& completionHandler)
 {
-    m_writer->stopRecording();
+    protectedWriter()->stopRecording();
     completionHandler();
 }
 
 void RemoteMediaRecorder::pause(CompletionHandler<void()>&& completionHandler)
 {
-    m_writer->pause();
+    protectedWriter()->pause();
     completionHandler();
 }
 
 void RemoteMediaRecorder::resume(CompletionHandler<void()>&& completionHandler)
 {
-    m_writer->resume();
+    protectedWriter()->resume();
     completionHandler();
 }
 

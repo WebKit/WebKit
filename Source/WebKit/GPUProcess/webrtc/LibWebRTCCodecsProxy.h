@@ -82,6 +82,8 @@ private:
     WorkQueue& workQueue() const { return m_queue; }
     Ref<WorkQueue> protectedWorkQueue() const { return m_queue; }
 
+    Ref<IPC::Connection> protectedConnection() const { return m_connection; }
+
     // IPC::WorkQueueMessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
