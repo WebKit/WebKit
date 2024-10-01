@@ -28,8 +28,13 @@
     window.internals.settings.setVisualViewportEnabled(false);
     window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
   }
+  if (window.testRunner)
+    window.testRunner.waitUntilDone();
   async function runTest() {
-    await window.testRunner.setPageScaleFactor(0.5, 0, 0);
+    if (window.testRunner) {
+      await window.testRunner.setPageScaleFactor(0.5, 0, 0);
+      window.testRunner.notifyDone();
+    }
   }
 </script>
 </head>

@@ -7426,9 +7426,6 @@ imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.
 # webkit.org/b/278333 [ iOS ] media/remove-video-best-media-element-in-main-frame-crash.html is a flaky timeout
 media/remove-video-best-media-element-in-main-frame-crash.html [ Pass Timeout ]
 
-# webkit.org/b/278340 [ iOS ] compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html is a flaky image failure
-compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ Pass ImageOnlyFailure ]
-
 # webkit.org/b/278343 [ iOS iPhone Debug ] editing/inserting/insert-composition-whitespace.html is a constant crash
 [ Debug ] editing/inserting/insert-composition-whitespace.html [ Crash ]
 
