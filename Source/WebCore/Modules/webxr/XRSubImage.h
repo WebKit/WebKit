@@ -36,7 +36,7 @@ class WebXRViewport;
 // https://immersive-web.github.io/layers/#xrsubimagetype
 class XRSubImage : public RefCounted<XRSubImage> {
 public:
-    virtual const WebXRViewport& viewport() const = 0;
+    virtual const WebXRViewport& viewport() const { RELEASE_ASSERT_NOT_REACHED(); }
     virtual ~XRSubImage() = default;
 };
 
