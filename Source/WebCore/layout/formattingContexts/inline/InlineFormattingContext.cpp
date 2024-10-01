@@ -292,6 +292,7 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
     auto lineLogicalTop = InlineLayoutUnit { constraints.logicalTop() };
     auto previousLineEnd = std::optional<InlineItemPosition> { };
     auto leadingInlineItemPosition = needsLayoutRange.start;
+    auto partialLayoutStartIndex = previousLine ? std::make_optional(previousLine->lineIndex) : std::nullopt;
     size_t numberOfLinesWithInlineContent = 0;
     while (true) {
 
@@ -320,8 +321,9 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
 
         auto lineHasInlineContent = !lineLayoutResult.inlineContent.isEmpty();
         numberOfLinesWithInlineContent += lineHasInlineContent ? 1 : 0;
-        if (formattingUtils().shouldDiscardRemainingContentInBlockDirection(numberOfLinesWithInlineContent)) {
+        if (formattingUtils().shouldDiscardRemainingContentInBlockDirection(partialLayoutStartIndex.value_or(0) + numberOfLinesWithInlineContent)) {
             resetBoxGeometriesForDiscardedContent({ leadingInlineItemPosition, needsLayoutRange.end }, lineLayoutResult.floatContent.suspendedFloats);
+            layoutResult.range = !isPartialLayout ? InlineLayoutResult::Range::Full : InlineLayoutResult::Range::FullFromDamage;
             break;
         }
 
