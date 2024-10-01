@@ -51,6 +51,8 @@ private:
     friend class RemoteLegacyCDMFactoryProxy;
     RemoteLegacyCDMProxy(WeakPtr<RemoteLegacyCDMFactoryProxy>&&, WebCore::MediaPlayerIdentifier&&, std::unique_ptr<WebCore::LegacyCDM>&&);
 
+    RefPtr<RemoteLegacyCDMFactoryProxy> protectedFactory() const { return m_factory.get(); }
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;

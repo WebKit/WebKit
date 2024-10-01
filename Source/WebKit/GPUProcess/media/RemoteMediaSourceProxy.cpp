@@ -68,8 +68,8 @@ void RemoteMediaSourceProxy::setMediaPlayers(RemoteMediaPlayerProxy& remoteMedia
     m_remoteMediaPlayerProxy = remoteMediaPlayerProxy;
     for (auto& sourceBuffer : m_sourceBuffers)
         sourceBuffer->setMediaPlayer(remoteMediaPlayerProxy);
-    if (m_private)
-        m_private->setPlayer(mediaPlayerPrivate);
+    if (RefPtr protectedPrivate = m_private)
+        protectedPrivate->setPlayer(mediaPlayerPrivate);
 }
 
 void RemoteMediaSourceProxy::disconnect()
@@ -128,7 +128,7 @@ void RemoteMediaSourceProxy::addSourceBuffer(const WebCore::ContentType& content
         return;
 
     RefPtr<SourceBufferPrivate> sourceBufferPrivate;
-    MediaSourcePrivate::AddStatus status = m_private->addSourceBuffer(contentType, m_webMParserEnabled, sourceBufferPrivate);
+    MediaSourcePrivate::AddStatus status = mediaSourcePrivate()->addSourceBuffer(contentType, m_webMParserEnabled, sourceBufferPrivate);
 
     std::optional<RemoteSourceBufferIdentifier> remoteSourceIdentifier;
     if (status == MediaSourcePrivate::AddStatus::Ok) {
@@ -144,39 +144,39 @@ void RemoteMediaSourceProxy::addSourceBuffer(const WebCore::ContentType& content
 
 void RemoteMediaSourceProxy::durationChanged(const MediaTime& duration)
 {
-    if (m_private)
-        m_private->durationChanged(duration);
+    if (RefPtr protectedPrivate = m_private)
+        protectedPrivate->durationChanged(duration);
 }
 
 void RemoteMediaSourceProxy::bufferedChanged(WebCore::PlatformTimeRanges&& buffered)
 {
-    if (m_private)
-        m_private->bufferedChanged(WTFMove(buffered));
+    if (RefPtr protectedPrivate = m_private)
+        protectedPrivate->bufferedChanged(WTFMove(buffered));
 }
 
 void RemoteMediaSourceProxy::markEndOfStream(WebCore::MediaSourcePrivate::EndOfStreamStatus status )
 {
-    if (m_private)
-        m_private->markEndOfStream(status);
+    if (RefPtr protectedPrivate = m_private)
+        protectedPrivate->markEndOfStream(status);
 }
 
 void RemoteMediaSourceProxy::unmarkEndOfStream()
 {
-    if (m_private)
-        m_private->unmarkEndOfStream();
+    if (RefPtr protectedPrivate = m_private)
+        protectedPrivate->unmarkEndOfStream();
 }
 
 
 void RemoteMediaSourceProxy::setMediaPlayerReadyState(WebCore::MediaPlayerEnums::ReadyState readyState)
 {
-    if (m_private)
-        m_private->setMediaPlayerReadyState(readyState);
+    if (RefPtr protectedPrivate = m_private)
+        protectedPrivate->setMediaPlayerReadyState(readyState);
 }
 
 void RemoteMediaSourceProxy::setTimeFudgeFactor(const MediaTime& fudgeFactor)
 {
-    if (m_private)
-        m_private->setTimeFudgeFactor(fudgeFactor);
+    if (RefPtr protectedPrivate = m_private)
+        protectedPrivate->setTimeFudgeFactor(fudgeFactor);
 }
 
 void RemoteMediaSourceProxy::attached()
@@ -189,7 +189,7 @@ void RemoteMediaSourceProxy::shutdown()
 
     disconnect();
 
-    if (auto* manager = m_manager.get())
+    if (RefPtr manager = m_manager.get())
         manager->invalidateMediaSource(m_identifier);
 }
 
@@ -197,7 +197,7 @@ RefPtr<GPUConnectionToWebProcess> RemoteMediaSourceProxy::connectionToWebProcess
 {
     ASSERT(RunLoop::isMain());
 
-    auto* manager = m_manager.get();
+    RefPtr manager = m_manager.get();
     return manager ? manager->gpuConnectionToWebProcess() : nullptr;
 }
 

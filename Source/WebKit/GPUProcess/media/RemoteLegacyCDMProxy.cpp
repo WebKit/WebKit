@@ -97,7 +97,7 @@ RefPtr<MediaPlayer> RemoteLegacyCDMProxy::cdmMediaPlayer(const LegacyCDM*) const
 
 const SharedPreferencesForWebProcess& RemoteLegacyCDMProxy::sharedPreferencesForWebProcess() const
 {
-    return m_factory->sharedPreferencesForWebProcess();
+    return protectedFactory()->sharedPreferencesForWebProcess();
 }
 
 }
