@@ -61,8 +61,8 @@ AuxiliaryProcess::AuxiliaryProcess()
 
 AuxiliaryProcess::~AuxiliaryProcess()
 {
-    if (m_connection)
-        m_connection->invalidate();
+    if (RefPtr connection = m_connection)
+        connection->invalidate();
 }
 
 void AuxiliaryProcess::didClose(IPC::Connection&)
@@ -105,9 +105,10 @@ void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters
     ContentWorldIdentifier::enableGenerationProtection();
     WebPageProxyIdentifier::enableGenerationProtection();
 
-    m_connection = IPC::Connection::createClientConnection(parameters.connectionIdentifier);
-    initializeConnection(m_connection.get());
-    m_connection->open(*this);
+    Ref connection = IPC::Connection::createClientConnection(parameters.connectionIdentifier);
+    m_connection = connection.ptr();
+    initializeConnection(connection.ptr());
+    connection->open(*this);
 }
 
 void AuxiliaryProcess::setProcessSuppressionEnabled(bool enabled)
@@ -220,7 +221,7 @@ void AuxiliaryProcess::platformStopRunLoop()
 
 void AuxiliaryProcess::terminate()
 {
-    m_connection->invalidate();
+    protectedParentProcessConnection()->invalidate();
 
     stopRunLoop();
 }

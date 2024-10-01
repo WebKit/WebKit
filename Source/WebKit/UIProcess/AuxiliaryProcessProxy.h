@@ -349,12 +349,13 @@ AuxiliaryProcessProxy::SendSyncResult<T> AuxiliaryProcessProxy::sendSync(T&& mes
 {
     static_assert(T::isSync, "Sync message expected");
 
-    if (!m_connection)
+    RefPtr connection = m_connection;
+    if (!connection)
         return { IPC::Error::InvalidConnection };
 
     TraceScope scope(SyncMessageStart, SyncMessageEnd);
 
-    return connection().sendSync(std::forward<T>(message), destinationID, timeout, sendSyncOptions);
+    return connection->sendSync(std::forward<T>(message), destinationID, timeout, sendSyncOptions);
 }
 
 template<typename T, typename C>

@@ -86,7 +86,7 @@ AuxiliaryProcessProxy::AuxiliaryProcessProxy(ShouldTakeUIBackgroundAssertion sho
 
 AuxiliaryProcessProxy::~AuxiliaryProcessProxy()
 {
-    throttler().didDisconnectFromProcess();
+    protectedThrottler()->didDisconnectFromProcess();
 
     if (RefPtr connection = m_connection)
         connection->invalidate();
@@ -251,7 +251,7 @@ bool AuxiliaryProcessProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, Optio
 
     if (asyncReplyHandler && canSendMessage() && shouldStartProcessThrottlerActivity == ShouldStartProcessThrottlerActivity::Yes) {
         auto completionHandler = WTFMove(asyncReplyHandler->completionHandler);
-        asyncReplyHandler->completionHandler = [activity = throttler().quietBackgroundActivity(description(encoder->messageName())), completionHandler = WTFMove(completionHandler)](IPC::Decoder* decoder) mutable {
+        asyncReplyHandler->completionHandler = [activity = protectedThrottler()->quietBackgroundActivity(description(encoder->messageName())), completionHandler = WTFMove(completionHandler)](IPC::Decoder* decoder) mutable {
             completionHandler(decoder);
         };
     }
@@ -277,7 +277,7 @@ bool AuxiliaryProcessProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, Optio
     }
 
     if (asyncReplyHandler && asyncReplyHandler->completionHandler) {
-        RunLoop::current().dispatch([completionHandler = WTFMove(asyncReplyHandler->completionHandler)]() mutable {
+        RunLoop::protectedCurrent()->dispatch([completionHandler = WTFMove(asyncReplyHandler->completionHandler)]() mutable {
             completionHandler(nullptr);
         });
     }
@@ -397,7 +397,7 @@ void AuxiliaryProcessProxy::replyToPendingMessages()
 void AuxiliaryProcessProxy::shutDownProcess()
 {
     auto scopeExit = WTF::makeScopeExit([&] {
-        throttler().didDisconnectFromProcess();
+        protectedThrottler()->didDisconnectFromProcess();
     });
 
     switch (state()) {
@@ -516,7 +516,7 @@ void AuxiliaryProcessProxy::checkForResponsiveness(CompletionHandler<void()>&& r
     sendWithAsyncReply(Messages::AuxiliaryProcess::MainThreadPing(), [weakThis = WeakPtr { *this }, responsivenessHandler = WTFMove(responsivenessHandler)]() mutable {
         // Schedule an asynchronous task because our completion handler may have been called as a result of the AuxiliaryProcessProxy
         // being in the middle of destruction.
-        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), responsivenessHandler = WTFMove(responsivenessHandler)]() mutable {
+        RunLoop::protectedMain()->dispatch([weakThis = WTFMove(weakThis), responsivenessHandler = WTFMove(responsivenessHandler)]() mutable {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->stopResponsivenessTimer();
 
@@ -602,7 +602,7 @@ void AuxiliaryProcessProxy::didChangeThrottleState(ProcessThrottleState state)
 AuxiliaryProcessProxy::InitializationActivityAndGrant AuxiliaryProcessProxy::initializationActivityAndGrant()
 {
     return {
-        throttler().foregroundActivity("Process initialization"_s)
+        protectedThrottler()->foregroundActivity("Process initialization"_s)
 #if USE(EXTENSIONKIT)
         , launchGrant()
 #endif
