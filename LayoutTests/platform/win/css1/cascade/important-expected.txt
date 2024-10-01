@@ -34,18 +34,18 @@ layer at (0,0) size 800x600
           text run at (0,0) width 604: "This sentence should also be green, even though it has a STYLE attribute declaring it to be red. "
           text run at (604,0) width 175: "This is because declarations"
           text run at (0,18) width 566: "marked important have more weight than normal declarations given in a STYLE attribute."
-      RenderTable {TABLE} at (0,281) size 784x176 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,281) size 784x176 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x174
           RenderTableRow {TR} at (0,0) size 782x26
-            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 160x17
                 RenderText {#text} at (4,4) size 160x17
                   text run at (4,4) width 160: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x148
-            RenderTableCell {TD} at (0,87) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,87) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 770x148 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 770x148 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x36 [color=#008000]
                 RenderText {#text} at (0,0) size 745x35
                   text run at (0,0) width 745: "This sentence should be green, because the declaration marked important should override any other normal declaration"

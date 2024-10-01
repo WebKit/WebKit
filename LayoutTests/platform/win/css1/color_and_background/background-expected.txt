@@ -45,18 +45,18 @@ layer at (0,0) size 785x721
           text run at (0,18) width 762: "Therefore, extra text would be in order, so that we can intelligently evaluate the performance of your browser in handling"
           text run at (0,36) width 119: "these declarations. "
           text run at (119,36) width 306: "Hey, I didn't say the page would be pretty, did I?"
-      RenderTable {TABLE} at (0,405) size 769x300 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,405) size 769x300 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x298
           RenderTableRow {TR} at (0,0) size 767x26
-            RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 160x17
                 RenderText {#text} at (4,4) size 160x17
                   text run at (4,4) width 160: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x272
-            RenderTableCell {TD} at (0,149) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,149) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 755x272 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 755x272 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x54
                 RenderText {#text} at (0,0) size 728x17
                   text run at (0,0) width 728: "This document should have a green background with an orange strip running across the entire top of the page, since"

@@ -29,9 +29,9 @@ layer at (0,0) size 800x600
                         text run at (3,23) width 130: "build your company a"
                         text run at (3,43) width 139: "custom WidgetMaster!"
             RenderTableCell {TD} at (453,64) size 170x24 [r=1 c=2 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 24x24 [border: (1px outset #808080)]
+              RenderTable {TABLE} at (0,0) size 24x24 [border: (1px outset #000000)]
                 RenderTableSection {TBODY} at (1,1) size 22x22
                   RenderTableRow {TR} at (0,0) size 22x22
-                    RenderTableCell {TD} at (0,0) size 22x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (0,0) size 22x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 20x19
                         text run at (1,1) width 20: "cell"

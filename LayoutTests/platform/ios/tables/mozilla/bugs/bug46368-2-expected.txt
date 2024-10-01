@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x68 [bgcolor=#00FFFF] [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,0) size 784x68 [bgcolor=#00FFFF] [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x66
           RenderTableRow {TR} at (0,2) size 782x62
-            RenderTableCell {TD} at (2,2) size 304x62 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 304x62 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderInline {FONT} at (2,3) size 100x36 [color=#0000FF]
                 RenderText {#text} at (2,3) size 100x36
                   text run at (2,3) width 100: "Mozilla"
@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
                 text run at (2,40) width 124: "MPL/GPL license. "
                 text run at (125,40) width 141: "See the for more info."
               RenderBR {BR} at (265,40) size 1x19
-            RenderTableCell {TD} at (308,21) size 472x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (308,21) size 472x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,21) size 245x19
                 text run at (2,2) width 245: "foo bar foo bar foo bar foo bar foo bar"
       RenderBlock (anonymous) at (0,68) size 784x43

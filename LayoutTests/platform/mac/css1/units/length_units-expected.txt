@@ -93,18 +93,18 @@ layer at (0,0) size 785x1592
           text run at (17,92) width 673: "This should make the left border the same"
           text run at (17,138) width 710: "number of pixels as the lower-case 'x' in this"
           text run at (17,184) width 610: "element's font, as well as solid purple."
-      RenderTable {TABLE} at (0,882) size 769x694 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,882) size 769x694 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x692
           RenderTableRow {TR} at (0,0) size 767x26
-            RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x666
-            RenderTableCell {TD} at (0,346) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,346) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,324) size 4x18
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 755x666 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 755x666 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x36
                 RenderText {#text} at (0,0) size 737x36
                   text run at (0,0) width 737: "This paragraph has no left margin. The following paragraphs have all been given a left margin and their left (outer)"

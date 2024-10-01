@@ -10,10 +10,10 @@ layer at (0,0) size 800x601
         RenderBR {BR} at (511,0) size 1x19
         RenderText {#text} at (0,20) size 419x19
           text run at (0,20) width 419: "of content beginning 'Pacific Shore Properties ...'. Can you see it?"
-      RenderTable {TABLE} at (0,56) size 777x529 [border: (2px outset #808080)]
+      RenderTable {TABLE} at (0,56) size 777x529 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 773x525
           RenderTableRow {TR} at (0,1) size 773x292
-            RenderTableCell {TD} at (1,1) size 771x216 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=0 c=0 rs=4 cs=2]
+            RenderTableCell {TD} at (1,1) size 771x216 [bgcolor=#FFFFFF] [border: (1px inset #000000)] [r=0 c=0 rs=4 cs=2]
               RenderBlock {P} at (5,5) size 761x46
                 RenderInline {FONT} at (0,1) size 23x28 [color=#E91C05]
                   RenderText {#text} at (0,1) size 23x28

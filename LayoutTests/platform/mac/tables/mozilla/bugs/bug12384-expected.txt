@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {FORM} at (0,0) size 784x23
-        RenderTable {TABLE} at (0,0) size 685x23 [bgcolor=#FFE030] [border: (1px outset #808080)]
+        RenderTable {TABLE} at (0,0) size 685x23 [bgcolor=#FFE030] [border: (1px outset #000000)]
           RenderTableSection {TBODY} at (1,1) size 683x21
             RenderTableRow {TR} at (0,0) size 683x21
-              RenderTableCell {TD} at (0,0) size 683x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,0) size 683x21 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderInline {NOBR} at (1,1) size 681x18
                   RenderTextControl {INPUT} at (1,1) size 218x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                   RenderText {#text} at (218,1) size 15x18

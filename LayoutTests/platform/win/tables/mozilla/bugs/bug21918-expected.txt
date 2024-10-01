@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 30x30 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,0) size 30x30 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 28x28
           RenderTableRow {TR} at (0,2) size 28x24
-            RenderTableCell {TD} at (2,2) size 24x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 24x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x19
                 text run at (2,2) width 20: "foo"
       RenderBlock (anonymous) at (0,30) size 784x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,50) size 35x30 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,50) size 35x30 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 33x28
           RenderTableRow {TR} at (0,2) size 33x24
-            RenderTableCell {TD} at (2,2) size 29x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 29x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 25x19
                 text run at (2,2) width 25: "blah"

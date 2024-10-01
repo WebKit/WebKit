@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x132
   RenderBlock {HTML} at (0,0) size 800x132
     RenderBody {BODY} at (8,8) size 784x116
-      RenderTable {TABLE} at (0,0) size 86x116 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,0) size 86x116 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 84x58
           RenderTableRow {TR} at (0,2) size 84x54
-            RenderTableCell {TH} at (2,27) size 37x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (40,2) size 42x54 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TH} at (2,27) size 37x4 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (40,2) size 42x54 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {P} at (2,18) size 37x18
                 RenderText {#text} at (0,0) size 37x18
                   text run at (0,0) width 37: "TWO"
@@ -15,7 +15,7 @@ layer at (0,0) size 800x132
           RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,59) size 84x56
           RenderTableRow {TR} at (0,0) size 84x54
-            RenderTableCell {TD} at (2,0) size 37x54 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,0) size 37x54 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {P} at (2,18) size 33x18
                 RenderText {#text} at (0,0) size 33x18
                   text run at (0,0) width 33: "ONE"

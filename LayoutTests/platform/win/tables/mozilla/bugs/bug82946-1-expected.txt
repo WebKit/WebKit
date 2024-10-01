@@ -11,24 +11,24 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 133x19
           text run at (0,0) width 133: "Table with width=459"
         RenderBR {BR} at (133,15) size 0x0
-      RenderTable {TABLE} at (0,76) size 784x246 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,76) size 784x246 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x244
           RenderTableRow {TR} at (0,2) size 782x154
-            RenderTableCell {TD} at (2,110) size 48x24 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+            RenderTableCell {TD} at (2,110) size 48x24 [border: (1px inset #000000)] [r=0 c=0 rs=2 cs=1]
               RenderText {#text} at (2,2) size 44x19
                 text run at (2,2) width 44: "sidebar"
-            RenderTableCell {TD} at (52,2) size 728x154 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (52,2) size 728x154 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (2,2) size 724x120
                 RenderImage {IMG} at (0,0) size 459x120
                 RenderText {#text} at (0,0) size 0x0
-              RenderTable {TABLE} at (2,122) size 459x30 [border: (1px outset #808080)]
+              RenderTable {TABLE} at (2,122) size 459x30 [border: (1px outset #000000)]
                 RenderTableSection {TBODY} at (1,1) size 457x28
                   RenderTableRow {TR} at (0,2) size 457x24
-                    RenderTableCell {TD} at (2,2) size 453x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (2,2) size 453x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 119x19
                         text run at (2,2) width 119: "THIS IS A TABLE"
           RenderTableRow {TR} at (0,158) size 782x84
-            RenderTableCell {TD} at (52,158) size 728x84 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (52,158) size 728x84 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 724x79
                 text run at (2,2) width 561: "The XML Cover Pages is a comprehensive online reference work for the Extensible Markup "
                 text run at (563,2) width 149: "Language (XML) and its"

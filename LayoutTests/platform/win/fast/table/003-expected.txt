@@ -15,26 +15,26 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,32) size 781x22 [bgcolor=#FF0000] [r=1 c=0 rs=1 cs=2]
               RenderText {#text} at (1,1) size 233x19
                 text run at (1,1) width 233: "Alongwordtogiveyouanicebigminwidth."
-      RenderTable {TABLE} at (0,56) size 100x100 [bgcolor=#FF0000] [border: (2px outset #808080)]
+      RenderTable {TABLE} at (0,56) size 100x100 [bgcolor=#FF0000] [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 96x96
           RenderTableRow {TR} at (0,2) size 96x92
-            RenderTableCell {TD} at (2,46) size 92x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-      RenderTable {TABLE} at (0,156) size 195x126 [border: (2px outset #808080)]
+            RenderTableCell {TD} at (2,46) size 92x4 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,156) size 195x126 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 191x122
           RenderTableRow {TR} at (0,2) size 191x24
-            RenderTableCell {TD} at (2,2) size 187x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 187x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x19
                 text run at (2,2) width 28: "hello"
           RenderTableRow {TR} at (0,28) size 191x24
-            RenderTableCell {TD} at (2,28) size 187x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,28) size 187x24 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 63x19
                 text run at (2,2) width 63: "more hello"
           RenderTableRow {TR} at (0,54) size 191x24
-            RenderTableCell {TD} at (2,54) size 187x24 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,54) size 187x24 [border: (1px inset #000000)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 35x19
                 text run at (2,2) width 35: "world"
           RenderTableRow {TR} at (0,80) size 191x40
-            RenderTableCell {TD} at (2,82) size 187x36 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,82) size 187x36 [border: (1px inset #000000)] [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,282) size 106x86
         RenderTableSection {TBODY} at (0,0) size 106x86

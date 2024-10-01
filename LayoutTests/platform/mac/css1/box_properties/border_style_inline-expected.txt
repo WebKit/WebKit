@@ -34,18 +34,18 @@ layer at (0,0) size 800x600
         RenderText {#text} at (67,36) size 701x18
           text run at (67,36) width 260: ", which should result in no border at all. "
           text run at (326,36) width 442: "The line-height of the parent element should not change, on any line."
-      RenderTable {TABLE} at (0,180) size 784x108 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,180) size 784x108 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x106
           RenderTableRow {TR} at (0,0) size 782x26
-            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x80
-            RenderTableCell {TD} at (0,53) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,53) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,31) size 4x18
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 770x80 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 770x80 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x72 [bgcolor=#C0C0C0]
                 RenderText {#text} at (0,0) size 679x18
                   text run at (0,0) width 679: "This is an unstyled element, save for the background color, and it contains inline elements with classes of "

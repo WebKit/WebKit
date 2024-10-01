@@ -7,24 +7,24 @@ layer at (0,0) size 800x585
         RenderInline {B} at (0,0) size 289x18
           RenderText {#text} at (0,0) size 289x18
             text run at (0,0) width 289: "All cell borders should look the same."
-      RenderTable {TABLE} at (40,74) size 902x186 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (40,74) size 902x186 [border: (1px outset #FFFF00)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 900x184
           RenderTableRow {TR} at (0,0) size 900x20
-            RenderTableCell {TD} at (0,0) size 900x20 [color=#00FF00] [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
+            RenderTableCell {TD} at (0,0) size 900x20 [color=#00FF00] [bgcolor=#000000] [border: (1px inset #00FF00)] [r=0 c=0 rs=1 cs=3]
               RenderBlock {P} at (1,1) size 898x18
                 RenderText {#text} at (375,0) size 148x18
                   text run at (375,0) width 148: "look at cell borders..."
           RenderTableRow {TR} at (0,20) size 900x164
-            RenderTableCell {TD} at (0,146) size 300x38 [color=#00FF00] [bgcolor=#000000] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,146) size 300x38 [color=#00FF00] [bgcolor=#000000] [border: (1px inset #00FF00)] [r=1 c=0 rs=1 cs=1]
               RenderBlock {P} at (1,127) size 298x36
                 RenderText {#text} at (125,0) size 48x18
                   text run at (125,0) width 48: "border"
                 RenderBR {BR} at (172,0) size 1x18
                 RenderText {#text} at (120,18) size 58x18
                   text run at (120,18) width 58: "bottom?"
-            RenderTableCell {TD} at (300,20) size 300x164 [color=#00FF00] [bgcolor=#000000] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (300,20) size 300x164 [color=#00FF00] [bgcolor=#000000] [border: (1px inset #00FF00)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (1,1) size 298x162
                 RenderText {#text} at (122,0) size 54x18
                   text run at (122,0) width 54: "this cell"
@@ -52,7 +52,7 @@ layer at (0,0) size 800x585
                 RenderBR {BR} at (172,126) size 1x18
                 RenderText {#text} at (136,144) size 26x18
                   text run at (136,144) width 26: "fine"
-            RenderTableCell {TD} at (600,20) size 300x164 [color=#00FF00] [bgcolor=#000000] [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (600,20) size 300x164 [color=#00FF00] [bgcolor=#000000] [border: (1px inset #00FF00)] [r=1 c=2 rs=1 cs=1]
               RenderBlock {P} at (1,1) size 298x162
                 RenderText {#text} at (122,0) size 54x18
                   text run at (122,0) width 54: "this cell"

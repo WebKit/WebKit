@@ -6,10 +6,10 @@ layer at (0,0) size 800x305
       RenderBlock {p} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 171x19
           text run at (0,0) width 171: "TH VALIGN=BASELINE"
-      RenderTable {table} at (0,36) size 784x245 [border: (1px outset #808080)]
+      RenderTable {table} at (0,36) size 784x245 [border: (1px outset #000000)]
         RenderTableSection (anonymous) at (1,1) size 782x243
           RenderTableRow {tr} at (0,2) size 782x239
-            RenderTableCell {th} at (2,24) size 218x104 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {th} at (2,24) size 218x104 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,24) size 213x99
                 text run at (13,2) width 192: "Compare the baseline of the"
                 text run at (2,22) width 80: "first line of "
@@ -18,7 +18,7 @@ layer at (0,0) size 800x305
                 text run at (24,62) width 49: "text in "
                 text run at (72,62) width 121: "the next cell: they"
                 text run at (15,82) width 188: "should be vertically aligned"
-            RenderTableCell {th} at (221,2) size 560x239 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {th} at (221,2) size 560x239 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (14,3) size 531x233
                 text run at (40,3) width 382: "Compare the baseline "
                 text run at (421,3) width 97: "of the"

@@ -6,20 +6,20 @@ layer at (0,0) size 800x202
       RenderBlock {p} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 286x19
           text run at (0,0) width 286: "In this test, the TBODY text should be justified."
-      RenderTable {table} at (0,36) size 300x142 [border: (1px outset #808080)]
+      RenderTable {table} at (0,36) size 300x142 [border: (1px outset #000000)]
         RenderTableSection {thead} at (1,1) size 298x28
           RenderTableRow {tr} at (0,2) size 298x24
-            RenderTableCell {td} at (2,2) size 294x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {td} at (2,2) size 294x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 155x19
                 text run at (2,2) width 155: "This text is in the THEAD"
         RenderTableSection {tfoot} at (1,115) size 298x26
           RenderTableRow {tr} at (0,0) size 298x24
-            RenderTableCell {td} at (2,0) size 294x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {td} at (2,0) size 294x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 155x19
                 text run at (2,2) width 155: "This text is in the TFOOT"
         RenderTableSection {tbody} at (1,29) size 298x86
           RenderTableRow {tr} at (0,0) size 298x84
-            RenderTableCell {td} at (2,0) size 294x84 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {td} at (2,0) size 294x84 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 290x79
                 text run at (2,2) width 290: "This TBODY text should be justified which"
                 text run at (2,22) width 125: "means that the right "

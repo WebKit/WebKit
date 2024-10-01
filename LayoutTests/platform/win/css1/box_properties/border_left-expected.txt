@@ -33,7 +33,7 @@ layer at (0,0) size 785x1028
       RenderBlock {P} at (20,256) size 749x18 [border: none (1px solid #800080)]
         RenderText {#text} at (1,0) size 330x17
           text run at (1,0) width 330: "This paragraph should have a thin purple left border."
-      RenderTable {TABLE} at (0,290) size 769x107 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,290) size 769x107 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x105
           RenderTableRow {TR} at (0,5) size 767x40
             RenderTableCell {TD} at (5,5) size 758x40 [border: (1px inset #808080) (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
@@ -49,7 +49,7 @@ layer at (0,0) size 785x1028
               RenderBlock (anonymous) at (3,2) size 554x18
                 RenderText {#text} at (0,0) size 54x17
                   text run at (0,0) width 54: "Cell two"
-              RenderTable {TABLE} at (3,20) size 162x28 [border: (1px outset #808080)]
+              RenderTable {TABLE} at (3,20) size 162x28 [border: (1px outset #000000)]
                 RenderTableSection {TBODY} at (1,1) size 160x26
                   RenderTableRow {TR} at (0,2) size 160x22
                     RenderTableCell {TD} at (2,2) size 156x22 [border: (1px inset #808080) (2px solid #008000)] [r=0 c=0 rs=1 cs=1]
@@ -85,7 +85,7 @@ layer at (0,0) size 785x1028
             text run at (698,0) width 25: "The"
             text run at (3,18) width 719: "first item's border should travel the entire height the nested list (to end near the baseline of the line \"...nested within"
             text run at (3,36) width 490: "the list item.\"), even though the nested list does not have any border styles set."
-      RenderTable {TABLE} at (0,573) size 769x439 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,573) size 769x439 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x437
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080) (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
@@ -108,7 +108,7 @@ layer at (0,0) size 785x1028
               RenderBlock {P} at (25,90) size 725x18 [border: none (1px solid #800080)]
                 RenderText {#text} at (1,0) size 330x17
                   text run at (1,0) width 330: "This paragraph should have a thin purple left border."
-              RenderTable {TABLE} at (5,124) size 745x107 [border: (1px outset #808080)]
+              RenderTable {TABLE} at (5,124) size 745x107 [border: (1px outset #000000)]
                 RenderTableSection {TBODY} at (1,1) size 743x105
                   RenderTableRow {TR} at (0,5) size 743x40
                     RenderTableCell {TD} at (5,5) size 734x40 [border: (1px inset #808080) (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
@@ -124,7 +124,7 @@ layer at (0,0) size 785x1028
                       RenderBlock (anonymous) at (3,2) size 536x18
                         RenderText {#text} at (0,0) size 54x17
                           text run at (0,0) width 54: "Cell two"
-                      RenderTable {TABLE} at (3,20) size 162x28 [border: (1px outset #808080)]
+                      RenderTable {TABLE} at (3,20) size 162x28 [border: (1px outset #000000)]
                         RenderTableSection {TBODY} at (1,1) size 160x26
                           RenderTableRow {TR} at (0,2) size 160x22
                             RenderTableCell {TD} at (2,2) size 156x22 [border: (1px inset #808080) (2px solid #008000)] [r=0 c=0 rs=1 cs=1]

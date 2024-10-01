@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x118 [bgcolor=#00FFFF] [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,0) size 784x118 [bgcolor=#00FFFF] [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x116
           RenderTableRow {TR} at (0,2) size 782x112
-            RenderTableCell {TD} at (2,2) size 454x112 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 450x108 [bgcolor=#FF00FF] [border: (1px outset #808080)]
+            RenderTableCell {TD} at (2,2) size 454x112 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 450x108 [bgcolor=#FF00FF] [border: (1px outset #000000)]
                 RenderTableSection {TBODY} at (1,1) size 448x106
                   RenderTableRow {TR} at (0,2) size 448x102
-                    RenderTableCell {TD} at (2,2) size 444x102 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (2,2) size 444x102 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 203x19
                         text run at (2,2) width 203: "Mozilla To Be Dually-Licensed"
                       RenderBR {BR} at (204,2) size 1x19
@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
                         text run at (208,60) width 181: "See the for more info. We're"
                         text run at (2,80) width 326: "gathering contributor input now, in the newsgroup."
                       RenderBR {BR} at (327,80) size 1x19
-            RenderTableCell {TD} at (457,26) size 324x64 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (457,26) size 324x64 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,26) size 293x59
                 text run at (2,2) width 273: "This status update contains information on"
                 text run at (2,22) width 231: "MailNews, XML/DOM, XPToolkit,"

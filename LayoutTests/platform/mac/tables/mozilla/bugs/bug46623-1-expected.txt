@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 360x92 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,0) size 360x92 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 358x90
           RenderTableRow {TR} at (0,2) size 358x86
-            RenderTableCell {TD} at (2,2) size 354x86 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 350x82 [bgcolor=#FFCC99] [border: (1px outset #808080)]
+            RenderTableCell {TD} at (2,2) size 354x86 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 350x82 [bgcolor=#FFCC99] [border: (1px outset #000000)]
                 RenderTableSection {TBODY} at (1,1) size 348x80
                   RenderTableRow {TR} at (0,2) size 348x76
-                    RenderTableCell {TD} at (2,14) size 247x52 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+                    RenderTableCell {TD} at (2,14) size 247x52 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
                       RenderInline {B} at (2,14) size 101x18
                         RenderText {#text} at (2,14) size 101x18
                           text run at (2,2) width 101: "Contact MPG:"
@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
                         RenderText {#text} at (188,47) size 4x15
                           text run at (188,35) width 4: "."
                       RenderText {#text} at (0,0) size 0x0
-                    RenderTableCell {TD} at (250,2) size 97x76 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                    RenderTableCell {TD} at (250,2) size 97x76 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
                       RenderInline {B} at (2,2) size 85x18
                         RenderText {#text} at (2,2) size 85x18
                           text run at (2,2) width 85: "MPG Rules:"

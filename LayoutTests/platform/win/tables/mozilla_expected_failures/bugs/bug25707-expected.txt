@@ -13,10 +13,10 @@ layer at (0,0) size 800x600
           text run at (0,20) width 757: "the \"maxElementSize\" of the cell was including margins calculated from the desired size of the text (in this case, 19x the desired"
           text run at (0,40) width 779: "width of the paragraph). The fix was to calculate the margin for the \"maxElementSize\" of the cell using the \"maxElementSize\" of the"
           text run at (0,60) width 439: "contained block itself, which in this case is the maximum width of a word."
-      RenderTable {TABLE} at (0,152) size 222x170 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,152) size 222x170 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 220x168
           RenderTableRow {TR} at (0,2) size 220x164
-            RenderTableCell {TD} at (2,2) size 216x164 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 216x164 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {P} at (203,2) size 11x160
                 RenderText {#text} at (0,0) size 32x159
                   text run at (0,0) width 25: "This"
