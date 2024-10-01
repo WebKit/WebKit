@@ -330,7 +330,7 @@ def computeMultipleHypothesesSignificance(a, b):
     return result
 
 
-def dumpBreakdowns(a, b):
+def dumpBreakdowns(a, b, sort_flag=False):
     nameLength = len("subtest")
     aLength = len(a[unitMarker])
     bLength = len(a[unitMarker])
@@ -363,10 +363,12 @@ def dumpBreakdowns(a, b):
 
     strings = []
     strings.append("|{key:^{nameLength}}|{aScore:^{aLength}} |{bScore:^{bLength}} |{compare:^{ratioLength}}|{pMarker:^{pLength}}|".format(key="subtest", aScore=a[unitMarker], bScore=b[unitMarker], nameLength=nameLength, aLength=aLength, bLength=bLength , compare="b / a", ratioLength=ratioLength, pMarker=pValueHeader, pLength=pLength))
-    for key in sorted(a.keys()):
-        if key == unitMarker:
-            continue
-
+    keys = [k for k in a.keys() if k != unitMarker]
+    if sort_flag:
+        keys.sort(key=lambda k: numpy.mean(b[k]) / numpy.mean(a[k]))
+    else:
+        keys.sort()
+    for key in keys:
         aScore = numpy.mean(a[key])
         bScore = numpy.mean(b[key])
 
@@ -392,17 +394,19 @@ def dumpBreakdowns(a, b):
         print(s)
     print("\n")
 
-def writeCSV(a, b, fileName):
+def writeCSV(a, b, fileName, sort_flag):
     strings = []
     result = ""
     result += "test_name, {}, {}, b_divided_by_a, pValue, is_significant_using_False_Discovery_Rate\n".format("a_in_" + a[unitMarker], "b_in_" + b[unitMarker])
 
     isSignificant = computeMultipleHypothesesSignificance(a, b)
 
-    for key in a.keys():
-        if key == unitMarker:
-            continue
-
+    keys = [k for k in a.keys() if k != unitMarker]
+    if sort_flag:
+        keys.sort(key=lambda k: numpy.mean(b[k]) / numpy.mean(a[k]))
+    else:
+        keys.sort()
+    for key in keys:
         aScore = numpy.mean(a[key])
         bScore = numpy.mean(b[key])
 
@@ -687,6 +691,9 @@ def getOptions():
     parser.add_argument("--category-breakdown", action="store_true",
         default=False, help="Print a breakdown per category. (e.g. startup, average, worst)")
 
+    parser.add_argument("--sort", action="store_true",
+        default=False, help="Sort the tests/sub-tests by b / a.")
+
     return parser.parse_known_args()[0]
 
 
@@ -713,76 +720,76 @@ def main():
     
     if typeA == JetStream2:
         if args.detailed_breakdown:
-            dumpBreakdowns(detailedJetStream2Breakdown(a), detailedJetStream2Breakdown(b))
+            dumpBreakdowns(detailedJetStream2Breakdown(a), detailedJetStream2Breakdown(b), args.sort)
         if args.category_breakdown:
-            dumpBreakdowns(categoryJetStream2Breakdown(a), categoryJetStream2Breakdown(b))
+            dumpBreakdowns(categoryJetStream2Breakdown(a), categoryJetStream2Breakdown(b), args.sort)
         if args.breakdown:
-            dumpBreakdowns(jetStream2Breakdown(a), jetStream2Breakdown(b))
+            dumpBreakdowns(jetStream2Breakdown(a), jetStream2Breakdown(b), args.sort)
 
         ttest(typeA, JetStream2Results(a), JetStream2Results(b))
 
         if args.csv:
-            writeCSV(jetStream2Breakdown(a), jetStream2Breakdown(b), args.csv)
+            writeCSV(jetStream2Breakdown(a), jetStream2Breakdown(b), args.csv, args.sort)
     elif typeA == JetStream3:
         if args.detailed_breakdown:
-            dumpBreakdowns(detailedJetStream3Breakdown(a), detailedJetStream3Breakdown(b))
+            dumpBreakdowns(detailedJetStream3Breakdown(a), detailedJetStream3Breakdown(b), args.sort)
         if args.category_breakdown:
-            dumpBreakdowns(categoryJetStream3Breakdown(a), categoryJetStream3Breakdown(b))
+            dumpBreakdowns(categoryJetStream3Breakdown(a), categoryJetStream3Breakdown(b), args.sort)
         if args.breakdown:
-            dumpBreakdowns(jetStream3Breakdown(a), jetStream3Breakdown(b))
+            dumpBreakdowns(jetStream3Breakdown(a), jetStream3Breakdown(b), args.sort)
 
         ttest(typeA, JetStream3Results(a), JetStream3Results(b))
 
         if args.csv:
-            writeCSV(jetStream3Breakdown(a), jetStream3Breakdown(b), args.csv)
+            writeCSV(jetStream3Breakdown(a), jetStream3Breakdown(b), args.csv, args.sort)
     elif typeA == Speedometer2:
         if args.detailed_breakdown:
-            dumpBreakdowns(speedometer2BreakdownSyncAsync(a), speedometer2BreakdownSyncAsync(b))
+            dumpBreakdowns(speedometer2BreakdownSyncAsync(a), speedometer2BreakdownSyncAsync(b), args.sort)
         if args.breakdown:
-            dumpBreakdowns(speedometer2Breakdown(a), speedometer2Breakdown(b))
+            dumpBreakdowns(speedometer2Breakdown(a), speedometer2Breakdown(b), args.sort)
 
         ttest(typeA, Speedometer2Results(a), Speedometer2Results(b))
 
         if args.csv:
-            writeCSV(speedometer2Breakdown(a), speedometer2Breakdown(b), args.csv)
+            writeCSV(speedometer2Breakdown(a), speedometer2Breakdown(b), args.csv, args.sort)
 
     elif typeA == Speedometer3:
         if args.detailed_breakdown:
-            dumpBreakdowns(speedometer3BreakdownSyncAsync(a), speedometer3BreakdownSyncAsync(b))
+            dumpBreakdowns(speedometer3BreakdownSyncAsync(a), speedometer3BreakdownSyncAsync(b), args.sort)
         if args.breakdown:
-            dumpBreakdowns(speedometer3Breakdown(a), speedometer3Breakdown(b))
+            dumpBreakdowns(speedometer3Breakdown(a), speedometer3Breakdown(b), args.sort)
 
         ttest(typeA, Speedometer3Results(a), Speedometer3Results(b))
 
         if args.csv:
-            writeCSV(speedometer3Breakdown(a), speedometer3Breakdown(b), args.csv)
+            writeCSV(speedometer3Breakdown(a), speedometer3Breakdown(b), args.csv, args.sort)
     elif any(typeA == validMotionMarkTest for validMotionMarkTest in [MotionMark, MotionMark1_1, MotionMark1_1_1, MotionMark1_2, MotionMark1_3]):
         if args.breakdown:
-            dumpBreakdowns(motionMarkBreakdown(a), motionMarkBreakdown(b))
+            dumpBreakdowns(motionMarkBreakdown(a), motionMarkBreakdown(b), args.sort)
 
         ttest(typeA, motionMarkResults(a), motionMarkResults(b))
 
         if args.csv:
-            writeCSV(motionMarkBreakdown(a), motionMarkBreakdown(b), args.csv)
+            writeCSV(motionMarkBreakdown(a), motionMarkBreakdown(b), args.csv, args.sort)
     elif typeA == PLT5:
         if args.breakdown:
-            dumpBreakdowns(plt5Breakdown(a), plt5Breakdown(b))
+            dumpBreakdowns(plt5Breakdown(a), plt5Breakdown(b), args.sort)
 
         ttest(typeA, PLT5Results(a), PLT5Results(b))
 
         if args.csv:
-            writeCSV(plt5Breakdown(a), plt5Breakdown(b), args.csv)
+            writeCSV(plt5Breakdown(a), plt5Breakdown(b), args.csv, args.sort)
     elif typeA == CompetitivePLT:
         if args.breakdown:
-            dumpBreakdowns(competitivePLTBreakdown(a), competitivePLTBreakdown(b))
+            dumpBreakdowns(competitivePLTBreakdown(a), competitivePLTBreakdown(b), args.sort)
 
         ttest(typeA, CompetitivePLTResults(a), CompetitivePLTResults(b))
 
         if args.csv:
-            writeCSV(competitivePLTBreakdown(a), competitivePLTBreakdown(b), args.csv)
+            writeCSV(competitivePLTBreakdown(a), competitivePLTBreakdown(b), args.csv, args.sort)
     elif typeA == PLUM3:
         if args.breakdown:
-            dumpBreakdowns(plum3Breakdown(a), plum3Breakdown(b))
+            dumpBreakdowns(plum3Breakdown(a), plum3Breakdown(b), args.sort)
 
         ttest(typeA, PLUM3Results(a), PLUM3Results(b))
 
@@ -790,14 +797,14 @@ def main():
             writeCSV(plum3Breakdown(a), plum3Breakdown(b), args.csv)
     elif typeA == RAMification:
         if args.detailed_breakdown:
-            dumpBreakdowns(detailedRAMificationBreakdown(a), detailedRAMificationBreakdown(b))
+            dumpBreakdowns(detailedRAMificationBreakdown(a), detailedRAMificationBreakdown(b), args.sort)
         if args.breakdown:
-            dumpBreakdowns(ramificationBreakdown(a), ramificationBreakdown(b))
+            dumpBreakdowns(ramificationBreakdown(a), ramificationBreakdown(b), args.sort)
 
         ttest(typeA, RAMificationResults(a), RAMificationResults(b))
 
         if args.csv:
-            writeCSV(ramificationBreakdown(a), ramificationBreakdown(b), args.csv)
+            writeCSV(ramificationBreakdown(a), ramificationBreakdown(b), args.csv, args.sort)
     else:
         print("Unknown benchmark type")
         sys.exit(1)
