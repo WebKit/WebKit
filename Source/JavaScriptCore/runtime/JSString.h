@@ -260,14 +260,23 @@ public:
         return m_fiber & isRopeInPointer;
     }
 
+    ALWAYS_INLINE bool isNonSubstringRope() const
+    {
+        return isRope() && !isSubstring();
+    }
+
     bool is8Bit() const;
 
+    ALWAYS_INLINE JSString* tryReplaceOneChar(JSGlobalObject*, UChar, JSString* replacement);
+
+    bool isSubstring() const;
 protected:
     friend class JSValue;
     friend class JSCell;
 
     JS_EXPORT_PRIVATE bool equalSlowCase(JSGlobalObject*, JSString* other) const;
-    bool isSubstring() const;
+
+    inline JSString* tryReplaceOneCharImpl(JSGlobalObject*, UChar search, JSString* replacement, uint8_t* stackLimit, bool& found);
 
     uintptr_t fiberConcurrently() const { return m_fiber; }
 

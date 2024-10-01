@@ -2787,6 +2787,10 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringString, JSString*, (JSGloba
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    if (JSString* result = tryReplaceOneCharUsingString<DollarCheck::Yes>(globalObject, stringCell, searchCell, replacementCell))
+        OPERATION_RETURN(scope, result);
+    OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
+
     auto string = stringCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
@@ -2806,6 +2810,10 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringStringWithoutSubstitution, 
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    if (JSString* result = tryReplaceOneCharUsingString<DollarCheck::No>(globalObject, stringCell, searchCell, replacementCell))
+        OPERATION_RETURN(scope, result);
+    OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
+
     auto string = stringCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
@@ -2824,6 +2832,10 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringEmptyString, JSString*, (JS
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (JSString* result = tryReplaceOneCharUsingString<DollarCheck::No>(globalObject, stringCell, searchCell, jsEmptyString(vm)))
+        OPERATION_RETURN(scope, result);
+    OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
     auto string = stringCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
@@ -2921,13 +2933,18 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringGeneric, JSString*, (JSGlob
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    JSValue replaceValue = JSValue::decode(encodedReplaceValue);
+    if (replaceValue.isString()) {
+        if (JSString* result = tryReplaceOneCharUsingString<DollarCheck::Yes>(globalObject, stringCell, searchCell, asString(replaceValue)))
+            OPERATION_RETURN(scope, result);
+        OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
+    }
+
     auto string = stringCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
     auto search = searchCell->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
-
-    JSValue replaceValue = JSValue::decode(encodedReplaceValue);
 
     OPERATION_RETURN(scope, replaceUsingStringSearch(vm, globalObject, stringCell, string, search, replaceValue, StringReplaceMode::Single));
 }
