@@ -32,7 +32,11 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+TEST(WebKit, DISABLED_ProcessSuspendMediaBuffering)
+#else
 TEST(WebKit, ProcessSuspendMediaBuffering)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
