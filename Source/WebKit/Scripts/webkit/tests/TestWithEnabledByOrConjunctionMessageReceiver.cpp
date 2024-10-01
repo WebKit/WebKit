@@ -47,7 +47,7 @@ void TestWithEnabledByOrConjunction::didReceiveMessage(IPC::Connection& connecti
         if (connection.ignoreInvalidMessageForTesting())
             return;
 #endif // ENABLE(IPC_TESTING_API)
-        ASSERT_NOT_REACHED_WITH_MESSAGE("Message received by a disabled message receiver TestWithEnabledByOrConjunction");
+        ASSERT_NOT_REACHED_WITH_MESSAGE("Message %s received by a disabled message receiver TestWithEnabledByOrConjunction", IPC::description(decoder.messageName()).characters());
         return;
     }
     Ref protectedThis { *this };

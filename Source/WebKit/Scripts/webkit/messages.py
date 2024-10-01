@@ -1330,7 +1330,7 @@ def generate_enabled_by_for_receiver(receiver, messages, ignore_invalid_message_
         '        if (%s)\n' % ignore_invalid_message_for_testing,
         '            %s;\n' % return_statement_line,
         '#endif // ENABLE(IPC_TESTING_API)\n',
-        '        ASSERT_NOT_REACHED_WITH_MESSAGE("Message received by a disabled message receiver %s");\n' % receiver.name,
+        '        ASSERT_NOT_REACHED_WITH_MESSAGE("Message %s received by a disabled message receiver %s", IPC::description(decoder.messageName()).characters());\n' % ('%s', receiver.name),
         '        %s;\n' % return_statement_line,
         '    }\n',
     ]
