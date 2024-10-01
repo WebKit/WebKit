@@ -107,10 +107,8 @@
 #include <dispatch/dispatch.h>
 #endif
 #include <windows.h>
-#else
-#if !PLATFORM(IOS_FAMILY)
+#elif PLATFORM(MAC)
 #include <CoreServices/CoreServices.h>
-#endif // !PLATFORM(IOS_FAMILY)
 #endif // OS(WINDOWS)
 
 #endif
