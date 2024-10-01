@@ -210,7 +210,12 @@ TEST(IndexedDB, IndexedDBFileNameAPI)
     
 }
 
+// rdar://137076757
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+TEST(IndexedDB, DISABLED_IndexedDBFileHashCollision)
+#else
 TEST(IndexedDB, IndexedDBFileHashCollision)
+#endif
 {
     createDirectories("collision"_s);
     
