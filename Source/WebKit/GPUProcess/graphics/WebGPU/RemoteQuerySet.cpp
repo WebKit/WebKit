@@ -45,29 +45,39 @@ RemoteQuerySet::RemoteQuerySet(WebCore::WebGPU::QuerySet& querySet, WebGPU::Obje
     , m_gpu(gpu)
     , m_identifier(identifier)
 {
-    m_streamConnection->startReceivingMessages(*this, Messages::RemoteQuerySet::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->startReceivingMessages(*this, Messages::RemoteQuerySet::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteQuerySet::~RemoteQuerySet() = default;
 
 void RemoteQuerySet::stopListeningForIPC()
 {
-    m_streamConnection->stopReceivingMessages(Messages::RemoteQuerySet::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->stopReceivingMessages(Messages::RemoteQuerySet::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemoteQuerySet::destroy()
 {
-    m_backing->destroy();
+    protectedBacking()->destroy();
 }
 
 void RemoteQuerySet::destruct()
 {
-    m_objectHeap->removeObject(m_identifier);
+    Ref { m_objectHeap.get() }->removeObject(m_identifier);
 }
 
 void RemoteQuerySet::setLabel(String&& label)
 {
-    m_backing->setLabel(WTFMove(label));
+    protectedBacking()->setLabel(WTFMove(label));
+}
+
+Ref<WebCore::WebGPU::QuerySet> RemoteQuerySet::protectedBacking()
+{
+    return m_backing;
+}
+
+Ref<IPC::StreamServerConnection> RemoteQuerySet::protectedStreamConnection() const
+{
+    return m_streamConnection;
 }
 
 } // namespace WebKit
