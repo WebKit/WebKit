@@ -736,8 +736,8 @@ public:
     static constexpr auto id = CSSValueAnchor;
 
     // <anchor()> = anchor( <anchor-element>? && <anchor-side>, <length-percentage>? )
-
-    using Side = std::variant<CSSValueID, double>;
+    // <anchor-side> = inside | outside | top | left | right | bottom | start | end | self-start | self-end | <percentage> | center
+    using Side = std::variant<CSSValueID, Child>;
 
     AtomString elementName;
     Side side;

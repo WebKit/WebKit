@@ -27,6 +27,7 @@
 
 #include "AnchorPositionEvaluator.h"
 #include "CSSCalcSymbolTable.h"
+#include "CSSCalcTree+Evaluation.h"
 #include "CSSCalcTree+NumericIdentity.h"
 #include "CSSCalcTree+Traversal.h"
 #include "CSSCalcTree.h"
@@ -1309,15 +1310,16 @@ std::optional<Child> simplify(Anchor& anchor, const SimplificationOptions& optio
     if (!options.conversionData || !options.conversionData->styleBuilderState())
         return { };
 
-    auto& builderState = *options.conversionData->styleBuilderState();
+    auto evaluationOptions = EvaluationOptions { .conversionData = options.conversionData, .symbolTable = options.symbolTable };
 
-    auto result = Style::AnchorPositionEvaluator::evaluate(builderState, anchor);
+    auto result = evaluateWithoutFallback(anchor, evaluationOptions);
     if (!result) {
         // https://drafts.csswg.org/css-anchor-position-1/#anchor-valid
         // "If any of these conditions are false, the anchor() function resolves to its specified fallback value.
         // If no fallback value is specified, it makes the declaration referencing it invalid at computed-value time."
+
         if (!anchor.fallback)
-            builderState.setCurrentPropertyInvalidAtComputedValueTime();
+            options.conversionData->styleBuilderState()->setCurrentPropertyInvalidAtComputedValueTime();
 
         // Replace the anchor node with the fallback node.
         return std::exchange(anchor.fallback, { });
@@ -1361,7 +1363,7 @@ template<typename Op> static auto copyAndSimplifyChildren(const IndirectNode<Op>
 
 static auto copyAndSimplifyChildren(const IndirectNode<Anchor>& anchor, const SimplificationOptions& options) -> Anchor
 {
-    return Anchor { .elementName = anchor->elementName, .side = anchor->side, .fallback = copyAndSimplify(anchor->fallback, options) };
+    return Anchor { .elementName = anchor->elementName, .side = copy(anchor->side), .fallback = copyAndSimplify(anchor->fallback, options) };
 }
 
 Child copyAndSimplify(const Child& root, const SimplificationOptions& options)

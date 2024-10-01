@@ -175,21 +175,19 @@ std::optional<double> evaluate(const IndirectNode<Anchor>& anchor, const Evaluat
     if (!options.conversionData || !options.conversionData->styleBuilderState())
         return { };
 
-    auto& builderState = *options.conversionData->styleBuilderState();
+    auto result = evaluateWithoutFallback(*anchor, options);
 
-    auto result = Style::AnchorPositionEvaluator::evaluate(builderState, *anchor);
-    if (!result) {
-        // https://drafts.csswg.org/css-anchor-position-1/#anchor-valid
-        // "If any of these conditions are false, the anchor() function resolves to its specified fallback value.
-        // If no fallback value is specified, it makes the declaration referencing it invalid at computed-value time."
-        if (!anchor->fallback) {
-            builderState.setCurrentPropertyInvalidAtComputedValueTime();
-            return { };
-        }
-        return evaluate(*anchor->fallback, options);
-    }
+    // https://drafts.csswg.org/css-anchor-position-1/#anchor-valid
+    // "If any of these conditions are false, the anchor() function resolves to its specified fallback value.
+    // If no fallback value is specified, it makes the declaration referencing it invalid at computed-value time."
+    if (!result && anchor->fallback)
+        result = evaluate(*anchor->fallback, options);
 
-    return *result;
+    if (!result)
+        options.conversionData->styleBuilderState()->setCurrentPropertyInvalidAtComputedValueTime();
+
+    return result;
+
 }
 
 template<typename Op> std::optional<double> evaluate(const IndirectNode<Op>& root, const EvaluationOptions& options)
@@ -200,6 +198,21 @@ template<typename Op> std::optional<double> evaluate(const IndirectNode<Op>& roo
 std::optional<double> evaluateDouble(const Tree& tree, const EvaluationOptions& options)
 {
     return evaluate(tree.root, options);
+}
+
+std::optional<double> evaluateWithoutFallback(const Anchor& anchor, const EvaluationOptions& options)
+{
+    auto& builderState = *options.conversionData->styleBuilderState();
+
+    auto side = WTF::switchOn(anchor.side,
+        [&](const Child& percentage) -> Style::AnchorPositionEvaluator::Side {
+            return evaluate(percentage, options).value_or(0) / 100;
+        }, [&](CSSValueID sideID) -> Style::AnchorPositionEvaluator::Side {
+            return sideID;
+        }
+    );
+
+    return Style::AnchorPositionEvaluator::evaluate(builderState, anchor.elementName, side);
 }
 
 } // namespace CSSCalc

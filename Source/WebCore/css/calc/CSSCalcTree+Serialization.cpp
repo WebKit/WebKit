@@ -89,6 +89,8 @@ static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Pr
 static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Anchor>&, SerializationState&);
 template<typename Op> static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Op>&, SerializationState&);
 
+void serializeWithoutOmittingPrefix(StringBuilder&, const Child&, SerializationState&);
+
 // https://drafts.csswg.org/css-values-4/#serialize-a-calculation-tree
 static void serializeCalculationTree(StringBuilder&, const Child&, SerializationState&);
 static void serializeCalculationTree(StringBuilder&, const ChildOrNone&, SerializationState&);
@@ -385,21 +387,15 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<A
     WTF::switchOn(anchor->side,
         [&](CSSValueID valueID) {
             builder.append(nameLiteralForSerialization(valueID));
-        }, [&](double value) {
-            formatCSSNumberValue(builder, value * 100, CSSPrimitiveValue::unitTypeString(CSSUnitType::CSS_PERCENTAGE));
+        }, [&](const Child& percentage) {
+            // As anchor() is not actually a "math function", calc() can't be omitted in arguments.
+            serializeWithoutOmittingPrefix(builder, percentage, state);
         }
     );
 
     if (anchor->fallback) {
         builder.append(", "_s);
-
-        WTF::switchOn(*anchor->fallback,
-            [&](Leaf auto& op) {
-                serializeCalculationTree(builder, op, state);
-            }, [&](auto& op) {
-                serializeMathFunction(builder, op, state);
-            }
-        );
+        serializeWithoutOmittingPrefix(builder, *anchor->fallback, state);
     }
 }
 
@@ -418,6 +414,17 @@ template<typename Op> void serializeMathFunctionArguments(StringBuilder& builder
             serializeCalculationTree(builder, root, state);
         }
     ));
+}
+
+void serializeWithoutOmittingPrefix(StringBuilder& builder, const Child& child, SerializationState& state)
+{
+    WTF::switchOn(child,
+        [&](Leaf auto& op) {
+            serializeCalculationTree(builder, op, state);
+        }, [&](auto& op) {
+            serializeMathFunction(builder, op, state);
+        }
+    );
 }
 
 // MARK: Calculation Tree

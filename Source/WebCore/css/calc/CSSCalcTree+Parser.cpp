@@ -702,6 +702,34 @@ static std::optional<TypedChild> consumeProgress(CSSParserTokenRange& tokens, in
     return TypedChild { makeChild(WTFMove(op), *outputType), *outputType };
 }
 
+static std::optional<TypedChild> consumeValueWithoutSimplifyingCalc(CSSParserTokenRange& tokens, int depth, ParserState& state)
+{
+    // Complex arguments need to be surrounded by a math function.
+    if (tokens.peek().type() == LeftParenthesisToken)
+        return { };
+
+    auto isFunction = !!tokens.peek().functionId();
+
+    auto typedValue = parseCalcValue(tokens, depth, state);
+    if (!typedValue)
+        return { };
+
+    auto isLeafValue = WTF::switchOn(typedValue->child,
+        [](Leaf auto&) { return true; },
+        [](auto&) { return false; }
+    );
+
+    if (isFunction && isLeafValue) {
+        // Wrap in Sum to keep top level calc() function in serialization.
+        Children children;
+        children.append(WTFMove(typedValue->child));
+
+        return TypedChild { makeChild(Sum { WTFMove(children) }, typedValue->type), typedValue->type };
+    }
+
+    return typedValue;
+}
+
 static std::optional<TypedChild> consumeAnchor(CSSParserTokenRange& tokens, int depth, ParserState& state)
 {
     // <anchor()> = anchor( <anchor-element>? && <anchor-side>, <length-percentage>? )
@@ -711,16 +739,32 @@ static std::optional<TypedChild> consumeAnchor(CSSParserTokenRange& tokens, int 
 
     auto anchorElement = CSSPropertyParserHelpers::consumeDashedIdentRaw(tokens);
 
+    // <anchor-side> = inside | outside | top | left | right | bottom | start | end | self-start | self-end | <percentage> | center
     auto anchorSide = [&]() -> std::optional<Anchor::Side> {
         auto sideIdent = CSSPropertyParserHelpers::consumeIdentRaw<CSSValueInside, CSSValueOutside, CSSValueTop, CSSValueLeft, CSSValueRight, CSSValueBottom, CSSValueStart, CSSValueEnd, CSSValueSelfStart, CSSValueSelfEnd, CSSValueCenter>(tokens);
         if (sideIdent)
             return sideIdent;
 
-        // FIXME: Parse as <percentage> instead of <percentage-token>.
-        if (tokens.peek().type() == PercentageToken)
-            return tokens.consumeIncludingWhitespace().numericValue() / 100;
+        auto percentageOptions = ParserOptions {
+            .category = Calculation::Category::Percentage,
+            .allowedSymbols = { },
+            .propertyOptions = { },
+        };
+        auto percentageState = ParserState {
+            .parserContext = state.parserContext,
+            .parserOptions = percentageOptions,
+            .simplificationOptions = { },
+        };
 
-        return { };
+        auto percentage = consumeValueWithoutSimplifyingCalc(tokens, depth, percentageState);
+        if (!percentage)
+            return { };
+
+        auto category = percentage->type.calculationCategory();
+        if (!category || category != Calculation::Category::Percentage)
+            return { };
+
+        return WTFMove(percentage->child);
     }();
 
     if (!anchorSide)
@@ -733,18 +777,7 @@ static std::optional<TypedChild> consumeAnchor(CSSParserTokenRange& tokens, int 
     std::optional<Child> fallback;
 
     if (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(tokens)) {
-        auto consumeTypedFallback = [&]() -> std::optional<TypedChild> {
-            switch (tokens.peek().type()) {
-            case DimensionToken:
-            case PercentageToken:
-            case FunctionToken:
-                return parseCalcValue(tokens, depth, state);
-            default:
-                return { };
-            }
-        };
-
-        auto typedFallback = consumeTypedFallback();
+        auto typedFallback = consumeValueWithoutSimplifyingCalc(tokens, depth, state);
         if (!typedFallback)
             return { };
 
@@ -762,7 +795,7 @@ static std::optional<TypedChild> consumeAnchor(CSSParserTokenRange& tokens, int 
 
     auto anchor = Anchor {
         .elementName = AtomString { anchorElement },
-        .side = *anchorSide,
+        .side = WTFMove(*anchorSide),
         .fallback = WTFMove(fallback)
     };
     return TypedChild { makeChild(WTFMove(anchor), type), type };

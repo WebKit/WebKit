@@ -274,7 +274,7 @@ static LayoutRect computeAnchorRectRelativeToContainingBlock(CheckedRef<const Re
 // align the edge of the positioned elements' inset-modified containing block corresponding to the
 // property the function appears in with the specified border edge of the target anchor element..."
 // See: https://drafts.csswg.org/css-anchor-position-1/#anchor-pos
-static LayoutUnit computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<const RenderBoxModelObject> anchorBox, CheckedRef<const RenderElement> anchorPositionedRenderer, CSSCalc::Anchor::Side anchorSide)
+static LayoutUnit computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<const RenderBoxModelObject> anchorBox, CheckedRef<const RenderElement> anchorPositionedRenderer, AnchorPositionEvaluator::Side anchorSide)
 {
     CheckedPtr containingBlock = anchorPositionedRenderer->containingBlock();
     ASSERT(containingBlock);
@@ -375,12 +375,7 @@ static LayoutUnit computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<co
     return removeBorderForInsetValue(insetValue, insetPropertySide, *containingBlock);
 }
 
-std::optional<double> AnchorPositionEvaluator::evaluate(const BuilderState& builderState, const CSSCalc::Anchor& anchor)
-{
-    return resolveAnchorValue(builderState, anchor.elementName, anchor.side);
-}
-
-std::optional<LayoutUnit> AnchorPositionEvaluator::resolveAnchorValue(const BuilderState& builderState, AtomString elementName, CSSCalc::Anchor::Side side)
+std::optional<double> AnchorPositionEvaluator::evaluate(const BuilderState& builderState, AtomString elementName, Side side)
 {
     auto propertyID = builderState.cssPropertyID();
     const auto& style = builderState.style();

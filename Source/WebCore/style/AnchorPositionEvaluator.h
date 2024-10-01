@@ -63,10 +63,8 @@ class AnchorPositionEvaluator {
 public:
     static void findAnchorsForAnchorPositionedElement(Ref<const Element> anchorPositionedElement);
 
-    static std::optional<double> evaluate(const BuilderState&, const CSSCalc::Anchor&);
-
-private:
-    static std::optional<LayoutUnit> resolveAnchorValue(const BuilderState&, AtomString, CSSCalc::Anchor::Side);
+    using Side = std::variant<CSSValueID, double>;
+    static std::optional<double> evaluate(const BuilderState&, AtomString elementName, Side);
 };
 
 } // namespace Style
