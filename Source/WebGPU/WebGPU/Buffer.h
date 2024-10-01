@@ -25,6 +25,8 @@
 
 #pragma once
 
+#import "Instance.h"
+#import <Metal/Metal.h>
 #import <utility>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
@@ -32,6 +34,7 @@
 #import <wtf/RangeSet.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/RetainReleaseSwift.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
@@ -148,6 +151,16 @@ private:
 #if CPU(X86_64)
     bool m_mappedAtCreation { false };
 #endif
-};
+} SWIFT_SHARED_REFERENCE(retainBuffer, releaseBuffer);
 
 } // namespace WebGPU
+
+inline void retainBuffer(WebGPU::Buffer* obj)
+{
+    retainRefCounted(obj);
+}
+
+inline void releaseBuffer(WebGPU::Buffer* obj)
+{
+    releaseRefCounted(obj);
+}

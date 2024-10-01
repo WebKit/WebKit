@@ -133,6 +133,9 @@
 		3AE27DB528C1BA480043A8E0 /* ASTVariableStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */; };
 		664C92FD286A66090008D143 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 664C92FC286A66090008D143 /* IOSurface.framework */; };
 		66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 66DC575428627E0B0014CABD /* ParserPrivate.h */; };
+		941C1EE52CA328F7004D4220 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 941C1EE42CA328EE004D4220 /* Queue.swift */; };
+		941C1EE62CA33255004D4220 /* Queue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACA9C273A426D0095F8D5 /* Queue.h */; };
+		941C1EE72CA46829004D4220 /* Instance.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACAA0273A426D0095F8D5 /* Instance.h */; };
 		9478714A2C98CECB003DB695 /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947871492C98CEC6003DB695 /* Buffer.swift */; };
 		9478714C2C98D31A003DB695 /* WebGPUSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 9478714B2C98D314003DB695 /* WebGPUSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		94CC0FE62CA203B300CB3264 /* WebGPUSwiftInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 94CC0FE52CA203AB00CB3264 /* WebGPUSwiftInternal.h */; };
@@ -446,6 +449,7 @@
 		3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTVariableStatement.h; sourceTree = "<group>"; };
 		664C92FC286A66090008D143 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		66DC575428627E0B0014CABD /* ParserPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserPrivate.h; sourceTree = "<group>"; };
+		941C1EE42CA328EE004D4220 /* Queue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		947871492C98CEC6003DB695 /* Buffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buffer.swift; sourceTree = "<group>"; };
 		9478714B2C98D314003DB695 /* WebGPUSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSwift.h; sourceTree = "<group>"; };
 		94CC0FE52CA203AB00CB3264 /* WebGPUSwiftInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSwiftInternal.h; sourceTree = "<group>"; };
@@ -636,6 +640,7 @@
 				1C5ACA9F273A426D0095F8D5 /* QuerySet.mm */,
 				1C5ACA9C273A426D0095F8D5 /* Queue.h */,
 				1C5ACAAD273A426D0095F8D5 /* Queue.mm */,
+				941C1EE42CA328EE004D4220 /* Queue.swift */,
 				1C5ACADB273A4EB80095F8D5 /* RenderBundle.h */,
 				1C5ACAE6273A55EF0095F8D5 /* RenderBundle.mm */,
 				1C5ACAA6273A426D0095F8D5 /* RenderBundleEncoder.h */,
@@ -883,8 +888,10 @@
 			files = (
 				1CEBD7E72716AFBA00A5254D /* WebGPU.h in Headers */,
 				0D30F93929F1FAC50055D9F1 /* ExternalTexture.h in Headers */,
+				941C1EE72CA46829004D4220 /* Instance.h in Headers */,
 				0D509DCD29CAB6EC00546D84 /* MetalSPI.h in Headers */,
 				973F784729C8A78200166C66 /* Pipeline.h in Headers */,
+				941C1EE62CA33255004D4220 /* Queue.h in Headers */,
 				0DE2BFAD2C150DF700D04AEB /* ShaderStage.h in Headers */,
 				1C5ACAD3273A4C860095F8D5 /* WebGPUExt.h in Headers */,
 				9478714C2C98D31A003DB695 /* WebGPUSwift.h in Headers */,
@@ -1195,6 +1202,7 @@
 				1CBD2E992977DAC900BBF52C /* PresentationContextIOSurface.mm in Sources */,
 				1C5ACABD273A426D0095F8D5 /* QuerySet.mm in Sources */,
 				1C5ACACB273A426E0095F8D5 /* Queue.mm in Sources */,
+				941C1EE52CA328F7004D4220 /* Queue.swift in Sources */,
 				1C5ACAE7273A55EF0095F8D5 /* RenderBundle.mm in Sources */,
 				1C5ACACC273A426E0095F8D5 /* RenderBundleEncoder.mm in Sources */,
 				1C5ACAC2273A426D0095F8D5 /* RenderPassEncoder.mm in Sources */,

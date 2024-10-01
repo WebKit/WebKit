@@ -215,4 +215,20 @@ protected:
 
 } // namespace WTF
 
+template<typename T>
+inline void retainRefCounted(T* obj)
+{
+    RELEASE_ASSERT(obj != nullptr);
+    static_assert(std::derived_from<T, WTF::RefCounted<T>>);
+    static_cast<WTF::RefCounted<T>*>(obj)->ref();
+}
+
+template<typename T>
+inline void releaseRefCounted(T* obj)
+{
+    RELEASE_ASSERT(obj != nullptr);
+    static_assert(std::derived_from<T, WTF::RefCounted<T>>);
+    static_cast<WTF::RefCounted<T>*>(obj)->deref();
+}
+
 using WTF::RefCounted;

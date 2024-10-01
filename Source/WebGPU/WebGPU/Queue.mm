@@ -35,6 +35,9 @@
 #import "MetalSPI.h"
 #import "Texture.h"
 #import "TextureView.h"
+#if ENABLE(WEBGPU_SWIFT)
+#import "WebGPUSwiftInternal.h"
+#endif
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
@@ -403,8 +406,11 @@ void Queue::writeBuffer(Buffer& buffer, uint64_t bufferOffset, std::span<uint8_t
             return;
         }
     }
-
+#if ENABLE(WEBGPU_SWIFT)
+    WebGPU::writeBuffer(this, &buffer, bufferOffset, data);
+#else
     writeBuffer(buffer.buffer(), bufferOffset, data);
+#endif
 }
 
 void Queue::writeBuffer(id<MTLBuffer> buffer, uint64_t bufferOffset, std::span<uint8_t> data)

@@ -26,10 +26,12 @@
 #pragma once
 
 #import "Instance.h"
+#import <Metal/Metal.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/Ref.h>
+#import <wtf/RetainReleaseSwift.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/ThreadSafeRefCounted.h>
 #import <wtf/Vector.h>
@@ -118,6 +120,17 @@ private:
     HashMap<uint64_t, OnSubmittedWorkDoneCallbacks, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_onSubmittedWorkDoneCallbacks;
     NSMutableOrderedSet<id<MTLCommandBuffer>> *m_createdNotCommittedBuffers { nil };
     NSMapTable<id<MTLCommandBuffer>, id<MTLCommandEncoder>> *m_openCommandEncoders;
-};
+} SWIFT_SHARED_REFERENCE(retainQueue, releaseQueue);
 
 } // namespace WebGPU
+
+inline void retainQueue(WebGPU::Queue* obj)
+{
+    retainThreadSafeRefCounted(obj);
+}
+
+inline void releaseQueue(WebGPU::Queue* obj)
+{
+    releaseThreadSafeRefCounted(obj);
+}
+
