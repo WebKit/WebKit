@@ -29,6 +29,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os.path
 import unittest
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
@@ -72,15 +73,15 @@ class PatchReaderTest(unittest.TestCase):
 
     def test_check_patch(self):
         # The modified line_numbers array for this patch is: [2].
-        self._call_check_patch("""diff --git a/__init__.py b/__init__.py
+        self._call_check_patch("""diff --git a/xyz/__init__.py b/xyz/__init__.py
 index ef65bee..e3db70e 100644
---- a/__init__.py
-+++ b/__init__.py
+--- a/xyz/__init__.py
++++ b/xyz/__init__.py
 @@ -1,1 +1,2 @@
  # Required for Python to search this directory for module files
 +# New line
 """)
-        self._assert_checked([("__init__.py", [2])], 0)
+        self._assert_checked([(os.path.join("xyz", "__init__.py"), [2])], 0)
 
     def test_check_patch_with_deletion(self):
         self._call_check_patch("""Index: __init__.py
