@@ -3115,6 +3115,20 @@ GenericCueAPIEnabled:
     WebCore:
       default: false
 
+GeolocationAPIEnabled:
+  type: bool
+  status: embedder
+  humanReadableName: "Geolocation API"
+  humanReadableDescription: "Enable Geolocation API"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+  sharedPreferenceForWebProcess: true
+
 GetCoalescedEventsEnabled:
   type: bool
   status: stable

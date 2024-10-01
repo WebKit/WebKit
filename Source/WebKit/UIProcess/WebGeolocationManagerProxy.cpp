@@ -92,6 +92,11 @@ void WebGeolocationManagerProxy::webProcessIsGoingAway(WebProcessProxy& proxy)
         stopUpdatingWithProxy(proxy, registrableDomain);
 }
 
+const SharedPreferencesForWebProcess& WebGeolocationManagerProxy::sharedPreferencesForWebProcess(IPC::Connection& connection) const
+{
+    return connectionToWebProcessProxy(connection)->sharedPreferencesForWebProcess();
+}
+
 void WebGeolocationManagerProxy::refWebContextSupplement()
 {
     API::Object::ref();

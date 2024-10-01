@@ -252,6 +252,10 @@ namespace WebCore {
     macro(GamepadButton) \
     macro(GamepadEvent) \
     macro(GamepadHapticActuator) \
+    macro(Geolocation) \
+    macro(GeolocationCoordinates) \
+    macro(GeolocationPosition) \
+    macro(GeolocationPositionError) \
     macro(HighlightRegistry) \
     macro(Highlight) \
     macro(HTMLAttachmentElement) \
