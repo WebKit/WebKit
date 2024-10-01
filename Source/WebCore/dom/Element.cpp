@@ -1560,6 +1560,15 @@ int Element::clientHeight()
     return 0;
 }
 
+double Element::currentCSSZoom()
+{
+    protectedDocument()->updateStyleIfNeeded();
+
+    if (CheckedPtr renderer = this->renderer())
+        return renderer->style().usedZoom() / RenderStyle::initialZoom();
+    return 1.0;
+}
+
 ALWAYS_INLINE LocalFrame* Element::documentFrameWithNonNullView() const
 {
     auto* frame = document().frame();
