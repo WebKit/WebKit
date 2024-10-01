@@ -852,8 +852,9 @@ DrawControlPart::DrawControlPart(ControlPart& part, const FloatRoundedRect& bord
 
 void DrawControlPart::apply(GraphicsContext& context, ControlFactory& controlFactory) const
 {
-    m_part->setControlFactory(controlFactory);
+    m_part->setOverrideControlFactory(&controlFactory);
     context.drawControlPart(m_part, m_borderRect, m_deviceScaleFactor, m_style);
+    m_part->setOverrideControlFactory(nullptr);
 }
 
 void DrawControlPart::dump(TextStream& ts, OptionSet<AsTextFlag>) const

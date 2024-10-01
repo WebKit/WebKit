@@ -44,7 +44,7 @@ public:
     StyleAppearance type() const { return m_type; }
 
     WEBCORE_EXPORT ControlFactory& controlFactory() const;
-    void setControlFactory(ControlFactory& controlFactory) { m_controlFactory = &controlFactory; }
+    void setOverrideControlFactory(ControlFactory* controlFactory) { m_overrideControlFactory = controlFactory; }
 
     FloatSize sizeForBounds(const FloatRect& bounds, const ControlStyle&);
     FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&);
@@ -60,6 +60,7 @@ protected:
 
     mutable std::unique_ptr<PlatformControl> m_platformControl;
     RefPtr<ControlFactory> m_controlFactory;
+    ControlFactory* m_overrideControlFactory { nullptr };
 };
 
 } // namespace WebCore
