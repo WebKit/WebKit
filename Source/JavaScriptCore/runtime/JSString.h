@@ -968,8 +968,6 @@ ALWAYS_INLINE JSString* jsString(VM& vm, Ref<StringImpl>&& s)
 
 inline JSString* jsSubstring(VM& vm, JSGlobalObject* globalObject, JSString* base, unsigned offset, unsigned length)
 {
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     ASSERT(offset <= base->length());
     ASSERT(length <= base->length());
     ASSERT(offset + length <= base->length());
@@ -983,13 +981,41 @@ inline JSString* jsSubstring(VM& vm, JSGlobalObject* globalObject, JSString* bas
     // FIXME: Evaluate if this would be worth adding more branches.
     if (base->isSubstring()) {
         JSRopeString* baseRope = jsCast<JSRopeString*>(base);
-        base = baseRope->substringBase();
-        offset = baseRope->substringOffset() + offset;
-        ASSERT(!base->isRope());
-    } else if (base->isRope()) {
-        jsCast<JSRopeString*>(base)->resolveRope(globalObject);
-        RETURN_IF_EXCEPTION(scope, nullptr);
+        ASSERT(!baseRope->substringBase()->isRope());
+        return jsSubstringOfResolved(vm, nullptr, baseRope->substringBase(), baseRope->substringOffset() + offset, length);
     }
+
+    if (!base->isRope())
+        return jsSubstringOfResolved(vm, nullptr, base, offset, length);
+
+    auto* rope = jsCast<JSRopeString*>(base);
+    auto* fiber0 = rope->fiber0();
+    ASSERT(fiber0);
+    if (offset < fiber0->length()) {
+        if ((offset + length) <= fiber0->length())
+            MUST_TAIL_CALL return jsSubstring(vm, globalObject, fiber0, offset, length);
+        // Crossing multiple fibers. Giving up and resolving the rope.
+    } else {
+        unsigned adjustedOffset = offset - fiber0->length();
+        auto* fiber1 = rope->fiber1();
+        ASSERT(fiber1);
+        if (adjustedOffset < fiber1->length()) {
+            if ((adjustedOffset + length) <= fiber1->length())
+                MUST_TAIL_CALL return jsSubstring(vm, globalObject, fiber1, adjustedOffset, length);
+            // Crossing multiple fibers. Giving up and resolving the rope.
+        } else {
+            adjustedOffset -= fiber1->length();
+            auto* fiber2 = rope->fiber2();
+            ASSERT(fiber2);
+            ASSERT(adjustedOffset < fiber2->length());
+            ASSERT((adjustedOffset + length) <= fiber2->length());
+            MUST_TAIL_CALL return jsSubstring(vm, globalObject, fiber2, adjustedOffset, length);
+        }
+    }
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    rope->resolveRope(globalObject);
+    RETURN_IF_EXCEPTION(scope, nullptr);
     return jsSubstringOfResolved(vm, nullptr, base, offset, length);
 }
 
