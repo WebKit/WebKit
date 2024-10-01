@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1600"
+   LastUpgradeVersion = "1520"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
-      buildImplicitDependencies = "YES"
-      buildArchitectures = "Automatic">
+      buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -30,7 +29,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:ios/app/TestPlan.xctestplan"
+            reference = "container:TestBundle/TestWebKitAPI.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -46,16 +45,6 @@
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES"
       internalIOSLaunchStyle = "2">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A17C58012C9AA12F009DD0B5"
-            BuildableName = "TestWebKitAPI.app"
-            BlueprintName = "TestWebKitAPIApp"
-            ReferencedContainer = "container:TestWebKitAPI.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -63,8 +52,7 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A17C58012C9AA12F009DD0B5"
@@ -72,7 +60,7 @@
             BlueprintName = "TestWebKitAPIApp"
             ReferencedContainer = "container:TestWebKitAPI.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

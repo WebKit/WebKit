@@ -26,18 +26,21 @@
 PRODUCT_NAME = TestWebKitAPI;
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.TestWebKitAPIApp;
 
-EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = *;
-SKIP_INSTALL[sdk=macosx*] = YES;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = ios/app/*;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=embedded*] = mac/app/*;
 
 GENERATE_INFOPLIST_FILE = YES;
+
 CURRENT_PROJECT_VERSION = 1;
 MARKETING_VERSION = 1.0;
-ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight;
-INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight;
+
+INFOPLIST_KEY_NSPrincipalClass[sdk=macosx*] = NSApplication;
+
+INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=embedded*] = YES;
+INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad[sdk=embedded*] = UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight;
+INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone[sdk=embedded*] = UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight;
 
 CLANG_ENABLE_OBJC_ARC = YES;
+CLANG_ENABLE_OBJC_WEAK = YES;
 
 GTEST_LDFLAGS = -framework gtest;

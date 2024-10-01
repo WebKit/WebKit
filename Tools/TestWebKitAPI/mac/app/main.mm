@@ -26,49 +26,42 @@
 #import "config.h"
 
 #import "AppCommon.h"
-#import <UIKit/UIKit.h>
+#import <Cocoa/Cocoa.h>
 
-static NSString * const sceneConfigurationName = @"Default Configuration";
-
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
-@end
-
-@interface SceneDelegate : UIResponder <UIWindowSceneDelegate>
-@property (nonatomic, strong) UIWindow *window;
+@interface AppDelegate : NSObject <NSApplicationDelegate>
++ (instancetype)sharedAppDelegate;
+@property (nonatomic, strong) NSWindow *window;
 @end
 
 @implementation AppDelegate
 
-- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession options:(UISceneConnectionOptions *)options
++ (instancetype)sharedAppDelegate
 {
-    UISceneConfiguration *configuration = [[UISceneConfiguration alloc] initWithName:sceneConfigurationName sessionRole:connectingSceneSession.role];
-    configuration.delegateClass = SceneDelegate.class;
-    return configuration;
+    static AppDelegate *sharedAppDelegate;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedAppDelegate = [[AppDelegate alloc] init];
+    });
+    return sharedAppDelegate;
 }
 
-@end
-
-@implementation SceneDelegate
-
-- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions
+- (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
-    UIWindow *window = [[UIWindow alloc] initWithWindowScene:(UIWindowScene *)scene];
-    window.rootViewController = [[UIViewController alloc] init];
-    [window makeKeyAndVisible];
+    NSWindow *window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 800, 600) styleMask:NSWindowStyleMaskTitled backing:NSBackingStoreBuffered defer:NO];
+    window.title = @"TestWebKitAPI";
+    [window makeKeyAndOrderFront:nil];
 
     self.window = window;
 }
 
 @end
 
-int main(int argc, char * argv[])
+int main(int argc, const char * argv[])
 {
-    NSString *appDelegateClassName;
-
     @autoreleasepool {
-        appDelegateClassName = NSStringFromClass(AppDelegate.class);
+        NSApplication.sharedApplication.delegate = AppDelegate.sharedAppDelegate;
         TestWebKitAPI::initializeApp();
     }
 
-    return UIApplicationMain(argc, argv, nil, appDelegateClassName);
+    return NSApplicationMain(argc, argv);
 }

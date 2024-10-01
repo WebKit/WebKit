@@ -24,51 +24,41 @@
  */
 
 #import "config.h"
-
 #import "AppCommon.h"
-#import <UIKit/UIKit.h>
 
-static NSString * const sceneConfigurationName = @"Default Configuration";
+#import "TestBundleLoader.h"
+#import <Foundation/Foundation.h>
+#import <WebKit/WebKitPrivate.h>
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
-@end
+namespace TestWebKitAPI {
 
-@interface SceneDelegate : UIResponder <UIWindowSceneDelegate>
-@property (nonatomic, strong) UIWindow *window;
-@end
-
-@implementation AppDelegate
-
-- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession options:(UISceneConnectionOptions *)options
+static void registerTestClasses()
 {
-    UISceneConfiguration *configuration = [[UISceneConfiguration alloc] initWithName:sceneConfigurationName sessionRole:connectingSceneSession.role];
-    configuration.delegateClass = SceneDelegate.class;
-    return configuration;
+    NSURL *testBundleURL = [NSURL URLWithString:@"TestWebKitAPIBundle.xctest" relativeToURL:NSBundle.mainBundle.builtInPlugInsURL];
+    if (!testBundleURL)
+        return;
+
+    Class principalClass = [NSBundle bundleWithURL:testBundleURL].principalClass;
+    if ([principalClass respondsToSelector:@selector(registerTestClasses)])
+        [principalClass registerTestClasses];
 }
 
-@end
-
-@implementation SceneDelegate
-
-- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions
+void initializeApp()
 {
-    UIWindow *window = [[UIWindow alloc] initWithWindowScene:(UIWindowScene *)scene];
-    window.rootViewController = [[UIViewController alloc] init];
-    [window makeKeyAndVisible];
+    [NSUserDefaults.standardUserDefaults removePersistentDomainForName:@"TestWebKitAPI"];
 
-    self.window = window;
+    // Set up user defaults.
+    NSMutableDictionary *argumentDomain = [[NSUserDefaults.standardUserDefaults volatileDomainForName:NSArgumentDomain] mutableCopy];
+    if (!argumentDomain)
+        argumentDomain = [[NSMutableDictionary alloc] init];
+
+    [NSUserDefaults.standardUserDefaults setVolatileDomain:argumentDomain forName:NSArgumentDomain];
+
+#if !defined(BUILDING_TEST_IPC) && !defined(BUILDING_TEST_WTF) && !defined(BUILDING_TEST_WGSL)
+    [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];
+#endif
+
+    registerTestClasses();
 }
 
-@end
-
-int main(int argc, char * argv[])
-{
-    NSString *appDelegateClassName;
-
-    @autoreleasepool {
-        appDelegateClassName = NSStringFromClass(AppDelegate.class);
-        TestWebKitAPI::initializeApp();
-    }
-
-    return UIApplicationMain(argc, argv, nil, appDelegateClassName);
-}
+} // namespace TestWebKitAPI

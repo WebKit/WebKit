@@ -39,7 +39,7 @@
 				3A5DDAFC28D3F2A7004DA950 /* PBXTargetDependency */,
 				7B9FC58828A26D83007570E7 /* PBXTargetDependency */,
 				7C83E0301D0A5E1B00FEBCF3 /* PBXTargetDependency */,
-				A17C58272C9AAAEE009DD0B5 /* PBXTargetDependency */,
+				A188990A2CAA366C00FEB09A /* PBXTargetDependency */,
 				7C83E0321D0A5E1D00FEBCF3 /* PBXTargetDependency */,
 			);
 			name = All;
@@ -1128,7 +1128,6 @@
 		A17C57ED2C9A53A0009DD0B5 /* TransformationMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AD3FE8D1D75FB8D00B169A4 /* TransformationMatrix.cpp */; };
 		A17C57EE2C9A53AD009DD0B5 /* WebTransportServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA8650322C7D01CA00117287 /* WebTransportServer.mm */; };
 		A17C57EF2C9A53B7009DD0B5 /* WKWebViewSpatialTrackingLabels.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD780E752BBE176D002A3DEC /* WKWebViewSpatialTrackingLabels.mm */; };
-		A17C58112C9AA132009DD0B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A17C58102C9AA132009DD0B5 /* Assets.xcassets */; };
 		A17C58172C9AA132009DD0B5 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = A17C58162C9AA132009DD0B5 /* main.mm */; };
 		A17C58252C9AAA25009DD0B5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A17C58242C9AAA25009DD0B5 /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, ); };
 		A17C58282C9AAFA6009DD0B5 /* TestWebKitAPIResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A17C46462C98E3430023F3C7 /* TestWebKitAPIResources.bundle */; };
@@ -1136,6 +1135,9 @@
 		A17C58482C9C0387009DD0B5 /* gtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDF3A83528930475005920CF /* gtest.framework */; };
 		A17C58492C9C09DC009DD0B5 /* InjectedBundleTestWebKitAPI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BC575980126E74AF006F0F12 /* InjectedBundleTestWebKitAPI.bundle */; };
 		A17C584A2C9C0A15009DD0B5 /* TestWebKitAPI.wkbundle in Resources */ = {isa = PBXBuildFile; fileRef = A13EBB491B87339E00097110 /* TestWebKitAPI.wkbundle */; };
+		A18898FB2CA9F1ED00FEB09A /* AppCommon.mm in Sources */ = {isa = PBXBuildFile; fileRef = A18898FA2CA9F1ED00FEB09A /* AppCommon.mm */; };
+		A18898FF2CA9F88600FEB09A /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = A121EEA72CA733F400DB8BB8 /* main.mm */; };
+		A18899012CA9FA6700FEB09A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB9E9F011235BDE00A137E0 /* Cocoa.framework */; platformFilters = (macos, ); };
 		A198D0A22BC64D8E0058BBEB /* NowPlayingMetadataObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = A198D0A12BC64D8E0058BBEB /* NowPlayingMetadataObserver.mm */; };
 		A1AD382F2C3DA40B003499BE /* FullscreenLifecycle.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1AD38272C3D9FAF003499BE /* FullscreenLifecycle.mm */; };
 		A1C142C224AA7B2E00444207 /* ContextMenuMouseEvents.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1C142C124AA7B2E00444207 /* ContextMenuMouseEvents.mm */; };
@@ -1414,19 +1416,19 @@
 			remoteGlobalIDString = A17C46452C98E3430023F3C7;
 			remoteInfo = TestWebKitAPIResources;
 		};
-		A17C58262C9AAAEE009DD0B5 /* PBXContainerItemProxy */ = {
+		A18898FD2CA9F70B00FEB09A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = A17C58012C9AA12F009DD0B5;
 			remoteInfo = TestWebKitAPIApp;
 		};
-		A17C58322C9B3EAE009DD0B5 /* PBXContainerItemProxy */ = {
+		A18899092CAA366C00FEB09A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = A17C58012C9AA12F009DD0B5;
-			remoteInfo = TestWebKitAPIApp;
+			remoteGlobalIDString = A17C582D2C9B3EAD009DD0B5;
+			remoteInfo = TestWebKitAPIBundle;
 		};
 		BC575A95126E74E7006F0F12 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3179,6 +3181,7 @@
 		A1183D402C6C8F8600233D8B /* fullscreen-lifecycle-audio.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "fullscreen-lifecycle-audio.html"; sourceTree = "<group>"; };
 		A11E7D9F24A169E200026745 /* link-with-hover-menu.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "link-with-hover-menu.html"; sourceTree = "<group>"; };
 		A11E7DA224A17C7D00026745 /* ElementActionTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ElementActionTests.mm; sourceTree = "<group>"; };
+		A121EEA72CA733F400DB8BB8 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		A125478D1DB18B9400358564 /* LoadDataWithNilMIMEType.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadDataWithNilMIMEType.mm; sourceTree = "<group>"; };
 		A12DDBF91E836F0700CF6CAE /* RenderedImageWithOptions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderedImageWithOptions.mm; sourceTree = "<group>"; };
 		A12DDBFC1E836FF100CF6CAE /* RenderedImageWithOptionsPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderedImageWithOptionsPlugIn.mm; sourceTree = "<group>"; };
@@ -3218,7 +3221,6 @@
 		A17C48572C98FA3F0023F3C7 /* TestNSBundleExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestNSBundleExtras.h; sourceTree = "<group>"; };
 		A17C48582C98FA3F0023F3C7 /* TestNSBundleExtras.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestNSBundleExtras.m; sourceTree = "<group>"; };
 		A17C58022C9AA12F009DD0B5 /* TestWebKitAPI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestWebKitAPI.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A17C58102C9AA132009DD0B5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A17C58162C9AA132009DD0B5 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		A17C58222C9AA2B0009DD0B5 /* TestWebKitAPIApp.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestWebKitAPIApp.xcconfig; sourceTree = "<group>"; };
 		A17C58232C9AA491009DD0B5 /* TestWebKitAPI.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestWebKitAPI.xcconfig; sourceTree = "<group>"; };
@@ -3230,6 +3232,8 @@
 		A17C58452C9BF45A009DD0B5 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		A17EAC542083056E0084B41B /* find.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = find.pdf; path = Tests/WebKit/find.pdf; sourceTree = SOURCE_ROOT; };
 		A180C0F91EE67DF000468F47 /* RunOpenPanel.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RunOpenPanel.mm; sourceTree = "<group>"; };
+		A18898F92CA9F1ED00FEB09A /* AppCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppCommon.h; sourceTree = "<group>"; };
+		A18898FA2CA9F1ED00FEB09A /* AppCommon.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppCommon.mm; sourceTree = "<group>"; };
 		A18AA8CC1C3FA218009B2B97 /* ContentFiltering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentFiltering.h; sourceTree = "<group>"; };
 		A198D0A12BC64D8E0058BBEB /* NowPlayingMetadataObserver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NowPlayingMetadataObserver.mm; sourceTree = "<group>"; };
 		A1A4FE5D18DD3DB700B5EA8A /* Download.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Download.mm; sourceTree = "<group>"; };
@@ -3910,6 +3914,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A18899012CA9FA6700FEB09A /* Cocoa.framework in Frameworks */,
 				A17C58252C9AAA25009DD0B5 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4001,6 +4006,7 @@
 		0F139E711A423A1D00F590F5 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				A121EEB52CA734D600DB8BB8 /* app */,
 				A17C582F2C9B3EAE009DD0B5 /* TestBundle */,
 				A13EBB441B87332B00097110 /* WebProcessPlugIn */,
 				F4A74B9229DDD9F100CB5288 /* CGImagePixelReader.cpp */,
@@ -4892,6 +4898,24 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
+		A121EEB42CA7345200DB8BB8 /* app */ = {
+			isa = PBXGroup;
+			children = (
+				A121EEA72CA733F400DB8BB8 /* main.mm */,
+			);
+			path = app;
+			sourceTree = "<group>";
+		};
+		A121EEB52CA734D600DB8BB8 /* app */ = {
+			isa = PBXGroup;
+			children = (
+				A18898F92CA9F1ED00FEB09A /* AppCommon.h */,
+				A18898FA2CA9F1ED00FEB09A /* AppCommon.mm */,
+			);
+			name = app;
+			path = cocoa/app;
+			sourceTree = "<group>";
+		};
 		A13EBB441B87332B00097110 /* WebProcessPlugIn */ = {
 			isa = PBXGroup;
 			children = (
@@ -5259,7 +5283,6 @@
 		A17C58032C9AA12F009DD0B5 /* app */ = {
 			isa = PBXGroup;
 			children = (
-				A17C58102C9AA132009DD0B5 /* Assets.xcassets */,
 				A17C58162C9AA132009DD0B5 /* main.mm */,
 			);
 			path = app;
@@ -5757,6 +5780,7 @@
 		BCA61C3A11700B9400460D1E /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				A121EEB42CA7345200DB8BB8 /* app */,
 				51EB125D24CA6B3E000CB030 /* GamepadMappings */,
 				F46128B6211C8ED500D9FADB /* DragAndDropSimulatorMac.mm */,
 				1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */,
@@ -6291,7 +6315,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				A17C58332C9B3EAE009DD0B5 /* PBXTargetDependency */,
+				A18898FE2CA9F70B00FEB09A /* PBXTargetDependency */,
 			);
 			name = TestWebKitAPIBundle;
 			productName = TestBundle;
@@ -6452,7 +6476,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A17C58112C9AA132009DD0B5 /* Assets.xcassets in Resources */,
 				A17C58492C9C09DC009DD0B5 /* InjectedBundleTestWebKitAPI.bundle in Resources */,
 				A17C584A2C9C0A15009DD0B5 /* TestWebKitAPI.wkbundle in Resources */,
 				A17C58282C9AAFA6009DD0B5 /* TestWebKitAPIResources.bundle in Resources */,
@@ -7289,6 +7312,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A18898FB2CA9F1ED00FEB09A /* AppCommon.mm in Sources */,
+				A18898FF2CA9F88600FEB09A /* main.mm in Sources */,
 				A17C58172C9AA132009DD0B5 /* main.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7410,15 +7435,15 @@
 			target = A17C46452C98E3430023F3C7 /* TestWebKitAPIResources */;
 			targetProxy = A17C48552C98EBF50023F3C7 /* PBXContainerItemProxy */;
 		};
-		A17C58272C9AAAEE009DD0B5 /* PBXTargetDependency */ = {
+		A18898FE2CA9F70B00FEB09A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A17C58012C9AA12F009DD0B5 /* TestWebKitAPIApp */;
-			targetProxy = A17C58262C9AAAEE009DD0B5 /* PBXContainerItemProxy */;
+			targetProxy = A18898FD2CA9F70B00FEB09A /* PBXContainerItemProxy */;
 		};
-		A17C58332C9B3EAE009DD0B5 /* PBXTargetDependency */ = {
+		A188990A2CAA366C00FEB09A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A17C58012C9AA12F009DD0B5 /* TestWebKitAPIApp */;
-			targetProxy = A17C58322C9B3EAE009DD0B5 /* PBXContainerItemProxy */;
+			target = A17C582D2C9B3EAD009DD0B5 /* TestWebKitAPIBundle */;
+			targetProxy = A18899092CAA366C00FEB09A /* PBXContainerItemProxy */;
 		};
 		BC575A96126E74E7006F0F12 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
