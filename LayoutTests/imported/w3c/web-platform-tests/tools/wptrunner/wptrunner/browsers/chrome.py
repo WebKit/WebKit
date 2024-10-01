@@ -97,6 +97,11 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data,
     chrome_options["args"].append("--use-fake-ui-for-media-stream")
     # Use a fake UI for FedCM to allow testing it.
     chrome_options["args"].append("--use-fake-ui-for-fedcm")
+    # This is needed until https://github.com/web-platform-tests/wpt/pull/40709
+    # is merged.
+    chrome_options["args"].append("--enable-features=FedCmWithoutWellKnownEnforcement")
+    # Use a fake UI for digital identity to allow testing it.
+    chrome_options["args"].append("--use-fake-ui-for-digital-identity")
     # Shorten delay for Reporting <https://w3c.github.io/reporting/>.
     chrome_options["args"].append("--short-reporting-delay")
     # Point all .test domains to localhost for Chrome
@@ -139,16 +144,18 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data,
     if kwargs["enable_experimental"]:
         chrome_options["args"].extend(["--enable-experimental-web-platform-features"])
 
-    # Pass the --headless flag to Chrome if WPT's own --headless flag was set
-    # or if we're running print reftests because of crbug.com/753118
-    if ((kwargs["headless"] or test_type == "print-reftest") and
-        "--headless" not in chrome_options["args"]):
-        chrome_options["args"].append("--headless")
-
     # Copy over any other flags that were passed in via `--binary-arg`
     for arg in kwargs.get("binary_args", []):
         if arg not in chrome_options["args"]:
             chrome_options["args"].append(arg)
+
+    # Pass the --headless=new flag to Chrome if WPT's own --headless flag was
+    # set. '--headless' should always mean the new headless mode, as the old
+    # headless mode is not used anyway.
+    if kwargs["headless"] and ("--headless=new" not in chrome_options["args"] and
+                               "--headless=old" not in chrome_options["args"] and
+                               "--headless" not in chrome_options["args"]):
+        chrome_options["args"].append("--headless=new")
 
     if test_type == "wdspec":
         executor_kwargs["binary_args"] = chrome_options["args"]

@@ -111,10 +111,9 @@ otherwise install OpenSSL and ensure that it's on your $PATH.""")
 
 
 def check_environ(product):
-    if product not in ("android_weblayer", "android_webview", "chrome",
-                       "chrome_android", "chrome_ios", "content_shell",
-                       "edgechromium", "firefox", "firefox_android", "ladybird", "servo",
-                       "wktr"):
+    if product not in ("android_webview", "chrome", "chrome_android", "chrome_ios",
+                       "content_shell", "edgechromium", "firefox", "firefox_android",
+                       "ladybird", "servo", "wktr"):
         config_builder = serve.build_config(os.path.join(wpt_root, "config.json"))
         # Override the ports to avoid looking for free ports
         config_builder.ssl = {"type": "none"}
@@ -503,6 +502,9 @@ class Chrome(BrowserSetup):
                 kwargs["webdriver_binary"] = webdriver_binary
             else:
                 raise WptrunError("Unable to locate or install matching ChromeDriver binary")
+        if kwargs["headless"] is None and not kwargs["debug_test"]:
+            kwargs["headless"] = True
+            logger.info("Running in headless mode, pass --no-headless to disable")
         if browser_channel in self.experimental_channels:
             # HACK(Hexcles): work around https://github.com/web-platform-tests/wpt/issues/16448
             kwargs["webdriver_args"].append("--disable-build-check")
@@ -610,17 +612,6 @@ class ChromeiOS(BrowserSetup):
             raise WptrunError("Unable to locate or install chromedriver binary")
 
 
-class AndroidWeblayer(ChromeAndroidBase):
-    name = "android_weblayer"
-    browser_cls = browser.AndroidWeblayer
-
-    def setup_kwargs(self, kwargs):
-        super().setup_kwargs(kwargs)
-        if kwargs["browser_channel"] in self.experimental_channels and kwargs["enable_experimental"] is None:
-            logger.info("Automatically turning on experimental features for WebLayer Dev/Canary")
-            kwargs["enable_experimental"] = True
-
-
 class AndroidWebview(ChromeAndroidBase):
     name = "android_webview"
     browser_cls = browser.AndroidWebview
@@ -724,53 +715,6 @@ class EdgeChromium(BrowserSetup):
             # We are on Taskcluster, where our Docker container does not have
             # enough capabilities to run Microsoft Edge with sandboxing. (gh-20133)
             kwargs["binary_args"].append("--no-sandbox")
-
-
-class Edge(BrowserSetup):
-    name = "edge"
-    browser_cls = browser.Edge
-
-    def install(self, channel=None):
-        raise NotImplementedError
-
-    def setup_kwargs(self, kwargs):
-        if kwargs["webdriver_binary"] is None:
-            webdriver_binary = self.browser.find_webdriver()
-
-            if webdriver_binary is None:
-                raise WptrunError("""Unable to find WebDriver and we aren't yet clever enough to work out which
-version to download. Please go to the following URL and install the correct
-version for your Edge/Windows release somewhere on the %PATH%:
-
-https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
-""")
-            kwargs["webdriver_binary"] = webdriver_binary
-
-
-class EdgeWebDriver(Edge):
-    name = "edge_webdriver"
-    browser_cls = browser.EdgeWebDriver
-
-
-class InternetExplorer(BrowserSetup):
-    name = "ie"
-    browser_cls = browser.InternetExplorer
-
-    def install(self, channel=None):
-        raise NotImplementedError
-
-    def setup_kwargs(self, kwargs):
-        if kwargs["webdriver_binary"] is None:
-            webdriver_binary = self.browser.find_webdriver()
-
-            if webdriver_binary is None:
-                raise WptrunError("""Unable to find WebDriver and we aren't yet clever enough to work out which
-version to download. Please go to the following URL and install the driver for Internet Explorer
-somewhere on the %PATH%:
-
-https://selenium-release.storage.googleapis.com/index.html
-""")
-            kwargs["webdriver_binary"] = webdriver_binary
 
 
 class Safari(BrowserSetup):
@@ -914,7 +858,6 @@ class Epiphany(BrowserSetup):
 
 
 product_setup = {
-    "android_weblayer": AndroidWeblayer,
     "android_webview": AndroidWebview,
     "firefox": Firefox,
     "firefox_android": FirefoxAndroid,
@@ -924,9 +867,6 @@ product_setup = {
     "chromium": Chromium,
     "content_shell": ContentShell,
     "edgechromium": EdgeChromium,
-    "edge": Edge,
-    "edge_webdriver": EdgeWebDriver,
-    "ie": InternetExplorer,
     "safari": Safari,
     "servo": Servo,
     "servodriver": ServoWebDriver,

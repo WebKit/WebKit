@@ -52,9 +52,9 @@ class WebDriverBaseProtocolPart(BaseProtocolPart):
     def setup(self):
         self.webdriver = self.parent.webdriver
 
-    def execute_script(self, script, asynchronous=False):
+    def execute_script(self, script, asynchronous=False, args=None):
         method = self.webdriver.execute_async_script if asynchronous else self.webdriver.execute_script
-        return method(script)
+        return method(script, args=args)
 
     def set_timeout(self, timeout):
         try:
@@ -586,11 +586,9 @@ class WebDriverTestharnessExecutor(TestharnessExecutor):
         if success:
             return self.convert_result(test, data)
 
-        return (test.result_cls(*data), [])
+        return (test.make_result(*data), [])
 
     def do_testharness(self, protocol, url, timeout):
-        format_map = {"url": strip_server(url)}
-
         # The previous test may not have closed its old windows (if something
         # went wrong or if cleanup_after_test was False), so clean up here.
         parent_window = protocol.testharness.close_old_windows()
@@ -610,13 +608,13 @@ class WebDriverTestharnessExecutor(TestharnessExecutor):
 
         while True:
             result = protocol.base.execute_script(
-                self.script_resume % format_map, asynchronous=True)
+                self.script_resume, asynchronous=True, args=[strip_server(url)])
 
             # As of 2019-03-29, WebDriver does not define expected behavior for
             # cases where the browser crashes during script execution:
             #
             # https://github.com/w3c/webdriver/issues/1308
-            if not isinstance(result, list) or len(result) != 2:
+            if not isinstance(result, list) or len(result) != 3:
                 try:
                     is_alive = self.is_alive()
                 except error.WebDriverException:
@@ -624,6 +622,16 @@ class WebDriverTestharnessExecutor(TestharnessExecutor):
 
                 if not is_alive:
                     raise Exception("Browser crashed during script execution.")
+
+            # A user prompt created after starting execution of the resume
+            # script will resolve the script with `null` [1, 2]. In that case,
+            # cycle this event loop and handle the prompt the next time the
+            # resume script executes.
+            #
+            # [1]: Step 5.3 of https://www.w3.org/TR/webdriver/#execute-async-script
+            # [2]: https://www.w3.org/TR/webdriver/#dfn-execute-a-function-body
+            if result is None:
+                continue
 
             done, rv = handler(result)
             if done:
@@ -754,7 +762,7 @@ class WebDriverCrashtestExecutor(CrashtestExecutor):
         if success:
             return self.convert_result(test, data)
 
-        return (test.result_cls(*data), [])
+        return (test.make_result(*data), [])
 
     def do_crashtest(self, protocol, url, timeout):
         protocol.base.load(url)

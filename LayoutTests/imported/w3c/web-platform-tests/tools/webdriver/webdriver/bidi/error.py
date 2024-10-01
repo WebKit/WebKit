@@ -83,8 +83,24 @@ class NoSuchScriptException(BidiException):
     error_code = "no such script"
 
 
+class NoSuchUserContextException(BidiException):
+    error_code = "no such user context"
+
+
 class UnableToCaptureScreenException(BidiException):
     error_code = "unable to capture screen"
+
+
+class UnableToSetCookieException(BidiException):
+    error_code = "unable to set cookie"
+
+
+class UnableToSetFileInputException(BidiException):
+    error_code = "unable to set file input"
+
+
+class UnderspecifiedStoragePartitionException(BidiException):
+    error_code = "underspecified storage partition"
 
 
 class UnknownCommandException(BidiException):

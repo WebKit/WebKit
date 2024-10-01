@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Any, Dict, List, Mapping, MutableMapping, Optional, Union
 
 from ._module import BidiModule, command
-from .script import OwnershipModel, SerializationOptions
+from .script import SerializationOptions
 from ..undefined import UNDEFINED, Undefined
 
 
@@ -81,7 +81,8 @@ class BrowsingContext(BidiModule):
     def create(self,
                type_hint: str,
                reference_context: Optional[str] = None,
-               background: Optional[bool] = None) -> Mapping[str, Any]:
+               background: Optional[bool] = None,
+               user_context: Optional[str] = None) -> Mapping[str, Any]:
         params: MutableMapping[str, Any] = {"type": type_hint}
 
         if reference_context is not None:
@@ -89,6 +90,9 @@ class BrowsingContext(BidiModule):
 
         if background is not None:
             params["background"] = background
+
+        if user_context is not None:
+            params["userContext"] = user_context
 
         return params
 
@@ -136,17 +140,11 @@ class BrowsingContext(BidiModule):
                      context: str,
                      locator: Mapping[str, Any],
                      max_node_count: Optional[int] = None,
-                     ownership: Optional[OwnershipModel] = None,
-                     sandbox: Optional[str] = None,
                      serialization_options: Optional[SerializationOptions] = None,
                      start_nodes: Optional[List[Mapping[str, Any]]] = None) -> Mapping[str, Any]:
         params: MutableMapping[str, Any] = {"context": context, "locator": locator}
         if max_node_count is not None:
             params["maxNodeCount"] = max_node_count
-        if ownership is not None:
-            params["ownership"] = ownership
-        if sandbox is not None:
-            params["sandbox"] = sandbox
         if serialization_options is not None:
             params["serializationOptions"] = serialization_options
         if start_nodes is not None:

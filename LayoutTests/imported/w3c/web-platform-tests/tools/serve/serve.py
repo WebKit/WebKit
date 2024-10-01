@@ -315,6 +315,20 @@ class WindowHandler(HtmlWrapperHandler):
 """
 
 
+class WindowModulesHandler(HtmlWrapperHandler):
+    global_type = "window-module"
+    path_replace = [(".any.window-module.html", ".any.js")]
+    wrapper = """<!doctype html>
+<meta charset=utf-8>
+%(meta)s
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+%(script)s
+<div id=log></div>
+<script type=module src="%(path)s"></script>
+"""
+
+
 class AnyHtmlHandler(HtmlWrapperHandler):
     global_type = "window"
     path_replace = [(".any.html", ".any.js")]
@@ -424,6 +438,17 @@ class ShadowRealmHandler(HtmlWrapperHandler):
 (async function() {
   const r = new ShadowRealm();
   r.evaluate("globalThis.self = globalThis; undefined;");
+  r.evaluate(`func => {
+    globalThis.fetch_json = (resource) => {
+      const thenMethod = func(resource);
+      return new Promise((resolve, reject) => thenMethod((s) => resolve(JSON.parse(s)), reject));
+    };
+  }`)((resource) => function (resolve, reject) {
+    fetch(resource).then(res => res.text(), String).then(resolve, reject);
+  });
+  r.evaluate(`s => {
+    globalThis.location = { search: s };
+  }`)(location.search);
   await new Promise(r.evaluate(`
     (resolve, reject) => {
       (async () => {
@@ -566,6 +591,7 @@ class RoutesBuilder:
             ("GET", "*.any.serviceworker.html", ServiceWorkersHandler),
             ("GET", "*.any.serviceworker-module.html", ServiceWorkerModulesHandler),
             ("GET", "*.any.shadowrealm.html", ShadowRealmHandler),
+            ("GET", "*.any.window-module.html", WindowModulesHandler),
             ("GET", "*.any.worker.js", ClassicWorkerHandler),
             ("GET", "*.any.worker-module.js", ModuleWorkerHandler),
             ("GET", "*.asis", handlers.AsIsHandler),
@@ -574,6 +600,7 @@ class RoutesBuilder:
             ("*", "/.well-known/attribution-reporting/report-aggregate-attribution", handlers.PythonScriptHandler),
             ("*", "/.well-known/attribution-reporting/debug/report-aggregate-attribution", handlers.PythonScriptHandler),
             ("*", "/.well-known/attribution-reporting/debug/verbose", handlers.PythonScriptHandler),
+            ("GET", "/.well-known/interest-group/permissions/", handlers.PythonScriptHandler),
             ("*", "/.well-known/private-aggregation/*", handlers.PythonScriptHandler),
             ("*", "/.well-known/web-identity", handlers.PythonScriptHandler),
             ("*", "*.py", handlers.PythonScriptHandler),

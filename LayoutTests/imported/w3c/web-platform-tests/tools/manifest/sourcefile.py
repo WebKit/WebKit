@@ -29,6 +29,10 @@ from .item import (ConformanceCheckerTest,
                    WebDriverSpecTest)
 from .utils import cached_property
 
+# Cannot do `from ..metadata.webfeatures.schema import WEB_FEATURES_YML_FILENAME`
+# because relative import beyond toplevel throws *ImportError*!
+from metadata.webfeatures.schema import WEB_FEATURES_YML_FILENAME  # type: ignore
+
 wd_pattern = "*.py"
 js_meta_re = re.compile(br"//\s*META:\s*(\w*)=(.*)$")
 python_meta_re = re.compile(br"#\s*META:\s*(\w*)=(.*)$")
@@ -66,6 +70,7 @@ def read_script_metadata(f: BinaryIO, regexp: Pattern[bytes]) -> Iterable[Tuple[
 
 _any_variants: Dict[Text, Dict[Text, Any]] = {
     "window": {"suffix": ".any.html"},
+    "window-module": {},
     "serviceworker": {"force_https": True},
     "serviceworker-module": {"force_https": True},
     "sharedworker": {},
@@ -302,6 +307,7 @@ class SourceFile:
         return (self.is_dir() or
                 self.name_prefix("MANIFEST") or
                 self.filename == "META.yml" or
+                self.filename == WEB_FEATURES_YML_FILENAME or
                 self.filename.startswith(".") or
                 self.filename.endswith(".headers") or
                 self.filename.endswith(".ini") or

@@ -4,7 +4,7 @@ components:
     workerType: ci
     schedulerId: taskcluster-github
     deadline: "24 hours"
-    image: webplatformtests/wpt:0.56
+    image: webplatformtests/wpt:0.57
     maxRunTime: 7200
     artifacts:
       public/results:
@@ -115,15 +115,15 @@ components:
     chunks-override:
       testharness: 24
 
-  tox-python3_7:
+  tox-python3_8:
     env:
-      TOXENV: py37
+      TOXENV: py38
       PY_COLORS: "0"
     install:
-      - python3.7
-      - python3.7-distutils
-      - python3.7-dev
-      - python3.7-venv
+      - python3.8
+      - python3.8-distutils
+      - python3.8-dev
+      - python3.8-venv
 
   tox-python3_11:
     env:
@@ -188,6 +188,12 @@ tasks:
                 - trigger-push
             - vars:
                 browser: chrome
+                channel: canary
+              use:
+                - trigger-master
+                - trigger-push
+            - vars:
+                browser: chrome
                 channel: dev
               use:
                 - trigger-master
@@ -226,7 +232,7 @@ tasks:
                 browser: servo
                 channel: nightly
               use:
-                - trigger-weekly
+                - trigger-daily
                 - trigger-push
             - vars:
                 browser: firefox_android
@@ -279,6 +285,12 @@ tasks:
                 channel: nightly
               use:
                 - trigger-daily
+                - trigger-push
+            - vars:
+                browser: chrome
+                channel: canary
+              use:
+                - trigger-master
                 - trigger-push
             - vars:
                 browser: chrome
@@ -426,13 +438,13 @@ tasks:
           - update_built
       command: "./tools/ci/ci_built_diff.sh"
 
-  - tools/ unittests (Python 3.7):
+  - tools/ unittests (Python 3.8):
       description: >-
-        Unit tests for tools running under Python 3.7, excluding wptrunner
+        Unit tests for tools running under Python 3.8, excluding wptrunner
       use:
         - wpt-base
         - trigger-pr
-        - tox-python3_7
+        - tox-python3_8
       command: ./tools/ci/ci_tools_unittest.sh
       env:
         HYPOTHESIS_PROFILE: ci
@@ -454,13 +466,13 @@ tasks:
         run-job:
           - tools_unittest
 
-  - tools/ integration tests (Python 3.7):
+  - tools/ integration tests (Python 3.8):
       description: >-
-        Integration tests for tools running under Python 3.7
+        Integration tests for tools running under Python 3.8
       use:
         - wpt-base
         - trigger-pr
-        - tox-python3_7
+        - tox-python3_8
       command: ./tools/ci/ci_tools_integration_test.sh
       install:
         - libnss3-tools
@@ -498,13 +510,13 @@ tasks:
         run-job:
           - wpt_integration
 
-  - resources/ tests (Python 3.7):
+  - resources/ tests (Python 3.8):
       description: >-
-        Tests for testharness.js and other files in resources/ under Python 3.7
+        Tests for testharness.js and other files in resources/ under Python 3.8
       use:
         - wpt-base
         - trigger-pr
-        - tox-python3_7
+        - tox-python3_8
       command: ./tools/ci/ci_resources_unittest.sh
       install:
         - libnss3-tools
