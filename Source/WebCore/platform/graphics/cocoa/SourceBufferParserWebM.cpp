@@ -236,6 +236,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMParser);
 WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WebMParserTrackData, WebMParser::TrackData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WebMParserVideoTrackData, WebMParser::VideoTrackData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WebMParserAudioTrackData, WebMParser::AudioTrackData);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceBufferParserWebM);
 
 // FIXME: Remove this once kCMVideoCodecType_VP9 is added to CMFormatDescription.h

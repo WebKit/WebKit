@@ -31,6 +31,7 @@
 #include "MediaSessionHelperIOS.h"
 #include "MediaSessionManagerCocoa.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS WebMediaSessionHelper;
 
@@ -47,6 +48,7 @@ class MediaSessionManageriOS
     : public MediaSessionManagerCocoa
     , public MediaSessionHelperClient
     , public AudioSessionInterruptionObserver {
+    WTF_MAKE_TZONE_ALLOCATED(MediaSessionManageriOS);
 public:
     virtual ~MediaSessionManageriOS();
 

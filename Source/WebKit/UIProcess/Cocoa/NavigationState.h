@@ -99,6 +99,7 @@ public:
 
 private:
     class NavigationClient final : public API::NavigationClient {
+        WTF_MAKE_TZONE_ALLOCATED(NavigationClient);
     public:
         explicit NavigationClient(NavigationState&);
         ~NavigationClient();
@@ -165,6 +166,7 @@ private:
     };
     
     class HistoryClient final : public API::HistoryClient {
+        WTF_MAKE_TZONE_ALLOCATED(HistoryClient);
     public:
         explicit HistoryClient(NavigationState&);
         ~HistoryClient();

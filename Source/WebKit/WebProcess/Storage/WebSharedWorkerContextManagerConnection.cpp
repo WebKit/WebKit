@@ -56,8 +56,11 @@
 #include <WebCore/UserAgent.h>
 #include <WebCore/WorkerFetchResult.h>
 #include <WebCore/WorkerInitializationData.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSharedWorkerContextManagerConnection);
 
 WebSharedWorkerContextManagerConnection::WebSharedWorkerContextManagerConnection(Ref<IPC::Connection>&& connectionToNetworkProcess, WebCore::RegistrableDomain&& registrableDomain, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, const WebPreferencesStore& preferencesStore, RemoteWorkerInitializationData&& initializationData)
     : m_connectionToNetworkProcess(WTFMove(connectionToNetworkProcess))

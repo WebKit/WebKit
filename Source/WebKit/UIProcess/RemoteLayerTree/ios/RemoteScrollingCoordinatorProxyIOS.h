@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
 
 #include "RemoteScrollingCoordinatorProxy.h"
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS UIScrollView;
 OBJC_CLASS WKBaseScrollView;
@@ -42,6 +43,7 @@ class RemoteLayerTreeDrawingAreaProxyIOS;
 class RemoteLayerTreeNode;
 
 class RemoteScrollingCoordinatorProxyIOS final : public RemoteScrollingCoordinatorProxy {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteScrollingCoordinatorProxyIOS);
 public:
     explicit RemoteScrollingCoordinatorProxyIOS(WebPageProxy&);
     ~RemoteScrollingCoordinatorProxyIOS() = default;

@@ -92,6 +92,7 @@ private:
 #endif
 
     class UIClient : public API::UIClient, public CanMakeWeakPtr<UIClient> {
+        WTF_MAKE_TZONE_ALLOCATED(UIClient);
     public:
         explicit UIClient(UIDelegate&);
         ~UIClient();

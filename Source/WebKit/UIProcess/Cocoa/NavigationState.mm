@@ -122,6 +122,8 @@ static WeakHashMap<WebPageProxy, WeakPtr<NavigationState>>& navigationStates()
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigationState);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(NavigationStateHistoryClient, NavigationState::HistoryClient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(NavigationStateNavigationClient, NavigationState::NavigationClient);
 
 NavigationState::NavigationState(WKWebView *webView)
     : m_webView(webView)

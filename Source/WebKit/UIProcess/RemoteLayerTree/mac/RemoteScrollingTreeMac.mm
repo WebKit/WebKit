@@ -43,9 +43,13 @@
 #import <WebCore/ScrollingTreePositionedNode.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/TextStream.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteScrollingTreeMac);
+
 using namespace WebCore;
 
 Ref<RemoteScrollingTree> RemoteScrollingTree::create(RemoteScrollingCoordinatorProxy& scrollingCoordinator)

@@ -33,6 +33,7 @@
 #include <wtf/Condition.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -43,6 +44,7 @@ class AsyncScrollingCoordinator;
 // to the correct scrolling tree nodes or dispatching events back to the ScrollingCoordinator
 // object on the main thread if they can't be handled on the scrolling thread for various reasons.
 class ThreadedScrollingTree : public ScrollingTree {
+    WTF_MAKE_TZONE_ALLOCATED(ThreadedScrollingTree);
 public:
     virtual ~ThreadedScrollingTree();
 

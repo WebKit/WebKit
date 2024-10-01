@@ -52,8 +52,12 @@
 #import <WebCore/ScrollingTreePluginScrollingNode.h>
 #import <WebCore/ScrollingTreePositionedNode.h>
 #import <tuple>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteScrollingCoordinatorProxyIOS);
+
 using namespace WebCore;
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, webPageProxy().legacyMainFrameProcess().connection())

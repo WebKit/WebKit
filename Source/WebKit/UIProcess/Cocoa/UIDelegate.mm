@@ -86,6 +86,8 @@
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(UIDelegate);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(UIDelegateUIClient, UIDelegate::UIClient);
+
 
 UIDelegate::UIDelegate(WKWebView *webView)
     : m_webView(webView)

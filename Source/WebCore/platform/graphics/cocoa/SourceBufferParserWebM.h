@@ -210,6 +210,7 @@ public:
     };
 
     class VideoTrackData : public TrackData {
+        WTF_MAKE_TZONE_ALLOCATED(VideoTrackData);
     public:
         static auto create(CodecType codecType, const webm::TrackEntry& trackEntry, WebMParser& parser) -> UniqueRef<VideoTrackData>
         {
@@ -238,6 +239,7 @@ public:
     };
 
     class AudioTrackData : public TrackData {
+        WTF_MAKE_TZONE_ALLOCATED(AudioTrackData);
     public:
         static auto create(CodecType codecType, const webm::TrackEntry& trackEntry, WebMParser& parser) -> UniqueRef<AudioTrackData>
         {
