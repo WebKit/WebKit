@@ -5233,8 +5233,10 @@ void WebPageProxy::scalePage(double scale, const IntPoint& origin, CompletionHan
 
     m_pageScaleFactor = scale;
 
-    if (!hasRunningProcess())
+    if (!hasRunningProcess()) {
+        completionHandler();
         return;
+    }
 
     send(Messages::WebPage::DidScalePage(scale, origin));
     forEachWebContentProcess([&] (auto& process, auto pageID) {
