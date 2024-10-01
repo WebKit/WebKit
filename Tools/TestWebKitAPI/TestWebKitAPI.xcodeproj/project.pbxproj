@@ -1430,6 +1430,13 @@
 			remoteGlobalIDString = A17C582D2C9B3EAD009DD0B5;
 			remoteInfo = TestWebKitAPIBundle;
 		};
+		A188991F2CAC690400FEB09A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7CCE7E8B1A41144E00447C4C;
+			remoteInfo = TestWebKitAPILibrary;
+		};
 		BC575A95126E74E7006F0F12 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -6298,6 +6305,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				A18899202CAC690400FEB09A /* PBXTargetDependency */,
 			);
 			name = TestWebKitAPIApp;
 			productName = TestWebKitAPIApp;
@@ -7444,6 +7452,11 @@
 			isa = PBXTargetDependency;
 			target = A17C582D2C9B3EAD009DD0B5 /* TestWebKitAPIBundle */;
 			targetProxy = A18899092CAA366C00FEB09A /* PBXContainerItemProxy */;
+		};
+		A18899202CAC690400FEB09A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */;
+			targetProxy = A188991F2CAC690400FEB09A /* PBXContainerItemProxy */;
 		};
 		BC575A96126E74E7006F0F12 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
