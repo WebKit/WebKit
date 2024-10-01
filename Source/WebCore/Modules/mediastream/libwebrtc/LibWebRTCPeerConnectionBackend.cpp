@@ -79,6 +79,12 @@ LibWebRTCPeerConnectionBackend::LibWebRTCPeerConnectionBackend(RTCPeerConnection
 
 LibWebRTCPeerConnectionBackend::~LibWebRTCPeerConnectionBackend() = default;
 
+bool LibWebRTCPeerConnectionBackend::shouldEnableWebRTCL4S() const
+{
+    RefPtr document = m_peerConnection.document();
+    return document && document->settings().webRTCL4SEnabled();
+}
+
 void LibWebRTCPeerConnectionBackend::suspend()
 {
     m_endpoint->suspend();
