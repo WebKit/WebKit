@@ -2510,6 +2510,7 @@ DeviceOrientationPermissionAPIEnabled:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 DeviceWidth:
   type: uint32_t
