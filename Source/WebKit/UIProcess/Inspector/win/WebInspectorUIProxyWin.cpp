@@ -111,7 +111,7 @@ void WebInspectorUIProxy::showSavePanelForSingleFile(HWND parentWindow, Vector<W
         auto content = saveDatas[0].content.utf8();
         auto contentSize = content.length();
         auto bytesWritten = FileSystem::writeToFile(fd, content.span());
-        if (bytesWritten == -1 || bytesWritten != contentSize) {
+        if (bytesWritten == -1 || static_cast<size_t>(bytesWritten) != contentSize) {
             auto message = systemErrorMessage(GetLastError());
             if (message.isEmpty())
                 message = makeString("Error: writeToFile returns "_s, bytesWritten, ", contentLength = "_s, content.length());

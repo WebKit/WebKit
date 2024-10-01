@@ -1643,6 +1643,9 @@ static MFVideoArea MakeArea(float x, float y, DWORD width, DWORD height)
     return area;
 }
 
+// FIXME: Fix the warnings
+IGNORE_CLANG_WARNINGS_BEGIN("sign-compare")
+
 static HRESULT validateVideoArea(const MFVideoArea& area, UINT32 width, UINT32 height)
 {
     float fOffsetX = MFOffsetToFloat(area.OffsetX);
@@ -2937,6 +2940,8 @@ HRESULT MediaPlayerPrivateMediaFoundation::Direct3DPresenter::getSwapChainPresen
 
     return S_OK;
 }
+
+IGNORE_CLANG_WARNINGS_END
 
 } // namespace WebCore
 

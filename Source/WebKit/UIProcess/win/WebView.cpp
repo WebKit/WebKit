@@ -918,7 +918,7 @@ void WebView::windowReceivedMessage(HWND, UINT message, WPARAM wParam, LPARAM)
 static Vector<wchar_t> truncatedString(const String& string)
 {
     // Truncate tooltip texts because multiline mode of tooltip control does word-wrapping very slowly
-    auto maxLength = 1024;
+    size_t maxLength = 1024;
     auto buffer = string.wideCharacters();
     if (buffer.size() > maxLength) {
         buffer[maxLength - 4] = L'.';

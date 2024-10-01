@@ -288,12 +288,12 @@ Thread& Thread::initializeTLS(Ref<Thread>&& thread)
     return *s_threadHolder.thread;
 }
 
-Atomic<int> Thread::SpecificStorage::s_numberOfKeys;
+Atomic<size_t> Thread::SpecificStorage::s_numberOfKeys;
 std::array<Atomic<Thread::SpecificStorage::DestroyFunction>, Thread::SpecificStorage::s_maxKeys> Thread::SpecificStorage::s_destroyFunctions;
 
 bool Thread::SpecificStorage::allocateKey(int& key, DestroyFunction destroy)
 {
-    int k = s_numberOfKeys.exchangeAdd(1);
+    auto k = s_numberOfKeys.exchangeAdd(1);
     if (k >= s_maxKeys) {
         s_numberOfKeys.exchangeSub(1);
         return false;

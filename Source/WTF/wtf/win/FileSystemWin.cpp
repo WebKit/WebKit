@@ -160,7 +160,7 @@ static String generateTemporaryPath(const Function<bool(const String&)>& action)
 {
     wchar_t tempPath[MAX_PATH];
     int tempPathLength = ::GetTempPathW(std::size(tempPath), tempPath);
-    if (tempPathLength <= 0 || tempPathLength > std::size(tempPath))
+    if (tempPathLength <= 0 || static_cast<size_t>(tempPathLength) >= std::size(tempPath))
         return String();
 
     String proposedPath;
