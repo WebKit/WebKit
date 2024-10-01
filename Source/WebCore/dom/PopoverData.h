@@ -25,12 +25,15 @@
 
 #pragma once
 
+#include "CloseWatcher.h"
 #include "Element.h"
 #include "HTMLElement.h"
 #include "HTMLFormControlElement.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+class EventListener;
 
 enum class PopoverVisibilityState : bool {
     Hidden,
@@ -63,6 +66,9 @@ public:
     HTMLFormControlElement* invoker() const { return m_invoker.get(); }
     void setInvoker(const HTMLFormControlElement* element) { m_invoker = element; }
 
+    CloseWatcher* closeWatcher() { return m_closeWatcher.get(); };
+    void setCloseWatcher(RefPtr<CloseWatcher> closeWatcher) { m_closeWatcher = closeWatcher; }
+
     class ScopedStartShowingOrHiding {
     public:
     explicit ScopedStartShowingOrHiding(Element& popover)
@@ -83,6 +89,19 @@ public:
         bool m_wasSet;
     };
 
+    class PopoverCloseWatcherEventListener final : public EventListener {
+    public:
+        static Ref<PopoverCloseWatcherEventListener> create(HTMLElement& popover)
+        {
+            return adoptRef(*new PopoverCloseWatcherEventListener(popover));
+        }
+        void handleEvent(ScriptExecutionContext&, Event&) final;
+    private:
+        explicit PopoverCloseWatcherEventListener(HTMLElement&);
+
+        WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_popover;
+    };
+
 private:
     PopoverState m_popoverState;
     PopoverVisibilityState m_visibilityState;
@@ -90,6 +109,7 @@ private:
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_previouslyFocusedElement;
     WeakPtr<HTMLFormControlElement, WeakPtrImplWithEventTargetData> m_invoker;
     bool m_isHidingOrShowingPopover = false;
+    RefPtr<CloseWatcher> m_closeWatcher;
 };
 
 }

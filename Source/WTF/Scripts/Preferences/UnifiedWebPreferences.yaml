@@ -1850,6 +1850,20 @@ ClientBadgeEnabled:
     WebCore:
       default: false
 
+CloseWatcherEnabled:
+  type: bool
+  status: testable
+  category: html
+  humanReadableName: "Close Watcher API"
+  humanReadableDescription: "Enable Close Watcher API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 ColorFilterEnabled:
   type: bool
   status: embedder

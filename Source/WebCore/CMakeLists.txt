@@ -108,6 +108,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/history"
     "${WEBCORE_DIR}/html"
     "${WEBCORE_DIR}/html/canvas"
+    "${WEBCORE_DIR}/html/closewatcher"
     "${WEBCORE_DIR}/html/forms"
     "${WEBCORE_DIR}/html/parser"
     "${WEBCORE_DIR}/html/shadow"
@@ -256,6 +257,7 @@ set(WebCore_IDL_INCLUDES
     css/typedom/transform
 
     html/canvas
+    html/closewatcher
     html/shadow
     html/track
 
@@ -1343,6 +1345,8 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/PaintRenderingContext2D.idl
     html/canvas/Path2D.idl
     html/canvas/PredefinedColorSpace.idl
+
+    html/closewatcher/CloseWatcher.idl
 
     html/track/AudioTrack.idl
     html/track/AudioTrackConfiguration.idl

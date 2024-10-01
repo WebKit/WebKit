@@ -29,6 +29,11 @@
 
 namespace WebCore {
 
+class CloseWatcher;
+class Event;
+class EventListener;
+class ScriptExecutionContext;
+
 class HTMLDialogElement final : public HTMLElement {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLDialogElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLDialogElement);
@@ -54,6 +59,19 @@ public:
     bool handleCommandInternal(const HTMLFormControlElement& invoker, const CommandType&) final;
 
 private:
+    class DialogCloseWatcherEventListener final : public EventListener {
+    public:
+        static Ref<DialogCloseWatcherEventListener> create(HTMLDialogElement& dialog)
+        {
+            return adoptRef(*new DialogCloseWatcherEventListener(dialog));
+        }
+        void handleEvent(ScriptExecutionContext&, Event&) final;
+    private:
+        explicit DialogCloseWatcherEventListener(HTMLDialogElement&);
+
+        WeakPtr<HTMLDialogElement, WeakPtrImplWithEventTargetData> m_dialog;
+    };
+
     HTMLDialogElement(const QualifiedName&, Document&);
 
     void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
@@ -63,6 +81,7 @@ private:
     String m_returnValue;
     bool m_isModal { false };
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_previouslyFocusedElement;
+    RefPtr<CloseWatcher> m_closeWatcher;
 };
 
 } // namespace WebCore

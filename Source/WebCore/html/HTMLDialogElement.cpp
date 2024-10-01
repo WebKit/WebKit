@@ -26,8 +26,11 @@
 #include "config.h"
 #include "HTMLDialogElement.h"
 
+#include "AddEventListenerOptions.h"
 #include "CSSSelector.h"
+#include "CloseWatcher.h"
 #include "DocumentInlines.h"
+#include "EventListener.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FocusOptions.h"
@@ -46,6 +49,26 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLDialogElement);
 
 using namespace HTMLNames;
+
+HTMLDialogElement::DialogCloseWatcherEventListener::DialogCloseWatcherEventListener(HTMLDialogElement& dialog)
+    : EventListener(EventListener::CPPEventListenerType)
+    , m_dialog(dialog)
+{
+}
+
+void HTMLDialogElement::DialogCloseWatcherEventListener::handleEvent(ScriptExecutionContext&, Event& event)
+{
+    if (!m_dialog)
+        return;
+    if (event.type() == eventNames().cancelEvent) {
+        Ref dialogCancelEvent = Event::create(eventNames().cancelEvent, Event::CanBubble::No, event.cancelable() ? Event::IsCancelable::Yes : Event::IsCancelable::No);
+        m_dialog->dispatchEvent(dialogCancelEvent);
+        if (dialogCancelEvent->defaultPrevented())
+            event.preventDefault();
+        dialogCancelEvent->setDefaultHandled();
+    } else if (event.type() == eventNames().closeEvent)
+        m_dialog->close(nullString());
+}
 
 HTMLDialogElement::HTMLDialogElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
@@ -105,6 +128,15 @@ ExceptionOr<void> HTMLDialogElement::showModal()
 
     RenderElement::markRendererDirtyAfterTopLayerChange(this->checkedRenderer().get(), containingBlockBeforeStyleResolution.get());
 
+    if (document().settings().closeWatcherEnabled()) {
+        m_closeWatcher = CloseWatcher::create(document());
+        if (m_closeWatcher) {
+            Ref<DialogCloseWatcherEventListener> listener = DialogCloseWatcherEventListener::create(*this);
+            m_closeWatcher->addEventListener(eventNames().cancelEvent, listener, { });
+            m_closeWatcher->addEventListener(eventNames().closeEvent, listener, { });
+        }
+    }
+
     m_previouslyFocusedElement = document().focusedElement();
 
     auto hideUntil = topmostPopoverAncestor(TopLayerElementType::Other);
@@ -138,6 +170,11 @@ void HTMLDialogElement::close(const String& result)
     }
 
     queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+
+    if (m_closeWatcher) {
+        m_closeWatcher->destroy();
+        m_closeWatcher = nullptr;
+    }
 }
 
 bool HTMLDialogElement::isValidCommandType(const CommandType command)
@@ -212,6 +249,11 @@ void HTMLDialogElement::removedFromAncestor(RemovalType removalType, ContainerNo
 {
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     setIsModal(false);
+
+    if (m_closeWatcher) {
+        m_closeWatcher->destroy();
+        m_closeWatcher = nullptr;
+    }
 }
 
 void HTMLDialogElement::setIsModal(bool newValue)
