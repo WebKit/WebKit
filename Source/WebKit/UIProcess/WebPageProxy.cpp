@@ -11528,13 +11528,17 @@ void WebPageProxy::willStartCapture(UserMediaPermissionRequestProxy& request, Co
 
 void WebPageProxy::microphoneMuteStatusChanged(bool isMuting)
 {
+    // We are updating both the internal and web app muting states so that only microphone changes, and not camera or screenshare.
     auto mutedState = internals().mutedState;
-    if (isMuting)
+    if (isMuting) {
         mutedState.add(WebCore::MediaProducerMutedState::AudioCaptureIsMuted);
-    else
+        m_mutedCaptureKindsDesiredByWebApp.add(WebCore::MediaProducerMediaCaptureKind::Microphone);
+    } else {
         mutedState.remove(WebCore::MediaProducerMutedState::AudioCaptureIsMuted);
+        m_mutedCaptureKindsDesiredByWebApp.remove(WebCore::MediaProducerMediaCaptureKind::Microphone);
+    }
 
-    setMuted(mutedState, FromApplication::Yes);
+    setMuted(mutedState, FromApplication::No);
 }
 
 void WebPageProxy::requestUserMediaPermissionForFrame(IPC::Connection& connection, UserMediaRequestIdentifier userMediaID, FrameIdentifier frameID, const SecurityOriginData& userMediaDocumentOriginData, const SecurityOriginData& topLevelDocumentOriginData, MediaStreamRequest&& request)
