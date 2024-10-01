@@ -335,6 +335,8 @@ void WorkerSWClientConnection::getPushPermissionState(ServiceWorkerRegistrationI
     });
 }
 
+#if ENABLE(NOTIFICATION_EVENT)
+
 void WorkerSWClientConnection::getNotifications(const URL& serviceWorkerRegistrationURL, const String& tag, GetNotificationsCallback&& callback)
 {
     auto requestIdentifier = SWClientRequestIdentifier::generate();
@@ -350,6 +352,8 @@ void WorkerSWClientConnection::getNotifications(const URL& serviceWorkerRegistra
         });
     });
 }
+
+#endif
 
 void WorkerSWClientConnection::enableNavigationPreload(ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrVoidCallback&& callback)
 {

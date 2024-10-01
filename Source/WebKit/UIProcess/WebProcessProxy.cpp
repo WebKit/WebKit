@@ -2671,6 +2671,8 @@ RefPtr<WebsiteDataStore> WebProcessProxy::protectedWebsiteDataStore() const
     return m_websiteDataStore;
 }
 
+#if ENABLE(NOTIFICATION_EVENT)
+
 void WebProcessProxy::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Vector<NotificationData>&&)>&& callback)
 {
     if (RefPtr websiteDataStore = m_websiteDataStore; websiteDataStore->hasClientGetDisplayedNotifications()) {
@@ -2694,6 +2696,8 @@ void WebProcessProxy::getNotifications(const URL& registrationURL, const String&
 
     WebNotificationManagerProxy::protectedSharedServiceWorkerManager()->getNotifications(registrationURL, tag, sessionID(), WTFMove(callback));
 }
+
+#endif
 
 void WebProcessProxy::getWebCryptoMasterKey(CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& completionHandler)
 {
