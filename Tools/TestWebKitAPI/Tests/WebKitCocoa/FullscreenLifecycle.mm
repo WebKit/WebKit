@@ -146,7 +146,12 @@ TEST(Fullscreen, VideoLifecycleElementFullscreenDisabled)
     runTest(configuration.get());
 }
 
+// rdar://136783989
+#if PLATFORM(MAC) && defined(NDEBUG)
+TEST(Fullscreen, DISABLED_VideoPausesAfterExitingFullscreen)
+#else
 TEST(Fullscreen, VideoPausesAfterExitingFullscreen)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
