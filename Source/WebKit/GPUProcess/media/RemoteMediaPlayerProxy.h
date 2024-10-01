@@ -395,6 +395,9 @@ private:
     RefPtr<RemoteMediaSourceProxy> protectedMediaSourceProxy() const { return m_mediaSourceProxy; }
 #endif
 
+    Ref<IPC::Connection> protectedConnection() const { return m_webProcessConnection; }
+    Ref<RemoteVideoFrameObjectHeap> protectedVideoFrameObjectHeap() const;
+
     Vector<Ref<RemoteAudioTrackProxy>> m_audioTracks;
     Vector<Ref<RemoteVideoTrackProxy>> m_videoTracks;
     Vector<Ref<RemoteTextTrackProxy>> m_textTracks;
