@@ -108,7 +108,7 @@ public:
 
     virtual void updateDebugIndicator() { }
 
-    virtual void waitForDidUpdateActivityState(ActivityStateChangeID, WebProcessProxy&) { }
+    virtual void waitForDidUpdateActivityState(ActivityStateChangeID) { }
 
     // Hide the content until the currently pending update arrives.
     virtual void hideContentUntilPendingUpdate() { ASSERT_NOT_REACHED(); }

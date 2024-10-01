@@ -2118,7 +2118,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
             _failedTouchStartDeferringGestures = { { } };
 
         [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
-        _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
+        _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedMainFrameLayerTreeTransactionID();
 
 #if ENABLE(TOUCH_EVENTS)
         _page->resetPotentialTapSecurityOrigin();
@@ -11609,7 +11609,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         return;
 
     if (event.type() == WebKit::WebEventType::MouseDown) {
-        _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
+        _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedMainFrameLayerTreeTransactionID();
 
         if (auto lastLocation = interaction.lastLocation)
             _lastInteractionLocation = *lastLocation;
@@ -13709,7 +13709,7 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
 
 - (void)_simulateElementAction:(_WKElementActionType)actionType atLocation:(CGPoint)location
 {
-    _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
+    _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedMainFrameLayerTreeTransactionID();
     [self doAfterPositionInformationUpdate:[actionType, self, protectedSelf = retainPtr(self)] (WebKit::InteractionInformationAtPosition info) {
         _WKActivatedElementInfo *elementInfo = [_WKActivatedElementInfo activatedElementInfoWithInteractionInformationAtPosition:info userInfo:nil];
         _WKElementAction *action = [_WKElementAction _elementActionWithType:actionType info:elementInfo assistant:_actionSheetAssistant.get()];

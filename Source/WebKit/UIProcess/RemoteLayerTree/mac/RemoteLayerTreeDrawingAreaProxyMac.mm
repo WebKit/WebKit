@@ -181,6 +181,9 @@ void RemoteLayerTreeDrawingAreaProxyMac::layoutBannerLayers(const RemoteLayerTre
 
 void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction& transaction, const RemoteScrollingCoordinatorTransaction&)
 {
+    if (!transaction.isMainFrameProcessTransaction())
+        return;
+
     m_pageScalingLayerID = transaction.pageScalingLayerID();
     m_pageScrollingLayerID = transaction.scrolledContentsLayerID();
 
@@ -403,8 +406,12 @@ void RemoteLayerTreeDrawingAreaProxyMac::pauseDisplayRefreshCallbacks()
     removeObserver(m_displayRefreshObserverID);
 }
 
-void RemoteLayerTreeDrawingAreaProxyMac::setPreferredFramesPerSecond(WebCore::FramesPerSecond preferredFramesPerSecond)
+void RemoteLayerTreeDrawingAreaProxyMac::setPreferredFramesPerSecond(IPC::Connection& connection,  WebCore::FramesPerSecond preferredFramesPerSecond)
 {
+    // FIXME(site-isolation): This currently ignores throttling requests from remote subframes (as would also happen for in-process subframes). We have the opportunity to do better, and allow throttling on a per-process level.
+    if (!m_webProcessProxy->hasConnection() || &m_webProcessProxy->connection() != &connection)
+        return;
+
     m_clientPreferredFramesPerSecond = preferredFramesPerSecond;
 
     if (!m_displayID) {
@@ -502,7 +509,9 @@ void RemoteLayerTreeDrawingAreaProxyMac::didChangeViewExposedRect()
 
 void RemoteLayerTreeDrawingAreaProxyMac::colorSpaceDidChange()
 {
-    send(Messages::DrawingArea::SetColorSpace(protectedWebPageProxy()->colorSpace()));
+    forEachProcessState([&](ProcessState& state, WebProcessProxy& webProcess) {
+        webProcess.send(Messages::DrawingArea::SetColorSpace(protectedWebPageProxy()->colorSpace()), identifier());
+    });
 }
 
 MachSendRight RemoteLayerTreeDrawingAreaProxyMac::createFence()
@@ -541,7 +550,7 @@ MachSendRight RemoteLayerTreeDrawingAreaProxyMac::createFence()
 
 void RemoteLayerTreeDrawingAreaProxyMac::updateZoomTransactionID()
 {
-    m_transactionIDAfterEndingTransientZoom = nextLayerTreeTransactionID();
+    m_transactionIDAfterEndingTransientZoom = nextMainFrameLayerTreeTransactionID();
 }
 
 

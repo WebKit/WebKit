@@ -62,9 +62,8 @@ public:
     void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime);
     void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& key);
 
-    // FIXME(site-isolation): These always return the root's IDs. Is that ok?
-    TransactionID nextLayerTreeTransactionID() const { return m_webPageProxyProcessState.pendingLayerTreeTransactionID.next(); }
-    TransactionID lastCommittedLayerTreeTransactionID() const { return m_webPageProxyProcessState.transactionIDForPendingCACommit; }
+    TransactionID nextMainFrameLayerTreeTransactionID() const { return m_webPageProxyProcessState.pendingLayerTreeTransactionID.next(); }
+    TransactionID lastCommittedMainFrameLayerTreeTransactionID() const { return m_transactionIDForPendingCACommit; }
 
     virtual void didRefreshDisplay();
     virtual void setDisplayLinkWantsFullSpeedUpdates(bool) { }
@@ -79,8 +78,8 @@ public:
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     void animationsWereAddedToNode(RemoteLayerTreeNode&);
     void animationsWereRemovedFromNode(RemoteLayerTreeNode&);
-    Seconds acceleratedTimelineTimeOrigin() const { return m_acceleratedTimelineTimeOrigin; }
-    MonotonicTime animationCurrentTime() const { return m_animationCurrentTime; }
+    Seconds acceleratedTimelineTimeOrigin(WebCore::ProcessIdentifier) const;
+    MonotonicTime animationCurrentTime(WebCore::ProcessIdentifier) const;
 #endif
 
     // For testing.
@@ -90,6 +89,32 @@ protected:
     void updateDebugIndicatorPosition();
 
     bool shouldCoalesceVisualEditorStateUpdates() const override { return true; }
+
+    // displayDidRefresh is sent to the WebProcess, and it responds
+    // with a commitLayerTree message (ideally before the next
+    // displayDidRefresh, otherwise we mark it as missed and send
+    // it when commitLayerTree does arrive).
+    enum CommitLayerTreeMessageState { CommitLayerTreePending, NeedsDisplayDidRefresh, MissedCommit, Idle };
+    struct ProcessState {
+        WTF_MAKE_NONCOPYABLE(ProcessState);
+        ProcessState() = default;
+        ProcessState(ProcessState&&) = default;
+        ProcessState& operator=(ProcessState&&) = default;
+
+        CommitLayerTreeMessageState commitLayerTreeMessageState { Idle };
+        TransactionID lastLayerTreeTransactionID;
+        TransactionID pendingLayerTreeTransactionID;
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+        Seconds acceleratedTimelineTimeOrigin;
+        MonotonicTime animationCurrentTime;
+#endif
+    };
+
+    ProcessState& processStateForConnection(IPC::Connection&);
+    const ProcessState& processStateForIdentifier(WebCore::ProcessIdentifier) const;
+    IPC::Connection& connectionForIdentifier(WebCore::ProcessIdentifier);
+    void forEachProcessState(Function<void(ProcessState&, WebProcessProxy&)>&&);
 
 private:
 
@@ -110,7 +135,7 @@ private:
     void updateDebugIndicator(WebCore::IntSize contentsSize, bool rootLayerChanged, float scale, const WebCore::IntPoint& scrollPosition);
     void initializeDebugIndicator();
 
-    void waitForDidUpdateActivityState(ActivityStateChangeID, WebProcessProxy&) final;
+    void waitForDidUpdateActivityState(ActivityStateChangeID) final;
     void hideContentUntilPendingUpdate() final;
     void hideContentUntilAnyUpdate() final;
     bool hasVisibleContent() const final;
@@ -134,7 +159,7 @@ private:
     // the main frame's request. We should either ignore subframe requests, or
     // properly track all the requested and filter displayDidRefresh callback rates
     // per-frame.
-    virtual void setPreferredFramesPerSecond(WebCore::FramesPerSecond) { }
+    virtual void setPreferredFramesPerSecond(IPC::Connection&, WebCore::FramesPerSecond) { }
 
     void willCommitLayerTree(IPC::Connection&, TransactionID);
     void commitLayerTreeNotTriggered(IPC::Connection&, TransactionID);
@@ -149,30 +174,12 @@ private:
     std::unique_ptr<RemoteLayerTreeHost> m_remoteLayerTreeHost;
     bool m_isWaitingForDidUpdateGeometry { false };
 
-    // displayDidRefresh is sent to the WebProcess, and it responds
-    // with a commitLayerTree message (ideally before the next
-    // displayDidRefresh, otherwise we mark it as missed and send
-    // it when commitLayerTree does arrive).
-    enum CommitLayerTreeMessageState { CommitLayerTreePending, NeedsDisplayDidRefresh, MissedCommit, Idle };
-    struct ProcessState {
-        CommitLayerTreeMessageState commitLayerTreeMessageState { Idle };
-        TransactionID lastLayerTreeTransactionID;
-        TransactionID pendingLayerTreeTransactionID;
-#if ASSERT_ENABLED
-        TransactionID lastVisibleTransactionID;
-#endif
-        TransactionID transactionIDForPendingCACommit;
-        ActivityStateChangeID activityStateChangeID { ActivityStateChangeAsynchronous };
-    };
-
-    ProcessState& processStateForConnection(IPC::Connection&);
-    void forEachProcessState(Function<void(ProcessState&, WebProcessProxy&)>&&);
     void didRefreshDisplay(IPC::Connection*);
     void didRefreshDisplay(ProcessState&, IPC::Connection&);
     bool maybePauseDisplayRefreshCallbacks();
 
     ProcessState m_webPageProxyProcessState;
-    WeakHashMap<RemotePageDrawingAreaProxy, ProcessState> m_remotePageProcessState;
+    HashMap<WebCore::ProcessIdentifier, ProcessState> m_remotePageProcessState;
 
     WebCore::IntSize m_lastSentSize;
     WebCore::IntSize m_lastSentMinimumSizeForAutoLayout;
@@ -184,12 +191,13 @@ private:
 
     Markable<IPC::AsyncReplyID> m_replyForUnhidingContent;
 
-    unsigned m_countOfTransactionsWithNonEmptyLayerChanges { 0 };
-
-#if ENABLE(THREADED_ANIMATION_RESOLUTION)
-    Seconds m_acceleratedTimelineTimeOrigin;
-    MonotonicTime m_animationCurrentTime;
+#if ASSERT_ENABLED
+    TransactionID m_lastVisibleTransactionID;
 #endif
+    TransactionID m_transactionIDForPendingCACommit;
+    ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
+
+    unsigned m_countOfTransactionsWithNonEmptyLayerChanges { 0 };
 };
 
 } // namespace WebKit

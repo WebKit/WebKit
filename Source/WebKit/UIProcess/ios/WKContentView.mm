@@ -725,7 +725,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
         !!self.webView._allowsViewportShrinkToFit,
         !!enclosedInScrollableAncestorView,
         velocityData,
-        downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).lastCommittedLayerTreeTransactionID());
+        downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).lastCommittedMainFrameLayerTreeTransactionID());
 
     LOG_WITH_STREAM(VisibleRects, stream << "-[WKContentView didUpdateVisibleRect]" << visibleContentRectUpdateInfo.dump());
 
