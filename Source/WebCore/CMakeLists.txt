@@ -2862,6 +2862,8 @@ WEBKIT_COMPUTE_SOURCES(WebCore)
 target_precompile_headers(WebCore PRIVATE WebCorePrefix.h)
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    ${WebCore_DERIVED_SOURCES_DIR}/SVGNames.h
+
     Modules/WebGPU/InternalAPI/WebGPU.serialization.in
 
     Modules/indexeddb/IndexedDB.serialization.in

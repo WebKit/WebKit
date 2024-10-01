@@ -27,10 +27,16 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "CSSStyleImageValue.h"
 #include "ContextDestructionObserver.h"
 #include "DOMRectReadOnly.h"
+#include "HTMLCanvasElement.h"
+#include "HTMLImageElement.h"
+#include "HTMLVideoElement.h"
 #include "JSDOMPromiseDeferredForward.h"
+#include "OffscreenCanvas.h"
 #include "PlaneLayout.h"
+#include "SVGImageElement.h"
 #include "VideoColorSpaceInit.h"
 #include "WebCodecsAlphaOption.h"
 #include "WebCodecsVideoFrameData.h"
@@ -38,16 +44,10 @@
 namespace WebCore {
 
 class BufferSource;
-class CSSStyleImageValue;
 class DOMRectReadOnly;
-class HTMLCanvasElement;
-class HTMLImageElement;
-class HTMLVideoElement;
 class ImageBitmap;
 class ImageBuffer;
 class NativeImage;
-class OffscreenCanvas;
-class SVGImageElement;
 class VideoColorSpace;
 
 template<typename> class ExceptionOr;

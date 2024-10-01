@@ -852,6 +852,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSFontPaletteValuesRule.h
     css/CSSGridIntegerRepeatValue.h
     css/CSSGroupingRule.h
+    css/CSSImageValue.h
     css/CSSImportRule.h
     css/CSSLineBoxContainValue.h
     css/CSSMediaRule.h
@@ -879,6 +880,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSVariableData.h
     css/CSSVariableReferenceValue.h
     css/Counter.h
+    css/DOMMatrix2DInit.h
     css/DeprecatedCSSOMCounter.h
     css/DeprecatedCSSOMPrimitiveValue.h
     css/DeprecatedCSSOMRGBColor.h
@@ -931,6 +933,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     css/typedom/CSSKeywordValue.h
     css/typedom/CSSNumericValue.h
+    css/typedom/CSSStyleImageValue.h
     css/typedom/CSSStyleValue.h
 
     css/typedom/numeric/CSSNumericBaseType.h
@@ -2562,17 +2565,41 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/StylePrimitiveNumericTypes.h
     style/values/StyleValueTypes.h
 
+    svg/SVGAngle.h
+    svg/SVGAngleValue.h
     svg/SVGElement.h
+    svg/SVGGraphicsElement.h
+    svg/SVGImageElement.h
+    svg/SVGImageLoader.h
+    svg/SVGLength.h
     svg/SVGLengthContext.h
+    svg/SVGLengthList.h
     svg/SVGLengthValue.h
+    svg/SVGLocatable.h
+    svg/SVGMarkerTypes.h
+    svg/SVGMatrix.h
+    svg/SVGNumber.h
+    svg/SVGNumberList.h
     svg/SVGParserUtilities.h
     svg/SVGParsingError.h
     svg/SVGPathByteStream.h
     svg/SVGPathConsumer.h
+    svg/SVGPathSeg.h
+    svg/SVGPathSegList.h
     svg/SVGPathUtilities.h
+    svg/SVGPoint.h
+    svg/SVGPointList.h
+    svg/SVGPreserveAspectRatio.h
     svg/SVGPreserveAspectRatioValue.h
+    svg/SVGRect.h
     svg/SVGStringList.h
     svg/SVGTests.h
+    svg/SVGTransform.h
+    svg/SVGTransformDistance.h
+    svg/SVGTransformList.h
+    svg/SVGTransformValue.h
+    svg/SVGTransformable.h
+    svg/SVGURIReference.h
     svg/SVGUnitTypes.h
 
     svg/graphics/SVGImageCache.h
@@ -2580,11 +2607,48 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     svg/graphics/filters/SVGFilter.h
     svg/graphics/filters/SVGFilterExpression.h
 
+    svg/properties/SVGAnimatedDecoratedProperty.h
+    svg/properties/SVGAnimatedPrimitiveProperty.h
+    svg/properties/SVGAnimatedProperty.h
+    svg/properties/SVGAnimatedPropertyAccessor.h
+    svg/properties/SVGAnimatedPropertyAccessorImpl.h
+    svg/properties/SVGAnimatedPropertyAnimator.h
+    svg/properties/SVGAnimatedPropertyAnimatorImpl.h
+    svg/properties/SVGAnimatedPropertyImpl.h
+    svg/properties/SVGAnimatedPropertyList.h
+    svg/properties/SVGAnimatedPropertyPairAccessor.h
+    svg/properties/SVGAnimatedPropertyPairAccessorImpl.h
+    svg/properties/SVGAnimatedPropertyPairAnimator.h
+    svg/properties/SVGAnimatedPropertyPairAnimatorImpl.h
+    svg/properties/SVGAnimatedString.h
+    svg/properties/SVGAnimatedValueProperty.h
+    svg/properties/SVGAnimationAdditiveFunction.h
+    svg/properties/SVGAnimationAdditiveListFunction.h
+    svg/properties/SVGAnimationAdditiveListFunctionImpl.h
+    svg/properties/SVGAnimationAdditiveValueFunction.h
+    svg/properties/SVGAnimationAdditiveValueFunctionImpl.h
+    svg/properties/SVGAnimationDiscreteFunction.h
+    svg/properties/SVGAnimationDiscreteFunctionImpl.h
+    svg/properties/SVGAnimationFunction.h
+    svg/properties/SVGAttributeAnimator.h
+    svg/properties/SVGDecoratedEnumeration.h
+    svg/properties/SVGDecoratedPrimitive.h
+    svg/properties/SVGDecoratedProperty.h
     svg/properties/SVGList.h
+    svg/properties/SVGMemberAccessor.h
+    svg/properties/SVGPointerMemberAccessor.h
     svg/properties/SVGPrimitiveList.h
     svg/properties/SVGProperty.h
+    svg/properties/SVGPropertyAccessor.h
+    svg/properties/SVGPropertyAccessorImpl.h
+    svg/properties/SVGPropertyList.h
     svg/properties/SVGPropertyOwner.h
+    svg/properties/SVGPropertyOwnerRegistry.h
+    svg/properties/SVGPropertyRegistry.h
     svg/properties/SVGPropertyTraits.h
+    svg/properties/SVGSharedPrimitiveProperty.h
+    svg/properties/SVGValueProperty.h
+    svg/properties/SVGValuePropertyList.h
 
     testing/MockGamepad.h
     testing/MockGamepadProvider.h
