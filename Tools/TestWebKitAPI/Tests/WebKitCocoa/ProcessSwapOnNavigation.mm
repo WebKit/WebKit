@@ -4733,12 +4733,7 @@ TEST(ProcessSwap, ProcessReuseeTLDPlus2)
     EXPECT_EQ(pid1, pid3);
 }
 
-// rdar://136716513
-#if !defined(NDEBUG)
-TEST(ProcessSwap, DISABLED_ConcurrentHistoryNavigations)
-#else
 TEST(ProcessSwap, ConcurrentHistoryNavigations)
-#endif
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
