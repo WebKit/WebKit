@@ -1145,6 +1145,11 @@ webkit.org/b/190626 imported/w3c/web-platform-tests/html/semantics/forms/the-dat
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-eval.html [ Failure ]
 webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-importScripts.html [ Failure ]
 
+# The GPU process should not be used in layout tests yet
+webkit.org/b/280604 fast/mediastream/video-background-with-canvas.html [ Skip ]
+webkit.org/b/280604 webgl/webgl-worker.html [ Skip ]
+webkit.org/b/280604 webgl/webgl-fail-platform-context-creation-no-crash.html [ Skip ]
+
 # WEBGL failures
 webkit.org/b/251107 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Failure ]
 webkit.org/b/251107 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
