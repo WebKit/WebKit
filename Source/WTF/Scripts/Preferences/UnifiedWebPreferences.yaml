@@ -8398,6 +8398,21 @@ WebRTCH265CodecEnabled:
       "PLATFORM(COCOA)": true
       default: false
 
+WebRTCL4SEnabled:
+  type: bool
+  status: testable
+  category: media
+  condition: ENABLE(WEB_RTC)
+  humanReadableName: "WebRTC L4S support"
+  humanReadableDescription: "Enable WebRTC L4S support"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebRTCMediaPipelineAdditionalLoggingEnabled:
   type: bool
   status: internal
