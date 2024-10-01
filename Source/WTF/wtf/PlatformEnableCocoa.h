@@ -362,7 +362,7 @@
 #define ENABLE_FIXED_IOS_TOUCH_POINT_RADIUS 1
 #endif
 
-#if !defined(ENABLE_FTL_JIT) && !USE(JSVALUE32_64)
+#if !defined(ENABLE_FTL_JIT) && CPU(ADDRESS64)
 #define ENABLE_FTL_JIT 1
 #endif
 
