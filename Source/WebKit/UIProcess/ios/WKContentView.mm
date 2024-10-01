@@ -817,6 +817,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 }
 
+// FIXME: <rdar://136769319> Adopt this in visionOS too.
+#if HAVE(UI_FOCUS_ITEM_DEFERRAL_MODE) && !PLATFORM(VISION)
+- (UIFocusItemDeferralMode)focusItemDeferralMode
+{
+    return UIFocusItemDeferralModeNever;
+}
+#endif
+
 #pragma mark Internal
 
 - (void)_windowDidMoveToScreenNotification:(NSNotification *)notification
