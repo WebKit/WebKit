@@ -81,7 +81,7 @@ private:
     CheckedRef<const Document> m_document;
     const RenderStyle& m_parentStyle;
     const RenderStyle& m_parentBoxStyle;
-    Element* m_element;
+    RefPtr<Element> m_element;
 };
 
 }

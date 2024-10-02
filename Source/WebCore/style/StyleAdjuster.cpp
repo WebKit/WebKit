@@ -429,31 +429,31 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     }
 
     if (style.display() != DisplayType::None && style.display() != DisplayType::Contents) {
-        if (m_element) {
+        if (RefPtr element = m_element) {
             // Tables never support the -webkit-* values for text-align and will reset back to the default.
-            if (is<HTMLTableElement>(*m_element) && (style.textAlign() == TextAlignMode::WebKitLeft || style.textAlign() == TextAlignMode::WebKitCenter || style.textAlign() == TextAlignMode::WebKitRight))
+            if (is<HTMLTableElement>(*element) && (style.textAlign() == TextAlignMode::WebKitLeft || style.textAlign() == TextAlignMode::WebKitCenter || style.textAlign() == TextAlignMode::WebKitRight))
                 style.setTextAlign(TextAlignMode::Start);
 
             // Ruby text does not support float or position. This might change with evolution of the specification.
-            if (m_element->hasTagName(rtTag)) {
+            if (element->hasTagName(rtTag)) {
                 style.setPosition(PositionType::Static);
                 style.setFloating(Float::None);
             }
 
-            if (m_element->hasTagName(legendTag))
+            if (element->hasTagName(legendTag))
                 style.setEffectiveDisplay(equivalentBlockDisplay(style));
         }
 
-        if (hasUnsupportedRubyDisplay(style.display(), m_element))
+        if (hasUnsupportedRubyDisplay(style.display(), m_element.get()))
             style.setEffectiveDisplay(style.display() == DisplayType::RubyBlock ? DisplayType::Block : DisplayType::Inline);
 
         // Top layer elements are always position: absolute; unless the position is set to fixed.
         // https://fullscreen.spec.whatwg.org/#new-stacking-layer
-        if (m_element != m_document->documentElement() && style.position() != PositionType::Absolute && style.position() != PositionType::Fixed && isInTopLayerOrBackdrop(style, m_element))
+        if (m_element != m_document->documentElement() && style.position() != PositionType::Absolute && style.position() != PositionType::Fixed && isInTopLayerOrBackdrop(style, m_element.get()))
             style.setPosition(PositionType::Absolute);
 
         // Absolute/fixed positioned elements, floating elements and the document element need block-like outside display.
-        if (style.hasOutOfFlowPosition() || style.isFloating() || (m_element && m_document->documentElement() == m_element))
+        if (style.hasOutOfFlowPosition() || style.isFloating() || (m_element && m_document->documentElement() == m_element.get()))
             style.setEffectiveDisplay(equivalentBlockDisplay(style));
 
         // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
@@ -519,7 +519,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         return style.position() == PositionType::Static && !parentBoxStyle.isDisplayFlexibleOrGridBox();
     };
 
-    if (hasAutoZIndex(style, m_parentBoxStyle, m_element))
+    if (hasAutoZIndex(style, m_parentBoxStyle, m_element.get()))
         style.setHasAutoUsedZIndex();
     else
         style.setUsedZIndex(style.specifiedZIndex());
@@ -548,9 +548,9 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     // cases where objects that should be blended as a single unit end up with a non-transparent
     // object wedged in between them. Auto z-index also becomes 0 for objects that specify transforms/masks/reflections.
     if (style.hasAutoUsedZIndex()) {
-        if ((m_element && m_document->documentElement() == m_element)
+        if ((m_element && m_document->documentElement() == m_element.get())
             || style.hasOpacity()
-            || hasTransformRelatedProperty(style, m_element, m_parentStyle)
+            || hasTransformRelatedProperty(style, m_element.get(), m_parentStyle)
             || style.hasMask()
             || style.clipPath()
             || style.boxReflect()
@@ -561,25 +561,25 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             || style.position() == PositionType::Sticky
             || style.position() == PositionType::Fixed
             || style.willChangeCreatesStackingContext()
-            || isInTopLayerOrBackdrop(style, m_element))
+            || isInTopLayerOrBackdrop(style, m_element.get()))
             style.setUsedZIndex(0);
     }
 
-    if (m_element) {
+    if (RefPtr element = m_element) {
         // Textarea considers overflow visible as auto.
-        if (is<HTMLTextAreaElement>(*m_element)) {
+        if (is<HTMLTextAreaElement>(*element)) {
             style.setOverflowX(style.overflowX() == Overflow::Visible ? Overflow::Auto : style.overflowX());
             style.setOverflowY(style.overflowY() == Overflow::Visible ? Overflow::Auto : style.overflowY());
         }
 
-        if (RefPtr input = dynamicDowncast<HTMLInputElement>(*m_element); input && input->isPasswordField())
+        if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element); input && input->isPasswordField())
             style.setTextSecurity(style.inputSecurity() == InputSecurity::Auto ? TextSecurity::Disc : TextSecurity::None);
 
         // Disallow -webkit-user-modify on :pseudo and ::pseudo elements.
-        if (m_element->isInUserAgentShadowTree() && !m_element->userAgentPart().isNull())
+        if (element->isInUserAgentShadowTree() && !element->userAgentPart().isNull())
             style.setUserModify(UserModify::ReadOnly);
 
-        if (is<HTMLMarqueeElement>(*m_element)) {
+        if (is<HTMLMarqueeElement>(*element)) {
             // For now, <marquee> requires an overflow clip to work properly.
             style.setOverflowX(Overflow::Hidden);
             style.setOverflowY(Overflow::Hidden);
@@ -600,7 +600,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             style.setIsInVisibilityAdjustmentSubtree();
     }
 
-    if (shouldInheritTextDecorationsInEffect(style, m_element))
+    if (shouldInheritTextDecorationsInEffect(style, m_element.get()))
         style.addToTextDecorationsInEffect(style.textDecorationLine());
     else
         style.setTextDecorationsInEffect(style.textDecorationLine());
@@ -700,8 +700,8 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             || style.hasBackdropFilter()
             || style.hasBlendMode()
             || style.viewTransitionName();
-        if (m_element) {
-            auto styleable = Styleable::fromElement(*m_element);
+        if (RefPtr element = m_element) {
+            auto styleable = Styleable::fromElement(*element);
             forceToFlat |= styleable.capturedInViewTransition();
         }
         style.setTransformStyleForcedToFlat(forceToFlat);
@@ -732,16 +732,16 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 #endif
         return false;
     };
-    if (isInertSubtreeRoot(m_element))
+    if (isInertSubtreeRoot(m_element.get()))
         style.setEffectiveInert(true);
 
-    if (m_element) {
+    if (RefPtr element = m_element) {
         // Make sure the active dialog is interactable when the whole document is blocked by the modal dialog
-        if (m_element == m_document->activeModalDialog() && !hasInertAttribute(m_element))
+        if (element == m_document->activeModalDialog() && !hasInertAttribute(element.get()))
             style.setEffectiveInert(false);
 
 #if ENABLE(FULLSCREEN_API)
-        if (CheckedPtr fullscreenManager = m_document->fullscreenManagerIfExists(); fullscreenManager && m_element == fullscreenManager->fullscreenElement() && !hasInertAttribute(m_element))
+        if (CheckedPtr fullscreenManager = m_document->fullscreenManagerIfExists(); fullscreenManager && m_element == fullscreenManager->fullscreenElement() && !hasInertAttribute(m_element.get()))
             style.setEffectiveInert(false);
 #endif
 
@@ -758,7 +758,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             adjustForTextAutosizing(style, *m_element);
 #endif
     }
-    if (isSkippedContentRoot(style, m_element) && m_parentStyle.contentVisibility() != ContentVisibility::Hidden)
+    if (isSkippedContentRoot(style, m_element.get()) && m_parentStyle.contentVisibility() != ContentVisibility::Hidden)
         style.setUsedContentVisibility(style.contentVisibility());
 
     if (style.contentVisibility() == ContentVisibility::Auto) {
@@ -814,8 +814,8 @@ static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
 
 void Adjuster::adjustDisplayContentsStyle(RenderStyle& style) const
 {
-    bool isInTopLayer = isInTopLayerOrBackdrop(style, m_element);
-    if (isInTopLayer || m_document->documentElement() == m_element) {
+    bool isInTopLayer = isInTopLayerOrBackdrop(style, m_element.get());
+    if (isInTopLayer || m_document->documentElement() == m_element.get()) {
         style.setEffectiveDisplay(DisplayType::Block);
         return;
     }
@@ -899,7 +899,7 @@ void Adjuster::adjustThemeStyle(RenderStyle& style, const RenderStyle* userAgent
     auto isOldHeightAuto = style.height().isAuto();
     auto isOldMinHeightAuto = style.minHeight().isAuto();
 
-    RenderTheme::singleton().adjustStyle(style, m_element, userAgentAppearanceStyle);
+    RenderTheme::singleton().adjustStyle(style, m_element.get(), userAgentAppearanceStyle);
 
     if (style.containsSize()) {
         if (style.containIntrinsicWidthType() != ContainIntrinsicSizeType::None) {
@@ -957,8 +957,8 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
             && style.flexShrink() == 1
             && (flexBasis.isPercent() || flexBasis.isFixed())
             && flexBasis.value() == 0
-            && const_cast<Element*>(m_element)->classList().contains(class1)
-            && const_cast<Element*>(m_element)->classList().contains(class2))
+            && const_cast<Element*>(m_element.get())->classList().contains(class1)
+            && const_cast<Element*>(m_element.get())->classList().contains(class2))
             style.setMinHeight(WebCore::Length(0, LengthType::Fixed));
     }
 #if ENABLE(VIDEO)
