@@ -173,10 +173,14 @@ static Path pathFromRectElement(const SVGRectElement& element)
     // value of width for the same shape.
     radii.constrainedBetween(radii, size / 2);
 
-    // FIXME: We currently enforce using beziers here, as at least on CoreGraphics/Lion, as
-    // the native method uses a different line dash origin, causing svg/custom/dashOrigin.svg to fail.
-    // See bug https://bugs.webkit.org/show_bug.cgi?id=79932 which tracks this issue.
-    path.addRoundedRect(FloatRect { location, size }, radii, PathRoundedRect::Strategy::PreferBezier);
+    auto strategy = PathRoundedRect::Strategy::PreferNative;
+    if (!style.svgStyle().strokeDashArray().isEmpty()) {
+        // FIXME: We currently enforce using beziers here, as at least on CoreGraphics/Lion, as
+        // the native method uses a different line dash origin, causing svg/custom/dashOrigin.svg to fail.
+        // See bug https://bugs.webkit.org/show_bug.cgi?id=79932 which tracks this issue.
+        strategy = PathRoundedRect::Strategy::PreferBezier;
+    }
+    path.addRoundedRect(FloatRect { location, size }, radii, strategy);
     return path;
 }
 
