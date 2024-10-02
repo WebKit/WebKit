@@ -22,12 +22,12 @@
             return document.getElementById("ui-script").text;
         }
 
-        function runTest()
+        async function runTest()
         {
-            if (!window.eventSender || !testRunner.runUIScript)
+            if (!testRunner.runUIScript)
                 return;
 
-            eventSender.scalePageBy(3, 3);
+            await testRunner.setPageScaleFactor(3, 0, 0);
             testRunner.runUIScript(getUIScript(), function(result) {
                 document.getElementById("target").innerText = "The viewport zoomed to scale: " + result;
                 testRunner.notifyDone();

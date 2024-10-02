@@ -60,7 +60,6 @@ interface EventSendingController {
     undefined textZoomOut();
     undefined zoomPageIn();
     undefined zoomPageOut();
-    undefined scalePageBy(double scale, double x, double y);
 
     undefined monitorWheelEvents(optional MonitorWheelEventsOptions options);
     undefined callAfterScrollingCompletes(object functionCallback);

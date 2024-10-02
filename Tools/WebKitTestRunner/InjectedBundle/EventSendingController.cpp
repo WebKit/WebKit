@@ -517,12 +517,6 @@ void EventSendingController::zoomPageOut()
     postSynchronousPageMessage("EventSender", body);
 }
 
-void EventSendingController::scalePageBy(double scale, double x, double y)
-{
-    WKPoint origin = { x, y };
-    WKBundlePageSetScaleAtOrigin(InjectedBundle::singleton().page()->page(), scale, origin);
-}
-
 MonitorWheelEventsOptions* toMonitorWheelEventsOptions(JSContextRef context, JSValueRef argument)
 {
     if (!JSValueIsObject(context, argument))

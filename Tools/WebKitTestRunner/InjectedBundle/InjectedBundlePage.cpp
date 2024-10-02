@@ -352,9 +352,6 @@ void InjectedBundlePage::prepare()
 {
     WKBundlePageClearMainFrameName(m_page);
 
-    WKPoint origin = { 0, 0 };
-    WKBundlePageSetScaleAtOrigin(m_page, 1, origin);
-    
     WKBundleClearHistoryForTesting(m_page);
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN

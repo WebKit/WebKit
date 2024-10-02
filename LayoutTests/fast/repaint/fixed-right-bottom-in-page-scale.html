@@ -7,6 +7,7 @@
         }
     </style>
     <script>
+      var jsTestIsAsync = true;
       window.enablePixelTesting = true;
       if (window.internals)
           window.internals.settings.setFixedElementsLayoutRelativeToFrame(true);
@@ -15,18 +16,18 @@
           window.scrollTo(100,100);
       }
 
-      function scaleWithEventSender() {
+      async function scaleWithTestRunner() {
           var scaleFactor = 2.0;
           var scaleOffset = 0;
-          if (window.eventSender) {
-             eventSender.scalePageBy(scaleFactor, scaleOffset, scaleOffset);
-          }
+          if (window.testRunner)
+              await testRunner.setPageScaleFactor(scaleFactor, scaleOffset, scaleOffset);
       }
 
-      function test() {
+      async function test() {
           document.body.style.width = (document.body.clientWidth + 100) + "px";
-          scaleWithEventSender();
+          await scaleWithTestRunner();
           scroll();
+          finishJSTest();
       }
     </script>
     <script src="../../resources/js-test-pre.js"></script>

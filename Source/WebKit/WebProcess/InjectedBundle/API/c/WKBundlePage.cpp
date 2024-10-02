@@ -362,11 +362,6 @@ double WKBundlePageGetPageZoomFactor(WKBundlePageRef pageRef)
     return WebKit::toImpl(pageRef)->pageZoomFactor();
 }
 
-void WKBundlePageSetScaleAtOrigin(WKBundlePageRef pageRef, double scale, WKPoint origin)
-{
-    WebKit::toImpl(pageRef)->scalePage(scale, WebKit::toIntPoint(origin));
-}
-
 WKStringRef WKBundlePageDumpHistoryForTesting(WKBundlePageRef page, WKStringRef directory)
 {
     return WebKit::toCopiedAPI(WebKit::toImpl(page)->dumpHistoryForTesting(WebKit::toWTFString(directory)));
