@@ -766,6 +766,9 @@ class BundleCreator(object):
         if needs_to_create_wpe_backend_symlink:
             self._ensure_wpe_backend_symlink()
 
+        if self._platform == 'wpe':
+            self._bundler.copy(os.path.join(self._buildpath, 'WebInspectorUI', 'DerivedSources', 'inspector.gresource'))
+
         # Now copy data files to share dir (only needed when bunding all for MiniBrowser).
         # We assume that the system uses standard paths at /usr/share and /etc for this resources
         # Every path should be checked and if some one is not found, then it will raise an error.
