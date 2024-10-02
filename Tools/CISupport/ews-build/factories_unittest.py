@@ -306,6 +306,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'install-cmake',
             'install-ninja',
             'print-clang-version',
+            'checkout-llvm-project',
+            'update-clang',
             'checkout-pull-request',
             'kill-old-processes',
             'scan-build-smart-pointer'

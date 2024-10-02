@@ -25,14 +25,14 @@ from buildbot.process import factory
 from buildbot.steps import trigger
 
 from .steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize,
-                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
+                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckOutLLVMProject,
                     CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CleanDerivedSources, CompileJSC, CompileWebKit, ConfigureBuild, DetermineLabelOwner,
                     DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub, InstallCMake, InstallNinja,
                     InstallGtkDependencies, InstallHooks, InstallWpeDependencies, InstallWinDependencies, KillOldProcesses, PrintClangVersion, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
                     MapBranchAlias, RemoveAndAddLabels, RetrievePRDataFromLabel, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
                     RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests,
                     RunWebKitPyTests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
-                    ScanBuildSmartPointer, SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory, UpdatePullRequest,
+                    ScanBuildSmartPointer, SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateClang, UpdateWorkingDirectory, UpdatePullRequest,
                     ValidateCommitMessage, ValidateChange, ValidateCommitterAndReviewer, WaitForCrashCollection,
                     InstallBuiltProduct, ValidateRemote, ValidateSquashed, GITHUB_PROJECTS)
 
@@ -114,6 +114,8 @@ class SmartPointerStaticAnalyzerFactory(factory.BuildFactory):
         self.addStep(InstallCMake())
         self.addStep(InstallNinja())
         self.addStep(PrintClangVersion())
+        self.addStep(CheckOutLLVMProject())
+        self.addStep(UpdateClang())
         self.addStep(CheckOutPullRequest())
         self.addStep(KillOldProcesses())
         self.addStep(ScanBuildSmartPointer())

@@ -44,22 +44,22 @@ from . import send_email
 
 from .layout_test_failures import LayoutTestFailures
 from .steps import (AddReviewerToCommitMessage, AddMergeLabelsToPRs, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
-                    AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, ArchiveStaticAnalyzerResults, BugzillaMixin,
-                    Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStatusOfPR, CheckStyle,
+                    AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, ArchiveStaticAnalyzerResults, BugzillaMixin, BlockPullRequest,
+                    Canonicalize, CheckOutPullRequest, CheckOutLLVMProject, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStatusOfPR, CheckStyle,
                     CleanBuild, CleanDerivedSources, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutChange,
                     CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, DetermineLabelOwner,
                     DetermineLandedIdentifier, DisplaySmartPointerResults, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
                     EWS_BUILD_HOSTNAMES, ExtractBuiltProduct, ExtractTestResults,
                     FetchBranches, FindModifiedLayoutTests, FindUnexpectedStaticAnalyzerResults, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub, GitHubMixin, GenerateS3URL,
-                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, InstallHooks, InstallCMake, InstallNinja,
+                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, InstallHooks, LeaveComment, InstallCMake, InstallNinja,
                     KillOldProcesses, ParseStaticAnalyzerResults, PrintConfiguration, PrintClangVersion, PushCommitToWebKitRepo, PushPullRequestBranch, RemoveAndAddLabels, ReRunAPITests, ReRunWebKitPerlTests, RetrievePRDataFromLabel,
                     MapBranchAlias, ReRunWebKitTests, RevertAppliedChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                     RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
                     RunJavaScriptCoreTests, RunJSCTestsWithoutChange, RunWebKit1Tests, RunWebKitPerlTests,
                     RunWebKitPyTests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                     RunWebKitTestsWithoutChange, RunWebKitTestsRedTree, RunWebKitTestsRepeatFailuresRedTree,
-                    RunWebKitTestsRepeatFailuresWithoutChangeRedTree, RunWebKitTestsWithoutChangeRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount,
-                    ScanBuildSmartPointer, ShowIdentifier, Trigger, TransferToS3, TwistedAdditions, UpdatePullRequest, UpdateWorkingDirectory, UploadBuiltProduct,
+                    RunWebKitTestsRepeatFailuresWithoutChangeRedTree, RunWebKitTestsWithoutChangeRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount, SetBuildSummary, SetCommitQueueMinusFlagOnPatch,
+                    ScanBuildSmartPointer, ShowIdentifier, Trigger, TransferToS3, TwistedAdditions, UpdateClang, UpdatePullRequest, UpdateWorkingDirectory, UploadBuiltProduct,
                     UploadFileToS3, UploadTestResults, ValidateCommitMessage, ValidateCommitterAndReviewer, ValidateChange, ValidateRemote, ValidateSquashed)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
@@ -9323,6 +9323,8 @@ class TestDisplaySmartPointerResults(BuildStepMixinAdditions, unittest.TestCase)
     def test_success_only_fixes(self):
         self.configureStep()
         self.setProperty('unexpected_passing_files', 1)
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
 
         self.expectOutcome(result=SUCCESS, state_string='Found 1 fixed file: File17.cpp')
         rc = self.runStep()
@@ -9331,12 +9333,15 @@ class TestDisplaySmartPointerResults(BuildStepMixinAdditions, unittest.TestCase)
         expected_comment += "Please update expectations using `smart-pointer-tool --update-expectations` before landing."
         self.assertEqual(self.getProperty('comment_text'), expected_comment)
         self.assertEqual(self.getProperty('build_summary'), 'Found 1 fixed file: File17.cpp')
+        self.assertEqual([LeaveComment(), SetBuildSummary()], next_steps)
 
     def test_failure_new_failures(self):
         self.configureStep()
         self.setProperty('unexpected_new_issues', 10)
         self.setProperty('unexpected_passing_files', 1)
         self.setProperty('unexpected_failing_files', 1)
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
 
         self.expectOutcome(result=FAILURE, state_string='Found 10 new failures in File1.cpp and found 1 fixed file: File17.cpp')
         rc = self.runStep()
@@ -9344,6 +9349,7 @@ class TestDisplaySmartPointerResults(BuildStepMixinAdditions, unittest.TestCase)
         expected_comment += "\nPlease address these issues before landing. See [WebKit Guidelines for Safer C++ Programming](https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines).\n(cc @rniwa)"
         self.assertEqual(self.getProperty('comment_text'), expected_comment)
         self.assertEqual(self.getProperty('build_finish_summary'), 'Found 10 new failures in File1.cpp')
+        self.assertEqual([LeaveComment(), SetCommitQueueMinusFlagOnPatch(), BlockPullRequest()], next_steps)
 
 
 class TestPrintClangVersion(BuildStepMixinAdditions, unittest.TestCase):
@@ -9386,6 +9392,83 @@ class TestPrintClangVersion(BuildStepMixinAdditions, unittest.TestCase):
         rc = self.runStep()
         self.assertEqual(self.getProperty('llvm_revision'), None)
         return rc
+
+
+class TestCheckoutLLVMProject(BuildStepMixinAdditions, unittest.TestCase):
+    LLVM_REVISION = '123456'
+
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(CheckOutLLVMProject())
+
+        def doStepIf(self, step):
+            return self.build.getProperty('llvm_revision', '') != TestCheckoutLLVMProject.LLVM_REVISION
+        CheckOutLLVMProject.doStepIf = doStepIf
+
+    def test_skipped(self):
+        self.configureStep()
+        self.setProperty('llvm_revision', '123456')
+        self.expectOutcome(result=SKIPPED, state_string='llvm-project is already up to date')
+        return self.runStep()
+
+
+class TestUpdateClang(BuildStepMixinAdditions, unittest.TestCase):
+    ENV = {'PATH': '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/CMake.app/Contents/bin/:BuildDir'}
+    LLVM_REVISION = '123456'
+
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(UpdateClang())
+        self.setProperty('builddir', 'BuildDir')
+
+        def doStepIf(self, step):
+            return self.build.getProperty('llvm_revision', '') != TestUpdateClang.LLVM_REVISION
+        UpdateClang.doStepIf = doStepIf
+
+    def test_success(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir=LLVM_DIR,
+                        logEnviron=True,
+                        timeout=1200,
+                        env=self.ENV,
+                        command=['/bin/sh', '-c', 'rm -r build-new; mkdir build-new']) + 0,
+            ExpectShell(workdir=LLVM_DIR,
+                        logEnviron=True,
+                        timeout=1200,
+                        env=self.ENV,
+                        command=['/bin/sh', '-c', 'cd build-new; xcrun cmake -DLLVM_ENABLE_PROJECTS=clang -DCMAKE_BUILD_TYPE=Release -G Ninja ../llvm -DCMAKE_MAKE_PROGRAM=$(xcrun --sdk macosx --find ninja)']) + 0,
+            ExpectShell(workdir=LLVM_DIR,
+                        logEnviron=True,
+                        timeout=1200,
+                        env=self.ENV,
+                        command=['/bin/sh', '-c', 'cd build-new; ninja clang']) + 0,
+            ExpectShell(workdir=LLVM_DIR,
+                        logEnviron=True,
+                        timeout=1200,
+                        env=self.ENV,
+                        command=['rm', '-r', '../build/WebKitBuild']) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Successfully updated clang')
+        return self.runStep()
+
+    def test_skipped(self):
+        self.configureStep()
+        self.setProperty('llvm_revision', '123456')
+        self.expectOutcome(result=SKIPPED, state_string='Clang is already up to date')
+        self.runStep()
 
 
 class TestInstallCMake(BuildStepMixinAdditions, unittest.TestCase):
