@@ -102,23 +102,34 @@ public:
         return *callee;
     }
 
-    Callee& wasmEntrypointCalleeFromFunctionIndexSpace(const AbstractLocker&, FunctionSpaceIndex functionIndexSpace) WTF_REQUIRES_LOCK(m_lock)
+    JITCallee* replacement(const AbstractLocker&, FunctionSpaceIndex functionIndexSpace) WTF_REQUIRES_LOCK(m_lock)
     {
         ASSERT(runnable());
         ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
+        UNUSED_PARAM(calleeIndex);
 #if ENABLE(WEBASSEMBLY_OMGJIT)
         if (!m_omgCallees.isEmpty() && m_omgCallees[calleeIndex])
-            return *m_omgCallees[calleeIndex].get();
+            return m_omgCallees[calleeIndex].get();
 #endif
 #if ENABLE(WEBASSEMBLY_BBQJIT)
         if (!m_bbqCallees.isEmpty() && m_bbqCallees[calleeIndex])
-            return *m_bbqCallees[calleeIndex].get();
+            return m_bbqCallees[calleeIndex].get();
 #endif
+        return nullptr;
+    }
+
+    Callee& wasmEntrypointCalleeFromFunctionIndexSpace(const AbstractLocker& locker, FunctionSpaceIndex functionIndexSpace) WTF_REQUIRES_LOCK(m_lock)
+    {
+
+        if (auto* replacement = this->replacement(locker, functionIndexSpace))
+            return *replacement;
+        unsigned calleeIndex = functionIndexSpace - functionImportCount();
         if (Options::useWasmIPInt())
             return m_ipintCallees->at(calleeIndex).get();
         return m_llintCallees->at(calleeIndex).get();
     }
+
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
     BBQCallee& wasmBBQCalleeFromFunctionIndexSpace(FunctionSpaceIndex functionIndexSpace)
@@ -131,14 +142,14 @@ public:
         return *m_bbqCallees[calleeIndex].get();
     }
 
-    BBQCallee* bbqCallee(const AbstractLocker&, unsigned functionIndex)
+    BBQCallee* bbqCallee(const AbstractLocker&, FunctionCodeIndex functionIndex)
     {
         if (m_bbqCallees.isEmpty())
             return nullptr;
         return m_bbqCallees[functionIndex].get();
     }
 
-    void setBBQCallee(const AbstractLocker&, unsigned functionIndex, Ref<BBQCallee>&& callee)
+    void setBBQCallee(const AbstractLocker&, FunctionCodeIndex functionIndex, Ref<BBQCallee>&& callee)
     {
         if (m_bbqCallees.isEmpty())
             m_bbqCallees = FixedVector<RefPtr<BBQCallee>>(m_calleeCount);
@@ -148,14 +159,14 @@ public:
 #endif
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-    OMGCallee* omgCallee(const AbstractLocker&, unsigned functionIndex)
+    OMGCallee* omgCallee(const AbstractLocker&, FunctionCodeIndex functionIndex)
     {
         if (m_omgCallees.isEmpty())
             return nullptr;
         return m_omgCallees[functionIndex].get();
     }
 
-    void setOMGCallee(const AbstractLocker&, unsigned functionIndex, Ref<OMGCallee>&& callee)
+    void setOMGCallee(const AbstractLocker&, FunctionCodeIndex functionIndex, Ref<OMGCallee>&& callee)
     {
         if (m_omgCallees.isEmpty())
             m_omgCallees = FixedVector<RefPtr<OMGCallee>>(m_calleeCount);
@@ -178,7 +189,7 @@ public:
         return m_wasmIndirectCallWasmCallees[calleeIndex].get();
     }
 
-    CodePtr<WasmEntryPtrTag> wasmToWasmExitStub(unsigned functionIndex)
+    CodePtr<WasmEntryPtrTag> wasmToWasmExitStub(FunctionSpaceIndex functionIndex)
     {
         return m_wasmToWasmExitStubs[functionIndex].code();
     }

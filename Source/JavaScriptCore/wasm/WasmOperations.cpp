@@ -867,13 +867,14 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (JSWebAss
         return;
     }
 
-    dataLogLnIf(Options::verboseOSR(), "Consider OMGPlan for [", functionIndex, "] with executeCounter = ", tierUp, " ", RawPointer(callee.replacement()));
+    OMGCallee* replacement = calleeGroup.omgCallee(Locker { calleeGroup.m_lock }, functionIndex);
+    dataLogLnIf(Options::verboseOSR(), "Consider OMGPlan for [", functionIndex, "] with executeCounter = ", tierUp, " ", RawPointer(replacement));
 
-    if (shouldTriggerOMGCompile(tierUp, callee.replacement(), functionIndex))
-        triggerOMGReplacementCompile(tierUp, callee.replacement(), instance, calleeGroup, functionIndex, callee.hasExceptionHandlers());
+    if (shouldTriggerOMGCompile(tierUp, replacement, functionIndex))
+        triggerOMGReplacementCompile(tierUp, replacement, instance, calleeGroup, functionIndex, callee.hasExceptionHandlers());
 
     // We already have an OMG replacement.
-    if (callee.replacement()) {
+    if (replacement) {
         // No OSR entry points. Just defer indefinitely.
         if (tierUp.osrEntryTriggers().isEmpty()) {
             dataLogLnIf(Options::verboseOSR(), "delayOMGCompile replacement in place, delaying indefinitely for ", functionIndex);
@@ -932,20 +933,22 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
         return returnWithoutOSREntry();
     }
 
-    dataLogLnIf(Options::verboseOSR(), "Consider OSREntryPlan for [", functionIndex, "] loopIndex#", loopIndex, " with executeCounter = ", tierUp, " ", RawPointer(callee.replacement()));
+    OMGCallee* replacement = calleeGroup.omgCallee(Locker { calleeGroup.m_lock }, functionIndex);
+    dataLogLnIf(Options::verboseOSR(), "Consider OSREntryPlan for [", functionIndex, "] loopIndex#", loopIndex, " with executeCounter = ", tierUp, " ", RawPointer(replacement));
 
     if (!Options::useWasmOSR()) {
-        if (shouldTriggerOMGCompile(tierUp, callee.replacement(), functionIndex))
-            triggerOMGReplacementCompile(tierUp, callee.replacement(), instance, calleeGroup, functionIndex, callee.hasExceptionHandlers());
+        if (shouldTriggerOMGCompile(tierUp, replacement, functionIndex))
+            triggerOMGReplacementCompile(tierUp, replacement, instance, calleeGroup, functionIndex, callee.hasExceptionHandlers());
 
         // We already have an OMG replacement.
-        if (callee.replacement()) {
+        if (replacement) {
             // No OSR entry points. Just defer indefinitely.
             if (tierUp.osrEntryTriggers().isEmpty()) {
                 tierUp.dontOptimizeAnytimeSoon(functionIndex);
                 return;
             }
 
+            // FIXME: Is this ever taken?
             // Found one OSR entry point. Since we do not have a way to jettison Wasm::Callee right now, this means that tierUp function is now meaningless.
             // Not call it as much as possible.
             if (callee.osrEntryCallee()) {
@@ -1000,13 +1003,13 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
         }
     }
 
-    if (!shouldTriggerOMGCompile(tierUp, callee.replacement(), functionIndex) && !triggeredSlowPathToStartCompilation)
+    if (!shouldTriggerOMGCompile(tierUp, replacement, functionIndex) && !triggeredSlowPathToStartCompilation)
         return returnWithoutOSREntry();
 
     if (!triggeredSlowPathToStartCompilation) {
-        triggerOMGReplacementCompile(tierUp, callee.replacement(), instance, calleeGroup, functionIndex, callee.hasExceptionHandlers());
+        triggerOMGReplacementCompile(tierUp, replacement, instance, calleeGroup, functionIndex, callee.hasExceptionHandlers());
 
-        if (!callee.replacement())
+        if (!replacement)
             return returnWithoutOSREntry();
     }
 

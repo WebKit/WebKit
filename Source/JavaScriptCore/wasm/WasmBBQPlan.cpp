@@ -135,6 +135,7 @@ void BBQPlan::work(CompilationEffort)
         Locker locker { m_calleeGroup->m_lock };
 
         m_calleeGroup->setBBQCallee(locker, m_functionIndex, callee.copyRef());
+        ASSERT(m_calleeGroup->replacement(locker, callee->index()) == callee.ptr());
 
         for (auto& call : callee->wasmToWasmCallsites()) {
             CodePtr<WasmEntryPtrTag> entrypoint;
@@ -154,15 +155,14 @@ void BBQPlan::work(CompilationEffort)
         m_calleeGroup->callsiteCollection().updateCallsitesToCallUs(locker, m_calleeGroup.get(), CodeLocationLabel<WasmEntryPtrTag>(entrypoint), m_functionIndex, functionIndexSpace);
 
         {
+            // These locks store barrier the set of OMG callee above.
             if (Options::useWasmIPInt()) {
                 IPIntCallee& ipintCallee = m_calleeGroup->m_ipintCallees->at(m_functionIndex).get();
                 Locker locker { ipintCallee.tierUpCounter().m_lock };
-                ipintCallee.setReplacement(callee.copyRef(), mode());
                 ipintCallee.tierUpCounter().setCompilationStatus(mode(), IPIntTierUpCounter::CompilationStatus::Compiled);
             } else {
                 LLIntCallee& llintCallee = m_calleeGroup->m_llintCallees->at(m_functionIndex).get();
                 Locker locker { llintCallee.tierUpCounter().m_lock };
-                llintCallee.setReplacement(callee.copyRef(), mode());
                 llintCallee.tierUpCounter().setCompilationStatus(mode(), LLIntTierUpCounter::CompilationStatus::Compiled);
             }
         }

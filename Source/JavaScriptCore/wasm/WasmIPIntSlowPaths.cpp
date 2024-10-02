@@ -82,19 +82,23 @@ static inline bool shouldJIT(Wasm::IPIntCallee* callee)
     return true;
 }
 
-static inline bool jitCompileAndSetHeuristics(Wasm::IPIntCallee* callee, JSWebAssemblyInstance* instance)
+static inline Wasm::JITCallee* jitCompileAndSetHeuristics(Wasm::IPIntCallee* callee, JSWebAssemblyInstance* instance)
 {
     Wasm::IPIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
     if (!tierUpCounter.checkIfOptimizationThresholdReached()) {
         dataLogLnIf(Options::verboseOSR(), "    JIT threshold should be lifted.");
-        return false;
+        return nullptr;
     }
 
     MemoryMode memoryMode = instance->memory()->mode();
-    if (callee->replacement(memoryMode))  {
-        dataLogLnIf(Options::verboseOSR(), "    Code was already compiled.");
-        tierUpCounter.optimizeSoon();
-        return true;
+    Wasm::CalleeGroup& calleeGroup = *instance->calleeGroup();
+    {
+        Locker locker { calleeGroup.m_lock };
+        if (auto* replacement = calleeGroup.replacement(locker, callee->index()))  {
+            dataLogLnIf(Options::verboseOSR(), "    Code was already compiled.");
+            tierUpCounter.optimizeSoon();
+            return replacement;
+        }
     }
 
     bool compile = false;
@@ -125,7 +129,8 @@ static inline bool jitCompileAndSetHeuristics(Wasm::IPIntCallee* callee, JSWebAs
         }
     }
 
-    return !!callee->replacement(memoryMode);
+    Locker locker { calleeGroup.m_lock };
+    return calleeGroup.replacement(locker, callee->index());
 }
 
 WASM_IPINT_EXTERN_CPP_DECL(prologue_osr, CallFrame* callFrame)
@@ -142,9 +147,9 @@ WASM_IPINT_EXTERN_CPP_DECL(prologue_osr, CallFrame* callFrame)
 
     dataLogLnIf(Options::verboseOSR(), *callee, ": Entered prologue_osr with tierUpCounter = ", callee->tierUpCounter());
 
-    if (!jitCompileAndSetHeuristics(callee, instance))
-        WASM_RETURN_TWO(nullptr, nullptr);
-    WASM_RETURN_TWO(callee->replacement(instance->memory()->mode())->entrypoint().taggedPtr(), nullptr);
+    if (auto* replacement = jitCompileAndSetHeuristics(callee, instance))
+        WASM_RETURN_TWO(replacement->entrypoint().taggedPtr(), nullptr);
+    WASM_RETURN_TWO(nullptr, nullptr);
 }
 
 WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint8_t* pc, IPIntLocal* pl)
@@ -169,6 +174,7 @@ WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint8_t* pc, IPIntLoc
 
     if (!Options::useBBQJIT())
         WASM_RETURN_TWO(nullptr, nullptr);
+    // We don't use the replacement directly here since it could be a OMGCallee and we can't loop OSR to OMG from IPInt.
     if (!jitCompileAndSetHeuristics(callee, instance))
         WASM_RETURN_TWO(nullptr, nullptr);
 
