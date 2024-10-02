@@ -119,6 +119,92 @@ JS_EXPORT_PRIVATE void dumpJITMemory(const void*, const void*, size_t);
 JS_EXPORT_PRIVATE void* performJITMemcpyWithMProtect(void *dst, const void *src, size_t n);
 #endif
 
+#if ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
+// This helps with error logging in the case of a crash, as it places the crash
+// PC at the point in the instruction stream which would be corrupted --
+// while preserving the stack so that we can use that to figure out who might be
+// responsible for generating the corrupted instructions.
+static NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void dieByJumpingIntoJITBufferWithInfo(int line, void* buffer, size_t offset, size_t size, auto info1, auto info2, auto info3)
+{
+    RELEASE_ASSERT(offset <= size);
+    RELEASE_ASSERT(offset <= std::numeric_limits<uint32_t>::max());
+    RELEASE_ASSERT(size <= std::numeric_limits<uint32_t>::max());
+    void* targetInstr = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(buffer) + offset);
+
+    // Since this function should only be called w/ buffer+offset pointing at
+    // already-zeroed memory, re-zeroing it is somewhat superflous on ARM64E,
+    // but necessary on x86-64 (where 0x00 0x00 encodes addb %al, (%rax)), and
+    // even on the former ensures that execution will never continue past the
+    // branch out of this function even if it is called improperly.
+#if OS(DARWIN) && CPU(X86_64)
+    memset(reinterpret_cast<char*>(targetInstr), 0xF4, 1);
+    sys_icache_invalidate(buffer, size);
+#elif OS(DARWIN) && CPU(ARM64)
+    memset(reinterpret_cast<char*>(targetInstr), 0, 4);
+    sys_icache_invalidate(buffer, size);
+#else
+#error "JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES not supported on this platform."
+#endif
+
+    uint64_t lineGpr = static_cast<uint64_t>(static_cast<int64_t>(line));
+    uint64_t bufferGpr = reinterpret_cast<uintptr_t>(buffer);
+    uint64_t sizeOffsetGpr = static_cast<uint64_t>(offset | size << 32);
+    uint64_t info1Gpr = wtfCrashArg(info1);
+    uint64_t info2Gpr = wtfCrashArg(info2);
+    uint64_t info3Gpr = wtfCrashArg(info3);
+
+    // We do this instead of using explicit register variables because clang
+    // seems to struggle with placing those in the same function as an outward
+    // function call
+#if CPU(X86_64)
+    __asm__ volatile(
+        "mov %1, %%" CRASH_GPR0 "\n"
+        "mov %2, %%" CRASH_GPR1 "\n"
+        "mov %3, %%" CRASH_GPR2 "\n"
+        "mov %4, %%" CRASH_GPR3 "\n"
+        "mov %5, %%" CRASH_GPR4 "\n"
+        "mov %6, %%" CRASH_GPR5 "\n"
+        "jmp *%0"
+            : : "r"(targetInstr), "r"(lineGpr), "r"(bufferGpr), "r"(sizeOffsetGpr), "r"(info1Gpr), "r"(info2Gpr), "r"(info3Gpr)
+            : CRASH_GPR0, CRASH_GPR1, CRASH_GPR2, CRASH_GPR3, CRASH_GPR4, CRASH_GPR5);
+#elif CPU(ARM64)
+    __asm__ volatile(
+        "mov " CRASH_GPR0 ", %1\n"
+        "mov " CRASH_GPR1 ", %2\n"
+        "mov " CRASH_GPR2 ", %3\n"
+        "mov " CRASH_GPR3 ", %4\n"
+        "mov " CRASH_GPR4 ", %5\n"
+        "mov " CRASH_GPR5 ", %6\n"
+        "br %0"
+            : : "r"(targetInstr), "r"(lineGpr), "r"(bufferGpr), "r"(sizeOffsetGpr), "r"(info1Gpr), "r"(info2Gpr), "r"(info3Gpr)
+            : CRASH_GPR0, CRASH_GPR1, CRASH_GPR2, CRASH_GPR3, CRASH_GPR4, CRASH_GPR5);
+#else
+#error "JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES not supported on this platform."
+#endif
+
+            __builtin_unreachable();
+}
+
+#define CRASH_BY_JUMPING_INTO_JIT_BUFFER_WITH_INFO(...) do { \
+        WTF::isIntegralOrPointerType(__VA_ARGS__); \
+        compilerFenceForCrash(); \
+        dieByJumpingIntoJITBufferWithInfo(__LINE__, __VA_ARGS__); \
+    } while (false)
+
+// We only check whether the run also exists in the source buffer
+// once we know we're going to crash and thus can afford the
+// overhead.
+#define RELEASE_ASSERT_ZERO_CHECK(zeroCount, dstBuff, srcBuff, buffSize, nextIndex) do { \
+        if (UNLIKELY(zeroCount > maxZeroByteRunLength)) { \
+            size_t firstZeroIndex = nextIndex - zeroCount; \
+            auto dstBuffZeroes = reinterpret_cast<const char*>(dstBuff) + firstZeroIndex; \
+            auto srcBuffZeroes = reinterpret_cast<const char*>(srcBuff) + firstZeroIndex; \
+            bool sourceBufferBytesAlsoZero = !(std::memcmp(dstBuffZeroes, srcBuffZeroes, runLength)); \
+            CRASH_BY_JUMPING_INTO_JIT_BUFFER_WITH_INFO(dstBuff, firstZeroIndex, buffSize, nextIndex, srcBuff, sourceBufferBytesAlsoZero); \
+        } \
+    } while (false)
+#endif // ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
+
 static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n)
 {
 #if CPU(ARM64)
@@ -131,7 +217,7 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
         RELEASE_ASSERT(static_cast<uint8_t*>(dst) + n <= endOfFixedExecutableMemoryPool());
 
 #if ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
-        auto checkForZeroes = [n] (const void* buffer_v) {
+        auto checkForZeroes = [dst, src, n] () {
             // On x86-64, the maximum immediate size is 8B, no opcodes/prefixes have 0x00
             // On other architectures this could be smaller
             constexpr size_t maxZeroByteRunLength = 16;
@@ -140,31 +226,31 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
             constexpr size_t stride = sizeof(uint64_t);
             static_assert(stride <= maxZeroByteRunLength);
 
-            const char* buffer = reinterpret_cast<const char*>(buffer_v);
+            const char* dstBuff = reinterpret_cast<const char*>(dst);
             size_t runLength = 0;
             size_t i = 0;
             if (n > stride) {
-                for (; (reinterpret_cast<uintptr_t>(buffer) + i) % stride; i++) {
-                    if (!(buffer[i]))
+                for (; (reinterpret_cast<uintptr_t>(dstBuff) + i) % stride; i++) {
+                    if (!(dstBuff[i]))
                         runLength++;
                     else
                         runLength = 0;
                 }
                 for (; i + stride <= n; i += stride) {
-                    uint64_t chunk = *reinterpret_cast<const uint64_t*>(buffer + i);
+                    uint64_t chunk = *reinterpret_cast<const uint64_t*>(dstBuff + i);
                     if (!chunk) {
                         runLength += sizeof(chunk);
-                        RELEASE_ASSERT(runLength <= maxZeroByteRunLength, buffer, n, i);
+                        RELEASE_ASSERT_ZERO_CHECK(runLength, dst, src, n, i + stride);
                     } else {
                         runLength += (std::countr_zero(chunk) / 8);
-                        RELEASE_ASSERT(runLength <= maxZeroByteRunLength, buffer, n, i);
+                        RELEASE_ASSERT_ZERO_CHECK(runLength, dst, src, n, i + (std::countr_zero(chunk) / 8));
                         runLength = std::countl_zero(chunk) / 8;
                     }
                 }
                 for (; i < n; i++) {
-                    if (!(buffer[i])) {
+                    if (!(dstBuff[i])) {
                         runLength++;
-                        RELEASE_ASSERT(runLength <= maxZeroByteRunLength, buffer, n, i);
+                        RELEASE_ASSERT_ZERO_CHECK(runLength, dst, src, n, i + 1);
                     }
                 }
             }
@@ -177,7 +263,7 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
 #if ENABLE(MPROTECT_RX_TO_RWX)
         auto ret = performJITMemcpyWithMProtect(dst, src, n);
 #if ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
-        checkForZeroes(dst);
+        checkForZeroes();
 #endif
         return ret;
 #endif
@@ -187,7 +273,7 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
             memcpy(dst, src, n);
             threadSelfRestrict<MemoryRestriction::kRwxToRx>();
 #if ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
-            checkForZeroes(dst);
+            checkForZeroes();
 #endif
             return dst;
         }
@@ -200,7 +286,7 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
             retagCodePtr<JITThunkPtrTag, CFunctionPtrTag>(g_jscConfig.jitWriteSeparateHeaps)(offset, src, n);
             RELEASE_ASSERT(!Gigacage::contains(src));
 #if ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
-            checkForZeroes(dst);
+            checkForZeroes();
 #endif
             return dst;
         }
@@ -208,7 +294,7 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
 
         auto ret = memcpy(dst, src, n);
 #if ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
-        checkForZeroes(dst);
+        checkForZeroes();
 #endif
         return ret;
     }
