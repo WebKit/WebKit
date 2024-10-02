@@ -292,6 +292,25 @@ TEST(WKWebExtensionAPIStorage, Get)
     Util::loadAndRunExtension(storageManifest, @{ @"background.js": backgroundScript });
 }
 
+TEST(WKWebExtensionAPIStorage, GetWithDefaultValue)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const data = { 'abc': 123 }",
+        @"await browser.storage.local.set(data)",
+
+        @"var result = await browser.storage.local.get()",
+        @"browser.test.assertDeepEq(data, result, 'Should retrieve the data that was set')",
+
+        @"result = await browser.storage.local.get({ 'abc': null, 'unrecognized_key': 'default_value' })",
+        @"browser.test.assertEq(result?.abc, 123, 'Should return the stored value when the key exists, even if default value is null')",
+        @"browser.test.assertEq(result?.unrecognized_key, 'default_value', 'Should return the default value for unrecognized keys')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    Util::loadAndRunExtension(storageManifest, @{ @"background.js": backgroundScript });
+}
+
 TEST(WKWebExtensionAPIStorage, GetBytesInUse)
 {
     auto *backgroundScript = Util::constructScript(@[
