@@ -213,7 +213,7 @@ class GitHubEWS(GitHub):
                           ['jsc-arm64', 'vision', 'mac-AS-debug-wk2', 'gtk-wk2', ''],
                           ['services', 'vision-sim', 'mac-wk2-stress', 'api-gtk', ''],
                           ['merge', 'vision-wk2', 'mac-intel-wk2', 'jsc-armv7', ''],
-                          ['unsafe-merge', 'tv', '', 'jsc-armv7-tests', ''],
+                          ['unsafe-merge', 'tv', 'mac-safer-cpp', 'jsc-armv7-tests', ''],
                           ['', 'tv-sim', '', '', ''],
                           ['', 'watch', '', '', ''],
                           ['', 'watch-sim', '', '', '']]
