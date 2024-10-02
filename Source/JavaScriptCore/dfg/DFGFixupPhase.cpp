@@ -1647,8 +1647,10 @@ private:
                 node->setOp(StringReplaceString);
                 fixEdge<StringUse>(node->child1());
                 fixEdge<StringUse>(node->child2());
-                if (node->child3()->shouldSpeculateString())
+                if (node->child3()->shouldSpeculateString()) {
                     fixEdge<StringUse>(node->child3());
+                    node->clearFlags(NodeMustGenerate);
+                }
                 break;
             }
 
