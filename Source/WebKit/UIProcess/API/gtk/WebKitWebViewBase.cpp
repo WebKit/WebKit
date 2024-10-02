@@ -372,6 +372,11 @@ struct _WebKitWebViewBasePrivate {
     Vector<CompletionHandler<void()>> nextPresentationUpdateCallbacks;
     RunLoop::Timer nextPresentationUpdateTimer;
     MonotonicTime nextPresentationUpdateStartTime;
+
+#if GTK_CHECK_VERSION(4, 12, 0)
+    GdkSurface* watchedScaleSurface;
+    gulong watchedScaleSurfaceSignalId;
+#endif
 };
 
 /**
@@ -602,6 +607,25 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
         priv->pageProxy->activityStateDidChange(flagsToUpdate);
 }
 
+static void deviceScaleFactorChanged(WebKitWebViewBase* webkitWebViewBase)
+{
+#if GTK_CHECK_VERSION(4, 12, 0)
+    // Allow correctly handling fractional scaling values by directly getting the scale factor from Gdk.
+    GtkRoot* root = gtk_widget_get_root(GTK_WIDGET(webkitWebViewBase));
+    if (!root)
+        return;
+    GdkSurface* surface = gtk_native_get_surface(GTK_NATIVE(root));
+    if (!surface)
+        return;
+    float scaleFactor = gdk_surface_get_scale(surface);
+#else
+    float scaleFactor = gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase));
+#endif
+
+    webkitWebViewBase->priv->pageProxy->setIntrinsicDeviceScaleFactor(scaleFactor);
+    refreshInternalScaling(webkitWebViewBase);
+}
+
 static void webkitWebViewBaseRealize(GtkWidget* widget)
 {
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(widget);
@@ -651,6 +675,12 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
     webkitWebViewBaseUpdateDisplayID(webView, monitor);
 #endif
 
+#if GTK_CHECK_VERSION(4, 12, 0)
+    priv->watchedScaleSurface = gtk_native_get_surface(gtk_widget_get_native(widget));
+    priv->watchedScaleSurfaceSignalId = g_signal_connect_swapped(priv->watchedScaleSurface, "notify::scale", G_CALLBACK(deviceScaleFactorChanged), webView);
+    deviceScaleFactorChanged(webView);
+#endif
+
     auto* imContext = priv->inputMethodFilter.context();
     if (WEBKIT_IS_INPUT_METHOD_CONTEXT_IMPL_GTK(imContext))
         webkitInputMethodContextImplGtkSetClientWidget(WEBKIT_INPUT_METHOD_CONTEXT_IMPL_GTK(imContext), widget);
@@ -671,6 +701,12 @@ static void webkitWebViewBaseUnrealize(GtkWidget* widget)
         webView->priv->acceleratedBackingStore->unrealize();
 
     GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->unrealize(widget);
+
+#if GTK_CHECK_VERSION(4, 12, 0)
+    g_signal_handler_disconnect(webView->priv->watchedScaleSurface, webView->priv->watchedScaleSurfaceSignalId);
+    webView->priv->watchedScaleSurface = nullptr;
+    webView->priv->watchedScaleSurfaceSignalId = 0;
+#endif
 }
 
 #if !USE(GTK4)
@@ -2525,19 +2561,18 @@ double webkitWebViewBaseGetPageScale(WebKitWebViewBase* webkitWebViewBase)
     return webkitWebViewBase->priv->pageScaleFactor;
 }
 
-static void deviceScaleFactorChanged(WebKitWebViewBase* webkitWebViewBase)
-{
-    webkitWebViewBase->priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
-    refreshInternalScaling(webkitWebViewBase);
-}
-
 void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<API::PageConfiguration>&& configuration)
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
 
     WebProcessPool& processPool = configuration->processPool();
     priv->pageProxy = processPool.createWebPage(*priv->pageClient, WTFMove(configuration));
+
+#if !GTK_CHECK_VERSION(4, 12, 0)
+    // The fractional scaling value for Gtk 4.12+ is only available
+    // once the widget was realized, so no scaling factor will be set here.
     priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
+#endif
     priv->acceleratedBackingStore = AcceleratedBackingStore::create(*priv->pageProxy);
 
     auto& pageConfiguration = priv->pageProxy->configuration();
@@ -2548,8 +2583,11 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
         priv->pageProxy->windowScreenDidChange(priv->displayID);
 
     refreshInternalScaling(webkitWebViewBase);
+
+#if !GTK_CHECK_VERSION(4, 12, 0)
     // We attach this here, because changes in scale factor are passed directly to the page proxy.
     g_signal_connect(webkitWebViewBase, "notify::scale-factor", G_CALLBACK(deviceScaleFactorChanged), nullptr);
+#endif
 
     WebCore::SystemSettings::singleton().addObserver([&webkitWebViewBase](const SystemSettings::State& state) mutable {
         if (state.xftDPI)
