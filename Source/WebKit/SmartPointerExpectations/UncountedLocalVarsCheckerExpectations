@@ -1,7 +1,5 @@
 GPUProcess/graphics/WebGPU/RemoteGPU.cpp
 GPUProcess/media/RemoteAudioSessionProxyManager.cpp
-GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp
-GPUProcess/media/RemoteMediaSourceProxy.cpp
 NetworkProcess/NetworkLoadScheduler.cpp
 NetworkProcess/NetworkProcess.cpp
 NetworkProcess/NetworkSession.cpp
