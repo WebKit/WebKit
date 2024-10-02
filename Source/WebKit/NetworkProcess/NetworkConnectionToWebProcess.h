@@ -228,6 +228,7 @@ public:
     WebSharedWorkerServerConnection* sharedWorkerConnection();
 
     NetworkSchemeRegistry& schemeRegistry() { return m_schemeRegistry.get(); }
+    Ref<NetworkSchemeRegistry> protectedSchemeRegistry();
 
     void cookieAcceptPolicyChanged(WebCore::HTTPCookieAcceptPolicy);
 

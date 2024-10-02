@@ -238,8 +238,8 @@ void ServiceWorkerDownloadTask::didFinish()
         if (auto download = protectedNetworkProcess()->downloadManager().download(*m_pendingDownloadID))
             download->didFinish();
 
-        if (m_client)
-            m_client->didCompleteWithError({ });
+        if (RefPtr client = m_client.get())
+            client->didCompleteWithError({ });
     });
 }
 
@@ -270,11 +270,11 @@ void ServiceWorkerDownloadTask::didFailDownload(std::optional<ResourceError>&& e
             sandboxExtension->revoke();
 
         auto resourceError = error.value_or(cancelledError(firstRequest()));
-        if (auto download = m_networkProcess->downloadManager().download(*m_pendingDownloadID))
+        if (auto download = protectedNetworkProcess()->downloadManager().download(*m_pendingDownloadID))
             download->didFail(resourceError, { });
 
-        if (m_client)
-            m_client->didCompleteWithError(resourceError);
+        if (RefPtr client = m_client.get())
+            client->didCompleteWithError(resourceError);
     });
 }
 

@@ -1290,7 +1290,7 @@ void NetworkStorageManager::resetQuotaForTesting(CompletionHandler<void()>&& com
 {
     ASSERT(RunLoop::isMain());
 
-    m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+    protectedWorkQueue()->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         assertIsCurrent(workQueue());
         for (auto& manager : m_originStorageManagers.values())
             manager->quotaManager().resetQuotaForTesting();
@@ -1928,7 +1928,7 @@ void NetworkStorageManager::clearServiceWorkerRegistrations(CompletionHandler<vo
     if (m_closed)
         return completionHandler();
 
-    m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+    protectedWorkQueue()->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         assertIsCurrent(workQueue());
 
         if (m_sharedServiceWorkerStorageManager)

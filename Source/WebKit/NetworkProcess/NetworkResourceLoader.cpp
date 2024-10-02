@@ -151,7 +151,7 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
 
     if (synchronousReply || m_parameters.shouldRestrictHTTPResponseAccess || m_parameters.options.keepAlive) {
         NetworkLoadChecker::LoadType requestLoadType = isMainFrameLoad() ? NetworkLoadChecker::LoadType::MainFrame : NetworkLoadChecker::LoadType::Other;
-        m_networkLoadChecker = NetworkLoadChecker::create(Ref { connection.networkProcess() }.get(), this,  &connection.schemeRegistry(), FetchOptions { m_parameters.options },
+        m_networkLoadChecker = NetworkLoadChecker::create(Ref { connection.networkProcess() }.get(), this,  connection.protectedSchemeRegistry().ptr(), FetchOptions { m_parameters.options },
             sessionID(), m_parameters.webPageProxyID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() },
             URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(),
             m_parameters.preflightPolicy, originalRequest().httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections,
@@ -440,13 +440,14 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     m_networkLoad = NetworkLoad::create(*this, WTFMove(parameters), *networkSession);
     
     WeakPtr weakThis { *this };
+    RefPtr networkLoad = m_networkLoad;
     if (isSynchronous())
-        m_networkLoad->start(); // May delete this object
+        networkLoad->start(); // May delete this object
     else
-        m_networkLoad->startWithScheduling();
+        networkLoad->startWithScheduling();
 
-    if (weakThis && m_networkLoad)
-        LOADER_RELEASE_LOG("startNetworkLoad: Going to the network (description=%" PUBLIC_LOG_STRING ")", m_networkLoad->description().utf8().data());
+    if (weakThis && networkLoad)
+        LOADER_RELEASE_LOG("startNetworkLoad: Going to the network (description=%" PUBLIC_LOG_STRING ")", networkLoad->description().utf8().data());
 }
 
 ResourceLoadInfo NetworkResourceLoader::resourceLoadInfo()
@@ -614,14 +615,14 @@ void NetworkResourceLoader::abort()
         task->cancelFromClient();
     }
 
-    if (m_networkLoad) {
-        if (canUseCache(m_networkLoad->currentRequest())) {
+    if (RefPtr networkLoad = m_networkLoad) {
+        if (canUseCache(networkLoad->currentRequest())) {
             // We might already have used data from this incomplete load. Ensure older versions don't remain in the cache after cancel.
             if (!m_response.isNull())
-                protectedCache()->remove(m_networkLoad->currentRequest());
+                protectedCache()->remove(networkLoad->currentRequest());
         }
         LOADER_RELEASE_LOG("abort: Cancelling network load");
-        m_networkLoad->cancel();
+        networkLoad->cancel();
     }
 
     if (isSynchronous()) {
@@ -965,8 +966,8 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
             });
             return completionHandler(PolicyAction::Ignore);
         }
-        if (m_networkLoad && m_networkLoadChecker->timingAllowFailedFlag())
-            m_networkLoad->setTimingAllowFailedFlag();
+        if (RefPtr networkLoad = m_networkLoad; networkLoad && m_networkLoadChecker->timingAllowFailedFlag())
+            networkLoad->setTimingAllowFailedFlag();
     }
 
     initializeReportingEndpoints(m_response);
@@ -1296,8 +1297,8 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
                 return completionHandler({ });
             }
 
-            if (m_networkLoad && m_networkLoadChecker && m_networkLoadChecker->timingAllowFailedFlag())
-                m_networkLoad->setTimingAllowFailedFlag();
+            if (RefPtr networkLoad = m_networkLoad; networkLoad && m_networkLoadChecker && m_networkLoadChecker->timingAllowFailedFlag())
+                networkLoad->setTimingAllowFailedFlag();
 
             LOADER_RELEASE_LOG("willSendRedirectedRequest: NetworkLoadChecker::checkRedirection is done");
             if (m_parameters.options.redirect == FetchOptions::Redirect::Manual) {
@@ -1335,10 +1336,12 @@ void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& 
     LOADER_RELEASE_LOG("continueWillSendRedirectedRequest: (m_isKeptAlive=%d, hasAdClickConversion=%d)", m_isKeptAlive, !!privateClickMeasurementAttributionTriggerData);
     ASSERT(!isSynchronous());
 
-    NetworkSession* networkSession = nullptr;
-    if (privateClickMeasurementAttributionTriggerData && (networkSession = protectedConnectionToWebProcess()->protectedNetworkProcess()->networkSession(sessionID()))) {
-        auto attributedBundleIdentifier = m_networkLoad ? m_networkLoad->attributedBundleIdentifier(m_parameters.webPageProxyID) : String();
-        networkSession->handlePrivateClickMeasurementConversion(WTFMove(*privateClickMeasurementAttributionTriggerData), request.url(), redirectRequest, WTFMove(attributedBundleIdentifier));
+    if (privateClickMeasurementAttributionTriggerData) {
+        if (CheckedPtr networkSession = protectedConnectionToWebProcess()->protectedNetworkProcess()->networkSession(sessionID())) {
+            RefPtr networkLoad = m_networkLoad;
+            auto attributedBundleIdentifier = networkLoad ? networkLoad->attributedBundleIdentifier(m_parameters.webPageProxyID) : String();
+            networkSession->handlePrivateClickMeasurementConversion(WTFMove(*privateClickMeasurementAttributionTriggerData), request.url(), redirectRequest, WTFMove(attributedBundleIdentifier));
+        }
     }
 
     if (m_isKeptAlive) {
@@ -1398,9 +1401,9 @@ void NetworkResourceLoader::restartNetworkLoad(WebCore::ResourceRequest&& newReq
 {
     LOADER_RELEASE_LOG("restartNetworkLoad: (hasNetworkLoad=%d)", !!m_networkLoad);
 
-    if (m_networkLoad) {
+    if (RefPtr networkLoad = m_networkLoad) {
         LOADER_RELEASE_LOG("restartNetworkLoad: Cancelling existing network load so we can restart the load.");
-        m_networkLoad->cancel();
+        networkLoad->cancel();
         m_networkLoad = nullptr;
     }
 
@@ -1452,8 +1455,8 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
     if (m_shouldRestartLoad) {
         m_shouldRestartLoad = false;
 
-        if (m_networkLoad)
-            m_networkLoad->updateRequestAfterRedirection(newRequest);
+        if (RefPtr networkLoad = m_networkLoad)
+            networkLoad->updateRequestAfterRedirection(newRequest);
 
         LOADER_RELEASE_LOG("continueWillSendRequest: Restarting network load");
         restartNetworkLoad(WTFMove(newRequest), WTFMove(completionHandler));
@@ -2045,8 +2048,8 @@ void NetworkResourceLoader::serviceWorkerDidNotHandle(ServiceWorkerFetchTask* fe
         auto newRequest = m_serviceWorkerFetchTask->takeRequest();
         m_serviceWorkerFetchTask = nullptr;
 
-        if (m_networkLoad)
-            m_networkLoad->updateRequestAfterRedirection(newRequest);
+        if (RefPtr networkLoad = m_networkLoad)
+            networkLoad->updateRequestAfterRedirection(newRequest);
 
         LOADER_RELEASE_LOG("serviceWorkerDidNotHandle: Restarting network load for redirect");
         restartNetworkLoad(WTFMove(newRequest), [] (auto) { });

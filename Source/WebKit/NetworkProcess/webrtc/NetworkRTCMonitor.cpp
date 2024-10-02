@@ -306,17 +306,18 @@ void NetworkManager::updateNetworks()
     auto aggregator = CallbackAggregator::create([] (auto&& ipv4, auto&& ipv6, auto&& networkList) mutable {
         networkManager().onGatheredNetworks(WTFMove(ipv4), WTFMove(ipv6), WTFMove(networkList));
     });
-    m_queue->dispatch([aggregator] {
+    Ref protectedQueue = m_queue;
+    protectedQueue->dispatch([aggregator] {
         bool useIPv4 = true;
         if (auto address = getDefaultIPAddress(useIPv4))
             aggregator->setIPv4(WTFMove(*address));
     });
-    m_queue->dispatch([aggregator] {
+    protectedQueue->dispatch([aggregator] {
         bool useIPv4 = false;
         if (auto address = getDefaultIPAddress(useIPv4))
             aggregator->setIPv6(WTFMove(*address));
     });
-    m_queue->dispatch([aggregator] {
+    protectedQueue->dispatch([aggregator] {
         aggregator->setNetworkMap(gatherNetworkMap());
     });
 }
