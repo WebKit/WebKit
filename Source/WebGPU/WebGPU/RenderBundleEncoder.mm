@@ -293,6 +293,9 @@ bool RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resource
 
 bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit)
 {
+    if (!isValid())
+        return false;
+
     auto vertexDynamicOffset = m_vertexDynamicOffset;
     auto fragmentDynamicOffset = m_fragmentDynamicOffset;
     if (!m_pipeline) {
@@ -1103,6 +1106,11 @@ void RenderBundleEncoder::setIndexBuffer(Buffer& buffer, WGPUIndexFormat format,
     if (m_renderPassEncoder && !setCommandEncoder(buffer, m_renderPassEncoder))
         return;
 
+    if (!isValidToUseWith(buffer, *this)) {
+        makeInvalid(@"setIndexBuffer: invalid index buffer");
+        return;
+    }
+
     id<MTLBuffer> indexBuffer = m_indexBuffer->buffer();
 
     if (!currentRenderCommand()) {
@@ -1175,6 +1183,9 @@ bool RenderBundleEncoder::icbNeedsToBeSplit(const RenderPipeline& a, const Rende
 
 void RenderBundleEncoder::recordCommand(WTF::Function<bool(void)>&& function)
 {
+    if (!isValid())
+        return;
+
     ASSERT(!m_renderPassEncoder || m_renderPassEncoder->renderCommandEncoder());
     m_recordedCommands.append(WTFMove(function));
 }
@@ -1182,6 +1193,12 @@ void RenderBundleEncoder::recordCommand(WTF::Function<bool(void)>&& function)
 void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
 {
     RETURN_IF_FINISHED();
+
+    if (!isValidToUseWith(pipeline, *this)) {
+        makeInvalid(@"setPipeline: invalid index buffer");
+        return;
+    }
+
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
         id<MTLRenderPipelineState> previousRenderPipelineState = m_currentPipelineState;
         id<MTLDepthStencilState> previousDepthStencilState = m_depthStencilState;
@@ -1260,6 +1277,12 @@ void RenderBundleEncoder::setVertexBuffer(uint32_t slot, Buffer* optionalBuffer,
 {
     RETURN_IF_FINISHED();
     m_maxVertexBufferSlot = std::max(m_maxVertexBufferSlot, slot);
+
+    if (optionalBuffer && !isValidToUseWith(*optionalBuffer, *this)) {
+        makeInvalid(@"setVertexBuffer: invalid index buffer");
+        return;
+    }
+
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
         if (!optionalBuffer) {
             if (slot < m_device->limits().maxVertexBuffers)
