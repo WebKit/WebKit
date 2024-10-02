@@ -32,6 +32,7 @@
 #include "PolicyDecision.h"
 #include "SandboxExtension.h"
 #include "UseDownloadPlaceholder.h"
+#include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/NotImplemented.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
@@ -46,6 +47,8 @@ namespace WebCore {
 class BlobDataFileReference;
 class ResourceRequest;
 class ResourceResponse;
+
+enum class FromDownloadAttribute : bool;
 }
 
 namespace IPC {
@@ -90,7 +93,7 @@ public:
     explicit DownloadManager(Client&);
     ~DownloadManager();
 
-    void startDownload(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain>, const String& suggestedName = { });
+    void startDownload(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain>, const String& suggestedName = { }, WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No);
     void dataTaskBecameDownloadTask(DownloadID, std::unique_ptr<Download>&&);
     void convertNetworkLoadToDownload(DownloadID, Ref<NetworkLoad>&&, ResponseCompletionHandler&&,  Vector<RefPtr<WebCore::BlobDataFileReference>>&&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     void downloadDestinationDecided(DownloadID, Ref<NetworkDataTask>&&);
