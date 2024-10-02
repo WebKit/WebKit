@@ -302,7 +302,7 @@ void ScopeRuleSets::collectFeatures() const
 
     m_customPropertyNamesInStyleContainerQueries = std::nullopt;
 
-    m_cachedHasComplexSelectorsForStyleAttribute = std::nullopt;
+    m_cachedSelectorsForStyleAttribute = std::nullopt;
 
     m_features.shrinkToFit();
 }
@@ -393,28 +393,23 @@ const HashSet<AtomString>& ScopeRuleSets::customPropertyNamesInStyleContainerQue
     return *m_customPropertyNamesInStyleContainerQueries;
 }
 
-bool ScopeRuleSets::hasSelectorsForStyleAttribute() const
-{
-    return !!attributeInvalidationRuleSets(HTMLNames::styleAttr->localName());
-}
-
-bool ScopeRuleSets::hasComplexSelectorsForStyleAttribute() const
+SelectorsForStyleAttribute ScopeRuleSets::selectorsForStyleAttribute() const
 {
     auto compute = [&] {
         auto* ruleSets = attributeInvalidationRuleSets(HTMLNames::styleAttr->localName());
         if (!ruleSets)
-            return false;
+            return SelectorsForStyleAttribute::None;
         for (auto& ruleSet : *ruleSets) {
             if (ruleSet.matchElement != MatchElement::Subject)
-                return true;
+                return SelectorsForStyleAttribute::NonSubjectPosition;
         }
-        return false;
+        return SelectorsForStyleAttribute::SubjectPositionOnly;
     };
 
-    if (!m_cachedHasComplexSelectorsForStyleAttribute)
-        m_cachedHasComplexSelectorsForStyleAttribute = compute();
+    if (!m_cachedSelectorsForStyleAttribute)
+        m_cachedSelectorsForStyleAttribute = compute();
 
-    return *m_cachedHasComplexSelectorsForStyleAttribute;
+    return *m_cachedSelectorsForStyleAttribute;
 }
 
 bool ScopeRuleSets::hasMatchingUserOrAuthorStyle(const Function<bool(RuleSet&)>& predicate)
