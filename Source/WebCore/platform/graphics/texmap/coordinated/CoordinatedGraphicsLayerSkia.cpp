@@ -64,7 +64,7 @@ void CoordinatedGraphicsLayer::paintIntoGraphicsContext(GraphicsContext& context
 
     context.translate(-dirtyRect.x(), -dirtyRect.y());
     context.scale(scale);
-    paintGraphicsLayerContents(context, enclosingIntRect(clipRect));
+    paintGraphicsLayerContents(context, clipRect);
 }
 
 Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& dirtyRect)
