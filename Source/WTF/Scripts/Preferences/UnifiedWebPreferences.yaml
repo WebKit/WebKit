@@ -7051,6 +7051,7 @@ SystemPreviewEnabled:
     WebCore:
       default: false
   disableInLockdownMode: true
+  sharedPreferenceForWebProcess: true
 
 TabsToLinks:
   type: bool
