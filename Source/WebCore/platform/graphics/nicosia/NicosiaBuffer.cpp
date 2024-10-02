@@ -152,6 +152,11 @@ void UnacceleratedBuffer::completePainting()
     ASSERT(m_painting.state == PaintingState::InProgress);
     m_painting.state = PaintingState::Complete;
     m_painting.condition.notifyOne();
+
+#if USE(SKIA)
+    // Surface is no longer needed, destroy it here (in the same thread that created it).
+    m_surface = nullptr;
+#endif
 }
 
 void UnacceleratedBuffer::waitUntilPaintingComplete()
@@ -226,6 +231,9 @@ void AcceleratedBuffer::completePainting()
             grContext->submit(GrSyncCpu::kYes);
     } else
         grContext->flushAndSubmit(m_surface.get(), GrSyncCpu::kYes);
+
+    // Surface is no longer needed, destroy it here (in the same thread that created it).
+    m_surface = nullptr;
 }
 
 void AcceleratedBuffer::waitUntilPaintingComplete()
