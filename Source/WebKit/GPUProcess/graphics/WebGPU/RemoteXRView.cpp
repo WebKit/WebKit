@@ -59,7 +59,7 @@ RemoteXRView::~RemoteXRView() = default;
 
 void RemoteXRView::destruct()
 {
-    m_objectHeap->removeObject(m_identifier);
+    Ref { m_objectHeap.get() }->removeObject(m_identifier);
 }
 
 void RemoteXRView::stopListeningForIPC()

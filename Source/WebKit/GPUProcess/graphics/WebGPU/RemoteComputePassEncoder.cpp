@@ -48,7 +48,7 @@ RemoteComputePassEncoder::RemoteComputePassEncoder(WebCore::WebGPU::ComputePassE
     , m_gpu(gpu)
     , m_identifier(identifier)
 {
-    m_streamConnection->startReceivingMessages(*this, Messages::RemoteComputePassEncoder::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->startReceivingMessages(*this, Messages::RemoteComputePassEncoder::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteComputePassEncoder::~RemoteComputePassEncoder() = default;
@@ -60,7 +60,7 @@ void RemoteComputePassEncoder::destruct()
 
 void RemoteComputePassEncoder::stopListeningForIPC()
 {
-    m_streamConnection->stopReceivingMessages(Messages::RemoteComputePassEncoder::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->stopReceivingMessages(Messages::RemoteComputePassEncoder::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemoteComputePassEncoder::setPipeline(WebGPUIdentifier computePipeline)
@@ -70,12 +70,12 @@ void RemoteComputePassEncoder::setPipeline(WebGPUIdentifier computePipeline)
     if (!convertedComputePipeline)
         return;
 
-    m_backing->setPipeline(*convertedComputePipeline);
+    protectedBacking()->setPipeline(*convertedComputePipeline);
 }
 
 void RemoteComputePassEncoder::dispatch(WebCore::WebGPU::Size32 workgroupCountX, WebCore::WebGPU::Size32 workgroupCountY, WebCore::WebGPU::Size32 workgroupCountZ)
 {
-    m_backing->dispatch(workgroupCountX, workgroupCountY, workgroupCountZ);
+    protectedBacking()->dispatch(workgroupCountX, workgroupCountY, workgroupCountZ);
 }
 
 void RemoteComputePassEncoder::dispatchIndirect(WebGPUIdentifier indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
@@ -85,12 +85,12 @@ void RemoteComputePassEncoder::dispatchIndirect(WebGPUIdentifier indirectBuffer,
     if (!convertedIndirectBuffer)
         return;
 
-    m_backing->dispatchIndirect(*convertedIndirectBuffer, indirectOffset);
+    protectedBacking()->dispatchIndirect(*convertedIndirectBuffer, indirectOffset);
 }
 
 void RemoteComputePassEncoder::end()
 {
-    m_backing->end();
+    protectedBacking()->end();
 }
 
 void RemoteComputePassEncoder::setBindGroup(WebCore::WebGPU::Index32 index, WebGPUIdentifier bindGroup,
@@ -101,27 +101,42 @@ void RemoteComputePassEncoder::setBindGroup(WebCore::WebGPU::Index32 index, WebG
     if (!convertedBindGroup)
         return;
 
-    m_backing->setBindGroup(index, *convertedBindGroup, WTFMove(offsets));
+    protectedBacking()->setBindGroup(index, *convertedBindGroup, WTFMove(offsets));
 }
 
 void RemoteComputePassEncoder::pushDebugGroup(String&& groupLabel)
 {
-    m_backing->pushDebugGroup(WTFMove(groupLabel));
+    protectedBacking()->pushDebugGroup(WTFMove(groupLabel));
 }
 
 void RemoteComputePassEncoder::popDebugGroup()
 {
-    m_backing->popDebugGroup();
+    protectedBacking()->popDebugGroup();
 }
 
 void RemoteComputePassEncoder::insertDebugMarker(String&& markerLabel)
 {
-    m_backing->insertDebugMarker(WTFMove(markerLabel));
+    protectedBacking()->insertDebugMarker(WTFMove(markerLabel));
 }
 
 void RemoteComputePassEncoder::setLabel(String&& label)
 {
-    m_backing->setLabel(WTFMove(label));
+    protectedBacking()->setLabel(WTFMove(label));
+}
+
+Ref<WebCore::WebGPU::ComputePassEncoder> RemoteComputePassEncoder::protectedBacking()
+{
+    return m_backing;
+}
+
+Ref<IPC::StreamServerConnection> RemoteComputePassEncoder::protectedStreamConnection() const
+{
+    return m_streamConnection;
+}
+
+Ref<WebGPU::ObjectHeap> RemoteComputePassEncoder::protectedObjectHeap() const
+{
+    return m_objectHeap.get();
 }
 
 } // namespace WebKit
